@@ -342,7 +342,7 @@
 							<arg value="${resetConfigurazione}" />
 							<arg value="${gestioneSezioneConfigurazione}" />
 							<arg value="insertUpdate" />
-							<arg value="false" /> <!-- gestioneSoggetti -->
+							<arg value="true" /> <!-- gestioneSoggetti (per url prefix rewriter) -->
 							<arg value="false" /> <!-- deleteMappingErogazioniFruizioni -->
 							<arg value="${protocolloDefault}" /> <!-- protocolloDefault -->
 							<arg value="${govway_testsuite}/deploy/properties_xml2Backend/xml2backend.log4j2.properties"/>

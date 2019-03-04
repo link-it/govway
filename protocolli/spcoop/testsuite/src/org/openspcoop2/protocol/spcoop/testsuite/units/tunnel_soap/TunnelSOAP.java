@@ -22,7 +22,7 @@
 
 
 
-package org.openspcoop2.protocol.spcoop.testsuite.units.others;
+package org.openspcoop2.protocol.spcoop.testsuite.units.tunnel_soap;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -172,7 +172,7 @@ public class TunnelSOAP {
 	 * Test per il profilo di collaborazione Sincrono
 	 */
 	Repository repositorySincrono=new Repository();
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void sincrono() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -248,7 +248,7 @@ public class TunnelSOAP {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO"},dataProvider="Sincrono",dependsOnMethods={"sincrono"})
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO"},dataProvider="Sincrono",dependsOnMethods={"sincrono"})
 	public void testSincrono(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			this.collaborazioneSPCoopBaseWithoutAttach.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_TUNNEL_SOAP,
@@ -276,7 +276,7 @@ public class TunnelSOAP {
 	 * Test per il profilo di collaborazione Oneway
 	 */
 	Repository repositorynotifica=new Repository();
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY"},description="Test di tipo notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY"},description="Test di tipo notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void notifica() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -346,7 +346,7 @@ public class TunnelSOAP {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY"},dataProvider="notifica",dependsOnMethods={"notifica"})
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY"},dataProvider="notifica",dependsOnMethods={"notifica"})
 	public void testnotifica(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			this.collaborazioneSPCoopBaseWithoutAttach.testOneWay(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_TUNNEL_SOAP,
@@ -378,7 +378,7 @@ public class TunnelSOAP {
 	 * Test per il profilo di collaborazione Sincrono con xml multipart related mime
 	 */
 	Repository repositorySincronoMultipartRelatedMIME=new Repository();
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_MUTIPART_RELATED"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_MUTIPART_RELATED"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void sincronoMultipartRelatedMIME() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -476,7 +476,7 @@ public class TunnelSOAP {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_MUTIPART_RELATED"},dataProvider="SincronoMultipartRelatedMIME",dependsOnMethods={"sincronoMultipartRelatedMIME"})
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_MUTIPART_RELATED"},dataProvider="SincronoMultipartRelatedMIME",dependsOnMethods={"sincronoMultipartRelatedMIME"})
 	public void testSincronoMultipartRelatedMIME(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			this.collaborazioneSPCoopBaseWithAttach.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_TUNNEL_SOAP,
@@ -507,7 +507,7 @@ public class TunnelSOAP {
 	 * Test per il profilo di collaborazione Oneway con xml multipart related mime
 	 */
 	Repository repositorynotificaMultipartRelatedMIME=new Repository();
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_MUTIPART_RELATED"},description="Test di tipo notificaMultipartRelatedMIME, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_MUTIPART_RELATED"},description="Test di tipo notificaMultipartRelatedMIME, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void notificaMultipartRelatedMIME() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -577,7 +577,7 @@ public class TunnelSOAP {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_MUTIPART_RELATED"},dataProvider="notificaMultipartRelatedMIME",dependsOnMethods={"notificaMultipartRelatedMIME"})
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_MUTIPART_RELATED"},dataProvider="notificaMultipartRelatedMIME",dependsOnMethods={"notificaMultipartRelatedMIME"})
 	public void testnotificaMultipartRelatedMIME(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			this.collaborazioneSPCoopBaseWithAttach.testOneWay(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_TUNNEL_SOAP,
@@ -615,7 +615,7 @@ public class TunnelSOAP {
 	 */
 	Repository repositorySincronoAttachmentsOpenSPCoopDoc=new Repository();
 	Hashtable<String, Message> repositorySincronoAttachmentsOpenSPCoopDoc_message = new Hashtable<String, Message>();
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_DOC"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_DOC"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void sincronoAttachmentsOpenSPCoopDoc() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -682,7 +682,7 @@ public class TunnelSOAP {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_DOC"},dataProvider="SincronoAttachmentsOpenSPCoopDoc",dependsOnMethods={"sincronoAttachmentsOpenSPCoopDoc"})
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_DOC"},dataProvider="SincronoAttachmentsOpenSPCoopDoc",dependsOnMethods={"sincronoAttachmentsOpenSPCoopDoc"})
 	public void testSincronoAttachmentsOpenSPCoopDoc(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			// Non riesco a recuperare il messaggio sul quale dovrei ottenere poi gli identificativi per fare il check sul databse delle tracce allegati.
@@ -715,7 +715,7 @@ public class TunnelSOAP {
  	 * con mimeType application/openspcoop2 (codificato in BASE64 il contenuto)
 	 */
 	Repository repositorySincronoAttachmentsOpenSPCoopZip=new Repository();
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_ZIP"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_ZIP"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void sincronoAttachmentsOpenSPCoopZip() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -781,7 +781,7 @@ public class TunnelSOAP {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_ZIP"},dataProvider="SincronoAttachmentsOpenSPCoopZip",dependsOnMethods={"sincronoAttachmentsOpenSPCoopZip"})
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_ZIP"},dataProvider="SincronoAttachmentsOpenSPCoopZip",dependsOnMethods={"sincronoAttachmentsOpenSPCoopZip"})
 	public void testSincronoAttachmentsOpenSPCoopZip(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			// Non riesco a recuperare il messaggio sul quale dovrei ottenere poi gli identificativi per fare il check sul databse delle tracce allegati.
@@ -816,7 +816,7 @@ public class TunnelSOAP {
  	 * con mimeType application/openspcoop2 (codificato in BASE64 il contenuto)
 	 */
 	Repository repositorySincronoAttachmentsOpenSPCoopPdf=new Repository();
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_PDF"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_PDF"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void sincronoAttachmentsOpenSPCoopPdf() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -882,7 +882,7 @@ public class TunnelSOAP {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_PDF"},dataProvider="SincronoAttachmentsOpenSPCoopPdf",dependsOnMethods={"sincronoAttachmentsOpenSPCoopPdf"})
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_PDF"},dataProvider="SincronoAttachmentsOpenSPCoopPdf",dependsOnMethods={"sincronoAttachmentsOpenSPCoopPdf"})
 	public void testSincronoAttachmentsOpenSPCoopPdf(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			// Non riesco a recuperare il messaggio sul quale dovrei ottenere poi gli identificativi per fare il check sul databse delle tracce allegati.
@@ -919,7 +919,7 @@ public class TunnelSOAP {
  	 * con mimeType application/openspcoop2 (codificato in BASE64 il contenuto)
 	 */
 	Repository repositorySincronoAttachmentsOpenSPCoopFormMultipart=new Repository();
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_FORM_MULTIPART"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_FORM_MULTIPART"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void sincronoAttachmentsOpenSPCoopFormMultipart() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -1018,7 +1018,7 @@ public class TunnelSOAP {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_FORM_MULTIPART"},
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_FORM_MULTIPART"},
 			dataProvider="SincronoAttachmentsOpenSPCoopFormMultipart",dependsOnMethods={"sincronoAttachmentsOpenSPCoopFormMultipart"})
 	public void testSincronoAttachmentsOpenSPCoopFormMultipart(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
@@ -1054,7 +1054,7 @@ public class TunnelSOAP {
  	 * con mimeType application/openspcoop2 (codificato in BASE64 il contenuto)
 	 */
 	Repository repositoryNotificaAttachmentsOpenSPCoopDoc=new Repository();
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_OPENSPCOOP_DOC"},description="Test di tipo Notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_OPENSPCOOP_DOC"},description="Test di tipo Notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void NotificaAttachmentsOpenSPCoopDoc() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -1126,7 +1126,7 @@ public class TunnelSOAP {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_OPENSPCOOP_DOC"},dataProvider="NotificaAttachmentsOpenSPCoopDoc",dependsOnMethods={"NotificaAttachmentsOpenSPCoopDoc"})
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_OPENSPCOOP_DOC"},dataProvider="NotificaAttachmentsOpenSPCoopDoc",dependsOnMethods={"NotificaAttachmentsOpenSPCoopDoc"})
 	public void testNotificaAttachmentsOpenSPCoopDoc(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			// Non riesco a recuperare il messaggio sul quale dovrei ottenere poi gli identificativi per fare il check sul databse delle tracce allegati.
@@ -1158,7 +1158,7 @@ public class TunnelSOAP {
  	 * con mimeType application/openspcoop2 (codificato in BASE64 il contenuto)
 	 */
 	Repository repositoryNotificaAttachmentsOpenSPCoopZip=new Repository();
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_OPENSPCOOP_ZIP"},description="Test di tipo Notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_OPENSPCOOP_ZIP"},description="Test di tipo Notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void NotificaAttachmentsOpenSPCoopZip() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -1230,7 +1230,7 @@ public class TunnelSOAP {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_OPENSPCOOP_ZIP"},dataProvider="NotificaAttachmentsOpenSPCoopZip",dependsOnMethods={"NotificaAttachmentsOpenSPCoopZip"})
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_OPENSPCOOP_ZIP"},dataProvider="NotificaAttachmentsOpenSPCoopZip",dependsOnMethods={"NotificaAttachmentsOpenSPCoopZip"})
 	public void testNotificaAttachmentsOpenSPCoopZip(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			// Non riesco a recuperare il messaggio sul quale dovrei ottenere poi gli identificativi per fare il check sul databse delle tracce allegati.
@@ -1264,7 +1264,7 @@ public class TunnelSOAP {
  	 * con mimeType application/openspcoop2 (codificato in BASE64 il contenuto)
 	 */
 	Repository repositoryNotificaAttachmentsOpenSPCoopPdf=new Repository();
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_OPENSPCOOP_PDF"},description="Test di tipo Notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_OPENSPCOOP_PDF"},description="Test di tipo Notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void NotificaAttachmentsOpenSPCoopPdf() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -1336,7 +1336,7 @@ public class TunnelSOAP {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_OPENSPCOOP_PDF"},dataProvider="NotificaAttachmentsOpenSPCoopPdf",dependsOnMethods={"NotificaAttachmentsOpenSPCoopPdf"})
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_OPENSPCOOP_PDF"},dataProvider="NotificaAttachmentsOpenSPCoopPdf",dependsOnMethods={"NotificaAttachmentsOpenSPCoopPdf"})
 	public void testNotificaAttachmentsOpenSPCoopPdf(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			// Non riesco a recuperare il messaggio sul quale dovrei ottenere poi gli identificativi per fare il check sul databse delle tracce allegati.
@@ -1371,7 +1371,7 @@ public class TunnelSOAP {
      * Es: application/octet-stream
 	 */
 	Repository repositorySincronoAttachmentsCustomDoc=new Repository();
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_CUSTOM_DOC"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_CUSTOM_DOC"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void sincronoAttachmentsCustomDoc() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -1440,7 +1440,7 @@ public class TunnelSOAP {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_CUSTOM_DOC"},dataProvider="SincronoAttachmentsCustomDoc",dependsOnMethods={"sincronoAttachmentsCustomDoc"})
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_CUSTOM_DOC"},dataProvider="SincronoAttachmentsCustomDoc",dependsOnMethods={"sincronoAttachmentsCustomDoc"})
 	public void testSincronoAttachmentsCustomDoc(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			// Non riesco a recuperare il messaggio sul quale dovrei ottenere poi gli identificativi per fare il check sul databse delle tracce allegati.
@@ -1475,7 +1475,7 @@ public class TunnelSOAP {
      * Es: application/octet-stream
 	 */
 	Repository repositorySincronoAttachmentsCustomZip=new Repository();
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_CUSTOM_ZIP"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_CUSTOM_ZIP"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void sincronoAttachmentsCustomZip() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -1543,7 +1543,7 @@ public class TunnelSOAP {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_CUSTOM_ZIP"},dataProvider="SincronoAttachmentsCustomZip",dependsOnMethods={"sincronoAttachmentsCustomZip"})
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_CUSTOM_ZIP"},dataProvider="SincronoAttachmentsCustomZip",dependsOnMethods={"sincronoAttachmentsCustomZip"})
 	public void testSincronoAttachmentsCustomZip(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			// Non riesco a recuperare il messaggio sul quale dovrei ottenere poi gli identificativi per fare il check sul databse delle tracce allegati.
@@ -1580,7 +1580,7 @@ public class TunnelSOAP {
      * Es: application/octet-stream
 	 */
 	Repository repositorySincronoAttachmentsCustomPdf=new Repository();
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_CUSTOM_PDF"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_CUSTOM_PDF"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void sincronoAttachmentsCustomPdf() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -1648,7 +1648,7 @@ public class TunnelSOAP {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_CUSTOM_PDF"},dataProvider="SincronoAttachmentsCustomPdf",dependsOnMethods={"sincronoAttachmentsCustomPdf"})
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_CUSTOM_PDF"},dataProvider="SincronoAttachmentsCustomPdf",dependsOnMethods={"sincronoAttachmentsCustomPdf"})
 	public void testSincronoAttachmentsCustomPdf(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			// Non riesco a recuperare il messaggio sul quale dovrei ottenere poi gli identificativi per fare il check sul databse delle tracce allegati.
@@ -1690,7 +1690,7 @@ public class TunnelSOAP {
      * Es: application/octet-stream
 	 */
 	Repository repositoryNotificaCustomDoc=new Repository();
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_CUSTOM_DOC"},description="Test di tipo Notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_CUSTOM_DOC"},description="Test di tipo Notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void NotificaCustomDoc() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -1762,7 +1762,7 @@ public class TunnelSOAP {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_CUSTOM_DOC"},dataProvider="NotificaCustomDoc",dependsOnMethods={"NotificaCustomDoc"})
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_CUSTOM_DOC"},dataProvider="NotificaCustomDoc",dependsOnMethods={"NotificaCustomDoc"})
 	public void testNotificaCustomDoc(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			// Non riesco a recuperare il messaggio sul quale dovrei ottenere poi gli identificativi per fare il check sul databse delle tracce allegati.
@@ -1797,7 +1797,7 @@ public class TunnelSOAP {
      * Es: application/octet-stream
 	 */
 	Repository repositoryNotificaCustomZip=new Repository();
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_CUSTOM_ZIP"},description="Test di tipo Notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_CUSTOM_ZIP"},description="Test di tipo Notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void NotificaCustomZip() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -1869,7 +1869,7 @@ public class TunnelSOAP {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_CUSTOM_ZIP"},dataProvider="NotificaCustomZip",dependsOnMethods={"NotificaCustomZip"})
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_CUSTOM_ZIP"},dataProvider="NotificaCustomZip",dependsOnMethods={"NotificaCustomZip"})
 	public void testNotificaCustomZip(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			// Non riesco a recuperare il messaggio sul quale dovrei ottenere poi gli identificativi per fare il check sul databse delle tracce allegati.
@@ -1900,7 +1900,7 @@ public class TunnelSOAP {
      * Es: application/octet-stream
 	 */
 	Repository repositoryNotificaCustomPdf=new Repository();
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_CUSTOM_PDF"},description="Test di tipo Notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_CUSTOM_PDF"},description="Test di tipo Notifica, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void NotificaCustomPdf() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
@@ -1972,7 +1972,7 @@ public class TunnelSOAP {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_CUSTOM_PDF"},dataProvider="NotificaCustomPdf",dependsOnMethods={"NotificaCustomPdf"})
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ONEWAY_ATTACHMENT_CUSTOM_PDF"},dataProvider="NotificaCustomPdf",dependsOnMethods={"NotificaCustomPdf"})
 	public void testNotificaCustomPdf(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			// Non riesco a recuperare il messaggio sul quale dovrei ottenere poi gli identificativi per fare il check sul databse delle tracce allegati.
@@ -2001,7 +2001,7 @@ public class TunnelSOAP {
 	/**
 	 * Funzione "Allega Body" 
 	 */
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ALLEGA_BODY"})
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".ALLEGA_BODY"})
 	public void testAllegaBody() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
@@ -2056,7 +2056,7 @@ public class TunnelSOAP {
 	/**
 	 * Funzione "Scarta Body" 
 	 */
-	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SCARTA_BODY"})
+	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SCARTA_BODY"})
 	public void testScartaBodyNonRiuscito() throws Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;

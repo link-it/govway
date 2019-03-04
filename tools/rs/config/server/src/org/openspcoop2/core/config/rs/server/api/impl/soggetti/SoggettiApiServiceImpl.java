@@ -76,20 +76,24 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
-			
-			if (profilo == null)
-				profilo = Helper.getProfiloDefault();
+
+			SoggettiEnv env = new SoggettiEnv(context.getServletRequest(),  profilo, context);
+
+			/*if (profilo == null)
+				profilo = Helper.getProfiloDefault();*/
             
 			Soggetto soggetto = null;
 			try{
 				soggetto = (Soggetto) body;
-				soggetto.setCredenziali(Helper.translateCredenziali(soggetto.getCredenziali(), soggetto.getModalitaAccesso()));
-			}catch(Throwable e) {
+				
+				if ( soggetto.getCredenziali() != null && soggetto.getModalitaAccesso() != null ) {
+					soggetto.setCredenziali(Helper.translateCredenziali(soggetto.getCredenziali(), soggetto.getModalitaAccesso()));
+					SoggettiApiHelper.overrideAuthParams(soggetto, env.requestWrapper);
+				}
+				
+			}catch(Exception e) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e);
 			}
-			
-			SoggettiEnv env = new SoggettiEnv(context.getServletRequest(),  profilo, context);
-			SoggettiApiHelper.overrideAuthParams(soggetto, env.requestWrapper);
 			
 			org.openspcoop2.core.registry.Soggetto soggettoRegistro = SoggettiApiHelper.soggettoApiToRegistro(soggetto, env);
 			
@@ -328,7 +332,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			
 			final org.openspcoop2.core.registry.Soggetto newSoggetto = env.soggettiCore.getSoggettoRegistro(idSogg);
 			
-			SoggettiApiHelper.updateSoggetto(body, newSoggetto, env);
+			SoggettiApiHelper.convert(body, newSoggetto, env);
 			
 			boolean isOk = env.soggettiHelper.soggettiCheckData(
 					TipoOperazione.CHANGE,

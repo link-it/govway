@@ -28,6 +28,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -44,6 +45,7 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<javax.ws.r
 	private Logger log = org.openspcoop2.utils.LoggerWrapperFactory.getLogger(WebApplicationExceptionMapper.class);
 	
 	private boolean excludeFaultBean;
+	private boolean updateTitle = true;
 	private ITypeGenerator typeGenerator;
 	
 	public boolean isExcludeFaultBean() {
@@ -51,6 +53,13 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<javax.ws.r
 	}
 	public void setExcludeFaultBean(boolean excludeFaultBean) {
 		this.excludeFaultBean = excludeFaultBean;
+	}
+	
+	public boolean isUpdateTitle() {
+		return this.updateTitle;
+	}
+	public void setUpdateTitle(boolean updateTitle) {
+		this.updateTitle = updateTitle;
 	}
 	
 	public ITypeGenerator getTypeGenerator() {
@@ -74,16 +83,17 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<javax.ws.r
             	((ProblemValidation) problem).addInvalidParam(jsonMappingException.getPathReference(), jsonMappingException.getMessage(), null);
             } 
             else {
-            	problem = this.toProblem(e);
+            	problem = FaultCode.RICHIESTA_NON_VALIDA.toFault();
             }
             
-            if(problem!=null) {
-            	this.updateProblem(problem, e);
-            	return Response.status(problem.getStatus()).entity(problem).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807).build();
+            this.updateProblem(problem, e); // customizzabile
+            this._setType(problem, e);
+            if(this.updateTitle) {
+            	// aggiorno rispetto al code modificabile nel metodo sopra
+            	problem.setTitle(HttpUtilities.getHttpReason(problem.getStatus()));
             }
-            else {
-            	return FaultCode.RICHIESTA_NON_VALIDA.toFaultResponse(e);
-            }
+            return Response.status(problem.getStatus()).entity(problem).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807).build();
+
 		}
 		else {
 			if(this.excludeFaultBean) {
@@ -99,37 +109,41 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<javax.ws.r
 				return responseBuilder.build();
 			} else {
 				
-				this.updateProblem(e);
+				Problem problem = this._getProblem(e);
+				if(problem!=null) {
+		            this.updateProblem(problem, e); // customizzabile
+		            this._setType(problem, e);
+		            if(this.updateTitle) {
+		            	// aggiorno rispetto al code modificabile nel metodo sopra
+		            	problem.setTitle(HttpUtilities.getHttpReason(problem.getStatus()));
+		            }
+				}
 				
 				return e.getResponse();
 			}
 		}
 	}
 	
-	public Problem toProblem(javax.ws.rs.WebApplicationException e) {
-		return null;
-	}
-	
-	
-	
-	private void updateProblem(javax.ws.rs.WebApplicationException e) {
-		if(this.typeGenerator==null) {
-			return;
-		}
+	private Problem _getProblem(javax.ws.rs.WebApplicationException e) {
 		if(e==null || e.getResponse()==null || e.getResponse().getEntity()==null) {
-			return;
+			return null;
 		}
 		if(!(e.getResponse().getEntity() instanceof Problem)) {
-			return;
+			return null;
 		}
 		Problem problem = (Problem) e.getResponse().getEntity();
-		this.updateProblem(problem, e);
+		return problem;
 	}
-	public void updateProblem(Problem problem, javax.ws.rs.WebApplicationException e) {
+	private void _setType(Problem problem, javax.ws.rs.WebApplicationException e) {
 		if(this.typeGenerator==null) {
 			return;
 		}
 		problem.setType(this.typeGenerator.getType(problem.getStatus(), e));
+	}
+	
+	
+	public void updateProblem(Problem problem, javax.ws.rs.WebApplicationException e) {
+		
 	}
 
 }

@@ -127,29 +127,18 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
             if ( as == null ) {
             	throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nessuna Api registrata con nome " + ero.getApiNome() + " e versione " + ero.getApiVersione());
             }
-            
-            
-            if ( Helper.evalnull( 
-            		() -> ErogazioniApiHelper.getServizioIfErogazione(ero.getApiNome(), ero.getApiVersione(), env.idSoggetto.toIDSoggetto(), env)
-            	) != null ) {
-            	throw FaultCode.CONFLITTO.toException("Erogazione già esistente");
-            }
-      
+           
             AccordoServizioParteSpecifica asps = ErogazioniApiHelper.apiImplToAps(ero, soggettoErogatore, as, env);	
-			
             final IDServizio idAps = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(), new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), asps.getVersione());
             boolean alreadyExists = env.apsCore.existsAccordoServizioParteSpecifica(idAps);
             
             if ( alreadyExists ) {
             	asps = env.apsCore.getServizio(idAps);
 			}
-            
+                       
             ServletUtils.setObjectIntoSession(context.getServletRequest().getSession(), AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
             
-            // TODO: mailandrea, refactoring controllo duplicati. 
-            if ( !ErogazioniApiHelper.serviziCheckData(TipoOperazione.ADD, env, as, asps, null,  ero, true) )
-            	throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
-        
+            ErogazioniApiHelper.serviziCheckData(TipoOperazione.ADD, env, as, asps, null,  ero, true);            	
 			
             org.openspcoop2.core.registry.Connettore regConnettore = ErogazioniApiHelper.buildConnettoreRegistro(env, ero.getConnettore());     
 			ErogazioniApiHelper.createAps(env, asps, regConnettore, ero, alreadyExists, true);
@@ -173,7 +162,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      *
      */
 	@Override
-    public void createErogazioneAllegato(ApiImplAllegato body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void createErogazioneAllegato(ApiImplAllegato body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -184,7 +173,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
                         
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
 
-			AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			
 			ErogazioniApiHelper.createAllegatoAsps(body, env, asps);       
 			context.getLogger().info("Invocazione completata con successo");
@@ -209,7 +198,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      *
      */
 	@Override
-    public void deleteErogazione(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void deleteErogazione(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -218,7 +207,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
             final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps =  Helper.evalnull( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env) );
+			final AccordoServizioParteSpecifica asps =  Helper.evalnull( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env) );
 			
 			if ( asps != null ) {
 			
@@ -268,7 +257,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      *
      */
 	@Override
-    public void deleteErogazioneAllegato(String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
+    public void deleteErogazioneAllegato(String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -277,7 +266,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
             final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			ErogazioniApiHelper.deleteAllegato(nomeAllegato, env, asps);
 			
 			context.getLogger().info("Invocazione completata con successo");
@@ -305,7 +294,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      *
      */
 	@Override
-    public byte[] downloadErogazioneAllegato(String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
+    public byte[] downloadErogazioneAllegato(String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -315,7 +304,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( 
-					() -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione"
+					() -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione"
 				);
 			
 			final Optional<Long> idDoc = ErogazioniApiHelper.getIdDocumento(nomeAllegato, asps);
@@ -402,7 +391,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      *
      */
 	@Override
-    public ListaApiImplAllegati findAllErogazioneAllegati(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset) {
+    public ListaApiImplAllegati findAllErogazioneAllegati(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio, String q, Integer limit, Integer offset) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -413,7 +402,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( 
-					() -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione"
+					() -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione"
 				);
 			ListaApiImplAllegati ret = ErogazioniApiHelper.findAllAllegati(q, limit, offset, context.getServletRequest().getRequestURI(), env, asps);
 			
@@ -438,7 +427,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      *
      */
 	@Override
-    public ErogazioneViewItem getErogazione(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public ErogazioneViewItem getErogazione(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -449,7 +438,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( 
-					() -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione"
+					() -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione"
 				);
 			
 			ErogazioneViewItem ret = ErogazioniApiHelper.aspsToErogazioneViewItem(env, asps);
@@ -478,7 +467,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      *
      */
 	@Override
-    public ApiImplVersioneApiView getErogazioneAPI(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public ApiImplVersioneApiView getErogazioneAPI(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -489,7 +478,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( 
-					() -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione"
+					() -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione"
 				);
 			ApiImplVersioneApiView ret = ErogazioniApiHelper.aspsToApiImplVersioneApiView(env, asps);
 
@@ -514,7 +503,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      *
      */
 	@Override
-    public ApiImplAllegato getErogazioneAllegato(String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
+    public ApiImplAllegato getErogazioneAllegato(String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -525,7 +514,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( 
-					() -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione"
+					() -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione"
 				);
 			
 			final Optional<Long> idDoc = ErogazioniApiHelper.getIdDocumento(nomeAllegato, asps);
@@ -557,7 +546,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      *
      */
 	@Override
-    public Connettore getErogazioneConnettore(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public Connettore getErogazioneConnettore(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -568,7 +557,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( 
-					() -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione"
+					() -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione"
 				);
 			
 			org.openspcoop2.core.config.Connettore connettore = ErogazioniApiHelper.getConnettoreErogazione(env.idServizioFactory.getIDServizioFromAccordo(asps), env.saCore, env.paCore);
@@ -596,7 +585,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      *
      */
 	@Override
-    public ApiImplInformazioniGeneraliView getErogazioneInformazioniGenerali(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public ApiImplInformazioniGeneraliView getErogazioneInformazioniGenerali(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -606,7 +595,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( 
-					() -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione"
+					() -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione"
 				);
 			
 			ApiImplInformazioniGeneraliView ret = ErogazioniApiHelper.erogazioneToApiImplInformazioniGeneraliView(env, asps);
@@ -632,7 +621,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      *
      */
 	@Override
-    public ApiImplUrlInvocazioneView getErogazioneUrlInvocazione(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public ApiImplUrlInvocazioneView getErogazioneUrlInvocazione(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -643,7 +632,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( 
-					() -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione"
+					() -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione"
 				);
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.paCore.getIDPortaApplicativaAssociataDefault(env.idServizioFactory.getIDServizioFromAccordo(asps)));
 			final PortaApplicativaAzione paAzione = pa.getAzione();
@@ -682,7 +671,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      *
      */
 	@Override
-    public void updateErogazioneAPI(ApiImplVersioneApi body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void updateErogazioneAPI(ApiImplVersioneApi body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");   
@@ -693,7 +682,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			Helper.throwIfNull(body);
 			
             final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			final AccordoServizioParteComune as = env.apcCore.getAccordoServizio(asps.getIdAccordo());
 
 	        List<AccordoServizioParteComune> asParteComuneCompatibili = env.apsCore.findAccordiParteComuneBySoggettoAndNome(
@@ -738,7 +727,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      *
      */
 	@Override
-    public void updateErogazioneAllegato(ApiImplAllegato body, String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
+    public void updateErogazioneAllegato(ApiImplAllegato body, String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -749,7 +738,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			Helper.throwIfNull(body);
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
-			AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			
 			
 			ErogazioniApiHelper.updateAllegatoAsps(body, nomeAllegato, env, asps);
@@ -775,7 +764,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      *
      */
 	@Override
-    public void updateErogazioneConnettore(Connettore body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void updateErogazioneConnettore(Connettore body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -790,7 +779,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			
 			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( 
-					() -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env)
+					() -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env)
 					, "Erogazione"
 				);
 			
@@ -881,7 +870,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      *
      */
 	@Override
-    public void updateErogazioneInformazioniGenerali(ApiImplInformazioniGenerali body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void updateErogazioneInformazioniGenerali(ApiImplInformazioniGenerali body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -890,7 +879,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
  		    final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-		    final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+		    final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 		    
 		    ErogazioniApiHelper.updateInformazioniGenerali(body, env, asps);
         
@@ -916,7 +905,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      *
      */
 	@Override
-    public void updateErogazioneUrlInvocazione(Object body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void updateErogazioneUrlInvocazione(Object body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -930,13 +919,24 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Accordo Servizio Parte Specifica");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Accordo Servizio Parte Specifica");
+			
 
 			final IDPortaApplicativa idPorta 	= Helper.supplyOrNotFound( () -> env.paCore.getIDPortaApplicativaAssociataDefault(env.idServizioFactory.getIDServizioFromAccordo(asps)), "Porta Applicativa Default");
 			final PortaApplicativa pa 			= Helper.supplyOrNotFound( () -> env.paCore.getPortaApplicativa(idPorta), "Porta Applicativa Default");
 			
 			final PortaApplicativaAzione paa 	= pa.getAzione() == null ? new PortaApplicativaAzione() : pa.getAzione();
 			
+			final AccordoServizioParteComune apc = env.apcCore.getAccordoServizio(asps.getIdAccordo());
+			List<PortaApplicativaAzioneIdentificazione> identModes = env.paHelper.getModalitaIdentificazionePorta(env.tipo_protocollo, env.apcCore.toMessageServiceBinding(apc.getServiceBinding()));
+			
+			if ( identModes.contains(PortaApplicativaAzioneIdentificazione.PROTOCOL_BASED) && identModes.size() == 1 ) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non puoi modificare la url-invocazione il cui metodo di identificazione azioni può essere solo " + PortaApplicativaAzioneIdentificazione.PROTOCOL_BASED.toString() );
+			}
+			
+			if ( !identModes.contains( PortaApplicativaAzioneIdentificazione.valueOf(urlInvocazione.getModalita().name()) )) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La modalità di identificazione azione deve essere una fra: " + identModes.toString() );
+			}
 			
 			switch (urlInvocazione.getModalita()) {
 			case CONTENT_BASED:
@@ -958,6 +958,8 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			case URL_BASED:
 				paa.setPattern(urlInvocazione.getPattern());
 				paa.setForceInterfaceBased(Helper.boolToStatoFunzionalitaConf(urlInvocazione.isForceInterface()));
+				break;
+			case PROTOCOL_BASED:
 				break;
 			}
 			paa.setIdentificazione(Enum.valueOf(PortaApplicativaAzioneIdentificazione.class, urlInvocazione.getModalita().name()));
@@ -998,6 +1000,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
     }
-    
+	
+
 }
 

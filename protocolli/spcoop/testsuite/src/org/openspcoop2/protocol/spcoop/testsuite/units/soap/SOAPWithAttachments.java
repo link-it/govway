@@ -1223,6 +1223,9 @@ public class SOAPWithAttachments {
 	}
 	@DataProvider (name="SincronoContentTypeNonStandard")
 	public Object[][]testSincronoContentTypeNonStandard()throws Exception{
+		
+		org.openspcoop2.utils.Utilities.sleep(5000);
+		
 		String id=this.repositorySincronoContentTypeNonStandard.getNext();
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
@@ -1334,6 +1337,9 @@ public class SOAPWithAttachments {
 	}
 	@DataProvider (name="SincronoBodyVuoto")
 	public Object[][]testSincronoBodyVuoto()throws Exception{
+		
+		org.openspcoop2.utils.Utilities.sleep(5000);
+		
 		String id=this.repositorySincronoBodyVuoto.getNext();
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	

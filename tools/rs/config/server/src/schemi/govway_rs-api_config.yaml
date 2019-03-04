@@ -40,8 +40,8 @@ paths:
    
   /api:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
     get:
       tags:
         - api
@@ -106,10 +106,10 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
     get:
       tags:
         - api
@@ -162,10 +162,10 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}/informazioni:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
     get:
       tags:
         - api
@@ -225,10 +225,10 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}/referente:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
     get:
       tags:
         - api
@@ -258,10 +258,10 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'          
   /api/{nome}/{versione}/interfaccia:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
     get:
       tags:
         - api
@@ -321,10 +321,10 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}/interfaccia/download:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
     get:
       tags:
         - api
@@ -359,10 +359,10 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}/descrizione:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
     get:
       tags:
         - api
@@ -423,10 +423,10 @@ paths:
           
   /api/{nome}/{versione}/allegati:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione" 
     get:
       tags:
         - api
@@ -490,11 +490,11 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}/allegati/{nome_allegato}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto" 
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_allegato"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_allegato"
     get:
       tags:
         - api
@@ -577,11 +577,11 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}/allegati/{nome_allegato}/download:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto" 
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_allegato"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_allegato"   
     get:
       tags:
         - api
@@ -617,10 +617,10 @@ paths:
           
   /api/{nome}/{versione}/risorse:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione" 
     get:
       tags:
         - api
@@ -685,11 +685,11 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}/risorse/{nome_risorsa}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto" 
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_risorsa"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_risorsa"
     get:
       tags:
         - api
@@ -773,10 +773,10 @@ paths:
           
   /api/{nome}/{versione}/servizi:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione" 
     get:
       tags:
         - api
@@ -840,11 +840,11 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}/servizi/{nome_servizio}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto" 
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_servizio"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_servizio"
     get:
       tags:
         - api
@@ -928,11 +928,11 @@ paths:
           
   /api/{nome}/{versione}/servizi/{nome_servizio}/azioni:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_servizio" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_servizio" 
     get:
       tags:
         - api
@@ -996,12 +996,12 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}/servizi/{nome_servizio}/azioni/{nome_azione}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto" 
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_servizio"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_azione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_servizio"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_azione"
     get:
       tags:
         - api
@@ -1086,8 +1086,8 @@ paths:
   # ** Erogazione ** 
   /erogazioni:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
     get:
       tags:
         - erogazioni
@@ -1152,10 +1152,11 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /erogazioni/{nome}/{versione}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni
@@ -1209,10 +1210,11 @@ paths:
 
   /erogazioni/{nome}/{versione}/informazioni:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni
@@ -1273,10 +1275,11 @@ paths:
           
   /erogazioni/{nome}/{versione}/api:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni
@@ -1337,10 +1340,11 @@ paths:
 
   /erogazioni/{nome}/{versione}/allegati:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni
@@ -1404,11 +1408,12 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /erogazioni/{nome}/{versione}/allegati/{nome_allegato}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_allegato"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_allegato"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni
@@ -1491,11 +1496,12 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /erogazioni/{nome}/{versione}/allegati/{nome_allegato}/download:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_allegato"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_allegato"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni
@@ -1531,10 +1537,11 @@ paths:
 
   /erogazioni/{nome}/{versione}/url-invocazione:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni
@@ -1595,10 +1602,11 @@ paths:
           
   /erogazioni/{nome}/{versione}/connettore:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni
@@ -1659,10 +1667,11 @@ paths:
           
   /erogazioni/{nome}/{versione}/configurazioni/gestione-cors:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -1723,10 +1732,11 @@ paths:
           
   /erogazioni/{nome}/{versione}/gruppi:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-gruppi
@@ -1791,11 +1801,12 @@ paths:
           
   /erogazioni/{nome}/{versione}/gruppi/{nome_gruppo}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_gruppo"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_gruppo"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     put:
       tags:
         - erogazioni-gruppi
@@ -1879,11 +1890,12 @@ paths:
 
   /erogazioni/{nome}/{versione}/gruppi/{nome_gruppo}/azioni:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_gruppo"           
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_gruppo"           
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     post:
       tags:
         - erogazioni-gruppi
@@ -1917,12 +1929,13 @@ paths:
           
   /erogazioni/{nome}/{versione}/gruppi/{nome_gruppo}/azioni/{nome_azione}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_gruppo"      
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_azione"       
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_gruppo"      
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_azione"       
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     delete:
       tags:
         - erogazioni-gruppi
@@ -1949,11 +1962,12 @@ paths:
 
   /erogazioni/{nome}/{versione}/configurazioni/stato:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2014,11 +2028,12 @@ paths:
           
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/gestione-token:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2079,11 +2094,12 @@ paths:
 
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autenticazione:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2144,11 +2160,12 @@ paths:
           
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2209,11 +2226,12 @@ paths:
           
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/download-xacml-policy:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2245,11 +2263,12 @@ paths:
 
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/soggetti:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2309,12 +2328,13 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/soggetti/{soggetto_autorizzato}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_soggetto_autorizzato"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     delete:
       tags:
         - erogazioni-configurazione
@@ -2341,11 +2361,12 @@ paths:
 
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/applicativi:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2405,12 +2426,13 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/applicativi/{applicativo_autorizzato}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_applicativo_autorizzato"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     delete:
       tags:
         - erogazioni-configurazione
@@ -2437,11 +2459,12 @@ paths:
 
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/ruoli:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2501,12 +2524,13 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/ruoli/{ruolo_autorizzato}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ruolo_autorizzato"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     delete:
       tags:
         - erogazioni-configurazione
@@ -2533,11 +2557,12 @@ paths:
 
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/scope:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2597,12 +2622,13 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/scope/{scope_autorizzato}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_scope_autorizzato"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     delete:
       tags:
         - erogazioni-configurazione
@@ -2627,13 +2653,172 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+  /erogazioni/{nome}/{versione}/configurazioni/rate-limiting:
+    parameters:
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
+      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
+      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
+    get:
+      tags:
+        - erogazioni-configurazione
+      summary: Restituisce l'elenco delle policy di rate limiting configurate
+      operationId: findAllErogazioneRateLimitingPolicies
+      description: Questa operazione consente di ottenere l'elenco delle policy di rate limiting configurate
+      responses:
+        "200":
+          description: Elenco policy di rate limiting restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ListaRateLimitingPolicy'
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    post:
+      tags:
+        - erogazioni-configurazione
+      summary: Aggiunta di una policy di rate limiting
+      operationId: addErogazioneRateLimitingPolicy
+      description: Questa operazione consente di aggiungere una policy di rate limiting
+      requestBody:
+        description: Policy che si vuole aggiungere
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RateLimitingPolicyErogazioneNew'
+      responses:
+        '201':
+          description: Policy aggiunta con con successo
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '409':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/409Conflict'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+  /erogazioni/{nome}/{versione}/configurazioni/rate-limiting/{id_policy}:
+    parameters:
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_policy"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - erogazioni-configurazione
+      summary: Restituisce il dettaglio di una policy di rate limiting
+      operationId: getErogazioneRateLimitingPolicy
+      description: Questa operazione consente di ottenere il dettaglio di una policy di rate limiting
+      responses:
+        "200":
+          description: Dati della policy restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/RateLimitingPolicyErogazioneView"
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - erogazioni-configurazione
+      summary: Modifica i dati di una policy di rate limiting
+      operationId: updateErogazioneRateLimitingPolicy
+      description: Questa operazione consente di aggiornare i dati relativi ad una policy di rate limiting
+      requestBody:
+        description: Dati della policy da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RateLimitingPolicyBaseErogazione'
+      responses: 
+        '204':
+          description: La policy è stata aggiornata correttamente
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    delete:
+      tags:
+        - erogazioni-configurazione
+      summary: Elimina la policy dall'elenco delle policies attive
+      operationId: deleteErogazioneRateLimitingPolicy
+      description: Questa operazione consente di eliminare la policy dall'elenco delle policies attive
+      responses: 
+        '204':
+          description: Policy eliminata con successo
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+          
   /erogazioni/{nome}/{versione}/configurazioni/validazione:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2694,11 +2879,12 @@ paths:
 
   /erogazioni/{nome}/{versione}/configurazioni/caching-risposta:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"     
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"     
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2756,14 +2942,331 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+ 
+  /erogazioni/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/richiesta:
+    parameters:
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
+      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
+      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
+    get:
+      tags:
+        - erogazioni-configurazione
+      summary: Restituisce l'elenco delle regole di correlazione applicativa per la richiesta
+      operationId: findAllErogazioneTracciamentoCorrelazioneApplicativaRichiesta
+      description: Questa operazione consente di ottenere l'elenco delle regole di correlazione applicativa per la richiesta
+      responses:
+        "200":
+          description: Elenco regole di correlazione applicativa restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ListaCorrelazioneApplicativaRichiesta'
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    post:
+      tags:
+        - erogazioni-configurazione
+      summary: Aggiunta di una regola di correlazione applicativa
+      operationId: addErogazioneTracciamentoCorrelazioneApplicativaRichiesta
+      description: Questa operazione consente di registrare una regola di correlazione applicativa per la richiesta
+      requestBody:
+        description: Regola di correlazione applicativa che si vuole aggiungere
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/CorrelazioneApplicativaRichiesta'
+      responses:
+        '201':
+          description: Regola aggiunta con con successo
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '409':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/409Conflict'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+  /erogazioni/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/richiesta/{elemento}:
+    parameters:
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/elemento_correlazione_applicativa"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - erogazioni-configurazione
+      summary: Restituisce il dettaglio di una regola di correlazione applicativa per la richiesta
+      operationId: getErogazioneTracciamentoCorrelazioneApplicativaRichiesta
+      description: Questa operazione consente di ottenere il dettaglio di una regola di correlazione applicativa per la richiesta
+      responses:
+        "200":
+          description: Dati della regola restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/CorrelazioneApplicativaRichiesta"
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - erogazioni-configurazione
+      summary: Modifica i dati di una regola di correlazione applicativa per la richiesta
+      operationId: updateErogazioneTracciamentoCorrelazioneApplicativaRichiesta
+      description: Questa operazione consente di aggiornare i dati relativi ad una regola di correlazione applicativa per la richiesta
+      requestBody:
+        description: Dati della regola da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/CorrelazioneApplicativaRichiesta'
+      responses: 
+        '204':
+          description: La regola è stata aggiornata correttamente
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    delete:
+      tags:
+        - erogazioni-configurazione
+      summary: Elimina la regola di correlazione applicativa dall'elenco di quelle attivate per la richiesta
+      operationId: deleteErogazioneTracciamentoCorrelazioneApplicativaRichiesta
+      description: Questa operazione consente di eliminare la regola di correlazione applicativa dall'elenco di quelle attivate per la richiesta
+      responses: 
+        '204':
+          description: Regola eliminata con successo
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /erogazioni/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/risposta:
+    parameters:
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
+      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
+      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
+    get:
+      tags:
+        - erogazioni-configurazione
+      summary: Restituisce l'elenco delle regole di correlazione applicativa per la risposta
+      operationId: findAllErogazioneTracciamentoCorrelazioneApplicativaRisposta
+      description: Questa operazione consente di ottenere l'elenco delle regole di correlazione applicativa per la risposta
+      responses:
+        "200":
+          description: Elenco regole di correlazione applicativa restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ListaCorrelazioneApplicativaRisposta'
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    post:
+      tags:
+        - erogazioni-configurazione
+      summary: Aggiunta di una regola di correlazione applicativa
+      operationId: addErogazioneTracciamentoCorrelazioneApplicativaRisposta
+      description: Questa operazione consente di registrare una regola di correlazione applicativa per la risposta
+      requestBody:
+        description: Regola di correlazione applicativa che si vuole aggiungere
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/CorrelazioneApplicativaRisposta'
+      responses:
+        '201':
+          description: Regola aggiunta con con successo
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '409':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/409Conflict'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+  /erogazioni/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/risposta/{elemento}:
+    parameters:
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/elemento_correlazione_applicativa"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - erogazioni-configurazione
+      summary: Restituisce il dettaglio di una regola di correlazione applicativa per la risposta
+      operationId: getErogazioneTracciamentoCorrelazioneApplicativaRisposta
+      description: Questa operazione consente di ottenere il dettaglio di una regola di correlazione applicativa per la risposta
+      responses:
+        "200":
+          description: Dati della regola restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/CorrelazioneApplicativaRisposta"
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - erogazioni-configurazione
+      summary: Modifica i dati di una regola di correlazione applicativa per la risposta
+      operationId: updateErogazioneTracciamentoCorrelazioneApplicativaRisposta
+      description: Questa operazione consente di aggiornare i dati relativi ad una regola di correlazione applicativa per la risposta
+      requestBody:
+        description: Dati della regola da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/CorrelazioneApplicativaRisposta'
+      responses: 
+        '204':
+          description: La regola è stata aggiornata correttamente
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    delete:
+      tags:
+        - erogazioni-configurazione
+      summary: Elimina la regola di correlazione applicativa dall'elenco di quelle attivate per la risposta
+      operationId: deleteErogazioneTracciamentoCorrelazioneApplicativaRisposta
+      description: Questa operazione consente di eliminare la regola di correlazione applicativa dall'elenco di quelle attivate per la risposta
+      responses: 
+        '204':
+          description: Regola eliminata con successo
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
           
   /erogazioni/{nome}/{versione}/configurazioni/registrazione-messaggi:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"     
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"     
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2825,8 +3328,8 @@ paths:
   # ** Fruizione ** 
   /fruizioni:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
     get:
       tags:
         - fruizioni
@@ -2891,11 +3394,12 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /fruizioni/{erogatore}/{nome}/{versione}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni
@@ -2949,11 +3453,12 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/informazioni:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni
@@ -3014,11 +3519,12 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/api:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"    
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"    
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni
@@ -3079,11 +3585,12 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/allegati:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni
@@ -3147,12 +3654,13 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /fruizioni/{erogatore}/{nome}/{versione}/allegati/{nome_allegato}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_allegato"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_allegato"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni
@@ -3235,12 +3743,13 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /fruizioni/{erogatore}/{nome}/{versione}/allegati/{nome_allegato}/download:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_allegato" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_allegato" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni
@@ -3276,11 +3785,12 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/url-invocazione:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni
@@ -3341,11 +3851,12 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/connettore:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"    
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"    
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni
@@ -3406,11 +3917,12 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/gestione-cors:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -3471,11 +3983,12 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/gruppi:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-gruppi
@@ -3540,12 +4053,13 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/gruppi/{nome_gruppo}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_gruppo"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_gruppo"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     put:
       tags:
         - fruizioni-gruppi
@@ -3629,12 +4143,13 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/gruppi/{nome_gruppo}/azioni:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_gruppo"          
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_gruppo"          
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     post:
       tags:
         - fruizioni-gruppi
@@ -3668,13 +4183,14 @@ paths:
           
   /fruizioni/{erogatore}/{nome}/{versione}/gruppi/{nome_gruppo}/azioni/{nome_azione}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_gruppo"         
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_azione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_gruppo"         
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_azione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     delete:
       tags:
         - fruizioni-gruppi
@@ -3701,12 +4217,13 @@ paths:
             
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/stato:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -3767,12 +4284,13 @@ paths:
               
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/gestione-token:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -3833,12 +4351,13 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autenticazione:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -3899,12 +4418,13 @@ paths:
  
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -3965,12 +4485,13 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/download-xacml-policy:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -4002,12 +4523,13 @@ paths:
         
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/applicativi:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -4067,13 +4589,14 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/applicativi/{applicativo_autorizzato}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_applicativo_autorizzato"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     delete:
       tags:
         - fruizioni-configurazione
@@ -4100,12 +4623,13 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/ruoli:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -4165,13 +4689,14 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/ruoli/{ruolo_autorizzato}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione" 
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ruolo_autorizzato" 
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     delete:
       tags:
         - fruizioni-configurazione
@@ -4198,12 +4723,13 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/scope:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -4263,13 +4789,14 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/scope/{scope_autorizzato}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_scope_autorizzato"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     delete:
       tags:
         - fruizioni-configurazione
@@ -4293,15 +4820,176 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'        
+
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/rate-limiting:
+    parameters:
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
+      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
+      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
+    get:
+      tags:
+        - fruizioni-configurazione
+      summary: Restituisce l'elenco delle policy di rate limiting configurate
+      operationId: findAllFruizioneRateLimitingPolicies
+      description: Questa operazione consente di ottenere l'elenco delle policy di rate limiting configurate
+      responses:
+        "200":
+          description: Elenco policy di rate limiting restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ListaRateLimitingPolicy'
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    post:
+      tags:
+        - fruizioni-configurazione
+      summary: Aggiunta di una policy di rate limiting
+      operationId: addFruizioneRateLimitingPolicy
+      description: Questa operazione consente di aggiungere una policy di rate limiting
+      requestBody:
+        description: Policy che si vuole aggiungere
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RateLimitingPolicyFruizioneNew'
+      responses:
+        '201':
+          description: Policy aggiunta con con successo
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '409':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/409Conflict'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/rate-limiting/{id_policy}:
+    parameters:
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_policy"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - fruizioni-configurazione
+      summary: Restituisce il dettaglio di una policy di rate limiting
+      operationId: getFruizioneRateLimitingPolicy
+      description: Questa operazione consente di ottenere il dettaglio di una policy di rate limiting
+      responses:
+        "200":
+          description: Dati della policy restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/RateLimitingPolicyFruizioneView"
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - fruizioni-configurazione
+      summary: Modifica i dati di una policy di rate limiting
+      operationId: updateFruizioneRateLimitingPolicy
+      description: Questa operazione consente di aggiornare i dati relativi ad una policy di rate limiting
+      requestBody:
+        description: Dati della policy da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RateLimitingPolicyBaseFruizione'
+      responses: 
+        '204':
+          description: La policy è stata aggiornata correttamente
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    delete:
+      tags:
+        - fruizioni-configurazione
+      summary: Elimina la policy dall'elenco delle policies attive
+      operationId: deleteFruizioneRateLimitingPolicy
+      description: Questa operazione consente di eliminare la policy dall'elenco delle policies attive
+      responses: 
+        '204':
+          description: Policy eliminata con successo
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
  
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/validazione:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -4362,12 +5050,13 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/caching-risposta:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -4426,14 +5115,335 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/richiesta:
+    parameters:
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
+      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
+      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
+    get:
+      tags:
+        - fruizioni-configurazione
+      summary: Restituisce l'elenco delle regole di correlazione applicativa per la richiesta
+      operationId: findAllFruizioneTracciamentoCorrelazioneApplicativaRichiesta
+      description: Questa operazione consente di ottenere l'elenco delle regole di correlazione applicativa per la richiesta
+      responses:
+        "200":
+          description: Elenco regole di correlazione applicativa restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ListaCorrelazioneApplicativaRichiesta'
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    post:
+      tags:
+        - fruizioni-configurazione
+      summary: Aggiunta di una regola di correlazione applicativa
+      operationId: addFruizioneTracciamentoCorrelazioneApplicativaRichiesta
+      description: Questa operazione consente di registrare una regola di correlazione applicativa per la richiesta
+      requestBody:
+        description: Regola di correlazione applicativa che si vuole aggiungere
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/CorrelazioneApplicativaRichiesta'
+      responses:
+        '201':
+          description: Regola aggiunta con con successo
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '409':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/409Conflict'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/richiesta/{elemento}:
+    parameters:
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/elemento_correlazione_applicativa"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - fruizioni-configurazione
+      summary: Restituisce il dettaglio di una regola di correlazione applicativa per la richiesta
+      operationId: getFruizioneTracciamentoCorrelazioneApplicativaRichiesta
+      description: Questa operazione consente di ottenere il dettaglio di una regola di correlazione applicativa per la richiesta
+      responses:
+        "200":
+          description: Dati della regola restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/CorrelazioneApplicativaRichiesta"
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - fruizioni-configurazione
+      summary: Modifica i dati di una regola di correlazione applicativa per la richiesta
+      operationId: updateFruizioneTracciamentoCorrelazioneApplicativaRichiesta
+      description: Questa operazione consente di aggiornare i dati relativi ad una regola di correlazione applicativa per la richiesta
+      requestBody:
+        description: Dati della regola da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/CorrelazioneApplicativaRichiesta'
+      responses: 
+        '204':
+          description: La regola è stata aggiornata correttamente
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    delete:
+      tags:
+        - fruizioni-configurazione
+      summary: Elimina la regola di correlazione applicativa dall'elenco di quelle attivate per la richiesta
+      operationId: deleteFruizioneTracciamentoCorrelazioneApplicativaRichiesta
+      description: Questa operazione consente di eliminare la regola di correlazione applicativa dall'elenco di quelle attivate per la richiesta
+      responses: 
+        '204':
+          description: Regola eliminata con successo
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/risposta:
+    parameters:
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
+      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
+      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
+    get:
+      tags:
+        - fruizioni-configurazione
+      summary: Restituisce l'elenco delle regole di correlazione applicativa per la risposta
+      operationId: findAllFruizioneTracciamentoCorrelazioneApplicativaRisposta
+      description: Questa operazione consente di ottenere l'elenco delle regole di correlazione applicativa per la risposta
+      responses:
+        "200":
+          description: Elenco regole di correlazione applicativa restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ListaCorrelazioneApplicativaRisposta'
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    post:
+      tags:
+        - fruizioni-configurazione
+      summary: Aggiunta di una regola di correlazione applicativa
+      operationId: addFruizioneTracciamentoCorrelazioneApplicativaRisposta
+      description: Questa operazione consente di registrare una regola di correlazione applicativa per la risposta
+      requestBody:
+        description: Regola di correlazione applicativa che si vuole aggiungere
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/CorrelazioneApplicativaRisposta'
+      responses:
+        '201':
+          description: Regola aggiunta con con successo
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '409':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/409Conflict'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/risposta/{elemento}:
+    parameters:
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/elemento_correlazione_applicativa"  
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - fruizioni-configurazione
+      summary: Restituisce il dettaglio di una regola di correlazione applicativa per la risposta
+      operationId: getFruizioneTracciamentoCorrelazioneApplicativaRisposta
+      description: Questa operazione consente di ottenere il dettaglio di una regola di correlazione applicativa per la risposta
+      responses:
+        "200":
+          description: Dati della regola restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/CorrelazioneApplicativaRisposta"
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - fruizioni-configurazione
+      summary: Modifica i dati di una regola di correlazione applicativa per la risposta
+      operationId: updateFruizioneTracciamentoCorrelazioneApplicativaRisposta
+      description: Questa operazione consente di aggiornare i dati relativi ad una regola di correlazione applicativa per la risposta
+      requestBody:
+        description: Dati della regola da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/CorrelazioneApplicativaRisposta'
+      responses: 
+        '204':
+          description: La regola è stata aggiornata correttamente
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    delete:
+      tags:
+        - fruizioni-configurazione
+      summary: Elimina la regola di correlazione applicativa dall'elenco di quelle attivate per la risposta
+      operationId: deleteFruizioneTracciamentoCorrelazioneApplicativaRisposta
+      description: Questa operazione consente di eliminare la regola di correlazione applicativa dall'elenco di quelle attivate per la risposta
+      responses: 
+        '204':
+          description: Regola eliminata con successo
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/registrazione-messaggi:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/gruppo"      
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"      
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -4495,7 +5505,7 @@ paths:
   # ** Soggetti **
   /soggetti:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
     get:
       tags:
         - soggetti
@@ -4561,8 +5571,8 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /soggetti/{nome}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_simple_name"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_simple_name"
     get:
       tags:
         - soggetti
@@ -4647,8 +5657,8 @@ paths:
   # ** Applicativi **
   /applicativi:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
     get:
       tags:
         - applicativi
@@ -4713,9 +5723,9 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /applicativi/{nome}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
     get:
       tags:
         - applicativi
@@ -4864,7 +5874,7 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /ruoli/{nome}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
     get:
       tags:
         - ruoli
@@ -5012,7 +6022,7 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /scope/{nome}:
     parameters:
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
     get:
       tags:
         - scope
@@ -5308,7 +6318,7 @@ components:
          type: string
          maxLength: 255
        profilo_collaborazione:
-          $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ProfiloCollaborazioneEnum'
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/ProfiloCollaborazioneEnum'
        id_collaborazione:
          type: boolean
          default: false
@@ -5341,7 +6351,7 @@ components:
          type: boolean
          default: false
        profilo_collaborazione:
-          $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ProfiloCollaborazioneEnum'
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/ProfiloCollaborazioneEnum'
        id_collaborazione:
          type: boolean
          default: false

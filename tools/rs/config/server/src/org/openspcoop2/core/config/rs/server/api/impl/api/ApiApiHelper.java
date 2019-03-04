@@ -450,10 +450,12 @@ public class ApiApiHelper {
 		ret.setDescrizione(api.getDescrizione());
 		ret.setFormato(api.getFormato());
 		ret.setNome(api.getNome());
-		ret.setProfilo(env.profilo);	// TODO: Continua da qui e prendi il profilo relativo al tip del soggetto referente dell'as
+		ret.setProfilo(env.profilo);	// TODO: In multitenant questo va cambiato al profilo relativo al tip del soggetto referente dell'as
 		ret.setSoggetto(api.getReferente());
 		ret.setTipo(api.getTipo());
 		ret.setVersione(api.getVersione());
+		ret.setReferente(api.getReferente());
+			
 		
 		StatoApiEnum stato = null;
 		String descrizioneStato = "";

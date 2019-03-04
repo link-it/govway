@@ -62,6 +62,7 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
  * Helper
@@ -141,10 +142,12 @@ public class Helper {
 	
 	public static <T> Optional<T> findFirst(Iterable<? extends T> collection, Predicate<? super T> test) {
 	    T value = null;
-	    for (Iterator<? extends T> it = collection.iterator(); it.hasNext();)
-	        if (test.test(value = it.next())) {
-	            return Optional.of(value);
-	        }
+	    if (collection != null ) {
+		    for (Iterator<? extends T> it = collection.iterator(); it.hasNext();)
+		        if (test.test(value = it.next())) {
+		            return Optional.of(value);
+		        }
+	    }
 	    return Optional.empty();
 	}
 	
@@ -177,12 +180,6 @@ public class Helper {
 		return ret;
 	}
 	
-	
-	/*public static <T extends Enum<T>> Object deserializeFromSwitch(Map<T,Class<?>> typeMap, T discr, Object body) throws UtilsException {
-		if (body == null) return null;
-		// TODO: Se tutto funziona, aggiungere eccezioni per discr non riconosciuto. 
-		return JSONUtils.getInstance().getAsObject( (InputStream) body, typeMap.get(discr));
-	}*/
 	
 	@SuppressWarnings("unchecked")
 	public static <T extends Enum<T>> Object deserializeFromSwitch(Map<T,Class<?>> typeMap, T discr, Object body) throws UtilsException, InstantiationException, IllegalAccessException {
@@ -572,8 +569,9 @@ public class Helper {
 	}
 
 	
+	@Deprecated
 	public static final String boolToYesNo(boolean v) {
-		return v ? "yes" : "no";	// TODO: Trovare costanti.
+		return ServletUtils.boolToCheckBoxStatus(v);
 	}
 	
 	public static final StatoFunzionalita boolToStatoFunzionalita(Boolean v) {

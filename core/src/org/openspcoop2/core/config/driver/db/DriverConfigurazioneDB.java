@@ -14157,6 +14157,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					pdServizio.setTipo(tipoServizio);
 					pdServizio.setVersione(versioneServizio);
 				}
+				// fix
+				else {
+					pdServizio=new PortaDelegataServizio();
+					pdServizio.setNome(nomeServizio);
+					pdServizio.setTipo(tipoServizio);
+					pdServizio.setVersione(versioneServizio);
+				}
 				pd.setServizio(pdServizio);
 
 				PortaDelegataAzione pdAzione = null;

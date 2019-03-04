@@ -32,6 +32,7 @@ import org.openspcoop2.core.config.rs.server.model.FonteEnum;
 import org.openspcoop2.core.config.rs.server.model.FormatoRestEnum;
 import org.openspcoop2.core.config.rs.server.model.FormatoSoapEnum;
 import org.openspcoop2.core.config.rs.server.model.ProfiloCollaborazioneEnum;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingChiaveEnum;
 import org.openspcoop2.core.config.rs.server.model.RuoloAllegatoAPI;
 import org.openspcoop2.core.config.rs.server.model.RuoloAllegatoAPIImpl;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
@@ -40,6 +41,7 @@ import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneNewEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoAutorizzazioneNewEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoGestioneCorsEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoSpecificaSemiformaleEnum;
+import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
@@ -278,7 +280,20 @@ public class Enums {
 		Enums.tipoGestioneCorsFromRest.put(TipoGestioneCorsEnum.GATEWAY, TipoGestioneCORS.GATEWAY);
 	}
 	
-	//public static final Map<Tipo>
-
-
+	
+	public static final Map<RateLimitingChiaveEnum,TipoFiltroApplicativo> tipoFiltroApplicativo = new HashMap<RateLimitingChiaveEnum,TipoFiltroApplicativo>();
+	static {
+		tipoFiltroApplicativo.put(RateLimitingChiaveEnum.CONTENT_BASED, TipoFiltroApplicativo.CONTENT_BASED);
+		tipoFiltroApplicativo.put(RateLimitingChiaveEnum.FORM_BASED, TipoFiltroApplicativo.FORM_BASED);
+		tipoFiltroApplicativo.put(RateLimitingChiaveEnum.HEADER_BASED, TipoFiltroApplicativo.HEADER_BASED);
+		tipoFiltroApplicativo.put(RateLimitingChiaveEnum.PLUGIN_BASED, TipoFiltroApplicativo.PLUGIN_BASED);
+		tipoFiltroApplicativo.put(RateLimitingChiaveEnum.SOAP_ACTION_BASED, TipoFiltroApplicativo.SOAPACTION_BASED);
+		tipoFiltroApplicativo.put(RateLimitingChiaveEnum.URL_BASED, TipoFiltroApplicativo.URLBASED);
+	}
+	
+	public static final Map<TipoFiltroApplicativo,RateLimitingChiaveEnum> rateLimitingChiaveEnum = new HashMap<TipoFiltroApplicativo,RateLimitingChiaveEnum>();
+	static {
+		tipoFiltroApplicativo.forEach( (a,r) -> rateLimitingChiaveEnum.put(r, a));
+	}
+	
 }

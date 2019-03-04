@@ -655,8 +655,10 @@ public class RicezioneContenutiApplicativi {
 				if(portaDelegata!=null) {
 					// Aggiorno tutti
 					soggettoErogatore = new IDSoggetto(portaDelegata.getSoggettoErogatore().getTipo(),portaDelegata.getSoggettoErogatore().getNome());
-					idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaDelegata.getServizio().getTipo(),portaDelegata.getServizio().getNome(), 
-								soggettoErogatore, portaDelegata.getServizio().getVersione());
+					if(portaDelegata.getServizio()!=null) {
+						idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaDelegata.getServizio().getTipo(),portaDelegata.getServizio().getNome(), 
+									soggettoErogatore, portaDelegata.getServizio().getVersione());
+					}
 					dominio = new IDSoggetto(portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario());
 					fruitore = new IDSoggetto(portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario());
 					try {
@@ -1319,8 +1321,8 @@ public class RicezioneContenutiApplicativi {
 				
 		} catch (Exception e) {
 			msgDiag.addKeywordErroreProcessamento(e);
-			msgDiag.logPersonalizzato("identificazioneDinamicaServizioNonRiuscita");
-			logCore.error(msgDiag.getMessaggio_replaceKeywords("identificazioneDinamicaServizioNonRiuscita"),e);
+			msgDiag.logPersonalizzato("identificazioneDinamicaAzioneNonRiuscita");
+			logCore.error(msgDiag.getMessaggio_replaceKeywords("identificazioneDinamicaAzioneNonRiuscita"),e);
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
@@ -1356,9 +1358,7 @@ public class RicezioneContenutiApplicativi {
 				headerIntegrazioneRisposta.getBusta().setRiferimentoMessaggio(headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio());
 			}
 		} catch (Exception e) {
-			msgDiag.addKeywordErroreProcessamento(e);
-			msgDiag.logPersonalizzato("LetturaDatiServizioServizioNonRiuscita");
-			logCore.error(msgDiag.getMessaggio_replaceKeywords("LetturaDatiServizioServizioNonRiuscita"),e);
+			msgDiag.logErroreGenerico(e, "configurazionePdDReader.letturaDatiServizioServizioNonRiuscita(pd)");
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,

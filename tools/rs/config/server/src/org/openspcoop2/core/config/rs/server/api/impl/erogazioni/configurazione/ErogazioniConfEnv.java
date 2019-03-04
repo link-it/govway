@@ -32,6 +32,9 @@ import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.utils.service.context.IContext;
+import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneHelper;
 
 /**
  * ErogazioniConfEnv
@@ -41,17 +44,25 @@ import org.openspcoop2.utils.service.context.IContext;
  * 
  */
 public class ErogazioniConfEnv extends ErogazioniEnv {
-	
+		
+	public final ConfigurazioneCore confCore;
+	public final ConfigurazioneHelper confHelper;
 	public final AccordoServizioParteSpecifica asps;
 	public final IdServizio idAsps;
 	public final IDPortaApplicativa idPa;
 
-	public ErogazioniConfEnv(HttpServletRequest req, ProfiloEnum profilo, String soggetto, IContext context, String nome, Integer versione, String gruppo)
+	public ErogazioniConfEnv(HttpServletRequest req, ProfiloEnum profilo, String soggetto, IContext context, String nome, Integer versione, String gruppo, String tipoServizio)
 			throws Exception {
 		super(req, profilo, soggetto, context);
-		
-		this.asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, this.idSoggetto.toIDSoggetto(), this), "Erogazione");
+		this.confCore = new ConfigurazioneCore(this.stationCore);
+		this.confHelper = new ConfigurazioneHelper(this.stationCore, this.requestWrapper, this.pd, req.getSession());
+			
+		this.asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, this.idSoggetto.toIDSoggetto(), this), "Erogazione");
 		this.idAsps = new IdServizio(this.idServizioFactory.getIDServizioFromAccordo(this.asps), this.asps.getId());
+		
+		if ( tipoServizio != null && ! this.protocolFactoryMgr._getServiceTypes().get(this.tipo_protocollo).contains(tipoServizio))
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo Servizio: " + tipoServizio + " sconosciuto ");
+	
 		
 		this.idPa = StringUtils.isEmpty(gruppo)
 				? Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPADefault(this.idAsps, this.apsCore),  "Gruppo default per l'erogazione scelta")

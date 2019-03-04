@@ -40,6 +40,8 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.ConfigurazioneProtocollo;
+import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
+import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.DumpConfigurazioneRegola;
@@ -53,6 +55,9 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
+import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIdentificazioneFallita;
+import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRichiestaIdentificazione;
+import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRispostaIdentificazione;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -107,6 +112,10 @@ import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutenticazion
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazione;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneView;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiGestioneToken;
+import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRichiesta;
+import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRichiestaEnum;
+import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRisposta;
+import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRispostaEnum;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneItem;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneViewItem;
 import org.openspcoop2.core.config.rs.server.model.FonteEnum;
@@ -120,6 +129,20 @@ import org.openspcoop2.core.config.rs.server.model.HttpMethodEnum;
 import org.openspcoop2.core.config.rs.server.model.KeystoreEnum;
 import org.openspcoop2.core.config.rs.server.model.ListaApiImplAllegati;
 import org.openspcoop2.core.config.rs.server.model.ModalitaConfigurazioneGruppoEnum;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBase;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBaseErogazione;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBaseFruizione;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyEnum;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneNew;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneView;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFiltro;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFiltroErogazione;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFiltroFruizione;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneNew;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneView;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyGroupBy;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyGroupByErogazione;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyGroupByFruizione;
 import org.openspcoop2.core.config.rs.server.model.RegistrazioneMessaggi;
 import org.openspcoop2.core.config.rs.server.model.RegistrazioneMessaggiConfigurazione;
 import org.openspcoop2.core.config.rs.server.model.RegistrazioneMessaggiConfigurazioneRegola;
@@ -139,9 +162,16 @@ import org.openspcoop2.core.config.rs.server.model.Validazione;
 import org.openspcoop2.core.config.rs.server.utils.WrapperFormFile;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
+import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
@@ -180,6 +210,7 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCor
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeHelper;
@@ -196,7 +227,6 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * 
  * @author $Author$
  * @version $Rev$, $Date$
- * 
  */
 public class ErogazioniApiHelper {
 		
@@ -209,8 +239,11 @@ public class ErogazioniApiHelper {
 		typeMap.put(ModalitaConfigurazioneGruppoEnum.EREDITA, GruppoEreditaConfigurazione.class);
 		typeMap.put(ModalitaConfigurazioneGruppoEnum.NUOVA, GruppoNuovaConfigurazione.class);
 		
-		// TODO: Try catch per casting, restituisci null se fallisci. Inizia a pensare ad un logger.
-		return (T) Helper.deserializeFromSwitch(typeMap, discr, body);
+		try {
+			return (T) Helper.deserializeFromSwitch(typeMap, discr, body);
+		} catch( Exception e ) {
+			return null;
+		}
 	}
 	
 	
@@ -300,7 +333,7 @@ public class ErogazioniApiHelper {
 	 */
 	
 	@SuppressWarnings("unchecked")
-	public static final boolean serviziCheckData(
+	public static final void serviziCheckData(
 			TipoOperazione tipoOp,
 			ErogazioniEnv env,
 			AccordoServizioParteComune as,
@@ -314,8 +347,6 @@ public class ErogazioniApiHelper {
 		IdSoggetto erogatore = new IdSoggetto( new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()));
 		erogatore.setId(asps.getIdSoggetto());
 		
-		
-		 // TODO: Spostare in un altro path di esecuzione
 		 if (impl == null) { 
 			 impl = new APIImpl();
 			 impl.setConnettore(new Connettore());
@@ -351,53 +382,69 @@ public class ErogazioniApiHelper {
         		.toArray(String[]::new);
         
         final Connettore conn = impl.getConnettore();
-		final boolean httpsstato = conn.getAutenticazioneHttps() != null;
-		final boolean autenticazioneHttp = conn.getAutenticazioneHttp() != null;
-		final boolean proxy_enabled = conn.getProxy() != null;
-		final boolean tempiRisposta_enabled = conn.getTempiRisposta() != null; 
-		
-		String endpointtype = conn.getAutenticazioneHttp() != null ? TipiConnettore.HTTP.getNome() : TipiConnettore.DISABILITATO.getNome();
-		endpointtype = conn.getAutenticazioneHttps() != null ? TipiConnettore.HTTPS.getNome() : endpointtype;
-		
+        final ConnettoreConfigurazioneHttps httpsConf 	 = conn.getAutenticazioneHttps();
+        final AuthenticationHttpBasic 		httpConf	 = conn.getAutenticazioneHttp();
+        
+	    final String endpointtype = httpsConf != null ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome();
+	    
+
     	final Properties parametersPOST = null;
 		org.openspcoop2.core.registry.Connettore conTmp = null;
 		List<ExtendedConnettore> listExtendedConnettore = 
 				ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, env.apsHelper, 
 							parametersPOST, false, endpointtype); // uso endpointtype per capire se è la prima volta che entro
-		
-        final ConnettoreConfigurazioneHttps httpsConf 	 = conn.getAutenticazioneHttps();
-        final AuthenticationHttpBasic 		httpConf	 = conn.getAutenticazioneHttp();
-        
+	
         
         final ConnettoreConfigurazioneHttpsClient httpsClient = Helper.evalnull( () -> httpsConf.getClient() );
       	final ConnettoreConfigurazioneHttpsServer httpsServer = Helper.evalnull( () -> httpsConf.getServer() );
       	final ConnettoreConfigurazioneProxy 	  proxy   	  = conn.getProxy();
       	final ConnettoreConfigurazioneTimeout	  timeoutConf = conn.getTempiRisposta();
-      	
-      	final String httpskeystore = Helper.evalnull( () -> httpsClient.getKeystoreTipo() == null 
-        		? ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT
-        		: ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI
-        	); 	
+
+        
+		final boolean httpsstato = httpsClient != null;
+		final boolean http_stato = conn.getAutenticazioneHttp() != null;
+		final boolean proxy_enabled = conn.getProxy() != null;
+		final boolean tempiRisposta_enabled = conn.getTempiRisposta() != null; 
+		
+		String httpskeystore = null;
+		if ( httpsClient != null ) {
+			if ( httpsClient.getKeystorePath() != null || httpsClient.getKeystoreTipo() != null ) {
+				httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI;  
+			}
+			else
+				httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
+		}
 
         // Autenticazione e autorizzazione sono opzionali nel json.
-        final APIImplAutorizzazioneNew auth = impl.getAutorizzazione();
-        final APIImplAutenticazioneNew autenticazione = impl.getAutenticazione();
+        final APIImplAutorizzazioneNew authz = impl.getAutorizzazione();
+        final APIImplAutenticazioneNew authn = impl.getAutenticazione();
         
         final APIImplAutorizzazioneConfigNew configAuth = new APIImplAutorizzazioneConfigNew();
         final APIImplAutorizzazioneXACMLConfig configAuthXaml = new APIImplAutorizzazioneXACMLConfig();        
         FonteEnum ruoliFonte = FonteEnum.QUALSIASI;
+        String erogazioneRuolo = null;
+        boolean isPuntuale = false;
+        boolean isRuoli = false;
+        String statoAutorizzazione = null;
         
-        if ( Helper.evalnull( () -> auth.getTipo()) != null) {
-	        switch (auth.getTipo()) {
+        if ( authz != null && authz.getTipo() != null ) {
+	        switch ( authz.getTipo() ) {
 	        case ABILITATO:
-	        	Helper.fillFromMap( (Map<String,Object>) auth.getConfigurazione(), configAuth );
+	        	Helper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuth );
 	         	ruoliFonte = configAuth.getRuoliFonte();
+	         	erogazioneRuolo = configAuth.getRuolo();
+	         	isPuntuale = configAuth.isPuntuale();
+	         	isRuoli = configAuth.isRuoli();
+	         	statoAutorizzazione = AutorizzazioneUtilities.STATO_ABILITATO;
 	        	break;
 	        case XACML_POLICY:
-	        	Helper.fillFromMap( (Map<String,Object>) auth.getConfigurazione(), configAuthXaml );
+	        	Helper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthXaml );
 	        	ruoliFonte = configAuthXaml.getRuoliFonte();
+	        	statoAutorizzazione = AutorizzazioneUtilities.STATO_XACML_POLICY;
+	        	
 	        	break;
 	        case DISABILITATO:
+	        	statoAutorizzazione = AutorizzazioneUtilities.STATO_DISABILITATO;
 	        	break;
 	        default: break;
 	        }
@@ -407,8 +454,38 @@ public class ErogazioniApiHelper {
         final BinaryParameter xamlPolicy = new BinaryParameter();
         xamlPolicy.setValue(configAuthXaml.getPolicy());
         xamlPolicy.setName(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
-                
-        return env.apsHelper.serviziCheckData(            		
+        
+        
+        StringBuffer inUsoMessage = new StringBuffer();
+		
+		if ( AccordiServizioParteSpecificaUtilities.alreadyExists(
+				env.apsCore, 
+				env.apsHelper, 
+				erogatore.getId(), 
+				env.idServizioFactory.getIDServizioFromAccordo(asps),
+				env.idAccordoFactory.getUriFromAccordo(as),
+				Helper.evalnull( () -> fruitore.getTipo() ),
+				Helper.evalnull( () -> fruitore.getNome() ),
+				env.tipo_protocollo,
+				asps.getVersioneProtocollo(),
+				asps.getPortType(),
+				! generaPortaApplicativa,
+				generaPortaApplicativa,
+				inUsoMessage
+			) ) {
+			throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml( inUsoMessage.toString() ));
+		}
+
+		/*final String tipoAutorString =	AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString( authz.getTipo(),
+				isPuntuale,
+				isRuoli,
+				false,
+				ServletUtils.isCheckBoxEnabled(autorizzazioneScope),		
+				autorizzazione_tokenOptions,					// Questo è il token claims
+				tipoRuoloFonte									// RuoliFonte: Qualsiasi, Registro, Esterna
+			);*/
+		
+        if (! env.apsHelper.serviziCheckData(            		
         		tipoOp,
         		soggettiCompatibili,		
         		accordiList, 		 		
@@ -443,7 +520,7 @@ public class ErogazioniApiHelper {
 				accordoPrivato,
 				false, 	// this.privato,
         		conn.getEndpoint(),	// httpsurl, 
-        		Helper.evalnull( () -> httpsConf.getTipologia().name() ),				// Corrisponde con con org.openspcoop2.utils.transport.http.SSLConstants
+        		Helper.evalnull( () ->  httpsConf.getTipologia().toString() ),				// I valori corrispondono con con org.openspcoop2.utils.transport.http.SSLConstants
         		Helper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),				// this.httpshostverify,
 				Helper.evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
 				Helper.evalnull( () -> httpsServer.getTruststoreTipo().toString() ),		// this.httpstipo,
@@ -461,7 +538,7 @@ public class ErogazioniApiHelper {
         		as.getVersione().toString(), 		// Versione aspc
         		false,								// validazioneDocumenti Da debug = false
         		null,								// Da Codice console
-        		ServletUtils.boolToCheckBoxStatus(autenticazioneHttp),	// "yes" se utilizziamo http.
+        		ServletUtils.boolToCheckBoxStatus(http_stato),	// "yes" se utilizziamo http.
         		ServletUtils.boolToCheckBoxStatus(proxy_enabled),			
     			Helper.evalnull( () -> proxy.getHostname() ),
     			Helper.evalnull( () -> proxy.getPorta().toString() ),
@@ -486,12 +563,12 @@ public class ErogazioniApiHelper {
         		null,	// responseInputDeleteAfterRead,
         		null,	// responseInputWaitTime,
         		null,	// erogazioneSoggetto, Come da codice console.
-        		configAuth.getRuolo(),																						// erogazioneRuolo: E' il ruolo scelto nella label "Ruolo"
-        		Helper.evalnull( () -> Enums.tipoAutenticazioneNewFromRest.get(autenticazione.getTipo()).toString() ),		// erogazioneAutenticazione
-        		Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus(autenticazione.isOpzionale()) ),					// erogazioneAutenticazioneOpzionale
-        		Helper.evalnull( () -> auth.getTipo().toString() ),					   	// erogazioneAutorizzazione .
-        		ServletUtils.boolToCheckBoxStatus( configAuth.isPuntuale() ), 			// erogazioneAutorizzazioneAutenticati, 
-        		ServletUtils.boolToCheckBoxStatus( configAuth.isRuoli() ),				// erogazioneAutorizzazioneRuoli, 
+        		erogazioneRuolo,																						// erogazioneRuolo: E' il ruolo scelto nella label "Ruolo"
+        		Helper.evalnull( () -> Enums.tipoAutenticazioneNewFromRest.get(authn.getTipo()).toString() ),		// erogazioneAutenticazione
+        		Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus(authn.isOpzionale()) ),					// erogazioneAutenticazioneOpzionale
+        		statoAutorizzazione,					   	// erogazioneAutorizzazione QUESTO E' lo STATO dell'autorizzazione
+        		ServletUtils.boolToCheckBoxStatus( isPuntuale ), 			// erogazioneAutorizzazioneAutenticati, 
+        		ServletUtils.boolToCheckBoxStatus( isRuoli ),				// erogazioneAutorizzazioneRuoli, 
                 Enums.ruoloTipologiaFromRest.get(ruoliFonte).toString(),				// erogazioneAutorizzazioneRuoliTipologia,
                 Helper.evalnull( () -> configAuth.getRuoliRichiesti().toString() ),  	// erogazioneAutorizzazioneRuoliMatch,  AllAnyEnum == RuoloTipoMatch
         		env.isSupportatoAutenticazioneSoggetti,	
@@ -499,11 +576,11 @@ public class ErogazioniApiHelper {
         		listExtendedConnettore,
         		null,																	// fruizioneServizioApplicativo
         		configAuth.getRuolo(),													// Ruolo fruizione.
-        		Helper.evalnull( () -> Enums.tipoAutenticazioneNewFromRest.get(autenticazione.getTipo()).toString() ),  // fruizioneAutenticazione 
-        		Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus( autenticazione.isOpzionale() ) ), 			// fruizioneAutenticazioneOpzionale
-        		Helper.evalnull( () ->  AutorizzazioneUtilities.convertToStato(Enums.tipoAutorizzazioneNewFromRest.get(auth.getTipo()).toString()) ),	// fruzioneAutorizzazione																	// fruizioneAutorizzazione, 	
-        		ServletUtils.boolToCheckBoxStatus( configAuth.isPuntuale() ), 				// fruizioneAutorizzazioneAutenticati, 
-        		ServletUtils.boolToCheckBoxStatus( configAuth.isRuoli() ), 					// fruizioneAutorizzazioneRuoli,
+        		Helper.evalnull( () -> Enums.tipoAutenticazioneNewFromRest.get(authn.getTipo()).toString() ),  // fruizioneAutenticazione 
+        		Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus( authn.isOpzionale() ) ), 			// fruizioneAutenticazioneOpzionale
+        		statoAutorizzazione,											// fruizioneAutorizzazione 	
+        		ServletUtils.boolToCheckBoxStatus( isPuntuale ), 				// fruizioneAutorizzazioneAutenticati, 
+        		ServletUtils.boolToCheckBoxStatus( isRuoli ), 					// fruizioneAutorizzazioneRuoli,
                 Enums.ruoloTipologiaFromRest.get(ruoliFonte).toString(), 					// fruizioneAutorizzazioneRuoliTipologia,
                 Helper.evalnull( () -> configAuth.getRuoliRichiesti().toString() ), 		// fruizioneAutorizzazioneRuoliMatch,
         		env.tipo_protocollo, 
@@ -511,7 +588,11 @@ public class ErogazioniApiHelper {
         		"",
         		Helper.evalnull( () -> fruitore.getTipo() ),		// tipoFruitore 
         		Helper.evalnull( () -> fruitore.getNome() )			// nomeFruitore
-        	);
+        	)) {
+        	throw FaultCode.RICHIESTA_NON_VALIDA.toException( StringEscapeUtils.unescapeHtml( env.pd.getMessage()) );
+        }
+        
+        
 		
 	}
 	
@@ -834,39 +915,45 @@ public class ErogazioniApiHelper {
 	{
 		final boolean generaPortaDelegata = !generaPortaApplicativa;
 		
-		final APIImplAutorizzazioneNew authz = ero.getAutorizzazione() != null ? ero.getAutorizzazione() : new APIImplAutorizzazioneNew();
+		final APIImplAutorizzazioneNew authz = ero.getAutorizzazione();
         final APIImplAutenticazioneNew authn = ero.getAutenticazione();
         
         final APIImplAutorizzazioneConfigNew configAuthz = new APIImplAutorizzazioneConfigNew();
-        final APIImplAutorizzazioneXACMLConfig configAuthzXaml = new APIImplAutorizzazioneXACMLConfig();
+        final APIImplAutorizzazioneXACMLConfig configAuthzXacml = new APIImplAutorizzazioneXACMLConfig();
 		final AccordoServizioParteComune as = env.apcCore.getAccordoServizio(asps.getIdAccordo());
 
         FonteEnum ruoliFonte = FonteEnum.QUALSIASI;
-       
-        if (authz.getTipo() != null) {
+        
+        boolean isPuntuale = false;
+        boolean isRuoli = false;
+        String statoAutorizzazione = null;
+                
+        if ( Helper.evalnull( () -> authz.getTipo() ) != null) {
 		    switch (authz.getTipo()) {
 		    case ABILITATO:	
 		    	Helper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthz );
 		     	ruoliFonte = configAuthz.getRuoliFonte();
+	         	isPuntuale = configAuthz.isPuntuale();
+	         	isRuoli = configAuthz.isRuoli();
+	         	statoAutorizzazione = AutorizzazioneUtilities.STATO_ABILITATO;
 		    	break;
 		    case XACML_POLICY:
-		    	Helper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthzXaml );
-		    	ruoliFonte = configAuthzXaml.getRuoliFonte();
+		    	Helper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthzXacml );
+		    	ruoliFonte = configAuthzXacml.getRuoliFonte();
+		    	statoAutorizzazione = AutorizzazioneUtilities.STATO_XACML_POLICY;
 		    	break;
 		    case DISABILITATO:
+		    	statoAutorizzazione = AutorizzazioneUtilities.STATO_DISABILITATO;
 		    	break;
 		    }
         }
         
-    	final IDServizio idServizio = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(), env.idSoggetto.toIDSoggetto(), asps.getVersione()); 
+    	final IDServizio idServizio = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(), new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), asps.getVersione()); 
 	               
         BinaryParameter xamlPolicy = new BinaryParameter();
-        xamlPolicy.setValue(configAuthzXaml.getPolicy());
+        xamlPolicy.setValue(configAuthzXacml.getPolicy());
         xamlPolicy.setName(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
-        
-        // Continua da qui, hai problemi a modificare l'autorizzazione per le API, la console crasha.
-        // Ricrea la stessa API da console e poi da REST e vedi se riesci a fare le stesse operazioni.
-        
+                
         AccordiServizioParteSpecificaUtilities.create(
         		asps,
         		alreadyExists, 
@@ -874,20 +961,20 @@ public class ErogazioniApiHelper {
 				env.idSoggetto.toIDSoggetto(),						// idFruitore,
 				env.tipo_protocollo,								// this.tipoProtocollo,
 				env.apcCore.toMessageServiceBinding(as.getServiceBinding()), 
-				env.idSoggetto.getId(), 
+				env.idSoggetto.getId(), 							// Questo è l'id del soggetto a cui associare la porta delegata\applicativa
 				regConnettore, 
 				generaPortaApplicativa,										// generaPortaApplicativa,
 				generaPortaDelegata, 										// generaPortaDelegata
 				Helper.evalnull( () -> Enums.tipoAutenticazioneNewFromRest.get(authn.getTipo()).toString() ),											// erogazioneAutenticazione
         		Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus( authn.isOpzionale() ) ), 														// erogazioneAutenticazioneOpzionale
-        		Helper.evalnull( () -> AutorizzazioneUtilities.convertToStato(Enums.tipoAutorizzazioneNewFromRest.get(authz.getTipo()).toString()) ),	// fruzioneAutorizzazione 	
-				Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus( configAuthz.isPuntuale() )),			// 	autorizzazioneAutenticati,
-				Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus( configAuthz.isRuoli()) ),				//	autorizzazioneRuoli,
+        		statoAutorizzazione,	// autorizzazione, è lo STATO 	
+				ServletUtils.boolToCheckBoxStatus( isPuntuale ),			// 	autorizzazioneAutenticati,
+				ServletUtils.boolToCheckBoxStatus( isRuoli ),				//	autorizzazioneRuoli,
 		    	Enums.ruoloTipologiaFromRest.get(ruoliFonte).toString(),				//	erogazioneAutorizzazioneRuoliTipologia
 		    	Helper.evalnull( () -> configAuthz.getRuoliRichiesti().toString() ),			// 	autorizzazioneRuoliMatch
 				null,	// servizioApplicativo Come da Debug, 
 		    	Helper.evalnull( () -> configAuthz.getRuolo() ),	// ruolo: E' il ruolo scelto nella label "Ruolo" 
-		    	Helper.evalnull( () -> configAuthz.getSoggetto() ),
+		    	Helper.evalnull( () -> new IDSoggetto(env.tipo_soggetto, configAuthz.getSoggetto()).toString() ),
 				null,	// autorizzazione_tokenOptions, 
 				null,	// autorizzazioneScope, 
 				null,	// scope, 
@@ -914,16 +1001,18 @@ public class ErogazioniApiHelper {
 		
 	}
 
-	public static final AccordoServizioParteSpecifica getServizio(String nome, Integer versione, IDSoggetto idErogatore, ErogazioniEnv env) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
-				
-		String tipo = env.protocolFactoryMgr._getServiceTypes().get(env.tipo_protocollo).get(0);
+	/*public static final AccordoServizioParteSpecifica getServizio(String tipo, String nome, Integer versione, IDSoggetto idErogatore, ErogazioniEnv env) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		
 		
 		return getServizio(nome, versione, tipo, idErogatore, env);
-	}
+	}*/
 	
 	
-	public static final AccordoServizioParteSpecifica getServizio(String nome, Integer versione, String tipo, IDSoggetto idErogatore, ErogazioniEnv env) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+	public static final AccordoServizioParteSpecifica getServizio(String tipo, String nome, Integer versione, IDSoggetto idErogatore, ErogazioniEnv env) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		
+		if ( tipo == null ) {
+			tipo = env.protocolFactoryMgr._getServiceTypes().get(env.tipo_protocollo).get(0);
+		} 		
         final IDServizio idAps = env.idServizioFactory.getIDServizioFromValues(tipo, nome, idErogatore, versione);
         
         return env.apsCore.getServizio(idAps, true);
@@ -944,11 +1033,10 @@ public class ErogazioniApiHelper {
 	
 	
 	
-	public static final AccordoServizioParteSpecifica getServizioIfErogazione(String nome, Integer versione, IDSoggetto idErogatore, ErogazioniEnv env) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+	public static final AccordoServizioParteSpecifica getServizioIfErogazione(String tipo, String nome, Integer versione, IDSoggetto idErogatore, ErogazioniEnv env) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		
-		final AccordoServizioParteSpecifica ret = getServizio(nome, versione, idErogatore, env);
+		final AccordoServizioParteSpecifica ret = getServizio(tipo, nome, versione, idErogatore, env);
 		
-		// Con questo controllo che esista effettivamente una erogazione associata.
 		try {
 			if (!isErogazione(ret,env)) {
 				return null;
@@ -961,10 +1049,10 @@ public class ErogazioniApiHelper {
 	}
 	
 	
-	public static final AccordoServizioParteSpecifica getServizioIfFruizione(String nome, Integer versione, IDSoggetto idErogatore, IDSoggetto idFruitore, ErogazioniEnv env) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
-		final AccordoServizioParteSpecifica ret = getServizio(nome, versione, idErogatore, env);
+	public static final AccordoServizioParteSpecifica getServizioIfFruizione(String tipo, String nome, Integer versione, IDSoggetto idErogatore, IDSoggetto idFruitore, ErogazioniEnv env) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		
-		// Con questo controllo che esista effettivamente una fruizione associata al soggetto.
+		final AccordoServizioParteSpecifica ret = getServizio(tipo, nome, versione, idErogatore, env);
+		
 		try {
 			if (!isFruizione(ret,idFruitore,env))
 				return null;
@@ -1206,16 +1294,8 @@ public class ErogazioniApiHelper {
 			asps.setPortType(body.getApiSoapServizio());
 		}
 		
-		/*IDServizio newId = env.idServizioFactory.getIDServizioFromAccordo(asps);
-		if ( env.apsCore.existsAccordoServizioParteSpecifica(newId) ) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Accordo Servizio Parte Specifica " + newId.toString() + " già presente nel registro");
-		}*/
-	
-		if (!ErogazioniApiHelper.serviziCheckData(TipoOperazione.CHANGE, env, as, asps, null, null, false))	{
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
-		}
-		
-					
+		ErogazioniApiHelper.serviziCheckData(TipoOperazione.CHANGE, env, as, asps, null, null, false);
+						
 		List<Object> oggettiDaAggiornare = AccordiServizioParteSpecificaUtilities.getOggettiDaAggiornare(asps, env.apsCore);
 		
 		// eseguo l'aggiornamento
@@ -2041,7 +2121,7 @@ public class ErogazioniApiHelper {
 	
 		env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_STATO, corsStato );
 		env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_TIPO, corsTipo.toString() );
-		env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS, Helper.boolToYesNo(c.isAllAllowOrigins()) );
+		env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS, ServletUtils.boolToCheckBoxStatus(c.isAllAllowOrigins()) );
 		env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS, allowOrigins );
 		env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS, allowHeaders );
 		env.requestWrapper.overrideParameter( CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS, allowMethods );
@@ -2116,18 +2196,20 @@ public class ErogazioniApiHelper {
 			
 			final RegistrazioneMessaggiConfigurazione richiesta = new RegistrazioneMessaggiConfigurazione();
 			
-			// TODO: Questo qui sotto è sbagliato, devo davvero controllare che tutti i valori di ingresso e tutti i valori di uscita siano
-			// disabilitati per impostare richiesta.setAbilitato(false)?
-			richiesta.setAbilitato(paDump.getRichiestaIngresso() != null || paDump.getRichiestaUscita() != null);
-			richiesta.setIngresso( fromDumpConfigurazioneRegola(paDump.getRichiestaIngresso()));
-			richiesta.setUscita( fromDumpConfigurazioneRegola(paDump.getRichiestaUscita()));
+			richiesta.setAbilitato( isDumpConfigurazioneAbilitato(paDump, false) );
+			if ( richiesta.isAbilitato() ) {
+				richiesta.setIngresso( fromDumpConfigurazioneRegola(paDump.getRichiestaIngresso()));
+				richiesta.setUscita( fromDumpConfigurazioneRegola(paDump.getRichiestaUscita()));
+			}
 			
 			ret.setRichiesta(richiesta);
 							
 			RegistrazioneMessaggiConfigurazione risposta = new RegistrazioneMessaggiConfigurazione();
-			risposta.setAbilitato( paDump.getRispostaIngresso() != null || paDump.getRispostaUscita() != null);
-			risposta.setIngresso( fromDumpConfigurazioneRegola( paDump.getRispostaIngresso()) );
-			risposta.setUscita( fromDumpConfigurazioneRegola( paDump.getRispostaUscita()) );
+			risposta.setAbilitato( isDumpConfigurazioneAbilitato(paDump,true) );
+			if (risposta.isAbilitato()) {
+				risposta.setIngresso( fromDumpConfigurazioneRegola( paDump.getRispostaIngresso()) );
+				risposta.setUscita( fromDumpConfigurazioneRegola( paDump.getRispostaUscita()) );
+			}
 			
 			ret.setRisposta(risposta);				
 		}
@@ -2241,6 +2323,13 @@ public class ErogazioniApiHelper {
 			stato_autorizzazione = AutorizzazioneUtilities.convertToStato(newPd.getAutorizzazione());
 		}
 		
+		boolean tokenAbilitato = newPd.getGestioneToken() != null;
+		boolean autorizzazioneScope = newPd.getScope() != null;
+		
+		if ( autorizzazioneScope && !tokenAbilitato ) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione per scope richiede una token policy abilitata");
+		}
+		
 		return env.paHelper.controlloAccessiCheck(
 				TipoOperazione.OTHER, 
 				newPd.getAutenticazione(),				// Autenticazione
@@ -2256,7 +2345,7 @@ public class ErogazioniApiHelper {
 				Helper.evalnull( () ->
 						newPd.getRuoli().getRuoloList().stream().map(Ruolo::getNome).collect(Collectors.toList())
 					),
-				ServletUtils.boolToCheckBoxStatus( newPd.getGestioneToken() != null),
+				ServletUtils.boolToCheckBoxStatus( tokenAbilitato ),
 				Helper.evalnull( () -> newPd.getGestioneToken().getPolicy() ), 
 				Helper.evalnull( () -> newPd.getGestioneToken().getValidazione().toString() ), 
 				Helper.evalnull( () -> newPd.getGestioneToken().getIntrospection().toString() ), 
@@ -2264,7 +2353,7 @@ public class ErogazioniApiHelper {
 				Helper.evalnull( () -> newPd.getGestioneToken().getForward().toString() ),
 				Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus( newPd.getGestioneToken().getOptions() != null ) ),
 				Helper.evalnull( () -> newPd.getGestioneToken().getOptions() ),
-				Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus( newPd.getScope() != null ) ),
+				Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus( autorizzazioneScope ) ),
 				Helper.evalnull( () -> newPd.getScope().getMatch().toString() ),
 				allegatoXacmlPolicy,
 				newPd.getAutorizzazioneContenuto(),
@@ -2289,6 +2378,13 @@ public class ErogazioniApiHelper {
 			stato_autorizzazione = AutorizzazioneUtilities.convertToStato(newPa.getAutorizzazione());
 		}
 		
+		boolean tokenAbilitato = newPa.getGestioneToken() != null;
+		boolean autorizzazioneScope = newPa.getScope() != null;
+		
+		if ( autorizzazioneScope && !tokenAbilitato ) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione per scope richiede una token policy abilitata");
+		}
+		
 		return env.paHelper.controlloAccessiCheck(
 				TipoOperazione.OTHER, 
 				newPa.getAutenticazione(),				// Autenticazione
@@ -2304,7 +2400,7 @@ public class ErogazioniApiHelper {
 				Helper.evalnull( () ->
 						newPa.getRuoli().getRuoloList().stream().map(Ruolo::getNome).collect(Collectors.toList())
 					),
-				ServletUtils.boolToCheckBoxStatus( newPa.getGestioneToken() != null),
+				ServletUtils.boolToCheckBoxStatus( tokenAbilitato ),
 				Helper.evalnull( () -> newPa.getGestioneToken().getPolicy() ), 
 				Helper.evalnull( () -> newPa.getGestioneToken().getValidazione().toString() ), 
 				Helper.evalnull( () -> newPa.getGestioneToken().getIntrospection().toString() ), 
@@ -2312,7 +2408,7 @@ public class ErogazioniApiHelper {
 				Helper.evalnull( () -> newPa.getGestioneToken().getForward().toString() ),
 				Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus( newPa.getGestioneToken().getOptions() != null ) ),
 				Helper.evalnull( () -> newPa.getGestioneToken().getOptions() ),
-				Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus( newPa.getScope() != null ) ),
+				Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus( autorizzazioneScope ) ),
 				Helper.evalnull( () -> newPa.getScope().getMatch().toString() ),
 				allegatoXacmlPolicy,
 				newPa.getAutorizzazioneContenuto(),
@@ -2337,7 +2433,13 @@ public class ErogazioniApiHelper {
 		case ABILITATO: {
 			@SuppressWarnings("unchecked") APIImplAutorizzazioneConfig config = Helper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneConfig.class);
 			
-			final String autorizzazione = authz.getTipo().toString();
+
+			// defaults
+			if ( config.isRuoli() && config.getRuoliFonte() == null ) {
+				config.setRuoliFonte(FonteEnum.QUALSIASI);
+			}
+			
+			final String autorizzazione = AutorizzazioneUtilities.STATO_ABILITATO;
 			final String autorizzazioneAutenticati = ServletUtils.boolToCheckBoxStatus(config.isPuntuale());
 			final String autorizzazioneRuoli = ServletUtils.boolToCheckBoxStatus(config.isRuoli());
 			final String autorizzazioneScope = ServletUtils.boolToCheckBoxStatus(config.isScope());
@@ -2397,16 +2499,18 @@ public class ErogazioniApiHelper {
 			@SuppressWarnings("unchecked")
 			APIImplAutorizzazioneXACMLConfig xacmlConfig = Helper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneXACMLConfig.class);
 			
+			if (xacmlConfig.getRuoliFonte() == null)
+				xacmlConfig.setRuoliFonte(FonteEnum.QUALSIASI);
+			
 			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(xacmlConfig.getRuoliFonte());
 			
 			final String tipoAutorString =	AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(TipoAutorizzazioneEnum.XACML_POLICY.toString(),
 					false,
-					true,		
+					false,		
 					false,
 					"",
 					tipoRuoloFonte									// RuoliFonte: Qualsiasi, Registro, Esterna
 				);
-			
 			
 			newPd.setAutorizzazione(tipoAutorString);
 			newPd.setXacmlPolicy( Helper.evalnull( () -> new String(xacmlConfig.getPolicy())));				
@@ -2439,7 +2543,12 @@ public class ErogazioniApiHelper {
 		case ABILITATO: {
 			@SuppressWarnings("unchecked") APIImplAutorizzazioneConfig config = Helper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneConfig.class);
 			
-			final String autorizzazione = authz.getTipo().toString();
+			// defaults
+			if ( config.isRuoli() && config.getRuoliFonte() == null ) {
+				config.setRuoliFonte(FonteEnum.QUALSIASI);
+			}
+			
+			final String statoAutorizzazione = AutorizzazioneUtilities.STATO_ABILITATO;
 			final String autorizzazioneAutenticati = ServletUtils.boolToCheckBoxStatus(config.isPuntuale());
 			final String autorizzazioneRuoli = ServletUtils.boolToCheckBoxStatus(config.isRuoli());
 			final String autorizzazioneScope = ServletUtils.boolToCheckBoxStatus(config.isScope());
@@ -2447,9 +2556,8 @@ public class ErogazioniApiHelper {
 			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(config.getRuoliFonte());
 			final RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant( Helper.evalnull( () -> config.getRuoliRichiesti().toString()) );	// Gli enum coincidono
 			final ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant( Helper.evalnull( () -> config.getScopeRichiesti().toString()) );
-	
 			
-			final String tipoAutorString =	AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(autorizzazione,
+			final String tipoAutorString =	AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(statoAutorizzazione,
 					ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati),
 					ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli),		
 					ServletUtils.isCheckBoxEnabled(autorizzazioneScope),		
@@ -2499,11 +2607,14 @@ public class ErogazioniApiHelper {
 			@SuppressWarnings("unchecked")
 			APIImplAutorizzazioneXACMLConfig xacmlConfig = Helper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneXACMLConfig.class);
 			
+			if (xacmlConfig.getRuoliFonte() == null)
+				xacmlConfig.setRuoliFonte(FonteEnum.QUALSIASI);
+			
 			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(xacmlConfig.getRuoliFonte());
 			
-			final String tipoAutorString =	AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(TipoAutorizzazioneEnum.XACML_POLICY.toString(),
+			final String tipoAutorString =	AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(AutorizzazioneUtilities.STATO_XACML_POLICY,
 					false,
-					true,		
+					false,		
 					false,
 					"",
 					tipoRuoloFonte									// RuoliFonte: Qualsiasi, Registro, Esterna
@@ -2556,13 +2667,17 @@ public class ErogazioniApiHelper {
 		switch ( tipoAuthz ) {
 		case ABILITATO: {
 			APIImplAutorizzazioneConfig config = new APIImplAutorizzazioneConfig();
-			config.setPuntuale(pa.getSoggetti() != null);
 			
-			config.setRuoli( pa.getRuoli() != null );
-			config.setRuoliRichiesti( Helper.evalnull(  () -> AllAnyEnum.fromValue( pa.getRuoli().getMatch().toString()) ) );
-			config.setRuoliFonte( Helper.evalnull( () -> 
-					Enums.registroTipologiaToApiFonte(	AutorizzazioneUtilities.convertToRuoloTipologia(pa.getAutorizzazione()) )
-				));
+			config.setPuntuale(TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione()));
+			
+			config.setRuoli( TipoAutorizzazione.isRolesRequired(pa.getAutorizzazione()) );
+			if (config.isRuoli()) {
+			
+				config.setRuoliRichiesti( Helper.evalnull(  () -> AllAnyEnum.fromValue( pa.getRuoli().getMatch().toString()) ) );
+				config.setRuoliFonte( Helper.evalnull( () -> 
+						Enums.registroTipologiaToApiFonte(	AutorizzazioneUtilities.convertToRuoloTipologia(pa.getAutorizzazione()) )
+					));
+			}
 			
 			
 			config.setScope( pa.getScope() != null );
@@ -2609,14 +2724,17 @@ public class ErogazioniApiHelper {
 		switch ( tipoAuthz ) {
 		case ABILITATO: {
 			APIImplAutorizzazioneConfig config = new APIImplAutorizzazioneConfig();
-			//config.setPuntuale(pa.getSoggetti() != null); L'unica cosa che cambia con la porta delegata.
+			
+			config.setPuntuale( TipoAutorizzazione.isAuthenticationRequired(pd.getAutorizzazione()));
 			
 			
-			config.setRuoli( pd.getRuoli() != null );
-			config.setRuoliRichiesti( Helper.evalnull(  () -> AllAnyEnum.fromValue( pd.getRuoli().getMatch().toString()) ) );
-			config.setRuoliFonte( Helper.evalnull( () -> 
-					Enums.registroTipologiaToApiFonte(	AutorizzazioneUtilities.convertToRuoloTipologia(pd.getAutorizzazione()) )
-				));
+			config.setRuoli( TipoAutorizzazione.isRolesRequired(pd.getAutorizzazione()) );
+			if (config.isRuoli()) {
+				config.setRuoliRichiesti( Helper.evalnull(  () -> AllAnyEnum.fromValue( pd.getRuoli().getMatch().toString()) ) );
+				config.setRuoliFonte( Helper.evalnull( () -> 
+						Enums.registroTipologiaToApiFonte(	AutorizzazioneUtilities.convertToRuoloTipologia(pd.getAutorizzazione()) )
+					));
+			}
 			
 			
 			config.setScope( pd.getScope() != null );
@@ -2766,10 +2884,560 @@ public class ErogazioniApiHelper {
 		}
 		return ret;
 	}
+	
+	// CONVERSIONI POLICY RAGGRUPPAMENTO
+	
+	public static final RateLimitingPolicyGroupBy convert( AttivazionePolicyRaggruppamento src, RateLimitingPolicyGroupBy dest ) {
+		
+		dest.setApplicativoFruitore(src.isServizioApplicativoFruitore());
+		dest.setAzione(src.isAzione());
+		
+		dest.setChiaveNome(src.getInformazioneApplicativaNome());
+		dest.setChiaveTipo(
+				Enums.rateLimitingChiaveEnum.get( TipoFiltroApplicativo.toEnumConstant(src.getInformazioneApplicativaTipo()) )
+			);
+		
+		return dest;
+	}
+	
+	
+	
+	public static final RateLimitingPolicyGroupByFruizione convert( AttivazionePolicyRaggruppamento src, RateLimitingPolicyGroupByFruizione dest) {
+		convert(src, (RateLimitingPolicyGroupBy) dest);
+		return dest;
+	}
+	
+	
+	public static final RateLimitingPolicyGroupByErogazione convert( AttivazionePolicyRaggruppamento src, RateLimitingPolicyGroupByErogazione dest) {
+		convert(src, (RateLimitingPolicyGroupBy) dest);
+		dest.setSoggettoFruitore(src.isServizioApplicativoFruitore());
+		
+		return dest;
+	}
+	
+	
+	
+	// CONVERSIONI POLICY FILTRO
+	
+	public static final RateLimitingPolicyFiltro  convert ( AttivazionePolicyFiltro src, RateLimitingPolicyFiltro dest ) {
+		
+		dest.setApplicativoFruitore(src.getServizioApplicativoFruitore());
+		dest.setAzione(src.getAzione());
+		dest.setChiaveNome(src.getInformazioneApplicativaNome());
+		dest.setChiaveTipo(
+				Enums.rateLimitingChiaveEnum.get( TipoFiltroApplicativo.toEnumConstant(src.getInformazioneApplicativaTipo()) )
+			);
+				
+		dest.setFiltroChiaveValore(src.getInformazioneApplicativaValore());
+		
+		return dest;
+	}
+	
+	
+	public static final RateLimitingPolicyFiltroErogazione  convert ( AttivazionePolicyFiltro src, RateLimitingPolicyFiltroErogazione dest ) {
+		convert( src, (RateLimitingPolicyFiltro) dest);
+		dest.setSoggettoFruitore(src.getNomeFruitore());
+			
+		return dest;
+	}
+	
+	
+	public static final RateLimitingPolicyFiltroFruizione  convert ( AttivazionePolicyFiltro src, RateLimitingPolicyFiltroFruizione dest ) {
+		convert(src, (RateLimitingPolicyFiltro) dest);
+		return dest;
+	}
+	
+	
+	// ATTIVAZIONE POLICY Conversion
+	
+	public static final RateLimitingPolicyFruizioneView convert ( AttivazionePolicy src, InfoPolicy infoPolicy, RateLimitingPolicyFruizioneView dest ) {
+		
+		convert( src, infoPolicy, (RateLimitingPolicyBase) dest );
+
+		dest.setDescrizione(infoPolicy.getDescrizione());
+		dest.setIdentificativo(src.getIdActivePolicy());
+				
+		dest.setCriterioCollezionamentoDati(
+				convert( src.getGroupBy(), new RateLimitingPolicyGroupByFruizione() )
+			);
+	 
+		
+		dest.setFiltro(
+				convert( src.getFiltro(), new RateLimitingPolicyFiltroFruizione() )
+			);
+		
+		return dest;
+	}
+
+	
+	
+	public static final RateLimitingPolicyErogazioneView convert ( AttivazionePolicy src, InfoPolicy infoPolicy, RateLimitingPolicyErogazioneView dest ) {
+		
+		convert( src, infoPolicy, (RateLimitingPolicyBase) dest );
+
+		dest.setDescrizione(infoPolicy.getDescrizione());
+		dest.setIdentificativo(src.getIdActivePolicy());
+		
+		dest.setCriterioCollezionamentoDati(
+				convert( src.getGroupBy(), new RateLimitingPolicyGroupByErogazione() )
+			);
+	 
+		
+		dest.setFiltro(
+				convert( src.getFiltro(), new RateLimitingPolicyFiltroErogazione() )
+			);
+		
+		return dest;
+	}
+	
+	
+	public static final RateLimitingPolicyBase convert ( AttivazionePolicy src, InfoPolicy infoPolicy, RateLimitingPolicyBase dest ) {
+	
+		dest.setNome(src.getAlias());
+		dest.setSogliaRidefinita(src.isRidefinisci());
+		
+		if ( src.isRidefinisci()) {
+			dest.setSogliaValore(src.getValore().intValue());
+		}
+		else {
+			dest.setSogliaValore(infoPolicy.getValore().intValue());
+		}
+		
+		if ( src.isWarningOnly() )
+			dest.setStato( StatoFunzionalitaConWarningEnum.WARNINGONLY );
+		
+		if ( src.isEnabled() )
+			dest.setStato(StatoFunzionalitaConWarningEnum.ABILITATO );
+		else
+			dest.setStato(StatoFunzionalitaConWarningEnum.DISABILITATO );
+		
+		
+		return dest;
+			
+	}
+
+
+	public static final void checkAzioniAdd( List<String> toAdd, List<String> occupate, List<String> presenti ) {
+		
+		for ( String azione : toAdd ) {
+			
+			if( occupate.contains(azione) ) {
+				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE));			
+			}
+			
+			if( !presenti.contains(azione) ) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Azione " + azione + " non presente fra le azioni dell'accordo");
+			}
+		}
+		
+	}
 
 
 
+	public static final String getIdInfoPolicy(RateLimitingPolicyEnum policy) {
+		
+		switch(policy) {
+		case NUMERO_RICHIESTE_GIORNALIERE: return "NumeroRichieste-ControlloRealtimeGiornaliero";
+		case NUMERO_RICHIESTE_MINUTO: return "NumeroRichieste-ControlloRealtimeMinuti";
+		case NUMERO_RICHIESTE_ORARIE: return "NumeroRichieste-ControlloRealtimeOrario";
+		case NUMERO_RICHIESTE_SIMULTANEE: return "NumeroRichieste-RichiesteSimultanee";
+		case OCCUPAZIONE_BANDA_ORARIA: return "OccupazioneBanda-ControlloRealtimeOrario";
+		case TEMPO_MEDIO_ORARIO: return "TempoMedioRisposta-ControlloRealtimeOrario";
+		}
 
+		return null;
+	}
+	
+	
+	
+	public static final void override( RateLimitingPolicyErogazioneNew body, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
+		override ( (RateLimitingPolicyBaseErogazione) body, idPropietarioSa, wrap );
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID, 
+				getIdInfoPolicy(body.getPolicy())	// Questo è l'id intero della policy in caso di update, può essere null
+			);		
+	}
+	
+
+	public static final void override( RateLimitingPolicyFruizioneNew body, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
+		override ( (RateLimitingPolicyBaseFruizione) body, idPropietarioSa, wrap );
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID, 
+				getIdInfoPolicy(body.getPolicy())
+			);
+
+	}
+	
+	
+	public static final void override( RateLimitingPolicyBaseErogazione body, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
+		override( (RateLimitingPolicyBase) body, idPropietarioSa, wrap );
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD,
+				RuoloPolicy.APPLICATIVA.toString() 
+		);
+		
+		// Campi in più rispetto al padre:
+		RateLimitingPolicyFiltroErogazione filtro = body.getFiltro();
+		RateLimitingPolicyGroupByErogazione groupCriteria = body.getCriterioCollezionamentoDati();
+
+		final String filtroFruitore = Helper.evalnull( () -> filtro.getSoggettoFruitore() != null 
+				? new IDSoggetto(idPropietarioSa.getTipo(), filtro.getSoggettoFruitore()).toString()
+				: ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI );
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_FRUITORE,
+				filtroFruitore 
+			);
+		
+
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_FRUITORE,
+				Helper.evalnull(  () -> Helper.evalnull(  () -> ServletUtils.boolToCheckBoxStatus( groupCriteria.isSoggettoFruitore() ) ) ) 
+			);
+	}
+	
+	
+	
+	
+	public static final void override ( RateLimitingPolicyBaseFruizione body,  IDSoggetto idPropietarioSa,  HttpRequestWrapper wrap ) {	// Questa è in comune alla update.
+		override ( (RateLimitingPolicyBase) body, idPropietarioSa, wrap );
+		
+		wrap.overrideParameter(
+			ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD,
+			RuoloPolicy.DELEGATA.toString() 
+		);
+		
+		
+		// Campi in più rispetto al padre:
+		/*	RateLimitingPolicyFiltroFruizione filtro = body.getFiltro();
+			RateLimitingPolicyGroupByFruizione groupCriteria = body.getCriterioCollezionamentoDati();
+			Che però Non definiscono nessun campo in più rispetto al padre, sono a posto.
+		*/
+	}
+		
+	public static final void override ( RateLimitingPolicyBase body,  IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {	// Questa è in comune alla update.
+		
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ALIAS,
+				body.getNome()
+			);		
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ENABLED,
+				body.getStato().toString()
+				);
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_RIDEFINISCI,
+				ServletUtils.boolToCheckBoxStatus( body.isSogliaRidefinita() )
+			);
+		
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VALORE, 
+				Helper.evalnull( () -> body.getSogliaValore().toString() )
+			);
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_ENABLED,
+				StatoFunzionalita.ABILITATO.toString() 
+			);
+		
+					
+		RateLimitingPolicyFiltro filtro = body.getFiltro();
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_AZIONE,
+				Helper.evalnull( () -> filtro.getAzione() )
+			);
+		
+		
+		IDServizioApplicativo idSaFiltroFruitore = new IDServizioApplicativo();
+		idSaFiltroFruitore.setNome(filtro.getApplicativoFruitore());
+		idSaFiltroFruitore.setIdSoggettoProprietario(idPropietarioSa);
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE,
+				Helper.evalnull( () -> filtro.getApplicativoFruitore() != null
+					? idSaFiltroFruitore.toString()
+					: ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI
+				)
+			);
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED,
+				Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus( filtro.getChiaveTipo() != null ))	// TOWAIT: mailandrea, non ho in rest un valore per la checkbox isFiltroAbilitato, quindi deduco il valore della checkbox così 
+			);
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_TIPO,
+				Helper.evalnull( () -> Enums.tipoFiltroApplicativo.get( filtro.getChiaveTipo() ).toString())	
+			);
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME,
+				Helper.evalnull( () -> filtro.getChiaveNome() )  
+			);
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE,
+				Helper.evalnull( () -> filtro.getFiltroChiaveValore() ) 
+			);
+		
+		RateLimitingPolicyGroupBy groupCriteria = body.getCriterioCollezionamentoDati();
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_ENABLED,
+				groupCriteria != null 
+					?  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_COLLEZIONAMENTO_ABILITATO
+					:  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_COLLEZIONAMENTO_DISABILITATO
+			);
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_FRUITORE,
+				Helper.evalnull(  () -> ServletUtils.boolToCheckBoxStatus( groupCriteria.isApplicativoFruitore() ) )
+			);
+		
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_AZIONE,
+				Helper.evalnull(  () -> ServletUtils.boolToCheckBoxStatus( groupCriteria.isAzione() ) )
+			);			
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED,
+				Helper.evalnull(  () -> ServletUtils.boolToCheckBoxStatus( groupCriteria.getChiaveTipo() != null ) )  
+			);
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_TIPO,
+				Helper.evalnull( () -> Enums.tipoFiltroApplicativo.get(groupCriteria.getChiaveTipo()).toString() )
+			);
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME,
+				Helper.evalnull( () -> groupCriteria.getChiaveNome() )
+			); 
+
+	}
+
+
+	public static final boolean correlazioneApplicativaRichiestaCheckData(
+			TipoOperazione tipoOp,
+			HttpRequestWrapper wrap,
+			ConsoleHelper paHelper,
+			boolean isDelegata,
+			CorrelazioneApplicativaRichiesta body,
+			Long idPorta,
+			Long idCorrelazione
+			
+		) throws Exception {
+		
+		wrap.overrideParameter( CostantiControlStation.PARAMETRO_ID, idPorta.toString() );
+		
+		wrap.overrideParameter( CostantiControlStation.PARAMETRO_ELEMENTO_XML, body.getElemento() );		// Campo elemento oppure "Qualsiasi"
+		
+		wrap.overrideParameter( 
+				CostantiControlStation.PARAMETRO_MODE_CORRELAZIONE_APPLICATIVA, 
+				CorrelazioneApplicativaRichiestaIdentificazione.valueOf(body.getIdentificazioneTipo().name()).toString()
+			);
+		
+		wrap.overrideParameter( CostantiControlStation.PARAMETRO_PATTERN, body.getIdentificazione() );
+		
+		wrap.overrideParameter( CostantiControlStation.PARAMETRO_ID_CORRELAZIONE, Helper.evalnull( () -> idCorrelazione.toString() ) );					// Questo va impostato nella update.
+		
+		return paHelper.correlazioneApplicativaRichiestaCheckData(tipoOp,isDelegata);
+		
+	}
+	
+	
+	public static final CorrelazioneApplicativaElemento convert(CorrelazioneApplicativaRichiesta body) {
+		
+		CorrelazioneApplicativaElemento cae = new CorrelazioneApplicativaElemento();
+		cae.setNome(body.getElemento());
+		cae.setIdentificazione(CorrelazioneApplicativaRichiestaIdentificazione.valueOf(body.getIdentificazioneTipo().name()));
+		
+		if ( body.getIdentificazioneTipo() == CorrelazioneApplicativaRichiestaEnum.URL_BASED 
+			||  body.getIdentificazioneTipo() == CorrelazioneApplicativaRichiestaEnum.HEADER_BASED 
+			||  body.getIdentificazioneTipo() == CorrelazioneApplicativaRichiestaEnum.CONTENT_BASED	) {
+			
+			cae.setPattern(body.getIdentificazione());
+		}
+		
+		if ( body.getIdentificazioneTipo() != CorrelazioneApplicativaRichiestaEnum.DISABILITATO ) {
+			
+			cae.setIdentificazioneFallita(body.isGenerazioneErroreIdentificazioneFallita()
+					? CorrelazioneApplicativaGestioneIdentificazioneFallita.BLOCCA 
+					: CorrelazioneApplicativaGestioneIdentificazioneFallita.ACCETTA
+				);
+		}
+		return cae;
+	}
+	
+		
+	public static final CorrelazioneApplicativaRispostaElemento convert(CorrelazioneApplicativaRisposta body) {
+
+		CorrelazioneApplicativaRispostaElemento cae = new CorrelazioneApplicativaRispostaElemento();
+		cae.setNome(body.getElemento());
+		cae.setIdentificazione(CorrelazioneApplicativaRispostaIdentificazione.valueOf(body.getIdentificazioneTipo().name()));
+		
+		if ( 	 body.getIdentificazioneTipo() == CorrelazioneApplicativaRispostaEnum.HEADER_BASED 
+			||   body.getIdentificazioneTipo() == CorrelazioneApplicativaRispostaEnum.CONTENT_BASED	) {
+			
+			cae.setPattern(body.getIdentificazione());
+		}
+		
+		if ( body.getIdentificazioneTipo() != CorrelazioneApplicativaRispostaEnum.DISABILITATO ) {
+			
+			cae.setIdentificazioneFallita(body.isGenerazioneErroreIdentificazioneFallita()
+					? CorrelazioneApplicativaGestioneIdentificazioneFallita.BLOCCA 
+					: CorrelazioneApplicativaGestioneIdentificazioneFallita.ACCETTA
+				);
+		}
+		return cae;
+	}
+	
+	
+	public static final boolean correlazioneApplicativaRispostaCheckData(
+			TipoOperazione tipoOp,
+			HttpRequestWrapper wrap,
+			ConsoleHelper paHelper,
+			boolean isDelegata,
+			CorrelazioneApplicativaRisposta body,
+			Long idPorta,
+			Long idCorrelazione 
+		) throws Exception {
+		
+		wrap.overrideParameter( CostantiControlStation.PARAMETRO_ID, idPorta.toString() );
+		
+		wrap.overrideParameter( CostantiControlStation.PARAMETRO_ELEMENTO_XML, body.getElemento() );		// Campo elemento oppure "Qualsiasi"
+		
+		wrap.overrideParameter( 
+				CostantiControlStation.PARAMETRO_MODE_CORRELAZIONE_APPLICATIVA, 
+				CorrelazioneApplicativaRichiestaIdentificazione.valueOf(body.getIdentificazioneTipo().name()).toString()
+			);
+		
+		wrap.overrideParameter( CostantiControlStation.PARAMETRO_PATTERN, body.getIdentificazione() );
+		
+		wrap.overrideParameter( CostantiControlStation.PARAMETRO_ID_CORRELAZIONE, Helper.evalnull( () -> idCorrelazione.toString() ));
+	
+		
+		return paHelper.correlazioneApplicativaRichiestaCheckData(TipoOperazione.ADD,isDelegata);
+		
+	}
+
+
+
+	public static final CorrelazioneApplicativaRichiesta convert( CorrelazioneApplicativaElemento  src) {
+		CorrelazioneApplicativaRichiesta ret = new CorrelazioneApplicativaRichiesta();
+		
+		ret.setElemento( StringUtils.isEmpty(src.getNome())
+				? "*"
+				: src.getNome()
+			);
+		
+		ret.setGenerazioneErroreIdentificazioneFallita(src.getIdentificazioneFallita() == CorrelazioneApplicativaGestioneIdentificazioneFallita.ACCETTA
+				? false
+				: true
+			);
+		
+		ret.setIdentificazione(src.getPattern());
+		ret.setIdentificazioneTipo(CorrelazioneApplicativaRichiestaEnum.valueOf(src.getIdentificazione().name()));
+		
+		return ret;
+	}
+	
+	
+	public static final CorrelazioneApplicativaRisposta convert( CorrelazioneApplicativaRispostaElemento  src) {
+		CorrelazioneApplicativaRisposta ret = new CorrelazioneApplicativaRisposta();
+		
+		ret.setElemento( StringUtils.isEmpty(src.getNome())
+				? "*"
+				: src.getNome()
+			);
+		
+		ret.setGenerazioneErroreIdentificazioneFallita(src.getIdentificazioneFallita() == CorrelazioneApplicativaGestioneIdentificazioneFallita.ACCETTA
+				? false
+				: true
+			);
+		
+		ret.setIdentificazione(src.getPattern());
+		ret.setIdentificazioneTipo(CorrelazioneApplicativaRispostaEnum.valueOf(src.getIdentificazione().name()));
+		
+		return ret;
+	}
+	
+	public static final boolean isDumpConfigurazioneAbilitato(DumpConfigurazione configurazione, boolean isRisposta) {
+		boolean abilitato = false;
+		
+		if(configurazione == null)
+			return false;
+		
+		if(isRisposta) {
+			DumpConfigurazioneRegola rispostaIngresso = configurazione.getRispostaIngresso();
+			
+			if(rispostaIngresso != null) {
+				if(rispostaIngresso.getHeaders().equals(StatoFunzionalita.ABILITATO))
+					return true;
+				
+				if(rispostaIngresso.getBody().equals(StatoFunzionalita.ABILITATO))
+					return true;
+				
+				if(rispostaIngresso.getAttachments().equals(StatoFunzionalita.ABILITATO))
+					return true;
+			}
+			
+			DumpConfigurazioneRegola rispostaUscita = configurazione.getRispostaUscita();
+			
+			if(rispostaUscita != null) {
+				if(rispostaUscita.getHeaders().equals(StatoFunzionalita.ABILITATO))
+					return true;
+				
+				if(rispostaUscita.getBody().equals(StatoFunzionalita.ABILITATO))
+					return true;
+				
+				if(rispostaUscita.getAttachments().equals(StatoFunzionalita.ABILITATO))
+					return true;
+			}
+		} else {
+			DumpConfigurazioneRegola richiestaIngresso = configurazione.getRichiestaIngresso();
+			
+			if(richiestaIngresso != null) {
+				if(richiestaIngresso.getHeaders().equals(StatoFunzionalita.ABILITATO))
+					return true;
+				
+				if(richiestaIngresso.getBody().equals(StatoFunzionalita.ABILITATO))
+					return true;
+				
+				if(richiestaIngresso.getAttachments().equals(StatoFunzionalita.ABILITATO))
+					return true;
+			}
+			
+			DumpConfigurazioneRegola richiestaUscita = configurazione.getRichiestaUscita();
+			
+			if(richiestaUscita != null) {
+				if(richiestaUscita.getHeaders().equals(StatoFunzionalita.ABILITATO))
+					return true;
+				
+				if(richiestaUscita.getBody().equals(StatoFunzionalita.ABILITATO))
+					return true;
+				
+				if(richiestaUscita.getAttachments().equals(StatoFunzionalita.ABILITATO))
+					return true;
+			}
+		}
+		
+		return abilitato;
+	}
+    
+    
+	
+	
+	
 	
 
 

@@ -23,7 +23,7 @@
 package org.openspcoop2.protocol.spcoop.testsuite.units.others;
 
 /**
- * CostantiProfili
+ * CostantiOthers
  * 
  * @author $Author$
  * @version $Rev$, $Date$

@@ -833,7 +833,7 @@ public class LocalForward {
 
 				String infoServizio = "( Servizio spc/SoggettoConnettoreErrato:spc/ComunicazioneVariazione:1 )";
 				String msgErrore = CostantiErroriIntegrazione.MSG_435_LOCAL_FORWARD_CONFIG_ERRORE+ infoServizio+" il soggetto erogatore non risulta essere gestito localmente dalla Porta";
-				String msgErrore2 = CostantiErroriIntegrazione.MSG_435_LOCAL_FORWARD_CONFIG_ERRORE+ infoServizio+" non risulta esistere una porta applicativa associata al servizio richiesto";
+				String msgErrore2 = CostantiErroriIntegrazione.MSG_435_LOCAL_FORWARD_CONFIG_ERRORE+ infoServizio+" Non esiste alcuna porta applicativa indirizzabile tramite il servizio";
 
 				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR).equals(error.getFaultCode().getLocalPart())){
 					try{
@@ -846,7 +846,7 @@ public class LocalForward {
 						Utilities.verificaFaultIntegrazione(error, 
 								this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativi", 
 								Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR), 
-								msgErrore2, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+								msgErrore2, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 					}
 				}
 				else{

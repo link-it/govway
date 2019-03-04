@@ -1,0 +1,42 @@
+1) Registrazione API PetStore
+
+./add api bodies/api_petstore.json
+
+2) Registrazione Erogazione Petstore
+
+./add erogazioni bodies/guida_rapida_erogazione_petstore.json
+
+3) Invocazione Api tramite GovWay
+curl -v -X PUT "http://127.0.0.1:8080/govway/ComuneDiPisa/PetStore/v2/pet" \
+    -H "accept: application/json" \
+    -H "Content-Type: application/json" \
+    -d '{
+    "id": 3,
+    "category": { "id": 22, "name": "dog" },
+    "name": "doggie",
+    "photoUrls": [ "http://image/dog.jpg" ],
+    "tags": [ { "id": 23, "name": "white" } ],
+    "status": "available"
+}'
+
+
+4) Registrazione nuovo Soggetto del dominio esterno
+
+./add soggetti bodies/guida_rapida_soggetto_esterno.json
+
+
+5) Registrazione Fruizione Petstore
+
+./add fruizioni bodies/guida_rapida_fruizione_petstore.json
+
+curl -v -X PUT "http://127.0.0.1:8080/govway/out/ComuneDiPisa/EnteEsterno/PetStore/v2/pet" \
+    -H "accept: application/json" \
+    -H "Content-Type: application/json" \
+    -d '{
+    "id": 3,
+    "category": { "id": 22, "name": "dog" },
+    "name": "doggie",
+    "photoUrls": [ "http://image/dog.jpg" ],
+    "tags": [ { "id": 23, "name": "white" } ],
+    "status": "available"
+}'

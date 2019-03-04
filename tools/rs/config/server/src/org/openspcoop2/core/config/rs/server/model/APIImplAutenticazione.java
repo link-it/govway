@@ -81,7 +81,7 @@ public class APIImplAutenticazione  {
   }
 
  /**
-   * nome autenticazione 'custom', set tipo&#x3D;'custom'
+   * nome autenticazione &#x27;custom&#x27;, set tipo&#x3D;&#x27;custom&#x27;
    * @return nome
   **/
   @JsonProperty("nome")

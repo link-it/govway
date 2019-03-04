@@ -11480,12 +11480,14 @@
     </soggetto>
     <!-- End Configurazione valida solo per xml -->
 
-    <!-- Start Configurazione valida solo per db (Creare il servizio applicativo sotto descritto a mano da console)
+    <!-- (Creare il servizio applicativo sotto descritto a mano da console)
     NOTA: Inoltre impostare la proprietà gestioneSoggetti a true nel Loader
           senno non vengono caricate le configurazioni per l'URL Prefix Rewriter
     NOTA2: Imppostare nella sezione configurazione della console:
            - Validazione Profilo di collaborazione abilitato
            - Inoltro buste non riscontrate con cadenza 1 minuto
+    -->
+    <!-- Start Configurazione valida solo per db
     <soggetto tipo="spc" nome="MinisteroFruitore" >
         <servizio-applicativo nome="silX_SSL">
             <invocazione-porta>

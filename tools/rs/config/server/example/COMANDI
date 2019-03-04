@@ -3,7 +3,7 @@ UTILIZZO GENERALE:
 	"./comando PATH PARAMETRI"
 
 ESEMPIO:
-	"./findall soggetti limit=1 offset=4"
+	"./get soggetti limit=1 offset=4"
 
 ============================================================
 					
@@ -84,7 +84,7 @@ ESEMPIO:
 ./add soggetti bodies/soggetto1.json profilo=SPCoop
 
 	+ FIND:
-./findall soggetti
+./get soggetti
 
 	+ GET:
 ./get soggetti/SoggettoJson
@@ -106,7 +106,7 @@ ESEMPIO:
 ./add api bodies/api_spcoop.json profilo=SPCoop
 
 	+ FIND:
-./findall api
+./get api
 
 	+ GET:
 ./get api/PetStore/1
@@ -228,6 +228,7 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 
 	+ CREATE
 ./add erogazioni bodies/erogazione_petstore.json
+./add erogazioni bodies/erogazione_spcoop.json profilo=SPCoop
 
 	+ UPDATE VERSIONE
 ./update erogazioni/PetStore/2/api bodies/ApiVersione3.json
@@ -251,14 +252,21 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 	
 	+ UPDATE URL INVOCAZIONE
 ./update erogazioni/PetStore/2/url-invocazione bodies/erogazione_petstore_url_invocazione.json
+./update erogazioni/EsempioServizioComposto/1/url-invocazione bodies/erogazione_petstore_url_invocazione.json profilo=SPCoop tipo_servizio=ldap
+
 
 
 	+ GET URL INVOCAZIONE
 ./get erogazioni/PetStore/2/url-invocazione
+./get erogazioni/EsempioServizioComposto/1/url-invocazione profilo=SPCoop tipo_servizio=ldap
+
 
 
 	+ DELETE
 ./rem erogazioni/PetStore/2
+
+./rem erogazioni/EsempioServizioComposto/1 profilo=SPCoop tipo_servizio=ldap
+
 
 	+ GET
 ./get erogazioni/PetStore/2
@@ -269,13 +277,14 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 
 	+ GET INTERFACCIA API
 ./get erogazioni/PetStore/2/api
+./get erogazioni/EsempioServizioComposto/1/api profilo=SPCoop tipo_servizio=ldap
 
 
 
 
 
 ============================================================
-					ALLEGATI EROGAZIONI
+					EROGAZIONI ALLEGATI
 ============================================================
 
 	+ CREATE
@@ -301,11 +310,13 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 
 			
 ============================================================
-					GRUPPI EROGAZIONI
+					EROGAZIONI GRUPPI
 ============================================================
 
 	+ CREATE
 ./add erogazioni/PetStore/2/gruppi bodies/gruppo_petstore.json
+
+./add erogazioni/PetStore/2/gruppi bodies/gruppo_petstore_eredita.json
 
 	+ ADD AZIONE
 ./add erogazioni/PetStore/2/gruppi/GruppoJson/azioni bodies/gruppo_azioni_petstore.json
@@ -336,6 +347,8 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 
 	+ UPDATE GESTIONE TOKEN
 ./update  erogazioni/PetStore/2/configurazioni/controllo-accessi/gestione-token bodies/gestione_token_petstore.json gruppo=GruppoJson
+./update  erogazioni/EsempioServizioComposto/1/configurazioni/controllo-accessi/gestione-token bodies/gestione_token_petstore.json profilo=SPCoop tipo_servizio=ldap
+
 
 	+ GET GESTIONE TOKEN
 ./get erogazioni/PetStore/2/configurazioni/controllo-accessi/gestione-token gruppo=GruppoJson
@@ -343,11 +356,13 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 
 	+ UPDATE AUTENTICAZIONE
 ./update  erogazioni/PetStore/2/configurazioni/controllo-accessi/autenticazione bodies/ControlloAccessiAutenticazione.json gruppo=GruppoJson
+./update  erogazioni/EsempioServizioComposto/1/configurazioni/controllo-accessi/autenticazione bodies/ControlloAccessiAutenticazione.json profilo=SPCoop tipo_servizio=ldap
+
 
 	+ GET AUTENTICAZIONE
 ./get  erogazioni/PetStore/2/configurazioni/controllo-accessi/autenticazione gruppo=GruppoJson
+./get erogazioni/EsempioServizioComposto/1/configurazioni/controllo-accessi/autenticazione profilo=SPCoop tipo_servizio=ldap
 
-	
 
 
 	+ UPDATE AUTORIZZAZIONE
@@ -427,8 +442,6 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 ./rem erogazioni/PetStore/2/configurazioni/controllo-accessi/autorizzazione/ruoli/RuoloJson1 gruppo=GruppoJson
 
 
-Prima di fare gli scope correggo tutte le findall e delete.
-
 	+ ADD SCOPE AUTORIZZAZIONE
 ./add erogazioni/PetStore/2/configurazioni/controllo-accessi/autorizzazione/scope bodies/ControlloAccessiAutorizzazioneScope.json  gruppo=GruppoJson
 
@@ -449,6 +462,43 @@ Prima di fare gli scope correggo tutte le findall e delete.
 
 
 
+	+ ADD RATE LIMITING POLICY
+./add erogazioni/PetStore/2/configurazioni/rate-limiting bodies/RateLimitingPolicyErogazioneNew.json gruppo=GruppoJson
+
+	+ LIST RATE LIMITING POLICY
+./get erogazioni/PetStore/2/configurazioni/rate-limiting/ gruppo=GruppoJson
+
+	+ GET RATE LIMITING POLICY	 ( Per recuperare il nome di una policy valida utilizzare la LIST )
+./get erogazioni/PetStore/2/configurazioni/rate-limiting/NumeroRichieste-ControlloRealtimeOrario:7 gruppo=GruppoJson
+
+	+ UPDATE RATE LIMITING POLICY
+./update erogazioni/PetStore/2/configurazioni/rate-limiting/NumeroRichieste-ControlloRealtimeOrario:7 bodies/RateLimitingPolicyErogazione.json gruppo=GruppoJson
+
+
+	+ DELETE RATE LIMITING POLICY
+
+
+	+ ADD TRACCIAMENTO CORRELAZIONE APPLICATIVA RICHIESTA\RISPOSTA
+./add erogazioni/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/richiesta bodies/CorrelazioneApplicativaRichiesta.json gruppo=GruppoJson
+./add erogazioni/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/risposta bodies/CorrelazioneApplicativaRisposta.json gruppo=GruppoJson
+
+	+ FINDALL TRACCIAMENTO CORRELAZIONE APPLICATIVA RICHIESTA\RISPOSTA
+./get erogazioni/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/richiesta gruppo=GruppoJson
+./get erogazioni/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/risposta gruppo=GruppoJson
+
+	+ GET TRACCIAMENTO CORRELAZIONE APPLICATIVA RICHIESTA\RISPOSTA
+./get "erogazioni/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/richiesta/*" gruppo=GruppoJson
+./get "erogazioni/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/risposta/%2Fpath%2F" gruppo=GruppoJson
+
+	+ UPDATE TRACCIAMENTO CORRELAZIONE APPLICATIVA RICHIESTA\RISPOSTA
+./update "erogazioni/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/richiesta/*" bodies/CorrelazioneApplicativaRichiesta2.json gruppo=GruppoJson
+./update "erogazioni/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/risposta/*" bodies/CorrelazioneApplicativaRisposta2.json gruppo=GruppoJson
+
+	+ DELETE TRACCIAMENTO CORRELAZIONE APPLICATIVA RICHIESTA\RISPOSTA
+./rem "erogazioni/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/richiesta/*" gruppo=GruppoJson
+./rem erogazioni/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/risposta/%2Fpath%2F gruppo=GruppoJson
+
+
 
 ========================================================
 					FRUIZIONI
@@ -456,6 +506,7 @@ Prima di fare gli scope correggo tutte le findall e delete.
 
 	+ CREATE
 ./add fruizioni bodies/fruizione_petstore.json
+./add fruizioni bodies/fruizione_spcoop.json profilo=SPCoop
 
 	+ UPDATE VERSIONE
 ./update fruizioni/ComuneDiPisa/PetStore/2/api bodies/ApiVersione3.json
@@ -532,8 +583,11 @@ Prima di fare gli scope correggo tutte le findall e delete.
 
 
 ============================================================
+					
 					GRUPPI FRUIZIONI
+
 ============================================================
+
 
 	+ CREATE
 ./add fruizioni/ComuneDiPisa/PetStore/2/gruppi bodies/gruppo_petstore.json
@@ -555,6 +609,7 @@ Prima di fare gli scope correggo tutte le findall e delete.
 
 	+ DELETE
 ./rem fruizioni/ComuneDiPisa/PetStore/2/gruppi/GruppoJson
+
 
 ========================================================
 
@@ -672,7 +727,40 @@ Prima di fare gli scope correggo tutte le findall e delete.
 
 
 
+	+ ADD RATE LIMITING POLICY
+./add fruizioni/ComuneDiPisa/PetStore/2/configurazioni/rate-limiting bodies/RateLimitingPolicyFruizioneNew.json gruppo=GruppoJson
+
+	+ GET RATE LIMITING POLICY (Il nome bisogna guardarlo dalla findall )
+./get fruizioni/ComuneDiPisa/PetStore/2/configurazioni/rate-limiting/NumeroRichieste-ControlloRealtimeOrario:4 gruppo=GruppoJson
+
+	+ LIST RATE LIMITING POLICY
+./get fruizioni/ComuneDiPisa/PetStore/2/configurazioni/rate-limiting gruppo=GruppoJson
+
+	+ UPDATE RATE LIMITING POLICY
+./update fruizioni/ComuneDiPisa/PetStore/2/configurazioni/rate-limiting/NumeroRichieste-ControlloRealtimeOrario:4 bodies/RateLimitingPolicyFruizione.json gruppo=GruppoJson
+
+	+ DELETE RATE LIMITING POLICY
 
 
-TODO: Cambia la creazione del soggetto nel soggetto che sarà poi l'erogatore delle fruizioni.
+	+ ADD TRACCIAMENTO CORRELAZIONE APPLICATIVA RICHIESTA\RISPOSTA
+./add fruizioni/ComuneDiPisa/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/richiesta bodies/CorrelazioneApplicativaRichiesta.json gruppo=GruppoJson
+./add fruizioni/ComuneDiPisa/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/risposta bodies/CorrelazioneApplicativaRisposta.json gruppo=GruppoJson
 
+
+	+ FINDALL TRACCIAMENTO CORRELAZIONE APPLICATIVA RICHIESTA\RISPOSTA
+./get fruizioni/ComuneDiPisa/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/richiesta gruppo=GruppoJson
+./get fruizioni/ComuneDiPisa/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/risposta gruppo=GruppoJson
+
+
+	+ GET TRACCIAMENTO CORRELAZIONE APPLICATIVA RICHIESTA\RISPOSTA
+
+./get "fruizioni/ComuneDiPisa/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/richiesta/*" gruppo=GruppoJson
+./get "fruizioni/ComuneDiPisa/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/risposta/%2Fpath%2F" gruppo=GruppoJson
+
+	+ UPDATE TRACCIAMENTO CORRELAZIONE APPLICATIVA RICHIESTA\RISPOSTA
+./update "fruizioni/ComuneDiPisa/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/richiesta/*" bodies/CorrelazioneApplicativaRichiesta2.json gruppo=GruppoJson
+./update "fruizioni/ComuneDiPisa/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/risposta/*" bodies/CorrelazioneApplicativaRisposta2.json gruppo=GruppoJson
+
+	+ DELETE TRACCIAMENTO CORRELAZIONE APPLICATIVA RICHIESTA\RISPOSTA
+./rem "fruizioni/ComuneDiPisa/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/richiesta/*" gruppo=GruppoJson
+./rem  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/risposta/%2Fpath%2F gruppo=GruppoJson

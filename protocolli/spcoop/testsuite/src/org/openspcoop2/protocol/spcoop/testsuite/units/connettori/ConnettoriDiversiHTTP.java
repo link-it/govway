@@ -105,11 +105,27 @@ public class ConnettoriDiversiHTTP {
 	
 	
 	private Date dataAvvioGruppoTest = null;
+	boolean doTestJMS = true;
 	@BeforeGroups (alwaysRun=true , groups=ID_GRUPPO)
 	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
 				
 		TestSuiteTransformer.sequentialForced = true;
+		
+		try{
+			String version_jbossas = Utilities.readApplicationServerVersion();
+			if(version_jbossas.startsWith("tomcat")){
+				System.out.println("WARNING: Verifiche code/topic disabilitate per Tomcat");
+				this.doTestJMS = false;
+			}
+		}catch(Exception e){
+			System.err.println("Comprensione A.S. non riuscita: "+e.getMessage());
+			e.printStackTrace(System.out);
+		}
+		
+		if(!this.doTestJMS){
+			return;
+		}
 		
 		// Sottoscrizione al topic
 		creaSottoscrittoreTopic();
@@ -117,6 +133,10 @@ public class ConnettoriDiversiHTTP {
 	@AfterGroups (alwaysRun=true , groups=ID_GRUPPO)
 	public void testOpenspcoopCoreLog() throws Exception{
 		FileSystemUtilities.verificaOpenspcoopCore(this.dataAvvioGruppoTest);
+		
+		if(!this.doTestJMS){
+			return;
+		}
 		
 		// Rilascio sottoscrizione
 		rilasciaSottoscrittoreTopic();
@@ -479,6 +499,10 @@ public class ConnettoriDiversiHTTP {
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".TEXT_QUEUE"})
 	public void jmsTextQueue() throws TestSuiteException, Exception{
 		
+		if(!this.doTestJMS){
+			return;
+		}
+		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_text_queue,CostantiTestSuite.PORTA_DELEGATA_JMS_TEXT_QUEUE);
 		
@@ -509,6 +533,11 @@ public class ConnettoriDiversiHTTP {
 	}
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".TEXT_QUEUE"},dataProvider="jmsTextQueue",dependsOnMethods={"jmsTextQueue"})
 	public void testJmsTextQueue(DatabaseComponent data,String id) throws Exception{
+		
+		if(!this.doTestJMS){
+			return;
+		}
+		
 		try{
 			this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
@@ -535,6 +564,10 @@ public class ConnettoriDiversiHTTP {
 	Repository repositoryJMS_bytes_queue=new Repository();
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".BYTES_QUEUE"})
 	public void jmsBytesQueue() throws TestSuiteException, Exception{
+		
+		if(!this.doTestJMS){
+			return;
+		}
 		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_bytes_queue,CostantiTestSuite.PORTA_DELEGATA_JMS_BYTES_QUEUE);
@@ -566,6 +599,11 @@ public class ConnettoriDiversiHTTP {
 	}
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".BYTES_QUEUE"},dataProvider="jmsBytesQueue",dependsOnMethods={"jmsBytesQueue"})
 	public void testJmsBytesQueue(DatabaseComponent data,String id) throws Exception{
+		
+		if(!this.doTestJMS){
+			return;
+		}
+		
 		try{
 			this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
@@ -592,6 +630,10 @@ public class ConnettoriDiversiHTTP {
 	Repository repositoryJMS_text_topic=new Repository();
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".TEXT_TOPIC"})
 	public void jmsTextTopic() throws TestSuiteException, Exception{
+		
+		if(!this.doTestJMS){
+			return;
+		}
 		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_text_topic,CostantiTestSuite.PORTA_DELEGATA_JMS_TEXT_TOPIC);
@@ -623,6 +665,11 @@ public class ConnettoriDiversiHTTP {
 	}
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".TEXT_TOPIC"},dataProvider="jmsTextTopic",dependsOnMethods={"jmsTextTopic"})
 	public void testJmsTextTopic(DatabaseComponent data,String id) throws Exception{
+		
+		if(!this.doTestJMS){
+			return;
+		}
+		
 		try{
 			this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
@@ -651,6 +698,10 @@ public class ConnettoriDiversiHTTP {
 	Repository repositoryJMS_bytes_topic=new Repository();
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".BYTES_TOPIC"})
 	public void jmsBytesTopic() throws TestSuiteException, Exception{
+		
+		if(!this.doTestJMS){
+			return;
+		}
 		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_bytes_topic,CostantiTestSuite.PORTA_DELEGATA_JMS_BYTES_TOPIC);
@@ -682,6 +733,11 @@ public class ConnettoriDiversiHTTP {
 	}
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".BYTES_TOPIC"},dataProvider="jmsBytesTopic",dependsOnMethods={"jmsBytesTopic"})
 	public void testJmsBytesTopic(DatabaseComponent data,String id) throws Exception{
+		
+		if(!this.doTestJMS){
+			return;
+		}
+		
 		try{
 			this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
@@ -711,6 +767,10 @@ public class ConnettoriDiversiHTTP {
 	Repository repositoryJMS_text_queue_propagazioneEGov=new Repository();
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".TEXT_QUEUE_PROPAGAZIONE_EGOV"})
 	public void jmsTextQueuePropagazioneEGov() throws TestSuiteException, Exception{
+		
+		if(!this.doTestJMS){
+			return;
+		}
 		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_text_queue_propagazioneEGov,CostantiTestSuite.PORTA_DELEGATA_JMS_INFO_EGOV_QUEUE);
@@ -742,6 +802,11 @@ public class ConnettoriDiversiHTTP {
 	}
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".TEXT_QUEUE_PROPAGAZIONE_EGOV"},dataProvider="jmsTextQueuePropagazioneEGov",dependsOnMethods={"jmsTextQueuePropagazioneEGov"})
 	public void testJmsTextQueuePropagazioneEGov(DatabaseComponent data,String id) throws Exception{
+		
+		if(!this.doTestJMS){
+			return;
+		}
+		
 		try{
 			this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
@@ -768,6 +833,10 @@ public class ConnettoriDiversiHTTP {
 	Repository repositoryJMS_text_topic_propagazioneEGov=new Repository();
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".TEXT_TOPIC_PROPAGAZIONE_EGOV"})
 	public void jmsTextTopicPropagazioneEGov() throws TestSuiteException, Exception{
+		
+		if(!this.doTestJMS){
+			return;
+		}
 		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_text_topic_propagazioneEGov,CostantiTestSuite.PORTA_DELEGATA_JMS_INFO_EGOV_TOPIC);
@@ -799,6 +868,11 @@ public class ConnettoriDiversiHTTP {
 	}
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".TEXT_TOPIC_PROPAGAZIONE_EGOV"},dataProvider="jmsTextTopicPropagazioneEGov",dependsOnMethods={"jmsTextTopicPropagazioneEGov"})
 	public void testJmsTextTopicPropagazioneEGov(DatabaseComponent data,String id) throws Exception{
+		
+		if(!this.doTestJMS){
+			return;
+		}
+		
 		try{
 			this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
@@ -829,6 +903,10 @@ public class ConnettoriDiversiHTTP {
 	Repository repositoryJMS_text_queue_sbustamentoSOAP=new Repository();
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".TEXT_QUEUE_SBUSTAMENTO_SOAP"})
 	public void jmsTextQueuesbustamentoSOAP() throws TestSuiteException, Exception{
+		
+		if(!this.doTestJMS){
+			return;
+		}
 		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_text_queue_sbustamentoSOAP,CostantiTestSuite.PORTA_DELEGATA_JMS_SBUSTAMENTO_SOAP_QUEUE);
@@ -861,6 +939,11 @@ public class ConnettoriDiversiHTTP {
 	}
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".TEXT_QUEUE_SBUSTAMENTO_SOAP"},dataProvider="jmsTextQueuesbustamentoSOAP",dependsOnMethods={"jmsTextQueuesbustamentoSOAP"})
 	public void testJmsTextQueuesbustamentoSOAP(DatabaseComponent data,String id) throws Exception{
+		
+		if(!this.doTestJMS){
+			return;
+		}
+		
 		try{
 			this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
@@ -887,6 +970,10 @@ public class ConnettoriDiversiHTTP {
 	Repository repositoryJMS_text_topic_sbustamentoSOAP=new Repository();
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".TEXT_TOPIC_SBUSTAMENTO_SOAP"})
 	public void jmsTextTopicsbustamentoSOAP() throws TestSuiteException, Exception{
+		
+		if(!this.doTestJMS){
+			return;
+		}
 		
 		// Invocazione SPCoop
 		org.apache.axis.Message sentMessage = this.invocazione(this.repositoryJMS_text_topic_sbustamentoSOAP,CostantiTestSuite.PORTA_DELEGATA_JMS_SBUSTAMENTO_SOAP_TOPIC);
@@ -919,6 +1006,11 @@ public class ConnettoriDiversiHTTP {
 	}
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".TEXT_TOPIC_SBUSTAMENTO_SOAP"},dataProvider="jmsTextTopicsbustamentoSOAP",dependsOnMethods={"jmsTextTopicsbustamentoSOAP"})
 	public void testJmsTextTopicsbustamentoSOAP(DatabaseComponent data,String id) throws Exception{
+		
+		if(!this.doTestJMS){
+			return;
+		}
+		
 		try{
 			this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
@@ -1470,10 +1562,15 @@ public class ConnettoriDiversiHTTP {
 	Repository repositoryFILE_serializeAndReturnFileAsync=new Repository();
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeAndReturnFileAsync"})
 	public void FILE_serializeAndReturnFileAsync() throws TestSuiteException, Exception{
+	
+		if(!this.doTestJMS){
+			return;
+		}
+		
 		this.collaborazioneSPCoopBase.oneWay(this.repositoryFILE_serializeAndReturnFileAsync,
 				CostantiTestSuite.PORTA_DELEGATA_FILE_SERIALIZE_AND_RETURN_FILE_ASYNC,addIDUnivoco,
 				"fruitoreSerializeAndReturnFileAsync","123456");
-		
+			
 		// Check file serializzato in asincrono
 		
 		try {
@@ -1529,6 +1626,11 @@ public class ConnettoriDiversiHTTP {
 	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeAndReturnFileAsync"},
 			dataProvider="FILE_serializeAndReturnFileAsync",dependsOnMethods={"FILE_serializeAndReturnFileAsync"})
 	public void testFILE_serializeAndReturnFileAsync(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		
+		if(!this.doTestJMS){
+			return;
+		}
+		
 		try{
 			this.collaborazioneSPCoopBase.testSincrono(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,

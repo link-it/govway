@@ -97,17 +97,15 @@ public class SoggettiApiHelper {
 	// le informazioni di autenticazione nel caso esso sia un fruitore, noi consideriamo tutti fruitori.
 	
 	
-	public static void updateSoggetto(Soggetto s, org.openspcoop2.core.registry.Soggetto ret, SoggettiEnv env) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverControlStationException, IllegalAccessException, InvocationTargetException, InstantiationException {
+	public static void convert(Soggetto body, org.openspcoop2.core.registry.Soggetto ret, SoggettiEnv env) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverControlStationException, IllegalAccessException, InvocationTargetException, InstantiationException {
 		
-		ret.setNome(s.getNome());
-		ret.setDescrizione(s.getDescrizione());		
+		ret.setNome(body.getNome());
+		ret.setDescrizione(body.getDescrizione());		
 	
 		// Un soggetto esterno abbiamo detto che può averla, ma durante la creazione essa non viene specificata perciò è lasciata a null.
 		// Un soggetto Interno DEVE avere una porta di dominio di tipo operativo, e gliene viene assegnata la prima trovata.
-		if (s.getDominio() == DominioEnum.INTERNO) {
+		if (body.getDominio() == DominioEnum.INTERNO) {
 	
-			// TODO: Questo controllo va migliorato, per essere precisi dobbiamo controllare che non stiamo registrando un soggetto interno
-			// con un nome diverso da quelli presenti nel db, quindi se non ci sono soggetti interni nel db dobbiamo poterlo creare.
 			if(!env.multitenant)
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Per registrare un nuovo soggetto interno passare alla modalità multitenant");
 			
@@ -122,10 +120,10 @@ public class SoggettiApiHelper {
 			ret.setPortaDominio(nome_pdd);
 		}
 		
-		if (env.soggettiCore.isSupportatoAutenticazioneSoggetti(env.tipo_protocollo)) {
+		if (env.soggettiCore.isSupportatoAutenticazioneSoggetti(env.tipo_protocollo) && body.getCredenziali() != null && body.getModalitaAccesso() != null ) {
 			CredenzialiSoggetto credenziali = Helper.apiCredenzialiToGovwayCred(
-						s.getCredenziali(),
-						s.getModalitaAccesso(),
+						body.getCredenziali(),
+						body.getModalitaAccesso(),
 						CredenzialiSoggetto.class,
 						org.openspcoop2.core.registry.constants.CredenzialeTipo.class
 			);		
@@ -134,14 +132,14 @@ public class SoggettiApiHelper {
 	
 	}
 	
-	public static final org.openspcoop2.core.registry.Soggetto soggettoApiToRegistro(Soggetto s, SoggettiEnv env) 
+	public static final org.openspcoop2.core.registry.Soggetto soggettoApiToRegistro(Soggetto body, SoggettiEnv env) 
 			throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverControlStationException, IllegalAccessException, InvocationTargetException, InstantiationException {
 		
 		final org.openspcoop2.core.registry.Soggetto ret = new org.openspcoop2.core.registry.Soggetto();
-		updateSoggetto(s, ret, env);
+		convert(body, ret, env);
 		
 		final String protocollo = env.tipo_protocollo;
-		final IDSoggetto idSoggetto = new IDSoggetto(protocollo,s.getNome());
+		final IDSoggetto idSoggetto = new IDSoggetto(protocollo,body.getNome());
 
 		ret.setVersioneProtocollo(env.soggettiCore.getVersioneDefaultProtocollo(protocollo));
 		ret.setIdentificativoPorta(env.soggettiCore.getIdentificativoPortaDefault(protocollo, idSoggetto));
@@ -149,22 +147,26 @@ public class SoggettiApiHelper {
 		ret.setSuperUser(env.userLogin);
 		ret.setTipo(env.tipo_soggetto);
 		
-		// I possibili ruoli da assegnare sono quelli con contesto porta_applicativa (erogazione) e tipologia interna.
-		FiltroRicercaRuoli filtroRuoli = new FiltroRicercaRuoli();
-		filtroRuoli.setContesto(RuoloContesto.PORTA_APPLICATIVA);
-		filtroRuoli.setTipologia(RuoloTipologia.INTERNO);
-		List<String> ruoliAmmessi = env.soggettiCore.getAllRuoli(filtroRuoli);
 		
-		RuoliSoggetto ruoliSoggetto = new RuoliSoggetto();
-		s.getRuoli().forEach( rname -> {
-			if (!ruoliAmmessi.contains(rname))
-				throw new RuntimeException("Non esiste alcun ruolo con nome " + rname + " da associare al soggetto.");
-			RuoloSoggetto rs = new RuoloSoggetto();
-			rs.setNome(rname);
-			ruoliSoggetto.addRuolo(rs);
-		});
-		
-		ret.setRuoli(ruoliSoggetto);
+		if ( body.getRuoli() != null ) {
+			// I possibili ruoli da assegnare sono quelli con contesto porta_applicativa (erogazione) e tipologia interna.
+			FiltroRicercaRuoli filtroRuoli = new FiltroRicercaRuoli();
+			filtroRuoli.setContesto(RuoloContesto.PORTA_APPLICATIVA);
+			filtroRuoli.setTipologia(RuoloTipologia.INTERNO);
+			List<String> ruoliAmmessi = env.soggettiCore.getAllRuoli(filtroRuoli);
+			
+			RuoliSoggetto ruoliSoggetto = new RuoliSoggetto();
+			
+			body.getRuoli().forEach( rname -> {
+				if (!ruoliAmmessi.contains(rname))
+					throw new RuntimeException("Non esiste alcun ruolo con nome " + rname + " da associare al soggetto.");
+				RuoloSoggetto rs = new RuoloSoggetto();
+				rs.setNome(rname);
+				ruoliSoggetto.addRuolo(rs);
+			});
+			
+			ret.setRuoli(ruoliSoggetto);
+		}
 		
 		// Di base privato è false, ha a che fare con una checkbox che spunterà fuori solo in modalità completa e non in quella avanzata.
 		ret.setPrivato(false);		

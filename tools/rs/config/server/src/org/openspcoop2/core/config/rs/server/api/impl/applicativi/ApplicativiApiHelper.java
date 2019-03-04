@@ -370,7 +370,6 @@ public class ApplicativiApiHelper {
 	
 	/**
 	 * Trasforma le credenziali per un'InvocazionePorta nelle credenziali conservate in un applicativo.
-	 * TODO: Sarà possibile unificare in futuro?
 	 * 
 	 * @param cred
 	 * @return
@@ -487,7 +486,7 @@ public class ApplicativiApiHelper {
 		}
 		case PRINCIPAL: {
 			AuthenticationPrincipal auth = new AuthenticationPrincipal();
-			auth.setUserid(cred.getSubject());	//TODO: Lo user-id dell'auth è il subject delle credenziali=
+			auth.setUserid(cred.getSubject());
 			checkPrincipalAuth(auth);
 			break;
 		}
@@ -574,8 +573,6 @@ public class ApplicativiApiHelper {
 		default:	
 			return new ArrayList<ServizioApplicativo>();
 		}
-		// TODO: Ask andrea Se quando non ho credenziali di accesso, ovvero provengo da un ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA
-		// non avrò problemi di conflitti
 	}
 	
 	

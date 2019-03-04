@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package org.openspcoop2.core.config.rs.server.api.impl.fruizioni;
 
 import java.io.InputStream;
@@ -32,6 +33,7 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
+import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.rs.server.api.FruizioniApi;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
@@ -120,7 +122,6 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
             idero.setId(erogatore.getId());
             final Soggetto fruitore  = env.soggettiCore.getSoggettoRegistro(env.idSoggetto.toIDSoggetto());
             
-
             IDSoggetto idReferente = ErogazioniApiHelper.getIdReferente(body, env);
             final AccordoServizioParteComune as = Helper.getAccordo(body.getApiNome(), body.getApiVersione(), idReferente,env.apcCore);
             
@@ -129,34 +130,27 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
             }
             
             AccordoServizioParteSpecifica asps = ErogazioniApiHelper.apiImplToAps(body, erogatore, as, env);
-			
             final IDServizio idAps = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(), new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), asps.getVersione());
             final boolean alreadyExists = env.apsCore.existsAccordoServizioParteSpecifica(idAps);
             
             if (alreadyExists)
             	asps = env.apsCore.getServizio(idAps);
             
-            for (Fruitore f : asps.getFruitoreList()) {
-				if(f.getTipo().equals(fruitore.getTipo()) && fruitore.getNome().equals(fruitore.getNome())) {
-					throw FaultCode.CONFLITTO.toException("Esiste già una fruizione per il servizio e il soggetto scelti.");
-				}
-			}
-                       
-            ServletUtils.setObjectIntoSession(context.getServletRequest().getSession(), AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+          
+            ServletUtils.setObjectIntoSession(context.getServletRequest().getSession(), AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);  
+            ErogazioniApiHelper.serviziCheckData(TipoOperazione.ADD, env, as, asps, env.idSoggetto, body, false);
             
-            if (!ErogazioniApiHelper.serviziCheckData(TipoOperazione.ADD, env, as, asps, env.idSoggetto, body, false))
-            	throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
-           
-           org.openspcoop2.core.registry.Connettore regConnettore = ErogazioniApiHelper.buildConnettoreRegistro(env, body.getConnettore());
-        
-           Fruitore f = new Fruitore();
-           f.setTipo(fruitore.getTipo());
-           f.setNome(fruitore.getNome());
-           f.setStatoPackage(StatoType.FINALE.getValue());
-           f.setConnettore(regConnettore);
-           asps.addFruitore(f);
+   
+			org.openspcoop2.core.registry.Connettore regConnettore = ErogazioniApiHelper.buildConnettoreRegistro(env, body.getConnettore());
+			
+			Fruitore f = new Fruitore();
+			f.setTipo(fruitore.getTipo());
+			f.setNome(fruitore.getNome());
+			f.setStatoPackage(StatoType.FINALE.getValue());
+			f.setConnettore(regConnettore);
+			asps.addFruitore(f);
          
-           ErogazioniApiHelper.createAps(env, asps, regConnettore, body, alreadyExists, false);
+            ErogazioniApiHelper.createAps(env, asps, regConnettore, body, alreadyExists, false);
             	
            context.getLogger().info("Invocazione completata con successo");     
 		}
@@ -177,7 +171,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
      *
      */
 	@Override
-    public void createFruizioneAllegato(ApiImplAllegato body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void createFruizioneAllegato(ApiImplAllegato body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -189,7 +183,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
             
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			final IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
 
 			
@@ -221,7 +215,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
      *
      */
 	@Override
-    public void deleteFruizione(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void deleteFruizione(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -232,7 +226,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			 
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.evalnull( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env) );
+			final AccordoServizioParteSpecifica asps = Helper.evalnull( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env) );
 			
 			if ( asps != null ) {
 				final IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
@@ -279,7 +273,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
      *
      */
 	@Override
-    public void deleteFruizioneAllegato(String erogatore, String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
+    public void deleteFruizioneAllegato(String erogatore, String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -290,7 +284,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			 
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(),  env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(),  env), "Fruizione");
 			
 			ErogazioniApiHelper.deleteAllegato(nomeAllegato, env, asps);
                         
@@ -316,7 +310,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
      *
      */
 	@Override
-    public byte[] downloadFruizioneAllegato(String erogatore, String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
+    public byte[] downloadFruizioneAllegato(String erogatore, String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -326,7 +320,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			
 			final Optional<Long> idDoc = ErogazioniApiHelper.getIdDocumento(nomeAllegato, asps);
 			
@@ -430,7 +424,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
      *
      */
 	@Override
-    public ListaApiImplAllegati findAllFruizioneAllegati(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset) {
+    public ListaApiImplAllegati findAllFruizioneAllegati(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio, String q, Integer limit, Integer offset) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -440,7 +434,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(),  env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(),  env), "Fruizione");
 			
 			ListaApiImplAllegati ret = ErogazioniApiHelper.findAllAllegati(q, limit, offset, context.getServletRequest().getRequestURI(), env, asps);
 			
@@ -464,7 +458,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
      *
      */
 	@Override
-    public FruizioneViewItem getFruizione(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public FruizioneViewItem getFruizione(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -474,7 +468,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(),  env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(),  env), "Fruizione");
             
 			FruizioneViewItem ret = ErogazioniApiHelper.aspsToFruizioneViewItem(env, asps, env.idSoggetto);
 			
@@ -499,7 +493,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
      *
      */
 	@Override
-    public ApiImplVersioneApiView getFruizioneAPI(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public ApiImplVersioneApiView getFruizioneAPI(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -510,7 +504,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(),  env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(),  env), "Fruizione");
 			
 			ApiImplVersioneApiView ret = ErogazioniApiHelper.aspsToApiImplVersioneApiView(env, asps);
 		
@@ -535,7 +529,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
      *
      */
 	@Override
-    public ApiImplAllegato getFruizioneAllegato(String erogatore, String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
+    public ApiImplAllegato getFruizioneAllegato(String erogatore, String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -545,7 +539,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Accordo servizio parte specifica");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Accordo servizio parte specifica");
 			
 			final Optional<Long> idDoc = ErogazioniApiHelper.getIdDocumento(nomeAllegato, asps);
 			
@@ -575,7 +569,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
      *
      */
 	@Override
-    public Connettore getFruizioneConnettore(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public Connettore getFruizioneConnettore(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -585,7 +579,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			
 			org.openspcoop2.core.registry.Connettore regConn = ErogazioniApiHelper.getConnettoreFruizione(asps, env.idSoggetto, env);
 			Map<String, String> props = regConn.getProperties();	// Qui c'è solo la proprietà location.
@@ -613,7 +607,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
      *
      */
 	@Override
-    public ApiImplInformazioniGeneraliView getFruizioneInformazioniGenerali(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public ApiImplInformazioniGeneraliView getFruizioneInformazioniGenerali(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -623,7 +617,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
                                 
 			ApiImplInformazioniGeneraliView ret = ErogazioniApiHelper.fruizioneToApiImplInformazioniGeneraliView(env, asps, env.idSoggetto);
                         
@@ -648,7 +642,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
      *
      */
 	@Override
-    public ApiImplUrlInvocazioneView getFruizioneUrlInvocazione(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public ApiImplUrlInvocazioneView getFruizioneUrlInvocazione(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -658,7 +652,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 		    final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			final AccordoServizioParteComune aspc = env.apcCore.getAccordoServizio(asps.getIdAccordo());
 			final IDPortaDelegata idPorta = Helper.supplyOrNotFound( () -> env.pdCore.getIDPortaDelegataAssociataDefault(env.idServizioFactory.getIDServizioFromAccordo(asps), env.idSoggetto.toIDSoggetto()), "Porta Delegata");
 			final PortaDelegata pd  = Helper.supplyOrNotFound( () -> env.pdCore.getPortaDelegata(idPorta), "Porta Delegata");
@@ -696,7 +690,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
      *
      */
 	@Override
-    public void updateFruizioneAPI(ApiImplVersioneApi body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void updateFruizioneAPI(ApiImplVersioneApi body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");
@@ -711,7 +705,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
             final Soggetto soggErogatore = Helper.supplyOrNotFound( () -> env.soggettiCore.getSoggettoRegistro(idErogatore.toIDSoggetto()), "Soggetto Erogatore");
             idErogatore.setId(soggErogatore.getId());
             
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore.toIDSoggetto(), env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore.toIDSoggetto(), env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			final AccordoServizioParteComune as = env.apcCore.getAccordoServizio(asps.getIdAccordo());
 
 	        List<AccordoServizioParteComune> asParteComuneCompatibili = env.apsCore.findAccordiParteComuneBySoggettoAndNome(
@@ -756,7 +750,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
      *
      */
 	@Override
-    public void updateFruizioneAllegato(ApiImplAllegato body, String erogatore, String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
+    public void updateFruizioneAllegato(ApiImplAllegato body, String erogatore, String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -766,7 +760,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 						
 			ErogazioniApiHelper.updateAllegatoAsps(body, nomeAllegato, env, asps);
 	    
@@ -790,7 +784,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
      *
      */
 	@Override
-    public void updateFruizioneConnettore(Connettore body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void updateFruizioneConnettore(Connettore body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -803,7 +797,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
 			
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			
 			final List<Fruitore> fruitori = asps.getFruitoreList();
 					
@@ -858,7 +852,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
      *
      */
 	@Override
-    public void updateFruizioneInformazioniGenerali(ApiImplInformazioniGenerali body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void updateFruizioneInformazioniGenerali(ApiImplInformazioniGenerali body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -869,7 +863,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			
  		    final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
  		    final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			
 		    ErogazioniApiHelper.updateInformazioniGenerali(body, env, asps);
         
@@ -892,7 +886,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
      *
      */
 	@Override
-    public void updateFruizioneUrlInvocazione(Object body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void updateFruizioneUrlInvocazione(Object body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -905,12 +899,23 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			final ApiImplUrlInvocazione urlInvocazione = JSONUtils.getInstance().getAsObject((InputStream) body, ApiImplUrlInvocazione.class);
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 		    final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			final IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);			
 			final IDPortaDelegata idPorta = Helper.supplyOrNotFound( () -> env.pdCore.getIDPortaDelegataAssociataDefault(env.idServizioFactory.getIDServizioFromAccordo(asps), env.idSoggetto.toIDSoggetto()), "Porta Delegata");
 			final PortaDelegata pd  = Helper.supplyOrNotFound( () -> env.pdCore.getPortaDelegata(idPorta), "Porta Delegata");
 			final PortaDelegataAzione pdAzione =  new PortaDelegataAzione(); //pd.getAzione() == null ? new PortaDelegataAzione() : pd.getAzione();
 			
+			final AccordoServizioParteComune apc = env.apcCore.getAccordoServizio(asps.getIdAccordo());
+			List<PortaApplicativaAzioneIdentificazione> identModes = env.paHelper.getModalitaIdentificazionePorta(env.tipo_protocollo, env.apcCore.toMessageServiceBinding(apc.getServiceBinding()));
+			if ( identModes.contains(PortaApplicativaAzioneIdentificazione.PROTOCOL_BASED) && identModes.size() == 1 ) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non puoi modificare la url-invocazione il cui metodo di identificazione azioni può essere solo " + PortaApplicativaAzioneIdentificazione.PROTOCOL_BASED.toString() );
+			}
+			
+			
+			if ( !identModes.contains( PortaApplicativaAzioneIdentificazione.valueOf(urlInvocazione.getModalita().name()) )) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La modalità di identificazione azione deve essere una fra: " + identModes.toString() );
+			}
+				
 			switch (urlInvocazione.getModalita()) {
 			case CONTENT_BASED:
 				pdAzione.setPattern(urlInvocazione.getPattern());
@@ -931,6 +936,8 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			case URL_BASED:
 				pdAzione.setPattern(urlInvocazione.getPattern());
 				pdAzione.setForceInterfaceBased(Helper.boolToStatoFunzionalitaConf(urlInvocazione.isForceInterface()));
+				break;
+			case PROTOCOL_BASED:
 				break;
 			}
 			

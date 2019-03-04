@@ -1102,6 +1102,8 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			int idLista = Liste.ACCORDI_PORTTYPE;
 			
 			Search ricerca = Helper.setupRicercaPaginata( q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo );
+		
+			List<PortType> servizi = env.apcCore.accordiPorttypeList(as.getId().intValue(), ricerca);
 			
 			final ListaApiServizi ret = Helper.costruisciListaPaginata(
 					context.getServletRequest().getRequestURI(),
@@ -1110,7 +1112,6 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					ricerca.getNumEntries(idLista), 
 					ListaApiServizi.class
 				); 
-			List<PortType> servizi = env.apcCore.accordiPorttypeList(as.getId().intValue(), ricerca);
 			
 			if ( servizi.size() == 0 && env.findall_404 )
 				throw FaultCode.NOT_FOUND.toException("Nessun allegato dell'Api specificata corrisponde ai criteri di ricerca");

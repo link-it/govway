@@ -84,6 +84,31 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/SimpleName'
+    id_nome_gruppo:
+      name: nome_gruppo
+      in: path
+      description: Nome del Gruppo di azioni o risorse
+      required: true
+      schema:
+        type: string
+        maxLength: 255
+        
+    # Dati Identificativi nella query
+    gruppo:
+      name: gruppo
+      in: query
+      description: Nome del Gruppo di azioni o risorse
+      required: false
+      schema:
+        type: string
+        maxLength: 255       
+    tipo_servizio:
+      name: tipo_servizio
+      in: query
+      description: Indica un tipo del servizio differente da quello di default
+      required: false
+      schema:
+        $ref: 'govway_rs-api_core.yaml#/components/schemas/Tipo'
         
   schemas:
  
@@ -97,7 +122,12 @@ components:
       type: string
       pattern: ^[_A-Za-z][\\-\\._A-Za-z0-9]*$
       maxLength: 255
-      description: Può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.' 
+      description: Può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'
+    Tipo:
+      type: string
+      maxLength: 20
+      description: Indica un tipo assegnato ad un soggetto o ad un servizio    
+    
          
     # Base: Modalita e Soggetto del Dominio
     BaseItem:
@@ -166,3 +196,11 @@ components:
       type: string
       enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
       default: APIGateway
+
+    # Base: Enumeration
+    ProfiloCollaborazioneEnum:
+      type: string
+      enum: ['oneway', 'sincrono', 'asincronoSimmetrico', 'asincronoAsimmetrico']
+      example: 'sincrono'
+
+

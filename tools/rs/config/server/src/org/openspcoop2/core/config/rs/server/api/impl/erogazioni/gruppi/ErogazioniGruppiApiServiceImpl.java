@@ -31,7 +31,6 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.rs.server.api.ErogazioniGruppiApi;
-import org.openspcoop2.core.config.rs.server.api.impl.Enums;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
@@ -39,6 +38,7 @@ import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniEnv;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.Gruppo;
 import org.openspcoop2.core.config.rs.server.model.GruppoAzioni;
+import org.openspcoop2.core.config.rs.server.model.GruppoEreditaConfigurazione;
 import org.openspcoop2.core.config.rs.server.model.GruppoItem;
 import org.openspcoop2.core.config.rs.server.model.GruppoNome;
 import org.openspcoop2.core.config.rs.server.model.GruppoNuovaConfigurazione;
@@ -58,6 +58,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaPorteApplicativeMappingInfo;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeUtilities;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -84,7 +85,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      *
      */
 	@Override
-    public void addErogazioneGruppoAzioni(GruppoAzioni body, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto) {
+    public void addErogazioneGruppoAzioni(GruppoAzioni body, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 
@@ -96,18 +97,18 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			Helper.throwIfNull(body);
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
 			final IDPortaApplicativa idPa = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPA(nomeGruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta");
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(idPa);
 						
 			List<String> azioniOccupate = ErogazioniApiHelper.getAzioniOccupateErogazione(idAsps, env.apsCore, env.paCore);
-						
-			for (String azione : body.getAzioni()) {
-				if(azioniOccupate.contains(azione)) {
-					throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE));			
-				}
-			}
+					
+			ErogazioniApiHelper.checkAzioniAdd( 
+					body.getAzioni(),
+					azioniOccupate,
+					env.apcCore.getAzioni(asps, env.apcCore.getAccordoServizio(asps.getIdAccordo()), false, false, null)
+				);
 			
 			env.requestWrapper.overrideParameterValues(CostantiControlStation.PARAMETRO_AZIONI, body.getAzioni().toArray(new String[0]));
 		
@@ -142,7 +143,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      *
      */
 	@Override
-    public void createErogazioneGruppo(Gruppo body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void createErogazioneGruppo(Gruppo body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -154,39 +155,55 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
+	
+			String mappingPadre = null;
+			String erogazioneAutenticazione = null;
+			String erogazioneAutenticazioneOpzionale = null;				
 			
-			final GruppoNuovaConfigurazione gnuovaconf = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getModalita(), body.getConfigurazione());
-			
-			if (body.getModalita() == ModalitaConfigurazioneGruppoEnum.EREDITA) {
-				// TODO: MailAndrea Non so quale Mapping scegliere perchè il nome del gruppo può esssere duplicato
-				// Qui devo recuperare il mapping erogazione\portaapplicativa relativo al gruppo padre.
-				// Ho bisogno del campo "nome" di un mapping. Recupero tutti i mapping
-				//final GruppoEreditaConfigurazione g = null;
-				throw FaultCode.ERRORE_INTERNO.toException("Non so come recuperare il mappingErogazionePortaApplicativa.");
+			if ( body.getModalita() == ModalitaConfigurazioneGruppoEnum.NUOVA ) {
+				
+				final GruppoNuovaConfigurazione confNuova = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getModalita(), body.getConfigurazione());
+				erogazioneAutenticazione = confNuova.getAutenticazione().getTipo().toString();
+				erogazioneAutenticazioneOpzionale = ServletUtils.boolToCheckBoxStatus(confNuova.getAutenticazione().isOpzionale());
+				
 			}
 			
-			// TODO: mailandrea, il primo parametro di getMappingInfo è il nome del mapping che mi collega alla porta applicativa\gruppo dalla quale ereditare.
-			// Da REST, geredita.getNome() è il nome del gruppo da cui ereditare giusto? Ma io ho bisognod del nome del mapping, perchè il sistema consente più gruppi con lo stesso nome.
-			final AccordiServizioParteSpecificaPorteApplicativeMappingInfo mappingInfo = AccordiServizioParteSpecificaUtilities.getMappingInfo(null, asps, env.apsCore);
+			else if ( body.getModalita() == ModalitaConfigurazioneGruppoEnum.EREDITA ) {
+				
+				GruppoEreditaConfigurazione confEredita = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getModalita(), body.getConfigurazione());
+				
+				List<MappingErogazionePortaApplicativa> mappings = ErogazioniApiHelper.getMappingGruppiPA( confEredita.getNome(), idAsps, env.apsCore);
+				
+				if ( mappings.isEmpty() ) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il gruppo " + confEredita.getNome() + " da cui ereditare è inesistente");
+				}
+				
+				mappingPadre = mappings.get(0).getNome();
+						
+			}
+						
+			final AccordiServizioParteSpecificaPorteApplicativeMappingInfo mappingInfo = AccordiServizioParteSpecificaUtilities.getMappingInfo(mappingPadre, asps, env.apsCore);
 			final MappingErogazionePortaApplicativa mappingSelezionato = mappingInfo.getMappingSelezionato();
 			final MappingErogazionePortaApplicativa mappingDefault = mappingInfo.getMappingDefault();
 			final List<String> azioniOccupate = mappingInfo.getAzioniOccupate();
 			
 			if ( mappingDefault == null )
 				throw FaultCode.NOT_FOUND.toException("Nessuna erogazione trovata");
+			
 			if ( mappingSelezionato == null )
-				throw FaultCode.NOT_FOUND.toException("Gruppo con nome " + body.getNome() + " non trovato");
-					
-			for (String azioneTmp : body.getAzioni()) {
-				if(azioniOccupate.contains(azioneTmp)) {
-					throw FaultCode.CONFLITTO.toException(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE);
-				}
-			}
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Gruppo scelto non trovato");
+						
+			ErogazioniApiHelper.checkAzioniAdd( 
+					body.getAzioni(),
+					azioniOccupate,
+					env.apcCore.getAzioni(asps, env.apcCore.getAccordoServizio(asps.getIdAccordo()), false, false, null)
+				);
 			
 			if (!env.apsHelper.configurazioneErogazioneCheckData(
 					TipoOperazione.ADD, 
-					nome, 
+					mappingInfo.getNomeNuovaConfigurazione(),					
 					body.getNome(), 
 					body.getAzioni().toArray(new String[0]),
 					asps, 
@@ -199,15 +216,15 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
-			// MailAndrea: Modificato anche accordiserviziopartespecificautilities: dovevo agganciare il core per creare il saCore
+			
 			AccordiServizioParteSpecificaUtilities.addAccordoServizioParteSpecificaPorteApplicative(
 					mappingDefault,
 					mappingSelezionato,
-					nome,
-					body.getNome(),
-					body.getAzioni().toArray(new String[0]),
-					body.getModalita().toString(),
-					body.getModalita().toString(),
+					mappingInfo.getNomeNuovaConfigurazione(),
+					body.getNome(),				// nomeGruppo
+					body.getAzioni().toArray(new String[0]),	// azioni
+					body.getModalita().toString(),				// modeCreazione
+					body.getModalita().toString(),				// modeCreazioneConnettore Forse c'è un bug nella console, qui viene passato "eredita", nella console viene trattato come una checkbox
 					null,							// endpointtype,
 					null,							// tipoconn,
 					null,							// autenticazioneHttp,	// RECHECK
@@ -261,8 +278,8 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 					null,							// responseInputDeleteAfterRead, 
 					null,							// responseInputWaitTime,
 					null,							// listExtendedConnettore
-	        		Helper.evalnull( () -> Enums.tipoAutenticazioneNewFromRest.get(gnuovaconf.getAutenticazione().getTipo()).toString() ),		// erogazioneAutenticazione
-	        		Helper.evalnull( () -> gnuovaconf.getAutenticazione().isOpzionale()  ? "yes" : "no" ), 	// erogazioneAutenticazioneOpzionale
+	        		erogazioneAutenticazione,
+	        		erogazioneAutenticazioneOpzionale,
 					"disabilitato",					// erogazioneAutorizzazione, Come da debug. 
 					null,							// erogazioneAutorizzazioneAutenticati, 
 					null,							// erogazioneAutorizzazioneRuoli, 
@@ -317,7 +334,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      *
      */
 	@Override
-    public void deleteErogazioneGruppo(String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto) {
+    public void deleteErogazioneGruppo(String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -326,7 +343,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps),asps.getId());
 			
 			final IDPortaApplicativa idPortaApplicativa = ErogazioniApiHelper.getIDGruppoPA(nomeGruppo, idAsps, env.apsCore);
@@ -363,7 +380,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      *
      */
 	@Override
-    public void deleteErogazioneGruppoAzione(String nome, Integer versione, String nomeGruppo, String nomeAzione, ProfiloEnum profilo, String soggetto) {
+    public void deleteErogazioneGruppoAzione(String nome, Integer versione, String nomeGruppo, String nomeAzione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -373,7 +390,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
 			final IDPortaApplicativa idPa = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPA(nomeGruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta");
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(idPa);
@@ -411,7 +428,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      *
      */
 	@Override
-    public ListaGruppi findAllErogazioneGruppi(String nome, Integer versione, ProfiloEnum profilo, String soggetto, Integer limit, Integer offset, String azione) {
+    public ListaGruppi findAllErogazioneGruppi(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio, Integer limit, Integer offset, String azione) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -420,7 +437,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
 			final int idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
 			
@@ -470,7 +487,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      *
      */
 	@Override
-    public GruppoAzioni getErogazioneGruppoAzioni(String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto) {
+    public GruppoAzioni getErogazioneGruppoAzioni(String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -479,7 +496,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
 			
 			final IDPortaApplicativa idPa = Helper.supplyOrNotFound( 
@@ -516,7 +533,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      *
      */
 	@Override
-    public void updateErogazioneGruppoNome(GruppoNome body, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto) {
+    public void updateErogazioneGruppoNome(GruppoNome body, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -528,7 +545,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
                         
 			// PorteApplicativeConfigurazioneChange
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps),asps.getId());
 			final List<MappingErogazionePortaApplicativa> listaMapping = env.apsCore.mappingServiziPorteAppList(idAsps,idAsps.getId(), null);
 			final List<String> mappingUtilizzati = ErogazioniApiHelper.getDescrizioniMappingPA(listaMapping);

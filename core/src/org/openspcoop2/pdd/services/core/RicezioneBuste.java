@@ -695,8 +695,10 @@ public class RicezioneBuste {
 				if(portaApplicativa!=null) {
 					// Aggiorno tutti
 					soggettoErogatore = new IDSoggetto(portaApplicativa.getTipoSoggettoProprietario(), portaApplicativa.getNomeSoggettoProprietario());
-					idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaApplicativa.getServizio().getTipo(),portaApplicativa.getServizio().getNome(), 
-								soggettoErogatore, portaApplicativa.getServizio().getVersione());
+					if(portaApplicativa.getServizio()!=null) {
+						idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaApplicativa.getServizio().getTipo(),portaApplicativa.getServizio().getNome(), 
+									soggettoErogatore, portaApplicativa.getServizio().getVersione());
+					}
 					dominio = new IDSoggetto(portaApplicativa.getTipoSoggettoProprietario(), portaApplicativa.getNomeSoggettoProprietario());
 					try {
 						dominio.setCodicePorta(RegistroServiziManager.getInstance().getDominio(dominio, null, protocolFactory));

@@ -30,6 +30,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
 
 /**	
@@ -44,7 +45,15 @@ public class ValidationExceptionMapper implements ExceptionMapper<ValidationExce
 
 	private Logger log = org.openspcoop2.utils.LoggerWrapperFactory.getLogger(ValidationExceptionMapper.class);
 	
+	private boolean updateTitle = true;
 	private ITypeGenerator typeGenerator;
+	
+	public boolean isUpdateTitle() {
+		return this.updateTitle;
+	}
+	public void setUpdateTitle(boolean updateTitle) {
+		this.updateTitle = updateTitle;
+	}
 	
 	public ITypeGenerator getTypeGenerator() {
 		return this.typeGenerator;
@@ -66,15 +75,25 @@ public class ValidationExceptionMapper implements ExceptionMapper<ValidationExce
 				problem.addInvalidParam(violation.getPropertyPath().toString(), violation.getMessage(), violation.getInvalidValue());
 			}
 		} 
-		this.updateProblem(problem, exception);
+        this.updateProblem(problem, exception); // customizzabile
+        this._setType(problem, exception);
+        if(this.updateTitle) {
+        	// aggiorno rispetto al code modificabile nel metodo sopra
+        	problem.setTitle(HttpUtilities.getHttpReason(problem.getStatus()));
+        }
 		return Response.status(problem.getStatus()).entity(problem).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807).build();
 	}
 	
-	public void updateProblem(Problem problem, ValidationException e) {
+	public void _setType(Problem problem, ValidationException e) {
 		if(this.typeGenerator==null) {
 			return;
 		}
 		problem.setType(this.typeGenerator.getType(problem.getStatus(), e));
+	}
+	
+	
+	public void updateProblem(Problem problem, ValidationException e) {
+		
 	}
 }
 

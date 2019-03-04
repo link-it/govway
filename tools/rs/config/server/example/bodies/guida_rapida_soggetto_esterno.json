@@ -1,0 +1,7 @@
+{
+ 	"nome": "EnteEsterno",
+   	"modalita_accesso": "http-basic",
+   
+	"dominio": "esterno",
+	"descrizione": ""
+}

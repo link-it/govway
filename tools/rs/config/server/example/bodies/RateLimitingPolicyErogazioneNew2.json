@@ -1,0 +1,14 @@
+{
+    "policy": "numero-richieste-orarie",
+    "stato": "abilitato",
+
+    "filtro": {
+        "filtro_chiave_valore": "chiave_valore1"
+    },
+
+    "criterio_collezionamento_dati": {
+        "soggetto_fruitore": false,
+        "chiave_nome": "chiave2",
+		"chiave_tipo": "content-based"
+    }
+}

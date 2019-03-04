@@ -28,6 +28,7 @@ import org.openspcoop2.utils.logger.beans.context.core.Role;
 import org.openspcoop2.utils.service.context.dump.DumpConfig;
 import org.openspcoop2.utils.service.context.dump.DumpRequest;
 import org.openspcoop2.utils.service.context.dump.DumpResponse;
+import org.openspcoop2.utils.service.context.dump.DumpUtilities;
 
 /**
  * ServerInfoContextManuallyAdd
@@ -40,6 +41,7 @@ public class ServerInfoContextManuallyAdd {
 	
 	private ServerConfig serverConfig;
 	private ServerInfoUtilities utilities;
+	private DumpUtilities dumpUtilities;
 	private DumpConfig dumpConfig;
 
 	public ServerInfoContextManuallyAdd(ServerConfig serverConfig) {
@@ -51,6 +53,12 @@ public class ServerInfoContextManuallyAdd {
 			this.dumpConfig = new DumpConfig();
 		}
 		this.dumpConfig.setRole(Role.CLIENT);
+		
+		if(this.serverConfig.isDump() && this.serverConfig.getDumpConfig() == null) {
+			this.serverConfig.setDumpConfig(this.dumpConfig);
+		}
+		
+		this.dumpUtilities = new DumpUtilities(this.serverConfig);
 	}
 
 	public void processBeforeSend(ServerInfoRequest request) throws Fault {
@@ -60,7 +68,7 @@ public class ServerInfoContextManuallyAdd {
 		
 		this.utilities.processBeforeSend(request);
 		if(this.serverConfig.isDump() && dumpRequest!=null) {
-			this.processBeforeSend(request, dumpRequest);
+			this.dumpUtilities.processBeforeSend(dumpRequest);
 		}
 		
 	}
@@ -72,7 +80,7 @@ public class ServerInfoContextManuallyAdd {
 		
 		this.utilities.processAfterSend(response);
 		if(this.serverConfig.isDump() && DumpResponse!=null) {
-			this.processAfterSend(response, DumpResponse);
+			this.dumpUtilities.processAfterSend(DumpResponse);
 		}
 		
 	}

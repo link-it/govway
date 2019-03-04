@@ -33,6 +33,8 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.utils.service.context.IContext;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneHelper;
 
 /**
  * FruizioniConfEnv
@@ -43,20 +45,26 @@ import org.openspcoop2.utils.service.context.IContext;
  */
 public class FruizioniConfEnv extends ErogazioniEnv {
 	
+	
+	public final ConfigurazioneCore confCore;
+	public final ConfigurazioneHelper confHelper;
 	public final AccordoServizioParteSpecifica asps;
 	public final IdServizio idAsps;
 	public final IDPortaDelegata idPd;
 	public final IDSoggetto idErogatore;
 
 
-	public FruizioniConfEnv(HttpServletRequest req, ProfiloEnum profilo, String soggetto, IContext context, String erogatore, String nome, Integer versione, String gruppo)
+	public FruizioniConfEnv(HttpServletRequest req, ProfiloEnum profilo, String soggetto, IContext context, String erogatore, String nome, Integer versione, String gruppo, String tipoServizio)
 			throws Exception {
 		super(req, profilo, soggetto, context);
+		
+		this.confCore = new ConfigurazioneCore(this.stationCore);
+		this.confHelper = new ConfigurazioneHelper(this.stationCore, this.requestWrapper, this.pd, req.getSession());
 		
 		this.idErogatore = new IDSoggetto(this.tipo_soggetto, erogatore);
 		
 		this.asps = Helper.supplyOrNotFound( 
-				() -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, this.idErogatore, this.idSoggetto.toIDSoggetto(), this),
+				() -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, this.idErogatore, this.idSoggetto.toIDSoggetto(), this),
 				"Fruizione"
 			);
 		

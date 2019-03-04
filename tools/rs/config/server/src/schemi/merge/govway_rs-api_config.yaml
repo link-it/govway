@@ -1232,6 +1232,7 @@ paths:
     - $ref: "#/components/parameters/soggetto"
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/informazioni:
     get:
       tags:
@@ -1298,6 +1299,7 @@ paths:
     - $ref: "#/components/parameters/soggetto"
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/api:
     get:
       tags:
@@ -1363,6 +1365,7 @@ paths:
     - $ref: "#/components/parameters/soggetto"
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/allegati:
     get:
       tags:
@@ -1432,6 +1435,7 @@ paths:
     - $ref: "#/components/parameters/soggetto"
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/allegati/{nome_allegato}:
     get:
       tags:
@@ -1522,6 +1526,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_nome_allegato"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/allegati/{nome_allegato}/download:
     get:
       tags:
@@ -1562,6 +1567,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_nome_allegato"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/url-invocazione:
     get:
       tags:
@@ -1630,6 +1636,7 @@ paths:
     - $ref: "#/components/parameters/soggetto"
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/connettore:
     get:
       tags:
@@ -1696,6 +1703,7 @@ paths:
     - $ref: "#/components/parameters/soggetto"
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/gestione-cors:
     get:
       tags:
@@ -1761,6 +1769,7 @@ paths:
     - $ref: "#/components/parameters/soggetto"
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/gruppi:
     get:
       tags:
@@ -1831,6 +1840,7 @@ paths:
     - $ref: "#/components/parameters/soggetto"
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/gruppi/{nome_gruppo}:
     get:
       tags:
@@ -1920,6 +1930,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_nome_gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/gruppi/{nome_gruppo}/azioni:
     post:
       tags:
@@ -1958,6 +1969,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_nome_gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/gruppi/{nome_gruppo}/azioni/{nome_azione}:
     delete:
       tags:
@@ -1990,6 +2002,7 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_nome_gruppo"
     - $ref: "#/components/parameters/id_nome_azione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/stato:
     get:
       tags:
@@ -2054,6 +2067,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/gestione-token:
     get:
       tags:
@@ -2122,6 +2136,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autenticazione:
     get:
       tags:
@@ -2190,6 +2205,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione:
     get:
       tags:
@@ -2258,6 +2274,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/download-xacml-policy:
     get:
       tags:
@@ -2294,6 +2311,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/soggetti:
     get:
       tags:
@@ -2360,6 +2378,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/soggetti/{soggetto_autorizzato}:
     delete:
       tags:
@@ -2392,6 +2411,7 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_soggetto_autorizzato"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/applicativi:
     get:
       tags:
@@ -2458,6 +2478,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/applicativi/{applicativo_autorizzato}:
     delete:
       tags:
@@ -2490,6 +2511,7 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_applicativo_autorizzato"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/ruoli:
     get:
       tags:
@@ -2555,6 +2577,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/ruoli/{ruolo_autorizzato}:
     delete:
       tags:
@@ -2587,6 +2610,7 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_ruolo_autorizzato"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/scope:
     get:
       tags:
@@ -2652,6 +2676,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/scope/{scope_autorizzato}:
     delete:
       tags:
@@ -2684,6 +2709,168 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_scope_autorizzato"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /erogazioni/{nome}/{versione}/configurazioni/rate-limiting:
+    get:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Restituisce l'elenco delle policy di rate limiting configurate"
+      description: "Questa operazione consente di ottenere l'elenco delle policy di\
+        \ rate limiting configurate"
+      operationId: "findAllErogazioneRateLimitingPolicies"
+      responses:
+        200:
+          description: "Elenco policy di rate limiting restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaRateLimitingPolicy"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    post:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Aggiunta di una policy di rate limiting"
+      description: "Questa operazione consente di aggiungere una policy di rate limiting"
+      operationId: "addErogazioneRateLimitingPolicy"
+      requestBody:
+        description: "Policy che si vuole aggiungere"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RateLimitingPolicyErogazioneNew"
+        required: true
+      responses:
+        201:
+          description: "Policy aggiunta con con successo"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        409:
+          $ref: "#/components/responses/409Conflict"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+    - $ref: "#/components/parameters/q"
+    - $ref: "#/components/parameters/limit"
+    - $ref: "#/components/parameters/offset"
+  /erogazioni/{nome}/{versione}/configurazioni/rate-limiting/{id_policy}:
+    get:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Restituisce il dettaglio di una policy di rate limiting"
+      description: "Questa operazione consente di ottenere il dettaglio di una policy\
+        \ di rate limiting"
+      operationId: "getErogazioneRateLimitingPolicy"
+      responses:
+        200:
+          description: "Dati della policy restituiti con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RateLimitingPolicyErogazioneView"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Modifica i dati di una policy di rate limiting"
+      description: "Questa operazione consente di aggiornare i dati relativi ad una\
+        \ policy di rate limiting"
+      operationId: "updateErogazioneRateLimitingPolicy"
+      requestBody:
+        description: "Dati della policy da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RateLimitingPolicyBaseErogazione"
+        required: true
+      responses:
+        204:
+          description: "La policy è stata aggiornata correttamente"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    delete:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Elimina la policy dall'elenco delle policies attive"
+      description: "Questa operazione consente di eliminare la policy dall'elenco\
+        \ delle policies attive"
+      operationId: "deleteErogazioneRateLimitingPolicy"
+      responses:
+        204:
+          description: "Policy eliminata con successo"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/id_policy"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/validazione:
     get:
       tags:
@@ -2752,6 +2939,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/caching-risposta:
     get:
       tags:
@@ -2819,6 +3007,337 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /erogazioni/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/richiesta:
+    get:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Restituisce l'elenco delle regole di correlazione applicativa per\
+        \ la richiesta"
+      description: "Questa operazione consente di ottenere l'elenco delle regole di\
+        \ correlazione applicativa per la richiesta"
+      operationId: "findAllErogazioneTracciamentoCorrelazioneApplicativaRichiesta"
+      responses:
+        200:
+          description: "Elenco regole di correlazione applicativa restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaCorrelazioneApplicativaRichiesta"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    post:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Aggiunta di una regola di correlazione applicativa"
+      description: "Questa operazione consente di registrare una regola di correlazione\
+        \ applicativa per la richiesta"
+      operationId: "addErogazioneTracciamentoCorrelazioneApplicativaRichiesta"
+      requestBody:
+        description: "Regola di correlazione applicativa che si vuole aggiungere"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CorrelazioneApplicativaRichiesta"
+        required: true
+      responses:
+        201:
+          description: "Regola aggiunta con con successo"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        409:
+          $ref: "#/components/responses/409Conflict"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+    - $ref: "#/components/parameters/q"
+    - $ref: "#/components/parameters/limit"
+    - $ref: "#/components/parameters/offset"
+  /erogazioni/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/richiesta/{elemento}:
+    get:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Restituisce il dettaglio di una regola di correlazione applicativa\
+        \ per la richiesta"
+      description: "Questa operazione consente di ottenere il dettaglio di una regola\
+        \ di correlazione applicativa per la richiesta"
+      operationId: "getErogazioneTracciamentoCorrelazioneApplicativaRichiesta"
+      responses:
+        200:
+          description: "Dati della regola restituiti con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorrelazioneApplicativaRichiesta"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Modifica i dati di una regola di correlazione applicativa per la richiesta"
+      description: "Questa operazione consente di aggiornare i dati relativi ad una\
+        \ regola di correlazione applicativa per la richiesta"
+      operationId: "updateErogazioneTracciamentoCorrelazioneApplicativaRichiesta"
+      requestBody:
+        description: "Dati della regola da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CorrelazioneApplicativaRichiesta"
+        required: true
+      responses:
+        204:
+          description: "La regola è stata aggiornata correttamente"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    delete:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Elimina la regola di correlazione applicativa dall'elenco di quelle\
+        \ attivate per la richiesta"
+      description: "Questa operazione consente di eliminare la regola di correlazione\
+        \ applicativa dall'elenco di quelle attivate per la richiesta"
+      operationId: "deleteErogazioneTracciamentoCorrelazioneApplicativaRichiesta"
+      responses:
+        204:
+          description: "Regola eliminata con successo"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/elemento_correlazione_applicativa"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /erogazioni/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/risposta:
+    get:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Restituisce l'elenco delle regole di correlazione applicativa per\
+        \ la risposta"
+      description: "Questa operazione consente di ottenere l'elenco delle regole di\
+        \ correlazione applicativa per la risposta"
+      operationId: "findAllErogazioneTracciamentoCorrelazioneApplicativaRisposta"
+      responses:
+        200:
+          description: "Elenco regole di correlazione applicativa restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaCorrelazioneApplicativaRisposta"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    post:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Aggiunta di una regola di correlazione applicativa"
+      description: "Questa operazione consente di registrare una regola di correlazione\
+        \ applicativa per la risposta"
+      operationId: "addErogazioneTracciamentoCorrelazioneApplicativaRisposta"
+      requestBody:
+        description: "Regola di correlazione applicativa che si vuole aggiungere"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CorrelazioneApplicativaRisposta"
+        required: true
+      responses:
+        201:
+          description: "Regola aggiunta con con successo"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        409:
+          $ref: "#/components/responses/409Conflict"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+    - $ref: "#/components/parameters/q"
+    - $ref: "#/components/parameters/limit"
+    - $ref: "#/components/parameters/offset"
+  /erogazioni/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/risposta/{elemento}:
+    get:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Restituisce il dettaglio di una regola di correlazione applicativa\
+        \ per la risposta"
+      description: "Questa operazione consente di ottenere il dettaglio di una regola\
+        \ di correlazione applicativa per la risposta"
+      operationId: "getErogazioneTracciamentoCorrelazioneApplicativaRisposta"
+      responses:
+        200:
+          description: "Dati della regola restituiti con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorrelazioneApplicativaRisposta"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Modifica i dati di una regola di correlazione applicativa per la risposta"
+      description: "Questa operazione consente di aggiornare i dati relativi ad una\
+        \ regola di correlazione applicativa per la risposta"
+      operationId: "updateErogazioneTracciamentoCorrelazioneApplicativaRisposta"
+      requestBody:
+        description: "Dati della regola da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CorrelazioneApplicativaRisposta"
+        required: true
+      responses:
+        204:
+          description: "La regola è stata aggiornata correttamente"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    delete:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Elimina la regola di correlazione applicativa dall'elenco di quelle\
+        \ attivate per la risposta"
+      description: "Questa operazione consente di eliminare la regola di correlazione\
+        \ applicativa dall'elenco di quelle attivate per la risposta"
+      operationId: "deleteErogazioneTracciamentoCorrelazioneApplicativaRisposta"
+      responses:
+        204:
+          description: "Regola eliminata con successo"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/elemento_correlazione_applicativa"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/registrazione-messaggi:
     get:
       tags:
@@ -2886,6 +3405,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni:
     get:
       tags:
@@ -3011,6 +3531,7 @@ paths:
     - $ref: "#/components/parameters/id_erogatore"
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/informazioni:
     get:
       tags:
@@ -3078,6 +3599,7 @@ paths:
     - $ref: "#/components/parameters/id_erogatore"
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/api:
     get:
       tags:
@@ -3146,6 +3668,7 @@ paths:
     - $ref: "#/components/parameters/id_erogatore"
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/allegati:
     get:
       tags:
@@ -3216,6 +3739,7 @@ paths:
     - $ref: "#/components/parameters/id_erogatore"
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/allegati/{nome_allegato}:
     get:
       tags:
@@ -3307,6 +3831,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_nome_allegato"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/allegati/{nome_allegato}/download:
     get:
       tags:
@@ -3348,6 +3873,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_nome_allegato"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/url-invocazione:
     get:
       tags:
@@ -3417,6 +3943,7 @@ paths:
     - $ref: "#/components/parameters/id_erogatore"
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/connettore:
     get:
       tags:
@@ -3485,6 +4012,7 @@ paths:
     - $ref: "#/components/parameters/id_erogatore"
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/gestione-cors:
     get:
       tags:
@@ -3553,6 +4081,7 @@ paths:
     - $ref: "#/components/parameters/id_erogatore"
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/gruppi:
     get:
       tags:
@@ -3624,6 +4153,7 @@ paths:
     - $ref: "#/components/parameters/id_erogatore"
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/gruppi/{nome_gruppo}:
     get:
       tags:
@@ -3714,6 +4244,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_nome_gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/gruppi/{nome_gruppo}/azioni:
     post:
       tags:
@@ -3753,6 +4284,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_nome_gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/gruppi/{nome_gruppo}/azioni/{nome_azione}:
     delete:
       tags:
@@ -3786,6 +4318,7 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_nome_gruppo"
     - $ref: "#/components/parameters/id_nome_azione"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/stato:
     get:
       tags:
@@ -3851,6 +4384,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/gestione-token:
     get:
       tags:
@@ -3920,6 +4454,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autenticazione:
     get:
       tags:
@@ -3989,6 +4524,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione:
     get:
       tags:
@@ -4058,6 +4594,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/download-xacml-policy:
     get:
       tags:
@@ -4095,6 +4632,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/applicativi:
     get:
       tags:
@@ -4162,6 +4700,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/applicativi/{applicativo_autorizzato}:
     delete:
       tags:
@@ -4195,6 +4734,7 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_applicativo_autorizzato"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/ruoli:
     get:
       tags:
@@ -4261,6 +4801,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/ruoli/{ruolo_autorizzato}:
     delete:
       tags:
@@ -4294,6 +4835,7 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_ruolo_autorizzato"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/scope:
     get:
       tags:
@@ -4360,6 +4902,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/scope/{scope_autorizzato}:
     delete:
       tags:
@@ -4393,6 +4936,170 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_scope_autorizzato"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/rate-limiting:
+    get:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Restituisce l'elenco delle policy di rate limiting configurate"
+      description: "Questa operazione consente di ottenere l'elenco delle policy di\
+        \ rate limiting configurate"
+      operationId: "findAllFruizioneRateLimitingPolicies"
+      responses:
+        200:
+          description: "Elenco policy di rate limiting restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaRateLimitingPolicy"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    post:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Aggiunta di una policy di rate limiting"
+      description: "Questa operazione consente di aggiungere una policy di rate limiting"
+      operationId: "addFruizioneRateLimitingPolicy"
+      requestBody:
+        description: "Policy che si vuole aggiungere"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RateLimitingPolicyFruizioneNew"
+        required: true
+      responses:
+        201:
+          description: "Policy aggiunta con con successo"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        409:
+          $ref: "#/components/responses/409Conflict"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_erogatore"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+    - $ref: "#/components/parameters/q"
+    - $ref: "#/components/parameters/limit"
+    - $ref: "#/components/parameters/offset"
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/rate-limiting/{id_policy}:
+    get:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Restituisce il dettaglio di una policy di rate limiting"
+      description: "Questa operazione consente di ottenere il dettaglio di una policy\
+        \ di rate limiting"
+      operationId: "getFruizioneRateLimitingPolicy"
+      responses:
+        200:
+          description: "Dati della policy restituiti con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RateLimitingPolicyFruizioneView"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Modifica i dati di una policy di rate limiting"
+      description: "Questa operazione consente di aggiornare i dati relativi ad una\
+        \ policy di rate limiting"
+      operationId: "updateFruizioneRateLimitingPolicy"
+      requestBody:
+        description: "Dati della policy da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RateLimitingPolicyBaseFruizione"
+        required: true
+      responses:
+        204:
+          description: "La policy è stata aggiornata correttamente"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    delete:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Elimina la policy dall'elenco delle policies attive"
+      description: "Questa operazione consente di eliminare la policy dall'elenco\
+        \ delle policies attive"
+      operationId: "deleteFruizioneRateLimitingPolicy"
+      responses:
+        204:
+          description: "Policy eliminata con successo"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_erogatore"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/id_policy"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/validazione:
     get:
       tags:
@@ -4462,6 +5169,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/caching-risposta:
     get:
       tags:
@@ -4530,6 +5238,341 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/richiesta:
+    get:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Restituisce l'elenco delle regole di correlazione applicativa per\
+        \ la richiesta"
+      description: "Questa operazione consente di ottenere l'elenco delle regole di\
+        \ correlazione applicativa per la richiesta"
+      operationId: "findAllFruizioneTracciamentoCorrelazioneApplicativaRichiesta"
+      responses:
+        200:
+          description: "Elenco regole di correlazione applicativa restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaCorrelazioneApplicativaRichiesta"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    post:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Aggiunta di una regola di correlazione applicativa"
+      description: "Questa operazione consente di registrare una regola di correlazione\
+        \ applicativa per la richiesta"
+      operationId: "addFruizioneTracciamentoCorrelazioneApplicativaRichiesta"
+      requestBody:
+        description: "Regola di correlazione applicativa che si vuole aggiungere"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CorrelazioneApplicativaRichiesta"
+        required: true
+      responses:
+        201:
+          description: "Regola aggiunta con con successo"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        409:
+          $ref: "#/components/responses/409Conflict"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_erogatore"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+    - $ref: "#/components/parameters/q"
+    - $ref: "#/components/parameters/limit"
+    - $ref: "#/components/parameters/offset"
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/richiesta/{elemento}:
+    get:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Restituisce il dettaglio di una regola di correlazione applicativa\
+        \ per la richiesta"
+      description: "Questa operazione consente di ottenere il dettaglio di una regola\
+        \ di correlazione applicativa per la richiesta"
+      operationId: "getFruizioneTracciamentoCorrelazioneApplicativaRichiesta"
+      responses:
+        200:
+          description: "Dati della regola restituiti con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorrelazioneApplicativaRichiesta"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Modifica i dati di una regola di correlazione applicativa per la richiesta"
+      description: "Questa operazione consente di aggiornare i dati relativi ad una\
+        \ regola di correlazione applicativa per la richiesta"
+      operationId: "updateFruizioneTracciamentoCorrelazioneApplicativaRichiesta"
+      requestBody:
+        description: "Dati della regola da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CorrelazioneApplicativaRichiesta"
+        required: true
+      responses:
+        204:
+          description: "La regola è stata aggiornata correttamente"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    delete:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Elimina la regola di correlazione applicativa dall'elenco di quelle\
+        \ attivate per la richiesta"
+      description: "Questa operazione consente di eliminare la regola di correlazione\
+        \ applicativa dall'elenco di quelle attivate per la richiesta"
+      operationId: "deleteFruizioneTracciamentoCorrelazioneApplicativaRichiesta"
+      responses:
+        204:
+          description: "Regola eliminata con successo"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_erogatore"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/elemento_correlazione_applicativa"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/risposta:
+    get:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Restituisce l'elenco delle regole di correlazione applicativa per\
+        \ la risposta"
+      description: "Questa operazione consente di ottenere l'elenco delle regole di\
+        \ correlazione applicativa per la risposta"
+      operationId: "findAllFruizioneTracciamentoCorrelazioneApplicativaRisposta"
+      responses:
+        200:
+          description: "Elenco regole di correlazione applicativa restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaCorrelazioneApplicativaRisposta"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    post:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Aggiunta di una regola di correlazione applicativa"
+      description: "Questa operazione consente di registrare una regola di correlazione\
+        \ applicativa per la risposta"
+      operationId: "addFruizioneTracciamentoCorrelazioneApplicativaRisposta"
+      requestBody:
+        description: "Regola di correlazione applicativa che si vuole aggiungere"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CorrelazioneApplicativaRisposta"
+        required: true
+      responses:
+        201:
+          description: "Regola aggiunta con con successo"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        409:
+          $ref: "#/components/responses/409Conflict"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_erogatore"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+    - $ref: "#/components/parameters/q"
+    - $ref: "#/components/parameters/limit"
+    - $ref: "#/components/parameters/offset"
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/risposta/{elemento}:
+    get:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Restituisce il dettaglio di una regola di correlazione applicativa\
+        \ per la risposta"
+      description: "Questa operazione consente di ottenere il dettaglio di una regola\
+        \ di correlazione applicativa per la risposta"
+      operationId: "getFruizioneTracciamentoCorrelazioneApplicativaRisposta"
+      responses:
+        200:
+          description: "Dati della regola restituiti con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorrelazioneApplicativaRisposta"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Modifica i dati di una regola di correlazione applicativa per la risposta"
+      description: "Questa operazione consente di aggiornare i dati relativi ad una\
+        \ regola di correlazione applicativa per la risposta"
+      operationId: "updateFruizioneTracciamentoCorrelazioneApplicativaRisposta"
+      requestBody:
+        description: "Dati della regola da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CorrelazioneApplicativaRisposta"
+        required: true
+      responses:
+        204:
+          description: "La regola è stata aggiornata correttamente"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    delete:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Elimina la regola di correlazione applicativa dall'elenco di quelle\
+        \ attivate per la risposta"
+      description: "Questa operazione consente di eliminare la regola di correlazione\
+        \ applicativa dall'elenco di quelle attivate per la risposta"
+      operationId: "deleteFruizioneTracciamentoCorrelazioneApplicativaRisposta"
+      responses:
+        204:
+          description: "Regola eliminata con successo"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_erogatore"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/elemento_correlazione_applicativa"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/registrazione-messaggi:
     get:
       tags:
@@ -4598,6 +5641,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /soggetti:
     get:
       tags:
@@ -5716,6 +6760,10 @@ components:
       type: "string"
       description: "Può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e\
         \ dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'"
+    Tipo:
+      maxLength: 20
+      type: "string"
+      description: "Indica un tipo assegnato ad un soggetto o ad un servizio"
     BaseItem:
       required:
       - "profilo"
@@ -5781,6 +6829,14 @@ components:
       - "FatturaPA"
       - "eDelivery"
       default: "APIGateway"
+    ProfiloCollaborazioneEnum:
+      type: "string"
+      example: "sincrono"
+      enum:
+      - "oneway"
+      - "sincrono"
+      - "asincronoSimmetrico"
+      - "asincronoAsimmetrico"
     StatoApiDescrizione:
       type: "string"
       example: "Nessuna risorsa definita nella API"
@@ -6080,9 +7136,6 @@ components:
           $ref: "#/components/schemas/ConnettoreConfigurazioneProxy"
         tempi_risposta:
           $ref: "#/components/schemas/ConnettoreConfigurazioneTimeout"
-    APIImplTipoServizio:
-      maxLength: 20
-      type: "string"
     APIBaseImpl:
       required:
       - "api_nome"
@@ -6098,7 +7151,7 @@ components:
         api_soap_servizio:
           $ref: "#/components/schemas/NCName"
         tipo_servizio:
-          $ref: "#/components/schemas/APIImplTipoServizio"
+          $ref: "#/components/schemas/Tipo"
     APIImpl:
       type: "object"
       allOf:
@@ -6305,7 +7358,7 @@ components:
       type: "object"
       properties:
         tipo:
-          $ref: "#/components/schemas/APIImplTipoServizio"
+          $ref: "#/components/schemas/Tipo"
         nome:
           $ref: "#/components/schemas/NCName"
         api_soap_servizio:
@@ -6738,6 +7791,187 @@ components:
       properties:
         scope:
           $ref: "#/components/schemas/NCName"
+    RateLimitingPolicyItem:
+      required:
+      - "identificativo"
+      type: "object"
+      properties:
+        identificativo:
+          maxLength: 255
+          type: "string"
+        nome:
+          maxLength: 255
+          type: "string"
+    ListaRateLimitingPolicy:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/Lista"
+      - required:
+        - "items"
+        type: "object"
+        properties:
+          items:
+            type: "array"
+            items:
+              $ref: "#/components/schemas/RateLimitingPolicyItem"
+    RateLimitingPolicyBase:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ApiImplConfigurazioneStato"
+      - required:
+        - "stato"
+        type: "object"
+        properties:
+          nome:
+            maxLength: 255
+            type: "string"
+          stato:
+            $ref: "#/components/schemas/StatoFunzionalitaConWarningEnum"
+          soglia_ridefinita:
+            type: "boolean"
+            default: false
+          soglia_valore:
+            type: "integer"
+            format: "int32"
+          filtro:
+            $ref: "#/components/schemas/RateLimitingPolicyFiltro"
+          criterio_collezionamento_dati:
+            $ref: "#/components/schemas/RateLimitingPolicyGroupBy"
+    RateLimitingPolicyBaseErogazione:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RateLimitingPolicyBase"
+      - type: "object"
+        properties:
+          filtro:
+            $ref: "#/components/schemas/RateLimitingPolicyFiltroErogazione"
+          criterio_collezionamento_dati:
+            $ref: "#/components/schemas/RateLimitingPolicyGroupByErogazione"
+    RateLimitingPolicyBaseFruizione:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RateLimitingPolicyBase"
+      - type: "object"
+        properties:
+          filtro:
+            $ref: "#/components/schemas/RateLimitingPolicyFiltroFruizione"
+          criterio_collezionamento_dati:
+            $ref: "#/components/schemas/RateLimitingPolicyGroupByFruizione"
+    RateLimitingPolicyFiltro:
+      type: "object"
+      properties:
+        azione:
+          $ref: "#/components/schemas/NCName"
+        applicativo_fruitore:
+          $ref: "#/components/schemas/NCName"
+        chiave_tipo:
+          $ref: "#/components/schemas/RateLimitingChiaveEnum"
+        chiave_nome:
+          maxLength: 255
+          type: "string"
+          description: "La semantica cambia in funzione del tipo:\n  * header-based:\
+            \ nome dell'header\n  * url-based: espressione regolare da applicare alla\
+            \ url di invocazione\n  * form-based: nome del parametro della url\n \
+            \ * soap-action-based: in questa modalità questo parametro non viene utilizzato\n\
+            \  * content-based: xpath o json path da applicare sul contenuto\n  *\
+            \ plugin-based: tipo del plugin"
+        filtro_chiave_valore:
+          maxLength: 255
+          type: "string"
+          description: "indica il valore che deve assumere la chiave"
+    RateLimitingPolicyFiltroErogazione:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RateLimitingPolicyFiltro"
+      - type: "object"
+        properties:
+          soggetto_fruitore:
+            $ref: "#/components/schemas/SimpleName"
+    RateLimitingPolicyFiltroFruizione:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RateLimitingPolicyFiltro"
+    RateLimitingPolicyGroupBy:
+      type: "object"
+      properties:
+        azione:
+          type: "boolean"
+          default: false
+        applicativo_fruitore:
+          type: "boolean"
+          default: false
+        chiave_tipo:
+          $ref: "#/components/schemas/RateLimitingChiaveEnum"
+        chiave_nome:
+          maxLength: 255
+          type: "string"
+          description: "La semantica cambia in funzione del tipo:\n  * header-based:\
+            \ nome dell'header\n  * url-based: espressione regolare da applicare alla\
+            \ url di invocazione\n  * form-based: nome del parametro della url\n \
+            \ * soap-action-based: in questa modalità questo parametro non viene utilizzato\n\
+            \  * content-based: xpath o json path da applicare sul contenuto\n  *\
+            \ plugin-based: tipo del plugin"
+    RateLimitingPolicyGroupByErogazione:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RateLimitingPolicyGroupBy"
+      - type: "object"
+        properties:
+          soggetto_fruitore:
+            type: "boolean"
+            default: false
+    RateLimitingPolicyGroupByFruizione:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RateLimitingPolicyGroupBy"
+    RateLimitingPolicyErogazioneNew:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RateLimitingPolicyBaseErogazione"
+      - required:
+        - "policy"
+        type: "object"
+        properties:
+          policy:
+            $ref: "#/components/schemas/RateLimitingPolicyEnum"
+    RateLimitingPolicyFruizioneNew:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RateLimitingPolicyBaseFruizione"
+      - required:
+        - "policy"
+        type: "object"
+        properties:
+          policy:
+            $ref: "#/components/schemas/RateLimitingPolicyEnum"
+    RateLimitingPolicyErogazioneView:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RateLimitingPolicyBaseErogazione"
+      - required:
+        - "descrizione"
+        - "identificativo"
+        type: "object"
+        properties:
+          identificativo:
+            maxLength: 255
+            type: "string"
+          descrizione:
+            type: "string"
+    RateLimitingPolicyFruizioneView:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RateLimitingPolicyBaseFruizione"
+      - required:
+        - "descrizione"
+        - "identificativo"
+        type: "object"
+        properties:
+          identificativo:
+            maxLength: 255
+            type: "string"
+          descrizione:
+            type: "string"
     Validazione:
       type: "object"
       allOf:
@@ -6783,6 +8017,101 @@ components:
           hash_payload:
             type: "boolean"
             default: true
+    CorrelazioneApplicativaRichiestaItem:
+      required:
+      - "elemento"
+      - "identificazione_tipo"
+      type: "object"
+      properties:
+        elemento:
+          maxLength: 255
+          type: "string"
+        identificazione_tipo:
+          $ref: "#/components/schemas/CorrelazioneApplicativaRichiestaEnum"
+    CorrelazioneApplicativaRispostaItem:
+      required:
+      - "elemento"
+      - "identificazione_tipo"
+      type: "object"
+      properties:
+        elemento:
+          maxLength: 255
+          type: "string"
+        identificazione_tipo:
+          $ref: "#/components/schemas/CorrelazioneApplicativaRispostaEnum"
+    ListaCorrelazioneApplicativaRichiesta:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/Lista"
+      - required:
+        - "items"
+        type: "object"
+        properties:
+          items:
+            type: "array"
+            items:
+              $ref: "#/components/schemas/CorrelazioneApplicativaRichiestaItem"
+    ListaCorrelazioneApplicativaRisposta:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/Lista"
+      - required:
+        - "items"
+        type: "object"
+        properties:
+          items:
+            type: "array"
+            items:
+              $ref: "#/components/schemas/CorrelazioneApplicativaRispostaItem"
+    CorrelazioneApplicativaBase:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ApiImplConfigurazioneStato"
+      - type: "object"
+        properties:
+          elemento:
+            maxLength: 255
+            type: "string"
+          generazione_errore_identificazione_fallita:
+            type: "boolean"
+            default: true
+    CorrelazioneApplicativaRichiesta:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/CorrelazioneApplicativaBase"
+      - required:
+        - "identificazione"
+        type: "object"
+        properties:
+          identificazione_tipo:
+            $ref: "#/components/schemas/CorrelazioneApplicativaRichiestaEnum"
+          identificazione:
+            type: "string"
+            description: "La semantica cambia in funzione del tipo:\n  * header-based:\
+              \ nome dell'header\n  * url-based: espressione regolare da applicare\
+              \ alla url di invocazione\n  * content-based: xpath o json path da applicare\
+              \ sul contenuto\n  * input-based: questo field non deve essere valorizzato\
+              \ poichè l'informazione applicativa viene estratta dagli header di integrazione\n\
+              \  * disabilitato:  questo field non deve essere valorizzato poichè\
+              \ la funzionalità di estrazione è disabilitata"
+    CorrelazioneApplicativaRisposta:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/CorrelazioneApplicativaBase"
+      - required:
+        - "identificazione"
+        type: "object"
+        properties:
+          identificazione_tipo:
+            $ref: "#/components/schemas/CorrelazioneApplicativaRispostaEnum"
+          identificazione:
+            type: "string"
+            description: "La semantica cambia in funzione del tipo:\n  * header-based:\
+              \ nome dell'header\n  * content-based: xpath o json path da applicare\
+              \ sul contenuto\n  * input-based: questo field non deve essere valorizzato\
+              \ poichè l'informazione applicativa viene estratta dagli header di integrazione\n\
+              \  * disabilitato:  questo field non deve essere valorizzato poichè\
+              \ la funzionalità di estrazione è disabilitata"
     RegistrazioneMessaggi:
       type: "object"
       allOf:
@@ -6929,14 +8258,6 @@ components:
       - "PATCH"
       - "LINK"
       - "UNLINK"
-    ProfiloCollaborazioneEnum:
-      type: "string"
-      example: "sincrono"
-      enum:
-      - "oneway"
-      - "sincrono"
-      - "asincronoSimmetrico"
-      - "asincronoAsimmetrico"
     SslTipologiaEnum:
       type: "string"
       example: "TLSv1.2"
@@ -7006,6 +8327,7 @@ components:
       - "interface-based"
       - "soap-action-based"
       - "url-based"
+      - "protocol-based"
     TipoGestioneCorsEnum:
       type: "string"
       example: "gateway"
@@ -7038,6 +8360,43 @@ components:
       enum:
       - "default"
       - "ridefinito"
+    RateLimitingPolicyEnum:
+      type: "string"
+      example: "numero-richieste-giornaliere"
+      enum:
+      - "numero-richieste-giornaliere"
+      - "numero-richieste-orarie"
+      - "numero-richieste-minuto"
+      - "numero-richieste-simultanee"
+      - "occupazione-banda-oraria"
+      - "tempo-medio-orario"
+    RateLimitingChiaveEnum:
+      type: "string"
+      example: "content-based"
+      enum:
+      - "content-based"
+      - "header-based"
+      - "soap-action-based"
+      - "url-based"
+      - "form-based"
+      - "plugin-based"
+    CorrelazioneApplicativaRichiestaEnum:
+      type: "string"
+      example: "content-based"
+      enum:
+      - "content-based"
+      - "header-based"
+      - "url-based"
+      - "input-based"
+      - "disabilitato"
+    CorrelazioneApplicativaRispostaEnum:
+      type: "string"
+      example: "content-based"
+      enum:
+      - "content-based"
+      - "header-based"
+      - "input-based"
+      - "disabilitato"
     Money:
       required:
       - "amount"
@@ -7253,6 +8612,21 @@ components:
       schema:
         maxLength: 255
         type: "string"
+    gruppo:
+      name: "gruppo"
+      in: "query"
+      description: "Nome del Gruppo di azioni o risorse"
+      required: false
+      schema:
+        maxLength: 255
+        type: "string"
+    tipo_servizio:
+      name: "tipo_servizio"
+      in: "query"
+      description: "Indica un tipo del servizio differente da quello di default"
+      required: false
+      schema:
+        $ref: "#/components/schemas/Tipo"
     id_soggetto_autorizzato:
       name: "soggetto_autorizzato"
       in: "path"
@@ -7281,11 +8655,19 @@ components:
       required: true
       schema:
         $ref: "#/components/schemas/NCName"
-    gruppo:
-      name: "gruppo"
-      in: "query"
-      description: "Nome del Gruppo di azioni o risorse"
-      required: false
+    id_policy:
+      name: "id_policy"
+      in: "path"
+      description: "Identificativo della policy di Rate Limiting"
+      required: true
+      schema:
+        maxLength: 255
+        type: "string"
+    elemento_correlazione_applicativa:
+      name: "elemento"
+      in: "path"
+      description: "Elemento della regola di correlazione applicativa"
+      required: true
       schema:
         maxLength: 255
         type: "string"

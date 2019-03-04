@@ -31,7 +31,6 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.rs.server.api.FruizioniGruppiApi;
-import org.openspcoop2.core.config.rs.server.api.impl.Enums;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
@@ -39,13 +38,16 @@ import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniEnv;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.Gruppo;
 import org.openspcoop2.core.config.rs.server.model.GruppoAzioni;
+import org.openspcoop2.core.config.rs.server.model.GruppoEreditaConfigurazione;
 import org.openspcoop2.core.config.rs.server.model.GruppoItem;
 import org.openspcoop2.core.config.rs.server.model.GruppoNome;
 import org.openspcoop2.core.config.rs.server.model.GruppoNuovaConfigurazione;
 import org.openspcoop2.core.config.rs.server.model.ListaGruppi;
+import org.openspcoop2.core.config.rs.server.model.ModalitaConfigurazioneGruppoEnum;
 import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.utils.service.BaseImpl;
@@ -85,7 +87,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
      *
      */
 	@Override
-    public void addFruizioneGruppoAzioni(GruppoAzioni body, String erogatore, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto) {
+    public void addFruizioneGruppoAzioni(GruppoAzioni body, String erogatore, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -99,19 +101,20 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
 
 			final IDPortaDelegata idPd = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPD(nomeGruppo, env.idSoggetto.toIDSoggetto(), idAsps, env.apsCore), "Gruppo per la fruizione scelta");
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(idPd);
 						
 			List<String> azioniOccupate = ErogazioniApiHelper.getAzioniOccupateFruizione(idAsps, env.idSoggetto.toIDSoggetto(), env.apsCore, env.pdCore);
-						
-			for (String azione : body.getAzioni()) {
-				if(azioniOccupate.contains(azione)) {
-					throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml( CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE) );			
-				}
-			}
+			
+			ErogazioniApiHelper.checkAzioniAdd( 
+					body.getAzioni(),
+					azioniOccupate,
+					env.apcCore.getAzioni(asps, env.apcCore.getAccordoServizio(asps.getIdAccordo()), false, false, null)
+				);
+			
 			
 			env.requestWrapper.overrideParameterValues(CostantiControlStation.PARAMETRO_AZIONI, body.getAzioni().toArray(new String[0]));
 		
@@ -149,7 +152,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
      *
      */
 	@Override
-    public void createFruizioneGruppo(Gruppo body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void createFruizioneGruppo(Gruppo body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -160,39 +163,60 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(),  env), "Fruizione");
-			
-			// TODO: AGGIUNGI EREDITA!
-			final GruppoNuovaConfigurazione gnuovaconf = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getModalita(), body.getConfigurazione());
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(),  env), "Fruizione");
+			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
 
-			// TODO: Qui devo controllare che il mapping esista.
-			AccordiServizioParteSpecificaFruitoriPorteDelegateMappingInfo mappingInfo = AccordiServizioParteSpecificaUtilities.getMappingInfo(null, env.idSoggetto.toIDSoggetto(), asps, env.apsCore);
+		
+			String mappingPadre = null;
+			String erogazioneAutenticazione = null;
+			String erogazioneAutenticazioneOpzionale = null;				
+			
+			if ( body.getModalita() == ModalitaConfigurazioneGruppoEnum.NUOVA ) {
+				
+				final GruppoNuovaConfigurazione confNuova = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getModalita(), body.getConfigurazione());
+				erogazioneAutenticazione = confNuova.getAutenticazione().getTipo().toString();
+				erogazioneAutenticazioneOpzionale = ServletUtils.boolToCheckBoxStatus(confNuova.getAutenticazione().isOpzionale());
+				
+			}
+			
+			else if ( body.getModalita() == ModalitaConfigurazioneGruppoEnum.EREDITA ) {
+				
+				GruppoEreditaConfigurazione confEredita = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getModalita(), body.getConfigurazione());
+				List<MappingErogazionePortaApplicativa> mappings = ErogazioniApiHelper.getMappingGruppiPA( confEredita.getNome(), idAsps, env.apsCore);
+				if ( mappings.isEmpty() ) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il gruppo " + confEredita.getNome() + " da cui ereditare è inesistente");
+				}
+				
+				mappingPadre = mappings.get(0).getNome();			
+			}
+			
+			AccordiServizioParteSpecificaFruitoriPorteDelegateMappingInfo mappingInfo = AccordiServizioParteSpecificaUtilities.getMappingInfo(mappingPadre, env.idSoggetto.toIDSoggetto(), asps, env.apsCore);
 			MappingFruizionePortaDelegata mappingSelezionato = mappingInfo.getMappingSelezionato();
 			MappingFruizionePortaDelegata mappingDefault = mappingInfo.getMappingDefault();
 			
 			if ( mappingDefault == null )
 				throw FaultCode.NOT_FOUND.toException("Nessuna fruizione trovata");
 			if ( mappingSelezionato == null )
-				throw FaultCode.NOT_FOUND.toException("Gruppo con nome " + body.getNome() + " non trovato");
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Gruppo con nome  non trovato");
 			
 			List<String> azioniOccupate = mappingInfo.getAzioniOccupate();
-					
-			for (String azioneTmp : body.getAzioni()) {
-				if(azioniOccupate.contains(azioneTmp)) {
-					throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE));
-				}
-			}
+			
+			ErogazioniApiHelper.checkAzioniAdd( 
+					body.getAzioni(),
+					azioniOccupate,
+					env.apcCore.getAzioni(asps, env.apcCore.getAccordoServizio(asps.getIdAccordo()), false, false, null)
+				);
 			
 			if (!env.apsHelper.configurazioneFruizioneCheckData(
 					TipoOperazione.ADD, 
-					nome, 
+					mappingInfo.getNomeNuovaConfigurazione(), 
 					body.getNome(), 
 					body.getAzioni().toArray(new String[0]),
 					asps, 
 					azioniOccupate,
 					body.getModalita().toString(),
 					null,
-					true,
+					env.isSupportatoAutenticazioneSoggetti,
 					mappingInfo)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
@@ -201,7 +225,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			AccordiServizioParteSpecificaUtilities.addAccordoServizioParteSpecificaPorteDelegate(
 					mappingDefault,
 					mappingSelezionato,
-					nome,
+					mappingInfo.getNomeNuovaConfigurazione(), 
 					body.getNome(),
 					body.getAzioni().toArray(new String[0]),
 					body.getModalita().toString(),
@@ -259,8 +283,8 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 					null,							// responseInputDeleteAfterRead, 
 					null,							// responseInputWaitTime,
 					null,							// listExtendedConnettore, TOWAIT: mailandrea, cosa ne faccio di questa? cos'è?
-	        		Helper.evalnull( () -> Enums.tipoAutenticazioneNewFromRest.get(gnuovaconf.getAutenticazione().getTipo()).toString() ),		// erogazioneAutenticazione
-	        		Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus(gnuovaconf.getAutenticazione().isOpzionale() )), 	// erogazioneAutenticazioneOpzionale
+	        		erogazioneAutenticazione,
+	        		erogazioneAutenticazioneOpzionale,
 					"disabilitato",					// erogazioneAutorizzazione, Come da debug. 
 					null,							// erogazioneAutorizzazioneAutenticati, 
 					null,							// erogazioneAutorizzazioneRuoli, 
@@ -314,7 +338,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
      *
      */
 	@Override
-    public void deleteFruizioneGruppo(String erogatore, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto) {
+    public void deleteFruizioneGruppo(String erogatore, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -324,7 +348,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
                         
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps),asps.getId());
 			
 			// ricevo come parametro l'id della pa associata al mapping da cancellare
@@ -368,7 +392,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
      *
      */
 	@Override
-    public void deleteFruizioneGruppoAzione(String erogatore, String nome, Integer versione, String nomeGruppo, String nomeAzione, ProfiloEnum profilo, String soggetto) {
+    public void deleteFruizioneGruppoAzione(String erogatore, String nome, Integer versione, String nomeGruppo, String nomeAzione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -379,7 +403,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
             
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps),asps.getId());
 			final IDPortaDelegata idPd = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPD(nomeGruppo, env.idSoggetto.toIDSoggetto(), idAsps, env.apsCore), "Gruppo per la fruizione scelta");
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(idPd);
@@ -417,7 +441,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
      *
      */
 	@Override
-    public ListaGruppi findAllFruizioneGruppi(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, Integer limit, Integer offset, String azione) {
+    public ListaGruppi findAllFruizioneGruppi(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio, Integer limit, Integer offset, String azione) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -427,7 +451,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps),asps.getId());
 			
 			final int idLista = Liste.CONFIGURAZIONE_FRUIZIONE;
@@ -476,7 +500,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
      *
      */
 	@Override
-    public GruppoAzioni getFruizioneGruppoAzioni(String erogatore, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto) {
+    public GruppoAzioni getFruizioneGruppoAzioni(String erogatore, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -487,7 +511,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
             
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps),asps.getId());
 			
 			// ricevo come parametro l'id della pa associata al mapping da cancellare
@@ -525,7 +549,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
      *
      */
 	@Override
-    public void updateFruizioneGruppoNome(GruppoNome body, String erogatore, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto) {
+    public void updateFruizioneGruppoNome(GruppoNome body, String erogatore, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -536,7 +560,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 		      
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps),asps.getId());
 			final List<MappingFruizionePortaDelegata> listaMapping = env.apsCore.serviziFruitoriMappingList(env.idSoggetto.toIDSoggetto(), idAsps, null);
 

@@ -3,14 +3,6 @@ components:
   parameters:
    
     # Dati Identificativi nel path
-    id_nome_gruppo:
-      name: nome_gruppo
-      in: path
-      description: Nome del Gruppo di azioni o risorse
-      required: true
-      schema:
-        type: string
-        maxLength: 255
     id_soggetto_autorizzato:
       name: soggetto_autorizzato
       in: path
@@ -39,17 +31,23 @@ components:
       required: true
       schema:
         $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
-
-    # Dati Identificativi nella query
-    gruppo:
-      name: gruppo
-      in: query
-      description: Nome del Gruppo di azioni o risorse
-      required: false
+    id_policy:
+      name: id_policy
+      in: path
+      description: Identificativo della policy di Rate Limiting
+      required: true
       schema:
         type: string
         maxLength: 255
-         
+    elemento_correlazione_applicativa:
+      name: elemento
+      in: path
+      description: Elemento della regola di correlazione applicativa
+      required: true
+      schema:
+        type: string
+        maxLength: 255
+              
     # Ricerche
     tipo_api:
       name: tipo_api
@@ -423,10 +421,6 @@ components:
           
     # Base: Erogazione/Fruizione
 
-    APIImplTipoServizio:
-      type: string
-      maxLength: 20
-      
     APIBaseImpl:
       type: object
       required:
@@ -442,7 +436,7 @@ components:
         api_soap_servizio:
           $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
         tipo_servizio:
-          $ref: '#/components/schemas/APIImplTipoServizio'
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/Tipo'
           
     APIImpl:
       type: object
@@ -660,7 +654,7 @@ components:
         - nome
       properties:
         tipo:
-          $ref: '#/components/schemas/APIImplTipoServizio'
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/Tipo'
         nome:
           $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
         api_soap_servizio:
@@ -1079,6 +1073,196 @@ components:
         scope:
           $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'     
 
+    RateLimitingPolicyItem:
+       type: object
+       required:
+        - identificativo
+       properties:
+         identificativo:
+           type: string
+           maxLength: 255
+         nome:
+           type: string
+           maxLength: 255
+    ListaRateLimitingPolicy:
+      type: object
+      allOf:
+          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - type: object
+            required:
+              - items
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RateLimitingPolicyItem'
+    RateLimitingPolicyBase:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/ApiImplConfigurazioneStato'
+          - type: object
+            required:
+            - stato
+            properties:
+              nome:
+                type: string
+                maxLength: 255
+              stato:
+                $ref: '#/components/schemas/StatoFunzionalitaConWarningEnum'
+              soglia_ridefinita:
+                 type: boolean
+                 default: false
+              soglia_valore:
+                 type: integer
+                 format: int32
+              filtro:
+                 $ref: '#/components/schemas/RateLimitingPolicyFiltro'
+              criterio_collezionamento_dati:
+                 $ref: '#/components/schemas/RateLimitingPolicyGroupBy'
+    RateLimitingPolicyBaseErogazione:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/RateLimitingPolicyBase'
+          - type: object
+            properties:
+              filtro:
+                 $ref: '#/components/schemas/RateLimitingPolicyFiltroErogazione'
+              criterio_collezionamento_dati:
+                 $ref: '#/components/schemas/RateLimitingPolicyGroupByErogazione'
+    RateLimitingPolicyBaseFruizione:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/RateLimitingPolicyBase'
+          - type: object
+            properties:
+              filtro:
+                 $ref: '#/components/schemas/RateLimitingPolicyFiltroFruizione'
+              criterio_collezionamento_dati:
+                 $ref: '#/components/schemas/RateLimitingPolicyGroupByFruizione'
+                
+    RateLimitingPolicyFiltro:
+      type: object
+      properties:
+        azione:
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+        applicativo_fruitore:
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+        chiave_tipo:
+          $ref: '#/components/schemas/RateLimitingChiaveEnum'
+        chiave_nome:
+          type: string
+          description: |-
+            La semantica cambia in funzione del tipo:
+              * header-based: nome dell'header
+              * url-based: espressione regolare da applicare alla url di invocazione
+              * form-based: nome del parametro della url
+              * soap-action-based: in questa modalità questo parametro non viene utilizzato
+              * content-based: xpath o json path da applicare sul contenuto
+              * plugin-based: tipo del plugin
+          maxLength: 255
+        filtro_chiave_valore:
+          type: string
+          description: indica il valore che deve assumere la chiave
+          maxLength: 255         
+    RateLimitingPolicyFiltroErogazione:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/RateLimitingPolicyFiltro'
+          - type: object
+            properties:
+              soggetto_fruitore:
+                $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+    RateLimitingPolicyFiltroFruizione:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/RateLimitingPolicyFiltro'
+
+    RateLimitingPolicyGroupBy:
+      type: object
+      properties:
+        azione:
+          type: boolean
+          default: false
+        applicativo_fruitore:
+          type: boolean
+          default: false
+        chiave_tipo:
+          $ref: '#/components/schemas/RateLimitingChiaveEnum'
+        chiave_nome:
+          type: string
+          description: |-
+            La semantica cambia in funzione del tipo:
+              * header-based: nome dell'header
+              * url-based: espressione regolare da applicare alla url di invocazione
+              * form-based: nome del parametro della url
+              * soap-action-based: in questa modalità questo parametro non viene utilizzato
+              * content-based: xpath o json path da applicare sul contenuto
+              * plugin-based: tipo del plugin
+          maxLength: 255
+    RateLimitingPolicyGroupByErogazione:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/RateLimitingPolicyGroupBy'
+          - type: object
+            properties:
+              soggetto_fruitore:
+                type: boolean
+                default: false
+    RateLimitingPolicyGroupByFruizione:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/RateLimitingPolicyGroupBy'
+
+    RateLimitingPolicyErogazioneNew:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/RateLimitingPolicyBaseErogazione'
+          - type: object
+            required:
+            - policy
+            properties:
+              policy:
+                $ref: '#/components/schemas/RateLimitingPolicyEnum'
+    RateLimitingPolicyFruizioneNew:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/RateLimitingPolicyBaseFruizione'
+          - type: object
+            required:
+            - policy
+            properties:
+              policy:
+                $ref: '#/components/schemas/RateLimitingPolicyEnum'
+                    
+    RateLimitingPolicyErogazioneView:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/RateLimitingPolicyBaseErogazione'
+          - type: object
+            required:
+            - identificativo
+            - descrizione
+            properties:
+              identificativo:
+                type: string
+                maxLength: 255
+              descrizione:
+                type: string
+    RateLimitingPolicyFruizioneView:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/RateLimitingPolicyBaseFruizione'
+          - type: object
+            required:
+            - identificativo
+            - descrizione
+            properties:
+              identificativo:
+                type: string
+                maxLength: 255
+              descrizione:
+                type: string
+
     Validazione:
        type: object
        allOf:
@@ -1126,6 +1310,104 @@ components:
               hash_payload:
                 type: boolean
                 default: true
+
+    CorrelazioneApplicativaRichiestaItem:
+       type: object
+       required:
+         - elemento
+         - identificazione_tipo
+       properties:
+          elemento:
+            type: string
+            maxLength: 255
+          identificazione_tipo:
+            $ref: '#/components/schemas/CorrelazioneApplicativaRichiestaEnum'
+    CorrelazioneApplicativaRispostaItem:
+       type: object
+       required:
+         - elemento
+         - identificazione_tipo
+       properties:
+          elemento:
+            type: string
+            maxLength: 255
+          identificazione_tipo:
+            $ref: '#/components/schemas/CorrelazioneApplicativaRispostaEnum'
+  
+    ListaCorrelazioneApplicativaRichiesta:
+      type: object
+      allOf:
+          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - type: object
+            required:
+              - items
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CorrelazioneApplicativaRichiestaItem'
+    ListaCorrelazioneApplicativaRisposta:
+      type: object
+      allOf:
+          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - type: object
+            required:
+              - items
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CorrelazioneApplicativaRispostaItem'
+          
+    CorrelazioneApplicativaBase:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/ApiImplConfigurazioneStato'
+          - type: object
+            properties:
+              elemento:
+                type: string
+                maxLength: 255
+              generazione_errore_identificazione_fallita:
+                type: boolean
+                default: true
+    CorrelazioneApplicativaRichiesta:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/CorrelazioneApplicativaBase'
+          - type: object
+            required:
+            - identificazione
+            properties:
+              identificazione_tipo:
+                $ref: '#/components/schemas/CorrelazioneApplicativaRichiestaEnum'
+              identificazione:
+                type: string
+                description: |-
+                  La semantica cambia in funzione del tipo:
+                    * header-based: nome dell'header
+                    * url-based: espressione regolare da applicare alla url di invocazione
+                    * content-based: xpath o json path da applicare sul contenuto
+                    * input-based: questo field non deve essere valorizzato poichè l'informazione applicativa viene estratta dagli header di integrazione
+                    * disabilitato:  questo field non deve essere valorizzato poichè la funzionalità di estrazione è disabilitata
+    CorrelazioneApplicativaRisposta:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/CorrelazioneApplicativaBase'
+          - type: object
+            required:
+            - identificazione
+            properties:
+              identificazione_tipo:
+                $ref: '#/components/schemas/CorrelazioneApplicativaRispostaEnum'
+              identificazione:
+                type: string
+                description: |-
+                  La semantica cambia in funzione del tipo:
+                    * header-based: nome dell'header
+                    * content-based: xpath o json path da applicare sul contenuto
+                    * input-based: questo field non deve essere valorizzato poichè l'informazione applicativa viene estratta dagli header di integrazione
+                    * disabilitato:  questo field non deve essere valorizzato poichè la funzionalità di estrazione è disabilitata
 
     RegistrazioneMessaggi:
        type: object
@@ -1226,10 +1508,6 @@ components:
       type: string
       enum: ['Qualsiasi', 'GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'TRACE', 'PATCH', 'LINK', 'UNLINK']
       example: 'POST'
-    ProfiloCollaborazioneEnum:
-      type: string
-      enum: ['oneway', 'sincrono', 'asincronoSimmetrico', 'asincronoAsimmetrico']
-      example: 'sincrono'
     SslTipologiaEnum:
       type: string
       enum: ['SSLv2Hello', 'SSLv3', 'TLSv1', 'TLSv1.1', 'TLSv1.2']
@@ -1262,7 +1540,7 @@ components:
       default: 'all'    
     ModalitaIdentificazioneAzioneEnum:
       type: string
-      enum: ['content-based', 'header-based', 'input-based', 'interface-based', 'soap-action-based', 'url-based']
+      enum: ['content-based', 'header-based', 'input-based', 'interface-based', 'soap-action-based', 'url-based', 'protocol-based']
       example: 'interface-based'   
     TipoGestioneCorsEnum:
       type: string
@@ -1284,3 +1562,19 @@ components:
       type: string
       enum: ['default', 'ridefinito']
       example: 'ridefinito'
+    RateLimitingPolicyEnum:
+      type: string
+      enum: ['numero-richieste-giornaliere', 'numero-richieste-orarie', 'numero-richieste-minuto', 'numero-richieste-simultanee', 'occupazione-banda-oraria', 'tempo-medio-orario']
+      example: 'numero-richieste-giornaliere'
+    RateLimitingChiaveEnum:
+      type: string
+      enum: ['content-based', 'header-based', 'soap-action-based', 'url-based', 'form-based', 'plugin-based']
+      example: 'content-based'   
+    CorrelazioneApplicativaRichiestaEnum:
+      type: string
+      enum: ['content-based', 'header-based', 'url-based', 'input-based', 'disabilitato']
+      example: 'content-based'
+    CorrelazioneApplicativaRispostaEnum:
+      type: string
+      enum: ['content-based', 'header-based', 'input-based', 'disabilitato']
+      example: 'content-based'   

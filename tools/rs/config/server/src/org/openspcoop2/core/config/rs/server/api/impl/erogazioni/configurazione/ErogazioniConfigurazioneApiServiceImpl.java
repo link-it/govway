@@ -21,12 +21,24 @@
  */
 package org.openspcoop2.core.config.rs.server.api.impl.erogazioni.configurazione;
 
+import static org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper.convert;
+import static org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper.correlazioneApplicativaRichiestaCheckData;
+import static org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper.correlazioneApplicativaRispostaCheckData;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.AutorizzazioneScope;
+import org.openspcoop2.core.config.CorrelazioneApplicativa;
+import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
+import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -67,12 +79,30 @@ import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazion
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneView;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiGestioneToken;
+import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRichiesta;
+import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRichiestaEnum;
+import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRichiestaItem;
+import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRisposta;
+import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRispostaEnum;
+import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRispostaItem;
 import org.openspcoop2.core.config.rs.server.model.GestioneCors;
+import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRichiesta;
+import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRisposta;
+import org.openspcoop2.core.config.rs.server.model.ListaRateLimitingPolicy;
 import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBaseErogazione;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneNew;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneView;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyItem;
 import org.openspcoop2.core.config.rs.server.model.RegistrazioneMessaggi;
 import org.openspcoop2.core.config.rs.server.model.StatoFunzionalitaConWarningEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneEnum;
 import org.openspcoop2.core.config.rs.server.model.Validazione;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
+import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -88,11 +118,13 @@ import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.servlet.ConsoleUtilities;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCore;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-
 /**
  * ErogazioniConfigurazioneApiServiceImpl
  * 
@@ -117,7 +149,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void addErogazioneControlloAccessiAutorizzazionePuntualeApplicativi(ControlloAccessiAutorizzazioneApplicativo body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public void addErogazioneControlloAccessiAutorizzazionePuntualeApplicativi(ControlloAccessiAutorizzazioneApplicativo body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -127,11 +159,11 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			Helper.throwIfNull(body);
 			
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
-			
-			if ( TipoAutorizzazione.toEnumConstant(pa.getAutorizzazione()) != TipoAutorizzazione.AUTHENTICATED) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autenticazione puntuale per soggetti non è abilitata");
+
+			if ( !TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione()) ) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autenticazione puntuale non è abilitata");
 			}
 			
 			final IDServizioApplicativo idSA = new IDServizioApplicativo();
@@ -197,7 +229,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void addErogazioneControlloAccessiAutorizzazionePuntualeSoggetti(ControlloAccessiAutorizzazioneSoggetto body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public void addErogazioneControlloAccessiAutorizzazionePuntualeSoggetti(ControlloAccessiAutorizzazioneSoggetto body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			
@@ -209,12 +241,10 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
                         
 			Helper.throwIfNull(body);
 			
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
-			// TODO: MailAndrea, ho difficoltà nel recuperare correttamente l'opzione di autorizzazione puntuale soggetti
-			// evitando di modificare ulteroriormente, va bene aggiungere || != TipoAutorizzazione.Authenticated_Or_roles?
-			if ( TipoAutorizzazione.toEnumConstant(pa.getAutorizzazione()) != TipoAutorizzazione.AUTHENTICATED) {
+			if ( !TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione())) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autenticazione puntuale per soggetti non è abilitata");
 			}
 			
@@ -231,7 +261,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final List<org.openspcoop2.core.registry.Soggetto> soggettiCompatibili = env.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, null);
 			
 			if (!Helper.findFirst(soggettiCompatibili, s -> s.getId() == daAutenticare.getId()).isPresent()) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto scelto non supporta l'autenticazione del gruppo");
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto scelto non supporta l'autenticazione per il gruppo");
 			}
 			
 			if (pa.getSoggetti() == null) pa.setSoggetti(new PortaApplicativaAutorizzazioneSoggetti());
@@ -280,7 +310,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void addErogazioneControlloAccessiAutorizzazioneRuoli(ControlloAccessiAutorizzazioneRuolo body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public void addErogazioneControlloAccessiAutorizzazioneRuoli(ControlloAccessiAutorizzazioneRuolo body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");
@@ -290,11 +320,11 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			Helper.throwIfNull(body);
 			
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			if ( !TipoAutorizzazione.isRolesRequired(pa.getAutorizzazione()) ) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione per ruoli non è abilitata");	
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione per ruoli non è abilitata per il gruppo scelto");	
 			}
 			
 			final RuoliCore ruoliCore = new RuoliCore(env.stationCore);
@@ -359,7 +389,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void addErogazioneControlloAccessiAutorizzazioneScope(ControlloAccessiAutorizzazioneScope body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public void addErogazioneControlloAccessiAutorizzazioneScope(ControlloAccessiAutorizzazioneScope body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -369,7 +399,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			Helper.throwIfNull(body);			
 			
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			if(pa.getScope()==null) {
@@ -418,13 +448,152 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
     }
     
     /**
-     * Elimina applicativi dall'elenco degli applicativi autorizzati puntualmente
+     * Aggiunta di una policy di rate limiting
      *
-     * Questa operazione consente di eliminare applicativi dall'elenco degli applicativi autorizzati puntualmente
+     * Questa operazione consente di aggiungere una policy di rate limiting
      *
      */
 	@Override
-    public void deleteErogazioneControlloAccessiAutorizzazionePuntualeApplicativi(String nome, Integer versione, String applicativoAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public void addErogazioneRateLimitingPolicy(RateLimitingPolicyErogazioneNew body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio, String q, Integer limit, Integer offset) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+			
+			Helper.throwIfNull(body);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			
+			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = env.confCore.getConfigurazioneControlloTraffico();
+
+			AttivazionePolicy policy = new AttivazionePolicy();
+			policy.setFiltro(new AttivazionePolicyFiltro());
+			policy.setGroupBy(new AttivazionePolicyRaggruppamento());
+			
+			final RuoloPolicy ruoloPorta = RuoloPolicy.APPLICATIVA;
+			final String nomePorta = pa.getNome();
+			final String idPolicy = ErogazioniApiHelper.getIdInfoPolicy(body.getPolicy());
+			
+			policy.setIdPolicy(idPolicy);
+			
+			// Questo lo prendo paro paro dal codice della console.
+			InfoPolicy infoPolicy = env.confCore.getInfoPolicy(policy.getIdPolicy());
+			int counter = env.confCore.getFreeCounterForGlobalPolicy(infoPolicy.getIdPolicy());
+			policy.setIdActivePolicy(infoPolicy.getIdPolicy()+":"+counter);
+			
+			ErogazioniApiHelper.override(body, env.idSoggetto.toIDSoggetto(), env.requestWrapper);
+			
+			String errorAttivazione = env.confHelper.readDatiAttivazionePolicyFromHttpParameters(policy, false, TipoOperazione.ADD, infoPolicy);
+			if ( !StringUtils.isEmpty(errorAttivazione) ) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(errorAttivazione));
+			}
+			
+			policy.getFiltro().setEnabled(true);
+			policy.getFiltro().setProtocollo(env.tipo_protocollo);
+			policy.getFiltro().setRuoloPorta(ruoloPorta);
+			policy.getFiltro().setNomePorta(nomePorta);
+		
+			StringBuffer existsMessage = new StringBuffer();
+			if ( ConfigurazioneUtilities.alreadyExists(
+					TipoOperazione.ADD,
+					env.confCore,
+					env.confHelper,
+					policy, 
+					infoPolicy,
+					ruoloPorta, 
+					nomePorta, 
+					existsMessage, 
+					org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE
+				)) {
+				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
+			}
+
+			if (! env.confHelper.attivazionePolicyCheckData(TipoOperazione.ADD, configurazioneControlloTraffico, policy,infoPolicy, ruoloPorta, nomePorta) ) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			}
+		
+			env.confCore.performCreateOperation(env.userLogin, false, policy);
+
+			context.getLogger().info("Invocazione completata con successo");
+        
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
+     * Aggiunta di una regola di correlazione applicativa
+     *
+     * Questa operazione consente di registrare una regola di correlazione applicativa per la richiesta
+     *
+     */
+	@Override
+    public void addErogazioneTracciamentoCorrelazioneApplicativaRichiesta(CorrelazioneApplicativaRichiesta body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio, String q, Integer limit, Integer offset) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+			
+			Helper.throwIfNull(body);
+			
+			if ( body.getElemento() == null )
+				body.setElemento("");
+                        
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			final Long idPorta = pa.getId();
+			
+			StringBuffer existsMessage = new StringBuffer();
+			if ( ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRichiesta(env.paCore, idPorta, body.getElemento(), 0, existsMessage)) {
+				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
+			}
+			
+			if ( !correlazioneApplicativaRichiestaCheckData(TipoOperazione.ADD, env.requestWrapper, env.paHelper, false, body, idPorta, null) ) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			}
+									
+			CorrelazioneApplicativa ca = pa.getCorrelazioneApplicativa();
+			if (ca == null) {
+				ca = new CorrelazioneApplicativa();
+			}
+			ca.addElemento(convert(body));
+			pa.setCorrelazioneApplicativa(ca);
+			
+			env.paCore.performUpdateOperation(env.userLogin, false, pa);
+
+					
+			context.getLogger().info("Invocazione completata con successo");
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
+	/**
+     * Aggiunta di una regola di correlazione applicativa
+     *
+     * Questa operazione consente di registrare una regola di correlazione applicativa per la risposta
+     *
+     */
+	@Override
+    public void addErogazioneTracciamentoCorrelazioneApplicativaRisposta(CorrelazioneApplicativaRisposta body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio, String q, Integer limit, Integer offset) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -432,7 +601,61 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
 			
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			Helper.throwIfNull(body);
+			
+			if ( body.getElemento() == null )
+				body.setElemento("");
+                        
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			final Long idPorta = pa.getId();
+			
+			
+			StringBuffer existsMessage = new StringBuffer();
+			if ( ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRisposta(env.paCore, idPorta, body.getElemento(), 0, existsMessage)) {
+				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
+			}
+			
+			if ( !correlazioneApplicativaRispostaCheckData(TipoOperazione.ADD, env.requestWrapper, env.pdHelper, false, body, idPorta, null)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			}
+                       			
+			if ( pa.getCorrelazioneApplicativaRisposta() == null)
+				pa.setCorrelazioneApplicativaRisposta(new org.openspcoop2.core.config.CorrelazioneApplicativaRisposta());
+			
+			pa.getCorrelazioneApplicativaRisposta().addElemento(convert(body));
+			
+			env.paCore.performUpdateOperation(env.userLogin, false, pa);
+			
+			context.getLogger().info("Invocazione completata con successo");       
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
+     * Elimina applicativi dall'elenco degli applicativi autorizzati puntualmente
+     *
+     * Questa operazione consente di eliminare applicativi dall'elenco degli applicativi autorizzati puntualmente
+     *
+     */
+	@Override
+    public void deleteErogazioneControlloAccessiAutorizzazionePuntualeApplicativi(String nome, Integer versione, String applicativoAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+			
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			if (pa.getServiziApplicativiAutorizzati() == null)	pa.setServiziApplicativiAutorizzati(new PortaApplicativaAutorizzazioneServiziApplicativi());
@@ -465,7 +688,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void deleteErogazioneControlloAccessiAutorizzazionePuntualeSoggetti(String nome, Integer versione, String soggettoAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public void deleteErogazioneControlloAccessiAutorizzazionePuntualeSoggetti(String nome, Integer versione, String soggettoAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -474,7 +697,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
 
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			if (pa.getSoggetti() == null)	pa.setSoggetti(new PortaApplicativaAutorizzazioneSoggetti());
@@ -509,7 +732,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void deleteErogazioneControlloAccessiAutorizzazioneRuoli(String nome, Integer versione, String ruoloAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public void deleteErogazioneControlloAccessiAutorizzazioneRuoli(String nome, Integer versione, String ruoloAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -517,7 +740,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			if (pa.getRuoli() == null)	pa.setRuoli(new AutorizzazioneRuoli());
@@ -551,7 +774,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void deleteErogazioneControlloAccessiAutorizzazioneScope(String nome, Integer versione, String scopeAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public void deleteErogazioneControlloAccessiAutorizzazioneScope(String nome, Integer versione, String scopeAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -559,7 +782,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
 			
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			if (pa.getScope() == null)	pa.setScope(new AutorizzazioneScope());
@@ -588,13 +811,169 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
     }
     
     /**
+     * Elimina la policy dall'elenco delle policies attive
+     *
+     * Questa operazione consente di eliminare la policy dall'elenco delle policies attive
+     *
+     */
+	@Override
+    public void deleteErogazioneRateLimitingPolicy(String nome, Integer versione, String idPolicy, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			
+			List<AttivazionePolicy> policies = env.confCore.attivazionePolicyList(null, RuoloPolicy.APPLICATIVA, pa.getNome());
+			AttivazionePolicy policy = Helper.findFirst( policies, p -> p.getIdActivePolicy().equals(idPolicy) ).orElse(null);
+			
+			if ( policy != null ) {
+				StringBuffer inUsoMessage = new StringBuffer();
+				List<AttivazionePolicy> policyRimosse = new ArrayList<AttivazionePolicy>();
+				
+				ConfigurazioneUtilities.deleteAttivazionePolicy(
+						new ArrayList<AttivazionePolicy>(Arrays.asList( policy )), 
+						env.confHelper, 
+						env.confCore, 
+						env.userLogin, 
+						inUsoMessage, 
+						org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, policyRimosse
+					);
+				
+				if ( inUsoMessage.length() > 0 ) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+				}
+				
+			}
+			else if ( env.delete_404 ) {
+				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting con id " + idPolicy );
+			}
+	   
+			context.getLogger().info("Invocazione completata con successo");
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
+     * Elimina la regola di correlazione applicativa dall'elenco di quelle attivate per la richiesta
+     *
+     * Questa operazione consente di eliminare la regola di correlazione applicativa dall'elenco di quelle attivate per la richiesta
+     *
+     */
+	@Override
+    public void deleteErogazioneTracciamentoCorrelazioneApplicativaRichiesta(String nome, Integer versione, String elemento, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			
+			final CorrelazioneApplicativa correlazioneApplicativa = pa.getCorrelazioneApplicativa();
+			
+			final String searchElemento = elemento.equals("*")
+					? ""
+				  	: elemento;	
+									
+			CorrelazioneApplicativaElemento to_del = Helper.evalnull( () -> Helper.findAndRemoveFirst( 
+					correlazioneApplicativa.getElementoList(), 
+					e -> e.getNome().equals(searchElemento)
+				));
+			
+			if ( to_del != null ) {
+				env.paCore.performUpdateOperation(env.userLogin, false, pa);
+			}
+			
+			else if (env.delete_404) {
+				throw FaultCode.NOT_FOUND.toException("Correlazione applicativa per l'elemento " + elemento + " non trovata");
+			}
+				
+			
+			context.getLogger().info("Invocazione completata con successo");     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
+     * Elimina la regola di correlazione applicativa dall'elenco di quelle attivate per la risposta
+     *
+     * Questa operazione consente di eliminare la regola di correlazione applicativa dall'elenco di quelle attivate per la risposta
+     *
+     */
+	@Override
+    public void deleteErogazioneTracciamentoCorrelazioneApplicativaRisposta(String nome, Integer versione, String elemento, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			
+			org.openspcoop2.core.config.CorrelazioneApplicativaRisposta correlazioneApplicativa = pa.getCorrelazioneApplicativaRisposta();
+			
+			final String searchElemento = elemento.equals("*")
+					? ""
+				  	: elemento;	
+									
+			CorrelazioneApplicativaRispostaElemento to_del = Helper.evalnull( () -> Helper.findAndRemoveFirst( 
+					correlazioneApplicativa.getElementoList(), 
+					e -> e.getNome().equals(searchElemento)
+				));
+			
+			if ( to_del != null ) {
+				env.paCore.performUpdateOperation(env.userLogin, false, pa);
+			}
+			
+			else if (env.delete_404) {
+				throw FaultCode.NOT_FOUND.toException("Correlazione applicativa per l'elemento " + elemento + " non trovata");
+			}        
+			context.getLogger().info("Invocazione completata con successo");
+        
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
      * Restituisce la policy XACML associata all'autorizzazione
      *
      * Questa operazione consente di ottenere la policy XACML associata all'autorizzazione
      *
      */
 	@Override
-    public byte[] downloadErogazioneControlloAccessiAutorizzazioneXacmlPolicy(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public byte[] downloadErogazioneControlloAccessiAutorizzazioneXacmlPolicy(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -602,7 +981,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
 			
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			if (pa.getXacmlPolicy() == null)
@@ -623,13 +1002,168 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
     }
     
     /**
+     * Restituisce l'elenco delle policy di rate limiting configurate
+     *
+     * Questa operazione consente di ottenere l'elenco delle policy di rate limiting configurate
+     *
+     */
+	@Override
+    public ListaRateLimitingPolicy findAllErogazioneRateLimitingPolicies(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio, String q, Integer limit, Integer offset) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+			
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			
+			final int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
+			final Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
+			List<AttivazionePolicy> policies = env.confCore.attivazionePolicyList(ricerca, RuoloPolicy.APPLICATIVA, pa.getNome());
+
+			if ( env.findall_404 && policies.isEmpty() ) {
+				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting associata");
+			}
+			
+			ListaRateLimitingPolicy ret = Helper.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset, limit, ricerca.getNumEntries(idLista), ListaRateLimitingPolicy.class);
+			
+			policies.forEach( p -> {
+				RateLimitingPolicyItem item = new RateLimitingPolicyItem();
+				item.setIdentificativo(p.getIdActivePolicy());
+				item.setNome(p.getAlias());ret.addItemsItem(item);
+				ret.addItemsItem(item);
+			});
+                              
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
+     * Restituisce l'elenco delle regole di correlazione applicativa per la richiesta
+     *
+     * Questa operazione consente di ottenere l'elenco delle regole di correlazione applicativa per la richiesta
+     *
+     */
+	@Override
+    public ListaCorrelazioneApplicativaRichiesta findAllErogazioneTracciamentoCorrelazioneApplicativaRichiesta(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio, String q, Integer limit, Integer offset) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+			
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			
+			final int idLista = Liste.PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA;
+			final Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
+			
+			List<CorrelazioneApplicativaElemento> lista = env.paCore.porteApplicativeCorrelazioneApplicativaList(pa.getId().intValue(), ricerca);
+
+			if ( env.findall_404 && lista.isEmpty() ) {
+				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting associata");
+			}
+			
+			ListaCorrelazioneApplicativaRichiesta ret = Helper.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset, limit, ricerca.getNumEntries(idLista), ListaCorrelazioneApplicativaRichiesta.class);
+			
+			lista.forEach( c -> {
+				CorrelazioneApplicativaRichiestaItem item = new CorrelazioneApplicativaRichiestaItem();
+				item.setElemento( StringUtils.isEmpty(c.getNome()) 
+						? "*"
+						: c.getNome() 
+					);
+				
+				item.setIdentificazioneTipo(CorrelazioneApplicativaRichiestaEnum.valueOf(c.getIdentificazione().name()));
+				ret.addItemsItem(item);
+			});
+
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
+     * Restituisce l'elenco delle regole di correlazione applicativa per la risposta
+     *
+     * Questa operazione consente di ottenere l'elenco delle regole di correlazione applicativa per la risposta
+     *
+     */
+	@Override
+    public ListaCorrelazioneApplicativaRisposta findAllErogazioneTracciamentoCorrelazioneApplicativaRisposta(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio, String q, Integer limit, Integer offset) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			
+			final int idLista = Liste.PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RISPOSTA;
+			final Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
+			
+			List<CorrelazioneApplicativaRispostaElemento> lista = env.paCore.porteApplicativeCorrelazioneApplicativaRispostaList(pa.getId().intValue(), ricerca);
+
+			if ( env.findall_404 && lista.isEmpty() ) {
+				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting associata");
+			}
+			
+			ListaCorrelazioneApplicativaRisposta ret = Helper.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset, limit, ricerca.getNumEntries(idLista), ListaCorrelazioneApplicativaRisposta.class);
+			
+			lista.forEach( c -> {
+				CorrelazioneApplicativaRispostaItem item = new CorrelazioneApplicativaRispostaItem();
+				item.setElemento( StringUtils.isEmpty(c.getNome()) 
+						? "*"
+						: c.getNome() 
+					);				item.setIdentificazioneTipo(CorrelazioneApplicativaRispostaEnum.valueOf(c.getIdentificazione().name()));
+				ret.addItemsItem(item);
+			});        
+			
+			context.getLogger().info("Invocazione completata con successo");
+        	return ret;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
      * Restituisce la configurazione relativa al caching delle risposte
      *
      * Questa operazione consente di ottenere la configurazione relativa al caching delle risposte
      *
      */
 	@Override
-    public CachingRisposta getErogazioneCachingRisposta(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public CachingRisposta getErogazioneCachingRisposta(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -638,7 +1172,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
 
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			CachingRisposta ret = ErogazioniApiHelper.buildCachingRisposta(pa.getResponseCaching());
@@ -665,7 +1199,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public ControlloAccessiAutenticazione getErogazioneControlloAccessiAutenticazione(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public ControlloAccessiAutenticazione getErogazioneControlloAccessiAutenticazione(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -673,7 +1207,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
 			
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			final APIImplAutenticazione autRet = new APIImplAutenticazione();
@@ -715,7 +1249,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public ControlloAccessiAutorizzazioneView getErogazioneControlloAccessiAutorizzazione(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public ControlloAccessiAutorizzazioneView getErogazioneControlloAccessiAutorizzazione(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -724,7 +1258,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			context.getLogger().debug("Autorizzazione completata con successo");    
 			
 
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			ControlloAccessiAutorizzazioneView ret = ErogazioniApiHelper.controlloAccessiAutorizzazioneFromPA(pa);
@@ -749,7 +1283,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public ControlloAccessiAutorizzazioneApplicativi getErogazioneControlloAccessiAutorizzazionePuntualeApplicativi(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public ControlloAccessiAutorizzazioneApplicativi getErogazioneControlloAccessiAutorizzazionePuntualeApplicativi(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -757,7 +1291,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
 			
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			ControlloAccessiAutorizzazioneApplicativi ret = new ControlloAccessiAutorizzazioneApplicativi();
@@ -784,7 +1318,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public ControlloAccessiAutorizzazioneSoggetti getErogazioneControlloAccessiAutorizzazionePuntualeSoggetti(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public ControlloAccessiAutorizzazioneSoggetti getErogazioneControlloAccessiAutorizzazionePuntualeSoggetti(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -792,7 +1326,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			ControlloAccessiAutorizzazioneSoggetti ret = new ControlloAccessiAutorizzazioneSoggetti();
@@ -821,7 +1355,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public ControlloAccessiAutorizzazioneRuoli getErogazioneControlloAccessiAutorizzazioneRuoli(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public ControlloAccessiAutorizzazioneRuoli getErogazioneControlloAccessiAutorizzazioneRuoli(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -829,7 +1363,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			final ControlloAccessiAutorizzazioneRuoli ret = new ControlloAccessiAutorizzazioneRuoli(); 
                         
@@ -856,7 +1390,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public ControlloAccessiAutorizzazioneScopes getErogazioneControlloAccessiAutorizzazioneScope(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public ControlloAccessiAutorizzazioneScopes getErogazioneControlloAccessiAutorizzazioneScope(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -864,7 +1398,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
 
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);	
 			final ControlloAccessiAutorizzazioneScopes ret = new ControlloAccessiAutorizzazioneScopes();
 			
@@ -891,7 +1425,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public ControlloAccessiGestioneToken getErogazioneControlloAccessiGestioneToken(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public ControlloAccessiGestioneToken getErogazioneControlloAccessiGestioneToken(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -899,7 +1433,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 		
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);	
 			
 			final ControlloAccessiGestioneToken ret = new ControlloAccessiGestioneToken();
@@ -936,7 +1470,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public GestioneCors getErogazioneGestioneCORS(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public GestioneCors getErogazioneGestioneCORS(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -945,7 +1479,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio , nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
 			
 			final IDPortaApplicativa idPa = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPADefault( idAsps, env.apsCore ),  "Gruppo default per l'erogazione scelta" );
@@ -967,15 +1501,15 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
     }
-
-	/**
-     * Restituisce la configurazione relativa alla registrazione dei messaggi
+    
+    /**
+     * Restituisce il dettaglio di una policy di rate limiting
      *
-     * Questa operazione consente di ottenere la configurazione relativa alla registrazione dei messaggi
+     * Questa operazione consente di ottenere il dettaglio di una policy di rate limiting
      *
      */
 	@Override
-    public RegistrazioneMessaggi getErogazioneRegistrazioneMessaggi(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public RateLimitingPolicyErogazioneView getErogazioneRateLimitingPolicy(String nome, Integer versione, String idPolicy, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -983,7 +1517,49 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			
+			List<AttivazionePolicy> policies = env.confCore.attivazionePolicyList(null, RuoloPolicy.APPLICATIVA, pa.getNome());
+			AttivazionePolicy policy = Helper.findFirst( policies, p -> p.getIdActivePolicy().equals(idPolicy) ).orElse(null);
+			
+			if ( policy == null ) 
+				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting con id " + idPolicy );
+			
+			InfoPolicy infoPolicy = env.confCore.getInfoPolicy(policy.getIdPolicy());
+						
+			RateLimitingPolicyErogazioneView ret = ErogazioniApiHelper.convert(policy, infoPolicy, new RateLimitingPolicyErogazioneView());
+			
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
+     * Restituisce la configurazione relativa alla registrazione dei messaggi
+     *
+     * Questa operazione consente di ottenere la configurazione relativa alla registrazione dei messaggi
+     *
+     */
+	@Override
+    public RegistrazioneMessaggi getErogazioneRegistrazioneMessaggi(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+			
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);	
 			final RegistrazioneMessaggi ret = ErogazioniApiHelper.fromDumpConfigurazione(pa.getDump());
 			
@@ -1008,7 +1584,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public ApiImplStato getErogazioneStato(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public ApiImplStato getErogazioneStato(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1016,7 +1592,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 		
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			final ApiImplStato ret = new ApiImplStato();
@@ -1038,13 +1614,102 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
     }
     
     /**
+     * Restituisce il dettaglio di una regola di correlazione applicativa per la richiesta
+     *
+     * Questa operazione consente di ottenere il dettaglio di una regola di correlazione applicativa per la richiesta
+     *
+     */
+	@Override
+    public CorrelazioneApplicativaRichiesta getErogazioneTracciamentoCorrelazioneApplicativaRichiesta(String nome, Integer versione, String elemento, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+			
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			
+			final String searchElemento = elemento.equals("*")
+					? ""
+					: elemento;			
+			List<CorrelazioneApplicativaElemento> lista = Helper.evalnull( () -> pa.getCorrelazioneApplicativa().getElementoList() );
+            
+			Optional<CorrelazioneApplicativaElemento> el = Helper.findFirst( lista, c -> c.getNome().equals(searchElemento) );
+			
+			if ( !el.isPresent() )
+				throw FaultCode.NOT_FOUND.toException("CorrelazioneApplicativaRichiesta per l'elemento " + elemento + " non presente");
+			
+			CorrelazioneApplicativaRichiesta ret = ErogazioniApiHelper.convert(el.get());
+			
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
+     * Restituisce il dettaglio di una regola di correlazione applicativa per la risposta
+     *
+     * Questa operazione consente di ottenere il dettaglio di una regola di correlazione applicativa per la risposta
+     *
+     */
+	@Override
+    public CorrelazioneApplicativaRisposta getErogazioneTracciamentoCorrelazioneApplicativaRisposta(String nome, Integer versione, String elemento, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");    
+			
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			
+			final String searchElemento = elemento.equals("*")
+					? ""
+					: elemento;			
+			
+			List<CorrelazioneApplicativaRispostaElemento> lista = Helper.evalnull( () -> pa.getCorrelazioneApplicativaRisposta().getElementoList() );
+            
+			Optional<CorrelazioneApplicativaRispostaElemento> el = Helper.findFirst( lista, c -> c.getNome().equals(searchElemento) );
+			
+			if ( !el.isPresent() )
+				throw FaultCode.NOT_FOUND.toException("CorrelazioneApplicativaRisposta per l'elemento " + elemento + " non presente");
+			
+			CorrelazioneApplicativaRisposta ret = ErogazioniApiHelper.convert(el.get());
+			
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
      * Restituisce la configurazione relativa alla validazione dei contenuti applicativi
      *
      * Questa operazione consente di ottenere la configurazione relativa alla validazione dei contenuti applicativi
      *
      */
 	@Override
-    public Validazione getErogazioneValidazione(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public Validazione getErogazioneValidazione(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1052,7 +1717,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
             
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			final Validazione ret = ErogazioniApiHelper.fromValidazioneContenutiApplicativi(pa.getValidazioneContenutiApplicativi());
         
@@ -1077,7 +1742,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void updateErogazioneCachingRisposta(CachingRisposta body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public void updateErogazioneCachingRisposta(CachingRisposta body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1097,7 +1762,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Devi specificare il campo MaxResponseSizeKb");
 			}
 			
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 		
 			if (!env.paHelper.checkDataConfigurazioneResponseCachingPorta(TipoOperazione.OTHER, true, body.getStato().toString())) {
@@ -1129,7 +1794,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void updateErogazioneControlloAccessiAutenticazione(ControlloAccessiAutenticazione body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public void updateErogazioneControlloAccessiAutenticazione(ControlloAccessiAutenticazione body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1139,7 +1804,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			Helper.throwIfNull(body);
 			
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa newPa = env.paCore.getPortaApplicativa(env.idPa);
 			final PortaApplicativa oldPa = env.paCore.getPortaApplicativa(env.idPa);			
 
@@ -1171,7 +1836,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void updateErogazioneControlloAccessiAutorizzazione(ControlloAccessiAutorizzazione body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public void updateErogazioneControlloAccessiAutorizzazione(ControlloAccessiAutorizzazione body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1181,7 +1846,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			Helper.throwIfNull(body);
 			
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);					
 			final PortaApplicativa newPa = env.paCore.getPortaApplicativa(env.idPa);		
 			
@@ -1213,7 +1878,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void updateErogazioneControlloAccessiGestioneToken(ControlloAccessiGestioneToken body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public void updateErogazioneControlloAccessiGestioneToken(ControlloAccessiGestioneToken body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");
@@ -1223,7 +1888,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			Helper.throwIfNull(body);
 			
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa oldPa = env.paCore.getPortaApplicativa(env.idPa);
 			final PortaApplicativa newPa = env.paCore.getPortaApplicativa(env.idPa);
 			
@@ -1258,7 +1923,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void updateErogazioneGestioneCORS(GestioneCors body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void updateErogazioneGestioneCORS(GestioneCors body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1269,7 +1934,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			Helper.throwIfNull(body);
 
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio , nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
 			
 			final IDPortaApplicativa idPa = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPADefault( idAsps, env.apsCore ),  "Gruppo default per l'erogazione scelta" );
@@ -1277,7 +1942,6 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final CorsConfigurazione oldConf = pa.getGestioneCors();
 			
 			
-			// TODO: NO! per determinare se sono abilitati o meno, guarda dapprima isRidefinito (come lo imposto nel db?) e poi vedi se è a null l'oggetto body.getAccessControl.
 			if (body.isRidefinito())
 				pa.setGestioneCors(ErogazioniApiHelper.buildCorsConfigurazione(body, env, oldConf));
 			else
@@ -1298,15 +1962,75 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
     }
+    
+    /**
+     * Modifica i dati di una policy di rate limiting
+     *
+     * Questa operazione consente di aggiornare i dati relativi ad una policy di rate limiting
+     *
+     */
+	@Override
+    public void updateErogazioneRateLimitingPolicy(RateLimitingPolicyBaseErogazione body, String nome, Integer versione, String idPolicy, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
 
-	/**
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+			
+			Helper.throwIfNull(body);            
+			
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);		
+			
+			AttivazionePolicy policy = Helper.supplyOrNotFound( 
+					() -> env.confCore.getAttivazionePolicy(idPolicy),
+					"Rate Limiting Policy con id " + idPolicy
+				);
+			InfoPolicy infoPolicy = env.confCore.getInfoPolicy(policy.getIdPolicy());
+			
+
+			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = env.confCore.getConfigurazioneControlloTraffico();
+			
+			final RuoloPolicy ruoloPorta = RuoloPolicy.APPLICATIVA;
+			final String nomePorta = pa.getNome();
+ 
+			ErogazioniApiHelper.override(body, env.idSoggetto.toIDSoggetto(), env.requestWrapper);
+
+			String errorAttivazione = env.confHelper.readDatiAttivazionePolicyFromHttpParameters(policy, false, TipoOperazione.CHANGE, infoPolicy);
+			if ( !StringUtils.isEmpty(errorAttivazione) ) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(errorAttivazione));
+			}
+			
+			if (! env.confHelper.attivazionePolicyCheckData(TipoOperazione.CHANGE, configurazioneControlloTraffico, policy,infoPolicy, ruoloPorta, nomePorta) ) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			}			
+
+			
+			env.confCore.performUpdateOperation(env.userLogin, false, policy);
+
+			context.getLogger().info("Invocazione completata con successo");
+        
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
      * Consente di modificare la configurazione relativa alla registrazione dei messaggi
      *
      * Questa operazione consente di aggiornare la configurazione relativa alla registrazione dei messaggi
      *
      */
 	@Override
-    public void updateErogazioneRegistrazioneMessaggi(RegistrazioneMessaggi body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public void updateErogazioneRegistrazioneMessaggi(RegistrazioneMessaggi body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1316,7 +2040,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			Helper.throwIfNull(body);
 			
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			if (body.isRidefinito())
@@ -1347,7 +2071,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void updateErogazioneStato(ApiImplStato body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public void updateErogazioneStato(ApiImplStato body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1357,7 +2081,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			Helper.throwIfNull(body);	
 			
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
@@ -1380,13 +2104,134 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
     }
     
     /**
+     * Modifica i dati di una regola di correlazione applicativa per la richiesta
+     *
+     * Questa operazione consente di aggiornare i dati relativi ad una regola di correlazione applicativa per la richiesta
+     *
+     */
+	@Override
+    public void updateErogazioneTracciamentoCorrelazioneApplicativaRichiesta(CorrelazioneApplicativaRichiesta body, String nome, Integer versione, String elemento, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+			
+			Helper.throwIfNull(body);
+			
+			if ( body.getElemento() == null )
+				body.setElemento("");
+			
+			final String searchElemento = elemento.equals("*")
+					? ""
+					: elemento;
+                        
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			final Long idPorta = pa.getId();
+			
+			if (pa.getCorrelazioneApplicativa() == null)
+				pa.setCorrelazioneApplicativa(new org.openspcoop2.core.config.CorrelazioneApplicativa());
+			
+			final List<CorrelazioneApplicativaElemento> correlazioni = pa.getCorrelazioneApplicativa().getElementoList();
+			final CorrelazioneApplicativaElemento oldElem = Helper.findAndRemoveFirst(correlazioni, c -> c.getNome().equals(searchElemento));
+			
+			if ( oldElem == null ) 
+				throw FaultCode.NOT_FOUND.toException("Correlazione Applicativa Richiesta per l'elemento " + elemento + " non trovata ");
+			
+			if ( !correlazioneApplicativaRichiestaCheckData(TipoOperazione.CHANGE, env.requestWrapper, env.pdHelper, false, body, idPorta, oldElem.getId())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			}
+			
+			correlazioni.add(convert(body));
+                        
+			pa.getCorrelazioneApplicativa().setElementoList(correlazioni);
+			
+			env.paCore.performUpdateOperation(env.userLogin, false, pa);
+			
+			context.getLogger().info("Invocazione completata con successo");
+         
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
+     * Modifica i dati di una regola di correlazione applicativa per la risposta
+     *
+     * Questa operazione consente di aggiornare i dati relativi ad una regola di correlazione applicativa per la risposta
+     *
+     */
+	@Override
+    public void updateErogazioneTracciamentoCorrelazioneApplicativaRisposta(CorrelazioneApplicativaRisposta body, String nome, Integer versione, String elemento, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+			
+			Helper.throwIfNull(body);
+			
+			if ( body.getElemento() == null )
+				body.setElemento("");
+			
+			final String searchElemento = elemento.equals("*")
+					? ""
+					: elemento;
+                        
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			final Long idPorta = pa.getId();
+			
+			if (pa.getCorrelazioneApplicativaRisposta() == null)
+				pa.setCorrelazioneApplicativaRisposta(new org.openspcoop2.core.config.CorrelazioneApplicativaRisposta());
+			
+			final List<CorrelazioneApplicativaRispostaElemento> correlazioni = pa.getCorrelazioneApplicativaRisposta().getElementoList();
+			final CorrelazioneApplicativaRispostaElemento oldElem = Helper.findAndRemoveFirst(correlazioni, c -> c.getNome().equals(searchElemento));
+			
+			if ( oldElem == null ) 
+				throw FaultCode.NOT_FOUND.toException("Correlazione Applicativa Risposta per l'elemento " + elemento + " non trovata ");
+			
+			if ( !correlazioneApplicativaRispostaCheckData(TipoOperazione.CHANGE, env.requestWrapper, env.pdHelper, false, body, idPorta, oldElem.getId())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			}
+			
+			correlazioni.add(convert(body));
+                        
+			pa.getCorrelazioneApplicativaRisposta().setElementoList(correlazioni);
+			
+			env.paCore.performUpdateOperation(env.userLogin, false, pa);
+        
+			context.getLogger().info("Invocazione completata con successo");
+        
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
      * Consente di modificare la configurazione relativa alla validazione dei contenuti applicativi
      *
      * Questa operazione consente di aggiornare la configurazione relativa alla validazione dei contenuti applicativi
      *
      */
 	@Override
-    public void updateErogazioneValidazione(Validazione body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
+    public void updateErogazioneValidazione(Validazione body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1396,7 +2241,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			Helper.throwIfNull(body);	
 			
-			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo);
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			final String stato = Helper.evalnull( () -> body.getStato().toString());

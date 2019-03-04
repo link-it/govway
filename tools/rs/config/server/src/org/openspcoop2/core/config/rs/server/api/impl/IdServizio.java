@@ -58,8 +58,5 @@ public class IdServizio extends IDServizio {
 	public void setID(Long id) {
 		this.id = id;
 	}
-	
-	// Parlare con andrea per l'equals.
-
 
 }

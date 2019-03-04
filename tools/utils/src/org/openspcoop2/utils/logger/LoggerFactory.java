@@ -59,9 +59,12 @@ public class LoggerFactory {
 	}
 	
 	public static ILogger newLogger() throws UtilsException{
-		return newLogger(null);
+		return _newLogger(null);
 	}
 	public static ILogger newLogger(IContext context) throws UtilsException{
+		return _newLogger(context);
+	}
+	private static ILogger _newLogger(IContext context) throws UtilsException{
 		
 		if(loggerImpl==null){
 			throw new UtilsException("LoggerFactory not Initialized");
@@ -69,6 +72,46 @@ public class LoggerFactory {
 		
 		try{
 			Constructor<ILogger> c = loggerImpl.getConstructor(parameterTypes);
+			ILogger logger = (ILogger) c.newInstance(parameters);
+			if(context!=null){
+				logger.initLogger(context);
+			}
+			else{
+				logger.initLogger();
+			}
+			return logger;
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
+	public static ILogger newLogger(String implementationClassName) throws UtilsException{
+		return _newLogger(implementationClassName, null);
+	}
+	public static ILogger newLogger(String implementationClassName, IContext context) throws UtilsException{
+		return _newLogger(implementationClassName, context);
+	}
+	@SuppressWarnings("unchecked")
+	private static ILogger _newLogger(String implementationClassName, IContext context) throws UtilsException{
+		Class<ILogger> c = null;
+		try {
+			c = (Class<ILogger>) Class.forName(implementationClassName);
+		}catch(Exception e){
+			throw new UtilsException("Expected class assignable from "+ILogger.class.getName()+". Found: "+implementationClassName+" . Error: "+e.getMessage(),e);
+		}
+		return _newLogger(c, context);
+	}
+	
+	public static ILogger newLogger(Class<? extends ILogger> implementationClass) throws UtilsException{
+		return _newLogger(implementationClass, null);
+	}
+	public static ILogger newLogger(Class<? extends ILogger> implementationClass, IContext context) throws UtilsException{
+		return _newLogger(implementationClass, context);
+	}
+	private static ILogger _newLogger(Class<? extends ILogger> implementationClass, IContext context) throws UtilsException{
+		
+		try{
+			Constructor<? extends ILogger> c = implementationClass.getConstructor(parameterTypes);
 			ILogger logger = (ILogger) c.newInstance(parameters);
 			if(context!=null){
 				logger.initLogger(context);

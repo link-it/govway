@@ -10790,7 +10790,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm = con.prepareStatement(sqlQuery);
 			stm.setString(1, nomeServizio);
 			stm.setString(2, tipoServizio);
-			stm.setInt(3, versioneServizio);
+			if(versioneServizio!=null) {
+				stm.setInt(3, versioneServizio);
+			}
+			else {
+				stm.setInt(3, 1); // default
+			}
 			stm.setLong(4, idSoggErogatore);
 
 			this.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, nomeServizio, tipoServizio, versioneServizio, idSoggErogatore));

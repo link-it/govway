@@ -140,13 +140,13 @@ public class Test {
 			
 			System.out.println("*** Test Application ***");
 			
-			LoggerFactory.initialize(Log4jLoggerWithApplicationContext.class.getName(),
-					mConfig);
+			//LoggerFactory.initialize(Log4jLoggerWithApplicationContext.class.getName(),
+			//		mConfig);
 			
 			//Log4JLogger.setDiagnosticSeverity(Severity.INFO);
 			//Log4JLogger.setEventSeverity(Severity.ERROR);
 			
-			test(LoggerFactory.newLogger(), "APPLICATION");
+			test(LoggerFactory.newLogger(Log4jLoggerWithApplicationContext.class.getName()), "APPLICATION");
 		
 		}
 		
@@ -157,13 +157,13 @@ public class Test {
 			
 			System.out.println("*** Test Batch ***");
 			
-			LoggerFactory.initialize(Log4JLoggerWithBatchContext.class.getName(),
-					mConfig);
+			//LoggerFactory.initialize(Log4JLoggerWithBatchContext.class.getName(),
+			//		mConfig);
 			
 			//Log4JLogger.setDiagnosticSeverity(Severity.INFO);
 			//Log4JLogger.setEventSeverity(Severity.ERROR);
 			
-			test(LoggerFactory.newLogger(), "BATCH");
+			test(LoggerFactory.newLogger(Log4JLoggerWithBatchContext.class), "BATCH");
 			
 		}
 	}
