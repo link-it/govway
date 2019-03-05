@@ -77,8 +77,8 @@
 				<var name="archiveFile" value="${deploy_sw}/${TIPO_AS}/govway_${buildPddInternal_tipo}.ear" />
 			</then>
 			<else>
-				<move file="${deploy_sw}/${TIPO_AS}/dist/govway.war" tofile="${deploy_sw}/${TIPO_AS}/openspcoop2_${buildPddInternal_tipo}.war"/>
-				<var name="archiveFile" value="${deploy_sw}/${TIPO_AS}/openspcoop2_${buildPddInternal_tipo}.war" />
+				<move file="${deploy_sw}/${TIPO_AS}/dist/govway.war" tofile="${deploy_sw}/${TIPO_AS}/govway_${buildPddInternal_tipo}.war"/>
+				<var name="archiveFile" value="${deploy_sw}/${TIPO_AS}/govway_${buildPddInternal_tipo}.war" />
 				<move file="${deploy_sw}/${TIPO_AS}/dist/govwaySec.war" tofile="${deploy_sw}/${TIPO_AS}/govwaySec_${buildPddInternal_tipo}.war"/>
 				<var name="secArchiveFile" value="${deploy_sw}/${TIPO_AS}/govwaySec_${buildPddInternal_tipo}.war" />
 			</else>

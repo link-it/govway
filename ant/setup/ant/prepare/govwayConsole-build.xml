@@ -33,7 +33,7 @@
 			<param name="singlePdD" value="true"/>
 	 	</antcall>
 		<antcall target="war_openspcoop2_govwayConsole">
-	    	<param name="as" value="${TIPO_AS}" />
+	    		<param name="as" value="${TIPO_AS}" />
 			<param name="dist_govwayConsole" value="${deploy_sw}/${TIPO_AS}/dist"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_govwayConsole" value="${src_govwayConsole}"/>
@@ -55,7 +55,8 @@
 			<param name="queue" value="${queue}"/>
 			<param name="plugins_govwayConsole" value="${govwayConsole}/deploy/plugins"/>
 			<param name="singlePdD" value="true"/>
-	 	</antcall>
+	 		<param name="data_content_handler_dir" value="${core}/deploy/data_content_handler" />
+		</antcall>
 	
 		<move file="${deploy_sw}/${TIPO_AS}/dist/govwayConsole.war" todir="${deploy_sw}/${TIPO_AS}"/>
 		

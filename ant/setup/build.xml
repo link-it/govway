@@ -592,7 +592,7 @@
 			</then>
 			<else>
 				<!-- unzip -->
-				<unzip src="${deploy_sw}/${build_for_as}/openspcoop2_${build_openspcoop_archive_suffix}.war" dest="${tmp_archivi}/govway.war"/>
+				<unzip src="${deploy_sw}/${build_for_as}/govway_${build_openspcoop_archive_suffix}.war" dest="${tmp_archivi}/govway.war"/>
 				<!-- configuro openspcoopp2.war -->
 				<antcall target="-create_tomcat_war">
 				    <param name="tomcat_war" value="${tmp_archivi}/govway.war"/>
