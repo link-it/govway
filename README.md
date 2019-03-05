@@ -1,4 +1,6 @@
 # GovWay
+[![Build Status](https://jenkins.link.it/buildStatus/icon?job=GovWay)](https://jenkins.link.it/job/GovWay/)
+
 Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle normative della Pubblica Amministrazione:
 - Conforme alle nuove linee guida AGID per l’interoperabilità ModI 2018 (profilo API Gateway)
 - Conforme alle specifiche per l’interoperabilità europea (profilo eDelivery)
@@ -12,6 +14,9 @@ Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle
 * [Manuale Utente](./resources/doc/pdf/GovWay-ManualeUtente.pdf)
 * [Manuale di Monitoraggio](./resources/doc/pdf/GovWay-ManualeMonitoraggio.pdf)
 
+## Docker
+Il progetto [govway-docker](https://github.com/link-it/govway-docker) fornisce tutto il necessario per produrre un'ambiente di prova per GovWay funzionante, containerizzato in formato Docker.
+
 ## Govlet
 
 * [Fatturazione Attiva](./resources/doc/govlet/Fatturazione/Govlet_FatturaPA_FatturazioneAttiva.pdf)
@@ -23,9 +28,6 @@ Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle
 
 - Mailing list: [Utenti GovWay](https://govway.org/mailing)
 - Segnalazioni: [GitHub Issues](https://github.com/link-it/GovWay/issues)
-
-## Docker
-Il progetto [govway-docker](https://github.com/link-it/govway-docker) fornisce tutto il necessario per produrre un'ambiente di prova per GovWay funzionante, containerizzato in formato Docker.
 
 # Le funzionalità principali
 ## Standard di Mercato

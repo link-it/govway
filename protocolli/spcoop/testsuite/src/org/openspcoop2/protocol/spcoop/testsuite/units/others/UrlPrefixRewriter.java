@@ -755,7 +755,9 @@ public class UrlPrefixRewriter {
 			
 			Reporter.log("Controllo esistenza diagnostico [http://localhost:8080/govwayTestPD]");
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD3StartTime,"(location: http://localhost:8080/govwayTestPD/govway/spcoop/in)"));
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD3StartTime,"(404)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD3StartTime,"(404)") // wildfly
+					|| 
+					msgDiagComponent.isTracedMessaggioWithLike(this.testPD3StartTime,"codice 404")); // tomcat
 			
 		}catch(Exception e){
 			throw e;
@@ -930,7 +932,9 @@ public class UrlPrefixRewriter {
 			
 			Reporter.log("Controllo esistenza diagnostico [http://localhost:8080/govwayTestPA]");
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://localhost:8080/govwayTestPA/govwayTestSuite/server)"));
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(404)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(404)") // wildfly
+					|| 
+					msgDiagComponent.isTracedMessaggioWithLike(id,"codice 404")); // tomcat
 			
 		}catch(Exception e){
 			throw e;

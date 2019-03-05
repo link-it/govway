@@ -1,3 +1,23 @@
+2019-03-05  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, TestsuiteProtocolloTrasparente, TestsuiteProtocolloSPCoop]
+	Aggiunta funzionalità OP-820
+	Integrato in continuous integration tramite jenkins lo sviluppo di GovWay:
+	- https://jenkins.link.it/job/GovWay/
+	E' stato creato un pipeline che attua i seguenti step:
+	- Verifica le dipendenze tramite il check owasp https://jeremylong.github.io/DependencyCheck/dependency-check-maven/index.html'
+	  (Risultati pubblicati in apposita sezione 'Vulnerability Trend')
+	- Verifica la compilazione dei sorgenti
+	- Produce l'archivio contenente l'installer della versione binaria e lo esegue.
+	- Effettua il deploy degli archivi e datasource prodotti dall'installer su tomcat
+	- Carica gli script sql prodotti dall'installer su un nuovo database postgresql inizializzato al momento.
+	- Esegue una batteria di test (TestNG) relativa alle classi base del progetto (org.openspcoop2.utils)
+	- Esegue i test di integrazione per quanto concerne il profilo 'API Gateway'
+	- Esegue i test di integrazione per quanto concerne il profilo 'SPCoop'
+	Al termine dell'esecuzione del pipeline vengono pubblicati:
+	- Risultati delle eventuali vulnerabilità riscontrate relative alle dipendenze (sezione 'Vulnerability Trend')
+	- Risultati dei test (sezione 'TestNG Results Trend')
+
 2019-02-26  Andrea Poli <apoli@link.it>
 
 	* [Utils]
