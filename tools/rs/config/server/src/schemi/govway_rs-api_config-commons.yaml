@@ -247,11 +247,55 @@ components:
     AuthenticationHttps:
       type: object
       required:
+        - tipo
+      properties:
+        tipo: 
+          $ref: '#/components/schemas/TipoAutenticazioneHttps'        
+        certificato:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/AuthenticationHttpsCertificato'
+            - $ref: '#/components/schemas/AuthenticationHttpsConfigurazioneManuale'
+          discriminator:
+            propertyName: tipo
+            mapping:
+              'certificato': '#/components/schemas/AuthenticationHttpsCertificato'
+              'configurazione-manuale': '#/components/schemas/AuthenticationHttpsConfigurazioneManuale' 
+    AuthenticationHttpsCertificato:
+      type: object
+      required:
+        - archivio
+        - tipo
+      properties:
+        archivio:
+          type: string
+          format: byte
+        alias: 
+          type: string
+          maxLength: 255
+          example: 'alias'
+        password: 
+          type: string
+          maxLength: 255
+          example: 'changeit'
+        tipo: 
+          $ref: '#/components/schemas/TipoKeystore'  
+        strict_verification:
+          type: boolean
+          example: false
+          default: false
+    AuthenticationHttpsConfigurazioneManuale:
+      type: object
+      required:
         - subject
       properties:
         subject: 
           type: string
-          maxLength: 255
+          maxLength: 2800
+          example: 'cn=esterno'
+        issuer: 
+          type: string
+          maxLength: 2800
           example: 'cn=esterno'
     AuthenticationPrincipal:
       type: object
@@ -1525,6 +1569,14 @@ components:
       type: string
       enum: ['disabilitato', 'http-basic', 'https', 'principal', 'custom']
       example: 'http-basic' 
+    TipoAutenticazioneHttps:
+      type: string
+      enum: ['certificato', 'configurazione-manuale']
+      example: 'certificato' 
+    TipoKeystore:
+      type: string
+      enum: ['JKS', 'PKCS12', 'CER']
+      example: 'JKS'
     TipoAutorizzazioneNewEnum:
       type: string
       enum: ['disabilitato', 'abilitato', 'xacml-Policy']

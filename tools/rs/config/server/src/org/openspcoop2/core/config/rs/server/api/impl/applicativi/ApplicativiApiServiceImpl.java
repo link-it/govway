@@ -100,7 +100,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 				);
 			}
 					
-			ApplicativiApiHelper.overrideSAParameters(wrap, sa);
+			ApplicativiApiHelper.overrideSAParameters(wrap, env.saHelper, sa, applicativo);
 			wrap.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO, env.tipo_protocollo);
 			
 			List<String> listaTipiProtocollo = ProtocolFactoryManager.getInstance().getProtocolNamesAsList();
@@ -332,7 +332,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			
 			List<ExtendedConnettore> listExtendedConnettore = null;	// Non serve alla checkData perchè da Api, gli applicativi sono sempre fruitori
 			
-			ApplicativiApiHelper.overrideSAParameters(env.requestWrapper, newSa);
+			ApplicativiApiHelper.overrideSAParameters(env.requestWrapper, env.saHelper, newSa, applicativo);
 			env.requestWrapper.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO, env.tipo_protocollo);
 			
 			if (! env.saHelper.servizioApplicativoCheckData(

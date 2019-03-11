@@ -46,6 +46,7 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 
 /**
  * Interfaccia per la ricerca informazioni di oggetti presenti in una
@@ -237,11 +238,20 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	/**
 	 * Restituisce Il servizio applicativo che include le credenziali passate come parametro. 
 	 *
-	 * @param aSubject Subject utilizzato nella connessione HTTPS.
+	 * @param subject Subject utilizzato nella connessione HTTPS.
+	 * @param issuer Issuer utilizzato nella connessione HTTPS.
 	 * @return Il servizio applicativo che include le credenziali passate come parametro. 
 	 * 
 	 */
-	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String subject, String issuer) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	/**
+	 * Restituisce Il servizio applicativo che include le credenziali passate come parametro. 
+	 * 
+	 * @param certificate certificato utilizzato nella connessione HTTPS.
+	 * @param strictVerifier indicazione se deve essere effettuata una ricerca stringente su tutti i parametri del certificato
+	 * @return Il servizio applicativo che include le credenziali passate come parametro. 
+	 */
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
 
 	/**
 	 * Restituisce Il servizio applicativo che include le credenziali passate come parametro. 

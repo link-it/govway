@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneHttps;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -29,25 +30,47 @@ import javax.validation.Valid;
 
 public class AuthenticationHttps  {
   
-  @Schema(example = "cn=esterno", required = true, description = "")
-  private String subject = null;
+  @Schema(required = true, description = "")
+  private TipoAutenticazioneHttps tipo = null;
+  
+  @Schema(description = "")
+  private Object certificato = null;
  /**
-   * Get subject
-   * @return subject
+   * Get tipo
+   * @return tipo
   **/
-  @JsonProperty("subject")
+  @JsonProperty("tipo")
   @NotNull
   @Valid
- @Size(max=255)  public String getSubject() {
-    return this.subject;
+  public TipoAutenticazioneHttps getTipo() {
+    return this.tipo;
   }
 
-  public void setSubject(String subject) {
-    this.subject = subject;
+  public void setTipo(TipoAutenticazioneHttps tipo) {
+    this.tipo = tipo;
   }
 
-  public AuthenticationHttps subject(String subject) {
-    this.subject = subject;
+  public AuthenticationHttps tipo(TipoAutenticazioneHttps tipo) {
+    this.tipo = tipo;
+    return this;
+  }
+
+ /**
+   * Get certificato
+   * @return certificato
+  **/
+  @JsonProperty("certificato")
+  @Valid
+  public Object getCertificato() {
+    return this.certificato;
+  }
+
+  public void setCertificato(Object certificato) {
+    this.certificato = certificato;
+  }
+
+  public AuthenticationHttps certificato(Object certificato) {
+    this.certificato = certificato;
     return this;
   }
 
@@ -57,7 +80,8 @@ public class AuthenticationHttps  {
     StringBuilder sb = new StringBuilder();
     sb.append("class AuthenticationHttps {\n");
     
-    sb.append("    subject: ").append(AuthenticationHttps.toIndentedString(this.subject)).append("\n");
+    sb.append("    tipo: ").append(AuthenticationHttps.toIndentedString(this.tipo)).append("\n");
+    sb.append("    certificato: ").append(AuthenticationHttps.toIndentedString(this.certificato)).append("\n");
     sb.append("}");
     return sb.toString();
   }

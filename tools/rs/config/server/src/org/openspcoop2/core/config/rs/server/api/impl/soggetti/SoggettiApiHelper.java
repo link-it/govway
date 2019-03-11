@@ -26,11 +26,8 @@ import java.util.List;
 
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
-import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
-import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpBasic;
-import org.openspcoop2.core.config.rs.server.model.AuthenticationHttps;
-import org.openspcoop2.core.config.rs.server.model.AuthenticationPrincipal;
+import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
 import org.openspcoop2.core.config.rs.server.model.DominioEnum;
 import org.openspcoop2.core.config.rs.server.model.Soggetto;
 import org.openspcoop2.core.config.rs.server.model.SoggettoItem;
@@ -51,6 +48,7 @@ import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
+import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -64,30 +62,15 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
  */
 public class SoggettiApiHelper {
 
-	public static final void overrideAuthParams(Soggetto soggetto, HttpRequestWrapper wrap) {
+	public static final void overrideAuthParams(ConsoleHelper consoleHelper, Soggetto soggetto, HttpRequestWrapper wrap) {
+		
 		wrap.overrideParameter(
 				ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE, 
 				Helper.tipoAuthFromModalitaAccesso.get(soggetto.getModalitaAccesso())
 		);
 		
-		switch(soggetto.getModalitaAccesso()) {
-		case HTTP_BASIC: {
-			AuthenticationHttpBasic c = (AuthenticationHttpBasic) soggetto.getCredenziali();
-			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME, c.getUsername());
-			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD, c.getPassword());
-			break;
-		}
-		case HTTPS: {
-			AuthenticationHttps c = (AuthenticationHttps) soggetto.getCredenziali();
-			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT, c.getSubject());
-			break;
-		}
-		case PRINCIPAL: {
-			AuthenticationPrincipal c = (AuthenticationPrincipal) soggetto.getCredenziali();
-			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL, c.getUserid());
-			break;
-		}
-		}
+		
+		Helper.overrideAuthParams(wrap, consoleHelper, soggetto.getModalitaAccesso(), soggetto.getCredenziali());
 	}
 
 	// In queste logiche non considero:
@@ -121,13 +104,17 @@ public class SoggettiApiHelper {
 		}
 		
 		if (env.soggettiCore.isSupportatoAutenticazioneSoggetti(env.tipo_protocollo) && body.getCredenziali() != null && body.getModalitaAccesso() != null ) {
-			CredenzialiSoggetto credenziali = Helper.apiCredenzialiToGovwayCred(
-						body.getCredenziali(),
-						body.getModalitaAccesso(),
-						CredenzialiSoggetto.class,
-						org.openspcoop2.core.registry.constants.CredenzialeTipo.class
-			);		
-			ret.setCredenziali(credenziali);
+			try {
+				CredenzialiSoggetto credenziali = Helper.apiCredenzialiToGovwayCred(
+							body.getCredenziali(),
+							body.getModalitaAccesso(),
+							CredenzialiSoggetto.class,
+							org.openspcoop2.core.registry.constants.CredenzialeTipo.class
+				);		
+				ret.setCredenziali(credenziali);
+			}catch(Exception e) {
+				throw new DriverRegistroServiziException(e.getMessage(),e);
+			}
 		}
 	
 	}

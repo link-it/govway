@@ -227,7 +227,11 @@ public class DataElement {
 		StringBuilder sb = new StringBuilder();
 		sb.append(servletName);
 		if(parameter!=null && parameter.length>0){
-			sb.append("?");
+			if(sb.indexOf("?") > 0)
+				sb.append("&");
+			else 
+				sb.append("?");
+			
 			for (int i = 0; i < parameter.length; i++) {
 				if(i>0){
 					sb.append("&");

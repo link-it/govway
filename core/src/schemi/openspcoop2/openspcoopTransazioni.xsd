@@ -1207,6 +1207,8 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 			    		<xsd:appinfo>
 			    			<linkit:generator
 			    				xmlns:linkit="http://www.link.it/project_generator">
+			    				<!-- Questa colonna tiene tutte le credenziali, sia il subject (2.500 max circa di lunghezza) che il principal (che potrebbe essere nuovamente un subject) e basic username e password -->
+			    				<linkit:sql-column-mapping text="true" />
 			    				<linkit:sql-ddl-column-comment><![CDATA[Credenziali utilizzate dall'applicativo client]]></linkit:sql-ddl-column-comment>
 			    			</linkit:generator>
 			    		</xsd:appinfo>

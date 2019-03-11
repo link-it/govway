@@ -24,6 +24,7 @@ package org.openspcoop2.core.transazioni.utils;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
@@ -34,8 +35,9 @@ import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.LikeMode;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.certificate.PrincipalType;
 
 /**     
  * CredenzialiMittenteUtils
@@ -58,16 +60,19 @@ public class CredenzialiMittenteUtils {
 			pagEpression.equals(CredenzialeMittente.model().TIPO, tipoCredenziale.name());
 		}
 		if(TipoCredenzialeMittente.trasporto.equals(tipoCredenziale) && TipoAutenticazione.SSL.getValue().equalsIgnoreCase(tipoAutenticazione) && ricercaEsatta) {
-			Hashtable<String, String> hashSubject = Utilities.getSubjectIntoHashtable(credential);			
+			Hashtable<String,  List<String>> hashSubject = CertificateUtils.getPrincipalIntoHashtable(credential, PrincipalType.subject);			
 			Enumeration<String> keys = hashSubject.keys();			
 			while(keys.hasMoreElements()){				
-				String key = keys.nextElement();				
-				String value = hashSubject.get(key);
-				if(caseSensitive) {
-					pagEpression.like(CredenzialeMittente.model().CREDENZIALE, "/"+Utilities.formatKeySubject(key)+"="+Utilities.formatValueSubject(value)+"/", LikeMode.ANYWHERE);
-				}
-				else {
-					pagEpression.ilike(CredenzialeMittente.model().CREDENZIALE, "/"+Utilities.formatKeySubject(key)+"="+Utilities.formatValueSubject(value)+"/", LikeMode.ANYWHERE);
+				String key = keys.nextElement();
+				
+				List<String> listValues = hashSubject.get(key);
+				for (String value : listValues) {
+					if(caseSensitive) {
+						pagEpression.like(CredenzialeMittente.model().CREDENZIALE, "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", LikeMode.ANYWHERE);
+					}
+					else {
+						pagEpression.ilike(CredenzialeMittente.model().CREDENZIALE, "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", LikeMode.ANYWHERE);
+					}
 				}
 			}				
 		}else {

@@ -2,7 +2,11 @@
  	"nome": "ApplicativoJsonHttps",
    	"modalita_accesso": "https",
    	"credenziali": {
-       		"subject": "cn=gabibbo"
+		"tipo": "configurazione-manuale",
+       		"certificato": {
+			"subject": "cn=gabibbo",
+			"issuer": "cn=issuer2"
+		}
 	},
 	"ruoli": [ "RuoloDemo" ]
 }

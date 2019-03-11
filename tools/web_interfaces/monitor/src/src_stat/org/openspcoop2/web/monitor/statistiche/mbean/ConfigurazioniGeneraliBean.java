@@ -120,7 +120,9 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 		PddRuolo ruoloReport = ((ConfigurazioniGeneraliSearchForm)this.search).getTipologiaTransazioni();
 		
 		if(ruoloReport == null || ruoloReport.equals(PddRuolo.DELEGATA)) {
-			return _getSoggetti(false,true,null);
+			//return _getSoggetti(false,true,null);
+			// bug fix: devo usare sempre i soggetti operativi
+			return _getSoggetti(true,false,null);
 		} else {
 			return _getSoggetti(true,false,null);
 		}
@@ -134,7 +136,9 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 			if(this.search!=null){
 				PddRuolo ruoloReport = ((ConfigurazioniGeneraliSearchForm)this.search).getTipologiaTransazioni();
 				if(ruoloReport == null || ruoloReport.equals(PddRuolo.DELEGATA)) {
-					listaSoggettiTmp = _getSoggetti(false,true,(String)val);
+					//listaSoggettiTmp = _getSoggetti(false,true,(String)val);
+					// bug fix: devo usare sempre i soggetti operativi
+					listaSoggettiTmp = _getSoggetti(true,false,(String)val);
 				} else {
 					listaSoggettiTmp = _getSoggetti(true,false,(String)val);
 				}

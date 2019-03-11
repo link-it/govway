@@ -75,7 +75,12 @@ import org.openspcoop2.core.id.IdentificativiErogazione;
 import org.openspcoop2.core.id.IdentificativiFruizione;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.ArchiveLoader;
+import org.openspcoop2.utils.certificate.ArchiveType;
+import org.openspcoop2.utils.certificate.Certificate;
+import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
 
@@ -1450,7 +1455,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	
 	
 	@Override
-	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject, String aIssuer) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
 		if(aSubject==null){
 			throw new DriverConfigurazioneException("Subject non definito");
@@ -1465,8 +1470,18 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 						//	Default: SSL
 						if(sa.getInvocazionePorta().getCredenziali(z).getTipo() == null){
 							try{
-								//if( aSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getSubject())){
-								if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject, this.log)){
+								if(sa.getInvocazionePorta().getCredenziali(z).getSubject()==null) {
+									continue;
+								}
+								boolean subjectValid = CertificateUtils.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject, PrincipalType.subject, this.log);
+								boolean issuerValid = true;
+								if(aIssuer!=null) {
+									issuerValid = CertificateUtils.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getIssuer(), aIssuer, PrincipalType.issuer, this.log);
+								}
+								else {
+									issuerValid = (sa.getInvocazionePorta().getCredenziali(z).getIssuer() == null);
+								}
+								if(subjectValid && issuerValid){
 									sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
 									sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
 									return sa;
@@ -1478,8 +1493,18 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 						if(sa.getInvocazionePorta().getCredenziali(z).getTipo()!=null &&
 								CostantiConfigurazione.CREDENZIALE_SSL.equals(sa.getInvocazionePorta().getCredenziali(z).getTipo())){
 							try{
-								//if( aSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getSubject())){
-								if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject, this.log)){
+								if(sa.getInvocazionePorta().getCredenziali(z).getSubject()==null) {
+									continue;
+								}
+								boolean subjectValid = CertificateUtils.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject, PrincipalType.subject, this.log);
+								boolean issuerValid = true;
+								if(aIssuer!=null) {
+									issuerValid = CertificateUtils.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getIssuer(), aIssuer, PrincipalType.issuer, this.log);
+								}
+								else {
+									issuerValid = (sa.getInvocazionePorta().getCredenziali(z).getIssuer() == null);
+								}
+								if(subjectValid && issuerValid){
 									sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
 									sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
 									return sa;
@@ -1494,6 +1519,72 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		}
 		
 		throw new DriverConfigurazioneNotFound("Servizio Applicativo cercato con credenziali ssl non trovato");
+	}
+	
+	@Override
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo aCertificate, boolean aStrictVerifier) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		if(aCertificate==null){
+			throw new DriverConfigurazioneException("Certificato non definito");
+		}
+		
+		for(int i=0; i<this.openspcoop.sizeSoggettoList(); i++){
+			Soggetto soggettoSearch = this.openspcoop.getSoggetto(i);
+			for(int j=0; j<soggettoSearch.sizeServizioApplicativoList(); j++){
+				ServizioApplicativo sa = soggettoSearch.getServizioApplicativo(j);
+				if(sa.getInvocazionePorta()!=null){
+					for(int z=0;z<sa.getInvocazionePorta().sizeCredenzialiList();z++){
+						//	Default: SSL
+						if(sa.getInvocazionePorta().getCredenziali(z).getTipo() == null){
+							try{
+								if(sa.getInvocazionePorta().getCredenziali(z).getCertificate()==null) {
+									continue;
+								}
+								if(aStrictVerifier != sa.getInvocazionePorta().getCredenziali(z).isCertificateStrictVerification()) {
+									continue;
+								}
+								String cnSubject = aCertificate.getSubject().getCN();
+								if(cnSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getCnSubject())) {
+									Certificate certificato = ArchiveLoader.load(ArchiveType.CER, sa.getInvocazionePorta().getCredenziali(z).getCertificate(), 0, null);
+									if(aCertificate.equals(certificato.getCertificate(),aStrictVerifier)) {
+										sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
+										sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
+										return sa;
+									}
+								}
+							}catch(Exception e){
+								throw new DriverConfigurazioneException(e.getMessage(),e);
+							}
+						}
+						if(sa.getInvocazionePorta().getCredenziali(z).getTipo()!=null &&
+								CostantiConfigurazione.CREDENZIALE_SSL.equals(sa.getInvocazionePorta().getCredenziali(z).getTipo())){
+							try{
+								if(sa.getInvocazionePorta().getCredenziali(z).getCertificate()==null) {
+									continue;
+								}
+								if(aStrictVerifier != sa.getInvocazionePorta().getCredenziali(z).isCertificateStrictVerification()) {
+									continue;
+								}
+								String cnSubject = aCertificate.getSubject().getCN();
+								if(cnSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getCnSubject())) {
+									Certificate certificato = ArchiveLoader.load(ArchiveType.CER, sa.getInvocazionePorta().getCredenziali(z).getCertificate(), 0, null);
+									if(aCertificate.equals(certificato.getCertificate(),aStrictVerifier)) {
+										sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
+										sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
+										return sa;
+									}	
+								}
+							}catch(Exception e){
+								throw new DriverConfigurazioneException(e.getMessage(),e);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		throw new DriverConfigurazioneNotFound("Servizio Applicativo cercato con credenziali ssl non trovato");
+		
 	}
 	
 	@Override

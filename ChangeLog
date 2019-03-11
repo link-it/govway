@@ -1,3 +1,20 @@
+2019-03-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, GovWayMonitor, TestsuiteProtocolloTrasparente]
+	Aggiunta funzionalità OP-505
+	Evoluta la funzionalità di associazione delle credenziali 'ssl' ad un servizio applicativo o ad un soggetto.
+	E' adesso possibile caricare il certificato in uno dei seguenti formati:
+	- DER
+	- PEM
+	- PKCS12
+	- JKS (con selezione del certificato se ne esiste più di uno all'interno del keystore)
+	E' inoltre possibile abilitare una validazione più puntuale che verifica oltra al Subject ed all'Issuer 
+	anche gli altri campi del certificato tra cui il serial number.
+	Tramite la nuova modalità di gestione dei certificati sono stati risolti i seguenti problemi:
+	- corretta gestione dei certificati che contengono molteplici campi 'OU'.
+	- vengono adesso salvati correttamente anche i certificati che possiedono un subject con lunghezza superiore ai 255 caratteri.
+	- corretta gestione dei certificati che contengono caratteri accentati.
+
 2019-03-05  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, TestsuiteProtocolloTrasparente, TestsuiteProtocolloSPCoop]

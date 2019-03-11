@@ -89,6 +89,7 @@ import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.slf4j.Logger;
 
 /**
@@ -667,8 +668,12 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiBasic(this.getConnection(), aUser, aPassword);
 	}
 	
-	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(String aSubject) throws DriverConfigurazioneException{
-		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiSsl(this.getConnection(), aSubject);
+	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(String aSubject, String aIssuer) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiSsl(this.getConnection(), aSubject, aIssuer);
+	}
+	
+	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiSsl(this.getConnection(), certificate, strictVerifier);
 	}
 	
 	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiPrincipal(String principal) throws DriverConfigurazioneException{

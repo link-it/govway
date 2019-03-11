@@ -91,7 +91,9 @@ import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
 
@@ -1890,7 +1892,7 @@ public class RegistroServiziReader {
 						esitoAutorizzazione.setDetails(error);
 						return esitoAutorizzazione;
 					}
-					if(Utilities.sslVerify(portaDominio.getSubject(), pdd, this.log)==false){
+					if(CertificateUtils.sslVerify(portaDominio.getSubject(), pdd, PrincipalType.subject, this.log)==false){
 					//if(pdd.equals(portaDominio.getSubject())==false){
 						String error = "subject estratto dal certificato client ["+pdd+"] diverso da quello registrato per la porta di dominio "+portaDominio.getNome()+" del mittente ["+portaDominio.getSubject()+"]";
 						this.log.error("Autorizzazione ("+soggetto.toString()+" -> "+servizio.toString()+") fallita: "+error);
@@ -2610,8 +2612,12 @@ public class RegistroServiziReader {
 		return this.registroServizi.getSoggettoByCredenzialiBasic(connectionPdD, nomeRegistro, username, password);
 	}
 	
-	public Soggetto getSoggettoByCredenzialiSsl(Connection connectionPdD,String subject, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServizi.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, subject);
+	public Soggetto getSoggettoByCredenzialiSsl(Connection connectionPdD,String subject, String issuer, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, subject, issuer);
+	}
+	
+	public Soggetto getSoggettoByCredenzialiSsl(Connection connectionPdD,CertificateInfo certificate, boolean strictVerifier, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, certificate, strictVerifier);
 	}
 	
 	public Soggetto getSoggettoByCredenzialiPrincipal(Connection connectionPdD,String principal, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
@@ -2622,8 +2628,12 @@ public class RegistroServiziReader {
 		return convertToId(this.registroServizi.getSoggettoByCredenzialiBasic(connectionPdD, nomeRegistro, username, password));
 	}
 	
-	public IDSoggetto getIdSoggettoByCredenzialiSsl(Connection connectionPdD,String subject, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return convertToId(this.registroServizi.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, subject));
+	public IDSoggetto getIdSoggettoByCredenzialiSsl(Connection connectionPdD,String subject, String issuer, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return convertToId(this.registroServizi.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, subject, issuer));
+	}
+	
+	public IDSoggetto getIdSoggettoByCredenzialiSsl(Connection connectionPdD,CertificateInfo certificate, boolean strictVerifier, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return convertToId(this.registroServizi.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, certificate, strictVerifier));
 	}
 	
 	public IDSoggetto getIdSoggettoByCredenzialiPrincipal(Connection connectionPdD,String principal, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{

@@ -156,8 +156,16 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 		tr.setRequestInfo(requestInfo);
 		
 		if(req.getCredential()!=null) {
-			Credenziali cr = new Credenziali(req.getCredential());
-			tr.setCredenziali(cr.toString());
+			Credenziali credenziali = new Credenziali(req.getCredential());
+			String credenzialiFornite = "";
+			if(credenziali!=null){
+				credenzialiFornite = credenziali.toString(!Credenziali.SHOW_BASIC_PASSWORD,
+						Credenziali.SHOW_ISSUER,
+						!Credenziali.SHOW_DIGEST_CLIENT_CERT,
+						Credenziali.SHOW_SERIAL_NUMBER_CLIENT_CERT,
+						"","","\n"); // riporto anche l'issuer ed il serial number del cert e formatto differentemente
+			}
+			tr.setCredenziali(credenzialiFornite);
 		}
 		
 		if(req.getURLProtocolContext()!=null){

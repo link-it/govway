@@ -88,6 +88,10 @@ public class CostantiGrafici {
 	public static final String COLONNE_LEGENDA_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.COLONNE_LEGENDA_KEY;
 	public static final String LIMITE_COLONNE_LEGENDA_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LIMITE_COLONNE_LEGENDA_KEY;
 	public static final int COLONNE_LEGENDA_DEFAULT_VALUE = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.COLONNE_LEGENDA_DEFAULT_VALUE;
+	public static final String LIMITE_LUNGHEZZA_LABEL_GRAFICO_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_KEY;
+	public static final int LIMITE_LUNGHEZZA_LABEL_GRAFICO_DEFAULT_VALUE = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_DEFAULT_VALUE;
+	public static final String LIMITE_LUNGHEZZA_LABEL_LEGENDA_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_KEY;
+	public static final int LIMITE_LUNGHEZZA_LABEL_LEGENDA_DEFAULT_VALUE = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_DEFAULT_VALUE;
 	
 	public static final String OK_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.OK_KEY;
 	public static final String OK_LABEL= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.OK_LABEL;

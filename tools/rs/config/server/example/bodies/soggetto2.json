@@ -2,7 +2,11 @@
  	"nome": "SoggettoJson2",
    	"modalita_accesso": "https",
    	"credenziali": {
-       		"subject": "cn=esterno"
+		"tipo": "configurazione-manuale",
+       		"certificato": {
+			"subject": "cn=esterno",
+			"issuer": "cn=issuer2"
+		}
 	},
 	"dominio": "esterno",
 	"descrizione": "Descrizione Soggetto Json2",

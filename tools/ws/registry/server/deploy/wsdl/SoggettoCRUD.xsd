@@ -47,6 +47,11 @@
  			<xsd:element name="user" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="password" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="subject" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="cn-subject" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="issuer" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="cn-issuer" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="certificate" type="xsd:base64Binary" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="certificate-strict-verification" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
 		</xsd:sequence>
 	</xsd:complexType>
 

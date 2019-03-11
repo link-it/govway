@@ -93,6 +93,7 @@ import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCostanti;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -631,7 +632,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					}
 					
 					if(StatoFunzionalita.ABILITATO.equals(is.getGetMessage())){
-						isOk = this.credenzialiCheckData();
+						isOk = this.credenzialiCheckData(TipoOperazione.ADD);
 						if (!isOk) {
 							return false;
 						}
@@ -674,7 +675,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				Credenziali credenziali = this.readCredenzialiSA();
 				if(credenziali!=null){
 					ConnettoriHelper connettoriHelper = new ConnettoriHelper(this.request, this.pd, this.session);
-					boolean isOk = connettoriHelper.credenzialiCheckData();
+					boolean isOk = connettoriHelper.credenzialiCheckData(TipoOperazione.ADD);
 					if (!isOk) {
 						return false;
 					}
@@ -2375,6 +2376,31 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		String password  = null;
 		String subject = null;
 		String principal = null;
+		String tipoCredenzialiSSLSorgente = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL);
+		if(tipoCredenzialiSSLSorgente == null) {
+			tipoCredenzialiSSLSorgente = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE;
+		}
+		String tipoCredenzialiSSLTipoArchivioS = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO);
+		BinaryParameter tipoCredenzialiSSLFileCertificato = this.getBinaryParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO);
+		List<String> listaAliasEstrattiCertificato = new ArrayList<String>();
+		String tipoCredenzialiSSLFileCertificatoPassword = this.getParameter(readedDatiConnettori, defaultProperties, ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
+		String tipoCredenzialiSSLAliasCertificato = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO);
+		String tipoCredenzialiSSLAliasCertificatoSubject= this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
+		String tipoCredenzialiSSLAliasCertificatoIssuer= this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_ISSUER);
+		String tipoCredenzialiSSLAliasCertificatoType= this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_TYPE);
+		String tipoCredenzialiSSLAliasCertificatoVersion= this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_VERSION);
+		String tipoCredenzialiSSLAliasCertificatoSerialNumber= this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SERIAL_NUMBER);
+		String tipoCredenzialiSSLAliasCertificatoSelfSigned= this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SELF_SIGNED);
+		String tipoCredenzialiSSLAliasCertificatoNotBefore= this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_BEFORE);
+		String tipoCredenzialiSSLAliasCertificatoNotAfter =this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_AFTER); 
+		String tipoCredenzialiSSLVerificaTuttiICampi = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
+		String tipoCredenzialiSSLConfigurazioneManualeSelfSigned= this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_MANUALE_SELF_SIGNED);
+		String issuer = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER);	
+		String tipoCredenzialiSSLStatoElaborazioneCertificato = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP);
+		if (tipoCredenzialiSSLStatoElaborazioneCertificato == null) {
+			tipoCredenzialiSSLStatoElaborazioneCertificato = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_NO_WIZARD_ARCHIVI;
+		}
+		//String oldTipoCredenzialiSSLStatoElaborazioneCertificato = tipoCredenzialiSSLStatoElaborazioneCertificato;
 		
 		// gestito nel metodo getParameter: if(readedDatiConnettori==false){
 		tipoauth = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
@@ -2403,9 +2429,38 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		if (principal == null) {
 			principal = "";
 		}
-		//}
-		dati = this.addCredenzialiToDati(dati, tipoauth, utente, password, subject, principal,
-				ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD, showSectionTitle, null, false, true, null, true);
+		if (issuer == null) {
+			issuer = "";
+		}
+		if(tipoCredenzialiSSLSorgente == null) {
+			tipoCredenzialiSSLSorgente = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE;
+		}
+		org.openspcoop2.utils.certificate.ArchiveType tipoCredenzialiSSLTipoArchivio= null;
+		if(tipoCredenzialiSSLTipoArchivioS == null) {
+			tipoCredenzialiSSLTipoArchivio = org.openspcoop2.utils.certificate.ArchiveType.CER; 
+		} else {
+			tipoCredenzialiSSLTipoArchivio = org.openspcoop2.utils.certificate.ArchiveType.valueOf(tipoCredenzialiSSLTipoArchivioS);
+		}
+		if (tipoCredenzialiSSLConfigurazioneManualeSelfSigned == null) {
+			tipoCredenzialiSSLConfigurazioneManualeSelfSigned = Costanti.CHECK_BOX_DISABLED;
+		}
+		if (tipoCredenzialiSSLVerificaTuttiICampi == null) {
+			tipoCredenzialiSSLVerificaTuttiICampi = Costanti.CHECK_BOX_DISABLED;
+		}
+		if (tipoCredenzialiSSLAliasCertificato == null) {
+			tipoCredenzialiSSLAliasCertificato = "";
+		}
+		
+		// controllo dei postback
+		
+		//}true,endpointtype,true,false, prefix, true
+		dati =	this.addCredenzialiToDati(dati, tipoauth, utente, password, subject, principal,
+				ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD, showSectionTitle, null, false, true, null, true, 
+				tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword, listaAliasEstrattiCertificato, 
+				tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
+				tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
+				tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
+				tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuer, tipoCredenzialiSSLStatoElaborazioneCertificato); 
 	}
 	
 	private void addDatiConnettore(Vector<DataElement> dati, boolean readedDatiConnettori, Default defaultProperties,
@@ -2702,6 +2757,25 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			}
 		}
 		return value;
+	}
+	
+	private BinaryParameter getBinaryParameter(boolean readedDatiConnettori, Default defaultProperties, String name) throws Exception {
+		BinaryParameter toReturn = this.getBinaryParameter(name);
+		byte [] value = null;
+		if(readedDatiConnettori==false) {
+			value = toReturn.getValue();
+		}
+		if(value==null) {
+			if(defaultProperties!=null && defaultProperties.sizeProprietaList()>0) {
+				for (ProprietaDefault defaultProperty : defaultProperties.getProprietaList()) {
+					if(name.equals(defaultProperty.getNome())) {
+						toReturn.setValue(defaultProperty.getValore().getBytes());
+						break;
+					}
+				}
+			}
+		}
+		return toReturn;
 	}
 
 }

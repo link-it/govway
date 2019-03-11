@@ -123,7 +123,7 @@ CREATE TABLE transazioni
 	location_richiesta VARCHAR(255),
 	location_risposta VARCHAR(255),
 	nome_porta VARCHAR(2000),
-	credenziali VARCHAR(255),
+	credenziali TEXT,
 	location_connettore TEXT,
 	url_invocazione TEXT,
 	trasporto_mittente VARCHAR(20),

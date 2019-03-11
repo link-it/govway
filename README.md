@@ -1,5 +1,5 @@
 # GovWay
-[![Build Status](https://jenkins.link.it/buildStatus/icon?job=GovWay)](https://jenkins.link.it/job/GovWay/)
+[![Build Status](https://jenkins.link.it/buildStatus/icon?job=GovWay&style=plastic)](https://jenkins.link.it/job/GovWay/)
 
 Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle normative della Pubblica Amministrazione:
 - Conforme alle nuove linee guida AGID per l’interoperabilità ModI 2018 (profilo API Gateway)

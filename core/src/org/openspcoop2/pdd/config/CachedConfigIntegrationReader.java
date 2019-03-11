@@ -42,6 +42,7 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.slf4j.Logger;
 
 /**
@@ -102,18 +103,39 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
-	public boolean existsServizioApplicativoByCredenzialiSsl(String subject){
+	public boolean existsServizioApplicativoByCredenzialiSsl(String subject, String aIssuer){
 		try{
-			return this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiSsl(subject)!=null;
+			return this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiSsl(subject,aIssuer)!=null;
 		} catch(Exception e){
 			return false;
 		}
 	}
 	
 	@Override
-	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String subject) throws RegistryNotFound,RegistryException{
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String subject, String aIssuer) throws RegistryNotFound,RegistryException{
 		try{
-			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiSsl(subject);
+			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiSsl(subject,aIssuer);
+			return this.configurazionePdDMangager.getServizioApplicativo(idSA);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public boolean existsServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier){
+		try{
+			return this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiSsl(certificate,strictVerifier)!=null;
+		} catch(Exception e){
+			return false;
+		}
+	}
+	
+	@Override
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws RegistryNotFound,RegistryException{
+		try{
+			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiSsl(certificate,strictVerifier);
 			return this.configurazionePdDMangager.getServizioApplicativo(idSA);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);

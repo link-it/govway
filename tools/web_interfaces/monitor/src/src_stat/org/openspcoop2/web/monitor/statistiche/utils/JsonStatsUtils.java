@@ -83,6 +83,7 @@ public class JsonStatsUtils {
 
 		JSONArray dati = new JSONArray();
 
+		int maxLenghtLabel = 0;
 		if(list!=null  && list.size()>0){
 			int i = 0;
 			long altri_sum=0;
@@ -93,12 +94,15 @@ public class JsonStatsUtils {
 				Number sum = entry.getSomma();
 
 				if(++i<=slice) {
+					if(r.length() > maxLenghtLabel)
+						maxLenghtLabel = r.length();
+					
 					String toolText = StatsUtils.getToolText(search,sum); 
 					if(!entry.getParentMap().isEmpty())
 						toolText = StatsUtils.getToolTextConParent(search, r ,entry.getParentMap(), sum);
 
 					JSONObject spicchio = new JSONObject();
-					spicchio.put(CostantiGrafici.LABEL_KEY, StringEscapeUtils.escapeXml(r));
+					spicchio.put(CostantiGrafici.LABEL_KEY, escapeJsonLabel(r));
 					spicchio.put(CostantiGrafici.TOOLTIP_KEY, toolText);
 					spicchio.put(CostantiGrafici.VALUE_KEY, sum);
 
@@ -126,6 +130,9 @@ public class JsonStatsUtils {
 				dati.add(spicchio);
 			}
 			grafico.put(CostantiGrafici.DATI_KEY, dati);
+			
+			if(maxLenghtLabel > CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_DEFAULT_VALUE)
+				grafico.put(CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_KEY, CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_DEFAULT_VALUE);
 		}
 		else{
 			grafico.put(CostantiGrafici.NO_DATA_KEY, CostantiGrafici.DATI_NON_PRESENTI);
@@ -346,6 +353,8 @@ public class JsonStatsUtils {
 			int slice = sliceParam;
 			if(slice != Integer.MAX_VALUE) // viene usato il maxValue per "disattivare" lo slice
 				slice = slice * numeroCategorie;
+			
+			int maxLenghtLabel = 0;
 
 			for (int z = 0 ; z <list.size() ; z++) {
 				ResBase entry = list.get(z);
@@ -407,7 +416,10 @@ public class JsonStatsUtils {
 
 						// Iterazione 1 memorizzo la label della barra
 						if(j==0){
-							bar.put(CostantiGrafici.DATA_KEY, StringEscapeUtils.escapeXml(r));
+							if(r.length() > maxLenghtLabel)
+								maxLenghtLabel = r.length();
+							
+							bar.put(CostantiGrafici.DATA_KEY, escapeJsonLabel(r));
 						}
 
 						// calcolo il tooltip
@@ -483,6 +495,9 @@ public class JsonStatsUtils {
 				}
 				dati.add(bar);
 			}
+			
+			if(maxLenghtLabel > CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_DEFAULT_VALUE)
+				grafico.put(CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_KEY, CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_DEFAULT_VALUE);
 
 			// inserisco l'array dei dati calcolati nel JSON
 			grafico.put(CostantiGrafici.DATI_KEY, dati);
@@ -695,7 +710,7 @@ public class JsonStatsUtils {
 				}
 
 				String label = sb.toString();
-				point.put(CostantiGrafici.DATA_KEY, StringEscapeUtils.escapeXml(label));
+				point.put(CostantiGrafici.DATA_KEY, escapeJsonLabel(label));
 
 				for (int j = 0; j < numeroCategorie; j++) {
 					// key che identifica la serie
@@ -768,7 +783,7 @@ public class JsonStatsUtils {
 				
 				JSONObject categoria = new JSONObject();
 				categoria.put(CostantiGrafici.KEY_KEY , catKey);
-				categoria.put(CostantiGrafici.LABEL_KEY , StringEscapeUtils.escapeXml(key));
+				categoria.put(CostantiGrafici.LABEL_KEY , escapeJsonLabel(key));
 				categorie.add(categoria);
 
 				// check estremi in modo da visualizzare sempre gli estremi ed eliminare il problema
@@ -854,7 +869,7 @@ public class JsonStatsUtils {
 
 		JSONArray dati = new JSONArray();
 
-		
+		int maxLenghtLabel = 0;
 		if(list!=null  && list.size()>0){
 			int i = 0;
 			long altri_sum=0;
@@ -863,11 +878,14 @@ public class JsonStatsUtils {
 			for (ResDistribuzione entry : list) {
 				String r = entry.getRisultato();
 				Number sum = entry.getSomma();
-
+				
 				if(++i<=slice) {
+					if(r.length() > maxLenghtLabel)
+						maxLenghtLabel = r.length();
+					
 					String toolText = StatsUtils.getToolText(search,sum); 
 					JSONObject spicchio = new JSONObject();
-					spicchio.put(CostantiGrafici.LABEL_KEY, StringEscapeUtils.escapeXml(r));
+					spicchio.put(CostantiGrafici.LABEL_KEY, escapeJsonLabel(r));
 					spicchio.put(CostantiGrafici.TOOLTIP_KEY, toolText);
 					spicchio.put(CostantiGrafici.VALUE_KEY, sum);
 
@@ -894,6 +912,9 @@ public class JsonStatsUtils {
 				
 				dati.add(spicchio);
 			}
+			
+			if(maxLenghtLabel > CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_DEFAULT_VALUE)
+				grafico.put(CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_KEY, CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_DEFAULT_VALUE);
 			
 			grafico.put(CostantiGrafici.DATI_KEY, dati);
 		}
@@ -936,6 +957,7 @@ public class JsonStatsUtils {
 
 		JSONArray dati = new JSONArray();
 
+		int maxLenghtLabel = 0;
 		if(list!=null  && list.size()>0){
 			int iterazione = 0;
 			long altri_sum_serie1=0;
@@ -958,7 +980,10 @@ public class JsonStatsUtils {
 						String r = entry.getRisultato();
 
 						if(j==0){
-							bar.put(CostantiGrafici.DATA_KEY, StringEscapeUtils.escapeXml(r));
+							if(r.length() > maxLenghtLabel)
+								maxLenghtLabel = r.length();
+							
+							bar.put(CostantiGrafici.DATA_KEY, escapeJsonLabel(r));
 						}
 
 						// valore da visualizzare nel grafico
@@ -1007,6 +1032,10 @@ public class JsonStatsUtils {
 				}
 				dati.add(bar);
 			}
+			
+			if(maxLenghtLabel > CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_DEFAULT_VALUE)
+				grafico.put(CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_KEY, CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_DEFAULT_VALUE);
+			
 			// inserisco l'array dei dati calcolati nel JSON
 			grafico.put(CostantiGrafici.DATI_KEY, dati);
 		} else{
@@ -1036,5 +1065,13 @@ public class JsonStatsUtils {
 		}
 		
 		return CostantiGrafici.DIREZIONE_LABEL_ORIZZONTALE;
+	}
+	
+	public static String escapeJsonLabel(String label) {
+		String escaped = StringEscapeUtils.escapeXml(label);
+		
+		escaped = escaped.replace("\\", "\\\\");
+		
+		return escaped;
 	}
 }

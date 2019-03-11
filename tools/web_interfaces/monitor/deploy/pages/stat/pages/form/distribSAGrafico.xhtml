@@ -91,11 +91,11 @@
 							enableDelete="false">
 							<rich:column>
 								<f:facet name="header">
-									<h:outputText value="Applicativo" />
+									<h:outputText value="#{distribuzionePerSABean.tipoFiltroDatiMittente}" />
 								</f:facet>
 								<h:outputText value="#{item.risultato}"/>
 							</rich:column>
-							<rich:column>
+							<rich:column rendered="#{distribuzionePerSABean.showColumnSoggetto}">
 								<f:facet name="header">
 									<h:outputText value="Soggetto" />
 								</f:facet>

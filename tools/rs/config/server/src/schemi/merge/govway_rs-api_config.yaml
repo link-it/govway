@@ -6967,11 +6967,54 @@ components:
           example: "pwd"
     AuthenticationHttps:
       required:
+      - "tipo"
+      type: "object"
+      properties:
+        tipo:
+          $ref: "#/components/schemas/TipoAutenticazioneHttps"
+        certificato:
+          type: "object"
+          discriminator:
+            propertyName: "tipo"
+            mapping:
+              certificato: "#/components/schemas/AuthenticationHttpsCertificato"
+              configurazione-manuale: "#/components/schemas/AuthenticationHttpsConfigurazioneManuale"
+          oneOf:
+          - $ref: "#/components/schemas/AuthenticationHttpsCertificato"
+          - $ref: "#/components/schemas/AuthenticationHttpsConfigurazioneManuale"
+    AuthenticationHttpsCertificato:
+      required:
+      - "archivio"
+      - "tipo"
+      type: "object"
+      properties:
+        archivio:
+          type: "string"
+          format: "byte"
+        alias:
+          maxLength: 255
+          type: "string"
+          example: "alias"
+        password:
+          maxLength: 255
+          type: "string"
+          example: "changeit"
+        tipo:
+          $ref: "#/components/schemas/TipoKeystore"
+        strict_verification:
+          type: "boolean"
+          default: false
+    AuthenticationHttpsConfigurazioneManuale:
+      required:
       - "subject"
       type: "object"
       properties:
         subject:
-          maxLength: 255
+          maxLength: 2800
+          type: "string"
+          example: "cn=esterno"
+        issuer:
+          maxLength: 2800
           type: "string"
           example: "cn=esterno"
     AuthenticationPrincipal:
@@ -8295,6 +8338,19 @@ components:
       - "https"
       - "principal"
       - "custom"
+    TipoAutenticazioneHttps:
+      type: "string"
+      example: "certificato"
+      enum:
+      - "certificato"
+      - "configurazione-manuale"
+    TipoKeystore:
+      type: "string"
+      example: "JKS"
+      enum:
+      - "JKS"
+      - "PKCS12"
+      - "CER"
     TipoAutorizzazioneNewEnum:
       type: "string"
       example: "abilitato"

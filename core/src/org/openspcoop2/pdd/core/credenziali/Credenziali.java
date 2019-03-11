@@ -26,6 +26,7 @@ package org.openspcoop2.pdd.core.credenziali;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.transport.Credential;
 import org.openspcoop2.utils.transport.http.HttpServletCredential;
 import org.slf4j.Logger;
@@ -40,31 +41,41 @@ import org.slf4j.Logger;
 
 public class Credenziali  extends HttpServletCredential implements java.io.Serializable  {
 
-
-    /**
+	public final static boolean SHOW_BASIC_PASSWORD = true;
+	public final static boolean SHOW_ISSUER = true;
+	public final static boolean SHOW_DIGEST_CLIENT_CERT = true;
+	public final static boolean SHOW_SERIAL_NUMBER_CLIENT_CERT = true;
+	
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	public Credenziali(){
-        super();
+		super();
 	}
 	public Credenziali(Credential credentials){
-	        if(credentials!=null){
-	                this.username = credentials.getUsername();
-	                this.password = credentials.getPassword();
-	                this.bearerToken = credentials.getBearerToken();
-	                this.certs = credentials.getCerts();
-	                this.subject = credentials.getSubject();
-	                this.principal = credentials.getPrincipalObject();
-	                this.principalName = credentials.getPrincipal();
-	        }
+		if(credentials!=null){
+
+			this.principal = credentials.getPrincipalObject();
+			this.principalName = credentials.getPrincipal();
+
+			this.subject = credentials.getSubject();
+			this.issuer = credentials.getIssuer();
+			this.certificate = credentials.getCertificate();
+
+			this.username = credentials.getUsername();
+			this.password = credentials.getPassword();
+
+			this.bearerToken = credentials.getBearerToken();
+
+		}
 	}
 	public Credenziali(HttpServletRequest req){
-	        super(req, null);
+		super(req, null);
 	}
 	public Credenziali(HttpServletRequest req,Logger log){
-	        super(req, log);
+		super(req, log);
 	}
 
 
@@ -77,12 +88,17 @@ public class Credenziali  extends HttpServletCredential implements java.io.Seria
 
 	@Override
 	public String toString(){
-		return this.toString(false);
+		return this.toString(false, false, false, false);
 	}
-	public String toString(boolean showBasicPassword){
+	public String toString(boolean showBasicPassword, boolean showIssuer, boolean showDigestClientCert, boolean showSerialNumberClientCert){
+		return this.toString(showBasicPassword, showIssuer, showDigestClientCert, showSerialNumberClientCert, 
+				"( ", " ) ", ", ");
+	}
+	public String toString(boolean showBasicPassword, boolean showIssuer, boolean showDigestClientCert, boolean showSerialNumberClientCert, 
+			String start, String end, String separator){
 		String credenzialiFornite = "";
 		if (this.getUsername() != null || this.getSubject() != null || this.getPassword() != null) {
-			credenzialiFornite = "( ";
+			credenzialiFornite = start;
 			boolean printPrincipal = true;
 			if (this.getUsername() != null){
 				String label = "BasicUsername";
@@ -91,12 +107,12 @@ public class Credenziali  extends HttpServletCredential implements java.io.Seria
 					printPrincipal = false;
 				}
 				if(this.getPassword()==null)
-					credenzialiFornite = credenzialiFornite + label+" '"+ this.getUsername() + "', BasicPassword undefined";
+					credenzialiFornite = credenzialiFornite + label+" '"+ this.getUsername() + "'"+separator+"BasicPassword undefined";
 				else if("".equals(this.getPassword()) )
-					credenzialiFornite = credenzialiFornite + label+" '"+ this.getUsername() + "', BasicPassword empty";
+					credenzialiFornite = credenzialiFornite + label+" '"+ this.getUsername() + "'"+separator+"BasicPassword empty";
 				else{
 					if(showBasicPassword){
-						credenzialiFornite = credenzialiFornite + label+" '"+ this.getUsername() + "', BasicPassword '"+this.getPassword()+"'";
+						credenzialiFornite = credenzialiFornite + label+" '"+ this.getUsername() + "'"+separator+"BasicPassword '"+this.getPassword()+"'";
 					}
 					else{
 						credenzialiFornite = credenzialiFornite + label+" '"+ this.getUsername() + "'";
@@ -110,18 +126,43 @@ public class Credenziali  extends HttpServletCredential implements java.io.Seria
 					printPrincipal = false;
 				}
 				if (this.getUsername() != null){
-					label = ", " + label;
+					label = separator + label;
 				}
 				credenzialiFornite = credenzialiFornite + label+" '"+ this.getSubject() + "'";
+
+				if(showIssuer) {
+					if(this.getIssuer()!=null){
+						label = separator+"SSL-Issuer";
+						credenzialiFornite = credenzialiFornite + label+" '"+ this.getIssuer() + "'";
+					}
+				}
+				if(showDigestClientCert) {
+					if(this.getCertificate()!=null && this.getCertificate().getCertificate()!=null) {
+						String digest = null;
+						try {
+							digest = this.getCertificate().getCertificate().digestBase64Encoded();
+							label = separator+"SSL-ClientCert-Digest";
+							credenzialiFornite = credenzialiFornite + label+" '"+ digest + "'";
+						}catch(Exception e) {
+							LoggerWrapperFactory.getLogger(Credenziali.class).error("Errore Digest Certificato: "+e.getMessage(),e);
+						}		
+					}
+				}
+				if(showSerialNumberClientCert) {
+					if(this.getCertificate()!=null && this.getCertificate().getCertificate()!=null) {				
+						label = separator+"SSL-ClientCert-SerialNumber";
+						credenzialiFornite = credenzialiFornite + label+" '"+ this.getCertificate().getCertificate().getSerialNumber() + "'";
+					}
+				}
 			}
 			if (this.getPrincipal() != null && printPrincipal){
 				String label = "Principal";
 				if ( (this.getUsername() != null) || (this.getSubject() != null) ){
-					label = ", " + label;
+					label = separator + label;
 				}
 				credenzialiFornite = credenzialiFornite + label+ " '"+ this.getPrincipal() + "'";
 			}
-			credenzialiFornite = credenzialiFornite + " ) ";
+			credenzialiFornite = credenzialiFornite + end;
 		}
 		return credenzialiFornite;
 	}

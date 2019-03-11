@@ -62,6 +62,7 @@ import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.slf4j.Logger;
 
 /**
@@ -208,18 +209,38 @@ public class CachedRegistryReader implements IRegistryReader {
 	}
 	
 	@Override
-	public boolean existsSoggettoByCredenzialiSsl(String subject){
+	public boolean existsSoggettoByCredenzialiSsl(String subject, String issuer){
 		try{
-			return this.registroServiziManager.getIdSoggettoByCredenzialiSsl(subject, null)!=null;
+			return this.registroServiziManager.getIdSoggettoByCredenzialiSsl(subject, issuer, null)!=null;
 		}catch(Exception e){
 			return false;
 		}	
 	}
 	
 	@Override
-	public Soggetto getSoggettoByCredenzialiSsl(String subject) throws RegistryNotFound,RegistryException{
+	public Soggetto getSoggettoByCredenzialiSsl(String subject, String issuer) throws RegistryNotFound,RegistryException{
 		try{
-			return this.registroServiziManager.getSoggettoByCredenzialiSsl(subject, null);
+			return this.registroServiziManager.getSoggettoByCredenzialiSsl(subject, issuer, null);
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public boolean existsSoggettoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier){
+		try{
+			return this.registroServiziManager.getIdSoggettoByCredenzialiSsl(certificate, strictVerifier, null)!=null;
+		}catch(Exception e){
+			return false;
+		}	
+	}
+	
+	@Override
+	public Soggetto getSoggettoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws RegistryNotFound,RegistryException{
+		try{
+			return this.registroServiziManager.getSoggettoByCredenzialiSsl(certificate, strictVerifier, null);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){

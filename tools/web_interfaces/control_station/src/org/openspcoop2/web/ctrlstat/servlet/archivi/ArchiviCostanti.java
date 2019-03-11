@@ -289,6 +289,11 @@ public class ArchiviCostanti {
 	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_PORTA_DELEGATA = "pd";
 	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_XACML_POLICY = "xacmlPolicy";
 	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_XACML_POLICY_FILENAME = "xacmlPolicy.xml";
+	
+	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_SOGGETTO = "sogg";
+	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_SERVIZIO_APPLICATIVO = "sa";
+	
+	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_CERTIFICATO_SSL = "sslCert";
 		
 	public final static String[] PARAMETRO_VALORI_ARCHIVI_EXPORT_TIPO_DUMP = { ArchiveType.ALL.toString(), ArchiveType.ALL_WITHOUT_CONFIGURAZIONE.toString(), ArchiveType.CONFIGURAZIONE.toString() };
 	public final static String[] PARAMETRO_LABEL_ARCHIVI_EXPORT_TIPO_DUMP = { "Esportazione completa", ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO , ConfigurazioneCostanti.LABEL_CONFIGURAZIONE };

@@ -23,6 +23,9 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.sa;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -30,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -55,6 +59,10 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.PddTipologia;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.ArchiveLoader;
+import org.openspcoop2.utils.certificate.ArchiveType;
+import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
@@ -67,10 +75,12 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
@@ -87,6 +97,8 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * 
  */
 public final class ServiziApplicativiAdd extends Action {
+	
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -157,6 +169,48 @@ public final class ServiziApplicativiAdd extends Action {
 			String passwordSA = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			String subjectSA = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
 			String principalSA = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
+			String tipoCredenzialiSSLSorgente = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL);
+			if(tipoCredenzialiSSLSorgente == null) {
+				tipoCredenzialiSSLSorgente = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO;
+			}
+			String tipoCredenzialiSSLTipoArchivioS = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO);
+			org.openspcoop2.utils.certificate.ArchiveType tipoCredenzialiSSLTipoArchivio= null;
+			if(tipoCredenzialiSSLTipoArchivioS == null) {
+				tipoCredenzialiSSLTipoArchivio = org.openspcoop2.utils.certificate.ArchiveType.CER; 
+			} else {
+				tipoCredenzialiSSLTipoArchivio = org.openspcoop2.utils.certificate.ArchiveType.valueOf(tipoCredenzialiSSLTipoArchivioS);
+			}
+			
+			BinaryParameter tipoCredenzialiSSLFileCertificato = saHelper.getBinaryParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO);
+			String tipoCredenzialiSSLFileCertificatoPassword = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
+			List<String> listaAliasEstrattiCertificato = new ArrayList<String>();
+			String tipoCredenzialiSSLAliasCertificato = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO);
+			if (tipoCredenzialiSSLAliasCertificato == null) {
+				tipoCredenzialiSSLAliasCertificato = "";
+			}
+			String tipoCredenzialiSSLAliasCertificatoSubject= saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
+			String tipoCredenzialiSSLAliasCertificatoIssuer= saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_ISSUER);
+			String tipoCredenzialiSSLAliasCertificatoType= saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_TYPE);
+			String tipoCredenzialiSSLAliasCertificatoVersion= saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_VERSION);
+			String tipoCredenzialiSSLAliasCertificatoSerialNumber= saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SERIAL_NUMBER);
+			String tipoCredenzialiSSLAliasCertificatoSelfSigned= saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SELF_SIGNED);
+			String tipoCredenzialiSSLAliasCertificatoNotBefore= saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_BEFORE);
+			String tipoCredenzialiSSLAliasCertificatoNotAfter = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_AFTER); 
+			String tipoCredenzialiSSLVerificaTuttiICampi = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
+			if (tipoCredenzialiSSLVerificaTuttiICampi == null) {
+				tipoCredenzialiSSLVerificaTuttiICampi = Costanti.CHECK_BOX_DISABLED;
+			}
+			String tipoCredenzialiSSLConfigurazioneManualeSelfSigned= saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_MANUALE_SELF_SIGNED);
+			if (tipoCredenzialiSSLConfigurazioneManualeSelfSigned == null) {
+				tipoCredenzialiSSLConfigurazioneManualeSelfSigned = Costanti.CHECK_BOX_DISABLED;
+			}
+			String issuerSA = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER);
+			
+			String tipoCredenzialiSSLWizardStep = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP);
+			if (tipoCredenzialiSSLWizardStep == null) {
+				tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CARICA_CERTIFICATO;
+			}
+			String oldTipoCredenzialiSSLWizardStep = tipoCredenzialiSSLWizardStep;
 			
 			String sbustamentoInformazioniProtocolloRisposta = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RISPOSTA);
 
@@ -277,11 +331,95 @@ public final class ServiziApplicativiAdd extends Action {
 			}
 			
 			String postBackElementName = saHelper.getPostBackElementName();
+			String labelButtonSalva = Costanti.LABEL_MONITOR_BUTTON_INVIA;
 
 			// Controllo se ho modificato l'accordo, se si allora suggerisco il referente dell'accordo
 			if(postBackElementName != null ){
 				if(!useIdSogg && postBackElementName.equalsIgnoreCase(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO)) {
 					provider = null;
+				}
+				
+				// tipo autenticazione
+				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE)){
+					if(tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
+						// reset impostazioni sezione ssl
+						tipoCredenzialiSSLSorgente = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO;
+						tipoCredenzialiSSLTipoArchivio = ArchiveType.CER;
+						tipoCredenzialiSSLVerificaTuttiICampi = Costanti.CHECK_BOX_DISABLED;
+						tipoCredenzialiSSLAliasCertificato = "";
+						tipoCredenzialiSSLAliasCertificatoSubject= "";
+						tipoCredenzialiSSLAliasCertificatoIssuer= "";
+						tipoCredenzialiSSLAliasCertificatoType= "";
+						tipoCredenzialiSSLAliasCertificatoVersion= "";
+						tipoCredenzialiSSLAliasCertificatoSerialNumber= "";
+						tipoCredenzialiSSLAliasCertificatoSelfSigned= "";
+						tipoCredenzialiSSLAliasCertificatoNotBefore= "";
+						tipoCredenzialiSSLAliasCertificatoNotAfter = "";
+						listaAliasEstrattiCertificato = new ArrayList<String>();
+						tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CARICA_CERTIFICATO;
+					} else {
+						tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_NO_WIZARD;
+					}
+				}
+
+				// tipo di configurazione SSL
+				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL) || 
+						postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_MODIFICA)) {
+					listaAliasEstrattiCertificato = new ArrayList<String>();
+					tipoCredenzialiSSLTipoArchivio = ArchiveType.CER;
+					tipoCredenzialiSSLVerificaTuttiICampi = Costanti.CHECK_BOX_DISABLED;
+					tipoCredenzialiSSLAliasCertificato = "";
+					tipoCredenzialiSSLAliasCertificatoSubject= "";
+					tipoCredenzialiSSLAliasCertificatoIssuer= "";
+					tipoCredenzialiSSLAliasCertificatoType= "";
+					tipoCredenzialiSSLAliasCertificatoVersion= "";
+					tipoCredenzialiSSLAliasCertificatoSerialNumber= "";
+					tipoCredenzialiSSLAliasCertificatoSelfSigned= "";
+					tipoCredenzialiSSLAliasCertificatoNotBefore= "";
+					tipoCredenzialiSSLAliasCertificatoNotAfter = "";
+					saHelper.deleteBinaryParameters(tipoCredenzialiSSLFileCertificato); 
+					tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CARICA_CERTIFICATO;
+
+					if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE)) {
+						subjectSA = "";
+						issuerSA = "";
+						tipoCredenzialiSSLConfigurazioneManualeSelfSigned = Costanti.CHECK_BOX_DISABLED;
+						tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_NO_WIZARD;
+					}
+				}
+
+				// cambio il tipo archivio butto via il vecchio certificato				
+				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO)) {
+					saHelper.deleteBinaryParameters(tipoCredenzialiSSLFileCertificato); 
+					tipoCredenzialiSSLAliasCertificato = "";
+					tipoCredenzialiSSLAliasCertificatoSubject= "";
+					tipoCredenzialiSSLAliasCertificatoIssuer= "";
+					tipoCredenzialiSSLAliasCertificatoType= "";
+					tipoCredenzialiSSLAliasCertificatoVersion= "";
+					tipoCredenzialiSSLAliasCertificatoSerialNumber= "";
+					tipoCredenzialiSSLAliasCertificatoSelfSigned= "";
+					tipoCredenzialiSSLAliasCertificatoNotBefore= "";
+					tipoCredenzialiSSLAliasCertificatoNotAfter = "";
+					listaAliasEstrattiCertificato = new ArrayList<String>();
+					tipoCredenzialiSSLVerificaTuttiICampi = Costanti.CHECK_BOX_DISABLED;
+					tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CARICA_CERTIFICATO;
+				}
+
+				// selezione alias
+				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO)) {
+					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificato)) {
+						tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CERTIFICATO_OK;
+					} else {
+						tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_ALIAS_NON_SCELTO;
+					}
+					tipoCredenzialiSSLAliasCertificatoSubject= "";
+					tipoCredenzialiSSLAliasCertificatoIssuer= "";
+					tipoCredenzialiSSLAliasCertificatoType= "";
+					tipoCredenzialiSSLAliasCertificatoVersion= "";
+					tipoCredenzialiSSLAliasCertificatoSerialNumber= "";
+					tipoCredenzialiSSLAliasCertificatoSelfSigned= "";
+					tipoCredenzialiSSLAliasCertificatoNotBefore= "";
+					tipoCredenzialiSSLAliasCertificatoNotAfter = "";
 				}
 			}
 			
@@ -338,9 +476,135 @@ public final class ServiziApplicativiAdd extends Action {
 			}
 			
 			
+			boolean checkWizard = false;
+			if(tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
+				if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO)) {
+					if(tipoCredenzialiSSLFileCertificato.getValue() != null && tipoCredenzialiSSLFileCertificato.getValue().length > 0) {
+						tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_ALIAS_NON_SCELTO;
+						if(!tipoCredenzialiSSLTipoArchivio.equals(ArchiveType.CER)) {
+							if(StringUtils.isNotEmpty(tipoCredenzialiSSLFileCertificatoPassword)) {
+								try {
+									listaAliasEstrattiCertificato = ArchiveLoader.readAliases(tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato.getValue(), tipoCredenzialiSSLFileCertificatoPassword);
+									Collections.sort(listaAliasEstrattiCertificato);
+	
+									//se ho un solo alias lo imposto
+									if(!listaAliasEstrattiCertificato.isEmpty() && listaAliasEstrattiCertificato.size() == 1) {
+										tipoCredenzialiSSLAliasCertificato = listaAliasEstrattiCertificato.get(0);
+									}
+									
+									// ho appena caricato il file devo solo far vedere la form senza segnalare il messaggio di errore
+									if(oldTipoCredenzialiSSLWizardStep.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CARICA_CERTIFICATO)
+											||oldTipoCredenzialiSSLWizardStep.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_PASSWORD_NON_PRESENTE) 
+											|| oldTipoCredenzialiSSLWizardStep.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_ERRORE_LETTURA_CERTIFICATO)) {
+										checkWizard = true;
+										if(listaAliasEstrattiCertificato.size() > 1) {
+											pd.setMessage("Il file caricato contiene pi&ugrave; certificati, selezionare un'"+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO, MessageType.INFO);
+										}  
+									}
+								}catch(UtilsException e) {
+									pd.setMessage("Il Certificato selezionato non &egrave; valido: "+e.getMessage());
+									tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_ERRORE_LETTURA_CERTIFICATO;
+									tipoCredenzialiSSLAliasCertificato = "";
+									tipoCredenzialiSSLAliasCertificatoSubject= "";
+									tipoCredenzialiSSLAliasCertificatoIssuer= "";
+									tipoCredenzialiSSLAliasCertificatoType= "";
+									tipoCredenzialiSSLAliasCertificatoVersion= "";
+									tipoCredenzialiSSLAliasCertificatoSerialNumber= "";
+									tipoCredenzialiSSLAliasCertificatoSelfSigned= "";
+									tipoCredenzialiSSLAliasCertificatoNotBefore= "";
+									tipoCredenzialiSSLAliasCertificatoNotAfter = "";
+								}
+	
+								if(!listaAliasEstrattiCertificato.isEmpty() && StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificato)) {
+									try {
+										Certificate cSelezionato = ArchiveLoader.load(tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato.getValue(), tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLFileCertificatoPassword);
+										tipoCredenzialiSSLAliasCertificatoIssuer = cSelezionato.getCertificate().getIssuer().getNameNormalized();
+										tipoCredenzialiSSLAliasCertificatoSubject = cSelezionato.getCertificate().getSubject().getNameNormalized();
+										tipoCredenzialiSSLAliasCertificatoSelfSigned = cSelezionato.getCertificate().isSelfSigned() ? CostantiControlStation.LABEL_SI : CostantiControlStation.LABEL_NO;
+										tipoCredenzialiSSLAliasCertificatoSerialNumber = cSelezionato.getCertificate().getSerialNumber() + "";
+										tipoCredenzialiSSLAliasCertificatoType = cSelezionato.getCertificate().getType();
+										tipoCredenzialiSSLAliasCertificatoVersion = cSelezionato.getCertificate().getVersion() + "";
+										tipoCredenzialiSSLAliasCertificatoNotBefore = this.sdf.format(cSelezionato.getCertificate().getNotBefore());
+										tipoCredenzialiSSLAliasCertificatoNotAfter = this.sdf.format(cSelezionato.getCertificate().getNotAfter());
+										tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CERTIFICATO_OK;
+									}catch(UtilsException e) {
+										pd.setMessage("Il Certificato selezionato non &egrave; valido: "+e.getMessage());
+										tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_ERRORE_LETTURA_CERTIFICATO;
+										tipoCredenzialiSSLAliasCertificato = "";
+										tipoCredenzialiSSLAliasCertificatoSubject= "";
+										tipoCredenzialiSSLAliasCertificatoIssuer= "";
+										tipoCredenzialiSSLAliasCertificatoType= "";
+										tipoCredenzialiSSLAliasCertificatoVersion= "";
+										tipoCredenzialiSSLAliasCertificatoSerialNumber= "";
+										tipoCredenzialiSSLAliasCertificatoSelfSigned= "";
+										tipoCredenzialiSSLAliasCertificatoNotBefore= "";
+										tipoCredenzialiSSLAliasCertificatoNotAfter = "";
+									}
+								} 
+							} else {
+								tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_PASSWORD_NON_PRESENTE;
+							}
+						} else {
+							try {
+								Certificate cSelezionato = ArchiveLoader.load(tipoCredenzialiSSLFileCertificato.getValue());
+								tipoCredenzialiSSLAliasCertificatoIssuer = cSelezionato.getCertificate().getIssuer().getNameNormalized();
+								tipoCredenzialiSSLAliasCertificatoSubject = cSelezionato.getCertificate().getSubject().getNameNormalized();
+								tipoCredenzialiSSLAliasCertificatoSelfSigned = cSelezionato.getCertificate().isSelfSigned() ? CostantiControlStation.LABEL_SI : CostantiControlStation.LABEL_NO;
+								tipoCredenzialiSSLAliasCertificatoSerialNumber = cSelezionato.getCertificate().getSerialNumber() + "";
+								tipoCredenzialiSSLAliasCertificatoType = cSelezionato.getCertificate().getType();
+								tipoCredenzialiSSLAliasCertificatoVersion = cSelezionato.getCertificate().getVersion() + "";
+								tipoCredenzialiSSLAliasCertificatoNotBefore = this.sdf.format(cSelezionato.getCertificate().getNotBefore());
+								tipoCredenzialiSSLAliasCertificatoNotAfter = this.sdf.format(cSelezionato.getCertificate().getNotAfter());
+								
+								// dalla seconda volta che passo, posso salvare, la prima mostro il recap del certificato estratto
+								
+								if(oldTipoCredenzialiSSLWizardStep.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CERTIFICATO_OK_TIPO_CER)||
+										oldTipoCredenzialiSSLWizardStep.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CERTIFICATO_OK)) {
+									tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CERTIFICATO_OK;
+								} else {
+									tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CERTIFICATO_OK_TIPO_CER;
+									checkWizard = true;
+								}
+							}catch(UtilsException e) {
+								pd.setMessage("Il Certificato selezionato non &egrave; valido: "+e.getMessage());
+								tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_ERRORE_LETTURA_CERTIFICATO;
+								tipoCredenzialiSSLAliasCertificato = "";
+								tipoCredenzialiSSLAliasCertificatoSubject= "";
+								tipoCredenzialiSSLAliasCertificatoIssuer= "";
+								tipoCredenzialiSSLAliasCertificatoType= "";
+								tipoCredenzialiSSLAliasCertificatoVersion= "";
+								tipoCredenzialiSSLAliasCertificatoSerialNumber= "";
+								tipoCredenzialiSSLAliasCertificatoSelfSigned= "";
+								tipoCredenzialiSSLAliasCertificatoNotBefore= "";
+								tipoCredenzialiSSLAliasCertificatoNotAfter = "";
+							}
+						}
+					} else {
+						tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CARICA_CERTIFICATO;
+					}
+				}
+				
+				if(StringUtils.isNotEmpty(tipoCredenzialiSSLWizardStep) && ( tipoCredenzialiSSLWizardStep.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CARICA_CERTIFICATO)
+						||tipoCredenzialiSSLWizardStep.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_PASSWORD_NON_PRESENTE) 
+						|| tipoCredenzialiSSLWizardStep.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_ERRORE_LETTURA_CERTIFICATO)
+						)) {
+					if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO)) {
+						labelButtonSalva = ConnettoriCostanti.LABEL_BUTTON_INVIA_CARICA_CERTIFICATO;
+					}
+				}else { 
+					labelButtonSalva = Costanti.LABEL_MONITOR_BUTTON_INVIA;
+				}
+			} else {
+				labelButtonSalva = Costanti.LABEL_MONITOR_BUTTON_INVIA;
+			}
+			
+			if(labelButtonSalva!= null) {
+				pd.setLabelBottoneInvia(labelButtonSalva);
+			}
+			
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento
 			// dati
-			if(saHelper.isEditModeInProgress()){
+			if(saHelper.isEditModeInProgress() || checkWizard){
 				
 				if(useIdSogg){
 					ServletUtils.setPageDataTitle(pd, 
@@ -410,7 +674,11 @@ public final class ServiziApplicativiAdd extends Action {
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						tipoProtocollo, listaTipiProtocollo, listExtendedConnettore);
+						tipoProtocollo, listaTipiProtocollo, listExtendedConnettore,tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato,tipoCredenzialiSSLFileCertificatoPassword, listaAliasEstrattiCertificato, 
+						tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
+						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
+						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
+						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSA,tipoCredenzialiSSLWizardStep);
 
 				pd.setDati(dati);
 
@@ -465,7 +733,11 @@ public final class ServiziApplicativiAdd extends Action {
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						tipoProtocollo, listaTipiProtocollo, listExtendedConnettore);
+						tipoProtocollo, listaTipiProtocollo, listExtendedConnettore,tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword, listaAliasEstrattiCertificato, 
+						tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
+						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
+						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
+						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSA,tipoCredenzialiSSLWizardStep);
 
 				pd.setDati(dati);
 
@@ -633,7 +905,30 @@ public final class ServiziApplicativiAdd extends Action {
 					credenziali.setUser(principalSA); // al posto di user
 				}
 				credenziali.setPassword(passwordSA);
-				credenziali.setSubject(subjectSA);
+				
+				if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoauthSA)) {
+					if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO)) {
+						Certificate cSelezionato = null;
+						if(tipoCredenzialiSSLTipoArchivio.equals(ArchiveType.CER)) {
+							cSelezionato = ArchiveLoader.load(tipoCredenzialiSSLFileCertificato.getValue());
+						}else {
+							cSelezionato = ArchiveLoader.load(tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato.getValue(), tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLFileCertificatoPassword);
+						}
+
+						credenziali.setCertificateStrictVerification(ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi)); 
+						credenziali.setCnIssuer(cSelezionato.getCertificate().getIssuer().getCN());
+						credenziali.setCnSubject(cSelezionato.getCertificate().getSubject().getCN()); 
+						credenziali.setCertificate(cSelezionato.getCertificate().getCertificate().getEncoded());
+					} else { // configurazione manuale
+						credenziali.setSubject(subjectSA);
+						if(ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLConfigurazioneManualeSelfSigned)) {
+							credenziali.setIssuer(subjectSA);
+						} else {
+							credenziali.setIssuer(issuerSA);
+						}
+					}
+				}
+				
 				invocazionePorta.addCredenziali(credenziali);
 				
 				if(interfacciaAvanzata) {
@@ -652,6 +947,7 @@ public final class ServiziApplicativiAdd extends Action {
 				
 				saCore.performCreateOperation(superUser, saHelper.smista(), sa);
 
+				saHelper.deleteBinaryParameters(tipoCredenzialiSSLFileCertificato); 
 			} catch (Exception ex) {
 				return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), ex, pd, session, gd, mapping, 
 						ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.ADD());

@@ -66,11 +66,11 @@
 				<mkdir dir="${build_registry_ws_client}/classes" />
 				<unzip dest="${build_registry_ws_client}/classes">
 					<fileset dir="${dist_registry_ws_client}">
-						<include name="govway_ws-registry-client*.jar"/>
+						<include name="openspcoop2_ws-registry-client*.jar"/>
 					</fileset>
 				</unzip>
 				<delete dir="${dist_registry_ws_client}" >
-					<include name="govway_ws-registry-client*.jar"/>
+					<include name="openspcoop2_ws-registry-client*.jar"/>
 				</delete>
 				<mkdir dir="${build_registry_ws_client}/classes/registry" />
 				<copy todir="${build_registry_ws_client}/classes/registry">

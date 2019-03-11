@@ -1,0 +1,7 @@
+ALTER TABLE soggetti ALTER COLUMN utente TYPE VARCHAR(2800);
+ALTER TABLE soggetti ALTER COLUMN subject TYPE VARCHAR(2800);
+ALTER TABLE soggetti ADD COLUMN cn_subject VARCHAR(255);
+ALTER TABLE soggetti ADD COLUMN issuer VARCHAR(2800);
+ALTER TABLE soggetti ADD COLUMN cn_issuer VARCHAR(255);
+ALTER TABLE soggetti ADD COLUMN certificate BYTEA;
+ALTER TABLE soggetti ADD COLUMN cert_strict_verification INT;

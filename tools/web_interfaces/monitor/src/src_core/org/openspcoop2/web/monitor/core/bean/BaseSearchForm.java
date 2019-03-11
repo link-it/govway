@@ -51,8 +51,9 @@ import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.TipiDatabase;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
@@ -1077,7 +1078,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				boolean ricercaEsatta = TipoMatch.EQUALS.equals(match);
 				if(TipoAutenticazione.SSL.getValue().equalsIgnoreCase(this.getAutenticazione()) && ricercaEsatta) {
 					try {
-						Utilities.validaSubject(this.getValoreRiconoscimento());
+						CertificateUtils.validaPrincipal(this.getValoreRiconoscimento(), PrincipalType.subject);
 					} catch (UtilsException e) {
 						MessageUtils.addErrorMsg("Indicare un Subject corretto");
 						return false;

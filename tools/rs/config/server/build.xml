@@ -283,7 +283,7 @@
 	<!-- Compilazioni dipendenze -->
 	<target name="compile_dipendenze_apiRS">
 		<if>
-			<istrue value="${buildPddConfig}"/>
+			<istrue value="${buildGovwayConsoleCore}"/>
 			<then>
 				<runtarget target="compile_dipendenze_apiRS_invoke" />
 			</then>

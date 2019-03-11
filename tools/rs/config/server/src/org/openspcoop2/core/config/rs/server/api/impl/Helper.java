@@ -23,6 +23,7 @@ package org.openspcoop2.core.config.rs.server.api.impl;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,20 +46,28 @@ import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpBasic;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationHttps;
+import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpsCertificato;
+import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpsConfigurazioneManuale;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationPrincipal;
 import org.openspcoop2.core.config.rs.server.model.Lista;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneHttps;
+import org.openspcoop2.core.config.rs.server.model.TipoKeystore;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.ArchiveLoader;
+import org.openspcoop2.utils.certificate.ArchiveType;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
@@ -377,6 +386,47 @@ public class Helper {
 		return soggetto;
 	}
 	
+	public static void overrideAuthParams(HttpRequestWrapper wrap, ConsoleHelper consoleHelper, ModalitaAccessoEnum modalitaAccesso, Object credenziali) {
+		
+		switch(modalitaAccesso) {
+		case HTTP_BASIC: {
+			AuthenticationHttpBasic c = (AuthenticationHttpBasic) credenziali;
+			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME, c.getUsername());
+			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD, c.getPassword());
+			break;
+		}
+		case HTTPS: {
+			AuthenticationHttps c = (AuthenticationHttps) credenziali;
+			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP,
+					ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_NO_WIZARD);
+			switch (c.getTipo()) {
+			case CERTIFICATO:
+				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL,
+						ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO);
+				AuthenticationHttpsCertificato certificate = (AuthenticationHttpsCertificato) c.getCertificato();
+				consoleHelper.registerBinaryParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO, certificate.getArchivio());
+				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO, certificate.getTipo().toString());
+				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO, certificate.getAlias());
+				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD, certificate.getPassword());
+				break;
+			case CONFIGURAZIONE_MANUALE:
+				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL,
+						ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE);
+				AuthenticationHttpsConfigurazioneManuale creManuale = (AuthenticationHttpsConfigurazioneManuale) c.getCertificato();
+				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT, creManuale.getSubject());
+				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER, creManuale.getIssuer());
+				break;
+			}
+			break;
+		}
+		case PRINCIPAL: {
+			AuthenticationPrincipal c = (AuthenticationPrincipal) credenziali;
+			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL, c.getUserid());
+			break;
+		}
+		}
+	}
+	
 	
 	/**
 	 * Swagger passa le credenziali come una linkedHashMap.
@@ -390,25 +440,54 @@ public class Helper {
 		Object ret = null;
 	
 		@SuppressWarnings("unchecked")
-		LinkedHashMap<String, String> map_creds = (LinkedHashMap<String,String>) creds;
+		LinkedHashMap<String, Object> map_creds = (LinkedHashMap<String,Object>) creds;
 		
 		switch (tipoAuth) {
 		case HTTP_BASIC: {
 			AuthenticationHttpBasic c = new AuthenticationHttpBasic();
-			c.setPassword(map_creds.get("password"));
-			c.setUsername(map_creds.get("username"));
+			c.setPassword((String) map_creds.get("password"));
+			c.setUsername((String) map_creds.get("username"));
 			ret = c;					
 			break;
 		}
 		case HTTPS: {
 			AuthenticationHttps c = new AuthenticationHttps();
-			c.setSubject(map_creds.get("subject"));
+			c.setTipo(TipoAutenticazioneHttps.fromValue((String) map_creds.get("tipo")));
+			Object oCredenziali = map_creds.get("certificato");
+			@SuppressWarnings("unchecked")
+			LinkedHashMap<String, Object> map_creds_https = (LinkedHashMap<String,Object>) oCredenziali;
+			switch (c.getTipo()) {
+			case CERTIFICATO:
+				AuthenticationHttpsCertificato cre = new AuthenticationHttpsCertificato();
+				String base64archive = (String) map_creds_https.get("archivio");
+				cre.setArchivio(Base64Utilities.decode(base64archive));
+				cre.setTipo(TipoKeystore.fromValue( (String) map_creds_https.get("tipo")));
+				if(map_creds_https.containsKey("alias")) {
+					cre.setAlias((String)map_creds_https.get("alias"));
+				}
+				if(map_creds_https.containsKey("password")) {
+					cre.setPassword((String)map_creds_https.get("password"));
+				}
+				if(map_creds_https.containsKey("strict_verification")) {
+					cre.setStrictVerification((Boolean)map_creds_https.get("strict_verification"));
+				}
+				c.setCertificato(cre);
+				break;
+			case CONFIGURAZIONE_MANUALE:
+				AuthenticationHttpsConfigurazioneManuale creManuale = new AuthenticationHttpsConfigurazioneManuale();
+				creManuale.setSubject((String)map_creds_https.get("subject"));
+				if(map_creds_https.containsKey("issuer")) {
+					creManuale.setIssuer((String)map_creds_https.get("issuer"));
+				}
+				c.setCertificato(creManuale);
+				break;	
+			}
 			ret = c;
 			break;
 		}
 		case PRINCIPAL: {
 			AuthenticationPrincipal c = new AuthenticationPrincipal();
-			c.setUserid(map_creds.get("userid"));
+			c.setUserid((String) map_creds.get("userid"));
 			ret = c;
 			break;
 		}
@@ -428,12 +507,13 @@ public class Helper {
 	 * @param tipoAuth
 	 * @param credClass	La classe verso cui tradurre
 	 * @param enumClass La modalità di accesso, ovvero il campo "tipo" della classe verso cui tradurre.
+	 * @throws UtilsException 
 	 */
 	
 	// TODO: Manage exceptions.
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T,E> T apiCredenzialiToGovwayCred(Object creds, ModalitaAccessoEnum tipoAuth, Class<T> credClass, Class<E> enumClass)
-			throws IllegalAccessException, InvocationTargetException, InstantiationException {
+			throws IllegalAccessException, InvocationTargetException, InstantiationException, UtilsException {
 		
 		if (!enumClass.isEnum())
 			throw new IllegalArgumentException("Il parametro enumClass deve essere un'enumerazione");
@@ -451,7 +531,27 @@ public class Helper {
 		case HTTPS: {
 			AuthenticationHttps auth = (AuthenticationHttps) creds;
 			BeanUtils.setProperty(ret, "tipo", Enum.valueOf( (Class<Enum>)enumClass, "SSL"));
-			BeanUtils.setProperty(ret, "subject", auth.getSubject());
+			switch (auth.getTipo()) {
+			case CERTIFICATO:
+				AuthenticationHttpsCertificato cre = (AuthenticationHttpsCertificato) auth.getCertificato();
+				ArchiveType type = ArchiveType.CER;
+				String alias = cre.getAlias();
+				String password = cre.getPassword();
+				if(cre.getTipo()!=null) {
+					type = ArchiveType.valueOf(cre.getTipo().toString());
+				}
+				CertificateInfo cInfo = ArchiveLoader.load(type, cre.getArchivio(), alias, password).getCertificate();
+				BeanUtils.setProperty(ret, "certificate", cre.getArchivio());
+				BeanUtils.setProperty(ret, "certificateStrictVerification", cre.isStrictVerification());
+				BeanUtils.setProperty(ret, "cnSubject", cInfo.getSubject().getCN());
+				BeanUtils.setProperty(ret, "cnIssuer", cInfo.getIssuer().getCN());				
+				break;
+			case CONFIGURAZIONE_MANUALE:
+				AuthenticationHttpsConfigurazioneManuale creManuale = (AuthenticationHttpsConfigurazioneManuale) auth.getCertificato();
+				BeanUtils.setProperty(ret, "subject", creManuale.getSubject());
+				BeanUtils.setProperty(ret, "issuer", creManuale.getIssuer());
+				break;
+			}
 			break;
 		}
 		case PRINCIPAL: {
@@ -490,7 +590,24 @@ public class Helper {
 		}
 		else if ("ssl".equals(tipo)) {
 			AuthenticationHttps auth = new AuthenticationHttps();
-			auth.setSubject(BeanUtils.getProperty(govwayCreds, "subject"));
+			Method mCertificate = credClass.getMethod("getCertificate");
+			Object oCertificate = mCertificate.invoke(govwayCreds);
+			if(oCertificate==null) {
+				auth.setTipo(TipoAutenticazioneHttps.CONFIGURAZIONE_MANUALE);
+				AuthenticationHttpsConfigurazioneManuale manuale = new AuthenticationHttpsConfigurazioneManuale();
+				manuale.setSubject(BeanUtils.getProperty(govwayCreds, "subject"));	
+				manuale.setIssuer(BeanUtils.getProperty(govwayCreds, "issuer"));	
+				auth.setCertificato(manuale);
+			}
+			else {
+				auth.setTipo(TipoAutenticazioneHttps.CERTIFICATO);
+				AuthenticationHttpsCertificato certificato = new AuthenticationHttpsCertificato();
+				certificato.setTipo(TipoKeystore.CER);
+				certificato.setArchivio((byte[])oCertificate);
+				Method mCertificateStrictVerification = credClass.getMethod("isCertificateStrictVerification");
+				certificato.setStrictVerification((Boolean) mCertificateStrictVerification.invoke(govwayCreds));
+				auth.setCertificato(certificato);
+			}
 			ret = auth;
 		}
 		else if ("principal".equals(tipo)) {

@@ -59,7 +59,7 @@ import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServizi;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
@@ -145,7 +145,7 @@ public class SICAtoOpenSPCoopUtilities {
 			if(keyValue[0].trim().contains(" ")){
 				throw new SICAToOpenSPCoopUtilitiesException("Comprensione dn non riuscita: il campo ["+valoriDN[i]+"] contiene spazi nella chiave identificativa ["+keyValue[0].trim()+"]");
 			}
-			if(Utilities.formatKeySubject(keyValue[0]).equalsIgnoreCase("O")){
+			if(CertificateUtils.formatKeyPrincipal(keyValue[0]).equalsIgnoreCase("O")){
 				campoObbligatorioO = true;
 			}
 		}

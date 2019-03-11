@@ -137,7 +137,7 @@ CREATE TABLE transazioni
 	location_richiesta VARCHAR2(255),
 	location_risposta VARCHAR2(255),
 	nome_porta VARCHAR2(2000),
-	credenziali VARCHAR2(255),
+	credenziali CLOB,
 	location_connettore CLOB,
 	url_invocazione CLOB,
 	trasporto_mittente VARCHAR2(20),

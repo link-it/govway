@@ -16,6 +16,7 @@
       <!-- Build-Options -->
       <property name="buildAsRelease" value="false"/>
       <property name="buildGovWayConfigApiRS" value="true"/>
+      <property name="buildGovwayConsoleCore" value="true"/>
       <property name="buildAPI" value="true"/>
 
       <!-- Dipendenze di compilazione -->

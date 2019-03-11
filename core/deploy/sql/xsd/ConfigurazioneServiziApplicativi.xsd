@@ -388,7 +388,13 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="utente"/>
+                                <!-- 
+                                    Nella tabella 'credenziale-mittente' dove vengono tracciate le credenziali, il principal ha a disposizione 2900 caratteri,
+                                    poichè può variare la lunghezza in funzione del formato e la conversione viene effettuata durante il salvataggio, si e' scelto di permettere meno caratteri per
+                                    non incorrere in eventuali errori di conversione.
+                                    NOTA: il principal potrebbe corrispondere ad un subject
+                                -->
+                                <linkit:sql-column-mapping name="utente" varchar="2800"/>
                                 <linkit:sql-ddl-column-comment>Username in caso di credenziali di tipo 'basic' o principal-user-id in caso di credenziali di tipo 'principal' (vedi colonna 'tipoauth')</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -410,8 +416,73 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="subject"/>
+                                <!-- 
+                                    Nella tabella 'credenziale-mittente' dove vengono tracciate le credenziali, il subject ha a disposizione 2900 caratteri,
+                                    poichè può variare la lunghezza in funzione del formato e la conversione viene effettuata durante il salvataggio, si e' scelto di permettere meno caratteri per
+                                    non incorrere in eventuali errori di conversione 
+                                -->
+                                <linkit:sql-column-mapping name="subject" varchar="2800"/>
                                 <linkit:sql-ddl-column-comment>Subject del certificato in caso di credenziali di tipo 'ssl' (vedi colonna 'tipoauth')</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>            
+                <xsd:element name="cn-subject" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="cn_subject"/>
+                                <linkit:sql-ddl-column-comment>CommonName del Subject del certificato in caso di credenziali di tipo 'ssl' (vedi colonna 'tipoauth')</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="issuer" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <!-- 
+                                    Nella tabella 'credenziale-mittente' dove vengono tracciate le credenziali, il subject ha a disposizione 2900 caratteri,
+                                    poichè può variare la lunghezza in funzione del formato e la conversione viene effettuata durante il salvataggio, si e' scelto di permettere meno caratteri per
+                                    non incorrere in eventuali errori di conversione 
+                                -->
+                                <linkit:sql-column-mapping name="issuer" varchar="2800"/>
+                                <linkit:sql-ddl-column-comment>Issuer del certificato in caso di credenziali di tipo 'ssl' (vedi colonna 'tipoauth')</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>            
+                <xsd:element name="cn-issuer" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="cn_issuer"/>
+                                <linkit:sql-ddl-column-comment>CommonName dell'Issuer del certificato in caso di credenziali di tipo 'ssl' (vedi colonna 'tipoauth')</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="certificate" type="xsd:hexBinary" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="certificate" medium-binary="true"/>
+                                <linkit:sql-ddl-column-comment>Certificato in caso di credenziali di tipo 'ssl' (vedi colonna 'tipoauth')</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="certificate-strict-verification" type="xsd:integer" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="cert_strict_verification" />
+                                <linkit:sql-ddl-column-comment>Indicazione se viene effettuata un confronto 'strict' su tutti i campi del certificato o solamente su Issuer e Subject, in caso di credenziali di tipo 'ssl' (vedi colonna 'tipoauth') (1=true, 0=false)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

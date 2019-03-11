@@ -1,7 +1,7 @@
 /*
  * GovWay - A customizable API Gateway 
  * http://www.govway.org
- * 
+ *
  * from the Link.it OpenSPCoop project codebase
  * 
  * Copyright (c) 2005-2019 Link.it srl (http://link.it).
@@ -456,8 +456,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link SearchFilterAccordoCooperazione }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link SearchFilterAccordoCooperazione }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link SearchFilterAccordoCooperazione }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "search-filter-accordo-cooperazione")
     public JAXBElement<SearchFilterAccordoCooperazione> createSearchFilterAccordoCooperazione(SearchFilterAccordoCooperazione value) {
@@ -465,8 +469,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link IdSoggetto }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link IdSoggetto }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link IdSoggetto }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "id-soggetto")
     public JAXBElement<IdSoggetto> createIdSoggetto(IdSoggetto value) {
@@ -474,8 +482,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdAccordoCooperazione }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdAccordoCooperazione }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link WrapperIdAccordoCooperazione }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdAccordoCooperazione")
     public JAXBElement<WrapperIdAccordoCooperazione> createWrapperIdAccordoCooperazione(WrapperIdAccordoCooperazione value) {
@@ -483,8 +495,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdAccordoServizioParteComune }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdAccordoServizioParteComune }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link WrapperIdAccordoServizioParteComune }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdAccordoServizioParteComune")
     public JAXBElement<WrapperIdAccordoServizioParteComune> createWrapperIdAccordoServizioParteComune(WrapperIdAccordoServizioParteComune value) {
@@ -492,8 +508,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdPortaDominio }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdPortaDominio }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link WrapperIdPortaDominio }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdPortaDominio")
     public JAXBElement<WrapperIdPortaDominio> createWrapperIdPortaDominio(WrapperIdPortaDominio value) {
@@ -501,8 +521,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdRuolo }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdRuolo }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link WrapperIdRuolo }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdRuolo")
     public JAXBElement<WrapperIdRuolo> createWrapperIdRuolo(WrapperIdRuolo value) {
@@ -510,8 +534,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdScope }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdScope }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link WrapperIdScope }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdScope")
     public JAXBElement<WrapperIdScope> createWrapperIdScope(WrapperIdScope value) {
@@ -519,8 +547,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdSoggetto }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdSoggetto }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link WrapperIdSoggetto }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdSoggetto")
     public JAXBElement<WrapperIdSoggetto> createWrapperIdSoggetto(WrapperIdSoggetto value) {
@@ -528,8 +560,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdAccordoServizioParteSpecifica }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdAccordoServizioParteSpecifica }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link WrapperIdAccordoServizioParteSpecifica }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdAccordoServizioParteSpecifica")
     public JAXBElement<WrapperIdAccordoServizioParteSpecifica> createWrapperIdAccordoServizioParteSpecifica(WrapperIdAccordoServizioParteSpecifica value) {
@@ -537,8 +573,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link RegistryServiceException }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link RegistryServiceException }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link RegistryServiceException }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "registry-service-exception")
     public JAXBElement<RegistryServiceException> createRegistryServiceException(RegistryServiceException value) {
@@ -546,8 +586,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link RegistryNotFoundException }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link RegistryNotFoundException }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link RegistryNotFoundException }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "registry-not-found-exception")
     public JAXBElement<RegistryNotFoundException> createRegistryNotFoundException(RegistryNotFoundException value) {
@@ -555,8 +599,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link RegistryMultipleResultException }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link RegistryMultipleResultException }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link RegistryMultipleResultException }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "registry-multiple-result-exception")
     public JAXBElement<RegistryMultipleResultException> createRegistryMultipleResultException(RegistryMultipleResultException value) {
@@ -564,8 +612,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link RegistryNotImplementedException }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link RegistryNotImplementedException }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link RegistryNotImplementedException }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "registry-not-implemented-exception")
     public JAXBElement<RegistryNotImplementedException> createRegistryNotImplementedException(RegistryNotImplementedException value) {
@@ -573,8 +625,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link RegistryNotAuthorizedException }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link RegistryNotAuthorizedException }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link RegistryNotAuthorizedException }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "registry-not-authorized-exception")
     public JAXBElement<RegistryNotAuthorizedException> createRegistryNotAuthorizedException(RegistryNotAuthorizedException value) {
@@ -582,8 +638,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link FindAll }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link FindAll }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link FindAll }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "findAll")
     public JAXBElement<FindAll> createFindAll(FindAll value) {
@@ -591,8 +651,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link FindAllResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link FindAllResponse }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link FindAllResponse }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "findAllResponse")
     public JAXBElement<FindAllResponse> createFindAllResponse(FindAllResponse value) {
@@ -600,8 +664,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Find }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Find }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link Find }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "find")
     public JAXBElement<Find> createFind(Find value) {
@@ -609,8 +677,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link FindResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link FindResponse }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link FindResponse }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "findResponse")
     public JAXBElement<FindResponse> createFindResponse(FindResponse value) {
@@ -618,8 +690,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Count }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Count }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link Count }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "count")
     public JAXBElement<Count> createCount(Count value) {
@@ -627,8 +703,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link CountResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link CountResponse }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link CountResponse }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "countResponse")
     public JAXBElement<CountResponse> createCountResponse(CountResponse value) {
@@ -636,8 +716,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Get }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Get }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link Get }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "get")
     public JAXBElement<Get> createGet(Get value) {
@@ -645,8 +729,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetResponse }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link GetResponse }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "getResponse")
     public JAXBElement<GetResponse> createGetResponse(GetResponse value) {
@@ -654,8 +742,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Exists }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Exists }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link Exists }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "exists")
     public JAXBElement<Exists> createExists(Exists value) {
@@ -663,8 +755,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ExistsResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link ExistsResponse }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link ExistsResponse }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "existsResponse")
     public JAXBElement<ExistsResponse> createExistsResponse(ExistsResponse value) {
@@ -672,8 +768,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link FindAllIds }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link FindAllIds }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link FindAllIds }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "findAllIds")
     public JAXBElement<FindAllIds> createFindAllIds(FindAllIds value) {
@@ -681,8 +781,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link FindAllIdsResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link FindAllIdsResponse }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link FindAllIdsResponse }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "findAllIdsResponse")
     public JAXBElement<FindAllIdsResponse> createFindAllIdsResponse(FindAllIdsResponse value) {
@@ -690,8 +794,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link InUse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link InUse }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link InUse }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "inUse")
     public JAXBElement<InUse> createInUse(InUse value) {
@@ -699,8 +807,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link InUseResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link InUseResponse }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link InUseResponse }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "inUseResponse")
     public JAXBElement<InUseResponse> createInUseResponse(InUseResponse value) {
@@ -708,8 +820,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Create }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Create }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link Create }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "create")
     public JAXBElement<Create> createCreate(Create value) {
@@ -717,8 +833,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link CreateResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link CreateResponse }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link CreateResponse }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "createResponse")
     public JAXBElement<CreateResponse> createCreateResponse(CreateResponse value) {
@@ -726,8 +846,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Update }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Update }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link Update }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "update")
     public JAXBElement<Update> createUpdate(Update value) {
@@ -735,8 +859,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link UpdateResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link UpdateResponse }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link UpdateResponse }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "updateResponse")
     public JAXBElement<UpdateResponse> createUpdateResponse(UpdateResponse value) {
@@ -744,8 +872,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link UpdateOrCreate }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link UpdateOrCreate }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link UpdateOrCreate }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "updateOrCreate")
     public JAXBElement<UpdateOrCreate> createUpdateOrCreate(UpdateOrCreate value) {
@@ -753,8 +885,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link UpdateOrCreateResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link UpdateOrCreateResponse }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link UpdateOrCreateResponse }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "updateOrCreateResponse")
     public JAXBElement<UpdateOrCreateResponse> createUpdateOrCreateResponse(UpdateOrCreateResponse value) {
@@ -762,8 +898,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteById }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteById }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link DeleteById }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "deleteById")
     public JAXBElement<DeleteById> createDeleteById(DeleteById value) {
@@ -771,8 +911,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteByIdResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteByIdResponse }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link DeleteByIdResponse }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "deleteByIdResponse")
     public JAXBElement<DeleteByIdResponse> createDeleteByIdResponse(DeleteByIdResponse value) {
@@ -780,8 +924,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteAll }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteAll }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link DeleteAll }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "deleteAll")
     public JAXBElement<DeleteAll> createDeleteAll(DeleteAll value) {
@@ -789,8 +937,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteAllResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteAllResponse }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link DeleteAllResponse }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "deleteAllResponse")
     public JAXBElement<DeleteAllResponse> createDeleteAllResponse(DeleteAllResponse value) {
@@ -798,8 +950,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteAllByFilter }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteAllByFilter }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link DeleteAllByFilter }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "deleteAllByFilter")
     public JAXBElement<DeleteAllByFilter> createDeleteAllByFilter(DeleteAllByFilter value) {
@@ -807,8 +963,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteAllByFilterResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteAllByFilterResponse }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link DeleteAllByFilterResponse }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "deleteAllByFilterResponse")
     public JAXBElement<DeleteAllByFilterResponse> createDeleteAllByFilterResponse(DeleteAllByFilterResponse value) {
@@ -816,8 +976,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Delete }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Delete }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link Delete }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "delete")
     public JAXBElement<Delete> createDelete(Delete value) {
@@ -825,8 +989,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteResponse }{@code >}
      * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link DeleteResponse }{@code >}
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "deleteResponse")
     public JAXBElement<DeleteResponse> createDeleteResponse(DeleteResponse value) {

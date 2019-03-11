@@ -38,6 +38,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
@@ -180,10 +181,17 @@ import org.openspcoop2.core.id.IdentificativiErogazione;
 import org.openspcoop2.core.id.IdentificativiFruizione;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsAlreadyExistsException;
+import org.openspcoop2.utils.certificate.ArchiveLoader;
+import org.openspcoop2.utils.certificate.ArchiveType;
+import org.openspcoop2.utils.certificate.Certificate;
+import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
 import org.openspcoop2.utils.datasource.DataSourceParams;
+import org.openspcoop2.utils.jdbc.IJDBCAdapter;
+import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -3244,25 +3252,49 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
     @Override
     public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-            return this._getServizioApplicativo(idServizioApplicativo, null, null, null, null, null);
+            return this._getServizioApplicativo(idServizioApplicativo, null, null, 
+            		null, null, null, false,
+            		null, 
+            		null);
     }
     @Override
     public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-            return this._getServizioApplicativo(null, aUser, aPassword, null, null, null);
+            return this._getServizioApplicativo(null, aUser, aPassword, 
+            		null, null, null, false,
+            		null, 
+            		null);
     }
     @Override
-    public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-            return this._getServizioApplicativo(null, null, null, aSubject, null, null);
+    public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject, String aIssuer) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+            return this._getServizioApplicativo(null, null, null, 
+            		aSubject, aIssuer, null, false,
+            		null, 
+            		null);
+    }
+    @Override
+    public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+    	 return this._getServizioApplicativo(null, null, null, 
+         		null, null, certificate, strictVerifier,
+         		null, 
+         		null);
     }
     @Override
     public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String principal) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-    	return this._getServizioApplicativo(null, null, null, null, principal, null);
+    	return this._getServizioApplicativo(null, null, null, 
+    			null, null, null, false,
+    			principal, 
+    			null);
     }
     public ServizioApplicativo getServizioApplicativo(long idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
-            return this._getServizioApplicativo(null, null, null, null, null, idServizioApplicativo);
+            return this._getServizioApplicativo(null, null, null, 
+            		null, null, null, false,
+            		null, 
+            		idServizioApplicativo);
     }
 
-    private ServizioApplicativo _getServizioApplicativo(IDServizioApplicativo idServizioApplicativoObject, String aUser, String aPassord, String aSubject, String principal,
+    private ServizioApplicativo _getServizioApplicativo(IDServizioApplicativo idServizioApplicativoObject, String aUser, String aPassord, 
+    		String aSubject, String aIssuer, CertificateInfo aCertificate, boolean aStrictVerifier, 
+    		String principal,
     		Long idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 
 		Connection con = null;
@@ -3275,7 +3307,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		int type = 0;
 		final int TYPE_ID_OBJECT = 1;
 		final int TYPE_BASIC = 2;
-		final int TYPE_SSL = 3;
+		final int TYPE_SSL_SUBJECT_ISSUER = 31;
+		final int TYPE_SSL_CERTIFICATE = 32;
 		final int TYPE_PRINCIPAL = 4;
 		final int TYPE_ID_LONG = 5;
 		if(idServizioApplicativoObject!=null){
@@ -3294,7 +3327,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			type = TYPE_BASIC;
 		}
 		else if(aSubject!=null){
-			type = TYPE_SSL;
+			type = TYPE_SSL_SUBJECT_ISSUER;
+		}
+		else if(aCertificate!=null){
+			type = TYPE_SSL_CERTIFICATE;
 		}
 		else if(principal!=null){
 			type = TYPE_PRINCIPAL;
@@ -3364,10 +3400,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 				break;
 				
-			case TYPE_SSL:
+			case TYPE_SSL_SUBJECT_ISSUER:
 
 				// Autenticazione SSL deve essere LIKE
-				Hashtable<String, String> hashSubject = Utilities.getSubjectIntoHashtable(aSubject);
+				Hashtable<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoHashtable(aSubject, PrincipalType.subject);
+				Hashtable<String, List<String>> hashIssuer = null;
+				if(StringUtils.isNotEmpty(aIssuer)) {
+					hashIssuer = CertificateUtils.getPrincipalIntoHashtable(aIssuer, PrincipalType.issuer);
+				}
 
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
@@ -3377,8 +3417,26 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				Enumeration<String> keys = hashSubject.keys();
 				while(keys.hasMoreElements()){
 					String key = keys.nextElement();
-					String value = hashSubject.get(key);
-					sqlQueryObject.addWhereLikeCondition("subject", "/"+Utilities.formatKeySubject(key)+"="+Utilities.formatValueSubject(value)+"/", true, true, false);
+					
+					List<String> listValues = hashSubject.get(key);
+					for (String value : listValues) {
+						sqlQueryObject.addWhereLikeCondition("subject", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
+					}
+				}
+				
+				if(hashIssuer!=null) {
+					keys = hashIssuer.keys();
+					while(keys.hasMoreElements()){
+						String key = keys.nextElement();
+						
+						List<String> listValues = hashIssuer.get(key);
+						for (String value : listValues) {
+							sqlQueryObject.addWhereLikeCondition("issuer", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
+						}
+					}
+				}
+				else {
+					sqlQueryObject.addWhereIsNullCondition("issuer");
 				}
 
 				sqlQueryObject.setANDLogicOperator(true);
@@ -3387,7 +3445,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				//System.out.println("QUERY["+sqlQuery+"]["+type+"]["+idSoggettoFruitore+"]["+CostantiConfigurazione.CREDENZIALE_SSL.toString()+"]");
 
 				stm = con.prepareStatement(sqlQuery);
-				//stm.setString(1, nome_sa);
 				stm.setString(1, CostantiConfigurazione.CREDENZIALE_SSL.toString());
 
 				this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_SSL.toString()));
@@ -3396,11 +3453,91 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				long idSA = -1;
 				while(rs.next()){
 					// Possono esistere piu' sil che hanno una porzione di subject uguale, devo quindi verificare che sia proprio quello che cerco
+					
 					String subjectPotenziale =  rs.getString("subject");
-					if(Utilities.sslVerify(subjectPotenziale, aSubject, this.log)){
+					boolean subjectValid = CertificateUtils.sslVerify(subjectPotenziale, aSubject, PrincipalType.subject, this.log);
+					
+					boolean issuerValid = true;
+					if(hashIssuer!=null) {
+						String issuerPotenziale =  rs.getString("issuer");
+						if(StringUtils.isNotEmpty(issuerPotenziale)) {
+							issuerValid = CertificateUtils.sslVerify(issuerPotenziale, aIssuer, PrincipalType.issuer, this.log);
+						}
+						else {
+							issuerValid = false;
+						}
+					}
+					
+					
+					if( subjectValid && issuerValid ) {
 						idSA = rs.getLong("id");
 						break;
 					}
+				}
+				rs.close();
+				stm.close();
+				//System.out.println("TROVATO["+idSA+"]");
+				if(idSA<=0){
+					throw new DriverConfigurazioneNotFound("Nessun Servizio Applicativo trovato.");
+				}
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id = ?");
+				stm = con.prepareStatement(sqlQueryObject.toString());
+				stm.setLong(1, idSA);
+
+				this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, idSA));
+
+				break;
+
+			case TYPE_SSL_CERTIFICATE:
+
+				String cnSubject = aCertificate.getSubject().getCN();
+				String cnIssuer = aCertificate.getIssuer().getCN();
+
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("tipoauth = ?");
+				sqlQueryObject.addWhereCondition("cn_subject = ?");
+				sqlQueryObject.addWhereCondition("cn_issuer = ?");
+				sqlQueryObject.addWhereCondition("cert_strict_verification = ?");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQuery = sqlQueryObject.createSQLQuery();
+
+				//System.out.println("QUERY["+sqlQuery+"]["+type+"]["+idSoggettoFruitore+"]["+CostantiConfigurazione.CREDENZIALE_SSL.toString()+"]");
+
+				stm = con.prepareStatement(sqlQuery);
+				stm.setString(1, CostantiConfigurazione.CREDENZIALE_SSL.toString());
+				stm.setString(2, cnSubject);
+				stm.setString(3, cnIssuer);
+				if(aStrictVerifier) {
+					stm.setInt(4, CostantiDB.TRUE);
+				}
+				else {
+					stm.setInt(4, CostantiDB.FALSE);
+				}
+
+				this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_SSL.toString()));
+
+				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
+				
+				rs = stm.executeQuery();
+				idSA = -1;
+				while(rs.next()){
+					// Possono esistere piu' sil che hanno un CN con subject e issuer diverso.
+					
+					byte[] certificatoBytes = jdbcAdapter.getBinaryData(rs, "certificate");
+					Certificate certificato = ArchiveLoader.load(ArchiveType.CER, certificatoBytes, 0, null);
+					//int tmpStrict = rs.getInt("cert_strict_verification");
+					//boolean strict = tmpStrict == CostantiDB.TRUE;
+					
+					if(aCertificate.equals(certificato.getCertificate(),aStrictVerifier)) {
+						idSA = rs.getLong("id");
+						break;
+					}
+
 				}
 				rs.close();
 				stm.close();
@@ -3487,10 +3624,26 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 						) {
 					invPorta = new InvocazionePorta();
 					Credenziali credenziali = new Credenziali();
-					credenziali.setPassword(rs.getString("password"));
-					credenziali.setSubject(rs.getString("subject"));
+					
 					credenziali.setTipo(DriverConfigurazioneDB_LIB.getEnumCredenzialeTipo(tipoAuth));
+					
 					credenziali.setUser(rs.getString("utente"));
+					credenziali.setPassword(rs.getString("password"));
+					
+					credenziali.setSubject(rs.getString("subject"));
+					credenziali.setCnSubject(rs.getString("cn_subject"));
+					credenziali.setIssuer(rs.getString("issuer"));
+					credenziali.setCnIssuer(rs.getString("cn_issuer"));
+					IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
+					credenziali.setCertificate(jdbcAdapter.getBinaryData(rs, "certificate"));
+					int strict = rs.getInt("cert_strict_verification");
+					if(strict == CostantiDB.TRUE) {
+						credenziali.setCertificateStrictVerification(true);
+					}
+					else if(strict == CostantiDB.FALSE) {
+						credenziali.setCertificateStrictVerification(false);
+					}
+					
 					if(tipoAuth != null && !tipoAuth.equals("")){
 						invPorta.addCredenziali( credenziali );
 					}
@@ -11441,7 +11594,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 	}
 
-	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiSslList(String subject) throws DriverConfigurazioneException {
+	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiSslList(String subject, String issuer) throws DriverConfigurazioneException {
 		String nomeMetodo = "servizioApplicativoWithCredenzialiSslList";
 		String queryString;
 
@@ -11467,21 +11620,48 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 
-			Hashtable<String, String> hashSubject = Utilities.getSubjectIntoHashtable(subject);
-
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 			sqlQueryObject.addSelectField("id");
 			sqlQueryObject.addSelectField("nome");
 			sqlQueryObject.addSelectField("subject");
+			sqlQueryObject.addSelectField("issuer");
 			sqlQueryObject.addSelectField("id_soggetto");
 			sqlQueryObject.addWhereCondition("tipoauth = ?");
+			
+			Hashtable<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoHashtable(subject, PrincipalType.subject);
+			Hashtable<String, List<String>> hashIssuer = null;
+			if(StringUtils.isNotEmpty(issuer)) {
+				hashIssuer = CertificateUtils.getPrincipalIntoHashtable(issuer, PrincipalType.issuer);
+			}
+			
 			Enumeration<String> keys = hashSubject.keys();
 			while(keys.hasMoreElements()){
 				String key = keys.nextElement();
-				String value = hashSubject.get(key);
-				sqlQueryObject.addWhereLikeCondition("subject", "/"+Utilities.formatKeySubject(key)+"="+Utilities.formatValueSubject(value)+"/", true, false);
+				
+				List<String> listValues = hashSubject.get(key);
+				for (String value : listValues) {
+					sqlQueryObject.addWhereLikeCondition("subject", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
+				}
+				
 			}
+			
+			if(hashIssuer!=null) {
+				keys = hashIssuer.keys();
+				while(keys.hasMoreElements()){
+					String key = keys.nextElement();
+					
+					List<String> listValues = hashIssuer.get(key);
+					for (String value : listValues) {
+						sqlQueryObject.addWhereLikeCondition("issuer", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
+					}
+				}
+				
+			}
+			else {
+				sqlQueryObject.addWhereIsNullCondition("issuer");
+			}
+			
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
@@ -11493,11 +11673,137 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			while (risultato.next()) {
 
 				// Possono esistere piu' sil che hanno una porzione di subject uguale, devo quindi verificare che sia proprio quello che cerco
+				
 				String subjectPotenziale =  risultato.getString("subject");
-				if(Utilities.sslVerify(subjectPotenziale, subject, this.log)){
-					sa=this.getServizioApplicativo(risultato.getLong("id"));
-					lista.add(sa);
+				boolean subjectValid = CertificateUtils.sslVerify(subjectPotenziale, subject, PrincipalType.subject, this.log);
+				
+				boolean issuerValid = true;
+				if(hashIssuer!=null) {
+					String issuerPotenziale =  risultato.getString("issuer");
+					if(StringUtils.isNotEmpty(issuerPotenziale)) {
+						issuerValid = CertificateUtils.sslVerify(issuerPotenziale, issuer, PrincipalType.issuer, this.log);
+					}
+					else {
+						issuerValid = false;
+					}
 				}
+				
+				if( !subjectValid || !issuerValid ) {
+					continue;
+				}
+				
+				sa=this.getServizioApplicativo(risultato.getLong("id"));
+				lista.add(sa);
+			}
+
+			return lista;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiSslList(CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException {
+		String nomeMetodo = "servizioApplicativoWithCredenzialiSslList";
+		String queryString;
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		ArrayList<ServizioApplicativo> lista = new ArrayList<ServizioApplicativo>();
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addSelectField("nome");
+			sqlQueryObject.addSelectField("certificate");
+			sqlQueryObject.addSelectField("id_soggetto");
+			sqlQueryObject.addWhereCondition("tipoauth = ?");
+			sqlQueryObject.addWhereCondition("cn_subject = ?");
+			sqlQueryObject.addWhereCondition("cn_issuer = ?");
+			//sqlQueryObject.addWhereCondition("cert_strict_verification = ?");
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			queryString = sqlQueryObject.createSQLQuery();
+			String cnSubject = certificate.getSubject().getCN();
+			String cnIssuer = certificate.getIssuer().getCN();
+			stmt = con.prepareStatement(queryString);
+			int indexStmt = 1;
+			stmt.setString(indexStmt++, CredenzialeTipo.SSL.getValue());
+			stmt.setString(indexStmt++, cnSubject);
+			stmt.setString(indexStmt++, cnIssuer);
+			// Il controllo serve ad evitare di caricare piu' applicativi con stesso certificato medesimo (indipendentemente dallo strict)
+			// Se quindi sto creando un entita con strict abilitato, verifichero sotto tra i vari certificati la corrispondenza esatta, altrimenti una corrispondenza non esatta
+//			if(strictVerifier) {
+//				stmt.setInt(indexStmt++, CostantiDB.TRUE);
+//			}
+//			else {
+//				stmt.setInt(indexStmt++, CostantiDB.FALSE);
+//			}
+			risultato = stmt.executeQuery();
+
+			ServizioApplicativo sa;
+			IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
+			while (risultato.next()) {
+
+				// Possono esistere piu' servizi applicativi che hanno un CN con subject e issuer diverso.
+				
+				byte[] certificatoBytes = jdbcAdapter.getBinaryData(risultato, "certificate");
+				Certificate certificato = ArchiveLoader.load(ArchiveType.CER, certificatoBytes, 0, null);
+				//int tmpStrict = rs.getInt("cert_strict_verification");
+				//boolean strict = tmpStrict == CostantiDB.TRUE;
+				
+				if(!certificate.equals(certificato.getCertificate(),strictVerifier)) {
+					continue;
+				}
+				
+				sa=this.getServizioApplicativo(risultato.getLong("id"));
+				lista.add(sa);
 			}
 
 			return lista;

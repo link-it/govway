@@ -83,6 +83,9 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.certificate.ArchiveLoader;
+import org.openspcoop2.utils.certificate.ArchiveType;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.slf4j.Logger;
 
 
@@ -679,12 +682,23 @@ public class ConfigurazionePdD  {
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
 										}
 										else if(CredenzialeTipo.SSL.equals(credenziale.getTipo())){
-											try{
-												this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(credenziale.getSubject()));
-												this.getServizioApplicativoByCredenzialiSsl(connectionPdD, credenziale.getSubject());
+											if(credenziale.getSubject()!=null) {
+												try{
+													this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(credenziale.getSubject(), credenziale.getIssuer()));
+													this.getServizioApplicativoByCredenzialiSsl(connectionPdD, credenziale.getSubject(), credenziale.getIssuer());
+												}
+												catch(DriverConfigurazioneNotFound notFound){}
+												catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}	
 											}
-											catch(DriverConfigurazioneNotFound notFound){}
-											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
+											if(credenziale.getCertificate()!=null) {
+												try{
+													CertificateInfo certificato = ArchiveLoader.load(ArchiveType.CER, credenziale.getCertificate(), 0, null).getCertificate();
+													this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(certificato, credenziale.isCertificateStrictVerification()));
+													this.getServizioApplicativoByCredenzialiSsl(connectionPdD, certificato, credenziale.isCertificateStrictVerification());
+												}
+												catch(DriverConfigurazioneNotFound notFound){}
+												catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}	
+											}			
 										}
 										else if(CredenzialeTipo.PRINCIPAL.equals(credenziale.getTipo())){
 											try{
@@ -904,12 +918,23 @@ public class ConfigurazionePdD  {
 								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
 							}
 							else if(CredenzialeTipo.SSL.equals(credenziale.getTipo())){
-								try{
-									this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(credenziale.getSubject()));
-									this.getServizioApplicativoByCredenzialiSsl(connectionPdD, credenziale.getSubject());
+								if(credenziale.getSubject()!=null) {
+									try{
+										this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(credenziale.getSubject(), credenziale.getIssuer()));
+										this.getServizioApplicativoByCredenzialiSsl(connectionPdD, credenziale.getSubject(), credenziale.getIssuer());
+									}
+									catch(DriverConfigurazioneNotFound notFound){}
+									catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}	
 								}
-								catch(DriverConfigurazioneNotFound notFound){}
-								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
+								if(credenziale.getCertificate()!=null) {
+									try{
+										CertificateInfo certificato = ArchiveLoader.load(ArchiveType.CER, credenziale.getCertificate(), 0, null).getCertificate();
+										this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(certificato, credenziale.isCertificateStrictVerification()));
+										this.getServizioApplicativoByCredenzialiSsl(connectionPdD, certificato, credenziale.isCertificateStrictVerification());
+									}
+									catch(DriverConfigurazioneNotFound notFound){}
+									catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}	
+								}
 							}
 							else if(CredenzialeTipo.PRINCIPAL.equals(credenziale.getTipo())){
 								try{
@@ -2374,12 +2399,18 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("Servizio Applicativo non trovato");
 	} 
 	
-	private String _getKey_getServizioApplicativoByCredenzialiSsl(String aSubject){
+	private String _getKey_getServizioApplicativoByCredenzialiSsl(String aSubject, String Issuer){
 		String key = "getServizioApplicativoByCredenzialiSsl";
-		key = key +"_"+aSubject;
+		key = key +"_subject:"+aSubject;
+		if(Issuer!=null) {
+			key = key +"_issuer:"+Issuer;
+		}
+		else {
+			key = key +"_issuer:nonDefinito";
+		}
 		return key;
 	}
-	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(Connection connectionPdD,String aSubject)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(Connection connectionPdD,String aSubject, String aIssuer)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Raccolta dati
 		if(aSubject == null)
@@ -2388,7 +2419,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getServizioApplicativoByCredenzialiSsl(aSubject);
+			key = this._getKey_getServizioApplicativoByCredenzialiSsl(aSubject, aIssuer);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2404,11 +2435,13 @@ public class ConfigurazionePdD  {
 		}
 
 		// Algoritmo CACHE
+		Class<?>[] classArguments = new Class[] {String.class, String.class};
+		Object[]values = new Object[] {aSubject , aIssuer}; // passo gli argomenti tramite array poich' aIssuer puo' essere null
 		ServizioApplicativo s = null;
 		if(this.cache!=null){
-			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiSsl",connectionPdD,CONFIGURAZIONE_PORTA,aSubject);
+			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiSsl",connectionPdD,CONFIGURAZIONE_PORTA,classArguments, values);
 		}else{
-			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiSsl",connectionPdD,CONFIGURAZIONE_PORTA,aSubject);
+			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiSsl",connectionPdD,CONFIGURAZIONE_PORTA,classArguments, values);
 		}
 
 		if(s!=null)
@@ -2416,6 +2449,56 @@ public class ConfigurazionePdD  {
 		else
 			throw new DriverConfigurazioneNotFound("Servizio Applicativo non trovato");
 	} 
+	
+	private String _getKey_getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException{
+		try {
+			String key = "getServizioApplicativoByCredenzialiSslCert";
+			key = key +"_cert:"+certificate.digestBase64Encoded();
+			key = key +"_strictVerifier:"+strictVerifier;
+			return key;
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(Connection connectionPdD, CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		// Raccolta dati
+		if(certificate == null)
+			throw new DriverConfigurazioneException("[getServizioApplicativo]: Parametro non definito (certificate)");		
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = this._getKey_getServizioApplicativoByCredenzialiSsl(certificate, strictVerifier);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((ServizioApplicativo) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		Class<?>[] classArguments = new Class[] {CertificateInfo.class, boolean.class};
+		Object[]values = new Object[] {certificate , strictVerifier};
+		ServizioApplicativo s = null;
+		if(this.cache!=null){
+			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiSsl",connectionPdD,CONFIGURAZIONE_PORTA, classArguments, values);
+		}else{
+			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiSsl",connectionPdD,CONFIGURAZIONE_PORTA, classArguments, values);
+		}
+
+		if(s!=null)
+			return s;
+		else
+			throw new DriverConfigurazioneNotFound("Servizio Applicativo non trovato");
+	}
 	
 	private String _getKey_getServizioApplicativoByCredenzialiPrincipal(String principal){
 		String key = "getServizioApplicativoByCredenzialiPrincipal";

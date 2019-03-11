@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -161,7 +162,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 
 	}
 
-	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiSslList(String subject) throws DriverConfigurazioneException {
+	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiSslList(String subject, String issuer) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "servizioApplicativoWithCredenzialiSslList";
 		DriverControlStationDB driver = null;
@@ -172,7 +173,28 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().servizioApplicativoWithCredenzialiSslList(subject);
+			return driver.getDriverConfigurazioneDB().servizioApplicativoWithCredenzialiSslList(subject, issuer);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiSslList(CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "servizioApplicativoWithCredenzialiSslList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().servizioApplicativoWithCredenzialiSslList(certificate, strictVerifier);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

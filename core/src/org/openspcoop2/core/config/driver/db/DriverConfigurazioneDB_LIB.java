@@ -154,11 +154,14 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject;
+import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKey;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyJDBCType;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyObject;
+import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.slf4j.Logger;
@@ -3211,6 +3214,11 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("utente", "?");
 				sqlQueryObject.addInsertField("password", "?");
 				sqlQueryObject.addInsertField("subject", "?");
+				sqlQueryObject.addInsertField("cn_subject", "?");
+				sqlQueryObject.addInsertField("issuer", "?");
+				sqlQueryObject.addInsertField("cn_issuer", "?");
+				sqlQueryObject.addInsertField("certificate", "?");
+				sqlQueryObject.addInsertField("cert_strict_verification", "?");
 				sqlQueryObject.addInsertField("invio_x_rif_inv", "?");
 				sqlQueryObject.addInsertField("risposta_x_rif_inv", "?");
 				sqlQueryObject.addInsertField("invio_x_rif", "?");
@@ -3301,10 +3309,37 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, (credenzialiInvocazionePorta != null ? DriverConfigurazioneDB_LIB.getValue(credenzialiInvocazionePorta.getTipo()) : null));
 				stm.setString(index++, (credenzialiInvocazionePorta != null ? credenzialiInvocazionePorta.getUser() : null));
 				stm.setString(index++, (credenzialiInvocazionePorta != null ? credenzialiInvocazionePorta.getPassword() : null));
+				
 				String subject = null;
 				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getSubject()!=null && !"".equals(credenzialiInvocazionePorta.getSubject()))
 					subject = credenzialiInvocazionePorta.getSubject();
-				stm.setString(index++, (subject != null ? Utilities.formatSubject(subject) : null));
+				stm.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.subject) : null));
+				String subjectCN = null;
+				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getCnSubject()!=null && !"".equals(credenzialiInvocazionePorta.getCnSubject()))
+					subjectCN = credenzialiInvocazionePorta.getCnSubject();
+				stm.setString(index++, subjectCN);
+				
+				String issuer = null;
+				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getIssuer()!=null && !"".equals(credenzialiInvocazionePorta.getIssuer()))
+					issuer = credenzialiInvocazionePorta.getIssuer();
+				stm.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.issuer) : null));
+				String issuerCN = null;
+				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getCnIssuer()!=null && !"".equals(credenzialiInvocazionePorta.getCnIssuer()))
+					issuerCN = credenzialiInvocazionePorta.getCnIssuer();
+				stm.setString(index++, issuerCN);
+				
+				byte [] certificate = null;
+				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getCertificate()!=null) {
+					certificate = credenzialiInvocazionePorta.getCertificate();
+				}
+				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDB);
+				jdbcAdapter.setBinaryData(stm, index++, certificate);
+				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.isCertificateStrictVerification()) {
+					stm.setInt(index++, CostantiDB.TRUE);
+				}				
+				else {
+					stm.setInt(index++, CostantiDB.FALSE);
+				}
 
 				// aggiungo gestione invio/risposta per riferimento
 				// invocazione servizio
@@ -3462,6 +3497,11 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("utente", "?");
 				sqlQueryObject.addUpdateField("password", "?");
 				sqlQueryObject.addUpdateField("subject", "?");
+				sqlQueryObject.addUpdateField("cn_subject", "?");
+				sqlQueryObject.addUpdateField("issuer", "?");
+				sqlQueryObject.addUpdateField("cn_issuer", "?");
+				sqlQueryObject.addUpdateField("certificate", "?");
+				sqlQueryObject.addUpdateField("cert_strict_verification", "?");
 				sqlQueryObject.addUpdateField("invio_x_rif_inv", "?");
 				sqlQueryObject.addUpdateField("risposta_x_rif_inv", "?");
 				sqlQueryObject.addUpdateField("invio_x_rif", "?");
@@ -3583,10 +3623,37 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, (credenzialiInvocazionePorta != null ? DriverConfigurazioneDB_LIB.getValue(credenzialiInvocazionePorta.getTipo()) : null));
 				stm.setString(index++, (credenzialiInvocazionePorta != null ? credenzialiInvocazionePorta.getUser() : null));
 				stm.setString(index++, (credenzialiInvocazionePorta != null ? credenzialiInvocazionePorta.getPassword() : null));
+				
 				subject = null;
 				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getSubject()!=null && !"".equals(credenzialiInvocazionePorta.getSubject()))
 					subject = credenzialiInvocazionePorta.getSubject();
-				stm.setString(index++, (subject != null ? Utilities.formatSubject(subject) : null));
+				stm.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.subject) : null));
+				subjectCN = null;
+				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getCnSubject()!=null && !"".equals(credenzialiInvocazionePorta.getCnSubject()))
+					subjectCN = credenzialiInvocazionePorta.getCnSubject();
+				stm.setString(index++, subjectCN);
+				
+				issuer = null;
+				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getIssuer()!=null && !"".equals(credenzialiInvocazionePorta.getIssuer()))
+					issuer = credenzialiInvocazionePorta.getIssuer();
+				stm.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.issuer) : null));
+				issuerCN = null;
+				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getCnIssuer()!=null && !"".equals(credenzialiInvocazionePorta.getCnIssuer()))
+					issuerCN = credenzialiInvocazionePorta.getCnIssuer();
+				stm.setString(index++, issuerCN);
+				
+				certificate = null;
+				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.getCertificate()!=null) {
+					certificate = credenzialiInvocazionePorta.getCertificate();
+				}
+				jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDB);
+				jdbcAdapter.setBinaryData(stm, index++, certificate);
+				if(credenzialiInvocazionePorta!=null && credenzialiInvocazionePorta.isCertificateStrictVerification()) {
+					stm.setInt(index++, CostantiDB.TRUE);
+				}				
+				else {
+					stm.setInt(index++, CostantiDB.FALSE);
+				}
 
 				// aggiungo gestione invio/risposta per riferimento
 				// invocazione servizio

@@ -36,6 +36,7 @@
 									<arg value="${package.skip.src}"/>
 									<arg value="false"/> <!-- updateLibs -->
 									<arg value="${package.log.dir}"/>
+									<arg value="${package.doc.generate}"/>
 								</exec>
 							</target>
 						</configuration>

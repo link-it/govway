@@ -1,0 +1,10 @@
+Lo scopo di questi certificati è:
+- avere più elementi OU all'interno del subject
+- avere una lunghezza del subject superiore a 255 caratteri
+- contenere caratteri speciali
+- avere valori di un OU che contiene caratteri '='
+
+Inoltre i certificati *_2 sono stati generati con l'ulteriore parametro 'true' nello script che ha comportato l'utilizzo di caratteri accentati non UTF8
+I certificati *_2 non sono quindi utilizzabili per una comparazione non binaria del certificato.
+
+Infine per ogni certificato ne sono state generate due versioni, in modo da avere stesso subject ma serial number differente.

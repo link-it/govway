@@ -44,6 +44,7 @@ import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 
 
 /**
@@ -300,11 +301,22 @@ public interface IDriverRegistroServiziGet extends IBeanUtilities{
 	 * che include le credenziali passate come parametro. 
 	 *
 	 * @param subject Subject utilizzato nella connessione HTTPS.
+	 * @param issuer Issuer utilizzato nella connessione HTTPS.
 	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Soggetto} .
 	 * 
 	 */
 	public Soggetto getSoggettoByCredenzialiSsl(
-			String subject) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
+			String subject, String issuer) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
+	
+	/**
+	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Soggetto}, 
+	 * che include le credenziali passate come parametro. 
+	 * 
+	 * @param certificate certificato utilizzato nella connessione HTTPS.
+	 * @param strictVerifier indicazione se deve essere effettuata una ricerca stringente su tutti i parametri del certificato
+	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Soggetto} .
+	 */
+	public Soggetto getSoggettoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws DriverRegistroServiziException,DriverRegistroServiziNotFound;
 	
 	/**
 	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Soggetto}, 

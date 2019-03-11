@@ -673,6 +673,12 @@ public class ConsoleHelper {
 
 	}
 	
+	private HashMap<String, byte[]> customBinaryParameters = new HashMap<>();
+	public void registerBinaryParameter(String parameterName, byte[] content) {
+		this.customBinaryParameters.put(parameterName, content);
+	}
+	
+	
 	public BinaryParameter getBinaryParameter(String parameterName) throws Exception {
 		
 		this.checkErrorInit();
@@ -687,8 +693,16 @@ public class ConsoleHelper {
 		ByteArrayInputStream bais = null;
 		ByteArrayOutputStream baos = null;
 		
-		// 1. provo a prelevare il valore dalla request
-		byte [] bpContent = this.getBinaryParameterContent(parameterName);
+		byte [] bpContent = null;
+		
+		// 0. provo a prelevarlo dai custom parameters (servizio rs)
+		if(this.customBinaryParameters.containsKey(parameterName)) {
+			bpContent = this.customBinaryParameters.get(parameterName);
+		}
+		else {
+			// 1. provo a prelevare il valore dalla request
+			bpContent = this.getBinaryParameterContent(parameterName);
+		}
 		
 		if(bpContent != null && bpContent.length > 0) {
 			//  cancello eventuale vecchio contenuto
@@ -2131,8 +2145,14 @@ public class ConsoleHelper {
 		return true;
 	}
 	
+	public boolean checkLength4000(String value, String object) throws Exception{
+		return this.checkLength(value, object, -1, 4000);
+	}
 	public boolean checkLength255(String value, String object) throws Exception{
 		return this.checkLength(value, object, -1, 255);
+	}
+	public boolean checkLengthSubject_SSL_Principal(String value, String object) throws Exception{
+		return this.checkLength(value, object, -1, 2800);
 	}
 	public boolean checkLength(String value, String object, int minLength, int maxLength) throws Exception{
 		if(minLength>0) {

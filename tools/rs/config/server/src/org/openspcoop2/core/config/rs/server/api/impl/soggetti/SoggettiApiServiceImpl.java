@@ -88,7 +88,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 				
 				if ( soggetto.getCredenziali() != null && soggetto.getModalitaAccesso() != null ) {
 					soggetto.setCredenziali(Helper.translateCredenziali(soggetto.getCredenziali(), soggetto.getModalitaAccesso()));
-					SoggettiApiHelper.overrideAuthParams(soggetto, env.requestWrapper);
+					SoggettiApiHelper.overrideAuthParams(env.soggettiHelper, soggetto, env.requestWrapper);
 				}
 				
 			}catch(Exception e) {
@@ -318,7 +318,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			}
 
 			final SoggettiEnv env = new SoggettiEnv(context.getServletRequest(), profilo, context);
-			SoggettiApiHelper.overrideAuthParams(soggetto, env.requestWrapper);
+			SoggettiApiHelper.overrideAuthParams(env.soggettiHelper, soggetto, env.requestWrapper);
 			
 			final IDSoggetto idSogg = new IDSoggetto(env.tipo_soggetto,nome);
 			org.openspcoop2.core.registry.Soggetto oldSoggetto = null; 

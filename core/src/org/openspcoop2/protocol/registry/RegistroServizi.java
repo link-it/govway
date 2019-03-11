@@ -93,6 +93,9 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.certificate.ArchiveLoader;
+import org.openspcoop2.utils.certificate.ArchiveType;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.slf4j.Logger;
 
@@ -1054,12 +1057,23 @@ public class RegistroServizi  {
 								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 							}
 							else if(CredenzialeTipo.SSL.equals(soggetto.getCredenziali().getTipo())){
-								try{
-									this.cache.remove(_getKey_getSoggettoByCredenzialiSsl(soggetto.getCredenziali().getSubject()));
-									this.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, soggetto.getCredenziali().getSubject());
+								if(soggetto.getCredenziali().getSubject()!=null) {
+									try{
+										this.cache.remove(_getKey_getSoggettoByCredenzialiSsl(soggetto.getCredenziali().getSubject(),soggetto.getCredenziali().getIssuer()));
+										this.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, soggetto.getCredenziali().getSubject(),soggetto.getCredenziali().getIssuer());
+									}
+									catch(DriverRegistroServiziNotFound notFound){}
+									catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 								}
-								catch(DriverRegistroServiziNotFound notFound){}
-								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+								if(soggetto.getCredenziali().getCertificate()!=null) {
+									try{
+										CertificateInfo certificato = ArchiveLoader.load(ArchiveType.CER, soggetto.getCredenziali().getCertificate(), 0, null).getCertificate();
+										this.cache.remove(_getKey_getSoggettoByCredenzialiSsl(certificato, soggetto.getCredenziali().isCertificateStrictVerification()));
+										this.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, certificato, soggetto.getCredenziali().isCertificateStrictVerification());
+									}
+									catch(DriverRegistroServiziNotFound notFound){}
+									catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+								}
 							}
 							else if(CredenzialeTipo.PRINCIPAL.equals(soggetto.getCredenziali().getTipo())){
 								try{
@@ -2005,10 +2019,18 @@ public class RegistroServizi  {
 
 	}
 	
-	private String _getKey_getSoggettoByCredenzialiSsl(String subject) throws DriverRegistroServiziException{
-		return "getSoggettoByCredenzialiSsl_" + subject;
+	private String _getKey_getSoggettoByCredenzialiSsl(String aSubject, String Issuer){
+		String key = "getSoggettoByCredenzialiSsl";
+		key = key +"_subject:"+aSubject;
+		if(Issuer!=null) {
+			key = key +"_issuer:"+Issuer;
+		}
+		else {
+			key = key +"_issuer:nonDefinito";
+		}
+		return key;
 	}
-	public Soggetto getSoggettoByCredenzialiSsl(Connection connectionPdD,String nomeRegistro,String subject) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	public Soggetto getSoggettoByCredenzialiSsl(Connection connectionPdD,String nomeRegistro,String subject, String issuer) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		// Raccolta dati
 		if(subject==null)
@@ -2017,7 +2039,7 @@ public class RegistroServizi  {
 		//	se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getSoggettoByCredenzialiSsl(subject);
+			key = this._getKey_getSoggettoByCredenzialiSsl(subject, issuer);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2033,11 +2055,64 @@ public class RegistroServizi  {
 		}
 
 		// Algoritmo CACHE
+		Class<?>[] classArguments = new Class[] {String.class, String.class};
+		Object[]values = new Object[] {subject,issuer}; // passo gli argomenti tramite array poich' aIssuer puo' essere null
 		Soggetto soggetto = null;
 		if(this.cache!=null){
-			soggetto = (Soggetto) this.getObjectCache(key,"getSoggettoByCredenzialiSsl",nomeRegistro,null,connectionPdD,subject);
+			soggetto = (Soggetto) this.getObjectCache(key,"getSoggettoByCredenzialiSsl",nomeRegistro,null,connectionPdD,classArguments, values);
 		}else{
-			soggetto = (Soggetto) this.getObject("getSoggettoByCredenzialiSsl",nomeRegistro,null,connectionPdD,subject);
+			soggetto = (Soggetto) this.getObject("getSoggettoByCredenzialiSsl",nomeRegistro,null,connectionPdD,classArguments, values);
+		}
+
+		if(soggetto!=null)
+			return soggetto;
+		else
+			throw new DriverRegistroServiziNotFound("[getSoggettoByCredenzialiSsl] Soggetto non Trovato");
+
+	}
+	
+	private String _getKey_getSoggettoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws DriverRegistroServiziException{
+		try {
+			String key = "getSoggettoByCredenzialiSslCert";
+			key = key +"_cert:"+certificate.digestBase64Encoded();
+			key = key +"_strictVerifier:"+strictVerifier;
+			return key;
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	public Soggetto getSoggettoByCredenzialiSsl(Connection connectionPdD,String nomeRegistro,CertificateInfo certificate, boolean strictVerifier) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+
+		// Raccolta dati
+		if(certificate==null)
+			throw new DriverRegistroServiziException("[getSoggettoByCredenzialiSsl] Parametro certificate Non Valido");
+
+		//	se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = this._getKey_getSoggettoByCredenzialiSsl(certificate, strictVerifier);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverRegistroServiziNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverRegistroServiziNotFound) response.getException();
+					else
+						throw (DriverRegistroServiziException) response.getException();
+				}else{
+					return ((Soggetto) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		Class<?>[] classArguments = new Class[] {CertificateInfo.class, boolean.class};
+		Object[]values = new Object[] {certificate , strictVerifier};
+		Soggetto soggetto = null;
+		if(this.cache!=null){
+			soggetto = (Soggetto) this.getObjectCache(key,"getSoggettoByCredenzialiSsl",nomeRegistro,null,connectionPdD, classArguments, values);
+		}else{
+			soggetto = (Soggetto) this.getObject("getSoggettoByCredenzialiSsl",nomeRegistro,null,connectionPdD, classArguments, values);
 		}
 
 		if(soggetto!=null)

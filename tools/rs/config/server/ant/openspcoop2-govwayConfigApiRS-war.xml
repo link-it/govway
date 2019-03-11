@@ -128,6 +128,8 @@
 
 			<lib dir="${openspcoop2.lib}/security">
 				<include name="herasaf-xacml-core-1.0.4.RELEASE.jar"/>
+				<include name="bcpkix-jdk15on-1.60.jar"/>
+				<include name="bcprov-ext-jdk15on-1.60.jar"/>
 			</lib>
 			
 			<classes dir="${build_govwayConfigApiRS}/properties">

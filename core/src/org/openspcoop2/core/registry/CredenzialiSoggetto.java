@@ -41,6 +41,11 @@ import java.io.Serializable;
  * 		&lt;attribute name="user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="password" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="subject" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="cn-subject" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="issuer" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="cn-issuer" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="certificate" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
+ * 		&lt;attribute name="certificate-strict-verification" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -117,6 +122,50 @@ public class CredenzialiSoggetto extends org.openspcoop2.utils.beans.BaseBean im
     this.subject = subject;
   }
 
+  public java.lang.String getCnSubject() {
+    return this.cnSubject;
+  }
+
+  public void setCnSubject(java.lang.String cnSubject) {
+    this.cnSubject = cnSubject;
+  }
+
+  public java.lang.String getIssuer() {
+    return this.issuer;
+  }
+
+  public void setIssuer(java.lang.String issuer) {
+    this.issuer = issuer;
+  }
+
+  public java.lang.String getCnIssuer() {
+    return this.cnIssuer;
+  }
+
+  public void setCnIssuer(java.lang.String cnIssuer) {
+    this.cnIssuer = cnIssuer;
+  }
+
+  public byte[] getCertificate() {
+    return this.certificate;
+  }
+
+  public void setCertificate(byte[] certificate) {
+    this.certificate = certificate;
+  }
+
+  public boolean isCertificateStrictVerification() {
+    return this.certificateStrictVerification;
+  }
+
+  public boolean getCertificateStrictVerification() {
+    return this.certificateStrictVerification;
+  }
+
+  public void setCertificateStrictVerification(boolean certificateStrictVerification) {
+    this.certificateStrictVerification = certificateStrictVerification;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -141,5 +190,25 @@ public class CredenzialiSoggetto extends org.openspcoop2.utils.beans.BaseBean im
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="subject",required=false)
   protected java.lang.String subject;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="cn-subject",required=false)
+  protected java.lang.String cnSubject;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="issuer",required=false)
+  protected java.lang.String issuer;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="cn-issuer",required=false)
+  protected java.lang.String cnIssuer;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="base64Binary")
+  @XmlAttribute(name="certificate",required=false)
+  protected byte[] certificate;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="certificate-strict-verification",required=false)
+  protected boolean certificateStrictVerification = false;
 
 }

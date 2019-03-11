@@ -527,10 +527,19 @@
 
 	<!-- Credenziali -->
 	<xsd:complexType name="credenziali">
-		<xsd:attribute default="ssl" name="tipo" type="CredenzialeTipo"/>
+		<xsd:attribute default="ssl" name="tipo" type="CredenzialeTipo">
+			
+		</xsd:attribute>
 		<xsd:attribute name="user" type="xsd:string"/>
 		<xsd:attribute name="password" type="xsd:string"/>
 		<xsd:attribute name="subject" type="xsd:string"/>
+		<xsd:attribute name="cn-subject" type="xsd:string"/>
+		<xsd:attribute name="issuer" type="xsd:string"/>
+		<xsd:attribute name="cn-issuer" type="xsd:string"/>
+		<xsd:attribute name="certificate" type="xsd:base64Binary"/>
+		<xsd:attribute default="false" name="certificate-strict-verification" type="xsd:boolean">
+			
+		</xsd:attribute>
 	</xsd:complexType>
 	
 	<!-- Connettore -->

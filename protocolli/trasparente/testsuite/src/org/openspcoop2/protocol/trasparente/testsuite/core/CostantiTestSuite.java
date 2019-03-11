@@ -413,6 +413,38 @@ public class CostantiTestSuite {
 	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_SSL_2 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_SSL_2, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_SSL_2);
 		
+	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteCert1  */
+	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_CERT1="EsempioSoggettoTrasparenteCert1";
+	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteSsl */
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_CERT1=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TRASPARENTE_CERT1);
+	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteSsl */
+	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_CERT1 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
+			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_CERT1, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_CERT1);
+	
+	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteCert1 - serialNumberDifferente */
+	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_CERT1_SERIALNUMBERDIFFERENTE="EsempioSoggettoTrasparenteCert1_serialNumberDifferente";
+	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteSsl */
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_CERT1_SERIALNUMBERDIFFERENTE=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TRASPARENTE_CERT1_SERIALNUMBERDIFFERENTE);
+	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteSsl */
+	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_CERT1_SERIALNUMBERDIFFERENTE = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
+			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_CERT1_SERIALNUMBERDIFFERENTE, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_CERT1_SERIALNUMBERDIFFERENTE);
+	
+	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteCert2  */
+	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_CERT2="EsempioSoggettoTrasparenteCert2";
+	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteSsl */
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_CERT2=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TRASPARENTE_CERT2);
+	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteSsl */
+	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_CERT2 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
+			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_CERT2, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_CERT2);
+	
+	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteCert2 - serialNumberDifferente */
+	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_CERT2_SERIALNUMBERDIFFERENTE="EsempioSoggettoTrasparenteCert2_serialNumberDifferente";
+	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteSsl */
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_CERT2_SERIALNUMBERDIFFERENTE=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TRASPARENTE_CERT2_SERIALNUMBERDIFFERENTE);
+	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteSsl */
+	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_CERT2_SERIALNUMBERDIFFERENTE = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
+			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_CERT2_SERIALNUMBERDIFFERENTE, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_CERT2_SERIALNUMBERDIFFERENTE);
+	
 	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparentePrincipal  */
 	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_PRINCIPAL="EsempioSoggettoTrasparentePrincipal";
 	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparentePrincipal */

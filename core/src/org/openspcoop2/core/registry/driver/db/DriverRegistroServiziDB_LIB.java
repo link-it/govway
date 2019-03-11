@@ -105,7 +105,8 @@ import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -419,7 +420,7 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(1, nome);
 				updateStmt.setString(2, descrizione);
 				updateStmt.setString(3, implementazione);
-				updateStmt.setString(4, (subject != null ? Utilities.formatSubject(subject) : null));
+				updateStmt.setString(4, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.subject) : null));
 				updateStmt.setString(5, getValue(client_auth));
 				updateStmt.setString(6, superuser);
 				if(pdd.getOraRegistrazione()!=null)
@@ -481,7 +482,7 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(1, nome);
 				updateStmt.setString(2, descrizione);
 				updateStmt.setString(3, implementazione);
-				updateStmt.setString(4, (subject != null ? Utilities.formatSubject(subject) : null));
+				updateStmt.setString(4, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.subject) : null));
 				updateStmt.setString(5, getValue(client_auth));
 				updateStmt.setString(6, superuser);
 
@@ -1618,6 +1619,11 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addInsertField("utente", "?");
 				sqlQueryObject.addInsertField("password", "?");
 				sqlQueryObject.addInsertField("subject", "?");
+				sqlQueryObject.addInsertField("cn_subject", "?");
+				sqlQueryObject.addInsertField("issuer", "?");
+				sqlQueryObject.addInsertField("cn_issuer", "?");
+				sqlQueryObject.addInsertField("certificate", "?");
+				sqlQueryObject.addInsertField("cert_strict_verification", "?");
 				if(soggetto.getOraRegistrazione()!=null)
 					sqlQueryObject.addInsertField("ora_registrazione", "?");
 				updateQuery = sqlQueryObject.createSQLInsert();
@@ -1656,11 +1662,38 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(index++, (credenziali != null ? DriverRegistroServiziDB_LIB.getValue(credenziali.getTipo()) : null));
 				updateStmt.setString(index++, (credenziali != null ? credenziali.getUser() : null));
 				updateStmt.setString(index++, (credenziali != null ? credenziali.getPassword() : null));
+				
 				String subject = null;
 				if(credenziali!=null && credenziali.getSubject()!=null && !"".equals(credenziali.getSubject()))
 					subject = credenziali.getSubject();
-				updateStmt.setString(index++, (subject != null ? Utilities.formatSubject(subject) : null));
+				updateStmt.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.subject) : null));
+				String subjectCN = null;
+				if(credenziali!=null && credenziali.getCnSubject()!=null && !"".equals(credenziali.getCnSubject()))
+					subjectCN = credenziali.getCnSubject();
+				updateStmt.setString(index++, subjectCN);
 				
+				String issuer = null;
+				if(credenziali!=null && credenziali.getIssuer()!=null && !"".equals(credenziali.getIssuer()))
+					issuer = credenziali.getIssuer();
+				updateStmt.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.issuer) : null));
+				String issuerCN = null;
+				if(credenziali!=null && credenziali.getCnIssuer()!=null && !"".equals(credenziali.getCnIssuer()))
+					issuerCN = credenziali.getCnIssuer();
+				updateStmt.setString(index++, issuerCN);
+				
+				byte [] certificate = null;
+				if(credenziali!=null && credenziali.getCertificate()!=null) {
+					certificate = credenziali.getCertificate();
+				}
+				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDB);
+				jdbcAdapter.setBinaryData(updateStmt, index++, certificate);
+				if(credenziali!=null && credenziali.isCertificateStrictVerification()) {
+					updateStmt.setInt(index++, CostantiDB.TRUE);
+				}				
+				else {
+					updateStmt.setInt(index++, CostantiDB.FALSE);
+				}
+								
 				if(soggetto.getOraRegistrazione()!=null){
 					updateStmt.setTimestamp(index++, new Timestamp(soggetto.getOraRegistrazione().getTime()));
 				}
@@ -1753,6 +1786,11 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addUpdateField("utente", "?");
 				sqlQueryObject.addUpdateField("password", "?");
 				sqlQueryObject.addUpdateField("subject", "?");
+				sqlQueryObject.addUpdateField("cn_subject", "?");
+				sqlQueryObject.addUpdateField("issuer", "?");
+				sqlQueryObject.addUpdateField("cn_issuer", "?");
+				sqlQueryObject.addUpdateField("certificate", "?");
+				sqlQueryObject.addUpdateField("cert_strict_verification", "?");
 				if(soggetto.getOraRegistrazione()!=null)
 					sqlQueryObject.addUpdateField("ora_registrazione", "?");
 				sqlQueryObject.addWhereCondition("id=?");
@@ -1785,10 +1823,37 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(index++, (credenziali != null ? DriverRegistroServiziDB_LIB.getValue(credenziali.getTipo()) : null));
 				updateStmt.setString(index++, (credenziali != null ? credenziali.getUser() : null));
 				updateStmt.setString(index++, (credenziali != null ? credenziali.getPassword() : null));
+				
 				subject = null;
 				if(credenziali!=null && credenziali.getSubject()!=null && !"".equals(credenziali.getSubject()))
 					subject = credenziali.getSubject();
-				updateStmt.setString(index++, (subject != null ? Utilities.formatSubject(subject) : null));
+				updateStmt.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.subject) : null));
+				subjectCN = null;
+				if(credenziali!=null && credenziali.getCnSubject()!=null && !"".equals(credenziali.getCnSubject()))
+					subjectCN = credenziali.getCnSubject();
+				updateStmt.setString(index++, subjectCN);
+				
+				issuer = null;
+				if(credenziali!=null && credenziali.getIssuer()!=null && !"".equals(credenziali.getIssuer()))
+					issuer = credenziali.getIssuer();
+				updateStmt.setString(index++, (issuer != null ? CertificateUtils.formatPrincipal(issuer, PrincipalType.issuer) : null));
+				issuerCN = null;
+				if(credenziali!=null && credenziali.getCnIssuer()!=null && !"".equals(credenziali.getCnIssuer()))
+					issuerCN = credenziali.getCnIssuer();
+				updateStmt.setString(index++, issuerCN);
+				
+				certificate = null;
+				if(credenziali!=null && credenziali.getCertificate()!=null) {
+					certificate = credenziali.getCertificate();
+				}
+				jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDB);
+				jdbcAdapter.setBinaryData(updateStmt, index++, certificate);
+				if(credenziali!=null && credenziali.isCertificateStrictVerification()) {
+					updateStmt.setInt(index++, CostantiDB.TRUE);
+				}				
+				else {
+					updateStmt.setInt(index++, CostantiDB.FALSE);
+				}
 				
 				if(soggetto.getOraRegistrazione()!=null){
 					updateStmt.setTimestamp(index++, new Timestamp(soggetto.getOraRegistrazione().getTime()));

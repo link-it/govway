@@ -21,8 +21,7 @@
  */
 package org.openspcoop2.core.config.rs.server.api.impl.applicativi;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,7 +39,6 @@ import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativoRuoli;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.FaultIntegrazioneTipo;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -49,14 +47,12 @@ import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
-import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
+import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.Applicativo;
 import org.openspcoop2.core.config.rs.server.model.ApplicativoItem;
-import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpBasic;
-import org.openspcoop2.core.config.rs.server.model.AuthenticationHttps;
-import org.openspcoop2.core.config.rs.server.model.AuthenticationPrincipal;
+import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -73,6 +69,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
@@ -90,17 +87,18 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 public class ApplicativiApiHelper {
 	
 
-	public static void overrideSAParameters(HttpRequestWrapper wrap, ServizioApplicativo sa) {
+	public static void overrideSAParameters(HttpRequestWrapper wrap, ConsoleHelper consoleHelper, ServizioApplicativo sa, Applicativo applicativo) {
 		Credenziali credenziali = sa.getInvocazionePorta().getCredenziali(0);
 		
 		wrap.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME, sa.getNome());
 		wrap.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, sa.getIdSoggetto());
 		wrap.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT, ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT_SOAP);
+		
 		wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE, credenziali.getTipo().toString());
-		wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME, credenziali.getUser());
-		wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD, credenziali.getPassword());
-		wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT, credenziali.getSubject());
-		wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL, credenziali.getUser());
+		
+		if(applicativo.getModalitaAccesso()!=null) {
+			Helper.overrideAuthParams(wrap, consoleHelper, applicativo.getModalitaAccesso(), applicativo.getCredenziali());
+		}
 	}
     
 	
@@ -154,7 +152,7 @@ public class ApplicativiApiHelper {
 		
 		// *** Invocazione Porta ***
 		InvocazionePorta invocazionePorta = new InvocazionePorta();
-		Credenziali credenziali = credenzialiFromAuth(applicativo.getCredenziali(), Helper.tipoAuthSAFromModalita.get(applicativo.getModalitaAccesso().toString()));
+		Credenziali credenziali = credenzialiFromAuth(applicativo.getCredenziali(), applicativo.getModalitaAccesso());
 
 		invocazionePorta.addCredenziali(credenziali);
 		
@@ -193,7 +191,7 @@ public class ApplicativiApiHelper {
 	}
 	
 	
-	public static final Applicativo servizioApplicativoToApplicativo(ServizioApplicativo sa) {
+	public static final Applicativo servizioApplicativoToApplicativo(ServizioApplicativo sa) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		Applicativo ret = new Applicativo();
 		
 		ret.setNome(sa.getNome());
@@ -271,15 +269,6 @@ public class ApplicativiApiHelper {
 		return soggettiCore.getSoggettoRegistro(getIDSoggetto(nome,Helper.tipoProtocolloFromProfilo.get(modalita)));
 
 	}
-	
-	
-	public static final void checkServizioApplicativoFormat(ServizioApplicativo sa, ServiziApplicativiCore saCore, SoggettiCore soggettiCore) throws Exception {
-		
-		checkApplicativoName(sa.getNome());
-		
-		Credenziali cred =  sa.getInvocazionePorta().getCredenzialiList().get(0);
-		checkCredenziali(cred);
-	}
 			
 	
 	/**
@@ -299,28 +288,11 @@ public class ApplicativiApiHelper {
 		if (tipoauthSA == null)
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo modalità accesso sconosciuto: " + applicativo.getModalitaAccesso());
 		
-		@SuppressWarnings("unchecked")
-		LinkedHashMap<String, String> map_creds = (LinkedHashMap<String,String>) applicativo.getCredenziali();
-	
-		if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
-			AuthenticationHttpBasic c = new AuthenticationHttpBasic();
-			c.setPassword(map_creds.get("password"));
-			c.setUsername(map_creds.get("username"));
-			creds = c;					
+		if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC) ||
+				tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL) ||
+				tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
+			creds = Helper.translateCredenziali(applicativo.getCredenziali(), applicativo.getModalitaAccesso());
 		}
-		
-		else if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL)) {
-			AuthenticationPrincipal c = new AuthenticationPrincipal();
-			c.setUserid(map_creds.get("user_id"));
-			creds = c;
-		}
-		
-		else if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL))	{
-			AuthenticationHttps c = new AuthenticationHttps();
-			c.setSubject(map_creds.get("subject"));
-			creds = c;
-		}
-		
 		else if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)) {
 			creds = null;
 		}
@@ -336,33 +308,29 @@ public class ApplicativiApiHelper {
 	/**
 	 * Trasforma le credenziali di autenticazione di un servizio applicativo nelle credenziali
 	 * di un'InvocazionePorta.
+	 * @throws UtilsException 
+	 * @throws InstantiationException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 * 
 	 */
-	public static Credenziali credenzialiFromAuth(Object cred, String tipoauthSA) {
-		Credenziali credenziali = new Credenziali();
-		credenziali.setUser("");
-		credenziali.setPassword("");
-		credenziali.setSubject("");
-
-	
-	    if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)) {
-			credenziali.setTipo(null);
-		}else{
-			credenziali.setTipo(CredenzialeTipo.toEnumConstant(tipoauthSA));
-		}
+	public static Credenziali credenzialiFromAuth(Object cred, ModalitaAccessoEnum modalitaAccesso) throws IllegalAccessException, InvocationTargetException, InstantiationException, UtilsException {
 		
-		if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
-			AuthenticationHttpBasic auth = (AuthenticationHttpBasic) cred;
-			credenziali.setUser(auth.getUsername());
-			credenziali.setPassword(auth.getPassword());
+		String tipoauthSA = Helper.tipoAuthSAFromModalita.get(modalitaAccesso.toString());
+		
+		Credenziali credenziali = new Credenziali();
+		if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)) {
+			credenziali.setTipo(null);
 		}
-		else if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
-			AuthenticationHttps auth = (AuthenticationHttps) cred;
-			credenziali.setSubject(auth.getSubject());
-		}
-		else if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL)) {
-			AuthenticationPrincipal auth = (AuthenticationPrincipal) cred;
-			credenziali.setUser(auth.getUserid());
+		else {
+		
+			credenziali = Helper.apiCredenzialiToGovwayCred(
+					cred,
+					modalitaAccesso,
+					Credenziali.class,
+					org.openspcoop2.core.config.constants.CredenzialeTipo.class
+					);	
+		
 		}
 		
 		return credenziali;
@@ -373,35 +341,17 @@ public class ApplicativiApiHelper {
 	 * 
 	 * @param cred
 	 * @return
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	public static Object authFromCredenziali(Credenziali cred) {
+	public static Object authFromCredenziali(Credenziali cred) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		
-		Object ret = null;
-		
-		switch(cred.getTipo()) {
-		case BASIC: {
-			AuthenticationHttpBasic auth = new AuthenticationHttpBasic();
-			auth.setUsername(cred.getUser());
-			auth.setPassword(cred.getPassword());
-			ret = auth;
-			break;
-		}
-			
-		case PRINCIPAL: {
-			AuthenticationPrincipal auth = new AuthenticationPrincipal();
-			auth.setUserid(cred.getUser());
-			break;
-		}
-			
-		case SSL: {
-			AuthenticationHttps auth = new AuthenticationHttps();
-			auth.setSubject(cred.getSubject());
-			ret = auth;
-			break;
-		} 
-		}
-		
-		return ret;
+		return Helper.govwayCredenzialiToApi(
+				cred,
+				Credenziali.class,
+				org.openspcoop2.core.config.constants.CredenzialeTipo.class);
+
 	}
 	
 	
@@ -474,107 +424,6 @@ public class ApplicativiApiHelper {
 			
 	}
 
-	public static final void checkCredenziali(Credenziali cred) {
-					
-		switch (cred.getTipo()) {
-		case BASIC: {
-			AuthenticationHttpBasic auth = new AuthenticationHttpBasic();
-			auth.setUsername(cred.getUser());
-			auth.setPassword(cred.getPassword());
-			checkBasicAuth(auth);
-			break;
-		}
-		case PRINCIPAL: {
-			AuthenticationPrincipal auth = new AuthenticationPrincipal();
-			auth.setUserid(cred.getSubject());
-			checkPrincipalAuth(auth);
-			break;
-		}
-		case SSL: {
-			AuthenticationHttps auth = new AuthenticationHttps();
-			auth.setSubject(cred.getSubject());
-			checkSSLAuth(auth);
-			break;
-		}
-		
-		}
-	}
-		
-	
-	public static final void checkBasicAuth(AuthenticationHttpBasic auth) {
-		String utente = auth.getUsername();
-		String password = auth.getPassword();
-		
-		if(utente.equals("") || password.equals("")){
-			
-			List<String> pMancanti = new ArrayList<String>(2);
-		
-			if (utente.equals(""))
-				pMancanti.add(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-			if (password.equals(""))
-				pMancanti.add(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-			
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Dati incompleti. E' necessario indicare: " + String.join(",",pMancanti));
-		}
-		
-		checkLength255(utente, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-		checkLength255(password, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-			
-		if (utente.indexOf(" ") != -1 || (password.indexOf(" ") != -1)) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non inserire spazi nei campi di testo");
-		}		
-	}
-	
-	
-	public static final void checkSSLAuth(AuthenticationHttps auth) {
-		String subject = auth.getSubject();
-		
-		if (subject.equals("")) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(
-					"Dati incompleti. E' necessario indicare il "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT
-			);
-		}
-		
-		try{
-			org.openspcoop2.utils.Utilities.validaSubject(subject);
-		} catch(Exception e){
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Le credenziali di tipo ssl  possiedono un subject non valido: "+e.getMessage());
-		}
-		
-		checkLength255(subject, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
-	}
-	
-	
-	public static final void checkPrincipalAuth(AuthenticationPrincipal auth) {
-		String principal = auth.getUserid();
-		
-		if(principal.equals("")) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(
-					"Dati incompleti. E' necessario indicare: " + ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL
-			);
-		}
-		
-		checkLength255(principal, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
-	}
-
-	
-	public static final List<ServizioApplicativo> getApplicativiStesseCredenziali(ServizioApplicativo sa, ServiziApplicativiCore saCore) throws DriverConfigurazioneException {
-		Credenziali cred = sa.getInvocazionePorta().getCredenziali(0);
-		
-		switch(cred.getTipo()) {
-		case BASIC:
-			return saCore.servizioApplicativoWithCredenzialiBasicList(cred.getUser(), cred.getPassword());	
-			
-		case PRINCIPAL:
-			return saCore.servizioApplicativoWithCredenzialiPrincipalList(cred.getSubject());
-	
-		case SSL:
-			return saCore.servizioApplicativoWithCredenzialiSslList(cred.getSubject());
-		default:	
-			return new ArrayList<ServizioApplicativo>();
-		}
-	}
-	
 	
 	public static final void checkNoDuplicateCred(
 			ServizioApplicativo sa,

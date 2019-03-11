@@ -24,8 +24,10 @@ package org.openspcoop2.pdd.services;
 
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 import org.openspcoop2.core.constants.TipoPdD;
@@ -41,6 +43,8 @@ import org.openspcoop2.pdd.services.core.AbstractContext;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.dump.DumpException;
+import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.Credential;
 import org.slf4j.Logger;
@@ -293,9 +297,21 @@ public class DumpRaw {
 					this.bfRequest.append("\n");
 				}
 				
-				X509Certificate[] certificates = credential.getCerts();
-				if(certificates!=null && certificates.length>0){
-					Credential.printCertificate(this.bfRequest, certificates);
+				if(credential.getCertificate()!=null){
+					List<X509Certificate> certificates = new ArrayList<>();
+					if(credential.getCertificate().getCertificate()!=null && credential.getCertificate().getCertificate().getCertificate()!=null) {
+						certificates.add(credential.getCertificate().getCertificate().getCertificate());
+					}
+					if(credential.getCertificate().getCertificateChain()!=null && credential.getCertificate().getCertificateChain().size()>0) {
+						for (CertificateInfo cInfo : credential.getCertificate().getCertificateChain()) {
+							if(cInfo.getCertificate()!=null) {
+								certificates.add(cInfo.getCertificate());
+							}
+						}
+					}
+					if(!certificates.isEmpty()) {
+						CertificateUtils.printCertificate(this.bfRequest, certificates);
+					}
 				}
 			}
 			

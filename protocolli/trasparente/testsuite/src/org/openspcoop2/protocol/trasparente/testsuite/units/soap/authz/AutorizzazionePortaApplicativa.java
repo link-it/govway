@@ -81,6 +81,14 @@ public class AutorizzazionePortaApplicativa {
 						CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_NON_AUTORIZZATO.
 							replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_TEMPLATE, CostantiTestSuite.PROXY_SOGGETTO_TRASPARENTE_BASIC_3.toString()),	
 							CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
+				
+				// applicativi
+				{CredenzialiInvocazione.getAutenticazioneBasic("esempioFruitoreTrasparente1_utilizzatoErogazione", "123456"), CostantiTestSuite.PROXY_SOGGETTO_FRUITORE, 
+						null, -1,true, 200}, // crendeziali corrette
+				{CredenzialiInvocazione.getAutenticazioneBasic("esempioFruitoreTrasparente2_utilizzatoErogazione", "123456"), CostantiTestSuite.PROXY_SOGGETTO_FRUITORE,
+						CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_NON_AUTORIZZATO.
+							replace(CostantiTestSuite.MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_TEMPLATE, CostantiTestSuite.PROXY_SOGGETTO_FRUITORE.toString()),	
+							CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA.getCodice(),false, 500}, // non autorizzato
 		};
 	}
 	@Test(groups={AutorizzazionePortaApplicativa.ID_GRUPPO,AutorizzazionePortaApplicativa.ID_GRUPPO+".AUTHENTICATED"},dataProvider="authenticatedProvider")

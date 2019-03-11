@@ -22,11 +22,16 @@
 package org.openspcoop2.utils.transport.http;
 
 import java.io.Serializable;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.certificate.Certificate;
+import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.transport.Credential;
 import org.slf4j.Logger;
 
@@ -88,7 +93,7 @@ public class HttpServletCredential extends Credential implements Serializable {
 			if(debug && log!=null){
 				try{
 					StringBuffer bf = new StringBuffer();
-					Credential.printCertificate(bf, certs);
+					CertificateUtils.printCertificate(bf, certs);
 					log.info(bf.toString());
 				}catch(Throwable e){
 					log.error("Print info certs error: "+e.getMessage(),e);
@@ -101,7 +106,14 @@ public class HttpServletCredential extends Credential implements Serializable {
 				//System.out.println("RFC1779 ["+certs[0].getSubjectX500Principal().getName(javax.security.auth.x500.X500Principal.RFC1779)+"]");
 				//System.out.println("RFC2253 ["+certs[0].getSubjectX500Principal().getName(javax.security.auth.x500.X500Principal.RFC2253)+"]");
 				this.subject = certs[0].getSubjectX500Principal().toString();
-				this.certs = certs;
+				this.issuer = certs[0].getIssuerX500Principal().toString();
+				List<X509Certificate> chains = new ArrayList<>();
+				if(certs.length > 1){
+					for (int i = 1; i < certs.length; i++) {
+						chains.add(certs[i]);
+					}
+				}
+				this.certificate = new Certificate("transport", certs[0], chains);
 			}
 		}else{
 			if(debug && log!=null){

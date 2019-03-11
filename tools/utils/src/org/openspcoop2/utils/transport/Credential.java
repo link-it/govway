@@ -24,9 +24,9 @@ package org.openspcoop2.utils.transport;
 import java.io.Serializable;
 import java.security.Principal;
 
-import javax.security.auth.x500.X500Principal;
-
 import org.apache.commons.lang.NotImplementedException;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.certificate.Certificate;
 
 /**
  * Credentials
@@ -48,7 +48,8 @@ public class Credential implements Serializable {
 	
 	// SSL (HTTPS)
 	protected String subject;
-	protected java.security.cert.X509Certificate[] certs;
+	protected String issuer;
+	protected Certificate certificate;
 	
 	// Basic (HTTP-Based)
 	protected String username;
@@ -60,82 +61,6 @@ public class Credential implements Serializable {
 	
 	public Credential(){
 		
-	}
-	
-	
-	public static void printCertificate(StringBuffer bf,java.security.cert.X509Certificate[] certs){
-		bf.append("X509Certificates: "+certs.length+"\n");
-		for (int i = 0; i < certs.length; i++) {
-			java.security.cert.X509Certificate cert = certs[i];
-			bf.append("#### X509Certificate["+i+"]\n");
-			bf.append("\tCert["+i+"].toString()="+cert.toString()+"\n");
-			bf.append("\tCert["+i+"].getType()="+cert.getType()+"\n");
-			bf.append("\tCert["+i+"].getVersion()="+cert.getVersion()+"\n");
-			
-			if(cert.getIssuerDN()!=null){
-				bf.append("\tCert["+i+"].cert.getIssuerDN().toString()="+cert.getIssuerDN().toString()+"\n");
-				bf.append("\tCert["+i+"].cert.getIssuerDN().getName()="+cert.getIssuerDN().getName()+"\n");
-			}
-			else{
-				bf.append("\tCert["+i+"].cert.getIssuerDN() is null"+"\n");
-			}
-			
-			if(cert.getIssuerX500Principal()!=null){
-				bf.append("\tCert["+i+"].getIssuerX500Principal().toString()="+cert.getIssuerX500Principal().toString()+"\n");
-				bf.append("\tCert["+i+"].getIssuerX500Principal().getName()="+cert.getIssuerX500Principal().getName()+"\n");
-				bf.append("\tCert["+i+"].getIssuerX500Principal().getName(X500Principal.CANONICAL)="+cert.getIssuerX500Principal().getName(X500Principal.CANONICAL)+"\n");
-				bf.append("\tCert["+i+"].getIssuerX500Principal().getName(X500Principal.RFC1779)="+cert.getIssuerX500Principal().getName(X500Principal.RFC1779)+"\n");
-				bf.append("\tCert["+i+"].getIssuerX500Principal().getName(X500Principal.RFC2253)="+cert.getIssuerX500Principal().getName(X500Principal.RFC2253)+"\n");
-//					Map<String,String> oidMapCanonical = new Hashtable<String, String>();
-//					bf.append("\tCert["+i+"].getIssuerX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical)="+
-//							cert.getIssuerX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical));
-//					if(oidMapCanonical!=null && oidMapCanonical.size()>0){
-//						Iterator<String> it = oidMapCanonical.keySet().iterator();
-//						while (it.hasNext()) {
-//							String key = (String) it.next();
-//							String value = oidMapCanonical.get(key);
-//							bf.append("\tCert["+i+"].getIssuerX500Principal() ["+key+"]=["+value+"]"+"\n");
-//						}
-//					}
-			}
-			else{
-				bf.append("\tCert["+i+"].cert.getIssuerX500Principal() is null"+"\n");
-			}
-			
-			if(cert.getSubjectDN()!=null){
-				bf.append("\tCert["+i+"].getSubjectDN().toString()="+cert.getSubjectDN().toString()+"\n");
-				bf.append("\tCert["+i+"].getSubjectDN().getName()="+cert.getSubjectDN().getName()+"\n");
-			}
-			else{
-				bf.append("\tCert["+i+"].cert.getSubjectDN() is null"+"\n");
-			}
-			
-			bf.append("\tCert["+i+"].getSerialNumber()="+cert.getSerialNumber()+"\n");
-			bf.append("\tCert["+i+"].getNotAfter()="+cert.getNotAfter()+"\n");
-			bf.append("\tCert["+i+"].getNotBefore()="+cert.getNotBefore()+"\n");
-			
-			if(cert.getSubjectX500Principal()!=null){
-				bf.append("\tCert["+i+"].getSubjectX500Principal().toString()="+cert.getSubjectX500Principal().toString()+"\n");
-				bf.append("\tCert["+i+"].getSubjectX500Principal().getName()="+cert.getSubjectX500Principal().getName()+"\n");
-				bf.append("\tCert["+i+"].getSubjectX500Principal().getName(X500Principal.CANONICAL)="+cert.getSubjectX500Principal().getName(X500Principal.CANONICAL)+"\n");
-				bf.append("\tCert["+i+"].getSubjectX500Principal().getName(X500Principal.RFC1779)="+cert.getSubjectX500Principal().getName(X500Principal.RFC1779)+"\n");
-				bf.append("\tCert["+i+"].getSubjectX500Principal().getName(X500Principal.RFC2253)="+cert.getSubjectX500Principal().getName(X500Principal.RFC2253)+"\n");
-//					Map<String,String> oidMapCanonical = new Hashtable<String, String>();
-//					bf.append("\tCert["+i+"].getSubjectX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical)="+
-//							cert.getSubjectX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical));
-//					if(oidMapCanonical!=null && oidMapCanonical.size()>0){
-//						Iterator<String> it = oidMapCanonical.keySet().iterator();
-//						while (it.hasNext()) {
-//							String key = (String) it.next();
-//							String value = oidMapCanonical.get(key);
-//							bf.append("\tCert["+i+"].getSubjectX500Principal() ["+key+"]=["+value+"]"+"\n");
-//						}
-//					}
-			}
-			else{
-				bf.append("\tCert["+i+"].cert.getSubjectX500Principal() is null"+"\n");
-			}
-		}
 	}
 	
 	
@@ -163,6 +88,12 @@ public class Credential implements Serializable {
 	public void setUsername(String username) {
 		this.username = username;
 	}
+	public String getIssuer() {
+		return this.issuer;
+	}
+	public void setIssuer(String issuer) {
+		this.issuer = issuer;
+	}
 	public String getPassword() {
 		return this.password;
 	}
@@ -175,11 +106,11 @@ public class Credential implements Serializable {
 	public void setBearerToken(String bearerToken) {
 		this.bearerToken = bearerToken;
 	}
-	public java.security.cert.X509Certificate[] getCerts() {
-		return this.certs;
+	public Certificate getCertificate() {
+		return this.certificate;
 	}
-	public void setCerts(java.security.cert.X509Certificate[] certs) {
-		this.certs = certs;
+	public void setCertificate(Certificate certificate) {
+		this.certificate = certificate;
 	}
 	
 	public boolean isUserInRole(String role){
@@ -220,6 +151,33 @@ public class Credential implements Serializable {
 			bf.append("subject(");
 			bf.append(this.subject);
 			bf.append(")");
+		}
+		
+		if(this.issuer!=null){
+			
+			if(bf.length()>0){
+				bf.append(" ");
+			}
+			
+			bf.append("issuer(");
+			bf.append(this.subject);
+			bf.append(")");
+		}
+		if(this.certificate!=null) {
+			if(this.certificate.getCertificate()!=null) {
+				if(bf.length()>0){
+					bf.append(" ");
+				}
+				
+				bf.append("certificate(");
+				try {
+					bf.append(this.certificate.getCertificate().digestBase64Encoded());
+				}catch(Exception e) {
+					bf.append("Errore Digest Certificato");
+					LoggerWrapperFactory.getLogger(Credential.class).error("Errore Digest Certificato: "+e.getMessage(),e);
+				}
+				bf.append(")");
+			}
 		}
 		
 		if(this.username!=null){

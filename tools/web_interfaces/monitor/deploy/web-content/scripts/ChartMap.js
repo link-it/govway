@@ -106,13 +106,22 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
                     }
 
                     if (!text) {
-                        title = titleFormat ? c3.extra.categories[d[i].x] : d[i].x;
+                        var cat = (c3.extra.limit !== 0)?c3.extra.catsTooltip[d[i].x]:c3.extra.categories[d[i].x];
+                        title = titleFormat ? cat : d[i].x;
                         //title = titleFormat ? titleFormat(d[i].x) : d[i].x;
-                        text = "<table class='" + $$.CLASS.tooltip + "'>" + (title || title === 0 ? "<tr><th colspan='2'>" + title + "</th></tr>" : "");
+                        text = "<table class='" + $$.CLASS.tooltip + "' style='word-wrap: break-word !important; max-width: 250px;'>" + (title || title === 0 ? "<tr><th colspan='2'>" + title + "</th></tr>" : "");
                     }
 
                     name = nameFormat(d[i].name);
-                    if(this.config.data_type == 'pie') {
+                    if (c3.extra.limitLegenda !== -1) {
+                        if(this.config.data_type !== 'pie') {
+                            name = nameFormat(c3.extra.legendTooltip[d[i].id]);
+                        }
+                        if(this.config.data_type === 'pie') {
+                            name = nameFormat(c3.extra.legendTooltip[d[i].index]);
+                        }
+                    }
+                    if(this.config.data_type === 'pie') {
                         //value = valueFormat(d[i].value, d[i].ratio, d[i].id, d[i].index);
                         value = c3.extra.tips[i][d[i].index];
                     }
@@ -149,21 +158,6 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
             var _title = _svg.querySelector('#title');
             var _subtitle = _svg.querySelector('#subtitle');
             var _warning = _svg.querySelector('#warning');
-
-            if(c3.extra.axis_tooltips){
-                c3.extra.ellipsis_rect = d3.selectAll('.c3-event-rects .c3-event-rect')[0];
-                d3.selectAll('.c3-axis.c3-axis-x text tspan').each(function(d, i) {
-                    var _width = c3.extra.ellipsis_rect[i].getBBox().width/2;
-                    var self = d3.select(this),
-                        textLength = self.node().getComputedTextLength(),
-                        text = self.text();
-                    while (textLength > _width && text.length > 0) {
-                        text = text.slice(0, -1);
-                        self.text(text + '...');
-                        textLength = self.node().getComputedTextLength();
-                    }
-                });
-            }
 
             if(_title && _title.innerHTML) {
                 if(_title.getComputedTextLength() > (_svg_width - 15)) {
@@ -228,7 +222,12 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
   ellipsis_textLength: 0,
         ellipsis_rect: [],
            categories: [].concat(dp.cats),
-             pieTotal: dp.pieTotal
+             pieTotal: dp.pieTotal,
+        legendTooltip: dp.legendTooltip,
+          catsTooltip: dp.catsTooltip,
+         limitLegenda: dp.limitLegenda,
+                limit: dp.limit,
+                 type: dp.type
     };
 
     var chart = c3.generate(options);
@@ -309,7 +308,9 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
     }
 
     //x-Axis: Tooltip categories
-    if(dp.type != 'pie' && dp.rotation == 0 && dp.noData != 0) {
+    /* fa sbarellare il browser quando vi sono informazioni lunghe
+       Inoltre l'informazione e' gia presente nel tooltip della barra
+    if(dp.type != 'pie' && dp.noData != 0) {
         var _ellipsis = document.createElementNS("http://www.w3.org/2000/svg", "text");
         _ellipsis.setAttributeNS(null,"opacity", 0);
         _ellipsis.appendChild(document.createTextNode('...'));
@@ -327,10 +328,11 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
                 if(d3.select(d1).node().textContent.indexOf('...')!=-1){
                     var _div = d3.select(".tooltip-category-div");
                     _div.transition().duration(100).style("opacity", 1);
+                    var ttip = c3.extra.catsTooltip[d];
                     if(data.x < dp.size.w - d3.event.pageX) {
-                        _div.html(data.text).style("left", d3.event.pageX + "px").style("top", (d3.event.pageY - 56) + "px");
+                        _div.html(ttip).style("word-wrap", "break-word").style("left", d3.event.pageX + "px").style("top", (d3.event.pageY - 56) + "px");
                     } else {
-                        _div.html(data.text).style("left", Math.abs(d3.event.pageX - data.x) + "px").style("top", (d3.event.pageY - 56) + "px");
+                        _div.html(ttip).style("word-wrap", "break-word").style("left", Math.abs(d3.event.pageX - data.x) + "px").style("top", (d3.event.pageY - 56) + "px");
                     }
                 }
             }).on("mouseout", function(d) {
@@ -341,7 +343,61 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
         c3.extra.axis_tooltips = true;
         chart.flush();
     }
+    */
 
+    d3.selectAll('g.c3-legend-item')
+        .on('mouseover', function (id, index) {
+            chart.focus(id);
+            var _text = (c3.extra.type !== 'pie')?c3.extra.legendTooltip[id]:c3.extra.legendTooltip[index];
+            if(c3.extra.limitLegenda !== -1) {
+                var size = d3.select('svg').node().getBoundingClientRect();
+                var target = d3.select(this).node().getBoundingClientRect();
+                d3.select(".c3-tooltip-container")
+                    .html("")
+                    .style("top", (size.top + window.scrollY + 10) +"px")
+                    .style("left", Math.abs(.5*size.width-2*target.width) + "px")
+                    .style("display", "block")
+                    .append("div")
+                    .style("width", 4*target.width+"px")
+                    .style("word-wrap", "break-word")
+                    .style("padding", "8px")
+                    .style("opacity", ".9")
+                    .style("border", "1px solid #eee")
+                    .style("box-shadow", "7px 7px 12px -9px #777")
+                    .style("background-color", "#fff")
+                    .html("<span>"+_text+"</span>");
+            }
+        })
+        .on('mouseout', function (id) {
+            chart.revert();
+            if(c3.extra.limitLegenda !== -1) {
+                d3.select(".c3-tooltip-container").html("");
+            }
+        });
+
+}
+
+function hoverLegend (id, index) {
+    chart.focus(id);
+    var _text = (c3.extra.type !== 'pie')?c3.extra.legendTooltip[id]:c3.extra.legendTooltip[index];
+    if(c3.extra.limitLegenda !== -1) {
+        var size = d3.select('svg').node().getBoundingClientRect();
+        var target = d3.select(this).node().getBoundingClientRect();
+        d3.select(".c3-tooltip-container")
+            .html("")
+            .style("top", (size.top + window.scrollY + 10) +"px")
+            .style("left", Math.abs(.5*size.width-2*target.width) + "px")
+            .style("display", "block")
+            .append("div")
+            .style("width", 4*target.width+"px")
+            .style("word-wrap", "break-word")
+            .style("padding", "8px")
+            .style("opacity", ".9")
+            .style("border", "1px solid #eee")
+            .style("box-shadow", "7px 7px 12px -9px #777")
+            .style("background-color", "#fff")
+                .html("<span>"+_text+"</span>");
+    }
 }
 
 /**
@@ -357,6 +413,8 @@ function chartMapping(_dataJson, _type, _size) {
     dpChart.subtitle = _dataJson.hasOwnProperty('sottotitolo')?labelUnescape(_dataJson.sottotitolo):'';
     dpChart.yLabel = _dataJson.hasOwnProperty('yAxisLabel')?labelUnescape(_dataJson.yAxisLabel):'';
     dpChart.showLegend = _dataJson.hasOwnProperty('mostraLegenda')?_dataJson.mostraLegenda:true;
+    dpChart.limit = _dataJson.hasOwnProperty('limit')?parseInt(_dataJson.limit,10):-1;
+    dpChart.limitLegenda = _dataJson.hasOwnProperty('limitLegenda')?parseInt(_dataJson.limitLegenda,10):-1;
     dpChart.rotation = _dataJson.hasOwnProperty('xAxisLabelDirezione')?Math.abs(_dataJson.xAxisLabelDirezione):0;
     dpChart.rotation = dpChart.rotation != 0?-dpChart.rotation:0;
     dpChart.xAxisGridLine = _dataJson.hasOwnProperty('xAxisGridLine')?_dataJson.xAxisGridLine:true;
@@ -416,7 +474,6 @@ function chartMapping(_dataJson, _type, _size) {
                     return rowdata;
                 });
                 cats = _dataJson.dati.map(function (cat) {
-                    dpChart.maxCategory = (cat.data.length > dpChart.maxCategory.length)?cat.data:dpChart.maxCategory;
                     return labelUnescape(cat.data);
                 });
             }
@@ -442,6 +499,16 @@ function chartMapping(_dataJson, _type, _size) {
                 });
             }
             else serieColors = colorSerie(serieRef.length - 1);
+            dpChart.legendTooltip = {};
+            serieRef = serieRef.map(function(key, index) {
+                dpChart.legendTooltip[index] = key;
+                if(dpChart.limitLegenda !== -1) {
+                    if(dpChart.limitLegenda < key.length) {
+                        return (index +1) + '. ' + key.substr(0, dpChart.limitLegenda) + '...';
+                    }
+                }
+                return (index +1) + '. ' + key;
+            });
         }
     }
     if(noData != 0) {
@@ -452,7 +519,30 @@ function chartMapping(_dataJson, _type, _size) {
     dpChart.size = _size;
     dpChart.rows = (noData != 0)?serie:[];
     dpChart.labelRef = labelRef;
-    dpChart.cats = cats;
+    dpChart.catsTooltip = {};
+    dpChart.cats = [];
+    if( _type !== 'pie') {
+        dpChart.legendTooltip = {};
+        Object.keys(dpChart.labelRef).map(function(key) {
+            dpChart.legendTooltip[key] = dpChart.labelRef[key];
+            if(dpChart.limitLegenda !== -1) {
+                if(dpChart.limitLegenda < dpChart.labelRef[key].length) {
+                    dpChart.labelRef[key] = labelRef[key].substr(0, dpChart.limitLegenda) + '...';
+                }
+            }
+        });
+        dpChart.cats = cats.map(function(key, index) {
+            dpChart.catsTooltip[index] = key;
+            if(dpChart.limit !== -1) {
+                if(dpChart.limit < key.length) {
+                    key = key.substr(0, dpChart.limit) + '...';
+                }
+            }
+            dpChart.maxCategory = (key.length > dpChart.maxCategory.length)?key:dpChart.maxCategory;
+
+            return key;
+        });
+    }
     dpChart.colors = serieColors;
     dpChart.noData = noData;
     dpChart.noDataLabel = (noData == 0)?noDataLabel:'';

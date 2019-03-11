@@ -40,6 +40,8 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
+import org.openspcoop2.utils.certificate.ArchiveLoader;
+import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -56,6 +58,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -88,7 +91,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 			String [] pddList,String[] pddEsterneList,String nomePddGestioneLocale, String pdd, 
 			List<String> listaTipiProtocollo, String protocollo,
 			boolean isSupportatoAutenticazioneSoggetti, String utente,String password, String subject, String principal, String tipoauth,
-			boolean isPddEsterna,String tipologia, String dominio) throws Exception  {
+			boolean isPddEsterna,String tipologia, String dominio,
+			String tipoCredenzialiSSLSorgente, org.openspcoop2.utils.certificate.ArchiveType tipoCredenzialiSSLTipoArchivio, BinaryParameter tipoCredenzialiSSLFileCertificato, String tipoCredenzialiSSLFileCertificatoPassword,
+			List<String> listaAliasEstrattiCertificato, String tipoCredenzialiSSLAliasCertificato,	String tipoCredenzialiSSLAliasCertificatoSubject, String tipoCredenzialiSSLAliasCertificatoIssuer,
+			String tipoCredenzialiSSLAliasCertificatoType, String tipoCredenzialiSSLAliasCertificatoVersion, String tipoCredenzialiSSLAliasCertificatoSerialNumber, String tipoCredenzialiSSLAliasCertificatoSelfSigned,
+			String tipoCredenzialiSSLAliasCertificatoNotBefore, String tipoCredenzialiSSLAliasCertificatoNotAfter, String tipoCredenzialiSSLVerificaTuttiICampi, String tipoCredenzialiSSLConfigurazioneManualeSelfSigned,
+			String issuer,String tipoCredenzialiSSLStatoElaborazioneCertificato) throws Exception  {
 		return addSoggettiToDati(tipoOp, dati, nomeprov, tipoprov, portadom, descr, 
 				isRouter, tipiSoggetti, profilo, privato, codiceIpa, versioni, 
 				isSupportatoCodiceIPA, isSupportatoIdentificativoPorta,
@@ -96,7 +104,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 				null,null,null,null,
 				-1,null,-1,null,listaTipiProtocollo,protocollo,
 				isSupportatoAutenticazioneSoggetti, utente, password, subject, principal, tipoauth,
-				isPddEsterna, tipologia, dominio);
+				isPddEsterna, tipologia, dominio,
+				tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword, listaAliasEstrattiCertificato, 
+				tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
+				tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
+				tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
+				tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuer,tipoCredenzialiSSLStatoElaborazioneCertificato);
 	}
 	public Vector<DataElement> addSoggettiToDati(TipoOperazione tipoOp,Vector<DataElement> dati, String nomeprov, String tipoprov, String portadom, String descr, 
 			boolean isRouter, List<String> tipiSoggetti, String profilo, boolean privato, String codiceIpa, List<String> versioni, 
@@ -105,7 +118,11 @@ public class SoggettiHelper extends ConnettoriHelper {
 			String id, String oldnomeprov, String oldtipoprov, org.openspcoop2.core.registry.Connettore connettore,
 			long numPD,String pd_url_prefix_rewriter,long numPA, String pa_url_prefix_rewriter, List<String> listaTipiProtocollo, String protocollo,
 			boolean isSupportatoAutenticazioneSoggetti, String utente,String password, String subject, String principal, String tipoauth,
-			boolean isPddEsterna,String tipologia, String dominio) throws Exception {
+			boolean isPddEsterna,String tipologia, String dominio,String tipoCredenzialiSSLSorgente, org.openspcoop2.utils.certificate.ArchiveType tipoCredenzialiSSLTipoArchivio, BinaryParameter tipoCredenzialiSSLFileCertificato, String tipoCredenzialiSSLFileCertificatoPassword,
+			List<String> listaAliasEstrattiCertificato, String tipoCredenzialiSSLAliasCertificato,	String tipoCredenzialiSSLAliasCertificatoSubject, String tipoCredenzialiSSLAliasCertificatoIssuer,
+			String tipoCredenzialiSSLAliasCertificatoType, String tipoCredenzialiSSLAliasCertificatoVersion, String tipoCredenzialiSSLAliasCertificatoSerialNumber, String tipoCredenzialiSSLAliasCertificatoSelfSigned,
+			String tipoCredenzialiSSLAliasCertificatoNotBefore, String tipoCredenzialiSSLAliasCertificatoNotAfter, String tipoCredenzialiSSLVerificaTuttiICampi, String tipoCredenzialiSSLConfigurazioneManualeSelfSigned,
+			String issuer,String tipoCredenzialiSSLStatoElaborazioneCertificato) throws Exception {
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
@@ -501,7 +518,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 			
 			if(showCredenziali){
-				dati = this.addCredenzialiToDati(dati, tipoauth, utente, password, subject, principal, servlet, true, null, false, true, null, autenticazioneNessunaAbilitata);
+				dati = this.addCredenzialiToDati(dati, tipoauth, utente, password, subject, principal, servlet, true, null, false, true, null, autenticazioneNessunaAbilitata,
+						tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword, listaAliasEstrattiCertificato, 
+						tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
+						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
+						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
+						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuer,tipoCredenzialiSSLStatoElaborazioneCertificato);
 			}
 		}
 		
@@ -786,7 +808,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 			
 
-			if(this.credenzialiCheckData()==false){
+			if(this.credenzialiCheckData(tipoOp)==false){
 				return false;
 			}
 
@@ -798,6 +820,10 @@ public class SoggettiHelper extends ConnettoriHelper {
 			String password = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			// String confpw = this.getParameter("confpw");
 			String subject = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
+			String issuer = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER);
+			if("".equals(issuer)) {
+				issuer = null;
+			}
 			String principal = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
 			
 			// Se sono presenti credenziali, controllo che non siano gia'
@@ -820,8 +846,65 @@ public class SoggettiHelper extends ConnettoriHelper {
 				}
 				
 			} else if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
-				// recupero soggetto con stesse credenziali
-				Soggetto soggettoAutenticato = this.soggettiCore.getSoggettoRegistroAutenticatoSsl(subject);
+				String tipoCredenzialiSSLSorgente = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL);
+				if(tipoCredenzialiSSLSorgente == null) {
+					tipoCredenzialiSSLSorgente = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE;
+				}
+				String tipoCredenzialiSSLConfigurazioneManualeSelfSigned= this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_MANUALE_SELF_SIGNED);
+				if (tipoCredenzialiSSLConfigurazioneManualeSelfSigned == null) {
+					tipoCredenzialiSSLConfigurazioneManualeSelfSigned = Costanti.CHECK_BOX_ENABLED;
+				}
+				
+				String details = "";
+				Soggetto soggettoAutenticato = null;
+				String tipoSsl = null;
+				if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE)) { 
+			
+					// recupero soggetto con stesse credenziali
+					soggettoAutenticato = this.soggettiCore.getSoggettoRegistroAutenticatoSsl(subject, issuer);
+					tipoSsl = "subject/issuer";
+			
+				} else {
+					
+					BinaryParameter tipoCredenzialiSSLFileCertificato = this.getBinaryParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO);
+					String tipoCredenzialiSSLVerificaTuttiICampi = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
+					boolean strictVerifier = ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi);
+					String tipoCredenzialiSSLTipoArchivioS = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO);
+					String tipoCredenzialiSSLFileCertificatoPassword = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
+					String tipoCredenzialiSSLAliasCertificato = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO);
+					if (tipoCredenzialiSSLAliasCertificato == null) {
+						tipoCredenzialiSSLAliasCertificato = "";
+					}
+					org.openspcoop2.utils.certificate.ArchiveType tipoCredenzialiSSLTipoArchivio= null;
+					if(tipoCredenzialiSSLTipoArchivioS == null) {
+						tipoCredenzialiSSLTipoArchivio = org.openspcoop2.utils.certificate.ArchiveType.CER; 
+					} else {
+						tipoCredenzialiSSLTipoArchivio = org.openspcoop2.utils.certificate.ArchiveType.valueOf(tipoCredenzialiSSLTipoArchivioS);
+					}
+					Certificate cSelezionato = null;
+					byte [] archivio = tipoCredenzialiSSLFileCertificato.getValue();
+					if(TipoOperazione.CHANGE.equals(tipoOp) && archivio==null) {
+						archivio = soggettoOld.getCredenziali().getCertificate();
+					}
+					if(tipoCredenzialiSSLTipoArchivio.equals(org.openspcoop2.utils.certificate.ArchiveType.CER)) {
+						cSelezionato = ArchiveLoader.load(archivio);
+					}else {
+						cSelezionato = ArchiveLoader.load(tipoCredenzialiSSLTipoArchivio, archivio, tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLFileCertificatoPassword);
+					}
+					//soggettoAutenticato = this.soggettiCore.getSoggettoRegistroAutenticatoSsl(cSelezionato.getCertificate(), strictVerifier);
+					// Fix: usando il metodo sopra e' permesso caricare due soggetti con lo stesso certificato (anche serial number) uno in strict e uno no, e questo e' sbagliato.
+					List<org.openspcoop2.core.registry.Soggetto> soggettiAutenticati = this.soggettiCore.soggettoWithCredenzialiSslList(cSelezionato.getCertificate(), strictVerifier);
+					if(soggettiAutenticati!=null && soggettiAutenticati.size()>0) {
+						soggettoAutenticato = soggettiAutenticati.get(0);
+						if(!strictVerifier) {
+							List<org.openspcoop2.core.registry.Soggetto> soggettiAutenticatiCheck = this.soggettiCore.soggettoWithCredenzialiSslList(cSelezionato.getCertificate(), true);
+							if(soggettiAutenticatiCheck==null || soggettiAutenticatiCheck.isEmpty() ) {
+								details=ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_DETAILS;
+							}
+						}
+					}
+					tipoSsl = "certificato";
+				}
 				
 				if(soggettoAutenticato!=null && tipoOp.equals(TipoOperazione.CHANGE)){
 					if(idInt == soggettoAutenticato.getId()){
@@ -832,7 +915,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				// Messaggio di errore
 				if(soggettoAutenticato!=null){
 					String labelSoggettoAutenticato = this.getLabelNomeSoggetto(new IDSoggetto(soggettoAutenticato.getTipo(), soggettoAutenticato.getNome()));
-					this.pd.setMessage("Il soggetto "+labelSoggettoAutenticato+" possiede già le credenziali subject indicate.");
+					this.pd.setMessage("Il soggetto "+labelSoggettoAutenticato+" possiede già le credenziali ssl ("+tipoSsl+") indicate."+details);
 					return false;
 				}
 			}

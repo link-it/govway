@@ -33,6 +33,11 @@ package org.openspcoop2.core.registry.ws.server.filter.beans;
  *         &lt;element name="user" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="password" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="subject" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="cn-subject" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="issuer" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="cn-issuer" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="certificate" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="certificate-strict-verification" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" />
  *     &lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -58,7 +63,12 @@ import org.openspcoop2.core.registry.constants.CredenzialeTipo;
     "tipo",
     "user",
     "password",
-    "subject"
+    "subject",
+    "cnSubject",
+    "issuer",
+    "cnIssuer",
+    "certificate",
+    "certificateStrictVerification"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "credenziali-soggetto")
 public class CredenzialiSoggetto extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
@@ -113,6 +123,71 @@ public class CredenzialiSoggetto extends org.openspcoop2.utils.beans.BaseBean im
 	
 	public String getSubject(){
 		return this.subject;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="cn-subject",required=false,nillable=false)
+	private String cnSubject;
+	
+	public void setCnSubject(String cnSubject){
+		this.cnSubject = cnSubject;
+	}
+	
+	public String getCnSubject(){
+		return this.cnSubject;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="issuer",required=false,nillable=false)
+	private String issuer;
+	
+	public void setIssuer(String issuer){
+		this.issuer = issuer;
+	}
+	
+	public String getIssuer(){
+		return this.issuer;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="cn-issuer",required=false,nillable=false)
+	private String cnIssuer;
+	
+	public void setCnIssuer(String cnIssuer){
+		this.cnIssuer = cnIssuer;
+	}
+	
+	public String getCnIssuer(){
+		return this.cnIssuer;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="base64Binary")
+  @XmlElement(name="certificate",required=false,nillable=false)
+	private byte[] certificate;
+	
+	public void setCertificate(byte[] certificate){
+		this.certificate = certificate;
+	}
+	
+	public byte[] getCertificate(){
+		return this.certificate;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlElement(name="certificate-strict-verification",required=false,nillable=false)
+	private Boolean certificateStrictVerification;
+	
+	public void setCertificateStrictVerification(Boolean certificateStrictVerification){
+		this.certificateStrictVerification = certificateStrictVerification;
+	}
+	
+	public Boolean getCertificateStrictVerification(){
+		return this.certificateStrictVerification;
 	}
 	
 	

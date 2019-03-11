@@ -141,8 +141,19 @@ public class FaultCode {
 		return new javax.ws.rs.WebApplicationException(responseBuilder.build());
 	}
 	public javax.ws.rs.WebApplicationException toException(Response response){
+		return toException(response, null);
+	}
+	public javax.ws.rs.WebApplicationException toException(Response response, Throwable e){
 		// Aggiunta eccezione nel costruttore, in modo che cxf chiami la classe WebApplicationExceptionMapper
-		return new javax.ws.rs.WebApplicationException(new Exception(response.getEntity().toString()),response);
+		Exception exception = null;
+		String msgException = response.getEntity().toString();
+		if(e!=null) {
+			exception = new Exception(msgException,e);
+		}
+		else {
+			exception = new Exception(msgException);
+		}
+		return new javax.ws.rs.WebApplicationException(exception,response);
 	}
 	public javax.ws.rs.WebApplicationException toException(){
 		return this.toException(true);
@@ -157,7 +168,7 @@ public class FaultCode {
 	}
 	public javax.ws.rs.WebApplicationException toException(Throwable e){
 		Response r = this.toFaultResponse(e);
-		return this.toException(r);
+		return this.toException(r,e);
 	}
 
 	public void throwException(ResponseBuilder responseBuilder) throws javax.ws.rs.WebApplicationException{

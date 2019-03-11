@@ -64,10 +64,11 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
@@ -889,7 +890,7 @@ public class GestoreAutenticazione {
 			}
 			credenzialeMittente.setOraRegistrazione(DateManager.getDate());
 			if(TipoCredenzialeMittente.trasporto.equals(tipoCredenziale) && TipoAutenticazione.SSL.getValue().equalsIgnoreCase(tipoAutenticazione)) {
-				credenzialeMittente.setCredenziale(Utilities.formatSubject(credential));
+				credenzialeMittente.setCredenziale(CertificateUtils.formatPrincipal(credential, PrincipalType.subject));
 			}
 			else {
 				credenzialeMittente.setCredenziale(credential);

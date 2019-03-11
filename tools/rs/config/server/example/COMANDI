@@ -13,6 +13,7 @@ ESEMPIO:
 	+ CREATE: 
 ./add applicativi bodies/applicativo.json		
 ./add applicativi bodies/applicativo_https.json	
+./add applicativi bodies/applicativo_https_certificato.json	
 
 	+ FIND:
 ./get applicativi	
@@ -82,6 +83,8 @@ ESEMPIO:
 	+ CREATE: 
 ./add soggetti bodies/soggetto.json
 ./add soggetti bodies/soggetto1.json profilo=SPCoop
+./add soggetti bodies/soggetto2.json
+./add soggetti bodies/soggetto2_certificato.json
 
 	+ FIND:
 ./get soggetti

@@ -268,6 +268,8 @@ public class CostantiControlStation {
 	public final static String LABEL_DEFAULT = "Default";
 	public final static String LABEL_NESSUNO = "Nessuno";
 	public final static String LABEL_ABILITATO = "Abilitato";
+	public final static String LABEL_SI = "Si";
+	public final static String LABEL_NO = "No";
 		
 	public final static String LABEL_DUMP = "Dump";
 	public final static String LABEL_REGISTRAZIONE_MESSAGGI = "Registrazione Messaggi";

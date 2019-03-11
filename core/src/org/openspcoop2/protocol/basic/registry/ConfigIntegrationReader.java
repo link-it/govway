@@ -40,6 +40,7 @@ import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.slf4j.Logger;
 
 /**
@@ -102,18 +103,38 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
-	public boolean existsServizioApplicativoByCredenzialiSsl(String subject){
+	public boolean existsServizioApplicativoByCredenzialiSsl(String subject, String issuer){
 		try{
-			return this.driverConfigurazioneGET.getServizioApplicativoByCredenzialiSsl(subject)!=null;
+			return this.driverConfigurazioneGET.getServizioApplicativoByCredenzialiSsl(subject, issuer)!=null;
 		}catch(Exception e){
 			return false;
 		}	
 	}
 	
 	@Override
-	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String subject) throws RegistryNotFound,RegistryException{
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String subject, String issuer) throws RegistryNotFound,RegistryException{
 		try{
-			return this.driverConfigurazioneGET.getServizioApplicativoByCredenzialiSsl(subject);
+			return this.driverConfigurazioneGET.getServizioApplicativoByCredenzialiSsl(subject, issuer);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public boolean existsServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier){
+		try{
+			return this.driverConfigurazioneGET.getServizioApplicativoByCredenzialiSsl(certificate, strictVerifier)!=null;
+		}catch(Exception e){
+			return false;
+		}	
+	}
+	
+	@Override
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws RegistryNotFound,RegistryException{
+		try{
+			return this.driverConfigurazioneGET.getServizioApplicativoByCredenzialiSsl(certificate, strictVerifier);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){

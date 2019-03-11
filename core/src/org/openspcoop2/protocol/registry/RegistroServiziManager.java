@@ -68,6 +68,7 @@ import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.slf4j.Logger;
 
 /**
@@ -261,8 +262,12 @@ public class RegistroServiziManager {
 		return this.registroServiziReader.getSoggettoByCredenzialiBasic(this.getConnection(), username, password, nomeRegistro);
 	}
 	
-	public Soggetto getSoggettoByCredenzialiSsl(String subject, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getSoggettoByCredenzialiSsl(this.getConnection(), subject, nomeRegistro);
+	public Soggetto getSoggettoByCredenzialiSsl(String subject, String issuer, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getSoggettoByCredenzialiSsl(this.getConnection(), subject, issuer, nomeRegistro);
+	}
+	
+	public Soggetto getSoggettoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getSoggettoByCredenzialiSsl(this.getConnection(), certificate, strictVerifier, nomeRegistro);
 	}
 	
 	public Soggetto getSoggettoByCredenzialiPrincipal(String principal, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
@@ -273,8 +278,12 @@ public class RegistroServiziManager {
 		return this.registroServiziReader.getIdSoggettoByCredenzialiBasic(this.getConnection(), username, password, nomeRegistro);
 	}
 	
-	public IDSoggetto getIdSoggettoByCredenzialiSsl(String subject, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getIdSoggettoByCredenzialiSsl(this.getConnection(), subject, nomeRegistro);
+	public IDSoggetto getIdSoggettoByCredenzialiSsl(String subject, String issuer, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getIdSoggettoByCredenzialiSsl(this.getConnection(), subject, issuer, nomeRegistro);
+	}
+	
+	public IDSoggetto getIdSoggettoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getIdSoggettoByCredenzialiSsl(this.getConnection(), certificate, strictVerifier, nomeRegistro);
 	}
 	
 	public IDSoggetto getIdSoggettoByCredenzialiPrincipal(String principal, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{

@@ -28,12 +28,16 @@ import java.util.Vector;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
+import org.openspcoop2.protocol.trasparente.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.trasparente.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.AuthUtilities;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.CredenzialiInvocazione;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
+import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.testng.Assert;
+import org.testng.Reporter;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.DataProvider;
@@ -152,17 +156,73 @@ public class AutenticazionePortaApplicativa {
 	public Object[][] sslProvider(){
 		return new Object[][]{
 				{CredenzialiInvocazione.getAutenticazioneDisabilitata(), null,  
-					CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE,	CodiceErroreCooperazione.MITTENTE_NON_VALORIZZATO.getCodice(),true, 500},// nessuna credenziale
-				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/client1_trasparente.jks", "openspcoopjks", "openspcoop"), CostantiTestSuite.PROXY_SOGGETTO_TRASPARENTE_SSL,
-						null, -1,true, 200}, // crendeziali corrette
-				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/client2_trasparente.jks", "openspcoopjks", "openspcoop"), CostantiTestSuite.PROXY_SOGGETTO_TRASPARENTE_SSL_2,
-							null, -1,true, 200}, // crendeziali corrette
-				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/client3_trasparente.jks", "openspcoopjks", "openspcoop"), null, 
-								null,-1, true, 200}, // credenziali corrette (anche se non registrate sul registro)
+					CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE,	CodiceErroreCooperazione.MITTENTE_NON_VALORIZZATO.getCodice(),true, 500,
+					null, null},// nessuna credenziale
+				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/client1_trasparente.jks", "openspcoopjks", "openspcoop"), 
+						CostantiTestSuite.PROXY_SOGGETTO_TRASPARENTE_SSL,
+						null, -1,true, 200,
+						new String[] {"CN=client, OU=trasparente, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it"},
+						null}, // crendeziali corrette
+				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/client2_trasparente.jks", "openspcoopjks", "openspcoop"), 
+							CostantiTestSuite.PROXY_SOGGETTO_TRASPARENTE_SSL_2,
+						null, -1,true, 200,
+						new String[] {"CN=client2, OU=trasparente, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it"},
+						null}, // crendeziali corrette
+				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/client3_trasparente.jks", "openspcoopjks", "openspcoop"), 
+							null, 
+						null,-1, true, 200,
+						new String[] {"CN=client3, OU=trasparente, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it"},
+						null}, // credenziali corrette (anche se non registrate sul registro)
+				
+				// Credenziali corrette con caricamento certificato
+				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/soggetto1_multipleOU.jks", "123456", "123456"), 
+						CostantiTestSuite.PROXY_SOGGETTO_TRASPARENTE_CERT1,
+						null, -1,true, 200,
+						new String[] {"CN=soggetto1_multipleOU","OU=\" Piano=2, Scala=B, porta=3\""},
+						null},
+				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/soggetto1_multipleOU_serialNumberDifferente.jks", "123456", "123456"), 
+						CostantiTestSuite.PROXY_SOGGETTO_TRASPARENTE_CERT1_SERIALNUMBERDIFFERENTE,
+						null, -1,true, 200,
+						new String[] {"CN=soggetto1_multipleOU","OU=\" Piano=2, Scala=B, porta=3\""},
+						null},
+				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/soggetto2_multipleOU.jks", "123456", "123456"), 
+						CostantiTestSuite.PROXY_SOGGETTO_TRASPARENTE_CERT2,
+						null, -1,true, 200,
+						new String[] {"CN=soggetto2_multipleOU","OU=\" Piano=2, Scala=B, porta=3\"","caratteri accentati"},
+						null},
+				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/soggetto2_multipleOU_serialNumberDifferente.jks", "123456", "123456"), 
+						CostantiTestSuite.PROXY_SOGGETTO_TRASPARENTE_CERT2_SERIALNUMBERDIFFERENTE,
+						null, -1,true, 200,
+						new String[] {"CN=soggetto2_multipleOU","OU=\" Piano=2, Scala=B, porta=3\"","caratteri accentati"},
+						null},
+				
+				// Credenziali corrette con caricamento certificato (applicativo)
+				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/applicativo1_multipleOU.jks", "123456", "123456"), 
+						CostantiTestSuite.PROXY_SOGGETTO_FRUITORE,
+						null, -1,true, 200,
+						new String[] {"CN=applicativo1_multipleOU","OU=\" Piano=2, Scala=B, porta=3\""},
+						"EsempioFruitoreTrasparenteCert1"},
+				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/applicativo1_multipleOU_serialNumberDifferente.jks", "123456", "123456"), 
+						CostantiTestSuite.PROXY_SOGGETTO_FRUITORE,
+						null, -1,true, 200,
+						new String[] {"CN=applicativo1_multipleOU","OU=\" Piano=2, Scala=B, porta=3\""},
+						"EsempioFruitoreTrasparenteCert1_serialNumberDifferente"},
+				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/applicativo2_multipleOU.jks", "123456", "123456"), 
+						CostantiTestSuite.PROXY_SOGGETTO_FRUITORE,
+						null, -1,true, 200,
+						new String[] {"CN=applicativo2_multipleOU","OU=\" Piano=2, Scala=B, porta=3\"","caratteri accentati"},
+						"EsempioFruitoreTrasparenteCert2"},
+				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/applicativo2_multipleOU_serialNumberDifferente.jks", "123456", "123456"), 
+						CostantiTestSuite.PROXY_SOGGETTO_FRUITORE,
+						null, -1,true, 200,
+						new String[] {"CN=applicativo2_multipleOU","OU=\" Piano=2, Scala=B, porta=3\"","caratteri accentati"},
+						"EsempioFruitoreTrasparenteCert2_serialNumberDifferente"},
 		};
 	}
 	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".SSL"},dataProvider="sslProvider")
-	public void testSsl(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void testSsl(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso,
+			String [] credenziale, 
+			String nomeServizioApplicativo  ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaApplicativa(CostantiTestSuite.PORTA_APPLICATIVA_AUTH_SSL, fruitore,
@@ -178,9 +238,35 @@ public class AutenticazionePortaApplicativa {
 			err.setMsgErrore(erroreAtteso);
 			this.erroriAttesiOpenSPCoopCore.add(err);
 		}
+		
+		if(credenziale!=null || nomeServizioApplicativo!=null) {
+			DatabaseMsgDiagnosticiComponent dataMsg = null;
+			try{
+				dataMsg = DatabaseProperties.getDatabaseComponentDiagnosticaErogatore();
+				
+				if(credenziale!=null && credenziale.length>0) {
+					for (int i = 0; i < credenziale.length; i++) {
+						Reporter.log("Cerco credenziale-"+i+" ["+credenziale[i]+"] nei log ...");
+						Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(dataInizioTest, credenziale[i]));		
+					}
+				}
+				
+				if(nomeServizioApplicativo!=null) {
+					Reporter.log("Cerco nomeServizioApplicativo ["+nomeServizioApplicativo+"] nei log ...");
+					Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(dataInizioTest, nomeServizioApplicativo));
+				}
+				
+			}finally{
+				dataMsg.close();
+			}
+		}
 	}
 	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".SSL_OPTIONAL"},dataProvider="sslProvider")
-	public void testSslOptional(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+	public void testSslOptional(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso,
+			String [] credenziale, 
+			String nomeSoggetto  ) throws Exception{
+		Date dataInizioTest = DateManager.getDate();
+		
 		// Con autenticazione opzionale tutte le invocazioni avvengono con successo.
 		ricercaEsatta = false; // il diagnostico e' arricchito dell'informazione che l'autenticazione e' opzionale
 		Utilities.sleep(5000);
@@ -188,6 +274,28 @@ public class AutenticazionePortaApplicativa {
 				credenzialiInvocazione, addIDUnivoco, 
 				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta,  DateManager.getDate(), 
 				200);
+		
+		if(credenziale!=null || nomeSoggetto!=null) {
+			DatabaseMsgDiagnosticiComponent dataMsg = null;
+			try{
+				dataMsg = DatabaseProperties.getDatabaseComponentDiagnosticaErogatore();
+				
+				if(credenziale!=null && credenziale.length>0) {
+					for (int i = 0; i < credenziale.length; i++) {
+						Reporter.log("Cerco credenziale-"+i+" ["+credenziale[i]+"] nei log ...");
+						Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(dataInizioTest, credenziale[i]));		
+					}
+				}
+				
+				if(nomeSoggetto!=null) {
+					Reporter.log("Cerco nomeSoggetto ["+nomeSoggetto+"] nei log ...");
+					Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(dataInizioTest, nomeSoggetto));
+				}
+				
+			}finally{
+				dataMsg.close();
+			}
+		}
 	}
 	
 	

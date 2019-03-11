@@ -71,6 +71,15 @@ if [ $# -eq 6 ] ; then
     UPDATE_LIB="$5"
     LOG_DIR="$6"
 fi
+if [ $# -eq 7 ] ; then
+    ramo="$1"
+    WORK_DIR="$2"
+    SKIP_CHECKS="$3"
+    SKIP_SRC_VERSION="$4"
+    UPDATE_LIB="$5"
+    LOG_DIR="$6"
+    UPDATE_DOC="$7"
+fi
 
 #####################################
 # Variabili a Runtime ##############
@@ -285,7 +294,7 @@ popd >> ${LOG_FILE} 2>&1
 pushd ${WORKING_COPY}/resources/doc/ >> ${LOG_FILE} 2>&1
 if [ ! -f pdf/GovWay-ReleaseNotes.pdf -o "$UPDATE_DOC" == "true" ]
 then
-	debugPrintln "   Generazione Release Notes ..."
+	debugPrintln "  Generazione Release Notes ..."
 	pushd src/releaseNotes/ >> ${LOG_FILE} 2>&1
 	make clean pdf >> ${LOG_FILE} 2>&1
 
@@ -297,7 +306,7 @@ then
 	fi
 
 	popd >> ${LOG_FILE} 2>&1
-	debugPrintln "   Generazione Release Notes completata con successo"
+	debugPrintln "  Generazione Release Notes completata con successo"
 else
 	/bin/cp -f pdf/GovWay-ReleaseNotes.pdf ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc/GovWay-ReleaseNotes-${TAG_FULL_VERSION}.pdf
 fi

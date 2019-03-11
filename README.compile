@@ -32,13 +32,21 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
     Per generare l'installer a partire dai sorgenti utilizzare il comando:
 	mvn package
 
+2.3.1 Generazione della documentazione in pdf
+
+    La documentazione inserita all'interno dell'installer viene presa dalla directory 'resources/doc/pdf/'.
+    Per generarla a partire dai sorgenti (resources/doc/src/) utilizzare il comando:
+	mvn package -Dpackage.doc.generate=true
+
+    NOTA: la generazione della documentazione in pdf richiede sphinx e latex.
+
 2.4 Verifica tramite OWASP Dependency-Check
 
     Usare il comando:
 	mvn verify
 
     Per evitare la compilazione e il packaging descritto nelle precedenti sezioni, utilizzare il comando:
-	mvn verify -Dcompile=none -Dpackage=none
+	mvn verify -Dcompile=none -Dtestsute=none -Dpackage=none
  
     Verranno identificate tutte le dipendenze relative a jar 3parti e saranno verificate se esistono vulnerabilità conosciute.
     Un report viene prodotto nella directory 'dependency-check-result'

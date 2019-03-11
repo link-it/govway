@@ -68,7 +68,11 @@ public class InRequestHandler extends FirstPositionHandler implements  org.opens
 				Credenziali credenziali = context.getConnettore().getCredenziali();
 				String credenzialiFornite = "";
 				if(credenziali!=null){
-					credenzialiFornite = credenziali.toString();
+					credenzialiFornite = credenziali.toString(!Credenziali.SHOW_BASIC_PASSWORD,
+							Credenziali.SHOW_ISSUER,
+							!Credenziali.SHOW_DIGEST_CLIENT_CERT,
+							Credenziali.SHOW_SERIAL_NUMBER_CLIENT_CERT,
+							"","","\n"); // riporto anche l'issuer ed il serial number del cert e formatto differentemente
 				}
 				tr.setCredenziali(credenzialiFornite);
 				//System.out.println("SET CREDENZIALI ["+credenzialiFornite+"]");

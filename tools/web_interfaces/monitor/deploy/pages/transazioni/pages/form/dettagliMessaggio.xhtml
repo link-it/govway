@@ -546,9 +546,9 @@
 								<h:outputText id="outServizioApplicativoFruitore" value="#{dettagliBean.dettaglio.servizioApplicativoFruitore}" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoFruitore}"/>
 								
 								<h:outputLabel styleClass="outputFieldLabel" id="outLabelTrasportoMittente" value="ID Autenticato" rendered="#{not empty dettagliBean.dettaglio.trasportoMittente}" />
-								<h:outputText id="outTrasportoMittente" value="#{dettagliBean.dettaglio.trasportoMittenteLabel}" rendered="#{not empty dettagliBean.dettaglio.trasportoMittente and not dettagliBean.visualizzaTextAreaUrlInvocazione}" />
+								<h:outputText id="outTrasportoMittente" value="#{dettagliBean.dettaglio.trasportoMittenteLabel}" rendered="#{not empty dettagliBean.dettaglio.trasportoMittente and not dettagliBean.visualizzaTextAreaTrasportoMittente}" />
 								<h:inputTextarea id="outTrasportoMittenteTextArea" value="#{dettagliBean.dettaglio.trasportoMittenteLabel}" readonly="true"  cols="60" rows="3" styleClass="inputLinkLong" style="width:auto;"
-									rendered="#{not empty dettagliBean.dettaglio.trasportoMittente and dettagliBean.visualizzaTextAreaUrlInvocazione}" />
+									rendered="#{not empty dettagliBean.dettaglio.trasportoMittente and dettagliBean.visualizzaTextAreaTrasportoMittente}" />
 								
 								<h:outputLabel styleClass="outputFieldLabel" id="outLabelTipoRichiesta" value="Metodo HTTP" rendered="#{not empty dettagliBean.dettaglio.tipoRichiesta}" />
 								<h:outputText id="outTipoRichiesta" value="#{dettagliBean.dettaglio.tipoRichiesta}" rendered="#{not empty dettagliBean.dettaglio.tipoRichiesta}" />
@@ -558,9 +558,6 @@
 								<h:inputTextarea id="outUrlInvocazioneTextArea" value="#{dettagliBean.dettaglio.urlInvocazione}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong" style="width:auto;"
 									rendered="#{not empty dettagliBean.dettaglio.urlInvocazione and dettagliBean.visualizzaTextAreaUrlInvocazione}" />
 								
-								<h:outputLabel styleClass="outputFieldLabel" id="outLabelCredenziali" value="Credenziali" rendered="#{not empty dettagliBean.dettaglio.credenziali}"/>
-								<h:outputText id="outCredenziali" value="#{dettagliBean.dettaglio.credenziali}" rendered="#{not empty dettagliBean.dettaglio.credenziali}"/>
-							
 								<h:outputLabel styleClass="outputFieldLabel" id="outLabelIndirizzoClient" value="Indirizzo Client" rendered="#{not empty dettagliBean.dettaglio.socketClientAddress}" />
 								<h:outputText id="outIndirizzoClient" value="#{dettagliBean.dettaglio.socketClientAddress}" rendered="#{not empty dettagliBean.dettaglio.socketClientAddress}" />
 								
@@ -569,6 +566,12 @@
 							
 								<h:outputLabel styleClass="outputFieldLabel" id="outLabelCodiceRispostaUscita" value="Codice Risposta Client" rendered="#{not empty dettagliBean.dettaglio.codiceRispostaUscita}"/>
 								<h:outputText id="outCodiceRispostaUscita" value="#{dettagliBean.dettaglio.codiceRispostaUscita}" rendered="#{not empty dettagliBean.dettaglio.codiceRispostaUscita}"/>
+								
+								<h:outputLabel styleClass="outputFieldLabel" id="outLabelCredenziali" value="Credenziali" rendered="#{not empty dettagliBean.dettaglio.credenziali}"/>
+								<h:outputText id="outCredenziali" value="#{dettagliBean.dettaglio.credenziali}" rendered="#{not empty dettagliBean.dettaglio.credenziali and not dettagliBean.visualizzaTextAreaCredenziali}" />
+								<h:inputTextarea id="outCredenzialiTextArea" value="#{dettagliBean.dettaglio.credenziali}" readonly="true"  cols="60" rows="3" styleClass="inputLinkLong" style="width:auto;"
+									rendered="#{not empty dettagliBean.dettaglio.credenziali and dettagliBean.visualizzaTextAreaCredenziali}" />
+								
 								
 								<h:outputLabel styleClass="outputFieldLabel" value="" id="idTokenInfoSubtitleLabel" 
 									rendered="#{not empty dettagliBean.dettaglio.tokenIssuer or not empty dettagliBean.dettaglio.tokenClientId or not empty dettagliBean.dettaglio.tokenSubject or not empty dettagliBean.dettaglio.tokenUsername or not empty dettagliBean.dettaglio.tokenMail or not empty dettagliBean.dettaglio.tokenInfo}"

@@ -109,7 +109,8 @@ import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.regexp.RegExpUtilities;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.slf4j.Logger;
@@ -2963,7 +2964,7 @@ public class ValidazioneSemantica {
 				this.errori.add("Le credenziali di tipo ssl del "+oggetto+" devono avere subject valorizzato");
 			}else{
 				try{
-					Utilities.validaSubject(c.getSubject());
+					CertificateUtils.validaPrincipal(c.getSubject(), PrincipalType.subject);
 				}catch(Exception e){
 					this.errori.add("Le credenziali di tipo ssl del "+oggetto+" possiedono un subject non valido: "+e.getMessage());
 				}

@@ -202,7 +202,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		return sb.toString();
 	}
 
-	private String getTipoFiltroDatiMittente() {
+	public String getTipoFiltroDatiMittente() {
 		if(StringUtils.isNotEmpty(this.search.getRiconoscimento())) {
 			if(this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
 				return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_MITTENTE_SERVIZIO_APPLICATIVO_LABEL_SUFFIX_KEY);
@@ -234,6 +234,13 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 
 
 		return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_LABEL_SUFFIX_KEY);
+	}
+	
+	public boolean isShowColumnSoggetto() {
+		if(StringUtils.isNotEmpty(this.search.getRiconoscimento())) {
+			return this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO);
+		}
+		return false;
 	}
 
 	public String getSubCaption() {

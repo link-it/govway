@@ -32,6 +32,7 @@ import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 
 /**
  * Classe che implementa una autenticazione BASIC.
@@ -56,7 +57,12 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     	Credenziali credenziali = datiInvocazione.getInfoConnettoreIngresso().getCredenziali();
 		
     	String subject = credenziali.getSubject();
-
+    	String issuer = credenziali.getIssuer();
+    	CertificateInfo certificate = null;
+    	if(credenziali.getCertificate()!=null) {
+    		certificate = credenziali.getCertificate().getCertificate();
+    	}
+    	
 		// Controllo credenziali fornite
     	if( subject==null || "".equals(subject) ){
 			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl("credenziali non fornite",subject));
@@ -72,8 +78,29 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     	// Provo a identificare il chiamante rispetto ad una entita' del registro
 		IDServizioApplicativo idServizioApplicativo = null;
 		try{
-			idServizioApplicativo = ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
-						getIdServizioApplicativoByCredenzialiSsl(subject);
+			ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState());
+			
+			// NOTA: il fatto di essersi registrati come strict o come non strict è insito nella registrazione dell'applicativo
+			
+			// 1. Prima si cerca per certificato strict
+			if(certificate!=null) {
+				idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate, true);
+			}
+			if(idServizioApplicativo==null) {
+				// 2. Poi per certificato no strict
+				if(certificate!=null) {
+					idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate, false);
+				}	
+			}
+			if(idServizioApplicativo==null) {
+				// 3. per subject/issuer
+				idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(subject, issuer);	
+			}
+			if(idServizioApplicativo==null) {
+				// 4. solo per subject
+				idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(subject, null);	
+			}
+			
 			if(idServizioApplicativo!=null && soggettoFruitore==null) {
 				soggettoFruitore = idServizioApplicativo.getIdSoggettoProprietario();
 			}

@@ -34,14 +34,15 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB_LIB;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
+import org.slf4j.Logger;
 
 /**
  * DriverControlStationDB_LIB
@@ -142,7 +143,7 @@ public class DriverControlStationDB_LIB {
 					updateStmt.setString(index++, protocolloGestione);
 					updateStmt.setString(index++, tipo);
 					updateStmt.setString(index++, implementazione);
-					updateStmt.setString(index++, (subject != null ? Utilities.formatSubject(subject) : null));
+					updateStmt.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.subject) : null));
 					updateStmt.setString(index++, password);
 					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(client_auth));
 					updateStmt.setString(index++, superuser);
@@ -209,7 +210,7 @@ public class DriverControlStationDB_LIB {
 					updateStmt.setString(index++, protocolloGestione);
 					updateStmt.setString(index++, tipo);
 					updateStmt.setString(index++, implementazione);
-					updateStmt.setString(index++, (subject != null ? Utilities.formatSubject(subject) : null));
+					updateStmt.setString(index++, (subject != null ? CertificateUtils.formatPrincipal(subject, PrincipalType.subject) : null));
 					updateStmt.setString(index++, password);
 					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(client_auth));
 					updateStmt.setString(index++, superuser);

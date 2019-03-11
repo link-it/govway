@@ -40,6 +40,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
@@ -828,7 +829,7 @@ public class SoggettiCore extends ControlStationCore {
 
 	}
 	
-	public org.openspcoop2.core.registry.Soggetto getSoggettoRegistroAutenticatoSsl(String subject) throws DriverConfigurazioneException {
+	public org.openspcoop2.core.registry.Soggetto getSoggettoRegistroAutenticatoSsl(String subject, String issuer) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getSoggettoRegistroAutenticatoSsl";
 		DriverControlStationDB driver = null;
@@ -839,12 +840,61 @@ public class SoggettiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverRegistroServiziDB().getSoggettoByCredenzialiSsl(subject);
+			return driver.getDriverRegistroServiziDB().getSoggettoByCredenzialiSsl(subject, issuer);
 
 		} 
 		catch (DriverRegistroServiziNotFound e) {
 			return null;
 		}
+		catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	public org.openspcoop2.core.registry.Soggetto getSoggettoRegistroAutenticatoSsl(CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getSoggettoRegistroAutenticatoSsl";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().getSoggettoByCredenzialiSsl(certificate, strictVerifier);
+
+		} 
+		catch (DriverRegistroServiziNotFound e) {
+			return null;
+		}
+		catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	public List<org.openspcoop2.core.registry.Soggetto> soggettoWithCredenzialiSslList(CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getSoggettoRegistroAutenticatoSsl";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().soggettoWithCredenzialiSslList(certificate, strictVerifier);
+
+		} 
 		catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

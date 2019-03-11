@@ -28,7 +28,8 @@
 		<package>package</package> <!-- package phase, use 'none' for disable -->
 		<package.type>branches</package.type>
 		<package.skip.check>true</package.skip.check>
-		<package.skip.src>true</package.skip.src>	
+		<package.skip.src>true</package.skip.src>
+		<package.doc.generate>false</package.doc.generate>
 
 		<!-- testsuite (test phase, use 'none' for disable) -->
 		<testsuite>test</testsuite>

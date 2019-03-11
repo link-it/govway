@@ -809,6 +809,18 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		this.visualizzaDataAccettazione = visualizzaDataAccettazione;
 	}
 	
+	public boolean isVisualizzaTextAreaCredenziali() {
+		if(StringUtils.isNotEmpty(this.dettaglio.getCredenziali())) {
+			if(this.dettaglio.getCredenziali().length() > 150)
+				return true;
+		} 
+		return false;
+	}
+
+	public void setVisualizzaTextAreaCredenziali(boolean visualizzaTextAreaCredenziali) {
+	}
+	
+	
 	public boolean isVisualizzaTextAreaUrlInvocazione () {
 		if(StringUtils.isNotEmpty(this.dettaglio.getUrlInvocazione())) {
 			if(this.dettaglio.getUrlInvocazione().length() > 150)

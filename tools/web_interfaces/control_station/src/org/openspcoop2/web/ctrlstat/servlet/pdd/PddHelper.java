@@ -37,6 +37,7 @@ import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -328,7 +329,7 @@ public class PddHelper extends ConsoleHelper {
 
 			if(subject!=null && !"".equals(subject)){
 				try{
-					org.openspcoop2.utils.Utilities.validaSubject(subject);
+					org.openspcoop2.utils.certificate.CertificateUtils.validaPrincipal(subject, PrincipalType.subject);
 				}catch(Exception e){
 					this.pd.setMessage("Il subject fornito non è valido: "+e.getMessage());
 					return false;

@@ -30,6 +30,7 @@ import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiConfigurationException;
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.certificate.PrincipalType;
 
 /**     
  * GestoreCredenzialiEngine
@@ -151,7 +152,7 @@ public class GestoreCredenzialiEngine {
 				throw new GestoreCredenzialiException(e.getMessage(),e);
 			}
 			try{
-				org.openspcoop2.utils.Utilities.validaSubject(subjectGateway);
+				org.openspcoop2.utils.certificate.CertificateUtils.validaPrincipal(subjectGateway, PrincipalType.subject);
 			}catch(Exception e){
 				throw new GestoreCredenzialiException("Richiesta autenticazione ssl del gestore delle credenziali, ma subject fornito non valido: "+e.getMessage());
 			}
@@ -159,7 +160,7 @@ public class GestoreCredenzialiEngine {
 				throw new GestoreCredenzialiConfigurationException("Autenticazione ssl del Gestore delle Credenziali '"+this.identita+ "' fallita, nessun tipo di credenziali ssl riscontrata nel trasporto");
 			}
 			try{
-				if( ! org.openspcoop2.utils.Utilities.sslVerify(subjectGateway, credenzialiTrasporto.getSubject(), OpenSPCoop2Logger.getLoggerOpenSPCoopCore()) ){
+				if( ! org.openspcoop2.utils.certificate.CertificateUtils.sslVerify(subjectGateway, credenzialiTrasporto.getSubject(), PrincipalType.subject, OpenSPCoop2Logger.getLoggerOpenSPCoopCore()) ){
 					String credenzialiPresenti = credenzialiTrasporto.toString();
 					if(credenzialiPresenti==null || credenzialiPresenti.equals("")){
 						throw new GestoreCredenzialiConfigurationException("Autenticazione ssl del Gestore delle Credenziali '"+this.identita+ "' fallita, nessun tipo di credenziali (basic/ssl/principal) riscontrate nel trasporto");
@@ -299,7 +300,7 @@ public class GestoreCredenzialiEngine {
 				throw new GestoreCredenzialiConfigurationException("Subject value non fornito nell'header del trasporto "+headerNameSSLSubject);
 			}
 			try{
-				org.openspcoop2.utils.Utilities.formatSubject(subject);
+				org.openspcoop2.utils.certificate.CertificateUtils.formatPrincipal(subject, PrincipalType.subject);
 				// Non posso validare, verra' fornito un certificato nel formato RFC 2253 o RFC 1779
 				// Sicuramente puo' contenere sia il carattere '/' che ',' ma uno dei due sara' escaped tramite il formato richiesto.
 				//org.openspcoop.utils.Utilities.validaSubject(subject);

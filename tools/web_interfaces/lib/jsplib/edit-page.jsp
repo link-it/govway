@@ -219,10 +219,11 @@ for (int i = 0; i < dati.size(); i++) {
 	        			<%
 	        		} else { // else note
 	        			if (type.equals("link")){
+	        				String selEvtOnClick = !de.getOnClick().equals("") ? (" onClick=\"" + de.getOnClick() + "\" " ) : " ";
 	        				%>
 	            			<div class="prop prop-link">
 	            				<label class="<%= labelStyleClass %>">&nbsp;</label>
-	            				<span><a href="<%= de.getUrl() %>"><%= de.getValue() %></a></span>
+	            				<span><a href="<%= de.getUrl() %>" <%= selEvtOnClick %> ><%= de.getValue() %></a></span>
 	            			</div>
 	            			<%
 	            		} else { // else link
@@ -566,9 +567,16 @@ if (pd.getMode().equals("view")) {
 	  // 	    		<input type=button onClick='document.form.reset();' value="Cancella" />
     %><tr class="buttonrow">
 	    <td colspan="2" >
-	    	<div class="buttonrowform">
-	    		<input type=submit onClick='CheckDati();return false;' value="<%=pd.getLabelBottoneInvia() %>" />
-	    	</div>
+	    	<div class="buttonrowform"><%
+			  String [][] bottoni = pd.getBottoni();
+			  if ((bottoni != null) && (bottoni.length > 0)) {
+			    for (int i = 0; i < bottoni.length; i++) {
+			      %><input type=submit onClick="<%= bottoni[i][1] %>" value="<%= bottoni[i][0] %>"/>&nbsp;<%
+			    }
+			  } else {
+			    %><input type=submit onClick='CheckDati();return false;' value="<%=pd.getLabelBottoneInvia() %>" /><%
+			  }
+		  %></div>
 	    </td>
     </tr><%
   }

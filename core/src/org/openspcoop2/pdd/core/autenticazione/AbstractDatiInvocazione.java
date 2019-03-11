@@ -76,10 +76,16 @@ public abstract class AbstractDatiInvocazione {
 			if(this.infoConnettoreIngresso.getCredenziali()!=null){
 				if(this.infoConnettoreIngresso.getCredenziali()!=null){
 					boolean showPassword = false;
+					boolean showIssuer = false;
+					boolean showDigestClientCert = false;
+					boolean showSerialNumberClientCert = false;
 					if(keyCache) {
 						showPassword = true;
+						showIssuer = true;
+						showDigestClientCert = true;
+						showSerialNumberClientCert = true;
 					}
-					bf.append(" Credenziali(").append(this.infoConnettoreIngresso.getCredenziali().toString(showPassword));
+					bf.append(" Credenziali(").append(this.infoConnettoreIngresso.getCredenziali().toString(showPassword, showIssuer, showDigestClientCert, showSerialNumberClientCert));
 					bf.append(")");
 				}
 				if(keyCache==false){

@@ -102,6 +102,7 @@ import org.openspcoop2.core.registry.ws.client.scope.search.SearchFilterScope;
 import org.openspcoop2.core.registry.ws.client.soggetto.search.SearchFilterSoggetto;
 import org.openspcoop2.core.registry.ws.client.soggetto.search.SoggettoSoap11Service;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.slf4j.Logger;
 
 
@@ -481,51 +482,40 @@ public class DriverRegistroServiziWS extends BeanUtilities
 		}
 	}
 	
-	/**
-	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Soggetto}, 
-	 * che include le credenziali passate come parametro. 
-	 *
-	 * @param user User utilizzato nell'header HTTP Authentication.
-	 * @param password Password utilizzato nell'header HTTP Authentication.
-	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Soggetto} .
-	 * 
-	 */
 	@Override
 	public Soggetto getSoggettoByCredenzialiBasic(
 			String user,String password) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return this._getSoggettoAutenticato(CredenzialeTipo.BASIC, user, password, null, null);
+		return this._getSoggettoAutenticato(CredenzialeTipo.BASIC, user, password, 
+				null, null, null, false,
+				null);
 	}
 	
-	/**
-	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Soggetto}, 
-	 * che include le credenziali passate come parametro. 
-	 *
-	 * @param subject Subject utilizzato nella connessione HTTPS.
-	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Soggetto} .
-	 * 
-	 */
 	@Override
 	public Soggetto getSoggettoByCredenzialiSsl(
-			String subject) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return this._getSoggettoAutenticato(CredenzialeTipo.SSL, null, null, subject, null);
+			String subject, String issuer) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return this._getSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
+				subject, issuer, null, false,
+				null);
 	}
 	
-	/**
-	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Soggetto}, 
-	 * che include le credenziali passate come parametro. 
-	 *
-	 * @param principal User Principal
-	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Soggetto} .
-	 * 
-	 */
+	@Override
+	public Soggetto getSoggettoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this._getSoggettoAutenticato(CredenzialeTipo.SSL, null, null, 
+				null, null, certificate, strictVerifier,
+				null);
+	}
+	
 	@Override
 	public Soggetto getSoggettoByCredenzialiPrincipal(
 			String principal) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return this._getSoggettoAutenticato(CredenzialeTipo.PRINCIPAL, null, null, null, principal);
+		return this._getSoggettoAutenticato(CredenzialeTipo.PRINCIPAL, null, null, 
+				null, null, null, false,
+				principal);
 	}
-	
-	private org.openspcoop2.core.registry.Soggetto _getSoggettoAutenticato(CredenzialeTipo tipoCredenziale, String user,String password, String subject, String principal) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-
+	private org.openspcoop2.core.registry.Soggetto _getSoggettoAutenticato(CredenzialeTipo tipoCredenziale, String user,String password, 
+			String aSubject, String aIssuer, CertificateInfo aCertificate, boolean aStrictVerifier, 
+			String principal) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		
 		// conrollo consistenza
 		if (tipoCredenziale == null)
 			throw new DriverRegistroServiziException("[getSoggettoAutenticato] Parametro tipoCredenziale is null");
@@ -538,8 +528,8 @@ public class DriverRegistroServiziWS extends BeanUtilities
 				throw new DriverRegistroServiziException("[getSoggettoAutenticato] Parametro password is null (required for basic auth)");
 			break;
 		case SSL:
-			if (subject == null || "".equalsIgnoreCase(subject))
-				throw new DriverRegistroServiziException("[getSoggettoAutenticato] Parametro subject is null (required for ssl auth)");
+			if ( (aSubject == null || "".equalsIgnoreCase(aSubject)) && (aCertificate==null))
+				throw new DriverRegistroServiziException("[getSoggettoAutenticato] Parametro subject/certificate is null (required for ssl auth)");
 			break;
 		case PRINCIPAL:
 			if (principal == null || "".equalsIgnoreCase(principal))
@@ -558,7 +548,16 @@ public class DriverRegistroServiziWS extends BeanUtilities
 				credenzialiSoggetto.setPassword(password);
 				break;
 			case SSL:
-				credenzialiSoggetto.setSubject(subject);
+				credenzialiSoggetto.setSubject(aSubject);
+				credenzialiSoggetto.setIssuer(aIssuer);
+				if(aCertificate!=null) {
+					try {
+						credenzialiSoggetto.setCertificate(aCertificate.getCertificate().getEncoded());
+					}catch(Exception e) {
+						throw new DriverRegistroServiziException(e.getMessage(),e);
+					}
+				}
+				credenzialiSoggetto.setCertificateStrictVerification(aStrictVerifier);
 				break;
 			case PRINCIPAL:
 				credenzialiSoggetto.setUser(principal);
@@ -627,6 +626,19 @@ public class DriverRegistroServiziWS extends BeanUtilities
 					}
 					if(filtroRicerca.getCredenzialiSoggetto().getSubject()!=null){
 						credenziali.setSubject(filtroRicerca.getCredenzialiSoggetto().getSubject());
+					}
+					if(filtroRicerca.getCredenzialiSoggetto().getIssuer()!=null){
+						credenziali.setSubject(filtroRicerca.getCredenzialiSoggetto().getIssuer());
+					}
+					if(filtroRicerca.getCredenzialiSoggetto().getCertificate()!=null){
+						credenziali.setCertificate(filtroRicerca.getCredenzialiSoggetto().getCertificate());
+						credenziali.setCertificateStrictVerification(filtroRicerca.getCredenzialiSoggetto().isCertificateStrictVerification());
+					}
+					if(filtroRicerca.getCredenzialiSoggetto().getCnSubject()!=null){
+						credenziali.setCnSubject(filtroRicerca.getCredenzialiSoggetto().getCnSubject());
+					}
+					if(filtroRicerca.getCredenzialiSoggetto().getCnIssuer()!=null){
+						credenziali.setCnIssuer(filtroRicerca.getCredenzialiSoggetto().getCnIssuer());
 					}
 					filter.setCredenziali(credenziali);
 				}

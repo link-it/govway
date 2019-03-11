@@ -57,7 +57,11 @@ import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotAuthorizedException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.ArchiveLoader;
+import org.openspcoop2.utils.certificate.ArchiveType;
+import org.openspcoop2.utils.certificate.Certificate;
+import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectCore;
@@ -273,14 +277,65 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 				paramTypes.add(new JDBCObject(filter.getCredenziali().getPassword(),String.class));
 			}
 			if(filter.getCredenziali().getSubject()!=null){
+				
 				// Autenticazione SSL deve essere LIKE
-				Hashtable<String, String> hashSubject = Utilities.getSubjectIntoHashtable(filter.getCredenziali().getSubject());
+				Hashtable<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoHashtable(filter.getCredenziali().getSubject(), PrincipalType.subject);
+				Hashtable<String, List<String>> hashIssuer = null;
+				if(filter.getCredenziali().getIssuer()!=null) {
+					hashIssuer = CertificateUtils.getPrincipalIntoHashtable(filter.getCredenziali().getIssuer(), PrincipalType.issuer);
+				}
+				
 				Enumeration<String> keys = hashSubject.keys();
 				while(keys.hasMoreElements()){
 					String key = keys.nextElement();
-					String value = hashSubject.get(key);
-					sqlQueryObjectCondition.addWhereLikeCondition(CostantiDB.SOGGETTI+".subject", "/"+Utilities.formatKeySubject(key)+"="+Utilities.formatValueSubject(value)+"/", true, true, false);
+					
+					List<String> listValues = hashSubject.get(key);
+					for (String value : listValues) {
+						sqlQueryObjectCondition.addWhereLikeCondition("subject", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
+					}
 				}
+				
+				if(hashIssuer!=null) {
+					keys = hashIssuer.keys();
+					while(keys.hasMoreElements()){
+						String key = keys.nextElement();
+						
+						List<String> listValues = hashIssuer.get(key);
+						for (String value : listValues) {
+							sqlQueryObjectCondition.addWhereLikeCondition("issuer", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
+						}
+					}
+				}
+				else {
+					sqlQueryObjectCondition.addWhereIsNullCondition("issuer");
+				}
+			}
+			else if(filter.getCredenziali().getCertificate()!=null) {
+				// ricerca per certificato
+				sqlQueryObjectCondition.addWhereCondition("cn_subject = ?");
+				sqlQueryObjectCondition.addWhereCondition("cn_issuer = ?");
+				sqlQueryObjectCondition.addWhereCondition("cert_strict_verification = ?");
+				
+				String cnSubject = filter.getCredenziali().getCnSubject();
+				String cnIssuer = filter.getCredenziali().getCnIssuer();
+				if(cnSubject==null || cnIssuer==null) {
+					Certificate certificato = ArchiveLoader.load(ArchiveType.CER, filter.getCredenziali().getCertificate(), 0, null);
+					if(cnSubject==null) {
+						cnSubject = certificato.getCertificate().getSubject().getCN();
+					}
+					if(cnIssuer==null) {
+						cnIssuer = certificato.getCertificate().getIssuer().getCN();
+					}
+				}
+				paramTypes.add(new JDBCObject(cnSubject,String.class));
+				paramTypes.add(new JDBCObject(cnIssuer,String.class));
+				if(filter.getCredenziali().getCertificateStrictVerification()!=null && filter.getCredenziali().getCertificateStrictVerification()) {
+					paramTypes.add(new JDBCObject(CostantiDB.TRUE,int.class));
+				}
+				else {
+					paramTypes.add(new JDBCObject(CostantiDB.FALSE,int.class));
+				}
+				
 			}
 		}
 		if(filter.getOraRegistrazioneMin()!= null) {
