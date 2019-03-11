@@ -55,6 +55,7 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.CorsConfigurazioneHeaders;
 import org.openspcoop2.core.config.CorsConfigurazioneMethods;
@@ -82,6 +83,7 @@ import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDRuolo;
@@ -172,6 +174,7 @@ import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCore;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.monitor.MonitorCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.operazioni.OperazioniCore;
 import org.openspcoop2.web.ctrlstat.servlet.operazioni.OperazioniCostanti;
@@ -7478,6 +7481,212 @@ public class ConsoleHelper {
 			}
 		}
 		return true;
+	}
+	
+	public void addDescrizioneVerificaConnettoreToDati(Vector<DataElement> dati, String labelConnettore, Connettore connettore) throws Exception {
+		
+		DataElement de = new DataElement();
+		de.setType(DataElementType.TEXT);
+		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE);
+		de.setValue(labelConnettore);
+		dati.add(de);
+		
+		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)) {
+			
+			de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_CONNECTION_TIMEOUT);
+			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT));
+			dati.add(de);
+			
+		}
+		
+		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_USERNAME)) {
+			
+			de = new DataElement();
+			de.setType(DataElementType.SUBTITLE);
+			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP);
+			de.setValue(labelConnettore);
+			dati.add(de);
+		
+			de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_USERNAME);
+			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_USERNAME));
+			dati.add(de);
+			
+			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_PASSWORD)) {
+				
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_PASSWORD);
+				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_PASSWORD));
+				dati.add(de);
+				
+			}
+			
+		}
+		
+		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION)) {
+		
+			de = new DataElement();
+			de.setType(DataElementType.SUBTITLE);
+			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS);
+			de.setValue(labelConnettore);
+			dati.add(de);
+		
+			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE)) {
+				
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_SSL_TYPE);
+				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE));
+				dati.add(de);
+				
+			}
+			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER)) {
+				
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_HOSTNAME_VERIFIER);
+				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER));
+				dati.add(de);
+				
+			}
+				
+			de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE);
+			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION));
+			dati.add(de);
+				
+			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION)) {
+				
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE);
+				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION));
+				dati.add(de);
+				
+			}
+		}
+		
+		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME)) {
+			
+			de = new DataElement();
+			de.setType(DataElementType.SUBTITLE);
+			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY);
+			de.setValue(labelConnettore);
+			dati.add(de);
+		
+			de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_HOSTNAME);
+			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME));
+			dati.add(de);
+			
+			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT)) {
+				
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_PORT);
+				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT));
+				dati.add(de);
+				
+			}
+			
+			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME)) {
+				
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_USERNAME);
+				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME));
+				dati.add(de);
+				
+			}
+
+			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD)) {
+				
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_PASSWORD);
+				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD));
+				dati.add(de);
+				
+			}
+			
+		}
+		
+	}
+	
+	public void addVerificaConnettoreSceltaAlias(List<String> aliases,Vector<DataElement> dati) throws Exception {
+		
+		DataElement de = new DataElement();
+		de.setType(DataElementType.SELECT);
+		List<String> values = new ArrayList<String>();
+		List<String> labels = new ArrayList<String>();
+		values.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
+		labels.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
+		values.addAll(this.confCore.getJmxPdD_aliases());
+		for (String alias : this.confCore.getJmxPdD_aliases()) {
+			labels.add(this.confCore.getJmxPdD_descrizione(alias));
+		}
+		de.setValues(values);
+		de.setLabels(labels);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+		de.setSize(this.getSize());
+		//de.setPostBack(true);
+		dati.addElement(de);
+		
+	}
+	
+	public void addVerificaConnettoreHidden(Vector<DataElement> dati,
+			String id, String idsogg,  String idAsps, String idFruizione,
+			long idConnettore, boolean accessoDaGruppi, boolean connettoreRegistro) throws Exception {
+
+		DataElement de = new DataElement();
+		de.setType(DataElementType.HIDDEN);
+		de.setName(CostantiControlStation.PARAMETRO_ID);
+		de.setValue(id);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setType(DataElementType.HIDDEN);
+		de.setName(CostantiControlStation.PARAMETRO_ID_SOGGETTO);
+		de.setValue(idsogg);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setType(DataElementType.HIDDEN);
+		de.setName(CostantiControlStation.PARAMETRO_ID_ASPS);
+		de.setValue(idAsps);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setType(DataElementType.HIDDEN);
+		de.setName(CostantiControlStation.PARAMETRO_ID_FRUIZIONE);
+		de.setValue(idFruizione);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setType(DataElementType.HIDDEN);
+		de.setName(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID);
+		de.setValue(idConnettore+"");
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setType(DataElementType.HIDDEN);
+		de.setName(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI);
+		de.setValue(accessoDaGruppi+"");
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setType(DataElementType.HIDDEN);
+		de.setName(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO);
+		de.setValue(connettoreRegistro+"");
+		dati.addElement(de);
+		
 	}
 	
 	public void addConfigurazioneResponseCachingPorteToDati(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean showStato, String statoResponseCachingPorta, boolean responseCachingEnabled, int responseCachingSeconds,

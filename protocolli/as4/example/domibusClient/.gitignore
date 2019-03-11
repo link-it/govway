@@ -2,10 +2,7 @@
 build
 dist
 bin
-target
+DomibusClient.properties
 .ant-targets-build.xml
-log
-dependency-check-result
-testsuite-result
 # Except this file
 !.gitignore

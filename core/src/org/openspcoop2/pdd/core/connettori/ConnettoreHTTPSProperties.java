@@ -47,7 +47,7 @@ public class ConnettoreHTTPSProperties extends SSLConfig implements Serializable
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public static ConnettoreHTTPSProperties readProperties(java.util.Hashtable<String,String> properties) throws Exception{
+	public static ConnettoreHTTPSProperties readProperties(java.util.Map<String,String> properties) throws Exception{
 		ConnettoreHTTPSProperties propertiesHTTPS = new ConnettoreHTTPSProperties();
 		
 		// AUTENTICAZIONE SERVER

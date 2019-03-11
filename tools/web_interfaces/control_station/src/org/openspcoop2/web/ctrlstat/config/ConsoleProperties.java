@@ -658,6 +658,12 @@ public class ConsoleProperties {
 	public String getJmxPdD_configurazioneSistema_nomeAttributo_log4jDump(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.log4jDump");
 	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkConnettoreById");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaAccessoRegistroServizi");
+	}
 	public String getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaStatoServiziPdD");
 	}

@@ -616,6 +616,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     }
     
     protected String readExceptionMessageFromException(Throwable e) {
+    	return _readExceptionMessageFromException(e);
+    }
+    protected static String _readExceptionMessageFromException(Throwable e) {
     	
     	// In questo metodo è possibile gestire meglio la casistica dei messaggi di errore ritornati.
     	
@@ -628,41 +631,41 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	// 2. java.net.SocketException
     	if(e instanceof java.net.SocketException){
     		java.net.SocketException s = (java.net.SocketException) e;
-    		if(isNotNullMessageException(s)){
+    		if(_isNotNullMessageException(s)){
     			return s.getMessage();
     		}
     	}
     	if(Utilities.existsInnerException(e, java.net.SocketException.class)){
     		Throwable internal = Utilities.getInnerException(e, java.net.SocketException.class);
-    		if(isNotNullMessageException(internal)){
-    			return this.buildException(e, internal);
+    		if(_isNotNullMessageException(internal)){
+    			return _buildException(e, internal);
     		}
     	}
     	
     	// 3. java.io.IOException
     	if(e instanceof java.io.IOException){
     		java.io.IOException io = (java.io.IOException) e;
-    		if(isNotNullMessageException(io)){
+    		if(_isNotNullMessageException(io)){
     			return io.getMessage();
     		}
     	}
     	if(Utilities.existsInnerException(e, java.io.IOException.class)){
     		Throwable internal = Utilities.getInnerException(e, java.io.IOException.class);
-    		if(isNotNullMessageException(internal)){
-    			return this.buildException(e, internal);
+    		if(_isNotNullMessageException(internal)){
+    			return _buildException(e, internal);
     		}
     	}
     	
     	// 4. ClientAbortException (Succede nel caso il buffer del client non sia più disponibile)
     	if(Utilities.existsInnerException(e, "org.apache.catalina.connector.ClientAbortException")){
     		Throwable internal = Utilities.getInnerException(e, "org.apache.catalina.connector.ClientAbortException");
-    		if(isNotNullMessageException(internal)){
-    			return "ClientAbortException - "+ this.buildException(e, internal);
+    		if(_isNotNullMessageException(internal)){
+    			return "ClientAbortException - "+ _buildException(e, internal);
     		}
     	}
     	
     	// Check Null Message
-    	if(this.isNotNullMessageException(e)){
+    	if(_isNotNullMessageException(e)){
     		return e.getMessage();
     	}
     	else{
@@ -676,15 +679,21 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	}
     	
     }
-    private String buildException(Throwable original,Throwable internal){
-    	if(isNotNullMessageException(original)){
+    protected String buildException(Throwable original,Throwable internal){
+    	return _buildException(original, internal);
+    }
+    private static String _buildException(Throwable original,Throwable internal){
+    	if(_isNotNullMessageException(original)){
     		return internal.getMessage() + " (sourceException: "+original.getMessage()+")";
     	}
     	else{
     		return internal.getMessage();
     	}
     }
-    private boolean isNotNullMessageException(Throwable tmp){
+    protected boolean isNotNullMessageException(Throwable tmp){
+    	return _isNotNullMessageException(tmp);
+    }
+    private static boolean _isNotNullMessageException(Throwable tmp){
     	return tmp.getMessage()!=null && !"".equals(tmp.getMessage()) && !"null".equalsIgnoreCase(tmp.getMessage());
     }
     

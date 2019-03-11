@@ -48,12 +48,12 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
-import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
@@ -67,8 +67,6 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
-import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
@@ -1135,7 +1133,8 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			dati.addElement(de);
 			
 			boolean visualizzaConnettore = true;
-			
+			boolean checkConnettore = false;
+			long idConnettore = 1;
 			for (int i = 0; i < listaPorteApplicativeAssociate.size(); i++) {
 				PortaApplicativa paAssociata = listaPorteApplicativeAssociate.get(i);
 				MappingErogazionePortaApplicativa mapping = listaMappingErogazionePortaApplicativa.get(i);
@@ -1148,6 +1147,18 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						break;
 					}
 				}
+				
+			}
+			
+			if(visualizzaConnettore) {
+				PortaApplicativaServizioApplicativo paDefautServizioApplicativo = paDefault.getServizioApplicativoList().get(0);
+				IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+				idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(paDefault.getTipoSoggettoProprietario(), paDefault.getNomeSoggettoProprietario()));
+				idServizioApplicativo.setNome(paDefautServizioApplicativo.getNome());
+				ServizioApplicativo sa = this.saCore.getServizioApplicativo(idServizioApplicativo);
+				Connettore connettore = sa.getInvocazioneServizio().getConnettore();
+				idConnettore = connettore.getId();
+				checkConnettore = org.openspcoop2.pdd.core.connettori.ConnettoreCheck.checkSupported(connettore);
 			}
 
 			// Connettore
@@ -1155,63 +1166,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				
 				de = new DataElement();
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
-				de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE));
-				de.setIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 				de.setType(DataElementType.TEXT);
 				ServizioApplicativo sa = this.saCore.getServizioApplicativo(portaApplicativaServizioApplicativo.getId());
 				InvocazioneServizio is = sa.getInvocazioneServizio();
-				Connettore connis = is.getConnettore();
-				List<Property> cp = connis.getPropertyList();
-				String urlConnettore = "";
-	
-				//TipiConnettore.HTTP.getNome() e anche TipiConnettore.HTTPS.getNome() -> location
-				//TipiConnettore.DISABILITATO.getNome() ci scrivi "disabilitato"
-				//TipiConnettore.FILE.getNome() CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE
-				//TipiConnettore.JMS.compareTo() CostantiConnettori.CONNETTORE_LOCATION
-	//			TipiConnettore.NULL 
-	//			TipiConnettore.CUSTOM -> connettore custom
-				String tipo = connis.getTipo();
-				
-				String tipoLabel = "[" + connis.getTipo() + "] ";
-				if ((connis.getCustom()!=null && connis.getCustom()) && 
-						!connis.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
-						!connis.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)) {
-					tipo = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
-				}  
-	
-				if(tipo.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM)) {
-					urlConnettore = tipoLabel + ConnettoriCostanti.LABEL_CONNETTORE_CUSTOM;
-				} else	if(tipo.equals(TipiConnettore.DISABILITATO.getNome())) {
-					urlConnettore = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
-				} else if(tipo.equals(TipiConnettore.NULL.getNome())) {
-					urlConnettore = tipoLabel + ConnettoreNULL.LOCATION;
-				} else if(tipo.equals(TipiConnettore.NULLECHO.getNome())) {
-					urlConnettore = tipoLabel + ConnettoreNULLEcho.LOCATION;
-				} else {  
-					String propertyName = CostantiConnettori.CONNETTORE_LOCATION;
-					if(tipo.equals(TipiConnettore.FILE.getNome()))
-						propertyName = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
-				
-					for (int i = 0; i < connis.sizePropertyList(); i++) {
-						Property singlecp = cp.get(i);
-						if (singlecp.getNome().equals(propertyName)) {
-							if(!tipo.equals(TipiConnettore.HTTP.getNome()) && !tipo.equals(TipiConnettore.HTTPS.getNome())) {
-								urlConnettore = tipoLabel + singlecp.getValore();
-							}
-							else {
-								urlConnettore = singlecp.getValore();
-							}
-							
-							break;
-						}
-					}
-				}
-				
-				if(is!=null && is.getGetMessage()!=null && StatoFunzionalita.ABILITATO.equals(is.getGetMessage())) {
-					urlConnettore = urlConnettore + " [MessageBox]";
-				}
-				
+				String urlConnettore = this.getLabelConnettore(is);
 				de.setValue(urlConnettore);
+				
 				List<Parameter> listParametersConnettore = new ArrayList<>();
 				listParametersConnettore.add(paIdProvider);
 				listParametersConnettore.add(paIdPortaPerSA);
@@ -1219,8 +1179,27 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				listParametersConnettore.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()));
 				listParametersConnettore.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getId()+""));
 				listParametersConnettore.add(paConnettoreDaListaAPS);
-				de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, 
+				de.addToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE));
+				de.addIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+				de.addUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, 
 						listParametersConnettore.toArray(new Parameter[1]));
+
+				if(checkConnettore) {
+					List<Parameter> listParametersVerificaConnettore = new ArrayList<>();
+					paIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, asps.getIdSoggetto() + "");
+					listParametersVerificaConnettore.add(paIdSogg);
+					listParametersVerificaConnettore.add(paIdPorta);
+					listParametersVerificaConnettore.add(paIdAsps);
+					listParametersVerificaConnettore.add(paConnettoreDaListaAPS);
+					listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID, idConnettore+""));
+					listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, "false"));
+					listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, "false"));
+					de.addToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTIVITA));
+					de.addIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE);
+					de.addUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE, 
+							listParametersVerificaConnettore.toArray(new Parameter[1]));
+				}
+				
 				dati.addElement(de);
 			}
 			
@@ -1299,6 +1278,8 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			
 			boolean visualizzaConnettore = true;
+			boolean checkConnettore = false;
+			long idConnettore = 1;
 			
 			for (int i = 0; i < listaPorteDelegateAssociate.size(); i++) {
 				PortaDelegata pdAssociata = listaPorteDelegateAssociate.get(i);
@@ -1330,53 +1311,20 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					break;
 				}
 			}
+			
+			if(visualizzaConnettore) {
+				org.openspcoop2.core.registry.Connettore connettore = fruitore.getConnettore();
+				idConnettore = connettore.getId();
+				checkConnettore = org.openspcoop2.pdd.core.connettori.ConnettoreCheck.checkSupported(connettore);
+			}
 
 			// Connettore
 			if(visualizzaConnettore) {
 				de = new DataElement();
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE);
-				de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE));
-				de.setIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 				de.setType(DataElementType.TEXT);
 				org.openspcoop2.core.registry.Connettore connettore = fruitore.getConnettore();
-				Map<String, String> props = connettore.getProperties();
-				String urlConnettore = "";
-	
-				//TipiConnettore.HTTP.getNome() e anche TipiConnettore.HTTPS.getNome() -> location
-				//TipiConnettore.DISABILITATO.getNome() ci scrivi "disabilitato"
-				//TipiConnettore.FILE.getNome() CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE
-				//TipiConnettore.JMS.compareTo() CostantiConnettori.CONNETTORE_LOCATION
-	//			TipiConnettore.NULL 
-	//			TipiConnettore.CUSTOM -> connettore custom
-				
-				String tipo = connettore.getTipo();
-				String tipoLabel = "[" + connettore.getTipo() + "] ";
-				if ((connettore.getCustom()!=null && connettore.getCustom()) && 
-						!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
-						!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)) {
-					tipo = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
-				}  
-	
-				if(tipo.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM)) {
-					urlConnettore = tipoLabel + ConnettoriCostanti.LABEL_CONNETTORE_CUSTOM;
-				} else	if(tipo.equals(TipiConnettore.DISABILITATO.getNome())) {
-					urlConnettore = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
-				} else if(tipo.equals(TipiConnettore.NULL.getNome())) {
-					urlConnettore =  tipoLabel + ConnettoreNULL.LOCATION;
-				} else if(tipo.equals(TipiConnettore.NULLECHO.getNome())) {
-					urlConnettore = tipoLabel +  ConnettoreNULLEcho.LOCATION;
-				} else {  
-					String propertyName = CostantiConnettori.CONNETTORE_LOCATION;
-					if(tipo.equals(TipiConnettore.FILE.getNome()))
-						propertyName =CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
-				
-					if(!tipo.equals(TipiConnettore.HTTP.getNome()) && !tipo.equals(TipiConnettore.HTTPS.getNome())) {
-						urlConnettore = tipoLabel + props.get(propertyName);
-					}
-					else {
-						urlConnettore = props.get(propertyName);
-					}
-				}
+				String urlConnettore = this.getLabelConnettore(connettore);
 				
 				// Controllo se richiedere il connettore
 				boolean connettoreStatic = false;
@@ -1385,6 +1333,9 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				}
 				
 				if(!connettoreStatic) {
+					
+					de.setValue(urlConnettore);
+					
 					List<Parameter> listParametersConnettore = new ArrayList<>();
 					listParametersConnettore.add(pId);
 					listParametersConnettore.add(pIdFruitore);
@@ -1393,11 +1344,32 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					listParametersConnettore.add(pConnettoreDaListaAPS);
 					listParametersConnettore.add(pTipoSoggettoFruitore);
 					listParametersConnettore.add(pNomeSoggettoFruitore);
-					de.setUrl(
+					de.addToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE));
+					de.addIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+					de.addUrl(
 							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE,
 							listParametersConnettore.toArray(new Parameter[1])
 							);
-					de.setValue(urlConnettore);
+					
+					if(checkConnettore) {
+						List<Parameter> listParametersVerificaConnettore = new ArrayList<>();
+						listParametersVerificaConnettore.add(pIdPD);
+						listParametersVerificaConnettore.add(pIdFruitore);
+						listParametersVerificaConnettore.add(pIdSoggettoErogatore);
+						listParametersVerificaConnettore.add(pIdProviderFruitore);
+						listParametersVerificaConnettore.add(pConnettoreDaListaAPS);
+						listParametersVerificaConnettore.add(pTipoSoggettoFruitore);
+						listParametersVerificaConnettore.add(pNomeSoggettoFruitore);
+						listParametersVerificaConnettore.add(pIdSoggPD);
+						listParametersVerificaConnettore.add(pIdAsps);
+						listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID, idConnettore+""));
+						listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, "false"));
+						listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, "true"));
+						de.addToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTIVITA));
+						de.addIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE);
+						de.addUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VERIFICA_CONNETTORE, 
+								listParametersVerificaConnettore.toArray(new Parameter[1]));
+					}
 				}
 				else {
 					de.setValue("-");

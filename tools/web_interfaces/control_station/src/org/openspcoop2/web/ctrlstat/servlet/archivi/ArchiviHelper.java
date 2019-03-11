@@ -32,6 +32,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.upload.FormFile;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.Credenziali;
@@ -988,6 +989,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		String utente = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 		String password = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 		String subject = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
+		String issuer = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER);
 		String principal = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
 		
 		if (tipoauth!=null && !tipoauth.equals(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_NONE.toString())) {
@@ -1012,6 +1014,9 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 			if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
 				cis.setSubject(subject);
+				if(StringUtils.isNotEmpty(issuer)) {
+					cis.setIssuer(issuer);
+				}
 			}
 			
 			if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL)) {

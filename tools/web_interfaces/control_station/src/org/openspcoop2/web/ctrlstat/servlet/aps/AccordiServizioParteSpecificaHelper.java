@@ -45,6 +45,7 @@ import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
@@ -60,6 +61,7 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
@@ -2337,6 +2339,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(gestioneConfigurazioni) { 
 				if(showConnettoreLink) {
 					listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
+					listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VERIFICA_CONNETTORE);
 				}
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI);
 				listaLabel.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
@@ -2542,6 +2545,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					
 					// connettore
 					if(showConnettoreLink) {
+						
 						DataElement de = new DataElement();
 						//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 						String servletConnettore = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT;
@@ -2562,10 +2566,31 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							}
 							de.setUrl(servletConnettore, pIdSogg, pIdPorta, pIdAsps);
 						}
-						
 						de.allineaTdAlCentro();
-						
 						e.addElement(de);
+						
+						DataElement deVerificaConnettore = new DataElement();
+						IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+						idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(paAssociata.getTipoSoggettoProprietario(), paAssociata.getNomeSoggettoProprietario()));
+						idServizioApplicativo.setNome(portaApplicativaServizioApplicativo.getNome());
+						ServizioApplicativo sa = this.saCore.getServizioApplicativo(idServizioApplicativo);
+						org.openspcoop2.core.config.Connettore connettore = sa.getInvocazioneServizio().getConnettore();
+						long idConnettore = connettore.getId();
+						boolean checkConnettore = org.openspcoop2.pdd.core.connettori.ConnettoreCheck.checkSupported(connettore);
+						if(checkConnettore) {
+							
+							Parameter paIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, asps.getIdSoggetto() + "");
+							deVerificaConnettore.setValue(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_VALORE_LINK);
+							deVerificaConnettore.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE, paIdSogg, pIdPorta, pIdAsps,
+									new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID, idConnettore+""),
+									new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, "true"),
+									new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, "false"));
+						}
+						else {
+							deVerificaConnettore.setValue("-");
+						}
+						deVerificaConnettore.allineaTdAlCentro();
+						e.addElement(deVerificaConnettore);
 					}
 					
 					// controllo accessi
@@ -3729,6 +3754,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(gestioneConfigurazioni) {
 				if(showConnettoreLink && !connettoreStatic) {
 					listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE);
+					listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VERIFICA_CONNETTORE);
 				}
 				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI);
 				listaLabel.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
@@ -3938,6 +3964,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					// connettore	
 					if(showConnettoreLink && !connettoreStatic) {
 						DataElement de = new DataElement();
+						Connettore connettore = null;
 						if(!gestioneFruitori && mapping.isDefault()) {
 							de.setValue("-");
 						}
@@ -3968,12 +3995,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									listParameter.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE,azioneConnettore));
 								}
 								de.setUrl(servletConnettore, listParameter.toArray(new Parameter[1]));
+								
+								connettore = fru.getConnettore();
 							} else {
 								boolean ridefinito = false;
 								if(azioneConnettore!=null && !"".equals(azioneConnettore)) {
 									for (ConfigurazioneServizioAzione check : fru.getConfigurazioneAzioneList()) {
 										if(check.getAzioneList().contains(azioneConnettore)) {
 											ridefinito = true;
+											connettore = check.getConnettore();
 											break;
 										}
 									}
@@ -3986,15 +4016,35 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									servletConnettore = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONNETTORE_DEFAULT;
 									de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_DEFAULT); 
 									de.setUrl(servletConnettore, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+									
+									connettore = fru.getConnettore();
 								}
 							}
 							
 						}
 						de.allineaTdAlCentro();
 						e.addElement(de);
+						
+						if(connettore!=null) {
+							DataElement deVerificaConnettore = new DataElement();
+							long idConnettore = connettore.getId();
+							boolean checkConnettore = org.openspcoop2.pdd.core.connettori.ConnettoreCheck.checkSupported(connettore);
+							if(checkConnettore) {								
+								deVerificaConnettore.setValue(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_VALORE_LINK);
+								deVerificaConnettore.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VERIFICA_CONNETTORE, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore,
+										new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID, idConnettore+""),
+										new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, "true"),
+										new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, "true"));
+							}
+							else {
+								deVerificaConnettore.setValue("-");
+							}
+							deVerificaConnettore.allineaTdAlCentro();
+							e.addElement(deVerificaConnettore);
+						}
 					}
 					//}
-	
+
 					// Controllo Accessi
 					DataElement de = new DataElement();
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);				

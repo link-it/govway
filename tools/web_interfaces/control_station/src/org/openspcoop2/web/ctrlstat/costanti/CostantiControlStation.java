@@ -220,6 +220,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_RISORSE = "Risorse";
 	public final static String LABEL_PARAMETRO_RISORSE_CONFIG_DI = "Risorse di ";
 	public final static String LABEL_PARAMETRO_PORTE_NOME_GRUPPO = "Nome Gruppo";
+	public final static String LABEL_DEL_GRUPPO = " del gruppo ";
 	public final static String LABEL_PARAMETRO_PORTA_AZIONE_MODALITA = "Modalità Identificazione Azione";
 	public final static String LABEL_PARAMETRO_PORTA_RISORSA_MODALITA = "Modalità Identificazione Risorsa";
 	public final static String LABEL_PARAMETRO_PORTA_QUALSIASI_AZIONE = "Tutte le azioni del servizio";
@@ -320,6 +321,17 @@ public class CostantiControlStation {
 	public final static String LABEL_CONFIGURAZIONE_CORS = "Gestione CORS";
 	public final static String LABEL_CONFIGURAZIONE_CORS_ACCESS_CONTROL = "Access Control";
 	public final static String LABEL_CONFIGURAZIONE_CORS_DI = "Gestione CORS di ";
+	
+	public final static String LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_BOTTONE = "Verifica";
+	public final static String LABEL_CONFIGURAZIONE_CONNETTIVITA = "Connettività";
+	public final static String LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_TITLE = "Verifica Connettività";
+	public final static String LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE = "Verifica Connettività Connettore";
+	public final static String LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_DI = LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE+" di ";
+	public final static String LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_EFFETTUATO_CON_SUCCESSO = "Test di connettività effettuato con successo";
+	public final static String LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_FALLITA = "Test di connettività fallito: ";
+	public final static String LABEL_VERIFICA_CONNETTORE_VALORE_LINK = "verifica";
+	public final static String LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI = "Verifica su tutti i nodi";
+	
 	public final static String LABEL_CONFIGURAZIONE_RESPONSE_CACHING = "Caching Risposta";
 	public final static String LABEL_CONFIGURAZIONE_RESPONSE_CACHING_DI = "Caching Risposta di ";
 	
@@ -475,6 +487,11 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE = "corsMaxAge";
 	public final static String PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE_SECONDS = "corsMaxAgeSec";
 	public final static String PARAMETRO_CONFIGURAZIONE_CORS_STATO_PORTA = "corsStatoPorta";
+	
+	public final static String PARAMETRO_VERIFICA_CONNETTORE_ID = "connettoreId";
+	public final static String PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI = "connettoreAccessoDaGruppi";
+	public final static String PARAMETRO_VERIFICA_CONNETTORE_REGISTRO = "connettoreRegistro";
+	public final static String PARAMETRO_VERIFICA_CONNETTORE_NODO = "connettoreNodo";
 	
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_STATO = "resCacheStato";

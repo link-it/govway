@@ -101,6 +101,9 @@ public class PorteDelegateCostanti {
 	public final static String OBJECT_NAME_PORTE_DELEGATE_GESTIONE_CORS = "porteDelegateGestioneCors";
 	public final static ForwardParams TIPO_OPERAZIONE_GESTIONE_CORS = ForwardParams.OTHER("");
 	
+	public final static String OBJECT_NAME_PORTE_DELEGATE_VERIFICA_CONNETTORE = "porteDelegateVerificaConnettore";
+	public final static ForwardParams TIPO_OPERAZIONE_VERIFICA_CONNETTORE = ForwardParams.OTHER("");
+	
 	public final static String OBJECT_NAME_PORTE_DELEGATE_RESPONSE_CACHING = "porteDelegateResponseCaching";
 	public final static ForwardParams TIPO_OPERAZIONE_RESPONSE_CACHING = ForwardParams.OTHER("");
 
@@ -289,6 +292,9 @@ public class PorteDelegateCostanti {
 	}
 	
 	public final static String SERVLET_NAME_PORTE_DELEGATE_GESTIONE_CORS = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_GESTIONE_CORS +".do"; 
+	
+	public final static String SERVLET_NAME_PORTE_DELEGATE_VERIFICA_CONNETTORE = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_VERIFICA_CONNETTORE+".do"; 
+	
 	public final static String SERVLET_NAME_PORTE_DELEGATE_RESPONSE_CACHING = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_RESPONSE_CACHING +".do"; 
 	
 	
@@ -457,6 +463,7 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_NOME_SERVIZIO = "Nome Servizio";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VERSIONE_SERVIZIO = "Versione Servizio";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE = "Connettore";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VERIFICA_CONNETTORE = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_DI = "Connettore di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA = "Modalit&agrave;";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE = "Configurazione";
@@ -538,6 +545,10 @@ public class PorteDelegateCostanti {
 	
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORS_CONFIGURAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_CORS;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORS_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_CORS_DI;
+	
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VERIFICA_CONNETTORE_TITLE = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_TITLE;
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VERIFICA_CONNETTORE_CONFIGURAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE;
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VERIFICA_CONNETTORE_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_DI;
 	
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_DI;

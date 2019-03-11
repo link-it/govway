@@ -18,19 +18,27 @@
 	
 	<target name="copy_dipendenze_sql_govwayConsole">
 		<copy todir="${sql_govwayConsole}">
-		    <fileset dir="${sql}"/>
+		    <fileset dir="${sql}">
+			<exclude name="patch/**"/>
+		    </fileset>
 		    <globmapper from="*.sql" to="*.sql"/>
 		</copy>
 		<copy todir="${sql_govwayConsole}">
-		    <fileset dir="${sql_queue}"/>
+		    <fileset dir="${sql_queue}">
+			<exclude name="patch/**"/>
+		    </fileset>
 		    <globmapper from="*.sql" to="*.sql"/>
 		</copy>
 		<copy todir="${sql_govwayConsole}">
-		    <fileset dir="${sql_audit}"/>
+		    <fileset dir="${sql_audit}">
+			<exclude name="patch/**"/>
+		    </fileset>
 		    <globmapper from="*.sql" to="*.sql"/>
 		</copy>
 		<copy todir="${sql_govwayConsole}">
-		    <fileset dir="${sql_users}"/>
+		    <fileset dir="${sql_users}">
+			<exclude name="patch/**"/>
+		    </fileset>
 		    <globmapper from="*.sql" to="*.sql"/>
 		</copy>
 	</target>

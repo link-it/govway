@@ -49,6 +49,7 @@ public class JMXUtils {
 	
 	/** Messaggi */
 	public final static String MSG_OPERAZIONE_NON_EFFETTUATA = "Operazione non riuscita: ";
+	public final static String MSG_OPERAZIONE_EFFETTUATA_SUCCESSO = "Operazione effettuata con successo";
 	public final static String MSG_RESET_CACHE_EFFETTUATO_SUCCESSO = "Operazione di reset effettuata con successo";
 	public final static String MSG_PREFILL_CACHE_EFFETTUATO_SUCCESSO = "Operazione pre-fill cache effettuata con successo";
 	public final static String MSG_ABILITAZIONE_CACHE_EFFETTUATA = "Abilitazione cache effettuata con successo";

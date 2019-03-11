@@ -192,6 +192,10 @@ public class PorteApplicativeGestioneCors extends Action {
 				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORS_CONFIGURAZIONE_CONFIG_DI+idporta;
 			}
 
+			if(labelPerPorta.contains(CostantiControlStation.LABEL_DEL_GRUPPO)) {
+				labelPerPorta = labelPerPorta.substring(0, labelPerPorta.indexOf(CostantiControlStation.LABEL_DEL_GRUPPO));
+			}
+			
 			lstParam.add(new Parameter(labelPerPorta,  null));
 
 			// edit in progress

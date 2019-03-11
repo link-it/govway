@@ -38,6 +38,7 @@ import javax.management.MBeanConstructorInfo;
 import javax.management.MBeanException;
 import javax.management.MBeanInfo;
 import javax.management.MBeanOperationInfo;
+import javax.management.MBeanParameterInfo;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ReflectionException;
 
@@ -45,6 +46,7 @@ import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
+import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.slf4j.Logger;
@@ -72,7 +74,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public final static String LOG4J_INTEGRATION_MANAGER_ABILITATO = "log4jLogFileIntegrationManagerAbilitato";
 	public final static String LOG4J_TRACCIAMENTO_ABILITATO = "log4jLogFileTracciamentoAbilitato";
 	public final static String LOG4J_DUMP_ABILITATO = "log4jLogFileDumpAbilitato";
-	
+		
+	/** Nomi metodi' */
+	public final static String CHECK_CONNETTORE_BY_ID = "checkConnettoreById";
+	public final static String CHECK_CONNETTORE_BY_NOME = "checkConnettoreByNome";
 	
 	/** Attributi */
 	private boolean cacheAbilitata = false;
@@ -321,7 +326,37 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			
 			return this.removeObjectCache(param1);
 		}
-				
+			
+		if(actionName.equals(CHECK_CONNETTORE_BY_ID)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+CHECK_CONNETTORE_BY_ID+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			return this.checkConnettoreById(param1);
+		}
+		
+		if(actionName.equals(CHECK_CONNETTORE_BY_NOME)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+CHECK_CONNETTORE_BY_NOME+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			return this.checkConnettoreByNome(param1);
+		}
+		
 		throw new UnsupportedOperationException("Operazione "+actionName+" sconosciuta");
 	}
 	
@@ -432,6 +467,24 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		// MetaData per l'operazione removeObjectCache
 		MBeanOperationInfo removeObjectCacheOP = JMXUtils.MBEAN_OPERATION_REMOVE_OBJECT_CACHE;
 				
+		// MetaData per l'operazione checkConettoreById
+		MBeanOperationInfo checkConnettoreById 
+		= new MBeanOperationInfo(CHECK_CONNETTORE_BY_ID,"Verifica la raggiungibilità del connettore con id fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("idConnettore",long.class.getName(),"Identificativo del connettore"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkConettoreByNome
+		MBeanOperationInfo checkConnettoreByNome 
+		= new MBeanOperationInfo(CHECK_CONNETTORE_BY_NOME,"Verifica la raggiungibilità del connettore con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del connettore"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
 		// Mbean costruttore
 		MBeanConstructorInfo defaultConstructor = new MBeanConstructorInfo("Default Constructor","Crea e inizializza una nuova istanza del MBean",null);
 
@@ -458,6 +511,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		listOperation.add(listKeysCacheOP);
 		listOperation.add(getObjectCacheOP);
 		listOperation.add(removeObjectCacheOP);
+		listOperation.add(checkConnettoreById);
+		listOperation.add(checkConnettoreByNome);
 		MBeanOperationInfo[] operations = listOperation.toArray(new MBeanOperationInfo[1]);
 		
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
@@ -689,5 +744,25 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public void setDumpBinarioPA(boolean v){
 		this.dumpBinarioPAAbilitato = v;
 		ConfigurazionePdDReader.dumpBinarioPAJMX = v;
+	}
+	
+	public String checkConnettoreById(long idConnettore) {
+		try{
+			ConnettoreCheck.check(idConnettore, false);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkConnettoreByNome(String nomeConnettore) {
+		try{
+			ConnettoreCheck.check(nomeConnettore, false);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
 	}
 }

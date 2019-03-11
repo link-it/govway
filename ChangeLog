@@ -1,5 +1,12 @@
 2019-03-11  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-821
+	Aggiunta la possibilità di verificare la connettività dei connettori http/https configurati tramite la govwayConsole.
+	In caso di configurazione in cluster su più nodi, la connettività è verificabile sia selezionando il singolo nodo che su tutti.
+
+2019-03-11  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovWayConsole, GovWayMonitor, TestsuiteProtocolloTrasparente]
 	Aggiunta funzionalità OP-505
 	Evoluta la funzionalità di associazione delle credenziali 'ssl' ad un servizio applicativo o ad un soggetto.

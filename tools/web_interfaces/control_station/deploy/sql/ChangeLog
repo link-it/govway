@@ -1,3 +1,15 @@
+2019-02-01  Andrea Poli <apoli@link.it>
+
+        Aggiunta gestione certificato X509 e Issue
+
+        ALTER TABLE soggetti ALTER COLUMN utente TYPE VARCHAR(2800);
+        ALTER TABLE soggetti ALTER COLUMN subject TYPE VARCHAR(2800);
+        ALTER TABLE soggetti ADD COLUMN cn_subject VARCHAR(255);
+        ALTER TABLE soggetti ADD COLUMN issuer VARCHAR(2800);
+        ALTER TABLE soggetti ADD COLUMN cn_issuer VARCHAR(255);
+        ALTER TABLE soggetti ADD COLUMN certificate BLOB;
+        ALTER TABLE soggetti ADD COLUMN cert_strict_verification INT;
+
 2017-11-28  Andrea Poli <apoli@link.it>
 
 	Creato file ChangeLog

@@ -1486,6 +1486,16 @@
             <forward name="porteDelegateGestioneCorsCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateGestioneCorsError" path="/jsplib/info.jsp"/>
         </action>
+
+        <!-- Porte Delegate (Verifica Connettore) -->
+    
+    	<action path="/porteDelegateVerificaConnettore" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateVerificaConnettore"
+            scope="request" validate="true">
+            <forward name="porteDelegateVerificaConnettoreForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateVerificaConnettoreOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateVerificaConnettoreCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateVerificaConnettoreError" path="/jsplib/info.jsp"/>
+        </action>
         
       <!-- Porte Delegate (Response Caching) -->
     
@@ -1988,6 +1998,16 @@
             <forward name="porteApplicativeGestioneCorsOk" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeGestioneCorsCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeGestioneCorsError" path="/jsplib/info.jsp"/>
+        </action>
+
+        <!-- Porte Applicative (Verifica Connettore) -->
+    
+    	<action path="/porteApplicativeVerificaConnettore" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeVerificaConnettore"
+            scope="request" validate="true">
+            <forward name="porteApplicativeVerificaConnettoreForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeVerificaConnettoreOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeVerificaConnettoreCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeVerificaConnettoreError" path="/jsplib/info.jsp"/>
         </action>
     
        	<!-- Porte Applicative (Response Caching) -->

@@ -4,5 +4,12 @@ dist
 doc
 local_env.xml
 .ant-targets-build.xml
+mvn/build_testunits
+mvn/log
+mvn/target
+mvn/sql/build_testunits
+mvn/sql/log
+mvn/sql/target
+target
 # Except this file
 !.gitignore

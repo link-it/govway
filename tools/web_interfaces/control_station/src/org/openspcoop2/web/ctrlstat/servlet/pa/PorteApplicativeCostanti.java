@@ -96,6 +96,9 @@ public class PorteApplicativeCostanti {
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_GESTIONE_CORS = "porteApplicativeGestioneCors";
 	public final static ForwardParams TIPO_OPERAZIONE_GESTIONE_CORS = ForwardParams.OTHER("");
 	
+	public final static String OBJECT_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE = "porteApplicativeVerificaConnettore";
+	public final static ForwardParams TIPO_OPERAZIONE_VERIFICA_CONNETTORE = ForwardParams.OTHER("");
+	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG = "porteApplicativeWSRequestPropertiesConfig";
 	public final static ForwardParams TIPO_OPERAZIONE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG = ForwardParams.OTHER("");
 	
@@ -313,6 +316,9 @@ public class PorteApplicativeCostanti {
 	}
 	
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_GESTIONE_CORS = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_GESTIONE_CORS+".do"; 
+	
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE+".do"; 
+	
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING +".do"; 
 	
 	/* LABEL GENERALI */
@@ -431,6 +437,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = "Applicativo Erogatore";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI = "Applicativi Erogatori";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE = "Connettore";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VERIFICA_CONNETTORE = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DI = "Connettore di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DEFAULT = "Connettore Default";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DEFAULT_DI = "Connettore Default di ";
@@ -556,6 +563,10 @@ public class PorteApplicativeCostanti {
 	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORS_CONFIGURAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_CORS;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORS_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_CORS_DI;
+	
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VERIFICA_CONNETTORE_TITLE = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_TITLE;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VERIFICA_CONNETTORE_CONFIGURAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VERIFICA_CONNETTORE_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_DI;
 	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_DI;

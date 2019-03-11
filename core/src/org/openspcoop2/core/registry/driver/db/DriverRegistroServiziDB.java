@@ -8224,7 +8224,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
 			while (rs.next()) {
 				
-				if(filtroRicerca.getCredenzialiSoggetto().getSubject()!=null){
+				if(filtroRicerca!=null &&
+						filtroRicerca.getCredenzialiSoggetto()!=null && 
+						filtroRicerca.getCredenzialiSoggetto().getSubject()!=null){
 				
 					// Possono esistere piu' soggetti che hanno una porzione di subject uguale, devo quindi verificare che sia proprio quello che cerco
 										
@@ -10448,6 +10450,113 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 * Metodi di utilita'
 	 */
 
+	public Connettore getConnettore(long idConnettore) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		String nomeMetodo = "getConnettore(id)";
+		
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			Connettore connettore = getConnettore(idConnettore, con);
+			if(connettore==null) {
+				throw new DriverRegistroServiziNotFound("Connettore con id '"+idConnettore+"' non esistente");
+			}
+			return connettore;
+			
+		} catch (Exception qe) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	public Connettore getConnettore(String nomeConnettore) throws DriverRegistroServiziException {
+		String nomeMetodo = "getConnettore(nome)";
+		
+		Connection con = null;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONNETTORI);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("nome_connettore=?");
+			String queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setString(1, nomeConnettore);
+			risultato = stmt.executeQuery();
+
+			Long idConnettore = null;
+			if (risultato.next()) {
+				idConnettore = risultato.getLong("id");
+			}
+			else {
+				throw new DriverRegistroServiziNotFound("Connettore con nome '"+nomeConnettore+"' non esistente");
+			}
+					
+			Connettore connettore = getConnettore(idConnettore, con);
+			if(connettore==null) {
+				throw new DriverRegistroServiziNotFound("Connettore con id '"+idConnettore+"' non esistente");
+			}
+			return connettore;
+			
+		} catch (Exception qe) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
 	/**
 	 * Accede alla tabella connettori, recupera il connettore con idConnettore
 	 * in caso di errore lancia un'eccezione.

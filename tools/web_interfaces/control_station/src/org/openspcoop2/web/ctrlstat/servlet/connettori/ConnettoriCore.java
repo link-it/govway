@@ -188,4 +188,46 @@ public class ConnettoriCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
+	
+	public Connettore getConnettoreRegistro(long idConnettore) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "getConnettoreRegistro";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().getConnettore(idConnettore);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public org.openspcoop2.core.config.Connettore getConnettoreConfig(long idConnettore) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getConnettoreRegistro";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().getConnettore(idConnettore);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
 }

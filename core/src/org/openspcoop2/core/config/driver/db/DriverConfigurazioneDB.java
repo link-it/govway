@@ -170,6 +170,7 @@ import org.openspcoop2.core.config.driver.IDriverConfigurazioneCRUD;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.TipologiaServizioApplicativo;
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -20676,4 +20677,196 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 	}
 	
+	
+	
+	public Connettore getConnettore(long idConnettore) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		String nomeMetodo = "getConnettore(id)";
+		
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			Connettore connettore = DriverConfigurazioneDB_LIB.getConnettore(idConnettore, con);
+			if(connettore==null) {
+				throw new DriverConfigurazioneNotFound("Connettore con id '"+idConnettore+"' non esistente");
+			}
+						
+			// Recupero anche eventuale username e password in invocazione servizio.
+			readCredenzialiBasicConnettore(connettore, idConnettore, con);
+			
+			return connettore;
+			
+		} catch (Exception qe) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	public Connettore getConnettore(String nomeConnettore) throws DriverConfigurazioneException {
+		String nomeMetodo = "getConnettore(nome)";
+		
+		Connection con = null;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONNETTORI);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("nome_connettore=?");
+			String queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setString(1, nomeConnettore);
+			risultato = stmt.executeQuery();
+
+			Long idConnettore = null;
+			if (risultato.next()) {
+				idConnettore = risultato.getLong("id");
+			}
+			else {
+				throw new DriverConfigurazioneNotFound("Connettore con nome '"+nomeConnettore+"' non esistente");
+			}
+					
+			Connettore connettore = DriverConfigurazioneDB_LIB.getConnettore(idConnettore, con);
+			if(connettore==null) {
+				throw new DriverConfigurazioneNotFound("Connettore con id '"+idConnettore+"' non esistente");
+			}
+			
+			risultato.close();
+			stmt.close();
+			
+			// Recupero anche eventuale username e password in invocazione servizio.
+			readCredenzialiBasicConnettore(connettore, idConnettore, con);
+			
+			return connettore;
+			
+		} catch (Exception qe) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	private void readCredenzialiBasicConnettore(Connettore connettore, long idConnettore,
+			Connection con) throws DriverConfigurazioneException {
+		String nomeMetodo = "getConnettore(nome)";
+		
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		try {
+			
+			// Recupero anche eventuale username e password in invocazione servizio.
+			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_USERNAME)==false) {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addSelectField("utenteinv");
+				sqlQueryObject.addSelectField("passwordinv");
+				sqlQueryObject.addWhereCondition("id_connettore_inv=?");
+				String queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setLong(1, idConnettore);
+				risultato = stmt.executeQuery();
+				String user = null;
+				String password = null;
+				if (risultato.next()) {
+					user = risultato.getString("utenteinv");
+					password = risultato.getString("passwordinv");
+				}
+				else {
+					// cerco come risposta asincrona
+					risultato.close();
+					stmt.close();
+					
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+					sqlQueryObject.addSelectField("utenterisp");
+					sqlQueryObject.addSelectField("passwordrisp");
+					sqlQueryObject.addWhereCondition("id_connettore_risp=?");
+					queryString = sqlQueryObject.createSQLQuery();
+					stmt = con.prepareStatement(queryString);
+					stmt.setLong(1, idConnettore);
+					risultato = stmt.executeQuery();
+					if (risultato.next()) {
+						user = risultato.getString("utenterisp");
+						password = risultato.getString("passwordrisp");
+					}
+				}
+				
+				if(user!=null) {
+					Property property = new Property();
+					property.setNome(CostantiConnettori.CONNETTORE_USERNAME);
+					property.setValore(user);
+					connettore.addProperty(property);
+				}
+				if(password!=null) {
+					Property property = new Property();
+					property.setNome(CostantiConnettori.CONNETTORE_PASSWORD);
+					property.setValore(password);
+					connettore.addProperty(property);
+				}
+
+			}
+			
+		} catch (Exception qe) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
 }

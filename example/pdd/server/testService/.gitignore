@@ -4,8 +4,6 @@ dist
 bin
 target
 .ant-targets-build.xml
-log
-dependency-check-result
-testsuite-result
+local_env.xml
 # Except this file
 !.gitignore

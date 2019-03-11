@@ -1,0 +1,17 @@
+# Ignore everything in this directory
+ant.install.log
+ant.install.properties
+deploy/jms
+deploy/resources/protocolli/as4
+deploy/sql/db2
+deploy/sql/hsql
+deploy/sql/mysql
+deploy/sql/oracle
+deploy/sql/postgresql
+deploy/sql/sqlserver
+deploy/sql/sql_upgrade
+deploy/sw
+dist
+.ant-targets-build.xml
+# Except this file
+!.gitignore

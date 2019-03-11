@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
@@ -53,6 +54,8 @@ import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
+import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
 import org.openspcoop2.utils.DynamicStringReplace;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
@@ -3886,5 +3889,67 @@ public class ConnettoriHelper extends ConsoleHelper {
 		}
 		
 		return true;
+	}
+	
+	public String getLabelConnettore(org.openspcoop2.core.config.InvocazioneServizio is) {
+		String urlConnettore = this.getLabelConnettore(is.getConnettore());
+		
+		if(is.getGetMessage()!=null && StatoFunzionalita.ABILITATO.equals(is.getGetMessage())) {
+			urlConnettore = urlConnettore + " [MessageBox]";
+		}
+		
+		return urlConnettore;
+	}
+	public String getLabelConnettore(org.openspcoop2.core.registry.Connettore connettore) {
+		return this.getLabelConnettore(connettore.mappingIntoConnettoreConfigurazione());
+	}
+	public String getLabelConnettore(org.openspcoop2.core.config.Connettore connettore) {
+		String urlConnettore = "";
+		
+		List<org.openspcoop2.core.config.Property> cp = connettore.getPropertyList();
+		
+		//TipiConnettore.HTTP.getNome() e anche TipiConnettore.HTTPS.getNome() -> location
+		//TipiConnettore.DISABILITATO.getNome() ci scrivi "disabilitato"
+		//TipiConnettore.FILE.getNome() CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE
+		//TipiConnettore.JMS.compareTo() CostantiConnettori.CONNETTORE_LOCATION
+//			TipiConnettore.NULL 
+//			TipiConnettore.CUSTOM -> connettore custom
+		String tipo = connettore.getTipo();
+		
+		String tipoLabel = "[" + connettore.getTipo() + "] ";
+		if ((connettore.getCustom()!=null && connettore.getCustom()) && 
+				!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
+				!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)) {
+			tipo = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
+		}  
+
+		if(tipo.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM)) {
+			urlConnettore = tipoLabel + ConnettoriCostanti.LABEL_CONNETTORE_CUSTOM;
+		} else	if(tipo.equals(TipiConnettore.DISABILITATO.getNome())) {
+			urlConnettore = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+		} else if(tipo.equals(TipiConnettore.NULL.getNome())) {
+			urlConnettore = tipoLabel + ConnettoreNULL.LOCATION;
+		} else if(tipo.equals(TipiConnettore.NULLECHO.getNome())) {
+			urlConnettore = tipoLabel + ConnettoreNULLEcho.LOCATION;
+		} else {  
+			String propertyName = CostantiConnettori.CONNETTORE_LOCATION;
+			if(tipo.equals(TipiConnettore.FILE.getNome()))
+				propertyName = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
+		
+			for (int i = 0; i < connettore.sizePropertyList(); i++) {
+				org.openspcoop2.core.config.Property singlecp = cp.get(i);
+				if (singlecp.getNome().equals(propertyName)) {
+					if(!tipo.equals(TipiConnettore.HTTP.getNome()) && !tipo.equals(TipiConnettore.HTTPS.getNome())) {
+						urlConnettore = tipoLabel + singlecp.getValore();
+					}
+					else {
+						urlConnettore = singlecp.getValore();
+					}
+					
+					break;
+				}
+			}
+		}
+		return urlConnettore;
 	}
 }
