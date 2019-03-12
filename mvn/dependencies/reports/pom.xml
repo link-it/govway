@@ -17,10 +17,10 @@
 
 		<jar.group.name>reports</jar.group.name>
 		
-		<dynamicreports.version>5.1.0</dynamicreports.version>
+		<dynamicreports.version>6.0.0</dynamicreports.version>
 		<ecj.version>4.4.2</ecj.version>
 		<itext.version>2.1.7.js6</itext.version>
-		<jasperreports.version>6.5.1</jasperreports.version>
+		<jasperreports.version>6.7.1</jasperreports.version>
 		<jcommon.version>1.0.23</jcommon.version>
 		<jdtcore.version>3.2.0.v_658</jdtcore.version>
 		<jfreechart.version>1.0.19</jfreechart.version>

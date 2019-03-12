@@ -1,3 +1,11 @@
+2019-03-12  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayMonitor]
+	Risolto Bug OP-827
+	Risolta vulnerabilità 'cpe:2.3:a:tibco:jasperreports_library:6.5.1:::::::*' con i seguenti aggiornamenti:
+	- jasperreports-6.5.1.jar -> jasperreports-6.7.1.jar
+	- dynamicreports-core-5.1.0.jar -> dynamicreports-core-6.0.0.jar
+
 2019-03-11  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

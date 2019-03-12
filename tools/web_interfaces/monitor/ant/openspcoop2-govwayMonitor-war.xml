@@ -222,10 +222,10 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/reports"> <!-- I report CSV vengono anche utilizzati per l'esportazione delle transazioni -->
-				<include name="dynamicreports-core-5.1.0.jar"/>
+				<include name="dynamicreports-core-6.0.0.jar"/>
 				<include name="itext-2.1.7.js6.jar"/>
 				<include name="jcommon-1.0.23.jar"/>
-				<include name="jasperreports-6.5.1.jar"/>
+				<include name="jasperreports-6.7.1.jar"/>
 				<include name="poi-3.17.jar"/>
 				<include name="${ecj_jar}"/>
 			</lib>
