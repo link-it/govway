@@ -65,7 +65,7 @@
 						<id>check owasp</id>
 						<phase>${owasp}</phase>
 						<configuration>
-							<failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
+							<failBuildOnAnyVulnerability>${owasp.plugin.failBuildOnAnyVulnerability}</failBuildOnAnyVulnerability>
 							<!-- <failBuildOnCVSS>8</failBuildOnCVSS> -->
 							<outputDirectory>${owasp.output.dir}</outputDirectory>
 							<format>ALL</format>

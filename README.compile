@@ -46,7 +46,7 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
 	mvn verify
 
     Per evitare la compilazione e il packaging descritto nelle precedenti sezioni, utilizzare il comando:
-	mvn verify -Dcompile=none -Dtestsute=none -Dpackage=none
+	mvn verify -Dcompile=none -Dtestsuite=none -Dpackage=none
  
     Verranno identificate tutte le dipendenze relative a jar 3parti e saranno verificate se esistono vulnerabilità conosciute.
     Un report viene prodotto nella directory 'dependency-check-result'
