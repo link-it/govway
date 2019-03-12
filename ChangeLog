@@ -1,5 +1,12 @@
 2019-03-12  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolto Bug OP-825
+	Non venivano decrementati i contatori delle richieste attive di una policy di Rate Limiting,
+	se la transazione aveva un esito per cui era stato disabilitato il tracciamento.
+
+2019-03-12  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovWayMonitor]
 	Risolto Bug OP-827
 	Risolta vulnerabilità 'cpe:2.3:a:tibco:jasperreports_library:6.5.1:::::::*' con i seguenti aggiornamenti:

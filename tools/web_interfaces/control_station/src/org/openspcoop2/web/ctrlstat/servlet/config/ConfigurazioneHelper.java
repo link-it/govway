@@ -5269,10 +5269,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 	
 	public boolean checkConfigurazioneTracciamento(TipoOperazione tipoOperazione, String configurazioneEsiti)	throws Exception {
-		if(configurazioneEsiti ==null || "".equals(configurazioneEsiti.trim())){
-			this.pd.setMessage("Deve essere selezionato almeno un esito");
-			return false;
-		}
+		// E' possibile disabilitare anche tutti gli esiti
+//		if(configurazioneEsiti ==null || "".equals(configurazioneEsiti.trim())){
+//			this.pd.setMessage("Deve essere selezionato almeno un esito");
+//			return false;
+//		}
 		
 		//String severita = this.getParameter("severita");
 		//String severita_log4j = this.getParameter("severita_log4j");

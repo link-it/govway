@@ -59,7 +59,6 @@ import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.RequestInfo;
-import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
@@ -386,26 +385,29 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 					int code = context.getEsito().getCode();
 					String codeAsString = code+"";
 					if(esitiDaRegistrare.contains(codeAsString)==false){
-						String msg = "Transazione ID["+idTransazione+"] non salvata nello storico: esito [name:"+esitiProperties.getEsitoName(context.getEsito().getCode())+" code:"+codeAsString+"]";
+						String msg = "Transazione ID["+idTransazione+"] non salvata nello storico come richiesto dalla configurazione del tracciamento: esito [name:"+esitiProperties.getEsitoName(context.getEsito().getCode())+" code:"+codeAsString+"]";
 						if(esitiOk.contains(codeAsString)){
 							this.log.warn(msg);
 						}
 						else{
 							this.log.error(msg);
 						}
-						int esitoViolazioneRateLimiting = esitiProperties.convertNameToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA.name());
-						int esitoViolazioneRateLimitingWarningOnly = esitiProperties.convertNameToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA_WARNING_ONLY.name());
-						int esitoMaxThreadsWarningOnly = esitiProperties.convertNameToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS_WARNING_ONLY.name());
-						if((esitoViolazioneRateLimiting == code) || //  Violazione Rate Limiting
-								(esitoViolazioneRateLimitingWarningOnly == code) ||  // Violazione Rate Limiting WarningOnly
-								(esitoMaxThreadsWarningOnly == code) // Superamento Limite Richieste WarningOnly
-								){
-							exitTransactionAfterRateLimitingRemoveThread = true;
-						}
-						else{
-							this._releaseResources(null, idTransazione, context);
-							return;
-						}
+						// BUG OP-825
+						// la gestione RateLimiting deve essere sempre fatta senno se si configurara di non registrare una transazione, poi si ha l'effetto che i contatori del Controllo del Traffico non vengono diminuiti.
+						
+//						int esitoViolazioneRateLimiting = esitiProperties.convertNameToCode(org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA.name());
+//						int esitoViolazioneRateLimitingWarningOnly = esitiProperties.convertNameToCode(org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA_WARNING_ONLY.name());
+//						int esitoMaxThreadsWarningOnly = esitiProperties.convertNameToCode(org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS_WARNING_ONLY.name());
+//						if((esitoViolazioneRateLimiting == code) || //  Violazione Rate Limiting
+//								(esitoViolazioneRateLimitingWarningOnly == code) ||  // Violazione Rate Limiting WarningOnly
+//								(esitoMaxThreadsWarningOnly == code) // Superamento Limite Richieste WarningOnly
+//								){
+						exitTransactionAfterRateLimitingRemoveThread = true;
+//						}
+//						else{
+//							this._releaseResources(null, idTransazione, context);
+//							return;
+//						}
 					}
 				}
 				else{
@@ -438,23 +440,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 
 		Transazione transazioneDTO = null;
 		try{
-		
-			// NOTA: se l'integrazione e' null o l'indicazione se la gestione stateless e' null, significa che la PdD non e' ancora riuscita
-			// a capire che tipo di gestione deve adottare. Queste transazioni devono essere sempre registrate perche' riguardano cooperazioni andate in errore all'inizio,
-			// es. Porta Delegata non esistente, busta malformata....
-			if(context.getIntegrazione()!=null && 
-					context.getIntegrazione().isGestioneStateless()!=null &&
-					!context.getIntegrazione().isGestioneStateless()){
-				if(this.openspcoopProperties.isTransazioniStatefulEnabled()==false){
-					//if(this.debug)
-					this.log.error("["+idTransazione+"] Transazione non registrata, gestione stateful non abilitata");
-					// NOTA: TODO thread che ripulisce header di trasporto o dump messaggi non associati a transazioni.
-					// La risorsa viene rilasciata nel finally
-					//this._releaseResources(transaction, idTransazione, context);
-					return;
-				}
-			}
-	
+			
 			IDSoggetto idDominio = this.openspcoopProperties.getIdentitaPortaDefault(context.getProtocolFactory().getProtocol());
 			if(context.getProtocollo()!=null && context.getProtocollo().getDominio()!=null){
 				idDominio = context.getProtocollo().getDominio();
@@ -534,6 +520,24 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 			}
 			
 			
+			
+			// Il controllo stateful è stato spostato sotto il blocco soprastante, per assicurare la gestione del traffico (decremento dei contatori)
+			
+			// NOTA: se l'integrazione e' null o l'indicazione se la gestione stateless e' null, significa che la PdD non e' ancora riuscita
+			// a capire che tipo di gestione deve adottare. Queste transazioni devono essere sempre registrate perche' riguardano cooperazioni andate in errore all'inizio,
+			// es. Porta Delegata non esistente, busta malformata....
+			if(context.getIntegrazione()!=null && 
+					context.getIntegrazione().isGestioneStateless()!=null &&
+					!context.getIntegrazione().isGestioneStateless()){
+				if(this.openspcoopProperties.isTransazioniStatefulEnabled()==false){
+					//if(this.debug)
+					this.log.error("["+idTransazione+"] Transazione non registrata, gestione stateful non abilitata");
+					// NOTA: TODO thread che ripulisce header di trasporto o dump messaggi non associati a transazioni.
+					// La risorsa viene rilasciata nel finally
+					//this._releaseResources(transaction, idTransazione, context);
+					return;
+				}
+			}
 			
 			
 			

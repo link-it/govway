@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -141,8 +142,12 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 				}
 			}
 			
+			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
+			
 			Configurazione config = null;
+			boolean firstTracciamento = false;
 			if(tracciamentoEsitiStato==null) {
+				firstTracciamento = true;
 				if(pde.getTracciamento()!=null && pde.getTracciamento().getEsiti()!=null) {
 					tracciamentoEsitiStato = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO;
 				}
@@ -150,8 +155,12 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 					tracciamentoEsitiStato = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT;
 				}
 			}
+			else if(CostantiControlStation.PARAMETRO_PORTE_TRACCIAMENTO_ESITO.equals(postBackElementName)) {
+				firstTracciamento = true;
+			}
+			
 			if(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(tracciamentoEsitiStato)) {
-				if(nuovaConfigurazioneEsiti==null) {
+				if(nuovaConfigurazioneEsiti==null && firstTracciamento) {
 					if(pde.getTracciamento()!=null && pde.getTracciamento().getEsiti()!=null) {
 						nuovaConfigurazioneEsiti = pde.getTracciamento().getEsiti();
 					}
@@ -347,7 +356,12 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 					portaTracciamento.setSeverita(Severita.toEnumConstant(severita));
 				}
 				if(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(tracciamentoEsitiStato)) {
-					portaTracciamento.setEsiti(nuovaConfigurazioneEsiti);
+					if(StringUtils.isEmpty(nuovaConfigurazioneEsiti)) {
+						portaTracciamento.setEsiti(EsitiConfigUtils.TUTTI_ESITI_DISABILITATI+"");
+					}
+					else {
+						portaTracciamento.setEsiti(nuovaConfigurazioneEsiti);
+					}
 				}
 				pde.setTracciamento(portaTracciamento);
 			}

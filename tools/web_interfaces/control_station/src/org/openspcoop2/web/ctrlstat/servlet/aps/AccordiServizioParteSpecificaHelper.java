@@ -84,6 +84,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
+import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -2788,8 +2789,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 		boolean tracciamento = false;
 		if(paAssociata.getTracciamento()!=null &&
-				(paAssociata.getTracciamento().getEsiti()!=null || 
-				paAssociata.getTracciamento().getSeverita()!=null)) {
+				(
+					(
+							paAssociata.getTracciamento().getEsiti()!=null 
+							&& 
+							!(EsitiConfigUtils.TUTTI_ESITI_DISABILITATI+"").equals(paAssociata.getTracciamento().getEsiti())
+					) 
+					|| 
+					paAssociata.getTracciamento().getSeverita()!=null)
+				) {
 			tracciamento = true;
 		}
 		
@@ -4213,10 +4221,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 		if (pdAssociata.getCorrelazioneApplicativaRisposta() != null)
 			isCorrelazioneApplicativaAbilitataRes = pdAssociata.getCorrelazioneApplicativaRisposta().sizeElementoList() > 0;
-			
+		
 		if(pdAssociata.getTracciamento()!=null &&
-				(pdAssociata.getTracciamento().getEsiti()!=null || 
-				pdAssociata.getTracciamento().getSeverita()!=null)) {
+				(
+					(
+							pdAssociata.getTracciamento().getEsiti()!=null 
+							&& 
+							!(EsitiConfigUtils.TUTTI_ESITI_DISABILITATI+"").equals(pdAssociata.getTracciamento().getEsiti())
+					) 
+					|| 
+					pdAssociata.getTracciamento().getSeverita()!=null)
+				) {
 			tracciamento = true;
 		}
 		

@@ -38,6 +38,8 @@ import org.slf4j.Logger;
  */
 public class EsitiConfigUtils {
 
+	public static int TUTTI_ESITI_DISABILITATI = -2;
+	
 	public static EsitiProperties getEsitiPropertiesForConfiguration(Logger log) throws ProtocolException {
 		return EsitiProperties.getInstance(log, EsitiProperties.NO_PROTOCOL_CONFIG);
 	}

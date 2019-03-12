@@ -95,7 +95,6 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.http.HttpConstants;
-import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
 
@@ -260,16 +259,6 @@ public class RicezioneBusteService  {
 			return; // l'errore in response viene impostato direttamente dentro il metodo
 		}
 		req.updateRequestInfo(requestInfo);
-		
-		// CORS
-		if(requestInfo!=null && requestInfo.getProtocolServiceBinding()!=null && 
-				ServiceBinding.SOAP.equals(requestInfo.getProtocolServiceBinding()) && 
-				requestInfo.getProtocolContext()!=null &&
-				HttpRequestMethod.OPTIONS.name().equalsIgnoreCase(requestInfo.getProtocolContext().getRequestType())) {
-			
-			// Preflight Request su Soap
-			
-		}
 		
 		
 		

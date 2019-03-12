@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -277,7 +278,12 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 			
 			Configurazione newConfigurazione = confCore.getConfigurazioneGenerale();
 			
-			newConfigurazione.getTracciamento().setEsiti(nuovaConfigurazioneEsiti);
+			if(StringUtils.isEmpty(nuovaConfigurazioneEsiti)) {
+				newConfigurazione.getTracciamento().setEsiti(EsitiConfigUtils.TUTTI_ESITI_DISABILITATI+"");
+			}
+			else {
+				newConfigurazione.getTracciamento().setEsiti(nuovaConfigurazioneEsiti);
+			}
 			
 			if (newConfigurazione.getMessaggiDiagnostici() != null) {
 				newConfigurazione.getMessaggiDiagnostici().setSeverita(Severita.toEnumConstant(severita));
