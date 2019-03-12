@@ -4679,9 +4679,8 @@ public class DriverConfigurazioneDB_LIB {
 					for (i = 0; i < aPA.getServiziApplicativiAutorizzati().sizeServizioApplicativoList(); i++) {
 						PortaApplicativaAutorizzazioneServizioApplicativo servizioApplicativo = aPA.getServiziApplicativiAutorizzati().getServizioApplicativo(i);
 						String nomeSA = servizioApplicativo.getNome();
-						//nome/tipo soggetto proprietario servizio applicativo sono gli stessi della porta applicativa
-						String nomeProprietarioSA = aPA.getNomeSoggettoProprietario();//servizioApplicativo.getNomeSoggettoProprietario();
-						String tipoProprietarioSA = aPA.getTipoSoggettoProprietario();//servizioApplicativo.getTipoSoggettoProprietario();
+						String nomeProprietarioSA = servizioApplicativo.getNomeSoggettoProprietario();
+						String tipoProprietarioSA = servizioApplicativo.getTipoSoggettoProprietario();
 						if (nomeSA == null || nomeSA.equals(""))
 							throw new DriverConfigurazioneException("[CRUDPortaApplicativa(CREATE)[Auth]::Nome del ServizioApplicativo associato non valido.");
 						if (nomeProprietarioSA == null || nomeProprietarioSA.equals(""))
