@@ -1,0 +1,318 @@
+openapi: 3.0.0
+components:
+  parameters:
+  
+    # Selezione Modalita e Soggetto del Dominio
+    
+    profilo:
+      name: profilo
+      in: query
+      description: |-
+            Indica la modalità operativa del Gateway, a scelta tra:
+              * APIGateway;
+              * SPCoop;
+              * FatturaPA;
+              * eDelivery.
+      required: false
+      example: APIGateway
+      schema:
+        $ref: '#/components/schemas/ProfiloEnum'
+    soggetto:
+      name: soggetto
+      in: query
+      description: Indica il Soggetto di dominio interno indirizzato dall'operazione.
+      required: false
+      example: ENTE
+      schema:
+        $ref: '#/components/schemas/SimpleName'
+        
+        
+    # Dati Identificativi nel path
+    
+    id_simple_name:
+      name: nome
+      in: path
+      description: Nome identificativo
+      required: true
+      schema:
+        $ref: '#/components/schemas/SimpleName'
+    id_ncname:
+      name: nome
+      in: path
+      description: Nome identificativo
+      required: true
+      schema:
+        $ref: '#/components/schemas/NCName'
+    id_versione:
+      name: versione
+      in: path
+      description: Versione che insieme al nome rappresente l'identificativo univoco
+      required: true
+      schema:
+         $ref: '#/components/schemas/Versione'
+    id_nome_allegato:
+      name: nome_allegato
+      in: path
+      description: Nome identificativo
+      required: true
+      schema:
+        $ref: '#/components/schemas/NCName'
+    id_nome_risorsa:
+      name: nome_risorsa
+      in: path
+      description: Nome identificativo
+      required: true
+      schema:
+        $ref: '#/components/schemas/NCName'
+    id_nome_servizio:
+      name: nome_servizio
+      in: path
+      description: Nome identificativo
+      required: true
+      schema:
+        $ref: '#/components/schemas/NCName'
+    id_nome_azione:
+      name: nome_azione
+      in: path
+      description: Nome identificativo
+      required: true
+      schema:
+        $ref: '#/components/schemas/NCName'
+    id_erogatore:
+      name: erogatore
+      in: path
+      description: Nome identificativo dell'erogatore
+      required: true
+      schema:
+        $ref: '#/components/schemas/SimpleName'
+    id_nome_gruppo:
+      name: nome_gruppo
+      in: path
+      description: Nome del Gruppo di azioni o risorse
+      required: true
+      schema:
+        type: string
+        maxLength: 255
+     
+        
+    # Dati Identificativi nella query (nella query devono essere opzionali)
+    
+    gruppo:
+      name: gruppo
+      in: query
+      description: Nome del Gruppo di azioni o risorse
+      required: false
+      schema:
+        type: string
+        maxLength: 255       
+    tipo_servizio:
+      name: tipo_servizio
+      in: query
+      description: Indica un tipo del servizio differente da quello di default
+      required: false
+      schema:
+        $ref: '#/components/schemas/Tipo'
+    nome_servizio:
+      name: nome_servizio
+      in: query
+      description: Nome identificativo
+      required: false
+      schema:
+        $ref: '#/components/schemas/NCName'
+    versione_servizio:
+      name: versione_servizio
+      in: query
+      description: Versione che insieme al nome rappresente l'identificativo univoco
+      required: false
+      schema:
+         $ref: '#/components/schemas/Versione'
+    azione:
+      name: azione
+      in: query
+      description: Nome identificativo
+      required: false
+      schema:
+        $ref: '#/components/schemas/NCName'
+
+
+    # Criteri di ricerca obbligatori nella query  
+    
+    data_inizio:
+      in: query
+      name: data_inizio
+      description: data inizio dell'intervallo di ricerca
+      schema:
+        type: string
+        format: date-time
+        example: '2017-07-21T17:32:28Z'
+      required: true
+    data_fine:
+      in: query
+      name: data_fine
+      description: data inizio dell'intervallo di ricerca
+      schema:
+        type: string
+        format: date-time
+        example: '2017-07-21T17:32:28Z'
+      required: true
+      
+      
+    # Criteri di ricerca opzionali nella query
+      
+    ricerca_esatta:
+      in: query
+      name: ricerca_esatta
+      description: Indica se utilizzare o meno un confronto di tipo LIKE per la query
+      schema:
+        type: boolean
+        default: true    
+    case_sensitive:
+      in: query
+      name: case_sensitive
+      schema:
+        type: boolean
+        default: true
+            
+  schemas:
+ 
+    # Base: Tipo di identificativi
+    
+    SimpleName:
+      type: string
+      pattern: ^[0-9A-Za-z]+$
+      maxLength: 255
+      description: Formato solo da caratteri e cifre
+    NCName:
+      type: string
+      pattern: ^[_A-Za-z][\\-\\._A-Za-z0-9]*$
+      maxLength: 255
+      description: Può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'
+    Tipo:
+      type: string
+      maxLength: 20
+      description: Indica un tipo assegnato ad un soggetto o ad un servizio    
+    
+         
+    # Base: Modalita e Soggetto del Dominio
+    
+    BaseItem:
+      type: object
+      required:
+        - profilo
+      properties:
+        profilo:
+          $ref: '#/components/schemas/ProfiloEnum'
+    BaseSoggettoItem:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseItem'
+        - type: object
+          required:
+            - soggetto
+          properties:
+            soggetto: 
+              $ref: '#/components/schemas/SimpleName'
+
+
+    # Base: Versione
+    
+    Versione:
+      type: integer
+      format: int32
+      minimum: 1
+      default: 1
+      example: 1
+
+
+    # Base: Http
+    
+    HttpStatusCode:
+      type: integer
+      format: int32
+      minimum: 100
+      maximum: 599
+      example: 200
+ 
+         
+    # Base: Lista di Oggetti
+    
+    Lista:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ListaSenzaTotale'
+        - type: object
+          required:
+            - total
+          properties:
+            total:
+              description: Number of items matching the filter criteria
+              type: integer
+              format: int64
+              minimum: 0
+            last:
+              description: Link to last result page. Null if you are already on last page.
+              type: string   
+ 
+    ListaSenzaTotale:
+      type: object
+      required:
+        - limit
+        - offset
+      properties:
+        offset:
+          description: The zero-ary offset index into the results
+          type: integer
+          format: int64
+        limit:
+          description: How many items to return at one time
+          type: integer
+          format: int32
+        first:
+          description: Link to first result page. Null if you are already on first page.
+          type: string     
+        next:
+          description: Link to next result page. Null if you are on last page.
+          type: string 
+        prev:
+          description: Link to previous result page. Null if you are on first page.
+          type: string  
+ 
+ 
+    # Base: Filtro Ricerca
+    
+    FiltroRicercaId:
+      type: object
+      required:
+      - id
+      properties:
+        ricerca_esatta:
+          type: boolean
+          default: true
+          example: false
+        case_sensitive:
+          type: boolean
+          default: true
+          example: false
+        id:
+          type: string
+          example: abc123
+  
+          
+    # Base: Enumeration
+    
+    ProfiloEnum:
+      type: string
+      enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+      default: APIGateway
+
+    ProfiloCollaborazioneEnum:
+      type: string
+      enum: ['oneway', 'sincrono', 'asincronoSimmetrico', 'asincronoAsimmetrico']
+      example: 'sincrono'
+
+    HttpMethodEnum:
+      type: string
+      enum: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'TRACE', 'PATCH', 'LINK', 'UNLINK']
+      example: 'POST'
+
+

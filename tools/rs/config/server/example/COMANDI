@@ -13,7 +13,7 @@ ESEMPIO:
 	+ CREATE: 
 ./add applicativi bodies/applicativo.json		
 ./add applicativi bodies/applicativo_https.json	
-./add applicativi bodies/applicativo_https_certificato.json	
+./add applicativi bodies/applicativo_https_certificate.json	
 
 	+ FIND:
 ./get applicativi	

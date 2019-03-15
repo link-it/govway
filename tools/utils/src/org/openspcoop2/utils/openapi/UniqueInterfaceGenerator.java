@@ -39,6 +39,7 @@ import org.openspcoop2.utils.rest.ApiFormats;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.examples.Example;
@@ -117,6 +118,9 @@ public class UniqueInterfaceGenerator {
 			pr = new OpenAPIV3Parser().readContents(config.master, null, parseOptions);
 		}
 		OpenAPI api = AbstractOpenapiApiReader.parseResult(LoggerWrapperFactory.getLogger(UniqueInterfaceGenerator.class), pr);
+		if(api.getComponents()==null) {
+			api.setComponents(new Components());
+		}
 		
 		HashMap<String,String> attachments = config.attachments;
 		Iterator<String> attachmentNames = attachments.keySet().iterator();

@@ -44,13 +44,14 @@ import org.openspcoop2.core.config.rs.server.model.GruppoNome;
 import org.openspcoop2.core.config.rs.server.model.GruppoNuovaConfigurazione;
 import org.openspcoop2.core.config.rs.server.model.ListaGruppi;
 import org.openspcoop2.core.config.rs.server.model.ModalitaConfigurazioneGruppoEnum;
-import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -452,7 +453,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 				throw FaultCode.NOT_FOUND.toException("Nessuna porta associata al servizio: " + idAsps.toString());
 			}
 			
-			ListaGruppi ret = Helper.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset, limit, ricerca.getNumEntries(idLista), ListaGruppi.class);
+			ListaGruppi ret = ListaUtils.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset, limit, ricerca.getNumEntries(idLista), ListaGruppi.class);
 			
 			for (MappingErogazionePortaApplicativa m : mappings) {
 				final PortaApplicativa pd = env.paCore.getPortaApplicativa(m.getIdPortaApplicativa());

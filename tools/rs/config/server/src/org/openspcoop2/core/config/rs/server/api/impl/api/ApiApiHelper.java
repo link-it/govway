@@ -44,7 +44,7 @@ import org.openspcoop2.core.config.rs.server.model.ApiServizio;
 import org.openspcoop2.core.config.rs.server.model.FormatoRestEnum;
 import org.openspcoop2.core.config.rs.server.model.FormatoSoapEnum;
 import org.openspcoop2.core.config.rs.server.model.HttpMethodEnum;
-import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.config.rs.server.model.StatoApiEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoSpecificaSemiformaleEnum;

@@ -61,9 +61,94 @@
 			<param name="swaggerCodeGen.withXmlAnnotations" value="false"/>
 			<param name="swaggerCodeGen.beanValidation" value="true"/>
 			<param name="swaggerCodeGen.useGovwayTemplate" value="true"/>
+			<param name="swaggerCodeGen.deleteOldSrc" value="true"/>
+			<param name="swaggerCodeGen.addGPLDeclaration" value="true"/>
 		</antcall>
+
+		<delete>
+			<fileset dir="${src_govwayConfigApiRS}/org/openspcoop2/core/config/rs/server/model">
+
+				<!-- team -->
+				<include name="Person.java"/>
+				<include name="Money.java"/>
+				<include name="TaxCode.java"/>
+
+				<!-- core -->
+				<include name="HttpStatusCode.java"/>
+				<include name="NCName.java"/>
+				<include name="SimpleName.java"/>
+				<include name="Tipo.java"/>
+				<include name="Versione.java"/>
+				<include name="Lista.java"/>
+				<include name="ListaSenzaTotale.java"/>
+				<include name="FiltroRicercaId.java"/>
+				<include name="BaseItem.java"/>
+				<include name="BaseSoggettoItem.java"/>
+				<!-- <include name="HttpMethodEnum.java"/> Modificato: aggiunto Qualsiasi come valore -->
+				<include name="ProfiloCollaborazioneEnum.java"/>	
+				<include name="ProfiloEnum.java"/>			
+
+				<!-- config -->
+				<include name="StatoApiDescrizione.java"/>
+
+			</fileset>
+		</delete>
+
+                <antcall target="-replacePackage">
+                        <param name="TokenClassName" value="Lista;"/>
+                </antcall>
+ 		<antcall target="-replacePackage">
+                        <param name="TokenClassName" value="ListaSenzaTotale;"/>
+                </antcall>
+		<antcall target="-replacePackage">
+                        <param name="TokenClassName" value="ProfiloEnum;"/>
+                </antcall>
+		<antcall target="-replacePackage">
+                        <param name="TokenClassName" value="ProfiloCollaborazioneEnum;"/>
+                </antcall>
+		<antcall target="-replacePackage">
+                        <param name="TokenClassName" value="BaseItem;"/>
+                </antcall>
+		<antcall target="-replacePackage">
+                        <param name="TokenClassName" value="BaseSoggettoItem;"/>
+                </antcall>
+
+		<antcall target="-replaceChar">
+                        <param name="TokenCode" value="x27"/>
+			<param name="TokenValue" value="'"/>
+                </antcall>
+		<antcall target="-replaceChar">
+                        <param name="TokenCode" value="x3D"/>
+			<param name="TokenValue" value="="/>
+                </antcall>
 
 	</target>
 
+
+	<target name="-replacePackage">
+		<replace dir="${src_govwayConfigApiRS}/org/openspcoop2/core/config/rs/server/model" 
+			token="org.openspcoop2.core.config.rs.server.model.${TokenClassName}" 
+			value="org.openspcoop2.utils.service.beans.${TokenClassName}"
+			includes="*.java"/>
+		<replace dir="${src_govwayConfigApiRS}/org/openspcoop2/core/config/rs/server/api" 
+			token="org.openspcoop2.core.config.rs.server.model.${TokenClassName}" 
+			value="org.openspcoop2.utils.service.beans.${TokenClassName}"
+			includes="*.java"/>	
+		<if>
+			<equals arg1="${overwriteImpl}" arg2="true" />
+			<then>
+				<replace dir="${src_govwayConfigApiRS}/org/openspcoop2/core/config/rs/server/api/impl" 
+					token="org.openspcoop2.core.config.rs.server.model.${TokenClassName}" 
+					value="org.openspcoop2.utils.service.beans.${TokenClassName}"
+					includes="*.java"/>	
+			</then>
+		</if>
+	</target>
+	<target name="-replaceChar">
+		<replace dir="${src_govwayConfigApiRS}/org/openspcoop2/core/config/rs/server/api" 
+			token="&amp;#${TokenCode};" value="${TokenValue}" includes="*.java"/>
+		<replace dir="${src_govwayConfigApiRS}/org/openspcoop2/core/config/rs/server/model"
+			token="&amp;#${TokenCode};" value="${TokenValue}" includes="*.java"/>
+	</target>
 
 </project>

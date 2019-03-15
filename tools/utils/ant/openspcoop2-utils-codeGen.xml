@@ -17,15 +17,79 @@
 
 	<!-- ***** CODICE GENERATO A PARTIRE DAI SORGENTI ************ -->
 	
-	<target name="codegen_for_jaxrs_utils">
+	<target name="codegen_service">
+
+		<!-- NOTA: Solo nel primo si eliminano i vecchi sorgenti -->
 	    	<antcall target="-swagger_codegen_components">
-			<param name="swaggerCodeGen.inputSpec" value="${src_utils}/org/openspcoop2/utils/service/fault/jaxrs/fault.yaml"/>
-			<param name="swaggerCodeGen.package" value="org.openspcoop2.utils.service.fault.jaxrs"/>
-			<param name="swaggerCodeGen.packagePath" value="org/openspcoop2/utils/service/fault/jaxrs"/>
+			<param name="swaggerCodeGen.inputSpec" value="${src_utils}/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml"/>
+			<param name="swaggerCodeGen.package" value="org.openspcoop2.utils.service.beans"/>
+			<param name="swaggerCodeGen.packagePath" value="org/openspcoop2/utils/service/beans"/>
 			<param name="swaggerCodeGen.outputDir" value="${src_utils}"/>
 			<param name="swaggerCodeGen.withXmlAnnotations" value="false"/>
-			<param name="swaggerCodeGen.beanValidation" value="false"/>
+			<param name="swaggerCodeGen.beanValidation" value="true"/>
+			<param name="swaggerCodeGen.useGovwayTemplate" value="false"/> <!-- Senno si va in ricorsione sull'Oggetto Problem -->
+			<param name="swaggerCodeGen.deleteOldSrc" value="true"/>
+			<param name="swaggerCodeGen.addGPLDeclaration" value="true"/>
 		</antcall>
+
+	    	<antcall target="-swagger_codegen_components">
+			<param name="swaggerCodeGen.inputSpec" value="${src_utils}/org/openspcoop2/utils/service/schemi/govway_core.yaml"/>
+			<param name="swaggerCodeGen.package" value="org.openspcoop2.utils.service.beans"/>
+			<param name="swaggerCodeGen.packagePath" value="org/openspcoop2/utils/service/beans"/>
+			<param name="swaggerCodeGen.outputDir" value="${src_utils}"/>
+			<param name="swaggerCodeGen.withXmlAnnotations" value="false"/>
+			<param name="swaggerCodeGen.beanValidation" value="true"/>
+			<param name="swaggerCodeGen.useGovwayTemplate" value="true"/> <!-- Per avere @Valid -->
+			<param name="swaggerCodeGen.deleteOldSrc" value="false"/> <!-- lascio false, senno elimino anche quelli generati dal precedente antcall -->
+			<param name="swaggerCodeGen.addGPLDeclaration" value="true"/>
+		</antcall>
+
+	    	<antcall target="-swagger_codegen_components">
+			<param name="swaggerCodeGen.inputSpec" value="${src_utils}/org/openspcoop2/utils/service/schemi/govway_trace.yaml"/>
+			<param name="swaggerCodeGen.package" value="org.openspcoop2.utils.service.beans"/>
+			<param name="swaggerCodeGen.packagePath" value="org/openspcoop2/utils/service/beans"/>
+			<param name="swaggerCodeGen.outputDir" value="${src_utils}"/>
+			<param name="swaggerCodeGen.withXmlAnnotations" value="true"/> <!-- per avere anche la traccia xml -->
+			<param name="swaggerCodeGen.beanValidation" value="true"/>
+			<param name="swaggerCodeGen.useGovwayTemplate" value="true"/> <!-- Per avere @Valid -->
+			<param name="swaggerCodeGen.deleteOldSrc" value="false"/> <!-- lascio false, senno elimino anche quelli generati dal precedente antcall -->
+			<param name="swaggerCodeGen.addGPLDeclaration" value="true"/>
+			<param name="swaggerCodeGen.refSchemaDir" value="${src_utils}/org/openspcoop2/utils/service/schemi"/>
+		</antcall>
+
+	    	<antcall target="-swagger_codegen_components">
+			<param name="swaggerCodeGen.inputSpec" value="${src_utils}/org/openspcoop2/utils/service/schemi/govway_trace-ext.yaml"/>
+			<param name="swaggerCodeGen.package" value="org.openspcoop2.utils.service.beans"/>
+			<param name="swaggerCodeGen.packagePath" value="org/openspcoop2/utils/service/beans"/>
+			<param name="swaggerCodeGen.outputDir" value="${src_utils}"/>
+			<param name="swaggerCodeGen.withXmlAnnotations" value="true"/> <!-- per avere anche la traccia xml -->
+			<param name="swaggerCodeGen.beanValidation" value="true"/>
+			<param name="swaggerCodeGen.useGovwayTemplate" value="true"/> <!-- Per avere @Valid -->
+			<param name="swaggerCodeGen.deleteOldSrc" value="false"/> <!-- lascio false, senno elimino anche quelli generati dal precedente antcall -->
+			<param name="swaggerCodeGen.addGPLDeclaration" value="true"/>
+			<param name="swaggerCodeGen.refSchemaDir" value="${src_utils}/org/openspcoop2/utils/service/schemi"/>
+		</antcall>
+
+		<delete>
+			<fileset dir="${src_utils}/org/openspcoop2/utils/service/beans">
+
+				<!-- team -->
+				<include name="Person.java"/>
+				<include name="Money.java"/>
+				<include name="TaxCode.java"/>
+
+				<!-- core -->
+				<include name="HttpStatusCode.java"/>
+				<include name="NCName.java"/>
+				<include name="SimpleName.java"/>
+				<include name="Tipo.java"/>
+				<include name="Versione.java"/>
+
+				<!-- trace -->
+				<include name="TransazioneId.java"/>
+
+			</fileset>
+		</delete>
 
 	</target>
 

@@ -6787,26 +6787,43 @@ components:
       format: "int32"
       example: 1
       default: 1
+    HttpStatusCode:
+      maximum: 599
+      minimum: 100
+      type: "integer"
+      format: "int32"
+      example: 200
     Lista:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ListaSenzaTotale"
+      - required:
+        - "total"
+        type: "object"
+        properties:
+          total:
+            minimum: 0
+            type: "integer"
+            description: "Number of items matching the filter criteria"
+            format: "int64"
+          last:
+            type: "string"
+            description: "Link to last result page. Null if you are already on last\
+              \ page."
+    ListaSenzaTotale:
       required:
       - "limit"
       - "offset"
-      - "total"
       type: "object"
       properties:
-        limit:
-          type: "integer"
-          description: "How many items to return at one time"
-          format: "int32"
         offset:
           type: "integer"
           description: "The zero-ary offset index into the results"
           format: "int64"
-        total:
-          minimum: 0
+        limit:
           type: "integer"
-          description: "Number of items matching the filter criteria"
-          format: "int64"
+          description: "How many items to return at one time"
+          format: "int32"
         first:
           type: "string"
           description: "Link to first result page. Null if you are already on first\
@@ -6817,18 +6834,28 @@ components:
         prev:
           type: "string"
           description: "Link to previous result page. Null if you are on first page."
-        last:
+    FiltroRicercaId:
+      required:
+      - "id"
+      type: "object"
+      properties:
+        ricerca_esatta:
+          type: "boolean"
+          default: true
+        case_sensitive:
+          type: "boolean"
+          default: true
+        id:
           type: "string"
-          description: "Link to last result page. Null if you are already on last\
-            \ page."
+          example: "abc123"
     ProfiloEnum:
       type: "string"
+      default: "APIGateway"
       enum:
       - "APIGateway"
       - "SPCoop"
       - "FatturaPA"
       - "eDelivery"
-      default: "APIGateway"
     ProfiloCollaborazioneEnum:
       type: "string"
       example: "sincrono"
@@ -6837,6 +6864,21 @@ components:
       - "sincrono"
       - "asincronoSimmetrico"
       - "asincronoAsimmetrico"
+    HttpMethodEnum:
+      type: "string"
+      example: "POST"
+      enum:
+      - "Qualsiasi"
+      - "GET"
+      - "POST"
+      - "PUT"
+      - "DELETE"
+      - "OPTIONS"
+      - "HEAD"
+      - "TRACE"
+      - "PATCH"
+      - "LINK"
+      - "UNLINK"
     StatoApiDescrizione:
       type: "string"
       example: "Nessuna risorsa definita nella API"
@@ -8195,16 +8237,16 @@ components:
           type: "boolean"
     FormatoSoapEnum:
       type: "string"
+      default: "Wsdl1.1"
       enum:
       - "Wsdl1.1"
-      default: "Wsdl1.1"
     FormatoRestEnum:
       type: "string"
+      default: "OpenApi3.0"
       enum:
       - "Wadl"
       - "Swagger2.0"
       - "OpenApi3.0"
-      default: "OpenApi3.0"
     TipoApiEnum:
       type: "string"
       example: "rest"
@@ -8233,35 +8275,35 @@ components:
     ContestoEnum:
       type: "string"
       example: "qualsiasi"
+      default: "qualsiasi"
       enum:
       - "qualsiasi"
       - "erogazione"
       - "fruizione"
-      default: "qualsiasi"
     FonteEnum:
       type: "string"
       example: "qualsiasi"
+      default: "qualsiasi"
       enum:
       - "qualsiasi"
       - "registro"
       - "esterna"
-      default: "qualsiasi"
     RuoloAllegatoAPI:
       type: "string"
       example: "specificaSemiFormale"
+      default: "allegato"
       enum:
       - "allegato"
       - "specificaSemiFormale"
-      default: "allegato"
     RuoloAllegatoAPIImpl:
       type: "string"
       example: "specificaSemiFormale"
+      default: "allegato"
       enum:
       - "allegato"
       - "specificaSemiFormale"
       - "specificaSicurezza"
       - "specificaLivelloServizio"
-      default: "allegato"
     TipoSpecificaSemiformaleEnum:
       type: "string"
       example: "XML"
@@ -8286,31 +8328,16 @@ components:
       enum:
       - "WS-Agreement"
       - "WSLA"
-    HttpMethodEnum:
-      type: "string"
-      example: "POST"
-      enum:
-      - "Qualsiasi"
-      - "GET"
-      - "POST"
-      - "PUT"
-      - "DELETE"
-      - "OPTIONS"
-      - "HEAD"
-      - "TRACE"
-      - "PATCH"
-      - "LINK"
-      - "UNLINK"
     SslTipologiaEnum:
       type: "string"
       example: "TLSv1.2"
+      default: "TLSv1.2"
       enum:
       - "SSLv2Hello"
       - "SSLv3"
       - "TLSv1"
       - "TLSv1.1"
       - "TLSv1.2"
-      default: "TLSv1.2"
     KeystoreEnum:
       type: "string"
       example: "jks"
@@ -8369,10 +8396,10 @@ components:
     AllAnyEnum:
       type: "string"
       example: "all"
+      default: "all"
       enum:
       - "all"
       - "any"
-      default: "all"
     ModalitaIdentificazioneAzioneEnum:
       type: "string"
       example: "interface-based"
@@ -8622,9 +8649,7 @@ components:
       description: "Versione che insieme al nome rappresente l'identificativo univoco"
       required: true
       schema:
-        minimum: 1
-        type: "integer"
-        format: "int32"
+        $ref: "#/components/schemas/Versione"
     id_nome_allegato:
       name: "nome_allegato"
       in: "path"
@@ -8683,6 +8708,59 @@ components:
       required: false
       schema:
         $ref: "#/components/schemas/Tipo"
+    nome_servizio:
+      name: "nome_servizio"
+      in: "query"
+      description: "Nome identificativo"
+      required: false
+      schema:
+        $ref: "#/components/schemas/NCName"
+    versione_servizio:
+      name: "versione_servizio"
+      in: "query"
+      description: "Versione che insieme al nome rappresente l'identificativo univoco"
+      required: false
+      schema:
+        $ref: "#/components/schemas/Versione"
+    azione:
+      name: "azione"
+      in: "query"
+      description: "Identifica un azione o risorsa"
+      required: false
+      schema:
+        $ref: "#/components/schemas/NCName"
+      example: "Azione1"
+    data_inizio:
+      name: "data_inizio"
+      in: "query"
+      description: "data inizio dell'intervallo di ricerca"
+      required: true
+      schema:
+        type: "string"
+        format: "date-time"
+    data_fine:
+      name: "data_fine"
+      in: "query"
+      description: "data inizio dell'intervallo di ricerca"
+      required: true
+      schema:
+        type: "string"
+        format: "date-time"
+    ricerca_esatta:
+      name: "ricerca_esatta"
+      in: "query"
+      description: "Indica se utilizzare o meno un confronto di tipo LIKE per la query"
+      required: false
+      schema:
+        type: "boolean"
+        default: true
+    case_sensitive:
+      name: "case_sensitive"
+      in: "query"
+      required: false
+      schema:
+        type: "boolean"
+        default: true
     id_soggetto_autorizzato:
       name: "soggetto_autorizzato"
       in: "path"
@@ -8775,14 +8853,6 @@ components:
       schema:
         $ref: "#/components/schemas/HttpMethodEnum"
       example: "PUT"
-    azione:
-      name: "azione"
-      in: "query"
-      description: "Identifica un azione o risorsa"
-      required: false
-      schema:
-        $ref: "#/components/schemas/NCName"
-      example: "Azione1"
     Etag:
       name: "Etag"
       in: "header"

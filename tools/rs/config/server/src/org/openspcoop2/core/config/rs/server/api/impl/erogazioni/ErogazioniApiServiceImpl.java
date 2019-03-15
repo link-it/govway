@@ -56,7 +56,7 @@ import org.openspcoop2.core.config.rs.server.model.ErogazioneViewItem;
 import org.openspcoop2.core.config.rs.server.model.ListaApiImplAllegati;
 import org.openspcoop2.core.config.rs.server.model.ListaErogazioni;
 import org.openspcoop2.core.config.rs.server.model.ModalitaIdentificazioneAzioneEnum;
-import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -70,6 +70,7 @@ import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -357,7 +358,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 				throw FaultCode.NOT_FOUND.toException("Nessuna erogazione presente");
 			}
 			
-			final ListaErogazioni ret = Helper.costruisciListaPaginata(
+			final ListaErogazioni ret = ListaUtils.costruisciListaPaginata(
 					context.getServletRequest().getRequestURI(), 
 					offset, 
 					limit, 

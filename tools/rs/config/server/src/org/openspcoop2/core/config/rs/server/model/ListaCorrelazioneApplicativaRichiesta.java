@@ -24,7 +24,7 @@ package org.openspcoop2.core.config.rs.server.model;
 import java.util.ArrayList;
 import java.util.List;
 import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRichiestaItem;
-import org.openspcoop2.core.config.rs.server.model.Lista;
+import org.openspcoop2.utils.service.beans.Lista;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

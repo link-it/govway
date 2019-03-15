@@ -35,7 +35,7 @@ public class ApiImplConfigurazioneStato  {
   **/
   private Boolean ridefinito = true;
  /**
-   * funzionalità non supportata al momento, indicare sempre &#x27;true&#x27;.
+   * funzionalità non supportata al momento, indicare sempre 'true'.
    * @return ridefinito
   **/
   @JsonProperty("ridefinito")

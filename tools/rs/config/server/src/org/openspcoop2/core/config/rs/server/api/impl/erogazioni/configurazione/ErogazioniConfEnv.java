@@ -28,7 +28,7 @@ import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniEnv;
-import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.utils.service.context.IContext;

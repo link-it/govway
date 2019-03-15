@@ -32,13 +32,14 @@ import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.Applicativo;
 import org.openspcoop2.core.config.rs.server.model.ListaApplicativi;
-import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -217,7 +218,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 							
 			List<ServizioApplicativo> saLista = env.saCore.soggettiServizioApplicativoList(null, ricerca);
 			
-			final ListaApplicativi ret = Helper.costruisciListaPaginata(
+			final ListaApplicativi ret = ListaUtils.costruisciListaPaginata(
 					context.getServletRequest().getRequestURI(),
 					offset, 
 					limit, 

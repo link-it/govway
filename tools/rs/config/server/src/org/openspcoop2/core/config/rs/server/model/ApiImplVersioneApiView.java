@@ -23,7 +23,7 @@ package org.openspcoop2.core.config.rs.server.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.openspcoop2.core.config.rs.server.model.BaseSoggettoItem;
+import org.openspcoop2.utils.service.beans.BaseSoggettoItem;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

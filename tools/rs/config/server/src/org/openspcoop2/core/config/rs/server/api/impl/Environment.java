@@ -24,7 +24,7 @@ package org.openspcoop2.core.config.rs.server.api.impl;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
-import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;

@@ -25,88 +25,83 @@
 		<replace file="${configSwagger}" token="WITHXMLOPTION" value="${swaggerCodeGen.withXmlAnnotations}"/>
 		<replace file="${configSwagger}" token="BEANVALIDATION" value="${swaggerCodeGen.beanValidation}"/>
 
-		<!-- template custom -->
-		<var name="propTemplateKey" value=""/>
-		<var name="propTemplateValue" value=""/>
+		<!-- Per inserire nel classpath  gli schemi riferiti -->
 		<if>
-			<istrue value="${swaggerCodeGen.useGovwayTemplate}" />
+			<not>
+				<equals arg1="${swaggerCodeGen.refSchemaDir}" arg2="$${swaggerCodeGen.refSchemaDir}"/>
+			</not>
 			<then>
-				<java jar="${required_lib}/swagger-codegen/swagger-codegen-cli-3.0.4-gov4j-2.jar" fork="true">
-					<arg value="generate" />
-					<arg value="--input-spec" />
-					<arg value="${swaggerCodeGen.inputSpec}" />
-					<arg value="--lang" />
-					<arg value="jaxrs-cxf" />
-					<arg value="--api-package" />
-					<arg value="${swaggerCodeGen.package}.api" />
-					<arg value="--model-package" />
-					<arg value="${swaggerCodeGen.package}.model" />
-					<!--
-					Non funziona (aggiungere un - se si scommenta)
-					<arg value="-invoker-package" />
-					<arg value="${swaggerCodeGen.package}.impl" />
-					-->
-					<arg value="--output" />
-					<arg value="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN" />
-					<arg value="--config" />
-					<arg value="${configSwagger}" />
-					<classpath>
-		<!--
-						<pathelement path="${required_lib}/swagger/*.jar"/>
-		-->
-					</classpath>
-				</java>
-			</then>
-			<else>
-				<java jar="${required_lib}/swagger-codegen/swagger-codegen-cli-3.0.4.jar" fork="true">
-					<arg value="generate" />
-					<arg value="--input-spec" />
-					<arg value="${swaggerCodeGen.inputSpec}" />
-					<arg value="--lang" />
-					<arg value="jaxrs-cxf" />
-					<arg value="--api-package" />
-					<arg value="${swaggerCodeGen.package}.api" />
-					<arg value="--model-package" />
-					<arg value="${swaggerCodeGen.package}.model" />
-					<!--
-					Non funziona (aggiungere un - se si scommenta)
-					<arg value="-invoker-package" />
-					<arg value="${swaggerCodeGen.package}.impl" />
-					-->
-					<arg value="--output" />
-					<arg value="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN" />
-					<arg value="--config" />
-					<arg value="${configSwagger}" />
-					<classpath>
-		<!--
-						<pathelement path="${required_lib}/swagger/*.jar"/>
-		-->
-					</classpath>
-				</java>
-			</else>
-		</if>
-			
-		<delete failonerror="false">
-			<fileset dir="${src_govwayMonitorApiRS}/${swaggerCodeGen.packagePath}/api">
-				<include name="*.java"/>
-			</fileset>
-		</delete>
-		<delete failonerror="false">
-			<fileset dir="${src_govwayMonitorApiRS}/${swaggerCodeGen.packagePath}/model">
-				<include name="*.java"/>
-			</fileset>
-		</delete>
-		<if>
-			<istrue value="${swaggerCodeGen.writeImpl}" />
-			<then>
-				<delete failonerror="false">
-					<fileset dir="${src_govwayMonitorApiRS}/${swaggerCodeGen.packagePath}/api/impl">
-						<include name="*.java"/>
+				<copy todir="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN">
+					<fileset dir="${swaggerCodeGen.refSchemaDir}">
+						<include name="*.yaml"/>
+						<include name="*.json"/>
 					</fileset>
-				</delete>
+				</copy>
 			</then>
 		</if>
 
+		<!-- Generazione -->
+		<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.4.jar"/>
+		<if>
+			<istrue value="${swaggerCodeGen.useGovwayTemplate}" />
+			<then>
+				<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.4-gov4j-2.jar"/>	
+			</then>
+		</if>
+		<java jar="${required_lib}/swagger-codegen/${swaggerCodeGenCliJarName}" fork="true">
+			<arg value="generate" />
+			<arg value="--input-spec" />
+			<arg value="${swaggerCodeGen.inputSpec}" />
+			<arg value="--lang" />
+			<arg value="jaxrs-cxf" />
+			<arg value="--api-package" />
+			<arg value="${swaggerCodeGen.package}.api" />
+			<arg value="--model-package" />
+			<arg value="${swaggerCodeGen.package}.model" />
+			<!--
+			Non funziona (aggiungere un - se si scommenta)
+			<arg value="-invoker-package" />
+			<arg value="${swaggerCodeGen.package}.impl" />
+			-->
+			<arg value="--output" />
+			<arg value="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN" />
+			<arg value="--config" />
+			<arg value="${configSwagger}" />
+			<classpath>
+				<!--
+					<pathelement path="${required_lib}/swagger/*.jar"/>
+				-->
+			</classpath>
+		</java>
+		
+		<!-- Pulizia vecchi sorgenti -->	
+		<if>
+			<istrue value="${swaggerCodeGen.deleteOldSrc}" />
+			<then>
+				<delete failonerror="false">
+					<fileset dir="${swaggerCodeGen.outputDir}/${swaggerCodeGen.packagePath}/api">
+						<include name="*.java"/>
+					</fileset>
+				</delete>
+				<delete failonerror="false">
+					<fileset dir="${swaggerCodeGen.outputDir}/${swaggerCodeGen.packagePath}/model">
+						<include name="*.java"/>
+					</fileset>
+				</delete>
+				<if>
+					<istrue value="${swaggerCodeGen.writeImpl}" />
+					<then>
+						<delete failonerror="false">
+							<fileset dir="${swaggerCodeGen.outputDir}/${swaggerCodeGen.packagePath}/api/impl">
+								<include name="*.java"/>
+							</fileset>
+						</delete>
+					</then>
+				</if>
+			</then>
+		</if>
+
+		<!-- Copia nuovi sorgenti generati -->	
 		<copy todir="${swaggerCodeGen.outputDir}">
 			<fileset dir="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN/src/gen/java">
 				<include name="**/*.java"/>
@@ -122,8 +117,40 @@
 				</copy>
 			</then>
 		</if>
-
 		<delete dir="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN"/>
+
+		<!-- Aggiunta GPL ai nuovi sorgenti generati -->	
+		<if>
+			<istrue value="${swaggerCodeGen.addGPLDeclaration}" />
+			<then>
+				<java classname="GPLWriter" fork="false">
+					<arg value="${swaggerCodeGen.outputDir}/${swaggerCodeGen.packagePath}/api" />
+					<arg value="1"/>
+					<classpath>
+						<pathelement path="${openspcoop2}/distrib/check/"/>
+					</classpath>
+				</java>
+				<java classname="GPLWriter" fork="false">
+					<arg value="${swaggerCodeGen.outputDir}/${swaggerCodeGen.packagePath}/model" />
+					<arg value="1"/>
+					<classpath>
+						<pathelement path="${openspcoop2}/distrib/check/"/>
+					</classpath>
+				</java>
+				<if>
+					<istrue value="${swaggerCodeGen.writeImpl}" />
+					<then>
+						<java classname="GPLWriter" fork="false">
+							<arg value="${swaggerCodeGen.outputDir}/${swaggerCodeGen.packagePath}/api/impl" />
+							<arg value="1"/>
+							<classpath>
+								<pathelement path="${openspcoop2}/distrib/check/"/>
+							</classpath>
+						</java>
+					</then>
+				</if>
+			</then>
+		</if>
 
 	</target>
 
@@ -170,8 +197,30 @@ paths:
 			</path>
 		</concat>
 
+		<!-- Per inserire nel classpath  gli schemi riferiti -->
+		<if>
+			<not>
+				<equals arg1="${swaggerCodeGen.refSchemaDir}" arg2="$${swaggerCodeGen.refSchemaDir}"/>
+			</not>
+			<then>
+				<copy todir="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN">
+					<fileset dir="${swaggerCodeGen.refSchemaDir}">
+						<include name="*.yaml"/>
+						<include name="*.json"/>
+					</fileset>
+				</copy>
+			</then>
+		</if>
+
 		<!-- Generazione -->
-		<java jar="${required_lib}/swagger-codegen/swagger-codegen-cli-3.0.4.jar" fork="true">
+		<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.4.jar"/>
+		<if>
+			<istrue value="${swaggerCodeGen.useGovwayTemplate}" />
+			<then>
+				<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.4-gov4j-2.jar"/>	
+			</then>
+		</if>
+		<java jar="${required_lib}/swagger-codegen/${swaggerCodeGenCliJarName}" fork="true">
 			<arg value="generate" />
 			<arg value="--input-spec" />
 			<arg value="${swagger}" />
@@ -191,25 +240,46 @@ paths:
 			<arg value="--config" />
 			<arg value="${configSwagger}" />
 			<classpath>
-<!--
-				<pathelement path="${required_lib}/swagger/*.jar"/>
--->
+				<!--
+					<pathelement path="${required_lib}/swagger/*.jar"/>
+				-->
 			</classpath>
 		</java>
 
-		<delete failonerror="false">
-			<fileset dir="${src_govwayMonitorApiRS}/${swaggerCodeGen.packagePath}">
-				<include name="*.java"/>
-			</fileset>
-		</delete>
+		<!-- Pulizia vecchi sorgenti -->		
+		<if>
+			<istrue value="${swaggerCodeGen.deleteOldSrc}" />
+			<then>
+				<delete failonerror="false">
+					<fileset dir="${swaggerCodeGen.outputDir}/${swaggerCodeGen.packagePath}">
+						<include name="*.java"/>
+					</fileset>
+				</delete>
+			</then>
+		</if>
+
+		<!-- Copia nuovi sorgenti generati -->
 		<copy todir="${swaggerCodeGen.outputDir}">
 			<fileset dir="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN/src/gen/java">
 				<exclude name="**/TMPapiTMP/**"/>
 				<exclude name="**/TMPapiTMP"/>
 			</fileset>
 		</copy>
-
 		<delete dir="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN"/>
+
+		<!-- Aggiunta GPL ai nuovi sorgenti generati -->
+		<if>
+			<istrue value="${swaggerCodeGen.addGPLDeclaration}" />
+			<then>
+				<java classname="GPLWriter" fork="false">
+					<arg value="${swaggerCodeGen.outputDir}/${swaggerCodeGen.packagePath}" />
+					<arg value="1"/>
+					<classpath>
+						<pathelement path="${openspcoop2}/distrib/check/"/>
+					</classpath>
+				</java>
+			</then>
+		</if>
 
 	</target>
 	

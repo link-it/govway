@@ -197,6 +197,8 @@ public final class ConfigurazioneSistemaAdd extends Action {
 					Vector<DataElement> dati = new Vector<DataElement>();
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 					
+					pd.setLabelBottoneInvia(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME_ACCEDI);
+					
 					dati = confHelper.addConfigurazioneSistemaSelectListNodiCluster(dati);
 					
 					pd.setDati(dati);

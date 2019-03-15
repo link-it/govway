@@ -53,7 +53,7 @@ import org.openspcoop2.core.config.rs.server.model.FruizioneViewItem;
 import org.openspcoop2.core.config.rs.server.model.ListaApiImplAllegati;
 import org.openspcoop2.core.config.rs.server.model.ListaFruizioni;
 import org.openspcoop2.core.config.rs.server.model.ModalitaIdentificazioneAzioneEnum;
-import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -73,6 +73,7 @@ import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -372,7 +373,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 				throw FaultCode.NOT_FOUND.toException("Nessuna fruizione presente nel registro");
 			}
 			
-			final ListaFruizioni ret = Helper.costruisciListaPaginata(
+			final ListaFruizioni ret = ListaUtils.costruisciListaPaginata(
 					context.getServletRequest().getRequestURI(), 
 					offset, 
 					limit, 

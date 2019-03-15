@@ -83,7 +83,7 @@ import org.openspcoop2.core.config.rs.server.model.GestioneCors;
 import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRichiesta;
 import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.rs.server.model.ListaRateLimitingPolicy;
-import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBaseFruizione;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneNew;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneView;
@@ -109,6 +109,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -900,7 +901,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting associata");
 			}
 			
-			ListaRateLimitingPolicy ret = Helper.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset, limit, ricerca.getNumEntries(idLista), ListaRateLimitingPolicy.class);
+			ListaRateLimitingPolicy ret = ListaUtils.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset, limit, ricerca.getNumEntries(idLista), ListaRateLimitingPolicy.class);
 			
 			policies.forEach( p -> {
 				RateLimitingPolicyItem item = new RateLimitingPolicyItem();
@@ -950,7 +951,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting associata");
 			}
 			
-			ListaCorrelazioneApplicativaRichiesta ret = Helper.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset, limit, ricerca.getNumEntries(idLista), ListaCorrelazioneApplicativaRichiesta.class);
+			ListaCorrelazioneApplicativaRichiesta ret = ListaUtils.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset, limit, ricerca.getNumEntries(idLista), ListaCorrelazioneApplicativaRichiesta.class);
 			
 			lista.forEach( c -> {
 				CorrelazioneApplicativaRichiestaItem item = new CorrelazioneApplicativaRichiestaItem();
@@ -1005,7 +1006,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting associata");
 			}
 			
-			ListaCorrelazioneApplicativaRisposta ret = Helper.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset, limit, ricerca.getNumEntries(idLista), ListaCorrelazioneApplicativaRisposta.class);
+			ListaCorrelazioneApplicativaRisposta ret = ListaUtils.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset, limit, ricerca.getNumEntries(idLista), ListaCorrelazioneApplicativaRisposta.class);
 			
 			lista.forEach( c -> {
 				CorrelazioneApplicativaRispostaItem item = new CorrelazioneApplicativaRispostaItem();

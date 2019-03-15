@@ -52,7 +52,7 @@ import org.openspcoop2.core.config.rs.server.model.ListaApiAllegati;
 import org.openspcoop2.core.config.rs.server.model.ListaApiAzioni;
 import org.openspcoop2.core.config.rs.server.model.ListaApiRisorse;
 import org.openspcoop2.core.config.rs.server.model.ListaApiServizi;
-import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.config.rs.server.model.RuoloAllegatoAPI;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.config.rs.server.utils.WrapperFormFile;
@@ -74,6 +74,7 @@ import org.openspcoop2.protocol.basic.archive.APIUtils;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -877,7 +878,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			
 			final String tipoAccordo = "apc"; // Dal debug.
 			final List<AccordoServizioParteComune> lista = AccordiServizioParteComuneUtilities.accordiList(env.apcCore, env.userLogin, ricerca, tipoAccordo);
-			final ListaApi ret = Helper.costruisciListaPaginata(
+			final ListaApi ret = ListaUtils.costruisciListaPaginata(
 					context.getServletRequest().getRequestURI(),
 					offset, 
 					limit, 
@@ -935,7 +936,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if ( docsRegistro.size() == 0 && env.findall_404 )
 				throw FaultCode.NOT_FOUND.toException("Nessun allegato dell'Api specificata corrisponde ai criteri di ricerca");
 			
-			final ListaApiAllegati ret = Helper.costruisciListaPaginata(
+			final ListaApiAllegati ret = ListaUtils.costruisciListaPaginata(
 					context.getServletRequest().getRequestURI(),
 					offset, 
 					limit, 
@@ -997,7 +998,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if ( azioniServizio.size() == 0 && env.findall_404 )
 				throw FaultCode.NOT_FOUND.toException("Nessua azione dell'Api specificata corrisponde ai criteri di ricerca");
 			
-			final ListaApiAzioni ret = Helper.costruisciListaPaginata(
+			final ListaApiAzioni ret = ListaUtils.costruisciListaPaginata(
 					context.getServletRequest().getRequestURI(),
 					offset, 
 					limit, 
@@ -1050,7 +1051,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if (httpMethod != null)
 				ricerca.addFilter(idLista, Filtri.FILTRO_HTTP_METHOD, httpMethod.toString());
 			
-			final ListaApiRisorse ret = Helper.costruisciListaPaginata(
+			final ListaApiRisorse ret = ListaUtils.costruisciListaPaginata(
 					context.getServletRequest().getRequestURI(),
 					offset, 
 					limit, 
@@ -1105,7 +1106,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 		
 			List<PortType> servizi = env.apcCore.accordiPorttypeList(as.getId().intValue(), ricerca);
 			
-			final ListaApiServizi ret = Helper.costruisciListaPaginata(
+			final ListaApiServizi ret = ListaUtils.costruisciListaPaginata(
 					context.getServletRequest().getRequestURI(),
 					offset, 
 					limit, 

@@ -106,7 +106,8 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/testsuite" >
-			<include name="*.jar"/>
+			<include name="jcommander-1.72.jar"/>
+			<include name="testng-6.14.3.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/axis14" >
 			<include name="*.jar"/>

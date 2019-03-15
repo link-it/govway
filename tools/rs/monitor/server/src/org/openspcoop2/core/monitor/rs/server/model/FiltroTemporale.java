@@ -1,3 +1,24 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.joda.time.DateTime;
@@ -8,45 +29,45 @@ import javax.validation.Valid;
 public class FiltroTemporale  {
   
   @Schema(description = "")
-  private DateTime dataDa = null;
+  private DateTime dataInizio = null;
   
   @Schema(description = "")
-  private DateTime dataA = null;
+  private DateTime dataFine = null;
  /**
-   * Get dataDa
-   * @return dataDa
+   * Get dataInizio
+   * @return dataInizio
   **/
-  @JsonProperty("dataDa")
+  @JsonProperty("data_inizio")
   @Valid
-  public DateTime getDataDa() {
-    return this.dataDa;
+  public DateTime getDataInizio() {
+    return this.dataInizio;
   }
 
-  public void setDataDa(DateTime dataDa) {
-    this.dataDa = dataDa;
+  public void setDataInizio(DateTime dataInizio) {
+    this.dataInizio = dataInizio;
   }
 
-  public FiltroTemporale dataDa(DateTime dataDa) {
-    this.dataDa = dataDa;
+  public FiltroTemporale dataInizio(DateTime dataInizio) {
+    this.dataInizio = dataInizio;
     return this;
   }
 
  /**
-   * Get dataA
-   * @return dataA
+   * Get dataFine
+   * @return dataFine
   **/
-  @JsonProperty("dataA")
+  @JsonProperty("data_fine")
   @Valid
-  public DateTime getDataA() {
-    return this.dataA;
+  public DateTime getDataFine() {
+    return this.dataFine;
   }
 
-  public void setDataA(DateTime dataA) {
-    this.dataA = dataA;
+  public void setDataFine(DateTime dataFine) {
+    this.dataFine = dataFine;
   }
 
-  public FiltroTemporale dataA(DateTime dataA) {
-    this.dataA = dataA;
+  public FiltroTemporale dataFine(DateTime dataFine) {
+    this.dataFine = dataFine;
     return this;
   }
 
@@ -56,8 +77,8 @@ public class FiltroTemporale  {
     StringBuilder sb = new StringBuilder();
     sb.append("class FiltroTemporale {\n");
     
-    sb.append("    dataDa: ").append(FiltroTemporale.toIndentedString(this.dataDa)).append("\n");
-    sb.append("    dataA: ").append(FiltroTemporale.toIndentedString(this.dataA)).append("\n");
+    sb.append("    dataInizio: ").append(FiltroTemporale.toIndentedString(this.dataInizio)).append("\n");
+    sb.append("    dataFine: ").append(FiltroTemporale.toIndentedString(this.dataFine)).append("\n");
     sb.append("}");
     return sb.toString();
   }

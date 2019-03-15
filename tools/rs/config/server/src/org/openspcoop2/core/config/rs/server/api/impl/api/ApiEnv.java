@@ -23,7 +23,7 @@ package org.openspcoop2.core.config.rs.server.api.impl.api;
 
 import org.openspcoop2.core.config.rs.server.api.impl.Environment;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
-import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;

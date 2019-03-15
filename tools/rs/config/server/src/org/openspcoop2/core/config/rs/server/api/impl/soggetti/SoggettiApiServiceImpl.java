@@ -31,12 +31,13 @@ import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.DominioEnum;
 import org.openspcoop2.core.config.rs.server.model.ListaSoggetti;
-import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.config.rs.server.model.Soggetto;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -224,7 +225,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			if ( soggetti.size() == 0 && env.findall_404 )
 				throw FaultCode.NOT_FOUND.toException("Nessun soggetto corrisponde ai criteri di ricerca specificati");
 			
-			final ListaSoggetti ret = Helper.costruisciListaPaginata(
+			final ListaSoggetti ret = ListaUtils.costruisciListaPaginata(
 					context.getServletRequest().getRequestURI(),
 					offset, 
 					limit, 

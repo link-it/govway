@@ -57,7 +57,7 @@ public class ControlloAccessiAutenticazioneToken  {
   **/
   private Boolean email = false;
  /**
-   * indica se nel token deve essere obbligatoriamente presente l&#x27;issuer
+   * indica se nel token deve essere obbligatoriamente presente l'issuer
    * @return issuer
   **/
   @JsonProperty("issuer")
@@ -76,7 +76,7 @@ public class ControlloAccessiAutenticazioneToken  {
   }
 
  /**
-   * indica se nel token deve essere obbligatoriamente presente l&#x27;identificativo dell&#x27;applicazione
+   * indica se nel token deve essere obbligatoriamente presente l'identificativo dell'applicazione
    * @return clientId
   **/
   @JsonProperty("client_id")
@@ -114,7 +114,7 @@ public class ControlloAccessiAutenticazioneToken  {
   }
 
  /**
-   * indica se nel token deve essere obbligatoriamente presente l&#x27;utente (identificativo utente &#x27;human-readable&#x27;)
+   * indica se nel token deve essere obbligatoriamente presente l'utente (identificativo utente 'human-readable')
    * @return username
   **/
   @JsonProperty("username")
@@ -133,7 +133,7 @@ public class ControlloAccessiAutenticazioneToken  {
   }
 
  /**
-   * indica se nel token deve essere obbligatoriamente presente l&#x27;email dell&#x27;utente
+   * indica se nel token deve essere obbligatoriamente presente l'email dell'utente
    * @return email
   **/
   @JsonProperty("email")

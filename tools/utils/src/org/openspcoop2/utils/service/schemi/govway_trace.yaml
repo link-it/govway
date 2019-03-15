@@ -1,0 +1,211 @@
+openapi: 3.0.0
+components:
+  schemas:
+
+    TransazioneBase:
+      type: object
+      required:
+        - emittente
+        - data_emissione
+        - id_traccia
+        - ruolo
+        - esito
+      properties:
+        emittente:
+          $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+        data_emissione:
+          type: string
+          format: date-time 
+        id_traccia:
+          $ref: '#/components/schemas/TransazioneId'
+        id_conversazione:
+          type: string
+          example: eba4355e-403f-4e75-8d56-0751710409c2
+        ruolo:
+          $ref: '#/components/schemas/TransazioneRuoloEnum'
+        esito:
+          $ref: '#/components/schemas/TransazioneEsito'
+  
+    Transazione:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TransazioneBase'
+        - type: object
+          properties:
+            richiesta:
+              $ref: '#/components/schemas/TransazioneDettaglioRichiesta'
+            risposta:
+              $ref: '#/components/schemas/TransazioneDettaglioRisposta'
+            api:
+              $ref: '#/components/schemas/TransazioneInformazioniApi'
+            mittente:
+              $ref: '#/components/schemas/TransazioneInformazioniMittente'
+          
+          
+    # Dettaglio
+    
+    TransazioneDettaglioRichiesta:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TransazioneDettaglioMessaggio'
+        - $ref: '#/components/schemas/TransazioneDettaglioRichiestaDatiTrasporto'
+        - $ref: '#/components/schemas/TransazioneDettaglioMessaggioContenuti'
+    
+    TransazioneDettaglioRichiestaDatiTrasporto:
+      type: object
+      required:
+        - data_ingresso
+        - tipo
+        - url_invocazione
+      properties:
+        data_ingresso:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        tipo:
+          $ref: 'govway_core.yaml#/components/schemas/HttpMethodEnum'
+        url_invocazione:
+          type: string
+          format: uri
+          example: /govway/in/Ente/PetStore/v2/pet
+    
+    TransazioneDettaglioRisposta:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TransazioneDettaglioMessaggio'
+        - $ref: '#/components/schemas/TransazioneDettaglioRispostaDatiTrasporto'
+        - $ref: '#/components/schemas/TransazioneDettaglioRispostaErrore'
+        - $ref: '#/components/schemas/TransazioneDettaglioMessaggioContenuti'
+
+    TransazioneDettaglioRispostaDatiTrasporto:
+      type: object
+      required:
+        - data_uscita
+        - codice_risposta
+      properties:
+        data_uscita:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        codice_risposta:
+          type: string
+          description: |-
+           Codice associato alla risposta.
+           Può essere un http status per i protocolli basati su HTTP.
+          example: 200
+
+    TransazioneDettaglioRispostaErrore:
+      type: object
+      properties:
+        fault:
+          type: string
+          format: byte
+        dettagli_errore:
+          type: array
+          items:
+            type: string
+
+    TransazioneDettaglioMessaggio:
+      type: object
+      properties:
+        id:
+          type: string
+          example: eba4355e-403f-4e75-8d56-0751710409c2
+        id_applicativo:
+          type: string
+
+    TransazioneDettaglioMessaggioContenuti:
+      type: object
+      properties:
+        contenuti:
+          $ref: '#/components/schemas/TransazioneContenutoMessaggio'
+
+    TransazioneContenutoMessaggio:
+      type: object
+      properties:
+        headers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransazioneContenutoMessaggioHeader'
+        body:
+          type: string
+          format: byte
+
+    TransazioneContenutoMessaggioHeader:
+      type: object
+      required:
+        - nome
+        - valore
+      properties:
+        nome:
+          type: string
+          example: Content-Type
+        valore:
+          type: string
+          example: application/json
+
+
+    # Informazioni
+ 
+    TransazioneInformazioniApi:
+      type: object
+      required:
+        - erogatore
+        - nome
+        - versione
+      properties:
+        erogatore:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+        nome:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+        versione:
+          $ref: 'govway_core.yaml#/components/schemas/Versione'
+        operazione:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+ 
+    TransazioneInformazioniMittente:
+      type: object
+      properties:
+        principal:
+          type: string
+        fruitore:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+        utente:
+          type: string
+        indirizzo_client:
+          type: string
+        indirizzo_client_forwarded:
+          type: string
+       
+                    
+    # Base  
+            
+    TransazioneEsito:
+      type: object
+      required:
+        - codice
+        - descrizione
+      properties:
+        codice:
+          type: string
+          description: |-
+           Codice che rappresenta l'esito dell'invocazione.
+           Può essere un http status per i protocolli basati su HTTP, o un altra codifica (es. OK/KO)
+        descrizione:
+          type: string
+
+    TransazioneId:
+      type: string
+      format: uuid
+      example: f54d8638-79f5-45db-878a-82d858ba128e
+               
+                    
+    # Enumeration
+    
+    TransazioneRuoloEnum:
+      type: string
+      enum:
+        - fruizione
+        - erogazione
+      example: fruizione
+      

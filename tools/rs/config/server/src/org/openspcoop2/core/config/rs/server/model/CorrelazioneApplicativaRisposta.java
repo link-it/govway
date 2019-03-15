@@ -59,7 +59,7 @@ public class CorrelazioneApplicativaRisposta extends CorrelazioneApplicativaBase
   }
 
  /**
-   * La semantica cambia in funzione del tipo:   * header-based: nome dell&#x27;header   * content-based: xpath o json path da applicare sul contenuto   * input-based: questo field non deve essere valorizzato poichè l&#x27;informazione applicativa viene estratta dagli header di integrazione   * disabilitato:  questo field non deve essere valorizzato poichè la funzionalità di estrazione è disabilitata
+   * La semantica cambia in funzione del tipo:   * header-based: nome dell'header   * content-based: xpath o json path da applicare sul contenuto   * input-based: questo field non deve essere valorizzato poichè l'informazione applicativa viene estratta dagli header di integrazione   * disabilitato:  questo field non deve essere valorizzato poichè la funzionalità di estrazione è disabilitata
    * @return identificazione
   **/
   @JsonProperty("identificazione")

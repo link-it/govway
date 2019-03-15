@@ -59,7 +59,7 @@ public class CorrelazioneApplicativaRichiesta extends CorrelazioneApplicativaBas
   }
 
  /**
-   * La semantica cambia in funzione del tipo:   * header-based: nome dell&#x27;header   * url-based: espressione regolare da applicare alla url di invocazione   * content-based: xpath o json path da applicare sul contenuto   * input-based: questo field non deve essere valorizzato poichè l&#x27;informazione applicativa viene estratta dagli header di integrazione   * disabilitato:  questo field non deve essere valorizzato poichè la funzionalità di estrazione è disabilitata
+   * La semantica cambia in funzione del tipo:   * header-based: nome dell'header   * url-based: espressione regolare da applicare alla url di invocazione   * content-based: xpath o json path da applicare sul contenuto   * input-based: questo field non deve essere valorizzato poichè l'informazione applicativa viene estratta dagli header di integrazione   * disabilitato:  questo field non deve essere valorizzato poichè la funzionalità di estrazione è disabilitata
    * @return identificazione
   **/
   @JsonProperty("identificazione")

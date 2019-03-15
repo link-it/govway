@@ -1,0 +1,120 @@
+<project name="GovWayConfigApiRSTestSuite">
+
+	<description>
+        	File di Script per la compilazione dell'interfaccia api rs per il Configaggio
+    	</description>
+
+	<import file="./local_env.xml" />
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<path id="karate_testsuite" >
+                <fileset dir="${required_lib}/testsuite" >
+                        <include name="hamcrest-core-1.3.jar"/>
+			<include name="junit-4.12.jar"/>
+			<include name="karate-*.jar"/>
+			<include name="picocli-3.9.5.jar"/>
+                </fileset>
+		<fileset dir="${required_lib}/commons" >
+                        <include name="*.jar"/>
+                </fileset>
+		<fileset dir="${required_lib}/httpcore" >
+                        <include name="*.jar"/>
+                </fileset>
+                <fileset dir="${required_lib}/log" >
+                        <include name="*.jar"/>
+                </fileset>
+                <fileset dir="${required_lib}/json" >
+                        <include name="*.jar"/>
+                </fileset>
+        </path> 
+
+	<property name="src_testsuite" location="src" />
+	<property name="build_testsuite" location="build" />
+	
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean">
+		<delete dir="${build_testsuite}"/>
+	</target>
+	<target name="init">
+		<mkdir dir="${build_testsuite}"/>
+	</target>
+
+	<!-- Compilazione del Client -->
+	<target name="build" depends="clean,init" description="compila" >
+		<!-- Compile the java code  -->
+		<javac includeantruntime="false" destdir="${build_testsuite}" debug="${debug}">
+			<src path="${src_testsuite}"/>
+			<classpath>
+				<path refid="karate_testsuite"/>
+			</classpath>
+		</javac>
+		<copy todir="${build_testsuite}">
+			<fileset dir="${src_testsuite}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- Esecuzione dei test -->
+
+	<target name="run_test">
+
+		<delete dir="${output}"/>
+		<mkdir dir="${output}"/>
+
+		<if>
+			<equals arg1="${karate.options}" arg2="$${karate.options}"/>
+			<then>
+				<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}">
+	
+					<classpath refid="karate_testsuite" />
+					<classpath location="${build_testsuite}" />
+
+					<formatter type="plain"/>			
+					<formatter type="xml" />
+
+					<batchtest fork="yes" todir="${output}">
+						<fileset dir="${src_testsuite}">
+							<include name="**/*Test*.java" />
+						</fileset>
+					</batchtest>
+			
+				 </junit>
+			</then>
+			<else>
+				<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}">
+	
+					<jvmarg value="-Dkarate.options=${build_testsuite}/${karate.options}"/>
+
+					<classpath refid="karate_testsuite" />
+					<classpath location="${build_testsuite}" />
+
+					<formatter type="plain"/>			
+					<formatter type="xml" />
+
+					<batchtest fork="yes" todir="${output}">
+						<fileset dir="${src_testsuite}">
+							<include name="**/*Test*.java" />
+						</fileset>
+					</batchtest>
+			
+				 </junit>				
+			</else>
+		</if>
+
+		<junitreport todir="${output}">
+			<fileset dir="${output}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${output}\html\" />
+		</junitreport>
+
+	</target>
+
+</project>

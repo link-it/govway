@@ -363,6 +363,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA = "Propriet&agrave; di Sistema";
 	
 	public final static String LABEL_CONFIGURAZIONE_RUNTIME =  "Runtime"; //"Configurazione di Sistema";
+	public final static String LABEL_CONFIGURAZIONE_RUNTIME_ACCEDI = "Accedi";
 	
 	public final static String LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN = "Token Policy";
 	

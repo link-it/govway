@@ -27,18 +27,17 @@ paths:
         \ più comune"
       description: "Permette di recuperare i dettagli delle transazioni, gestite su\
         \ GovWay, ricercandole in base a parametri di filtro di uso più comune"
-      operationId: "baseSearchTransazioni"
+      operationId: "findAllTransazioniBySimpleSearch"
       parameters:
       - $ref: "#/components/parameters/data_inizio"
       - $ref: "#/components/parameters/data_fine"
-      - $ref: "#/components/parameters/tipologia_servizio"
-      - $ref: "#/components/parameters/id_tipo_servizio"
+      - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
-      - $ref: "#/components/parameters/id_nome_servizio"
-      - $ref: "#/components/parameters/id_versione_servizio"
+      - $ref: "#/components/parameters/nome_servizio"
+      - $ref: "#/components/parameters/tipo_servizio"
+      - $ref: "#/components/parameters/versione_servizio"
       - $ref: "#/components/parameters/azione"
       - $ref: "#/components/parameters/esito_transazione"
-      - $ref: "#/components/parameters/id_evento"
       responses:
         200:
           description: "ricerca completata con successo"
@@ -66,7 +65,7 @@ paths:
       summary: "Ricerca completa delle transazioni per intervallo temporale"
       description: "Permette di recuperare i dettagli delle transazioni, gestite su\
         \ GovWay, limitando i risultati di ricerca ad un intervallo di date"
-      operationId: "searchTransazioni"
+      operationId: "findAllTransazioniByFullSearch"
       requestBody:
         content:
           application/json:
@@ -96,7 +95,7 @@ paths:
     parameters:
     - $ref: "#/components/parameters/profilo"
     - $ref: "#/components/parameters/soggetto"
-    - $ref: "#/components/parameters/ordinamento"
+    - $ref: "#/components/parameters/sort"
   /monitoraggio/transazioni/id_applicativo:
     get:
       tags:
@@ -106,42 +105,20 @@ paths:
       description: "Permette di recuperare i dettagli delle transazioni, gestite su\
         \ GovWay, ricercandole in base all'identificativo applicativo e i parametri\
         \ di filtro di uso più comune"
-      operationId: "baseSearchTransazioniByApplicativo"
+      operationId: "findAllTransazioniByIdApplicativoSimpleSearch"
       parameters:
       - $ref: "#/components/parameters/data_inizio"
       - $ref: "#/components/parameters/data_fine"
-      - $ref: "#/components/parameters/tipologia_servizio"
-      - $ref: "#/components/parameters/id_tipo_servizio"
-      - $ref: "#/components/parameters/id_nome_servizio"
-      - $ref: "#/components/parameters/id_versione_servizio"
+      - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/nome_servizio"
+      - $ref: "#/components/parameters/tipo_servizio"
+      - $ref: "#/components/parameters/versione_servizio"
       - $ref: "#/components/parameters/azione"
       - $ref: "#/components/parameters/esito_transazione"
-      - $ref: "#/components/parameters/id_evento"
-      - name: "ricerca_esatta"
-        in: "query"
-        required: false
-        style: "FORM"
-        explode: true
-        schema:
-          type: "boolean"
-          default: true
-      - name: "case_sensitive"
-        in: "query"
-        required: false
-        style: "FORM"
-        explode: true
-        schema:
-          type: "boolean"
-          default: true
-      - name: "id_applicativo"
-        in: "query"
-        description: "l'identificativo applicativo"
-        required: true
-        style: "FORM"
-        explode: true
-        schema:
-          type: "string"
+      - $ref: "#/components/parameters/id_correlazione_applicativa"
+      - $ref: "#/components/parameters/ricerca_esatta"
+      - $ref: "#/components/parameters/case_sensitive"
       responses:
         200:
           description: "ricerca completata con successo"
@@ -170,7 +147,7 @@ paths:
       description: "Permette di recuperare i dettagli delle transazioni, gestite su\
         \ GovWay, ricercandole in base all'identificativo applicativo e i parametri\
         \ di filtro completi"
-      operationId: "searchTransazioniByApplicativo"
+      operationId: "findAllTransazioniByIdApplicativoFullSearch"
       requestBody:
         content:
           application/json:
@@ -200,32 +177,26 @@ paths:
     parameters:
     - $ref: "#/components/parameters/profilo"
     - $ref: "#/components/parameters/soggetto"
-    - $ref: "#/components/parameters/ordinamento"
-  /monitoraggio/transazioni/{id}:
+    - $ref: "#/components/parameters/sort"
+  /monitoraggio/transazioni/id_messaggio:
     get:
       tags:
       - "Monitoraggio"
-      summary: "Dettaglio della transazione"
-      description: "Questa operazione consente di ottenere il dettaglio di una transazione"
-      operationId: "getTransazione"
+      summary: "Ricerca semplificata delle transazioni in base all'identificativo\
+        \ messaggio"
+      description: "Permette di recuperare i dettagli delle transazioni, gestite su\
+        \ GovWay, ricercandole in base all'identificativo messaggio"
+      operationId: "findAllTransazioniByIdMessaggio"
       parameters:
-      - $ref: "#/components/parameters/profilo"
-      - $ref: "#/components/parameters/soggetto"
-      - name: "id"
-        in: "path"
-        description: "identificativo della transazione"
-        required: true
-        style: "SIMPLE"
-        explode: false
-        schema:
-          $ref: "#/components/schemas/IdTransazione"
+      - $ref: "#/components/parameters/tipo_messaggio"
+      - $ref: "#/components/parameters/id_messaggio"
       responses:
         200:
           description: "dettaglio transazione restituito correttamente"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TransazioneDetail"
+                $ref: "#/components/schemas/ListaTransazioni"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -240,40 +211,28 @@ paths:
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
-  /monitoraggio/transazioni/id_messaggio:
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/sort"
+  /monitoraggio/transazioni/{id}:
     get:
       tags:
       - "Monitoraggio"
-      summary: "Ricerca semplificata delle transazioni in base all'identificativo\
-        \ messaggio"
-      description: "Permette di recuperare i dettagli delle transazioni, gestite su\
-        \ GovWay, ricercandole in base all'identificativo messaggio"
-      operationId: "searchTransazioneByMessaggio"
+      summary: "Dettaglio della transazione"
+      description: "Questa operazione consente di ottenere il dettaglio di una transazione"
+      operationId: "getTransazione"
       parameters:
       - $ref: "#/components/parameters/profilo"
       - $ref: "#/components/parameters/soggetto"
-      - name: "tipo_messaggio"
-        in: "query"
-        description: "Distingue se il messaggio è una richiesta o una risposta"
-        required: true
-        style: "FORM"
-        explode: true
-        schema:
-          $ref: "#/components/schemas/TipoMessaggioEnum"
-      - name: "id"
-        in: "query"
-        required: true
-        style: "FORM"
-        explode: true
-        schema:
-          type: "string"
+      - $ref: "#/components/parameters/id_transazione"
       responses:
         200:
           description: "dettaglio transazione restituito correttamente"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TransazioneDetail"
+                $ref: "#/components/schemas/TransazioneExt"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -295,65 +254,16 @@ paths:
       summary: "Ricerca di Eventi"
       description: "Questa operazione consente di effettuare una ricerca nell'archivio\
         \ degli eventi specificando i criteri di filtraggio"
-      operationId: "searchEventi"
+      operationId: "findAllEventi"
       parameters:
-      - $ref: "#/components/parameters/profilo"
-      - $ref: "#/components/parameters/soggetto"
       - $ref: "#/components/parameters/data_inizio"
       - $ref: "#/components/parameters/data_fine"
-      - name: "severita"
-        in: "query"
-        description: "Indica il livello di severità con il quale l'evento è stato\
-          \ registrato nel sistema"
-        required: false
-        style: "FORM"
-        explode: true
-        schema:
-          $ref: "#/components/schemas/SeveritaEnum"
-      - name: "tipo"
-        in: "query"
-        description: "TODO"
-        required: false
-        style: "FORM"
-        explode: true
-        schema:
-          $ref: "#/components/schemas/TipoEvento"
-      - name: "codice"
-        in: "query"
-        description: "TODO"
-        required: false
-        style: "FORM"
-        explode: true
-        schema:
-          $ref: "#/components/schemas/CodiceEventoEnum"
-      - name: "ricerca_esatta"
-        in: "query"
-        description: "Indica se il filtro origine deve essere interpretato alla lettera\
-          \ o in modalità LIKE"
-        required: true
-        style: "FORM"
-        explode: true
-        schema:
-          type: "boolean"
-          default: true
-      - name: "case_sensitive"
-        in: "query"
-        description: "Indica se la ricerca relativa filtro origine deve essere case\
-          \ sensitive o meno"
-        required: true
-        style: "FORM"
-        explode: true
-        schema:
-          type: "boolean"
-          default: true
-      - name: "origine"
-        in: "query"
-        description: "TODO"
-        required: false
-        style: "FORM"
-        explode: true
-        schema:
-          type: "string"
+      - $ref: "#/components/parameters/severita"
+      - $ref: "#/components/parameters/tipo_evento"
+      - $ref: "#/components/parameters/codice_evento"
+      - $ref: "#/components/parameters/origine_evento"
+      - $ref: "#/components/parameters/ricerca_esatta"
+      - $ref: "#/components/parameters/case_sensitive"
       responses:
         200:
           description: "Ricerca eventi completata con successo"
@@ -375,7 +285,7 @@ paths:
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
-  /monitoraggio/eventi/{id_evento}:
+  /monitoraggio/eventi/{id}:
     get:
       tags:
       - "Monitoraggio"
@@ -384,23 +294,14 @@ paths:
         \ identificativo"
       operationId: "getEvento"
       parameters:
-      - $ref: "#/components/parameters/profilo"
-      - $ref: "#/components/parameters/soggetto"
-      - name: "id_evento"
-        in: "path"
-        description: "L'identificativo dell'evento da recuperare"
-        required: true
-        style: "SIMPLE"
-        explode: false
-        schema:
-          type: "string"
+      - $ref: "#/components/parameters/id_evento_path"
       responses:
         200:
-          description: "Ricerca eventi completata con successo"
+          description: "Recupero evento completato con successo"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/EventoDetail"
+                $ref: "#/components/schemas/Evento"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -424,24 +325,26 @@ paths:
       description: "Questa operazione consente di generare per mezzo di una ricerca\
         \ semplice, un report statistico per andamento temporale esportandolo nei\
         \ formati più comuni"
-      operationId: "baseGeneraReportTemporale"
+      operationId: "getReportDistribuzioneTemporaleBySimpleSearch"
       parameters:
-      - $ref: "#/components/parameters/tipo_grafico"
-      - $ref: "#/components/parameters/formato_export"
-      - $ref: "#/components/parameters/unita_tempo"
       - $ref: "#/components/parameters/data_inizio"
       - $ref: "#/components/parameters/data_fine"
-      - $ref: "#/components/parameters/tipologia_servizio"
+      - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
-      - $ref: "#/components/parameters/id_tipo_servizio"
-      - $ref: "#/components/parameters/id_nome_servizio"
-      - $ref: "#/components/parameters/id_versione_servizio"
+      - $ref: "#/components/parameters/nome_servizio"
+      - $ref: "#/components/parameters/tipo_servizio"
+      - $ref: "#/components/parameters/versione_servizio"
       - $ref: "#/components/parameters/azione"
       - $ref: "#/components/parameters/esito_transazione"
-      - $ref: "#/components/parameters/visualizzazione_report"
+      - $ref: "#/components/parameters/formato_report"
+      - $ref: "#/components/parameters/unita_tempo_report"
+      - $ref: "#/components/parameters/tipo_report"
+      - $ref: "#/components/parameters/tipo_informazione_report"
+      - $ref: "#/components/parameters/orientamento_etichette"
+      - $ref: "#/components/parameters/larghezza_grafico"
       responses:
         200:
-          $ref: "#/components/responses/200ReportGenerato"
+          $ref: "#/components/responses/200ReportStatistico"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -461,18 +364,17 @@ paths:
       - "Reportistica"
       summary: "Genera un report statistico per andamento temporale per mezzo di una\
         \ ricerca articolata"
-      description: "Questa operazione consente di generare per mezzo di una ricerca\
-        \ articolata, un report statistico per andamento temporale esportandolo nei\
-        \ formati più comuni "
-      operationId: "generaReportTemporale"
+      description: "Questa operazione consente di generare un report statistico per\
+        \ andamento temporale esportandolo nei formati più comuni "
+      operationId: "getReportDistribuzioneTemporaleByFullSearch"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RicercaStatisticaTemporale"
+              $ref: "#/components/schemas/RicercaStatisticaAndamentoTemporale"
       responses:
         200:
-          $ref: "#/components/responses/200ReportGenerato"
+          $ref: "#/components/responses/200ReportStatistico"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -499,23 +401,25 @@ paths:
       description: "Questa operazione consente di generare per mezzo di una ricerca\
         \ semplice, un report statistico per andamento esiti esportandolo nei formati\
         \ più comuni"
-      operationId: "baseGeneraReportEsiti"
+      operationId: "getReportDistribuzioneEsitiBySimpleSearch"
       parameters:
-      - $ref: "#/components/parameters/tipo_grafico"
-      - $ref: "#/components/parameters/formato_export"
-      - $ref: "#/components/parameters/unita_tempo"
       - $ref: "#/components/parameters/data_inizio"
       - $ref: "#/components/parameters/data_fine"
-      - $ref: "#/components/parameters/tipologia_servizio"
+      - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
-      - $ref: "#/components/parameters/id_tipo_servizio"
-      - $ref: "#/components/parameters/id_nome_servizio"
-      - $ref: "#/components/parameters/id_versione_servizio"
+      - $ref: "#/components/parameters/nome_servizio"
+      - $ref: "#/components/parameters/tipo_servizio"
+      - $ref: "#/components/parameters/versione_servizio"
       - $ref: "#/components/parameters/azione"
-      - $ref: "#/components/parameters/visualizzazione_report"
+      - $ref: "#/components/parameters/formato_report"
+      - $ref: "#/components/parameters/unita_tempo_report"
+      - $ref: "#/components/parameters/tipo_report"
+      - $ref: "#/components/parameters/tipo_informazione_report"
+      - $ref: "#/components/parameters/orientamento_etichette"
+      - $ref: "#/components/parameters/larghezza_grafico"
       responses:
         200:
-          $ref: "#/components/responses/200ReportGenerato"
+          $ref: "#/components/responses/200ReportStatistico"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -535,18 +439,17 @@ paths:
       - "Reportistica"
       summary: "Genera un report statistico per andamento esiti per mezzo di una ricerca\
         \ articolata"
-      description: "Questa operazione consente di generare per mezzo di una ricerca\
-        \ articolata, un report statistico per andamento esiti esportandolo nei formati\
-        \ più comuni "
-      operationId: "generaReportEsiti"
+      description: "Questa operazione consente di generare un report statistico per\
+        \ andamento esiti esportandolo nei formati più comuni "
+      operationId: "getReportDistribuzioneEsitiByFullSearch"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RicercaStatisticaEsiti"
+              $ref: "#/components/schemas/RicercaStatisticaDistribuzioneEsiti"
       responses:
         200:
-          $ref: "#/components/responses/200ReportGenerato"
+          $ref: "#/components/responses/200ReportStatistico"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -573,23 +476,25 @@ paths:
       description: "Questa operazione consente di generare per mezzo di una ricerca\
         \ semplice, un report statistico per soggetto remoto esportandolo nei formati\
         \ più comuni"
-      operationId: "baseGeneraReportSoggettoRemoto"
+      operationId: "getReportDistribuzioneSoggettoRemotoBySimpleSearch"
       parameters:
-      - $ref: "#/components/parameters/tipo_grafico"
-      - $ref: "#/components/parameters/formato_export"
-      - $ref: "#/components/parameters/unita_tempo"
       - $ref: "#/components/parameters/data_inizio"
       - $ref: "#/components/parameters/data_fine"
-      - $ref: "#/components/parameters/tipologia_servizio"
-      - $ref: "#/components/parameters/id_tipo_servizio"
-      - $ref: "#/components/parameters/id_nome_servizio"
-      - $ref: "#/components/parameters/id_versione_servizio"
+      - $ref: "#/components/parameters/tipo_transazione"
+      - $ref: "#/components/parameters/nome_servizio"
+      - $ref: "#/components/parameters/tipo_servizio"
+      - $ref: "#/components/parameters/versione_servizio"
       - $ref: "#/components/parameters/azione"
       - $ref: "#/components/parameters/esito_transazione"
-      - $ref: "#/components/parameters/visualizzazione_report"
+      - $ref: "#/components/parameters/formato_report"
+      - $ref: "#/components/parameters/unita_tempo_report"
+      - $ref: "#/components/parameters/tipo_report"
+      - $ref: "#/components/parameters/tipo_informazione_report"
+      - $ref: "#/components/parameters/orientamento_etichette"
+      - $ref: "#/components/parameters/larghezza_grafico"
       responses:
         200:
-          $ref: "#/components/responses/200ReportGenerato"
+          $ref: "#/components/responses/200ReportStatistico"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -609,18 +514,17 @@ paths:
       - "Reportistica"
       summary: "Genera un report statistico raggruppato per soggetto remoto per mezzo\
         \ di una ricerca articolata"
-      description: "Questa operazione consente di generare per mezzo di una ricerca\
-        \ articolata, un report statistico raggruppato per soggetto remoto esportandolo\
-        \ nei formati più comuni "
-      operationId: "generaReportSoggettoRemoto"
+      description: "Questa operazione consente di generare un report statistico raggruppato\
+        \ per soggetto remoto esportandolo nei formati più comuni "
+      operationId: "getReportDistribuzioneSoggettoRemotoByFullSearch"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RicercaStatisticaSoggettoRemoto"
+              $ref: "#/components/schemas/RicercaStatisticaDistribuzioneSoggettoRemoto"
       responses:
         200:
-          $ref: "#/components/responses/200ReportGenerato"
+          $ref: "#/components/responses/200ReportStatistico"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -647,24 +551,26 @@ paths:
       description: "Questa operazione consente di generare per mezzo di una ricerca\
         \ semplice, un report statistico per soggetto locale esportandolo nei formati\
         \ più comuni"
-      operationId: "baseGeneraReportSoggettoLocale"
+      operationId: "getReportDistribuzioneSoggettoLocaleBySimpleSearch"
       parameters:
-      - $ref: "#/components/parameters/tipo_grafico"
-      - $ref: "#/components/parameters/formato_export"
-      - $ref: "#/components/parameters/unita_tempo"
       - $ref: "#/components/parameters/data_inizio"
       - $ref: "#/components/parameters/data_fine"
-      - $ref: "#/components/parameters/tipologia_servizio"
-      - $ref: "#/components/parameters/id_tipo_servizio"
-      - $ref: "#/components/parameters/id_nome_servizio"
+      - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
-      - $ref: "#/components/parameters/id_versione_servizio"
+      - $ref: "#/components/parameters/nome_servizio"
+      - $ref: "#/components/parameters/tipo_servizio"
+      - $ref: "#/components/parameters/versione_servizio"
       - $ref: "#/components/parameters/azione"
       - $ref: "#/components/parameters/esito_transazione"
-      - $ref: "#/components/parameters/visualizzazione_report"
+      - $ref: "#/components/parameters/formato_report"
+      - $ref: "#/components/parameters/unita_tempo_report"
+      - $ref: "#/components/parameters/tipo_report"
+      - $ref: "#/components/parameters/tipo_informazione_report"
+      - $ref: "#/components/parameters/orientamento_etichette"
+      - $ref: "#/components/parameters/larghezza_grafico"
       responses:
         200:
-          $ref: "#/components/responses/200ReportGenerato"
+          $ref: "#/components/responses/200ReportStatistico"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -684,18 +590,17 @@ paths:
       - "Reportistica"
       summary: "Genera un report statistico raggruppato per soggetto locale per mezzo\
         \ di una ricerca articolata"
-      description: "Questa operazione consente di generare per mezzo di una ricerca\
-        \ articolata, un report statistico raggruppato per soggetto locale esportandolo\
-        \ nei formati più comuni "
-      operationId: "generaReportSoggettoLocale"
+      description: "Questa operazione consente di generare un report statistico raggruppato\
+        \ per soggetto locale esportandolo nei formati più comuni "
+      operationId: "getReportDistribuzioneSoggettoLocaleByFullSearch"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RicercaStatisticaSoggettoLocale"
+              $ref: "#/components/schemas/RicercaStatisticaDistribuzioneSoggettoLocale"
       responses:
         200:
-          $ref: "#/components/responses/200ReportGenerato"
+          $ref: "#/components/responses/200ReportStatistico"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -712,7 +617,6 @@ paths:
           $ref: "#/components/responses/default"
     parameters:
     - $ref: "#/components/parameters/profilo"
-    - $ref: "#/components/parameters/soggetto"
   /reportistica/analisi-statistica/distribuzione-api:
     get:
       tags:
@@ -722,20 +626,22 @@ paths:
       description: "Questa operazione consente di generare per mezzo di una ricerca\
         \ semplice, un report statistico organizzato per API esportandolo nei formati\
         \ più comuni"
-      operationId: "baseGeneraReportApi"
+      operationId: "getReportDistribuzioneApiBySimpleSearch"
       parameters:
-      - $ref: "#/components/parameters/tipo_grafico"
-      - $ref: "#/components/parameters/formato_export"
-      - $ref: "#/components/parameters/unita_tempo"
       - $ref: "#/components/parameters/data_inizio"
       - $ref: "#/components/parameters/data_fine"
-      - $ref: "#/components/parameters/tipologia_servizio"
+      - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
       - $ref: "#/components/parameters/esito_transazione"
-      - $ref: "#/components/parameters/visualizzazione_report"
+      - $ref: "#/components/parameters/formato_report"
+      - $ref: "#/components/parameters/unita_tempo_report"
+      - $ref: "#/components/parameters/tipo_report"
+      - $ref: "#/components/parameters/tipo_informazione_report"
+      - $ref: "#/components/parameters/orientamento_etichette"
+      - $ref: "#/components/parameters/larghezza_grafico"
       responses:
         200:
-          $ref: "#/components/responses/200ReportGenerato"
+          $ref: "#/components/responses/200ReportStatistico"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -755,18 +661,91 @@ paths:
       - "Reportistica"
       summary: "Genera per mezzo di una ricerca articolata, un report statistico raggruppato\
         \ per servizi"
-      description: "Questa operazione consente di generare per mezzo di una ricerca\
-        \ articolata, un report statistico raggrupato per servizi esportandolo nei\
-        \ formati più comuni "
-      operationId: "generaReportApi"
+      description: "Questa operazione consente di generare un report statistico raggrupato\
+        \ per servizi esportandolo nei formati più comuni "
+      operationId: "getReportDistribuzioneApiByFullSearch"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RicercaStatisticaApi"
+              $ref: "#/components/schemas/RicercaStatisticaDistribuzioneApi"
       responses:
         200:
-          $ref: "#/components/responses/200ReportGenerato"
+          $ref: "#/components/responses/200ReportStatistico"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+  /reportistica/analisi-statistica/distribuzione-azione:
+    get:
+      tags:
+      - "Reportistica"
+      summary: "Genera un report statistico organizzato per Azioni utilizzando una\
+        \ ricerca semplice"
+      description: "Questa operazione consente di generare per mezzo di una ricerca\
+        \ semplice, un report statistico per azione esportandolo nei formati più comuni"
+      operationId: "getReportDistribuzioneAzioneBySimpleSearch"
+      parameters:
+      - $ref: "#/components/parameters/data_inizio"
+      - $ref: "#/components/parameters/data_fine"
+      - $ref: "#/components/parameters/tipo_transazione"
+      - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/nome_servizio"
+      - $ref: "#/components/parameters/tipo_servizio"
+      - $ref: "#/components/parameters/versione_servizio"
+      - $ref: "#/components/parameters/esito_transazione"
+      - $ref: "#/components/parameters/formato_report"
+      - $ref: "#/components/parameters/unita_tempo_report"
+      - $ref: "#/components/parameters/tipo_report"
+      - $ref: "#/components/parameters/tipo_informazione_report"
+      - $ref: "#/components/parameters/orientamento_etichette"
+      - $ref: "#/components/parameters/larghezza_grafico"
+      responses:
+        200:
+          $ref: "#/components/responses/200ReportStatistico"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    post:
+      tags:
+      - "Reportistica"
+      summary: "Genera un report statistico distribuito per azione utilizzando una\
+        \ ricerca articolata"
+      description: "Questa operazione consente di generare un report statistico raggruppato\
+        \ distribuito per azione ed esportandolo nei formati più comuni "
+      operationId: "getReportDistribuzioneAzioneByFullSearch"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RicercaStatisticaDistribuzioneAzione"
+      responses:
+        200:
+          $ref: "#/components/responses/200ReportStatistico"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -793,24 +772,26 @@ paths:
       description: "Questa operazione consente di generare per mezzo di una ricerca\
         \ semplice, un report statistico per applicativo esportandolo nei formati\
         \ più comuni"
-      operationId: "baseGeneraReportApplicativo"
+      operationId: "getReportDistribuzioneApplicativoBySimpleSearch"
       parameters:
-      - $ref: "#/components/parameters/tipo_grafico"
-      - $ref: "#/components/parameters/formato_export"
-      - $ref: "#/components/parameters/unita_tempo"
       - $ref: "#/components/parameters/data_inizio"
       - $ref: "#/components/parameters/data_fine"
-      - $ref: "#/components/parameters/tipologia_servizio"
-      - $ref: "#/components/parameters/id_tipo_servizio"
-      - $ref: "#/components/parameters/id_nome_servizio"
-      - $ref: "#/components/parameters/id_versione_servizio"
-      - $ref: "#/components/parameters/azione"
+      - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/nome_servizio"
+      - $ref: "#/components/parameters/tipo_servizio"
+      - $ref: "#/components/parameters/versione_servizio"
+      - $ref: "#/components/parameters/azione"
       - $ref: "#/components/parameters/esito_transazione"
-      - $ref: "#/components/parameters/visualizzazione_report"
+      - $ref: "#/components/parameters/formato_report"
+      - $ref: "#/components/parameters/unita_tempo_report"
+      - $ref: "#/components/parameters/tipo_report"
+      - $ref: "#/components/parameters/tipo_informazione_report"
+      - $ref: "#/components/parameters/orientamento_etichette"
+      - $ref: "#/components/parameters/larghezza_grafico"
       responses:
         200:
-          $ref: "#/components/responses/200ReportGenerato"
+          $ref: "#/components/responses/200ReportStatistico"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -830,91 +811,17 @@ paths:
       - "Reportistica"
       summary: "Genera un report statistico per applicativo utilizzando una ricerca\
         \ articolata"
-      description: "Questa operazione consente di generare per mezzo di una ricerca\
-        \ articolata, un report statistico raggruppato per applicativo ed esportandolo\
-        \ nei formati più comuni "
-      operationId: "generaReportApplicativo"
+      description: "Questa operazione consente di generare un report statistico raggruppato\
+        \ per applicativo ed esportandolo nei formati più comuni "
+      operationId: "getReportDistribuzioneApplicativoByFullSearch"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RicercaStatisticaApplicativo"
+              $ref: "#/components/schemas/RicercaStatisticaDistribuzioneApplicativo"
       responses:
         200:
-          $ref: "#/components/responses/200ReportGenerato"
-        400:
-          $ref: "#/components/responses/400BadRequest"
-        401:
-          $ref: "#/components/responses/401Unauthorized"
-        403:
-          $ref: "#/components/responses/403Forbidden"
-        404:
-          $ref: "#/components/responses/404NotFound"
-        429:
-          $ref: "#/components/responses/429TooManyRequests"
-        503:
-          $ref: "#/components/responses/503ServiceUnavailable"
-        default:
-          $ref: "#/components/responses/default"
-    parameters:
-    - $ref: "#/components/parameters/profilo"
-    - $ref: "#/components/parameters/soggetto"
-  /reportistica/analisi-statistica/distribuzione-azione:
-    get:
-      tags:
-      - "Reportistica"
-      summary: "Genera un report statistico organizzato per Azioni utilizzando una\
-        \ ricerca semplice"
-      description: "Questa operazione consente di generare per mezzo di una ricerca\
-        \ semplice, un report statistico per azione esportandolo nei formati più comuni"
-      operationId: "baseGeneraReportAzione"
-      parameters:
-      - $ref: "#/components/parameters/tipo_grafico"
-      - $ref: "#/components/parameters/formato_export"
-      - $ref: "#/components/parameters/unita_tempo"
-      - $ref: "#/components/parameters/data_inizio"
-      - $ref: "#/components/parameters/data_fine"
-      - $ref: "#/components/parameters/tipologia_servizio"
-      - $ref: "#/components/parameters/id_tipo_servizio"
-      - $ref: "#/components/parameters/id_nome_servizio"
-      - $ref: "#/components/parameters/id_versione_servizio"
-      - $ref: "#/components/parameters/soggetto_remoto"
-      - $ref: "#/components/parameters/esito_transazione"
-      - $ref: "#/components/parameters/visualizzazione_report"
-      responses:
-        200:
-          $ref: "#/components/responses/200ReportGenerato"
-        400:
-          $ref: "#/components/responses/400BadRequest"
-        401:
-          $ref: "#/components/responses/401Unauthorized"
-        403:
-          $ref: "#/components/responses/403Forbidden"
-        404:
-          $ref: "#/components/responses/404NotFound"
-        429:
-          $ref: "#/components/responses/429TooManyRequests"
-        503:
-          $ref: "#/components/responses/503ServiceUnavailable"
-        default:
-          $ref: "#/components/responses/default"
-    post:
-      tags:
-      - "Reportistica"
-      summary: "Genera un report statistico distribuito per azione utilizzando una\
-        \ ricerca articolata"
-      description: "Questa operazione consente di generare per mezzo di una ricerca\
-        \ articolata, un report statistico raggruppato distribuito per azione ed esportandolo\
-        \ nei formati più comuni "
-      operationId: "generaReportAzione"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/RicercaStatisticaAzione"
-      responses:
-        200:
-          $ref: "#/components/responses/200ReportGenerato"
+          $ref: "#/components/responses/200ReportStatistico"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -941,24 +848,26 @@ paths:
       description: "Questa operazione consente di generare per mezzo di una ricerca\
         \ semplice, un report statistico per identificativo autenticato esportandolo\
         \ nei formati più comuni"
-      operationId: "baseGeneraReportIdAutenticato"
+      operationId: "getReportDistribuzioneIdAutenticatoBySimpleSearch"
       parameters:
-      - $ref: "#/components/parameters/tipo_grafico"
-      - $ref: "#/components/parameters/formato_export"
-      - $ref: "#/components/parameters/unita_tempo"
       - $ref: "#/components/parameters/data_inizio"
       - $ref: "#/components/parameters/data_fine"
-      - $ref: "#/components/parameters/tipologia_servizio"
-      - $ref: "#/components/parameters/id_tipo_servizio"
-      - $ref: "#/components/parameters/id_nome_servizio"
-      - $ref: "#/components/parameters/id_versione_servizio"
-      - $ref: "#/components/parameters/azione"
+      - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/nome_servizio"
+      - $ref: "#/components/parameters/tipo_servizio"
+      - $ref: "#/components/parameters/versione_servizio"
+      - $ref: "#/components/parameters/azione"
       - $ref: "#/components/parameters/esito_transazione"
-      - $ref: "#/components/parameters/visualizzazione_report"
+      - $ref: "#/components/parameters/formato_report"
+      - $ref: "#/components/parameters/unita_tempo_report"
+      - $ref: "#/components/parameters/tipo_report"
+      - $ref: "#/components/parameters/tipo_informazione_report"
+      - $ref: "#/components/parameters/orientamento_etichette"
+      - $ref: "#/components/parameters/larghezza_grafico"
       responses:
         200:
-          $ref: "#/components/responses/200ReportGenerato"
+          $ref: "#/components/responses/200ReportStatistico"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -978,18 +887,17 @@ paths:
       - "Reportistica"
       summary: "Genera un report statistico per identificativo autenticato utilizzando\
         \ una ricerca articolata"
-      description: "Questa operazione consente di generare per mezzo di una ricerca\
-        \ articolata, un report statistico raggruppato per identificativo autenticato\
-        \ ed esportandolo nei formati più comuni "
-      operationId: "generaReportIdAutenticato"
+      description: "Questa operazione consente di generare un report statistico raggruppato\
+        \ per identificativo autenticato ed esportandolo nei formati più comuni "
+      operationId: "getReportDistribuzioneIdAutenticatoByFullSearch"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RicercaStatisticaIdAutenticato"
+              $ref: "#/components/schemas/RicercaStatisticaDistribuzioneIdAutenticato"
       responses:
         200:
-          $ref: "#/components/responses/200ReportGenerato"
+          $ref: "#/components/responses/200ReportStatistico"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -1015,27 +923,27 @@ paths:
         \ utilizzando una ricerca semplice"
       description: "Consente di generare un report raggruppato secondo un claim del\
         \ token per mezzo di una ricerca semplice"
-      operationId: "baseGeneraReportTokenInfo"
+      operationId: "getReportDistribuzioneTokenInfoBySimpleSearch"
       parameters:
-      - $ref: "#/components/parameters/unita_tempo"
       - $ref: "#/components/parameters/data_inizio"
       - $ref: "#/components/parameters/data_fine"
-      - $ref: "#/components/parameters/tipologia_servizio"
-      - $ref: "#/components/parameters/id_tipo_servizio"
-      - $ref: "#/components/parameters/id_nome_servizio"
-      - $ref: "#/components/parameters/id_versione_servizio"
-      - $ref: "#/components/parameters/azione"
+      - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/nome_servizio"
+      - $ref: "#/components/parameters/tipo_servizio"
+      - $ref: "#/components/parameters/versione_servizio"
+      - $ref: "#/components/parameters/azione"
       - $ref: "#/components/parameters/esito_transazione"
-      - $ref: "#/components/parameters/claim"
-      - $ref: "#/components/parameters/visualizzazione_report"
-      - $ref: "#/components/parameters/tipo_grafico"
-      - $ref: "#/components/parameters/formato_export"
-      - $ref: "#/components/parameters/orientamento_label"
+      - $ref: "#/components/parameters/formato_report"
+      - $ref: "#/components/parameters/unita_tempo_report"
+      - $ref: "#/components/parameters/tipo_report"
+      - $ref: "#/components/parameters/tipo_informazione_report"
+      - $ref: "#/components/parameters/orientamento_etichette"
       - $ref: "#/components/parameters/larghezza_grafico"
+      - $ref: "#/components/parameters/claim"
       responses:
         200:
-          $ref: "#/components/responses/200ReportGenerato"
+          $ref: "#/components/responses/200ReportStatistico"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -1056,15 +964,15 @@ paths:
       summary: "Genera un report statistico organizzato per Token Info"
       description: "Consente di generare un report raggruppato secondo un claim del\
         \ token"
-      operationId: "generaReportTokenInfo"
+      operationId: "getReportDistribuzioneTokenInfoByFullSearch"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RicercaStatisticaTokenInfo"
+              $ref: "#/components/schemas/RicercaStatisticaDistribuzioneTokenInfo"
       responses:
         200:
-          $ref: "#/components/responses/200ReportGenerato"
+          $ref: "#/components/responses/200ReportStatistico"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -1089,10 +997,7 @@ paths:
       summary: "Ottieni le informazioni generali sulle api e servizi di un soggetto"
       description: "Restituisce il numero e tipo di api che coinvolgono il soggetto,\
         \ e un riepilogo del registro circa i soggetti e gli applicativi registrati."
-      operationId: "getRiepologo"
-      parameters:
-      - $ref: "#/components/parameters/profilo"
-      - $ref: "#/components/parameters/soggetto"
+      operationId: "getRiepologoConfigurazioni"
       responses:
         200:
           description: "Riepilogo ottenuto con successo"
@@ -1114,6 +1019,9 @@ paths:
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
   /reportistica/configurazione-api/riepilogo/api:
     get:
       tags:
@@ -1123,13 +1031,11 @@ paths:
         \ numero di erogazioni e fruizioni registrate per esso"
       operationId: "getRiepilogoApi"
       parameters:
-      - $ref: "#/components/parameters/profilo"
-      - $ref: "#/components/parameters/soggetto"
-      - $ref: "#/components/parameters/tipologia_servizio"
-      - $ref: "#/components/parameters/id_tipo_servizio"
+      - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
-      - $ref: "#/components/parameters/id_nome_servizio"
-      - $ref: "#/components/parameters/id_versione_servizio"
+      - $ref: "#/components/parameters/nome_servizio"
+      - $ref: "#/components/parameters/tipo_servizio"
+      - $ref: "#/components/parameters/versione_servizio"
       responses:
         200:
           description: "Informazioni sulla API ottenute con successo"
@@ -1151,6 +1057,9 @@ paths:
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
   /reportistica/configurazione-api:
     get:
       tags:
@@ -1161,9 +1070,7 @@ paths:
         \ per tipologia servizio  "
       operationId: "getConfigurazioneApi"
       parameters:
-      - $ref: "#/components/parameters/profilo"
-      - $ref: "#/components/parameters/soggetto"
-      - $ref: "#/components/parameters/tipologia_servizio"
+      - $ref: "#/components/parameters/tipo_transazione"
       responses:
         200:
           description: "Riepilogo ottenuto con successo"
@@ -1185,27 +1092,26 @@ paths:
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
   /reportistica/configurazione-api/esporta:
-    post:
+    get:
       tags:
       - "Reportistica"
       summary: "Recupera la configurazione di un servizio"
       description: "Consente di recuperare la configurazione di un servizio esportandola\
         \ in formato csv"
-      operationId: "exportConfigurazioneApi"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/RicercaConfigurazioneApi"
+      operationId: "exportConfigurazioneApiBySimpleSearch"
+      parameters:
+      - $ref: "#/components/parameters/tipo_transazione"
+      - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/nome_servizio"
+      - $ref: "#/components/parameters/tipo_servizio"
+      - $ref: "#/components/parameters/versione_servizio"
       responses:
         200:
-          description: "Configurazione scaricata con successo"
-          content:
-            text/csv:
-              schema:
-                type: "string"
-                format: "binary"
+          $ref: "#/components/responses/200ReportConfigurazioni"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -1220,170 +1126,44 @@ paths:
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
+    post:
+      tags:
+      - "Reportistica"
+      summary: "Recupera la configurazione di un servizio"
+      description: "Consente di recuperare la configurazione di un servizio esportandola\
+        \ in formato csv"
+      operationId: "exportConfigurazioneApiByFullSearch"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RicercaConfigurazioneApi"
+      responses:
+        200:
+          $ref: "#/components/responses/200ReportConfigurazioni"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
 components:
   schemas:
-    Tipo:
-      maxLength: 20
-      type: "string"
-      description: "Indica un tipo assegnato ad un soggetto o ad un servizio"
-    ContenutoMessaggio:
-      type: "object"
-      properties:
-        headers:
-          type: "array"
-          items:
-            $ref: "#/components/schemas/HeaderItem"
-        body:
-          type: "object"
-    HeaderItem:
-      type: "object"
-      properties:
-        nome:
-          type: "string"
-          example: "Content-Type"
-        valore:
-          type: "string"
-          example: "application/json"
-    RiepilogoRegistroApi:
-      type: "object"
-      properties:
-        soggetti_operativi:
-          type: "integer"
-          format: "int32"
-        soggetti_esterni:
-          type: "integer"
-          format: "int32"
-        applicativi:
-          type: "integer"
-          format: "int32"
-    InfoImplementazioneApi:
-      type: "object"
-      properties:
-        nome:
-          $ref: "#/components/schemas/NCName"
-        versione:
-          $ref: "#/components/schemas/VersioneApi"
-        azioni:
-          type: "integer"
-          description: "Il numero di azioni\\risorse della api"
-          format: "int32"
-          example: 20
-        erogazioni:
-          type: "integer"
-          description: "Il numero di erogazioni che implementano la api"
-          format: "int32"
-          example: 2
-        fruizioni:
-          type: "integer"
-          description: "Il numero di fruizioni che implementano la api"
-          format: "int32"
-          example: 2
-    IdTransazione:
-      type: "string"
-      format: "uuid"
-      example: "f54d8638-79f5-45db-878a-82d858ba128e"
-    LarghezzaGrafico:
-      maximum: 2000
-      minimum: 1
-      type: "integer"
-      format: "int32"
-    TipoGraficoEnum:
-      type: "string"
-      example: "Line"
-      enum:
-      - "line"
-      - "pie"
-      - "bar"
-      - "table"
-    OrientamentoLabelEnum:
-      type: "string"
-      example: "obliquo"
-      enum:
-      - "orizzontale"
-      - "obliquo"
-      - "verticale"
-    HttpMethodEnum:
-      type: "string"
-      example: "POST"
-      enum:
-      - "GET"
-      - "POST"
-      - "PUT"
-      - "DELETE"
-      - "OPTIONS"
-      - "HEAD"
-      - "TRACE"
-      - "PATCH"
-      - "LINK"
-      - "UNLINK"
-    VisualizzazioneReportEnum:
-      type: "string"
-      example: "numero_transazioni"
-      enum:
-      - "numero_transazioni"
-      - "occupazione_banda"
-      - "tempo_medio_risposta"
-    FormatoExportEnum:
-      type: "string"
-      example: "csv"
-      enum:
-      - "csv"
-      - "pdf"
-      - "xls"
-      - "png"
-    UnitaTempoEnum:
-      type: "string"
-      example: "orario"
-      enum:
-      - "orario"
-      - "giornaliero"
-      - "settimanale"
-      - "mensile"
-    TokenClaimEnum:
-      type: "string"
-      enum:
-      - "subject"
-      - "issuer"
-      - "client_id"
-      - "username"
-      - "email"
-    InvocazioneContextEnum:
-      type: "string"
-      example: "in"
-      enum:
-      - "in"
-      - "out"
-    RiepilogoApiSoggetto:
-      type: "object"
-      properties:
-        soggetto:
-          $ref: "#/components/schemas/SimpleName"
-        erogazioni:
-          type: "integer"
-          description: "Il numero di erogazioni del soggetto"
-          format: "int32"
-          example: 2
-        fruizioni:
-          type: "integer"
-          description: "Il numero di fruizioni del soggetto"
-          format: "int32"
-          example: 2
-        api:
-          type: "integer"
-          description: "Il numero di api per cui il soggetto è referente"
-          format: "int32"
-          example: 2
-    Riepilogo:
-      type: "object"
-      properties:
-        api_soggetto:
-          $ref: "#/components/schemas/RiepilogoApiSoggetto"
-        registro:
-          $ref: "#/components/schemas/RiepilogoRegistroApi"
-    ListaRiepilogoApi:
+    ListaTransazioni:
       type: "object"
       allOf:
-      - $ref: "#/components/schemas/Lista"
+      - $ref: "#/components/schemas/ListaSenzaTotale"
       - required:
         - "items"
         type: "object"
@@ -1391,207 +1171,48 @@ components:
           items:
             type: "array"
             items:
-              $ref: "#/components/schemas/RiepilogoApiItem"
-    RiepilogoApiItem:
-      type: "object"
-      properties:
-        fruitore:
-          $ref: "#/components/schemas/SimpleName"
-        erogatore:
-          $ref: "#/components/schemas/SimpleName"
-        nome:
-          $ref: "#/components/schemas/NCName"
-        versione:
-          $ref: "#/components/schemas/VersioneApi"
-        tipo:
-          type: "string"
-    OpzioniReport:
-      type: "object"
-      properties:
-        tipo_grafico:
-          $ref: "#/components/schemas/TipoGraficoEnum"
-        orientamento_label:
-          $ref: "#/components/schemas/OrientamentoLabelEnum"
-        larghezza_grafico:
-          $ref: "#/components/schemas/LarghezzaGrafico"
-        visualizzazione_report:
-          $ref: "#/components/schemas/VisualizzazioneReport"
-        unita_tempo:
-          $ref: "#/components/schemas/UnitaTempoEnum"
-    RicercaStatisticaBase:
-      type: "object"
-      properties:
-        formato_export:
-          $ref: "#/components/schemas/FormatoExportEnum"
-        opzioni:
-          $ref: "#/components/schemas/OpzioniReport"
-        filtro_temporale:
-          $ref: "#/components/schemas/FiltroTemporale"
-        tipologia_servizio:
-          $ref: "#/components/schemas/TipologiaServizioEnum"
-    RicercaStatisticaTemporale:
-      type: "object"
-      properties:
-        filtro_api:
-          discriminator:
-            propertyName: "tipologia_servizio"
-            mapping:
-              erogazione: "#/components/schemas/FiltroErogazione"
-              fruizione: "#/components/schemas/FiltroFruizione"
-          oneOf:
-          - $ref: "#/components/schemas/FiltroErogazione"
-          - $ref: "#/components/schemas/FiltroFruizione"
-        filtro_mittente:
-          $ref: "#/components/schemas/FiltroMittente"
-        filtro_transazione:
-          $ref: "#/components/schemas/FiltroTransazione"
-        filtro_azione:
-          $ref: "#/components/schemas/NCName"
-      allOf:
-      - $ref: "#/components/schemas/RicercaStatisticaBase"
-    RicercaStatisticaEsiti:
-      type: "object"
-      properties:
-        filtro_api:
-          discriminator:
-            propertyName: "tipologia_servizio"
-            mapping:
-              erogazione: "#/components/schemas/FiltroErogazione"
-              fruizione: "#/components/schemas/FiltroFruizione"
-          oneOf:
-          - $ref: "#/components/schemas/FiltroErogazione"
-          - $ref: "#/components/schemas/FiltroFruizione"
-        filtro_mittente:
-          $ref: "#/components/schemas/FiltroMittente"
-        filtro_azione:
-          $ref: "#/components/schemas/NCName"
-      allOf:
-      - $ref: "#/components/schemas/RicercaStatisticaBase"
-    RicercaStatisticaSoggettoRemoto:
-      type: "object"
-      properties:
-        filtro_mittente:
-          $ref: "#/components/schemas/FiltroMittente"
-        filtro_transazione:
-          $ref: "#/components/schemas/FiltroTransazione"
-        filtro_api:
-          discriminator:
-            propertyName: "tipologia_servizio"
-            mapping:
-              erogazione: "#/components/schemas/FiltroErogazioneSoggettoRemoto"
-              fruizione: "#/components/schemas/FiltroFruizione"
-          oneOf:
-          - $ref: "#/components/schemas/FiltroErogazioneSoggettoRemoto"
-          - $ref: "#/components/schemas/FiltroFruizione"
-        filtro_azione:
-          $ref: "#/components/schemas/NCName"
-      allOf:
-      - $ref: "#/components/schemas/RicercaStatisticaBase"
-    RicercaStatisticaSoggettoLocale:
+              $ref: "#/components/schemas/ItemTransazione"
+    ItemTransazione:
       type: "object"
       allOf:
-      - $ref: "#/components/schemas/RicercaStatisticaTemporale"
-    RicercaStatisticaApi:
+      - $ref: "#/components/schemas/TransazioneBase"
+      - $ref: "#/components/schemas/TransazioneExtTipo"
+      - required:
+        - "data"
+        type: "object"
+        properties:
+          data:
+            type: "string"
+            format: "date-time"
+          latenza_servizio:
+            type: "integer"
+            format: "int64"
+            example: 8
+          latenza_totale:
+            type: "integer"
+            format: "int64"
+            example: 20
+          richiesta:
+            $ref: "#/components/schemas/TransazioneExtDettaglioRichiestaBase"
+          risposta:
+            $ref: "#/components/schemas/TransazioneExtDettaglioRispostaBase"
+          api:
+            $ref: "#/components/schemas/TransazioneExtInformazioniApiBase"
+          mittente:
+            $ref: "#/components/schemas/TransazioneExtInformazioniMittenteBase"
+    ListaEventi:
       type: "object"
-      properties:
-        filtro_mittente:
-          $ref: "#/components/schemas/FiltroMittente"
-        filtro_transazione:
-          $ref: "#/components/schemas/FiltroTransazione"
-        filtro_api:
-          discriminator:
-            propertyName: "tipologia_servizio"
-            mapping:
-              erogazione: "#/components/schemas/FiltroFruitore"
-              fruizione: "#/components/schemas/FiltroErogatore"
-          oneOf:
-          - $ref: "#/components/schemas/FiltroErogatore"
-          - $ref: "#/components/schemas/FiltroFruitore"
       allOf:
-      - $ref: "#/components/schemas/RicercaStatisticaBase"
-    RicercaStatisticaAzione:
-      type: "object"
-      properties:
-        filtro_mittente:
-          $ref: "#/components/schemas/FiltroMittente"
-        filtro_transazione:
-          $ref: "#/components/schemas/FiltroTransazione"
-        filtro_api:
-          discriminator:
-            propertyName: "tipologia_servizio"
-            mapping:
-              erogazione: "#/components/schemas/FiltroErogazione"
-              fruizione: "#/components/schemas/FiltroFruizione"
-          oneOf:
-          - $ref: "#/components/schemas/FiltroErogazione"
-          - $ref: "#/components/schemas/FiltroFruizione"
-      allOf:
-      - $ref: "#/components/schemas/RicercaStatisticaBase"
-    RicercaStatisticaApplicativo:
-      type: "object"
-      properties:
-        filtro_transazione:
-          $ref: "#/components/schemas/FiltroTransazione"
-        filtro_api:
-          discriminator:
-            propertyName: "tipologia_servizio"
-            mapping:
-              erogazione: "#/components/schemas/FiltroErogazione"
-              fruizione: "#/components/schemas/FiltroFruizione"
-          oneOf:
-          - $ref: "#/components/schemas/FiltroErogazione"
-          - $ref: "#/components/schemas/FiltroFruizione"
-        filtro_mittente:
-          $ref: "#/components/schemas/FiltroMittente"
-        filtro_azione:
-          $ref: "#/components/schemas/NCName"
-      allOf:
-      - $ref: "#/components/schemas/RicercaStatisticaBase"
-    RicercaStatisticaIdAutenticato:
-      type: "object"
-      properties:
-        filtro_transazione:
-          $ref: "#/components/schemas/FiltroTransazione"
-        filtro_api:
-          discriminator:
-            propertyName: "tipologia_servizio"
-            mapping:
-              erogazione: "#/components/schemas/FiltroErogazione"
-              fruizione: "#/components/schemas/FiltroFruizione"
-          oneOf:
-          - $ref: "#/components/schemas/FiltroErogazione"
-          - $ref: "#/components/schemas/FiltroFruizione"
-        filtro_mittente:
-          $ref: "#/components/schemas/FiltroMittente"
-        filtro_azione:
-          $ref: "#/components/schemas/NCName"
-      allOf:
-      - $ref: "#/components/schemas/RicercaStatisticaBase"
-    RicercaStatisticaTokenInfo:
-      type: "object"
-      properties:
-        filtro_transazione:
-          $ref: "#/components/schemas/FiltroTransazione"
-        filtro_api:
-          discriminator:
-            propertyName: "tipologia_servizio"
-            mapping:
-              erogazione: "#/components/schemas/FiltroErogazione"
-              fruizione: "#/components/schemas/FiltroFruizione"
-          oneOf:
-          - $ref: "#/components/schemas/FiltroErogazione"
-          - $ref: "#/components/schemas/FiltroFruizione"
-        filtro_mittente:
-          $ref: "#/components/schemas/FiltroMittente"
-        filtro_azione:
-          $ref: "#/components/schemas/NCName"
-        filtro_token:
-          $ref: "#/components/schemas/FiltroTokenClaimBase"
-      allOf:
-      - $ref: "#/components/schemas/RicercaStatisticaBase"
-    TipoEvento:
-      type: "string"
-    EventoDetail:
+      - $ref: "#/components/schemas/ListaSenzaTotale"
+      - required:
+        - "items"
+        type: "object"
+        properties:
+          items:
+            type: "array"
+            items:
+              $ref: "#/components/schemas/Evento"
+    Evento:
       type: "object"
       properties:
         id:
@@ -1601,134 +1222,68 @@ components:
           type: "string"
           format: "date-time"
         severita:
-          $ref: "#/components/schemas/SeveritaEnum"
+          $ref: "#/components/schemas/DiagnosticoSeveritaEnum"
         tipo:
-          $ref: "#/components/schemas/TipoEvento"
+          type: "string"
         codice:
-          $ref: "#/components/schemas/CodiceEventoEnum"
+          type: "string"
         origine:
           type: "string"
-    ListaTransazioni:
+    OpzioniGenerazioneReportBase:
+      required:
+      - "formato"
+      type: "object"
+      properties:
+        formato:
+          $ref: "#/components/schemas/FormatoReportEnum"
+        tipo:
+          $ref: "#/components/schemas/TipoReportEnum"
+        orientamento_etichette:
+          $ref: "#/components/schemas/OrientamentoEtichetteReportEnum"
+        larghezza_grafico:
+          $ref: "#/components/schemas/LarghezzaReportGrafico"
+    OpzioniGenerazioneReportMultiLine:
       type: "object"
       allOf:
-      - $ref: "#/components/schemas/ListaRisultati"
-      - required:
-        - "items"
-        type: "object"
+      - $ref: "#/components/schemas/OpzioniGenerazioneReportBase"
+      - type: "object"
         properties:
-          items:
-            type: "array"
-            items:
-              $ref: "#/components/schemas/TransazioneItem"
-    ListaEventi:
+          tipo_informazione:
+            $ref: "#/components/schemas/TipoInformazioneReportMultiLine"
+    OpzioniGenerazioneReport:
       type: "object"
       allOf:
-      - $ref: "#/components/schemas/ListaRisultati"
+      - $ref: "#/components/schemas/OpzioniGenerazioneReportBase"
       - required:
-        - "items"
+        - "tipo_informazione"
         type: "object"
         properties:
-          items:
-            type: "array"
-            items:
-              $ref: "#/components/schemas/EventoDetail"
-    TempiAttraversamento:
-      type: "object"
-    DimensioneMessaggi:
-      type: "object"
-    EsitoTransazioneEnum:
-      type: "string"
-      enum:
-      - "ok"
-      - "fault"
-      - "error"
-      - "error_or_fault"
-      - "personalizzato"
-    EsitoTransazioneEnumBase:
-      type: "string"
-      enum:
-      - "ok"
-      - "fault"
-      - "error"
-      - "error_or_fault"
-    CodiceEventoEnum:
-      type: "string"
-      enum:
-      - "start"
-      - "stop"
-    SeveritaEnum:
-      type: "string"
-      example: "info"
-      enum:
-      - "fatal"
-      - "error"
-      - "warn"
-      - "info"
-      - "debug"
-    DettaglioEsitoEnum:
-      type: "string"
-      example: "fault applicativo"
-      enum:
-      - "ok"
-      - "ok (presenza anomalie)"
-      - "fault applicativo"
-      - "autenticazione fallita"
-      - "autorizzazione negata"
-      - "richiesta client rifiutata"
-      - "errore di connessione"
-      - "errore di protocollo"
-      - "violazione rate limiting"
-      - "violazione rate limiting warningOnly"
-      - "superamento limite richieste"
-      - "superamento limite richieste warningOnly"
-      - "fault pdd esterna"
-      - "contenuto richiesta non riconosciuto"
-      - "contenuto risposta non riconosciuto"
-      - "connessione client interrotta"
-      - "fault generato dalla pdd"
-      - "errore interno pdd"
-    DettaglioEsitoList:
-      type: "array"
-      items:
-        $ref: "#/components/schemas/DettaglioEsitoEnum"
-    TipologiaServizioEnum:
-      type: "string"
-      example: "fruizione"
-      enum:
-      - "fruizione"
-      - "erogazione"
-    TipoMessaggioEnum:
-      type: "string"
-      example: "richiesta"
-      enum:
-      - "richiesta"
-      - "risposta"
-    SeveritaDiagnosticoEnum:
-      type: "string"
-      example: "errorProtocol"
-      enum:
-      - "errorIntegration"
-      - "errorProtocol"
-      - "infoIntegration"
-      - "InfoProtocol"
-      - "debugLow"
-      - "debugMedium"
-      - "debugHigh"
-    FunzioneDiagnosticoEnum:
-      type: "string"
-      example: "ricezioneBuste"
-      enum:
-      - "ricezioneBuste"
-      - "ricezioneContenutiApplicativi"
-      - "inoltroBuste"
-      - "consegnaContenutiApplicativi"
-      - "imbustamento"
-      - "sbustamento"
-    VisualizzazioneReport:
+          tipo_informazione:
+            $ref: "#/components/schemas/TipoInformazioneReport"
+    LarghezzaReportGrafico:
+      maximum: 2000
+      minimum: 1
+      type: "integer"
+      format: "int32"
+    TipoInformazioneReport:
       type: "object"
       properties:
         tipo:
-          $ref: "#/components/schemas/VisualizzazioneReportEnum"
+          $ref: "#/components/schemas/TipoInformazioneReportEnum"
+        valori:
+          discriminator:
+            propertyName: "tipo"
+            mapping:
+              occupazione_banda: "#/components/schemas/OccupazioneBandaEnum"
+              tempo_medio_risposta: "#/components/schemas/TempoMedioRispostaEnum"
+          oneOf:
+          - $ref: "#/components/schemas/OccupazioneBandaEnum"
+          - $ref: "#/components/schemas/TempoMedioRispostaEnum"
+    TipoInformazioneReportMultiLine:
+      type: "object"
+      properties:
+        tipo:
+          $ref: "#/components/schemas/TipoInformazioneReportEnum"
         valori:
           discriminator:
             propertyName: "tipo"
@@ -1762,247 +1317,309 @@ components:
         latenza_gateway:
           type: "boolean"
           default: false
-    Diagnostico:
+    Riepilogo:
+      required:
+      - "api"
+      - "applicativi"
+      - "erogazioni"
+      - "fruizioni"
+      - "soggetti_dominio_esterno"
+      - "soggetti_dominio_interno"
       type: "object"
       properties:
-        data:
-          type: "string"
-          format: "date-time"
-        severita:
-          $ref: "#/components/schemas/SeveritaDiagnosticoEnum"
-        funzione:
-          $ref: "#/components/schemas/FunzioneDiagnosticoEnum"
-        messaggio:
-          type: "string"
-          example: "Generato messaggio di cooperazione di Errore con identificativo\
-            \ [0998f497-e05d-420a-a6b0-ff3bb718d2c4]"
-    VersioneApi:
-      minimum: 1
-      type: "integer"
-      format: "int32"
-      example: 1
-    TransazioneDetail:
-      type: "object"
-      properties:
-        id:
-          type: "string"
-          format: "uri"
-        esito:
-          type: "string"
-        tipologia:
-          $ref: "#/components/schemas/TipologiaServizioEnum"
-        informazioni_servizio:
-          $ref: "#/components/schemas/InformazioniServizio"
-        dettaglio_richiesta:
-          $ref: "#/components/schemas/DettaglioRichiesta"
-        dettaglio_risposta:
-          $ref: "#/components/schemas/DettaglioRisposta"
-        informazioni_mittente:
-          $ref: "#/components/schemas/InformazioniMittente"
-        informazioni_avanzate:
-          $ref: "#/components/schemas/InformazioniAvanzate"
-        diagnostici:
-          type: "array"
-          items:
-            $ref: "#/components/schemas/Diagnostico"
-    InformazioniServizio:
-      type: "object"
-      properties:
-        erogatore:
+        api:
+          type: "integer"
+          description: "Il numero di api per cui il soggetto è referente"
+          format: "int32"
+          example: 2
+        soggetto:
           $ref: "#/components/schemas/SimpleName"
+        erogazioni:
+          type: "integer"
+          description: "Il numero di erogazioni del soggetto"
+          format: "int32"
+          example: 2
+        fruizioni:
+          type: "integer"
+          description: "Il numero di fruizioni del soggetto"
+          format: "int32"
+          example: 2
+        soggetti_dominio_interno:
+          type: "integer"
+          format: "int32"
+        soggetti_dominio_esterno:
+          type: "integer"
+          format: "int32"
+        applicativi:
+          type: "integer"
+          format: "int32"
+    InfoImplementazioneApi:
+      type: "object"
+      properties:
         nome:
           $ref: "#/components/schemas/NCName"
-        versione:
-          $ref: "#/components/schemas/VersioneApi"
-        tipo:
-          type: "string"
-          description: "Il tipo del servizio, significativo in caso di profilo SPCoop"
-        azione:
-          $ref: "#/components/schemas/NCName"
-        profilo_collaborazione:
-          $ref: "#/components/schemas/ProfiloCollaborazioneEnum"
-    DettagliMessaggio:
-      type: "object"
-      properties:
-        data_ingresso:
-          type: "string"
-          format: "date-time"
-        data_uscita:
-          type: "string"
-          format: "date-time"
-        bytes_ingresso:
-          type: "integer"
-          format: "int64"
-        bytes_uscita:
-          type: "integer"
-          format: "int64"
-        contenuti_ingresso:
-          $ref: "#/components/schemas/ContenutoMessaggio"
-        contenuti_uscita:
-          $ref: "#/components/schemas/ContenutoMessaggio"
-    DettaglioRichiesta:
-      type: "object"
-      properties:
-        id_messaggio:
-          type: "string"
-          example: "eba4355e-403f-4e75-8d56-0751710409c2"
-      allOf:
-      - $ref: "#/components/schemas/DettagliMessaggio"
-    DettaglioRisposta:
-      type: "object"
-      properties:
-        fault_uscita:
-          type: "string"
-          format: "byte"
-        fault_ingresso:
-          type: "string"
-          format: "byte"
-      allOf:
-      - $ref: "#/components/schemas/DettagliMessaggio"
-    InformazioniMittente:
-      type: "object"
-      properties:
-        metodo_http:
-          $ref: "#/components/schemas/HttpMethodEnum"
-        url_invocazione_context:
-          $ref: "#/components/schemas/InvocazioneContextEnum"
-        url_invocazione:
-          type: "string"
-          format: "uri"
-          example: "/govway/in/Ente/PetStore/v2/pet"
-        indirizzo_client:
-          type: "string"
-          format: "ipv4"
-        codice_risposta_client:
-          type: "integer"
-          format: "int32"
-        token:
-          $ref: "#/components/schemas/InformazioniToken"
-    InformazioniToken:
-      type: "object"
-      properties:
-        client_id:
-          type: "string"
-          example: "407408718192.apps.googleusercontent.com"
-        subject:
-          type: "string"
-          example: "10623565759265497689"
-        detail:
-          type: "object"
-    InformazioniAvanzate:
-      type: "object"
-      properties:
-        id_dominio:
-          type: "string"
-          example: "domain/gw/Ente"
-        soggetto_dominio:
-          $ref: "#/components/schemas/SimpleName"
-        latenza_servizio:
-          type: "integer"
-          format: "int64"
-          example: 8
-        latenza_gateway:
-          type: "integer"
-          format: "int64"
-          example: 8
-        latenza_totale:
-          type: "integer"
-          format: "int64"
-          example: 8
-        eventi:
-          type: "string"
-          description: "Gli eventi registrati da Govway durante la transazione"
-        porta_inbound:
-          type: "string"
-          example: "Ente/PetStore/v2"
-        applicativo_erogatore:
-          type: "string"
-          example: "gw_Ente/gw_PetStore/v2"
-    TransazioneItem:
-      type: "object"
-      properties:
-        id:
-          type: "string"
-          format: "uuid"
-          example: "f54d8638-79f5-45db-878a-82d858ba128e"
-        data_ingresso_richiesta:
-          type: "string"
-          format: "date-time"
-        tipologia:
-          $ref: "#/components/schemas/TipologiaServizioEnum"
-        esito:
-          $ref: "#/components/schemas/EsitoTransazioneEnum"
-        soggetto_fruitore:
-          $ref: "#/components/schemas/SimpleName"
-        soggetto_erogatore:
-          $ref: "#/components/schemas/SimpleName"
-        api:
-          $ref: "#/components/schemas/NCName"
-        azione:
-          $ref: "#/components/schemas/NCName"
-        versione_api:
-          minimum: 1
-          type: "integer"
-          format: "int32"
-          example: 1
-        latenzaServizio:
-          type: "string"
-          example: "8 ms"
-        latenzaTotale:
-          type: "string"
-          example: "20 ms"
-    RicercaConfigurazioneApi:
-      type: "object"
-      properties:
-        tipologia:
-          $ref: "#/components/schemas/TipologiaServizioEnum"
-        filtro_api:
-          discriminator:
-            propertyName: "tipologia"
-            mapping:
-              erogazione: "#/components/schemas/FiltroErogazioneConfigurazione"
-              fruizione: "#/components/schemas/FiltroFruizione"
-          oneOf:
-          - $ref: "#/components/schemas/FiltroErogazioneConfigurazione"
-          - $ref: "#/components/schemas/FiltroFruizione"
-    FiltroErogazioneBase:
-      type: "object"
-      properties:
         tipo:
           $ref: "#/components/schemas/Tipo"
-        nome:
-          $ref: "#/components/schemas/NCName"
         versione:
-          minimum: 1
-          type: "integer"
-          format: "int32"
-    FiltroErogazioneSoggettoRemoto:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/FiltroErogazioneBase"
-    FiltroErogazioneConfigurazione:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/FiltroErogazioneBase"
-    FiltroFruizione:
-      type: "object"
-      properties:
-        erogatore:
+          $ref: "#/components/schemas/Versione"
+        soggetto:
           $ref: "#/components/schemas/SimpleName"
+        azioni:
+          type: "integer"
+          description: "Il numero di azioni\\risorse della api"
+          format: "int32"
+          example: 20
+        erogazioni:
+          type: "integer"
+          description: "Il numero di erogazioni che implementano la api"
+          format: "int32"
+          example: 2
+        fruizioni:
+          type: "integer"
+          description: "Il numero di fruizioni che implementano la api"
+          format: "int32"
+          example: 2
+    ListaRiepilogoApi:
+      type: "object"
       allOf:
-      - $ref: "#/components/schemas/FiltroErogazioneBase"
-    FiltroErogazione:
+      - $ref: "#/components/schemas/Lista"
+      - required:
+        - "items"
+        type: "object"
+        properties:
+          items:
+            type: "array"
+            items:
+              $ref: "#/components/schemas/RiepilogoApiItem"
+    RiepilogoApiItem:
+      required:
+      - "erogatore"
       type: "object"
       properties:
         fruitore:
           $ref: "#/components/schemas/SimpleName"
-      allOf:
-      - $ref: "#/components/schemas/FiltroErogazioneBase"
-    FiltroAzione:
+        erogatore:
+          $ref: "#/components/schemas/SimpleName"
+        nome:
+          $ref: "#/components/schemas/NCName"
+        tipo:
+          $ref: "#/components/schemas/Tipo"
+        versione:
+          $ref: "#/components/schemas/Versione"
+    RicercaBaseTransazione:
+      required:
+      - "intervallo_temporale"
+      - "tipo"
       type: "object"
       properties:
+        intervallo_temporale:
+          $ref: "#/components/schemas/FiltroTemporale"
+        tipo:
+          $ref: "#/components/schemas/TransazioneRuoloEnum"
+        api:
+          discriminator:
+            propertyName: "tipo"
+            mapping:
+              erogazione: "#/components/schemas/FiltroErogazione"
+              fruizione: "#/components/schemas/FiltroFruizione"
+          oneOf:
+          - $ref: "#/components/schemas/FiltroErogazione"
+          - $ref: "#/components/schemas/FiltroFruizione"
         azione:
           $ref: "#/components/schemas/NCName"
+        esito:
+          $ref: "#/components/schemas/FiltroEsito"
+        evento:
+          type: "string"
+          description: "Eevento da ricercare per una transazione"
+    RicercaIntervalloTemporale:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RicercaBaseTransazione"
+      - type: "object"
+        properties:
+          mittente:
+            $ref: "#/components/schemas/FiltroMittente"
+    RicercaIdApplicativo:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RicercaBaseTransazione"
+      - required:
+        - "id_applicativo"
+        type: "object"
+        properties:
+          id_applicativo:
+            $ref: "#/components/schemas/FiltroRicercaId"
+    RicercaBaseStatistica:
+      required:
+      - "intervallo_temporale"
+      - "tipo"
+      type: "object"
+      properties:
+        intervallo_temporale:
+          $ref: "#/components/schemas/FiltroTemporale"
+        tipo:
+          $ref: "#/components/schemas/TransazioneRuoloEnum"
+    RicercaBaseStatisticaSoggetti:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RicercaBaseStatistica"
+      - type: "object"
+        properties:
+          api:
+            discriminator:
+              propertyName: "tipo"
+              mapping:
+                erogazione: "#/components/schemas/FiltroErogazione"
+                fruizione: "#/components/schemas/FiltroFruizione"
+            oneOf:
+            - $ref: "#/components/schemas/FiltroErogazione"
+            - $ref: "#/components/schemas/FiltroFruizione"
+    RicercaStatisticaAndamentoTemporale:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RicercaBaseStatisticaSoggetti"
+      - required:
+        - "report"
+        type: "object"
+        properties:
+          report:
+            $ref: "#/components/schemas/OpzioniGenerazioneReportMultiLine"
+          azione:
+            $ref: "#/components/schemas/NCName"
+          mittente:
+            $ref: "#/components/schemas/FiltroMittente"
+          esito:
+            $ref: "#/components/schemas/FiltroEsito"
+    RicercaStatisticaDistribuzioneEsiti:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RicercaBaseStatisticaSoggetti"
+      - required:
+        - "report"
+        type: "object"
+        properties:
+          report:
+            $ref: "#/components/schemas/OpzioniGenerazioneReport"
+          azione:
+            $ref: "#/components/schemas/NCName"
+          mittente:
+            $ref: "#/components/schemas/FiltroMittente"
+    RicercaStatisticaDistribuzioneSoggettoRemoto:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RicercaBaseStatistica"
+      - required:
+        - "report"
+        type: "object"
+        properties:
+          report:
+            $ref: "#/components/schemas/OpzioniGenerazioneReport"
+          api:
+            discriminator:
+              propertyName: "tipo"
+              mapping:
+                erogazione: "#/components/schemas/FiltroApiBase"
+                fruizione: "#/components/schemas/FiltroFruizione"
+            oneOf:
+            - $ref: "#/components/schemas/FiltroApiBase"
+            - $ref: "#/components/schemas/FiltroFruizione"
+          azione:
+            $ref: "#/components/schemas/NCName"
+          mittente:
+            $ref: "#/components/schemas/FiltroMittente"
+          esito:
+            $ref: "#/components/schemas/FiltroEsito"
+    RicercaStatisticaDistribuzioneSoggettoLocale:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RicercaBaseStatisticaSoggetti"
+      - required:
+        - "report"
+        type: "object"
+        properties:
+          report:
+            $ref: "#/components/schemas/OpzioniGenerazioneReport"
+          azione:
+            $ref: "#/components/schemas/NCName"
+          mittente:
+            $ref: "#/components/schemas/FiltroMittente"
+          esito:
+            $ref: "#/components/schemas/FiltroEsito"
+    RicercaStatisticaDistribuzioneApi:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RicercaBaseStatistica"
+      - required:
+        - "report"
+        type: "object"
+        properties:
+          report:
+            $ref: "#/components/schemas/OpzioniGenerazioneReport"
+          soggetto_remoto:
+            $ref: "#/components/schemas/SimpleName"
+          mittente:
+            $ref: "#/components/schemas/FiltroMittente"
+          esito:
+            $ref: "#/components/schemas/FiltroEsito"
+    RicercaStatisticaDistribuzioneAzione:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RicercaBaseStatisticaSoggetti"
+      - required:
+        - "report"
+        type: "object"
+        properties:
+          report:
+            $ref: "#/components/schemas/OpzioniGenerazioneReport"
+          mittente:
+            $ref: "#/components/schemas/FiltroMittente"
+          esito:
+            $ref: "#/components/schemas/FiltroEsito"
+    RicercaStatisticaDistribuzioneApplicativo:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RicercaBaseStatisticaSoggetti"
+      - required:
+        - "report"
+        type: "object"
+        properties:
+          report:
+            $ref: "#/components/schemas/OpzioniGenerazioneReport"
+          azione:
+            $ref: "#/components/schemas/NCName"
+          esito:
+            $ref: "#/components/schemas/FiltroEsito"
+    RicercaStatisticaDistribuzioneIdAutenticato:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RicercaStatisticaDistribuzioneApplicativo"
+    RicercaStatisticaDistribuzioneTokenInfo:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RicercaStatisticaDistribuzioneApplicativo"
+      - required:
+        - "claim"
+        type: "object"
+        properties:
+          claim:
+            $ref: "#/components/schemas/TokenClaimEnum"
+    RicercaConfigurazioneApi:
+      required:
+      - "tipo"
+      type: "object"
+      properties:
+        tipo:
+          $ref: "#/components/schemas/TransazioneRuoloEnum"
+        api:
+          discriminator:
+            propertyName: "tipo"
+            mapping:
+              erogazione: "#/components/schemas/FiltroApiBase"
+              fruizione: "#/components/schemas/FiltroFruizione"
+          oneOf:
+          - $ref: "#/components/schemas/FiltroApiBase"
+          - $ref: "#/components/schemas/FiltroFruizione"
     FiltroTemporale:
       type: "object"
       properties:
@@ -2012,182 +1629,482 @@ components:
         data_fine:
           type: "string"
           format: "date-time"
-    FiltroErogatore:
+    FiltroApiBase:
       type: "object"
       properties:
-        erogatore:
-          type: "string"
-    FiltroFruitore:
+        tipo:
+          $ref: "#/components/schemas/Tipo"
+        nome:
+          $ref: "#/components/schemas/NCName"
+        versione:
+          $ref: "#/components/schemas/Versione"
+    FiltroFruizione:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/FiltroApiBase"
+      - type: "object"
+        properties:
+          erogatore:
+            $ref: "#/components/schemas/SimpleName"
+    FiltroErogazione:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/FiltroApiBase"
+      - type: "object"
+        properties:
+          fruitore:
+            $ref: "#/components/schemas/SimpleName"
+    FiltroEsito:
       type: "object"
       properties:
-        fruitore:
-          type: "string"
+        tipo:
+          $ref: "#/components/schemas/EsitoTransazioneFullSearchEnum"
+        dettaglio:
+          discriminator:
+            propertyName: "esito"
+            mapping:
+              ok: "#/components/schemas/DettaglioEsitoCode"
+              error: "#/components/schemas/DettaglioEsitoCode"
+              error_or_fault: "#/components/schemas/DettaglioEsitoCode"
+              personalizzato: "#/components/schemas/DettaglioEsitoList"
+          oneOf:
+          - $ref: "#/components/schemas/DettaglioEsitoCode"
+          - $ref: "#/components/schemas/DettaglioEsitoList"
+    DettaglioEsitoCode:
+      type: "integer"
+      format: "int32"
+    DettaglioEsitoList:
+      type: "array"
+      items:
+        $ref: "#/components/schemas/DettaglioEsitoCode"
     FiltroMittente:
       type: "object"
       properties:
-        tipo_filtro_mittente:
+        tipo:
           $ref: "#/components/schemas/TipoFiltroMittenteEnum"
-        filtro_mittente:
+        id:
           discriminator:
             propertyName: "tipo_filtro_mittente"
             mapping:
-              applicativo: "#/components/schemas/FiltroApplicativo"
-              identificativo_autenticato: "#/components/schemas/FiltroIdAutenticato"
-              token_info: "#/components/schemas/FiltroTokenClaim"
+              applicativo: "#/components/schemas/FiltroMittenteApplicativo"
+              identificativo_autenticato: "#/components/schemas/FiltroMittenteIdAutenticato"
+              token_info: "#/components/schemas/FiltroMittenteTokenClaim"
           oneOf:
-          - $ref: "#/components/schemas/FiltroApplicativo"
-          - $ref: "#/components/schemas/FiltroIdApplicativo"
-          - $ref: "#/components/schemas/FiltroTokenClaim"
+          - $ref: "#/components/schemas/FiltroMittenteApplicativo"
+          - $ref: "#/components/schemas/FiltroMittenteIdApplicativo"
+          - $ref: "#/components/schemas/FiltroMittenteTokenClaim"
       description: "Descrive le informazioni di filtraggio relative al mittente per\
         \ la ricerca di transazioni"
-    FiltroApplicativo:
+    FiltroMittenteApplicativo:
+      $ref: "#/components/schemas/NCName"
+    FiltroMittenteIdApplicativo:
+      $ref: "#/components/schemas/FiltroRicercaId"
+    FiltroMittenteTokenClaim:
       type: "object"
-      properties:
-        nome_applicativo:
-          $ref: "#/components/schemas/SimpleName"
+      allOf:
+      - $ref: "#/components/schemas/FiltroTokenClaimBase"
+      - $ref: "#/components/schemas/FiltroRicercaId"
     FiltroTokenClaimBase:
       type: "object"
       properties:
         claim:
           $ref: "#/components/schemas/TokenClaimEnum"
-    FiltroTokenClaim:
-      type: "object"
-      properties:
-        ricerca_esatta:
-          type: "boolean"
-          default: true
-        case_sensitive:
-          type: "boolean"
-          default: true
-        id_applicativo:
-          type: "string"
-          example: "abc123"
-      allOf:
-      - $ref: "#/components/schemas/FiltroTokenClaimBase"
+    EsitoTransazioneSimpleSearchEnum:
+      type: "string"
+      enum:
+      - "ok"
+      - "fault"
+      - "error"
+      - "error_or_fault"
+    EsitoTransazioneFullSearchEnum:
+      type: "string"
+      enum:
+      - "ok"
+      - "fault"
+      - "error"
+      - "error_or_fault"
+      - "personalizzato"
     TipoFiltroMittenteEnum:
       type: "string"
       enum:
       - "applicativo"
       - "identificativo_autenticato"
       - "token_info"
-    FiltroTransazioneBase:
+    TokenClaimEnum:
+      type: "string"
+      enum:
+      - "subject"
+      - "issuer"
+      - "client_id"
+      - "username"
+      - "email"
+    TipoMessaggioEnum:
+      type: "string"
+      example: "richiesta"
+      enum:
+      - "richiesta"
+      - "risposta"
+    TipoReportEnum:
+      type: "string"
+      example: "Line"
+      enum:
+      - "line"
+      - "pie"
+      - "bar"
+      - "table"
+      default: "table"
+    FormatoReportEnum:
+      type: "string"
+      example: "csv"
+      enum:
+      - "csv"
+      - "pdf"
+      - "xls"
+      - "png"
+    UnitaTempoReportEnum:
+      type: "string"
+      example: "orario"
+      enum:
+      - "orario"
+      - "giornaliero"
+      - "settimanale"
+      - "mensile"
+      default: "giornaliero"
+    TipoInformazioneReportEnum:
+      type: "string"
+      example: "numero_transazioni"
+      enum:
+      - "numero_transazioni"
+      - "occupazione_banda"
+      - "tempo_medio_risposta"
+      default: "numero_transazioni"
+    OccupazioneBandaEnum:
+      type: "string"
+      example: "banda_complessiva"
+      enum:
+      - "banda_complessiva"
+      - "banda_interna"
+      - "banda_esterna"
+      default: "banda_complessiva"
+    TempoMedioRispostaEnum:
+      type: "string"
+      example: "latenza_totale"
+      enum:
+      - "latenza_totale"
+      - "latenza_servizio"
+      - "latenza_gateway"
+      default: "latenza_totale"
+    OrientamentoEtichetteReportEnum:
+      type: "string"
+      example: "obliquo"
+      enum:
+      - "orizzontale"
+      - "obliquo"
+      - "verticale"
+      default: "obliquo"
+    TransazioneExt:
       type: "object"
-      properties:
-        esito:
-          $ref: "#/components/schemas/EsitoTransazioneEnum"
-        dettaglioEsito:
-          discriminator:
-            propertyName: "esito"
-            mapping:
-              ok: "#/components/schemas/DettaglioEsitoEnum"
-              error: "#/components/schemas/DettaglioEsitoEnum"
-              error_or_fault: "#/components/schemas/DettaglioEsitoEnum"
-              personalizzato: "#/components/schemas/DettaglioEsitoList"
-          oneOf:
-          - $ref: "#/components/schemas/DettaglioEsitoEnum"
-          - $ref: "#/components/schemas/DettaglioEsitoList"
-    FiltroTransazione:
-      type: "object"
-      properties:
-        id_evento:
-          type: "integer"
-          description: "L'identificativo numerico dell'evento da ricercare per una\
-            \ transazione"
-          format: "int64"
       allOf:
-      - $ref: "#/components/schemas/FiltroTransazioneBase"
-    FiltroIdApplicativo:
-      type: "object"
-      properties:
-        ricerca_esatta:
-          type: "boolean"
-          default: true
-        case_sensitive:
-          type: "boolean"
-          default: true
-        id_applicativo:
-          type: "string"
-          example: "abc123"
-    FiltroIdMessaggio:
-      type: "object"
-      properties:
-        tipoMessaggio:
-          $ref: "#/components/schemas/TipoMessaggioEnum"
-        idMessaggio:
-          type: "string"
-          example: "abc456"
-    FiltroIdTransazione:
-      type: "object"
-      properties:
-        idTransazione:
-          type: "string"
-          example: "tr123"
-    RicercaIntervalloTemporale:
-      type: "object"
-      properties:
-        tipologia:
-          $ref: "#/components/schemas/TipologiaServizioEnum"
-        filtro_temporale:
-          $ref: "#/components/schemas/FiltroTemporale"
-        filtro_api:
-          discriminator:
-            propertyName: "tipologia_servizio"
-            mapping:
-              erogazione: "#/components/schemas/FiltroErogazione"
-              fruizione: "#/components/schemas/FiltroFruizione"
-          oneOf:
-          - $ref: "#/components/schemas/FiltroErogazione"
-          - $ref: "#/components/schemas/FiltroFruizione"
-        filtro_transazione:
-          $ref: "#/components/schemas/FiltroTransazione"
-        filtro_azione:
-          $ref: "#/components/schemas/NCName"
-        filtro_mittente:
-          $ref: "#/components/schemas/FiltroMittente"
-    RicercaIdApplicativo:
-      type: "object"
-      properties:
-        tipologia:
-          $ref: "#/components/schemas/TipologiaServizioEnum"
-        filtro_api:
-          discriminator:
-            propertyName: "tipologia_servizio"
-            mapping:
-              erogazione: "#/components/schemas/FiltroErogazione"
-              fruizione: "#/components/schemas/FiltroFruizione"
-          oneOf:
-          - $ref: "#/components/schemas/FiltroErogazione"
-          - $ref: "#/components/schemas/FiltroFruizione"
-        filtro_temporale:
-          $ref: "#/components/schemas/FiltroTemporale"
-        filtro_transazione:
-          $ref: "#/components/schemas/FiltroTransazione"
-        filtro_id_applicativo:
-          $ref: "#/components/schemas/FiltroIdApplicativo"
-    ListaRisultati:
+      - $ref: "#/components/schemas/TransazioneBase"
+      - $ref: "#/components/schemas/TransazioneExtTipo"
+      - type: "object"
+        properties:
+          richiesta:
+            $ref: "#/components/schemas/TransazioneExtDettaglioRichiesta"
+          risposta:
+            $ref: "#/components/schemas/TransazioneExtDettaglioRisposta"
+          api:
+            $ref: "#/components/schemas/TransazioneExtInformazioniApi"
+          mittente:
+            $ref: "#/components/schemas/TransazioneExtInformazioniMittente"
+          diagnostici:
+            type: "array"
+            items:
+              $ref: "#/components/schemas/Diagnostico"
+    TransazioneExtTipo:
       required:
-      - "limit"
-      - "offset"
+      - "contesto"
+      - "profilo"
       type: "object"
       properties:
-        offset:
+        profilo:
+          $ref: "#/components/schemas/ProfiloEnum"
+        contesto:
+          $ref: "#/components/schemas/TransazioneContestoEnum"
+        id_cluster:
+          type: "string"
+        informazioni_emittente:
+          $ref: "#/components/schemas/TransazioneExtInformazioniSoggetto"
+        stato:
+          type: "string"
+    TransazioneExtDettaglioRichiestaBase:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/TransazioneExtDettaglioMessaggioBase"
+      - $ref: "#/components/schemas/TransazioneDettaglioRichiestaDatiTrasporto"
+      - type: "object"
+        properties:
+          data_uscita:
+            type: "string"
+            format: "date-time"
+          connettore:
+            type: "string"
+            format: "uri"
+            example: "http://backend.api"
+    TransazioneExtDettaglioRichiesta:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/TransazioneExtDettaglioRichiestaBase"
+      - $ref: "#/components/schemas/TransazioneExtDettaglioMessaggio"
+    TransazioneExtDettaglioRispostaBase:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/TransazioneExtDettaglioMessaggioBase"
+      - $ref: "#/components/schemas/TransazioneDettaglioRispostaDatiTrasporto"
+      - type: "object"
+        properties:
+          data_ingresso:
+            type: "string"
+            format: "date-time"
+          codice_risposta_ingresso:
+            type: "string"
+            description: "Codice associato alla risposta.\nPuò essere un http status\
+              \ per i protocolli basati su HTTP."
+            example: "200"
+    TransazioneExtDettaglioRisposta:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/TransazioneExtDettaglioRispostaBase"
+      - $ref: "#/components/schemas/TransazioneExtDettaglioMessaggio"
+      - $ref: "#/components/schemas/TransazioneDettaglioRispostaErrore"
+      - type: "object"
+        properties:
+          fault_formato:
+            $ref: "#/components/schemas/TransazioneMessaggioFormatoEnum"
+          fault_ingresso:
+            type: "string"
+            format: "byte"
+          fault_ingresso_formato:
+            $ref: "#/components/schemas/TransazioneMessaggioFormatoEnum"
+    TransazioneExtDettaglioMessaggioBase:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/TransazioneDettaglioMessaggio"
+      - type: "object"
+        properties:
+          data_accettazione:
+            type: "string"
+            format: "date-time"
+          bytes_ingresso:
+            type: "integer"
+            format: "int64"
+          bytes_uscita:
+            type: "integer"
+            format: "int64"
+    TransazioneExtDettaglioMessaggio:
+      type: "object"
+      properties:
+        contenuti_ingresso:
+          $ref: "#/components/schemas/TransazioneExtContenutoMessaggio"
+        contenuti_uscita:
+          $ref: "#/components/schemas/TransazioneExtContenutoMessaggio"
+        duplicati_messaggio:
           type: "integer"
-          description: "The zero-ary offset index into the results"
-          format: "int64"
-        limit:
-          type: "integer"
-          description: "How many items to return at one time"
           format: "int32"
-        first:
+        traccia:
           type: "string"
-          description: "Link to first result page. Null if you are already on first\
-            \ page."
-        next:
+    TransazioneExtContenutoMessaggio:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/TransazioneContenutoMessaggio"
+      - type: "object"
+        properties:
+          informazioni_body:
+            $ref: "#/components/schemas/TransazioneExtContenutoMessaggioBody"
+          attachments:
+            type: "array"
+            items:
+              $ref: "#/components/schemas/TransazioneExtContenutoMessaggioAllegato"
+    TransazioneExtContenutoMessaggioBody:
+      required:
+      - "content_type"
+      type: "object"
+      properties:
+        formato:
+          $ref: "#/components/schemas/TransazioneMessaggioFormatoEnum"
+        content_type:
           type: "string"
-          description: "Link to next result page. Null if you are on last page."
-        prev:
+          example: "application/json"
+        multipart:
+          $ref: "#/components/schemas/TransazioneExtContenutoMessaggioBodyMultipart"
+        contenuti_body:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/TransazioneExtContenutoMessaggioPorzioneBody"
+    TransazioneExtContenutoMessaggioBodyMultipart:
+      type: "object"
+      properties:
+        content_type:
           type: "string"
-          description: "Link to previous result page. Null if you are on first page."
+          example: "application/json"
+        content_id:
+          type: "string"
+        content_location:
+          type: "string"
+    TransazioneExtContenutoMessaggioAllegato:
+      required:
+      - "content_type"
+      - "contenuto"
+      type: "object"
+      properties:
+        contenuto:
+          type: "string"
+          format: "byte"
+        content_type:
+          type: "string"
+          example: "application/json"
+        content_id:
+          type: "string"
+        content_location:
+          type: "string"
+    TransazioneExtContenutoMessaggioPorzioneBody:
+      required:
+      - "nome"
+      - "valore"
+      type: "object"
+      properties:
+        nome:
+          type: "string"
+        valore:
+          type: "string"
+    TransazioneExtInformazioniApiBase:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/TransazioneInformazioniApi"
+      - required:
+        - "informazioni_erogatore"
+        - "tipo"
+        type: "object"
+        properties:
+          informazioni_erogatore:
+            $ref: "#/components/schemas/TransazioneExtInformazioniSoggetto"
+          tipo:
+            $ref: "#/components/schemas/Tipo"
+    TransazioneExtInformazioniApi:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/TransazioneExtInformazioniApiBase"
+      - type: "object"
+        properties:
+          profilo_collaborazione:
+            $ref: "#/components/schemas/ProfiloCollaborazioneEnum"
+          id_collaborazione:
+            type: "string"
+          id_asincrono:
+            type: "string"
+    TransazioneExtInformazioniMittenteBase:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/TransazioneInformazioniMittente"
+      - type: "object"
+        properties:
+          informazioni_fruitore:
+            $ref: "#/components/schemas/TransazioneExtInformazioniSoggetto"
+          applicativo:
+            $ref: "#/components/schemas/NCName"
+    TransazioneExtInformazioniMittente:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/TransazioneExtInformazioniMittenteBase"
+      - type: "object"
+        properties:
+          credenziali:
+            type: "string"
+          token:
+            type: "string"
+            format: "byte"
+          informazioni_token:
+            $ref: "#/components/schemas/TransazioneExtInformazioniToken"
+    TransazioneExtInformazioniToken:
+      type: "object"
+      properties:
+        client_id:
+          type: "string"
+          example: "407408718192.apps.googleusercontent.com"
+        issuer:
+          type: "string"
+        subject:
+          type: "string"
+          example: "10623565759265497689"
+        username:
+          type: "string"
+        mail:
+          type: "string"
+    Diagnostico:
+      required:
+      - "codice"
+      - "data"
+      - "funzione"
+      - "messaggio"
+      - "severita"
+      - "severita_codice"
+      type: "object"
+      properties:
+        data:
+          type: "string"
+          format: "date-time"
+        severita_codice:
+          type: "integer"
+          format: "int32"
+        severita:
+          $ref: "#/components/schemas/DiagnosticoSeveritaEnum"
+        funzione:
+          type: "string"
+        codice:
+          type: "string"
+        messaggio:
+          type: "string"
+          example: "Generato messaggio di cooperazione di Errore con identificativo\
+            \ [0998f497-e05d-420a-a6b0-ff3bb718d2c4]"
+    TransazioneExtInformazioniSoggetto:
+      required:
+      - "codice"
+      - "indirizzo"
+      - "tipo"
+      type: "object"
+      properties:
+        tipo:
+          $ref: "#/components/schemas/Tipo"
+        codice:
+          type: "string"
+        indirizzo:
+          type: "string"
+    TransazioneContestoEnum:
+      type: "string"
+      example: "standard"
+      enum:
+      - "standard"
+      - "sonda"
+    TransazioneMessaggioFormatoEnum:
+      type: "string"
+      example: "soap11"
+      enum:
+      - "soap11"
+      - "soap12"
+      - "xml"
+      - "json"
+      - "multipart"
+      - "binary"
+    DiagnosticoSeveritaEnum:
+      type: "string"
+      example: "infoIntegration"
+      enum:
+      - "fatal"
+      - "error"
+      - "warning"
+      - "info"
+      - "debug"
+      - "trace"
     SimpleName:
       maxLength: 255
       pattern: "^[0-9A-Za-z]+$"
@@ -2199,6 +2116,10 @@ components:
       type: "string"
       description: "Può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e\
         \ dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'"
+    Tipo:
+      maxLength: 20
+      type: "string"
+      description: "Indica un tipo assegnato ad un soggetto o ad un servizio"
     BaseItem:
       required:
       - "profilo"
@@ -2222,26 +2143,43 @@ components:
       format: "int32"
       example: 1
       default: 1
+    HttpStatusCode:
+      maximum: 599
+      minimum: 100
+      type: "integer"
+      format: "int32"
+      example: 200
     Lista:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ListaSenzaTotale"
+      - required:
+        - "total"
+        type: "object"
+        properties:
+          total:
+            minimum: 0
+            type: "integer"
+            description: "Number of items matching the filter criteria"
+            format: "int64"
+          last:
+            type: "string"
+            description: "Link to last result page. Null if you are already on last\
+              \ page."
+    ListaSenzaTotale:
       required:
       - "limit"
       - "offset"
-      - "total"
       type: "object"
       properties:
-        limit:
-          type: "integer"
-          description: "How many items to return at one time"
-          format: "int32"
         offset:
           type: "integer"
           description: "The zero-ary offset index into the results"
           format: "int64"
-        total:
-          minimum: 0
+        limit:
           type: "integer"
-          description: "Number of items matching the filter criteria"
-          format: "int64"
+          description: "How many items to return at one time"
+          format: "int32"
         first:
           type: "string"
           description: "Link to first result page. Null if you are already on first\
@@ -2252,10 +2190,20 @@ components:
         prev:
           type: "string"
           description: "Link to previous result page. Null if you are on first page."
-        last:
+    FiltroRicercaId:
+      required:
+      - "id"
+      type: "object"
+      properties:
+        ricerca_esatta:
+          type: "boolean"
+          default: true
+        case_sensitive:
+          type: "boolean"
+          default: true
+        id:
           type: "string"
-          description: "Link to last result page. Null if you are already on last\
-            \ page."
+          example: "abc123"
     ProfiloEnum:
       type: "string"
       enum:
@@ -2272,6 +2220,20 @@ components:
       - "sincrono"
       - "asincronoSimmetrico"
       - "asincronoAsimmetrico"
+    HttpMethodEnum:
+      type: "string"
+      example: "POST"
+      enum:
+      - "GET"
+      - "POST"
+      - "PUT"
+      - "DELETE"
+      - "OPTIONS"
+      - "HEAD"
+      - "TRACE"
+      - "PATCH"
+      - "LINK"
+      - "UNLINK"
     Money:
       required:
       - "amount"
@@ -2342,26 +2304,209 @@ components:
       example: "RSSMRA75L01H501A"
       externalDocs:
         url: "https://w3id.org/italia/onto/CPV/taxCode"
+    TransazioneBase:
+      required:
+      - "data_emissione"
+      - "emittente"
+      - "esito"
+      - "id_traccia"
+      - "ruolo"
+      type: "object"
+      properties:
+        emittente:
+          $ref: "#/components/schemas/SimpleName"
+        data_emissione:
+          type: "string"
+          format: "date-time"
+        id_traccia:
+          $ref: "#/components/schemas/TransazioneId"
+        id_conversazione:
+          type: "string"
+          example: "eba4355e-403f-4e75-8d56-0751710409c2"
+        ruolo:
+          $ref: "#/components/schemas/TransazioneRuoloEnum"
+        esito:
+          $ref: "#/components/schemas/TransazioneEsito"
+    Transazione:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/TransazioneBase"
+      - type: "object"
+        properties:
+          richiesta:
+            $ref: "#/components/schemas/TransazioneDettaglioRichiesta"
+          risposta:
+            $ref: "#/components/schemas/TransazioneDettaglioRisposta"
+          api:
+            $ref: "#/components/schemas/TransazioneInformazioniApi"
+          mittente:
+            $ref: "#/components/schemas/TransazioneInformazioniMittente"
+    TransazioneDettaglioRichiesta:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/TransazioneDettaglioMessaggio"
+      - $ref: "#/components/schemas/TransazioneDettaglioRichiestaDatiTrasporto"
+      - $ref: "#/components/schemas/TransazioneDettaglioMessaggioContenuti"
+    TransazioneDettaglioRichiestaDatiTrasporto:
+      required:
+      - "data_ingresso"
+      - "tipo"
+      - "url_invocazione"
+      type: "object"
+      properties:
+        data_ingresso:
+          type: "string"
+          format: "date-time"
+        tipo:
+          $ref: "#/components/schemas/HttpMethodEnum"
+        url_invocazione:
+          type: "string"
+          format: "uri"
+          example: "/govway/in/Ente/PetStore/v2/pet"
+    TransazioneDettaglioRisposta:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/TransazioneDettaglioMessaggio"
+      - $ref: "#/components/schemas/TransazioneDettaglioRispostaDatiTrasporto"
+      - $ref: "#/components/schemas/TransazioneDettaglioRispostaErrore"
+      - $ref: "#/components/schemas/TransazioneDettaglioMessaggioContenuti"
+    TransazioneDettaglioRispostaDatiTrasporto:
+      required:
+      - "codice_risposta"
+      - "data_uscita"
+      type: "object"
+      properties:
+        data_uscita:
+          type: "string"
+          format: "date-time"
+        codice_risposta:
+          type: "string"
+          description: "Codice associato alla risposta.\nPuò essere un http status\
+            \ per i protocolli basati su HTTP."
+          example: "200"
+    TransazioneDettaglioRispostaErrore:
+      type: "object"
+      properties:
+        fault:
+          type: "string"
+          format: "byte"
+        dettagli_errore:
+          type: "array"
+          items:
+            type: "string"
+    TransazioneDettaglioMessaggio:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          example: "eba4355e-403f-4e75-8d56-0751710409c2"
+        id_applicativo:
+          type: "string"
+    TransazioneDettaglioMessaggioContenuti:
+      type: "object"
+      properties:
+        contenuti:
+          $ref: "#/components/schemas/TransazioneContenutoMessaggio"
+    TransazioneContenutoMessaggio:
+      type: "object"
+      properties:
+        headers:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/TransazioneContenutoMessaggioHeader"
+        body:
+          type: "string"
+          format: "byte"
+    TransazioneContenutoMessaggioHeader:
+      required:
+      - "nome"
+      - "valore"
+      type: "object"
+      properties:
+        nome:
+          type: "string"
+          example: "Content-Type"
+        valore:
+          type: "string"
+          example: "application/json"
+    TransazioneInformazioniApi:
+      required:
+      - "erogatore"
+      - "nome"
+      - "versione"
+      type: "object"
+      properties:
+        erogatore:
+          $ref: "#/components/schemas/NCName"
+        nome:
+          $ref: "#/components/schemas/NCName"
+        versione:
+          $ref: "#/components/schemas/Versione"
+        operazione:
+          $ref: "#/components/schemas/NCName"
+    TransazioneInformazioniMittente:
+      type: "object"
+      properties:
+        principal:
+          type: "string"
+        fruitore:
+          $ref: "#/components/schemas/NCName"
+        utente:
+          type: "string"
+        indirizzo_client:
+          type: "string"
+        indirizzo_client_forwarded:
+          type: "string"
+    TransazioneEsito:
+      required:
+      - "codice"
+      - "descrizione"
+      type: "object"
+      properties:
+        codice:
+          type: "string"
+          description: "Codice che rappresenta l'esito dell'invocazione.\nPuò essere\
+            \ un http status per i protocolli basati su HTTP, o un altra codifica\
+            \ (es. OK/KO)"
+        descrizione:
+          type: "string"
+    TransazioneId:
+      type: "string"
+      format: "uuid"
+      example: "f54d8638-79f5-45db-878a-82d858ba128e"
+    TransazioneRuoloEnum:
+      type: "string"
+      example: "fruizione"
+      enum:
+      - "fruizione"
+      - "erogazione"
   responses:
-    200ReportGenerato:
-      description: "Report generato correttamente"
+    200ReportStatistico:
+      description: "Report statistico generato correttamente"
       content:
         text/csv:
           schema:
             type: "string"
-            format: "binary"
+            format: "byte"
         application/pdf:
           schema:
             type: "string"
-            format: "binary"
+            format: "byte"
         application/xls:
           schema:
             type: "string"
-            format: "binary"
+            format: "byte"
         image/png:
           schema:
             type: "string"
-            format: "binary"
+            format: "byte"
+    200ReportConfigurazioni:
+      description: "Report delle configurazioni generato correttamente"
+      content:
+        text/csv:
+          schema:
+            type: "string"
+            format: "byte"
     400BadRequest:
       description: "Bad Request"
       content:
@@ -2423,100 +2568,51 @@ components:
           schema:
             $ref: "#/components/schemas/Problem"
   parameters:
-    pagina:
-      name: "pagina"
-      in: "query"
-      description: "La pagina dei risultati da restituire nella ricerca"
-      required: false
+    id_transazione:
+      name: "id"
+      in: "path"
+      description: "identificativo della transazione"
+      required: true
+      schema:
+        $ref: "#/components/schemas/TransazioneId"
+    id_evento_path:
+      name: "id"
+      in: "path"
+      description: "L'identificativo dell'evento da recuperare"
+      required: true
       schema:
         type: "integer"
-        format: "int32"
-        example: 1
-    ordinamento:
-      name: "ordinamento"
-      in: "query"
-      description: "csv dei campi su cui ordinare i risultati, preceduti da + o -\
-        \ per ascendente o discendente (default ascendente) per data di ingresso"
-      required: false
-      schema:
-        type: "string"
-        format: "csv"
-        default: "+nome"
-    claim:
-      name: "claim"
-      in: "query"
-      description: "Specifica il claim che deve essere presente nel jwt di una transazione"
-      required: false
-      schema:
-        $ref: "#/components/schemas/TokenClaimEnum"
-    orientamento_label:
-      name: "orientamento_label"
-      in: "query"
-      description: "Specifica l'orientamento delle label nei grafici generati dalle\
-        \ analisi statistiche"
-      required: false
-      schema:
-        $ref: "#/components/schemas/OrientamentoLabelEnum"
-    larghezza_grafico:
-      name: "larghezza_grafico"
-      in: "query"
-      description: "Specifica la largheza del grafico in pixel"
-      required: false
-      schema:
-        $ref: "#/components/schemas/LarghezzaGrafico"
-    visualizzazione_report:
-      name: "visualizzazione_report"
-      in: "query"
-      description: "Specifica l'informazione da visualizzare nel report"
-      required: false
-      schema:
-        $ref: "#/components/schemas/VisualizzazioneReportEnum"
-    unita_tempo:
-      name: "unita_tempo"
-      in: "query"
-      description: "L'unità di tempo con cui visualizzare i report"
-      required: false
-      schema:
-        $ref: "#/components/schemas/UnitaTempoEnum"
-    formato_export:
-      name: "formato_export"
-      in: "query"
-      description: "Indica la modalità di esportazione (csv, png pdf...) del report\
-        \ statistico"
-      required: false
-      schema:
-        $ref: "#/components/schemas/FormatoExportEnum"
-    tipo_grafico:
-      name: "tipo_grafico"
-      in: "query"
-      description: "Indica il tipo di grafico da voler visualizzare per un dato report\
-        \ statistico"
-      required: false
-      schema:
-        $ref: "#/components/schemas/TipoGraficoEnum"
-    data_inizio:
-      name: "data_inizio"
-      in: "query"
-      description: "data inizio dell'intervallo di ricerca"
-      required: true
-      schema:
-        type: "string"
-        format: "date-time"
-    data_fine:
-      name: "data_fine"
-      in: "query"
-      description: "data inizio dell'intervallo di ricerca"
-      required: true
-      schema:
-        type: "string"
-        format: "date-time"
-    tipologia_servizio:
-      name: "tipologia_servizio"
+        format: "int64"
+    tipo_transazione:
+      name: "tipo"
       in: "query"
       description: "La tipologia (erogazione\\fruizione) del servizio"
       required: true
       schema:
-        $ref: "#/components/schemas/TipologiaServizioEnum"
+        $ref: "#/components/schemas/TransazioneRuoloEnum"
+    id_correlazione_applicativa:
+      name: "id_applicativo"
+      in: "query"
+      description: "l'identificativo di correlazione applicativa della richiesta o\
+        \ della risposta"
+      required: true
+      schema:
+        type: "string"
+    id_messaggio:
+      name: "id"
+      in: "query"
+      description: "L'identificativo del messaggio"
+      required: true
+      schema:
+        type: "string"
+    tipo_messaggio:
+      name: "tipo_messaggio"
+      in: "query"
+      description: "Distingue se l'identificativo del messaggio è relativo ad una\
+        \ richiesta o una risposta"
+      required: true
+      schema:
+        $ref: "#/components/schemas/TipoMessaggioEnum"
     soggetto_remoto:
       name: "soggetto_remoto"
       in: "query"
@@ -2525,45 +2621,6 @@ components:
       required: false
       schema:
         $ref: "#/components/schemas/SimpleName"
-    id_nome_servizio:
-      name: "nome_servizio"
-      in: "path"
-      description: "Nome identificativo"
-      required: true
-      schema:
-        $ref: "#/components/schemas/NCName"
-    id_versione_servizio:
-      name: "versione_servizio"
-      in: "query"
-      description: "La versione del servizio coinvolto nella transazione"
-      required: false
-      schema:
-        minimum: 1
-        type: "integer"
-        format: "int32"
-    id_tipo_servizio:
-      name: "tipo_servizio"
-      in: "query"
-      description: "Indica un tipo del servizio differente da quello di default"
-      required: false
-      schema:
-        $ref: "#/components/schemas/Tipo"
-    azione:
-      name: "azione"
-      in: "query"
-      description: "Indica un'azione o una risorsa"
-      required: false
-      schema:
-        $ref: "#/components/schemas/NCName"
-      example: "Azione1"
-    id_evento:
-      name: "id_evento"
-      in: "query"
-      description: "L'identificativo numerico dell'evento da ricercare per una transazione"
-      required: false
-      schema:
-        type: "integer"
-        format: "int64"
     esito_transazione:
       name: "esito"
       in: "query"
@@ -2571,7 +2628,88 @@ components:
         \ con successo, error: fallite, fault: fault applicativo)\" "
       required: false
       schema:
-        $ref: "#/components/schemas/EsitoTransazioneEnumBase"
+        $ref: "#/components/schemas/EsitoTransazioneSimpleSearchEnum"
+    severita:
+      name: "severita"
+      in: "query"
+      description: "Indica il livello di severità con il quale l'evento è stato registrato\
+        \ nel sistema"
+      required: false
+      schema:
+        $ref: "#/components/schemas/DiagnosticoSeveritaEnum"
+    origine_evento:
+      name: "origine"
+      in: "query"
+      description: "attore che ha provocato l'evento (es. nodo di un cluster)"
+      required: false
+      schema:
+        type: "string"
+    codice_evento:
+      name: "codice"
+      in: "query"
+      description: "codice dell'evento"
+      required: false
+      schema:
+        type: "string"
+    tipo_evento:
+      name: "tipo"
+      in: "query"
+      description: "tipo di evento (es. rateLimiting)"
+      required: false
+      schema:
+        type: "string"
+    formato_report:
+      name: "formato_report"
+      in: "query"
+      description: "Indica la modalità di esportazione (csv, png pdf...) del report\
+        \ statistico"
+      required: true
+      schema:
+        $ref: "#/components/schemas/FormatoReportEnum"
+    unita_tempo_report:
+      name: "unita_tempo"
+      in: "query"
+      description: "L'unità di tempo con cui visualizzare i report"
+      required: false
+      schema:
+        $ref: "#/components/schemas/UnitaTempoReportEnum"
+    tipo_report:
+      name: "tipo_report"
+      in: "query"
+      description: "Indica il tipo di grafico da voler visualizzare per un dato report\
+        \ statistico"
+      required: false
+      schema:
+        $ref: "#/components/schemas/TipoReportEnum"
+    tipo_informazione_report:
+      name: "tipo_informazione_report"
+      in: "query"
+      description: "Specifica l'informazione da visualizzare nel report"
+      required: false
+      schema:
+        $ref: "#/components/schemas/TipoInformazioneReportEnum"
+    orientamento_etichette:
+      name: "orientamento_etichette"
+      in: "query"
+      description: "Specifica l'orientamento delle label nei grafici generati dalle\
+        \ analisi statistiche"
+      required: false
+      schema:
+        $ref: "#/components/schemas/OrientamentoEtichetteReportEnum"
+    larghezza_grafico:
+      name: "larghezza_grafico"
+      in: "query"
+      description: "Specifica la largheza del grafico in pixel"
+      required: false
+      schema:
+        $ref: "#/components/schemas/LarghezzaReportGrafico"
+    claim:
+      name: "claim"
+      in: "query"
+      description: "Specifica il claim che deve essere presente nel jwt di una transazione"
+      required: true
+      schema:
+        $ref: "#/components/schemas/TokenClaimEnum"
     profilo:
       name: "profilo"
       in: "query"
@@ -2609,9 +2747,7 @@ components:
       description: "Versione che insieme al nome rappresente l'identificativo univoco"
       required: true
       schema:
-        minimum: 1
-        type: "integer"
-        format: "int32"
+        $ref: "#/components/schemas/Versione"
     id_nome_allegato:
       name: "nome_allegato"
       in: "path"
@@ -2621,6 +2757,13 @@ components:
         $ref: "#/components/schemas/NCName"
     id_nome_risorsa:
       name: "nome_risorsa"
+      in: "path"
+      description: "Nome identificativo"
+      required: true
+      schema:
+        $ref: "#/components/schemas/NCName"
+    id_nome_servizio:
+      name: "nome_servizio"
       in: "path"
       description: "Nome identificativo"
       required: true
@@ -2663,6 +2806,58 @@ components:
       required: false
       schema:
         $ref: "#/components/schemas/Tipo"
+    nome_servizio:
+      name: "nome_servizio"
+      in: "query"
+      description: "Nome identificativo"
+      required: false
+      schema:
+        $ref: "#/components/schemas/NCName"
+    versione_servizio:
+      name: "versione_servizio"
+      in: "query"
+      description: "Versione che insieme al nome rappresente l'identificativo univoco"
+      required: false
+      schema:
+        $ref: "#/components/schemas/Versione"
+    azione:
+      name: "azione"
+      in: "query"
+      description: "Nome identificativo"
+      required: false
+      schema:
+        $ref: "#/components/schemas/NCName"
+    data_inizio:
+      name: "data_inizio"
+      in: "query"
+      description: "data inizio dell'intervallo di ricerca"
+      required: true
+      schema:
+        type: "string"
+        format: "date-time"
+    data_fine:
+      name: "data_fine"
+      in: "query"
+      description: "data inizio dell'intervallo di ricerca"
+      required: true
+      schema:
+        type: "string"
+        format: "date-time"
+    ricerca_esatta:
+      name: "ricerca_esatta"
+      in: "query"
+      description: "Indica se utilizzare o meno un confronto di tipo LIKE per la query"
+      required: false
+      schema:
+        type: "boolean"
+        default: true
+    case_sensitive:
+      name: "case_sensitive"
+      in: "query"
+      required: false
+      schema:
+        type: "boolean"
+        default: true
     Etag:
       name: "Etag"
       in: "header"

@@ -44,7 +44,7 @@ import org.openspcoop2.core.config.rs.server.model.GruppoNome;
 import org.openspcoop2.core.config.rs.server.model.GruppoNuovaConfigurazione;
 import org.openspcoop2.core.config.rs.server.model.ListaGruppi;
 import org.openspcoop2.core.config.rs.server.model.ModalitaConfigurazioneGruppoEnum;
-import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
@@ -53,6 +53,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -466,7 +467,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 				throw FaultCode.NOT_FOUND.toException("Nessun gruppo associato alla fruizione");
 			}
 			
-			ListaGruppi ret = Helper.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset, limit, ricerca.getNumEntries(idLista), ListaGruppi.class);
+			ListaGruppi ret = ListaUtils.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset, limit, ricerca.getNumEntries(idLista), ListaGruppi.class);
 			
 			for (MappingFruizionePortaDelegata m : mappings) {
 				final PortaDelegata pd = env.pdCore.getPortaDelegata(m.getIdPortaDelegata());

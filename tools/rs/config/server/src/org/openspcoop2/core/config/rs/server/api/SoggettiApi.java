@@ -24,7 +24,7 @@ package org.openspcoop2.core.config.rs.server.api;
 import org.openspcoop2.core.config.rs.server.model.DominioEnum;
 import org.openspcoop2.core.config.rs.server.model.ListaSoggetti;
 import org.openspcoop2.core.config.rs.server.model.Problem;
-import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.config.rs.server.model.Soggetto;
 
 import javax.ws.rs.*;

@@ -1,0 +1,308 @@
+{
+	"$id": "https://example.com/arrays.schema.json",
+	"description": "Rappresentazione di una traccia",
+	"type": "object",
+	"required": [
+	  "emittente",
+	  "data_emissione",
+	  "id_traccia",
+	  "ruolo",
+	  "esito"
+	],
+	"properties": {
+	  "emittente": {
+	    "type": "string",
+	    "description": "Identificativo dell'emittente della traccia",
+	    "example": "Ente"
+	  },
+	  "data_emissione": {
+	    "type": "string",
+	    "format": "date-time",
+	    "description": "Data e Ora in cui la traccia è stata emessa, in formato RFC3339 in UTC e con i separatori Z e T maiuscolo.",
+	    "example": "2017-07-21T17:32:28Z"
+	  },
+	  "id_traccia": {
+	    "type": "string",
+	    "description": "Identificativo unico della traccia per l'emittente",
+	    "example": "b32a7501-7788-48ff-99999-a726f8e7658e"
+	  },
+	  "id_conversazione": {
+	    "type": "string",
+	    "description": "dove disponibile, un identificativo univoco utile a correlare invocazioni differenti",
+	    "example": "b32a7501-7788-48ff-99999-a726f8e7658e"
+	  },
+	  "ruolo": {
+	    "type": "string",
+	    "enum": [
+	      "fruizione",
+	      "erogazione"
+	    ],
+	    "example": "fruizione",
+	    "description": "Indica se la traccia rappresenta una erogazione o una fruizione di api"
+	  },
+	  "esito": {
+	    "$ref": "#/definitions/TracciaEsito"
+	  },
+	  "richiesta": {
+	    "$ref": "#/definitions/TracciaDettaglioRichiesta"
+	  },
+	  "risposta": {
+	    "$ref": "#/definitions/TracciaDettaglioRisposta"
+	  },
+	  "api": {
+	    "$ref": "#/definitions/TracciaInformazioniApi"
+	  },
+	  "mittente": {
+	    "$ref": "#/definitions/TracciaInformazioniMittente"
+	  }
+	},
+	"definitions": {
+      "TracciaEsito": {
+        "type": "object",
+        "required": [
+          "codice"
+        ],
+        "properties": {
+          "codice": {
+            "type": "string",
+            "description": "Codice che rappresenta l'esito dell'invocazione.\nPuò essere un http status per i protocolli basati su HTTP, o un altra codifica (es. OK/KO)"
+          },
+          "descrizione": {
+            "type": "string",
+            "description": "Fornisce una descrizione dell'esito rappresentanto dal codice. "
+          }
+        }
+      },
+      "TracciaDettaglioRichiesta": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/definitions/TracciaDettaglioMessaggio"
+          },
+          {
+            "$ref": "#/definitions/TracciaDettaglioRichiestaDatiTrasporto"
+          },
+          {
+            "$ref": "#/definitions/TracciaDettaglioMessaggioContenuti"
+          }
+        ]
+      },
+      "TracciaDettaglioRichiestaDatiTrasporto": {
+        "type": "object",
+        "required": [
+          "data_ingresso",
+          "tipo",
+          "url_invocazione"
+        ],
+        "properties": {
+          "data_ingresso": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data e Ora della richiesta in formato RFC3339 in UTC e con i separatori Z e T maiuscolo.",
+            "example": "2017-07-21T17:32:28Z"
+          },
+          "tipo": {
+            "type": "string",
+            "description": "Tipologia dell'invocazione.\nPuò essere un http method per i protocolli basati su HTTP.",
+            "example": "POST"
+          },
+          "url_invocazione": {
+            "type": "string",
+            "format": "uri",
+            "description": "URI dell'invocazione",
+            "example": "http://govway/in/Ente/Protocollazione/v1/documenti?test=true"
+          }
+        }
+      },
+      "TracciaDettaglioRisposta": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/definitions/TracciaDettaglioMessaggio"
+          },
+          {
+            "$ref": "#/definitions/TracciaDettaglioRispostaDatiTrasporto"
+          },
+          {
+            "$ref": "#/definitions/TracciaDettaglioRispostaErrore"
+          },
+          {
+            "$ref": "#/definitions/TracciaDettaglioMessaggioContenuti"
+          }
+        ]
+      },
+      "TracciaDettaglioRispostaDatiTrasporto": {
+        "type": "object",
+        "required": [
+          "data_uscita",
+          "codice_risposta"
+        ],
+        "properties": {
+          "data_uscita": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data e Ora della risposta in formato RFC3339 in UTC e con i separatori Z e T maiuscolo.",
+            "example": "2017-07-21T17:32:28Z"
+          },
+          "codice_risposta": {
+            "type": "string",
+            "description": "Codice associato alla risposta.\nPuò essere un http status per i protocolli basati su HTTP.",
+            "example": 200
+          }
+        }
+      },
+      "TracciaDettaglioRispostaErrore": {
+        "type": "object",
+        "properties": {
+          "fault": {
+            "type": "string",
+            "format": "byte",
+            "description": "Messaggio di errore ritornato in caso la richiesta non sia andata a buon fine.\nPuò essere un Problem Details RFC7807 per i protocolli basati su HTTP o un SOAPFault per i protocolli basati su SOAP."
+          },
+          "dettagli_errore": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Eventuali messaggi di errore"
+            }
+          }
+        }
+      },
+      "TracciaDettaglioMessaggio": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Dove applicabile, identificativo univoco del messaggio.\nPuò essere l'identificativo del messaggio in presenza di header WS-Addressing (es. wsa:MessageID),\nl'identificativo SDI nella Fatturazione Elettronica,\nl'id e-Gov su richieste SPCoop o altri casi. ",
+            "example": "eba4355e-403f-4e75-8d56-0751710409c2"
+          },
+          "id_applicativo": {
+            "type": "string",
+            "description": "Dove applicabile, identificativo applicativo del messaggio.\nNei messaggi dove è presenta un imbustamento di protocollo (WS-Addressing, Fatturazione Elettronica, SPCoop ...),\npuò essere associato alla traccia un ulteriore identificativo applicativo che identifica il messaggio contenuto all'interno della busta di protocollo.  ",
+            "example": "ENTE-X-UFFICIOY-123"
+          }
+        }
+      },
+      "TracciaDettaglioMessaggioContenuti": {
+        "type": "object",
+        "properties": {
+          "contenuti": {
+            "$ref": "#/definitions/TracciaContenutoMessaggio"
+          }
+        }
+      },
+      "TracciaContenutoMessaggio": {
+        "type": "object",
+        "properties": {
+          "headers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/TracciaContenutoMessaggioHeader"
+            },
+            "description": "Dove applicabile, vengono registrati gli header di trasporto.\nPossono essere ad esempio gli header HTTP.",
+            "example": {
+              "headers": [
+                {
+                  "nome": "Accept",
+                  "valore": "application/json"
+                },
+                {
+                  "nome": "Content-Length",
+                  "valore": "56789"
+                },
+                {
+                  "nome": "Content-Type",
+                  "valore": "application/pdf"
+                }
+              ]
+            }
+          },
+          "body": {
+            "type": "string",
+            "format": "byte",
+            "description": "Contenuto del messaggio"
+          }
+        }
+      },
+      "TracciaContenutoMessaggioHeader": {
+        "type": "object",
+        "required": [
+          "nome",
+          "valore"
+        ],
+        "properties": {
+          "nome": {
+            "type": "string",
+            "example": "Content-Type",
+            "description": "Nome dell'header"
+          },
+          "valore": {
+            "type": "string",
+            "example": "application/json",
+            "description": "Valore dell'header"
+          }
+        }
+      },
+      "TracciaInformazioniApi": {
+        "type": "object",
+        "required": [
+          "erogatore",
+          "nome",
+          "versione"
+        ],
+        "properties": {
+          "erogatore": {
+            "type": "string",
+            "description": "Identificativo dell'erogatore dell'api",
+            "example": "Ente"
+          },
+          "nome": {
+            "type": "string",
+            "description": "Identificativo dell'api",
+            "example": "Protocollazione"
+          },
+          "versione": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1,
+            "default": 1,
+            "description": "Versione dell'api",
+            "example": 1
+          },
+          "operazione": {
+            "type": "string",
+            "description": "Dove applicabile, identificativo dell'operazione",
+            "example": "protocollazioneDocumento"
+          }
+        }
+      },
+      "TracciaInformazioniMittente": {
+        "type": "object",
+        "properties": {
+          "principal": {
+            "type": "string",
+            "description": "Dove applicabile, credenziali univoche del chiamante.",
+            "example": "c=IT, O=Comune Firenze, OU=Protocollo, CN=protocollo.regionetoscana.it"
+          },
+          "fruitore": {
+            "type": "string",
+            "description": "Identificativo del fruitore",
+            "example": "Ente"
+          },
+          "utente": {
+            "type": "string",
+            "description": "Dove applicabile, identificativo del consumatore o altro soggetto operante la richiesta.\nE' cura del fruitore procedere a codificare e anonimizzare ove necessario.",
+            "example": "Andrea Rossi"
+          },
+          "indirizzo_client": {
+            "type": "string",
+            "description": "Dove applicabile, indirizzo IP del client"
+          },
+          "indirizzo_client_forwarded": {
+            "type": "string",
+            "description": "Dove applicabile, indirizzo IP del client recuperato tramite meccanismi di header forwarding quali ad esempio\n- [X-]Forwarded-For\n- [X-]Forwarded\n- [X-]Client-IP\n- [X-]Cluster-Client-IP"
+          }
+        }
+      }
+    }
+}

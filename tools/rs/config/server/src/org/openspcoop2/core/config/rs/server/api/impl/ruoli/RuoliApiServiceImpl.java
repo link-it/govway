@@ -40,6 +40,7 @@ import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -199,7 +200,7 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 				throw FaultCode.NOT_FOUND.toException("Nessun ruolo corrisponde ai criteri di ricerca specificati");
 			}
 			
-			final ListaRuoli ret = Helper.costruisciListaPaginata(
+			final ListaRuoli ret = ListaUtils.costruisciListaPaginata(
 					context.getServletRequest().getRequestURI(),
 					offset, 
 					limit, 

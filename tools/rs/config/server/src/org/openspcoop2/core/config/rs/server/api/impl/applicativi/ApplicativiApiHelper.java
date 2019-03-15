@@ -53,7 +53,7 @@ import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.Applicativo;
 import org.openspcoop2.core.config.rs.server.model.ApplicativoItem;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
-import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;

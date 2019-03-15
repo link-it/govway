@@ -103,7 +103,7 @@ public class APIImplAutorizzazioneConfig extends APIImplAutorizzazioneBaseConfig
   }
 
  /**
-   * Indicare per riga i claims richiesti (nome&#x3D;valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+   * Indicare per riga i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
    * @return tokenClaims
   **/
   @JsonProperty("token_claims")

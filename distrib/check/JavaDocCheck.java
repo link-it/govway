@@ -155,6 +155,8 @@ public class JavaDocCheck {
 			jumpCheck = true;
 		else if( f.getAbsolutePath().contains("distrib/check/") )
 			jumpCheck = true;
+		else if( f.getAbsolutePath().indexOf("tools/utils/src/org/openspcoop2/utils/service/beans")!= -1 )
+			jumpCheck = true;
 		else if( f.getAbsolutePath().indexOf("tools/rs/config/server/src/org/openspcoop2/core/config/rs/server/model")!= -1 )
 			jumpCheck = true;
 		else if( f.getAbsolutePath().indexOf("tools/rs/config/server/src/org/openspcoop2/core/config/rs/server/api")!= -1 && !f.getAbsolutePath().contains("/impl/"))

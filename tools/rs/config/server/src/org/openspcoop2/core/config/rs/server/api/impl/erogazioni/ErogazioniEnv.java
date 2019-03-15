@@ -25,7 +25,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.core.config.rs.server.api.impl.Environment;
-import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;

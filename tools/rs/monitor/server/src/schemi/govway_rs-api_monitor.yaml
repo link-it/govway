@@ -20,32 +20,34 @@ tags:
       riguardanti le transazioni gestite su GovWay
 paths:
   
+  # Transazioni
+  
   /monitoraggio/transazioni:
     parameters:
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/profilo'
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/soggetto'
-      - $ref: '#/components/parameters/ordinamento'
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
+      - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/sort'
+ 
     get:
       tags:
         - Monitoraggio
       summary: >-
         Ricerca semplificata delle transazioni in base ai parametri di uso più
         comune
-      operationId: baseSearchTransazioni
+      operationId: findAllTransazioniBySimpleSearch
       description: >-
         Permette di recuperare i dettagli delle transazioni, gestite su GovWay,
         ricercandole in base a parametri di filtro di uso più comune
       parameters:
-        - $ref: '#/components/parameters/data_inizio'
-        - $ref: '#/components/parameters/data_fine'
-        - $ref: '#/components/parameters/tipologia_servizio'
-        - $ref: '#/components/parameters/id_tipo_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/data_inizio'
+        - $ref: 'govway_core.yaml#/components/parameters/data_fine'
+        - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
-        - $ref: '#/components/parameters/id_nome_servizio'
-        - $ref: '#/components/parameters/id_versione_servizio'
-        - $ref: '#/components/parameters/azione'
+        - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/azione'
         - $ref: '#/components/parameters/esito_transazione'
-        - $ref: '#/components/parameters/id_evento'
       responses:
         200:
           description: ricerca completata con successo
@@ -72,7 +74,7 @@ paths:
       tags:
         - Monitoraggio
       summary: Ricerca completa delle transazioni per intervallo temporale
-      operationId: searchTransazioni
+      operationId: findAllTransazioniByFullSearch
       description: >-
         Permette di recuperare i dettagli delle transazioni, gestite su GovWay,
         limitando i risultati di ricerca ad un intervallo di date
@@ -103,50 +105,37 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+
   /monitoraggio/transazioni/id_applicativo:
     parameters:
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/profilo'
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/soggetto'
-      - $ref: '#/components/parameters/ordinamento'
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
+      - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/sort'
+      
     get:
       tags:
         - Monitoraggio
       summary: >-
         Ricerca semplificata delle transazioni in base all'identificativo
         applicativo
-      operationId: baseSearchTransazioniByApplicativo
+      operationId: findAllTransazioniByIdApplicativoSimpleSearch
       description: >-
         Permette di recuperare i dettagli delle transazioni, gestite su GovWay,
         ricercandole in base all'identificativo applicativo e i parametri di
         filtro di uso più comune
       parameters:
-        - $ref: '#/components/parameters/data_inizio'
-        - $ref: '#/components/parameters/data_fine'
-        - $ref: '#/components/parameters/tipologia_servizio'
-        - $ref: '#/components/parameters/id_tipo_servizio'
-        - $ref: '#/components/parameters/id_nome_servizio'
-        - $ref: '#/components/parameters/id_versione_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/data_inizio'
+        - $ref: 'govway_core.yaml#/components/parameters/data_fine'
+        - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
-        - $ref: '#/components/parameters/azione'
+        - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/azione'
         - $ref: '#/components/parameters/esito_transazione'
-        - $ref: '#/components/parameters/id_evento'
-        - in: query
-          name: ricerca_esatta
-          schema:
-            type: boolean
-            default: true
-        - in: query
-          name: case_sensitive
-          schema:
-            type: boolean
-            default: true
-        - in: query
-          name: id_applicativo
-          description: l'identificativo applicativo
-          required: true
-          schema:
-            type: string
-          
+        - $ref: '#/components/parameters/id_correlazione_applicativa'
+        - $ref: 'govway_core.yaml#/components/parameters/ricerca_esatta'
+        - $ref: 'govway_core.yaml#/components/parameters/case_sensitive'          
       responses:
         200:
           description: ricerca completata con successo
@@ -175,7 +164,7 @@ paths:
       summary: >-
         Ricerca completa delle transazioni in base all'identificativo
         applicativo
-      operationId: searchTransazioniByApplicativo
+      operationId: findAllTransazioniByIdApplicativoFullSearch
       description: >-
         Permette di recuperare i dettagli delle transazioni, gestite su GovWay,
         ricercandole in base all'identificativo applicativo e i parametri di
@@ -207,6 +196,50 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+
+  /monitoraggio/transazioni/id_messaggio:
+    parameters:
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
+      - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/sort'
+  
+    get:
+      tags:
+        - Monitoraggio
+      summary: >-
+        Ricerca semplificata delle transazioni in base all'identificativo
+        messaggio
+      operationId: findAllTransazioniByIdMessaggio
+      description: >-
+        Permette di recuperare i dettagli delle transazioni, gestite su GovWay,
+        ricercandole in base all'identificativo messaggio
+      parameters:
+        - $ref: '#/components/parameters/tipo_messaggio'
+        - $ref: '#/components/parameters/id_messaggio'
+
+      responses:
+        200:
+          description: dettaglio transazione restituito correttamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListaTransazioni'
+        400:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        401:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        403:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        404:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        429:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        503:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+
   /monitoraggio/transazioni/{id}:
     get:
       tags:
@@ -215,14 +248,9 @@ paths:
       operationId: getTransazione
       description: Questa operazione consente di ottenere il dettaglio di una transazione
       parameters:
-        - $ref: 'govway_rs-api_core.yaml#/components/parameters/profilo'
-        - $ref: 'govway_rs-api_core.yaml#/components/parameters/soggetto'
-        - in: path
-          name: id
-          description: identificativo della transazione
-          required: true
-          schema:
-            $ref: '#/components/schemas/IdTransazione'
+        - $ref: 'govway_core.yaml#/components/parameters/profilo'
+        - $ref: 'govway_core.yaml#/components/parameters/soggetto'
+        - $ref: '#/components/parameters/id_transazione'
       
       responses:
         200:
@@ -230,7 +258,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TransazioneDetail'
+                $ref: 'govway_trace-ext.yaml#/components/schemas/TransazioneExt'
         400:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         401:
@@ -246,55 +274,11 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
-  /monitoraggio/transazioni/id_messaggio:
-    get:
-      tags:
-        - Monitoraggio
-      summary: >-
-        Ricerca semplificata delle transazioni in base all'identificativo
-        messaggio
-      operationId: searchTransazioneByMessaggio
-      description: >-
-        Permette di recuperare i dettagli delle transazioni, gestite su GovWay,
-        ricercandole in base all'identificativo messaggio
-      parameters:
-        - $ref: 'govway_rs-api_core.yaml#/components/parameters/profilo'
-        - $ref: 'govway_rs-api_core.yaml#/components/parameters/soggetto'
-        - in: query
-          name: tipo_messaggio
-          required: true
-          description: "Distingue se il messaggio è una richiesta o una risposta"
-          schema:
-            $ref: "#/components/schemas/TipoMessaggioEnum"
-        - in: query
-          name: id
-          required: true
-          schema:
-            type: string
 
-      responses:
-        200:
-          description: dettaglio transazione restituito correttamente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TransazioneDetail'
-        400:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
-        default:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+  # Eventi
 
   /monitoraggio/eventi:
+  
     get:
       tags:
         - Monitoraggio
@@ -303,58 +287,16 @@ paths:
       description: >-
         Questa operazione consente di effettuare una ricerca nell'archivio degli eventi
         specificando i criteri di filtraggio
-      operationId: searchEventi
+      operationId: findAllEventi
       parameters:
-        - $ref: 'govway_rs-api_core.yaml#/components/parameters/profilo'
-        - $ref: 'govway_rs-api_core.yaml#/components/parameters/soggetto'
-        - $ref: "#/components/parameters/data_inizio"
-        - $ref: "#/components/parameters/data_fine"
-
-        - in: query
-          name: severita
-          description: Indica il livello di severità con il quale l'evento è stato registrato nel sistema
-          required: false
-          schema:
-            $ref: "#/components/schemas/SeveritaEnum"
-
-        - in: query
-          name: tipo
-          description: TODO
-          required: false
-          schema:
-            $ref: "#/components/schemas/TipoEvento"
-
-        - in: query
-          name: codice
-          description: TODO
-          required: false
-          schema:
-            $ref: "#/components/schemas/CodiceEventoEnum"
-
-        - in: query
-          name: ricerca_esatta
-          description: "Indica se il filtro origine deve essere interpretato alla lettera o in modalità LIKE"
-          required: true
-          schema:
-            type: boolean
-            default: true
-
-        - in: query
-          name: case_sensitive
-          description: >-
-            Indica se la ricerca relativa filtro origine deve essere case sensitive o meno
-          required: true
-          schema:
-            type: boolean
-            default: true
-        
-        - in: query
-          name: origine
-          description: TODO
-          required: false
-          schema:
-            type: string
-
+        - $ref: "govway_core.yaml#/components/parameters/data_inizio"
+        - $ref: "govway_core.yaml#/components/parameters/data_fine"
+        - $ref: "#/components/parameters/severita"
+        - $ref: "#/components/parameters/tipo_evento"
+        - $ref: "#/components/parameters/codice_evento"
+        - $ref: "#/components/parameters/origine_evento"
+        - $ref: "govway_core.yaml#/components/parameters/ricerca_esatta"
+        - $ref: "govway_core.yaml#/components/parameters/case_sensitive"
       responses:
         200:
           description: Ricerca eventi completata con successo
@@ -377,7 +319,7 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
-  /monitoraggio/eventi/{id_evento}:
+  /monitoraggio/eventi/{id}:
     get:
       tags:
         - Monitoraggio
@@ -387,22 +329,14 @@ paths:
         Permette di recuperare il dettaglio di un evento in base al suo identificativo
 
       parameters:
-        - $ref: 'govway_rs-api_core.yaml#/components/parameters/profilo'
-        - $ref: 'govway_rs-api_core.yaml#/components/parameters/soggetto'
-        - in: path
-          name: id_evento
-          description: L'identificativo dell'evento da recuperare
-          required: true
-          schema:
-            type: string
-      
+        - $ref: '#/components/parameters/id_evento_path'
       responses:
         200:
-          description: Ricerca eventi completata con successo
+          description: Recupero evento completato con successo
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EventoDetail'
+                $ref: '#/components/schemas/Evento'
         400:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         401:
@@ -418,36 +352,43 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+
+
+  # Statistiche
+
   /reportistica/analisi-statistica/distribuzione-temporale:
     parameters:
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/profilo'
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/soggetto'
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
+      
     get:
       tags:
         - Reportistica
       summary: Genera un report statistico per andamento temporale per mezzo di una ricerca semplice
-      operationId: baseGeneraReportTemporale
+      operationId: getReportDistribuzioneTemporaleBySimpleSearch
       description: >-
         Questa operazione consente di generare per mezzo di una ricerca semplice, un report statistico
         per andamento temporale esportandolo nei formati più comuni
-
+        
       parameters:
-        - $ref: "#/components/parameters/tipo_grafico"
-        - $ref: "#/components/parameters/formato_export"
-        - $ref: "#/components/parameters/unita_tempo"
-        - $ref: "#/components/parameters/data_inizio"
-        - $ref: "#/components/parameters/data_fine"
-        - $ref: '#/components/parameters/tipologia_servizio'
+        - $ref: "govway_core.yaml#/components/parameters/data_inizio"
+        - $ref: "govway_core.yaml#/components/parameters/data_fine"  
+        - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
-        - $ref: '#/components/parameters/id_tipo_servizio'
-        - $ref: '#/components/parameters/id_nome_servizio'
-        - $ref: '#/components/parameters/id_versione_servizio'
-        - $ref: '#/components/parameters/azione'
-        - $ref: '#/components/parameters/esito_transazione'
-        - $ref: '#/components/parameters/visualizzazione_report'
+        - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/azione'
+        - $ref: '#/components/parameters/esito_transazione'                     
+        - $ref: "#/components/parameters/formato_report"
+        - $ref: "#/components/parameters/unita_tempo_report"
+        - $ref: "#/components/parameters/tipo_report"
+        - $ref: '#/components/parameters/tipo_informazione_report'
+        - $ref: '#/components/parameters/orientamento_etichette'
+        - $ref: '#/components/parameters/larghezza_grafico'
       responses:
         200:
-          $ref: '#/components/responses/200ReportGenerato'
+          $ref: '#/components/responses/200ReportStatistico'
         400:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         401:
@@ -467,18 +408,19 @@ paths:
       tags:
         - Reportistica
       summary: Genera un report statistico per andamento temporale per mezzo di una ricerca articolata
-      operationId: generaReportTemporale
+      operationId: getReportDistribuzioneTemporaleByFullSearch
       description: >-
-        Questa operazione consente di generare per mezzo di una ricerca articolata, un report statistico
+        Questa operazione consente di generare un report statistico
         per andamento temporale esportandolo nei formati più comuni 
+        
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RicercaStatisticaTemporale'
+              $ref: '#/components/schemas/RicercaStatisticaAndamentoTemporale'
       responses:
         200:
-          $ref: '#/components/responses/200ReportGenerato'
+          $ref: '#/components/responses/200ReportStatistico'
         400:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         401:
@@ -494,35 +436,38 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+
   /reportistica/analisi-statistica/distribuzione-esiti:
     parameters:
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/profilo'
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/soggetto'
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
     get:
       tags:
         - Reportistica
       summary: Genera un report statistico per andamento esiti per mezzo di una ricerca semplice
-      operationId: baseGeneraReportEsiti
+      operationId: getReportDistribuzioneEsitiBySimpleSearch
       description: >-
         Questa operazione consente di generare per mezzo di una ricerca semplice, un report statistico
         per andamento esiti esportandolo nei formati più comuni
-
+        
       parameters:
-        - $ref: "#/components/parameters/tipo_grafico"
-        - $ref: "#/components/parameters/formato_export"
-        - $ref: "#/components/parameters/unita_tempo"
-        - $ref: "#/components/parameters/data_inizio"
-        - $ref: "#/components/parameters/data_fine"
-        - $ref: '#/components/parameters/tipologia_servizio'
+        - $ref: "govway_core.yaml#/components/parameters/data_inizio"
+        - $ref: "govway_core.yaml#/components/parameters/data_fine"  
+        - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
-        - $ref: '#/components/parameters/id_tipo_servizio'
-        - $ref: '#/components/parameters/id_nome_servizio'
-        - $ref: '#/components/parameters/id_versione_servizio'
-        - $ref: '#/components/parameters/azione'
-        - $ref: '#/components/parameters/visualizzazione_report'
+        - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/azione'                     
+        - $ref: "#/components/parameters/formato_report"
+        - $ref: "#/components/parameters/unita_tempo_report"
+        - $ref: "#/components/parameters/tipo_report"
+        - $ref: '#/components/parameters/tipo_informazione_report'
+        - $ref: '#/components/parameters/orientamento_etichette'
+        - $ref: '#/components/parameters/larghezza_grafico'
       responses:
         200:
-          $ref: '#/components/responses/200ReportGenerato'
+          $ref: '#/components/responses/200ReportStatistico'
         400:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         401:
@@ -542,18 +487,18 @@ paths:
       tags:
         - Reportistica
       summary: Genera un report statistico per andamento esiti per mezzo di una ricerca articolata
-      operationId: generaReportEsiti
+      operationId: getReportDistribuzioneEsitiByFullSearch
       description: >-
-        Questa operazione consente di generare per mezzo di una ricerca articolata, un report statistico
+        Questa operazione consente di generare un report statistico
         per andamento esiti esportandolo nei formati più comuni 
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RicercaStatisticaEsiti'
+              $ref: '#/components/schemas/RicercaStatisticaDistribuzioneEsiti'
       responses:
         200:
-          $ref: '#/components/responses/200ReportGenerato'
+          $ref: '#/components/responses/200ReportStatistico'
         400:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         401:
@@ -569,35 +514,38 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+
   /reportistica/analisi-statistica/distribuzione-soggetto-remoto:
     parameters:
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/profilo'
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/soggetto'
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
     get:
       tags:
         - Reportistica
       summary: Genera un report statistico per soggetto remoto per mezzo di una ricerca semplice
-      operationId: baseGeneraReportSoggettoRemoto
+      operationId: getReportDistribuzioneSoggettoRemotoBySimpleSearch
       description: >-
         Questa operazione consente di generare per mezzo di una ricerca semplice, un report statistico
         per soggetto remoto esportandolo nei formati più comuni
 
       parameters:
-        - $ref: "#/components/parameters/tipo_grafico"
-        - $ref: "#/components/parameters/formato_export"
-        - $ref: "#/components/parameters/unita_tempo"
-        - $ref: "#/components/parameters/data_inizio"
-        - $ref: "#/components/parameters/data_fine"
-        - $ref: '#/components/parameters/tipologia_servizio'
-        - $ref: '#/components/parameters/id_tipo_servizio'
-        - $ref: '#/components/parameters/id_nome_servizio'
-        - $ref: '#/components/parameters/id_versione_servizio'
-        - $ref: '#/components/parameters/azione'
-        - $ref: '#/components/parameters/esito_transazione'
-        - $ref: '#/components/parameters/visualizzazione_report'
+        - $ref: "govway_core.yaml#/components/parameters/data_inizio"
+        - $ref: "govway_core.yaml#/components/parameters/data_fine"  
+        - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/azione'                
+        - $ref: '#/components/parameters/esito_transazione'                     
+        - $ref: "#/components/parameters/formato_report"
+        - $ref: "#/components/parameters/unita_tempo_report"
+        - $ref: "#/components/parameters/tipo_report"
+        - $ref: '#/components/parameters/tipo_informazione_report'
+        - $ref: '#/components/parameters/orientamento_etichette'
+        - $ref: '#/components/parameters/larghezza_grafico'
       responses:
         200:
-          $ref: '#/components/responses/200ReportGenerato'
+          $ref: '#/components/responses/200ReportStatistico'
         400:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         401:
@@ -617,18 +565,18 @@ paths:
       tags:
         - Reportistica
       summary: Genera un report statistico raggruppato per soggetto remoto per mezzo di una ricerca articolata
-      operationId: generaReportSoggettoRemoto
+      operationId: getReportDistribuzioneSoggettoRemotoByFullSearch
       description: >-
-        Questa operazione consente di generare per mezzo di una ricerca articolata, un report statistico
+        Questa operazione consente di generare un report statistico
         raggruppato per soggetto remoto esportandolo nei formati più comuni 
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RicercaStatisticaSoggettoRemoto'
+              $ref: '#/components/schemas/RicercaStatisticaDistribuzioneSoggettoRemoto'
       responses:
         200:
-          $ref: '#/components/responses/200ReportGenerato'
+          $ref: '#/components/responses/200ReportStatistico'
         400:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         401:
@@ -644,36 +592,39 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+
   /reportistica/analisi-statistica/distribuzione-soggetto-locale:
     parameters:
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/profilo'
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/soggetto'
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'
+      # Non ci vuole essendo la distribuzione per soggetto locale: - $ref: 'govway_core.yaml#/components/parameters/soggetto'
     get:
       tags:
         - Reportistica
       summary: Genera un report statistico per soggetto locale per mezzo di una ricerca semplice
-      operationId: baseGeneraReportSoggettoLocale
+      operationId: getReportDistribuzioneSoggettoLocaleBySimpleSearch
       description: >-
         Questa operazione consente di generare per mezzo di una ricerca semplice, un report statistico
         per soggetto locale esportandolo nei formati più comuni
 
       parameters:
-        - $ref: "#/components/parameters/tipo_grafico"
-        - $ref: "#/components/parameters/formato_export"
-        - $ref: "#/components/parameters/unita_tempo"
-        - $ref: "#/components/parameters/data_inizio"
-        - $ref: "#/components/parameters/data_fine"
-        - $ref: '#/components/parameters/tipologia_servizio'
-        - $ref: '#/components/parameters/id_tipo_servizio'
-        - $ref: '#/components/parameters/id_nome_servizio'
+        - $ref: "govway_core.yaml#/components/parameters/data_inizio"
+        - $ref: "govway_core.yaml#/components/parameters/data_fine"  
+        - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
-        - $ref: '#/components/parameters/id_versione_servizio'
-        - $ref: '#/components/parameters/azione'
-        - $ref: '#/components/parameters/esito_transazione'
-        - $ref: '#/components/parameters/visualizzazione_report'
+        - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/azione'                     
+        - $ref: '#/components/parameters/esito_transazione'                     
+        - $ref: "#/components/parameters/formato_report"
+        - $ref: "#/components/parameters/unita_tempo_report"
+        - $ref: "#/components/parameters/tipo_report"
+        - $ref: '#/components/parameters/tipo_informazione_report'
+        - $ref: '#/components/parameters/orientamento_etichette'
+        - $ref: '#/components/parameters/larghezza_grafico'
       responses:
         200:
-          $ref: '#/components/responses/200ReportGenerato'
+          $ref: '#/components/responses/200ReportStatistico'
         400:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         401:
@@ -693,18 +644,18 @@ paths:
       tags:
         - Reportistica
       summary: Genera un report statistico raggruppato per soggetto locale per mezzo di una ricerca articolata
-      operationId: generaReportSoggettoLocale
+      operationId: getReportDistribuzioneSoggettoLocaleByFullSearch
       description: >-
-        Questa operazione consente di generare per mezzo di una ricerca articolata, un report statistico
+        Questa operazione consente di generare un report statistico
         raggruppato per soggetto locale esportandolo nei formati più comuni 
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RicercaStatisticaSoggettoLocale'
+              $ref: '#/components/schemas/RicercaStatisticaDistribuzioneSoggettoLocale'
       responses:
         200:
-          $ref: '#/components/responses/200ReportGenerato'
+          $ref: '#/components/responses/200ReportStatistico'
         400:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         401:
@@ -720,31 +671,34 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+
   /reportistica/analisi-statistica/distribuzione-api:
     parameters:
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/profilo'
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/soggetto'
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
     get:
       tags:
         - Reportistica
       summary: Genera un report statistico organizzato per API utilizzando una ricerca semplice
-      operationId: baseGeneraReportApi
+      operationId: getReportDistribuzioneApiBySimpleSearch
       description: >-
         Questa operazione consente di generare per mezzo di una ricerca semplice, un report statistico
         organizzato per API esportandolo nei formati più comuni
       parameters:
-        - $ref: "#/components/parameters/tipo_grafico"
-        - $ref: "#/components/parameters/formato_export"
-        - $ref: "#/components/parameters/unita_tempo"
-        - $ref: "#/components/parameters/data_inizio"
-        - $ref: "#/components/parameters/data_fine"
-        - $ref: '#/components/parameters/tipologia_servizio'
-        - $ref: '#/components/parameters/soggetto_remoto' 
-        - $ref: '#/components/parameters/esito_transazione'
-        - $ref: '#/components/parameters/visualizzazione_report'
+        - $ref: "govway_core.yaml#/components/parameters/data_inizio"
+        - $ref: "govway_core.yaml#/components/parameters/data_fine"  
+        - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: '#/components/parameters/soggetto_remoto'                     
+        - $ref: '#/components/parameters/esito_transazione'                     
+        - $ref: "#/components/parameters/formato_report"
+        - $ref: "#/components/parameters/unita_tempo_report"
+        - $ref: "#/components/parameters/tipo_report"
+        - $ref: '#/components/parameters/tipo_informazione_report'
+        - $ref: '#/components/parameters/orientamento_etichette'
+        - $ref: '#/components/parameters/larghezza_grafico'
       responses:
         200:
-          $ref: '#/components/responses/200ReportGenerato'
+          $ref: '#/components/responses/200ReportStatistico'
         400:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         401:
@@ -764,18 +718,18 @@ paths:
       tags:
         - Reportistica
       summary: Genera per mezzo di una ricerca articolata, un report statistico raggruppato per servizi
-      operationId: generaReportApi
+      operationId: getReportDistribuzioneApiByFullSearch
       description: >-
-        Questa operazione consente di generare per mezzo di una ricerca articolata, un report statistico
+        Questa operazione consente di generare un report statistico
         raggrupato per servizi esportandolo nei formati più comuni 
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RicercaStatisticaApi'
+              $ref: '#/components/schemas/RicercaStatisticaDistribuzioneApi'
       responses:
         200:
-          $ref: '#/components/responses/200ReportGenerato'
+          $ref: '#/components/responses/200ReportStatistico'
         400:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         401:
@@ -791,110 +745,37 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
-  /reportistica/analisi-statistica/distribuzione-applicativo:
-    parameters:
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/profilo'
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/soggetto'
-    get:
-      tags:
-        - Reportistica
-      summary: Genera un report statistico organizzato per Applicativi utilizzando una ricerca semplice
-      operationId: baseGeneraReportApplicativo
-      description: >-
-        Questa operazione consente di generare per mezzo di una ricerca semplice, un report statistico
-        per applicativo esportandolo nei formati più comuni
-
-      parameters:
-        - $ref: "#/components/parameters/tipo_grafico"
-        - $ref: "#/components/parameters/formato_export"
-        - $ref: "#/components/parameters/unita_tempo"
-        - $ref: "#/components/parameters/data_inizio"
-        - $ref: "#/components/parameters/data_fine"
-        - $ref: '#/components/parameters/tipologia_servizio'
-        - $ref: '#/components/parameters/id_tipo_servizio'
-        - $ref: '#/components/parameters/id_nome_servizio'
-        - $ref: '#/components/parameters/id_versione_servizio'
-        - $ref: '#/components/parameters/azione'
-        - $ref: '#/components/parameters/soggetto_remoto' 
-        - $ref: '#/components/parameters/esito_transazione'
-        - $ref: '#/components/parameters/visualizzazione_report'
-      responses:
-        200:
-          $ref: '#/components/responses/200ReportGenerato'
-        400:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
-        default:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
-    
-    post:
-      tags:
-        - Reportistica
-      summary: Genera un report statistico per applicativo utilizzando una ricerca articolata
-      operationId: generaReportApplicativo
-      description: >-
-        Questa operazione consente di generare per mezzo di una ricerca articolata, un report statistico
-        raggruppato per applicativo ed esportandolo nei formati più comuni 
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RicercaStatisticaApplicativo'
-      responses:
-        200:
-          $ref: '#/components/responses/200ReportGenerato'
-        400:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
-        default:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
   /reportistica/analisi-statistica/distribuzione-azione:
     parameters:
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/profilo'
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/soggetto'
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
     get:
       tags:
         - Reportistica
       summary: Genera un report statistico organizzato per Azioni utilizzando una ricerca semplice
-      operationId: baseGeneraReportAzione
+      operationId: getReportDistribuzioneAzioneBySimpleSearch
       description: >-
         Questa operazione consente di generare per mezzo di una ricerca semplice, un report statistico
         per azione esportandolo nei formati più comuni
       parameters:
-        - $ref: "#/components/parameters/tipo_grafico"
-        - $ref: "#/components/parameters/formato_export"
-        - $ref: "#/components/parameters/unita_tempo"
-        - $ref: "#/components/parameters/data_inizio"
-        - $ref: "#/components/parameters/data_fine"
-        - $ref: '#/components/parameters/tipologia_servizio'
-        - $ref: '#/components/parameters/id_tipo_servizio'
-        - $ref: '#/components/parameters/id_nome_servizio'
-        - $ref: '#/components/parameters/id_versione_servizio'
-        - $ref: '#/components/parameters/soggetto_remoto' 
-        - $ref: '#/components/parameters/esito_transazione'
-        - $ref: '#/components/parameters/visualizzazione_report'
+        - $ref: "govway_core.yaml#/components/parameters/data_inizio"
+        - $ref: "govway_core.yaml#/components/parameters/data_fine"  
+        - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: '#/components/parameters/soggetto_remoto'
+        - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'                     
+        - $ref: '#/components/parameters/esito_transazione'                     
+        - $ref: "#/components/parameters/formato_report"
+        - $ref: "#/components/parameters/unita_tempo_report"
+        - $ref: "#/components/parameters/tipo_report"
+        - $ref: '#/components/parameters/tipo_informazione_report'
+        - $ref: '#/components/parameters/orientamento_etichette'
+        - $ref: '#/components/parameters/larghezza_grafico'
       responses:
         200:
-          $ref: '#/components/responses/200ReportGenerato'
+          $ref: '#/components/responses/200ReportStatistico'
         400:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         401:
@@ -914,18 +795,97 @@ paths:
       tags:
         - Reportistica
       summary: Genera un report statistico distribuito per azione utilizzando una ricerca articolata
-      operationId: generaReportAzione
+      operationId: getReportDistribuzioneAzioneByFullSearch
       description: >-
-        Questa operazione consente di generare per mezzo di una ricerca articolata, un report statistico
+        Questa operazione consente di generare un report statistico
         raggruppato distribuito per azione ed esportandolo nei formati più comuni 
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RicercaStatisticaAzione'
+              $ref: '#/components/schemas/RicercaStatisticaDistribuzioneAzione'
       responses:
         200:
-          $ref: '#/components/responses/200ReportGenerato'
+          $ref: '#/components/responses/200ReportStatistico'
+        400:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        401:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        403:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        404:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        429:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        503:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+
+  /reportistica/analisi-statistica/distribuzione-applicativo:
+    parameters:
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
+    get:
+      tags:
+        - Reportistica
+      summary: Genera un report statistico organizzato per Applicativi utilizzando una ricerca semplice
+      operationId: getReportDistribuzioneApplicativoBySimpleSearch
+      description: >-
+        Questa operazione consente di generare per mezzo di una ricerca semplice, un report statistico
+        per applicativo esportandolo nei formati più comuni
+
+      parameters:
+        - $ref: "govway_core.yaml#/components/parameters/data_inizio"
+        - $ref: "govway_core.yaml#/components/parameters/data_fine"  
+        - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: '#/components/parameters/soggetto_remoto'
+        - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/azione'                     
+        - $ref: '#/components/parameters/esito_transazione'                     
+        - $ref: "#/components/parameters/formato_report"
+        - $ref: "#/components/parameters/unita_tempo_report"
+        - $ref: "#/components/parameters/tipo_report"
+        - $ref: '#/components/parameters/tipo_informazione_report'
+        - $ref: '#/components/parameters/orientamento_etichette'
+        - $ref: '#/components/parameters/larghezza_grafico'
+      responses:
+        200:
+          $ref: '#/components/responses/200ReportStatistico'
+        400:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        401:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        403:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        404:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        429:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        503:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    
+    post:
+      tags:
+        - Reportistica
+      summary: Genera un report statistico per applicativo utilizzando una ricerca articolata
+      operationId: getReportDistribuzioneApplicativoByFullSearch
+      description: >-
+        Questa operazione consente di generare un report statistico
+        raggruppato per applicativo ed esportandolo nei formati più comuni 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RicercaStatisticaDistribuzioneApplicativo'
+      responses:
+        200:
+          $ref: '#/components/responses/200ReportStatistico'
         400:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         401:
@@ -944,34 +904,36 @@ paths:
 
   /reportistica/analisi-statistica/distribuzione-id-autenticato:
     parameters:
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/profilo'
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/soggetto'
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
     get:
       tags:
         - Reportistica
       summary: Genera un report statistico organizzato per Identificativo Autenticato utilizzando una ricerca semplice
-      operationId: baseGeneraReportIdAutenticato
+      operationId: getReportDistribuzioneIdAutenticatoBySimpleSearch
       description: >-
         Questa operazione consente di generare per mezzo di una ricerca semplice, un report statistico
         per identificativo autenticato esportandolo nei formati più comuni
 
       parameters:
-        - $ref: "#/components/parameters/tipo_grafico"
-        - $ref: "#/components/parameters/formato_export"
-        - $ref: "#/components/parameters/unita_tempo"
-        - $ref: "#/components/parameters/data_inizio"
-        - $ref: "#/components/parameters/data_fine"
-        - $ref: '#/components/parameters/tipologia_servizio'
-        - $ref: '#/components/parameters/id_tipo_servizio'
-        - $ref: '#/components/parameters/id_nome_servizio'
-        - $ref: '#/components/parameters/id_versione_servizio'
-        - $ref: '#/components/parameters/azione'
+        - $ref: "govway_core.yaml#/components/parameters/data_inizio"
+        - $ref: "govway_core.yaml#/components/parameters/data_fine"  
+        - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
-        - $ref: '#/components/parameters/esito_transazione'
-        - $ref: '#/components/parameters/visualizzazione_report'
+        - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/azione'                     
+        - $ref: '#/components/parameters/esito_transazione'                     
+        - $ref: "#/components/parameters/formato_report"
+        - $ref: "#/components/parameters/unita_tempo_report"
+        - $ref: "#/components/parameters/tipo_report"
+        - $ref: '#/components/parameters/tipo_informazione_report'
+        - $ref: '#/components/parameters/orientamento_etichette'
+        - $ref: '#/components/parameters/larghezza_grafico'
       responses:
         200:
-          $ref: '#/components/responses/200ReportGenerato'
+          $ref: '#/components/responses/200ReportStatistico'
         400:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         401:
@@ -991,18 +953,18 @@ paths:
       tags:
         - Reportistica
       summary: Genera un report statistico per identificativo autenticato utilizzando una ricerca articolata
-      operationId: generaReportIdAutenticato
+      operationId: getReportDistribuzioneIdAutenticatoByFullSearch
       description: >-
-        Questa operazione consente di generare per mezzo di una ricerca articolata, un report statistico
+        Questa operazione consente di generare un report statistico
         raggruppato per identificativo autenticato ed esportandolo nei formati più comuni 
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RicercaStatisticaIdAutenticato'
+              $ref: '#/components/schemas/RicercaStatisticaDistribuzioneIdAutenticato'
       responses:
         200:
-          $ref: '#/components/responses/200ReportGenerato'
+          $ref: '#/components/responses/200ReportStatistico'
         400:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         401:
@@ -1021,36 +983,36 @@ paths:
 
   /reportistica/analisi-statistica/distribuzione-token-info:
     parameters:
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/profilo'
-      - $ref: 'govway_rs-api_core.yaml#/components/parameters/soggetto'
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
     get:
       tags:
         - Reportistica
       summary: Genera un report statistico organizzato organizzato per Token Info utilizzando una ricerca semplice
-      operationId: baseGeneraReportTokenInfo
+      operationId: getReportDistribuzioneTokenInfoBySimpleSearch
       description: >-
         Consente di generare un report raggruppato secondo un claim del token per mezzo di una ricerca semplice
 
       parameters:
-        - $ref: "#/components/parameters/unita_tempo"
-        - $ref: "#/components/parameters/data_inizio"
-        - $ref: "#/components/parameters/data_fine"
-        - $ref: '#/components/parameters/tipologia_servizio'
-        - $ref: '#/components/parameters/id_tipo_servizio'
-        - $ref: '#/components/parameters/id_nome_servizio'
-        - $ref: '#/components/parameters/id_versione_servizio'
-        - $ref: '#/components/parameters/azione'
+        - $ref: "govway_core.yaml#/components/parameters/data_inizio"
+        - $ref: "govway_core.yaml#/components/parameters/data_fine"  
+        - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
-        - $ref: '#/components/parameters/esito_transazione'
-        - $ref: '#/components/parameters/claim'
-        - $ref: '#/components/parameters/visualizzazione_report'
-        - $ref: "#/components/parameters/tipo_grafico"
-        - $ref: "#/components/parameters/formato_export"
-        - $ref: '#/components/parameters/orientamento_label'
+        - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/azione'                     
+        - $ref: '#/components/parameters/esito_transazione'                     
+        - $ref: "#/components/parameters/formato_report"
+        - $ref: "#/components/parameters/unita_tempo_report"
+        - $ref: "#/components/parameters/tipo_report"
+        - $ref: '#/components/parameters/tipo_informazione_report'
+        - $ref: '#/components/parameters/orientamento_etichette'
         - $ref: '#/components/parameters/larghezza_grafico'
+        - $ref: '#/components/parameters/claim'
       responses:
         200:
-          $ref: '#/components/responses/200ReportGenerato'
+          $ref: '#/components/responses/200ReportStatistico'
         400:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         401:
@@ -1070,18 +1032,18 @@ paths:
       tags:
         - Reportistica
       summary: Genera un report statistico organizzato per Token Info
-      operationId: generaReportTokenInfo
+      operationId: getReportDistribuzioneTokenInfoByFullSearch
       description: >-
         Consente di generare un report raggruppato secondo un claim del token
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RicercaStatisticaTokenInfo'
+              $ref: '#/components/schemas/RicercaStatisticaDistribuzioneTokenInfo'
 
       responses:
         200:
-          $ref: '#/components/responses/200ReportGenerato'
+          $ref: '#/components/responses/200ReportStatistico'
         400:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         401:
@@ -1097,8 +1059,13 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
-  # OPPURE
+
+  # Reportistica Configurazione
+  
   /reportistica/configurazione-api/riepilogo:   # Pannellino di sinistra non filtrato, uguale sia per erogazione che fruizione
+    parameters:
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
     get:
       tags:
         - Reportistica
@@ -1106,10 +1073,7 @@ paths:
       description: >-
         Restituisce il numero e tipo di api che coinvolgono il soggetto, e un riepilogo del registro
         circa i soggetti e gli applicativi registrati.
-      operationId: getRiepologo
-      parameters:
-        - $ref: 'govway_rs-api_core.yaml#/components/parameters/profilo'
-        - $ref: 'govway_rs-api_core.yaml#/components/parameters/soggetto'
+      operationId: getRiepologoConfigurazioni
       responses:
         200:
           description: Riepilogo ottenuto con successo
@@ -1134,6 +1098,9 @@ paths:
       
       
   /reportistica/configurazione-api/riepilogo/api:
+    parameters:
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
     get:
       tags:
         - Reportistica
@@ -1141,13 +1108,11 @@ paths:
       description: >-
         Recupera le informazioni generali di una Api, come il nome e il numero di erogazioni e fruizioni registrate per esso
       parameters:
-        - $ref: 'govway_rs-api_core.yaml#/components/parameters/profilo'
-        - $ref: 'govway_rs-api_core.yaml#/components/parameters/soggetto'
-        - $ref: '#/components/parameters/tipologia_servizio'
-        - $ref: '#/components/parameters/id_tipo_servizio'
+        - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
-        - $ref: '#/components/parameters/id_nome_servizio'
-        - $ref: '#/components/parameters/id_versione_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
       operationId: getRiepilogoApi
       responses:
         200:
@@ -1171,7 +1136,11 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+
   /reportistica/configurazione-api:  # Lista
+    parameters:
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
     get:
       tags:
         - Reportistica 
@@ -1180,9 +1149,7 @@ paths:
       description: >-
         Ricerca le erogazioni e fruizioni registrate sul sistema filtrandole per tipologia servizio  
       parameters:
-        - $ref: 'govway_rs-api_core.yaml#/components/parameters/profilo'
-        - $ref: 'govway_rs-api_core.yaml#/components/parameters/soggetto'
-        - $ref: '#/components/parameters/tipologia_servizio'
+        - $ref: '#/components/parameters/tipo_transazione'
       responses:
           200:
             description: Riepilogo ottenuto con successo
@@ -1205,12 +1172,48 @@ paths:
           default:
             $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+
   /reportistica/configurazione-api/esporta:
+    parameters:
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
+  
+    get:
+      tags:
+        - Reportistica
+      summary: Recupera la configurazione di un servizio
+      operationId: exportConfigurazioneApiBySimpleSearch
+      description: >-
+        Consente di recuperare la configurazione di un servizio esportandola in formato csv
+      parameters:
+        - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: '#/components/parameters/soggetto_remoto'
+        - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
+      responses:
+        200:
+          $ref: '#/components/responses/200ReportConfigurazioni'
+        400:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        401:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        403:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        404:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        429:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        503:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'    
+      
     post:
       tags:
         - Reportistica
       summary: Recupera la configurazione di un servizio
-      operationId: exportConfigurazioneApi
+      operationId: exportConfigurazioneApiByFullSearch
       description: >-
         Consente di recuperare la configurazione di un servizio esportandola in formato csv
       requestBody:
@@ -1221,12 +1224,7 @@ paths:
       
       responses:
         200:
-          description: Configurazione scaricata con successo
-          content:
-            text/csv:
-              schema:
-                type: string
-                format: binary
+          $ref: '#/components/responses/200ReportConfigurazioni'
         400:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         401:
@@ -1245,135 +1243,94 @@ paths:
 components:
 
   responses:
-    200ReportGenerato:
-      description: Report generato correttamente
+  
+    200ReportStatistico:
+      description: Report statistico generato correttamente
       content:
         text/csv:
           schema:
             type: string
-            format: binary
+            format: byte
         application/pdf:
           schema:
             type: string
-            format: binary
+            format: byte
         application/xls:
           schema:
             type: string
-            format: binary
+            format: byte
         image/png:
           schema:
             type: string
-            format: binary
+            format: byte
 
-# Aggiungere il prefisso /esporta per i riepilogo, una puntuale e una che esporta tutto il risultato del filtro.
-# Riepilogo registro va nel riepilogo normale 
-
-# TRE OPERAZIONI  ( riepilogo api + riepilogo registro ) ( list configurazioni con tipologia parametro query )
-# Due Post Export, una puntuale e una con ricerca.
-# con il concetto di discriminator sul soggetto remoto nelle post.
-
+    200ReportConfigurazioni:
+      description: Report delle configurazioni generato correttamente
+      content:
+        text/csv:
+          schema:
+            type: string
+            format: byte
 
   parameters:
 
-    pagina:
-      in: query
-      name: pagina
-      description: >-
-        La pagina dei risultati da restituire nella ricerca
-      required: false
+    # Dati Identificativi nel path
+
+    id_transazione:
+      in: path
+      name: id
+      description: identificativo della transazione
+      required: true
+      schema:
+        $ref: 'govway_trace.yaml#/components/schemas/TransazioneId'
+
+    id_evento_path:
+      in: path
+      name: id
+      description: L'identificativo dell'evento da recuperare
+      required: true
       schema:
         type: integer
-        format: int32
-        example: 1
+        format: int64
 
-    ordinamento:
-      in: query
-      name: ordinamento
-      description: >-
-        csv dei campi su cui ordinare i risultati, preceduti da + o - per
-        ascendente o discendente (default ascendente) per data di ingresso
-      required: false
-      schema:
-        type: string
-        format: csv
-        default: +nome
 
-    claim:
-      in: query
-      name: claim
-      description: Specifica il claim che deve essere presente nel jwt di una transazione
-      schema:
-        $ref: "#/components/schemas/TokenClaimEnum"
 
-    orientamento_label:
-      in: query
-      name: orientamento_label
-      description: Specifica l'orientamento delle label nei grafici generati dalle analisi statistiche
-      schema:
-        $ref: '#/components/schemas/OrientamentoLabelEnum'
+    # Criteri di ricerca obbligatori nella query
 
-    larghezza_grafico:
+    tipo_transazione:
       in: query
-      name: larghezza_grafico
-      description: Specifica la largheza del grafico in pixel
-      schema:
-        $ref: '#/components/schemas/LarghezzaGrafico'
-
-    visualizzazione_report:
-      in: query
-      name: visualizzazione_report
-      description: Specifica l'informazione da visualizzare nel report
-      schema:
-        $ref: '#/components/schemas/VisualizzazioneReportEnum'
-        
-    unita_tempo:
-      in: query
-      name: unita_tempo
-      description: L'unità di tempo con cui visualizzare i report
-      schema:
-        $ref: '#/components/schemas/UnitaTempoEnum'
-        
-    formato_export:
-      in: query
-      name: formato_export
-      description: Indica la modalità di esportazione (csv, png pdf...) del report statistico
-      schema: 
-        $ref: '#/components/schemas/FormatoExportEnum'
-
-    tipo_grafico:
-      in: query
-      name: tipo_grafico
-      description: Indica il tipo di grafico da voler visualizzare per un dato report statistico
-      schema:
-        $ref: "#/components/schemas/TipoGraficoEnum"
-
-    data_inizio:
-      in: query
-      name: data_inizio
-      description: data inizio dell'intervallo di ricerca
-      schema:
-        type: string
-        format: date-time
-        example: '2017-07-21T17:32:28Z'
-      required: true
-
-    data_fine:
-      in: query
-      name: data_fine
-      description: data inizio dell'intervallo di ricerca
-      schema:
-        type: string
-        format: date-time
-        example: '2017-07-21T17:32:28Z'
-      required: true
-
-    tipologia_servizio:
-      in: query
-      name: tipologia_servizio
+      name: tipo
       description: La tipologia (erogazione\fruizione) del servizio
       required: true
       schema:
-        $ref: '#/components/schemas/TipologiaServizioEnum'
+        $ref: 'govway_trace.yaml#/components/schemas/TransazioneRuoloEnum'
+
+    id_correlazione_applicativa:
+      in: query
+      name: id_applicativo
+      description: l'identificativo di correlazione applicativa della richiesta o della risposta
+      required: true
+      schema:
+        type: string
+
+    id_messaggio:
+      in: query
+      name: id
+      required: true
+      description: L'identificativo del messaggio
+      schema:
+        type: string      
+
+    tipo_messaggio:
+      in: query
+      name: tipo_messaggio
+      required: true
+      description: "Distingue se l'identificativo del messaggio è relativo ad una richiesta o una risposta"
+      schema:
+        $ref: "#/components/schemas/TipoMessaggioEnum"
+
+
+    # Criteri di ricerca opzionali nella query  
 
     soggetto_remoto:
       in: query
@@ -1383,50 +1340,7 @@ components:
         caso di erogazione, o l'erogatore in caso di fruizione
       required: false
       schema:
-        $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
-
-    id_nome_servizio:
-      in: query
-      name: nome_servizio
-      description: Il nome del servizio coinvolto nella transazione
-      required: false
-      schema:
-        $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
-
-    id_versione_servizio:
-      in: query
-      name: versione_servizio
-      description: La versione del servizio coinvolto nella transazione
-      required: false
-      schema:
-        type: integer
-        format: int32
-        minimum: 1
-
-    id_tipo_servizio:
-      in: query
-      name: tipo_servizio
-      description: Indica un tipo del servizio differente da quello di default
-      required: false
-      schema:
-        $ref: '#/components/schemas/Tipo'
-
-    azione:
-      in: query
-      name: azione
-      description: Indica un'azione o una risorsa
-      required: false
-      schema:
-        $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
-      example: Azione1
-
-    id_evento:
-      in: query
-      name: id_evento
-      description: L'identificativo numerico dell'evento da ricercare per una transazione
-      schema:
-        type: integer
-        format: int64
+        $ref: 'govway_core.yaml#/components/schemas/SimpleName'
 
     esito_transazione:
       in: query
@@ -1435,181 +1349,109 @@ components:
         "Indica come sono state gestite le transazioni (ok: completate con
         successo, error: fallite, fault: fault applicativo)" 
       schema:
-        $ref: '#/components/schemas/EsitoTransazioneEnumBase'
-  
+        $ref: '#/components/schemas/EsitoTransazioneSimpleSearchEnum'
+      required: false
+
+    severita:
+      in: query
+      name: severita
+      description: Indica il livello di severità con il quale l'evento è stato registrato nel sistema
+      required: false
+      schema:
+        $ref: 'govway_trace-ext.yaml#/components/schemas/DiagnosticoSeveritaEnum'
+
+    origine_evento:
+      in: query
+      name: origine
+      description: attore che ha provocato l'evento (es. nodo di un cluster)
+      required: false
+      schema:
+        type: string
+
+    codice_evento:
+      in: query
+      name: codice
+      description: codice dell'evento
+      required: false
+      schema:
+        type: string
+
+    tipo_evento:
+      in: query
+      name: tipo
+      description: tipo di evento (es. rateLimiting)
+      required: false
+      schema:
+        type: string
+
+
+    # Criteri di generazione report nella query  
+        
+    formato_report:
+      in: query
+      name: formato_report
+      description: Indica la modalità di esportazione (csv, png pdf...) del report statistico
+      schema: 
+        $ref: '#/components/schemas/FormatoReportEnum'
+      required: true
+
+    unita_tempo_report:
+      in: query
+      name: unita_tempo
+      description: L'unità di tempo con cui visualizzare i report
+      schema:
+        $ref: '#/components/schemas/UnitaTempoReportEnum'
+      required: false
+
+    tipo_report:
+      in: query
+      name: tipo_report
+      description: Indica il tipo di grafico da voler visualizzare per un dato report statistico
+      schema:
+        $ref: "#/components/schemas/TipoReportEnum"
+      required: false
+      
+    tipo_informazione_report:
+      in: query
+      name: tipo_informazione_report
+      description: Specifica l'informazione da visualizzare nel report
+      schema:
+        $ref: '#/components/schemas/TipoInformazioneReportEnum'
+      required: false
+
+    orientamento_etichette:
+      in: query
+      name: orientamento_etichette
+      description: Specifica l'orientamento delle label nei grafici generati dalle analisi statistiche
+      schema:
+        $ref: '#/components/schemas/OrientamentoEtichetteReportEnum'
+      required: false
+
+    larghezza_grafico:
+      in: query
+      name: larghezza_grafico
+      description: Specifica la largheza del grafico in pixel
+      schema:
+        $ref: '#/components/schemas/LarghezzaReportGrafico'
+      required: false
+      
+    claim:
+      in: query
+      name: claim
+      description: Specifica il claim che deve essere presente nel jwt di una transazione
+      schema:
+        $ref: "#/components/schemas/TokenClaimEnum"
+      required: true
+
+ 
   schemas:
 
-    Tipo:
-      type: string
-      maxLength: 20
-      description: Indica un tipo assegnato ad un soggetto o ad un servizio
+    # Transazioni
 
-    ContenutoMessaggio:
-      type: object
-      properties:
-        headers:
-          type: array
-          items:
-            $ref: '#/components/schemas/HeaderItem'
-        body:
-          type: object
-
-    HeaderItem:
-      type: object
-      properties:
-        nome:
-          type: string
-          example: Content-Type
-        valore:
-          type: string
-          example: application/json
-
-    RiepilogoRegistroApi:
-      type: object
-      properties:
-        soggetti_operativi:
-          type: integer
-          format: int32
-        soggetti_esterni:
-          type: integer
-          format: int32
-        applicativi:
-          type: integer
-          format: int32
-    
-    InfoImplementazioneApi:
-      type: object
-      properties:
-        nome: 
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
-        versione:
-          $ref: '#/components/schemas/VersioneApi'
-        azioni:
-          type: integer
-          format: int32
-          description: Il numero di azioni\risorse della api
-          example: 20
-        erogazioni:
-          type: integer
-          format: int32
-          description: Il numero di erogazioni che implementano la api
-          example: 2
-        fruizioni:
-          type: integer
-          format: int32
-          description: Il numero di fruizioni che implementano la api
-          example: 2
-
-    IdTransazione:
-      type: string
-      format: uuid
-      example: f54d8638-79f5-45db-878a-82d858ba128e
-
-    LarghezzaGrafico:
-      type: integer
-      format: int32
-      minimum: 1
-      maximum: 2000
-
-    TipoGraficoEnum:
-      type: string
-      enum:
-        - line
-        - pie
-        - bar
-        - table
-      example: Line
-
-    OrientamentoLabelEnum:
-      type: string
-      enum:
-        - orizzontale 
-        - obliquo
-        - verticale
-      example: obliquo
-
-    HttpMethodEnum:
-      type: string
-      enum: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'TRACE', 'PATCH', 'LINK', 'UNLINK']
-      example: 'POST'
-
-    VisualizzazioneReportEnum:
-      type: string
-      enum:
-        - numero_transazioni
-        - occupazione_banda
-        - tempo_medio_risposta
-      example: numero_transazioni
-
-    FormatoExportEnum:
-      type: string
-      enum:
-        - csv
-        - pdf
-        - xls
-        - png
-      example: csv
-
-    UnitaTempoEnum:
-      type: string
-      enum:
-        - orario
-        - giornaliero
-        - settimanale
-        - mensile
-      example: orario
-
-    TokenClaimEnum:
-      type: string
-      enum:
-        - subject
-        - issuer
-        - client_id
-        - username
-        - email
-
-    InvocazioneContextEnum:
-      type: string
-      enum:
-        - in 
-        - out
-      example: in
-      
-    RiepilogoApiSoggetto:
-      type: object
-      properties:
-        soggetto:
-          $ref: "govway_rs-api_core.yaml#/components/schemas/SimpleName"
-        erogazioni:
-          type: integer
-          format: int32
-          description: Il numero di erogazioni del soggetto
-          example: 2
-        fruizioni:
-          type: integer
-          format: int32
-          description: Il numero di fruizioni del soggetto
-          example: 2
-        api:
-          type: integer
-          format: int32
-          description: Il numero di api per cui il soggetto è referente
-          example: 2
-
-    Riepilogo:
-      type: object
-      properties:
-        api_soggetto:
-          $ref: '#/components/schemas/RiepilogoApiSoggetto'
-        registro:
-          $ref: '#/components/schemas/RiepilogoRegistroApi'
-
-
-
-    ListaRiepilogoApi:
+    ListaTransazioni:
       type: object
       allOf:
-        - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+        - $ref: 'govway_core.yaml#/components/schemas/ListaSenzaTotale'
         - type: object
           required:
             - items
@@ -1617,227 +1459,55 @@ components:
             items:
               type: array
               items:
-                $ref: '#/components/schemas/RiepilogoApiItem'
-      
-    RiepilogoApiItem:
-      type: object
-      properties:
-        fruitore:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
-        erogatore:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
-        nome:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
-        versione:
-          $ref: '#/components/schemas/VersioneApi'
-        tipo:
-          type: string
+                $ref: '#/components/schemas/ItemTransazione'
 
-    OpzioniReport:
-      type: object
-      properties:
-        tipo_grafico:
-          $ref: '#/components/schemas/TipoGraficoEnum'
-        orientamento_label:
-          $ref: '#/components/schemas/OrientamentoLabelEnum'
-        larghezza_grafico:
-          $ref: '#/components/schemas/LarghezzaGrafico'
-        visualizzazione_report:
-          $ref: '#/components/schemas/VisualizzazioneReport'   
-        unita_tempo:
-          $ref: '#/components/schemas/UnitaTempoEnum'
-
-    RicercaStatisticaBase:
-      type: object
-      properties:
-        formato_export:
-          $ref: '#/components/schemas/FormatoExportEnum'
-        opzioni:
-          $ref: '#/components/schemas/OpzioniReport'
-        filtro_temporale:
-          $ref: '#/components/schemas/FiltroTemporale'
-        tipologia_servizio:
-          $ref: '#/components/schemas/TipologiaServizioEnum'
-
-    RicercaStatisticaTemporale:
+    ItemTransazione:
       type: object
       allOf:
-        - $ref: '#/components/schemas/RicercaStatisticaBase'
-      properties:
-        filtro_api:
-          discriminator:
-            propertyName: tipologia_servizio
-            mapping:
-              erogazione: '#/components/schemas/FiltroErogazione'
-              fruizione: '#/components/schemas/FiltroFruizione'
-          oneOf:
-            - $ref: '#/components/schemas/FiltroErogazione'
-            - $ref: '#/components/schemas/FiltroFruizione'
+        - $ref: 'govway_trace.yaml#/components/schemas/TransazioneBase'
+        - $ref: 'govway_trace-ext.yaml#/components/schemas/TransazioneExtTipo'
+        - type: object      
+          required:
+            - data
+          properties:
+            data:
+              type: string
+              format: date-time
+              example: '2017-07-21T17:32:28Z'
+            latenza_servizio:
+              type: integer
+              format: int64
+              example: 8
+            latenza_totale:
+              type: integer
+              format: int64
+              example: 20
+            richiesta:
+              $ref: 'govway_trace-ext.yaml#/components/schemas/TransazioneExtDettaglioRichiestaBase'
+            risposta:
+              $ref: 'govway_trace-ext.yaml#/components/schemas/TransazioneExtDettaglioRispostaBase'
+            api:
+              $ref: 'govway_trace-ext.yaml#/components/schemas/TransazioneExtInformazioniApiBase'
+            mittente:
+              $ref: 'govway_trace-ext.yaml#/components/schemas/TransazioneExtInformazioniMittenteBase'
 
-        filtro_mittente:
-          $ref: '#/components/schemas/FiltroMittente'
-        filtro_transazione:
-          $ref: '#/components/schemas/FiltroTransazione'
-        filtro_azione:  # TODO Parametro per filtro azione che abbia description e example
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
 
+    # Eventi
 
-    RicercaStatisticaEsiti:
+    ListaEventi:
       type: object
       allOf:
-        - $ref: '#/components/schemas/RicercaStatisticaBase'
-      properties:
-        filtro_api:
-          discriminator:
-            propertyName: tipologia_servizio
-            mapping:
-              erogazione: '#/components/schemas/FiltroErogazione'
-              fruizione: '#/components/schemas/FiltroFruizione'
-          oneOf:
-            - $ref: '#/components/schemas/FiltroErogazione'
-            - $ref: '#/components/schemas/FiltroFruizione'
-        filtro_mittente:
-          $ref: '#/components/schemas/FiltroMittente'
-        filtro_azione:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+        - $ref: 'govway_core.yaml#/components/schemas/ListaSenzaTotale'
+        - type: object
+          required:
+            - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/Evento'
 
-    RicercaStatisticaSoggettoRemoto:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/RicercaStatisticaBase'
-      properties:
-        filtro_mittente:
-          $ref: '#/components/schemas/FiltroMittente'
-        filtro_transazione:
-          $ref: '#/components/schemas/FiltroTransazione'
-        filtro_api:
-          discriminator:
-            propertyName: tipologia_servizio
-            mapping:
-              erogazione: '#/components/schemas/FiltroErogazioneSoggettoRemoto'
-              fruizione: '#/components/schemas/FiltroFruizione'
-          oneOf:
-            - $ref: '#/components/schemas/FiltroErogazioneSoggettoRemoto'
-            - $ref: '#/components/schemas/FiltroFruizione'
-        filtro_azione:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
-
-    RicercaStatisticaSoggettoLocale:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/RicercaStatisticaTemporale'
-      
-    RicercaStatisticaApi:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/RicercaStatisticaBase'
-      properties:
-        filtro_mittente:
-          $ref: '#/components/schemas/FiltroMittente'
-        filtro_transazione:
-          $ref: '#/components/schemas/FiltroTransazione'
-        filtro_api:
-          discriminator:
-            propertyName: tipologia_servizio
-            mapping:
-              erogazione: '#/components/schemas/FiltroFruitore'
-              fruizione: '#/components/schemas/FiltroErogatore'
-          oneOf:
-            - $ref: '#/components/schemas/FiltroErogatore'
-            - $ref: '#/components/schemas/FiltroFruitore'
-
-    RicercaStatisticaAzione:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/RicercaStatisticaBase'
-      properties:
-        filtro_mittente:
-          $ref: '#/components/schemas/FiltroMittente'
-        filtro_transazione:
-          $ref: '#/components/schemas/FiltroTransazione'
-        filtro_api:
-          discriminator:
-            propertyName: tipologia_servizio
-            mapping:
-              erogazione: '#/components/schemas/FiltroErogazione'
-              fruizione: '#/components/schemas/FiltroFruizione'
-          oneOf:
-            - $ref: '#/components/schemas/FiltroErogazione'
-            - $ref: '#/components/schemas/FiltroFruizione'
-      
-    RicercaStatisticaApplicativo:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/RicercaStatisticaBase'
-      properties:
-        filtro_transazione:
-          $ref: '#/components/schemas/FiltroTransazione'
-        filtro_api:
-          discriminator:
-            propertyName: tipologia_servizio
-            mapping:
-              erogazione: '#/components/schemas/FiltroErogazione'
-              fruizione: '#/components/schemas/FiltroFruizione'
-          oneOf:
-            - $ref: '#/components/schemas/FiltroErogazione'
-            - $ref: '#/components/schemas/FiltroFruizione'
-        filtro_mittente:
-          $ref: '#/components/schemas/FiltroMittente'
-        filtro_azione:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
-
-    RicercaStatisticaIdAutenticato:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/RicercaStatisticaBase'
-      properties:
-        filtro_transazione:
-          $ref: '#/components/schemas/FiltroTransazione'
-        filtro_api:
-          discriminator:
-            propertyName: tipologia_servizio
-            mapping:
-              erogazione: '#/components/schemas/FiltroErogazione'
-              fruizione: '#/components/schemas/FiltroFruizione'
-          oneOf:
-            - $ref: '#/components/schemas/FiltroErogazione'
-            - $ref: '#/components/schemas/FiltroFruizione'
-        filtro_mittente:
-          $ref: '#/components/schemas/FiltroMittente'
-        filtro_azione:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
-
-
-
-    RicercaStatisticaTokenInfo:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/RicercaStatisticaBase'
-      properties:
-        filtro_transazione:
-          $ref: '#/components/schemas/FiltroTransazione'
-        filtro_api:
-          discriminator:
-            propertyName: tipologia_servizio
-            mapping:
-              erogazione: '#/components/schemas/FiltroErogazione'
-              fruizione: '#/components/schemas/FiltroFruizione'
-          oneOf:
-            - $ref: '#/components/schemas/FiltroErogazione'
-            - $ref: '#/components/schemas/FiltroFruizione'
-        filtro_mittente:
-          $ref: '#/components/schemas/FiltroMittente'
-        filtro_azione:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
-
-        filtro_token:
-          $ref: '#/components/schemas/FiltroTokenClaimBase'
-
-    TipoEvento:
-      type: string
-    
-
-    EventoDetail:
+    Evento:
       type: object
       properties:
         id:
@@ -1847,151 +1517,78 @@ components:
           type: string
           format: date-time
           example: '2017-07-21T17:32:28Z'
-
         severita:
-          $ref: "#/components/schemas/SeveritaEnum"
+          $ref: 'govway_trace-ext.yaml#/components/schemas/DiagnosticoSeveritaEnum'
         tipo:
-          $ref: "#/components/schemas/TipoEvento"
+          type: string
         codice:
-          $ref: "#/components/schemas/CodiceEventoEnum"
+          type: string
         origine:
           type: string
 
-     
-    ListaTransazioni:
+
+    # Statistiche
+
+    OpzioniGenerazioneReportBase:
+      type: object
+      required:
+      - formato
+      properties:
+        formato:
+          $ref: '#/components/schemas/FormatoReportEnum'
+        tipo:
+          $ref: '#/components/schemas/TipoReportEnum'
+        orientamento_etichette:
+          $ref: '#/components/schemas/OrientamentoEtichetteReportEnum'
+        larghezza_grafico:
+          $ref: '#/components/schemas/LarghezzaReportGrafico'  
+
+    OpzioniGenerazioneReportMultiLine:
       type: object
       allOf:
-        - $ref: '#/components/schemas/ListaRisultati'
+        - $ref: '#/components/schemas/OpzioniGenerazioneReportBase'
         - type: object
-          required:
-            - items
-          properties:
-            items:
-              type: array
-              items:
-                $ref: '#/components/schemas/TransazioneItem'
+          properties:  
+            tipo_informazione:
+              $ref: '#/components/schemas/TipoInformazioneReportMultiLine'
 
-    ListaEventi:
+    OpzioniGenerazioneReport:
       type: object
       allOf:
-        - $ref: '#/components/schemas/ListaRisultati'
+        - $ref: '#/components/schemas/OpzioniGenerazioneReportBase'
         - type: object
           required:
-            - items
-          properties:
-            items:
-              type: array
-              items:
-                $ref: '#/components/schemas/EventoDetail'
+          - tipo_informazione
+          properties:  
+            tipo_informazione:
+              $ref: '#/components/schemas/TipoInformazioneReport'
 
-    TempiAttraversamento:
-      type: object
-    DimensioneMessaggi:
-      type: object
-  
-    EsitoTransazioneEnum:
-      type: string
-      enum:
-        - ok
-        - fault
-        - error
-        - error_or_fault
-        - personalizzato
-    
-    EsitoTransazioneEnumBase:
-      type: string
-      enum:
-        - ok
-        - fault
-        - error
-        - error_or_fault
-    
-    CodiceEventoEnum:
-      type: string
-      enum:
-        - start
-        - stop
+    LarghezzaReportGrafico:
+      type: integer
+      format: int32
+      minimum: 1
+      maximum: 2000
 
-    SeveritaEnum:
-      type: string
-      enum:
-        - fatal
-        - error
-        - warn
-        - info
-        - debug
-      example: info
-
-    DettaglioEsitoEnum: # TODO: Vanno bene questi valori? li ho copiati da quelli della bozza.
-      type: string
-      enum:
-        - ok
-        - ok (presenza anomalie)
-        - fault applicativo
-        - autenticazione fallita
-        - autorizzazione negata
-        - richiesta client rifiutata
-        - errore di connessione
-        - errore di protocollo
-        - violazione rate limiting
-        - violazione rate limiting warningOnly
-        - superamento limite richieste
-        - superamento limite richieste warningOnly
-        - fault pdd esterna
-        - contenuto richiesta non riconosciuto
-        - contenuto risposta non riconosciuto
-        - connessione client interrotta
-        - fault generato dalla pdd
-        - errore interno pdd
-      example: fault applicativo
-    
-    DettaglioEsitoList:
-      type: array
-      items:
-          $ref: '#/components/schemas/DettaglioEsitoEnum'
-
-    TipologiaServizioEnum:
-      type: string
-      enum:
-        - fruizione
-        - erogazione
-      example: fruizione
-
-    TipoMessaggioEnum:
-      type: string
-      enum:
-        - richiesta
-        - risposta
-      example: richiesta
-
-    SeveritaDiagnosticoEnum:
-      type: string
-      enum:
-        - errorIntegration
-        - errorProtocol
-        - infoIntegration
-        - InfoProtocol
-        - debugLow
-        - debugMedium
-        - debugHigh
-      example: errorProtocol
-
-    FunzioneDiagnosticoEnum:
-      type: string
-      enum:
-        - ricezioneBuste
-        - ricezioneContenutiApplicativi
-        - inoltroBuste
-        - consegnaContenutiApplicativi
-        - imbustamento
-        - sbustamento
-      example: ricezioneBuste
-
-    VisualizzazioneReport:
+    TipoInformazioneReport:
       type: object
       properties:
         tipo:
-          $ref: '#/components/schemas/VisualizzazioneReportEnum'
+          $ref: '#/components/schemas/TipoInformazioneReportEnum'
+        valori:
+          discriminator:
+            propertyName: tipo
+            mapping:
+              occupazione_banda:  '#/components/schemas/OccupazioneBandaEnum' 
+              tempo_medio_risposta: '#/components/schemas/TempoMedioRispostaEnum'
+          oneOf:
+            - $ref: '#/components/schemas/OccupazioneBandaEnum'  
+            - $ref: '#/components/schemas/TempoMedioRispostaEnum'
+
+    TipoInformazioneReportMultiLine:
+      type: object
+      properties:
+        tipo:
+          $ref: '#/components/schemas/TipoInformazioneReportEnum'
         valori:
           discriminator:
             propertyName: tipo
@@ -2028,320 +1625,343 @@ components:
           type: boolean
           default: false
 
-    Diagnostico:
-      type: object
-      properties:
-        data:
-          type: string
-          format: date-time
-          example: '2017-07-21T17:32:28Z'
-        severita:
-          $ref: '#/components/schemas/SeveritaDiagnosticoEnum'
-        funzione:
-          $ref: '#/components/schemas/FunzioneDiagnosticoEnum'
-        messaggio:
-          type: string
-          example: >-
-            Generato messaggio di cooperazione di Errore con identificativo
-            [0998f497-e05d-420a-a6b0-ff3bb718d2c4]
 
-    VersioneApi:
-      type: integer
-      format: int32
-      minimum: 1
-      example: 1
-    
-    TransazioneDetail:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uri
-        esito:
-          type: string
-        tipologia:
-          $ref: '#/components/schemas/TipologiaServizioEnum'
-        informazioni_servizio:
-          $ref: '#/components/schemas/InformazioniServizio'
-        dettaglio_richiesta:
-          $ref: '#/components/schemas/DettaglioRichiesta'
-        dettaglio_risposta:
-          $ref: '#/components/schemas/DettaglioRisposta'
-        informazioni_mittente:
-          $ref: '#/components/schemas/InformazioniMittente'
-        informazioni_avanzate:
-          $ref: '#/components/schemas/InformazioniAvanzate'
-        diagnostici:
-          type: array
-          items:
-            $ref: '#/components/schemas/Diagnostico'
-    
-    InformazioniServizio:
-      type: object
-      properties:
-        erogatore:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
-        nome:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
-        versione:
-          $ref: '#/components/schemas/VersioneApi'
-        tipo:
-          type: string
-          description: Il tipo del servizio, significativo in caso di profilo SPCoop
-        azione:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
-        profilo_collaborazione:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/ProfiloCollaborazioneEnum'     
+    # Report Configurazioni
 
-    DettagliMessaggio:
+    Riepilogo:
       type: object
+      required:
+      - api
+      - erogazioni
+      - fruizioni
+      - soggetti_dominio_interno
+      - soggetti_dominio_esterno
+      - applicativi
       properties:
-        data_ingresso:
-          type: string
-          format: date-time
-          example: '2017-07-21T17:32:28Z'
-        data_uscita:
-          type: string
-          format: date-time
-          example: '2017-07-21T17:32:28Z'
-        bytes_ingresso:
-          type: integer
-          format: int64
-        bytes_uscita:
-          type: integer
-          format: int64
-        contenuti_ingresso:
-          $ref: '#/components/schemas/ContenutoMessaggio'
-        contenuti_uscita:
-          $ref: '#/components/schemas/ContenutoMessaggio'
-
-    DettaglioRichiesta:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/DettagliMessaggio'
-      properties:
-        id_messaggio:
-          type: string
-          example: eba4355e-403f-4e75-8d56-0751710409c2
-        
-    DettaglioRisposta:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/DettagliMessaggio'
-      properties:
-        fault_uscita:
-          type: string
-          format: byte
-        fault_ingresso:
-          type: string
-          format: byte
-
-    InformazioniMittente:
-      type: object
-      properties:
-        metodo_http:
-          $ref: '#/components/schemas/HttpMethodEnum'
-        url_invocazione_context:
-          $ref: '#/components/schemas/InvocazioneContextEnum'
-        url_invocazione:
-          type: string
-          format: uri
-          example: /govway/in/Ente/PetStore/v2/pet
-        indirizzo_client:
-          type: string
-          format: ipv4
-        # TODO: Qui per fare i precisini dovremmo avere un grosso enum con tutti 
-        # i codici di risposta http oppure un'espressione regolare per un intero a tre cifre
-        codice_risposta_client:
-          type: integer
-          format: int32
-        token:
-          $ref: '#/components/schemas/InformazioniToken'
-
-    InformazioniToken:
-      type: object
-      properties:
-        client_id:
-          type: string
-          example: 407408718192.apps.googleusercontent.com
-        subject:
-          type: string
-          example: 10623565759265497689
-        detail:
-          type: object
-    
-    InformazioniAvanzate: 
-      type: object
-      properties:
-        id_dominio:
-          type: string
-          example: domain/gw/Ente
-        soggetto_dominio:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
-        latenza_servizio:
-          type: integer
-          format: int64
-          example: 8
-        latenza_gateway:
-          type: integer
-          format: int64
-          example: 8
-        latenza_totale:
-          type: integer
-          format: int64
-          example: 8
-        eventi:
-          type: string
-          description: Gli eventi registrati da Govway durante la transazione
-        porta_inbound:
-          type: string
-          example: Ente/PetStore/v2
-        applicativo_erogatore:
-          type: string
-          example: gw_Ente/gw_PetStore/v2
-
-    TransazioneItem:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          example: f54d8638-79f5-45db-878a-82d858ba128e
-        data_ingresso_richiesta:
-          type: string
-          format: date-time
-          example: '2017-07-21T17:32:28Z'
-        tipologia:
-          $ref: "#/components/schemas/TipologiaServizioEnum"
-        esito:
-          $ref: "#/components/schemas/EsitoTransazioneEnum"
-        soggetto_fruitore:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
-        soggetto_erogatore:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
         api:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
-        azione:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
-        versione_api:
           type: integer
           format: int32
-          minimum: 1
-          example: 1 
-        latenzaServizio:
-          type: string
-          example: 8 ms
-        latenzaTotale:
-          type: string
-          example: 20 ms
-      
-      #  idApplicativoRichiesta:
-      #    type: string
-      #    example: AB234
-      #  idApplicativoRisposta:
-      #    type: string
-      #    example: '141'
-      #  idMessaggioRichiesta:
-      #    type: string
-      #  idMessaggioRisposta:
-      #    type: string
-      #  profiloCollaborazione:
-      #    type: string
-      #    enum:
-      #      - oneway
-      #      - sincrono
-      #      - asincronoAsimmetrico
-      #      - asincronoSimmetrico
-      #    example: oneway
-      #  servizioApplicativo:
-      #    type: string
-      #    example: applicativo1
-      #  dimensioniIngressoRichiesta:
-      #    type: string
-      #    example: ''
-      #  dimensioniUscitaRichiesta:
-      #    type: string
-      #    example: ''
-      #  dimensioniIngressoRisposta:
-      #    type: string
-      #    example: ''
-      #  dimensioniUscitaRisposta:
-      #    type: string
-      #    example: ''
-      #  duplicatiRichiesta:
-      #    type: string
-      #    example: ''
-      #  duplicatiRisposta:
-      #    type: string
-      #    example: ''
-      #  eventi:
-      #    type: string
-      #    example: ''
-      #  indirizzoClient:
-      #    type: string
-      #    example: 127.0.0.1
-      #  X-Forwarded-For:
-      #    type: string
-      #    example: ''
-    
-    RicercaConfigurazioneApi:
-      type: object
-      properties:
-        tipologia:
-          $ref: '#/components/schemas/TipologiaServizioEnum'
-        filtro_api:
-          discriminator:
-            propertyName: tipologia
-            mapping:
-              erogazione: '#/components/schemas/FiltroErogazioneConfigurazione'
-              fruizione: '#/components/schemas/FiltroFruizione'
-          oneOf:
-            - $ref: '#/components/schemas/FiltroErogazioneConfigurazione'
-            - $ref: '#/components/schemas/FiltroFruizione'
+          description: Il numero di api per cui il soggetto è referente
+          example: 2
+        soggetto:
+          $ref: "govway_core.yaml#/components/schemas/SimpleName"
+        erogazioni:
+          type: integer
+          format: int32
+          description: Il numero di erogazioni del soggetto
+          example: 2
+        fruizioni:
+          type: integer
+          format: int32
+          description: Il numero di fruizioni del soggetto
+          example: 2
+        soggetti_dominio_interno:
+          type: integer
+          format: int32
+        soggetti_dominio_esterno:
+          type: integer
+          format: int32
+        applicativi:
+          type: integer
+          format: int32
 
-    FiltroErogazioneBase:
+    InfoImplementazioneApi:
       type: object
       properties:
-        tipo:
-          $ref: '#/components/schemas/Tipo'
-        nome:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+        nome: 
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+        tipo: 
+          $ref: 'govway_core.yaml#/components/schemas/Tipo'
         versione:
+          $ref: 'govway_core.yaml#/components/schemas/Versione'
+        soggetto:
+          $ref: "govway_core.yaml#/components/schemas/SimpleName"
+        azioni:
           type: integer
           format: int32
-          minimum: 1
-    
-    FiltroErogazioneSoggettoRemoto:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/FiltroErogazioneBase'
+          description: Il numero di azioni\risorse della api
+          example: 20
+        erogazioni:
+          type: integer
+          format: int32
+          description: Il numero di erogazioni che implementano la api
+          example: 2
+        fruizioni:
+          type: integer
+          format: int32
+          description: Il numero di fruizioni che implementano la api
+          example: 2
 
-    FiltroErogazioneConfigurazione:
+    ListaRiepilogoApi:
       type: object
       allOf:
-        - $ref: '#/components/schemas/FiltroErogazioneBase'
-     
-    FiltroFruizione:
+        - $ref: 'govway_core.yaml#/components/schemas/Lista'
+        - type: object
+          required:
+            - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/RiepilogoApiItem'
+      
+    RiepilogoApiItem:
       type: object
-      allOf:
-        - $ref: '#/components/schemas/FiltroErogazioneBase'
-      properties:
-        erogatore:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
-
-    FiltroErogazione:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/FiltroErogazioneBase'
+      required:
+        - erogatore
       properties:
         fruitore:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'   
-    
-    FiltroAzione:
+          $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+        erogatore:
+          $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+        nome:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+        tipo: 
+          $ref: 'govway_core.yaml#/components/schemas/Tipo'
+        versione:
+          $ref: 'govway_core.yaml#/components/schemas/Versione'
+
+
+
+    # Ricerche Transazioni
+
+    RicercaBaseTransazione:
       type: object
+      required:
+      - intervallo_temporale
+      - tipo
       properties:
+        intervallo_temporale:
+          $ref: '#/components/schemas/FiltroTemporale'
+        tipo:
+          $ref: 'govway_trace.yaml#/components/schemas/TransazioneRuoloEnum'
+        api:
+          discriminator:
+            propertyName: tipo
+            mapping:
+              erogazione: '#/components/schemas/FiltroErogazione'
+              fruizione: '#/components/schemas/FiltroFruizione'
+          oneOf:
+            - $ref: '#/components/schemas/FiltroErogazione'
+            - $ref: '#/components/schemas/FiltroFruizione'
         azione:
-            $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+        esito:
+          $ref: '#/components/schemas/FiltroEsito'
+        evento:  
+          description: >-
+            Eevento da ricercare per una transazione
+          type: string
+     
+    RicercaIntervalloTemporale:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/RicercaBaseTransazione'
+        - type: object
+          properties:
+            mittente:
+              $ref: '#/components/schemas/FiltroMittente'
+              
+    RicercaIdApplicativo:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/RicercaBaseTransazione'
+        - type: object
+          required:
+          - id_applicativo
+          properties:
+            id_applicativo:
+              $ref: 'govway_core.yaml#/components/schemas/FiltroRicercaId'
+
+
+    # Ricerche Statistiche
+
+    RicercaBaseStatistica:
+      type: object
+      required:
+      - intervallo_temporale
+      - tipo
+      properties:
+        intervallo_temporale:
+          $ref: '#/components/schemas/FiltroTemporale'
+        tipo:
+          $ref: 'govway_trace.yaml#/components/schemas/TransazioneRuoloEnum'
+
+    RicercaBaseStatisticaSoggetti:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/RicercaBaseStatistica'
+        - type: object
+          properties:
+            api:
+              discriminator:
+                propertyName: tipo
+                mapping:
+                  erogazione: '#/components/schemas/FiltroErogazione'
+                  fruizione: '#/components/schemas/FiltroFruizione'
+              oneOf:
+                - $ref: '#/components/schemas/FiltroErogazione'
+                - $ref: '#/components/schemas/FiltroFruizione'
+
+    RicercaStatisticaAndamentoTemporale:
+       type: object
+       allOf:
+        - $ref: '#/components/schemas/RicercaBaseStatisticaSoggetti'
+        - type: object
+          required:
+          - report
+          properties:
+            report:
+              $ref: '#/components/schemas/OpzioniGenerazioneReportMultiLine'
+            azione:
+              $ref: 'govway_core.yaml#/components/schemas/NCName'
+            mittente:
+              $ref: '#/components/schemas/FiltroMittente'
+            esito:
+              $ref: '#/components/schemas/FiltroEsito'
+
+    RicercaStatisticaDistribuzioneEsiti:
+       type: object
+       allOf:
+        - $ref: '#/components/schemas/RicercaBaseStatisticaSoggetti'
+        - type: object
+          required:
+          - report
+          properties:
+            report:
+              $ref: '#/components/schemas/OpzioniGenerazioneReport'
+            azione:
+              $ref: 'govway_core.yaml#/components/schemas/NCName'
+            mittente:
+              $ref: '#/components/schemas/FiltroMittente'
+
+    RicercaStatisticaDistribuzioneSoggettoRemoto:
+       type: object
+       allOf:
+        - $ref: '#/components/schemas/RicercaBaseStatistica'
+        - type: object
+          required:
+          - report
+          properties:
+            report:
+              $ref: '#/components/schemas/OpzioniGenerazioneReport'
+            api:
+              discriminator:
+                propertyName: tipo
+                mapping:
+                  erogazione: '#/components/schemas/FiltroApiBase'
+                  fruizione: '#/components/schemas/FiltroFruizione'
+              oneOf:
+                - $ref: '#/components/schemas/FiltroApiBase'
+                - $ref: '#/components/schemas/FiltroFruizione'
+            azione:
+              $ref: 'govway_core.yaml#/components/schemas/NCName'
+            mittente:
+              $ref: '#/components/schemas/FiltroMittente'
+            esito:
+              $ref: '#/components/schemas/FiltroEsito'
+
+    RicercaStatisticaDistribuzioneSoggettoLocale:
+       type: object
+       allOf:
+        - $ref: '#/components/schemas/RicercaBaseStatisticaSoggetti'
+        - type: object
+          required:
+          - report
+          properties:
+            report:
+              $ref: '#/components/schemas/OpzioniGenerazioneReport'
+            azione:
+              $ref: 'govway_core.yaml#/components/schemas/NCName'
+            mittente:
+              $ref: '#/components/schemas/FiltroMittente'
+            esito:
+              $ref: '#/components/schemas/FiltroEsito'
+
+    RicercaStatisticaDistribuzioneApi:
+       type: object
+       allOf:
+        - $ref: '#/components/schemas/RicercaBaseStatistica'
+        - type: object
+          required:
+          - report
+          properties:
+            report:
+              $ref: '#/components/schemas/OpzioniGenerazioneReport'
+            soggetto_remoto:
+              $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+            mittente:
+              $ref: '#/components/schemas/FiltroMittente'
+            esito:
+              $ref: '#/components/schemas/FiltroEsito'
+ 
+    RicercaStatisticaDistribuzioneAzione:
+       type: object
+       allOf:
+        - $ref: '#/components/schemas/RicercaBaseStatisticaSoggetti'
+        - type: object
+          required:
+          - report
+          properties:
+            report:
+              $ref: '#/components/schemas/OpzioniGenerazioneReport'
+            mittente:
+              $ref: '#/components/schemas/FiltroMittente'
+            esito:
+              $ref: '#/components/schemas/FiltroEsito'
+
+    RicercaStatisticaDistribuzioneApplicativo:
+       type: object
+       allOf:
+        - $ref: '#/components/schemas/RicercaBaseStatisticaSoggetti'
+        - type: object
+          required:
+          - report
+          properties:
+            report:
+              $ref: '#/components/schemas/OpzioniGenerazioneReport'
+            azione:
+              $ref: 'govway_core.yaml#/components/schemas/NCName'
+            esito:
+              $ref: '#/components/schemas/FiltroEsito'
+
+    RicercaStatisticaDistribuzioneIdAutenticato:
+       type: object
+       allOf:
+        - $ref: '#/components/schemas/RicercaStatisticaDistribuzioneApplicativo'
+
+    RicercaStatisticaDistribuzioneTokenInfo:
+       type: object
+       allOf:
+        - $ref: '#/components/schemas/RicercaStatisticaDistribuzioneApplicativo'
+        - type: object
+          required:
+          - claim
+          properties:
+            claim:
+              $ref: '#/components/schemas/TokenClaimEnum'
+
+    # Ricerche Report Configurazione
+
+    RicercaConfigurazioneApi:
+      type: object
+      required:
+      - tipo
+      properties:
+        tipo:
+          $ref: 'govway_trace.yaml#/components/schemas/TransazioneRuoloEnum'
+        api:
+          discriminator:
+            propertyName: tipo
+            mapping:
+              erogazione: '#/components/schemas/FiltroApiBase'
+              fruizione: '#/components/schemas/FiltroFruizione'
+          oneOf:
+            - $ref: '#/components/schemas/FiltroApiBase'
+            - $ref: '#/components/schemas/FiltroFruizione'
+
+
+    # Filtri
 
     FiltroTemporale:
       type: object
@@ -2355,199 +1975,194 @@ components:
           format: date-time
           example: '2017-07-21T17:32:28Z'
 
-    FiltroErogatore:
+    FiltroApiBase:
       type: object
       properties:
-        erogatore:
-          type: string
+        tipo:
+          $ref: 'govway_core.yaml#/components/schemas/Tipo'
+        nome:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+        versione:
+          $ref: 'govway_core.yaml#/components/schemas/Versione'
 
-    FiltroFruitore:
+    FiltroFruizione:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/FiltroApiBase'
+        - type: object
+          properties:
+            erogatore:
+              $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+    FiltroErogazione:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/FiltroApiBase'
+        - type: object
+          properties:
+            fruitore:
+              $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+           
+    FiltroEsito:
       type: object
       properties:
-        fruitore:
-          type: string    
-    
+        tipo:
+          $ref: '#/components/schemas/EsitoTransazioneFullSearchEnum'
+        dettaglio:
+          discriminator:
+            propertyName: esito
+            mapping:
+              ok:             '#/components/schemas/DettaglioEsitoCode'
+              error:          '#/components/schemas/DettaglioEsitoCode'
+              error_or_fault: '#/components/schemas/DettaglioEsitoCode'
+              personalizzato: '#/components/schemas/DettaglioEsitoList'
+          oneOf: 
+            - $ref: '#/components/schemas/DettaglioEsitoCode' 
+            - $ref: '#/components/schemas/DettaglioEsitoList'
+    DettaglioEsitoCode:
+      type: integer
+      format: int32   
+    DettaglioEsitoList:
+      type: array
+      items:
+          $ref: '#/components/schemas/DettaglioEsitoCode'
+
     FiltroMittente:
       type: object
       description: >-
         Descrive le informazioni di filtraggio relative al mittente per la ricerca di transazioni
       properties:
-        tipo_filtro_mittente: 
+        tipo: 
           $ref: '#/components/schemas/TipoFiltroMittenteEnum'
-        filtro_mittente:
+        id:
           discriminator:
             propertyName: tipo_filtro_mittente
             mapping:
-              applicativo:  '#/components/schemas/FiltroApplicativo' 
-              identificativo_autenticato: '#/components/schemas/FiltroIdAutenticato'
-              token_info: '#/components/schemas/FiltroTokenClaim'
+              applicativo:  '#/components/schemas/FiltroMittenteApplicativo' 
+              identificativo_autenticato: '#/components/schemas/FiltroMittenteIdAutenticato'
+              token_info: '#/components/schemas/FiltroMittenteTokenClaim'
           oneOf:
-            - $ref: '#/components/schemas/FiltroApplicativo' 
-            - $ref: '#/components/schemas/FiltroIdApplicativo'
-            - $ref: '#/components/schemas/FiltroTokenClaim'
-
-    FiltroApplicativo:
+            - $ref: '#/components/schemas/FiltroMittenteApplicativo' 
+            - $ref: '#/components/schemas/FiltroMittenteIdApplicativo'
+            - $ref: '#/components/schemas/FiltroMittenteTokenClaim'
+    FiltroMittenteApplicativo:
+      $ref: 'govway_core.yaml#/components/schemas/NCName'
+    FiltroMittenteIdApplicativo:
+      $ref: 'govway_core.yaml#/components/schemas/FiltroRicercaId'
+    FiltroMittenteTokenClaim:
       type: object
-      properties:
-        nome_applicativo: 
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
-
+      allOf:
+        - $ref: '#/components/schemas/FiltroTokenClaimBase'
+        - $ref: 'govway_core.yaml#/components/schemas/FiltroRicercaId'
+      
     FiltroTokenClaimBase:
       type: object
       properties:
         claim:
           $ref: '#/components/schemas/TokenClaimEnum'
-
-    FiltroTokenClaim:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/FiltroTokenClaimBase'
-      properties:
-        ricerca_esatta:
-          type: boolean
-          default: true
-          example: false
-        case_sensitive:
-          type: boolean
-          default: true
-          example: false
-        id_applicativo:
-          type: string
-          example: abc123
       
 
+
+    # Enum
+    EsitoTransazioneSimpleSearchEnum:
+      type: string
+      enum:
+        - ok
+        - fault
+        - error
+        - error_or_fault
+    EsitoTransazioneFullSearchEnum:
+      type: string
+      enum:
+        - ok
+        - fault
+        - error
+        - error_or_fault
+        - personalizzato
+        
     TipoFiltroMittenteEnum:
       type: string
       enum:
         - applicativo
         - identificativo_autenticato
         - token_info
+        
+    TokenClaimEnum:
+      type: string
+      enum:
+        - subject
+        - issuer
+        - client_id
+        - username
+        - email
+        
+    TipoMessaggioEnum:
+      type: string
+      enum:
+        - richiesta
+        - risposta
+      example: richiesta
+      
+    TipoReportEnum:
+      type: string
+      enum:
+        - line
+        - pie
+        - bar
+        - table
+      example: Line
+      default: table
+      
+    FormatoReportEnum:
+      type: string
+      enum:
+        - csv
+        - pdf
+        - xls
+        - png
+      example: csv
+      
+    UnitaTempoReportEnum:
+      type: string
+      enum:
+        - orario
+        - giornaliero
+        - settimanale
+        - mensile
+      example: orario
+      default: giornaliero
+      
+    TipoInformazioneReportEnum:
+      type: string
+      enum:
+        - numero_transazioni
+        - occupazione_banda
+        - tempo_medio_risposta
+      example: numero_transazioni
+      default: numero_transazioni
 
-    FiltroTransazioneBase:
-      type: object
-      properties:
-        esito:
-          $ref: '#/components/schemas/EsitoTransazioneEnum'
-        dettaglioEsito:
-          discriminator:
-            propertyName: esito
-            mapping:
-              ok:             '#/components/schemas/DettaglioEsitoEnum'
-              error:          '#/components/schemas/DettaglioEsitoEnum'
-              error_or_fault: '#/components/schemas/DettaglioEsitoEnum'
-              personalizzato: '#/components/schemas/DettaglioEsitoList'
-          oneOf: 
-            - $ref: '#/components/schemas/DettaglioEsitoEnum' 
-            - $ref: '#/components/schemas/DettaglioEsitoList'
-
-    FiltroTransazione:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/FiltroTransazioneBase'
-      properties:
-        id_evento:  
-          description: >-
-            L'identificativo numerico dell'evento da ricercare per una
-            transazione
-          type: integer
-          format: int64
-
-    FiltroIdApplicativo:
-      type: object
-      properties:
-        ricerca_esatta:
-          type: boolean
-          default: true
-          example: false
-        case_sensitive:
-          type: boolean
-          default: true
-          example: false
-        id_applicativo:
-          type: string
-          example: abc123
-
-    FiltroIdMessaggio:
-      type: object
-      properties:
-        tipoMessaggio:
-          $ref: "#/components/schemas/TipoMessaggioEnum"
-        idMessaggio:
-          type: string
-          example: abc456
-
-    FiltroIdTransazione:
-      type: object
-      properties:
-        idTransazione:
-          type: string
-          example: tr123
-
-    RicercaIntervalloTemporale:
-      type: object
-      properties:
-        tipologia:
-          $ref: '#/components/schemas/TipologiaServizioEnum'
-        filtro_temporale:
-          $ref: '#/components/schemas/FiltroTemporale'
-        filtro_api:
-          discriminator:
-            propertyName: tipologia_servizio
-            mapping:
-              erogazione: '#/components/schemas/FiltroErogazione'
-              fruizione: '#/components/schemas/FiltroFruizione'
-          oneOf:
-            - $ref: '#/components/schemas/FiltroErogazione'
-            - $ref: '#/components/schemas/FiltroFruizione'
-        filtro_transazione:
-          $ref: '#/components/schemas/FiltroTransazione'
-        filtro_azione:  # TODO Parametro per filtro azione che abbia description e example
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
-        filtro_mittente:
-          $ref: '#/components/schemas/FiltroMittente'
-
-    RicercaIdApplicativo:
-      type: object
-      properties:
-        tipologia:
-          $ref: '#/components/schemas/TipologiaServizioEnum'
-        filtro_api:
-          discriminator:
-            propertyName: tipologia_servizio
-            mapping:
-              erogazione: '#/components/schemas/FiltroErogazione'
-              fruizione: '#/components/schemas/FiltroFruizione'
-          oneOf:
-            - $ref: '#/components/schemas/FiltroErogazione'
-            - $ref: '#/components/schemas/FiltroFruizione'
-        filtro_temporale:
-          $ref: '#/components/schemas/FiltroTemporale'
-        filtro_transazione:
-          $ref: '#/components/schemas/FiltroTransazione'
-        filtro_id_applicativo:
-          $ref: '#/components/schemas/FiltroIdApplicativo'
-
-    ListaRisultati:
-      type: object
-      required:
-        - limit
-        - offset
-      properties:
-        offset:
-          description: The zero-ary offset index into the results
-          type: integer
-          format: int64
-        limit:
-          description: How many items to return at one time
-          type: integer
-          format: int32
-        first:
-          description: Link to first result page. Null if you are already on first page.
-          type: string     
-        next:
-          description: Link to next result page. Null if you are on last page.
-          type: string 
-        prev:
-          description: Link to previous result page. Null if you are on first page.
-          type: string
-   
+    OccupazioneBandaEnum:
+      type: string
+      enum:
+        - banda_complessiva
+        - banda_interna
+        - banda_esterna
+      example: banda_complessiva
+      default: banda_complessiva
+      
+    TempoMedioRispostaEnum:
+      type: string
+      enum:
+        - latenza_totale
+        - latenza_servizio
+        - latenza_gateway
+      example: latenza_totale
+      default: latenza_totale
+      
+    OrientamentoEtichetteReportEnum:
+      type: string
+      enum:
+        - orizzontale 
+        - obliquo
+        - verticale
+      example: obliquo
+      default: obliquo

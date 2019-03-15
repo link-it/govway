@@ -21,7 +21,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.BaseItem;
+import org.openspcoop2.utils.service.beans.BaseItem;
 import org.openspcoop2.core.config.rs.server.model.DominioEnum;
 import javax.validation.constraints.*;
 

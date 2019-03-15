@@ -9,28 +9,28 @@ components:
       description: Nome del soggetto autorizzato
       required: true
       schema:
-        $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+        $ref: 'govway_core.yaml#/components/schemas/SimpleName'
     id_applicativo_autorizzato:
       name: applicativo_autorizzato
       in: path
       description: Nome dell'applicativo autorizzato
       required: true
       schema:
-        $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+        $ref: 'govway_core.yaml#/components/schemas/NCName'
     id_ruolo_autorizzato:
       name: ruolo_autorizzato
       in: path
       description: Nome del ruolo autorizzato
       required: true
       schema:
-        $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+        $ref: 'govway_core.yaml#/components/schemas/NCName'
     id_scope_autorizzato:
       name: scope_autorizzato
       in: path
       description: Nome dello scope autorizzato
       required: true
       schema:
-        $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+        $ref: 'govway_core.yaml#/components/schemas/NCName'
     id_policy:
       name: id_policy
       in: path
@@ -72,7 +72,7 @@ components:
       required: false
       example: 'AccessoSolaLettura'
       schema:
-        $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+        $ref: 'govway_core.yaml#/components/schemas/NCName'
     fonte:
       name: fonte
       in: query
@@ -104,7 +104,7 @@ components:
       required: false
       example: 'Azione1'
       schema:
-        $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+        $ref: 'govway_core.yaml#/components/schemas/NCName'
         
   schemas:
  
@@ -123,17 +123,17 @@ components:
         - formato
       properties:
         referente:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+          $ref: 'govway_core.yaml#/components/schemas/SimpleName'
         tipo:
           $ref: '#/components/schemas/TipoApiEnum'
         nome:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
         descrizione:
           type: string
           maxLength: 255
           example: 'descrizione API'
         versione:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/Versione'
+          $ref: 'govway_core.yaml#/components/schemas/Versione'
         formato:
           type: object
           oneOf:
@@ -155,7 +155,7 @@ components:
         - documento
       properties:
         nome:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
         documento:
           type: string
           format: byte
@@ -196,7 +196,7 @@ components:
         - nome
       properties:
         nome:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
     AllegatoSpecificaSemiformaleItem:
       type: object
       allOf:
@@ -472,15 +472,15 @@ components:
         - api_versione
       properties:
         api_nome:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
         api_versione:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/Versione'
+          $ref: 'govway_core.yaml#/components/schemas/Versione'
         api_referente:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+          $ref: 'govway_core.yaml#/components/schemas/SimpleName'
         api_soap_servizio:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
         tipo_servizio:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/Tipo'
+          $ref: 'govway_core.yaml#/components/schemas/Tipo'
           
     APIImpl:
       type: object
@@ -601,9 +601,9 @@ components:
         - type: object
           properties:
             soggetto:
-              $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+              $ref: 'govway_core.yaml#/components/schemas/SimpleName'
             ruolo:
-              $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+              $ref: 'govway_core.yaml#/components/schemas/NCName'
     APIImplAutorizzazioneConfig:
       type: object
       allOf:
@@ -654,7 +654,7 @@ components:
     ApiImplItem:
       type: object
       allOf:
-        - $ref: 'govway_rs-api_core.yaml#/components/schemas/BaseSoggettoItem'
+        - $ref: 'govway_core.yaml#/components/schemas/BaseSoggettoItem'
         - $ref: '#/components/schemas/APIBaseImpl'
         - type: object
           required:
@@ -664,9 +664,9 @@ components:
             - stato_descrizione
           properties:
             nome:
-              $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+              $ref: 'govway_core.yaml#/components/schemas/NCName'
             versione:
-              $ref: 'govway_rs-api_core.yaml#/components/schemas/Versione'
+              $ref: 'govway_core.yaml#/components/schemas/Versione'
             api_tipo:
               $ref: '#/components/schemas/TipoApiEnum'
             stato:
@@ -698,15 +698,15 @@ components:
         - nome
       properties:
         tipo:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/Tipo'
+          $ref: 'govway_core.yaml#/components/schemas/Tipo'
         nome:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
         api_soap_servizio:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
     ApiImplInformazioniGeneraliView:
       type: object
       allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/BaseItem'
+          - $ref: 'govway_core.yaml#/components/schemas/BaseItem'
           - $ref: '#/components/schemas/ApiImplInformazioniGenerali'
   
     ApiImplVersioneApi:
@@ -715,11 +715,11 @@ components:
         - api_versione
       properties:
         api_versione:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/Versione'
+          $ref: 'govway_core.yaml#/components/schemas/Versione'
     ApiImplVersioneApiView:
       type: object
       allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/BaseSoggettoItem'
+          - $ref: 'govway_core.yaml#/components/schemas/BaseSoggettoItem'
           - $ref: '#/components/schemas/APIBaseImpl'
           - type: object
             required:
@@ -728,7 +728,7 @@ components:
               versioni:
                 type: array
                 items:
-                  $ref: 'govway_rs-api_core.yaml#/components/schemas/Versione'
+                  $ref: 'govway_core.yaml#/components/schemas/Versione'
                 example: [1, 2, 3] 
 
     ApiImplModalitaIdentificazioneAzione:
@@ -768,7 +768,7 @@ components:
                azioni:
                   type: array
                   items:
-                    $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+                    $ref: 'govway_core.yaml#/components/schemas/NCName'
                   example: ['az1', 'az2', 'az3']
 
     ApiImplAllegato:
@@ -818,7 +818,7 @@ components:
     ListaApiImplAllegati:
        type: object
        allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - $ref: 'govway_core.yaml#/components/schemas/Lista'
           - type: object
             required:
               - items
@@ -846,7 +846,7 @@ components:
         azioni:
           type: array
           items:
-            $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+            $ref: 'govway_core.yaml#/components/schemas/NCName'
           example: ['az1', 'az2', 'az3']
     GruppoBase:
       type: object
@@ -901,7 +901,7 @@ components:
     ListaGruppi:
        type: object
        allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - $ref: 'govway_core.yaml#/components/schemas/Lista'
           - type: object
             required:
               - items
@@ -1056,7 +1056,7 @@ components:
         soggetti:
           type: array
           items:
-            $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+            $ref: 'govway_core.yaml#/components/schemas/SimpleName'
           example: ['Ente1', 'Ente2', 'Ente3'] 
     ControlloAccessiAutorizzazioneSoggetto:
       type: object
@@ -1064,7 +1064,7 @@ components:
         - soggetto
       properties:
         soggetto:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+          $ref: 'govway_core.yaml#/components/schemas/SimpleName'
     ControlloAccessiAutorizzazioneApplicativi:
       type: object
       required:
@@ -1073,7 +1073,7 @@ components:
         applicativi:
           type: array
           items:
-            $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+            $ref: 'govway_core.yaml#/components/schemas/NCName'
           example: ['Applicativo1', 'Applicativo2', 'Applicativo3']
     ControlloAccessiAutorizzazioneApplicativo:
       type: object
@@ -1081,7 +1081,7 @@ components:
         - applicativo
       properties:
         applicativo:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'     
+          $ref: 'govway_core.yaml#/components/schemas/NCName'     
     ControlloAccessiAutorizzazioneRuoli:
       type: object
       required:
@@ -1090,7 +1090,7 @@ components:
         ruoli:
           type: array
           items:
-            $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+            $ref: 'govway_core.yaml#/components/schemas/NCName'
           example: ['Ruolo1', 'Ruolo2', 'Ruolo3']
     ControlloAccessiAutorizzazioneRuolo:
       type: object
@@ -1098,7 +1098,7 @@ components:
         - ruolo
       properties:
         ruolo:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName' 
+          $ref: 'govway_core.yaml#/components/schemas/NCName' 
     ControlloAccessiAutorizzazioneScopes:
       type: object
       required:
@@ -1107,7 +1107,7 @@ components:
         scope:
           type: array
           items:
-            $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+            $ref: 'govway_core.yaml#/components/schemas/NCName'
           example: ['Scope1', 'Scope2', 'Scope3']
     ControlloAccessiAutorizzazioneScope:
       type: object
@@ -1115,7 +1115,7 @@ components:
         - scope
       properties:
         scope:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'     
+          $ref: 'govway_core.yaml#/components/schemas/NCName'     
 
     RateLimitingPolicyItem:
        type: object
@@ -1131,7 +1131,7 @@ components:
     ListaRateLimitingPolicy:
       type: object
       allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - $ref: 'govway_core.yaml#/components/schemas/Lista'
           - type: object
             required:
               - items
@@ -1188,9 +1188,9 @@ components:
       type: object
       properties:
         azione:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
         applicativo_fruitore:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
         chiave_tipo:
           $ref: '#/components/schemas/RateLimitingChiaveEnum'
         chiave_nome:
@@ -1215,7 +1215,7 @@ components:
           - type: object
             properties:
               soggetto_fruitore:
-                $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+                $ref: 'govway_core.yaml#/components/schemas/SimpleName'
     RateLimitingPolicyFiltroFruizione:
        type: object
        allOf:
@@ -1381,7 +1381,7 @@ components:
     ListaCorrelazioneApplicativaRichiesta:
       type: object
       allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - $ref: 'govway_core.yaml#/components/schemas/Lista'
           - type: object
             required:
               - items
@@ -1393,7 +1393,7 @@ components:
     ListaCorrelazioneApplicativaRisposta:
       type: object
       allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - $ref: 'govway_core.yaml#/components/schemas/Lista'
           - type: object
             required:
               - items

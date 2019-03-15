@@ -37,8 +37,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.ws.rs.core.UriBuilder;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.openspcoop2.core.commons.Filtri;
@@ -49,9 +47,8 @@ import org.openspcoop2.core.config.rs.server.model.AuthenticationHttps;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpsCertificato;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpsConfigurazioneManuale;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationPrincipal;
-import org.openspcoop2.core.config.rs.server.model.Lista;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
-import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneHttps;
 import org.openspcoop2.core.config.rs.server.model.TipoKeystore;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -63,6 +60,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.service.beans.Lista;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.json.JSONUtils;
@@ -707,34 +705,6 @@ public class Helper {
 		ret.setValue(value);
 		return ret;
 	}
-	
-	public static final <T extends Lista> T costruisciListaPaginata(String requestURI, Integer offset, Integer limit, long total, Class<T> lclass) throws InstantiationException, IllegalAccessException {
-		T l = lclass.newInstance();
-		
-		if (total < 0)
-			throw new IllegalArgumentException("Il numero totale di elementi deve essere positivo");
-		
-		if (offset == null || offset < 0) offset = 0;
-		if (limit == null || limit <= 0 ) limit = Integer.MAX_VALUE;
-		
-		if(offset > 0)
-			l.setFirst(UriBuilder.fromUri(requestURI).queryParam("offset", 0).build().toString());
-		
-		if(offset > limit)
-        	l.setPrev(UriBuilder.fromUri(requestURI).queryParam("offset", offset - limit).build().toString());
-		
-		if (limit < total - offset) {
-			l.setNext(UriBuilder.fromUri(requestURI).queryParam("offset", offset + limit).build().toString());
-			l.setLast(UriBuilder.fromUri(requestURI).queryParam("offset", (total / limit) * limit).build().toString());
-		}		
-		        
-        l.setOffset(offset.longValue());
-        l.setLimit(limit == Integer.MAX_VALUE ? 0 : limit);
-        l.setTotal(total);
-		
-		return l;
-	}
-	
 	
 	public static final AccordoServizioParteComune getAccordo(String nome, int versione, IDSoggetto idSoggReferente,	AccordiServizioParteComuneCore apcCore)  {
 		return evalnull( () -> apcCore.getAccordoServizio(IDAccordoFactory.getInstance().getIDAccordoFromValues(nome, idSoggReferente, versione)));

@@ -1,0 +1,11 @@
+Prerequisito:
+Compilare i test con il comando 'ant clean build'
+
+Per eseguire tutti i test:
+  ant run_test
+
+Per eseguire una sola feature:
+  ant run_test -Dkarate.options=org/openspcoop2/core/config/rs/testsuite/applicativi/create.feature
+
+Per eseguire un solo scenario all'interno della feature:
+  ant run_test -Dkarate.options="org/openspcoop2/core/config/rs/testsuite/applicativi/create.feature --tags=Create204"

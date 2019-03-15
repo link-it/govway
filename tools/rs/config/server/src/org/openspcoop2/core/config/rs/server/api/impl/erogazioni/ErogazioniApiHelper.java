@@ -197,6 +197,7 @@ import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -1932,7 +1933,7 @@ public class ErogazioniApiHelper {
 			throw FaultCode.NOT_FOUND.toException("Nessun allegato associato");
 		}
 		
-		ListaApiImplAllegati ret = Helper.costruisciListaPaginata(
+		ListaApiImplAllegati ret = ListaUtils.costruisciListaPaginata(
 				requestURI,
 				offset, 
 				limit, 

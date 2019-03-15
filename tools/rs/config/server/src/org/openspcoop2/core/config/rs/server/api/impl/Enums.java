@@ -31,7 +31,7 @@ import org.openspcoop2.core.config.rs.server.model.ContestoEnum;
 import org.openspcoop2.core.config.rs.server.model.FonteEnum;
 import org.openspcoop2.core.config.rs.server.model.FormatoRestEnum;
 import org.openspcoop2.core.config.rs.server.model.FormatoSoapEnum;
-import org.openspcoop2.core.config.rs.server.model.ProfiloCollaborazioneEnum;
+import org.openspcoop2.utils.service.beans.ProfiloCollaborazioneEnum;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingChiaveEnum;
 import org.openspcoop2.core.config.rs.server.model.RuoloAllegatoAPI;
 import org.openspcoop2.core.config.rs.server.model.RuoloAllegatoAPIImpl;

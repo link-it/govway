@@ -21,7 +21,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.ProfiloCollaborazioneEnum;
+import org.openspcoop2.utils.service.beans.ProfiloCollaborazioneEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;

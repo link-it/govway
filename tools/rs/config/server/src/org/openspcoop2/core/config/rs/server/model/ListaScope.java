@@ -23,7 +23,7 @@ package org.openspcoop2.core.config.rs.server.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.openspcoop2.core.config.rs.server.model.Lista;
+import org.openspcoop2.utils.service.beans.Lista;
 import org.openspcoop2.core.config.rs.server.model.ScopeItem;
 import javax.validation.constraints.*;
 

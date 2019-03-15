@@ -24,7 +24,7 @@ package org.openspcoop2.core.config.rs.server.api;
 import org.openspcoop2.core.config.rs.server.model.Applicativo;
 import org.openspcoop2.core.config.rs.server.model.ListaApplicativi;
 import org.openspcoop2.core.config.rs.server.model.Problem;
-import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 
 import javax.ws.rs.*;
 import io.swagger.v3.oas.annotations.Operation;

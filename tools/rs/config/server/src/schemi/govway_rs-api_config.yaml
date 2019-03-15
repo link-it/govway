@@ -40,8 +40,8 @@ paths:
    
   /api:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
     get:
       tags:
         - api
@@ -106,10 +106,10 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
     get:
       tags:
         - api
@@ -162,10 +162,10 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}/informazioni:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"   
     get:
       tags:
         - api
@@ -225,10 +225,10 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}/referente:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"   
     get:
       tags:
         - api
@@ -258,10 +258,10 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'          
   /api/{nome}/{versione}/interfaccia:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"   
     get:
       tags:
         - api
@@ -321,10 +321,10 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}/interfaccia/download:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"   
     get:
       tags:
         - api
@@ -359,10 +359,10 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}/descrizione:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"   
     get:
       tags:
         - api
@@ -423,10 +423,10 @@ paths:
           
   /api/{nome}/{versione}/allegati:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione" 
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione" 
     get:
       tags:
         - api
@@ -490,11 +490,11 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}/allegati/{nome_allegato}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto" 
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_allegato"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto" 
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_allegato"
     get:
       tags:
         - api
@@ -577,11 +577,11 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}/allegati/{nome_allegato}/download:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto" 
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_allegato"   
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto" 
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_allegato"   
     get:
       tags:
         - api
@@ -617,10 +617,10 @@ paths:
           
   /api/{nome}/{versione}/risorse:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione" 
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione" 
     get:
       tags:
         - api
@@ -685,11 +685,11 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}/risorse/{nome_risorsa}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto" 
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_risorsa"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto" 
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_risorsa"
     get:
       tags:
         - api
@@ -773,10 +773,10 @@ paths:
           
   /api/{nome}/{versione}/servizi:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione" 
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione" 
     get:
       tags:
         - api
@@ -840,11 +840,11 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}/servizi/{nome_servizio}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto" 
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto" 
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_servizio"
     get:
       tags:
         - api
@@ -928,11 +928,11 @@ paths:
           
   /api/{nome}/{versione}/servizi/{nome_servizio}/azioni:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_servizio" 
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_servizio" 
     get:
       tags:
         - api
@@ -996,12 +996,12 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /api/{nome}/{versione}/servizi/{nome_servizio}/azioni/{nome_azione}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto" 
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_servizio"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_azione"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto" 
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_azione"
     get:
       tags:
         - api
@@ -1086,8 +1086,8 @@ paths:
   # ** Erogazione ** 
   /erogazioni:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
     get:
       tags:
         - erogazioni
@@ -1152,11 +1152,11 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /erogazioni/{nome}/{versione}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni
@@ -1210,11 +1210,11 @@ paths:
 
   /erogazioni/{nome}/{versione}/informazioni:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni
@@ -1275,11 +1275,11 @@ paths:
           
   /erogazioni/{nome}/{versione}/api:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni
@@ -1340,11 +1340,11 @@ paths:
 
   /erogazioni/{nome}/{versione}/allegati:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni
@@ -1408,12 +1408,12 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /erogazioni/{nome}/{versione}/allegati/{nome_allegato}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_allegato"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_allegato"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni
@@ -1496,12 +1496,12 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /erogazioni/{nome}/{versione}/allegati/{nome_allegato}/download:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_allegato"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_allegato"  
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni
@@ -1537,11 +1537,11 @@ paths:
 
   /erogazioni/{nome}/{versione}/url-invocazione:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni
@@ -1602,11 +1602,11 @@ paths:
           
   /erogazioni/{nome}/{versione}/connettore:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni
@@ -1667,11 +1667,11 @@ paths:
           
   /erogazioni/{nome}/{versione}/configurazioni/gestione-cors:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -1732,11 +1732,11 @@ paths:
           
   /erogazioni/{nome}/{versione}/gruppi:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-gruppi
@@ -1801,12 +1801,12 @@ paths:
           
   /erogazioni/{nome}/{versione}/gruppi/{nome_gruppo}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_gruppo"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_gruppo"  
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     put:
       tags:
         - erogazioni-gruppi
@@ -1890,12 +1890,12 @@ paths:
 
   /erogazioni/{nome}/{versione}/gruppi/{nome_gruppo}/azioni:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_gruppo"           
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_gruppo"           
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     post:
       tags:
         - erogazioni-gruppi
@@ -1929,13 +1929,13 @@ paths:
           
   /erogazioni/{nome}/{versione}/gruppi/{nome_gruppo}/azioni/{nome_azione}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_gruppo"      
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_azione"       
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_gruppo"      
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_azione"       
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     delete:
       tags:
         - erogazioni-gruppi
@@ -1962,12 +1962,12 @@ paths:
 
   /erogazioni/{nome}/{versione}/configurazioni/stato:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2028,12 +2028,12 @@ paths:
           
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/gestione-token:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2094,12 +2094,12 @@ paths:
 
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autenticazione:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2160,12 +2160,12 @@ paths:
           
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2226,12 +2226,12 @@ paths:
           
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/download-xacml-policy:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2263,12 +2263,12 @@ paths:
 
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/soggetti:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2328,13 +2328,13 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/soggetti/{soggetto_autorizzato}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_soggetto_autorizzato"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"   
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"   
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     delete:
       tags:
         - erogazioni-configurazione
@@ -2361,12 +2361,12 @@ paths:
 
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/applicativi:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2426,13 +2426,13 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/applicativi/{applicativo_autorizzato}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_applicativo_autorizzato"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     delete:
       tags:
         - erogazioni-configurazione
@@ -2459,12 +2459,12 @@ paths:
 
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/ruoli:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2524,13 +2524,13 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/ruoli/{ruolo_autorizzato}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ruolo_autorizzato"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     delete:
       tags:
         - erogazioni-configurazione
@@ -2557,12 +2557,12 @@ paths:
 
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/scope:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2622,13 +2622,13 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/scope/{scope_autorizzato}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_scope_autorizzato"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     delete:
       tags:
         - erogazioni-configurazione
@@ -2655,12 +2655,12 @@ paths:
 
   /erogazioni/{nome}/{versione}/configurazioni/rate-limiting:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
       - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
       - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
       - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
@@ -2723,13 +2723,13 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /erogazioni/{nome}/{versione}/configurazioni/rate-limiting/{id_policy}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_policy"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2813,12 +2813,12 @@ paths:
           
   /erogazioni/{nome}/{versione}/configurazioni/validazione:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2879,12 +2879,12 @@ paths:
 
   /erogazioni/{nome}/{versione}/configurazioni/caching-risposta:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"     
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"     
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -2945,12 +2945,12 @@ paths:
  
   /erogazioni/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/richiesta:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
       - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
       - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
       - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
@@ -3013,13 +3013,13 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /erogazioni/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/richiesta/{elemento}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/elemento_correlazione_applicativa"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -3103,12 +3103,12 @@ paths:
 
   /erogazioni/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/risposta:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
       - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
       - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
       - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
@@ -3171,13 +3171,13 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /erogazioni/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/risposta/{elemento}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/elemento_correlazione_applicativa"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -3261,12 +3261,12 @@ paths:
           
   /erogazioni/{nome}/{versione}/configurazioni/registrazione-messaggi:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"     
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"     
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - erogazioni-configurazione
@@ -3328,8 +3328,8 @@ paths:
   # ** Fruizione ** 
   /fruizioni:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
     get:
       tags:
         - fruizioni
@@ -3394,12 +3394,12 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /fruizioni/{erogatore}/{nome}/{versione}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni
@@ -3453,12 +3453,12 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/informazioni:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni
@@ -3519,12 +3519,12 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/api:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"    
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"    
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni
@@ -3585,12 +3585,12 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/allegati:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni
@@ -3654,13 +3654,13 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /fruizioni/{erogatore}/{nome}/{versione}/allegati/{nome_allegato}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_allegato"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_allegato"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni
@@ -3743,13 +3743,13 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /fruizioni/{erogatore}/{nome}/{versione}/allegati/{nome_allegato}/download:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_allegato" 
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_allegato" 
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni
@@ -3785,12 +3785,12 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/url-invocazione:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni
@@ -3851,12 +3851,12 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/connettore:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"    
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"    
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni
@@ -3917,12 +3917,12 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/gestione-cors:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"   
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -3983,12 +3983,12 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/gruppi:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-gruppi
@@ -4053,13 +4053,13 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/gruppi/{nome_gruppo}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_gruppo"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_gruppo"  
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     put:
       tags:
         - fruizioni-gruppi
@@ -4143,13 +4143,13 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/gruppi/{nome_gruppo}/azioni:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_gruppo"          
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_gruppo"          
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     post:
       tags:
         - fruizioni-gruppi
@@ -4183,14 +4183,14 @@ paths:
           
   /fruizioni/{erogatore}/{nome}/{versione}/gruppi/{nome_gruppo}/azioni/{nome_azione}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_gruppo"         
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_nome_azione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_gruppo"         
+      - $ref: "govway_core.yaml#/components/parameters/id_nome_azione"  
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     delete:
       tags:
         - fruizioni-gruppi
@@ -4217,13 +4217,13 @@ paths:
             
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/stato:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -4284,13 +4284,13 @@ paths:
               
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/gestione-token:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -4351,13 +4351,13 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autenticazione:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -4418,13 +4418,13 @@ paths:
  
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -4485,13 +4485,13 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/download-xacml-policy:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -4523,13 +4523,13 @@ paths:
         
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/applicativi:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -4589,14 +4589,14 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/applicativi/{applicativo_autorizzato}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_applicativo_autorizzato"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     delete:
       tags:
         - fruizioni-configurazione
@@ -4623,13 +4623,13 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/ruoli:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -4689,14 +4689,14 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/ruoli/{ruolo_autorizzato}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione" 
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione" 
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ruolo_autorizzato" 
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     delete:
       tags:
         - fruizioni-configurazione
@@ -4723,13 +4723,13 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/scope:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -4789,14 +4789,14 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/scope/{scope_autorizzato}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_scope_autorizzato"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     delete:
       tags:
         - fruizioni-configurazione
@@ -4823,13 +4823,13 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/rate-limiting:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione" 
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione" 
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
       - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
       - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
       - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
@@ -4892,14 +4892,14 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/rate-limiting/{id_policy}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_policy"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -4983,13 +4983,13 @@ paths:
  
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/validazione:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -5050,13 +5050,13 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/caching-risposta:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo" 
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -5117,13 +5117,13 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/richiesta:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
       - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
       - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
       - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
@@ -5186,14 +5186,14 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/richiesta/{elemento}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/elemento_correlazione_applicativa"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -5277,13 +5277,13 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/risposta:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
       - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
       - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
       - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
@@ -5346,14 +5346,14 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/risposta/{elemento}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
       - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/elemento_correlazione_applicativa"  
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -5437,13 +5437,13 @@ paths:
 
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/registrazione-messaggi:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_erogatore"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_versione"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/gruppo"      
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"      
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     get:
       tags:
         - fruizioni-configurazione
@@ -5505,7 +5505,7 @@ paths:
   # ** Soggetti **
   /soggetti:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
     get:
       tags:
         - soggetti
@@ -5571,8 +5571,8 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /soggetti/{nome}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_simple_name"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/id_simple_name"
     get:
       tags:
         - soggetti
@@ -5657,8 +5657,8 @@ paths:
   # ** Applicativi **
   /applicativi:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
     get:
       tags:
         - applicativi
@@ -5723,9 +5723,9 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /applicativi/{nome}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/profilo"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/soggetto"
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
     get:
       tags:
         - applicativi
@@ -5874,7 +5874,7 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /ruoli/{nome}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
     get:
       tags:
         - ruoli
@@ -6022,7 +6022,7 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   /scope/{nome}:
     parameters:
-      - $ref: "govway_rs-api_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
     get:
       tags:
         - scope
@@ -6121,7 +6121,7 @@ components:
     ApiItem:
       type: object
       allOf:
-        - $ref: 'govway_rs-api_core.yaml#/components/schemas/BaseSoggettoItem'
+        - $ref: 'govway_core.yaml#/components/schemas/BaseSoggettoItem'
         - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ApiBase'
         - type: object
           required:
@@ -6135,7 +6135,7 @@ components:
     ListaApi:
        type: object
        allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - $ref: 'govway_core.yaml#/components/schemas/Lista'
           - type: object
             required:
               - items
@@ -6155,7 +6155,7 @@ components:
         - versione
       properties:
         nome:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
         versione:
           type: integer
           format: int32
@@ -6164,7 +6164,7 @@ components:
     ApiInformazioniGeneraliView:
       type: object
       allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/BaseItem'
+          - $ref: 'govway_core.yaml#/components/schemas/BaseItem'
           - $ref: '#/components/schemas/ApiInformazioniGenerali'
     ApiReferente:
       type: object
@@ -6172,11 +6172,11 @@ components:
         - referente
       properties:
         referente:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+          $ref: 'govway_core.yaml#/components/schemas/SimpleName'
     ApiReferenteView:
       type: object
       allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/BaseItem'
+          - $ref: 'govway_core.yaml#/components/schemas/BaseItem'
           - $ref: '#/components/schemas/ApiReferente'
     ApiInterfaccia:
       type: object
@@ -6189,7 +6189,7 @@ components:
     ApiInterfacciaView:
       type: object
       allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/BaseItem'
+          - $ref: 'govway_core.yaml#/components/schemas/BaseItem'
           - $ref: '#/components/schemas/ApiInterfaccia'
           - type: object
             required:
@@ -6259,7 +6259,7 @@ components:
     ListaApiAllegati:
        type: object
        allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - $ref: 'govway_core.yaml#/components/schemas/Lista'
           - type: object
             required:
               - items
@@ -6282,7 +6282,7 @@ components:
          maxLength: 255
          example: '/libri'
        nome:
-         $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+         $ref: 'govway_core.yaml#/components/schemas/NCName'
        descrizione:
          type: string
          maxLength: 255
@@ -6296,7 +6296,7 @@ components:
     ListaApiRisorse:
        type: object
        allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - $ref: 'govway_core.yaml#/components/schemas/Lista'
           - type: object
             required:
               - items
@@ -6313,12 +6313,12 @@ components:
         - profilo_collaborazione
       properties:
        nome:
-         $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+         $ref: 'govway_core.yaml#/components/schemas/NCName'
        descrizione:
          type: string
          maxLength: 255
        profilo_collaborazione:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/ProfiloCollaborazioneEnum'
+          $ref: 'govway_core.yaml#/components/schemas/ProfiloCollaborazioneEnum'
        id_collaborazione:
          type: boolean
          default: false
@@ -6329,7 +6329,7 @@ components:
     ListaApiServizi:
        type: object
        allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - $ref: 'govway_core.yaml#/components/schemas/Lista'
           - type: object
             required:
               - items
@@ -6346,12 +6346,12 @@ components:
         - profilo_ridefinito
       properties:
        nome:
-         $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+         $ref: 'govway_core.yaml#/components/schemas/NCName'
        profilo_ridefinito:
          type: boolean
          default: false
        profilo_collaborazione:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/ProfiloCollaborazioneEnum'
+          $ref: 'govway_core.yaml#/components/schemas/ProfiloCollaborazioneEnum'
        id_collaborazione:
          type: boolean
          default: false
@@ -6362,7 +6362,7 @@ components:
     ListaApiAzioni:
        type: object
        allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - $ref: 'govway_core.yaml#/components/schemas/Lista'
           - type: object
             required:
               - items
@@ -6384,7 +6384,7 @@ components:
     ListaErogazioni:
       type: object
       allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - $ref: 'govway_core.yaml#/components/schemas/Lista'
           - type: object
             required:
               - items
@@ -6408,7 +6408,7 @@ components:
             - erogatore
           properties:
             erogatore:
-              $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+              $ref: 'govway_core.yaml#/components/schemas/SimpleName'
     FruizioneItem:
       type: object
       allOf:
@@ -6418,11 +6418,11 @@ components:
             - erogatore
           properties:
             erogatore:
-              $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+              $ref: 'govway_core.yaml#/components/schemas/SimpleName'
     ListaFruizioni:
        type: object
        allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - $ref: 'govway_core.yaml#/components/schemas/Lista'
           - type: object
             required:
               - items
@@ -6440,7 +6440,7 @@ components:
             - erogatore
           properties:
             erogatore:
-              $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+              $ref: 'govway_core.yaml#/components/schemas/SimpleName'
               
     # Soggetti
     Soggetto:
@@ -6452,7 +6452,7 @@ components:
             - nome
           properties:
             nome:
-              $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+              $ref: 'govway_core.yaml#/components/schemas/SimpleName'
             dominio:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/DominioEnum'
             descrizione:
@@ -6462,19 +6462,19 @@ components:
             ruoli:
               type: array
               items:
-                $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+                $ref: 'govway_core.yaml#/components/schemas/NCName'
               example: ['ruolo1', 'ruolo2'] 
     SoggettoItem:
       type: object
       allOf:
-        - $ref: 'govway_rs-api_core.yaml#/components/schemas/BaseItem'
+        - $ref: 'govway_core.yaml#/components/schemas/BaseItem'
         - type: object
           required:
             - nome
             - dominio
           properties:
             nome:
-              $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+              $ref: 'govway_core.yaml#/components/schemas/SimpleName'
             dominio:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/DominioEnum'
             count_ruoli:
@@ -6485,7 +6485,7 @@ components:
     ListaSoggetti:
       type: object
       allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - $ref: 'govway_core.yaml#/components/schemas/Lista'
           - type: object
             required:
               - items
@@ -6505,22 +6505,22 @@ components:
             - nome
           properties:
             nome:
-              $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'            
+              $ref: 'govway_core.yaml#/components/schemas/NCName'            
             ruoli:
               type: array
               items:
-                $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+                $ref: 'govway_core.yaml#/components/schemas/NCName'
               example: ['ruolo1', 'ruolo2'] 
     ApplicativoItem:
       type: object
       allOf:
-        - $ref: 'govway_rs-api_core.yaml#/components/schemas/BaseSoggettoItem'
+        - $ref: 'govway_core.yaml#/components/schemas/BaseSoggettoItem'
         - type: object
           required: 
             - nome
           properties:
             nome:
-              $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+              $ref: 'govway_core.yaml#/components/schemas/NCName'
             count_ruoli:
               type: integer
               format: int32
@@ -6529,7 +6529,7 @@ components:
     ListaApplicativi:
        type: object
        allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - $ref: 'govway_core.yaml#/components/schemas/Lista'
           - type: object
             required:
               - items
@@ -6546,7 +6546,7 @@ components:
         - nome
       properties:
         nome:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
         descrizione:
           type: string
           maxLength: 255
@@ -6567,7 +6567,7 @@ components:
         - contesto
       properties:
         nome:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName' 
+          $ref: 'govway_core.yaml#/components/schemas/NCName' 
         fonte:
           $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/FonteEnum'
         contesto:
@@ -6575,7 +6575,7 @@ components:
     ListaRuoli:
        type: object
        allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - $ref: 'govway_core.yaml#/components/schemas/Lista'
           - type: object
             required:
               - items
@@ -6592,7 +6592,7 @@ components:
         - nome
       properties:
         nome:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
         descrizione:
           type: string
           maxLength: 255
@@ -6610,13 +6610,13 @@ components:
         - contesto
       properties:
         nome:
-          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
         contesto:
           $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ContestoEnum'
     ListaScope:
        type: object
        allOf:
-          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - $ref: 'govway_core.yaml#/components/schemas/Lista'
           - type: object
             required:
               - items

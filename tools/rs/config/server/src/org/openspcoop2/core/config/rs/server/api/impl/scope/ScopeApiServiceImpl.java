@@ -38,6 +38,7 @@ import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -179,7 +180,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 				throw FaultCode.NOT_FOUND.toException("Nessuno scope corrisponde ai criteri di ricerca specificati");
 			}
 		
-			final ListaScope ret = Helper.costruisciListaPaginata(
+			final ListaScope ret = ListaUtils.costruisciListaPaginata(
 					context.getServletRequest().getRequestURI(),
 					offset, 
 					limit, 

@@ -1,10 +1,40 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.core.monitor.rs.server.api;
 
 import org.joda.time.DateTime;
+import org.openspcoop2.utils.service.beans.DiagnosticoSeveritaEnum;
+import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneSimpleSearchEnum;
+import org.openspcoop2.core.monitor.rs.server.model.Evento;
+import org.openspcoop2.core.monitor.rs.server.model.ListaEventi;
+import org.openspcoop2.core.monitor.rs.server.model.ListaTransazioni;
 import org.openspcoop2.core.monitor.rs.server.model.Problem;
-import org.openspcoop2.core.monitor.rs.server.model.RisultatoRicercaTransazioni;
-import org.openspcoop2.core.monitor.rs.server.model.TransazioneDetail;
-import org.openspcoop2.core.monitor.rs.server.model.TransazioneSearchFilter;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
+import org.openspcoop2.core.monitor.rs.server.model.RicercaIdApplicativo;
+import org.openspcoop2.core.monitor.rs.server.model.RicercaIntervalloTemporale;
+import org.openspcoop2.core.monitor.rs.server.model.TipoMessaggioEnum;
+import org.openspcoop2.utils.service.beans.TransazioneExt;
+import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
+import java.util.UUID;
 
 import javax.ws.rs.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +55,113 @@ import javax.validation.Valid;
 public interface MonitoraggioApi  {
 
     /**
+     * Ricerca di Eventi
+     *
+     * Questa operazione consente di effettuare una ricerca nell'archivio degli eventi specificando i criteri di filtraggio
+     *
+     */
+    @GET
+    @Path("/monitoraggio/eventi")
+    @Produces({ "application/json", "application/problem+json" })
+    @Operation(summary = "Ricerca di Eventi", tags={ "Monitoraggio" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Ricerca eventi completata con successo", content = @Content(schema = @Schema(implementation = ListaEventi.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public ListaEventi findAllEventi(@QueryParam("data_inizio") @NotNull DateTime dataInizio, @QueryParam("data_fine") @NotNull DateTime dataFine, @QueryParam("severita") DiagnosticoSeveritaEnum severita, @QueryParam("tipo") String tipo, @QueryParam("codice") String codice, @QueryParam("origine") String origine, @QueryParam("ricerca_esatta") Boolean ricercaEsatta, @QueryParam("case_sensitive") Boolean caseSensitive);
+
+    /**
+     * Ricerca completa delle transazioni per intervallo temporale
+     *
+     * Permette di recuperare i dettagli delle transazioni, gestite su GovWay, limitando i risultati di ricerca ad un intervallo di date
+     *
+     */
+    @POST
+    @Path("/monitoraggio/transazioni")
+    @Consumes({ "application/json" })
+    @Produces({ "application/json", "application/problem+json" })
+    @Operation(summary = "Ricerca completa delle transazioni per intervallo temporale", tags={ "Monitoraggio" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "ricerca completata con successo", content = @Content(schema = @Schema(implementation = ListaTransazioni.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public ListaTransazioni findAllTransazioniByFullSearch(@Valid RicercaIntervalloTemporale body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("sort") String sort);
+
+    /**
+     * Ricerca completa delle transazioni in base all'identificativo applicativo
+     *
+     * Permette di recuperare i dettagli delle transazioni, gestite su GovWay, ricercandole in base all'identificativo applicativo e i parametri di filtro completi
+     *
+     */
+    @POST
+    @Path("/monitoraggio/transazioni/id_applicativo")
+    @Consumes({ "application/json" })
+    @Produces({ "application/json", "application/problem+json" })
+    @Operation(summary = "Ricerca completa delle transazioni in base all'identificativo applicativo", tags={ "Monitoraggio" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "ricerca completata con successo", content = @Content(schema = @Schema(implementation = ListaTransazioni.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public ListaTransazioni findAllTransazioniByIdApplicativoFullSearch(@Valid RicercaIdApplicativo body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("sort") String sort);
+
+    /**
+     * Ricerca semplificata delle transazioni in base all'identificativo applicativo
+     *
+     * Permette di recuperare i dettagli delle transazioni, gestite su GovWay, ricercandole in base all'identificativo applicativo e i parametri di filtro di uso più comune
+     *
+     */
+    @GET
+    @Path("/monitoraggio/transazioni/id_applicativo")
+    @Produces({ "application/json", "application/problem+json" })
+    @Operation(summary = "Ricerca semplificata delle transazioni in base all'identificativo applicativo", tags={ "Monitoraggio" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "ricerca completata con successo", content = @Content(schema = @Schema(implementation = ListaTransazioni.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public ListaTransazioni findAllTransazioniByIdApplicativoSimpleSearch(@QueryParam("data_inizio") @NotNull DateTime dataInizio, @QueryParam("data_fine") @NotNull DateTime dataFine, @QueryParam("tipo") @NotNull TransazioneRuoloEnum tipo, @QueryParam("id_applicativo") @NotNull String idApplicativo, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("sort") String sort, @QueryParam("soggetto_remoto") String soggettoRemoto, @QueryParam("nome_servizio") String nomeServizio, @QueryParam("tipo_servizio") String tipoServizio, @QueryParam("versione_servizio") Integer versioneServizio, @QueryParam("azione") String azione, @QueryParam("esito") EsitoTransazioneSimpleSearchEnum esito, @QueryParam("ricerca_esatta") Boolean ricercaEsatta, @QueryParam("case_sensitive") Boolean caseSensitive);
+
+    /**
+     * Ricerca semplificata delle transazioni in base all'identificativo messaggio
+     *
+     * Permette di recuperare i dettagli delle transazioni, gestite su GovWay, ricercandole in base all'identificativo messaggio
+     *
+     */
+    @GET
+    @Path("/monitoraggio/transazioni/id_messaggio")
+    @Produces({ "application/json", "application/problem+json" })
+    @Operation(summary = "Ricerca semplificata delle transazioni in base all'identificativo messaggio", tags={ "Monitoraggio" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "dettaglio transazione restituito correttamente", content = @Content(schema = @Schema(implementation = ListaTransazioni.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public ListaTransazioni findAllTransazioniByIdMessaggio(@QueryParam("tipo_messaggio") @NotNull TipoMessaggioEnum tipoMessaggio, @QueryParam("id") @NotNull String id, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("sort") String sort);
+
+    /**
      * Ricerca semplificata delle transazioni in base ai parametri di uso più comune
      *
      * Permette di recuperare i dettagli delle transazioni, gestite su GovWay, ricercandole in base a parametri di filtro di uso più comune
@@ -32,42 +169,58 @@ public interface MonitoraggioApi  {
      */
     @GET
     @Path("/monitoraggio/transazioni")
-    @Produces({ "application/json" })
+    @Produces({ "application/json", "application/problem+json" })
     @Operation(summary = "Ricerca semplificata delle transazioni in base ai parametri di uso più comune", tags={ "Monitoraggio" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "ricerca completata con successo", content = @Content(schema = @Schema(implementation = RisultatoRicercaTransazioni.class))),
-        @ApiResponse(responseCode = "400", description = "La richiesta inviata ha prodotto un errore", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public RisultatoRicercaTransazioni baseSearchTransaction(@QueryParam("profilo") String profilo, @QueryParam("dataDa") DateTime dataDa, @QueryParam("dataA") DateTime dataA, @QueryParam("soggettoLocale") String soggettoLocale, @QueryParam("soggettoRemoto") String soggettoRemoto, @QueryParam("servizio") String servizio, @QueryParam("azione") String azione, @QueryParam("esito") String esito, @QueryParam("idApplicativo") String idApplicativo, @QueryParam("idMessaggio") String idMessaggio, @QueryParam("idT") String idT, @QueryParam("pagina") Integer pagina, @QueryParam("risultatiPerPagina") @Max(200) Integer risultatiPerPagina, @QueryParam("ordinamento") String ordinamento);
+        @ApiResponse(responseCode = "200", description = "ricerca completata con successo", content = @Content(schema = @Schema(implementation = ListaTransazioni.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public ListaTransazioni findAllTransazioniBySimpleSearch(@QueryParam("data_inizio") @NotNull DateTime dataInizio, @QueryParam("data_fine") @NotNull DateTime dataFine, @QueryParam("tipo") @NotNull TransazioneRuoloEnum tipo, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("sort") String sort, @QueryParam("soggetto_remoto") String soggettoRemoto, @QueryParam("nome_servizio") String nomeServizio, @QueryParam("tipo_servizio") String tipoServizio, @QueryParam("versione_servizio") Integer versioneServizio, @QueryParam("azione") String azione, @QueryParam("esito") EsitoTransazioneSimpleSearchEnum esito);
 
     /**
-     * dettaglio della transazione
+     * Dettaglio di un evento
+     *
+     * Permette di recuperare il dettaglio di un evento in base al suo identificativo
+     *
+     */
+    @GET
+    @Path("/monitoraggio/eventi/{id}")
+    @Produces({ "application/json", "application/problem+json" })
+    @Operation(summary = "Dettaglio di un evento", tags={ "Monitoraggio" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Recupero evento completato con successo", content = @Content(schema = @Schema(implementation = Evento.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public Evento getEvento(@PathParam("id") Long id);
+
+    /**
+     * Dettaglio della transazione
      *
      * Questa operazione consente di ottenere il dettaglio di una transazione
      *
      */
     @GET
     @Path("/monitoraggio/transazioni/{id}")
-    @Produces({ "application/json" })
-    @Operation(summary = "dettaglio della transazione", tags={ "Monitoraggio" })
+    @Produces({ "application/json", "application/problem+json" })
+    @Operation(summary = "Dettaglio della transazione", tags={ "Monitoraggio" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "dettaglio transazione restituito correttamente", content = @Content(schema = @Schema(implementation = TransazioneDetail.class))),
-        @ApiResponse(responseCode = "400", description = "La richiesta inviata ha prodotto un errore", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "404", description = "Transazione non esistente") })
-    public TransazioneDetail getTransazione(@PathParam("id") String id);
-
-    /**
-     * ricerca transazioni
-     *
-     * Questa operazione consente di effettuare una ricerca nell&#x27;archivio delle transazioni specificando i criteri di filtro
-     *
-     */
-    @POST
-    @Path("/transazioni/ricerca")
-    @Consumes({ "application/json" })
-    @Produces({ "application/json" })
-    @Operation(summary = "ricerca transazioni", tags={ "Monitoraggio" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "201", description = "ricerca completata correttamente", content = @Content(schema = @Schema(implementation = Object.class))),
-        @ApiResponse(responseCode = "400", description = "La richiesta inviata ha prodotto un errore", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public Object searchTransazioni(@Valid TransazioneSearchFilter body, @QueryParam("pagina") Integer pagina, @QueryParam("risultatiPerPagina") @Max(200) Integer risultatiPerPagina, @QueryParam("ordinamento") String ordinamento);
+        @ApiResponse(responseCode = "200", description = "dettaglio transazione restituito correttamente", content = @Content(schema = @Schema(implementation = TransazioneExt.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public TransazioneExt getTransazione(@PathParam("id") UUID id, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 }

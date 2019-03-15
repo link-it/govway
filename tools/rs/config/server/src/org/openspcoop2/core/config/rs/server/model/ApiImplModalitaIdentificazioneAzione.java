@@ -71,7 +71,7 @@ public class ApiImplModalitaIdentificazioneAzione  {
   }
 
  /**
-   * XPath/JsonPath nel caso di modalità &#x27;content-based&#x27; o espressione regolare nel caso &#x27;url-based&#x27;
+   * XPath/JsonPath nel caso di modalità 'content-based' o espressione regolare nel caso 'url-based'
    * @return pattern
   **/
   @JsonProperty("pattern")
@@ -90,7 +90,7 @@ public class ApiImplModalitaIdentificazioneAzione  {
   }
 
  /**
-   * Nome dell&#x27;header http nel caso di modalità &#x27;header-based&#x27;
+   * Nome dell'header http nel caso di modalità 'header-based'
    * @return nome
   **/
   @JsonProperty("nome")
@@ -109,7 +109,7 @@ public class ApiImplModalitaIdentificazioneAzione  {
   }
 
  /**
-   * Indicazione se oltre alla modalità indicata per individuare l&#x27;azione viene usata comunque la modalità &#x27;interface-based&#x27;
+   * Indicazione se oltre alla modalità indicata per individuare l'azione viene usata comunque la modalità 'interface-based'
    * @return forceInterface
   **/
   @JsonProperty("force_interface")

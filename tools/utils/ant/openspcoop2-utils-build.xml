@@ -449,6 +449,8 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.authentication.preauth.role" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.authentication.provider" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.authorization" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.beans" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.beans.utils" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.context" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.context.server" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.context.dump" />

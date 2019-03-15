@@ -102,7 +102,7 @@ public class RateLimitingPolicyGroupBy  {
   }
 
  /**
-   * La semantica cambia in funzione del tipo:   * header-based: nome dell&#x27;header   * url-based: espressione regolare da applicare alla url di invocazione   * form-based: nome del parametro della url   * soap-action-based: in questa modalità questo parametro non viene utilizzato   * content-based: xpath o json path da applicare sul contenuto   * plugin-based: tipo del plugin
+   * La semantica cambia in funzione del tipo:   * header-based: nome dell'header   * url-based: espressione regolare da applicare alla url di invocazione   * form-based: nome del parametro della url   * soap-action-based: in questa modalità questo parametro non viene utilizzato   * content-based: xpath o json path da applicare sul contenuto   * plugin-based: tipo del plugin
    * @return chiaveNome
   **/
   @JsonProperty("chiave_nome")

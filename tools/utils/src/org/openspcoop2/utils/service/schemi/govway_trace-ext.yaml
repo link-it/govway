@@ -1,0 +1,352 @@
+openapi: 3.0.0
+components:
+  schemas:
+  
+    TransazioneExt:
+      type: object
+      allOf:
+        - $ref: 'govway_trace.yaml#/components/schemas/TransazioneBase'
+        - $ref: '#/components/schemas/TransazioneExtTipo'
+        - type: object
+          properties:
+            richiesta:
+              $ref: '#/components/schemas/TransazioneExtDettaglioRichiesta'
+            risposta:
+              $ref: '#/components/schemas/TransazioneExtDettaglioRisposta'
+            api:
+              $ref: '#/components/schemas/TransazioneExtInformazioniApi'
+            mittente:
+              $ref: '#/components/schemas/TransazioneExtInformazioniMittente'
+            diagnostici:
+              type: array
+              items:
+                $ref: '#/components/schemas/Diagnostico'
+
+    # Transazione                      
+    TransazioneExtTipo:
+      type: object
+      required:
+        - profilo
+        - contesto
+      properties:    
+        profilo:
+          $ref: 'govway_core.yaml#/components/schemas/ProfiloEnum'
+        contesto:
+          $ref: '#/components/schemas/TransazioneContestoEnum'
+        id_cluster:
+          type: string
+        informazioni_emittente:
+          $ref: '#/components/schemas/TransazioneExtInformazioniSoggetto'
+        stato:
+          type: string
+          
+    # Dettaglio
+    
+    # La versione Base viene utilizzata come 'item' nell'interfaccia govwayMonitor rs
+    TransazioneExtDettaglioRichiestaBase:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TransazioneExtDettaglioMessaggioBase'
+        - $ref: 'govway_trace.yaml#/components/schemas/TransazioneDettaglioRichiestaDatiTrasporto'
+        - type: object
+          properties:
+             data_uscita:
+                type: string
+                format: date-time
+                example: '2017-07-21T17:32:28Z'
+             connettore:
+                type: string
+                format: uri
+                example: http://backend.api
+
+    TransazioneExtDettaglioRichiesta:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TransazioneExtDettaglioRichiestaBase'
+        - $ref: '#/components/schemas/TransazioneExtDettaglioMessaggio'
+
+    # La versione Base viene utilizzata come 'item' nell'interfaccia govwayMonitor rs
+    TransazioneExtDettaglioRispostaBase:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TransazioneExtDettaglioMessaggioBase'
+        - $ref: 'govway_trace.yaml#/components/schemas/TransazioneDettaglioRispostaDatiTrasporto'
+        - type: object
+          properties:
+            data_ingresso:
+              type: string
+              format: date-time
+              example: '2017-07-21T17:32:28Z'
+            codice_risposta_ingresso:
+              type: string
+              description: |-
+               Codice associato alla risposta.
+               Può essere un http status per i protocolli basati su HTTP.
+              example: 200
+    
+    TransazioneExtDettaglioRisposta:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TransazioneExtDettaglioRispostaBase'
+        - $ref: '#/components/schemas/TransazioneExtDettaglioMessaggio'
+        - $ref: 'govway_trace.yaml#/components/schemas/TransazioneDettaglioRispostaErrore'
+        - type: object
+          properties:
+            fault_formato:
+              $ref: '#/components/schemas/TransazioneMessaggioFormatoEnum'
+            fault_ingresso:
+              type: string
+              format: byte
+            fault_ingresso_formato:
+              $ref: '#/components/schemas/TransazioneMessaggioFormatoEnum'
+
+    TransazioneExtDettaglioMessaggioBase:
+      type: object
+      allOf:
+        - $ref: 'govway_trace.yaml#/components/schemas/TransazioneDettaglioMessaggio'
+        - type: object
+          properties:
+            data_accettazione:
+              type: string
+              format: date-time
+              example: '2017-07-21T17:32:28Z'
+            bytes_ingresso:
+              type: integer
+              format: int64
+            bytes_uscita:
+              type: integer
+              format: int64
+
+    TransazioneExtDettaglioMessaggio:
+      type: object
+      properties:
+        contenuti_ingresso:
+          $ref: '#/components/schemas/TransazioneExtContenutoMessaggio'
+        contenuti_uscita:
+          $ref: '#/components/schemas/TransazioneExtContenutoMessaggio'
+        duplicati_messaggio:
+          type: integer
+          format: int32
+        traccia:
+          type: string
+
+    TransazioneExtContenutoMessaggio:
+      type: object
+      allOf:
+        - $ref: 'govway_trace.yaml#/components/schemas/TransazioneContenutoMessaggio'
+        - type: object
+          properties:
+            informazioni_body:
+              $ref: '#/components/schemas/TransazioneExtContenutoMessaggioBody'
+            attachments:
+              type: array
+              items:
+                $ref: '#/components/schemas/TransazioneExtContenutoMessaggioAllegato'
+
+    TransazioneExtContenutoMessaggioBody:
+      type: object
+      required:
+        - content_type
+      properties:
+        formato:
+          $ref: '#/components/schemas/TransazioneMessaggioFormatoEnum'
+        content_type:
+          type: string
+          example: application/json
+        multipart:
+          $ref: '#/components/schemas/TransazioneExtContenutoMessaggioBodyMultipart' 
+        contenuti_body:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransazioneExtContenutoMessaggioPorzioneBody' 
+                   
+    TransazioneExtContenutoMessaggioBodyMultipart:
+      type: object
+      properties:
+        content_type:
+          type: string
+          example: application/json
+        content_id:
+          type: string
+        content_location:
+          type: string
+        
+    TransazioneExtContenutoMessaggioAllegato:
+      type: object
+      required:
+        - contenuto
+        - content_type
+      properties:
+        contenuto:
+          type: string
+          format: byte
+        content_type:
+          type: string
+          example: application/json
+        content_id:
+          type: string
+        content_location:
+          type: string
+          
+    TransazioneExtContenutoMessaggioPorzioneBody:
+      type: object
+      required:
+        - nome
+        - valore
+      properties:
+        nome:
+          type: string
+        valore:
+          type: string
+
+    # Informazioni
+ 
+    # La versione Base viene utilizzata come 'item' nell'interfaccia govwayMonitor rs
+    TransazioneExtInformazioniApiBase:
+      type: object
+      allOf:
+        - $ref: 'govway_trace.yaml#/components/schemas/TransazioneInformazioniApi'
+        - type: object
+          required:
+            - informazioni_erogatore
+            - tipo
+          properties:
+            informazioni_erogatore:
+              $ref: '#/components/schemas/TransazioneExtInformazioniSoggetto'
+            tipo:
+              $ref: 'govway_core.yaml#/components/schemas/Tipo'
+ 
+    TransazioneExtInformazioniApi:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TransazioneExtInformazioniApiBase'
+        - type: object
+          properties:
+            profilo_collaborazione:
+              $ref: 'govway_core.yaml#/components/schemas/ProfiloCollaborazioneEnum' 
+            id_collaborazione:
+              type: string
+            id_asincrono:
+              type: string
+ 
+    # La versione Base viene utilizzata come 'item' nell'interfaccia govwayMonitor rs
+    TransazioneExtInformazioniMittenteBase:
+      type: object
+      allOf:
+        - $ref: 'govway_trace.yaml#/components/schemas/TransazioneInformazioniMittente'
+        - type: object
+          properties:
+            informazioni_fruitore:
+              $ref: '#/components/schemas/TransazioneExtInformazioniSoggetto'
+            applicativo:
+              $ref: 'govway_core.yaml#/components/schemas/NCName'                  
+ 
+    TransazioneExtInformazioniMittente:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TransazioneExtInformazioniMittenteBase'
+        - type: object
+          properties:
+            credenziali:
+              type: string
+            token:
+              type: string
+              format: byte
+            informazioni_token:
+              $ref: '#/components/schemas/TransazioneExtInformazioniToken'
+          
+    TransazioneExtInformazioniToken:
+      type: object
+      properties:
+        client_id:
+          type: string
+          example: 407408718192.apps.googleusercontent.com
+        issuer:
+          type: string
+        subject:
+          type: string
+          example: 10623565759265497689
+        username:
+          type: string
+        mail:
+          type: string
+
+    # Diagnostico
+    Diagnostico:
+      type: object
+      required:
+        - data
+        - severita_codice
+        - severita
+        - funzione
+        - codice
+        - messaggio
+      properties:
+        data:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        severita_codice:
+          type: integer
+          format: int32
+        severita:
+          $ref: '#/components/schemas/DiagnosticoSeveritaEnum'
+        funzione:
+          type: string
+        codice:
+          type: string
+        messaggio:
+          type: string
+          example: >-
+            Generato messaggio di cooperazione di Errore con identificativo
+            [0998f497-e05d-420a-a6b0-ff3bb718d2c4]
+
+          
+    # Base          
+
+    TransazioneExtInformazioniSoggetto:
+      type: object
+      required:
+        - tipo
+        - codice
+        - indirizzo
+      properties:
+        tipo:
+          $ref: 'govway_core.yaml#/components/schemas/Tipo'
+        codice:
+          type: string
+        indirizzo:
+          type: string
+ 
+
+                    
+    # Enumeration
+    
+    TransazioneContestoEnum:
+      type: string
+      enum:
+        - standard
+        - sonda
+      example: 'standard'
+      
+    TransazioneMessaggioFormatoEnum:
+      type: string
+      enum:
+        - soap11
+        - soap12
+        - xml
+        - json
+        - multipart
+        - binary
+      example: 'soap11'      
+      
+    DiagnosticoSeveritaEnum:
+      type: string
+      enum:
+        - fatal
+        - error
+        - warning
+        - info
+        - debug
+        - trace
+      example: infoIntegration

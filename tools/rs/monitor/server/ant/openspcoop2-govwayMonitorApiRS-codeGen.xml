@@ -62,9 +62,110 @@
 			<param name="swaggerCodeGen.withXmlAnnotations" value="false"/>
 			<param name="swaggerCodeGen.beanValidation" value="true"/>
 			<param name="swaggerCodeGen.useGovwayTemplate" value="true"/>
+			<param name="swaggerCodeGen.deleteOldSrc" value="true"/>
+			<param name="swaggerCodeGen.addGPLDeclaration" value="true"/>
 		</antcall>
+
+		<delete>
+			<fileset dir="${src_govwayMonitorApiRS}/org/openspcoop2/core/monitor/rs/server/model">
+
+				<!-- team -->
+				<include name="Person.java"/>
+				<include name="Money.java"/>
+				<include name="TaxCode.java"/>
+
+				<!-- core -->
+				<include name="HttpStatusCode.java"/>
+				<include name="NCName.java"/>
+				<include name="SimpleName.java"/>
+				<include name="Tipo.java"/>
+				<include name="Versione.java"/>
+				<include name="Lista.java"/>
+				<include name="ListaSenzaTotale.java"/>
+				<include name="FiltroRicercaId.java"/>
+				<include name="BaseItem.java"/>
+				<include name="BaseSoggettoItem.java"/>
+				<include name="HttpMethodEnum.java"/>	
+				<include name="ProfiloCollaborazioneEnum.java"/>	
+				<include name="ProfiloEnum.java"/>
+
+				<!-- trace -->
+				<include name="Transazione*.java"/>
+				<include name="Diagnostico*.java"/>
+					
+				<!-- monitor -->
+				<include name="DettaglioEsitoCode.java"/>
+				<include name="FiltroMittenteApplicativo.java"/>
+				<include name="FiltroMittenteIdApplicativo.java"/>
+				<include name="LarghezzaReportGrafico.java"/>
+
+			</fileset>
+		</delete>
+
+                <antcall target="-replacePackage">
+                        <param name="TokenClassName" value="Lista;"/>
+                </antcall>
+ 		<antcall target="-replacePackage">
+                        <param name="TokenClassName" value="ListaSenzaTotale;"/>
+                </antcall>
+		<antcall target="-replacePackage">
+                        <param name="TokenClassName" value="ProfiloEnum;"/>
+                </antcall>
+		<antcall target="-replacePackage">
+                        <param name="TokenClassName" value="ProfiloCollaborazioneEnum;"/>
+                </antcall>
+		<antcall target="-replacePackage">
+                        <param name="TokenClassName" value="BaseItem;"/>
+                </antcall>
+		<antcall target="-replacePackage">
+                        <param name="TokenClassName" value="BaseSoggettoItem;"/>
+                </antcall>
+		<antcall target="-replacePackage">
+                        <param name="TokenClassName" value="FiltroRicercaId;"/>
+                </antcall>
+
+		<antcall target="-replacePackage">
+                        <param name="TokenClassName" value="Transazione"/>
+                </antcall>
+		<antcall target="-replacePackage">
+                        <param name="TokenClassName" value="Diagnostico"/>
+                </antcall>
+
+		<antcall target="-replaceChar">
+                        <param name="TokenCode" value="x27"/>
+			<param name="TokenValue" value="'"/>
+                </antcall>
+		<antcall target="-replaceChar">
+                        <param name="TokenCode" value="x3D"/>
+			<param name="TokenValue" value="="/>
+                </antcall>
 
 	</target>
 
+	<target name="-replacePackage">
+		<replace dir="${src_govwayMonitorApiRS}/org/openspcoop2/core/monitor/rs/server/model" 
+			token="org.openspcoop2.core.monitor.rs.server.model.${TokenClassName}" 
+			value="org.openspcoop2.utils.service.beans.${TokenClassName}"
+			includes="*.java"/>
+		<replace dir="${src_govwayMonitorApiRS}/org/openspcoop2/core/monitor/rs/server/api" 
+			token="org.openspcoop2.core.monitor.rs.server.model.${TokenClassName}" 
+			value="org.openspcoop2.utils.service.beans.${TokenClassName}"
+			includes="*.java"/>
+		<if>
+			<equals arg1="${overwriteImpl}" arg2="true" />
+			<then>
+				<replace dir="${src_govwayMonitorApiRS}/org/openspcoop2/core/monitor/rs/server/api/impl" 
+					token="org.openspcoop2.core.monitor.rs.server.model.${TokenClassName}" 
+					value="org.openspcoop2.utils.service.beans.${TokenClassName}"
+					includes="*.java"/>
+			</then>
+		</if>	
+	</target>
+	<target name="-replaceChar">
+		<replace dir="${src_govwayMonitorApiRS}/org/openspcoop2/core/monitor/rs/server/api" 
+			token="&amp;#${TokenCode};" value="${TokenValue}" includes="*.java"/>
+		<replace dir="${src_govwayMonitorApiRS}/org/openspcoop2/core/monitor/rs/server/model"
+			token="&amp;#${TokenCode};" value="${TokenValue}" includes="*.java"/>
+	</target>
 
 </project>
