@@ -54,11 +54,15 @@ components:
     TransazioneDettaglioRichiestaDatiTrasporto:
       type: object
       required:
-        - data_ingresso
+        - data_ricezione
         - tipo
         - url_invocazione
       properties:
-        data_ingresso:
+        data_ricezione:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        data_consegna:
           type: string
           format: date-time
           example: '2017-07-21T17:32:28Z'
@@ -80,14 +84,24 @@ components:
     TransazioneDettaglioRispostaDatiTrasporto:
       type: object
       required:
-        - data_uscita
-        - codice_risposta
+        - data_consegna
+        - esito_consegna
       properties:
-        data_uscita:
+        data_ricezione:
           type: string
           format: date-time
           example: '2017-07-21T17:32:28Z'
-        codice_risposta:
+        data_consegna:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        esito_ricezione:
+          type: string
+          description: |-
+           Codice associato alla risposta.
+           Può essere un http status per i protocolli basati su HTTP.
+          example: 200
+        esito_consegna:
           type: string
           description: |-
            Codice associato alla risposta.
@@ -97,7 +111,10 @@ components:
     TransazioneDettaglioRispostaErrore:
       type: object
       properties:
-        fault:
+        fault_ricezione:
+          type: string
+          format: byte
+        fault_consegna:
           type: string
           format: byte
         dettagli_errore:
@@ -174,7 +191,7 @@ components:
           type: string
         indirizzo_client:
           type: string
-        indirizzo_client_forwarded:
+        indirizzo_client_inoltrato:
           type: string
        
                     

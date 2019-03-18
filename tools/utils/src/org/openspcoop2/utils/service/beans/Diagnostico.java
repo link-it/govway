@@ -48,7 +48,7 @@ public class Diagnostico  {
   @XmlElement(name="severita_codice", required = true)
   
   @Schema(required = true, description = "")
-  private Integer severitaCodice = null;
+  private String severitaCodice = null;
   @XmlElement(name="severita", required = true)
   
   @Schema(required = true, description = "")
@@ -92,15 +92,15 @@ public class Diagnostico  {
   @JsonProperty("severita_codice")
   @NotNull
   @Valid
-  public Integer getSeveritaCodice() {
+  public String getSeveritaCodice() {
     return this.severitaCodice;
   }
 
-  public void setSeveritaCodice(Integer severitaCodice) {
+  public void setSeveritaCodice(String severitaCodice) {
     this.severitaCodice = severitaCodice;
   }
 
-  public Diagnostico severitaCodice(Integer severitaCodice) {
+  public Diagnostico severitaCodice(String severitaCodice) {
     this.severitaCodice = severitaCodice;
     return this;
   }

@@ -21,6 +21,8 @@
  */
 package org.openspcoop2.utils.service.beans;
 
+import java.util.List;
+import org.openspcoop2.utils.service.beans.TransazioneContenutoMessaggioHeader;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -32,7 +34,7 @@ import javax.validation.Valid;
 
 @XmlAccessorType(XmlAccessType.FIELD)
  @XmlType(name = "TransazioneExtContenutoMessaggioBodyMultipart", propOrder =
-    { "contentType", "contentId", "contentLocation"
+    { "contentType", "contentId", "contentLocation", "headers"
 })
 
 @XmlRootElement(name="TransazioneExtContenutoMessaggioBodyMultipart")
@@ -49,6 +51,10 @@ public class TransazioneExtContenutoMessaggioBodyMultipart  {
   
   @Schema(description = "")
   private String contentLocation = null;
+  @XmlElement(name="headers")
+  
+  @Schema(description = "")
+  private List<TransazioneContenutoMessaggioHeader> headers = null;
  /**
    * Get contentType
    * @return contentType
@@ -106,6 +112,30 @@ public class TransazioneExtContenutoMessaggioBodyMultipart  {
     return this;
   }
 
+ /**
+   * Get headers
+   * @return headers
+  **/
+  @JsonProperty("headers")
+  @Valid
+  public List<TransazioneContenutoMessaggioHeader> getHeaders() {
+    return this.headers;
+  }
+
+  public void setHeaders(List<TransazioneContenutoMessaggioHeader> headers) {
+    this.headers = headers;
+  }
+
+  public TransazioneExtContenutoMessaggioBodyMultipart headers(List<TransazioneContenutoMessaggioHeader> headers) {
+    this.headers = headers;
+    return this;
+  }
+
+  public TransazioneExtContenutoMessaggioBodyMultipart addHeadersItem(TransazioneContenutoMessaggioHeader headersItem) {
+    this.headers.add(headersItem);
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -115,6 +145,7 @@ public class TransazioneExtContenutoMessaggioBodyMultipart  {
     sb.append("    contentType: ").append(TransazioneExtContenutoMessaggioBodyMultipart.toIndentedString(this.contentType)).append("\n");
     sb.append("    contentId: ").append(TransazioneExtContenutoMessaggioBodyMultipart.toIndentedString(this.contentId)).append("\n");
     sb.append("    contentLocation: ").append(TransazioneExtContenutoMessaggioBodyMultipart.toIndentedString(this.contentLocation)).append("\n");
+    sb.append("    headers: ").append(TransazioneExtContenutoMessaggioBodyMultipart.toIndentedString(this.headers)).append("\n");
     sb.append("}");
     return sb.toString();
   }

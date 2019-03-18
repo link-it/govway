@@ -35,59 +35,108 @@ import javax.validation.Valid;
 
 @XmlAccessorType(XmlAccessType.FIELD)
  @XmlType(name = "TransazioneDettaglioRispostaDatiTrasporto", propOrder =
-    { "dataUscita", "codiceRisposta"
+    { "dataRicezione", "dataConsegna", "esitoRicezione", "esitoConsegna"
 })
 
 @XmlRootElement(name="TransazioneDettaglioRispostaDatiTrasporto")
 public class TransazioneDettaglioRispostaDatiTrasporto  {
-  @XmlElement(name="data_uscita", required = true)
+  @XmlElement(name="data_ricezione")
+  
+  @Schema(description = "")
+  private DateTime dataRicezione = null;
+  @XmlElement(name="data_consegna", required = true)
   
   @Schema(required = true, description = "")
-  private DateTime dataUscita = null;
-  @XmlElement(name="codice_risposta", required = true)
+  private DateTime dataConsegna = null;
+  @XmlElement(name="esito_ricezione")
+  
+  @Schema(example = "200", description = "Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.")
+ /**
+   * Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.  
+  **/
+  private String esitoRicezione = null;
+  @XmlElement(name="esito_consegna", required = true)
   
   @Schema(example = "200", required = true, description = "Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.")
  /**
    * Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.  
   **/
-  private String codiceRisposta = null;
+  private String esitoConsegna = null;
  /**
-   * Get dataUscita
-   * @return dataUscita
+   * Get dataRicezione
+   * @return dataRicezione
   **/
-  @JsonProperty("data_uscita")
+  @JsonProperty("data_ricezione")
+  @Valid
+  public DateTime getDataRicezione() {
+    return this.dataRicezione;
+  }
+
+  public void setDataRicezione(DateTime dataRicezione) {
+    this.dataRicezione = dataRicezione;
+  }
+
+  public TransazioneDettaglioRispostaDatiTrasporto dataRicezione(DateTime dataRicezione) {
+    this.dataRicezione = dataRicezione;
+    return this;
+  }
+
+ /**
+   * Get dataConsegna
+   * @return dataConsegna
+  **/
+  @JsonProperty("data_consegna")
   @NotNull
   @Valid
-  public DateTime getDataUscita() {
-    return this.dataUscita;
+  public DateTime getDataConsegna() {
+    return this.dataConsegna;
   }
 
-  public void setDataUscita(DateTime dataUscita) {
-    this.dataUscita = dataUscita;
+  public void setDataConsegna(DateTime dataConsegna) {
+    this.dataConsegna = dataConsegna;
   }
 
-  public TransazioneDettaglioRispostaDatiTrasporto dataUscita(DateTime dataUscita) {
-    this.dataUscita = dataUscita;
+  public TransazioneDettaglioRispostaDatiTrasporto dataConsegna(DateTime dataConsegna) {
+    this.dataConsegna = dataConsegna;
     return this;
   }
 
  /**
    * Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.
-   * @return codiceRisposta
+   * @return esitoRicezione
   **/
-  @JsonProperty("codice_risposta")
+  @JsonProperty("esito_ricezione")
+  @Valid
+  public String getEsitoRicezione() {
+    return this.esitoRicezione;
+  }
+
+  public void setEsitoRicezione(String esitoRicezione) {
+    this.esitoRicezione = esitoRicezione;
+  }
+
+  public TransazioneDettaglioRispostaDatiTrasporto esitoRicezione(String esitoRicezione) {
+    this.esitoRicezione = esitoRicezione;
+    return this;
+  }
+
+ /**
+   * Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.
+   * @return esitoConsegna
+  **/
+  @JsonProperty("esito_consegna")
   @NotNull
   @Valid
-  public String getCodiceRisposta() {
-    return this.codiceRisposta;
+  public String getEsitoConsegna() {
+    return this.esitoConsegna;
   }
 
-  public void setCodiceRisposta(String codiceRisposta) {
-    this.codiceRisposta = codiceRisposta;
+  public void setEsitoConsegna(String esitoConsegna) {
+    this.esitoConsegna = esitoConsegna;
   }
 
-  public TransazioneDettaglioRispostaDatiTrasporto codiceRisposta(String codiceRisposta) {
-    this.codiceRisposta = codiceRisposta;
+  public TransazioneDettaglioRispostaDatiTrasporto esitoConsegna(String esitoConsegna) {
+    this.esitoConsegna = esitoConsegna;
     return this;
   }
 
@@ -97,8 +146,10 @@ public class TransazioneDettaglioRispostaDatiTrasporto  {
     StringBuilder sb = new StringBuilder();
     sb.append("class TransazioneDettaglioRispostaDatiTrasporto {\n");
     
-    sb.append("    dataUscita: ").append(TransazioneDettaglioRispostaDatiTrasporto.toIndentedString(this.dataUscita)).append("\n");
-    sb.append("    codiceRisposta: ").append(TransazioneDettaglioRispostaDatiTrasporto.toIndentedString(this.codiceRisposta)).append("\n");
+    sb.append("    dataRicezione: ").append(TransazioneDettaglioRispostaDatiTrasporto.toIndentedString(this.dataRicezione)).append("\n");
+    sb.append("    dataConsegna: ").append(TransazioneDettaglioRispostaDatiTrasporto.toIndentedString(this.dataConsegna)).append("\n");
+    sb.append("    esitoRicezione: ").append(TransazioneDettaglioRispostaDatiTrasporto.toIndentedString(this.esitoRicezione)).append("\n");
+    sb.append("    esitoConsegna: ").append(TransazioneDettaglioRispostaDatiTrasporto.toIndentedString(this.esitoConsegna)).append("\n");
     sb.append("}");
     return sb.toString();
   }

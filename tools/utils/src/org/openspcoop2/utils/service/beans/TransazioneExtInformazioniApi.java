@@ -33,7 +33,7 @@ import javax.validation.Valid;
 
 @XmlAccessorType(XmlAccessType.FIELD)
  @XmlType(name = "TransazioneExtInformazioniApi", propOrder =
-    { "profiloCollaborazione", "idCollaborazione", "idAsincrono"
+    { "profiloCollaborazione", "idAsincrono"
 })
 
 
@@ -42,10 +42,6 @@ public class TransazioneExtInformazioniApi extends TransazioneExtInformazioniApi
   
   @Schema(description = "")
   private ProfiloCollaborazioneEnum profiloCollaborazione = null;
-  @XmlElement(name="id_collaborazione")
-  
-  @Schema(description = "")
-  private String idCollaborazione = null;
   @XmlElement(name="id_asincrono")
   
   @Schema(description = "")
@@ -66,25 +62,6 @@ public class TransazioneExtInformazioniApi extends TransazioneExtInformazioniApi
 
   public TransazioneExtInformazioniApi profiloCollaborazione(ProfiloCollaborazioneEnum profiloCollaborazione) {
     this.profiloCollaborazione = profiloCollaborazione;
-    return this;
-  }
-
- /**
-   * Get idCollaborazione
-   * @return idCollaborazione
-  **/
-  @JsonProperty("id_collaborazione")
-  @Valid
-  public String getIdCollaborazione() {
-    return this.idCollaborazione;
-  }
-
-  public void setIdCollaborazione(String idCollaborazione) {
-    this.idCollaborazione = idCollaborazione;
-  }
-
-  public TransazioneExtInformazioniApi idCollaborazione(String idCollaborazione) {
-    this.idCollaborazione = idCollaborazione;
     return this;
   }
 
@@ -114,7 +91,6 @@ public class TransazioneExtInformazioniApi extends TransazioneExtInformazioniApi
     sb.append("class TransazioneExtInformazioniApi {\n");
     sb.append("    ").append(TransazioneExtInformazioniApi.toIndentedString(super.toString())).append("\n");
     sb.append("    profiloCollaborazione: ").append(TransazioneExtInformazioniApi.toIndentedString(this.profiloCollaborazione)).append("\n");
-    sb.append("    idCollaborazione: ").append(TransazioneExtInformazioniApi.toIndentedString(this.idCollaborazione)).append("\n");
     sb.append("    idAsincrono: ").append(TransazioneExtInformazioniApi.toIndentedString(this.idAsincrono)).append("\n");
     sb.append("}");
     return sb.toString();

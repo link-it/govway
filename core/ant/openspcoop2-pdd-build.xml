@@ -139,6 +139,7 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.token.parser" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.transazioni" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.logger" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.logger.traccia" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.mdb" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.mdb.threads" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.monitor" />

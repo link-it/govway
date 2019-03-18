@@ -1,6 +1,6 @@
 {
   "emittente" : "Ente",
-  "data_emissione" : "2019-03-15T11:11:09.039Z",
+  "data_emissione" : "2019-03-14T17:40:18.100Z",
   "id_traccia" : "a16c7501-0664-48ff-9216-a726f8e7778c",
   "id_conversazione" : "c77a7501-2288-48ff-kmdi98-a333f8elm2je",
   "ruolo" : "erogazione",
@@ -11,16 +11,17 @@
   "richiesta" : {
     "id" : "b32a7501-7788-48ff-99999-a726f8e7658e",
     "id_applicativo" : "ENTE-X-UFFICIOY-123",
-    "data_ingresso" : "2019-03-14T17:40:17.600Z",
+    "data_ricezione" : "2019-03-14T17:40:17.600Z",
+    "data_consegna" : "2019-03-14T17:40:17.701Z",
     "tipo" : "POST",
     "url_invocazione" : "http://govway/in/Ente/Protocollazione/v1/documenti?test=true",
   },
   "risposta" : {
     "id" : "c72a4403-2288-09ff-99gbh-a726f8e1238h",
-    "data_uscita" : "2019-03-14T17:40:17.847Z",
-    "codice_risposta" : "403",
-    "fault" : "PGZhdWx0Pjx0ZXN0PkVTRU1QSU88L3Rlc3Q+PC9mYXVsdD4=",
-    "dettagli_errore" : [ "credenziali non sufficenti" ],
+    "data_ricezione" : "2019-03-14T17:40:17.847Z",
+    "data_consegna" : "2019-03-14T17:40:18.002Z",
+    "esito_ricezione" : "200",
+    "esito_consegna" : "200"
   },
   "api" : {
     "erogatore" : "Ente",
@@ -33,7 +34,7 @@
     "fruitore" : "UfficioProtocolloComuneFirenze",
     "utente" : "Andrea Rossi",
     "indirizzo_client" : "127.0.0.1",
-    "indirizzo_client_forwarded" : "10.114.87.23"
+    "indirizzo_client_inoltrato" : "10.114.87.23"
   }
 }
 

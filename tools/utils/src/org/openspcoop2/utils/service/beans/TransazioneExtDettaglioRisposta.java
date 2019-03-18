@@ -35,7 +35,7 @@ import javax.validation.Valid;
 
 @XmlAccessorType(XmlAccessType.FIELD)
  @XmlType(name = "TransazioneExtDettaglioRisposta", propOrder =
-    { "contenutiIngresso", "contenutiUscita", "duplicatiMessaggio", "traccia", "fault", "dettagliErrore", "faultFormato", "faultIngresso", "faultIngressoFormato"
+    { "contenutiIngresso", "contenutiUscita", "duplicatiMessaggio", "traccia", "faultRicezione", "faultConsegna", "dettagliErrore", "faultRicezioneFormato", "faultConsegnaFormato"
 })
 
 
@@ -56,26 +56,26 @@ public class TransazioneExtDettaglioRisposta extends TransazioneExtDettaglioRisp
   
   @Schema(description = "")
   private String traccia = null;
-  @XmlElement(name="fault")
+  @XmlElement(name="fault_ricezione")
   
   @Schema(description = "")
-  private byte[] fault = null;
+  private byte[] faultRicezione = null;
+  @XmlElement(name="fault_consegna")
+  
+  @Schema(description = "")
+  private byte[] faultConsegna = null;
   @XmlElement(name="dettagli_errore")
   
   @Schema(description = "")
   private List<String> dettagliErrore = null;
-  @XmlElement(name="fault_formato")
+  @XmlElement(name="fault_ricezione_formato")
   
   @Schema(description = "")
-  private TransazioneMessaggioFormatoEnum faultFormato = null;
-  @XmlElement(name="fault_ingresso")
+  private TransazioneMessaggioFormatoEnum faultRicezioneFormato = null;
+  @XmlElement(name="fault_consegna_formato")
   
   @Schema(description = "")
-  private byte[] faultIngresso = null;
-  @XmlElement(name="fault_ingresso_formato")
-  
-  @Schema(description = "")
-  private TransazioneMessaggioFormatoEnum faultIngressoFormato = null;
+  private TransazioneMessaggioFormatoEnum faultConsegnaFormato = null;
  /**
    * Get contenutiIngresso
    * @return contenutiIngresso
@@ -153,21 +153,40 @@ public class TransazioneExtDettaglioRisposta extends TransazioneExtDettaglioRisp
   }
 
  /**
-   * Get fault
-   * @return fault
+   * Get faultRicezione
+   * @return faultRicezione
   **/
-  @JsonProperty("fault")
+  @JsonProperty("fault_ricezione")
   @Valid
-  public byte[] getFault() {
-    return this.fault;
+  public byte[] getFaultRicezione() {
+    return this.faultRicezione;
   }
 
-  public void setFault(byte[] fault) {
-    this.fault = fault;
+  public void setFaultRicezione(byte[] faultRicezione) {
+    this.faultRicezione = faultRicezione;
   }
 
-  public TransazioneExtDettaglioRisposta fault(byte[] fault) {
-    this.fault = fault;
+  public TransazioneExtDettaglioRisposta faultRicezione(byte[] faultRicezione) {
+    this.faultRicezione = faultRicezione;
+    return this;
+  }
+
+ /**
+   * Get faultConsegna
+   * @return faultConsegna
+  **/
+  @JsonProperty("fault_consegna")
+  @Valid
+  public byte[] getFaultConsegna() {
+    return this.faultConsegna;
+  }
+
+  public void setFaultConsegna(byte[] faultConsegna) {
+    this.faultConsegna = faultConsegna;
+  }
+
+  public TransazioneExtDettaglioRisposta faultConsegna(byte[] faultConsegna) {
+    this.faultConsegna = faultConsegna;
     return this;
   }
 
@@ -196,59 +215,40 @@ public class TransazioneExtDettaglioRisposta extends TransazioneExtDettaglioRisp
   }
 
  /**
-   * Get faultFormato
-   * @return faultFormato
+   * Get faultRicezioneFormato
+   * @return faultRicezioneFormato
   **/
-  @JsonProperty("fault_formato")
+  @JsonProperty("fault_ricezione_formato")
   @Valid
-  public TransazioneMessaggioFormatoEnum getFaultFormato() {
-    return this.faultFormato;
+  public TransazioneMessaggioFormatoEnum getFaultRicezioneFormato() {
+    return this.faultRicezioneFormato;
   }
 
-  public void setFaultFormato(TransazioneMessaggioFormatoEnum faultFormato) {
-    this.faultFormato = faultFormato;
+  public void setFaultRicezioneFormato(TransazioneMessaggioFormatoEnum faultRicezioneFormato) {
+    this.faultRicezioneFormato = faultRicezioneFormato;
   }
 
-  public TransazioneExtDettaglioRisposta faultFormato(TransazioneMessaggioFormatoEnum faultFormato) {
-    this.faultFormato = faultFormato;
+  public TransazioneExtDettaglioRisposta faultRicezioneFormato(TransazioneMessaggioFormatoEnum faultRicezioneFormato) {
+    this.faultRicezioneFormato = faultRicezioneFormato;
     return this;
   }
 
  /**
-   * Get faultIngresso
-   * @return faultIngresso
+   * Get faultConsegnaFormato
+   * @return faultConsegnaFormato
   **/
-  @JsonProperty("fault_ingresso")
+  @JsonProperty("fault_consegna_formato")
   @Valid
-  public byte[] getFaultIngresso() {
-    return this.faultIngresso;
+  public TransazioneMessaggioFormatoEnum getFaultConsegnaFormato() {
+    return this.faultConsegnaFormato;
   }
 
-  public void setFaultIngresso(byte[] faultIngresso) {
-    this.faultIngresso = faultIngresso;
+  public void setFaultConsegnaFormato(TransazioneMessaggioFormatoEnum faultConsegnaFormato) {
+    this.faultConsegnaFormato = faultConsegnaFormato;
   }
 
-  public TransazioneExtDettaglioRisposta faultIngresso(byte[] faultIngresso) {
-    this.faultIngresso = faultIngresso;
-    return this;
-  }
-
- /**
-   * Get faultIngressoFormato
-   * @return faultIngressoFormato
-  **/
-  @JsonProperty("fault_ingresso_formato")
-  @Valid
-  public TransazioneMessaggioFormatoEnum getFaultIngressoFormato() {
-    return this.faultIngressoFormato;
-  }
-
-  public void setFaultIngressoFormato(TransazioneMessaggioFormatoEnum faultIngressoFormato) {
-    this.faultIngressoFormato = faultIngressoFormato;
-  }
-
-  public TransazioneExtDettaglioRisposta faultIngressoFormato(TransazioneMessaggioFormatoEnum faultIngressoFormato) {
-    this.faultIngressoFormato = faultIngressoFormato;
+  public TransazioneExtDettaglioRisposta faultConsegnaFormato(TransazioneMessaggioFormatoEnum faultConsegnaFormato) {
+    this.faultConsegnaFormato = faultConsegnaFormato;
     return this;
   }
 
@@ -262,11 +262,11 @@ public class TransazioneExtDettaglioRisposta extends TransazioneExtDettaglioRisp
     sb.append("    contenutiUscita: ").append(TransazioneExtDettaglioRisposta.toIndentedString(this.contenutiUscita)).append("\n");
     sb.append("    duplicatiMessaggio: ").append(TransazioneExtDettaglioRisposta.toIndentedString(this.duplicatiMessaggio)).append("\n");
     sb.append("    traccia: ").append(TransazioneExtDettaglioRisposta.toIndentedString(this.traccia)).append("\n");
-    sb.append("    fault: ").append(TransazioneExtDettaglioRisposta.toIndentedString(this.fault)).append("\n");
+    sb.append("    faultRicezione: ").append(TransazioneExtDettaglioRisposta.toIndentedString(this.faultRicezione)).append("\n");
+    sb.append("    faultConsegna: ").append(TransazioneExtDettaglioRisposta.toIndentedString(this.faultConsegna)).append("\n");
     sb.append("    dettagliErrore: ").append(TransazioneExtDettaglioRisposta.toIndentedString(this.dettagliErrore)).append("\n");
-    sb.append("    faultFormato: ").append(TransazioneExtDettaglioRisposta.toIndentedString(this.faultFormato)).append("\n");
-    sb.append("    faultIngresso: ").append(TransazioneExtDettaglioRisposta.toIndentedString(this.faultIngresso)).append("\n");
-    sb.append("    faultIngressoFormato: ").append(TransazioneExtDettaglioRisposta.toIndentedString(this.faultIngressoFormato)).append("\n");
+    sb.append("    faultRicezioneFormato: ").append(TransazioneExtDettaglioRisposta.toIndentedString(this.faultRicezioneFormato)).append("\n");
+    sb.append("    faultConsegnaFormato: ").append(TransazioneExtDettaglioRisposta.toIndentedString(this.faultConsegnaFormato)).append("\n");
     sb.append("}");
     return sb.toString();
   }

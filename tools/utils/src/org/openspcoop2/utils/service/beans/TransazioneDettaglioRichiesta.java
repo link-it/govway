@@ -37,15 +37,19 @@ import javax.validation.Valid;
 
 @XmlAccessorType(XmlAccessType.FIELD)
  @XmlType(name = "TransazioneDettaglioRichiesta", propOrder =
-    { "dataIngresso", "tipo", "urlInvocazione", "contenuti"
+    { "dataRicezione", "dataConsegna", "tipo", "urlInvocazione", "contenuti"
 })
 
 
 public class TransazioneDettaglioRichiesta extends TransazioneDettaglioMessaggio {
-  @XmlElement(name="data_ingresso", required = true)
+  @XmlElement(name="data_ricezione", required = true)
   
   @Schema(required = true, description = "")
-  private DateTime dataIngresso = null;
+  private DateTime dataRicezione = null;
+  @XmlElement(name="data_consegna")
+  
+  @Schema(description = "")
+  private DateTime dataConsegna = null;
   @XmlElement(name="tipo", required = true)
   
   @Schema(required = true, description = "")
@@ -59,22 +63,41 @@ public class TransazioneDettaglioRichiesta extends TransazioneDettaglioMessaggio
   @Schema(description = "")
   private TransazioneContenutoMessaggio contenuti = null;
  /**
-   * Get dataIngresso
-   * @return dataIngresso
+   * Get dataRicezione
+   * @return dataRicezione
   **/
-  @JsonProperty("data_ingresso")
+  @JsonProperty("data_ricezione")
   @NotNull
   @Valid
-  public DateTime getDataIngresso() {
-    return this.dataIngresso;
+  public DateTime getDataRicezione() {
+    return this.dataRicezione;
   }
 
-  public void setDataIngresso(DateTime dataIngresso) {
-    this.dataIngresso = dataIngresso;
+  public void setDataRicezione(DateTime dataRicezione) {
+    this.dataRicezione = dataRicezione;
   }
 
-  public TransazioneDettaglioRichiesta dataIngresso(DateTime dataIngresso) {
-    this.dataIngresso = dataIngresso;
+  public TransazioneDettaglioRichiesta dataRicezione(DateTime dataRicezione) {
+    this.dataRicezione = dataRicezione;
+    return this;
+  }
+
+ /**
+   * Get dataConsegna
+   * @return dataConsegna
+  **/
+  @JsonProperty("data_consegna")
+  @Valid
+  public DateTime getDataConsegna() {
+    return this.dataConsegna;
+  }
+
+  public void setDataConsegna(DateTime dataConsegna) {
+    this.dataConsegna = dataConsegna;
+  }
+
+  public TransazioneDettaglioRichiesta dataConsegna(DateTime dataConsegna) {
+    this.dataConsegna = dataConsegna;
     return this;
   }
 
@@ -143,7 +166,8 @@ public class TransazioneDettaglioRichiesta extends TransazioneDettaglioMessaggio
     StringBuilder sb = new StringBuilder();
     sb.append("class TransazioneDettaglioRichiesta {\n");
     sb.append("    ").append(TransazioneDettaglioRichiesta.toIndentedString(super.toString())).append("\n");
-    sb.append("    dataIngresso: ").append(TransazioneDettaglioRichiesta.toIndentedString(this.dataIngresso)).append("\n");
+    sb.append("    dataRicezione: ").append(TransazioneDettaglioRichiesta.toIndentedString(this.dataRicezione)).append("\n");
+    sb.append("    dataConsegna: ").append(TransazioneDettaglioRichiesta.toIndentedString(this.dataConsegna)).append("\n");
     sb.append("    tipo: ").append(TransazioneDettaglioRichiesta.toIndentedString(this.tipo)).append("\n");
     sb.append("    urlInvocazione: ").append(TransazioneDettaglioRichiesta.toIndentedString(this.urlInvocazione)).append("\n");
     sb.append("    contenuti: ").append(TransazioneDettaglioRichiesta.toIndentedString(this.contenuti)).append("\n");

@@ -21,6 +21,8 @@
  */
 package org.openspcoop2.utils.service.beans;
 
+import java.util.List;
+import org.openspcoop2.utils.service.beans.TransazioneContenutoMessaggioHeader;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -34,7 +36,7 @@ import javax.validation.Valid;
 
 @XmlAccessorType(XmlAccessType.FIELD)
  @XmlType(name = "TransazioneExtContenutoMessaggioAllegato", propOrder =
-    { "contenuto", "contentType", "contentId", "contentLocation"
+    { "contenuto", "contentType", "contentId", "contentLocation", "headers"
 })
 
 @XmlRootElement(name="TransazioneExtContenutoMessaggioAllegato")
@@ -55,6 +57,10 @@ public class TransazioneExtContenutoMessaggioAllegato  {
   
   @Schema(description = "")
   private String contentLocation = null;
+  @XmlElement(name="headers")
+  
+  @Schema(description = "")
+  private List<TransazioneContenutoMessaggioHeader> headers = null;
  /**
    * Get contenuto
    * @return contenuto
@@ -133,6 +139,30 @@ public class TransazioneExtContenutoMessaggioAllegato  {
     return this;
   }
 
+ /**
+   * Get headers
+   * @return headers
+  **/
+  @JsonProperty("headers")
+  @Valid
+  public List<TransazioneContenutoMessaggioHeader> getHeaders() {
+    return this.headers;
+  }
+
+  public void setHeaders(List<TransazioneContenutoMessaggioHeader> headers) {
+    this.headers = headers;
+  }
+
+  public TransazioneExtContenutoMessaggioAllegato headers(List<TransazioneContenutoMessaggioHeader> headers) {
+    this.headers = headers;
+    return this;
+  }
+
+  public TransazioneExtContenutoMessaggioAllegato addHeadersItem(TransazioneContenutoMessaggioHeader headersItem) {
+    this.headers.add(headersItem);
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -143,6 +173,7 @@ public class TransazioneExtContenutoMessaggioAllegato  {
     sb.append("    contentType: ").append(TransazioneExtContenutoMessaggioAllegato.toIndentedString(this.contentType)).append("\n");
     sb.append("    contentId: ").append(TransazioneExtContenutoMessaggioAllegato.toIndentedString(this.contentId)).append("\n");
     sb.append("    contentLocation: ").append(TransazioneExtContenutoMessaggioAllegato.toIndentedString(this.contentLocation)).append("\n");
+    sb.append("    headers: ").append(TransazioneExtContenutoMessaggioAllegato.toIndentedString(this.headers)).append("\n");
     sb.append("}");
     return sb.toString();
   }

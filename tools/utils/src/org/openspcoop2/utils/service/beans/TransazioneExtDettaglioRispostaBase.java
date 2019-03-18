@@ -35,108 +35,108 @@ import javax.validation.Valid;
 
 @XmlAccessorType(XmlAccessType.FIELD)
  @XmlType(name = "TransazioneExtDettaglioRispostaBase", propOrder =
-    { "dataUscita", "codiceRisposta", "dataIngresso", "codiceRispostaIngresso"
+    { "dataRicezione", "dataConsegna", "esitoRicezione", "esitoConsegna"
 })
 
 
 public class TransazioneExtDettaglioRispostaBase extends TransazioneExtDettaglioMessaggioBase {
-  @XmlElement(name="data_uscita", required = true)
-  
-  @Schema(required = true, description = "")
-  private DateTime dataUscita = null;
-  @XmlElement(name="codice_risposta", required = true)
-  
-  @Schema(example = "200", required = true, description = "Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.")
- /**
-   * Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.  
-  **/
-  private String codiceRisposta = null;
-  @XmlElement(name="data_ingresso")
+  @XmlElement(name="data_ricezione")
   
   @Schema(description = "")
-  private DateTime dataIngresso = null;
-  @XmlElement(name="codice_risposta_ingresso")
+  private DateTime dataRicezione = null;
+  @XmlElement(name="data_consegna", required = true)
+  
+  @Schema(required = true, description = "")
+  private DateTime dataConsegna = null;
+  @XmlElement(name="esito_ricezione")
   
   @Schema(example = "200", description = "Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.")
  /**
    * Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.  
   **/
-  private String codiceRispostaIngresso = null;
+  private String esitoRicezione = null;
+  @XmlElement(name="esito_consegna", required = true)
+  
+  @Schema(example = "200", required = true, description = "Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.")
  /**
-   * Get dataUscita
-   * @return dataUscita
+   * Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.  
   **/
-  @JsonProperty("data_uscita")
+  private String esitoConsegna = null;
+ /**
+   * Get dataRicezione
+   * @return dataRicezione
+  **/
+  @JsonProperty("data_ricezione")
+  @Valid
+  public DateTime getDataRicezione() {
+    return this.dataRicezione;
+  }
+
+  public void setDataRicezione(DateTime dataRicezione) {
+    this.dataRicezione = dataRicezione;
+  }
+
+  public TransazioneExtDettaglioRispostaBase dataRicezione(DateTime dataRicezione) {
+    this.dataRicezione = dataRicezione;
+    return this;
+  }
+
+ /**
+   * Get dataConsegna
+   * @return dataConsegna
+  **/
+  @JsonProperty("data_consegna")
   @NotNull
   @Valid
-  public DateTime getDataUscita() {
-    return this.dataUscita;
+  public DateTime getDataConsegna() {
+    return this.dataConsegna;
   }
 
-  public void setDataUscita(DateTime dataUscita) {
-    this.dataUscita = dataUscita;
+  public void setDataConsegna(DateTime dataConsegna) {
+    this.dataConsegna = dataConsegna;
   }
 
-  public TransazioneExtDettaglioRispostaBase dataUscita(DateTime dataUscita) {
-    this.dataUscita = dataUscita;
+  public TransazioneExtDettaglioRispostaBase dataConsegna(DateTime dataConsegna) {
+    this.dataConsegna = dataConsegna;
     return this;
   }
 
  /**
    * Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.
-   * @return codiceRisposta
+   * @return esitoRicezione
   **/
-  @JsonProperty("codice_risposta")
-  @NotNull
+  @JsonProperty("esito_ricezione")
   @Valid
-  public String getCodiceRisposta() {
-    return this.codiceRisposta;
+  public String getEsitoRicezione() {
+    return this.esitoRicezione;
   }
 
-  public void setCodiceRisposta(String codiceRisposta) {
-    this.codiceRisposta = codiceRisposta;
+  public void setEsitoRicezione(String esitoRicezione) {
+    this.esitoRicezione = esitoRicezione;
   }
 
-  public TransazioneExtDettaglioRispostaBase codiceRisposta(String codiceRisposta) {
-    this.codiceRisposta = codiceRisposta;
-    return this;
-  }
-
- /**
-   * Get dataIngresso
-   * @return dataIngresso
-  **/
-  @JsonProperty("data_ingresso")
-  @Valid
-  public DateTime getDataIngresso() {
-    return this.dataIngresso;
-  }
-
-  public void setDataIngresso(DateTime dataIngresso) {
-    this.dataIngresso = dataIngresso;
-  }
-
-  public TransazioneExtDettaglioRispostaBase dataIngresso(DateTime dataIngresso) {
-    this.dataIngresso = dataIngresso;
+  public TransazioneExtDettaglioRispostaBase esitoRicezione(String esitoRicezione) {
+    this.esitoRicezione = esitoRicezione;
     return this;
   }
 
  /**
    * Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.
-   * @return codiceRispostaIngresso
+   * @return esitoConsegna
   **/
-  @JsonProperty("codice_risposta_ingresso")
+  @JsonProperty("esito_consegna")
+  @NotNull
   @Valid
-  public String getCodiceRispostaIngresso() {
-    return this.codiceRispostaIngresso;
+  public String getEsitoConsegna() {
+    return this.esitoConsegna;
   }
 
-  public void setCodiceRispostaIngresso(String codiceRispostaIngresso) {
-    this.codiceRispostaIngresso = codiceRispostaIngresso;
+  public void setEsitoConsegna(String esitoConsegna) {
+    this.esitoConsegna = esitoConsegna;
   }
 
-  public TransazioneExtDettaglioRispostaBase codiceRispostaIngresso(String codiceRispostaIngresso) {
-    this.codiceRispostaIngresso = codiceRispostaIngresso;
+  public TransazioneExtDettaglioRispostaBase esitoConsegna(String esitoConsegna) {
+    this.esitoConsegna = esitoConsegna;
     return this;
   }
 
@@ -146,10 +146,10 @@ public class TransazioneExtDettaglioRispostaBase extends TransazioneExtDettaglio
     StringBuilder sb = new StringBuilder();
     sb.append("class TransazioneExtDettaglioRispostaBase {\n");
     sb.append("    ").append(TransazioneExtDettaglioRispostaBase.toIndentedString(super.toString())).append("\n");
-    sb.append("    dataUscita: ").append(TransazioneExtDettaglioRispostaBase.toIndentedString(this.dataUscita)).append("\n");
-    sb.append("    codiceRisposta: ").append(TransazioneExtDettaglioRispostaBase.toIndentedString(this.codiceRisposta)).append("\n");
-    sb.append("    dataIngresso: ").append(TransazioneExtDettaglioRispostaBase.toIndentedString(this.dataIngresso)).append("\n");
-    sb.append("    codiceRispostaIngresso: ").append(TransazioneExtDettaglioRispostaBase.toIndentedString(this.codiceRispostaIngresso)).append("\n");
+    sb.append("    dataRicezione: ").append(TransazioneExtDettaglioRispostaBase.toIndentedString(this.dataRicezione)).append("\n");
+    sb.append("    dataConsegna: ").append(TransazioneExtDettaglioRispostaBase.toIndentedString(this.dataConsegna)).append("\n");
+    sb.append("    esitoRicezione: ").append(TransazioneExtDettaglioRispostaBase.toIndentedString(this.esitoRicezione)).append("\n");
+    sb.append("    esitoConsegna: ").append(TransazioneExtDettaglioRispostaBase.toIndentedString(this.esitoConsegna)).append("\n");
     sb.append("}");
     return sb.toString();
   }

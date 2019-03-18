@@ -79,15 +79,25 @@ components:
     TracciaDettaglioRichiestaDatiTrasporto:
       type: object
       required:
-        - data_ingresso
+        - data_ricezione
         - tipo
         - url_invocazione
       properties:
-        data_ingresso:
+        data_ricezione:
           type: string
           format: date-time
-          description: Data e Ora della richiesta in formato RFC3339 in UTC e con i separatori Z e T maiuscolo.
           example: '2017-07-21T17:32:28Z'
+          description: |-
+            Rappresenta il momento in cui una richiesta arriva sull'API Gateway.
+            Data e Ora della richiesta in formato RFC3339 in UTC e con i separatori Z e T maiuscolo.
+        data_consegna:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+          description: |-
+            Rappresenta il momento in cui una richiesta, dopo essere stata autorizzata dall'API Gateway, 
+            viene consegnata all'applicativo che implementa l'api.
+            Data e Ora della richiesta in formato RFC3339 in UTC e con i separatori Z e T maiuscolo.
         tipo:
           type: string
           description: |-
@@ -112,35 +122,61 @@ components:
     TracciaDettaglioRispostaDatiTrasporto:
       type: object
       required:
-        - data_uscita
-        - codice_risposta
+        - data_consegna
+        - esito_consegna
       properties:
-        data_uscita:
+        data_ricezione:
           type: string
           format: date-time
-          description: Data e Ora della risposta in formato RFC3339 in UTC e con i separatori Z e T maiuscolo.
           example: '2017-07-21T17:32:28Z'
-        codice_risposta:
+          description: |-
+            Rappresenta il momento in cui una risposta viene ricevuta sull'API Gateway.
+            Data e Ora della richiesta in formato RFC3339 in UTC e con i separatori Z e T maiuscolo.
+        data_consegna:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+          description: |-
+            Rappresenta il momento in cui una risposta, dopo essere stata verifica dall'API Gateway, 
+            viene inoltrata all'applicativo che aveva scaturito la richiesta.
+            Data e Ora della richiesta in formato RFC3339 in UTC e con i separatori Z e T maiuscolo.
+        esito_ricezione:
           type: string
           description: |-
-           Codice associato alla risposta.
-           Può essere un http status per i protocolli basati su HTTP.
+           Esito di trasporto associato alla risposta ricevuta sull'API Gateway.
+           Negli scenari basati su protocollo HTTP si tratta di http status.
+          example: 200
+        esito_consegna:
+          type: string
+          description: |-
+           Esito di trasporto ritornato all'applicativo che aveva scaturito la richiesta.
+           Può essere quello ritornato dall'applicativo che implementa l'API (esito_ricezione) o 
+           può essere generato dall'API Gateway in presenza di errori avvenuti durante la gestione della richiesta. 
+           Negli scenari basati su protocollo HTTP si tratta di http status.
           example: 200
 
     TracciaDettaglioRispostaErrore:
       type: object
       properties:
-        fault:
+        fault_ricezione:
           type: string
           format: byte
           description: |-
-           Messaggio di errore ritornato in caso la richiesta non sia andata a buon fine.
-           Può essere un Problem Details RFC7807 per i protocolli basati su HTTP o un SOAPFault per i protocolli basati su SOAP.
+           Messaggio di errore ricevuta sull'API Gateway, in seguito ad una richiesta non andata a buon fine.
+           Può trattarsi di un Problem Details RFC7807 per i protocolli basati su HTTP o un SOAPFault per i protocolli basati su SOAP.
+        fault_consegna:
+          type: string
+          format: byte
+          description: |-
+           Messaggio di errore ritornato all'applicativo che aveva scaturito la richiesta.
+           Il Fault può essere quello ritornato dall'applicativo che implementa l'API (fault_ricezione) o 
+           può essere generato dall'API Gateway in presenza di errori avvenuti durante la gestione della richiesta. 
+           Può trattarsi di un Problem Details RFC7807 per i protocolli basati su HTTP o un SOAPFault per i protocolli basati su SOAP.
         dettagli_errore:
           type: array
           items:
             type: string
-            description: Eventuali messaggi di errore 
+            description: Eventuali messaggi di errore
 
     TracciaDettaglioMessaggio:
       type: object
@@ -175,8 +211,7 @@ components:
           items:
             $ref: '#/components/schemas/TracciaContenutoMessaggioHeader'
           description: |-
-            Dove applicabile, vengono registrati gli header di trasporto.
-            Possono essere ad esempio gli header HTTP.
+            Dove applicabile, vengono registrati gli header di trasporto (es. header HTTP).
           example:
             "headers" : [ {
               "nome" : "Accept",
@@ -258,7 +293,7 @@ components:
         indirizzo_client:
           type: string
           description: Dove applicabile, indirizzo IP del client
-        indirizzo_client_forwarded:
+        indirizzo_client_inoltrato:
           type: string
           description: |-
             Dove applicabile, indirizzo IP del client recuperato tramite meccanismi di header forwarding quali ad esempio

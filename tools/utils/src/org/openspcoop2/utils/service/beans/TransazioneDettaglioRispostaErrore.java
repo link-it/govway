@@ -33,35 +33,58 @@ import javax.validation.Valid;
 
 @XmlAccessorType(XmlAccessType.FIELD)
  @XmlType(name = "TransazioneDettaglioRispostaErrore", propOrder =
-    { "fault", "dettagliErrore"
+    { "faultRicezione", "faultConsegna", "dettagliErrore"
 })
 
 @XmlRootElement(name="TransazioneDettaglioRispostaErrore")
 public class TransazioneDettaglioRispostaErrore  {
-  @XmlElement(name="fault")
+  @XmlElement(name="fault_ricezione")
   
   @Schema(description = "")
-  private byte[] fault = null;
+  private byte[] faultRicezione = null;
+  @XmlElement(name="fault_consegna")
+  
+  @Schema(description = "")
+  private byte[] faultConsegna = null;
   @XmlElement(name="dettagli_errore")
   
   @Schema(description = "")
   private List<String> dettagliErrore = null;
  /**
-   * Get fault
-   * @return fault
+   * Get faultRicezione
+   * @return faultRicezione
   **/
-  @JsonProperty("fault")
+  @JsonProperty("fault_ricezione")
   @Valid
-  public byte[] getFault() {
-    return this.fault;
+  public byte[] getFaultRicezione() {
+    return this.faultRicezione;
   }
 
-  public void setFault(byte[] fault) {
-    this.fault = fault;
+  public void setFaultRicezione(byte[] faultRicezione) {
+    this.faultRicezione = faultRicezione;
   }
 
-  public TransazioneDettaglioRispostaErrore fault(byte[] fault) {
-    this.fault = fault;
+  public TransazioneDettaglioRispostaErrore faultRicezione(byte[] faultRicezione) {
+    this.faultRicezione = faultRicezione;
+    return this;
+  }
+
+ /**
+   * Get faultConsegna
+   * @return faultConsegna
+  **/
+  @JsonProperty("fault_consegna")
+  @Valid
+  public byte[] getFaultConsegna() {
+    return this.faultConsegna;
+  }
+
+  public void setFaultConsegna(byte[] faultConsegna) {
+    this.faultConsegna = faultConsegna;
+  }
+
+  public TransazioneDettaglioRispostaErrore faultConsegna(byte[] faultConsegna) {
+    this.faultConsegna = faultConsegna;
     return this;
   }
 
@@ -95,7 +118,8 @@ public class TransazioneDettaglioRispostaErrore  {
     StringBuilder sb = new StringBuilder();
     sb.append("class TransazioneDettaglioRispostaErrore {\n");
     
-    sb.append("    fault: ").append(TransazioneDettaglioRispostaErrore.toIndentedString(this.fault)).append("\n");
+    sb.append("    faultRicezione: ").append(TransazioneDettaglioRispostaErrore.toIndentedString(this.faultRicezione)).append("\n");
+    sb.append("    faultConsegna: ").append(TransazioneDettaglioRispostaErrore.toIndentedString(this.faultConsegna)).append("\n");
     sb.append("    dettagliErrore: ").append(TransazioneDettaglioRispostaErrore.toIndentedString(this.dettagliErrore)).append("\n");
     sb.append("}");
     return sb.toString();

@@ -37,26 +37,41 @@ import javax.validation.Valid;
 
 @XmlAccessorType(XmlAccessType.FIELD)
  @XmlType(name = "TransazioneDettaglioRisposta", propOrder =
-    { "dataUscita", "codiceRisposta", "fault", "dettagliErrore", "contenuti"
+    { "dataRicezione", "dataConsegna", "esitoRicezione", "esitoConsegna", "faultRicezione", "faultConsegna", "dettagliErrore", "contenuti"
 })
 
 
 public class TransazioneDettaglioRisposta extends TransazioneDettaglioMessaggio {
-  @XmlElement(name="data_uscita", required = true)
+  @XmlElement(name="data_ricezione")
+  
+  @Schema(description = "")
+  private DateTime dataRicezione = null;
+  @XmlElement(name="data_consegna", required = true)
   
   @Schema(required = true, description = "")
-  private DateTime dataUscita = null;
-  @XmlElement(name="codice_risposta", required = true)
+  private DateTime dataConsegna = null;
+  @XmlElement(name="esito_ricezione")
+  
+  @Schema(example = "200", description = "Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.")
+ /**
+   * Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.  
+  **/
+  private String esitoRicezione = null;
+  @XmlElement(name="esito_consegna", required = true)
   
   @Schema(example = "200", required = true, description = "Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.")
  /**
    * Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.  
   **/
-  private String codiceRisposta = null;
-  @XmlElement(name="fault")
+  private String esitoConsegna = null;
+  @XmlElement(name="fault_ricezione")
   
   @Schema(description = "")
-  private byte[] fault = null;
+  private byte[] faultRicezione = null;
+  @XmlElement(name="fault_consegna")
+  
+  @Schema(description = "")
+  private byte[] faultConsegna = null;
   @XmlElement(name="dettagli_errore")
   
   @Schema(description = "")
@@ -66,61 +81,118 @@ public class TransazioneDettaglioRisposta extends TransazioneDettaglioMessaggio 
   @Schema(description = "")
   private TransazioneContenutoMessaggio contenuti = null;
  /**
-   * Get dataUscita
-   * @return dataUscita
+   * Get dataRicezione
+   * @return dataRicezione
   **/
-  @JsonProperty("data_uscita")
+  @JsonProperty("data_ricezione")
+  @Valid
+  public DateTime getDataRicezione() {
+    return this.dataRicezione;
+  }
+
+  public void setDataRicezione(DateTime dataRicezione) {
+    this.dataRicezione = dataRicezione;
+  }
+
+  public TransazioneDettaglioRisposta dataRicezione(DateTime dataRicezione) {
+    this.dataRicezione = dataRicezione;
+    return this;
+  }
+
+ /**
+   * Get dataConsegna
+   * @return dataConsegna
+  **/
+  @JsonProperty("data_consegna")
   @NotNull
   @Valid
-  public DateTime getDataUscita() {
-    return this.dataUscita;
+  public DateTime getDataConsegna() {
+    return this.dataConsegna;
   }
 
-  public void setDataUscita(DateTime dataUscita) {
-    this.dataUscita = dataUscita;
+  public void setDataConsegna(DateTime dataConsegna) {
+    this.dataConsegna = dataConsegna;
   }
 
-  public TransazioneDettaglioRisposta dataUscita(DateTime dataUscita) {
-    this.dataUscita = dataUscita;
+  public TransazioneDettaglioRisposta dataConsegna(DateTime dataConsegna) {
+    this.dataConsegna = dataConsegna;
     return this;
   }
 
  /**
    * Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.
-   * @return codiceRisposta
+   * @return esitoRicezione
   **/
-  @JsonProperty("codice_risposta")
-  @NotNull
+  @JsonProperty("esito_ricezione")
   @Valid
-  public String getCodiceRisposta() {
-    return this.codiceRisposta;
+  public String getEsitoRicezione() {
+    return this.esitoRicezione;
   }
 
-  public void setCodiceRisposta(String codiceRisposta) {
-    this.codiceRisposta = codiceRisposta;
+  public void setEsitoRicezione(String esitoRicezione) {
+    this.esitoRicezione = esitoRicezione;
   }
 
-  public TransazioneDettaglioRisposta codiceRisposta(String codiceRisposta) {
-    this.codiceRisposta = codiceRisposta;
+  public TransazioneDettaglioRisposta esitoRicezione(String esitoRicezione) {
+    this.esitoRicezione = esitoRicezione;
     return this;
   }
 
  /**
-   * Get fault
-   * @return fault
+   * Codice associato alla risposta. Può essere un http status per i protocolli basati su HTTP.
+   * @return esitoConsegna
   **/
-  @JsonProperty("fault")
+  @JsonProperty("esito_consegna")
+  @NotNull
   @Valid
-  public byte[] getFault() {
-    return this.fault;
+  public String getEsitoConsegna() {
+    return this.esitoConsegna;
   }
 
-  public void setFault(byte[] fault) {
-    this.fault = fault;
+  public void setEsitoConsegna(String esitoConsegna) {
+    this.esitoConsegna = esitoConsegna;
   }
 
-  public TransazioneDettaglioRisposta fault(byte[] fault) {
-    this.fault = fault;
+  public TransazioneDettaglioRisposta esitoConsegna(String esitoConsegna) {
+    this.esitoConsegna = esitoConsegna;
+    return this;
+  }
+
+ /**
+   * Get faultRicezione
+   * @return faultRicezione
+  **/
+  @JsonProperty("fault_ricezione")
+  @Valid
+  public byte[] getFaultRicezione() {
+    return this.faultRicezione;
+  }
+
+  public void setFaultRicezione(byte[] faultRicezione) {
+    this.faultRicezione = faultRicezione;
+  }
+
+  public TransazioneDettaglioRisposta faultRicezione(byte[] faultRicezione) {
+    this.faultRicezione = faultRicezione;
+    return this;
+  }
+
+ /**
+   * Get faultConsegna
+   * @return faultConsegna
+  **/
+  @JsonProperty("fault_consegna")
+  @Valid
+  public byte[] getFaultConsegna() {
+    return this.faultConsegna;
+  }
+
+  public void setFaultConsegna(byte[] faultConsegna) {
+    this.faultConsegna = faultConsegna;
+  }
+
+  public TransazioneDettaglioRisposta faultConsegna(byte[] faultConsegna) {
+    this.faultConsegna = faultConsegna;
     return this;
   }
 
@@ -173,9 +245,12 @@ public class TransazioneDettaglioRisposta extends TransazioneDettaglioMessaggio 
     StringBuilder sb = new StringBuilder();
     sb.append("class TransazioneDettaglioRisposta {\n");
     sb.append("    ").append(TransazioneDettaglioRisposta.toIndentedString(super.toString())).append("\n");
-    sb.append("    dataUscita: ").append(TransazioneDettaglioRisposta.toIndentedString(this.dataUscita)).append("\n");
-    sb.append("    codiceRisposta: ").append(TransazioneDettaglioRisposta.toIndentedString(this.codiceRisposta)).append("\n");
-    sb.append("    fault: ").append(TransazioneDettaglioRisposta.toIndentedString(this.fault)).append("\n");
+    sb.append("    dataRicezione: ").append(TransazioneDettaglioRisposta.toIndentedString(this.dataRicezione)).append("\n");
+    sb.append("    dataConsegna: ").append(TransazioneDettaglioRisposta.toIndentedString(this.dataConsegna)).append("\n");
+    sb.append("    esitoRicezione: ").append(TransazioneDettaglioRisposta.toIndentedString(this.esitoRicezione)).append("\n");
+    sb.append("    esitoConsegna: ").append(TransazioneDettaglioRisposta.toIndentedString(this.esitoConsegna)).append("\n");
+    sb.append("    faultRicezione: ").append(TransazioneDettaglioRisposta.toIndentedString(this.faultRicezione)).append("\n");
+    sb.append("    faultConsegna: ").append(TransazioneDettaglioRisposta.toIndentedString(this.faultConsegna)).append("\n");
     sb.append("    dettagliErrore: ").append(TransazioneDettaglioRisposta.toIndentedString(this.dettagliErrore)).append("\n");
     sb.append("    contenuti: ").append(TransazioneDettaglioRisposta.toIndentedString(this.contenuti)).append("\n");
     sb.append("}");

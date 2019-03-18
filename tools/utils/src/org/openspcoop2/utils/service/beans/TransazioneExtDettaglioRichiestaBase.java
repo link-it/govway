@@ -36,15 +36,19 @@ import javax.validation.Valid;
 
 @XmlAccessorType(XmlAccessType.FIELD)
  @XmlType(name = "TransazioneExtDettaglioRichiestaBase", propOrder =
-    { "dataIngresso", "tipo", "urlInvocazione", "dataUscita", "connettore"
+    { "dataRicezione", "dataConsegna", "tipo", "urlInvocazione", "connettore"
 })
 
 
 public class TransazioneExtDettaglioRichiestaBase extends TransazioneExtDettaglioMessaggioBase {
-  @XmlElement(name="data_ingresso", required = true)
+  @XmlElement(name="data_ricezione", required = true)
   
   @Schema(required = true, description = "")
-  private DateTime dataIngresso = null;
+  private DateTime dataRicezione = null;
+  @XmlElement(name="data_consegna")
+  
+  @Schema(description = "")
+  private DateTime dataConsegna = null;
   @XmlElement(name="tipo", required = true)
   
   @Schema(required = true, description = "")
@@ -53,31 +57,46 @@ public class TransazioneExtDettaglioRichiestaBase extends TransazioneExtDettagli
   
   @Schema(example = "/govway/in/Ente/PetStore/v2/pet", required = true, description = "")
   private String urlInvocazione = null;
-  @XmlElement(name="data_uscita")
-  
-  @Schema(description = "")
-  private DateTime dataUscita = null;
   @XmlElement(name="connettore")
   
   @Schema(example = "http://backend.api", description = "")
   private String connettore = null;
  /**
-   * Get dataIngresso
-   * @return dataIngresso
+   * Get dataRicezione
+   * @return dataRicezione
   **/
-  @JsonProperty("data_ingresso")
+  @JsonProperty("data_ricezione")
   @NotNull
   @Valid
-  public DateTime getDataIngresso() {
-    return this.dataIngresso;
+  public DateTime getDataRicezione() {
+    return this.dataRicezione;
   }
 
-  public void setDataIngresso(DateTime dataIngresso) {
-    this.dataIngresso = dataIngresso;
+  public void setDataRicezione(DateTime dataRicezione) {
+    this.dataRicezione = dataRicezione;
   }
 
-  public TransazioneExtDettaglioRichiestaBase dataIngresso(DateTime dataIngresso) {
-    this.dataIngresso = dataIngresso;
+  public TransazioneExtDettaglioRichiestaBase dataRicezione(DateTime dataRicezione) {
+    this.dataRicezione = dataRicezione;
+    return this;
+  }
+
+ /**
+   * Get dataConsegna
+   * @return dataConsegna
+  **/
+  @JsonProperty("data_consegna")
+  @Valid
+  public DateTime getDataConsegna() {
+    return this.dataConsegna;
+  }
+
+  public void setDataConsegna(DateTime dataConsegna) {
+    this.dataConsegna = dataConsegna;
+  }
+
+  public TransazioneExtDettaglioRichiestaBase dataConsegna(DateTime dataConsegna) {
+    this.dataConsegna = dataConsegna;
     return this;
   }
 
@@ -122,25 +141,6 @@ public class TransazioneExtDettaglioRichiestaBase extends TransazioneExtDettagli
   }
 
  /**
-   * Get dataUscita
-   * @return dataUscita
-  **/
-  @JsonProperty("data_uscita")
-  @Valid
-  public DateTime getDataUscita() {
-    return this.dataUscita;
-  }
-
-  public void setDataUscita(DateTime dataUscita) {
-    this.dataUscita = dataUscita;
-  }
-
-  public TransazioneExtDettaglioRichiestaBase dataUscita(DateTime dataUscita) {
-    this.dataUscita = dataUscita;
-    return this;
-  }
-
- /**
    * Get connettore
    * @return connettore
   **/
@@ -165,10 +165,10 @@ public class TransazioneExtDettaglioRichiestaBase extends TransazioneExtDettagli
     StringBuilder sb = new StringBuilder();
     sb.append("class TransazioneExtDettaglioRichiestaBase {\n");
     sb.append("    ").append(TransazioneExtDettaglioRichiestaBase.toIndentedString(super.toString())).append("\n");
-    sb.append("    dataIngresso: ").append(TransazioneExtDettaglioRichiestaBase.toIndentedString(this.dataIngresso)).append("\n");
+    sb.append("    dataRicezione: ").append(TransazioneExtDettaglioRichiestaBase.toIndentedString(this.dataRicezione)).append("\n");
+    sb.append("    dataConsegna: ").append(TransazioneExtDettaglioRichiestaBase.toIndentedString(this.dataConsegna)).append("\n");
     sb.append("    tipo: ").append(TransazioneExtDettaglioRichiestaBase.toIndentedString(this.tipo)).append("\n");
     sb.append("    urlInvocazione: ").append(TransazioneExtDettaglioRichiestaBase.toIndentedString(this.urlInvocazione)).append("\n");
-    sb.append("    dataUscita: ").append(TransazioneExtDettaglioRichiestaBase.toIndentedString(this.dataUscita)).append("\n");
     sb.append("    connettore: ").append(TransazioneExtDettaglioRichiestaBase.toIndentedString(this.connettore)).append("\n");
     sb.append("}");
     return sb.toString();

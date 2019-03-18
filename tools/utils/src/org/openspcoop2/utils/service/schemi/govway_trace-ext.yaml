@@ -50,10 +50,6 @@ components:
         - $ref: 'govway_trace.yaml#/components/schemas/TransazioneDettaglioRichiestaDatiTrasporto'
         - type: object
           properties:
-             data_uscita:
-                type: string
-                format: date-time
-                example: '2017-07-21T17:32:28Z'
              connettore:
                 type: string
                 format: uri
@@ -71,18 +67,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/TransazioneExtDettaglioMessaggioBase'
         - $ref: 'govway_trace.yaml#/components/schemas/TransazioneDettaglioRispostaDatiTrasporto'
-        - type: object
-          properties:
-            data_ingresso:
-              type: string
-              format: date-time
-              example: '2017-07-21T17:32:28Z'
-            codice_risposta_ingresso:
-              type: string
-              description: |-
-               Codice associato alla risposta.
-               Può essere un http status per i protocolli basati su HTTP.
-              example: 200
     
     TransazioneExtDettaglioRisposta:
       type: object
@@ -92,12 +76,9 @@ components:
         - $ref: 'govway_trace.yaml#/components/schemas/TransazioneDettaglioRispostaErrore'
         - type: object
           properties:
-            fault_formato:
+            fault_ricezione_formato:
               $ref: '#/components/schemas/TransazioneMessaggioFormatoEnum'
-            fault_ingresso:
-              type: string
-              format: byte
-            fault_ingresso_formato:
+            fault_consegna_formato:
               $ref: '#/components/schemas/TransazioneMessaggioFormatoEnum'
 
     TransazioneExtDettaglioMessaggioBase:
@@ -170,6 +151,10 @@ components:
           type: string
         content_location:
           type: string
+        headers:
+          type: array
+          items:
+            $ref: 'govway_trace.yaml#/components/schemas/TransazioneContenutoMessaggioHeader'
         
     TransazioneExtContenutoMessaggioAllegato:
       type: object
@@ -187,6 +172,10 @@ components:
           type: string
         content_location:
           type: string
+        headers:
+          type: array
+          items:
+            $ref: 'govway_trace.yaml#/components/schemas/TransazioneContenutoMessaggioHeader'
           
     TransazioneExtContenutoMessaggioPorzioneBody:
       type: object
@@ -223,9 +212,7 @@ components:
         - type: object
           properties:
             profilo_collaborazione:
-              $ref: 'govway_core.yaml#/components/schemas/ProfiloCollaborazioneEnum' 
-            id_collaborazione:
-              type: string
+              $ref: 'govway_core.yaml#/components/schemas/ProfiloCollaborazioneEnum'
             id_asincrono:
               type: string
  
@@ -287,8 +274,7 @@ components:
           format: date-time
           example: '2017-07-21T17:32:28Z'
         severita_codice:
-          type: integer
-          format: int32
+          type: string
         severita:
           $ref: '#/components/schemas/DiagnosticoSeveritaEnum'
         funzione:

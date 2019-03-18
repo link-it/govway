@@ -65,7 +65,7 @@
         "properties": {
           "codice": {
             "type": "string",
-            "description": "Codice che rappresenta l'esito dell'invocazione.\nPuò essere un http status per i protocolli basati su HTTP, o un altra codifica (es. OK/KO)"
+            "description": "Codice che rappresenta l'esito dell'invocazione. Può essere un http status per i protocolli basati su HTTP, o un altra codifica (es. OK/KO)"
           },
           "descrizione": {
             "type": "string",
@@ -90,20 +90,26 @@
       "TracciaDettaglioRichiestaDatiTrasporto": {
         "type": "object",
         "required": [
-          "data_ingresso",
+          "data_ricezione",
           "tipo",
           "url_invocazione"
         ],
         "properties": {
-          "data_ingresso": {
+          "data_ricezione": {
             "type": "string",
             "format": "date-time",
-            "description": "Data e Ora della richiesta in formato RFC3339 in UTC e con i separatori Z e T maiuscolo.",
+            "description": "Rappresenta il momento in cui una richiesta arriva sull'API Gateway. Data e Ora della richiesta in formato RFC3339 in UTC e con i separatori Z e T maiuscolo.",
+            "example": "2017-07-21T17:32:28Z"
+          },
+          "data_consegna": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Rappresenta il momento in cui una richiesta, dopo essere stata autorizzata dall'API Gateway, viene consegnata all'applicativo che implementa l'api. Data e Ora della richiesta in formato RFC3339 in UTC e con i separatori Z e T maiuscolo.",
             "example": "2017-07-21T17:32:28Z"
           },
           "tipo": {
             "type": "string",
-            "description": "Tipologia dell'invocazione.\nPuò essere un http method per i protocolli basati su HTTP.",
+            "description": "Tipologia dell'invocazione. Può essere un http method per i protocolli basati su HTTP.",
             "example": "POST"
           },
           "url_invocazione": {
@@ -134,19 +140,30 @@
       "TracciaDettaglioRispostaDatiTrasporto": {
         "type": "object",
         "required": [
-          "data_uscita",
-          "codice_risposta"
+          "data_consegna",
+          "esito_consegna"
         ],
         "properties": {
-          "data_uscita": {
+          "data_ricezione": {
             "type": "string",
             "format": "date-time",
-            "description": "Data e Ora della risposta in formato RFC3339 in UTC e con i separatori Z e T maiuscolo.",
+            "description": "Rappresenta il momento in cui una risposta viene ricevuta sull'API Gateway. Data e Ora della richiesta in formato RFC3339 in UTC e con i separatori Z e T maiuscolo.",
             "example": "2017-07-21T17:32:28Z"
           },
-          "codice_risposta": {
+          "data_consegna": {
             "type": "string",
-            "description": "Codice associato alla risposta.\nPuò essere un http status per i protocolli basati su HTTP.",
+            "format": "date-time",
+            "description": "Rappresenta il momento in cui una risposta, dopo essere stata verifica dall'API Gateway, viene inoltrata all'applicativo che aveva scaturito la richiesta. Data e Ora della richiesta in formato RFC3339 in UTC e con i separatori Z e T maiuscolo.",
+            "example": "2017-07-21T17:32:28Z"
+          },
+          "esito_ricezione": {
+            "type": "string",
+            "description": "Esito di trasporto associato alla risposta ricevuta sull'API Gateway. Negli scenari basati su protocollo HTTP si tratta di http status.",
+            "example": 200
+          },
+          "esito_consegna": {
+            "type": "string",
+            "description": "Esito di trasporto ritornato all'applicativo che aveva scaturito la richiesta. Può essere quello ritornato dall'applicativo che implementa l'API (esito_ricezione) o può essere generato dall'API Gateway in presenza di errori avvenuti durante la gestione della richiesta. Negli scenari basati su protocollo HTTP si tratta di http status.",
             "example": 200
           }
         }
@@ -154,10 +171,15 @@
       "TracciaDettaglioRispostaErrore": {
         "type": "object",
         "properties": {
-          "fault": {
+          "fault_ricezione": {
             "type": "string",
             "format": "byte",
-            "description": "Messaggio di errore ritornato in caso la richiesta non sia andata a buon fine.\nPuò essere un Problem Details RFC7807 per i protocolli basati su HTTP o un SOAPFault per i protocolli basati su SOAP."
+            "description": "Messaggio di errore ricevuta sull'API Gateway, in seguito ad una richiesta non andata a buon fine. Può trattarsi di un Problem Details RFC7807 per i protocolli basati su HTTP o un SOAPFault per i protocolli basati su SOAP."
+          },
+          "fault_consegna": {
+            "type": "string",
+            "format": "byte",
+            "description": "Messaggio di errore ritornato all'applicativo che aveva scaturito la richiesta. Il Fault può essere quello ritornato dall'applicativo che implementa l'API (fault_ricezione) o può essere generato dall'API Gateway in presenza di errori avvenuti durante la gestione della richiesta. Può trattarsi di un Problem Details RFC7807 per i protocolli basati su HTTP o un SOAPFault per i protocolli basati su SOAP."
           },
           "dettagli_errore": {
             "type": "array",
@@ -173,12 +195,12 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Dove applicabile, identificativo univoco del messaggio.\nPuò essere l'identificativo del messaggio in presenza di header WS-Addressing (es. wsa:MessageID),\nl'identificativo SDI nella Fatturazione Elettronica,\nl'id e-Gov su richieste SPCoop o altri casi. ",
+            "description": "Dove applicabile, identificativo univoco del messaggio. Può essere l'identificativo del messaggio in presenza di header WS-Addressing (es. wsa:MessageID), l'identificativo SDI nella Fatturazione Elettronica, l'id e-Gov su richieste SPCoop o altri casi. ",
             "example": "eba4355e-403f-4e75-8d56-0751710409c2"
           },
           "id_applicativo": {
             "type": "string",
-            "description": "Dove applicabile, identificativo applicativo del messaggio.\nNei messaggi dove è presenta un imbustamento di protocollo (WS-Addressing, Fatturazione Elettronica, SPCoop ...),\npuò essere associato alla traccia un ulteriore identificativo applicativo che identifica il messaggio contenuto all'interno della busta di protocollo.  ",
+            "description": "Dove applicabile, identificativo applicativo del messaggio. Nei messaggi dove è presenta un imbustamento di protocollo (WS-Addressing, Fatturazione Elettronica, SPCoop ...), può essere associato alla traccia un ulteriore identificativo applicativo che identifica il messaggio contenuto all'interno della busta di protocollo.  ",
             "example": "ENTE-X-UFFICIOY-123"
           }
         }
@@ -199,7 +221,7 @@
             "items": {
               "$ref": "#/definitions/TracciaContenutoMessaggioHeader"
             },
-            "description": "Dove applicabile, vengono registrati gli header di trasporto.\nPossono essere ad esempio gli header HTTP.",
+            "description": "Dove applicabile, vengono registrati gli header di trasporto (es. header HTTP).",
             "example": {
               "headers": [
                 {
@@ -291,16 +313,16 @@
           },
           "utente": {
             "type": "string",
-            "description": "Dove applicabile, identificativo del consumatore o altro soggetto operante la richiesta.\nE' cura del fruitore procedere a codificare e anonimizzare ove necessario.",
+            "description": "Dove applicabile, identificativo del consumatore o altro soggetto operante la richiesta. E' cura del fruitore procedere a codificare e anonimizzare ove necessario.",
             "example": "Andrea Rossi"
           },
           "indirizzo_client": {
             "type": "string",
             "description": "Dove applicabile, indirizzo IP del client"
           },
-          "indirizzo_client_forwarded": {
+          "indirizzo_client_inoltrato": {
             "type": "string",
-            "description": "Dove applicabile, indirizzo IP del client recuperato tramite meccanismi di header forwarding quali ad esempio\n- [X-]Forwarded-For\n- [X-]Forwarded\n- [X-]Client-IP\n- [X-]Cluster-Client-IP"
+            "description": "Dove applicabile, indirizzo IP del client recuperato tramite meccanismi di header forwarding quali ad esempio: [X-]Forwarded-For, [X-]Forwarded, [X-]Client-IP, [X-]Cluster-Client-IP"
           }
         }
       }

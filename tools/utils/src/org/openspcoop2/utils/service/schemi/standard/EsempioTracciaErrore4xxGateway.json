@@ -5,49 +5,22 @@
   "id_conversazione" : "c77a7501-2288-48ff-kmdi98-a333f8elm2je",
   "ruolo" : "erogazione",
   "esito" : {
-    "codice" : "0",
-    "descrizione" : "ok"
+    "codice" : "17",
+    "descrizione" : "Autorizzazione Negata"
   },
   "richiesta" : {
     "id" : "b32a7501-7788-48ff-99999-a726f8e7658e",
     "id_applicativo" : "ENTE-X-UFFICIOY-123",
     "data_ricezione" : "2019-03-14T17:40:17.600Z",
-    "data_consegna" : "2019-03-14T17:40:17.701Z",
     "tipo" : "POST",
     "url_invocazione" : "http://govway/in/Ente/Protocollazione/v1/documenti?test=true",
-    "contenuti" : {
-      "headers" : [ {
-        "nome" : "Accept",
-        "valore" : "application/json"
-      }, {
-        "nome" : "Content-Length",
-        "valore" : "56789"
-      }, {
-        "nome" : "Content-Type",
-        "valore" : "application/pdf"
-      }, {
-        "nome" : "X-Forwarded-For",
-        "valore" : "10.114.87.23"
-      } ],
-      "body" : "CnsKCSJuYW1lIjoiTWVzc2FnZ2lvIHJpY2hpZXN0YUluZ3Jlc3NvIiwKCSJuYW1lMiI6InZhbHVlMiIKfQ=="
-    }
   },
   "risposta" : {
     "id" : "c72a4403-2288-09ff-99gbh-a726f8e1238h",
-    "data_ricezione" : "2019-03-14T17:40:17.847Z",
     "data_consegna" : "2019-03-14T17:40:18.002Z",
-    "esito_ricezione" : "200",
-    "esito_consegna" : "200",
-    "contenuti" : {
-      "headers" : [ {
-        "nome" : "Content-Length",
-        "valore" : "6570"
-      }, {
-        "nome" : "Content-Type",
-        "valore" : "application/json"
-      } ],
-      "body" : "CnsKCSJuYW1lIjoiTWVzc2FnZ2lvIHJpc3Bvc3RhSW5ncmVzc28iLAoJIm5hbWUyIjoidmFsdWUyIgp9"
-    }
+    "esito_consegna" : "403",
+    "fault_consegna" : "PGZhdWx0Pjx0ZXN0PkVTRU1QSU88L3Rlc3Q+PC9mYXVsdD4=",
+    "dettagli_errore" : [ "credenziali non sufficenti" ],
   },
   "api" : {
     "erogatore" : "Ente",

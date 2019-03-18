@@ -34,7 +34,7 @@ import javax.validation.Valid;
 
 @XmlAccessorType(XmlAccessType.FIELD)
  @XmlType(name = "TransazioneInformazioniMittente", propOrder =
-    { "principal", "fruitore", "utente", "indirizzoClient", "indirizzoClientForwarded"
+    { "principal", "fruitore", "utente", "indirizzoClient", "indirizzoClientInoltrato"
 })
 
 @XmlRootElement(name="TransazioneInformazioniMittente")
@@ -55,10 +55,10 @@ public class TransazioneInformazioniMittente  {
   
   @Schema(description = "")
   private String indirizzoClient = null;
-  @XmlElement(name="indirizzo_client_forwarded")
+  @XmlElement(name="indirizzo_client_inoltrato")
   
   @Schema(description = "")
-  private String indirizzoClientForwarded = null;
+  private String indirizzoClientInoltrato = null;
  /**
    * Get principal
    * @return principal
@@ -136,21 +136,21 @@ public class TransazioneInformazioniMittente  {
   }
 
  /**
-   * Get indirizzoClientForwarded
-   * @return indirizzoClientForwarded
+   * Get indirizzoClientInoltrato
+   * @return indirizzoClientInoltrato
   **/
-  @JsonProperty("indirizzo_client_forwarded")
+  @JsonProperty("indirizzo_client_inoltrato")
   @Valid
-  public String getIndirizzoClientForwarded() {
-    return this.indirizzoClientForwarded;
+  public String getIndirizzoClientInoltrato() {
+    return this.indirizzoClientInoltrato;
   }
 
-  public void setIndirizzoClientForwarded(String indirizzoClientForwarded) {
-    this.indirizzoClientForwarded = indirizzoClientForwarded;
+  public void setIndirizzoClientInoltrato(String indirizzoClientInoltrato) {
+    this.indirizzoClientInoltrato = indirizzoClientInoltrato;
   }
 
-  public TransazioneInformazioniMittente indirizzoClientForwarded(String indirizzoClientForwarded) {
-    this.indirizzoClientForwarded = indirizzoClientForwarded;
+  public TransazioneInformazioniMittente indirizzoClientInoltrato(String indirizzoClientInoltrato) {
+    this.indirizzoClientInoltrato = indirizzoClientInoltrato;
     return this;
   }
 
@@ -164,7 +164,7 @@ public class TransazioneInformazioniMittente  {
     sb.append("    fruitore: ").append(TransazioneInformazioniMittente.toIndentedString(this.fruitore)).append("\n");
     sb.append("    utente: ").append(TransazioneInformazioniMittente.toIndentedString(this.utente)).append("\n");
     sb.append("    indirizzoClient: ").append(TransazioneInformazioniMittente.toIndentedString(this.indirizzoClient)).append("\n");
-    sb.append("    indirizzoClientForwarded: ").append(TransazioneInformazioniMittente.toIndentedString(this.indirizzoClientForwarded)).append("\n");
+    sb.append("    indirizzoClientInoltrato: ").append(TransazioneInformazioniMittente.toIndentedString(this.indirizzoClientInoltrato)).append("\n");
     sb.append("}");
     return sb.toString();
   }
