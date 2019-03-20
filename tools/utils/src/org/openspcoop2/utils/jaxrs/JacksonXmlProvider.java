@@ -36,18 +36,24 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
  */
 public class JacksonXmlProvider extends com.fasterxml.jackson.jaxrs.xml.JacksonXMLProvider {
 
-	public static XmlMapper getObjectMapper() {
+	public static XmlMapper getObjectMapper(boolean prettyPrint) {
 		XmlMapper mapper = new XmlMapper();
 		mapper.registerModule(new JodaModule());
 		mapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
 			    WRITE_DATES_AS_TIMESTAMPS , false);
 		mapper.setSerializationInclusion(Include.NON_NULL);
 		mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+		if(prettyPrint) {
+			mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+		}
 		return mapper;
 	}
 	
 	public JacksonXmlProvider() {
-		super(getObjectMapper());
+		super(getObjectMapper(false));
+	}
+	public JacksonXmlProvider(boolean prettyPrint) {
+		super(getObjectMapper(prettyPrint));
 	}
 	
 }

@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
+import org.openspcoop2.web.monitor.core.config.ApplicationProperties;
 
 /**     
  * ServerProperties
@@ -75,6 +76,14 @@ public class ServerProperties  {
 		}
 
 		this.reader = new ServerInstanceProperties(propertiesReader, this.log, confDir);
+		
+		this.log.info("Inizializzazione ApplicationProperties in corso...");
+		try{
+			ApplicationProperties.initialize(log, "/rs-api-monitor.properties", ConstantsEnv.OPENSPCOOP2_RS_API_MONITOR_PROPERTIES, ConstantsEnv.OPENSPCOOP2_RS_API_MONITOR_LOCAL_PATH);
+		}catch(Exception e){
+			throw new RuntimeException(e.getMessage(),e);
+		}
+		this.log.info("Inizializzazione ApplicationProperties effettuata con successo");
 	}
 
 
@@ -158,5 +167,38 @@ public class ServerProperties  {
 		return this.authConfig;
 	}
 
+	
+	public String getConfDirectory() throws UtilsException {
+		return this.readProperty(false, "confDirectory");
+	}
+	public String getProtocolloDefault() throws UtilsException {
+		return this.readProperty(true, "protocolloDefault");
+	}
+	
+	public boolean isFindall404() throws UtilsException {
+		return Boolean.parseBoolean(this.readProperty(true, "findall_404"));
+	}
+	
+	
+	public String getSoggettoDefault(String protocollo) throws UtilsException {
+		String p = this.readProperty(false, protocollo+".soggetto");
+		if(p!=null) {
+			return p;
+		}
+		return this.readProperty(true, "soggetto");
+	}
+
+
+	public org.openspcoop2.utils.service.context.ContextConfig getContextConfig() throws UtilsException {
+		org.openspcoop2.utils.service.context.ContextConfig config = new org.openspcoop2.utils.service.context.ContextConfig();
+		config.setClusterId(this.readProperty(false, "clusterId"));
+		config.setDump(Boolean.parseBoolean(this.readProperty(true, "dump")));
+		config.setEmitTransaction(Boolean.parseBoolean(this.readProperty(true, "transaction")));
+		config.setServiceType(this.readProperty(false, "service.type"));
+		config.setServiceName(this.readProperty(false, "service.name"));
+		config.setServiceVersion(Integer.parseInt(this.readProperty(false, "service.version")));
+		return config;
+	}
+	
 
 }

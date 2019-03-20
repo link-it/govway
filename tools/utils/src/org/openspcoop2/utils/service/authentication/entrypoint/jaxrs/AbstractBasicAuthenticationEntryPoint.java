@@ -89,7 +89,7 @@ public abstract class AbstractBasicAuthenticationEntryPoint extends BasicAuthent
 				}
 			}
 
-			ObjectMapper mapper = JacksonJsonProvider.getObjectMapper();
+			ObjectMapper mapper = JacksonJsonProvider.getObjectMapper(false);
 			String fault = mapper.writeValueAsString(response.getEntity());
 			bais = new ByteArrayInputStream(fault.getBytes());
 

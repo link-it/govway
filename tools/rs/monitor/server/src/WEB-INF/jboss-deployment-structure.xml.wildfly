@@ -14,6 +14,13 @@
 			<module name="org.jboss.as.webservices" />
 			<module name="org.jboss.ws" />
 			<module name="org.jboss.ws.*" />
+			<module name="com.fasterxml.jackson.core.jackson-core" />
+			<module name="com.fasterxml.jackson.core.jackson-databind" />
+			<module name="com.fasterxml.jackson.jaxrs.jackson-jaxrs-json-provider" />
+			<module name="org.jboss.resteasy.resteasy-jackson2-provider" />
+			<module name="org.jboss.as.jsf-injection"/>
+                        <module name="org.jboss.as.jsf-injection" slot="mojarra-1.2_15"/>
+			<module name="com.sun.jsf-impl"/>
 		</exclusions>
 	</deployment>
 </jboss-deployment-structure>

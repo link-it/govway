@@ -24,6 +24,7 @@ package org.openspcoop2.web.monitor.core.core;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -38,6 +39,7 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.generic_project.beans.IProjectInfo;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.web.monitor.core.config.ApplicationProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -470,12 +472,28 @@ public class PddMonitorProperties {
 	
 	public ITracciaDriver getDriverTracciamento() throws Exception{
 		Logger log =  LoggerManager.getPddMonitorSqlLogger();
-		return (ITracciaDriver) DAOFactory.getInstance(log).getServiceManager(org.openspcoop2.core.tracciamento.utils.ProjectInfo.getInstance(),log);
-		
+		return (ITracciaDriver) DAOFactory.getInstance(log).getServiceManager(org.openspcoop2.core.tracciamento.utils.ProjectInfo.getInstance(), log);	
 	}
+	public ITracciaDriver getDriverTracciamento(Connection con) throws Exception{
+		Logger log =  LoggerManager.getPddMonitorSqlLogger();
+		return (ITracciaDriver) DAOFactory.getInstance(log).getServiceManager(org.openspcoop2.core.tracciamento.utils.ProjectInfo.getInstance(), con, log);
+	}
+	public ITracciaDriver getDriverTracciamento(Connection con, ServiceManagerProperties serviceManagerProperties) throws Exception{
+		Logger log =  LoggerManager.getPddMonitorSqlLogger();
+		return (ITracciaDriver) DAOFactory.getInstance(log).getServiceManager(org.openspcoop2.core.tracciamento.utils.ProjectInfo.getInstance(), con, serviceManagerProperties, log);
+	}
+	
 	public IDiagnosticDriver getDriverMsgDiagnostici() throws Exception{
 		Logger log =  LoggerManager.getPddMonitorSqlLogger();
-		return (IDiagnosticDriver) DAOFactory.getInstance(log).getServiceManager(org.openspcoop2.core.diagnostica.utils.ProjectInfo.getInstance(),log);
+		return (IDiagnosticDriver) DAOFactory.getInstance(log).getServiceManager(org.openspcoop2.core.diagnostica.utils.ProjectInfo.getInstance(), log);
+	}
+	public IDiagnosticDriver getDriverMsgDiagnostici(Connection con) throws Exception{
+		Logger log =  LoggerManager.getPddMonitorSqlLogger();
+		return (IDiagnosticDriver) DAOFactory.getInstance(log).getServiceManager(org.openspcoop2.core.diagnostica.utils.ProjectInfo.getInstance(), con, log);
+	}
+	public IDiagnosticDriver getDriverMsgDiagnostici(Connection con, ServiceManagerProperties serviceManagerProperties) throws Exception{
+		Logger log =  LoggerManager.getPddMonitorSqlLogger();
+		return (IDiagnosticDriver) DAOFactory.getInstance(log).getServiceManager(org.openspcoop2.core.diagnostica.utils.ProjectInfo.getInstance(), con, serviceManagerProperties, log);
 	}
 
 	public TipiDatabase  tipoDatabase() throws Exception{

@@ -156,6 +156,14 @@ components:
         example: '2017-07-21T17:32:28Z'
       required: true
       
+    nome_servizio_obbligatorio:
+      name: nome_servizio
+      in: query
+      description: Nome identificativo
+      required: true
+      schema:
+        $ref: '#/components/schemas/NCName'
+      
       
     # Criteri di ricerca opzionali nella query
       

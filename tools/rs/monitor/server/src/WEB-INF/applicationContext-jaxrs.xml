@@ -38,6 +38,9 @@
 		-->
 	</b:bean>
     
+	<!-- Validaton Feature -->
+	<b:bean id="commonValidationFeature" class="org.apache.cxf.validation.BeanValidationFeature"/>
+
 	<!-- Parameter Converter -->
 	<b:bean id="parameterConverter" class="org.openspcoop2.utils.jaxrs.ParameterConverterProvider"/>
 
@@ -45,15 +48,43 @@
 	<b:bean id="objectMessageBodyReader" class="org.openspcoop2.utils.jaxrs.ObjectMessageBodyReader"/>
 	
 	<!--  Jackson Provider for JSON/XML -->
-	<b:bean id="jacksonJsonProvider" class="org.openspcoop2.utils.jaxrs.JacksonJsonProvider"/>
-	<b:bean id="jacksonXmlProvider" class="org.openspcoop2.utils.jaxrs.JacksonXmlProvider"/>
+	<b:bean id="jacksonJsonProvider" class="org.openspcoop2.utils.jaxrs.JacksonJsonProvider">
+		<b:constructor-arg type="boolean"><b:value>true</b:value></b:constructor-arg> <!-- prettyPrint response serialization -->
+	</b:bean>
+	<b:bean id="jacksonXmlProvider" class="org.openspcoop2.utils.jaxrs.JacksonXmlProvider">
+		<b:constructor-arg type="boolean"><b:value>true</b:value></b:constructor-arg> <!-- prettyPrint response serialization -->
+	</b:bean>
 	
 	<!-- FaultBean Exception Mapper -->
-	<b:bean id="webApplicationExceptionMapper" class="org.openspcoop2.utils.jaxrs.fault.WebApplicationExceptionMapper"/>
+	<b:bean id="typeStatusGenerator" class="org.openspcoop2.utils.service.fault.jaxrs.TypeStatusGenerator">
+		<b:property name="typeTemplate" value="https://govpay.readthedocs.io/it/latest/integrazione/99_errori.html#http-@CODE@"/>
+	</b:bean>
+	<b:bean id="webApplicationExceptionMapper" class="org.openspcoop2.utils.service.fault.jaxrs.WebApplicationExceptionMapper">
+		<b:property name="typeGenerator" >
+			<b:ref bean="typeStatusGenerator"/>
+		</b:property>
+	</b:bean>
+	<b:bean id="validationExceptionMapper" class="org.openspcoop2.utils.service.fault.jaxrs.ValidationExceptionMapper">
+		<b:property name="typeGenerator" >
+			<b:ref bean="typeStatusGenerator"/>
+		</b:property>
+	</b:bean>
 	
 	<!-- Interceptor -->
-	<b:bean id="dumpReceivedMessageToFileSystemInterceptor" class="org.openspcoop2.utils.jaxrs.DumpReceivedMessageToFileSystemInterceptor"/>
-	<b:bean id="dumpSendMessageToFileSystemInterceptor" class="org.openspcoop2.utils.jaxrs.DumpSendMessageToFileSystemInterceptor"/>
+	<b:bean id="dumpReceivedMessageToFileSystemInterceptor" class="org.openspcoop2.utils.service.logger.DumpReceivedMessageToFileSystemInterceptor"/>
+	<b:bean id="dumpSendMessageToFileSystemInterceptor" class="org.openspcoop2.utils.service.logger.DumpSendMessageToFileSystemInterceptor"/>
+
+	<!-- Context -->
+	<b:bean id="contextConfig" class="org.openspcoop2.core.monitor.rs.server.config.ContextConfig"/>
+	<!--  <b:bean id="customContextFactory" class="org.openspcoop2.utils.service.context.ExampleCustomContextFactory"/> -->
+	<b:bean id="context" class="org.openspcoop2.utils.service.context.ContextFeature">
+		<!-- <b:property name="contextFactory" >
+			<b:ref bean="customContextFactory"/>
+		</b:property> -->
+		<b:property name="contextConfig" >
+			<b:ref bean="contextConfig"/>
+		</b:property>
+	</b:bean>
 
 	<!-- JAX-RS Service Impl -->
 	<b:bean id="monitoraggioApiImpl" class="org.openspcoop2.core.monitor.rs.server.api.impl.MonitoraggioApiServiceImpl"/>
@@ -87,10 +118,13 @@
 			<ref bean="objectMessageBodyReader"/>
 			<ref bean="jacksonJsonProvider"/>
 			<ref bean="jacksonXmlProvider"/>  
-			<ref bean="webApplicationExceptionMapper" />     	        	    
+			<ref bean="webApplicationExceptionMapper" />
+			<ref bean="validationExceptionMapper" />   	        	    
 		</jaxrs:providers>
 		<jaxrs:features>
-		    <ref bean="openApiFeature" />
+			<ref bean="openApiFeature" />
+			<ref bean="commonValidationFeature" />
+			<ref bean="context" />
 		</jaxrs:features>
 	</jaxrs:server>
 	

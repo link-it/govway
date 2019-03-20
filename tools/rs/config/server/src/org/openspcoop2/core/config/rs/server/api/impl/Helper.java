@@ -49,6 +49,7 @@ import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpsConfiguraz
 import org.openspcoop2.core.config.rs.server.model.AuthenticationPrincipal;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.utils.ProfiloUtils;
 import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneHttps;
 import org.openspcoop2.core.config.rs.server.model.TipoKeystore;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -298,19 +299,8 @@ public class Helper {
 
 
 	
-	public static final Map<ProfiloEnum,String> tipoProtocolloFromProfilo = new HashMap<ProfiloEnum,String>();
-	static {
-		tipoProtocolloFromProfilo.put(ProfiloEnum.APIGATEWAY, "trasparente");
-		tipoProtocolloFromProfilo.put(ProfiloEnum.SPCOOP, "spcoop");
-		tipoProtocolloFromProfilo.put(ProfiloEnum.FATTURAPA, "sdi");
-		tipoProtocolloFromProfilo.put(ProfiloEnum.EDELIVERY, "as4");
-	}
-	
-	
-	public static final Map<String,ProfiloEnum> profiloFromTipoProtocollo = new HashMap<String,ProfiloEnum>();
-	static {
-		tipoProtocolloFromProfilo.forEach( (mod,prot) -> Helper.profiloFromTipoProtocollo.put(prot, mod));
-	}
+	public static final Map<ProfiloEnum,String> tipoProtocolloFromProfilo = ProfiloUtils.getMapProfiloToProtocollo();	
+	public static final Map<String,ProfiloEnum> profiloFromTipoProtocollo = ProfiloUtils.getMapProtocolloToProfilo();
 	
 	
 	public static final Map<CredenzialeTipo,ModalitaAccessoEnum> modalitaAccessoFromCredenzialeTipo = new HashMap<>();
@@ -724,19 +714,6 @@ public class Helper {
 		}
 			
 	}
-
-	
-	
-	
-	/*public static <T1,T2 extends Object> T2 apiConverter(T1 t1, Class<T2> toClass) throws InstantiationException, IllegalAccessException {
-		T2 ret = toClass.newInstance();
-		
-		if (t1 instanceof StatoFunzionalita ) {
-			ret = (T2) statoFunzionalitaToBool( (StatoFunzionalita) t1);
-		}
-		
-		return ret;
-	}*/
 	
 
 }

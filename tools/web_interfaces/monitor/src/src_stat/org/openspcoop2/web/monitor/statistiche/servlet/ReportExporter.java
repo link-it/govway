@@ -169,11 +169,14 @@ public class ReportExporter extends HttpServlet{
 			
 			String r = getServletConfig().getInitParameter("resource");
 			if("config".equals(r)){
-				this.getConfigurazione(req, resp, user);
+				ConfigurazioniGeneraliService service = new ConfigurazioniGeneraliService();
+				generaConfigurazione(req, resp, user, service);
 				ReportExporter.log.debug("[mittente: "+bfSource.toString()+"] richiesta report configurazione completata");
 			}
 			else if("stat".equals(r)){
-				this.getStatistiche(req, resp, user);
+				org.openspcoop2.web.monitor.statistiche.dao.StatisticheGiornaliereService service =
+						new org.openspcoop2.web.monitor.statistiche.dao.StatisticheGiornaliereService();
+				generaStatistiche(req, resp, user, service);
 				ReportExporter.log.debug("[mittente: "+bfSource.toString()+"] richiesta report statistica completata");
 			}
 			else{
@@ -199,13 +202,13 @@ public class ReportExporter extends HttpServlet{
 			
 	}
 	
-	private void getConfigurazione(HttpServletRequest req, HttpServletResponse resp, UserDetailsBean user) throws Exception{
+	public static void generaConfigurazione(HttpServletRequest req, HttpServletResponse resp, UserDetailsBean user,
+			ConfigurazioniGeneraliService service) throws Exception{
 		
 		try{	
 			ConfigurazioniGeneraliSearchForm searchForm = new ConfigurazioniGeneraliSearchForm();
 			searchForm.setUser(user.getUtente());
 			
-			ConfigurazioniGeneraliService service = new ConfigurazioniGeneraliService();
 			service.setSearch(searchForm);
 			
 			searchForm.setTipologiaRicerca(CostantiExporter.RICERCA_INGRESSO); 
@@ -252,15 +255,15 @@ public class ReportExporter extends HttpServlet{
 			else{
 				throw new ParameterUncorrectException("Parametro obbligatorio '"+CostantiExporter.TIPOLOGIA+"' non fornito");
 			}
-			PddRuolo pddRuolo = null;
 			if(CostantiExporter.TIPOLOGIA_EROGAZIONE.equals(tipologiaTransazione)){
-				pddRuolo = PddRuolo.APPLICATIVA;
+				searchForm.setTipologiaRicerca(CostantiExporter.RICERCA_INGRESSO);
+				searchForm.setTipologiaTransazioni(PddRuolo.APPLICATIVA);
 			}
 			else if(CostantiExporter.TIPOLOGIA_FRUIZIONE.equals(tipologiaTransazione)){
-				pddRuolo = PddRuolo.DELEGATA;
+				searchForm.setTipologiaRicerca(CostantiExporter.RICERCA_USCITA);
+				searchForm.setTipologiaTransazioni(PddRuolo.DELEGATA);
 			}
-			searchForm.setTipologiaRicerca(pddRuolo.getValue());
-			searchForm.setTipologiaTransazioni(pddRuolo);
+			searchForm.saveProtocollo();
 			
 			
 			
@@ -269,7 +272,7 @@ public class ReportExporter extends HttpServlet{
 			builder.toString();
 			ReportExporter.log.debug("Lettura parametri completata, search form: "+bf.toString());
 			
-			ConfigurazioniExporter.export(req, resp, true, service, null, pddRuolo);
+			ConfigurazioniExporter.export(req, resp, true, service, null, searchForm.getTipologiaTransazioni());
 			
 		}catch(Throwable e){
 			ReportExporter.log.error(e.getMessage(),e);
@@ -277,7 +280,8 @@ public class ReportExporter extends HttpServlet{
 		}
 	}
 	
-	private void getStatistiche(HttpServletRequest req, HttpServletResponse resp, UserDetailsBean user) throws Exception{
+	public static void generaStatistiche(HttpServletRequest req, HttpServletResponse resp, UserDetailsBean user,
+			org.openspcoop2.web.monitor.statistiche.dao.StatisticheGiornaliereService service) throws Exception{
 		
 		try{	
 			
@@ -305,6 +309,35 @@ public class ReportExporter extends HttpServlet{
 						+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.TIPI_FORMATO);
 			}
 			
+			// Comprensione claim
+			org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tokenClaim = null;
+			if(CostantiExporter.TIPO_DISTRIBUZIONE_TOKEN_INFO.equals(tipoDistribuzioneReport)){
+				String claim = req.getParameter(CostantiExporter.CLAIM);
+				if(claim==null){
+					throw new ParameterUncorrectException("Parametro obbligatorio '"+CostantiExporter.CLAIM+"' non fornito");
+				}
+				claim=claim.trim();
+				if(CostantiExporter.CLAIMS.contains(claim) == false){
+					throw new ParameterUncorrectException("Parametro '"+CostantiExporter.CLAIM+"' fornito possiede un valore '"+claim
+							+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.CLAIMS);
+				}
+				if(CostantiExporter.CLAIM_ISSUER.equals(claim)) {
+					tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_issuer;
+				}
+				else if(CostantiExporter.CLAIM_SUBJECT.equals(claim)) {
+					tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_subject;
+				}
+				else if(CostantiExporter.CLAIM_USERNAME.equals(claim)) {
+					tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_username;
+				}
+				else if(CostantiExporter.CLAIM_CLIENT_ID.equals(claim)) {
+					tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_clientId;
+				}
+				else if(CostantiExporter.CLAIM_EMAIL.equals(claim)) {
+					tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_eMail;
+				}
+			}
+			
 			StatsSearchForm statSearchForm = null;
 			if(CostantiExporter.TIPO_DISTRIBUZIONE_PERSONALIZZATA.equals(tipoDistribuzioneReport)){
 				statSearchForm = new StatistichePersonalizzateSearchForm();
@@ -321,10 +354,7 @@ public class ReportExporter extends HttpServlet{
 			// Istanzio bean
 			
 			ReportExporter.log.debug("Inizializzazione bean ["+tipoDistribuzioneReport+"] in corso ...");
-			
-			org.openspcoop2.web.monitor.statistiche.dao.StatisticheGiornaliereService service =
-					new org.openspcoop2.web.monitor.statistiche.dao.StatisticheGiornaliereService();
-			
+						
 			BaseStatsMBean<?, ?, ?> bean = null;
 			if(CostantiExporter.TIPO_DISTRIBUZIONE_TEMPORALE.equals(tipoDistribuzioneReport)){
 				statSearchForm.setTipoStatistica(TipoStatistica.ANDAMENTO_TEMPORALE);
@@ -378,8 +408,28 @@ public class ReportExporter extends HttpServlet{
 				((DistribuzionePerAzioneBean<?>) bean).setSearch(statSearchForm);
 				((DistribuzionePerAzioneBean<?>) bean).getSearch().initSearchListener(null);
 			}
-			else if(CostantiExporter.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO.equals(tipoDistribuzioneReport)){
+			else if(CostantiExporter.TIPO_DISTRIBUZIONE_APPLICATIVO.equals(tipoDistribuzioneReport)){
 				statSearchForm.setTipoStatistica(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO);
+				statSearchForm.setRiconoscimento(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO);
+				service.setDistribSaSearch(statSearchForm);
+				bean = new DistribuzionePerSABean<>();
+				((DistribuzionePerSABean<?>) bean).setStatisticheGiornaliereService(service);
+				((DistribuzionePerSABean<?>) bean).setSearch(statSearchForm);
+				((DistribuzionePerSABean<?>) bean).getSearch().initSearchListener(null);
+			}
+			else if(CostantiExporter.TIPO_DISTRIBUZIONE_IDENTIFICATIVO_AUTENTICATO.equals(tipoDistribuzioneReport)){
+				statSearchForm.setTipoStatistica(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO);
+				statSearchForm.setRiconoscimento(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO);
+				service.setDistribSaSearch(statSearchForm);
+				bean = new DistribuzionePerSABean<>();
+				((DistribuzionePerSABean<?>) bean).setStatisticheGiornaliereService(service);
+				((DistribuzionePerSABean<?>) bean).setSearch(statSearchForm);
+				((DistribuzionePerSABean<?>) bean).getSearch().initSearchListener(null);
+			}
+			else if(CostantiExporter.TIPO_DISTRIBUZIONE_TOKEN_INFO.equals(tipoDistribuzioneReport)){
+				statSearchForm.setTipoStatistica(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO);
+				statSearchForm.setRiconoscimento(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
+				statSearchForm.setTokenClaim(tokenClaim.name());
 				service.setDistribSaSearch(statSearchForm);
 				bean = new DistribuzionePerSABean<>();
 				((DistribuzionePerSABean<?>) bean).setStatisticheGiornaliereService(service);
@@ -400,6 +450,7 @@ public class ReportExporter extends HttpServlet{
 			
 			ReportExporter.log.debug("Imposto parametri di ricerca nel search form ...");
 			setParametersInSearchForm(req, statSearchForm);
+			statSearchForm.saveProtocollo();
 			
 			StringBuffer bf = new StringBuffer();
 			ReflectionToStringBuilder builder = new ReflectionToStringBuilder(statSearchForm, ToStringStyle.MULTI_LINE_STYLE, bf, null, false, false);
@@ -418,6 +469,12 @@ public class ReportExporter extends HttpServlet{
 			else if(CostantiExporter.TIPO_FORMATO_PDF.equals(tipoFormato)){
 				bean.esportaPdf(resp);
 			}
+			else if(CostantiExporter.TIPO_FORMATO_XML.equals(tipoFormato)){
+				bean.esportaXml(resp);
+			}
+			else if(CostantiExporter.TIPO_FORMATO_JSON.equals(tipoFormato)){
+				bean.esportaJson(resp);
+			}
 			
 			ReportExporter.log.debug("Esportazione["+tipoFormato+"] tramite bean ["+tipoDistribuzioneReport+"] completata");
 			
@@ -428,7 +485,7 @@ public class ReportExporter extends HttpServlet{
 	}
 
 
-	private void setParametersInSearchForm(HttpServletRequest req,StatsSearchForm statSearchForm ) throws Exception{
+	private static void setParametersInSearchForm(HttpServletRequest req,StatsSearchForm statSearchForm ) throws Exception{
 		// Andare in ordine con l'xhtml dei search form
 		
 		
@@ -814,20 +871,21 @@ public class ReportExporter extends HttpServlet{
 	}
 	
 	
-	private class ParameterUncorrectException extends Exception {
+}
 
-		/**     
-		 * serialVersionUID
-		 */
-		private static final long serialVersionUID = 1L;
+class ParameterUncorrectException extends Exception {
 
-		public ParameterUncorrectException(String message, Throwable cause){
-			super(message, cause);
-		}
+	/**     
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
 
-		public ParameterUncorrectException(String msg) {
-			super(msg);
-		}
-
+	public ParameterUncorrectException(String message, Throwable cause){
+		super(message, cause);
 	}
+
+	public ParameterUncorrectException(String msg) {
+		super(msg);
+	}
+
 }

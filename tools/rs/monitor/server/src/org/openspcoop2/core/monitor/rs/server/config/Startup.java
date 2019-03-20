@@ -29,7 +29,11 @@ import java.util.Properties;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.openspcoop2.core.config.driver.ExtendedInfoManager;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
 /**
  * Questa classe si occupa di inizializzare tutte le risorse necessarie al webService.
@@ -130,10 +134,41 @@ public class Startup implements ServletContextListener {
 				return;
 			}
 			
-//			if(DriverMonitor.initialize(Startup.log)==false){
-//				return;
-//			}
+			Startup.log.info("Inizializzazione DBManager in corso...");
+			try{
+				DatasourceProperties dbProperties = DatasourceProperties.getInstance();
+				DBManager.initialize(dbProperties.getDbDataSource(), dbProperties.getDbDataSourceContext(),
+						dbProperties.getDbTipoDatabase(), dbProperties.isShowSql());
+			}catch(Exception e){
+				throw new RuntimeException(e.getMessage(),e);
+			}
+			Startup.log.info("Inizializzazione DBManager effettuata con successo");
 			
+			Startup.log.info("Inizializzazione ExtendedInfoManager in corso...");
+			try{
+				ExtendedInfoManager.initialize(new Loader(), null, null, null);
+			}catch(Exception e){
+				throw new RuntimeException(e.getMessage(),e);
+			}
+			Startup.log.info("Inizializzazione ExtendedInfoManager effettuata con successo");
+			
+			Startup.log.info("Inizializzazione ProtocolFactoryManager in corso...");
+			ServerProperties properties = null;
+			try {
+				properties = ServerProperties.getInstance();
+				ConfigurazionePdD configPdD = new ConfigurazionePdD();
+				configPdD.setAttesaAttivaJDBC(-1);
+				configPdD.setCheckIntervalJDBC(-1);
+				configPdD.setLoader(new Loader(Startup.class.getClassLoader()));
+				configPdD.setLog(Startup.log);
+				ProtocolFactoryManager.initialize(Startup.log, configPdD,
+						properties.getProtocolloDefault());
+			} catch (Exception e) {
+				throw new RuntimeException(e.getMessage(),e);
+			}
+			Startup.log.info("ProtocolFactoryManager DBManager effettuata con successo");
+			
+						
 			Startup.initializedResources = true;
 			
 			Startup.log.info("Inizializzazione rs api monitor effettuata con successo.");

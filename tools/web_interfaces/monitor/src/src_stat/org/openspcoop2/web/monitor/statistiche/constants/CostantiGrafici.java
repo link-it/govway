@@ -162,9 +162,13 @@ public class CostantiGrafici {
 	public static final String CSV_EXPORT_MESSAGGIO_ERRORE = "Si e' verificato un errore durante l'export in formato CSV.";
 	public static final String PDF_EXPORT_MESSAGGIO_ERRORE = "Si e' verificato un errore durante l'export in formato PDF.";
 	public static final String XLS_EXPORT_MESSAGGIO_ERRORE = "Si e' verificato un errore durante l'export in formato XLS.";
+	public static final String XML_EXPORT_MESSAGGIO_ERRORE = "Si e' verificato un errore durante l'export in formato XML.";
+	public static final String JSON_EXPORT_MESSAGGIO_ERRORE = "Si e' verificato un errore durante l'export in formato JSON.";
 	public static final String PDF_EXTENSION = ".pdf";
 	public static final String XLS_EXTENSION = ".xls";
 	public static final String CSV_EXTENSION = ".csv";
+	public static final String XML_EXTENSION = ".xml";
+	public static final String JSON_EXTENSION = ".json";
 	
 	
 	public static final String NUMERO_TRANSAZIONI_LABEL = "Numero Transazioni";

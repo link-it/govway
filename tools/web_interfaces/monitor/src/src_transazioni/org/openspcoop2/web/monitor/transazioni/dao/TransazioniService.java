@@ -65,6 +65,7 @@ import org.openspcoop2.generic_project.expression.Index;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.engine.condition.FilterImpl;
 import org.openspcoop2.monitor.engine.config.BasicServiceLibrary;
@@ -294,6 +295,9 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	public TransazioniService(Connection con, boolean autoCommit, Logger log) {
+		this(con,autoCommit, null, log);
+	}
+	public TransazioniService(Connection con, boolean autoCommit, ServiceManagerProperties serviceManagerProperties, Logger log) {
 		this.log =  log;
 		try {
 
@@ -301,22 +305,22 @@ public class TransazioniService implements ITransazioniService {
 			
 			// init Service Manager (Transazioni.plugins)
 			this.transazioniPluginsServiceManager = 
-					(org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.transazioni.utils.ProjectInfo.getInstance(),con,autoCommit,this.log);
+					(org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.transazioni.utils.ProjectInfo.getInstance(),con,autoCommit,serviceManagerProperties,this.log);
 			this.confTransazioneSearchDAO = this.transazioniPluginsServiceManager
 					.getConfigurazioneTransazioneServiceSearch();
 
 			// init Service Manager (ricerche.plugins)
 			this.ricerchePluginsServiceManager = 
-					(org.openspcoop2.monitor.engine.config.ricerche.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.ricerche.utils.ProjectInfo.getInstance(),con,autoCommit,this.log);
+					(org.openspcoop2.monitor.engine.config.ricerche.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.ricerche.utils.ProjectInfo.getInstance(),con,autoCommit,serviceManagerProperties,this.log);
 
 			// init Service Manager (base.plugins)
 			this.basePluginsServiceManager = 
-					(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),con,autoCommit,this.log);
+					(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),con,autoCommit,serviceManagerProperties, this.log);
 			this.confSerAzSearchDAO = this.basePluginsServiceManager
 					.getConfigurazioneServizioAzioneServiceSearch();
 
 			this.transazioniServiceManager = 
-					(org.openspcoop2.core.transazioni.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(),con,autoCommit,this.log);
+					(org.openspcoop2.core.transazioni.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(),con,autoCommit,serviceManagerProperties,this.log);
 
 			this.transazioniSearchDAO = this.transazioniServiceManager.getTransazioneServiceSearch();
 			this.transazioniDAO = this.transazioniServiceManager.getTransazioneService();
@@ -326,7 +330,7 @@ public class TransazioniService implements ITransazioniService {
 			this.transazioniFieldConverter = ((IDBServiceUtilities<?>)this.transazioniSearchDAO).getFieldConverter(); 
 
 			this.utilsServiceManager = 
-					(org.openspcoop2.core.commons.search.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(), con,autoCommit,this.log);
+					(org.openspcoop2.core.commons.search.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(), con,autoCommit,serviceManagerProperties,this.log);
 			
 			PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(this.log);
 			

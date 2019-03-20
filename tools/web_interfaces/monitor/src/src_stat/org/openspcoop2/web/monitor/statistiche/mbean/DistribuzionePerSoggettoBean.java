@@ -555,6 +555,138 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 	}
 
 	@Override
+	public String esportaXml() {
+		try{
+			return this._esportaXml(null, true);
+		}catch(Exception e){
+			// in questo caso l'eccezione non viene mai lanciata dal metodo (useFaceContext==true)
+			// Il codice sottostante e' solo per sicurezza
+			DynamicPdDBean.log.error(e.getMessage(), e);
+			MessageUtils.addErrorMsg("Si e' verificato un errore inatteso:"	+ e.getMessage());
+			return null;
+		}
+	}
+	@Override
+	public void esportaXml(HttpServletResponse response) throws Exception {
+		this._esportaXml(response, false);
+	}
+	private String _esportaXml(HttpServletResponse responseParam, boolean useFaceContext) throws Exception {
+		log.debug("Export in formato XML in corso...."); 
+		String fileExt = CostantiGrafici.XML_EXTENSION;
+		String filename = this.getExportFilename()+fileExt;
+
+		try {	
+
+			HttpServletResponse response = null;
+			FacesContext context = null;
+			if(useFaceContext){
+				// We must get first our context
+				context = FacesContext.getCurrentInstance();
+
+				// Then we have to get the Response where to write our file
+				response = (HttpServletResponse) context
+						.getExternalContext().getResponse();
+			}
+			else{
+				response = responseParam;
+			}
+
+			response.reset();
+
+			// Setto Proprietà Export File
+			HttpUtilities.setOutputFile(response, true, filename);
+
+			response.setStatus(200);
+
+			response.getOutputStream().write(this.getXml().getBytes());
+			response.getOutputStream().flush();
+			
+			if(useFaceContext){
+				context.responseComplete();
+			}
+
+			// End of the method
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			if(useFaceContext){
+				FacesContext.getCurrentInstance().responseComplete();
+				MessageUtils.addErrorMsg(CostantiGrafici.XML_EXPORT_MESSAGGIO_ERRORE);
+			}
+			else{
+				throw e;
+			}
+		}
+
+		return null;
+	}
+	
+	@Override
+	public String esportaJson() {
+		try{
+			return this._esportaJson(null, true);
+		}catch(Exception e){
+			// in questo caso l'eccezione non viene mai lanciata dal metodo (useFaceContext==true)
+			// Il codice sottostante e' solo per sicurezza
+			DynamicPdDBean.log.error(e.getMessage(), e);
+			MessageUtils.addErrorMsg("Si e' verificato un errore inatteso:"	+ e.getMessage());
+			return null;
+		}
+	}
+	@Override
+	public void esportaJson(HttpServletResponse response) throws Exception {
+		this._esportaJson(response, false);
+	}
+	private String _esportaJson(HttpServletResponse responseParam, boolean useFaceContext) throws Exception {
+		log.debug("Export in formato JSON in corso...."); 
+		String fileExt = CostantiGrafici.JSON_EXTENSION;
+		String filename = this.getExportFilename()+fileExt;
+
+		try {	
+
+			HttpServletResponse response = null;
+			FacesContext context = null;
+			if(useFaceContext){
+				// We must get first our context
+				context = FacesContext.getCurrentInstance();
+
+				// Then we have to get the Response where to write our file
+				response = (HttpServletResponse) context
+						.getExternalContext().getResponse();
+			}
+			else{
+				response = responseParam;
+			}
+
+			response.reset();
+
+			// Setto Proprietà Export File
+			HttpUtilities.setOutputFile(response, true, filename);
+
+			response.setStatus(200);
+
+			response.getOutputStream().write(this.getJson().getBytes());
+			response.getOutputStream().flush();
+			
+			if(useFaceContext){
+				context.responseComplete();
+			}
+
+			// End of the method
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			if(useFaceContext){
+				FacesContext.getCurrentInstance().responseComplete();
+				MessageUtils.addErrorMsg(CostantiGrafici.JSON_EXPORT_MESSAGGIO_ERRORE);
+			}
+			else{
+				throw e;
+			}
+		}
+
+		return null;
+	}
+	
+	@Override
 	public String getExportFilename() {
 		if(((StatsSearchForm)this.search).isDistribuzionePerSoggettoRemota())
 			return CostantiGrafici.DISTRIBUZIONE_SOGGETTO_REMOTO_FILE_NAME;

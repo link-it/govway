@@ -59,8 +59,6 @@
 	<var name="jsf_api_jar" value="" />
 	<var name="el_impl_jar" value="" />
 	<var name="el-api-1.0.jar" value="" />
-	<var name="jsf_module_jar" value="" />
-	<var name="wildfly_module_jar" value="" />
 	<var name="jboss_classloading" value="" />
 	<var name="jboss_scanning" value="" />
 	<var name="jboss_deployment_structure" value="" />
@@ -179,29 +177,6 @@
 			<var name="el-api-1.0.jar" value="el-api-1.0.jar" />
 		</then>
 	</if>
-	
-	<!-- JSF Module -->
-	<if>
-		<and>
-			<matches string="${as}" pattern="wildfly.*"/>
-			<equals arg1="${buildJsfAsModule}" arg2="false"/>
-		</and>
-		<then>
-			<var name="jsf_module_jar" value="*.jar" />
-		</then>
-	</if>
-	<if>
-		<and>
-			<or>
-				<matches string="${as}" pattern="wildfly8"/>
-				<matches string="${as}" pattern="wildfly9"/>
-			</or>
-			<equals arg1="${buildJsfAsModule}" arg2="false"/>
-		</and>
-		<then>
-			<var name="wildfly_module_jar" value="*.jar" />
-		</then>
-	</if>	
 
 	<!-- jboss_classloading -->
 	<if>
@@ -283,7 +258,7 @@
 	<!-- Compilazioni dipendenze -->
 	<target name="compile_dipendenze_apiRS">
 		<if>
-			<istrue value="${buildPddMonitor}"/>
+			<istrue value="${buildGovwayMonitorCore}"/>
 			<then>
 				<runtarget target="compile_dipendenze_apiRS_invoke" />
 			</then>

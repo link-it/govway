@@ -31,6 +31,8 @@ public enum FormatoReportEnum {
 CSV("csv"),
   PDF("pdf"),
   XLS("xls"),
+  XML("xml"),
+  JSON("json"),
   PNG("png");
 
   private String value;

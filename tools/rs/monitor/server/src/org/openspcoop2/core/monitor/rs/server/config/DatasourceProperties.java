@@ -168,5 +168,9 @@ public class DatasourceProperties {
 		return this.readProperty(true, "db.tipoDatabase");
 	}
 	
+	public boolean isShowSql() throws UtilsException{
+		return Boolean.parseBoolean(this.readProperty(true, "db.showSql"));
+	}
+	
 
 }

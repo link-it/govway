@@ -32,6 +32,15 @@ import javax.validation.Valid;
 
 public class RicercaBaseTransazione  {
   
+  @Schema(description = "")
+  private Integer offset = 0;
+  
+  @Schema(description = "")
+  private Integer limit = null;
+  
+  @Schema(example = "+name", description = "")
+  private String sort = null;
+  
   @Schema(required = true, description = "")
   private FiltroTemporale intervalloTemporale = null;
   
@@ -52,6 +61,63 @@ public class RicercaBaseTransazione  {
    * Eevento da ricercare per una transazione  
   **/
   private String evento = null;
+ /**
+   * Get offset
+   * @return offset
+  **/
+  @JsonProperty("offset")
+  @Valid
+  public Integer getOffset() {
+    return this.offset;
+  }
+
+  public void setOffset(Integer offset) {
+    this.offset = offset;
+  }
+
+  public RicercaBaseTransazione offset(Integer offset) {
+    this.offset = offset;
+    return this;
+  }
+
+ /**
+   * Get limit
+   * @return limit
+  **/
+  @JsonProperty("limit")
+  @Valid
+  public Integer getLimit() {
+    return this.limit;
+  }
+
+  public void setLimit(Integer limit) {
+    this.limit = limit;
+  }
+
+  public RicercaBaseTransazione limit(Integer limit) {
+    this.limit = limit;
+    return this;
+  }
+
+ /**
+   * Get sort
+   * @return sort
+  **/
+  @JsonProperty("sort")
+  @Valid
+  public String getSort() {
+    return this.sort;
+  }
+
+  public void setSort(String sort) {
+    this.sort = sort;
+  }
+
+  public RicercaBaseTransazione sort(String sort) {
+    this.sort = sort;
+    return this;
+  }
+
  /**
    * Get intervalloTemporale
    * @return intervalloTemporale
@@ -174,6 +240,9 @@ public class RicercaBaseTransazione  {
     StringBuilder sb = new StringBuilder();
     sb.append("class RicercaBaseTransazione {\n");
     
+    sb.append("    offset: ").append(RicercaBaseTransazione.toIndentedString(this.offset)).append("\n");
+    sb.append("    limit: ").append(RicercaBaseTransazione.toIndentedString(this.limit)).append("\n");
+    sb.append("    sort: ").append(RicercaBaseTransazione.toIndentedString(this.sort)).append("\n");
     sb.append("    intervalloTemporale: ").append(RicercaBaseTransazione.toIndentedString(this.intervalloTemporale)).append("\n");
     sb.append("    tipo: ").append(RicercaBaseTransazione.toIndentedString(this.tipo)).append("\n");
     sb.append("    api: ").append(RicercaBaseTransazione.toIndentedString(this.api)).append("\n");

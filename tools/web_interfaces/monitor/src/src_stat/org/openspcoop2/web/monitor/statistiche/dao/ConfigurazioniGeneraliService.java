@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.web.monitor.statistiche.dao;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -73,6 +74,7 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -125,20 +127,62 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 	public ConfigurazioniGeneraliService(){
 		try{
 			this.dynamicService = new DynamicUtilsService();
-
+			
 			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
 					.getInstance( ConfigurazioniGeneraliService.log).getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(), ConfigurazioniGeneraliService.log);
-
+		
+			this._init(null, null);
+			
+		}catch(Exception e){
+			ConfigurazioniGeneraliService.log.error("Errore durante la creazione del Service: " + e.getMessage(),e);
+		}
+	}
+	public ConfigurazioniGeneraliService(Connection con, boolean autoCommit){
+		this(con, autoCommit, null, ConfigurazioniGeneraliService.log);
+	}
+	public ConfigurazioniGeneraliService(Connection con, boolean autoCommit, Logger log){
+		this(con, autoCommit, null, log);
+	}
+	public ConfigurazioniGeneraliService(Connection con, boolean autoCommit, ServiceManagerProperties serviceManagerProperties){
+		this(con, autoCommit, serviceManagerProperties, ConfigurazioniGeneraliService.log);
+	}
+	public ConfigurazioniGeneraliService(Connection con, boolean autoCommit, ServiceManagerProperties serviceManagerProperties, Logger log){
+		try{
+			this.dynamicService = new DynamicUtilsService(con,autoCommit,serviceManagerProperties,log);
+			
+			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
+					.getInstance( ConfigurazioniGeneraliService.log).getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(), con,autoCommit,serviceManagerProperties,log);
+		
+			this._init(con, serviceManagerProperties);
+			
+		}catch(Exception e){
+			ConfigurazioniGeneraliService.log.error("Errore durante la creazione del Service: " + e.getMessage(),e);
+		}
+	}
+	private void _init(Connection con, ServiceManagerProperties serviceManagerProperties) {
+		try{
 			this.portaApplicativaDAO = this.utilsServiceManager.getPortaApplicativaServiceSearch();
 			this.portaDelegataDAO = this.utilsServiceManager.getPortaDelegataServiceSearch();
 
-			String tipoDatabase = DAOFactoryProperties.getInstance(ConfigurazioniGeneraliService.log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
-			String datasourceJNDIName = DAOFactoryProperties.getInstance(ConfigurazioniGeneraliService.log).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
-			Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(ConfigurazioniGeneraliService.log).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
-
-
-			this.driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, ConfigurazioniGeneraliService.log, tipoDatabase);
-			this.driverRegistroDB = new DriverRegistroServiziDB(datasourceJNDIName,datasourceJNDIContext, ConfigurazioniGeneraliService.log, tipoDatabase);
+			String tipoDatabase = null;
+			if(serviceManagerProperties!=null) {
+				tipoDatabase = serviceManagerProperties.getDatabaseType();
+			}
+			else {
+				tipoDatabase = DAOFactoryProperties.getInstance(ConfigurazioniGeneraliService.log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			}
+			
+			if(con!=null) {
+				this.driverConfigDB = new DriverConfigurazioneDB(con, ConfigurazioniGeneraliService.log, tipoDatabase);
+				this.driverRegistroDB = new DriverRegistroServiziDB(con, ConfigurazioniGeneraliService.log, tipoDatabase);
+			}
+			else {
+				String datasourceJNDIName = DAOFactoryProperties.getInstance(ConfigurazioniGeneraliService.log).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+				Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(ConfigurazioniGeneraliService.log).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+	
+				this.driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, ConfigurazioniGeneraliService.log, tipoDatabase);
+				this.driverRegistroDB = new DriverRegistroServiziDB(datasourceJNDIName,datasourceJNDIContext, ConfigurazioniGeneraliService.log, tipoDatabase);
+			}
 
 			ConfigurazioneProtocolli configProtocolli = this.driverConfigDB.getConfigurazioneGenerale().getProtocolli();
 			this.endpointApplicativoPD = new Hashtable<>();

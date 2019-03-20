@@ -21,7 +21,6 @@
  */
 package org.openspcoop2.utils.beans;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +67,11 @@ public class BeanUtils {
 	}
 	public static void copy(Logger logParam, Object oggettoDestinazione,
 			Object oggettoOriginale, List<BlackListElement> metodiEsclusi) {
+		copy(logParam, oggettoDestinazione, oggettoOriginale, metodiEsclusi, false);
+	}
+	public static void copy(Logger logParam, Object oggettoDestinazione,
+			Object oggettoOriginale, List<BlackListElement> metodiEsclusi,
+			boolean throwRuntimeException) {
 
 		//check esistenza oggetti da copiare.
 		if (oggettoDestinazione == null || oggettoOriginale == null) {
@@ -105,50 +109,51 @@ public class BeanUtils {
 					if (!metodiEsclusi.contains(ble)) {
 						String getPrefix = "get";
 
-						// caso particolare: i getter che restituiscono boolean
-						// o Boolean hanno il nome che inizia per 'is'
-						if (oggettoDestinazioneMethod.getParameterTypes()[0]
-								.equals(Boolean.class)
-								|| oggettoDestinazioneMethod
-								.getParameterTypes()[0]
-										.equals(boolean.class)) {
-							getPrefix = "is";
-						}
-
-						// calcolo il nome del metodo getter corrispondente nell'oggetto origine;
-						String getterName = getPrefix
-								+ setterName.substring(setterName
+						String name = setterName.substring(setterName
 										.lastIndexOf("set") + 3);
-						//		logParam.debug("Nome Getter: " + getterName);
-
-						// prelevo il metodo getter.
-						Method oggettoOriginaleMethod = oggettoOriginaleClass
-								.getMethod(getterName);
-
-						// invoco il getter nell'oggetto origine per ottenere il valore da settare nell'oggetto destinazione.
-						if (oggettoOriginaleMethod != null) {
-							Object retObj = oggettoOriginaleMethod.invoke(
-									oggettoOriginale);
-
-							// prelevo il valore e lo utilizzo come parametro del metodo setter. 
-							if (retObj != null) {
-								oggettoDestinazioneMethod.invoke(
-										oggettoDestinazione, retObj);
+						try {
+						
+							// caso particolare: i getter che restituiscono boolean
+							// o Boolean hanno il nome che inizia per 'is'
+							if (oggettoDestinazioneMethod.getParameterTypes()[0]
+									.equals(Boolean.class)
+									|| oggettoDestinazioneMethod
+									.getParameterTypes()[0]
+											.equals(boolean.class)) {
+								getPrefix = "is";
 							}
+	
+							// calcolo il nome del metodo getter corrispondente nell'oggetto origine;
+							String getterName = getPrefix+ name;
+							//		logParam.debug("Nome Getter: " + getterName);
+	
+							// prelevo il metodo getter.
+							Method oggettoOriginaleMethod = oggettoOriginaleClass
+									.getMethod(getterName);
+	
+							// invoco il getter nell'oggetto origine per ottenere il valore da settare nell'oggetto destinazione.
+							if (oggettoOriginaleMethod != null) {
+								Object retObj = oggettoOriginaleMethod.invoke(
+										oggettoOriginale);
+	
+								// prelevo il valore e lo utilizzo come parametro del metodo setter. 
+								if (retObj != null) {
+									oggettoDestinazioneMethod.invoke(
+											oggettoDestinazione, retObj);
+								}
+							}
+						}catch(Throwable e) {
+							throw new Exception("[field '"+name+"'] "+e.getMessage(),e);
 						}
+			
 					}
 				}
 			}
-		} catch (IllegalAccessException e) {
-			logParam.error("Errore: Illegal Access Exception! ", e);
-		} catch (SecurityException e) {
-			logParam.error("Errore: Security Exception! ", e);
-		} catch (NoSuchMethodException e) {
-			logParam.error("Errore: No such method Exception! ", e);
-		} catch (IllegalArgumentException e) {
-			logParam.error("Errore: Illegal Argument Exception! ", e);
-		} catch (InvocationTargetException e) {
-			logParam.error("Errore: Invocation Target Exception! ", e);
+		}catch (Throwable e) {
+			logParam.error(e.getMessage(), e);
+			if(throwRuntimeException) {
+				throw new RuntimeException(e.getMessage(),e);
+			}
 		}
 	}
 }

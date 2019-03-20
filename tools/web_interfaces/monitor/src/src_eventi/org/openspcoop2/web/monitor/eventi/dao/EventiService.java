@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.web.monitor.eventi.dao;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -38,6 +39,7 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.Index;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.SortOrder;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.slf4j.Logger;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
@@ -97,6 +99,31 @@ public class EventiService implements IEventiService{
 			this.pluginsServiceManager = (IServiceManager) DAOFactory
 					.getInstance(EventiService.log).getServiceManager(
 							org.openspcoop2.core.eventi.utils.ProjectInfo.getInstance(),EventiService.log);
+			this.eventiDao = this.pluginsServiceManager
+					.getEventoServiceSearch();
+			
+			this.initForceIndex(PddMonitorProperties.getInstance(EventiService.log));
+			
+		} catch (Exception e) {
+			EventiService.log.error(e.getMessage(), e);
+		}
+	}
+	
+	public EventiService(Connection con, boolean autoCommit){
+		this(con, autoCommit, null, EventiService.log);
+	}
+	public EventiService(Connection con, boolean autoCommit, Logger log){
+		this(con, autoCommit, null, log);
+	}
+	public EventiService(Connection con, boolean autoCommit, ServiceManagerProperties serviceManagerProperties){
+		this(con, autoCommit, serviceManagerProperties, EventiService.log);
+	}
+	public EventiService(Connection con, boolean autoCommit, ServiceManagerProperties serviceManagerProperties, Logger log){
+		try {
+			// init Service Manager plugins
+			this.pluginsServiceManager = (IServiceManager) DAOFactory
+					.getInstance(log).getServiceManager(
+							org.openspcoop2.core.eventi.utils.ProjectInfo.getInstance(),con,autoCommit,serviceManagerProperties,log);
 			this.eventiDao = this.pluginsServiceManager
 					.getEventoServiceSearch();
 			

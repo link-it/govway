@@ -21,8 +21,21 @@
  */
 package org.openspcoop2.core.monitor.rs.server.api.impl;
 
+import java.sql.Connection;
+import java.text.SimpleDateFormat;
+import java.util.List;
+
 import org.joda.time.DateTime;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.monitor.rs.server.api.ReportisticaApi;
+import org.openspcoop2.core.monitor.rs.server.api.impl.utils.Converter;
+import org.openspcoop2.core.monitor.rs.server.api.impl.utils.HttpRequestWrapper;
+import org.openspcoop2.core.monitor.rs.server.api.impl.utils.SearchFormUtilities;
+import org.openspcoop2.core.monitor.rs.server.api.impl.utils.StatsGenerator;
+import org.openspcoop2.core.monitor.rs.server.api.impl.utils.TipoReport;
+import org.openspcoop2.core.monitor.rs.server.config.DBManager;
+import org.openspcoop2.core.monitor.rs.server.config.LoggerProperties;
+import org.openspcoop2.core.monitor.rs.server.config.ServerProperties;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneSimpleSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.InfoImplementazioneApi;
@@ -42,13 +55,21 @@ import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TokenClaimEnum;
 import org.openspcoop2.core.monitor.rs.server.model.UnitaTempoReportEnum;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
+import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
+import org.openspcoop2.web.monitor.core.utils.ParseUtility;
+import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
+import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioniGeneraliSearchForm;
+import org.openspcoop2.web.monitor.statistiche.constants.CostantiExporter;
+import org.openspcoop2.web.monitor.statistiche.dao.ConfigurazioniGeneraliService;
+import org.openspcoop2.web.monitor.statistiche.dao.StatisticheGiornaliereService;
 /**
  * GovWay Monitor API
  *
@@ -62,8 +83,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	}
 
 	private AuthorizationConfig getAuthorizationConfig() throws Exception{
-		// TODO: Implement ...
-		throw new Exception("NotImplemented");
+		return new AuthorizationConfig(ServerProperties.getInstance().getProperties());
 	}
 
     /**
@@ -112,10 +132,26 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
-        // TODO: Implement...
-        
-			context.getLogger().info("Invocazione completata con successo");
-        return null;
+			DBManager dbManager = DBManager.getInstance();
+			Connection connection = null;
+			try {
+				connection = dbManager.getConnection();
+				ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+				ConfigurazioniGeneraliService configurazioniService = new ConfigurazioniGeneraliService(connection, true, smp, LoggerProperties.getLoggerDAO());
+				
+				SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
+				HttpRequestWrapper request = searchFormUtilities.getHttpRequestWrapper(context, profilo, soggetto, tipo, 
+						FormatoReportEnum.CSV, TipoReport.api);
+				// TODO: altri campi..
+
+				
+				byte[]report = StatsGenerator.generateReport(request, context, configurazioniService);
+				context.getLogger().info("Invocazione completata con successo");
+		        return report;
+			}
+			finally {
+				dbManager.releaseConnection(connection);
+			}
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
@@ -129,13 +165,13 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
     }
     
     /**
-     * Consente di recuperare l&#x27;elenco delle erogazioni o fruizioni che coinvolgono il soggetto scelto
+     * Consente di recuperare l'elenco delle erogazioni o fruizioni che coinvolgono il soggetto scelto
      *
      * Ricerca le erogazioni e fruizioni registrate sul sistema filtrandole per tipologia servizio  
      *
      */
 	@Override
-    public ListaRiepilogoApi getConfigurazioneApi(TransazioneRuoloEnum tipo, ProfiloEnum profilo, String soggetto) {
+    public ListaRiepilogoApi getConfigurazioneApi(TransazioneRuoloEnum tipo, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -143,10 +179,47 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
-        // TODO: Implement...
-        
-			context.getLogger().info("Invocazione completata con successo");
-        return null;
+			DBManager dbManager = DBManager.getInstance();
+			Connection connection = null;
+			try {
+				connection = dbManager.getConnection();
+				ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+				ConfigurazioniGeneraliService configurazioniService = new ConfigurazioniGeneraliService(connection, true, smp, LoggerProperties.getLoggerDAO());
+				
+				ServerProperties serverProperties = ServerProperties.getInstance();
+				SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
+				
+				ConfigurazioniGeneraliSearchForm search = searchFormUtilities.getConfigurazioniGeneraliSearchForm(context,profilo, soggetto, tipo);
+				configurazioniService.setSearch(search);	
+				List<ConfigurazioneGenerale> listDB = configurazioniService.findAll(Converter.toOffset(offset), Converter.toLimit(limit));
+				ListaRiepilogoApi ret = ListaUtils.costruisciListaPaginata(
+						context.getServletRequest().getRequestURI(),
+						Converter.toOffset(offset), Converter.toLimit(limit), 
+						listDB!=null ? listDB.size() : 0, 
+								ListaRiepilogoApi.class
+					); 
+				
+				if ( serverProperties.isFindall404() && (listDB==null || listDB.isEmpty()) )
+					throw FaultCode.NOT_FOUND.toException("Nessuna configurazione trovata corrispondente ai criteri di ricerca");
+				
+				if(listDB!=null && !listDB.isEmpty()) {
+					listDB.forEach( configurazioneDB -> 
+						{
+							try {
+								ret.addItemsItem( Converter.toRiepilogoApiItem(configurazioneDB, this.log) );
+							} catch (Exception e) {
+								throw new RuntimeException(e.getMessage(),e);
+							}
+						}
+						);
+				}
+				
+				context.getLogger().info("Invocazione completata con successo");
+		        return ret;
+			}
+			finally {
+				dbManager.releaseConnection(connection);
+			}
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
@@ -173,12 +246,34 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
-                        
-        // TODO: Implement...
+               
+			if(body==null) {
+				FaultCode.RICHIESTA_NON_VALIDA.throwException("Body request undefined");
+			}
+			
+	        DBManager dbManager = DBManager.getInstance();
+			Connection connection = null;
+			try {
+				connection = dbManager.getConnection();
+				ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+				StatisticheGiornaliereService statisticheService = new StatisticheGiornaliereService(connection, true, smp, LoggerProperties.getLoggerDAO());
+				
+				SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
+				HttpRequestWrapper request = searchFormUtilities.getHttpRequestWrapper(context, profilo, soggetto, body.getTipo(), 
+						body.getReport().getFormato(), TipoReport.api);
+				// TODO: altri campi..
+				SimpleDateFormat sdf = new SimpleDateFormat(CostantiExporter.FORMAT_TIME);
+				request.overrideParameter(CostantiExporter.DATA_INIZIO, sdf.format(body.getIntervalloTemporale().getDataInizio().toDate()));
+				request.overrideParameter(CostantiExporter.DATA_FINE, sdf.format(body.getIntervalloTemporale().getDataFine().toDate()));
+				
+				byte[]report = StatsGenerator.generateReport(request, context, statisticheService);
+				context.getLogger().info("Invocazione completata con successo");
+		        return report;
+			}
+			finally {
+				dbManager.releaseConnection(connection);
+			}
         
-			context.getLogger().info("Invocazione completata con successo");
-        return null;
-     
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -205,10 +300,28 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
-        // TODO: Implement...
-        
-			context.getLogger().info("Invocazione completata con successo");
-        return null;
+	        DBManager dbManager = DBManager.getInstance();
+			Connection connection = null;
+			try {
+				connection = dbManager.getConnection();
+				ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+				StatisticheGiornaliereService statisticheService = new StatisticheGiornaliereService(connection, true, smp, LoggerProperties.getLoggerDAO());
+				
+				SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
+				HttpRequestWrapper request = searchFormUtilities.getHttpRequestWrapper(context, profilo, soggetto, tipo, 
+						formatoReport, TipoReport.api);
+				// TODO: altri campi..
+				SimpleDateFormat sdf = new SimpleDateFormat(CostantiExporter.FORMAT_TIME);
+				request.overrideParameter(CostantiExporter.DATA_INIZIO, sdf.format(dataInizio.toDate()));
+				request.overrideParameter(CostantiExporter.DATA_FINE, sdf.format(dataFine.toDate()));
+				
+				byte[]report = StatsGenerator.generateReport(request, context, statisticheService);
+				context.getLogger().info("Invocazione completata con successo");
+		        return report;
+			}
+			finally {
+				dbManager.releaseConnection(connection);
+			}
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
@@ -724,7 +837,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
      *
      */
 	@Override
-    public InfoImplementazioneApi getRiepilogoApi(TransazioneRuoloEnum tipo, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio) {
+    public InfoImplementazioneApi getRiepilogoApi(TransazioneRuoloEnum tipo, String nomeServizio, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String tipoServizio, Integer versioneServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -732,10 +845,34 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
-        // TODO: Implement...
-        
-			context.getLogger().info("Invocazione completata con successo");
-        return null;
+			DBManager dbManager = DBManager.getInstance();
+			Connection connection = null;
+			try {
+				connection = dbManager.getConnection();
+				ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+				ConfigurazioniGeneraliService configurazioniService = new ConfigurazioniGeneraliService(connection, true, smp, LoggerProperties.getLoggerDAO());
+				
+				ServerProperties serverProperties = ServerProperties.getInstance();
+				SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
+				
+				ConfigurazioniGeneraliSearchForm search = searchFormUtilities.getConfigurazioniGeneraliSearchForm(context,profilo, soggetto, tipo);
+				IDServizio idServizio = Converter.toIDServizio(tipo, profilo, soggetto, soggettoRemoto, nomeServizio, tipoServizio, versioneServizio);
+				search.setNomeServizio(ParseUtility.convertToServizioSoggetto(idServizio));
+				configurazioniService.setSearch(search);	
+				
+				List<ConfigurazioneGenerale> listDB_infoServizi_left = configurazioniService.findAllInformazioniServizi();
+				if ( serverProperties.isFindall404() && 
+						(listDB_infoServizi_left==null || listDB_infoServizi_left.isEmpty()) )
+					throw FaultCode.NOT_FOUND.toException("Nessuna configurazione trovata corrispondente ai criteri di ricerca");
+				
+				InfoImplementazioneApi info =  Converter.toInfoImplementazioneApi(listDB_infoServizi_left, this.log);
+				
+				context.getLogger().info("Invocazione completata con successo");
+		        return info;
+			}
+			finally {
+				dbManager.releaseConnection(connection);
+			}
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
@@ -763,10 +900,34 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
-        // TODO: Implement...
-        
-			context.getLogger().info("Invocazione completata con successo");
-        return null;
+			DBManager dbManager = DBManager.getInstance();
+			Connection connection = null;
+			try {
+				connection = dbManager.getConnection();
+				ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+				ConfigurazioniGeneraliService configurazioniService = new ConfigurazioniGeneraliService(connection, true, smp, LoggerProperties.getLoggerDAO());
+				
+				ServerProperties serverProperties = ServerProperties.getInstance();
+				SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
+				
+				ConfigurazioniGeneraliSearchForm search = searchFormUtilities.getConfigurazioniGeneraliSearchForm(context,profilo, soggetto, null);
+				configurazioniService.setSearch(search);	
+
+				List<ConfigurazioneGenerale> listDB_infoGenerali_right = configurazioniService.findAllInformazioniGenerali();
+				List<ConfigurazioneGenerale> listDB_infoServizi_left = configurazioniService.findAllInformazioniServizi();
+				if ( serverProperties.isFindall404() && 
+						(listDB_infoGenerali_right==null || listDB_infoGenerali_right.isEmpty()) && 
+						(listDB_infoServizi_left==null || listDB_infoServizi_left.isEmpty()) )
+					throw FaultCode.NOT_FOUND.toException("Nessuna configurazione trovata corrispondente ai criteri di ricerca");
+				
+				Riepilogo riepilogo =  Converter.toRiepilogo(listDB_infoGenerali_right, listDB_infoServizi_left, this.log);
+				
+				context.getLogger().info("Invocazione completata con successo");
+		        return riepilogo;
+			}
+			finally {
+				dbManager.releaseConnection(connection);
+			}
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {

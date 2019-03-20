@@ -22,7 +22,6 @@
 
 package org.openspcoop2.pdd.logger.traccia;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -49,22 +48,12 @@ import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
-import org.openspcoop2.utils.jaxrs.JacksonJsonProvider;
-import org.openspcoop2.utils.jaxrs.JacksonXmlProvider;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
-import org.openspcoop2.utils.security.JOSERepresentation;
-import org.openspcoop2.utils.security.JsonSignature;
-import org.openspcoop2.utils.security.KeyStore;
 import org.openspcoop2.utils.security.TestSignature;
 import org.openspcoop2.utils.security.XmlSignature;
 import org.openspcoop2.utils.service.beans.TransazioneBase;
-import org.openspcoop2.utils.xml.PrettyPrintXMLUtils;
-import org.openspcoop2.utils.xml.XMLUtils;
 import org.slf4j.Logger;
-import org.w3c.dom.Element;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**	
  * Client
@@ -106,43 +95,45 @@ public class Client {
 		InputStream isKeystore = TestSignature.class.getResourceAsStream("/org/openspcoop2/utils/security/keystore_example.jks");
 		File fKeystore = File.createTempFile("keystore", "jks");
 		FileSystemUtilities.writeFile(fKeystore, Utilities.getAsByteArray(isKeystore));
-		Properties signatureProps = new Properties();
-		signatureProps.put("rs.security.keystore.type", "jks");
-		signatureProps.put("rs.security.keystore.alias", "openspcoop");
-		signatureProps.put("rs.security.keystore.password", "123456");
-		signatureProps.put("rs.security.key.password", "key123456");
-		signatureProps.put("rs.security.signature.algorithm", "RS256");
-		signatureProps.put("rs.security.keystore.file", fKeystore.getPath());	
+		
+		Properties pSerializerConf = new Properties();
+		pSerializerConf.setProperty("prettyPrint", "true");
+		pSerializerConf.setProperty("xml.namespace", "http://govway.org/traccia");
+		pSerializerConf.setProperty("xml.localName", "traccia");
+		Serializer serializer = new Serializer(pSerializerConf);
+		
+		Properties pSignatureConf = new Properties();
+		pSignatureConf.setProperty("keystore.type", "jks");
+		pSignatureConf.setProperty("keystore.path", fKeystore.getPath());
+		pSignatureConf.setProperty("keystore.password", "123456");
+		pSignatureConf.setProperty("key.alias", "openspcoop");
+		pSignatureConf.setProperty("key.password", "key123456");
+		pSignatureConf.setProperty("json.signatureAlgorithm", "RS256");
+		pSignatureConf.setProperty("xml.signatureAlgorithm", XmlSignature.DEFAULT_SIGNATURE_METHOD);
+		pSignatureConf.setProperty("xml.digestAlgorithm", XmlSignature.DEFAULT_DIGEST_METHOD);
+		pSignatureConf.setProperty("xml.canonicalizationAlgorithm", XmlSignature.DEFAULT_CANONICALIZATION_METHOD);
+		pSignatureConf.setProperty("xml.addBouncyCastleProvider", "true");
+		pSignatureConf.setProperty("xml.addX509KeyInfo", "true");
+		pSignatureConf.setProperty("xml.xml_addRSAKeyInfo", "false");
+		Signature signature = new Signature(pSignatureConf);
+		signature.init();
 		
 		if("JSON".equals(tipo)) {
 			
-			ObjectMapper mapper = JacksonJsonProvider.getObjectMapper();
-			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			mapper.writer().withDefaultPrettyPrinter().writeValue(bout, transazione);
-			bout.flush();
-			bout.close();
-			System.out.println(bout.toString());
-				
-			JsonSignature jsonCompactSignature = new JsonSignature(signatureProps, JOSERepresentation.COMPACT);
-			String compactSign = jsonCompactSignature.sign(bout.toString());
+			String json = serializer.toJson(transazione);
+			System.out.println(json);
+			
+			String compactSign = signature.jsonSign(json);
 			System.out.println("JsonCompactSignature Signed: \n"+compactSign);
 			
 		}
 		else {
 		
-			ObjectMapper mapper = JacksonXmlProvider.getObjectMapper();
-			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			mapper.writer().withDefaultPrettyPrinter().writeValue(bout, transazione);
-			bout.flush();
-			bout.close();
-			System.out.println(bout.toString());
+			String xml = serializer.toXml(transazione);
+			System.out.println(xml);
 	
-			KeyStore keystore = new KeyStore(fKeystore.getAbsolutePath(), "123456");
-			XmlSignature xmlSignature = new XmlSignature(keystore, "openspcoop", "key123456");
-			xmlSignature.addX509KeyInfo();
-			Element node = XMLUtils.getInstance().newElement(bout.toByteArray());
-			xmlSignature.sign(node);
-			System.out.println("XmlSignature Signed (X509 KeyInfo): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			String xmlSign = signature.xmlSign(xml);
+			System.out.println("XmlSignature Signed (X509 KeyInfo): "+xmlSign);
 			
 		}
 		

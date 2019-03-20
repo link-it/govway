@@ -109,7 +109,7 @@ public interface ReportisticaApi  {
     /**
      * Consente di recuperare l'elenco delle erogazioni o fruizioni che coinvolgono il soggetto scelto
      *
-     * Ricerca le erogazioni e fruizioni registrate sul sistema filtrandole per tipologia servizio  
+     * Ricerca le erogazioni e fruizioni registrate sul sistema
      *
      */
     @GET
@@ -125,7 +125,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaRiepilogoApi getConfigurazioneApi(@QueryParam("tipo") @NotNull TransazioneRuoloEnum tipo, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ListaRiepilogoApi getConfigurazioneApi(@QueryParam("tipo") @NotNull TransazioneRuoloEnum tipo, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit);
 
     /**
      * Genera per mezzo di una ricerca articolata, un report statistico raggruppato per servizi
@@ -136,7 +136,7 @@ public interface ReportisticaApi  {
     @POST
     @Path("/reportistica/analisi-statistica/distribuzione-api")
     @Consumes({ "application/json" })
-    @Produces({ "text/csv", "application/pdf", "application/xls", "image/png", "application/problem+json" })
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera per mezzo di una ricerca articolata, un report statistico raggruppato per servizi", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
@@ -157,7 +157,7 @@ public interface ReportisticaApi  {
      */
     @GET
     @Path("/reportistica/analisi-statistica/distribuzione-api")
-    @Produces({ "text/csv", "application/pdf", "application/xls", "image/png", "application/problem+json" })
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico organizzato per API utilizzando una ricerca semplice", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
@@ -179,7 +179,7 @@ public interface ReportisticaApi  {
     @POST
     @Path("/reportistica/analisi-statistica/distribuzione-applicativo")
     @Consumes({ "application/json" })
-    @Produces({ "text/csv", "application/pdf", "application/xls", "image/png", "application/problem+json" })
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico per applicativo utilizzando una ricerca articolata", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
@@ -200,7 +200,7 @@ public interface ReportisticaApi  {
      */
     @GET
     @Path("/reportistica/analisi-statistica/distribuzione-applicativo")
-    @Produces({ "text/csv", "application/pdf", "application/xls", "image/png", "application/problem+json" })
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico organizzato per Applicativi utilizzando una ricerca semplice", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
@@ -222,7 +222,7 @@ public interface ReportisticaApi  {
     @POST
     @Path("/reportistica/analisi-statistica/distribuzione-azione")
     @Consumes({ "application/json" })
-    @Produces({ "text/csv", "application/pdf", "application/xls", "image/png", "application/problem+json" })
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico distribuito per azione utilizzando una ricerca articolata", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
@@ -243,7 +243,7 @@ public interface ReportisticaApi  {
      */
     @GET
     @Path("/reportistica/analisi-statistica/distribuzione-azione")
-    @Produces({ "text/csv", "application/pdf", "application/xls", "image/png", "application/problem+json" })
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico organizzato per Azioni utilizzando una ricerca semplice", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
@@ -265,7 +265,7 @@ public interface ReportisticaApi  {
     @POST
     @Path("/reportistica/analisi-statistica/distribuzione-esiti")
     @Consumes({ "application/json" })
-    @Produces({ "text/csv", "application/pdf", "application/xls", "image/png", "application/problem+json" })
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico per andamento esiti per mezzo di una ricerca articolata", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
@@ -286,7 +286,7 @@ public interface ReportisticaApi  {
      */
     @GET
     @Path("/reportistica/analisi-statistica/distribuzione-esiti")
-    @Produces({ "text/csv", "application/pdf", "application/xls", "image/png", "application/problem+json" })
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico per andamento esiti per mezzo di una ricerca semplice", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
@@ -308,7 +308,7 @@ public interface ReportisticaApi  {
     @POST
     @Path("/reportistica/analisi-statistica/distribuzione-id-autenticato")
     @Consumes({ "application/json" })
-    @Produces({ "text/csv", "application/pdf", "application/xls", "image/png", "application/problem+json" })
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico per identificativo autenticato utilizzando una ricerca articolata", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
@@ -329,7 +329,7 @@ public interface ReportisticaApi  {
      */
     @GET
     @Path("/reportistica/analisi-statistica/distribuzione-id-autenticato")
-    @Produces({ "text/csv", "application/pdf", "application/xls", "image/png", "application/problem+json" })
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico organizzato per Identificativo Autenticato utilizzando una ricerca semplice", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
@@ -351,7 +351,7 @@ public interface ReportisticaApi  {
     @POST
     @Path("/reportistica/analisi-statistica/distribuzione-soggetto-locale")
     @Consumes({ "application/json" })
-    @Produces({ "text/csv", "application/pdf", "application/xls", "image/png", "application/problem+json" })
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico raggruppato per soggetto locale per mezzo di una ricerca articolata", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
@@ -372,7 +372,7 @@ public interface ReportisticaApi  {
      */
     @GET
     @Path("/reportistica/analisi-statistica/distribuzione-soggetto-locale")
-    @Produces({ "text/csv", "application/pdf", "application/xls", "image/png", "application/problem+json" })
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico per soggetto locale per mezzo di una ricerca semplice", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
@@ -394,7 +394,7 @@ public interface ReportisticaApi  {
     @POST
     @Path("/reportistica/analisi-statistica/distribuzione-soggetto-remoto")
     @Consumes({ "application/json" })
-    @Produces({ "text/csv", "application/pdf", "application/xls", "image/png", "application/problem+json" })
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico raggruppato per soggetto remoto per mezzo di una ricerca articolata", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
@@ -415,7 +415,7 @@ public interface ReportisticaApi  {
      */
     @GET
     @Path("/reportistica/analisi-statistica/distribuzione-soggetto-remoto")
-    @Produces({ "text/csv", "application/pdf", "application/xls", "image/png", "application/problem+json" })
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico per soggetto remoto per mezzo di una ricerca semplice", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
@@ -437,7 +437,7 @@ public interface ReportisticaApi  {
     @POST
     @Path("/reportistica/analisi-statistica/distribuzione-temporale")
     @Consumes({ "application/json" })
-    @Produces({ "text/csv", "application/pdf", "application/xls", "image/png", "application/problem+json" })
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico per andamento temporale per mezzo di una ricerca articolata", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
@@ -458,7 +458,7 @@ public interface ReportisticaApi  {
      */
     @GET
     @Path("/reportistica/analisi-statistica/distribuzione-temporale")
-    @Produces({ "text/csv", "application/pdf", "application/xls", "image/png", "application/problem+json" })
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico per andamento temporale per mezzo di una ricerca semplice", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
@@ -480,7 +480,7 @@ public interface ReportisticaApi  {
     @POST
     @Path("/reportistica/analisi-statistica/distribuzione-token-info")
     @Consumes({ "application/json" })
-    @Produces({ "text/csv", "application/pdf", "application/xls", "image/png", "application/problem+json" })
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico organizzato per Token Info", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
@@ -501,7 +501,7 @@ public interface ReportisticaApi  {
      */
     @GET
     @Path("/reportistica/analisi-statistica/distribuzione-token-info")
-    @Produces({ "text/csv", "application/pdf", "application/xls", "image/png", "application/problem+json" })
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico organizzato organizzato per Token Info utilizzando una ricerca semplice", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
@@ -533,7 +533,7 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public InfoImplementazioneApi getRiepilogoApi(@QueryParam("tipo") @NotNull TransazioneRuoloEnum tipo, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("soggetto_remoto") String soggettoRemoto, @QueryParam("nome_servizio") String nomeServizio, @QueryParam("tipo_servizio") String tipoServizio, @QueryParam("versione_servizio") Integer versioneServizio);
+    public InfoImplementazioneApi getRiepilogoApi(@QueryParam("tipo") @NotNull TransazioneRuoloEnum tipo, @QueryParam("nome_servizio") @NotNull String nomeServizio, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("soggetto_remoto") String soggettoRemoto, @QueryParam("tipo_servizio") String tipoServizio, @QueryParam("versione_servizio") Integer versioneServizio);
 
     /**
      * Ottieni le informazioni generali sulle api e servizi di un soggetto

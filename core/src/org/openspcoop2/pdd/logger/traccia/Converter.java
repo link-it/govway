@@ -145,17 +145,25 @@ public class Converter {
 	public Converter(Logger log) {
 		this.log = log;
 	} 
-	public Converter(Logger log, Properties pConf) throws IllegalArgumentException, IllegalAccessException {
+	public Converter(Logger log, Properties pConf) throws TracciaException {
 		this.log = log;
 		
-		Field [] fields = Converter.class.getDeclaredFields();
-		for (Field field : fields) {
-			String fieldName = field.getName();
-			fieldName = fieldName.replace("_", ".");
-			if(pConf.containsKey(fieldName)) {
-				String value = pConf.getProperty(fieldName);
-				field.set(this, "true".equals(value));
+		try {
+			Field [] fields = Converter.class.getDeclaredFields();
+			for (Field field : fields) {
+				String fieldName = field.getName();
+				fieldName = fieldName.replace("_", ".");
+				if(pConf.containsKey(fieldName)) {
+					String value = pConf.getProperty(fieldName);
+					if(boolean.class.getName().equals(field.getType().getName())) {
+						field.set(this, "true".equalsIgnoreCase(value));
+					}else {
+						field.set(this, value);
+					}
+				}
 			}
+		}catch(Exception e) {
+			throw new TracciaException(e.getMessage(),e);
 		}
 	} 
 	
@@ -208,7 +216,7 @@ public class Converter {
 			esito.setCodice(transazioneDB.getEsito()+"");
 			try {
 				EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, transazioneDB.getProtocollo());
-				esito.setDescrizione(esitiProperties.getEsitoDescription(transazioneDB.getEsito()));
+				esito.setDescrizione(esitiProperties.getEsitoLabel(transazioneDB.getEsito()));
 			}catch(Throwable e) {
 				if(this.throwInitProtocol) {
 					throw e;
@@ -627,7 +635,9 @@ public class Converter {
 					}
 				}
 				if(this.mittente_token) {
-					((TransazioneExtInformazioniMittente)mittente).setToken(transazioneDB.getTokenInfo().getBytes());
+					if(transazioneDB.getTokenInfo()!=null) {
+						((TransazioneExtInformazioniMittente)mittente).setToken(transazioneDB.getTokenInfo().getBytes());
+					}
 				}
 				((TransazioneExtInformazioniMittente)mittente).setInformazioniToken(informazioniToken);
 			}

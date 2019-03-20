@@ -66,8 +66,7 @@
 			</lib>
 			<lib dir="${dist_govwayMonitorApiRS}">
 				<include name="openspcoop2_*.jar"/>
-				<!-- Risolvere problematiche di deploy? -->
-				<exclude name="openspcoop2_web-govwayMonitor*.jar"/>
+				<include name="openspcoop2_web-govwayMonitor*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/cxf">
 				<include name="*.jar"/>
@@ -99,6 +98,12 @@
 				<include name="guava-26.0-jre.jar"/>
 				<include name="snakeyaml-1.22.jar"/>
 				<include name="javassist-3.12.1.GA.jar"/>
+				<include name="ezmorph-1.0.6.jar" />
+				<include name="xom-1.2.11.jar" />
+				<include name="${xerces_jar}"/>
+				<include name="${xml_apis_jar}"/>
+				<include name="${xalan_jar}"/>
+				<include name="${xalan_serializer_jar}"/>	
 			</lib>
 			<lib dir="${openspcoop2.lib}/jackson">
 				<include name="*.jar"/>
@@ -108,14 +113,41 @@
 				<include name="commons-lang3-3.8.jar"/>
 				<include name="commons-beanutils-1.9.3.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
+				<include name="commons-digester-2.1.jar"/>
 				<include name="commons-io-2.6.jar"/>
+				<include name="commons-codec-1.11.jar"/>
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/log">
 				<include name="slf4j-api-1.7.25-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
-			
+			<lib dir="${openspcoop2.lib}/saaj">
+				<include name="saaj-impl-1.3.28.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/security">
+				<include name="herasaf-xacml-core-1.0.4.RELEASE.jar"/>
+				<include name="bcpkix-jdk15on-1.60.jar"/>
+				<include name="bcprov-ext-jdk15on-1.60.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/faces">
+                                <include name="richfaces-api-3.3.4.Final.jar" />
+                                <include name="richfaces-ui-3.3.4.Final.jar" />
+                                <include name="richfaces-impl-3.3.4.Final-gov4j-1.jar" />
+				<include name="jsf-facelets-1.1.15.jar" />
+				<include name="jsf-impl-1.2_15-06.jar" />
+                        </lib>
+			<lib dir="${required_lib}/json">
+				<include name="*.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/reports">
+				<include name="dynamicreports-core-6.0.0.jar"/>
+				<include name="itext-2.1.7.js6.jar"/>
+				<include name="jcommon-1.0.23.jar"/>
+				<include name="jasperreports-6.7.1.jar"/>
+				<include name="poi-3.17.jar"/>
+				<include name="${ecj_jar}"/>
+			</lib>
 			<classes dir="${build_govwayMonitorApiRS}/properties">
 				<include name="rs-api-monitor.datasource.properties"/>
 			</classes>			
@@ -123,6 +155,7 @@
 				<include name="rs-api-monitor.properties"/>
 				<include name="rs-api-monitor.users.properties"/>
 				<include name="rs-api-monitor.log4j2.properties"/>
+				<include name="messages_it.properties"/>
 				<include name="log4j2.properties"/>
 			</classes>
 			

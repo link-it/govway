@@ -31,6 +31,11 @@ import org.slf4j.Logger;
 import org.openspcoop2.utils.Costanti;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.logger.LoggerFactory;
+import org.openspcoop2.utils.logger.config.DiagnosticConfig;
+import org.openspcoop2.utils.logger.config.Log4jConfig;
+import org.openspcoop2.utils.logger.config.MultiLoggerConfig;
+import org.openspcoop2.utils.logger.log4j.Log4jLoggerWithApplicationContext;
 import org.openspcoop2.utils.properties.CollectionProperties;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 
@@ -101,7 +106,38 @@ public class LoggerProperties {
 			}
 		}
 
-		LoggerWrapperFactory.setLogConfiguration(loggerProperties);
+		// DIAGNOSTIC CONFIGURATION
+		DiagnosticConfig diagnosticConfig = DiagnosticConfig.newEmptyDiagnosticConfig();
+		diagnosticConfig.setThrowExceptionPlaceholderFailedResolution(true);
+				
+				
+		// LOG4J CONFIGURATION
+		Log4jConfig log4jConfig = new Log4jConfig();
+		log4jConfig.setLog4jConfigProperties(loggerProperties);
+
+		// MULTILOGGER
+				
+		MultiLoggerConfig mConfig = new MultiLoggerConfig();
+		
+		mConfig.setDiagnosticConfig(diagnosticConfig);
+				
+		//mConfig.setDiagnosticSeverityFilter(Severity.DEBUG_HIGH);
+		//mConfig.setEventSeverityFilter(Severity.INFO);
+				
+		mConfig.setLog4jLoggerEnabled(true);
+		mConfig.setLog4jConfig(log4jConfig);
+				
+		mConfig.setDbLoggerEnabled(false);
+		//mConfig.setDatabaseConfig(dbConfig);
+			
+		try {
+			LoggerFactory.initialize(Log4jLoggerWithApplicationContext.class.getName(),
+					mConfig);
+			
+			//LoggerWrapperFactory.setLogConfiguration(loggerProperties);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 		
 	}
 

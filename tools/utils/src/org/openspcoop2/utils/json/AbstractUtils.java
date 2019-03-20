@@ -181,6 +181,14 @@ public abstract class AbstractUtils {
 		}
 	}
 	
+	public void writeTo(Object object, OutputStream os) throws UtilsException {
+		try {
+			_getObjectWriter(this.prettyPrint).writeValue(os, object);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
 	// IS
 	
 	protected boolean isValid(byte[]jsonBytes){

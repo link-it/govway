@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.web.monitor.core.dao;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -81,6 +82,7 @@ import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.SortOrder;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -129,6 +131,39 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		try{
 			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
 					.getInstance( log).getServiceManager(ProjectInfo.getInstance(), DynamicUtilsService.log);
+			this.soggettoDAO = this.utilsServiceManager.getSoggettoServiceSearch();
+
+			this.aspcDAO = this.utilsServiceManager.getAccordoServizioParteComuneServiceSearch();
+			this.aspsDAO = this.utilsServiceManager.getAccordoServizioParteSpecificaServiceSearch();
+
+			this.serviziApplicativiDAO = this.utilsServiceManager.getServizioApplicativoServiceSearch();
+
+			this.portTypeDAO  = this.utilsServiceManager.getPortTypeServiceSearch();
+
+			this.fruitoreSearchDAO = this.utilsServiceManager.getFruitoreServiceSearch();
+
+			this.pddDAO = this.utilsServiceManager.getPortaDominioServiceSearch();
+
+			this.portaApplicativaDAO = this.utilsServiceManager.getPortaApplicativaServiceSearch();
+			this.portaDelegataDAO = this.utilsServiceManager.getPortaDelegataServiceSearch();
+
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+	}
+	public DynamicUtilsService(Connection con, boolean autoCommit){
+		this(con, autoCommit, null, DynamicUtilsService.log);
+	}
+	public DynamicUtilsService(Connection con, boolean autoCommit, Logger log){
+		this(con, autoCommit, null, log);
+	}
+	public DynamicUtilsService(Connection con, boolean autoCommit, ServiceManagerProperties serviceManagerProperties){
+		this(con, autoCommit, serviceManagerProperties, DynamicUtilsService.log);
+	}
+	public DynamicUtilsService(Connection con, boolean autoCommit, ServiceManagerProperties serviceManagerProperties, Logger log){
+		try{
+			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
+					.getInstance( log).getServiceManager(ProjectInfo.getInstance(), con,autoCommit,serviceManagerProperties,log);
 			this.soggettoDAO = this.utilsServiceManager.getSoggettoServiceSearch();
 
 			this.aspcDAO = this.utilsServiceManager.getAccordoServizioParteComuneServiceSearch();

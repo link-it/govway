@@ -26,7 +26,6 @@ paths:
     parameters:
       - $ref: 'govway_core.yaml#/components/parameters/profilo'
       - $ref: 'govway_core.yaml#/components/parameters/soggetto'
-      - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/sort'
  
     get:
       tags:
@@ -39,6 +38,9 @@ paths:
         Permette di recuperare i dettagli delle transazioni, gestite su GovWay,
         ricercandole in base a parametri di filtro di uso più comune
       parameters:
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/offset'
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/limit'
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/sort'
         - $ref: 'govway_core.yaml#/components/parameters/data_inizio'
         - $ref: 'govway_core.yaml#/components/parameters/data_fine'
         - $ref: '#/components/parameters/tipo_transazione'
@@ -110,7 +112,6 @@ paths:
     parameters:
       - $ref: 'govway_core.yaml#/components/parameters/profilo'
       - $ref: 'govway_core.yaml#/components/parameters/soggetto'
-      - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/sort'
       
     get:
       tags:
@@ -124,6 +125,9 @@ paths:
         ricercandole in base all'identificativo applicativo e i parametri di
         filtro di uso più comune
       parameters:
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/offset'
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/limit'
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/sort'
         - $ref: 'govway_core.yaml#/components/parameters/data_inizio'
         - $ref: 'govway_core.yaml#/components/parameters/data_fine'
         - $ref: '#/components/parameters/tipo_transazione'
@@ -201,7 +205,6 @@ paths:
     parameters:
       - $ref: 'govway_core.yaml#/components/parameters/profilo'
       - $ref: 'govway_core.yaml#/components/parameters/soggetto'
-      - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/sort'
   
     get:
       tags:
@@ -214,6 +217,9 @@ paths:
         Permette di recuperare i dettagli delle transazioni, gestite su GovWay,
         ricercandole in base all'identificativo messaggio
       parameters:
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/offset'
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/limit'
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/sort'
         - $ref: '#/components/parameters/tipo_messaggio'
         - $ref: '#/components/parameters/id_messaggio'
 
@@ -248,8 +254,6 @@ paths:
       operationId: getTransazione
       description: Questa operazione consente di ottenere il dettaglio di una transazione
       parameters:
-        - $ref: 'govway_core.yaml#/components/parameters/profilo'
-        - $ref: 'govway_core.yaml#/components/parameters/soggetto'
         - $ref: '#/components/parameters/id_transazione'
       
       responses:
@@ -289,6 +293,8 @@ paths:
         specificando i criteri di filtraggio
       operationId: findAllEventi
       parameters:
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/offset'
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/limit'
         - $ref: "govway_core.yaml#/components/parameters/data_inizio"
         - $ref: "govway_core.yaml#/components/parameters/data_fine"
         - $ref: "#/components/parameters/severita"
@@ -1110,7 +1116,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
-        - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/nome_servizio_obbligatorio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
       operationId: getRiepilogoApi
@@ -1147,9 +1153,11 @@ paths:
       summary: Consente di recuperare l'elenco delle erogazioni o fruizioni che coinvolgono il soggetto scelto
       operationId: getConfigurazioneApi
       description: >-
-        Ricerca le erogazioni e fruizioni registrate sul sistema filtrandole per tipologia servizio  
+        Ricerca le erogazioni e fruizioni registrate sul sistema
       parameters:
         - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/offset'
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/limit'
       responses:
           200:
             description: Riepilogo ottenuto con successo
@@ -1255,11 +1263,15 @@ components:
           schema:
             type: string
             format: byte
-        application/xls:
+        application/vnd.ms-excel:
           schema:
             type: string
             format: byte
-        image/png:
+        text/xml:
+          schema:
+            type: string
+            format: byte
+        application/json:
           schema:
             type: string
             format: byte
@@ -1557,8 +1569,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/OpzioniGenerazioneReportBase'
         - type: object
-          required:
-          - tipo_informazione
           properties:  
             tipo_informazione:
               $ref: '#/components/schemas/TipoInformazioneReport'
@@ -1731,6 +1741,16 @@ components:
       - intervallo_temporale
       - tipo
       properties:
+        offset:
+          default: 0
+          format: int32
+          type: integer
+        limit:
+          format: int32
+          type: integer
+        sort:
+          example: +name
+          type: string
         intervallo_temporale:
           $ref: '#/components/schemas/FiltroTemporale'
         tipo:
@@ -2118,6 +2138,8 @@ components:
         - csv
         - pdf
         - xls
+        - xml
+        - json
         - png
       example: csv
       

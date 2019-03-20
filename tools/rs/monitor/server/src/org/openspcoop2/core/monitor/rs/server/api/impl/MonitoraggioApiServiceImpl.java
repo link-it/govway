@@ -21,10 +21,17 @@
  */
 package org.openspcoop2.core.monitor.rs.server.api.impl;
 
+import java.sql.Connection;
+import java.util.List;
 import java.util.UUID;
 
 import org.joda.time.DateTime;
 import org.openspcoop2.core.monitor.rs.server.api.MonitoraggioApi;
+import org.openspcoop2.core.monitor.rs.server.api.impl.utils.Converter;
+import org.openspcoop2.core.monitor.rs.server.api.impl.utils.SearchFormUtilities;
+import org.openspcoop2.core.monitor.rs.server.config.DBManager;
+import org.openspcoop2.core.monitor.rs.server.config.LoggerProperties;
+import org.openspcoop2.core.monitor.rs.server.config.ServerProperties;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneSimpleSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.Evento;
 import org.openspcoop2.core.monitor.rs.server.model.ListaEventi;
@@ -32,6 +39,8 @@ import org.openspcoop2.core.monitor.rs.server.model.ListaTransazioni;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaIdApplicativo;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaIntervalloTemporale;
 import org.openspcoop2.core.monitor.rs.server.model.TipoMessaggioEnum;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
@@ -39,8 +48,15 @@ import org.openspcoop2.utils.service.beans.DiagnosticoSeveritaEnum;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.TransazioneExt;
 import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
+import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
+import org.openspcoop2.web.monitor.eventi.bean.EventiSearchForm;
+import org.openspcoop2.web.monitor.eventi.bean.EventoBean;
+import org.openspcoop2.web.monitor.eventi.dao.EventiService;
+import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
+import org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm;
+import org.openspcoop2.web.monitor.transazioni.dao.TransazioniService;
 /**
  * GovWay Monitor API
  *
@@ -54,8 +70,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 	}
 
 	private AuthorizationConfig getAuthorizationConfig() throws Exception{
-		// TODO: Implement ...
-		throw new Exception("NotImplemented");
+		return new AuthorizationConfig(ServerProperties.getInstance().getProperties());
 	}
 
     /**
@@ -65,7 +80,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
      *
      */
 	@Override
-    public ListaEventi findAllEventi(DateTime dataInizio, DateTime dataFine, DiagnosticoSeveritaEnum severita, String tipo, String codice, String origine, Boolean ricercaEsatta, Boolean caseSensitive) {
+    public ListaEventi findAllEventi(DateTime dataInizio, DateTime dataFine, Integer offset, Integer limit, DiagnosticoSeveritaEnum severita, String tipo, String codice, String origine, Boolean ricercaEsatta, Boolean caseSensitive) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -73,10 +88,49 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
-        // TODO: Implement...
-        
-			context.getLogger().info("Invocazione completata con successo");
-        return null;
+			DBManager dbManager = DBManager.getInstance();
+			Connection connection = null;
+			try {
+				connection = dbManager.getConnection();
+				ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+				EventiService eventiService = new EventiService(connection, true, smp, LoggerProperties.getLoggerDAO());
+				
+				ServerProperties serverProperties = ServerProperties.getInstance();
+				SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
+				
+				EventiSearchForm search = searchFormUtilities.getEventiSearchForm(context, dataInizio, dataFine);
+				// TODO: altri criteri...
+				// TODO: altre impostazioni
+				eventiService.setSearch(search);	
+				List<EventoBean> listEventiDB = eventiService.findAll(Converter.toOffset(offset), Converter.toLimit(limit));
+				ListaEventi ret = ListaUtils.costruisciLista(
+						context.getServletRequest().getRequestURI(),
+						Converter.toOffset(offset), Converter.toLimit(limit), 
+						listEventiDB!=null ? listEventiDB.size() : 0, 
+								ListaEventi.class
+					); 
+				
+				if ( serverProperties.isFindall404() && (listEventiDB==null || listEventiDB.isEmpty()) )
+					throw FaultCode.NOT_FOUND.toException("Nessun evento trovato corrispondente ai criteri di ricerca");
+				
+				if(listEventiDB!=null && !listEventiDB.isEmpty()) {
+					listEventiDB.forEach( eventoDB -> 
+						{
+							try {
+								ret.addItemsItem( Converter.toEvento(eventoDB, this.log) );
+							} catch (Exception e) {
+								throw new RuntimeException(e.getMessage(),e);
+							}
+						}
+						);
+				}
+		
+				context.getLogger().info("Invocazione completata con successo");
+		        return ret;
+			}
+			finally {
+				dbManager.releaseConnection(connection);
+			}
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
@@ -96,19 +150,84 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
      *
      */
 	@Override
-    public ListaTransazioni findAllTransazioniByFullSearch(RicercaIntervalloTemporale body, ProfiloEnum profilo, String soggetto, String sort) {
+    public ListaTransazioni findAllTransazioniByFullSearch(RicercaIntervalloTemporale body, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
-                        
-        // TODO: Implement...
-        
-			context.getLogger().info("Invocazione completata con successo");
-        return null;
-     
+                    
+			if(body==null) {
+				FaultCode.RICHIESTA_NON_VALIDA.throwException("Body request undefined");
+			}
+			
+			DBManager dbManager = DBManager.getInstance();
+			Connection connection = null;
+			try {
+				connection = dbManager.getConnection();
+				ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+				TransazioniService transazioniService = new TransazioniService(connection, true, smp, LoggerProperties.getLoggerDAO());
+				
+				ServerProperties serverProperties = ServerProperties.getInstance();
+				SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
+				
+				TransazioniSearchForm search = searchFormUtilities.getAndamentoTemporaleSearchForm(context, profilo, soggetto, 
+						body.getTipo(), body.getIntervalloTemporale().getDataInizio(), body.getIntervalloTemporale().getDataFine());
+				// TODO: altri criteri...
+				if(body.getEsito()!=null && body.getEsito().getTipo()!=null) {
+					switch (body.getEsito().getTipo()){
+					case OK:
+						search.setEsitoGruppo(EsitoUtils.ALL_OK_VALUE);
+						break;
+					case FAULT:
+						search.setEsitoGruppo(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE);
+						break;
+					case ERROR:
+						search.setEsitoGruppo(EsitoUtils.ALL_ERROR_VALUE);
+						break;
+					case ERROR_OR_FAULT:
+						search.setEsitoGruppo(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE);
+						break;
+					case PERSONALIZZATO:
+						search.setEsitoGruppo(EsitoUtils.ALL_PERSONALIZZATO_VALUE);
+						break;
+					}	
+				}
+				// TODO: altre impostazioni
+				transazioniService.setSearch(search);
+				
+				List<TransazioneBean> listTransazioniDB = transazioniService.findAll(Converter.toOffset(body.getOffset()), Converter.toLimit(body.getLimit()), 
+						Converter.toSortOrder(body.getSort()), Converter.toSortField(body.getSort()));
+				ListaTransazioni ret = ListaUtils.costruisciLista(
+						context.getServletRequest().getRequestURI(),
+						Converter.toOffset(body.getOffset()), Converter.toLimit(body.getLimit()), 
+						listTransazioniDB!=null ? listTransazioniDB.size() : 0, 
+								ListaTransazioni.class
+					); 
+				
+				if ( serverProperties.isFindall404() && (listTransazioniDB==null || listTransazioniDB.isEmpty()) )
+					throw FaultCode.NOT_FOUND.toException("Nessuna transazione trovata corrispondente ai criteri di ricerca");
+				
+				if(listTransazioniDB!=null && !listTransazioniDB.isEmpty()) {
+					listTransazioniDB.forEach( transazioneDB -> 
+						{
+							try {
+								ret.addItemsItem( Converter.toItemTransazione(transazioneDB, this.log) );
+							} catch (Exception e) {
+								throw new RuntimeException(e.getMessage(),e);
+							}
+						}
+						);
+				}
+		
+				context.getLogger().info("Invocazione completata con successo");
+		        return ret;
+			}
+			finally {
+				dbManager.releaseConnection(connection);
+			}
+             
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -127,7 +246,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
      *
      */
 	@Override
-    public ListaTransazioni findAllTransazioniByIdApplicativoFullSearch(RicercaIdApplicativo body, ProfiloEnum profilo, String soggetto, String sort) {
+    public ListaTransazioni findAllTransazioniByIdApplicativoFullSearch(RicercaIdApplicativo body, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -158,7 +277,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
      *
      */
 	@Override
-    public ListaTransazioni findAllTransazioniByIdApplicativoSimpleSearch(DateTime dataInizio, DateTime dataFine, TransazioneRuoloEnum tipo, String idApplicativo, ProfiloEnum profilo, String soggetto, String sort, String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean ricercaEsatta, Boolean caseSensitive) {
+    public ListaTransazioni findAllTransazioniByIdApplicativoSimpleSearch(DateTime dataInizio, DateTime dataFine, TransazioneRuoloEnum tipo, String idApplicativo, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit, String sort,  String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean ricercaEsatta, Boolean caseSensitive) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -189,7 +308,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
      *
      */
 	@Override
-    public ListaTransazioni findAllTransazioniByIdMessaggio(TipoMessaggioEnum tipoMessaggio, String id, ProfiloEnum profilo, String soggetto, String sort) {
+    public ListaTransazioni findAllTransazioniByIdMessaggio(TipoMessaggioEnum tipoMessaggio, String id, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit, String sort) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -220,7 +339,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
      *
      */
 	@Override
-    public ListaTransazioni findAllTransazioniBySimpleSearch(DateTime dataInizio, DateTime dataFine, TransazioneRuoloEnum tipo, ProfiloEnum profilo, String soggetto, String sort, String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito) {
+    public ListaTransazioni findAllTransazioniBySimpleSearch(DateTime dataInizio, DateTime dataFine, TransazioneRuoloEnum tipo, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit, String sort,  String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -258,11 +377,29 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
-                        
-        // TODO: Implement...
-        
-			context.getLogger().info("Invocazione completata con successo");
-        return null;
+               
+			if(id==null) {
+				FaultCode.RICHIESTA_NON_VALIDA.throwException("Id undefined");
+			}
+			
+			DBManager dbManager = DBManager.getInstance();
+			Connection connection = null;
+			try {
+				connection = dbManager.getConnection();
+				ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+				EventiService eventiService = new EventiService(connection, true, smp, LoggerProperties.getLoggerDAO());
+				
+				EventoBean eventoDB = eventiService.findById(id);
+				if(eventoDB==null) {
+					FaultCode.NOT_FOUND.throwException("Evento con id '"+id+"' non esistente");
+				}
+				Evento evento = Converter.toEvento(eventoDB, this.log);		
+				context.getLogger().info("Invocazione completata con successo");
+		        return evento;
+			}
+			finally {
+				dbManager.releaseConnection(connection);
+			}
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
@@ -282,19 +419,37 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
      *
      */
 	@Override
-    public TransazioneExt getTransazione(UUID id, ProfiloEnum profilo, String soggetto) {
+    public TransazioneExt getTransazione(UUID id) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
-                        
-        // TODO: Implement...
-        
-			context.getLogger().info("Invocazione completata con successo");
-        return null;
-     
+            
+			if(id==null) {
+				FaultCode.RICHIESTA_NON_VALIDA.throwException("Id undefined");
+			}
+			
+			DBManager dbManager = DBManager.getInstance();
+			Connection connection = null;
+			try {
+				connection = dbManager.getConnection();
+				ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+				TransazioniService transazioniService = new TransazioniService(connection, true, smp, LoggerProperties.getLoggerDAO());
+				TransazioneBean transazioneDB = transazioniService.findByIdTransazione(id.toString());
+				if(transazioneDB==null) {
+					FaultCode.NOT_FOUND.throwException("Traccia con id '"+id+"' non esistente");
+				}
+				TransazioneExt transazione = org.openspcoop2.core.monitor.rs.server.api.impl.utils.Converter.toTransazioneExt(transazioneDB, transazioniService, 
+						connection, smp,
+						this.log);
+				context.getLogger().info("Invocazione completata con successo");
+				return transazione;
+			}
+			finally {
+				dbManager.releaseConnection(connection);
+			}
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());

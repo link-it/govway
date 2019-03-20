@@ -107,6 +107,12 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 	public abstract String esportaPdf();
 	public abstract void esportaPdf(HttpServletResponse response) throws Exception;
 	
+	public abstract String esportaJson();
+	public abstract void esportaJson(HttpServletResponse response) throws Exception;
+	
+	public abstract String esportaXml();
+	public abstract void esportaXml(HttpServletResponse response) throws Exception;
+	
 	
 	public boolean isVisualizzaComandiExport() {
 		return this.visualizzaComandiExport;

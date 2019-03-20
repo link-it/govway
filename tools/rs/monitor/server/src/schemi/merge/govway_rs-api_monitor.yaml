@@ -29,6 +29,9 @@ paths:
         \ GovWay, ricercandole in base a parametri di filtro di uso più comune"
       operationId: "findAllTransazioniBySimpleSearch"
       parameters:
+      - $ref: "#/components/parameters/offset"
+      - $ref: "#/components/parameters/limit"
+      - $ref: "#/components/parameters/sort"
       - $ref: "#/components/parameters/data_inizio"
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
@@ -95,7 +98,6 @@ paths:
     parameters:
     - $ref: "#/components/parameters/profilo"
     - $ref: "#/components/parameters/soggetto"
-    - $ref: "#/components/parameters/sort"
   /monitoraggio/transazioni/id_applicativo:
     get:
       tags:
@@ -107,6 +109,9 @@ paths:
         \ di filtro di uso più comune"
       operationId: "findAllTransazioniByIdApplicativoSimpleSearch"
       parameters:
+      - $ref: "#/components/parameters/offset"
+      - $ref: "#/components/parameters/limit"
+      - $ref: "#/components/parameters/sort"
       - $ref: "#/components/parameters/data_inizio"
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
@@ -177,7 +182,6 @@ paths:
     parameters:
     - $ref: "#/components/parameters/profilo"
     - $ref: "#/components/parameters/soggetto"
-    - $ref: "#/components/parameters/sort"
   /monitoraggio/transazioni/id_messaggio:
     get:
       tags:
@@ -188,6 +192,9 @@ paths:
         \ GovWay, ricercandole in base all'identificativo messaggio"
       operationId: "findAllTransazioniByIdMessaggio"
       parameters:
+      - $ref: "#/components/parameters/offset"
+      - $ref: "#/components/parameters/limit"
+      - $ref: "#/components/parameters/sort"
       - $ref: "#/components/parameters/tipo_messaggio"
       - $ref: "#/components/parameters/id_messaggio"
       responses:
@@ -214,7 +221,6 @@ paths:
     parameters:
     - $ref: "#/components/parameters/profilo"
     - $ref: "#/components/parameters/soggetto"
-    - $ref: "#/components/parameters/sort"
   /monitoraggio/transazioni/{id}:
     get:
       tags:
@@ -223,8 +229,6 @@ paths:
       description: "Questa operazione consente di ottenere il dettaglio di una transazione"
       operationId: "getTransazione"
       parameters:
-      - $ref: "#/components/parameters/profilo"
-      - $ref: "#/components/parameters/soggetto"
       - $ref: "#/components/parameters/id_transazione"
       responses:
         200:
@@ -256,6 +260,8 @@ paths:
         \ degli eventi specificando i criteri di filtraggio"
       operationId: "findAllEventi"
       parameters:
+      - $ref: "#/components/parameters/offset"
+      - $ref: "#/components/parameters/limit"
       - $ref: "#/components/parameters/data_inizio"
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/severita"
@@ -1033,7 +1039,7 @@ paths:
       parameters:
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
-      - $ref: "#/components/parameters/nome_servizio"
+      - $ref: "#/components/parameters/nome_servizio_obbligatorio"
       - $ref: "#/components/parameters/tipo_servizio"
       - $ref: "#/components/parameters/versione_servizio"
       responses:
@@ -1066,11 +1072,12 @@ paths:
       - "Reportistica"
       summary: "Consente di recuperare l'elenco delle erogazioni o fruizioni che coinvolgono\
         \ il soggetto scelto"
-      description: "Ricerca le erogazioni e fruizioni registrate sul sistema filtrandole\
-        \ per tipologia servizio  "
+      description: "Ricerca le erogazioni e fruizioni registrate sul sistema"
       operationId: "getConfigurazioneApi"
       parameters:
       - $ref: "#/components/parameters/tipo_transazione"
+      - $ref: "#/components/parameters/offset"
+      - $ref: "#/components/parameters/limit"
       responses:
         200:
           description: "Riepilogo ottenuto con successo"
@@ -1254,9 +1261,7 @@ components:
       type: "object"
       allOf:
       - $ref: "#/components/schemas/OpzioniGenerazioneReportBase"
-      - required:
-        - "tipo_informazione"
-        type: "object"
+      - type: "object"
         properties:
           tipo_informazione:
             $ref: "#/components/schemas/TipoInformazioneReport"
@@ -1412,6 +1417,16 @@ components:
       - "tipo"
       type: "object"
       properties:
+        offset:
+          type: "integer"
+          format: "int32"
+          default: 0
+        limit:
+          type: "integer"
+          format: "int32"
+        sort:
+          type: "string"
+          example: "+name"
         intervallo_temporale:
           $ref: "#/components/schemas/FiltroTemporale"
         tipo:
@@ -1760,6 +1775,8 @@ components:
       - "csv"
       - "pdf"
       - "xls"
+      - "xml"
+      - "json"
       - "png"
     UnitaTempoReportEnum:
       type: "string"
@@ -1844,9 +1861,6 @@ components:
       - $ref: "#/components/schemas/TransazioneDettaglioRichiestaDatiTrasporto"
       - type: "object"
         properties:
-          data_uscita:
-            type: "string"
-            format: "date-time"
           connettore:
             type: "string"
             format: "uri"
@@ -1861,16 +1875,6 @@ components:
       allOf:
       - $ref: "#/components/schemas/TransazioneExtDettaglioMessaggioBase"
       - $ref: "#/components/schemas/TransazioneDettaglioRispostaDatiTrasporto"
-      - type: "object"
-        properties:
-          data_ingresso:
-            type: "string"
-            format: "date-time"
-          codice_risposta_ingresso:
-            type: "string"
-            description: "Codice associato alla risposta.\nPuò essere un http status\
-              \ per i protocolli basati su HTTP."
-            example: "200"
     TransazioneExtDettaglioRisposta:
       type: "object"
       allOf:
@@ -1879,12 +1883,9 @@ components:
       - $ref: "#/components/schemas/TransazioneDettaglioRispostaErrore"
       - type: "object"
         properties:
-          fault_formato:
+          fault_ricezione_formato:
             $ref: "#/components/schemas/TransazioneMessaggioFormatoEnum"
-          fault_ingresso:
-            type: "string"
-            format: "byte"
-          fault_ingresso_formato:
+          fault_consegna_formato:
             $ref: "#/components/schemas/TransazioneMessaggioFormatoEnum"
     TransazioneExtDettaglioMessaggioBase:
       type: "object"
@@ -1951,6 +1952,10 @@ components:
           type: "string"
         content_location:
           type: "string"
+        headers:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/TransazioneContenutoMessaggioHeader"
     TransazioneExtContenutoMessaggioAllegato:
       required:
       - "content_type"
@@ -1967,6 +1972,10 @@ components:
           type: "string"
         content_location:
           type: "string"
+        headers:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/TransazioneContenutoMessaggioHeader"
     TransazioneExtContenutoMessaggioPorzioneBody:
       required:
       - "nome"
@@ -1998,8 +2007,6 @@ components:
         properties:
           profilo_collaborazione:
             $ref: "#/components/schemas/ProfiloCollaborazioneEnum"
-          id_collaborazione:
-            type: "string"
           id_asincrono:
             type: "string"
     TransazioneExtInformazioniMittenteBase:
@@ -2054,8 +2061,7 @@ components:
           type: "string"
           format: "date-time"
         severita_codice:
-          type: "integer"
-          format: "int32"
+          type: "string"
         severita:
           $ref: "#/components/schemas/DiagnosticoSeveritaEnum"
         funzione:
@@ -2349,12 +2355,15 @@ components:
       - $ref: "#/components/schemas/TransazioneDettaglioMessaggioContenuti"
     TransazioneDettaglioRichiestaDatiTrasporto:
       required:
-      - "data_ingresso"
+      - "data_ricezione"
       - "tipo"
       - "url_invocazione"
       type: "object"
       properties:
-        data_ingresso:
+        data_ricezione:
+          type: "string"
+          format: "date-time"
+        data_consegna:
           type: "string"
           format: "date-time"
         tipo:
@@ -2372,14 +2381,22 @@ components:
       - $ref: "#/components/schemas/TransazioneDettaglioMessaggioContenuti"
     TransazioneDettaglioRispostaDatiTrasporto:
       required:
-      - "codice_risposta"
-      - "data_uscita"
+      - "data_consegna"
+      - "esito_consegna"
       type: "object"
       properties:
-        data_uscita:
+        data_ricezione:
           type: "string"
           format: "date-time"
-        codice_risposta:
+        data_consegna:
+          type: "string"
+          format: "date-time"
+        esito_ricezione:
+          type: "string"
+          description: "Codice associato alla risposta.\nPuò essere un http status\
+            \ per i protocolli basati su HTTP."
+          example: "200"
+        esito_consegna:
           type: "string"
           description: "Codice associato alla risposta.\nPuò essere un http status\
             \ per i protocolli basati su HTTP."
@@ -2387,7 +2404,10 @@ components:
     TransazioneDettaglioRispostaErrore:
       type: "object"
       properties:
-        fault:
+        fault_ricezione:
+          type: "string"
+          format: "byte"
+        fault_consegna:
           type: "string"
           format: "byte"
         dettagli_errore:
@@ -2455,7 +2475,7 @@ components:
           type: "string"
         indirizzo_client:
           type: "string"
-        indirizzo_client_forwarded:
+        indirizzo_client_inoltrato:
           type: "string"
     TransazioneEsito:
       required:
@@ -2492,11 +2512,15 @@ components:
           schema:
             type: "string"
             format: "byte"
-        application/xls:
+        application/vnd.ms-excel:
           schema:
             type: "string"
             format: "byte"
-        image/png:
+        text/xml:
+          schema:
+            type: "string"
+            format: "byte"
+        application/json:
           schema:
             type: "string"
             format: "byte"
@@ -2843,6 +2867,13 @@ components:
       schema:
         type: "string"
         format: "date-time"
+    nome_servizio_obbligatorio:
+      name: "nome_servizio"
+      in: "query"
+      description: "Nome identificativo"
+      required: true
+      schema:
+        $ref: "#/components/schemas/NCName"
     ricerca_esatta:
       name: "ricerca_esatta"
       in: "query"

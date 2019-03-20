@@ -1,0 +1,31 @@
+TRANSAZIONI
+
+curl --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/monitoraggio/transazioni/a16c7501-0664-48ff-9216-a726f8e7778c"
+
+curl -v -H "Content-Type: application/json" -X POST --data @request.json --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/monitoraggio/transazioni"
+
+
+EVENTI
+
+curl --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/monitoraggio/eventi?data_inizio=2012-07-21T17:32:28Z&data_fine=2022-07-21T17:32:28Z"
+
+curl --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/monitoraggio/eventi/225"
+
+
+STATISTICHE
+
+curl -v -H "Content-Type: application/json" -X POST --data @requestReport.json --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-api"
+
+curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-api?data_inizio=2012-07-21T17:32:28Z&data_fine=2022-07-21T17:32:28Z&formato_report=pdf&tipo=erogazione"
+
+
+CONFIGURAZIONE
+
+curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/configurazione-api/esporta?tipo=erogazione"
+
+curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/configurazione-api?tipo=erogazione"
+
+curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/configurazione-api/riepilogo"
+
+curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/configurazione-api/riepilogo/api?tipo=erogazione&nome_servizio=ServizioOneWay"
+

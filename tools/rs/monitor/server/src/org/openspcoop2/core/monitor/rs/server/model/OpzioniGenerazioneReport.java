@@ -23,22 +23,19 @@ package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReportBase;
 import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReport;
-import javax.validation.constraints.*;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
 public class OpzioniGenerazioneReport extends OpzioniGenerazioneReportBase {
   
-  @Schema(required = true, description = "")
+  @Schema(description = "")
   private TipoInformazioneReport tipoInformazione = null;
  /**
    * Get tipoInformazione
    * @return tipoInformazione
   **/
   @JsonProperty("tipo_informazione")
-  @NotNull
   @Valid
   public TipoInformazioneReport getTipoInformazione() {
     return this.tipoInformazione;

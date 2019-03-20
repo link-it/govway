@@ -730,12 +730,13 @@ public class StatsSearchForm extends BaseSearchForm{
 	}
 
 	public boolean isUseGraficiSVG() {
-		BrowserInfo browserInfo = ApplicationBean.getInstance().getBrowserInfo();
-		this.useGraficiSVG =ApplicationBean.getInstance().isGraficiSvgEnabled() && !BrowserFilter.disabilitaGraficiSVG(browserInfo);
-
-		LoggerManager.getPddMonitorCoreLogger().debug("Usa grafici SVG ["+this.useGraficiSVG+"]");
-
-
+		if(this.useGraficiSVG==null) {
+			BrowserInfo browserInfo = ApplicationBean.getInstance().getBrowserInfo();
+			this.useGraficiSVG =ApplicationBean.getInstance().isGraficiSvgEnabled() && !BrowserFilter.disabilitaGraficiSVG(browserInfo);
+	
+			LoggerManager.getPddMonitorCoreLogger().debug("Usa grafici SVG ["+this.useGraficiSVG+"]");
+		}
+	
 		return this.useGraficiSVG;
 	}
 
@@ -746,7 +747,7 @@ public class StatsSearchForm extends BaseSearchForm{
 	private String action = null;
 
 
-	private boolean useGraficiSVG = false;
+	private Boolean useGraficiSVG = null;
 
 
 	private boolean usaSVG = true;

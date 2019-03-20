@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.web.monitor.statistiche.dao;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -71,6 +72,7 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.Index;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.SortOrder;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.engine.condition.FilterImpl;
 import org.openspcoop2.monitor.engine.constants.Costanti;
@@ -162,6 +164,39 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		}
 	}
 
+	public StatisticheGiornaliereService(Connection con, boolean autoCommit){
+		this(con, autoCommit, null, StatisticheGiornaliereService.log);
+	}
+	public StatisticheGiornaliereService(Connection con, boolean autoCommit, Logger log){
+		this(con, autoCommit, null, log);
+	}
+	public StatisticheGiornaliereService(Connection con, boolean autoCommit, ServiceManagerProperties serviceManagerProperties){
+		this(con, autoCommit, serviceManagerProperties, StatisticheGiornaliereService.log);
+	}
+	public StatisticheGiornaliereService(Connection con, boolean autoCommit, ServiceManagerProperties serviceManagerProperties, Logger log) {
+
+		try {
+			this.transazioniStatisticheServiceManager = (org.openspcoop2.core.statistiche.dao.IServiceManager) DAOFactory
+					.getInstance(log).getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),con,autoCommit,serviceManagerProperties,log);
+
+			this.statGiornaliereSearchDAO = this.transazioniStatisticheServiceManager.getStatisticaGiornalieraServiceSearch();
+			this.statMensileSearchDAO = this.transazioniStatisticheServiceManager.getStatisticaMensileServiceSearch();
+			this.statOrariaSearchDAO = this.transazioniStatisticheServiceManager.getStatisticaOrariaServiceSearch();
+			this.statSettimanaleSearchDAO = this.transazioniStatisticheServiceManager.getStatisticaSettimanaleServiceSearch();
+			
+			this.transazioniServiceManager = 
+					(org.openspcoop2.core.transazioni.dao.IServiceManager) DAOFactory
+					.getInstance(log).getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(),con,autoCommit,serviceManagerProperties,log);
+			
+			this.credenzialiMittenteDAO = this.transazioniServiceManager.getCredenzialeMittenteService();
+
+			this.govwayMonitorProperties = PddMonitorProperties.getInstance(StatisticheGiornaliereService.log);
+			
+		} catch (Exception e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+		}
+	}
+	
 	public void setAndamentoTemporaleSearch(
 			StatsSearchForm andamentoTemporaleSearch) {
 		this.andamentoTemporaleSearch = andamentoTemporaleSearch;

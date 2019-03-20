@@ -55,7 +55,9 @@ public class CostantiExporter {
 	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE = "soggetto_locale";
 	public static final String TIPO_DISTRIBUZIONE_SERVIZIO = "servizio";
 	public static final String TIPO_DISTRIBUZIONE_AZIONE = "azione";
-	public static final String TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO = "servizio_applicativo";
+	public static final String TIPO_DISTRIBUZIONE_APPLICATIVO = "applicativo";
+	public static final String TIPO_DISTRIBUZIONE_IDENTIFICATIVO_AUTENTICATO = "identificativo_autenticato";
+	public static final String TIPO_DISTRIBUZIONE_TOKEN_INFO = "token_info";
 	public static final String TIPO_DISTRIBUZIONE_PERSONALIZZATA = "personalizzata";
 	public static final List<String> TIPI_DISTRIBUZIONE = new ArrayList<String> ();
 	static{
@@ -65,7 +67,9 @@ public class CostantiExporter {
 		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE);
 		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_SERVIZIO);
 		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_AZIONE);
-		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO);
+		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_APPLICATIVO);
+		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_IDENTIFICATIVO_AUTENTICATO);
+		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_TOKEN_INFO);
 		// TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_PERSONALIZZATA); TODO
 	}
 	
@@ -73,11 +77,15 @@ public class CostantiExporter {
 	public final static String TIPO_FORMATO_CSV = "csv";
 	public final static String TIPO_FORMATO_XLS = "xls";
 	public final static String TIPO_FORMATO_PDF = "pdf";
+	public final static String TIPO_FORMATO_XML = "xml";
+	public final static String TIPO_FORMATO_JSON = "json";
 	public static final List<String> TIPI_FORMATO = new ArrayList<String> ();
 	static{
 		TIPI_FORMATO.add(TIPO_FORMATO_CSV);
 		TIPI_FORMATO.add(TIPO_FORMATO_XLS);
 		TIPI_FORMATO.add(TIPO_FORMATO_PDF);
+		TIPI_FORMATO.add(TIPO_FORMATO_XML);
+		TIPI_FORMATO.add(TIPO_FORMATO_JSON);
 	}
 	
 	public final static String DATA_INIZIO = "dataInizio";
@@ -142,7 +150,20 @@ public class CostantiExporter {
 	public final static String TIPO_LATENZA_VISUALIZZATA = "latenza";
 	public final static TipoLatenza TIPO_LATENZA_VISUALIZZATA_DEFAULT = TipoLatenza.LATENZA_TOTALE;
 	
-	
+	public final static String CLAIM = "claim";
+	public final static String CLAIM_SUBJECT = "subject";
+	public final static String CLAIM_ISSUER = "issuer";
+	public final static String CLAIM_USERNAME = "username";
+	public final static String CLAIM_EMAIL = "eMail";
+	public final static String CLAIM_CLIENT_ID = "clientId";
+	public static final List<String> CLAIMS = new ArrayList<String> ();
+	static{
+		CLAIMS.add(CLAIM_SUBJECT);
+		CLAIMS.add(CLAIM_ISSUER);
+		CLAIMS.add(CLAIM_USERNAME);
+		CLAIMS.add(CLAIM_EMAIL);
+		CLAIMS.add(CLAIM_CLIENT_ID);
+	}
 	
 	
 	
