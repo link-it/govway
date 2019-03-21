@@ -22,7 +22,7 @@
 		
 		<!-- owasp config -->
 		<owasp>verify</owasp> <!-- owasp phase, use 'none' for disable -->
-		<owasp.plugin.version>5.0.0-M1</owasp.plugin.version>
+		<owasp.plugin.version>5.0.0-M2</owasp.plugin.version>
 		<owasp.plugin.failBuildOnAnyVulnerability>true</owasp.plugin.failBuildOnAnyVulnerability>
 
 		<!-- package config -->
