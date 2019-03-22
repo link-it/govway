@@ -1,0 +1,65 @@
+openapi: 3.0.0
+servers: []
+info:
+  description: Servizio per il recupero delle tracce emesse dal Gateway
+  version: 1.0.0
+  title: GovWay Recupero Traccia API
+  contact:
+    email: info@link.it
+  license:
+    name: GPL v3.0
+    url: 'https://www.gnu.org/licenses/gpl-3.0.txt'
+tags:
+  - name: Traccia
+    description: >-
+      Fornisce un'operazione che consente di recuperare la traccia emessa dal Gateway
+paths:
+  
+  /tracce/{id}:
+    get:
+      tags:
+        - Traccia
+      summary: Traccia
+      operationId: getTraccia
+      description: Questa operazione consente di recuperare la traccia emessa dal Gateway
+      parameters:
+        - $ref: '#/components/parameters/id_traccia'
+      
+      responses:
+        200:
+          description: traccia restituita correttamente
+          content:
+            application/jose:
+              schema:
+                type: string
+            application/xml:
+              schema:
+                type: string
+        400:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        401:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        403:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        404:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        429:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        503:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+components:
+
+  parameters:
+
+    # Dati Identificativi nel path
+
+    id_traccia:
+      in: path
+      name: id
+      description: identificativo della traccia
+      required: true
+      schema:
+        type: string
