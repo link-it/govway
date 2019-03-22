@@ -22,12 +22,17 @@
 
 package org.openspcoop2.utils.certificate;
 
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.CertificateParsingException;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.security.auth.x500.X500Principal;
@@ -193,6 +198,38 @@ public class CertificateInfo {
 	}
 	public void checkValid() throws CertificateExpiredException, CertificateNotYetValidException {
 		this.certificate.checkValidity(DateManager.getDate());
+	}
+	
+	public boolean isVerified(KeyStore trustStore) {
+		try {
+			Enumeration<String> aliasesEnum = trustStore.aliases();
+			while (aliasesEnum.hasMoreElements()) {
+				String alias = (String) aliasesEnum.nextElement();
+				java.security.cert.Certificate certificate = trustStore.getCertificate(alias);
+				if(this.isVerified(certificate)) {
+					return true;
+				}
+			}
+		}catch(Exception e) {
+		}
+		return false;
+	}
+	public boolean isVerified(CertificateInfo caCert) {
+		return this.isVerified(caCert.getCertificate());
+	}
+	public boolean isVerified(java.security.cert.Certificate caCert) {
+		try {
+			this.certificate.verify(caCert.getPublicKey());
+			return true;
+		}catch(Exception e) {
+			return false;
+		}
+	}
+	public void verify(CertificateInfo caCert) throws InvalidKeyException, CertificateException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
+		verify(caCert.getCertificate());
+	}
+	public void verify(java.security.cert.Certificate caCert) throws InvalidKeyException, CertificateException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
+		this.certificate.verify(caCert.getPublicKey());
 	}
 	
 	@Override

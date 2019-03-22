@@ -34,6 +34,7 @@ import org.apache.xml.security.encryption.EncryptedKey;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.keys.KeyInfo;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.KeyStore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

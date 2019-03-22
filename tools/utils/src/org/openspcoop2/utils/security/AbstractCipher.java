@@ -26,6 +26,7 @@ package org.openspcoop2.utils.security;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.KeyStore;
 
 /**	
  * Encrypt

@@ -21,7 +21,7 @@
  */
 
 
-package org.openspcoop2.utils.security;
+package org.openspcoop2.utils.certificate;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -124,6 +124,20 @@ public class KeyStore {
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}	
+	}
+	public boolean existsAlias(String alias) throws UtilsException{
+		try{
+			return this.keystore.containsAlias(alias);
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}	
+	}
+	public Enumeration<String> aliases() throws UtilsException{
+		try{
+			return this.keystore.aliases();
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
 	}
 	public PublicKey getPublicKey() throws UtilsException{
 		return this.getCertificate().getPublicKey();

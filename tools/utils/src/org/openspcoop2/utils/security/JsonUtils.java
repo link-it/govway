@@ -23,6 +23,7 @@
 package org.openspcoop2.utils.security;
 
 import java.io.File;
+import java.net.URI;
 import java.util.Properties;
 
 import org.apache.cxf.message.Exchange;
@@ -31,6 +32,8 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.apache.cxf.rs.security.jose.jwe.JweException;
+import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
+import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.apache.cxf.rs.security.jose.jws.JwsException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -151,9 +154,10 @@ public class JsonUtils {
 	}
 	
 	public static File normalizeProperties(Properties props) throws Exception {
-		File fTmp = null;
+		
 		String propertyKeystoreName = JoseConstants.RSSEC_KEY_STORE_FILE;
 		String path = props.getProperty(propertyKeystoreName);
+		byte[]content = null;
 		if(path!=null && (path.startsWith("http") || path.startsWith("https"))) {
 			HttpResponse httpResponse = null;
 			String trustStoreProperty =  JoseConstants.RSSEC_KEY_STORE_FILE+".ssl";
@@ -184,15 +188,28 @@ public class JsonUtils {
 			if(httpResponse.getResultHTTPOperation()!=200) {
 				throw new Exception("Retrieve keystore '"+path+"' failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
 			}
+			content = httpResponse.getContent();
+		}
+		else if(path!=null && (path.startsWith("file"))){
+			File f = new File(new URI(path));
+			content = FileSystemUtilities.readBytesFromFile(f);
+		}
+		
+		File fTmp = null;
+		if(content!=null) {
+		
 			String tipo = props.getProperty(JoseConstants.RSSEC_KEY_STORE_TYPE);
 			if(tipo==null) {
 				tipo = "jks";
 			}
+			
 			fTmp = File.createTempFile("keystore", "."+tipo);
-			FileSystemUtilities.writeFile(fTmp, httpResponse.getContent());
+			FileSystemUtilities.writeFile(fTmp, content);
 			props.remove(propertyKeystoreName);
 			props.put(propertyKeystoreName, fTmp.getAbsolutePath());
+			
 		}
+		
 		return fTmp;
 	}
 	
@@ -220,5 +237,16 @@ public class JsonUtils {
 			throw new Exception("Claim 'kid' without value");
 		}
 		return kid;
+	}
+
+	public static JsonWebKey readKey(JsonWebKeys jsonWebKeys, String alias) throws UtilsException {
+		if(alias==null) {
+			throw new UtilsException("Alias unknonw");
+		}
+		JsonWebKey jsonWebKey = jsonWebKeys.getKey(alias);
+		if(jsonWebKey==null) {
+			throw new UtilsException("Key with alias '"+alias+"' unknonw");
+		}
+		return jsonWebKey;
 	}
 }

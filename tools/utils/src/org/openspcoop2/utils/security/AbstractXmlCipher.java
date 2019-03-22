@@ -31,6 +31,7 @@ import javax.crypto.SecretKey;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.KeyStore;
 
 /**	
  * Encrypt

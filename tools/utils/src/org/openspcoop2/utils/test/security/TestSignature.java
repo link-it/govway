@@ -24,6 +24,7 @@ package org.openspcoop2.utils.test.security;
 
 import org.openspcoop2.utils.test.Costanti;
 import org.openspcoop2.utils.test.TestLogger;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
@@ -37,12 +38,30 @@ public class TestSignature {
 
 	private static final String ID_TEST = "Signature";
 	
-	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST})
-	public void testSignature() throws Exception{
+	@DataProvider(name="signatureProvider")
+	public Object[][] provider(){
+		return new Object[][]{
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JAVA_SIGNATURE},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.XML_SIGNATURE},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JKS},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JWK},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_KEYSTORE},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_KEYSTORE_HEADER_CUSTOM},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_KEYS},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_KEYS_HEADER_CUSTOM},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_KEY},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_KEY_HEADER_CUSTOM}
+		};
+	}
+	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST},dataProvider="signatureProvider")
+	public void testSignature(org.openspcoop2.utils.security.TestSignature.TipoTest tipo) throws Exception{
 		
-		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.security.TestSignature.main(null);
-		TestLogger.info("Run test '"+ID_TEST+"' ok");
+		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ...");
+		org.openspcoop2.utils.security.TestSignature.main(new String [] { tipo.name() } );
+		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ok");
 		
 	}
 	

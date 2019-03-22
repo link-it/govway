@@ -28,6 +28,9 @@ import java.security.cert.X509Certificate;
 import java.util.Properties;
 
 import org.apache.cxf.rs.security.jose.common.JoseConstants;
+import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
+import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
+import org.apache.cxf.rs.security.jose.jwk.JwkUtils;
 import org.apache.cxf.rs.security.jose.jws.JwsCompactConsumer;
 import org.apache.cxf.rs.security.jose.jws.JwsHeaders;
 import org.apache.cxf.rs.security.jose.jws.JwsJsonConsumer;
@@ -35,6 +38,12 @@ import org.apache.cxf.rs.security.jose.jws.JwsJsonProducer;
 import org.apache.cxf.rs.security.jose.jws.JwsSignatureVerifier;
 import org.apache.cxf.rs.security.jose.jws.JwsUtils;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.ArchiveLoader;
+import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.JWKSet;
+import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 
 /**	
  * Encrypt
@@ -47,15 +56,19 @@ public class JsonVerifySignature {
 
 	private JwsSignatureVerifier provider;
 	private JOSERepresentation representation;
-	private Properties dynamicProvider;
+	private Properties properties;
+	private boolean dynamicProvider;
 	
 	private String decodedPayload;
 	private byte[] decodedPayloadAsByte;
+	
+	private KeyStore trustStore; // per verificare i certificati presenti nell'header 
 
 	public JsonVerifySignature(Properties props, JOSERepresentation representation) throws UtilsException{
 		try {
-			if(JOSERepresentation.COMPACT.equals(representation) && JsonUtils.isDynamicProvider(props)) {
-				this.dynamicProvider = props;
+			this.dynamicProvider = JsonUtils.isDynamicProvider(props); // rimuove l'alias
+			if(JOSERepresentation.COMPACT.equals(representation) && this.dynamicProvider) {
+				this.properties = props;
 			}
 			else {
 				this.provider = loadProviderFromProperties(props);
@@ -75,7 +88,11 @@ public class JsonVerifySignature {
 				String key = (String) en.nextElement();
 				System.out.println("- ["+key+"] ["+props.getProperty(key)+"]");
 			}*/
-			return JwsUtils.loadSignatureVerifier(JsonUtils.newMessage(), props, new JwsHeaders());
+			JwsSignatureVerifier provider = JwsUtils.loadSignatureVerifier(JsonUtils.newMessage(), props, new JwsHeaders());
+			if(provider==null) {
+				throw new Exception("JwsSignatureVerifier provider not found");
+			}
+			return provider;
 		}finally {
 			try {
 				if(fTmp!=null) {
@@ -96,6 +113,46 @@ public class JsonVerifySignature {
 		}catch(Throwable t) {
 			throw JsonUtils.convert(representation, JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
 		}
+	}
+	
+	public JsonVerifySignature(JsonWebKeys jsonWebKeys, String alias, String signatureAlgorithm, JOSERepresentation representation) throws UtilsException{
+		this(JsonUtils.readKey(jsonWebKeys, alias), signatureAlgorithm, representation);
+	}
+	
+	public JsonVerifySignature(JsonWebKey jsonWebKey, String signatureAlgorithm, JOSERepresentation representation) throws UtilsException{
+		try {
+			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
+			this.provider = JwsUtils.getPublicKeySignatureVerifier(JwkUtils.toRSAPublicKey(jsonWebKey), algo);
+			this.representation=representation;
+		}catch(Throwable t) {
+			throw JsonUtils.convert(representation, JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
+		}
+	}
+	
+	
+	public JsonVerifySignature() throws UtilsException{
+		_initVerifyCertificatiHeaderJWT(null, null);
+	}
+	public JsonVerifySignature(Properties props) throws UtilsException{
+		_initVerifyCertificatiHeaderJWT(props, null);
+	}
+	public JsonVerifySignature(Properties props, java.security.KeyStore trustStore) throws UtilsException{
+		_initVerifyCertificatiHeaderJWT(props, new KeyStore(trustStore));
+	}
+	public JsonVerifySignature(Properties props, KeyStore trustStore) throws UtilsException{
+		_initVerifyCertificatiHeaderJWT(props, trustStore);
+	}
+	public JsonVerifySignature(java.security.KeyStore trustStore) throws UtilsException{
+		_initVerifyCertificatiHeaderJWT(null, new KeyStore(trustStore));
+	}
+	public JsonVerifySignature(KeyStore trustStore) throws UtilsException{
+		_initVerifyCertificatiHeaderJWT(null, trustStore);
+	}
+	private void _initVerifyCertificatiHeaderJWT(Properties props, KeyStore trustStore) throws UtilsException{
+		// verra usato l'header per validare ed ottenere il certificato
+		this.representation=JOSERepresentation.COMPACT;
+		this.properties = props; // le proprieta' servono per risolvere le url https
+		this.trustStore = trustStore;
 	}
 
 
@@ -147,17 +204,97 @@ public class JsonVerifySignature {
 	
 	private boolean verifyCompact(String jsonString) throws Exception {
 		
+		JwsCompactConsumer consumer = new JwsCompactConsumer(jsonString);
+		
 		JwsSignatureVerifier provider = this.provider;
-		if(this.dynamicProvider!=null) {
+		if(this.dynamicProvider) {
 			String alias = JsonUtils.readAlias(jsonString);
 			Properties pNew = new Properties();
-			pNew.putAll(this.dynamicProvider);
+			pNew.putAll(this.properties);
 			//System.out.println("ALIAS ["+alias+"]");
 			pNew.put(JoseConstants.RSSEC_KEY_STORE_ALIAS, alias);
 			provider = loadProviderFromProperties(pNew);
 		}
 		
-		JwsCompactConsumer consumer = new JwsCompactConsumer(jsonString);
+		if(provider==null) {
+			JwsHeaders jwsHeaders = consumer.getJwsHeaders();
+			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = jwsHeaders.getSignatureAlgorithm();
+			if(jwsHeaders.getX509Chain()!=null && !jwsHeaders.getX509Chain().isEmpty()) {
+				byte [] cer = Base64Utilities.decode(jwsHeaders.getX509Chain().get(0));
+				CertificateInfo certificatoInfo = ArchiveLoader.load(cer).getCertificate();
+				if(this.trustStore!=null) {
+					if(certificatoInfo.isVerified(this.trustStore)==false) {
+						throw new Exception("Certificato presente nell'header '"+JwtHeaders.JWT_HDR_X5U+"' non è verificabile rispetto alle CA conosciute");
+					}
+				}
+				X509Certificate cerx509 = certificatoInfo.getCertificate();
+				provider = JwsUtils.getPublicKeySignatureVerifier(cerx509, algo);
+			}
+			else if(jwsHeaders.getJsonWebKey()!=null) {
+				provider = JwsUtils.getPublicKeySignatureVerifier(JwkUtils.toRSAPublicKey(jwsHeaders.getJsonWebKey()), algo);
+			}
+			else if(jwsHeaders.getX509Url()!=null) {
+				if(this.properties==null) {
+					this.properties = new Properties();
+				}
+				this.properties.put(JoseConstants.RSSEC_KEY_STORE_FILE, jwsHeaders.getX509Url());
+				File fTmp = null;
+				try {
+					fTmp = JsonUtils.normalizeProperties(this.properties); // in caso di url http viene letta la risorsa remota e salvata in tmp
+					byte [] cer = FileSystemUtilities.readBytesFromFile(fTmp);
+					CertificateInfo certificatoInfo = ArchiveLoader.load(cer).getCertificate();
+					if(this.trustStore!=null) {
+						if(certificatoInfo.isVerified(this.trustStore)==false) {
+							throw new Exception("Certificato presente nell'header '"+JwtHeaders.JWT_HDR_X5U+"' non è verificabile rispetto alle CA conosciute");
+						}
+					}
+					X509Certificate cerx509 = certificatoInfo.getCertificate();
+					provider = JwsUtils.getPublicKeySignatureVerifier(cerx509, algo);
+				}finally {
+					try {
+						if(fTmp!=null) {
+							fTmp.delete();
+						}
+					}catch(Throwable t) {}
+				}
+			}
+			else if(jwsHeaders.getJsonWebKeysUrl()!=null) {
+				if(this.properties==null) {
+					this.properties = new Properties();
+				}
+				this.properties.put(JoseConstants.RSSEC_KEY_STORE_FILE, jwsHeaders.getJsonWebKeysUrl());
+				File fTmp = null;
+				try {
+					fTmp = JsonUtils.normalizeProperties(this.properties); // in caso di url http viene letta la risorsa remota e salvata in tmp
+					JWKSet set = new JWKSet(FileSystemUtilities.readFile(fTmp));
+					JsonWebKeys jsonWebKeys = set.getJsonWebKeys();
+					JsonWebKey jsonWebKey = null;
+					if(jsonWebKeys.size()==1) {
+						jsonWebKey = jsonWebKeys.getKeys().get(0);
+					}
+					else {
+						if(jwsHeaders.getKeyId()==null) {
+							throw new Exception("Kid non definito e JwkSet contiene più di un certificato");
+						}
+						jsonWebKey = jsonWebKeys.getKey(jwsHeaders.getKeyId());
+					}
+					if(jsonWebKey==null) {
+						throw new Exception("JsonWebKey non trovata");
+					}
+					provider = JwsUtils.getPublicKeySignatureVerifier(JwkUtils.toRSAPublicKey(jsonWebKey), algo);
+				}finally {
+					try {
+						if(fTmp!=null) {
+							fTmp.delete();
+						}
+					}catch(Throwable t) {}
+				}
+			}
+			else {
+				throw new Exception("Non è stato trovato alcun header che consentisse di recuperare il certificato per effettuare la validazione");
+			}
+		}
+		
 		boolean result = consumer.verifySignatureWith(provider);
 		this.decodedPayload = consumer.getDecodedJwsPayload();
 		this.decodedPayloadAsByte = consumer.getDecodedJwsPayloadBytes();

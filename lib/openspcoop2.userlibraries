@@ -177,6 +177,7 @@
         <archive path="/op2_3.1.dev/lib/security/bcprov-ext-jdk15on-1.60.jar"/>
 	<archive path="/op2_3.1.dev/lib/security/bcpkix-jdk15on-1.60.jar"/>
 	<archive path="/op2_3.1.dev/lib/security/herasaf-xacml-core-1.0.4.RELEASE.jar"/>
+	<archive path="/op2_3.1.dev/lib/security/nimbus-jose-jwt-7.0.1.jar"/>
 	<!-- shared -->
         <archive path="/op2_3.1.dev/lib/shared/xom-1.2.11.jar"/>
         <archive path="/op2_3.1.dev/lib/shared/xmldb-1.0.jar"/>

@@ -24,6 +24,7 @@ package org.openspcoop2.utils.test.security;
 
 import org.openspcoop2.utils.test.Costanti;
 import org.openspcoop2.utils.test.TestLogger;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
@@ -37,12 +38,32 @@ public class TestEncrypt {
 
 	private static final String ID_TEST = "Encrypt";
 	
-	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST})
-	public void testEncrypt() throws Exception{
+	@DataProvider(name="encryptProvider")
+	public Object[][] provider(){
+		return new Object[][]{
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JAVA_ENCRYPT},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.XML_ENCRYPT},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JKS},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JWK},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE_HEADER_CUSTOM},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE_JCE},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE_JCE_HEADER_CUSTOM},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_KEYS},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_KEYS_HEADER_CUSTOM},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_KEY},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_KEY_HEADER_CUSTOM}
+		};
+	}
+	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST},dataProvider="encryptProvider")
+	public void testEncrypt(org.openspcoop2.utils.security.TestEncrypt.TipoTest tipo) throws Exception{
 		
-		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.security.TestEncrypt.main(null);
-		TestLogger.info("Run test '"+ID_TEST+"' ok");
+		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ...");
+		org.openspcoop2.utils.security.TestEncrypt.main(new String [] { tipo.name() } );
+		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ok");
 		
 	}
 	

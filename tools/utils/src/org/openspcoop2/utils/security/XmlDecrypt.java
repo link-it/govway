@@ -33,6 +33,7 @@ import org.apache.xml.security.encryption.EncryptedData;
 import org.apache.xml.security.encryption.EncryptedKey;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.XPathExpressionEngine;
 import org.openspcoop2.utils.xml.XPathReturnType;

@@ -1,0 +1,8 @@
+{
+  "keys" : [ {
+    "kty" : "RSA",
+    "e" : "AQAB",
+    "kid" : "openspcoop",
+    "n" : "ux_y7t8iwuaziAq7OQFNyn-UCJZ50XMPcjjYQzvaqaC7skdQ5khUQ_aIdFTMWVo6CA6o-6t6QgTDNskYMyh-mxPEeGeqZKreX9jN-z4bjBxrp4jit9peifynYCm6En4jPrclM1YNCXiuTSTY6RbEFRX6VQMYVdXjuF8D1MorENYhhnQxFPpE6kn1IfYBh5xqi2dr21N2jQhcicaEU1x5UUAXO0tQG77UH5ekfEEXh4cgCk0TN6d17mpMecPUF9Lf6PECVL2Oqlqxp4uXfDHxzyFZDF3F358uwrOS7ntKJT_4i8eTOsUA5RSXoJ4bi84GJ2_pYsiVZcFGnMid4En5Yw"
+  } ]
+}

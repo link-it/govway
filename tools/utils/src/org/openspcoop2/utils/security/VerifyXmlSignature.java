@@ -30,6 +30,7 @@ import java.security.cert.X509Certificate;
 import org.apache.xml.security.keys.KeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.XPathExpressionEngine;
 import org.openspcoop2.utils.xml.XPathReturnType;

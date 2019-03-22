@@ -26,6 +26,7 @@ package org.openspcoop2.utils.security;
 import java.security.cert.Certificate;
 
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.KeyStore;
 
 /**	
  * VerifySignature

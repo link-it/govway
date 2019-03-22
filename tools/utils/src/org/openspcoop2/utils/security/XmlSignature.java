@@ -46,6 +46,7 @@ import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.KeyStore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

@@ -25,6 +25,7 @@
 		<neethi.version>3.1.1</neethi.version>
 		<xmlsec.version>2.1.2</xmlsec.version>
 		<xml-security-impl.version>1.0</xml-security-impl.version>
+		<nimbus-jose.version>7.0.1</nimbus-jose.version>
 
 	</properties>
 
@@ -118,6 +119,18 @@
 			<groupId>com.sun.xml.security</groupId>
 			<artifactId>xml-security-impl</artifactId>
 			<version>${xml-security-impl.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.nimbusds</groupId>
+			<artifactId>nimbus-jose-jwt</artifactId>
+			<version>${nimbus-jose.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

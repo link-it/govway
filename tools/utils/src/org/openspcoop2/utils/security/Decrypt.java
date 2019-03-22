@@ -27,6 +27,7 @@ import java.security.Key;
 import java.security.cert.Certificate;
 
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.HexBinaryUtilities;
 
