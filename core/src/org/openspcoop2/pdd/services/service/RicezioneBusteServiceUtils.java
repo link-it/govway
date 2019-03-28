@@ -72,6 +72,7 @@ import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.transport.http.CORSRequestType;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -332,7 +333,7 @@ public class RicezioneBusteServiceUtils {
 						
 						CORSFilter corsFilter = new CORSFilter(logCore, cors);
 						CORSWrappedHttpServletResponse resCORS = new CORSWrappedHttpServletResponse(true);
-						corsFilter.doCORS(httpServletRequest, resCORS);
+						corsFilter.doCORS(httpServletRequest, resCORS, CORSRequestType.PRE_FLIGHT);
 						OpenSPCoop2Message msgCORSResponse = resCORS.buildMessage();
 						EsitoTransazione esito = 
 								requestInfo.getProtocolFactory().createEsitoBuilder().getEsito(requestInfo.getProtocolContext(),

@@ -50,6 +50,7 @@ import org.openspcoop2.core.config.OpenspcoopSorgenteDati;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Property;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.Route;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.RoutingTableDestinazione;
@@ -196,6 +197,23 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return dati;
 	}
 
+	public String convertLifeCacheValue(String v) {
+		if(v==null) {
+			return "-1";
+		}
+		try {
+			int vInt = Integer.valueOf(v);
+			if(vInt>0) {
+				return vInt+"";
+			}
+			else {
+				return "-1";
+			}
+		}catch(Exception e) {
+			return "-1";
+		}
+	}
+	
 	public void setDataElementCache(Vector<DataElement> dati, String intestazioneSezione,
 			String nomeParametroStatoCache, String statocache,
 			String nomeParametroDimensioneCache, String dimensionecache,
@@ -219,7 +237,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_CACHE);
 		de.setName(nomeParametroStatoCache);
-		if(view){
+		if(view && !ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE.equals(intestazioneSezione)){
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoStatoCache);
 			de.setSelected(statocache);
@@ -271,10 +289,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIFE_CACHE);
-			de.setValue(lifecache);
-			if(view){
+			int value = -1;
+			try {
+				value = Integer.valueOf(lifecache);
+			}catch(Exception e) {}
+			if(value>0){
+				de.setValue(value+"");
+			}
+			if(view && !ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE.equals(intestazioneSezione)){
 				de.setType(DataElementType.TEXT_EDIT);
-				de.setRequired(true);
+				//de.setRequired(true);
 			}
 			else{
 				de.setType(DataElementType.HIDDEN);
@@ -288,6 +312,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(idlecache);
 			if(view){
 				de.setType(DataElementType.TEXT_EDIT);
+				de.setNote(ConfigurazioneCostanti.LABEL_CACHE_SECONDS_NOTE);
 			}
 			else{
 				de.setType(DataElementType.HIDDEN);
@@ -1680,11 +1705,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return false;
 			}
 			
-			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && (lifecache==null || lifecache.equals("")) ) {
-				this.pd.setMessage("Deve essere indicato un valore per l'impostazione 'Life second' della Cache "+nomeCache);
-				return false;
-			}
-			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && !lifecache.equals("") && 
+//			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && (lifecache==null || lifecache.equals("")) ) {
+//				this.pd.setMessage("Deve essere indicato un valore per l'impostazione 'Life second' della Cache "+nomeCache);
+//				return false;
+//			}
+			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && lifecache!=null && !lifecache.equals("") && 
 					!this.checkNumber(lifecache, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIFE_CACHE+ "("+nomeCache+")", false)) {
 				return false;
 			}
@@ -1886,8 +1911,211 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 	
-	
+	// Prepara la lista delle regole di configurazione del caching risposta
+	public void prepareResponseCachingConfigurazioneRegolaList(ISearch ricerca, List<ResponseCachingConfigurazioneRegola> lista) throws Exception {
+		try {
+			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA);
 
+			int idLista = Liste.CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setSearch("");
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			this.pd.setSearchDescription("");
+			
+			ServletUtils.disabledPageDataSearch(this.pd);
+
+			// setto la barra del titolo
+			List<Parameter> lstParam = new ArrayList<Parameter>();
+
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE, null));
+
+			ServletUtils.setPageDataTitle(this.pd, lstParam);
+
+			// setto le label delle colonne	
+			String[] labels = {
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE,
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT,
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS
+			};
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<ResponseCachingConfigurazioneRegola> it = lista.iterator();
+				while (it.hasNext()) {
+					ResponseCachingConfigurazioneRegola regola = it.next();
+
+					Vector<DataElement> e = new Vector<DataElement>();
+
+					DataElement de = new DataElement();
+					de.setIdToRemove(regola.getId() + "");
+					
+					Integer statusMin = regola.getReturnCodeMin();
+					Integer statusMax = regola.getReturnCodeMax();
+					
+					// se e' stato salvato il valore 0 lo tratto come null
+					if(statusMin != null && statusMin.intValue() <= 0) {
+						statusMin = null;
+					}
+					
+					if(statusMax != null && statusMax.intValue() <= 0) {
+						statusMax = null;
+					}
+					
+					String statusValue = null;
+					// Intervallo
+					if(statusMin != null && statusMax != null) {
+						if(statusMax.longValue() == statusMin.longValue()) // esatto
+							statusValue = statusMin + "";
+						else 
+							statusValue = "[" + statusMin + " - " + statusMax + "]";
+					} else if(statusMin != null && statusMax == null) { // definito solo l'estremo inferiore
+						statusValue = "&gt;" + statusMin;
+					} else if(statusMin == null && statusMax != null) { // definito solo l'estremo superiore
+						statusValue = "&lt;" + statusMax;
+					} else { //entrambi null 
+						statusValue = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI;
+					}
+					
+					de.setValue(statusValue);
+					e.addElement(de);
+					
+					de = new DataElement();
+					de.setValue(regola.getFault() ? CostantiControlStation.LABEL_SI : CostantiControlStation.LABEL_NO);
+					e.addElement(de);
+					
+					de = new DataElement();
+					de.setValue(regola.getCacheTimeoutSeconds() != null ? regola.getCacheTimeoutSeconds() + "" : "--");
+					e.addElement(de);
+
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	// Controlla i dati del registro
+	public boolean responseCachingConfigurazioneRegolaCheckData(TipoOperazione tipoOp) throws Exception {
+
+		try{
+			
+			String returnCode = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE);
+			String statusMinS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN);
+			String statusMaxS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX);
+			String faultS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT);
+			String cacheSecondsS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS);
+			
+			Integer statusMin = null;
+			Integer statusMax = null;
+			Integer cacheSeconds = null;
+			boolean fault = ServletUtils.isCheckBoxEnabled(faultS);
+			
+			if(!returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI)) {
+				
+				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO)) {
+					if(StringUtils.isEmpty(statusMinS)) {
+						this.pd.setMessage("Il campo "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE + " &egrave; obbligatorio.");
+						return false;
+					}
+				}
+				
+				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
+					if(StringUtils.isEmpty(statusMinS) || StringUtils.isEmpty(statusMaxS)) {
+						this.pd.setMessage("Il campo "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE + " &egrave; obbligatorio.");
+						return false;
+					}
+				}
+				
+				if(StringUtils.isNotEmpty(statusMinS)) {
+					try {
+						statusMin = Integer.parseInt(statusMinS);
+						
+						if(statusMin < 1) {
+							this.pd.setMessage("Il valore inserito nel campo "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+							return false;
+						}
+						if(statusMin > 999) {
+							this.pd.setMessage("Il valore inserito nel campo "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+							return false;
+						}
+						
+						// return code esatto, ho salvato lo stesso valore nel campo return code;
+						if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO))
+							statusMax = statusMin;
+					}catch(Exception e) {
+						this.pd.setMessage("Il formato del campo "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido.");
+						return false;
+					}
+				}
+				
+				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
+					if(StringUtils.isNotEmpty(statusMaxS)) {
+						try {
+							statusMax = Integer.parseInt(statusMaxS);
+							
+							if(statusMax < 1) {
+								this.pd.setMessage("Il valore inserito nel campo "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+								return false;
+							}
+							if(statusMax > 999) {
+								this.pd.setMessage("Il valore inserito nel campo "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+								return false;
+							}
+						}catch(Exception e) {
+							this.pd.setMessage("Il formato del campo "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido.");
+							return false;
+						}
+					}
+				}
+			}
+			
+			if(StringUtils.isNotEmpty(cacheSecondsS)) {
+				try {
+					cacheSeconds = Integer.parseInt(cacheSecondsS);
+					
+					if(cacheSeconds < 1) {
+						this.pd.setMessage("Il valore inserito nel campo "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+						return false;
+					}
+				}catch(Exception e) {
+					this.pd.setMessage("Il formato del campo "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS + " non &egrave; valido.");
+					return false;
+				}
+			}
+			
+			
+
+			// Se tipoOp = add, controllo che il registro non sia gia' stato
+			// registrata
+			if (tipoOp.equals(TipoOperazione.ADD)) {
+				boolean giaRegistrato = this.confCore.existsResponseCachingConfigurazioneRegola(statusMin, statusMax, fault, cacheSeconds);
+
+				if (giaRegistrato) {
+					this.pd.setMessage("&Egrave; gi&agrave; presente una Regola di Response Caching con in parametri indicati.");
+					return false;
+				}
+			}
+
+			return true;
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
 
 	// Controlla i dati del pannello Configurazione -> Generale
 	public boolean configurazioneCheckData() throws Exception {
@@ -2974,7 +3202,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String corsAllowHeaders, String corsAllowOrigins, String corsAllowMethods, 
 			boolean corsAllowCredential, String corsExposeHeaders, boolean corsMaxAge, int corsMaxAgeSeconds,
 			boolean responseCachingEnabled,	int responseCachingSeconds, boolean responseCachingMaxResponseSize,	long responseCachingMaxResponseSizeBytes, 
-			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders, boolean responseCachingDigestPayload
+			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders, boolean responseCachingDigestPayload, String responseCachingDigestHeadersNomiHeaders, 
+			boolean responseCachingCacheControlNoCache, boolean responseCachingCacheControlMaxAge, boolean responseCachingCacheControlNoStore, boolean visualizzaLinkConfigurazioneRegola, 
+			String servletResponseCachingConfigurazioneRegolaList, List<Parameter> paramsResponseCachingConfigurazioneRegolaList, int numeroResponseCachingConfigurazioneRegola
 			) throws Exception {
 		DataElement de = new DataElement();
 
@@ -3519,7 +3749,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// Configurazione Response Caching
 		this.addResponseCachingToDati(dati, responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize,		responseCachingMaxResponseSizeBytes, responseCachingDigestUrlInvocazione, responseCachingDigestHeaders,
-				responseCachingDigestPayload, true);
+				responseCachingDigestPayload, true, responseCachingDigestHeadersNomiHeaders, responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore,
+				visualizzaLinkConfigurazioneRegola, servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola);
 		
 		if (!this.isModalitaStandard()) {
 			de = new DataElement();
@@ -5810,33 +6041,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(cache.getSize()+"");
 		dati.addElement(de);
 		
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME);
-		if(enabled && cache.isCache()){
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setRequired(true);
-		}
-		else{
-			de.setType(DataElementType.HIDDEN);
-		}
-		if(cache.getLifeTime()!=null)
-			de.setValue(cache.getLifeTime()+"");
-		dati.addElement(de);
-		
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_IDLE_TIME);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_IDLE_TIME);
-		if(enabled && cache.isCache()){
-			de.setType(DataElementType.TEXT_EDIT);
-		}
-		else{
-			de.setType(DataElementType.HIDDEN);
-		}
-		if(cache.getIdleTime()!=null)
-			de.setValue(cache.getIdleTime()+"");
-		dati.addElement(de);
-		
 		
 		String[] tipoAlgoritmo = { 
 				CacheAlgorithm.LRU.name(),
@@ -5859,6 +6063,35 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(cache.getAlgorithm().name());
 		}
 		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME);
+		if(enabled && cache.isCache()){
+			de.setType(DataElementType.TEXT_EDIT);
+			//de.setRequired(true);
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+		}
+		if(cache.getLifeTime()!=null)
+			de.setValue(cache.getLifeTime()+"");
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_IDLE_TIME);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_IDLE_TIME);
+		if(enabled && cache.isCache()){
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setNote(ConfigurazioneCostanti.LABEL_CACHE_SECONDS_NOTE);
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+		}
+		if(cache.getIdleTime()!=null)
+			de.setValue(cache.getIdleTime()+"");
+		dati.addElement(de);
+		
 		
 	}
 	
@@ -6221,7 +6454,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(first){
 				if(cache.getLifeTime()==null){
 					// default
-					cache.setLifeTime(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME);
+					//cache.setLifeTime(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME);
 				}
 			}else{
 				cache.setLifeTime(null); // il check segnalera' l'errore  
@@ -6371,11 +6604,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return false;
 			}
 			
-			if(configurazioneControlloTraffico.getCache().getLifeTime()==null){
-				String messaggio = "Deve essere indicato un valore in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_DIMENSIONE+"'";
-				this.pd.setMessage(messaggio);
-				return false;
-			}
+//			if(configurazioneControlloTraffico.getCache().getLifeTime()==null){
+//				String messaggio = "Deve essere indicato un valore in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_DIMENSIONE+"'";
+//				this.pd.setMessage(messaggio);
+//				return false;
+//			}
 			
 		}
 		return true;

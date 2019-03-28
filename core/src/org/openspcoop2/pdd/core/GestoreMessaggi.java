@@ -359,35 +359,30 @@ public class GestoreMessaggi  {
 
 		}
 
-		if( ( itemIdleTime> 0) ||
-				( itemLifeSecond > 0) ){
-
-			if( itemIdleTime > 0  ){
-				try{
-					msg = "Attributo 'IdleTime' (Gestore Messaggi) impostato al valore: "+itemIdleTime;
-					if(log!=null)
-						log.info(msg);
-					if(logConsole!=null)
-						logConsole.info(msg);
-					GestoreMessaggi.cacheMappingGestoreMessaggi.setItemIdleTime(itemIdleTime);
-				}catch(Exception error){
-					throw new DriverConfigurazioneException("Parametro errato per l'attributo 'IdleTime' (Gestore Messaggi): "+error.getMessage());
-				}
+		if( itemIdleTime > 0  ){
+			try{
+				msg = "Attributo 'IdleTime' (Gestore Messaggi) impostato al valore: "+itemIdleTime;
+				if(log!=null)
+					log.info(msg);
+				if(logConsole!=null)
+					logConsole.info(msg);
+				GestoreMessaggi.cacheMappingGestoreMessaggi.setItemIdleTime(itemIdleTime);
+			}catch(Exception error){
+				throw new DriverConfigurazioneException("Parametro errato per l'attributo 'IdleTime' (Gestore Messaggi): "+error.getMessage());
 			}
-			if( itemLifeSecond > 0  ){
-				try{
-					msg = "Attributo 'MaxLifeSecond' (Gestore Messaggi) impostato al valore: "+itemLifeSecond;
-					if(log!=null)
-						log.info(msg);
-					if(logConsole!=null)
-						logConsole.info(msg);
-					GestoreMessaggi.cacheMappingGestoreMessaggi.setItemLifeTime(itemLifeSecond);
-				}catch(Exception error){
-					throw new DriverConfigurazioneException("Parametro errato per l'attributo 'MaxLifeSecond' (Gestore Messaggi): "+error.getMessage());
-				}
-			}
-
 		}
+
+		try{
+			msg = "Attributo 'MaxLifeSecond' (Gestore Messaggi) impostato al valore: "+itemLifeSecond;
+			if(log!=null)
+				log.info(msg);
+			if(logConsole!=null)
+				logConsole.info(msg);
+			GestoreMessaggi.cacheMappingGestoreMessaggi.setItemLifeTime(itemLifeSecond);
+		}catch(Exception error){
+			throw new DriverConfigurazioneException("Parametro errato per l'attributo 'MaxLifeSecond' (Gestore Messaggi): "+error.getMessage());
+		}
+
 	}
 
 

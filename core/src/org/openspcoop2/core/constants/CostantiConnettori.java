@@ -116,15 +116,6 @@ public class CostantiConnettori {
     
     /** FILE PROPERTIES */
     
-    public final static String _CONNETTORE_FILE_MAP_DATE_OBJECT = "date";
-    public final static String _CONNETTORE_FILE_MAP_TRANSACTION_OBJECT = "transaction";
-    public final static String _CONNETTORE_FILE_MAP_TRANSACTION_ID = "{transaction:id}";
-    public final static String _CONNETTORE_FILE_MAP_BUSTA_OBJECT = "busta";
-    public final static String _CONNETTORE_FILE_MAP_CTX_OBJECT = "context";
-    public final static String _CONNETTORE_FILE_MAP_HEADER = "header";
-    public final static String _CONNETTORE_FILE_MAP_QUERY_PARAMETER = "query";
-    public final static String _CONNETTORE_FILE_MAP_BUSTA_PROPERTY = "property";
-    
 	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE = "outputFile";
 	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS = "outputFileHeaders";
 	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR = "outputFileAutoCreateParentDirectory";

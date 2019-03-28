@@ -120,6 +120,7 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.controllo_traffico.plugins" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.controllo_traffico.policy" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.controllo_traffico.policy.driver" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.dynamic" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.eventi" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.handlers" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.handlers.statistics" />
@@ -138,6 +139,7 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.token.pa" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.token.parser" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.transazioni" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.trasformazioni" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.logger" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.logger.traccia" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.mdb" />

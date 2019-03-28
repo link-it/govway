@@ -62,12 +62,15 @@ import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Property;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
@@ -106,6 +109,8 @@ import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
+import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.pdd.logger.DriverMsgDiagnostici;
 import org.openspcoop2.pdd.logger.DriverTracciamento;
@@ -166,6 +171,7 @@ import org.openspcoop2.web.lib.audit.dao.AppenderProperty;
 import org.openspcoop2.web.lib.audit.dao.Filtro;
 import org.openspcoop2.web.lib.audit.log.constants.Stato;
 import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.queue.config.QueueProperties;
 import org.openspcoop2.web.lib.queue.costanti.Operazione;
@@ -5294,6 +5300,183 @@ public class ControlStationCore {
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
+	}
+	
+	public TipoAutenticazionePrincipal getTipoAutenticazionePrincipal(List<Proprieta> list) {
+		if(list==null || list.isEmpty()) {
+			return null;
+		}
+		for (Proprieta proprieta : list) {
+			if(ParametriAutenticazionePrincipal.TIPO_AUTENTICAZIONE.equals(proprieta.getNome())) {
+				return TipoAutenticazionePrincipal.toEnumConstant(proprieta.getValore());
+			}
+		}
+		return null;
+	}
+	public List<String> getParametroAutenticazione(String autenticazione, List<Proprieta> list) {
+		if(list==null || list.isEmpty()) {
+			return null;
+		}
+		
+		 List<String> parametroAutenticazioneList = null;
+		
+		if(TipoAutenticazione.BASIC.equals(autenticazione)) {
+			// posizione 0: clean
+			for (Proprieta proprieta : list) {
+				if(ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION.equals(proprieta.getNome())) {
+					parametroAutenticazioneList = new ArrayList<>();
+					if(ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION_TRUE.equals(proprieta.getValore())) {
+						parametroAutenticazioneList.add(Costanti.CHECK_BOX_DISABLED);
+					}
+					else {
+						parametroAutenticazioneList.add(Costanti.CHECK_BOX_ENABLED);
+					}
+					break;
+				}
+			}
+		}
+		else if(TipoAutenticazione.PRINCIPAL.equals(autenticazione)) {
+			TipoAutenticazionePrincipal tipo = getTipoAutenticazionePrincipal(list);
+			if(tipo==null) {
+				return null;
+			}
+			
+			// posizione 0: nome o pattern
+			switch (tipo) {
+			case CONTAINER:
+			case INDIRIZZO_IP:
+				return null;
+			case HEADER:
+			case FORM:
+				// posizione 0: nome
+				for (Proprieta proprieta : list) {
+					if(ParametriAutenticazionePrincipal.NOME.equals(proprieta.getNome())) {
+						parametroAutenticazioneList = new ArrayList<>();
+						parametroAutenticazioneList.add(proprieta.getValore());
+						break;
+					}
+				}
+				
+				// posizione 1: clean
+				if(parametroAutenticazioneList==null) {
+					break;
+				}
+				for (Proprieta proprieta : list) {
+					if(ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL.equals(proprieta.getNome())) {
+						if(ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL_TRUE.equals(proprieta.getValore())) {
+							parametroAutenticazioneList.add(Costanti.CHECK_BOX_DISABLED);
+						}
+						else {
+							parametroAutenticazioneList.add(Costanti.CHECK_BOX_ENABLED);
+						}
+						break;
+					}
+				}
+				
+				break;
+			case URL:
+				// posizione 0: pattern
+				for (Proprieta proprieta : list) {
+					if(ParametriAutenticazionePrincipal.PATTERN.equals(proprieta.getNome())) {
+						parametroAutenticazioneList = new ArrayList<>();
+						parametroAutenticazioneList.add(proprieta.getValore());
+						break;
+					}
+				}
+				break;
+			}
+		}
+			
+		return parametroAutenticazioneList;
+	}
+
+	public List<Proprieta> convertToAutenticazioneProprieta(String autenticazione, TipoAutenticazionePrincipal autenticazionePrincipal,  List<String> autenticazioneParametroList){
+		List<Proprieta> list = new ArrayList<>();
+		if(TipoAutenticazione.BASIC.equals(autenticazione)) {
+			if(autenticazioneParametroList!=null && !autenticazioneParametroList.isEmpty()) {
+				for (int i = 0; i < autenticazioneParametroList.size(); i++) {
+					String autenticazioneParametro = autenticazioneParametroList.get(i);
+					if(autenticazioneParametro!=null && !"".equals(autenticazioneParametro)) {
+						Proprieta proprieta = new Proprieta();
+						
+						// posizione 0: clean
+						if(i==0) {
+							proprieta.setNome(ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION);
+							if(ServletUtils.isCheckBoxEnabled(autenticazioneParametro)) {
+								proprieta.setValore(ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION_FALSE);
+							}
+							else {
+								proprieta.setValore(ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION_TRUE);
+							}
+						}
+						list.add(proprieta);
+					}
+				}
+			}
+		}
+		else if(TipoAutenticazione.PRINCIPAL.equals(autenticazione)) {
+			
+			if(autenticazionePrincipal==null) {
+				autenticazionePrincipal = TipoAutenticazionePrincipal.CONTAINER;	
+			}
+			Proprieta proprieta = new Proprieta();
+			proprieta.setNome(ParametriAutenticazionePrincipal.TIPO_AUTENTICAZIONE);
+			proprieta.setValore(autenticazionePrincipal.getValue());
+			list.add(proprieta);
+			
+			switch (autenticazionePrincipal) {
+			case CONTAINER:
+			case INDIRIZZO_IP:
+				break;
+			case HEADER:
+			case FORM:
+				if(autenticazioneParametroList!=null && !autenticazioneParametroList.isEmpty()) {
+					for (int i = 0; i < autenticazioneParametroList.size(); i++) {
+						String autenticazioneParametro = autenticazioneParametroList.get(i);
+						if(autenticazioneParametro!=null && !"".equals(autenticazioneParametro)) {
+							Proprieta proprietaPar = new Proprieta();
+							
+							// posizione 0: nome
+							if(i==0) {
+								proprietaPar.setNome(ParametriAutenticazionePrincipal.NOME);
+								proprietaPar.setValore(autenticazioneParametro);
+							}
+							
+							// posizione 1: clean
+							else if(i==1) {
+								proprietaPar.setNome(ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL);
+								if(ServletUtils.isCheckBoxEnabled(autenticazioneParametro)) {
+									proprietaPar.setValore(ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL_FALSE);
+								}
+								else {
+									proprietaPar.setValore(ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL_TRUE);
+								}
+							}
+							list.add(proprietaPar);
+						}
+					}
+				}
+				break;
+			case URL:
+				if(autenticazioneParametroList!=null && !autenticazioneParametroList.isEmpty()) {
+					for (int i = 0; i < autenticazioneParametroList.size(); i++) {
+						String autenticazioneParametro = autenticazioneParametroList.get(i);
+						if(autenticazioneParametro!=null && !"".equals(autenticazioneParametro)) {
+							Proprieta proprietaPar = new Proprieta();
+							
+							// posizione 0: pattern
+							if(i==0) {
+								proprietaPar.setNome(ParametriAutenticazionePrincipal.PATTERN);
+								proprietaPar.setValore(autenticazioneParametro);
+							}
+							list.add(proprietaPar);
+						}
+					}
+				}
+				break;
+			}
+		}
+		return list;
 	}
 	
 	public List<String> getVersioniProtocollo(String protocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {

@@ -22,6 +22,8 @@
 
 package org.openspcoop2.message.constants;
 
+import org.openspcoop2.utils.transport.http.HttpConstants;
+
 /**
  * Costanti
  *
@@ -40,8 +42,8 @@ public class Costanti {
 	public final static String CONTENT_TYPE_NOT_DEFINED = "NotDefined";
 	
 	/** SOAP Action */
-	public static final String SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION = "SOAPAction";
-	public static final String SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION = "action";
+	public static final String SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION = HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION;
+	public static final String SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION = HttpConstants.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION;
 	
 	/** SOAP Envelope namespace */
 	public static final String SOAP_ENVELOPE_NAMESPACE = "http://schemas.xmlsoap.org/soap/envelope/";

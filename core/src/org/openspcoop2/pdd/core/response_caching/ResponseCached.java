@@ -60,10 +60,23 @@ public class ResponseCached implements Serializable {
 	private byte[] message;
 	private long messageLength;
 	private byte[] context;
+	private Date creazione;
 	private Date scadenza;
 	private String digest;
 	private String uuid;
 	
+	public Date getCreazione() {
+		return this.creazione;
+	}
+	public long getAgeInSeconds() {
+		long now = DateManager.getTimeMillis();
+		long creazione = this.creazione.getTime();
+		long diff = now - creazione;
+		return (diff / 1000l);
+	}
+	public void setCreazione(Date creazione) {
+		this.creazione = creazione;
+	}
 	public Date getScadenza() {
 		return this.scadenza;
 	}
@@ -114,8 +127,11 @@ public class ResponseCached implements Serializable {
 		bf.append("UUID: ").append(this.uuid).append("\n\n");
 		bf.append("Digest: ").append(this.digest).append("\n\n");
 		SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+		String creazione = dateformat.format(this.creazione).replace('_','T');
+		bf.append("Creazione: ").append(creazione).append("\n\n");
 		String scadenza = dateformat.format(this.scadenza).replace('_','T');
 		bf.append("Scadenza: ").append(scadenza).append("\n\n");
+		bf.append("Età (secondi): ").append(this.getAgeInSeconds()).append("\n\n");
 		bf.append("Content-Type: ").append(this.contentType).append("\n\n");
 		bf.append("Content-Length: ").append(this.messageLength).append("\n\n");
 		bf.append("Context: \n").append(new String(this.context)).append("\n\n");
@@ -175,7 +191,13 @@ public class ResponseCached implements Serializable {
 	public static ResponseCached toResponseCached(OpenSPCoop2Message msg, int seconds) throws MessageException, IOException {
 		ResponseCached rCached = new ResponseCached();
 		
-		Date scadenza = new Date( DateManager.getTimeMillis() + (seconds*1000) );
+		long now = DateManager.getTimeMillis();
+		long ms = (((long)seconds)*1000l);
+		
+		Date creazione = new Date( now );
+		rCached.setCreazione(creazione);
+		
+		Date scadenza = new Date( now + ms );
 		rCached.setScadenza(scadenza);
 		
 		// Save bytes message

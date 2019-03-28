@@ -1,0 +1,20 @@
+# Alcune note che valgono per tutti i campi:
+# - i campi che iniziano con 'data_' possiedono Data e Ora in formato RFC3339 in UTC e con i separatori Z e T maiuscolo.
+
+emittente: Ente # [required] Identificativo dell'Issuer che ha emesso la traccia
+data_emissione: '2019-03-14T17:40:18.100Z' # [required] Informazione temporale su quando la traccia è stata emessa.
+id_traccia: a16c7501-0664-48ff-9216-a726f8e7778c # [required] Identificativo unico della traccia nel dominio dell'Issuer
+ruolo: erogazione # [required] Indica se la traccia rappresenta una erogazione (server) o una fruizione (client) di api
+
+esito: # [required]
+  codice: '0' # [required] Codifica l'esito dell'invocazione nel dominio dell'Issuer.
+  descrizione: ok # [optional] Fornisce una descrizione 'human readable' dell'esito. 
+
+richiesta: # [required]
+  data_ricezione: '2019-03-14T17:40:17.600Z' # [required] Rappresenta il momento in cui la richiesta è stata ricevuta.
+  tipo: POST # [required] Indica il metodo http utilizzato nella richiesta.
+  url_invocazione: http://govway/in/Ente/Protocollazione/v1/documenti?test=true  # [required] Indica l'endpoint
+  
+risposta:
+  data_consegna: '2019-03-14T17:40:18.002Z' # [required] Rappresenta il momento in cui una risposta viene inoltrata all'applicativo che aveva scaturito la richiesta
+  esito_consegna: '200' # [required] Esito di trasporto ritornato all'applicativo che aveva scaturito la richiesta.

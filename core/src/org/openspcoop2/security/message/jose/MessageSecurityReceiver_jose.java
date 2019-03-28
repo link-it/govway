@@ -43,7 +43,8 @@ import org.openspcoop2.security.message.utils.KeystoreUtils;
 import org.openspcoop2.security.message.utils.PropertiesUtils;
 import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.security.JOSERepresentation;
+import org.openspcoop2.utils.security.JOSESerialization;
+import org.openspcoop2.utils.security.JWTOptions;
 import org.openspcoop2.utils.security.JsonDecrypt;
 import org.openspcoop2.utils.security.JsonVerifySignature;
 
@@ -59,7 +60,8 @@ import org.openspcoop2.utils.security.JsonVerifySignature;
  */
 public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityReceiver {
 
-	private JOSERepresentation joseRepresentation = null;
+	private JOSESerialization joseSerialization = null;
+	private boolean detached = false;
 	private JsonVerifySignature jsonVerifierSignature = null;
 	private JsonDecrypt jsonDecrypt = null;
 
@@ -117,10 +119,11 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					throw new SecurityException(JOSECostanti.JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION+" require '"+SecurityConstants.SIGNATURE_MODE+"' property");
 				}
 				try {
-					this.joseRepresentation = JOSEUtils.toJOSERepresentation(mode);
+					this.joseSerialization = JOSEUtils.toJOSESerialization(mode);
 				}catch(Exception e) {
 					throw new SecurityException(JOSECostanti.JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION+", '"+SecurityConstants.SIGNATURE_MODE+"' property error: "+e.getMessage(),e);
 				}
+				JWTOptions options = new JWTOptions(this.joseSerialization);
 				
 				SignatureBean bean = null;
 				NotFoundException notFound = null;
@@ -131,7 +134,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				}
 				if(bean!=null) {
 					Properties signatureProperties = bean.getProperties();
-					this.jsonVerifierSignature = new JsonVerifySignature(signatureProperties, this.joseRepresentation);	
+					this.jsonVerifierSignature = new JsonVerifySignature(signatureProperties, options);	
 				}
 				else {	
 					KeyStore signatureKS = null;
@@ -167,15 +170,20 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					}
 					
 					if(signatureTrustStoreKS!=null) {
-						this.jsonVerifierSignature = new JsonVerifySignature(signatureTrustStoreKS, aliasSignatureUser, signatureAlgorithm, this.joseRepresentation);	
+						this.jsonVerifierSignature = new JsonVerifySignature(signatureTrustStoreKS, aliasSignatureUser, signatureAlgorithm, options);	
 					}
 					else {
-						this.jsonVerifierSignature = new JsonVerifySignature(signatureKS, aliasSignatureUser, signatureAlgorithm, this.joseRepresentation);	
+						this.jsonVerifierSignature = new JsonVerifySignature(signatureKS, aliasSignatureUser, signatureAlgorithm, options);	
 					}
 				}
 				
+				String signatureDetachedParam = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_DETACHED);
+				if(signatureDetachedParam!=null) {
+					this.detached = SecurityConstants.SIGNATURE_DETACHED_TRUE.equalsIgnoreCase(signatureDetachedParam);
+				}
+				
 				String detachedSignature = null;
-				if(JOSERepresentation.DETACHED.equals(this.joseRepresentation)) {
+				if(this.detached) {
 					detachedSignature = this.readDetachedSignatureFromMessage(messageSecurityContext.getIncomingProperties(), 
 							restJsonMessage, JOSECostanti.JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION);
 				}
@@ -187,8 +195,8 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				signatureProcess = true; // le eccezioni lanciate da adesso sono registrato con codice relative alla verifica
 				boolean verify = false;
 				try {
-					if(JOSERepresentation.DETACHED.equals(this.joseRepresentation)) {
-						verify = this.jsonVerifierSignature.verify(detachedSignature, restJsonMessage.getContent());
+					if(this.detached) {
+						verify = this.jsonVerifierSignature.verifyDetached(detachedSignature, restJsonMessage.getContent());
 					}else {
 						verify = this.jsonVerifierSignature.verify(restJsonMessage.getContent());
 					}
@@ -213,13 +221,11 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+" require '"+SecurityConstants.DECRYPTION_MODE+"' property");
 				}
 				try {
-					this.joseRepresentation = JOSEUtils.toJOSERepresentation(mode);
+					this.joseSerialization = JOSEUtils.toJOSESerialization(mode);
 				}catch(Exception e) {
 					throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+", '"+SecurityConstants.DECRYPTION_MODE+"' property error: "+e.getMessage(),e);
 				}
-				if(JOSERepresentation.DETACHED.equals(this.joseRepresentation)) {
-					throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+", "+SecurityConstants.DECRYPTION_MODE+" '"+mode+"' not supported");
-				}
+				JWTOptions options = new JWTOptions(this.joseSerialization);
 				
 				EncryptionBean bean = null;
 				NotFoundException notFound = null;
@@ -230,7 +236,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				}
 				if(bean!=null) {
 					Properties encryptionProperties = bean.getProperties();
-					this.jsonDecrypt = new JsonDecrypt(encryptionProperties, this.joseRepresentation);	
+					this.jsonDecrypt = new JsonDecrypt(encryptionProperties, options);	
 				}
 				else {	
 					KeyStore encryptionKS = null;
@@ -286,7 +292,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					}
 					
 					this.jsonDecrypt = new JsonDecrypt(encryptionKS, encryptionSymmetric, aliasEncryptUser, aliasEncryptPassword,
-							encryptionKeyAlgorithm, encryptionContentAlgorithm, this.joseRepresentation);	
+							encryptionKeyAlgorithm, encryptionContentAlgorithm, options);	
 				}
 				
 	
@@ -369,7 +375,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 			OpenSPCoop2RestJsonMessage restJsonMessage = messageParam.castAsRestJson();
 					
 			if(this.jsonVerifierSignature!=null) {
-				if(JOSERepresentation.DETACHED.equals(this.joseRepresentation)) {
+				if(this.detached) {
 					this.deleteDetachedSignatureFromMessage(restJsonMessage, JOSECostanti.JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION);
 				}	
 				else {

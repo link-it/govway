@@ -26,13 +26,21 @@ package org.openspcoop2.pdd.services;
 import java.util.List;
 import java.util.Properties;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPHeader;
 
 import org.apache.commons.io.output.NullOutputStream;
+import org.openspcoop2.core.config.CorsConfigurazione;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TransferLengthModes;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
@@ -41,7 +49,11 @@ import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.CORSFilter;
+import org.openspcoop2.pdd.core.CORSWrappedHttpServletResponse;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
@@ -51,6 +63,7 @@ import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorOutMessage;
 import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.engine.RequestInfo;
+import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.registry.CachedRegistryReader;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
@@ -60,6 +73,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.transport.http.CORSRequestType;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 
@@ -325,7 +339,7 @@ public class ServicesUtils {
 	}
 	
 	
-	public static void setGovWayHeaderResponse(Properties propertiesTrasporto, Logger logCore, boolean portaDelegata, PdDContext pddContext) {
+	public static void setGovWayHeaderResponse(Properties propertiesTrasporto, Logger logCore, boolean portaDelegata, PdDContext pddContext, URLProtocolContext protocolContext) {
 		try {
 			UtilitiesIntegrazione utilitiesIntegrazione = null;
 			if(portaDelegata) {
@@ -364,6 +378,69 @@ public class ServicesUtils {
 		    	}	
 			}
 		}
+		setCORSAllowOrigin(propertiesTrasporto, logCore, portaDelegata, pddContext, protocolContext);
+	}
+	
+	
+	
+	private static void setCORSAllowOrigin(Properties propertiesTrasporto, Logger logCore, boolean portaDelegata, PdDContext pddContext, URLProtocolContext protocolContext) {
+		try {
+			
+			Object nomePortaObject = pddContext.getObject(CostantiPdD.NOME_PORTA_INVOCATA);
+			String nomePorta = null;
+			if(nomePortaObject!=null && nomePortaObject instanceof String) {
+				nomePorta = (String) nomePortaObject;
+			}
+			
+			CorsConfigurazione cors = null;
+			HttpServletRequest httpServletRequest = null;
+			if(protocolContext!=null) {
+				httpServletRequest = protocolContext.getHttpServletRequest();	
+				if(nomePorta==null) {
+					nomePorta = protocolContext.getInterfaceName();
+				}
+			}
+			
+			if(httpServletRequest!=null) {
+				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance();
+				if(nomePorta!=null) {
+					if(portaDelegata) {
+						IDPortaDelegata idPD = new IDPortaDelegata();
+						idPD.setNome(nomePorta);
+						PortaDelegata pdDefault = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD);
+						cors = configurazionePdDManager.getConfigurazioneCORS(pdDefault);
+					}
+					else {
+						IDPortaApplicativa idPA = new IDPortaApplicativa();
+						idPA.setNome(nomePorta);
+						PortaApplicativa paDefault = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA);
+						cors = configurazionePdDManager.getConfigurazioneCORS(paDefault);						
+					}
+				}
+				if(cors==null) {
+					cors = configurazionePdDManager.getConfigurazioneCORS();
+				}
+			}
+			else {
+				cors = new CorsConfigurazione();
+				cors.setStato(StatoFunzionalita.DISABILITATO);
+			}
+			
+			if(StatoFunzionalita.ABILITATO.equals(cors.getStato()) && TipoGestioneCORS.GATEWAY.equals(cors.getTipo())) {
+				// verifico che non siamo in una preflight già gestita
+				boolean preflightRequest = pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY);
+				if(!preflightRequest) {
+					CORSFilter corsFilter = new CORSFilter(logCore, cors);
+					CORSWrappedHttpServletResponse res = new CORSWrappedHttpServletResponse(false);
+					corsFilter.doCORS(httpServletRequest, res, CORSRequestType.ACTUAL);
+					propertiesTrasporto.putAll(res.getHeader());
+				}
+			}
+			
+		}catch(Exception e){
+			logCore.error("Set cors origin: "+e.getMessage(),e);
+		}
+
 	}
 	
 }

@@ -150,7 +150,7 @@ public class ValidatoreMessaggiApplicativi {
 				catch(Exception e){
 					this.logger.error("Read failed: "+e.getMessage(),e);
 					ValidatoreMessaggiApplicativiException ex 
-						= new ValidatoreMessaggiApplicativiException("Lettura SOAPEnvelope fallita");
+						= new ValidatoreMessaggiApplicativiException("Lettura SOAPEnvelope fallita",e);
 					ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA));
 					throw ex;
 				}
@@ -170,7 +170,7 @@ public class ValidatoreMessaggiApplicativi {
 		}
 		catch(Exception e){
 			ValidatoreMessaggiApplicativiException ex 
-				= new ValidatoreMessaggiApplicativiException(e.getMessage());
+				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
 			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA));
 			throw ex;
 		}
@@ -196,13 +196,13 @@ public class ValidatoreMessaggiApplicativi {
 		}catch(DriverRegistroServiziNotFound e){
 			this.logger.error("Riscontrato errore durante la ricerca dei wsdl/xsd che definiscono l'accordo di servizio: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 
-			= new ValidatoreMessaggiApplicativiException("Riscontrato errore durante la ricerca del Wsdl: "+e.getMessage());
+			= new ValidatoreMessaggiApplicativiException("Riscontrato errore durante la ricerca del Wsdl: "+e.getMessage(),e);
 			ex.setErrore(ErroriIntegrazione.ERRORE_405_SERVIZIO_NON_TROVATO.getErroreIntegrazione());
 			throw ex;
 		}catch(DriverRegistroServiziException e){
 			this.logger.error("Riscontrato errore durante l'inizializzazione: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 
-			= new ValidatoreMessaggiApplicativiException("Riscontrato errore durante l'inizializzazione: "+e.getMessage());
+			= new ValidatoreMessaggiApplicativiException("Riscontrato errore durante l'inizializzazione: "+e.getMessage(),e);
 			if(e.getMessage()!=null && e.getMessage().startsWith("[SchemaXSD]")){
 				ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.getErrore417_CostruzioneValidatoreTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD));
 				throw ex;
@@ -223,7 +223,7 @@ public class ValidatoreMessaggiApplicativi {
 		}catch(Exception e){
 			this.logger.error("WSDLValidator initialized failed: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 
-				= new ValidatoreMessaggiApplicativiException(e.getMessage());
+				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
 			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA));
 			throw ex;
 		}
@@ -265,12 +265,12 @@ public class ValidatoreMessaggiApplicativi {
 		}catch(org.openspcoop2.utils.wsdl.WSDLException e){
 			this.logger.error("WSDL validate failed: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 
-			= new ValidatoreMessaggiApplicativiException(e.getMessage());
+			= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
 			ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.getErrore417_CostruzioneValidatoreTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD));
 			throw ex;
 		}catch(Exception e){ // WSDLValidatorException
 			ValidatoreMessaggiApplicativiException ex 
-			= new ValidatoreMessaggiApplicativiException(e.getMessage());
+			= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
 			if(isRichiesta){
 				ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD));
 			}else{
@@ -304,7 +304,7 @@ public class ValidatoreMessaggiApplicativi {
 					checkSoapAction, false);
 		}catch(Exception e ){ // WSDLValidatorException
 			ValidatoreMessaggiApplicativiException ex 
-				= new ValidatoreMessaggiApplicativiException(e.getMessage());
+				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
 			if(isRichiesta){
 				if(TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio()))
 					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.WSDL_FRUITORE));
@@ -327,7 +327,7 @@ public class ValidatoreMessaggiApplicativi {
 			this.wsdlValidator.wsdlConformanceCheck_restoreOriginalDocument();
 		}catch(Exception e ){ // WSDLValidatorException
 			ValidatoreMessaggiApplicativiException ex 
-				= new ValidatoreMessaggiApplicativiException(e.getMessage());
+				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
 			if(isRichiesta){
 				if(TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio()))
 					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.WSDL_FRUITORE));

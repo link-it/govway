@@ -1,0 +1,66 @@
+# Alcune note che valgono per tutti i campi:
+# - i campi che iniziano con 'data_' possiedono Data e Ora in formato RFC3339 in UTC e con i separatori Z e T maiuscolo.
+
+emittente: Ente # [required] Identificativo dell'Issuer che ha emesso la traccia
+data_emissione: '2019-03-14T17:40:18.100Z' # [required] Informazione temporale su quando la traccia è stata emessa.
+id_traccia: a16c7501-0664-48ff-9216-a726f8e7778c # [required] Identificativo unico della traccia nel dominio dell'Issuer
+ruolo: erogazione # [required] Indica se la traccia rappresenta una erogazione (server) o una fruizione (client) di api
+
+esito: # [required]
+  codice: '0' # [required] Codifica l'esito dell'invocazione nel dominio dell'Issuer.
+  descrizione: ok # [optional] Fornisce una descrizione 'human readable' dell'esito. 
+
+richiesta: # [required]
+  data_ricezione: '2019-03-14T17:40:17.600Z' # [required] Rappresenta il momento in cui la richiesta è stata ricevuta.
+  tipo: POST # [required] Indica il metodo http utilizzato nella richiesta.
+  url_invocazione: http://govway/in/Ente/Protocollazione/v1/documenti?test=true  # [required] Indica l'endpoint
+  id: b32a7501-7788-48ff-99999-a726f8e7658e # [optional] Dove applicabile, identificativo univoco della richiesta. (Alcuni esempi: header wsa:MessageID in WS-Addressing, l'identificativo SDI nella Fatturazione Elettronica, l'id e-Gov su richieste SPCoop). 
+  id_applicativo: ENTE-X-UFFICIOY-123 # [otional] Dove applicabile, identificativo applicativo del messaggio. Dove è presenta un imbustamento di protocollo (WS-Addressing, Fatturazione Elettronica, SPCoop ...), può essere associato alla traccia un ulteriore identificativo applicativo che identifica il messaggio contenuto all'interno della busta di protocollo. 
+  data_consegna: '2019-03-14T17:40:17.701Z' # [optional] Se è presente un elemento infrastrutturale come un API Gateway, rappresenta il momento in cui la richiesta, dopo essere stata autorizzata dall'API Gateway, viene consegnata all'applicativo che implementa l'api.
+  contenuti: # [optional]
+    # [optional] contiene la lista degli header http presenti nella richiesta. 
+    #            Alcuni header potrebbero non essere riportati nella traccia se classificati come infrastrutturali (es. Proxy). 
+    #            E' obbligatorio registrare tutti gli header che rientrano nell'ambito applicativo e/o sono inerenti alla comprensione del body (ContentEncoding, Signature, Encrypt ...)
+    headers: 
+    - nome: Accept
+      valore: application/json
+    - nome: Content-Length
+      valore: '56789'
+    - nome: Content-Type
+      valore: application/pdf
+    - nome: X-Forwarded-For
+      valore: 10.114.87.23
+    # [optional] contiene il payload http della richiesta (se presente)
+    #            Il payload è codificato in base64 secondo quando previsto dal formato openapi 'type:string format:byte'.
+    #            Il body (salvo codifica base64) è esattamente quello presente nel payload http. E' quindi codificato se è presente l'header Content-Encoding (es. gzip, compress ...)
+    #            In presenza di Transfer Encoding Chunked il body salvato è decodificato dai chunk previsti per tale modalità di trasferimento.
+    body: CnsKCSJuYW1lIjoiTWVzc2FnZ2lvIHJpY2hpZXN0YUluZ3Jlc3NvIiwKCSJuYW1lMiI6InZhbHVlMiIKfQ==
+
+risposta:
+  data_consegna: '2019-03-14T17:40:18.002Z' # [required] Rappresenta il momento in cui una risposta viene inoltrata all'applicativo che aveva scaturito la richiesta
+  esito_consegna: '200' # [required] Esito di trasporto ritornato all'applicativo che aveva scaturito la richiesta.
+  id: c72a4403-2288-09ff-99gbh-a726f8e1238h # [optional] Dove applicabile, identificativo univoco della risposta. (Alcuni esempi: header wsa:MessageID in WS-Addressing, l'identificativo SDI nella Fatturazione Elettronica, l'id e-Gov su richieste SPCoop). 
+  data_ricezione: '2019-03-14T17:40:17.847Z'# [optional] Se è presente un elemento infrastrutturale come un API Gateway, rappresenta il momento in cui la risposta è stata ricevuta sul gateway.
+  esito_ricezione: '200' # [optional] Se è presente un elemento infrastrutturale come un API Gateway, rappresenta l'esito di trasporto ricevuto sul gateway.
+  contenuti: # [optional]
+    headers: # [optional] vedi considerazioni della richiesta
+    - nome: Content-Length
+      valore: '6570'
+    - nome: Content-Type
+      valore: application/json
+    body: CnsKCSJuYW1lIjoiTWVzc2FnZ2lvIHJpc3Bvc3RhSW5ncmVzc28iLAoJIm5hbWUyIjoidmFsdWUyIgp9 # [optional] vedi considerazioni della richiesta
+
+id_conversazione: c77a7501-2288-48ff-kmdi98-a333f8elm2je # [optional] Dove disponibile, un identificativo univoco utile a correlare invocazioni differenti (e quindi tracce differenti)
+
+api: # [optional] Dove disponibili, identificativi univoci del servizio richiesto
+  erogatore: Ente # [optional] Identificativo univoco dell'erogatore dell'api. Ad esempio il soggetto destinatario su richieste SPCoop o presenza di multitenant sull'Issuer
+  nome: Protocollazione # [required] Identificativo univoco dell'api. (Alcuni esempi: header wsa:To in WS-Addressing, port-type su SOAP, il servizio su richieste SPCoop). 
+  versione: 1 # [required] Versione dell'api
+  operazione: protocollazioneDocumento # [optional] Identificativo univoco dell'operazione. (Alcuni esempi: header wsa:Action in WS-Addressing, operation su SOAP, l'azione su richieste SPCoop). 
+
+mittente: # [optional] Dove disponibili informazioni sul mittente
+  principal: c=IT, O=Comune Firenze, OU=Protocollo, CN=protocollo.regionetoscana.it # [optional] Dove applicabile, credenziali univoche del chiamante. Ad esempio il subject del certificato client: 'c=IT, O=Comune Firenze, OU=Protocollo, CN=protocollo.regionetoscana.it'
+  fruitore: UfficioProtocolloComuneFirenze # [optional] Dove applicabile, identificativo univoco del mittente che sta richiedendo il servizio. (Alcuni esempi: header wsa:From in WS-Addressing, il mittente su richieste SPCoop). 
+  utente: Andrea Rossi # [optional] Dove applicabile, identificativo del consumatore o altro utente operante la richiesta. Tale informazione potrebbe essere prelevata da un eventuale token presente nella richiesta (es. SAMLRequest, TokenJWT, ...). E' cura dell'issuer procedere a codificare e anonimizzare ove necessario.
+  indirizzo_client: 127.0.0.1 # [optional] Dove applicabile, indirizzo IP (socket) del client
+  indirizzo_client_inoltrato: 10.114.87.23 # [optional] Dove applicabile, indirizzo IP del client recuperato tramite meccanismi di header forwarding quali ad esempio: [X-]Forwarded-For, [X-]Forwarded, [X-]Client-IP, [X-]Cluster-Client-IP

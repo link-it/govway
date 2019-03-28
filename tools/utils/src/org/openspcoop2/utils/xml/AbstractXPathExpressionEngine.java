@@ -25,7 +25,9 @@ package org.openspcoop2.utils.xml;
 
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.xml.soap.SOAPElement;
 
@@ -692,7 +694,13 @@ public abstract class AbstractXPathExpressionEngine {
 		return resultBuffer.toString();
 		
 	}
+	public List<String> toList(NodeList rootNode){
+		
+		return this.toList(rootNode,1);
+		
+	}
 	
+
 	
 	/* -------------- UTILITIES PRIVATE ------------------- */
 	private int _prefixIndex = 0;
@@ -792,6 +800,65 @@ public abstract class AbstractXPathExpressionEngine {
 		}
 	}
 	
+	private List<String> toList(NodeList rootNode,int livello){
+		
+		List<String> l = new ArrayList<>();
+		
+		if (rootNode.getLength()==1 && rootNode.item(0).getNodeType()==Node.TEXT_NODE){
+			//System.out.println("TEXT ["+rootNode.item(0).getNodeType()+"] confronto con ["+Node.TEXT_NODE+"]");
+			l.add(rootNode.item(0).getTextContent());
+			return l;
+		}
+		for(int index = 0; index < rootNode.getLength();index ++){
+			Node aNode = rootNode.item(index);
+			//System.out.println("NODE["+index+"] ["+aNode.getNodeType()+"] confronto con  ["+Node.ELEMENT_NODE+"]");
+			if (aNode.getNodeType() == Node.ELEMENT_NODE){
+				NodeList childNodes = aNode.getChildNodes(); 
+				
+				if (childNodes.getLength() > 0){
+					
+					StringBuffer resultBuffer = new StringBuffer();
+					
+					boolean hasChildNodes = false;
+					for(int i=0;i<childNodes.getLength();i++){
+						// elimino i text node che possono contenere "\n" con axiom
+						Node n = childNodes.item(i);
+						if(n.hasChildNodes()){
+							hasChildNodes = true;
+							break;
+						}
+					}
+					
+					if (hasChildNodes){
+						resultBuffer.append("<"+aNode.getNodeName());
+
+						this.printAttributes(aNode,resultBuffer);
+
+						resultBuffer.append(">");
+						
+						this.toString(aNode.getChildNodes(), resultBuffer, (livello+1));
+						resultBuffer.append("</"+aNode.getNodeName()+">");
+					}
+					else {
+						resultBuffer.append("<"+aNode.getNodeName());
+						
+						this.printAttributes(aNode,resultBuffer);
+						
+						resultBuffer.append(">"+aNode.getTextContent()+ "</"+aNode.getNodeName()+">");
+					}
+					
+					l.add(resultBuffer.toString());
+				}
+			}
+			// Risultati multipli per uno stesso elemento
+			else if ( (livello==1) && (aNode.getNodeType() == Node.TEXT_NODE) ){
+				l.add(aNode.getTextContent());
+			}
+		}
+		
+		return l;
+	}
+	
 	private void printAttributes(Node aNode,StringBuffer resultBuffer){
 		NamedNodeMap attr = aNode.getAttributes();
 		for (int i=0;i<attr.getLength();i++){
@@ -870,4 +937,64 @@ public abstract class AbstractXPathExpressionEngine {
 		return risultato;
 	}
 	
+	
+	
+	public static List<String> extractAndConvertResultAsList(Element element,AbstractXPathExpressionEngine xPathEngine, String pattern, Logger log) throws Exception {
+		DynamicNamespaceContext dnc = new DynamicNamespaceContext();
+		dnc.findPrefixNamespace(element);
+		return extractAndConvertResultAsList(element, dnc, xPathEngine, pattern, log);
+	}
+	public static List<String> extractAndConvertResultAsList(Element element,DynamicNamespaceContext dnc,AbstractXPathExpressionEngine xPathEngine, String pattern, Logger log) throws Exception {
+		
+		// Provo a cercarlo prima come Node
+		NodeList nodeList = null;
+		Exception exceptionNodeSet = null;
+		List<String> risultato = new ArrayList<>();
+		try{
+			nodeList = (NodeList) xPathEngine.getMatchPattern(element, dnc, pattern,XPathReturnType.NODESET);
+			if(nodeList!=null){
+				risultato = xPathEngine.toList(nodeList);
+			}
+		}catch(Exception e){
+			exceptionNodeSet = e;
+		}
+		
+		// Se non l'ho trovato provo a cercarlo come string (es. il metodo sopra serve per avere l'xml, ma fallisce in caso di concat, in caso di errori di concat_openspcoop....)
+		// Insomma il caso dell'xml sopra e' quello speciale, che pero' deve essere eseguito prima, perche' altrimenti il caso string sotto funziona sempre, e quindi non si ottiene mai l'xml.
+		if(risultato==null || risultato.isEmpty()){
+			try{
+				String s = xPathEngine.getStringMatchPattern(element, dnc, pattern);
+				if(risultato==null) {
+					risultato = new ArrayList<>();
+				}
+				risultato.add(s);
+			}catch(Exception e){
+				if(exceptionNodeSet!=null){
+					log.debug("Errore avvenuto durante la getStringMatchPattern("+pattern
+							+") ("+e.getMessage()+") invocata in seguito all'errore dell'invocazione getMatchPattern("+
+							pattern+",NODESET): "+exceptionNodeSet.getMessage(),exceptionNodeSet);
+				}
+				// lancio questo errore e se presente anche quello con la ricerca notset nodoset.
+				if(exceptionNodeSet!=null) {
+					throw new UtilsMultiException(e,exceptionNodeSet);
+				}
+				else {
+					throw e;
+				}
+			}
+		}
+		
+		if(risultato == null || risultato.isEmpty()){
+			if(exceptionNodeSet!=null){
+				log.debug("Non sono stati trovati risultati tramite l'invocazione del metodo getStringMatchPattern("+pattern
+						+") invocato in seguito all'errore dell'invocazione getMatchPattern("+
+						pattern+",NODESET): "+exceptionNodeSet.getMessage(),exceptionNodeSet);
+				// lancio questo errore.
+				// Questo errore puo' avvenire perche' ho provato a fare xpath con nodeset
+				//throw exceptionNodeSet;
+			}
+		}
+		
+		return risultato;
+	}
 }

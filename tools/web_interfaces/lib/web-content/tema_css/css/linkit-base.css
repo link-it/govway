@@ -1185,6 +1185,26 @@ p.note.labelLong {
 	padding-top: 6px;
 }
 
+.intervalExternalDiv{
+	display: inline-flex;
+}
+
+.intervalInnerDiv{
+	
+}
+
+div.intervalInnerDiv label {
+    width: 30px;
+    padding-right: 4px;
+    margin-right: 8px;
+}	
+
+.intervalInnerInput{
+	width: 100px;
+    margin-right: 16px;
+}
+
+
 .subtitle {
 	padding: 16px 20px 12px 5px;
     margin-left: 232px;

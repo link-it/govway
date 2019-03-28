@@ -35,8 +35,50 @@ import java.util.Properties;
 public class CORSFilterConfiguration {
 
 	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/
+
 	
-	protected boolean throwExceptionIfNotFoundConfig = false;
+	// indicazione se una richiesta invalida deve cmq essere continuata ad essere gestita (e pilotata con le opzioni seguenti)
+	protected boolean throwExceptionIfInvalid = false;
+	protected boolean terminateIfInvalid = true; 
+	
+	// indica un utilizzo errato del cors come descritto nel capitolo 6.1.1 e 6.2.1 (https://www.w3.org/TR/cors/#resource-processing-model)
+	// If the Origin header is not present terminate this set of steps. The request is outside the scope of this specification.
+	protected boolean throwExceptionIfNotFoundOrigin = false;
+	protected boolean terminateIfNotFoundOrigin = false;
+	
+	// indica un utilizzo errato del cors come descritto nel capitolo 6.1.2 e 6.2.2 (https://www.w3.org/TR/cors/#resource-processing-model)
+	// If the value of the Origin header is not a case-sensitive match for any of the values in list of origins, 
+	// do not set any additional headers and terminate this set of steps.
+	protected boolean throwExceptionIfNotMatchOrigin = false;
+	protected boolean terminateIfNotMatchOrigin = false;
+
+	// indica una configurazione errata come descritto nel capitolo 6.1.3 e 6.2.7 (https://www.w3.org/TR/cors/#resource-processing-model)
+	// The string "*" (Access-Control-Allow-Origin) cannot be used for a resource that supports credentials (Access-Control-Allow-Credentials=true).
+	protected boolean throwExceptionIfAllowCredentialAndAllowOrigin = false;
+
+	// indica un utilizzo errato del cors come descritto nel capitolo 6.3.3 (https://www.w3.org/TR/cors/#resource-processing-model)
+	// If there is no Access-Control-Request-Method header or if parsing failed, do not set any additional headers and terminate this set of steps. 
+	// The request is outside the scope of this specification.
+	protected boolean throwExceptionIfNotFoundRequestMethod = false;
+	protected boolean terminateIfNotFoundRequestMethod = false;
+	
+	// indica un utilizzo errato del cors come descritto nel capitolo 6.3.5 (https://www.w3.org/TR/cors/#resource-processing-model)
+	// If method is not a case-sensitive match for any of the values in list of methods do not set any additional headers and terminate this set of steps.
+	protected boolean throwExceptionIfNotMatchRequestMethod = false;
+	protected boolean terminateIfNotMatchRequestMethod = false;
+	
+	// indica un utilizzo errato del cors come descritto nel capitolo 6.3.4 (https://www.w3.org/TR/cors/#resource-processing-model)
+	// If parsing failed do not set any additional headers and terminate this set of steps.
+	// The request is outside the scope of this specification.
+	protected boolean throwExceptionIfNotFoundRequestHeaders = false;
+	protected boolean terminateIfNotFoundRequestHeaders = false;
+	
+	// indica un utilizzo errato del cors come descritto nel capitolo 6.3.6 (https://www.w3.org/TR/cors/#resource-processing-model)
+	// If any of the header field-names is not a ASCII case-insensitive match for any of the values in list of headers do not set any additional headers and terminate this set of steps.
+	protected boolean throwExceptionIfNotMatchRequestHeaders = false;
+	protected boolean terminateIfNotMatchRequestHeaders = false;
+	
+	
 	
 	/*
 	 * The Access-Control-Allow-Credentials response header indicates whether or not the response to the request can be exposed to the page. 
@@ -135,9 +177,28 @@ public class CORSFilterConfiguration {
 
 	
 	public void init(Properties p) {
-		
+						
 		/*
-		 * cors.throwExceptionIfNotFoundConfig=true/false
+		 * cors.throwExceptionIfInvalid=true/false
+		 * cors.terminateIfInvalid=true/false
+		 * 
+		 * cors.throwExceptionIfNotFoundOrigin=true/false
+		 * cors.terminateIfNotFoundOrigin=true/false
+		 * cors.throwExceptionIfNotMatchOrigin=true/false
+		 * cors.terminateIfNotMatchOrigin=true/false
+		 * 
+		 * cors.throwExceptionIfAllowCredentialAndAllowOrigin=true/false
+		 * 
+		 * cors.throwExceptionIfNotFoundRequestMethod=true/false
+		 * cors.terminateIfNotFoundRequestMethod=true/false
+		 * cors.throwExceptionIfNotMatchRequestMethod=true/false
+		 * cors.terminateIfNotMatchRequestMethod=true/false
+		 * 
+		 * cors.throwExceptionIfNotFoundRequestHeaders=true/false
+		 * cors.terminateIfNotFoundRequestHeaders=true/false
+		 * cors.throwExceptionIfNotMatchRequestHeaders=true/false
+		 * cors.terminateIfNotMatchRequestHeaders=true/false
+		 * 
 		 * 
 		 * cors.allowCredentials=true/false
 		 * 
@@ -158,10 +219,71 @@ public class CORSFilterConfiguration {
 		 * 
 		 **/
 		
-		String tmp = p.getProperty("cors.throwExceptionIfNotFoundConfig");
+		String tmp = p.getProperty("cors.throwExceptionIfInvalid");
 		if(tmp!=null) {
-			this.throwExceptionIfNotFoundConfig = "true".equalsIgnoreCase(tmp.trim());
+			this.throwExceptionIfInvalid = "true".equalsIgnoreCase(tmp.trim());
 		}
+		tmp = p.getProperty("cors.terminateIfInvalid");
+		if(tmp!=null) {
+			this.terminateIfInvalid = "true".equalsIgnoreCase(tmp.trim());
+		}	
+		
+		tmp = p.getProperty("cors.throwExceptionIfNotFoundOrigin");
+		if(tmp!=null) {
+			this.throwExceptionIfNotFoundOrigin = "true".equalsIgnoreCase(tmp.trim());
+		}
+		tmp = p.getProperty("cors.terminateIfNotFoundOrigin");
+		if(tmp!=null) {
+			this.terminateIfNotFoundOrigin = "true".equalsIgnoreCase(tmp.trim());
+		}		
+		tmp = p.getProperty("cors.throwExceptionIfNotMatchOrigin");
+		if(tmp!=null) {
+			this.throwExceptionIfNotMatchOrigin = "true".equalsIgnoreCase(tmp.trim());
+		}
+		tmp = p.getProperty("cors.terminateIfNotMatchOrigin");
+		if(tmp!=null) {
+			this.terminateIfNotMatchOrigin = "true".equalsIgnoreCase(tmp.trim());
+		}
+		
+		tmp = p.getProperty("cors.throwExceptionIfAllowCredentialAndAllowOrigin");
+		if(tmp!=null) {
+			this.throwExceptionIfAllowCredentialAndAllowOrigin = "true".equalsIgnoreCase(tmp.trim());
+		}
+			
+		tmp = p.getProperty("cors.throwExceptionIfNotFoundRequestMethod");
+		if(tmp!=null) {
+			this.throwExceptionIfNotFoundRequestMethod = "true".equalsIgnoreCase(tmp.trim());
+		}
+		tmp = p.getProperty("cors.terminateIfNotFoundRequestMethod");
+		if(tmp!=null) {
+			this.terminateIfNotFoundRequestMethod = "true".equalsIgnoreCase(tmp.trim());
+		}		
+		tmp = p.getProperty("cors.throwExceptionIfNotMatchRequestMethod");
+		if(tmp!=null) {
+			this.throwExceptionIfNotMatchRequestMethod = "true".equalsIgnoreCase(tmp.trim());
+		}
+		tmp = p.getProperty("cors.terminateIfNotMatchRequestMethod");
+		if(tmp!=null) {
+			this.terminateIfNotMatchRequestMethod = "true".equalsIgnoreCase(tmp.trim());
+		}
+		
+		tmp = p.getProperty("cors.throwExceptionIfNotFoundRequestHeaders");
+		if(tmp!=null) {
+			this.throwExceptionIfNotFoundRequestHeaders = "true".equalsIgnoreCase(tmp.trim());
+		}
+		tmp = p.getProperty("cors.terminateIfNotFoundRequestHeaders");
+		if(tmp!=null) {
+			this.terminateIfNotFoundRequestHeaders = "true".equalsIgnoreCase(tmp.trim());
+		}		
+		tmp = p.getProperty("cors.throwExceptionIfNotMatchRequestHeaders");
+		if(tmp!=null) {
+			this.throwExceptionIfNotMatchRequestHeaders = "true".equalsIgnoreCase(tmp.trim());
+		}
+		tmp = p.getProperty("cors.terminateIfNotMatchRequestHeaders");
+		if(tmp!=null) {
+			this.terminateIfNotMatchRequestHeaders = "true".equalsIgnoreCase(tmp.trim());
+		}
+
 		
 		tmp = p.getProperty("cors.allowCredentials");
 		if(tmp!=null) {
@@ -227,12 +349,123 @@ public class CORSFilterConfiguration {
 		
 	}
 	
-	public boolean isThrowExceptionIfNotFoundConfig() {
-		return this.throwExceptionIfNotFoundConfig;
+
+	public boolean isThrowExceptionIfInvalid() {
+		return this.throwExceptionIfInvalid;
 	}
-	public void setThrowExceptionIfNotFoundConfig(boolean throwExceptionIfNotFoundConfig) {
-		this.throwExceptionIfNotFoundConfig = throwExceptionIfNotFoundConfig;
+	public void setThrowExceptionIfInvalid(boolean throwExceptionIfInvalid) {
+		this.throwExceptionIfInvalid = throwExceptionIfInvalid;
 	}
+
+	public boolean isTerminateIfInvalid() {
+		return this.terminateIfInvalid;
+	}
+	public void setTerminateIfInvalid(boolean terminateIfInvalid) {
+		this.terminateIfInvalid = terminateIfInvalid;
+	}
+
+	
+	public boolean isThrowExceptionIfNotFoundOrigin() {
+		return this.throwExceptionIfNotFoundOrigin;
+	}
+	public void setThrowExceptionIfNotFoundOrigin(boolean throwExceptionIfNotFoundOrigin) {
+		this.throwExceptionIfNotFoundOrigin = throwExceptionIfNotFoundOrigin;
+	}
+
+	public boolean isTerminateIfNotFoundOrigin() {
+		return this.terminateIfNotFoundOrigin;
+	}
+	public void setTerminateIfNotFoundOrigin(boolean terminateIfNotFoundOrigin) {
+		this.terminateIfNotFoundOrigin = terminateIfNotFoundOrigin;
+	}
+
+
+	public boolean isThrowExceptionIfNotMatchOrigin() {
+		return this.throwExceptionIfNotMatchOrigin;
+	}
+	public void setThrowExceptionIfNotMatchOrigin(boolean throwExceptionIfNotMatchOrigin) {
+		this.throwExceptionIfNotMatchOrigin = throwExceptionIfNotMatchOrigin;
+	}
+
+	public boolean isTerminateIfNotMatchOrigin() {
+		return this.terminateIfNotMatchOrigin;
+	}
+	public void setTerminateIfNotMatchOrigin(boolean terminateIfNotMatchOrigin) {
+		this.terminateIfNotMatchOrigin = terminateIfNotMatchOrigin;
+	}
+
+
+	
+	public boolean isThrowExceptionIfAllowCredentialAndAllowOrigin() {
+		return this.throwExceptionIfAllowCredentialAndAllowOrigin;
+	}
+	public void setThrowExceptionIfAllowCredentialAndAllowOrigin(boolean throwExceptionIfAllowCredentialAndAllowOrigin) {
+		this.throwExceptionIfAllowCredentialAndAllowOrigin = throwExceptionIfAllowCredentialAndAllowOrigin;
+	}
+
+
+
+	public boolean isThrowExceptionIfNotFoundRequestMethod() {
+		return this.throwExceptionIfNotFoundRequestMethod;
+	}
+	public void setThrowExceptionIfNotFoundRequestMethod(boolean throwExceptionIfNotFoundRequestMethod) {
+		this.throwExceptionIfNotFoundRequestMethod = throwExceptionIfNotFoundRequestMethod;
+	}
+
+	public boolean isTerminateIfNotFoundRequestMethod() {
+		return this.terminateIfNotFoundRequestMethod;
+	}
+	public void setTerminateIfNotFoundRequestMethod(boolean terminateIfNotFoundRequestMethod) {
+		this.terminateIfNotFoundRequestMethod = terminateIfNotFoundRequestMethod;
+	}
+
+
+	public boolean isThrowExceptionIfNotMatchRequestMethod() {
+		return this.throwExceptionIfNotMatchRequestMethod;
+	}
+	public void setThrowExceptionIfNotMatchRequestMethod(boolean throwExceptionIfNotMatchRequestMethod) {
+		this.throwExceptionIfNotMatchRequestMethod = throwExceptionIfNotMatchRequestMethod;
+	}
+
+	public boolean isTerminateIfNotMatchRequestMethod() {
+		return this.terminateIfNotMatchRequestMethod;
+	}
+	public void setTerminateIfNotMatchRequestMethod(boolean terminateIfNotMatchRequestMethod) {
+		this.terminateIfNotMatchRequestMethod = terminateIfNotMatchRequestMethod;
+	}
+
+
+	
+	public boolean isThrowExceptionIfNotFoundRequestHeaders() {
+		return this.throwExceptionIfNotFoundRequestHeaders;
+	}
+	public void setThrowExceptionIfNotFoundRequestHeaders(boolean throwExceptionIfNotFoundRequestHeaders) {
+		this.throwExceptionIfNotFoundRequestHeaders = throwExceptionIfNotFoundRequestHeaders;
+	}
+
+	public boolean isTerminateIfNotFoundRequestHeaders() {
+		return this.terminateIfNotFoundRequestHeaders;
+	}
+	public void setTerminateIfNotFoundRequestHeaders(boolean terminateIfNotFoundRequestHeaders) {
+		this.terminateIfNotFoundRequestHeaders = terminateIfNotFoundRequestHeaders;
+	}
+
+
+	public boolean isThrowExceptionIfNotMatchRequestHeaders() {
+		return this.throwExceptionIfNotMatchRequestHeaders;
+	}
+	public void setThrowExceptionIfNotMatchRequestHeaders(boolean throwExceptionIfNotMatchRequestHeaders) {
+		this.throwExceptionIfNotMatchRequestHeaders = throwExceptionIfNotMatchRequestHeaders;
+	}
+
+	public boolean isTerminateIfNotMatchRequestHeaders() {
+		return this.terminateIfNotMatchRequestHeaders;
+	}
+	public void setTerminateIfNotMatchRequestHeaders(boolean terminateIfNotMatchRequestHeaders) {
+		this.terminateIfNotMatchRequestHeaders = terminateIfNotMatchRequestHeaders;
+	}
+	
+
 	
 	public Boolean getAllowCredentials() {
 		return this.allowCredentials;

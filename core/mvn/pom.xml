@@ -60,10 +60,10 @@
 									</fileset>
 								</unzip>
 
-								<echo message="Avvio TestSuite (gruppo: pdd) (haltOnFailure:${testsuite.haltOnFailure})" />
+								<echo message="Avvio TestSuite (gruppo: ${testsuite.pdd.group}) (haltOnFailure:${testsuite.haltOnFailure})" />
 								<testng classpathref="classpath_run"
 									outputdir="${testsuite.output}"
-									haltonfailure="${testsuite.haltOnFailure}" groups="pdd">
+									haltonfailure="${testsuite.haltOnFailure}" groups="${testsuite.pdd.group}">
 									<classfileset dir="build_testunits" includes="**/*.class"/>
 									<jvmarg value="-Dtestng.show.stack.frames=${testsuite.showStackFrames}" />
 								</testng>

@@ -229,8 +229,13 @@ public class SecurityConstants {
     public static final String SIGNATURE_VERIFICATION_PROPERTY_FILE = ConfigurationConstants.SIG_VER_PROP_FILE;
     public static final String SIGNATURE_MODE = "signatureMode";
     public static final String SIGNATURE_MODE_SELF_CONTAINED = MODE_SELF_CONTAINED;
-    public static final String SIGNATURE_MODE_DETACHED = MODE_DETACHED;
     public static final String SIGNATURE_MODE_COMPACT = MODE_COMPACT;
+    public static final String SIGNATURE_PAYLOAD_ENCODING = "signaturePayloadEncoding";
+    public static final String SIGNATURE_PAYLOAD_ENCODING_TRUE = "true";
+    public static final String SIGNATURE_PAYLOAD_ENCODING_FALSE = "false";
+    public static final String SIGNATURE_DETACHED = "signatureDetached";
+    public static final String SIGNATURE_DETACHED_TRUE = "true";
+    public static final String SIGNATURE_DETACHED_FALSE = "false";
     public static final String SIGNATURE_DETACHED_BASE64 = "signatureDetachedBase64";
     public static final String SIGNATURE_DETACHED_BASE64_TRUE = "true";
     public static final String SIGNATURE_DETACHED_BASE64_FALSE = "false";

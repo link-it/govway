@@ -69,6 +69,8 @@ public class TempiElaborazione implements Serializable {
 	protected TempiElaborazioneFunzionalita responseCachingCalcoloDigest;
 	protected TempiElaborazioneFunzionalita responseCachingReadFromCache;
 	protected TempiElaborazioneFunzionalita responseCachingSaveInCache;
+	protected TempiElaborazioneFunzionalita trasformazioneRichiesta;
+	protected TempiElaborazioneFunzionalita trasformazioneRisposta;
 	
 	
 	public TempiElaborazioneFunzionalita getToken() {
@@ -501,4 +503,31 @@ public class TempiElaborazione implements Serializable {
 		this.responseCachingSaveInCache.setDataUscita(DateManager.getDate());
 	}
 	
+	public TempiElaborazioneFunzionalita getTrasformazioneRichiesta() {
+		return this.trasformazioneRichiesta;
+	}
+	public void setTrasformazioneRichiesta(TempiElaborazioneFunzionalita trasformazioneRichiesta) {
+		this.trasformazioneRichiesta = trasformazioneRichiesta;
+	}
+	public void startTrasformazioneRichiesta() {
+		this.trasformazioneRichiesta = new TempiElaborazioneFunzionalita();
+		this.trasformazioneRichiesta.setDataIngresso(DateManager.getDate());
+	}
+	public void endTrasformazioneRichiesta() {
+		this.trasformazioneRichiesta.setDataUscita(DateManager.getDate());
+	}
+	
+	public TempiElaborazioneFunzionalita getTrasformazioneRisposta() {
+		return this.trasformazioneRisposta;
+	}
+	public void setTrasformazioneRisposta(TempiElaborazioneFunzionalita trasformazioneRisposta) {
+		this.trasformazioneRisposta = trasformazioneRisposta;
+	}
+	public void startTrasformazioneRisposta() {
+		this.trasformazioneRisposta = new TempiElaborazioneFunzionalita();
+		this.trasformazioneRisposta.setDataIngresso(DateManager.getDate());
+	}
+	public void endTrasformazioneRisposta() {
+		this.trasformazioneRisposta.setDataUscita(DateManager.getDate());
+	}
 }

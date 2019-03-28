@@ -1,3 +1,9 @@
+DELETE FROM pd_transform_risp_hdr;
+DELETE FROM pd_transform_risp;
+DELETE FROM pd_transform_url;
+DELETE FROM pd_transform_hdr;
+DELETE FROM pd_transform;
+DELETE FROM pd_cache_regole;
 DELETE FROM pd_azioni;
 DELETE FROM pd_scope;
 DELETE FROM pd_ruoli;
@@ -8,5 +14,6 @@ DELETE FROM pd_security_request;
 DELETE FROM pd_mtom_response;
 DELETE FROM pd_mtom_request;
 DELETE FROM pd_properties;
+DELETE FROM pd_auth_properties;
 DELETE FROM porte_delegate_sa;
 DELETE FROM porte_delegate;

@@ -21,6 +21,7 @@
                                 <linkit:sql-comment><![CDATA[**** Porte Applicative ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="porte-applicative" object-type="porte-applicative"/>
                                 <linkit:sql-table object-name="porte-applicative-sa" object-type="porte-applicative-sa"/>
+                                <linkit:sql-table object-name="porte-applicative-prop-autenticazione" object-type="NomeValore"/>
                                 <linkit:sql-table object-name="porte-applicative-prop" object-type="NomeValore"/>
                                 <linkit:sql-table object-name="porte-applicative-mtom-request" object-type="MtomFlowParameter"/>
                                 <linkit:sql-table object-name="porte-applicative-mtom-response" object-type="MtomFlowParameter"/>
@@ -33,6 +34,12 @@
                                 <linkit:sql-table object-name="porte-applicative-soggetti" object-type="porte-applicative-soggetti"/>
                                 <linkit:sql-table object-name="porte-applicative-sa-autenticati" object-type="porte-applicative-sa-autenticati"/>
                                 <linkit:sql-table object-name="porte-applicative-azioni" object-type="porte-applicative-azioni"/>
+                                <linkit:sql-table object-name="porte-applicative-cache-regola" object-type="porte-applicative-cache-regola"/>
+                                <linkit:sql-table object-name="porte-applicative-trasformazioni" object-type="porte-applicative-trasformazioni"/>
+                                <linkit:sql-table object-name="porte-applicative-trasformazioni-header" object-type="porte-applicative-trasformazioni-header"/>
+                                <linkit:sql-table object-name="porte-applicative-trasformazioni-url" object-type="porte-applicative-trasformazioni-url"/>
+                                <linkit:sql-table object-name="porte-applicative-trasformazioni-risposta" object-type="porte-applicative-trasformazioni-risposta"/>
+                                <linkit:sql-table object-name="porte-applicative-trasformazioni-header-risposta" object-type="porte-applicative-trasformazioni-header-risposta"/>
                             </linkit:sql-table-list>
                         </linkit:sql-script>
                         <linkit:sql-mapping single-table-mapping="false"
@@ -948,6 +955,17 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="response_cache_hash_hdr_list" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="response_cache_hash_hdr_list"  text="true"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sugli header http abilitati, nel calcolo del digest. Gli header sono separati dalla ','</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="response_cache_hash_payload" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
@@ -955,6 +973,39 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="response_cache_hash_payload"/>
                                 <linkit:sql-ddl-column-comment>Indicazione se nel calcolo del digest per la response caching viene considerato il payload (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="response_cache_control_nocache" type="xsd:integer" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="response_cache_control_nocache"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se viene interpretata la direttiva 'no-cache' in 'Cache-Control' header (1:abilitato/0:disabilitato)</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="response_cache_control_maxage" type="xsd:integer" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="response_cache_control_maxage"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se viene interpretata la direttiva 'max-age' in 'Cache-Control' header (1:abilitato/0:disabilitato)</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="response_cache_control_nostore" type="xsd:integer" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="response_cache_control_nostore"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se viene interpretata la direttiva 'no-store' in 'Cache-Control' header (1:abilitato/0:disabilitato)</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1052,6 +1103,36 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                 </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
+    </xsd:element>
+    
+    
+    
+    <xsd:element name="porte-applicative-prop-autenticazione" type="NomeValore">
+    <xsd:annotation>
+        <xsd:appinfo>
+            <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                <linkit:interface crud="false" id="xsd:string"/>
+                <linkit:sql-table-mapping name="pa_auth_properties" 
+                    comment="Elenco di proprieta, relative all'autenticazione,  associate alla porta">
+                    <linkit:sql-table-constraint unique="uniq_pa_auth_props" index="idx_pa_auth_props"/>
+                    <linkit:sql-table-foreign-key
+                        reference-object-name="porte-applicative"
+                        reference-object-type="porte-applicative"
+                        reference-primary-key="true">
+                        <linkit:sql-table-fk-field name="id_porta"/>
+                    </linkit:sql-table-foreign-key>
+                    <linkit:sql-table-unique>
+                        <linkit:sql-table-unique-field name="id_porta"/>
+                        <linkit:sql-table-unique-field name="nome"/>
+                        <linkit:sql-table-unique-field name="valore"/>
+                    </linkit:sql-table-unique>
+                    <linkit:sql-table-index name="INDEX_PA_AUTH_PROP">
+                        <linkit:sql-table-index-field name="id_porta"/>
+                    </linkit:sql-table-index>
+                </linkit:sql-table-mapping>
+            </linkit:generator>
+        </xsd:appinfo>
+    </xsd:annotation>
     </xsd:element>
     
     
@@ -1767,6 +1848,714 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+    
+    
+    
+    
+    
+    
+    <xsd:element name="porte-applicative-cache-regola">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_cache_regole"
+                        comment="Elenco di regole di cache associate alla porta">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_porta" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_porta"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della porta applicativa [FK verso tabella porte_applicative(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="status_min" type="xsd:integer" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="status_min" />
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, in base al valore minimo del return code http</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="status_max" type="xsd:integer" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="status_max" />
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, in base al valore massimo del return code http</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="fault" type="xsd:integer" minOccurs="0" default="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="fault"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se un fault viene salvato in cache (1:abilitato/0:disabilitato)</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="cache_seconds" type="xsd:int" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="cache_seconds"/>
+                                <linkit:sql-ddl-column-comment>Indicazione della durata delle informazioni salvate in cache, in secondi</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    
+    
+    
+    
+    <xsd:element name="porte-applicative-trasformazioni">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_transform"
+                        comment="Elenco di trasformazioni associate alla porta">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-column name="id_porta" />
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_porta" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_porta"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della porta applicativa [FK verso tabella porte_applicative(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="applicabilita_azioni" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="applicabilita_azioni" text="true"/>
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, in base al nome dell'azione invocata</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="applicabilita_ct" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="applicabilita_ct" text="true"/>
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, in base al content type</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="applicabilita_pattern" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="applicabilita_pattern" text="true"/>
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, in base ad un pattern (xpath o jsonpath)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="req_conversione_enabled" type="xsd:int" default="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="req_conversione_enabled" />
+                                <linkit:sql-ddl-column-comment>Indicazione se il body della richiesta deve essere trasformato (0:false, 1:true)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="req_conversione_tipo" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="req_conversione_tipo" />
+                                <linkit:sql-ddl-column-comment>Tipo di conversione del body</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="req_conversione_template" type="xsd:hexBinary" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="req_conversione_template" long-binary="true" />
+                                <linkit:sql-ddl-column-comment>Template di conversione del body</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="req_content_type" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="req_content_type" />
+                                <linkit:sql-ddl-column-comment>Content Type della richiesta</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="rest_transformation" type="xsd:int" default="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="rest_transformation" />
+                                <linkit:sql-ddl-column-comment>Indicazione se deve essere attuata una trasformazione rest (0:false, 1:true)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="rest_method" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="rest_method" />
+                                <linkit:sql-ddl-column-comment>HttpMethod utilizzato in caso di trasformazione rest</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="rest_path" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="rest_path" />
+                                <linkit:sql-ddl-column-comment>Path utilizzato in caso di trasformazione rest</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="soap_transformation" type="xsd:int" default="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="soap_transformation" />
+                                <linkit:sql-ddl-column-comment>Indicazione se deve essere attuata una trasformazione soap (0:false, 1:true)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="soap_version" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="soap_version" />
+                                <linkit:sql-ddl-column-comment>Versione soap in caso di trasformazione soap</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="soap_action" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="soap_action" />
+                                <linkit:sql-ddl-column-comment>SOAPAction in caso di trasformazione soap</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="soap_envelope" type="xsd:int" default="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="soap_envelope" />
+                                <linkit:sql-ddl-column-comment>Indicazione se il contenuto deve essere imbustato in SOAP (0:false, 1:true)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="soap_envelope_as_attach" type="xsd:int" default="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="soap_envelope_as_attach" />
+                                <linkit:sql-ddl-column-comment>Indicazione se il contenuto deve essere imbustato come attachment di un messaggio SOAP (0:false, 1:true)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="soap_envelope_tipo" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="soap_envelope_tipo" />
+                                <linkit:sql-ddl-column-comment>Tipo di conversione dell'envelope soap da utilizzare</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="soap_envelope_template" type="xsd:hexBinary" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="soap_envelope_template" long-binary="true" />
+                                <linkit:sql-ddl-column-comment>Template di conversione dell'envelope soap da utilizzare</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="porte-applicative-trasformazioni-header">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_transform_hdr"
+                        comment="Elenco di trasformazioni degli header di trasporto della richiesta">
+                        <linkit:sql-table-constraint unique="uniq_pa_trasf_hdr" index="idx_pa_trasf_hdr"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative-trasformazioni"
+                            reference-object-type="porte-applicative-trasformazioni"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_trasformazione"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-column name="id_trasformazione" />
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_trasformazione" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_trasformazione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della trasformazione [FK verso tabella pa_transform(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tipo" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="tipo"/>
+                                <linkit:sql-ddl-column-comment>Tipo di Operazione attuata</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="nome" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Nome dell'header</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="valore" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="valore" text="true"/>
+                                <linkit:sql-ddl-column-comment>Valore dell'header</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="porte-applicative-trasformazioni-url">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_transform_url"
+                        comment="Elenco di trasformazioni dei parametri della url della richiesta">
+                        <linkit:sql-table-constraint unique="uniq_pa_trasf_url" index="idx_pa_trasf_url"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative-trasformazioni"
+                            reference-object-type="porte-applicative-trasformazioni"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_trasformazione"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-column name="id_trasformazione" />
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_trasformazione" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_trasformazione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della trasformazione [FK verso tabella pa_transform(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tipo" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="tipo"/>
+                                <linkit:sql-ddl-column-comment>Tipo di Operazione attuata</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="nome" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Nome del parametro</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="valore" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="valore" text="true"/>
+                                <linkit:sql-ddl-column-comment>Valore del parametro</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="porte-applicative-trasformazioni-risposta">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_transform_risp"
+                        comment="Elenco di trasformazioni della risposta">
+                        <linkit:sql-table-constraint unique="uniq_pa_trasf_resp" index="idx_pa_trasf_resp"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative-trasformazioni"
+                            reference-object-type="porte-applicative-trasformazioni"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_trasformazione"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-column name="id_trasformazione" />
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_trasformazione" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_trasformazione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della trasformazione [FK verso tabella pa_transform(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="applicabilita_status_min" type="xsd:integer" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="applicabilita_status_min" />
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, in base al valore minimo del return code http</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="applicabilita_status_max" type="xsd:integer" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="applicabilita_status_max" />
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, in base al valore massimo del return code http</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="applicabilita_ct" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="applicabilita_ct" text="true"/>
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, in base al content type</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="applicabilita_pattern" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="applicabilita_pattern" text="true"/>
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, in base ad un pattern (xpath o jsonpath)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="conversione_enabled" type="xsd:int" default="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="conversione_enabled" />
+                                <linkit:sql-ddl-column-comment>Indicazione se il body della risposta deve essere trasformato (0:false, 1:true)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="conversione_tipo" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="conversione_tipo" />
+                                <linkit:sql-ddl-column-comment>Tipo di conversione del body</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="conversione_template" type="xsd:hexBinary" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="conversione_template" long-binary="true" />
+                                <linkit:sql-ddl-column-comment>Template di conversione del body</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="content_type" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="content_type" />
+                                <linkit:sql-ddl-column-comment>Content Type della risposta</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="return_code" type="xsd:integer" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="return_code" />
+                                <linkit:sql-ddl-column-comment>Return Code della risposta</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="soap_envelope" type="xsd:int" default="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="soap_envelope" />
+                                <linkit:sql-ddl-column-comment>Indicazione se il contenuto deve essere imbustato in SOAP (0:false, 1:true)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="soap_envelope_as_attach" type="xsd:int" default="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="soap_envelope_as_attach" />
+                                <linkit:sql-ddl-column-comment>Indicazione se il contenuto deve essere imbustato come attachment di un messaggio SOAP (0:false, 1:true)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="soap_envelope_tipo" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="soap_envelope_tipo" />
+                                <linkit:sql-ddl-column-comment>Tipo di conversione dell'envelope soap da utilizzare</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="soap_envelope_template" type="xsd:hexBinary" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="soap_envelope_template" long-binary="true" />
+                                <linkit:sql-ddl-column-comment>Template di conversione dell'envelope soap da utilizzare</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="porte-applicative-trasformazioni-header-risposta">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_transform_risp_hdr"
+                        comment="Elenco di trasformazioni degli header di trasporto della risposta">
+                        <linkit:sql-table-constraint unique="uniq_pa_trasf_hdr_resp" index="idx_pa_trasf_hdr_resp"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative-trasformazioni-risposta"
+                            reference-object-type="porte-applicative-trasformazioni-risposta"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_transform_risp"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-column name="id_transform_risp" />
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_transform_risp" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_transform_risp"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della trasformazione [FK verso tabella pa_transform_risp(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tipo" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="tipo"/>
+                                <linkit:sql-ddl-column-comment>Tipo di Operazione attuata</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="nome" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Nome dell'header</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="valore" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="valore" text="true"/>
+                                <linkit:sql-ddl-column-comment>Valore dell'header</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    
+    
     
     
     

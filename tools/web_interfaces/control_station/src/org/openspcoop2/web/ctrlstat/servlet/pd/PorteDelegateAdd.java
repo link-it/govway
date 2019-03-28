@@ -51,6 +51,7 @@ import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.PortaDelegataLocalForward;
 import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
@@ -58,6 +59,7 @@ import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
 import org.openspcoop2.core.id.IDAccordo;
@@ -130,6 +132,9 @@ public final class PorteDelegateAdd extends Action {
 			String statoPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_STATO_PORTA);
 			String autenticazione = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE);
 			String autenticazioneOpzionale = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
+			String autenticazionePrincipalTipo = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO);
+			TipoAutenticazionePrincipal autenticazionePrincipal = TipoAutenticazionePrincipal.toEnumConstant(autenticazionePrincipalTipo, false);
+			List<String> autenticazioneParametroList = porteDelegateHelper.convertFromDataElementValue_parametroAutenticazioneList(autenticazione, autenticazionePrincipal);
 			String autenticazioneCustom = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM);
 			String autorizzazione = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE);
 			String autorizzazioneCustom = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
@@ -533,7 +538,7 @@ public final class PorteDelegateAdd extends Action {
 						modeaz, azid, azioniListLabel, azioniList, azione,
 						azione, numAzioni,  stateless, localForward, paLocalForward, ricsim, ricasim,
 						statoValidazione, tipoValidazione, 0, "", gestBody, gestManifest,
-						null, autenticazioneOpzionale, autenticazioneCustom, 
+						null, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, autenticazioneCustom, 
 						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,autorizzazioneContenuti,idsogg,protocollo,
 						numSA,numRuoli, ruoloMatch,
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,
@@ -586,7 +591,7 @@ public final class PorteDelegateAdd extends Action {
 						modeaz, azid, azioniListLabel, azioniList, azione,
 						azione, numAzioni, stateless, localForward, paLocalForward, ricsim, ricasim,
 						statoValidazione, tipoValidazione, 0, "", gestBody, gestManifest,
-						null, autenticazioneOpzionale, autenticazioneCustom, 
+						null, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, autenticazioneCustom, 
 						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,autorizzazioneContenuti ,idsogg,protocollo,
 						numSA,numRuoli, ruoloMatch,
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,
@@ -631,6 +636,7 @@ public final class PorteDelegateAdd extends Action {
 			else{
 				portaDelegata.setStato(StatoFunzionalita.DISABILITATO);
 			}
+			
 			if (autenticazione == null ||
 					!autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM))
 				portaDelegata.setAutenticazione(autenticazione);
@@ -643,6 +649,11 @@ public final class PorteDelegateAdd extends Action {
 					portaDelegata.setAutenticazioneOpzionale(StatoFunzionalita.DISABILITATO);
 			} else 
 				portaDelegata.setAutenticazioneOpzionale(null);
+			List<Proprieta> proprietaAutenticazione = porteDelegateCore.convertToAutenticazioneProprieta(autenticazione, autenticazionePrincipal, autenticazioneParametroList);
+			if(proprietaAutenticazione!=null && !proprietaAutenticazione.isEmpty()) {
+				portaDelegata.getProprietaAutenticazioneList().addAll(proprietaAutenticazione);
+			}
+			
 			if (autorizzazione == null || 
 					!autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM))
 				portaDelegata.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(autorizzazione, 

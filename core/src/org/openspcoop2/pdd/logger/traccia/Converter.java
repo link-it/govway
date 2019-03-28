@@ -375,12 +375,12 @@ public class Converter {
 			if(this.messaggi_contenuti) {
 				if(TransazioneRuoloEnum.FRUIZIONE.equals(ruoloTraccia)){
 					((TransazioneDettaglioRichiesta)richiesta).setContenuti(
-							(TransazioneExtContenutoMessaggio) newTransazioneContenutoMessaggio(transazioneDB, 
+							(TransazioneContenutoMessaggio) newTransazioneContenutoMessaggio(transazioneDB, 
 									TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO ,false));
 				}
 				else {
 					((TransazioneDettaglioRichiesta)richiesta).setContenuti(
-							(TransazioneExtContenutoMessaggio) newTransazioneContenutoMessaggio(transazioneDB, 
+							(TransazioneContenutoMessaggio) newTransazioneContenutoMessaggio(transazioneDB, 
 									TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO ,false));
 				}
 			}

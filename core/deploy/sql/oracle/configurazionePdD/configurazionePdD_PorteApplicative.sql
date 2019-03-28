@@ -107,7 +107,11 @@ CREATE TABLE porte_applicative
 	response_cache_max_msg_size NUMBER,
 	response_cache_hash_url VARCHAR2(255),
 	response_cache_hash_headers VARCHAR2(255),
+	response_cache_hash_hdr_list CLOB,
 	response_cache_hash_payload VARCHAR2(255),
+	response_cache_control_nocache NUMBER,
+	response_cache_control_maxage NUMBER,
+	response_cache_control_nostore NUMBER,
 	-- Stato della porta: abilitato/disabilitato
 	stato VARCHAR2(255),
 	-- proprietario porta applicativa
@@ -165,6 +169,38 @@ for each row
 begin
    IF (:new.id IS NULL) THEN
       SELECT seq_porte_applicative_sa.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_pa_auth_properties MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE pa_auth_properties
+(
+	id_porta NUMBER NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
+	valore VARCHAR2(255) NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT uniq_pa_auth_props_1 UNIQUE (id_porta,nome,valore),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_auth_properties_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_auth_properties PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX INDEX_PA_AUTH_PROP ON pa_auth_properties (id_porta);
+CREATE TRIGGER trg_pa_auth_properties
+BEFORE
+insert on pa_auth_properties
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_pa_auth_properties.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;
@@ -536,6 +572,230 @@ for each row
 begin
    IF (:new.id IS NULL) THEN
       SELECT seq_pa_azioni.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_pa_cache_regole MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE pa_cache_regole
+(
+	id_porta NUMBER NOT NULL,
+	status_min NUMBER,
+	status_max NUMBER,
+	fault NUMBER,
+	cache_seconds NUMBER,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_cache_regole_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_cache_regole PRIMARY KEY (id)
+);
+
+
+ALTER TABLE pa_cache_regole MODIFY fault DEFAULT 0;
+
+CREATE TRIGGER trg_pa_cache_regole
+BEFORE
+insert on pa_cache_regole
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_pa_cache_regole.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_pa_transform MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE pa_transform
+(
+	id_porta NUMBER NOT NULL,
+	applicabilita_azioni CLOB,
+	applicabilita_ct CLOB,
+	applicabilita_pattern CLOB,
+	req_conversione_enabled NUMBER NOT NULL,
+	req_conversione_tipo VARCHAR2(255),
+	req_conversione_template BLOB,
+	req_content_type VARCHAR2(255),
+	rest_transformation NUMBER NOT NULL,
+	rest_method VARCHAR2(255),
+	rest_path VARCHAR2(255),
+	soap_transformation NUMBER NOT NULL,
+	soap_version VARCHAR2(255),
+	soap_action VARCHAR2(255),
+	soap_envelope NUMBER NOT NULL,
+	soap_envelope_as_attach NUMBER NOT NULL,
+	soap_envelope_tipo VARCHAR2(255),
+	soap_envelope_template BLOB,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_transform_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_transform PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_pa_transform_1 ON pa_transform (id_porta);
+
+ALTER TABLE pa_transform MODIFY req_conversione_enabled DEFAULT 0;
+ALTER TABLE pa_transform MODIFY rest_transformation DEFAULT 0;
+ALTER TABLE pa_transform MODIFY soap_transformation DEFAULT 0;
+ALTER TABLE pa_transform MODIFY soap_envelope DEFAULT 0;
+ALTER TABLE pa_transform MODIFY soap_envelope_as_attach DEFAULT 0;
+
+CREATE TRIGGER trg_pa_transform
+BEFORE
+insert on pa_transform
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_pa_transform.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_pa_transform_hdr MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE pa_transform_hdr
+(
+	id_trasformazione NUMBER NOT NULL,
+	tipo VARCHAR2(255) NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
+	valore CLOB,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_transform_hdr_1 FOREIGN KEY (id_trasformazione) REFERENCES pa_transform(id),
+	CONSTRAINT pk_pa_transform_hdr PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX idx_pa_trasf_hdr_1 ON pa_transform_hdr (id_trasformazione);
+CREATE TRIGGER trg_pa_transform_hdr
+BEFORE
+insert on pa_transform_hdr
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_pa_transform_hdr.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_pa_transform_url MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE pa_transform_url
+(
+	id_trasformazione NUMBER NOT NULL,
+	tipo VARCHAR2(255) NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
+	valore CLOB,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_transform_url_1 FOREIGN KEY (id_trasformazione) REFERENCES pa_transform(id),
+	CONSTRAINT pk_pa_transform_url PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX idx_pa_trasf_url_1 ON pa_transform_url (id_trasformazione);
+CREATE TRIGGER trg_pa_transform_url
+BEFORE
+insert on pa_transform_url
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_pa_transform_url.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_pa_transform_risp MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE pa_transform_risp
+(
+	id_trasformazione NUMBER NOT NULL,
+	applicabilita_status_min NUMBER,
+	applicabilita_status_max NUMBER,
+	applicabilita_ct CLOB,
+	applicabilita_pattern CLOB,
+	conversione_enabled NUMBER NOT NULL,
+	conversione_tipo VARCHAR2(255),
+	conversione_template BLOB,
+	content_type VARCHAR2(255),
+	return_code NUMBER,
+	soap_envelope NUMBER NOT NULL,
+	soap_envelope_as_attach NUMBER NOT NULL,
+	soap_envelope_tipo VARCHAR2(255),
+	soap_envelope_template BLOB,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_transform_risp_1 FOREIGN KEY (id_trasformazione) REFERENCES pa_transform(id),
+	CONSTRAINT pk_pa_transform_risp PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX idx_pa_trasf_resp_1 ON pa_transform_risp (id_trasformazione);
+
+ALTER TABLE pa_transform_risp MODIFY conversione_enabled DEFAULT 0;
+ALTER TABLE pa_transform_risp MODIFY soap_envelope DEFAULT 0;
+ALTER TABLE pa_transform_risp MODIFY soap_envelope_as_attach DEFAULT 0;
+
+CREATE TRIGGER trg_pa_transform_risp
+BEFORE
+insert on pa_transform_risp
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_pa_transform_risp.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_pa_transform_risp_hdr MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE pa_transform_risp_hdr
+(
+	id_transform_risp NUMBER NOT NULL,
+	tipo VARCHAR2(255) NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
+	valore CLOB,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_transform_risp_hdr_1 FOREIGN KEY (id_transform_risp) REFERENCES pa_transform_risp(id),
+	CONSTRAINT pk_pa_transform_risp_hdr PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX idx_pa_trasf_hdr_resp_1 ON pa_transform_risp_hdr (id_transform_risp);
+CREATE TRIGGER trg_pa_transform_risp_hdr
+BEFORE
+insert on pa_transform_risp_hdr
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_pa_transform_risp_hdr.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;

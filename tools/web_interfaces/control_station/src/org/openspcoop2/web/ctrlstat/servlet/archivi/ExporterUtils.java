@@ -183,6 +183,10 @@ public class ExporterUtils {
 		List<IDServizio> idsAccordi = new ArrayList<IDServizio>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
+			if(id.contains("@")) {
+				// fruizioni
+				id = id.split("@")[0];
+			}
 			IDServizio idS = IDServizioFactory.getInstance().getIDServizioFromUri(id);
 			idsAccordi.add(idS);
 		}

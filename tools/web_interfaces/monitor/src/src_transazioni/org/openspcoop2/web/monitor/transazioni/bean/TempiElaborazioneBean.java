@@ -202,4 +202,12 @@ public class TempiElaborazioneBean extends TempiElaborazione {
 		return this._getInfoTempiElaborazione(this.responseCachingSaveInCache);
 	}
 	
+	public String getInfoTempiElaborazioneTrasformazioneRichiesta() {
+		return this._getInfoTempiElaborazione(this.trasformazioneRichiesta);
+	}
+	
+	public String getInfoTempiElaborazioneTrasformazioneRisposta() {
+		return this._getInfoTempiElaborazione(this.trasformazioneRisposta);
+	}
+	
 }

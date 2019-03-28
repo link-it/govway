@@ -207,7 +207,8 @@ public class ConnettoreFileUtils {
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
 		de.setValue(requestOutputFileName);
-		de.setType(DataElementType.TEXT_EDIT);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_SIZE);
 		de.setRequired(true);	
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
 		de.setSize(pageSize);
@@ -216,7 +217,8 @@ public class ConnettoreFileUtils {
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
 		de.setValue(requestOutputFileNameHeaders);
-		de.setType(DataElementType.TEXT_EDIT);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_SIZE);
 		de.setRequired(false);	
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
 		de.setSize(pageSize);
@@ -262,7 +264,8 @@ public class ConnettoreFileUtils {
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME);
 		de.setValue(responseInputFileName);
 		if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){
-			de.setType(DataElementType.TEXT_EDIT);
+			de.setType(DataElementType.TEXT_AREA);
+			de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_SIZE);
 			de.setRequired(true);
 		}
 		else{
@@ -276,7 +279,8 @@ public class ConnettoreFileUtils {
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
 		de.setValue(responseInputFileNameHeaders);
 		if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){
-			de.setType(DataElementType.TEXT_EDIT);
+			de.setType(DataElementType.TEXT_AREA);
+			de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS_SIZE);
 		}
 		else{
 			de.setType(DataElementType.HIDDEN);

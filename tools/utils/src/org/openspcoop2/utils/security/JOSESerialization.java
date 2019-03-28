@@ -27,6 +27,8 @@ package org.openspcoop2.utils.security;
  * @version $Rev$, $Date$
  * 
  */
-public enum JOSERepresentation {
-	SELF_CONTAINED, DETACHED, COMPACT
+public enum JOSESerialization {
+	
+	JSON, COMPACT
+	
 }

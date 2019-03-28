@@ -43,6 +43,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
@@ -206,7 +207,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			long idProv, // id del database relativo al soggetto. 
 			Connettore connettore,		
 			boolean generaPortaApplicativa, boolean generaPortaDelegata,
-			String autenticazione, String autenticazioneOpzionale,
+			String autenticazione, String autenticazioneOpzionale, TipoAutenticazionePrincipal autenticazionePrincipal, List<String> autenticazioneParametroList,
 			String autorizzazione, String autorizzazioneAutenticati, String autorizzazioneRuoli, String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
 			String servizioApplicativo, String ruolo, String soggettoAutenticato, 
 			String autorizzazione_tokenOptions,
@@ -228,7 +229,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			
 			AccordiServizioParteSpecificaUtilities.generaPortaApplicativa(listaOggettiDaCreare, idServizio,tipoProtocollo, serviceBinding, 
 					idProv, connettore, 
-					autenticazione, autenticazioneOpzionale,
+					autenticazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,
 					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, autorizzazioneRuoliTipologia, autorizzazioneRuoliMatch,
 					servizioApplicativo, ruolo,soggettoAutenticato,
 					autorizzazione_tokenOptions,
@@ -246,7 +247,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			AccordiServizioParteSpecificaUtilities.generaPortaDelegata(listaOggettiDaCreare, 
 					idFruitore, idServizio, tipoProtocollo, serviceBinding, 
 					idProv, 
-					autenticazione, autenticazioneOpzionale,
+					autenticazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,
 					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, autorizzazioneRuoliTipologia, autorizzazioneRuoliMatch,
 					servizioApplicativo, ruolo,
 					autorizzazione_tokenOptions,
@@ -274,7 +275,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			IDServizio idServizio, String tipoProtocollo, ServiceBinding serviceBinding,
 			long idProv, // id del database relativo al soggetto. 
 			Connettore connettore,			
-			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale,
+			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale, TipoAutenticazionePrincipal erogazioneAutenticazionePrincipal, List<String> erogazioneAutenticazioneParametroList,
 			String erogazioneAutorizzazione, String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,
 			String nomeSA, String erogazioneRuolo, String erogazioneSoggettoAutenticato, 
 			String autorizzazione_tokenOptions,
@@ -342,7 +343,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		}
 			
 		porteApplicativeCore.configureControlloAccessiPortaApplicativa(portaApplicativa,
-				erogazioneAutenticazione, erogazioneAutenticazioneOpzionale,
+				erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList,
 				erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,
 				nomeServizioApplicativoErogatore, erogazioneRuolo,idSoggettoAutenticatoErogazione,
 				autorizzazione_tokenOptions,
@@ -367,7 +368,7 @@ public class AccordiServizioParteSpecificaUtilities {
 	public static void generaPortaDelegata(List<Object> listaOggettiDaCreare,
 			IDSoggetto idFruitore, IDServizio idServizio, String tipoProtocollo, ServiceBinding serviceBinding,
 			long idProv, // id del database relativo al soggetto. 
-			String fruizioneAutenticazione, String fruizioneAutenticazioneOpzionale,
+			String fruizioneAutenticazione, String fruizioneAutenticazioneOpzionale, TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal, List<String> fruizioneAutenticazioneParametroList,
 			String fruizioneAutorizzazione, String fruizioneAutorizzazioneAutenticati, String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
 			String fruizioneServizioApplicativo, String fruizioneRuolo, 
 			String autorizzazione_tokenOptions,
@@ -391,7 +392,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		portaDelegata.setIdSoggetto((long) idProv);
 
 		porteDelegateCore.configureControlloAccessiPortaDelegata(portaDelegata, 
-				fruizioneAutenticazione, fruizioneAutenticazioneOpzionale,
+				fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList,
 				fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
 				fruizioneServizioApplicativo, fruizioneRuolo,
 				autorizzazione_tokenOptions,
@@ -1439,7 +1440,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			List<ExtendedConnettore> listExtendedConnettore,
-			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale,
+			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale, TipoAutenticazionePrincipal erogazioneAutenticazionePrincipal, List<String> erogazioneAutenticazioneParametroList,
 			String erogazioneAutorizzazione, String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,
 			String nomeSA, String erogazioneRuolo, String erogazioneSoggettoAutenticato, 
 			String autorizzazione_tokenOptions,
@@ -1582,7 +1583,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			}
 			
 			porteApplicativeCore.configureControlloAccessiPortaApplicativa(portaApplicativa,
-					erogazioneAutenticazione, erogazioneAutenticazioneOpzionale,
+					erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList,
 					erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,
 					nomeServizioApplicativoErogatore, erogazioneRuolo,idSoggettoAutenticatoErogazione,
 					autorizzazione_tokenOptions,
@@ -1813,7 +1814,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			List<ExtendedConnettore> listExtendedConnettore,
-			String fruizioneAutenticazione, String fruizioneAutenticazioneOpzionale,
+			String fruizioneAutenticazione, String fruizioneAutenticazioneOpzionale, TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal, List<String> fruizioneAutenticazioneParametroList,
 			String fruizioneAutorizzazione, String fruizioneAutorizzazioneAutenticati, String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
 			String fruizioneServizioApplicativo, String fruizioneRuolo, 
 			String autorizzazione_tokenOptions,
@@ -1957,7 +1958,7 @@ public class AccordiServizioParteSpecificaUtilities {
 
 		if(!modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
 			porteDelegateCore.configureControlloAccessiPortaDelegata(portaDelegata, 
-					fruizioneAutenticazione, fruizioneAutenticazioneOpzionale,
+					fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList,
 					fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
 					fruizioneServizioApplicativo, fruizioneRuolo,
 					autorizzazione_tokenOptions,

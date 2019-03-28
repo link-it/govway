@@ -37,13 +37,19 @@ import java.util.Map;
  */
 public class DynamicStringReplace {
 
-	public static void validate(String messaggioWithPlaceHolder) throws UtilsException{
+	public static void validate(String messaggioWithPlaceHolder, boolean startWithDollaro) throws UtilsException{
 		
+		String start = "{";
+		if(startWithDollaro) {
+			start = "${";
+		}
+		String end = "}";
+		int length = start.length()+end.length();
 
 		// Check di esistenza di almeno 1  '{' e '}'
-		if(messaggioWithPlaceHolder!=null && messaggioWithPlaceHolder.length()>2){
-			int index1 = messaggioWithPlaceHolder.indexOf("{");
-			int index2 = messaggioWithPlaceHolder.indexOf("}",index1+1);
+		if(messaggioWithPlaceHolder!=null && messaggioWithPlaceHolder.length()>length){
+			int index1 = messaggioWithPlaceHolder.indexOf(start);
+			int index2 = messaggioWithPlaceHolder.indexOf(end,index1+start.length());
 			if(index1<0 || index2<0){
 				return; // non serve il replace
 			}
@@ -53,7 +59,24 @@ public class DynamicStringReplace {
 		boolean separator = false;
 		for(int i=0; i<messaggioWithPlaceHolder.length(); i++){
 			char ch = messaggioWithPlaceHolder.charAt(i);
-			if( ('{' == ch) || ('}' == ch) ){
+			boolean checkPossibleStart = false;
+			if(startWithDollaro) {
+				if(ch == '$') {
+					checkPossibleStart = true;
+					if(i+1 < messaggioWithPlaceHolder.length()) {
+						i++;
+						ch = messaggioWithPlaceHolder.charAt(i);
+					}
+				}
+			}
+			else {
+				checkPossibleStart = true;
+			}
+			if( 
+					( (checkPossibleStart && '{' == ch) ) 
+					|| 
+					('}' == ch) 
+				){
 				//char separatorChar = ch;
 				if(separator==false){
 					// inizio keyword
@@ -91,14 +114,21 @@ public class DynamicStringReplace {
 		}
 	}
 	
-	public static String replace(String messaggioWithPlaceHolder, Map<String, Object> map) throws UtilsException{
+	public static String replace(String messaggioWithPlaceHolder, Map<String, Object> map, boolean startWithDollaro) throws UtilsException{
 		
-		validate(messaggioWithPlaceHolder);
+		validate(messaggioWithPlaceHolder, startWithDollaro);
+		
+		String start = "{";
+		if(startWithDollaro) {
+			start = "${";
+		}
+		String end = "}";
+		int length = start.length()+end.length();
 		
 		// Check di esistenza di almeno 1  '{' e '}'
-		if(messaggioWithPlaceHolder!=null && messaggioWithPlaceHolder.length()>2){
-			int index1 = messaggioWithPlaceHolder.indexOf("{");
-			int index2 = messaggioWithPlaceHolder.indexOf("}",index1+1);
+		if(messaggioWithPlaceHolder!=null && messaggioWithPlaceHolder.length()>length){
+			int index1 = messaggioWithPlaceHolder.indexOf(start);
+			int index2 = messaggioWithPlaceHolder.indexOf(end,index1+start.length());
 			if(index1<0 || index2<0){
 				return messaggioWithPlaceHolder; // non serve il replace
 			}
@@ -109,7 +139,24 @@ public class DynamicStringReplace {
 		boolean separator = false;
 		for(int i=0; i<messaggioWithPlaceHolder.length(); i++){
 			char ch = messaggioWithPlaceHolder.charAt(i);
-			if( ('{' == ch) || ('}' == ch) ){
+			boolean checkPossibleStart = false;
+			if(startWithDollaro) {
+				if(ch == '$') {
+					checkPossibleStart = true;
+					if(i+1 < messaggioWithPlaceHolder.length()) {
+						i++;
+						ch = messaggioWithPlaceHolder.charAt(i);
+					}
+				}
+			}
+			else {
+				checkPossibleStart = true;
+			}
+			if( 
+					( (checkPossibleStart && '{' == ch) ) 
+					|| 
+					('}' == ch) 
+				){
 				//char separatorChar = ch;
 				if(separator==false){
 					// inizio keyword

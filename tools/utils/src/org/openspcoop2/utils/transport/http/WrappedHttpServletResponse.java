@@ -20,7 +20,7 @@
  *
  */
 
-package org.openspcoop2.utils.transport;
+package org.openspcoop2.utils.transport.http;
 
 import java.io.IOException;
 import java.io.PrintWriter;

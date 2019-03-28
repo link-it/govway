@@ -41,7 +41,9 @@ import org.openspcoop2.security.message.utils.KeystoreUtils;
 import org.openspcoop2.security.message.utils.PropertiesUtils;
 import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.security.JOSERepresentation;
+import org.openspcoop2.utils.security.JOSESerialization;
+import org.openspcoop2.utils.security.JWEOptions;
+import org.openspcoop2.utils.security.JWSOptions;
 import org.openspcoop2.utils.security.JsonEncrypt;
 import org.openspcoop2.utils.security.JsonSignature;
 
@@ -102,15 +104,26 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 				
 				// **************** Leggo parametri signature store **************************
 
-				JOSERepresentation joseRepresentation = null;
+				JOSESerialization joseSerialization = null;
 				String mode = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_MODE);
 				if(mode==null || "".equals(mode.trim())){
 					throw new SecurityException(JOSECostanti.JOSE_ENGINE_SIGNATURE_DESCRIPTION+" require '"+SecurityConstants.SIGNATURE_MODE+"' property");
 				}
 				try {
-					joseRepresentation = JOSEUtils.toJOSERepresentation(mode);
+					joseSerialization = JOSEUtils.toJOSESerialization(mode);
 				}catch(Exception e) {
 					throw new SecurityException(JOSECostanti.JOSE_ENGINE_SIGNATURE_DESCRIPTION+", '"+SecurityConstants.SIGNATURE_MODE+"' property error: "+e.getMessage(),e);
+				}
+				JWSOptions jwsOptions = new JWSOptions(joseSerialization);
+				
+				String signatureDetachedParam = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_DETACHED);
+				if(signatureDetachedParam!=null) {
+					jwsOptions.setDetached(SecurityConstants.SIGNATURE_DETACHED_TRUE.equalsIgnoreCase(signatureDetachedParam));
+				}
+				
+				String signaturePayloadEncodingParam = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_PAYLOAD_ENCODING);
+				if(signaturePayloadEncodingParam!=null) {
+					jwsOptions.setPayloadEncoding(SecurityConstants.SIGNATURE_PAYLOAD_ENCODING_TRUE.equalsIgnoreCase(signaturePayloadEncodingParam));
 				}
 				
 				JsonSignature jsonSignature = null;
@@ -123,7 +136,7 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 				}
 				if(bean!=null) {
 					Properties signatureProperties = bean.getProperties();
-					jsonSignature = new JsonSignature(signatureProperties, joseRepresentation);	
+					jsonSignature = new JsonSignature(signatureProperties, jwsOptions);	
 				}
 				else {	
 					KeyStore signatureKS = null;
@@ -163,7 +176,7 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 						throw new SecurityException(JOSECostanti.JOSE_ENGINE_SIGNATURE_DESCRIPTION+" require '"+SecurityConstants.SIGNATURE_ALGORITHM+"' property");
 					}
 					
-					jsonSignature = new JsonSignature(signatureKS, aliasSignatureUser, aliasSignaturePassword, signatureAlgorithm, joseRepresentation);	
+					jsonSignature = new JsonSignature(signatureKS, aliasSignatureUser, aliasSignaturePassword, signatureAlgorithm, jwsOptions);	
 				}
 				
 
@@ -174,7 +187,7 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 				// **************** Process **************************
 				
 				String contentSign = jsonSignature.sign(restJsonMessage.getContent());
-				if(JOSERepresentation.DETACHED.equals(joseRepresentation)) {
+				if(jwsOptions.isDetached()) {
 					this.setDetachedSignatureInMessage(messageSecurityContext.getOutgoingProperties(), 
 							restJsonMessage, 
 							JOSECostanti.JOSE_ENGINE_SIGNATURE_DESCRIPTION, 
@@ -195,18 +208,21 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 			
 				// **************** Leggo parametri encryption store **************************
 				
-				JOSERepresentation joseRepresentation = null;
+				JOSESerialization joseSerialization = null;
 				String mode = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_MODE);
 				if(mode==null || "".equals(mode.trim())){
 					throw new SecurityException(JOSECostanti.JOSE_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_MODE+"' property");
 				}
 				try {
-					joseRepresentation = JOSEUtils.toJOSERepresentation(mode);
+					joseSerialization = JOSEUtils.toJOSESerialization(mode);
 				}catch(Exception e) {
 					throw new SecurityException(JOSECostanti.JOSE_ENGINE_ENCRYPT_DESCRIPTION+", '"+SecurityConstants.ENCRYPTION_MODE+"' property error: "+e.getMessage(),e);
 				}
-				if(JOSERepresentation.DETACHED.equals(joseRepresentation)) {
-					throw new SecurityException(JOSECostanti.JOSE_ENGINE_ENCRYPT_DESCRIPTION+", "+SecurityConstants.ENCRYPTION_MODE+" '"+mode+"' not supported");
+				JWEOptions jweOptions = new JWEOptions(joseSerialization);
+				
+				String encryptionDeflateParam = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_DEFLATE);
+				if(encryptionDeflateParam!=null) {
+					jweOptions.setDeflate(SecurityConstants.ENCRYPTION_DEFLATE_TRUE.equalsIgnoreCase(encryptionDeflateParam));
 				}
 				
 				JsonEncrypt jsonEncrypt = null;
@@ -219,7 +235,7 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 				}
 				if(bean!=null) {
 					Properties encryptionProperties = bean.getProperties();
-					jsonEncrypt = new JsonEncrypt(encryptionProperties, joseRepresentation);	
+					jsonEncrypt = new JsonEncrypt(encryptionProperties, jweOptions);	
 				}
 				else {	
 					KeyStore encryptionKS = null;
@@ -276,17 +292,11 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 					if(encryptionContentAlgorithm==null || "".equals(encryptionContentAlgorithm.trim())){
 						throw new SecurityException(JOSECostanti.JOSE_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_CONTENT_ALGORITHM+"' property");
 					}
-					
-					String encryptionDeflateParam = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_DEFLATE);
-					boolean deflate = false;
-					if(encryptionDeflateParam!=null) {
-						deflate = SecurityConstants.ENCRYPTION_DEFLATE_TRUE.equalsIgnoreCase(encryptionDeflateParam);
-					}
-					
+
 					if(encryptionSymmetric) {
-						jsonEncrypt = new JsonEncrypt(encryptionKS, aliasEncryptUser, aliasEncryptPassword, encryptionKeyAlgorithm, encryptionContentAlgorithm, deflate, joseRepresentation);
+						jsonEncrypt = new JsonEncrypt(encryptionKS, aliasEncryptUser, aliasEncryptPassword, encryptionKeyAlgorithm, encryptionContentAlgorithm, jweOptions);
 					}else {
-						jsonEncrypt = new JsonEncrypt(encryptionTrustStoreKS, aliasEncryptUser, encryptionKeyAlgorithm, encryptionContentAlgorithm, deflate, joseRepresentation);
+						jsonEncrypt = new JsonEncrypt(encryptionTrustStoreKS, aliasEncryptUser, encryptionKeyAlgorithm, encryptionContentAlgorithm, jweOptions);
 					}
 				}
 		

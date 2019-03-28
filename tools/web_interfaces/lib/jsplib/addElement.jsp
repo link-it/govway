@@ -94,6 +94,25 @@ function CheckDati() {
 
 </script>
 <script type="text/javascript">
+	function customInputNumberChangeEventHandler(e){
+		
+		if (e.target.value == '') {
+	    	// do nothing
+	    } else {
+	    	if(e.target.min){
+	    		if(parseInt(e.target.min) > parseInt(e.target.value)){
+	    			e.target.value = e.target.min;
+	    		}
+	    	}
+	    	
+	    	if(e.target.max){
+	    		if(parseInt(e.target.max) < parseInt(e.target.value)){
+	    			e.target.value = e.target.max;
+	    		}
+	    	}
+	    }
+	}
+
         $(document).ready(function(){
                 //date time tracciamento
                 //date time diagnostica
@@ -105,7 +124,11 @@ function CheckDati() {
                 var numInputs = document.querySelectorAll('input[type=number]');
 
                	for(var i = 0 ; i < numInputs.length; i++){
-               		numInputs[i].addEventListener('change', inputNumberChangeEventHandler	);
+               		if(numInputs[i].hasAttribute('gw-function')){
+               			numInputs[i].addEventListener('change', window[numInputs[i].getAttribute('gw-function')]);
+               		} else {
+               			numInputs[i].addEventListener('change', inputNumberChangeEventHandler	);
+               		}
                	}
                	
                	function inputNumberChangeEventHandler(e){

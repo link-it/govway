@@ -167,6 +167,8 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
     CODICE_560_GESTIONE_TOKEN(560),
     /** String che contiene un codice di errore OpenSPCoop: ErroreProcessamento situazione anomala durante la generazione del digest della richiesta, 561*/
     CODICE_561_DIGEST_REQUEST(561),
+    /** String che contiene un codice di errore OpenSPCoop: ErroreProcessamento situazione anomala durante la gestione della trasformazione, 562*/
+    CODICE_562_TRASFORMAZIONE(562),
     
     /** Codice di Errore Custom, 5XX*/
     CODICE_5XX_CUSTOM(5),

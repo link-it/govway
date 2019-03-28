@@ -46,6 +46,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.SERVIZIO = new org.openspcoop2.core.config.model.PortaApplicativaServizioModel(new Field("servizio",org.openspcoop2.core.config.PortaApplicativaServizio.class,"porta-applicativa",PortaApplicativa.class));
 		this.AZIONE = new org.openspcoop2.core.config.model.PortaApplicativaAzioneModel(new Field("azione",org.openspcoop2.core.config.PortaApplicativaAzione.class,"porta-applicativa",PortaApplicativa.class));
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaApplicativaServizioApplicativoModel(new Field("servizio-applicativo",org.openspcoop2.core.config.PortaApplicativaServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
+		this.PROPRIETA_AUTENTICAZIONE = new org.openspcoop2.core.config.model.ProprietaModel(new Field("proprieta-autenticazione",org.openspcoop2.core.config.Proprieta.class,"porta-applicativa",PortaApplicativa.class));
 		this.XACML_POLICY = new Field("xacml-policy",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.SOGGETTI = new org.openspcoop2.core.config.model.PortaApplicativaAutorizzazioneSoggettiModel(new Field("soggetti",org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti.class,"porta-applicativa",PortaApplicativa.class));
 		this.SERVIZI_APPLICATIVI_AUTORIZZATI = new org.openspcoop2.core.config.model.PortaApplicativaAutorizzazioneServiziApplicativiModel(new Field("servizi-applicativi-autorizzati",org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServiziApplicativi.class,"porta-applicativa",PortaApplicativa.class));
@@ -62,6 +63,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.TRACCIAMENTO = new org.openspcoop2.core.config.model.PortaTracciamentoModel(new Field("tracciamento",org.openspcoop2.core.config.PortaTracciamento.class,"porta-applicativa",PortaApplicativa.class));
 		this.GESTIONE_CORS = new org.openspcoop2.core.config.model.CorsConfigurazioneModel(new Field("gestione-cors",org.openspcoop2.core.config.CorsConfigurazione.class,"porta-applicativa",PortaApplicativa.class));
 		this.RESPONSE_CACHING = new org.openspcoop2.core.config.model.ResponseCachingConfigurazioneModel(new Field("response-caching",org.openspcoop2.core.config.ResponseCachingConfigurazione.class,"porta-applicativa",PortaApplicativa.class));
+		this.TRASFORMAZIONI = new org.openspcoop2.core.config.model.TrasformazioniModel(new Field("trasformazioni",org.openspcoop2.core.config.Trasformazioni.class,"porta-applicativa",PortaApplicativa.class));
 		this.ID_SOGGETTO = new Field("id-soggetto",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
 		this.ID_ACCORDO = new Field("id-accordo",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
 		this.ID_PORT_TYPE = new Field("id-port-type",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
@@ -96,6 +98,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.SERVIZIO = new org.openspcoop2.core.config.model.PortaApplicativaServizioModel(new ComplexField(father,"servizio",org.openspcoop2.core.config.PortaApplicativaServizio.class,"porta-applicativa",PortaApplicativa.class));
 		this.AZIONE = new org.openspcoop2.core.config.model.PortaApplicativaAzioneModel(new ComplexField(father,"azione",org.openspcoop2.core.config.PortaApplicativaAzione.class,"porta-applicativa",PortaApplicativa.class));
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaApplicativaServizioApplicativoModel(new ComplexField(father,"servizio-applicativo",org.openspcoop2.core.config.PortaApplicativaServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
+		this.PROPRIETA_AUTENTICAZIONE = new org.openspcoop2.core.config.model.ProprietaModel(new ComplexField(father,"proprieta-autenticazione",org.openspcoop2.core.config.Proprieta.class,"porta-applicativa",PortaApplicativa.class));
 		this.XACML_POLICY = new ComplexField(father,"xacml-policy",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.SOGGETTI = new org.openspcoop2.core.config.model.PortaApplicativaAutorizzazioneSoggettiModel(new ComplexField(father,"soggetti",org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti.class,"porta-applicativa",PortaApplicativa.class));
 		this.SERVIZI_APPLICATIVI_AUTORIZZATI = new org.openspcoop2.core.config.model.PortaApplicativaAutorizzazioneServiziApplicativiModel(new ComplexField(father,"servizi-applicativi-autorizzati",org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServiziApplicativi.class,"porta-applicativa",PortaApplicativa.class));
@@ -112,6 +115,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.TRACCIAMENTO = new org.openspcoop2.core.config.model.PortaTracciamentoModel(new ComplexField(father,"tracciamento",org.openspcoop2.core.config.PortaTracciamento.class,"porta-applicativa",PortaApplicativa.class));
 		this.GESTIONE_CORS = new org.openspcoop2.core.config.model.CorsConfigurazioneModel(new ComplexField(father,"gestione-cors",org.openspcoop2.core.config.CorsConfigurazione.class,"porta-applicativa",PortaApplicativa.class));
 		this.RESPONSE_CACHING = new org.openspcoop2.core.config.model.ResponseCachingConfigurazioneModel(new ComplexField(father,"response-caching",org.openspcoop2.core.config.ResponseCachingConfigurazione.class,"porta-applicativa",PortaApplicativa.class));
+		this.TRASFORMAZIONI = new org.openspcoop2.core.config.model.TrasformazioniModel(new ComplexField(father,"trasformazioni",org.openspcoop2.core.config.Trasformazioni.class,"porta-applicativa",PortaApplicativa.class));
 		this.ID_SOGGETTO = new ComplexField(father,"id-soggetto",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
 		this.ID_ACCORDO = new ComplexField(father,"id-accordo",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
 		this.ID_PORT_TYPE = new ComplexField(father,"id-port-type",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
@@ -148,6 +152,8 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	 
 	public org.openspcoop2.core.config.model.PortaApplicativaServizioApplicativoModel SERVIZIO_APPLICATIVO = null;
 	 
+	public org.openspcoop2.core.config.model.ProprietaModel PROPRIETA_AUTENTICAZIONE = null;
+	 
 	public IField XACML_POLICY = null;
 	 
 	public org.openspcoop2.core.config.model.PortaApplicativaAutorizzazioneSoggettiModel SOGGETTI = null;
@@ -179,6 +185,8 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	public org.openspcoop2.core.config.model.CorsConfigurazioneModel GESTIONE_CORS = null;
 	 
 	public org.openspcoop2.core.config.model.ResponseCachingConfigurazioneModel RESPONSE_CACHING = null;
+	 
+	public org.openspcoop2.core.config.model.TrasformazioniModel TRASFORMAZIONI = null;
 	 
 	public IField ID_SOGGETTO = null;
 	 

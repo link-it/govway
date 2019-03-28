@@ -40,6 +40,12 @@
 		<testsuite.pdd.core>${testsuite}</testsuite.pdd.core>
 		<testsuite.pdd.core.sql>${testsuite.sql}</testsuite.pdd.core.sql>
 
+		<!-- testsuite gruppi -->
+		<testsuite.utils.group>utils</testsuite.utils.group>
+		<testsuite.utils.sql.group>utils.sql</testsuite.utils.sql.group>
+		<testsuite.pdd.group>pdd</testsuite.pdd.group>
+		<testsuite.pdd.sql.group>pdd.sql</testsuite.pdd.sql.group>
+
 		<!-- testsuite (database config) -->
 		<testsuite.utils.sql.tipoDatabase>postgresql</testsuite.utils.sql.tipoDatabase>
 		<testsuite.utils.sql.connectionUrl>jdbc:postgresql://localhost/govway</testsuite.utils.sql.connectionUrl>

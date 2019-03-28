@@ -24,7 +24,9 @@
 package org.openspcoop2.utils.security;
 
 import java.io.File;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.cxf.rs.security.jose.common.JoseConstants;
@@ -55,27 +57,28 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 public class JsonVerifySignature {
 
 	private JwsSignatureVerifier provider;
-	private JOSERepresentation representation;
+	private JWTOptions options;
 	private Properties properties;
 	private boolean dynamicProvider;
 	
 	private String decodedPayload;
 	private byte[] decodedPayloadAsByte;
 	
-	private KeyStore trustStore; // per verificare i certificati presenti nell'header 
-
-	public JsonVerifySignature(Properties props, JOSERepresentation representation) throws UtilsException{
+	private KeyStore trustStoreCertificatiX509; // per verificare i certificati presenti nell'header 
+	private JsonWebKeys jsonWebKeys; // dove prendere il certificato per validare rispetto al kid
+	
+	public JsonVerifySignature(Properties props, JWTOptions options) throws UtilsException{
 		try {
 			this.dynamicProvider = JsonUtils.isDynamicProvider(props); // rimuove l'alias
-			if(JOSERepresentation.COMPACT.equals(representation) && this.dynamicProvider) {
+			if(this.dynamicProvider) {
 				this.properties = props;
 			}
 			else {
 				this.provider = loadProviderFromProperties(props);
 			}
-			this.representation = representation;
+			this.options = options;
 		}catch(Throwable t) {
-			throw JsonUtils.convert(representation, JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
+			throw JsonUtils.convert(options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
 		}
 	}
 	
@@ -102,113 +105,169 @@ public class JsonVerifySignature {
 		}
 	}
 	
-	public JsonVerifySignature(java.security.KeyStore keystore, String alias, String signatureAlgorithm, JOSERepresentation representation) throws UtilsException{
-		this(new KeyStore(keystore), alias, signatureAlgorithm, representation);
+	public JsonVerifySignature(java.security.KeyStore keystore, String alias, String signatureAlgorithm, JWTOptions options) throws UtilsException{
+		this(new KeyStore(keystore), alias, signatureAlgorithm, options);
 	}
-	public JsonVerifySignature(KeyStore keystore, String alias, String signatureAlgorithm, JOSERepresentation representation) throws UtilsException{
+	public JsonVerifySignature(KeyStore keystore, String alias, String signatureAlgorithm, JWTOptions options) throws UtilsException{
 		try {
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
 			this.provider = JwsUtils.getPublicKeySignatureVerifier((X509Certificate) keystore.getCertificate(alias), algo);
-			this.representation=representation;
+			this.options=options;
 		}catch(Throwable t) {
-			throw JsonUtils.convert(representation, JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
+			throw JsonUtils.convert(options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
 		}
 	}
 	
-	public JsonVerifySignature(JsonWebKeys jsonWebKeys, String alias, String signatureAlgorithm, JOSERepresentation representation) throws UtilsException{
-		this(JsonUtils.readKey(jsonWebKeys, alias), signatureAlgorithm, representation);
+	public JsonVerifySignature(JsonWebKeys jsonWebKeys, String alias, String signatureAlgorithm, JWTOptions options) throws UtilsException{
+		this(JsonUtils.readKey(jsonWebKeys, alias), signatureAlgorithm, options);
 	}
 	
-	public JsonVerifySignature(JsonWebKey jsonWebKey, String signatureAlgorithm, JOSERepresentation representation) throws UtilsException{
+	public JsonVerifySignature(JsonWebKey jsonWebKey, String signatureAlgorithm, JWTOptions options) throws UtilsException{
 		try {
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
 			this.provider = JwsUtils.getPublicKeySignatureVerifier(JwkUtils.toRSAPublicKey(jsonWebKey), algo);
-			this.representation=representation;
+			this.options=options;
 		}catch(Throwable t) {
-			throw JsonUtils.convert(representation, JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
+			throw JsonUtils.convert(options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
 		}
 	}
 	
 	
-	public JsonVerifySignature() throws UtilsException{
-		_initVerifyCertificatiHeaderJWT(null, null);
+	public JsonVerifySignature(JWTOptions options) throws UtilsException{
+		_initVerifyCertificatiHeaderJWT(null, null, options);
 	}
-	public JsonVerifySignature(Properties props) throws UtilsException{
-		_initVerifyCertificatiHeaderJWT(props, null);
+	public JsonVerifySignature(Properties propsTrustStoreHttps, java.security.KeyStore trustStoreVerificaCertificato, JWTOptions options) throws UtilsException{
+		_initVerifyCertificatiHeaderJWT(propsTrustStoreHttps, new KeyStore(trustStoreVerificaCertificato), options);
 	}
-	public JsonVerifySignature(Properties props, java.security.KeyStore trustStore) throws UtilsException{
-		_initVerifyCertificatiHeaderJWT(props, new KeyStore(trustStore));
+	public JsonVerifySignature(Properties propsTrustStoreHttps, KeyStore trustStore, JWTOptions options) throws UtilsException{
+		_initVerifyCertificatiHeaderJWT(propsTrustStoreHttps, trustStore, options);
 	}
-	public JsonVerifySignature(Properties props, KeyStore trustStore) throws UtilsException{
-		_initVerifyCertificatiHeaderJWT(props, trustStore);
+	public JsonVerifySignature(java.security.KeyStore trustStoreVerificaCertificato, JWTOptions options) throws UtilsException{
+		_initVerifyCertificatiHeaderJWT(null, new KeyStore(trustStoreVerificaCertificato), options);
 	}
-	public JsonVerifySignature(java.security.KeyStore trustStore) throws UtilsException{
-		_initVerifyCertificatiHeaderJWT(null, new KeyStore(trustStore));
+	public JsonVerifySignature(KeyStore trustStore, JWTOptions options) throws UtilsException{
+		_initVerifyCertificatiHeaderJWT(null, trustStore, options);
 	}
-	public JsonVerifySignature(KeyStore trustStore) throws UtilsException{
-		_initVerifyCertificatiHeaderJWT(null, trustStore);
-	}
-	private void _initVerifyCertificatiHeaderJWT(Properties props, KeyStore trustStore) throws UtilsException{
+	private void _initVerifyCertificatiHeaderJWT(Properties propsTrustStoreHttps, KeyStore trustStoreVerificaCertificato, JWTOptions options) throws UtilsException{
 		// verra usato l'header per validare ed ottenere il certificato
-		this.representation=JOSERepresentation.COMPACT;
-		this.properties = props; // le proprieta' servono per risolvere le url https
-		this.trustStore = trustStore;
+		this.options=options;
+		this.properties = propsTrustStoreHttps; // le proprieta' servono per risolvere le url https
+		this.trustStoreCertificatiX509 = trustStoreVerificaCertificato;
+	}
+	
+	public JsonVerifySignature(JsonWebKeys jsonWebKeys, JWTOptions options) throws UtilsException{
+		_initVerifyCertificatiHeaderJWT(jsonWebKeys, options);
+	}
+	private void _initVerifyCertificatiHeaderJWT(JsonWebKeys jsonWebKeys, JWTOptions options) throws UtilsException{
+		// verra usato l'header per validare ed ottenere il certificato
+		this.options=options;
+		this.jsonWebKeys = jsonWebKeys;
 	}
 
 
 	public boolean verify(String jsonString) throws UtilsException{
 		try {
-			switch(this.representation) {
-				case SELF_CONTAINED: return verifySelfContained(jsonString);
+			switch(this.options.getSerialization()) {
+				case JSON: return verifyJson(jsonString);
 				case COMPACT: return verifyCompact(jsonString);
-				case DETACHED:   throw new UtilsException("Use method verify(String, String) with representation '"+this.representation+"'");
-				default: throw new UtilsException("Unsupported representation '"+this.representation+"'");
+				default: throw new UtilsException("Unsupported serialization '"+this.options.getSerialization()+"'");
 			}
 		}
 		catch(Throwable t) {
 			t.printStackTrace(System.out);
-			throw JsonUtils.convert(this.representation, JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
+			throw JsonUtils.convert(this.options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
 		}
 	}
 
-	public boolean verify(String jsonDetachedSignature, String jsonDetachedPayload) throws UtilsException{
+	public boolean verifyDetached(String jsonDetachedSignature, String jsonDetachedPayload) throws UtilsException{
 		try {
-			switch(this.representation) {
-				case SELF_CONTAINED: throw new UtilsException("Use method verify(String) with representation '"+this.representation+"'");
-				case COMPACT: throw new UtilsException("UUse method verify(String) with representation '"+this.representation+"'");
-				case DETACHED:  return verifyDetached(jsonDetachedSignature, jsonDetachedPayload);
-				default: throw new UtilsException("Unsupported representation '"+this.representation+"'");
+			switch(this.options.getSerialization()) {
+				case JSON: return verifyDetachedJson(jsonDetachedSignature, jsonDetachedPayload);
+				case COMPACT: return verifyDetachedCompact(jsonDetachedSignature, jsonDetachedPayload);
+				default: throw new UtilsException("Unsupported serialization '"+this.options.getSerialization()+"'");
 			}
 		}
 		catch(Throwable t) {
-			throw JsonUtils.convert(this.representation, JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
+			throw JsonUtils.convert(this.options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
 		}
 	}
 
-	private boolean verifyDetached(String jsonDetachedSignature, String jsonDetachedPayload) {
+	private boolean verifyDetachedJson(String jsonDetachedSignature, String jsonDetachedPayload) throws Exception {
 		JwsJsonProducer producer = new JwsJsonProducer(jsonDetachedPayload);
 		JwsJsonConsumer consumer = new JwsJsonConsumer(jsonDetachedSignature, producer.getUnsignedEncodedPayload());
-		return this._verify(consumer);
+		return this._verifyJson(consumer);
 	}
-	private boolean verifySelfContained(String jsonString) {
+	private boolean verifyJson(String jsonString) throws Exception {
 		JwsJsonConsumer consumer = new JwsJsonConsumer(jsonString);
-		return this._verify(consumer);
+		return this._verifyJson(consumer);
 	}	
-	private boolean _verify(JwsJsonConsumer consumer) {
-		boolean result = consumer.verifySignatureWith(this.provider);
+	private boolean _verifyJson(JwsJsonConsumer consumer) throws Exception {
+		
+		JwsHeaders jwsHeaders = null;
+		if(consumer.getSignatureEntries()!=null && !consumer.getSignatureEntries().isEmpty()) {
+			// prendo la prima entry
+			if(consumer.getSignatureEntries().get(0)!=null) {
+				jwsHeaders = consumer.getSignatureEntries().get(0).getProtectedHeader();
+			}
+		}
+		JwsSignatureVerifier provider = getProvider(jwsHeaders);
+		
+		boolean result = consumer.verifySignatureWith(provider);
 		this.decodedPayload = consumer.getDecodedJwsPayload();
 		this.decodedPayloadAsByte = consumer.getDecodedJwsPayloadBytes();
 		return result;
 	}
 
-	
-	private boolean verifyCompact(String jsonString) throws Exception {
+	private boolean verifyDetachedCompact(String jsonDetachedSignature, String jsonDetachedPayload) throws Exception {
+		return _verifyCompact(jsonDetachedSignature, jsonDetachedPayload);
+	}
+	private boolean verifyCompact(String jsonSignature) throws Exception {
+		return _verifyCompact(jsonSignature, null);
+	}
+	private boolean _verifyCompact(String jsonSignature, String jsonDetachedPayload) throws Exception {
 		
-		JwsCompactConsumer consumer = new JwsCompactConsumer(jsonString);
+		JwsCompactConsumer consumer = null;
+		if(jsonDetachedPayload==null) {
+			consumer = new JwsCompactConsumer(jsonSignature);
+		}
+		else {
+			consumer = new JwsCompactConsumer(jsonSignature, jsonDetachedPayload);
+		}
+		
+		JwsHeaders jwsHeaders = consumer.getJwsHeaders();
+		JwsSignatureVerifier provider = getProvider(jwsHeaders);
+				
+		boolean result = consumer.verifySignatureWith(provider);
+		if(jsonDetachedPayload!=null) {
+			this.decodedPayload = jsonDetachedPayload;
+			this.decodedPayloadAsByte = jsonDetachedPayload.getBytes();
+		}
+		else {
+			this.decodedPayload = consumer.getDecodedJwsPayload();
+			this.decodedPayloadAsByte = consumer.getDecodedJwsPayloadBytes();
+		}
+		return result;
+	}
+	
+	public String getDecodedPayload() {
+		return this.decodedPayload;
+	}
+
+	public byte[] getDecodedPayloadAsByte() {
+		return this.decodedPayloadAsByte;
+	}
+	
+	
+	private JwsSignatureVerifier getProvider(JwsHeaders jwsHeaders) throws Exception {
 		
 		JwsSignatureVerifier provider = this.provider;
+		if(jwsHeaders==null) {
+			return provider;
+		}
+		
 		if(this.dynamicProvider) {
-			String alias = JsonUtils.readAlias(jsonString);
+			//String alias = JsonUtils.readAlias(jsonSignature);
+			String alias = jwsHeaders.getKeyId();
 			Properties pNew = new Properties();
 			pNew.putAll(this.properties);
 			//System.out.println("ALIAS ["+alias+"]");
@@ -217,23 +276,26 @@ public class JsonVerifySignature {
 		}
 		
 		if(provider==null) {
-			JwsHeaders jwsHeaders = consumer.getJwsHeaders();
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = jwsHeaders.getSignatureAlgorithm();
-			if(jwsHeaders.getX509Chain()!=null && !jwsHeaders.getX509Chain().isEmpty()) {
+			if(algo==null) {
+				throw new Exception("SignatureAlgorithm not found");
+			}
+			
+			if(jwsHeaders.getX509Chain()!=null && !jwsHeaders.getX509Chain().isEmpty() && this.options.isPermitUseHeaderX5C()) {
 				byte [] cer = Base64Utilities.decode(jwsHeaders.getX509Chain().get(0));
 				CertificateInfo certificatoInfo = ArchiveLoader.load(cer).getCertificate();
-				if(this.trustStore!=null) {
-					if(certificatoInfo.isVerified(this.trustStore)==false) {
+				if(this.trustStoreCertificatiX509!=null) {
+					if(certificatoInfo.isVerified(this.trustStoreCertificatiX509)==false) {
 						throw new Exception("Certificato presente nell'header '"+JwtHeaders.JWT_HDR_X5U+"' non è verificabile rispetto alle CA conosciute");
 					}
 				}
 				X509Certificate cerx509 = certificatoInfo.getCertificate();
 				provider = JwsUtils.getPublicKeySignatureVerifier(cerx509, algo);
 			}
-			else if(jwsHeaders.getJsonWebKey()!=null) {
+			else if(jwsHeaders.getJsonWebKey()!=null && this.options.isPermitUseHeaderJWK()) {
 				provider = JwsUtils.getPublicKeySignatureVerifier(JwkUtils.toRSAPublicKey(jwsHeaders.getJsonWebKey()), algo);
 			}
-			else if(jwsHeaders.getX509Url()!=null) {
+			else if(jwsHeaders.getX509Url()!=null && this.options.isPermitUseHeaderX5U()) {
 				if(this.properties==null) {
 					this.properties = new Properties();
 				}
@@ -243,8 +305,8 @@ public class JsonVerifySignature {
 					fTmp = JsonUtils.normalizeProperties(this.properties); // in caso di url http viene letta la risorsa remota e salvata in tmp
 					byte [] cer = FileSystemUtilities.readBytesFromFile(fTmp);
 					CertificateInfo certificatoInfo = ArchiveLoader.load(cer).getCertificate();
-					if(this.trustStore!=null) {
-						if(certificatoInfo.isVerified(this.trustStore)==false) {
+					if(this.trustStoreCertificatiX509!=null) {
+						if(certificatoInfo.isVerified(this.trustStoreCertificatiX509)==false) {
 							throw new Exception("Certificato presente nell'header '"+JwtHeaders.JWT_HDR_X5U+"' non è verificabile rispetto alle CA conosciute");
 						}
 					}
@@ -258,7 +320,7 @@ public class JsonVerifySignature {
 					}catch(Throwable t) {}
 				}
 			}
-			else if(jwsHeaders.getJsonWebKeysUrl()!=null) {
+			else if(jwsHeaders.getJsonWebKeysUrl()!=null && this.options.isPermitUseHeaderJKU()) {
 				if(this.properties==null) {
 					this.properties = new Properties();
 				}
@@ -290,22 +352,39 @@ public class JsonVerifySignature {
 					}catch(Throwable t) {}
 				}
 			}
+			else if(jwsHeaders.getKeyId()!=null && this.options.isPermitUseHeaderKID()) {
+				String kid = jwsHeaders.getKeyId();
+				if(this.jsonWebKeys!=null) {
+					JsonWebKey jsonWebKey = null;
+					try {
+						jsonWebKey = this.jsonWebKeys.getKey(kid);
+					}catch(Exception e) {}
+					if(jsonWebKey!=null) {
+						provider = JwsUtils.getPublicKeySignatureVerifier(JwkUtils.toRSAPublicKey(jsonWebKey), algo);
+					}
+				}
+				if(provider==null) {
+					if(this.trustStoreCertificatiX509!=null) {
+						if(this.trustStoreCertificatiX509.existsAlias(kid)) {
+							Certificate cer = this.trustStoreCertificatiX509.getCertificate(kid);
+							if(cer instanceof X509Certificate) {
+								X509Certificate x509Certificate = (X509Certificate) cer;
+								provider = JwsUtils.getPublicKeySignatureVerifier(x509Certificate, algo);
+							}
+						}
+					}
+				}
+			}
 			else {
-				throw new Exception("Non è stato trovato alcun header che consentisse di recuperare il certificato per effettuare la validazione");
+				List<String> hdrNotPermitted = this.options.headersNotPermitted(jwsHeaders);
+				String notPermitted = "";
+				if(hdrNotPermitted!=null && !hdrNotPermitted.isEmpty()) {
+					notPermitted = "; header trovati ma non abilitati all'utilizzo: "+hdrNotPermitted;
+				}
+				throw new Exception("Non è stato trovato alcun header che consentisse di recuperare il certificato per effettuare la validazione"+notPermitted);
 			}
 		}
 		
-		boolean result = consumer.verifySignatureWith(provider);
-		this.decodedPayload = consumer.getDecodedJwsPayload();
-		this.decodedPayloadAsByte = consumer.getDecodedJwsPayloadBytes();
-		return result;
-	}
-	
-	public String getDecodedPayload() {
-		return this.decodedPayload;
-	}
-
-	public byte[] getDecodedPayloadAsByte() {
-		return this.decodedPayloadAsByte;
+		return provider;
 	}
 }

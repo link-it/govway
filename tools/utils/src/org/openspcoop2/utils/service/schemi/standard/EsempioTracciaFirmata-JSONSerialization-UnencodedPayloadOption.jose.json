@@ -1,0 +1,64 @@
+{"payload":"{
+  "emittente" : "Ente",
+  "data_emissione" : "2019-03-26T16:47:53.366Z",
+  "id_traccia" : "a16c7501-0664-48ff-9216-a726f8e7778c",
+  "id_conversazione" : "c77a7501-2288-48ff-kmdi98-a333f8elm2je",
+  "ruolo" : "erogazione",
+  "esito" : {
+    "codice" : "0",
+    "descrizione" : "ok"
+  },
+  "richiesta" : {
+    "id" : "c72a4403-2288-09ff-99gbh-a726f8e1238h",
+    "id_applicativo" : "ENTE-X-UFFICIOY-123",
+    "data_ricezione" : "2019-03-26T16:47:52.610Z",
+    "data_consegna" : "2019-03-26T16:47:52.822Z",
+    "tipo" : "POST",
+    "url_invocazione" : "http://govway/in/Ente/Protocollazione/v1/documenti?test=true",
+    "contenuti" : {
+      "headers" : [ {
+        "nome" : "Content-Length",
+        "valore" : "56789"
+      }, {
+        "nome" : "Content-Type",
+        "valore" : "application/problem+json"
+      } ],
+      "body" : "CnsKCSJuYW1lIjoiTWVzc2FnZ2lvIFJpY2hpZXN0YUluZ3Jlc3NvRHVtcEJpbmFyaW8iLAoJIm5hbWUyIjoidmFsdWUyIgp9"
+    }
+  },
+  "risposta" : {
+    "id" : "b32a7501-7788-48ff-99999-a726f8e7658e",
+    "id_applicativo" : "ENTE-X-UFFICIOY-123-PROTOCOLLO-23",
+    "data_ricezione" : "2019-03-26T16:47:53.250Z",
+    "data_consegna" : "2019-03-26T16:47:53.342Z",
+    "esito_ricezione" : "200",
+    "esito_consegna" : "200",
+    "fault_ricezione" : "PGZhdWx0Pjx0ZXN0PkVTRU1QSU88L3Rlc3Q+PC9mYXVsdD4=",
+    "fault_consegna" : "PGZhdWx0Pjx0ZXN0PkVTRU1QSU88L3Rlc3Q+PC9mYXVsdD4=",
+    "dettagli_errore" : [ "Credenziali non sufficenti" ],
+    "contenuti" : {
+      "headers" : [ {
+        "nome" : "Content-Length",
+        "valore" : "56789"
+      }, {
+        "nome" : "Content-Type",
+        "valore" : "application/problem+json"
+      } ],
+      "body" : "CnsKCSJuYW1lIjoiTWVzc2FnZ2lvIFJpc3Bvc3RhVXNjaXRhRHVtcEJpbmFyaW8iLAoJIm5hbWUyIjoidmFsdWUyIgp9"
+    }
+  },
+  "api" : {
+    "erogatore" : "Ente",
+    "nome" : "Protocollazione",
+    "versione" : 1,
+    "operazione" : "protocollazioneDocumento"
+  },
+  "mittente" : {
+    "principal" : "c=IT, O=Comune Firenze, OU=Protocollo, CN=protocollo.regionetoscana.it",
+    "fruitore" : "UfficioProtocolloComuneFirenze",
+    "utente" : "Andrea Rossi",
+    "indirizzo_client" : "127.0.0.1",
+    "indirizzo_client_inoltrato" : "10.114.87.23"
+  }
+}","signatures":[{"protected":"eyJhbGciOiJSUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19","signature":"MtkSFUy08Z52xXGYLBDpEH4EGhSi6fuaFZwP8ieV0dpWJ92o963uvBYC0Sdie6MUPuUxLpXgoltkAKPcbXhjXHVig-BwXMhoapwRXWU1XXgCTOYHx0AjXP3vc4U0TieiNt2Q4GQ0rkTa87amzNDCSwWeF3zlpp5DJC3q13jkrhSwJIiGjoRtsJ-cLNVISyE3uPLo_R_yRyLTcJuZqC5Qswb-8A4GE3Uw7XCIZ5e0XcZjxtXVujGRo68y1-ARCRukvcDGauKBjeL7Vay0H7AeZUp-Qg-_NXO5zP0mrW2NRoHjbE-rZZezu2Qi8Duz_l1DZn5zRGbCK2Wnu--ezEYgIw"}]}
+

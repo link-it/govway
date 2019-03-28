@@ -47,106 +47,108 @@ import org.openspcoop2.utils.certificate.KeyStore;
 public class JsonSignature {
 
 	private JwsSignatureProvider provider;
-	private JOSERepresentation representation;
+	private JWSOptions options;
 	private JwsHeaders headers;
 	private JwtHeaders jwtHeaders;
 	
-	public JsonSignature(Properties props, JOSERepresentation representation) throws UtilsException{
-		this(props, null, representation);
+	public JsonSignature(Properties props, JWSOptions options) throws UtilsException{
+		this(props, null, options);
 	}
-	public JsonSignature(Properties props, JwtHeaders jwtHeaders, JOSERepresentation representation) throws UtilsException{
+	public JsonSignature(Properties props, JwtHeaders jwtHeaders, JWSOptions options) throws UtilsException{
 		try {
 			this.headers = new JwsHeaders(props);
 			this.provider = JwsUtils.loadSignatureProvider(JsonUtils.newMessage(), props, this.headers);
-			this.representation=representation;
+			this.options=options;
 			this.jwtHeaders = jwtHeaders;
 		}catch(Throwable t) {
-			throw JsonUtils.convert(representation, JsonUtils.SIGNATURE,JsonUtils.SENDER,t);
+			throw JsonUtils.convert(options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.SENDER,t);
 		}
 	}
 
-	public JsonSignature(java.security.KeyStore keystore, String alias, String passwordPrivateKey, String signatureAlgorithm, JOSERepresentation representation) throws UtilsException{
+	public JsonSignature(java.security.KeyStore keystore, String alias, String passwordPrivateKey, String signatureAlgorithm, JWSOptions options) throws UtilsException{
 		this(new KeyStore(keystore), alias, passwordPrivateKey, signatureAlgorithm, 
-				null, representation);
+				null, options);
 	}
-	public JsonSignature(KeyStore keystore, String alias, String passwordPrivateKey, String signatureAlgorithm, JOSERepresentation representation) throws UtilsException{
+	public JsonSignature(KeyStore keystore, String alias, String passwordPrivateKey, String signatureAlgorithm, JWSOptions options) throws UtilsException{
 		this(keystore, alias, passwordPrivateKey, signatureAlgorithm, 
-				null, representation);
+				null, options);
 	}
 	public JsonSignature(java.security.KeyStore keystore, String alias, String passwordPrivateKey, String signatureAlgorithm, 
-			JwtHeaders jwtHeaders, JOSERepresentation representation) throws UtilsException{
-		this(new KeyStore(keystore), alias, passwordPrivateKey, signatureAlgorithm, jwtHeaders, representation);
+			JwtHeaders jwtHeaders, JWSOptions options) throws UtilsException{
+		this(new KeyStore(keystore), alias, passwordPrivateKey, signatureAlgorithm, jwtHeaders, options);
 	}
 	public JsonSignature(KeyStore keystore, String alias, String passwordPrivateKey, String signatureAlgorithm, 
-			JwtHeaders jwtHeaders, JOSERepresentation representation) throws UtilsException{
+			JwtHeaders jwtHeaders, JWSOptions options) throws UtilsException{
 		try {
 			
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
 			this.provider = JwsUtils.getPrivateKeySignatureProvider(keystore.getPrivateKey(alias, passwordPrivateKey), algo);
-			this.representation=representation;
+			this.options=options;
 			this.jwtHeaders = jwtHeaders;
 		}catch(Throwable t) {
-			throw JsonUtils.convert(representation, JsonUtils.SIGNATURE,JsonUtils.SENDER,t);
+			throw JsonUtils.convert(options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.SENDER,t);
 		}
 	}
 	
-	public JsonSignature(JsonWebKeys jsonWebKeys, String alias, String signatureAlgorithm, JOSERepresentation representation) throws UtilsException{
+	public JsonSignature(JsonWebKeys jsonWebKeys, String alias, String signatureAlgorithm, JWSOptions options) throws UtilsException{
 		this(jsonWebKeys, alias, signatureAlgorithm, 
-				null, representation);
+				null, options);
 	}
 	public JsonSignature(JsonWebKeys jsonWebKeys, String alias, String signatureAlgorithm, 
-			JwtHeaders jwtHeaders, JOSERepresentation representation) throws UtilsException{
-		this(JsonUtils.readKey(jsonWebKeys, alias),signatureAlgorithm,jwtHeaders,representation);
+			JwtHeaders jwtHeaders, JWSOptions options) throws UtilsException{
+		this(JsonUtils.readKey(jsonWebKeys, alias),signatureAlgorithm,jwtHeaders,options);
 	}
 	
-	public JsonSignature(JsonWebKey jsonWebKey, String signatureAlgorithm, JOSERepresentation representation) throws UtilsException{
+	public JsonSignature(JsonWebKey jsonWebKey, String signatureAlgorithm, JWSOptions options) throws UtilsException{
 		this(jsonWebKey, signatureAlgorithm, 
-				null, representation);
+				null, options);
 	}
 	public JsonSignature(JsonWebKey jsonWebKey, String signatureAlgorithm, 
-			JwtHeaders jwtHeaders, JOSERepresentation representation) throws UtilsException{
+			JwtHeaders jwtHeaders, JWSOptions options) throws UtilsException{
 		try {
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
 			this.provider = JwsUtils.getPrivateKeySignatureProvider(JwkUtils.toRSAPrivateKey(jsonWebKey), algo);
-			this.representation=representation;
+			this.options=options;
 			this.jwtHeaders = jwtHeaders;
 		}catch(Throwable t) {
-			throw JsonUtils.convert(representation, JsonUtils.SIGNATURE,JsonUtils.SENDER,t);
+			throw JsonUtils.convert(options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.SENDER,t);
 		}
 	}
 
 
 	public String sign(String jsonString) throws UtilsException{
 		try {
-			switch(this.representation) {
-				case SELF_CONTAINED: return signSelfContained(jsonString);
+			switch(this.options.getSerialization()) {
+				case JSON: return signJson(jsonString);
 				case COMPACT: return signCompact(jsonString);
-				case DETACHED:  return signDetached(jsonString);
-				default: throw new UtilsException("Unsupported representation '"+this.representation+"'");
+				default: throw new UtilsException("Unsupported serialization '"+this.options.getSerialization()+"'");
 			}
 		}
 		catch(Throwable t) {
-			throw JsonUtils.convert(this.representation, JsonUtils.SIGNATURE,JsonUtils.SENDER,t);
+			throw JsonUtils.convert(this.options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.SENDER,t);
 		}
 	}
 
-	private String signDetached(String jsonString) {
-		boolean detached = true;
-		JwsJsonProducer jwsProducer = new JwsJsonProducer(jsonString, false, detached);
-		jwsProducer.signWith(this.provider);
-		return jwsProducer.getJwsJsonSignedDocument();
-	}
-
 	private String signCompact(String jsonString) throws Exception {
-		JwsCompactProducer jwsProducer = new JwsCompactProducer(new JwsHeaders(), jsonString);
+		JwsHeaders headers = new JwsHeaders(this.provider.getAlgorithm());
+		// utilizzabile solamente per JSON. Per COMPACT è sconsigliato poichè limitato nei caratteri, non utilizzabile quindi per un json https://tools.ietf.org/html/rfc7797#page-8
+		// Infatti JwsCompactProducer di cxf non lo implementa proprio se si va a vedere il codice, il metodo 'getUnsignedEncodedJws' utilizzato per comporre il jwt non prevede il caso di lasciarlo in chiaro
+//		if(this.options.isPayloadEncoding()==false) {
+//			headers.setPayloadEncodingStatus(this.options.isPayloadEncoding()); // RFC: https://tools.ietf.org/html/rfc7797
+//		}
+		JwsCompactProducer jwsProducer = new JwsCompactProducer(headers, jsonString, this.options.isDetached());
 		fillJwtHeaders(jwsProducer.getJwsHeaders(), this.provider.getAlgorithm());
 		return jwsProducer.signWith(this.provider);
 	}
 
-
-	private String signSelfContained(String jsonString) {
-		JwsJsonProducer jwsProducer = new JwsJsonProducer(jsonString);
-		return jwsProducer.signWith(this.provider);
+	private String signJson(String jsonString) throws Exception {
+		JwsJsonProducer jwsProducer = new JwsJsonProducer(jsonString, false, this.options.isDetached());
+		JwsHeaders headers = new JwsHeaders(this.provider.getAlgorithm());
+		if(this.options.isPayloadEncoding()==false) {
+			headers.setPayloadEncodingStatus(this.options.isPayloadEncoding()); // RFC: https://tools.ietf.org/html/rfc7797
+		}
+		fillJwtHeaders(headers, this.provider.getAlgorithm());
+		return jwsProducer.signWith(this.provider, headers);
 	}
 
 	

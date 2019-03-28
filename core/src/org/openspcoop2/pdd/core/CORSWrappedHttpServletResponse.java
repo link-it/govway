@@ -31,7 +31,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
-import org.openspcoop2.utils.transport.WrappedHttpServletResponse;
+import org.openspcoop2.utils.transport.http.WrappedHttpServletResponse;
 
 /**
  * CORSWrappedHttpServletResponse

@@ -43,7 +43,7 @@ public enum DataElementType {
 	NOTE("note"),
 	RADIO("radio"),
 	IMAGE("image"), BUTTON("button"),
-	NUMBER("number");
+	NUMBER("number"), INTERVAL_NUMBER("interval-number");
 	
 	private String value;
 	DataElementType(String value){

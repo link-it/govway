@@ -25,6 +25,9 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 import javax.crypto.SecretKey;
@@ -109,6 +112,8 @@ public class TestEncrypt {
 			String passwordChiavePrivata = "key123456";
 			String passwordStore = "123456";
 			String alias = "openspcoop";
+			HashMap<String, String> keystore_mapAliasPassword = new HashMap<>();
+			keystore_mapAliasPassword.put(alias, passwordChiavePrivata);
 			
 			KeyStore keystore = new KeyStore(fKeystore.getAbsolutePath(), passwordStore);
 			KeyStore truststore = new KeyStore(fTruststore.getAbsolutePath(), passwordStore);
@@ -153,23 +158,37 @@ public class TestEncrypt {
 			// Esempio Signature JSON
 			
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JKS.equals(tipoTest)) {
-				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS, fKeystore, fTruststore, null);
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS, fKeystore, fTruststore, null,
+						truststore, keystore, keystore_mapAliasPassword, null);
 			}
 			
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM.equals(tipoTest)) {
 				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
-				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM, fKeystore, fTruststore, jwtHeader);
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM, fKeystore, fTruststore, jwtHeader,
+						truststore, keystore, keystore_mapAliasPassword, null);
 				jwtHeader.setX509Url(null);
 			}
 			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY.equals(tipoTest)) {
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY, fKeystore, fTruststore, jwtHeader,
+						truststore, keystore, keystore_mapAliasPassword, null);
+			}
+
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JWK.equals(tipoTest)) {
-				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK, jwks_fKeystore, jwks_fTruststore, null);
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK, jwks_fKeystore, jwks_fTruststore, null,
+						null,null,null,jwks_keystore);
 			}
 			
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipoTest)) {
 				jwtHeader.setJwkUrl(new URI("file://"+jwks_fTruststore.getAbsolutePath()));
-				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM, jwks_fKeystore, jwks_fTruststore, jwtHeader);
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM, jwks_fKeystore, jwks_fTruststore, jwtHeader,
+						null,null,null,jwks_keystore);
 				jwtHeader.setJwkUrl(null);
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipoTest)) {
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY, jwks_fKeystore, jwks_fTruststore, jwtHeader,
+						null,null,null,jwks_keystore);
 			}
 
 			
@@ -183,7 +202,8 @@ public class TestEncrypt {
 				jwtHeader.setX509IncludeCertSha256(false);
 				jwtHeader.setKid(alias);
 				
-				testJsonKeystore(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE, keystore, truststore, alias, passwordChiavePrivata, jwtHeader);
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE, keystore, truststore, alias, passwordChiavePrivata, jwtHeader,
+						keystore_mapAliasPassword);
 				
 				jwtHeader.getX509c().clear();
 				jwtHeader.setX509IncludeCertSha1(false);
@@ -199,7 +219,8 @@ public class TestEncrypt {
 				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
 				jwtHeader.setKid(alias);
 				
-				testJsonKeystore(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE_HEADER_CUSTOM, keystore, truststore, alias, passwordChiavePrivata, jwtHeader);
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE_HEADER_CUSTOM, keystore, truststore, alias, passwordChiavePrivata, jwtHeader,
+						keystore_mapAliasPassword);
 				
 				jwtHeader.getX509c().clear();
 				jwtHeader.setX509IncludeCertSha1(false);
@@ -246,7 +267,6 @@ public class TestEncrypt {
 			
 
 			
-			
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_KEYS.equals(tipoTest)) {
 				
 				jwtHeader.setJwKey(jwks_keystore, alias);
@@ -278,7 +298,8 @@ public class TestEncrypt {
 				jwtHeader.setJwKey(jwk_keystore);
 				jwtHeader.setKid(alias);
 				
-				testJsonJwkKey(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_KEY, jwk_keystore, jwk_truststore, jwtHeader);
+				testJsonJwkKey(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_KEY, jwk_keystore, jwk_truststore, jwtHeader,
+						jwks_keystore);
 				
 				jwtHeader.setJwKey(null);
 				jwtHeader.setKid(null);
@@ -288,12 +309,12 @@ public class TestEncrypt {
 				
 				jwtHeader.setJwkUrl(new URI("file://"+jwks_fTruststore.getAbsolutePath()));
 				
-				testJsonJwkKey(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_KEY, jwk_keystore, jwk_truststore, jwtHeader);
+				testJsonJwkKey(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_KEY, jwk_keystore, jwk_truststore, jwtHeader,
+						jwks_keystore);
 				
 				jwtHeader.setJwkUrl(null);
 				jwtHeader.setKid(null);
 			}
-			
 			
 
 		}finally{
@@ -521,7 +542,8 @@ public class TestEncrypt {
 	}
 	
 	
-	private static void testJsonProperties(TipoTest tipo, File fKeystore, File fTruststore, JwtHeaders headers) throws Exception {
+	private static void testJsonProperties(TipoTest tipo, File fKeystore, File fTruststore, JwtHeaders headers,
+			KeyStore truststoreJKS,KeyStore keystoreJKS,HashMap<String, String> keystore_mapAliasPassword, JsonWebKeys jsonWebKeys) throws Exception {
 		
 		System.out.println("\n\n ============= "+tipo+" ===================");
 		System.out.println("["+tipo+"]. Example JsonEncrypt \n");
@@ -545,7 +567,8 @@ public class TestEncrypt {
 			}
 		}
 		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK.equals(tipo) ||
-				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipo)) {
+				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipo)  ||
+				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
 			encryptProps.put("rs.security.keystore.type", "jwk");
 			
 			encryptProps.remove("rs.security.encryption.include.cert.sha1");
@@ -567,9 +590,12 @@ public class TestEncrypt {
 			decryptProps.put("rs.security.keystore.type", "jks");
 		}
 		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK.equals(tipo) ||
-				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipo) ) {
+				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipo) ||
+				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo) ) {
 			decryptProps.put("rs.security.keystore.type", "jwk");
 		}
+		
+		System.out.println("\n\n");
 		
 		
 		
@@ -577,178 +603,238 @@ public class TestEncrypt {
 		
 		// Cifratura con chiave pubblica e decifratura con chiave privata.
 		
-		System.out.println("\n");
 		
-		// 3a. Encrypt Attached 
-		JsonEncrypt jsonAttachedEncrypt = new JsonEncrypt(encryptProps, JOSERepresentation.SELF_CONTAINED);
-		String attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
+		// **** JSON - !deflated ***
 		
-		System.out.println("["+tipo+"]-a. JsonAttachedEncrypt Encrypted (Public) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
-		
-		// Verifica
-		JsonDecrypt jsonAttachedVerify = new JsonDecrypt(decryptProps,JOSERepresentation.SELF_CONTAINED);
-		jsonAttachedVerify.decrypt(attachEncrypt);
-		System.out.println("["+tipo+"]-a. JsonAttachedEncrypt Verify (Private): \n"+jsonAttachedVerify.getDecodedPayload());
-		if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		try {
-			jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
-			throw new Exception("Expected validation error");
-		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
-		}
-		
-		
-		System.out.println("\n\n");
-		
-		// 3b. Encrypt Compact
-		JsonEncrypt jsonCompactEncrypt = null;
+		// Encrypt Json 
+		JWEOptions options = new JWEOptions(JOSESerialization.JSON);
+		JsonEncrypt jsonEncrypt = null;
 		if(headers==null) {
-			jsonCompactEncrypt = new JsonEncrypt(encryptProps, JOSERepresentation.COMPACT);
+			jsonEncrypt = new JsonEncrypt(encryptProps, options);
 		}
 		else {
-			jsonCompactEncrypt = new JsonEncrypt(encryptProps, headers, JOSERepresentation.COMPACT);	
+			jsonEncrypt = new JsonEncrypt(encryptProps, headers, options);
 		}
-		String compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
-		
-		System.out.println("["+tipo+"]-b. JsonCompactEncrypt Encrypted (Public) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
-		
-		String hdrDecoded = new String (Base64Utilities.decode(compactEncrypt.split("\\.")[0]));
-		System.out.println("["+tipo+"]-b. JsonCompactEncrypt HDR base64 decoded: "+hdrDecoded);
-		
+		String attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		int lengthNotDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate", attachEncrypt, jsonInput, options, encryptProps, headers);
+
 		// Verifica
-		JsonDecrypt jsonCompactVerify = new JsonDecrypt(decryptProps, JOSERepresentation.COMPACT);
-		jsonCompactVerify.decrypt(compactEncrypt);
-		System.out.println("["+tipo+"]-b. JsonCompactEncrypt Verify (Private): \n"+jsonCompactVerify.getDecodedPayload());
-		if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
+		JWTOptions optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
+		JsonDecrypt jsonDecrypt = new JsonDecrypt(decryptProps,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		// Verifica basata sull'header
+		String suffix = "";
+		if(jsonWebKeys!=null) {
+			jsonDecrypt = new JsonDecrypt(jsonWebKeys,optionsDecrypt);
+			suffix = "-jsonWebKeysHDR";
 		}
-		try {
-			jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
-			throw new Exception("Expected validation error");
-		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
+		else {
+			jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
+			suffix = "-jksHDR";
 		}
+		decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		System.out.println("\n\n");
 		
 		
 		
+		// **** JSON - deflated via properties ***
 		
-		
-		
-		
-		// Ripeto i test riabilitando l'encrypt algorithm e aggiungendo DEFLATE!!!
-		
-		encryptProps = new Properties();
-		encryptPropsis.close();
-		encryptPropsis = TestEncrypt.class.getResourceAsStream("jws.encrypt.properties");
-		encryptProps.load(encryptPropsis);
-		encryptProps.put("rs.security.keystore.file", fTruststore.getPath());
-		if(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS.equals(tipo) || 
-				TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM.equals(tipo)) {
-			encryptProps.put("rs.security.keystore.type", "jks");
-			
-			if(headers!=null) {
-				// inverto
-				encryptProps.put("rs.security.encryption.include.cert.sha1", "true");
-				encryptProps.put("rs.security.encryption.include.cert.sha256", "false");
-			}
-		}
-		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK.equals(tipo) ||
-				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipo)) {
-			encryptProps.put("rs.security.keystore.type", "jwk");
-			
-			encryptProps.remove("rs.security.encryption.include.cert.sha1");
-			encryptProps.remove("rs.security.encryption.include.cert.sha256");
-		}
-				
-		if(headers!=null) {
-			encryptProps.remove("rs.security.encryption.include.cert");
-			encryptProps.remove("rs.security.encryption.include.public.key");
-		}
-		
-		
-		decryptProps = new Properties();
-		decryptPropsis.close();
-		decryptPropsis = TestEncrypt.class.getResourceAsStream("jws.decrypt.properties");
-		decryptProps.load(decryptPropsis);
-		decryptProps.put("rs.security.keystore.file", fKeystore.getPath());
-		decryptProps.remove("rs.security.keystore.type");
-		if(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS.equals(tipo) || 
-				TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM.equals(tipo)) {
-			decryptProps.put("rs.security.keystore.type", "jks");
-		}
-		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK.equals(tipo) ||
-				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipo) ) {
-			decryptProps.put("rs.security.keystore.type", "jwk");
-		}
-		
-
 		encryptProps.put("rs.security.encryption.zip.algorithm","DEF");
-		//decryptProps.put("rs.security.encryption.zip.algorithm","DEF"); non serve, l'informazione viaggia
 		
-		
-
-		
-		// 3e. Encrypt Attached
-		jsonAttachedEncrypt = new JsonEncrypt(encryptProps, JOSERepresentation.SELF_CONTAINED);
-		attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
-		
-		System.out.println("["+tipo+"]-e. JsonAttachedEncrypt Deflate (Private) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
-		
-		// Verifica
-		jsonAttachedVerify = new JsonDecrypt(decryptProps,JOSERepresentation.SELF_CONTAINED);
-		jsonAttachedVerify.decrypt(attachEncrypt);
-		System.out.println("["+tipo+"]-e. JsonAttachedEncrypt Verify-Deflate (Public): \n"+jsonAttachedVerify.getDecodedPayload());
-		if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		try {
-			jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
-			throw new Exception("Expected validation error");
-		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
-		}
-	
-	
-	
-		System.out.println("\n\n");
-		
-		// 3f. Encrypt Compact
+		// Encrypt Json 
+		options = new JWEOptions(JOSESerialization.JSON);
 		if(headers==null) {
-			jsonCompactEncrypt = new JsonEncrypt(encryptProps, JOSERepresentation.COMPACT);
+			jsonEncrypt = new JsonEncrypt(encryptProps, options);
 		}
 		else {
-			jsonCompactEncrypt = new JsonEncrypt(encryptProps, headers, JOSERepresentation.COMPACT);
+			jsonEncrypt = new JsonEncrypt(encryptProps, headers, options);
 		}
-		compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
-		
-		System.out.println("["+tipo+"]-f. JsonCompactEncrypt Deflate (Private) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
-		
-		hdrDecoded = new String (Base64Utilities.decode(compactEncrypt.split("\\.")[0]));
-		System.out.println("["+tipo+"]-f. JsonCompactEncrypt HDR base64 decoded: "+hdrDecoded);
-		
+		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		int lengthDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate-deflateProperties", attachEncrypt, jsonInput, options, encryptProps, headers);
+		if(lengthDeflated>=lengthNotDeflated) {
+			throw new Exception("Attesa dimensione minore con utilizzo di deflate");
+		}
+	
 		// Verifica
-		jsonCompactVerify = new JsonDecrypt(decryptProps, JOSERepresentation.COMPACT);
-		jsonCompactVerify.decrypt(compactEncrypt);
-		System.out.println("["+tipo+"]-f. JsonCompactEncrypt Verify-Deflate (Public): \n"+jsonCompactVerify.getDecodedPayload());
-		if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
+		optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
+		jsonDecrypt = new JsonDecrypt(decryptProps,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate-deflateProperties", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		// Verifica basata sull'header
+		if(jsonWebKeys!=null) {
+			jsonDecrypt = new JsonDecrypt(jsonWebKeys,optionsDecrypt);
+			suffix = "-jsonWebKeysHDR";
 		}
-		try {
-			jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
-			throw new Exception("Expected validation error");
-		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
+		else {
+			jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
+			suffix = "-jksHDR";
 		}
+		decrypt(tipo, "encPublic-decryptPrivate-deflateProperties", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		encryptProps.remove("rs.security.encryption.zip.algorithm");
 		
 		System.out.println("\n\n");
 		
+		
+		
+		// **** JSON - deflated via options ***
+		
+		// Encrypt Json 
+		options = new JWEOptions(JOSESerialization.JSON);
+		options.setDeflate(true);
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(encryptProps, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(encryptProps, headers, options);
+		}
+		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		lengthDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate-deflate", attachEncrypt, jsonInput, options, encryptProps, headers);
+		if(lengthDeflated>=lengthNotDeflated) {
+			throw new Exception("Attesa dimensione minore con utilizzo di deflate");
+		}
+
+		// Verifica
+		optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
+		jsonDecrypt = new JsonDecrypt(decryptProps,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		// Verifica basata sull'header
+		if(jsonWebKeys!=null) {
+			jsonDecrypt = new JsonDecrypt(jsonWebKeys,optionsDecrypt);
+			suffix = "-jsonWebKeysHDR";
+		}
+		else {
+			jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
+			suffix = "-jksHDR";
+		}
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+		
+		
+		// **** COMPACT - !deflated ***
+		
+		// Encrypt Json 
+		options = new JWEOptions(JOSESerialization.COMPACT);
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(encryptProps, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(encryptProps, headers, options);
+		}
+		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		lengthNotDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate", attachEncrypt, jsonInput, options, encryptProps, headers);
+
+		// Verifica
+		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
+		jsonDecrypt = new JsonDecrypt(decryptProps,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		// Verifica basata sull'header
+		if(jsonWebKeys!=null) {
+			jsonDecrypt = new JsonDecrypt(jsonWebKeys,optionsDecrypt);
+			suffix = "-jsonWebKeysHDR";
+		}
+		else {
+			jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
+			suffix = "-jksHDR";
+		}
+		decrypt(tipo, "encPublic-decryptPrivate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+		
+		
+		// **** COMPACT - deflated via properties ***
+		
+		encryptProps.put("rs.security.encryption.zip.algorithm","DEF");
+		
+		// Encrypt Json 
+		options = new JWEOptions(JOSESerialization.COMPACT);
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(encryptProps, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(encryptProps, headers, options);
+		}
+		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		lengthDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate-deflate", attachEncrypt, jsonInput, options, encryptProps, headers);
+		if(lengthDeflated>=lengthNotDeflated) {
+			throw new Exception("Attesa dimensione minore con utilizzo di deflate");
+		}
+
+		// Verifica
+		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
+		jsonDecrypt = new JsonDecrypt(decryptProps,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		// Verifica basata sull'header
+		if(jsonWebKeys!=null) {
+			jsonDecrypt = new JsonDecrypt(jsonWebKeys,optionsDecrypt);
+			suffix = "-jsonWebKeysHDR";
+		}
+		else {
+			jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
+			suffix = "-jksHDR";
+		}
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		encryptProps.remove("rs.security.encryption.zip.algorithm");
+		
+		System.out.println("\n\n");
+		
+		
+		
+		// **** COMPACT - deflated via options ***
+		
+		// Encrypt Json 
+		options = new JWEOptions(JOSESerialization.COMPACT);
+		options.setDeflate(true);
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(encryptProps, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(encryptProps, headers, options);
+		}
+		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		lengthDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate-deflate", attachEncrypt, jsonInput, options, encryptProps, headers);
+		if(lengthDeflated>=lengthNotDeflated) {
+			throw new Exception("Attesa dimensione minore con utilizzo di deflate");
+		}
+
+		// Verifica
+		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
+		jsonDecrypt = new JsonDecrypt(decryptProps,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		// Verifica basata sull'header
+		if(jsonWebKeys!=null) {
+			jsonDecrypt = new JsonDecrypt(jsonWebKeys,optionsDecrypt);
+			suffix = "-jsonWebKeysHDR";
+		}
+		else {
+			jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
+			suffix = "-jksHDR";
+		}
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+
+		System.out.println("\n\n");
+		
+	
 	}
 	
-	private static void testJsonKeystore(TipoTest tipo, KeyStore keystore, KeyStore truststore, String alias, String passwordChiavePrivata, JwtHeaders headers) throws Exception {
+	private static void testJsonKeystore(TipoTest tipo, KeyStore keystore, KeyStore truststore, String alias, String passwordChiavePrivata, JwtHeaders headers,
+			HashMap<String, String> keystore_mapAliasPassword) throws Exception {
 		
 		System.out.println("\n\n ============= "+tipo+" ===================");
 		System.out.println("["+tipo+"]. Example JsonEncrypt \n");
@@ -758,123 +844,136 @@ public class TestEncrypt {
 		String keyAlgorithm = "RSA-OAEP-256"; 
 		String contentAlgorithm = "A256GCM";
 		
+		System.out.println("\n\n");
+		
+		
 		
 		
 		// Cifratura con chiave pubblica e decifratura con chiave privata.
 		
-		System.out.println("\n");
 		
-		// 4a. Encrypt Attached 
-		JsonEncrypt jsonAttachedEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, JOSERepresentation.SELF_CONTAINED);
-		String attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
+		// **** JSON - !deflated ***
 		
-		System.out.println("["+tipo+"]-a. JsonAttachedEncrypt Encrypted (Public) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
-		
+		// Encrypt Json 
+		JWEOptions options = new JWEOptions(JOSESerialization.JSON);
+		JsonEncrypt jsonEncrypt = null;
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, headers, options);
+		}
+		String attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		int lengthNotDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate", attachEncrypt, jsonInput, options, null, headers);
+
 		// Verifica
-		JsonDecrypt jsonAttachedVerify = new JsonDecrypt(keystore, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, JOSERepresentation.SELF_CONTAINED);
-		jsonAttachedVerify.decrypt(attachEncrypt);
-		System.out.println("["+tipo+"]-a. JsonAttachedEncrypt Verify (Private): \n"+jsonAttachedVerify.getDecodedPayload());
-		if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		try {
-			jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
-			throw new Exception("Expected validation error");
-		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
-		}
+		JWTOptions optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
+		JsonDecrypt jsonDecrypt = new JsonDecrypt(keystore, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
-		
-		System.out.println("\n\n");
-		
-		// 4b. Encrypt Compact
-		JsonEncrypt jsonCompactEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, headers, JOSERepresentation.COMPACT);
-		String compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
-		
-		System.out.println("["+tipo+"]-b. JsonCompactEncrypt Encrypted (Public) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
-		
-		String hdrDecoded = new String (Base64Utilities.decode(compactEncrypt.split("\\.")[0]));
-		System.out.println("["+tipo+"]-b. JsonCompactEncrypt HDR base64 decoded: "+hdrDecoded);
-		
-		// Verifica
-		JsonDecrypt jsonCompactVerify = new JsonDecrypt(keystore, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, JOSERepresentation.COMPACT);
-		jsonCompactVerify.decrypt(compactEncrypt);
-		System.out.println("["+tipo+"]-b. JsonCompactEncrypt Verify (Private): \n"+jsonCompactVerify.getDecodedPayload());
-		if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		try {
-			jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
-			throw new Exception("Expected validation error");
-		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
-		}
-		
+		// Verifica basata sull'header
+		String suffix = "";
+		jsonDecrypt = new JsonDecrypt(truststore,keystore,keystore_mapAliasPassword,optionsDecrypt);
+		suffix = "-jksHDR";
+		decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		System.out.println("\n\n");
 		
 		
 		
+		// **** JSON - deflated ***
 		
-		
-		
-		
-		// Ripeto i test aggiungendo DEFLATE!!!
-		
-		boolean deflate = true;
-		
-			
-		// 4e. Encrypt Attached
-		jsonAttachedEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, deflate, JOSERepresentation.SELF_CONTAINED);
-		attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
-		
-		System.out.println("["+tipo+"]-e. JsonAttachedEncrypt Deflate (Private) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
-		
+		// Encrypt Json 
+		options = new JWEOptions(JOSESerialization.JSON);
+		options.setDeflate(true);
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, headers, options);
+		}
+		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		int lengthDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate-deflate", attachEncrypt, jsonInput, options, null, headers);
+		if(lengthDeflated>=lengthNotDeflated) {
+			throw new Exception("Attesa dimensione minore con utilizzo di deflate");
+		}
+
 		// Verifica
-		jsonAttachedVerify = new JsonDecrypt(keystore, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm,JOSERepresentation.SELF_CONTAINED);
-		jsonAttachedVerify.decrypt(attachEncrypt);
-		System.out.println("["+tipo+"]-. JsonAttachedEncrypt Verify-Deflate (Public): \n"+jsonAttachedVerify.getDecodedPayload());
-		if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		try {
-			jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
-			throw new Exception("Expected validation error");
-		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
-		}
-	
-	
-	
+		optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
+		jsonDecrypt = new JsonDecrypt(keystore, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonDecrypt = new JsonDecrypt(truststore,keystore,keystore_mapAliasPassword,optionsDecrypt);
+		suffix = "-jksHDR";
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
 		System.out.println("\n\n");
 		
-		// 4f. Encrypt Compact
-		jsonCompactEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, deflate, headers, JOSERepresentation.COMPACT);
-		compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
 		
-		System.out.println("["+tipo+"]-f. JsonCompactEncrypt Deflate (Private) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
 		
-		hdrDecoded = new String (Base64Utilities.decode(compactEncrypt.split("\\.")[0]));
-		System.out.println("["+tipo+"]-f. JsonCompactEncrypt HDR base64 decoded: "+hdrDecoded);
+		// **** COMPACT - !deflated ***
 		
+		// Encrypt Json 
+		options = new JWEOptions(JOSESerialization.COMPACT);
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, headers, options);
+		}
+		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		lengthNotDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate", attachEncrypt, jsonInput, options, null, headers);
+
 		// Verifica
-		jsonCompactVerify = new JsonDecrypt(keystore, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, JOSERepresentation.COMPACT);
-		jsonCompactVerify.decrypt(compactEncrypt);
-		System.out.println("["+tipo+"]-f. JsonCompactEncrypt Verify-Deflate (Public): \n"+jsonCompactVerify.getDecodedPayload());
-		if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		try {
-			jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
-			throw new Exception("Expected validation error");
-		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
-		}
+		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
+		jsonDecrypt = new JsonDecrypt(keystore, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
+		// Verifica basata sull'header
+		jsonDecrypt = new JsonDecrypt(truststore,keystore,keystore_mapAliasPassword,optionsDecrypt);
+		suffix = "-jksHDR";
+		decrypt(tipo, "encPublic-decryptPrivate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+		
+
+		// **** COMPACT - deflated ***
+		
+		// Encrypt Json 
+		options = new JWEOptions(JOSESerialization.COMPACT);
+		options.setDeflate(true);
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, headers, options);
+		}
+		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		lengthDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate-deflate", attachEncrypt, jsonInput, options, null, headers);
+		if(lengthDeflated>=lengthNotDeflated) {
+			throw new Exception("Attesa dimensione minore con utilizzo di deflate");
+		}
+
+		// Verifica
+		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
+		jsonDecrypt = new JsonDecrypt(keystore, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonDecrypt = new JsonDecrypt(truststore,keystore,keystore_mapAliasPassword,optionsDecrypt);
+		suffix = "-jksHDR";
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+
 		System.out.println("\n\n");
 		
 	}
-	
+		
 	private static void testJsonKeystore(TipoTest tipo, KeyStore keystoreJCEKS, String alias, String passwordChiavePrivata, JwtHeaders headers) throws Exception {
 		System.out.println("\n\n ============= "+tipo+" ===================");
 		System.out.println("["+tipo+"]. Example JsonEncrypt (Symmetric) \n");
@@ -885,115 +984,115 @@ public class TestEncrypt {
 		String contentAlgorithm = "A256GCM";
 		boolean symmetric = true;
 		
-		
-		// Cifratura con chiave simmetrica
-		
 		System.out.println("\n");
 		
-		// 5a. Encrypt Attached 
-		JsonEncrypt jsonAttachedEncrypt = new JsonEncrypt(keystoreJCEKS, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, JOSERepresentation.SELF_CONTAINED);
-		String attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
 		
-		System.out.println("["+tipo+"]-a. JsonAttachedEncrypt Encrypted (Symmetric) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
-		
-		// Verifica
-		JsonDecrypt jsonAttachedVerify = new JsonDecrypt(keystoreJCEKS, symmetric, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, JOSERepresentation.SELF_CONTAINED);
-		jsonAttachedVerify.decrypt(attachEncrypt);
-		System.out.println("["+tipo+"]-a. JsonAttachedEncrypt Verify (Symmetric): \n"+jsonAttachedVerify.getDecodedPayload());
-		if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		try {
-			jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
-			throw new Exception("Expected validation error");
-		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
-		}
-		
-		
-		System.out.println("\n\n");
-		
-		// 5b. Encrypt Compact
-		JsonEncrypt jsonCompactEncrypt = new JsonEncrypt(keystoreJCEKS, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, headers, JOSERepresentation.COMPACT);
-		String compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
-		
-		System.out.println("["+tipo+"]-b. JsonCompactEncrypt Encrypted (Symmetric) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
-		
-		String hdrDecoded = new String (Base64Utilities.decode(compactEncrypt.split("\\.")[0]));
-		System.out.println("["+tipo+"]-b. JsonCompactEncrypt HDR base64 decoded: "+hdrDecoded);
-		
-		// Verifica
-		JsonDecrypt jsonCompactVerify = new JsonDecrypt(keystoreJCEKS, symmetric, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, JOSERepresentation.COMPACT);
-		jsonCompactVerify.decrypt(compactEncrypt);
-		System.out.println("["+tipo+"]-b. JsonCompactEncrypt Verify (Symmetric): \n"+jsonCompactVerify.getDecodedPayload());
-		if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		try {
-			jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
-			throw new Exception("Expected validation error");
-		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
-		}
-		
-		
-		System.out.println("\n\n");
-		
-		
-		// Ripeto i test aggiungendo DEFLATE!!!
-		
-		boolean deflate = true;
-		
-			
-		// 5e. Encrypt Attached
-		jsonAttachedEncrypt = new JsonEncrypt(keystoreJCEKS, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, deflate, JOSERepresentation.SELF_CONTAINED);
-		attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
-		
-		System.out.println("["+tipo+"]-e. JsonAttachedEncrypt Deflate (Symmetric) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
-		
-		// Verifica
-		jsonAttachedVerify = new JsonDecrypt(keystoreJCEKS, symmetric, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm,JOSERepresentation.SELF_CONTAINED);
-		jsonAttachedVerify.decrypt(attachEncrypt);
-		System.out.println("["+tipo+"]-e. JsonAttachedEncrypt Verify-Deflate (Symmetric): \n"+jsonAttachedVerify.getDecodedPayload());
-		if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		try {
-			jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
-			throw new Exception("Expected validation error");
-		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
-		}
 	
-	
-	
-		System.out.println("\n\n");
+
+		// Cifratura con chiave pubblica e decifratura con chiave privata.
 		
-		// 5f. Encrypt Compact
-		jsonCompactEncrypt = new JsonEncrypt(keystoreJCEKS, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, deflate, headers, JOSERepresentation.COMPACT);
-		compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
 		
-		System.out.println("["+tipo+"]-f. JsonCompactEncrypt Deflate (Symmetric) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
+		// **** JSON - !deflated ***
 		
-		hdrDecoded = new String (Base64Utilities.decode(compactEncrypt.split("\\.")[0]));
-		System.out.println("["+tipo+"]-f. JsonCompactEncrypt HDR base64 decoded: "+hdrDecoded);
-		
+		// Encrypt Json 
+		JWEOptions options = new JWEOptions(JOSESerialization.JSON);
+		JsonEncrypt jsonEncrypt = null;
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(keystoreJCEKS, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(keystoreJCEKS, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, headers, options);
+		}
+		String attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		int lengthNotDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate", attachEncrypt, jsonInput, options, null, headers);
+
 		// Verifica
-		jsonCompactVerify = new JsonDecrypt(keystoreJCEKS, symmetric, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, JOSERepresentation.COMPACT);
-		jsonCompactVerify.decrypt(compactEncrypt);
-		System.out.println("["+tipo+"]-f. JsonCompactEncrypt Verify-Deflate (Symmetric): \n"+jsonCompactVerify.getDecodedPayload());
-		if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		try {
-			jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
-			throw new Exception("Expected validation error");
-		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
-		}
+		JWTOptions optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
+		JsonDecrypt jsonDecrypt = new JsonDecrypt(keystoreJCEKS, symmetric, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		System.out.println("\n\n");
+		
+		
+		// **** JSON - deflated ***
+		
+		// Encrypt Json 
+		options = new JWEOptions(JOSESerialization.JSON);
+		options.setDeflate(true);
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(keystoreJCEKS, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(keystoreJCEKS, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, headers, options);
+		}
+		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		int lengthDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate-deflate", attachEncrypt, jsonInput, options, null, headers);
+		if(lengthDeflated>=lengthNotDeflated) {
+			throw new Exception("Attesa dimensione minore con utilizzo di deflate");
+		}
+
+		// Verifica
+		optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
+		jsonDecrypt = new JsonDecrypt(keystoreJCEKS, symmetric, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+		
+		
+		// **** COMPACT - !deflated ***
+		
+		// Encrypt Json 
+		options = new JWEOptions(JOSESerialization.COMPACT);
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(keystoreJCEKS, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(keystoreJCEKS, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, headers, options);
+		}
+		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		lengthNotDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate", attachEncrypt, jsonInput, options, null, headers);
+
+		// Verifica
+		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
+		jsonDecrypt = new JsonDecrypt(keystoreJCEKS, symmetric, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+		
+		
+		// **** COMPACT - deflated ***
+		
+		// Encrypt Json 
+		options = new JWEOptions(JOSESerialization.COMPACT);
+		options.setDeflate(true);
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(keystoreJCEKS, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(keystoreJCEKS, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, headers, options);
+		}
+		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		lengthDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate-deflate", attachEncrypt, jsonInput, options, null, headers);
+		if(lengthDeflated>=lengthNotDeflated) {
+			throw new Exception("Attesa dimensione minore con utilizzo di deflate");
+		}
+
+		// Verifica
+		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
+		jsonDecrypt = new JsonDecrypt(keystoreJCEKS, symmetric, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+
+		System.out.println("\n\n");
+		
 	}
+	
+	
 	
 	private static void testJsonJwkKeys(TipoTest tipo, JsonWebKeys keystore, JsonWebKeys truststore, String alias, JwtHeaders headers) throws Exception {
 		
@@ -1005,126 +1104,145 @@ public class TestEncrypt {
 		String keyAlgorithm = "RSA-OAEP-256"; 
 		String contentAlgorithm = "A256GCM";
 		
+		System.out.println("\n\n");
+		
+		
+		
 		
 		
 		// Cifratura con chiave pubblica e decifratura con chiave privata.
 		
-		System.out.println("\n");
 		
-		// 4a. Encrypt Attached 
-		JsonEncrypt jsonAttachedEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, JOSERepresentation.SELF_CONTAINED);
-		String attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
+		// **** JSON - !deflated ***
 		
-		System.out.println("["+tipo+"]-a. JsonAttachedEncrypt Encrypted (Public) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
-		
+		// Encrypt Json 
+		JWEOptions options = new JWEOptions(JOSESerialization.JSON);
+		JsonEncrypt jsonEncrypt = null;
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, headers, options);
+		}
+		String attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		int lengthNotDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate", attachEncrypt, jsonInput, options, null, headers);
+
 		// Verifica
-		JsonDecrypt jsonAttachedVerify = new JsonDecrypt(keystore, alias, keyAlgorithm, contentAlgorithm, JOSERepresentation.SELF_CONTAINED);
-		jsonAttachedVerify.decrypt(attachEncrypt);
-		System.out.println("["+tipo+"]-a. JsonAttachedEncrypt Verify (Private): \n"+jsonAttachedVerify.getDecodedPayload());
-		if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		try {
-			jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
-			throw new Exception("Expected validation error");
-		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
-		}
+		JWTOptions optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
+		JsonDecrypt jsonDecrypt = new JsonDecrypt(keystore, alias, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
-		
-		System.out.println("\n\n");
-		
-		// 4b. Encrypt Compact
-		JsonEncrypt jsonCompactEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, headers, JOSERepresentation.COMPACT);
-		String compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
-		
-		System.out.println("["+tipo+"]-b. JsonCompactEncrypt Encrypted (Public) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
-		
-		String hdrDecoded = new String (Base64Utilities.decode(compactEncrypt.split("\\.")[0]));
-		System.out.println("["+tipo+"]-b. JsonCompactEncrypt HDR base64 decoded: "+hdrDecoded);
-		
-		// Verifica
-		JsonDecrypt jsonCompactVerify = new JsonDecrypt(keystore, alias, keyAlgorithm, contentAlgorithm, JOSERepresentation.COMPACT);
-		jsonCompactVerify.decrypt(compactEncrypt);
-		System.out.println("["+tipo+"]-b. JsonCompactEncrypt Verify (Private): \n"+jsonCompactVerify.getDecodedPayload());
-		if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		try {
-			jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
-			throw new Exception("Expected validation error");
-		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
-		}
-		
+		// Verifica basata sull'header
+		String suffix = "";
+		jsonDecrypt = new JsonDecrypt(keystore,optionsDecrypt);
+		suffix = "-jsonWebKeysHDR";
+		decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		System.out.println("\n\n");
 		
 		
 		
 		
+		// **** JSON - deflated ***
 		
-		
-		
-		// Ripeto i test aggiungendo DEFLATE!!!
-		
-		boolean deflate = true;
-		
-			
-		// 4e. Encrypt Attached
-		jsonAttachedEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, deflate, JOSERepresentation.SELF_CONTAINED);
-		attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
-		
-		System.out.println("["+tipo+"]-e. JsonAttachedEncrypt Deflate (Private) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
-		
+		// Encrypt Json 
+		options = new JWEOptions(JOSESerialization.JSON);
+		options.setDeflate(true);
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, headers, options);
+		}
+		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		int lengthDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate-deflate", attachEncrypt, jsonInput, options, null, headers);
+		if(lengthDeflated>=lengthNotDeflated) {
+			throw new Exception("Attesa dimensione minore con utilizzo di deflate");
+		}
+
 		// Verifica
-		jsonAttachedVerify = new JsonDecrypt(keystore, alias, keyAlgorithm, contentAlgorithm,JOSERepresentation.SELF_CONTAINED);
-		jsonAttachedVerify.decrypt(attachEncrypt);
-		System.out.println("["+tipo+"]-. JsonAttachedEncrypt Verify-Deflate (Public): \n"+jsonAttachedVerify.getDecodedPayload());
-		if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		try {
-			jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
-			throw new Exception("Expected validation error");
-		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
-		}
-	
-	
-	
+		optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
+		jsonDecrypt = new JsonDecrypt(keystore, alias, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonDecrypt = new JsonDecrypt(keystore,optionsDecrypt);
+		suffix = "-jsonWebKeysHDR";
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
 		System.out.println("\n\n");
 		
-		// 4f. Encrypt Compact
-		jsonCompactEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, deflate, headers, JOSERepresentation.COMPACT);
-		compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
 		
-		System.out.println("["+tipo+"]-f. JsonCompactEncrypt Deflate (Private) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
 		
-		hdrDecoded = new String (Base64Utilities.decode(compactEncrypt.split("\\.")[0]));
-		System.out.println("["+tipo+"]-f. JsonCompactEncrypt HDR base64 decoded: "+hdrDecoded);
+		// **** COMPACT - !deflated ***
 		
+		// Encrypt Json 
+		options = new JWEOptions(JOSESerialization.COMPACT);
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, headers, options);
+		}
+		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		lengthNotDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate", attachEncrypt, jsonInput, options, null, headers);
+
 		// Verifica
-		jsonCompactVerify = new JsonDecrypt(keystore, alias, keyAlgorithm, contentAlgorithm, JOSERepresentation.COMPACT);
-		jsonCompactVerify.decrypt(compactEncrypt);
-		System.out.println("["+tipo+"]-f. JsonCompactEncrypt Verify-Deflate (Public): \n"+jsonCompactVerify.getDecodedPayload());
-		if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		try {
-			jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
-			throw new Exception("Expected validation error");
-		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
-		}
+		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
+		jsonDecrypt = new JsonDecrypt(keystore, alias, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonDecrypt = new JsonDecrypt(keystore,optionsDecrypt);
+		suffix = "-jsonWebKeysHDR";
+		decrypt(tipo, "encPublic-decryptPrivate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		System.out.println("\n\n");
+		
+		
+		
+		
+		// **** COMPACT - deflated ***
+		
+		// Encrypt Json 
+		options = new JWEOptions(JOSESerialization.COMPACT);
+		options.setDeflate(true);
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, headers, options);
+		}
+		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		lengthDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate-deflate", attachEncrypt, jsonInput, options, null, headers);
+		if(lengthDeflated>=lengthNotDeflated) {
+			throw new Exception("Attesa dimensione minore con utilizzo di deflate");
+		}
+
+		// Verifica
+		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
+		jsonDecrypt = new JsonDecrypt(keystore, alias, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonDecrypt = new JsonDecrypt(keystore,optionsDecrypt);
+		suffix = "-jsonWebKeysHDR";
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+
+		System.out.println("\n\n");
+		
+		
 		
 	}
 	
 	
 	
-	private static void testJsonJwkKey(TipoTest tipo, JsonWebKey keystore, JsonWebKey truststore, JwtHeaders headers) throws Exception {
+	private static void testJsonJwkKey(TipoTest tipo, JsonWebKey keystore, JsonWebKey truststore, JwtHeaders headers,
+			JsonWebKeys keystoreVerificaHeaders) throws Exception {
 		
 		System.out.println("\n\n ============= "+tipo+" ===================");
 		System.out.println("["+tipo+"]. Example JsonEncrypt \n");
@@ -1136,119 +1254,269 @@ public class TestEncrypt {
 		
 		
 		
+		
 		// Cifratura con chiave pubblica e decifratura con chiave privata.
 		
-		System.out.println("\n");
 		
-		// 4a. Encrypt Attached 
-		JsonEncrypt jsonAttachedEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, JOSERepresentation.SELF_CONTAINED);
-		String attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
+		// **** JSON - !deflated ***
 		
-		System.out.println("["+tipo+"]-a. JsonAttachedEncrypt Encrypted (Public) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
-		
+		// Encrypt Json 
+		JWEOptions options = new JWEOptions(JOSESerialization.JSON);
+		JsonEncrypt jsonEncrypt = null;
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, headers, options);
+		}
+		String attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		int lengthNotDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate", attachEncrypt, jsonInput, options, null, headers);
+
 		// Verifica
-		JsonDecrypt jsonAttachedVerify = new JsonDecrypt(keystore, keyAlgorithm, contentAlgorithm, JOSERepresentation.SELF_CONTAINED);
-		jsonAttachedVerify.decrypt(attachEncrypt);
-		System.out.println("["+tipo+"]-a. JsonAttachedEncrypt Verify (Private): \n"+jsonAttachedVerify.getDecodedPayload());
-		if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		try {
-			jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
-			throw new Exception("Expected validation error");
-		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
-		}
+		JWTOptions optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
+		JsonDecrypt jsonDecrypt = new JsonDecrypt(keystore, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
-		
-		System.out.println("\n\n");
-		
-		// 4b. Encrypt Compact
-		JsonEncrypt jsonCompactEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, headers, JOSERepresentation.COMPACT);
-		String compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
-		
-		System.out.println("["+tipo+"]-b. JsonCompactEncrypt Encrypted (Public) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
-		
-		String hdrDecoded = new String (Base64Utilities.decode(compactEncrypt.split("\\.")[0]));
-		System.out.println("["+tipo+"]-b. JsonCompactEncrypt HDR base64 decoded: "+hdrDecoded);
-		
-		// Verifica
-		JsonDecrypt jsonCompactVerify = new JsonDecrypt(keystore, keyAlgorithm, contentAlgorithm, JOSERepresentation.COMPACT);
-		jsonCompactVerify.decrypt(compactEncrypt);
-		System.out.println("["+tipo+"]-b. JsonCompactEncrypt Verify (Private): \n"+jsonCompactVerify.getDecodedPayload());
-		if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		try {
-			jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
-			throw new Exception("Expected validation error");
-		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
-		}
-		
+		// Verifica basata sull'header
+		String suffix = "";
+		jsonDecrypt = new JsonDecrypt(keystoreVerificaHeaders,optionsDecrypt);
+		suffix = "-jsonWebKeysHDR";
+		decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		System.out.println("\n\n");
 		
 		
 		
 		
+		// **** JSON - deflated ***
+		
+		// Encrypt Json 
+		options = new JWEOptions(JOSESerialization.JSON);
+		options.setDeflate(true);
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, headers, options);
+		}
+		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		int lengthDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate-deflate", attachEncrypt, jsonInput, options, null, headers);
+		if(lengthDeflated>=lengthNotDeflated) {
+			throw new Exception("Attesa dimensione minore con utilizzo di deflate");
+		}
+
+		// Verifica
+		optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
+		jsonDecrypt = new JsonDecrypt(keystore, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonDecrypt = new JsonDecrypt(keystoreVerificaHeaders,optionsDecrypt);
+		suffix = "-jsonWebKeysHDR";
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		System.out.println("\n\n");
 		
 		
 		
-		// Ripeto i test aggiungendo DEFLATE!!!
+		// **** COMPACT - !deflated ***
 		
-		boolean deflate = true;
+		// Encrypt Json 
+		options = new JWEOptions(JOSESerialization.COMPACT);
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, headers, options);
+		}
+		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		lengthNotDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate", attachEncrypt, jsonInput, options, null, headers);
+
+		// Verifica
+		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
+		jsonDecrypt = new JsonDecrypt(keystore, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
+		// Verifica basata sull'header
+		jsonDecrypt = new JsonDecrypt(keystoreVerificaHeaders,optionsDecrypt);
+		suffix = "-jsonWebKeysHDR";
+		decrypt(tipo, "encPublic-decryptPrivate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+		
+		
+		
+		// **** COMPACT - deflated ***
+		
+		// Encrypt Json 
+		options = new JWEOptions(JOSESerialization.COMPACT);
+		options.setDeflate(true);
+		if(headers==null) {
+			jsonEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, options);
+		}
+		else {
+			jsonEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, headers, options);
+		}
+		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
+		lengthDeflated = attachEncrypt.length();
+		verifyEncryptBuild(tipo, "encPublic-decryptPrivate-deflate", attachEncrypt, jsonInput, options, null, headers);
+		if(lengthDeflated>=lengthNotDeflated) {
+			throw new Exception("Attesa dimensione minore con utilizzo di deflate");
+		}
+
+		// Verifica
+		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
+		jsonDecrypt = new JsonDecrypt(keystore, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonDecrypt = new JsonDecrypt(keystoreVerificaHeaders,optionsDecrypt);
+		suffix = "-jsonWebKeysHDR";
+		decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+
+		System.out.println("\n\n");
+		
+		
+	}
+
+	
+	private static void verifyEncryptBuild(TipoTest tipo, String extTipo, String encryption, String jsonInput, JWEOptions options, 
+			Properties signatureProps, JwtHeaders headers) throws Exception {
+		
+		List<String> checkHeaders = getHeaders(signatureProps, headers);
+		
+		System.out.println("["+tipo+" - "+extTipo+"] "+options.getSerialization().name()+" Encrypt (deflate:"+options.isDeflate()+") Encrypted.length="+encryption.length()+" Encrypted: \n"+encryption);
+		if(JOSESerialization.JSON.equals(options.getSerialization())) {
+			if(encryption.contains("\"ciphertext\":")==false) {
+				throw new Exception("Not Found payload");
+			}
+			if(encryption.contains(jsonInput)) {
+				throw new Exception("Payload not encoded");
+			}
+						
+			int indexOf = encryption.indexOf("\"protected\":\"");
+			String protectedHeaders = encryption.substring(indexOf+"\"protected\":\"".length());
+			protectedHeaders = protectedHeaders.substring(0, protectedHeaders.indexOf("\""));
+			String hdrDecoded = new String (Base64Utilities.decode(protectedHeaders));
+			System.out.println("["+tipo+" - "+extTipo+"] "+options.getSerialization().name()+" Encrypt (deflate:"+options.isDeflate()+") protected base64 decoded: "+hdrDecoded);
+			if(checkHeaders!=null && !checkHeaders.isEmpty()) {
+				for (String hdr : checkHeaders) {
+					System.out.println("["+tipo+" - "+extTipo+"] "+options.getSerialization().name()+" Verifico presenza '"+hdr+"'");
+					String hdrName = "\""+hdr+"\":";
+					if(!hdrDecoded.contains(hdrName)) {
+						throw new Exception("'"+hdr+"' not found in headers");
+					}
+				}
+			}
+		}
+		else {
+			if(encryption.contains(".")==false) {
+				throw new Exception("Expected format with '.' separator");
+			}
+			String [] tmp = encryption.split("\\.");
+			if(tmp==null) {
+				throw new Exception("Expected format with '.' separator");
+			}
+			int length = 5;
+			if(tmp.length!=length) {
+				throw new Exception("Expected format with 5 base64 info ('.' separator");
+			}
+			for (int i = 0; i < tmp.length; i++) {
+				String part = tmp[i];
+				try {
+					Base64Utilities.decode(part);
+				}catch(Exception e) {
+					throw new Exception("Position '"+i+"' uncorrect base64 encoded:"+e.getMessage(),e);
+				}			
+			}
 			
-		// 4e. Encrypt Attached
-		jsonAttachedEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, deflate, JOSERepresentation.SELF_CONTAINED);
-		attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
-		
-		System.out.println("["+tipo+"]-e. JsonAttachedEncrypt Deflate (Private) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
-		
-		// Verifica
-		jsonAttachedVerify = new JsonDecrypt(keystore, keyAlgorithm, contentAlgorithm,JOSERepresentation.SELF_CONTAINED);
-		jsonAttachedVerify.decrypt(attachEncrypt);
-		System.out.println("["+tipo+"]-. JsonAttachedEncrypt Verify-Deflate (Public): \n"+jsonAttachedVerify.getDecodedPayload());
-		if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
+			String hdrDecoded = new String (Base64Utilities.decode(encryption.split("\\.")[0]));
+			System.out.println("["+tipo+" - "+extTipo+"] "+options.getSerialization().name()+" Encrypt (deflate:"+options.isDeflate()+") HDR base64 decoded: "+hdrDecoded);
+			if(checkHeaders!=null && !checkHeaders.isEmpty()) {
+				for (String hdr : checkHeaders) {
+					System.out.println("["+tipo+" - "+extTipo+"] "+options.getSerialization().name()+" Verifico presenza '"+hdr+"'");
+					String hdrName = "\""+hdr+"\":";
+					if(!hdrDecoded.contains(hdrName)) {
+						throw new Exception("'"+hdr+"' not found in headers");
+					}
+				}
+			}
+		}
+	}
+	
+	private static void decrypt(TipoTest tipo, String extTipo, boolean useHdrsForValidation, JsonDecrypt decrypt, String encryption, String jsonInput, JWEOptions options) throws Exception {
+		decrypt.decrypt(encryption);
+		System.out.println("["+tipo+" - "+extTipo+"] "+options.getSerialization().name()+" Decrypt (use-hdrs: "+useHdrsForValidation+" deflate:"+options.isDeflate()+") payload: "+decrypt.getDecodedPayload());
+		if(decrypt.getDecodedPayload().equals(jsonInput)==false) {
 			throw new Exception("Found different payload");
 		}
-		try {
-			jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
-			throw new Exception("Expected validation error");
-		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
+		
+
+		// test per corrompere il contenuto
+		
+		// body
+		String encryptionCorrottaParteBody = null;
+		if(JOSESerialization.JSON.equals(options.getSerialization())) {
+			encryptionCorrottaParteBody = encryption.replace("ciphertext\":\"", "ciphertext\":\"CORROTTO");
 		}
-	
-	
-	
-		System.out.println("\n\n");
-		
-		// 4f. Encrypt Compact
-		jsonCompactEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, deflate, headers, JOSERepresentation.COMPACT);
-		compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
-		
-		System.out.println("["+tipo+"]-f. JsonCompactEncrypt Deflate (Private) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
-		
-		hdrDecoded = new String (Base64Utilities.decode(compactEncrypt.split("\\.")[0]));
-		System.out.println("["+tipo+"]-f. JsonCompactEncrypt HDR base64 decoded: "+hdrDecoded);
-		
-		// Verifica
-		jsonCompactVerify = new JsonDecrypt(keystore, keyAlgorithm, contentAlgorithm, JOSERepresentation.COMPACT);
-		jsonCompactVerify.decrypt(compactEncrypt);
-		System.out.println("["+tipo+"]-f. JsonCompactEncrypt Verify-Deflate (Public): \n"+jsonCompactVerify.getDecodedPayload());
-		if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
+		else {
+			encryptionCorrottaParteBody = encryption.replaceFirst("\\.", ".CORROTTO");
 		}
 		try {
-			jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
-			throw new Exception("Expected validation error");
+			decrypt.decrypt(encryptionCorrottaParteBody);
+			throw new Exception("Expected validation error (bodyCorrupted: "+encryptionCorrottaParteBody+")");
 		}catch(Exception e) {
-			System.out.println("Expected error: "+e.getMessage());
+			System.out.println("[ok] Expected error: "+e.getMessage());
+		}
+
+	}
+	
+	private static List<String> getHeaders(Properties signatureProps, JwtHeaders headers){
+		List<String> list = new ArrayList<>();
+		
+		if(signatureProps!=null) {
+			
+			String kid = signatureProps.getProperty("rs.security.encryption.include.key.id");
+			if("true".equals(kid)) {
+				list.add(JwtHeaders.JWT_HDR_KID);
+			}
+			
+			String tipo = signatureProps.getProperty("rs.security.keystore.type");
+			if("jwk".equals(tipo)) {
+				String jwk = signatureProps.getProperty("rs.security.encryption.include.public.key");
+				if("true".equals(jwk)) {
+					list.add(JwtHeaders.JWT_HDR_JWK);
+				}
+			}
+			else {
+				String x5c = signatureProps.getProperty("rs.security.encryption.include.cert");
+				if("true".equals(x5c)) {
+					list.add(JwtHeaders.JWT_HDR_X5C);
+				}
+				String x5t = signatureProps.getProperty("rs.security.encryption.include.cert.sha1");
+				if("true".equals(x5t)) {
+					list.add(JwtHeaders.JWT_HDR_X5T);
+				}
+				String x5t_256 = signatureProps.getProperty("rs.security.encryption.include.cert.sha256");
+				if("true".equals(x5t_256)) {
+					list.add(JwtHeaders.JWT_HDR_X5t_S256);
+				}	
+			}
+						
 		}
 		
-		System.out.println("\n\n");
+		if(headers!=null) {
+			List<String> listHDR = headers.headers();
+			if(listHDR!=null && !listHDR.isEmpty()) {
+				list.addAll(listHDR);
+			}
+		}
 		
+		return list;
 	}
 	
 	public enum TipoTest {
@@ -1259,6 +1527,8 @@ public class TestEncrypt {
 		JSON_ENCRYPT_PROPERTIES_JWK,
 		JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM,
 		JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM,
+		JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY,
+		JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY,
 		JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE,
 		JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE_HEADER_CUSTOM,
 		JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE_JCE,

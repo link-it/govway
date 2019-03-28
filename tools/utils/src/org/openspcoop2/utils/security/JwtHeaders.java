@@ -142,8 +142,51 @@ public class JwtHeaders {
 	public HashMap<String, String> getExtensions() {
 		return this.extensions;
 	}
-
-
+	
+	public List<String> headers(){
+		List<String> list = new ArrayList<>();
+		if(this.type!=null) {
+			list.add(JWT_HDR_TYP);
+		}
+		if(this.contentType!=null) {
+			list.add(JWT_HDR_CTY);
+		}
+		if(this.kid!=null) {
+			list.add(JWT_HDR_KID);
+		}
+		if(this.criticalHeaders!=null && !this.criticalHeaders.isEmpty()) {
+			list.add(JWT_HDR_CRIT);
+		}
+		if(this.x509Url!=null) {
+			list.add(JWT_HDR_X5U);
+		}
+		if(this.x509c!=null && !this.x509c.isEmpty()) {
+			// fix: lo aggiungo solo se non c'è la url. Nell'oggetto JwtHreader il certificato ho dovuto mettercelo per creare i sha
+			if(!list.contains(JWT_HDR_X5U)) {
+				list.add(JWT_HDR_X5C);
+			}
+		}
+		if(this.x509IncludeCertSha1 && this.x509c!=null && !this.x509c.isEmpty()) {
+			list.add(JWT_HDR_X5T);
+		}
+		if(this.x509IncludeCertSha256) {
+			list.add(JWT_HDR_X5t_S256);
+		}
+		if(this.jwkUrl!=null) {
+			list.add(JWT_HDR_JKU);
+		}
+		if(this.jwKey!=null) {
+			list.add(JWT_HDR_JWK);
+		}
+		if(this.extensions!=null && !this.extensions.isEmpty()) {
+			Iterator<String> hdrIt = this.extensions.keySet().iterator();
+			while (hdrIt.hasNext()) {
+				String hdr = (String) hdrIt.next();
+				list.add(hdr);
+			}
+		}
+		return list;
+	}
 	
 	public void fillJwsHeaders(org.apache.cxf.rs.security.jose.common.JoseHeaders hdrs, boolean forceOverride, String algorithm) throws Exception {
 		if(this.type!=null) {

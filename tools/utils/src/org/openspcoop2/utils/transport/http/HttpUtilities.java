@@ -414,6 +414,100 @@ public class HttpUtilities {
 	}
 	
 	
+	public static boolean isNoCache(Properties headers) throws UtilsException{
+		List<String> l = getDirectiveCacheControl(headers);
+		if(l==null || l.isEmpty()) {
+			l = getDirectivePragma(headers);
+		}
+		if(l==null || l.isEmpty()) {
+			return false;
+		}
+		else {
+			return l.contains(HttpConstants.CACHE_STATUS_DIRECTIVE_NO_CACHE);
+		}
+	}
+	public static boolean isNoStore(Properties headers) throws UtilsException{
+		List<String> l = getDirectiveCacheControl(headers);
+		if(l==null || l.isEmpty()) {
+			l = getDirectivePragma(headers);
+			if(l==null || l.isEmpty()) {
+				return false;
+			}else{
+				return l.contains(HttpConstants.CACHE_STATUS_DIRECTIVE_NO_CACHE); // no cache in pragma vale anche per nostore.
+			}
+		}
+		else {
+			return l.contains(HttpConstants.CACHE_STATUS_DIRECTIVE_NO_STORE);
+		}
+	}
+	public static Integer getCacheMaxAge(Properties headers) throws UtilsException{
+		List<String> l = getDirectiveCacheControl(headers);
+		if(l==null || l.isEmpty()) {
+			return null;
+		}
+		else {
+			for (String direttiva : l) {
+				if(direttiva!=null && direttiva.startsWith(HttpConstants.CACHE_STATUS_DIRECTIVE_MAX_AGE+"=") && !direttiva.endsWith("=")) {
+					try {
+						String age = direttiva.substring((HttpConstants.CACHE_STATUS_DIRECTIVE_MAX_AGE+"=").length(), direttiva.length());
+						return Integer.valueOf(age);
+					}catch(Throwable t) {}
+				}
+			}
+			return null;
+		}
+	}
+	public static List<String> getDirectiveCacheControl(Properties headers){
+		
+		String cacheControl = headers.getProperty(HttpConstants.CACHE_STATUS_HTTP_1_1);		
+		if(cacheControl==null) {
+			cacheControl = headers.getProperty(HttpConstants.CACHE_STATUS_HTTP_1_1.toLowerCase());	
+		}
+		if(cacheControl==null) {
+			cacheControl = headers.getProperty(HttpConstants.CACHE_STATUS_HTTP_1_1.toUpperCase());	
+		}
+		
+		List<String> values = new ArrayList<>();
+		if(cacheControl!=null) {
+			if(cacheControl.contains(",")) {
+				String [] tmp = cacheControl.split(",");
+				for (int i = 0; i < tmp.length; i++) {
+					values.add(tmp[i].trim());
+				}
+			}
+			else {
+				values.add(cacheControl);
+			}
+		}
+		
+		return values;
+	}
+	public static List<String> getDirectivePragma(Properties headers){
+		
+		String cacheControl = headers.getProperty(HttpConstants.CACHE_STATUS_HTTP_1_0);		
+		if(cacheControl==null) {
+			cacheControl = headers.getProperty(HttpConstants.CACHE_STATUS_HTTP_1_0.toLowerCase());		
+		}
+		if(cacheControl==null) {
+			cacheControl = headers.getProperty(HttpConstants.CACHE_STATUS_HTTP_1_0.toUpperCase());		
+		}
+		
+		List<String> values = new ArrayList<>();
+		if(cacheControl!=null) {
+			if(cacheControl.contains(",")) {
+				String [] tmp = cacheControl.split(",");
+				for (int i = 0; i < tmp.length; i++) {
+					values.add(tmp[i].trim());
+				}
+			}
+			else {
+				values.add(cacheControl);
+			}
+		}
+		
+		return values;
+	}
+	
 	
 	public static void setChunkedStreamingMode(HttpURLConnection httpConn, int chunkLength, HttpRequestMethod httpMethod, String contentType) throws UtilsException{
 		

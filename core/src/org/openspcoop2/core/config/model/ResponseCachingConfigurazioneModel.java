@@ -43,6 +43,8 @@ public class ResponseCachingConfigurazioneModel extends AbstractModel<ResponseCa
 		super();
 	
 		this.HASH_GENERATOR = new org.openspcoop2.core.config.model.ResponseCachingConfigurazioneHashGeneratorModel(new Field("hash-generator",org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator.class,"response-caching-configurazione",ResponseCachingConfigurazione.class));
+		this.CONTROL = new org.openspcoop2.core.config.model.ResponseCachingConfigurazioneControlModel(new Field("control",org.openspcoop2.core.config.ResponseCachingConfigurazioneControl.class,"response-caching-configurazione",ResponseCachingConfigurazione.class));
+		this.REGOLA = new org.openspcoop2.core.config.model.ResponseCachingConfigurazioneRegolaModel(new Field("regola",org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola.class,"response-caching-configurazione",ResponseCachingConfigurazione.class));
 		this.STATO = new Field("stato",java.lang.String.class,"response-caching-configurazione",ResponseCachingConfigurazione.class);
 		this.CACHE_TIMEOUT_SECONDS = new Field("cache-timeout-seconds",java.lang.Integer.class,"response-caching-configurazione",ResponseCachingConfigurazione.class);
 		this.MAX_MESSAGE_SIZE = new Field("max-message-size",java.lang.Long.class,"response-caching-configurazione",ResponseCachingConfigurazione.class);
@@ -54,6 +56,8 @@ public class ResponseCachingConfigurazioneModel extends AbstractModel<ResponseCa
 		super(father);
 	
 		this.HASH_GENERATOR = new org.openspcoop2.core.config.model.ResponseCachingConfigurazioneHashGeneratorModel(new ComplexField(father,"hash-generator",org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator.class,"response-caching-configurazione",ResponseCachingConfigurazione.class));
+		this.CONTROL = new org.openspcoop2.core.config.model.ResponseCachingConfigurazioneControlModel(new ComplexField(father,"control",org.openspcoop2.core.config.ResponseCachingConfigurazioneControl.class,"response-caching-configurazione",ResponseCachingConfigurazione.class));
+		this.REGOLA = new org.openspcoop2.core.config.model.ResponseCachingConfigurazioneRegolaModel(new ComplexField(father,"regola",org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola.class,"response-caching-configurazione",ResponseCachingConfigurazione.class));
 		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"response-caching-configurazione",ResponseCachingConfigurazione.class);
 		this.CACHE_TIMEOUT_SECONDS = new ComplexField(father,"cache-timeout-seconds",java.lang.Integer.class,"response-caching-configurazione",ResponseCachingConfigurazione.class);
 		this.MAX_MESSAGE_SIZE = new ComplexField(father,"max-message-size",java.lang.Long.class,"response-caching-configurazione",ResponseCachingConfigurazione.class);
@@ -63,6 +67,10 @@ public class ResponseCachingConfigurazioneModel extends AbstractModel<ResponseCa
 	
 
 	public org.openspcoop2.core.config.model.ResponseCachingConfigurazioneHashGeneratorModel HASH_GENERATOR = null;
+	 
+	public org.openspcoop2.core.config.model.ResponseCachingConfigurazioneControlModel CONTROL = null;
+	 
+	public org.openspcoop2.core.config.model.ResponseCachingConfigurazioneRegolaModel REGOLA = null;
 	 
 	public IField STATO = null;
 	 

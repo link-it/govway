@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
@@ -142,26 +144,34 @@ public class TestSignature {
 			// Esempio Signature JSON
 				
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JKS.equals(tipoTest)) {
-				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JKS, fKeystore, fTruststore, truststore, null);
+				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JKS, fKeystore, fTruststore, truststore, null, null);
 			}
 			
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM.equals(tipoTest)) {
 				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
-				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM, fKeystore, fTruststore, truststore, jwtHeader);
+				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM, fKeystore, fTruststore, truststore, jwtHeader, null);
 				jwtHeader.setX509Url(null);
 			}
 			
+			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY.equals(tipoTest)) {
+				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY, fKeystore, fTruststore, truststore, jwtHeader, null);
+			}
+			
+			
+			
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JWK.equals(tipoTest)) {
-				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK, jwks_fKeystore, jwks_fTruststore, truststore, null);
+				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK, jwks_fKeystore, jwks_fTruststore, truststore, null, null);
 			}
 			
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipoTest)) {
 				jwtHeader.setJwkUrl(new URI("file://"+jwks_fTruststore.getAbsolutePath()));
-				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM, jwks_fKeystore, jwks_fTruststore, truststore, jwtHeader);
+				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM, jwks_fKeystore, jwks_fTruststore, truststore, jwtHeader, null);
 				jwtHeader.setJwkUrl(null);
 			}
 			
-			
+			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipoTest)) {
+				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY, jwks_fKeystore, jwks_fTruststore, truststore, jwtHeader, jwks_truststore);
+			}
 			
 			
 			
@@ -207,7 +217,7 @@ public class TestSignature {
 				jwtHeader.setJwKey(jwks_keystore, alias);
 				jwtHeader.setKid(alias);
 				
-				testJsonJwkKeys(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_KEYS, jwks_keystore, jwks_truststore, alias, jwtHeader);
+				testJsonJwkKeys(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_KEYS, jwks_keystore, jwks_truststore, truststore, alias, jwtHeader);
 				
 				jwtHeader.setJwKey(null);
 				jwtHeader.setKid(null);
@@ -217,23 +227,20 @@ public class TestSignature {
 				
 				jwtHeader.setJwkUrl(new URI("file://"+jwks_fTruststore.getAbsolutePath()));
 				
-				testJsonJwkKeys(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_KEYS, jwks_keystore, jwks_truststore, alias, jwtHeader);
+				testJsonJwkKeys(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_KEYS, jwks_keystore, jwks_truststore, truststore, alias, jwtHeader);
 				
 				jwtHeader.setJwkUrl(null);
 				jwtHeader.setKid(null);
 			}
 			
-			
-			
-			
-			
+				
 			
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_KEY.equals(tipoTest)) {
 				
 				jwtHeader.setJwKey(jwk_keystore);
 				jwtHeader.setKid(alias);
 				
-				testJsonJwkKey(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_KEY, jwk_keystore, jwk_truststore, jwtHeader);
+				testJsonJwkKey(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_KEY, jwk_keystore, jwk_truststore, truststore, jwtHeader);
 				
 				jwtHeader.setJwKey(null);
 				jwtHeader.setKid(null);
@@ -243,7 +250,7 @@ public class TestSignature {
 				
 				jwtHeader.setJwkUrl(new URI("file://"+jwks_fTruststore.getAbsolutePath()));
 				
-				testJsonJwkKey(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_KEY, jwk_keystore, jwk_truststore, jwtHeader);
+				testJsonJwkKey(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_KEY, jwk_keystore, jwk_truststore, truststore, jwtHeader);
 				
 				jwtHeader.setJwkUrl(null);
 				jwtHeader.setKid(null);
@@ -251,9 +258,7 @@ public class TestSignature {
 			
 			
 			
-			
-	
-			
+					
 			System.out.println("Testsuite terminata");
 
 
@@ -391,7 +396,8 @@ public class TestSignature {
 		System.out.println("["+tipo+"]-b. XmlSignature KeyInfo (RSA KeyInfo): "+keyInfo.getPublicKey());
 	}
 	
-	private static void testJsonProperties(TipoTest tipo, File fKeystore, File fTruststore, KeyStore truststore, JwtHeaders headers) throws Exception {
+	private static void testJsonProperties(TipoTest tipo, File fKeystore, File fTruststore, KeyStore truststore, JwtHeaders headers,
+			JsonWebKeys jsonWebKeys) throws Exception {
 		// Esempio Signature JSON
 		
 		System.out.println("\n\n ============== "+tipo+" ==================");
@@ -416,7 +422,8 @@ public class TestSignature {
 			}
 		}
 		else if(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK.equals(tipo) ||
-				TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipo)) {
+				TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipo) ||
+				TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
 			signatureProps.put("rs.security.keystore.type", "jwk");
 			
 			signatureProps.remove("rs.security.signature.include.cert.sha1");
@@ -439,88 +446,177 @@ public class TestSignature {
 			verifySignatureProps.put("rs.security.keystore.type", "jks");
 		}
 		else if(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK.equals(tipo) ||
-				TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipo) ) {
+				TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipo) ||
+				TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo) ) {
 			verifySignatureProps.put("rs.security.keystore.type", "jwk");
 		}
-		
 		
 
 		System.out.println("\n");
 		
-		// 3a. Signature Attached 
-		JsonSignature jsonAttachedSignature = new JsonSignature(signatureProps, JOSERepresentation.SELF_CONTAINED);
-		String attachSign = jsonAttachedSignature.sign(jsonInput);
 		
-		System.out.println("["+tipo+"]-a. JsonSelfContainedSignature Signed: \n"+attachSign);
 		
-		// Verifica
-		JsonVerifySignature jsonAttachedVerify = new JsonVerifySignature(verifySignatureProps,JOSERepresentation.SELF_CONTAINED);
-		System.out.println("["+tipo+"]-a. JsonSelfContainedSignature Verify ("+jsonAttachedVerify.verify(attachSign)+") payload: "+jsonAttachedVerify.getDecodedPayload());
-		if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		if(jsonAttachedVerify.verify(attachSign.replace("payload\":\"", "payload\":\"CORROMPO"))!=false) {
-			throw new Exception("Expected validation error");
-		}
 		
-		System.out.println("\n\n");
 		
-		// 3b. Signature Compact
-		JsonSignature jsonCompactSignature = null;
+		// **** JSON - !detached -  payloadEncoding ***
+		
+		// Signature Json
+		JWSOptions options = new JWSOptions(JOSESerialization.JSON);
+		JsonSignature jsonSignature = null;
 		if(headers==null) {
-			jsonCompactSignature = new JsonSignature(signatureProps, JOSERepresentation.COMPACT);
+			jsonSignature = new JsonSignature(signatureProps, options);
 		}
 		else {
-			jsonCompactSignature = new JsonSignature(signatureProps, headers, JOSERepresentation.COMPACT);
+			jsonSignature = new JsonSignature(signatureProps, headers, options);
 		}
-		String compactSign = jsonCompactSignature.sign(jsonInput);
-		
-		System.out.println("["+tipo+"]-b. JsonCompactSignature Signed: \n"+compactSign);
-		
-		String hdrDecoded = new String (Base64Utilities.decode(compactSign.split("\\.")[0]));
-		System.out.println("["+tipo+"]-b. JsonCompactSignature HDR base64 decoded: "+hdrDecoded);
+		String attachSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo, attachSign, jsonInput, options, signatureProps, headers);
 		
 		// Verifica
-		JsonVerifySignature jsonCompactVerify = new JsonVerifySignature(verifySignatureProps, JOSERepresentation.COMPACT);
-		System.out.println("["+tipo+"]-b. JsonCompactSignature Verify ("+jsonCompactVerify.verify(compactSign)+" ) payload: "+jsonCompactVerify.getDecodedPayload());
-		if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		if(jsonCompactVerify.verify(compactSign.replace(".", ".CORROMPO"))!=false) {
-			throw new Exception("Expected validation error");
-		}
+		JWTOptions optionsVerify = new JWTOptions(JOSESerialization.JSON);
+		JsonVerifySignature jsonVerify = new JsonVerifySignature(verifySignatureProps,optionsVerify);
+		verifySignature(tipo, false, jsonVerify, attachSign, jsonInput, options);
 		
 		// Verifica basata sull'header
-		jsonCompactVerify = new JsonVerifySignature(truststore);
-		System.out.println("["+tipo+"]-b2. JsonCompactSignature Verify HEADER ("+jsonCompactVerify.verify(compactSign)+" ) payload: "+jsonCompactVerify.getDecodedPayload());
-		if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
+		if(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
+			jsonVerify = new JsonVerifySignature(jsonWebKeys, optionsVerify);
 		}
-		if(jsonCompactVerify.verify(compactSign.replace(".", ".CORROMPO"))!=false) {
-			throw new Exception("Expected validation error");
+		else {
+			jsonVerify = new JsonVerifySignature(truststore, optionsVerify);
 		}
-
+		verifySignature(tipo, true, jsonVerify, attachSign, jsonInput, options);
 		
 		System.out.println("\n\n");
 		
-		// 3c. Signature Detached
-		JsonSignature jsonDetachedSignature = new JsonSignature(signatureProps, JOSERepresentation.DETACHED);
-		String detachedSign = jsonDetachedSignature.sign(jsonInput);
 		
-		System.out.println("["+tipo+"]-c. JsonDetachedSignature Signed: \n"+detachedSign);
+		
+		// **** JSON - !detached -  !payloadEncoding ***
+		
+		// Signature Json - Unencoded Payload Option (RFC 7797)
+		options = new JWSOptions(JOSESerialization.JSON);
+		options.setPayloadEncoding(false);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(signatureProps, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(signatureProps, headers, options);
+		}
+		attachSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo,attachSign, jsonInput, options, signatureProps, headers);
 		
 		// Verifica
-		JsonVerifySignature jsonDetachedVerify = new JsonVerifySignature(verifySignatureProps, JOSERepresentation.DETACHED);
-		System.out.println("["+tipo+"]-c. JsonDetachedSignature Verify ("+jsonDetachedVerify.verify(detachedSign, jsonInput)+") payload:"+jsonDetachedVerify.getDecodedPayload());
-		if(jsonDetachedVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
+		optionsVerify = new JWTOptions(JOSESerialization.JSON);
+		jsonVerify = new JsonVerifySignature(verifySignatureProps,optionsVerify);
+		verifySignature(tipo, false, jsonVerify, attachSign, jsonInput, options);
+		
+		// Verifica basata sull'header
+		if(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
+			jsonVerify = new JsonVerifySignature(jsonWebKeys, optionsVerify);
 		}
-		String jsonInputCorretto = "\n{\n\t\"name\":\"value1\",\n\t\"name2\":\"valueCORROMPO\"\n}";
-		if(jsonDetachedVerify.verify(detachedSign, jsonInputCorretto)!=false) {
-			throw new Exception("Expected validation error");
+		else {
+			jsonVerify = new JsonVerifySignature(truststore, optionsVerify);
 		}
+		verifySignature(tipo, true, jsonVerify, attachSign, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+		
+		
+		// **** JSON - detached -  [n.c. payloadEncoding] ***
+		
+		// Signature Json - detached
+		options = new JWSOptions(JOSESerialization.JSON);
+		options.setDetached(true);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(signatureProps, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(signatureProps, headers, options);
+		}
+		String detachedSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo,detachedSign, jsonInput, options, signatureProps, headers);
+		
+		// Verifica
+		optionsVerify = new JWTOptions(JOSESerialization.JSON);
+		jsonVerify = new JsonVerifySignature(verifySignatureProps,optionsVerify);
+		verifySignature(tipo, false, jsonVerify, detachedSign, jsonInput, options);
+		
+		// Verifica basata sull'header
+		if(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
+			jsonVerify = new JsonVerifySignature(jsonWebKeys, optionsVerify);
+		}
+		else {
+			jsonVerify = new JsonVerifySignature(truststore, optionsVerify);
+		}
+		verifySignature(tipo, true, jsonVerify, detachedSign, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+		
+		
+		// **** COMPACT - !detached -  [n.c. payloadEncoding] ***		
+		
+		// Signature Compact
+		options = new JWSOptions(JOSESerialization.COMPACT);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(signatureProps, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(signatureProps, headers, options);
+		}
+		String compactSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo, compactSign, jsonInput, options, signatureProps, headers);
+		
+		// Verifica
+		optionsVerify = new JWTOptions(JOSESerialization.COMPACT);
+		jsonVerify = new JsonVerifySignature(verifySignatureProps, optionsVerify);
+		verifySignature(tipo, false, jsonVerify, compactSign, jsonInput, options);
+		
+		// Verifica basata sull'header
+		if(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
+			jsonVerify = new JsonVerifySignature(jsonWebKeys, optionsVerify);
+		}
+		else {
+			jsonVerify = new JsonVerifySignature(truststore, optionsVerify);
+		}
+		verifySignature(tipo, true, jsonVerify, compactSign, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+		
+
+		// **** COMPACT - detached -  [n.c. payloadEncoding] ***
+		
+		// Signature Compact
+		options = new JWSOptions(JOSESerialization.COMPACT);
+		options.setDetached(true);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(signatureProps, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(signatureProps, headers, options);
+		}
+		compactSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo, compactSign, jsonInput, options, signatureProps, headers);
+		
+		// Verifica
+		optionsVerify = new JWTOptions(JOSESerialization.COMPACT);
+		jsonVerify = new JsonVerifySignature(verifySignatureProps, optionsVerify);
+		verifySignature(tipo, false, jsonVerify, compactSign, jsonInput, options);
+		
+		// Verifica basata sull'header
+		if(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
+			jsonVerify = new JsonVerifySignature(jsonWebKeys, optionsVerify);
+		}
+		else {
+			jsonVerify = new JsonVerifySignature(truststore, optionsVerify);
+		}
+		verifySignature(tipo, true, jsonVerify, compactSign, jsonInput, options);
+		
+		System.out.println("\n\n");
 	}
 	
+
 	private static void testJsonKeystore(TipoTest tipo, KeyStore keystore, KeyStore truststore, String alias, String passwordChiavePrivata, JwtHeaders headers) throws Exception {
 		// Esempio Signature JSON con altri costruttori
 			
@@ -529,84 +625,151 @@ public class TestSignature {
 		System.out.println("\n\n ================ "+tipo+"  ================");
 		System.out.println("["+tipo+"]. Example JsonSignature (Costruttore keystore) \n");
 
-		Properties signatureProps = new Properties();
+		Properties signaturePropsTmp = new Properties(); // per comprendere l'algoritmo
 		InputStream is = TestSignature.class.getResourceAsStream("jws.signature.properties");
-		signatureProps.load(is);
-		
-		String signatureAlgorithm = signatureProps.getProperty("rs.security.signature.algorithm");
+		signaturePropsTmp.load(is);
+		String signatureAlgorithm = signaturePropsTmp.getProperty("rs.security.signature.algorithm");
 
 		
 		System.out.println("\n");
-		
-		// 4a. Signature Attached 
-		JsonSignature jsonAttachedSignature = new JsonSignature(keystore.getKeystore(), alias, passwordChiavePrivata, signatureAlgorithm , JOSERepresentation.SELF_CONTAINED);
-		String attachSign = jsonAttachedSignature.sign(jsonInput);
-		
-		System.out.println("["+tipo+"]-a. JsonSelfContainedSignature Signed: \n"+attachSign);
-		
-		// Verifica
-		JsonVerifySignature jsonAttachedVerify = new JsonVerifySignature(truststore.getKeystore(), alias, signatureAlgorithm, JOSERepresentation.SELF_CONTAINED);
-		System.out.println("["+tipo+"]-a. JsonSelfContainedSignature Verify ("+jsonAttachedVerify.verify(attachSign)+") payload: "+jsonAttachedVerify.getDecodedPayload());
-		if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		if(jsonAttachedVerify.verify(attachSign.replace("payload\":\"", "payload\":\"CORROMPO"))!=false) {
-			throw new Exception("Expected validation error");
-		}
-		
-		System.out.println("\n\n");
-		
-		// 4b. Signature Compact (e uso keystore openspcoop)
-		JsonSignature jsonCompactSignature = new JsonSignature(keystore, alias, passwordChiavePrivata, signatureAlgorithm, headers, JOSERepresentation.COMPACT);
-		String compactSign = jsonCompactSignature.sign(jsonInput);
-		
-		System.out.println("["+tipo+"]-b. JsonCompactSignature Signed: \n"+compactSign);
-		
-		String hdrDecoded = new String (Base64Utilities.decode(compactSign.split("\\.")[0]));
-		System.out.println("["+tipo+"]-b. JsonCompactSignature HDR base64 decoded: "+hdrDecoded);
-		
-		// Verifica
-		JsonVerifySignature jsonCompactVerify = new JsonVerifySignature(truststore, alias, signatureAlgorithm, JOSERepresentation.COMPACT);
-		System.out.println("["+tipo+"]-b. JsonCompactSignature Verify ("+jsonCompactVerify.verify(compactSign)+" ) payload: "+jsonCompactVerify.getDecodedPayload());
-		if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		if(jsonCompactVerify.verify(compactSign.replace(".", ".CORROMPO"))!=false) {
-			throw new Exception("Expected validation error");
-		}
-		
-		// Verifica basata sull'header
-		jsonCompactVerify = new JsonVerifySignature(truststore);
-		System.out.println("["+tipo+"]-b2. JsonCompactSignature Verify HEADER ("+jsonCompactVerify.verify(compactSign)+" ) payload: "+jsonCompactVerify.getDecodedPayload());
-		if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		if(jsonCompactVerify.verify(compactSign.replace(".", ".CORROMPO"))!=false) {
-			throw new Exception("Expected validation error");
-		}
 
 		
-		System.out.println("\n\n");
 		
-		// 4c. Signature Detached
-		JsonSignature jsonDetachedSignature = new JsonSignature(keystore.getKeystore(), alias, passwordChiavePrivata, signatureAlgorithm, JOSERepresentation.DETACHED);
-		String detachedSign = jsonDetachedSignature.sign(jsonInput);
+		// **** JSON - !detached -  payloadEncoding ***
 		
-		System.out.println("["+tipo+"]-c. JsonDetachedSignature Signed: \n"+detachedSign);
+		// Signature Json
+		JWSOptions options = new JWSOptions(JOSESerialization.JSON);
+		JsonSignature jsonSignature = null;
+		if(headers==null) {
+			jsonSignature = new JsonSignature(keystore.getKeystore(), alias, passwordChiavePrivata, signatureAlgorithm, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(keystore.getKeystore(), alias, passwordChiavePrivata, signatureAlgorithm, headers, options);
+		}
+		String attachSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo, attachSign, jsonInput, options, null, headers);
 		
 		// Verifica
-		JsonVerifySignature jsonDetachedVerify = new JsonVerifySignature(truststore.getKeystore(), alias, signatureAlgorithm, JOSERepresentation.DETACHED);
-		System.out.println("["+tipo+"]-c. JsonDetachedSignature Verify ("+jsonDetachedVerify.verify(detachedSign, jsonInput)+") payload:"+jsonDetachedVerify.getDecodedPayload());
-		if(jsonDetachedVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
+		JWTOptions optionsVerify = new JWTOptions(JOSESerialization.JSON);
+		JsonVerifySignature jsonVerify = new JsonVerifySignature(truststore.getKeystore(), alias, signatureAlgorithm,optionsVerify);
+		verifySignature(tipo, false, jsonVerify, attachSign, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonVerify = new JsonVerifySignature(truststore, optionsVerify);
+		verifySignature(tipo, true, jsonVerify, attachSign, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+		
+		
+		// **** JSON - !detached -  !payloadEncoding ***
+		
+		// Signature Json - Unencoded Payload Option (RFC 7797)
+		options = new JWSOptions(JOSESerialization.JSON);
+		options.setPayloadEncoding(false);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(keystore.getKeystore(), alias, passwordChiavePrivata, signatureAlgorithm, options);
 		}
-		String jsonInputCorretto = "\n{\n\t\"name\":\"value1\",\n\t\"name2\":\"valueCORROMPO\"\n}";
-		if(jsonDetachedVerify.verify(detachedSign, jsonInputCorretto)!=false) {
-			throw new Exception("Expected validation error");
+		else {
+			jsonSignature = new JsonSignature(keystore.getKeystore(), alias, passwordChiavePrivata, signatureAlgorithm, headers, options);
 		}
+		attachSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo,attachSign, jsonInput, options, null, headers);
+		
+		// Verifica
+		optionsVerify = new JWTOptions(JOSESerialization.JSON);
+		jsonVerify = new JsonVerifySignature(truststore.getKeystore(), alias, signatureAlgorithm,optionsVerify);
+		verifySignature(tipo, false, jsonVerify, attachSign, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonVerify = new JsonVerifySignature(truststore,optionsVerify);
+		verifySignature(tipo, true, jsonVerify, attachSign, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+		
+		
+		// **** JSON - detached -  [n.c. payloadEncoding] ***
+		
+		// Signature Json - detached
+		options = new JWSOptions(JOSESerialization.JSON);
+		options.setDetached(true);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(keystore.getKeystore(), alias, passwordChiavePrivata, signatureAlgorithm, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(keystore.getKeystore(), alias, passwordChiavePrivata, signatureAlgorithm, headers, options);
+		}
+		String detachedSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo,detachedSign, jsonInput, options, null, headers);
+		
+		// Verifica
+		optionsVerify = new JWTOptions(JOSESerialization.JSON);
+		jsonVerify = new JsonVerifySignature(truststore.getKeystore(), alias, signatureAlgorithm,optionsVerify);
+		verifySignature(tipo, false, jsonVerify, detachedSign, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonVerify = new JsonVerifySignature(truststore,optionsVerify);
+		verifySignature(tipo, true, jsonVerify, detachedSign, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+		
+		
+		// **** COMPACT - !detached -  [n.c. payloadEncoding] ***		
+		
+		// Signature Compact
+		options = new JWSOptions(JOSESerialization.COMPACT);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(keystore.getKeystore(), alias, passwordChiavePrivata, signatureAlgorithm, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(keystore.getKeystore(), alias, passwordChiavePrivata, signatureAlgorithm, headers, options);
+		}
+		String compactSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo, compactSign, jsonInput, options, null, headers);
+		
+		// Verifica
+		optionsVerify = new JWTOptions(JOSESerialization.COMPACT);
+		jsonVerify = new JsonVerifySignature(truststore.getKeystore(), alias, signatureAlgorithm, optionsVerify);
+		verifySignature(tipo, false, jsonVerify, compactSign, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonVerify = new JsonVerifySignature(truststore, optionsVerify);
+		verifySignature(tipo, true, jsonVerify, compactSign, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+		
+
+		// **** COMPACT - detached -  [n.c. payloadEncoding] ***
+		
+		// Signature Compact
+		options = new JWSOptions(JOSESerialization.COMPACT);
+		options.setDetached(true);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(keystore.getKeystore(), alias, passwordChiavePrivata, signatureAlgorithm, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(keystore.getKeystore(), alias, passwordChiavePrivata, signatureAlgorithm, headers, options);
+		}
+		compactSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo, compactSign, jsonInput, options, null, headers);
+		
+		// Verifica
+		optionsVerify = new JWTOptions(JOSESerialization.COMPACT);
+		jsonVerify = new JsonVerifySignature(truststore.getKeystore(), alias, signatureAlgorithm, optionsVerify);
+		verifySignature(tipo, false, jsonVerify, compactSign, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonVerify = new JsonVerifySignature(truststore, optionsVerify);
+		verifySignature(tipo, true, jsonVerify, compactSign, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
 	}
 	
-	private static void testJsonJwkKeys(TipoTest tipo, JsonWebKeys keystore, JsonWebKeys truststore, String alias, JwtHeaders headers) throws Exception {
+	private static void testJsonJwkKeys(TipoTest tipo, JsonWebKeys keystore, JsonWebKeys truststore, KeyStore truststoreJKS, String alias, JwtHeaders headers) throws Exception {
 		// Esempio Signature JSON con altri costruttori
 			
 		String jsonInput = "\n{\n\t\"name\":\"value1\",\n\t\"name2\":\"value2\"\n}";
@@ -614,85 +777,152 @@ public class TestSignature {
 		System.out.println("\n\n =============== "+tipo+" =================");
 		System.out.println("["+tipo+"]. Example JsonSignature (Costruttore keystore) \n");
 
-		Properties signatureProps = new Properties();
+		Properties signaturePropsTmp = new Properties();
 		InputStream is = TestSignature.class.getResourceAsStream("jws.signature.properties");
-		signatureProps.load(is);
-		
-		String signatureAlgorithm = signatureProps.getProperty("rs.security.signature.algorithm");
+		signaturePropsTmp.load(is);
+		String signatureAlgorithm = signaturePropsTmp.getProperty("rs.security.signature.algorithm"); // per comprendere l'algoritmo
 
 		
 		System.out.println("\n");
 		
-		// 4a. Signature Attached 
-		JsonSignature jsonAttachedSignature = new JsonSignature(keystore, alias, signatureAlgorithm , JOSERepresentation.SELF_CONTAINED);
-		String attachSign = jsonAttachedSignature.sign(jsonInput);
 		
-		System.out.println("["+tipo+"]-a. JsonSelfContainedSignature Signed: \n"+attachSign);
+		
+		// **** JSON - !detached -  payloadEncoding ***
+		
+		// Signature Json
+		JWSOptions options = new JWSOptions(JOSESerialization.JSON);
+		JsonSignature jsonSignature = null;
+		if(headers==null) {
+			jsonSignature = new JsonSignature(keystore, alias, signatureAlgorithm, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(keystore, alias, signatureAlgorithm, headers, options);
+		}
+		String attachSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo, attachSign, jsonInput, options, null, headers);
 		
 		// Verifica
-		JsonVerifySignature jsonAttachedVerify = new JsonVerifySignature(truststore, alias, signatureAlgorithm, JOSERepresentation.SELF_CONTAINED);
-		System.out.println("["+tipo+"]-a. JsonSelfContainedSignature Verify ("+jsonAttachedVerify.verify(attachSign)+") payload: "+jsonAttachedVerify.getDecodedPayload());
-		if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		if(jsonAttachedVerify.verify(attachSign.replace("payload\":\"", "payload\":\"CORROMPO"))!=false) {
-			throw new Exception("Expected validation error");
-		}
-		
-		System.out.println("\n\n");
-		
-		// 4b. Signature Compact (e uso keystore openspcoop)
-		JsonSignature jsonCompactSignature = new JsonSignature(keystore, alias, signatureAlgorithm, headers, JOSERepresentation.COMPACT);
-		String compactSign = jsonCompactSignature.sign(jsonInput);
-		
-		System.out.println("["+tipo+"]-b. JsonCompactSignature Signed: \n"+compactSign);
-		
-		String hdrDecoded = new String (Base64Utilities.decode(compactSign.split("\\.")[0]));
-		System.out.println("["+tipo+"]-b. JsonCompactSignature HDR base64 decoded: "+hdrDecoded);
-		
-		// Verifica
-		JsonVerifySignature jsonCompactVerify = new JsonVerifySignature(truststore, alias, signatureAlgorithm, JOSERepresentation.COMPACT);
-		System.out.println("["+tipo+"]-b. JsonCompactSignature Verify ("+jsonCompactVerify.verify(compactSign)+" ) payload: "+jsonCompactVerify.getDecodedPayload());
-		if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		if(jsonCompactVerify.verify(compactSign.replace(".", ".CORROMPO"))!=false) {
-			throw new Exception("Expected validation error");
-		}
+		JWTOptions optionsVerify = new JWTOptions(JOSESerialization.JSON);
+		JsonVerifySignature jsonVerify = new JsonVerifySignature(truststore, alias, signatureAlgorithm,optionsVerify);
+		verifySignature(tipo, false, jsonVerify, attachSign, jsonInput, options);
 		
 		// Verifica basata sull'header
-		jsonCompactVerify = new JsonVerifySignature();
-		System.out.println("["+tipo+"]-b2. JsonCompactSignature Verify HEADER ("+jsonCompactVerify.verify(compactSign)+" ) payload: "+jsonCompactVerify.getDecodedPayload());
-		if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		if(jsonCompactVerify.verify(compactSign.replace(".", ".CORROMPO"))!=false) {
-			throw new Exception("Expected validation error");
-		}
-
+		jsonVerify = new JsonVerifySignature(truststoreJKS, optionsVerify);
+		verifySignature(tipo, true, jsonVerify, attachSign, jsonInput, options);
 		
 		System.out.println("\n\n");
 		
-		// 4c. Signature Detached
-		JsonSignature jsonDetachedSignature = new JsonSignature(keystore, alias, signatureAlgorithm, JOSERepresentation.DETACHED);
-		String detachedSign = jsonDetachedSignature.sign(jsonInput);
 		
-		System.out.println("["+tipo+"]-c. JsonDetachedSignature Signed: \n"+detachedSign);
+		
+		// **** JSON - !detached -  !payloadEncoding ***
+		
+		// Signature Json - Unencoded Payload Option (RFC 7797)
+		options = new JWSOptions(JOSESerialization.JSON);
+		options.setPayloadEncoding(false);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(keystore, alias, signatureAlgorithm, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(keystore, alias, signatureAlgorithm, headers, options);
+		}
+		attachSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo,attachSign, jsonInput, options, null, headers);
 		
 		// Verifica
-		JsonVerifySignature jsonDetachedVerify = new JsonVerifySignature(truststore, alias, signatureAlgorithm, JOSERepresentation.DETACHED);
-		System.out.println("["+tipo+"]-c. JsonDetachedSignature Verify ("+jsonDetachedVerify.verify(detachedSign, jsonInput)+") payload:"+jsonDetachedVerify.getDecodedPayload());
-		if(jsonDetachedVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
+		optionsVerify = new JWTOptions(JOSESerialization.JSON);
+		jsonVerify = new JsonVerifySignature(truststore, alias, signatureAlgorithm,optionsVerify);
+		verifySignature(tipo, false, jsonVerify, attachSign, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonVerify = new JsonVerifySignature(truststoreJKS,optionsVerify);
+		verifySignature(tipo, true, jsonVerify, attachSign, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+		
+		
+		// **** JSON - detached -  [n.c. payloadEncoding] ***
+		
+		// Signature Json - detached
+		options = new JWSOptions(JOSESerialization.JSON);
+		options.setDetached(true);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(keystore, alias, signatureAlgorithm, options);
 		}
-		String jsonInputCorretto = "\n{\n\t\"name\":\"value1\",\n\t\"name2\":\"valueCORROMPO\"\n}";
-		if(jsonDetachedVerify.verify(detachedSign, jsonInputCorretto)!=false) {
-			throw new Exception("Expected validation error");
+		else {
+			jsonSignature = new JsonSignature(keystore, alias, signatureAlgorithm, headers, options);
 		}
+		String detachedSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo,detachedSign, jsonInput, options, null, headers);
+		
+		// Verifica
+		optionsVerify = new JWTOptions(JOSESerialization.JSON);
+		jsonVerify = new JsonVerifySignature(truststore, alias, signatureAlgorithm,optionsVerify);
+		verifySignature(tipo, false, jsonVerify, detachedSign, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonVerify = new JsonVerifySignature(truststoreJKS,optionsVerify);
+		verifySignature(tipo, true, jsonVerify, detachedSign, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+		
+		
+		// **** COMPACT - !detached -  [n.c. payloadEncoding] ***		
+		
+		// Signature Compact
+		options = new JWSOptions(JOSESerialization.COMPACT);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(keystore, alias, signatureAlgorithm, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(keystore, alias, signatureAlgorithm, headers, options);
+		}
+		String compactSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo, compactSign, jsonInput, options, null, headers);
+		
+		// Verifica
+		optionsVerify = new JWTOptions(JOSESerialization.COMPACT);
+		jsonVerify = new JsonVerifySignature(truststore, alias, signatureAlgorithm, optionsVerify);
+		verifySignature(tipo, false, jsonVerify, compactSign, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonVerify = new JsonVerifySignature(truststoreJKS, optionsVerify);
+		verifySignature(tipo, true, jsonVerify, compactSign, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+		
+
+		// **** COMPACT - detached -  [n.c. payloadEncoding] ***
+		
+		// Signature Compact
+		options = new JWSOptions(JOSESerialization.COMPACT);
+		options.setDetached(true);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(keystore, alias, signatureAlgorithm, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(keystore, alias, signatureAlgorithm, headers, options);
+		}
+		compactSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo, compactSign, jsonInput, options, null, headers);
+		
+		// Verifica
+		optionsVerify = new JWTOptions(JOSESerialization.COMPACT);
+		jsonVerify = new JsonVerifySignature(truststore, alias, signatureAlgorithm, optionsVerify);
+		verifySignature(tipo, false, jsonVerify, compactSign, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonVerify = new JsonVerifySignature(truststoreJKS, optionsVerify);
+		verifySignature(tipo, true, jsonVerify, compactSign, jsonInput, options);
+		
+		System.out.println("\n\n");
+
 	}
 	
 	
-	private static void testJsonJwkKey(TipoTest tipo, JsonWebKey keystore, JsonWebKey truststore, JwtHeaders headers) throws Exception {
+	private static void testJsonJwkKey(TipoTest tipo, JsonWebKey keystore, JsonWebKey truststore, KeyStore truststoreJKS, JwtHeaders headers) throws Exception {
 		// Esempio Signature JSON con altri costruttori
 			
 		String jsonInput = "\n{\n\t\"name\":\"value1\",\n\t\"name2\":\"value2\"\n}";
@@ -700,81 +930,379 @@ public class TestSignature {
 		System.out.println("\n\n =============== "+tipo+" =================");
 		System.out.println("["+tipo+"]. Example JsonSignature (Costruttore keystore) \n");
 
-		Properties signatureProps = new Properties();
+		Properties signaturePropsTmp = new Properties();
 		InputStream is = TestSignature.class.getResourceAsStream("jws.signature.properties");
-		signatureProps.load(is);
-		
-		String signatureAlgorithm = signatureProps.getProperty("rs.security.signature.algorithm");
+		signaturePropsTmp.load(is);
+		String signatureAlgorithm = signaturePropsTmp.getProperty("rs.security.signature.algorithm"); // per comprendere l'algoritmo
 
 		
 		System.out.println("\n");
 		
-		// 4a. Signature Attached 
-		JsonSignature jsonAttachedSignature = new JsonSignature(keystore, signatureAlgorithm , JOSERepresentation.SELF_CONTAINED);
-		String attachSign = jsonAttachedSignature.sign(jsonInput);
 		
-		System.out.println("["+tipo+"]-a. JsonSelfContainedSignature Signed: \n"+attachSign);
+		// **** JSON - !detached -  payloadEncoding ***
+		
+		// Signature Json
+		JWSOptions options = new JWSOptions(JOSESerialization.JSON);
+		JsonSignature jsonSignature = null;
+		if(headers==null) {
+			jsonSignature = new JsonSignature(keystore, signatureAlgorithm, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(keystore, signatureAlgorithm, headers, options);
+		}
+		String attachSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo, attachSign, jsonInput, options, null, headers);
 		
 		// Verifica
-		JsonVerifySignature jsonAttachedVerify = new JsonVerifySignature(truststore, signatureAlgorithm, JOSERepresentation.SELF_CONTAINED);
-		System.out.println("["+tipo+"]-a. JsonSelfContainedSignature Verify ("+jsonAttachedVerify.verify(attachSign)+") payload: "+jsonAttachedVerify.getDecodedPayload());
-		if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		if(jsonAttachedVerify.verify(attachSign.replace("payload\":\"", "payload\":\"CORROMPO"))!=false) {
-			throw new Exception("Expected validation error");
-		}
-		
-		System.out.println("\n\n");
-		
-		// 4b. Signature Compact (e uso keystore openspcoop)
-		JsonSignature jsonCompactSignature = new JsonSignature(keystore, signatureAlgorithm, headers, JOSERepresentation.COMPACT);
-		String compactSign = jsonCompactSignature.sign(jsonInput);
-		
-		System.out.println("["+tipo+"]-b. JsonCompactSignature Signed: \n"+compactSign);
-		
-		String hdrDecoded = new String (Base64Utilities.decode(compactSign.split("\\.")[0]));
-		System.out.println("["+tipo+"]-b. JsonCompactSignature HDR base64 decoded: "+hdrDecoded);
-		
-		// Verifica
-		JsonVerifySignature jsonCompactVerify = new JsonVerifySignature(truststore, signatureAlgorithm, JOSERepresentation.COMPACT);
-		System.out.println("["+tipo+"]-b. JsonCompactSignature Verify ("+jsonCompactVerify.verify(compactSign)+" ) payload: "+jsonCompactVerify.getDecodedPayload());
-		if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		if(jsonCompactVerify.verify(compactSign.replace(".", ".CORROMPO"))!=false) {
-			throw new Exception("Expected validation error");
-		}
+		JWTOptions optionsVerify = new JWTOptions(JOSESerialization.JSON);
+		JsonVerifySignature jsonVerify = new JsonVerifySignature(truststore, signatureAlgorithm,optionsVerify);
+		verifySignature(tipo, false, jsonVerify, attachSign, jsonInput, options);
 		
 		// Verifica basata sull'header
-		jsonCompactVerify = new JsonVerifySignature();
-		System.out.println("["+tipo+"]-b2. JsonCompactSignature Verify HEADER ("+jsonCompactVerify.verify(compactSign)+" ) payload: "+jsonCompactVerify.getDecodedPayload());
-		if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-			throw new Exception("Found different payload");
-		}
-		if(jsonCompactVerify.verify(compactSign.replace(".", ".CORROMPO"))!=false) {
-			throw new Exception("Expected validation error");
-		}
-		
+		jsonVerify = new JsonVerifySignature(truststoreJKS, optionsVerify);
+		verifySignature(tipo, true, jsonVerify, attachSign, jsonInput, options);
 		
 		System.out.println("\n\n");
 		
-		// 4c. Signature Detached
-		JsonSignature jsonDetachedSignature = new JsonSignature(keystore, signatureAlgorithm, JOSERepresentation.DETACHED);
-		String detachedSign = jsonDetachedSignature.sign(jsonInput);
 		
-		System.out.println("["+tipo+"]-c. JsonDetachedSignature Signed: \n"+detachedSign);
+		
+		// **** JSON - !detached -  !payloadEncoding ***
+		
+		// Signature Json - Unencoded Payload Option (RFC 7797)
+		options = new JWSOptions(JOSESerialization.JSON);
+		options.setPayloadEncoding(false);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(keystore, signatureAlgorithm, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(keystore, signatureAlgorithm, headers, options);
+		}
+		attachSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo,attachSign, jsonInput, options, null, headers);
 		
 		// Verifica
-		JsonVerifySignature jsonDetachedVerify = new JsonVerifySignature(truststore, signatureAlgorithm, JOSERepresentation.DETACHED);
-		System.out.println("["+tipo+"]-c. JsonDetachedSignature Verify ("+jsonDetachedVerify.verify(detachedSign, jsonInput)+") payload:"+jsonDetachedVerify.getDecodedPayload());
-		if(jsonDetachedVerify.getDecodedPayload().equals(jsonInput)==false) {
+		optionsVerify = new JWTOptions(JOSESerialization.JSON);
+		jsonVerify = new JsonVerifySignature(truststore, signatureAlgorithm,optionsVerify);
+		verifySignature(tipo, false, jsonVerify, attachSign, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonVerify = new JsonVerifySignature(truststoreJKS,optionsVerify);
+		verifySignature(tipo, true, jsonVerify, attachSign, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+		
+		
+		// **** JSON - detached -  [n.c. payloadEncoding] ***
+		
+		// Signature Json - detached
+		options = new JWSOptions(JOSESerialization.JSON);
+		options.setDetached(true);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(keystore, signatureAlgorithm, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(keystore, signatureAlgorithm, headers, options);
+		}
+		String detachedSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo,detachedSign, jsonInput, options, null, headers);
+		
+		// Verifica
+		optionsVerify = new JWTOptions(JOSESerialization.JSON);
+		jsonVerify = new JsonVerifySignature(truststore, signatureAlgorithm,optionsVerify);
+		verifySignature(tipo, false, jsonVerify, detachedSign, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonVerify = new JsonVerifySignature(truststoreJKS,optionsVerify);
+		verifySignature(tipo, true, jsonVerify, detachedSign, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+		
+		
+		// **** COMPACT - !detached -  [n.c. payloadEncoding] ***		
+		
+		// Signature Compact
+		options = new JWSOptions(JOSESerialization.COMPACT);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(keystore, signatureAlgorithm, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(keystore, signatureAlgorithm, headers, options);
+		}
+		String compactSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo, compactSign, jsonInput, options, null, headers);
+		
+		// Verifica
+		optionsVerify = new JWTOptions(JOSESerialization.COMPACT);
+		jsonVerify = new JsonVerifySignature(truststore, signatureAlgorithm, optionsVerify);
+		verifySignature(tipo, false, jsonVerify, compactSign, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonVerify = new JsonVerifySignature(truststoreJKS, optionsVerify);
+		verifySignature(tipo, true, jsonVerify, compactSign, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+		
+
+		// **** COMPACT - detached -  [n.c. payloadEncoding] ***
+		
+		// Signature Compact
+		options = new JWSOptions(JOSESerialization.COMPACT);
+		options.setDetached(true);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(keystore, signatureAlgorithm, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(keystore, signatureAlgorithm, headers, options);
+		}
+		compactSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo, compactSign, jsonInput, options, null, headers);
+		
+		// Verifica
+		optionsVerify = new JWTOptions(JOSESerialization.COMPACT);
+		jsonVerify = new JsonVerifySignature(truststore, signatureAlgorithm, optionsVerify);
+		verifySignature(tipo, false, jsonVerify, compactSign, jsonInput, options);
+		
+		// Verifica basata sull'header
+		jsonVerify = new JsonVerifySignature(truststoreJKS, optionsVerify);
+		verifySignature(tipo, true, jsonVerify, compactSign, jsonInput, options);
+		
+		System.out.println("\n\n");
+		
+	}
+	
+	
+	private static void verifySignatureBuild(TipoTest tipo, String signature, String jsonInput, JWSOptions options, 
+			Properties signatureProps, JwtHeaders headers) throws Exception {
+		
+		List<String> checkHeaders = getHeaders(signatureProps, headers);
+		
+		System.out.println("["+tipo+"] "+options.getSerialization().name()+" Signature (detached:"+options.isDetached()+" payloadEncoding:"+options.isPayloadEncoding()+") Signed: \n"+signature);
+		if(JOSESerialization.JSON.equals(options.getSerialization())) {
+			if(options.isDetached()) {
+				if(signature.contains("\"payload\":")) {
+					throw new Exception("Found payload? (detached mode)");
+				}
+			}
+			else {
+				if(signature.contains("\"payload\":")==false) {
+					throw new Exception("Not Found payload");
+				}
+				if(options.isPayloadEncoding()) {
+					if(signature.contains(jsonInput)) {
+						throw new Exception("Payload not encoded (payload encoding enabled)");
+					}
+				}
+				else {
+					if(!signature.contains(jsonInput)) {
+						throw new Exception("Payload encoded (payload encoding disabled)");
+					}
+				}
+			}
+			
+			int indexOf = signature.indexOf("\"protected\":\"");
+			String protectedHeaders = signature.substring(indexOf+"\"protected\":\"".length());
+			protectedHeaders = protectedHeaders.substring(0, protectedHeaders.indexOf("\""));
+			String hdrDecoded = new String (Base64Utilities.decode(protectedHeaders));
+			System.out.println("["+tipo+"] "+options.getSerialization().name()+" Signature (detached:"+options.isDetached()+" payloadEncoding:"+options.isPayloadEncoding()+") protected base64 decoded: "+hdrDecoded);
+			if(checkHeaders!=null && !checkHeaders.isEmpty()) {
+				for (String hdr : checkHeaders) {
+					System.out.println("["+tipo+"] "+options.getSerialization().name()+" Verifico presenza '"+hdr+"'");
+					String hdrName = "\""+hdr+"\":";
+					if(!hdrDecoded.contains(hdrName)) {
+						throw new Exception("'"+hdr+"' not found in headers");
+					}
+				}
+			}
+		}
+		else {
+			if(signature.contains(".")==false) {
+				throw new Exception("Expected format with '.' separator");
+			}
+			String [] tmp = signature.split("\\.");
+			if(tmp==null) {
+				throw new Exception("Expected format with '.' separator");
+			}
+			if(options.isDetached()) {
+				if(signature.contains("..")==false) {
+					throw new Exception("Expected format with '..' separator (detached)");
+				}
+			}
+			int length = 3;
+			if(tmp.length!=length) {
+				throw new Exception("Expected format with 3 base64 info ('.' separator");
+			}
+			for (int i = 0; i < tmp.length; i++) {
+				
+				String part = tmp[i];
+				if(i==1) {
+					if(options.isDetached()) {
+						if(!(part==null || "".equals(part))) {
+							throw new Exception("Found payload? (detached mode)");
+						}
+						continue;
+					}
+				}
+				if(i==1) {
+					if(options.isPayloadEncoding()) {
+						byte [] decoded = Base64Utilities.decode(part);
+						String jsonDecoded = new String(decoded);
+						if(!jsonDecoded.equals(jsonInput)) {
+							throw new Exception("Found different payload after decoded (payload encoding enabled)");
+						}
+					}
+					else {
+						boolean decodeError = false;
+						try {
+							Base64Utilities.decode(part);
+						}catch(Exception e) {
+							decodeError = true;
+						}
+						if(!decodeError) {
+							throw new Exception("Position '"+i+"' base64 encoded, expected payload encoding disabled");
+						}
+						if(!part.equals(jsonInput)) {
+							throw new Exception("Found different payload (payload encoding disabled)");
+						}
+					}
+				}
+				else {
+					try {
+						Base64Utilities.decode(part);
+					}catch(Exception e) {
+						throw new Exception("Position '"+i+"' uncorrect base64 encoded:"+e.getMessage(),e);
+					}
+				}
+				
+			}
+			
+			String hdrDecoded = new String (Base64Utilities.decode(signature.split("\\.")[0]));
+			System.out.println("["+tipo+"] "+options.getSerialization().name()+" Signature (detached:"+options.isDetached()+" payloadEncoding:"+options.isPayloadEncoding()+") HDR base64 decoded: "+hdrDecoded);
+			if(checkHeaders!=null && !checkHeaders.isEmpty()) {
+				for (String hdr : checkHeaders) {
+					System.out.println("["+tipo+"] "+options.getSerialization().name()+" Verifico presenza '"+hdr+"'");
+					String hdrName = "\""+hdr+"\":";
+					if(!hdrDecoded.contains(hdrName)) {
+						throw new Exception("'"+hdr+"' not found in headers");
+					}
+				}
+			}
+		}
+	}
+	
+	private static void verifySignature(TipoTest tipo, boolean useHdrsForValidation, JsonVerifySignature verify, String signature, String jsonInput, JWSOptions options) throws Exception {
+		boolean result = false;
+		if(options.isDetached()) {
+			result = verify.verifyDetached(signature, jsonInput);
+		}
+		else {
+			result = verify.verify(signature);
+		}
+		System.out.println("["+tipo+"] "+options.getSerialization().name()+" Verify Signature (use-hdrs: "+useHdrsForValidation+" detached:"+options.isDetached()+" payloadEncoding:"+options.isPayloadEncoding()+")  result:"+result+" payload: "+verify.getDecodedPayload());
+		if(verify.getDecodedPayload().equals(jsonInput)==false) {
 			throw new Exception("Found different payload");
 		}
-		String jsonInputCorretto = "\n{\n\t\"name\":\"value1\",\n\t\"name2\":\"valueCORROMPO\"\n}";
-		if(jsonDetachedVerify.verify(detachedSign, jsonInputCorretto)!=false) {
-			throw new Exception("Expected validation error");
+		
+		// test per corrompere il contenuto
+		if(options.isDetached()) {
+			
+			// body
+			String jsonInputCorrotto = jsonInput.replace("value1", "value1CORROTTO");
+			if(verify.verifyDetached(signature, jsonInputCorrotto)!=false) {
+				throw new Exception("Expected validation error (bodyCorrupted: "+jsonInputCorrotto+")");
+			}
+			
+			// signature
+			String signatureCorrotta = signature.replace("signature\":\"", "signature\":\"CORROTTO");
+			if(verify.verifyDetached(signatureCorrotta, jsonInput)!=false) {
+				throw new Exception("Expected validation error (signatureCorrupted: "+signatureCorrotta+")");
+			}
 		}
+		else {
+			
+			// body
+			String signatureCorrottaParteBody = null;
+			if(JOSESerialization.JSON.equals(options.getSerialization())) {
+				if(options.isPayloadEncoding()) {
+					signatureCorrottaParteBody = signature.replace("payload\":\"", "payload\":\"CORROTTO");
+				}
+				else {
+					signatureCorrottaParteBody = signature.replace("value1", "value1differente");
+				}
+			}
+			else {
+				if(options.isPayloadEncoding()) {
+					signatureCorrottaParteBody = signature.replaceFirst("\\.", ".CORROTTO");
+				}
+				else {
+					signatureCorrottaParteBody = signature.replace("value1", "value1differente");
+				}
+			}
+			if(verify.verify(signatureCorrottaParteBody)!=false) {
+				throw new Exception("Expected validation error (bodyCorrupted: "+signatureCorrottaParteBody+")");
+			}
+			
+			// signature
+			String signatureCorrotta = null;
+			if(JOSESerialization.JSON.equals(options.getSerialization())) {
+				signatureCorrotta = signature.replace("signature\":\"", "signature\":\"CORROTTO");
+			}
+			else {
+				signatureCorrotta = signature.replaceFirst("\\.", "TEMPLATECORROTTO"); // per non corrompere il body
+				signatureCorrotta = signatureCorrotta.replaceFirst("\\.", ".CORROTTO");
+				signatureCorrotta = signatureCorrotta.replaceFirst("TEMPLATECORROTTO","."); // ripristino il body
+			}
+			if(verify.verify(signatureCorrotta)!=false) {
+				throw new Exception("Expected validation error (signatureCorrupted: "+signatureCorrotta+")");
+			}
+		}
+
+	}
+	
+	private static List<String> getHeaders(Properties signatureProps, JwtHeaders headers){
+		List<String> list = new ArrayList<>();
+		
+		if(signatureProps!=null) {
+			
+			String kid = signatureProps.getProperty("rs.security.signature.include.key.id");
+			if("true".equals(kid)) {
+				list.add(JwtHeaders.JWT_HDR_KID);
+			}
+			
+			String tipo = signatureProps.getProperty("rs.security.keystore.type");
+			if("jwk".equals(tipo)) {
+				String jwk = signatureProps.getProperty("rs.security.signature.include.public.key");
+				if("true".equals(jwk)) {
+					list.add(JwtHeaders.JWT_HDR_JWK);
+				}
+			}
+			else {
+				String x5c = signatureProps.getProperty("rs.security.signature.include.cert");
+				if("true".equals(x5c)) {
+					list.add(JwtHeaders.JWT_HDR_X5C);
+				}
+				String x5t = signatureProps.getProperty("rs.security.signature.include.cert.sha1");
+				if("true".equals(x5t)) {
+					list.add(JwtHeaders.JWT_HDR_X5T);
+				}
+				String x5t_256 = signatureProps.getProperty("rs.security.signature.include.cert.sha256");
+				if("true".equals(x5t_256)) {
+					list.add(JwtHeaders.JWT_HDR_X5t_S256);
+				}	
+			}
+						
+		}
+		
+		if(headers!=null) {
+			List<String> listHDR = headers.headers();
+			if(listHDR!=null && !listHDR.isEmpty()) {
+				list.addAll(listHDR);
+			}
+		}
+		
+		return list;
 	}
 	
 	public enum TipoTest {
@@ -785,6 +1313,8 @@ public class TestSignature {
 		JSON_SIGNATURE_PROPERTIES_JWK,
 		JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM,
 		JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM,
+		JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY,
+		JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY,
 		JSON_SIGNATURE_PROPERTIES_JKS_KEYSTORE,
 		JSON_SIGNATURE_PROPERTIES_JKS_KEYSTORE_HEADER_CUSTOM,
 		JSON_SIGNATURE_PROPERTIES_JWK_KEYS,

@@ -47,6 +47,8 @@ public class TestEncrypt {
 				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JWK},
 				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM},
 				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY},
 				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE},
 				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE_HEADER_CUSTOM},
 				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE_JCE},

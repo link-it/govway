@@ -62,8 +62,6 @@ public class CORSFilter extends AbstractCORSFilter {
 	
 		CORSFilterConfiguration cors = new CORSFilterConfiguration();
 		
-		cors.setThrowExceptionIfNotFoundConfig(false);
-		
 		cors.setAllowCredentials(StatoFunzionalita.ABILITATO.equals(config.getAccessControlAllowCredentials()));
 			
 		if(config.getAccessControlAllowHeaders()!=null && config.getAccessControlAllowHeaders().sizeHeaderList()>0) {

@@ -188,6 +188,8 @@ public class Costanti {
 	public final static String HTML_MODAL_SPAN_SUFFIX = "</span></p>";
 	
 	
+	public final static String CUSTOM_JS_FUNCTION_INPUT_NUMBER_VALIDATION = "customInputNumberChangeEventHandler";
+	
 	/** PARAMETRI BINARI **/
 	
 	public static final String PARAMETER_FILENAME_PREFIX = "__fn__";  

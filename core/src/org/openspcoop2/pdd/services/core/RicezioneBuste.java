@@ -92,6 +92,7 @@ import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativi;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiException;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiRest;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
+import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazione;
 import org.openspcoop2.pdd.core.autenticazione.pa.EsitoAutenticazionePortaApplicativa;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
 import org.openspcoop2.pdd.core.autorizzazione.container.AutorizzazioneHttpServletRequest;
@@ -219,6 +220,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.Credential;
+import org.openspcoop2.utils.transport.http.CORSRequestType;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -636,7 +638,7 @@ public class RicezioneBuste {
 						outResponseContext.setPropertiesRispostaTrasporto(new Properties());
 					}
 					Properties propertiesTrasporto = outResponseContext.getPropertiesRispostaTrasporto();
-					ServicesUtils.setGovWayHeaderResponse(propertiesTrasporto, logCore, false, outResponseContext.getPddContext());
+					ServicesUtils.setGovWayHeaderResponse(propertiesTrasporto, logCore, false, outResponseContext.getPddContext(), this.msgContext.getRequestInfo().getProtocolContext());
 					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
 							inRequestContext.getConnettore().getUrlProtocolContext(), 
 							outResponseContext.getPropertiesRispostaTrasporto());
@@ -1848,7 +1850,7 @@ public class RicezioneBuste {
 				CORSFilter corsFilter = new CORSFilter(logCore, cors);
 				try {
 					CORSWrappedHttpServletResponse res = new CORSWrappedHttpServletResponse(true);
-					corsFilter.doCORS(httpServletRequest, res);
+					corsFilter.doCORS(httpServletRequest, res, CORSRequestType.PRE_FLIGHT);
 					this.msgContext.setMessageResponse(res.buildMessage());
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY, "true");
 				}catch(Exception e) {
@@ -2875,14 +2877,17 @@ public class RicezioneBuste {
 			
 				msgDiag.mediumDebug("Autenticazione del soggetto...");
 				boolean autenticazioneOpzionale = false;
+				ParametriAutenticazione parametriAutenticazione = null;
 				try{
 					if(pa!=null){
 						tipoAutenticazione = configurazionePdDReader.getAutenticazione(pa);
 						autenticazioneOpzionale = configurazionePdDReader.isAutenticazioneOpzionale(pa);
+						parametriAutenticazione = new ParametriAutenticazione(pa.getProprietaAutenticazioneList());
 					}
 					else{
 						tipoAutenticazione = configurazionePdDReader.getAutenticazione(pd);
 						autenticazioneOpzionale = configurazionePdDReader.isAutenticazioneOpzionale(pd);
+						parametriAutenticazione = new ParametriAutenticazione(pd.getProprietaAutenticazioneList());
 					}
 				}catch(Exception exception){}
 				this.msgContext.getIntegrazione().setTipoAutenticazione(tipoAutenticazione);
@@ -2909,7 +2914,9 @@ public class RicezioneBuste {
 						String wwwAuthenticateErrorHeader = null;
 						try {						
 							EsitoAutenticazionePortaApplicativa esito = 
-									GestoreAutenticazione.verificaAutenticazionePortaApplicativa(tipoAutenticazione, datiInvocazioneAutenticazione, pddContext, protocolFactory, requestMessage); 
+									GestoreAutenticazione.verificaAutenticazionePortaApplicativa(tipoAutenticazione,
+											datiInvocazioneAutenticazione, parametriAutenticazione,
+											pddContext, protocolFactory, requestMessage); 
 							if(esito.getDetails()==null){
 								msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
 							}else{

@@ -95,6 +95,7 @@ import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativi;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiException;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiRest;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
+import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazione;
 import org.openspcoop2.pdd.core.autenticazione.pd.EsitoAutenticazionePortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
 import org.openspcoop2.pdd.core.autorizzazione.container.AutorizzazioneHttpServletRequest;
@@ -189,6 +190,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.transport.http.CORSRequestType;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -594,7 +596,7 @@ public class RicezioneContenutiApplicativi {
 						outResponseContext.setPropertiesRispostaTrasporto(new Properties());
 					}
 					Properties propertiesTrasporto = outResponseContext.getPropertiesRispostaTrasporto();
-					ServicesUtils.setGovWayHeaderResponse(propertiesTrasporto, logCore, true, outResponseContext.getPddContext());
+					ServicesUtils.setGovWayHeaderResponse(propertiesTrasporto, logCore, true, outResponseContext.getPddContext(), this.msgContext.getRequestInfo().getProtocolContext());
 					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
 							inRequestContext.getConnettore().getUrlProtocolContext(), 
 							outResponseContext.getPropertiesRispostaTrasporto());
@@ -1418,7 +1420,7 @@ public class RicezioneContenutiApplicativi {
 				CORSFilter corsFilter = new CORSFilter(logCore, cors);
 				try {
 					CORSWrappedHttpServletResponse res = new CORSWrappedHttpServletResponse(false);
-					corsFilter.doCORS(httpServletRequest, res);
+					corsFilter.doCORS(httpServletRequest, res, CORSRequestType.PRE_FLIGHT);
 					this.msgContext.setMessageResponse(res.buildMessage());
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY, "true");
 				}catch(Exception e) {
@@ -2089,7 +2091,9 @@ public class RicezioneContenutiApplicativi {
 				try {						
 						
 					EsitoAutenticazionePortaDelegata esito = 
-							GestoreAutenticazione.verificaAutenticazionePortaDelegata(tipoAutenticazione, datiInvocazioneAutenticazione, pddContext, protocolFactory, requestMessage); 
+							GestoreAutenticazione.verificaAutenticazionePortaDelegata(tipoAutenticazione, 
+									datiInvocazioneAutenticazione, new ParametriAutenticazione(portaDelegata.getProprietaAutenticazioneList()), 
+									pddContext, protocolFactory, requestMessage); 
 					if(esito.getDetails()==null){
 						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
 					}else{

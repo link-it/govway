@@ -28,7 +28,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openspcoop2.utils.transport.WrappedHttpServletResponse;
+import org.openspcoop2.utils.transport.http.WrappedHttpServletResponse;
 
 /**
  * HttpResponseWrapper

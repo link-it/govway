@@ -70,7 +70,10 @@ import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.json.JSONUtils;
-import org.openspcoop2.utils.security.JOSERepresentation;
+import org.openspcoop2.utils.security.JOSESerialization;
+import org.openspcoop2.utils.security.JWEOptions;
+import org.openspcoop2.utils.security.JWSOptions;
+import org.openspcoop2.utils.security.JWTOptions;
 import org.openspcoop2.utils.security.JsonDecrypt;
 import org.openspcoop2.utils.security.JsonEncrypt;
 import org.openspcoop2.utils.security.JsonSignature;
@@ -287,33 +290,27 @@ public class GestoreToken {
 
 		}
 
-		if( (idleTime > 0) ||
-				(itemLifeSecond > 0) ){
-
-			if( idleTime > 0  ){
-				try{
-					String msg = "Attributo 'IdleTime' (Token) impostato al valore: "+idleTime;
-					if(log!=null)
-						log.info(msg);
-					GestoreToken.logConsole.info(msg);
-					GestoreToken.cacheToken.setItemIdleTime(idleTime);
-				}catch(Exception error){
-					throw new TokenException("Parametro errato per l'attributo 'IdleTime' (Gestore Messaggi): "+error.getMessage(),error);
-				}
+		if( idleTime > 0  ){
+			try{
+				String msg = "Attributo 'IdleTime' (Token) impostato al valore: "+idleTime;
+				if(log!=null)
+					log.info(msg);
+				GestoreToken.logConsole.info(msg);
+				GestoreToken.cacheToken.setItemIdleTime(idleTime);
+			}catch(Exception error){
+				throw new TokenException("Parametro errato per l'attributo 'IdleTime' (Gestore Messaggi): "+error.getMessage(),error);
 			}
-			if( itemLifeSecond > 0  ){
-				try{
-					String msg = "Attributo 'MaxLifeSecond' (Token) impostato al valore: "+itemLifeSecond;
-					if(log!=null)
-						log.info(msg);
-					GestoreToken.logConsole.info(msg);
-					GestoreToken.cacheToken.setItemLifeTime(itemLifeSecond);
-				}catch(Exception error){
-					throw new TokenException("Parametro errato per l'attributo 'MaxLifeSecond' (Gestore Messaggi): "+error.getMessage(),error);
-				}
-			}
-
 		}
+		try{
+			String msg = "Attributo 'MaxLifeSecond' (Token) impostato al valore: "+itemLifeSecond;
+			if(log!=null)
+				log.info(msg);
+			GestoreToken.logConsole.info(msg);
+			GestoreToken.cacheToken.setItemLifeTime(itemLifeSecond);
+		}catch(Exception error){
+			throw new TokenException("Parametro errato per l'attributo 'MaxLifeSecond' (Gestore Messaggi): "+error.getMessage(),error);
+		}
+
 	}
 	
 	
@@ -645,8 +642,9 @@ public class GestoreToken {
     			// JWS Compact   			
     			JsonVerifySignature jsonCompactVerify = null;
     			try {
+    				JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
     				jsonCompactVerify = new JsonVerifySignature(policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID),
-    						JOSERepresentation.COMPACT);
+    						options);
     				if(jsonCompactVerify.verify(token)) {
     					informazioniToken = new InformazioniToken(SorgenteInformazioniToken.JWT,jsonCompactVerify.getDecodedPayload(),tokenParser);
     				}
@@ -662,8 +660,9 @@ public class GestoreToken {
     			// JWE Compact
     			JsonDecrypt jsonDecrypt = null;
     			try {
+    				JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
     				jsonDecrypt = new JsonDecrypt(policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID),
-    						JOSERepresentation.COMPACT);
+    						options);
     				jsonDecrypt.decrypt(token);
     				informazioniToken = new InformazioniToken(SorgenteInformazioniToken.JWT,jsonDecrypt.getDecodedPayload(),tokenParser);
     			}catch(Exception e) {
@@ -1656,8 +1655,9 @@ public class GestoreToken {
 					}
 				}
 				else {
-					// JWS Compact   			
-	    			JsonSignature jsonCompactSignature = new JsonSignature(jwtSecurity,JOSERepresentation.COMPACT);
+					// JWS Compact
+					JWSOptions jwsOptions = new JWSOptions(JOSESerialization.COMPACT);
+	    			JsonSignature jsonCompactSignature = new JsonSignature(jwtSecurity,jwsOptions);
 	    			String compact = jsonCompactSignature.sign(json);
 	    			String headerName = properties.getGestioneTokenHeaderTrasportoJWT();
 	    			tokenForward.getTrasporto().put(headerName, compact);
@@ -1673,12 +1673,14 @@ public class GestoreToken {
 				String value = esitoValidazioneJWT.getInformazioniToken().getRawResponse();
 				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(forwardInforRaccolteMode)) {
 					// JWS Compact   			
-	    			JsonSignature jsonCompactSignature = new JsonSignature(jwtSecurity,JOSERepresentation.COMPACT);
+					JWSOptions jwsOptions = new JWSOptions(JOSESerialization.COMPACT);
+	    			JsonSignature jsonCompactSignature = new JsonSignature(jwtSecurity,jwsOptions);
 	    			value = jsonCompactSignature.sign(value);
 				}
 				else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(forwardInforRaccolteMode)) {
 					// JWE Compact
-					JsonEncrypt jsonCompactEncrypt = new JsonEncrypt(jwtSecurity,JOSERepresentation.COMPACT);
+					JWEOptions jweOptions = new JWEOptions(JOSESerialization.COMPACT);
+	    			JsonEncrypt jsonCompactEncrypt = new JsonEncrypt(jwtSecurity,jweOptions);
 					value = jsonCompactEncrypt.encrypt(value);
 				}
 				else {
@@ -1703,12 +1705,14 @@ public class GestoreToken {
 				String value = esitoIntrospection.getInformazioniToken().getRawResponse();
 				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(forwardInforRaccolteMode)) {
 					// JWS Compact   			
-	    			JsonSignature jsonCompactSignature = new JsonSignature(jwtSecurity,JOSERepresentation.COMPACT);
+					JWSOptions jwsOptions = new JWSOptions(JOSESerialization.COMPACT);
+	    			JsonSignature jsonCompactSignature = new JsonSignature(jwtSecurity,jwsOptions);
 	    			value = jsonCompactSignature.sign(value);
 				}
 				else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(forwardInforRaccolteMode)) {
 					// JWE Compact
-					JsonEncrypt jsonCompactEncrypt = new JsonEncrypt(jwtSecurity,JOSERepresentation.COMPACT);
+					JWEOptions jweOptions = new JWEOptions(JOSESerialization.COMPACT);
+	    			JsonEncrypt jsonCompactEncrypt = new JsonEncrypt(jwtSecurity,jweOptions);
 					value = jsonCompactEncrypt.encrypt(value);
 				}
 				else {
@@ -1733,12 +1737,14 @@ public class GestoreToken {
 				String value = esitoUserInfo.getInformazioniToken().getRawResponse();
 				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(forwardInforRaccolteMode)) {
 					// JWS Compact   			
-	    			JsonSignature jsonCompactSignature = new JsonSignature(jwtSecurity,JOSERepresentation.COMPACT);
+					JWSOptions jwsOptions = new JWSOptions(JOSESerialization.COMPACT);
+	    			JsonSignature jsonCompactSignature = new JsonSignature(jwtSecurity,jwsOptions);
 	    			value = jsonCompactSignature.sign(value);
 				}
 				else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(forwardInforRaccolteMode)) {
 					// JWE Compact
-					JsonEncrypt jsonCompactEncrypt = new JsonEncrypt(jwtSecurity,JOSERepresentation.COMPACT);
+					JWEOptions jweOptions = new JWEOptions(JOSESerialization.COMPACT);
+	    			JsonEncrypt jsonCompactEncrypt = new JsonEncrypt(jwtSecurity,jweOptions);
 					value = jsonCompactEncrypt.encrypt(value);
 				}
 				else {

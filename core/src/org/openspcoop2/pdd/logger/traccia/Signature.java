@@ -29,7 +29,8 @@ import java.lang.reflect.Field;
 import java.util.Properties;
 
 import org.openspcoop2.message.xml.XMLUtils;
-import org.openspcoop2.utils.security.JOSERepresentation;
+import org.openspcoop2.utils.security.JOSESerialization;
+import org.openspcoop2.utils.security.JWSOptions;
 import org.openspcoop2.utils.security.JsonSignature;
 import org.openspcoop2.utils.security.XmlSignature;
 import org.w3c.dom.Element;
@@ -49,6 +50,9 @@ public class Signature {
 	private String key_alias = null;
 	private String key_password = null;
 	private String json_signatureAlgorithm = "RS256";
+	private JOSESerialization json_signatureSerialization = JOSESerialization.COMPACT;
+	private boolean json_signatureDetached = false;
+	private boolean json_signaturePayloadEncoding = true;
 	private String xml_signatureAlgorithm = XmlSignature.DEFAULT_SIGNATURE_METHOD;
 	private String xml_digestAlgorithm = XmlSignature.DEFAULT_DIGEST_METHOD;
 	private String xml_canonicalizationAlgorithm = XmlSignature.DEFAULT_CANONICALIZATION_METHOD;
@@ -68,7 +72,11 @@ public class Signature {
 					String value = pConf.getProperty(fieldName);
 					if(boolean.class.getName().equals(field.getType().getName())) {
 						field.set(this, "true".equalsIgnoreCase(value));
-					}else {
+					}
+					else if(JOSESerialization.class.getName().equals(field.getType().getName())) {
+						field.set(this, JOSESerialization.valueOf(value));
+					}
+					else {
 						field.set(this, value);
 					}
 				}
@@ -108,6 +116,9 @@ public class Signature {
 			if(this.json_signatureAlgorithm==null) {
 				throw new TracciaException("Json Signature Algorithm undefined");
 			}
+			if(this.json_signatureSerialization==null) {
+				throw new TracciaException("Json Signature Representation undefined");
+			}
 			
 			if(this.xml_signatureAlgorithm==null) {
 				throw new TracciaException("Xml Signature Algorithm undefined");
@@ -135,7 +146,10 @@ public class Signature {
 				java.security.KeyStore keystore = java.security.KeyStore.getInstance(this.keystore_type);
 				keystore.load(isKeystore, this.keystore_password.toCharArray());
 				
-				this.jsonCompactSignature = new JsonSignature(keystore, this.key_alias, this.key_password, this.json_signatureAlgorithm, JOSERepresentation.COMPACT);
+				JWSOptions jwsOptions = new JWSOptions(this.json_signatureSerialization);
+				jwsOptions.setDetached(this.json_signatureDetached);
+				jwsOptions.setPayloadEncoding(this.json_signaturePayloadEncoding);
+				this.jsonCompactSignature = new JsonSignature(keystore, this.key_alias, this.key_password, this.json_signatureAlgorithm, jwsOptions);
 				
 				this.xmlSignature = new XmlSignature(keystore, this.key_alias, this.key_password, this.xml_addBouncyCastleProvider);
 				if(this.xml_addX509KeyInfo) {
@@ -203,6 +217,15 @@ public class Signature {
 	}
 	public void setJson_signatureAlgorithm(String json_signatureAlgorithm) {
 		this.json_signatureAlgorithm = json_signatureAlgorithm;
+	}
+	public void setJson_signatureSerialization(JOSESerialization json_signatureSerialization) {
+		this.json_signatureSerialization = json_signatureSerialization;
+	}
+	public void setJson_signatureDetached(boolean json_signatureDetached) {
+		this.json_signatureDetached = json_signatureDetached;
+	}
+	public void setJson_signaturePayloadEncoding(boolean json_signaturePayloadEncoding) {
+		this.json_signaturePayloadEncoding = json_signaturePayloadEncoding;
 	}
 	public void setXml_signatureAlgorithm(String xml_signatureAlgorithm) {
 		this.xml_signatureAlgorithm = xml_signatureAlgorithm;

@@ -59,7 +59,6 @@ import org.openspcoop2.core.registry.ResourceRequest;
 import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
-import org.openspcoop2.core.registry.constants.HttpMethod;
 import org.openspcoop2.core.registry.constants.ParameterType;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.RepresentationType;
@@ -6716,34 +6715,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	}
 	
 	public DataElement getHttpMethodDataElement(TipoOperazione tipoOperazione, String httpMethod) {
-		DataElement de = new DataElement();
-		
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD);
-		de.setSelected(httpMethod);
-		de.setType(DataElementType.SELECT);
-		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_HTTP_METHOD);
-		de.setSize(this.getSize());
-		de.setPostBack(true);
-		
-		HttpMethod[] httpMethods = HttpMethod.values();
-		String [] values = new String[httpMethods.length+1];
-		String [] labels = new String[httpMethods.length+1];
-
-		labels[0] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI;
-		values[0] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI;
-		
-		for (int i = 0; i < httpMethods.length; i++) {
-			HttpMethod method = httpMethods[i];
-			labels[i+1] = method.name();
-			values[i+1] = method.name();
-		}
-		
-		de.setLabels(labels);
-		de.setValues(values);
-		
-		return de;
+		return this.getHttpMethodDataElement(tipoOperazione, httpMethod, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD, AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_HTTP_METHOD,
+				true, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI, AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI);
 	}
-	
 	
 	public void prepareAccordiResourcesResponseList(ISearch ricerca, List<org.openspcoop2.core.registry.ResourceResponse> lista, String idApc,AccordoServizioParteComune as, String tipoAccordo, Resource risorsa)
 			throws Exception {

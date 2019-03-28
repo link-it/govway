@@ -23,6 +23,7 @@
 
 package org.openspcoop2.core.registry.wsdl;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.wsdl.BindingInput;
@@ -35,6 +36,7 @@ import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPHeader;
 import javax.wsdl.extensions.soap.SOAPHeaderFault;
 import javax.wsdl.extensions.soap.SOAPOperation;
+import javax.xml.namespace.QName;
 
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Message;
@@ -216,10 +218,11 @@ public class AccordoServizioWrapperUtilities {
 	
 	/** Utilities oggetti Registro OpenSPCoop */
 	
-	public static void addMessageInputOperation(javax.wsdl.Operation operationWSDL,Logger logger,Operation operationAS){
+	public static void addMessageInputOperation(javax.wsdl.Operation operationWSDL,Logger logger,Operation operationAS, HashMap<String,QName> mapPartQName){
 		// Prendo la definizione del messaggio di input
 		if(operationWSDL.getInput()!=null && operationWSDL.getInput().getMessage()!=null &&
 				operationWSDL.getInput().getMessage().getParts()!=null){
+			QName nameMesssage = operationWSDL.getInput().getMessage().getQName();
 			java.util.Map<?,?> argumentsOperationInput = operationWSDL.getInput().getMessage().getParts();
 			if(argumentsOperationInput!=null && argumentsOperationInput.size()>0){
 				Message mInputAS = new Message();
@@ -240,6 +243,9 @@ public class AccordoServizioWrapperUtilities {
 						partAS.setTypeName(name);
 						partAS.setTypeNamespace(namespace);
 					}
+					if(nameMesssage!=null) {
+						mapPartQName.put(partAS.getName(), nameMesssage);
+					}
 					mInputAS.addPart(partAS);
 					logger.debug("add message input dell'operation["+operationWSDL.getName()+
 							"] con name ["+partAS.getName()+"] element-info({"+partAS.getElementNamespace()+"}"+partAS.getElementName()+
@@ -250,10 +256,11 @@ public class AccordoServizioWrapperUtilities {
 		}
 	}
 	
-	public static void addMessageOutputOperation(javax.wsdl.Operation operationWSDL,Logger logger,Operation operationAS){
+	public static void addMessageOutputOperation(javax.wsdl.Operation operationWSDL,Logger logger,Operation operationAS, HashMap<String,QName> mapPartQName){
 		// Prendo la definizione del messaggio di output
 		if(operationWSDL.getOutput()!=null && operationWSDL.getOutput().getMessage()!=null &&
 				operationWSDL.getOutput().getMessage().getParts()!=null){
+			QName nameMesssage = operationWSDL.getOutput().getMessage().getQName();
 			java.util.Map<?,?> argumentsOperationOutput = operationWSDL.getOutput().getMessage().getParts();
 			if(argumentsOperationOutput!=null && argumentsOperationOutput.size()>0){
 				Message mOutputAS = new Message();
@@ -273,6 +280,9 @@ public class AccordoServizioWrapperUtilities {
 						String namespace = argument.getTypeName().getNamespaceURI();
 						partAS.setTypeName(name);
 						partAS.setTypeNamespace(namespace);
+					}
+					if(nameMesssage!=null) {
+						mapPartQName.put(partAS.getName(), nameMesssage);
 					}
 					mOutputAS.addPart(partAS);
 					logger.debug("add message output dell'operation["+operationWSDL.getName()+
@@ -335,7 +345,7 @@ public class AccordoServizioWrapperUtilities {
 	}
 	
 	public static void setMessageInputSoapBindingInformation(BindingOperation bindingOperation,Logger logger,
-			Operation operationAS,PortType ptAS){
+			Operation operationAS,PortType ptAS, HashMap<String,QName> mapPartQName){
 		String nomeOperation = operationAS.getNome();
 		String nomePortType = ptAS.getNome();
 		BindingInput bindingInput = bindingOperation.getBindingInput();
@@ -346,14 +356,14 @@ public class AccordoServizioWrapperUtilities {
 				for(int j=0; j<extendibleElementsMessageInput.size(); j++){
 					ExtensibilityElement elem = (ExtensibilityElement) extendibleElementsMessageInput.get(j);
 					logger.debug("esamino binding extendibles di tipo:"+elem.getClass().getName()+" instance of SOAPBody:"+(elem instanceof SOAPBody));
-					setPartMessageSoapBindingOperationInfo(elem, logger, operationAS, ptAS, true, operationAS.getMessageInput());
+					setPartMessageSoapBindingOperationInfo(elem, logger, operationAS, ptAS, true, operationAS.getMessageInput(), mapPartQName);
 				}
 			}
 		}
 	}
 	
 	public static void setMessageOutputSoapBindingInformation(BindingOperation bindingOperation,Logger logger,
-			Operation operationAS,PortType ptAS){
+			Operation operationAS,PortType ptAS, HashMap<String,QName> mapPartQName){
 		String nomeOperation = operationAS.getNome();
 		String nomePortType = ptAS.getNome();
 		BindingOutput bindingOutput = bindingOperation.getBindingOutput();
@@ -364,14 +374,15 @@ public class AccordoServizioWrapperUtilities {
 				for(int j=0; j<extendibleElementsMessageOutput.size(); j++){
 					ExtensibilityElement elem = (ExtensibilityElement) extendibleElementsMessageOutput.get(j);
 					logger.debug("esamino binding extendibles di tipo:"+elem.getClass().getName()+" instance of SOAPBody:"+(elem instanceof SOAPBody));
-					setPartMessageSoapBindingOperationInfo(elem, logger, operationAS, ptAS, false, operationAS.getMessageOutput());
+					setPartMessageSoapBindingOperationInfo(elem, logger, operationAS, ptAS, false, operationAS.getMessageOutput(), mapPartQName);
 				}
 			}
 		}
 	}
 	
 	public static void setPartMessageSoapBindingOperationInfo(ExtensibilityElement elem,Logger logger,
-			Operation operationAS,PortType ptAS, boolean inputMessage, Message message){
+			Operation operationAS,PortType ptAS, boolean inputMessage, Message message,
+			HashMap<String,QName> mapPartQName){
 		
 		String nomeOperation = operationAS.getNome();
 		String tipoMessage = "message-input";
@@ -399,10 +410,24 @@ public class AccordoServizioWrapperUtilities {
 		else if(elem instanceof SOAPHeader){
 			SOAPHeader soapHeader = (SOAPHeader) elem;
 			String part = soapHeader.getPart();
+			QName messageQName = soapHeader.getMessage();
 			if(part!=null){
 				if(message.sizePartList()>0){
 					for (int i = 0; i <message.sizePartList(); i++) {
 						if(part.equals(message.getPart(i).getName())){
+							if(messageQName!=null && mapPartQName!=null && mapPartQName.size()>0) {
+								// verifico che sia effettivamente un part dello stesso messaggio usato per il body
+								if(mapPartQName.containsKey(part)) {
+									// verifico che appartenga allo stesso namespace
+									QName qname = mapPartQName.get(part);
+									if(!messageQName.toString().equals(qname.toString())){
+										continue;
+									}
+								}
+								else {
+									continue;
+								}
+							}
 							// Li rimuovo poiche' non vengono gestiti nella validazione XSD/WSDL attuale.
 							// TODO: in futuro aggiungere supporto, classificando il part come header o body
 							message.removePart(i);
@@ -415,10 +440,24 @@ public class AccordoServizioWrapperUtilities {
 		else if(elem instanceof SOAPHeaderFault){
 			SOAPHeaderFault soapHeaderFault = (SOAPHeaderFault) elem;
 			String part = soapHeaderFault.getPart();
+			QName messageQName = soapHeaderFault.getMessage();
 			if(part!=null){
 				if(message.sizePartList()>0){
 					for (int i = 0; i <message.sizePartList(); i++) {
 						if(part.equals(message.getPart(i).getName())){
+							if(messageQName!=null && mapPartQName!=null && mapPartQName.size()>0) {
+								// verifico che sia effettivamente un part dello stesso messaggio usato per il body
+								if(mapPartQName.containsKey(part)) {
+									// verifico che appartenga allo stesso namespace
+									QName qname = mapPartQName.get(part);
+									if(!messageQName.toString().equals(qname.toString())){
+										continue;
+									}
+								}
+								else {
+									continue;
+								}
+							}
 							// Li rimuovo poiche' non vengono gestiti nella validazione XSD/WSDL attuale.
 							// TODO: in futuro aggiungere supporto, classificando il part come header o body
 							message.removePart(i);
@@ -449,10 +488,24 @@ public class AccordoServizioWrapperUtilities {
 		else if(elem instanceof javax.wsdl.extensions.soap12.SOAP12Header){
 			javax.wsdl.extensions.soap12.SOAP12Header soapHeader = (javax.wsdl.extensions.soap12.SOAP12Header) elem;
 			String part = soapHeader.getPart();
+			QName messageQName = soapHeader.getMessage();
 			if(part!=null){
 				if(message.sizePartList()>0){
 					for (int i = 0; i <message.sizePartList(); i++) {
 						if(part.equals(message.getPart(i).getName())){
+							if(messageQName!=null && mapPartQName!=null && mapPartQName.size()>0) {
+								// verifico che sia effettivamente un part dello stesso messaggio usato per il body
+								if(mapPartQName.containsKey(part)) {
+									// verifico che appartenga allo stesso namespace
+									QName qname = mapPartQName.get(part);
+									if(!messageQName.toString().equals(qname.toString())){
+										continue;
+									}
+								}
+								else {
+									continue;
+								}
+							}
 							// Li rimuovo poiche' non vengono gestiti nella validazione XSD/WSDL attuale.
 							// TODO: in futuro aggiungere supporto, classificando il part come header o body
 							message.removePart(i);
@@ -465,10 +518,24 @@ public class AccordoServizioWrapperUtilities {
 		else if(elem instanceof javax.wsdl.extensions.soap12.SOAP12HeaderFault){
 			javax.wsdl.extensions.soap12.SOAP12HeaderFault soapHeaderFault = (javax.wsdl.extensions.soap12.SOAP12HeaderFault) elem;
 			String part = soapHeaderFault.getPart();
+			QName messageQName = soapHeaderFault.getMessage();
 			if(part!=null){
 				if(message.sizePartList()>0){
 					for (int i = 0; i <message.sizePartList(); i++) {
 						if(part.equals(message.getPart(i).getName())){
+							if(messageQName!=null && mapPartQName!=null && mapPartQName.size()>0) {
+								// verifico che sia effettivamente un part dello stesso messaggio usato per il body
+								if(mapPartQName.containsKey(part)) {
+									// verifico che appartenga allo stesso namespace
+									QName qname = mapPartQName.get(part);
+									if(!messageQName.toString().equals(qname.toString())){
+										continue;
+									}
+								}
+								else {
+									continue;
+								}
+							}
 							// Li rimuovo poiche' non vengono gestiti nella validazione XSD/WSDL attuale.
 							// TODO: in futuro aggiungere supporto, classificando il part come header o body
 							message.removePart(i);
@@ -501,6 +568,8 @@ public class AccordoServizioWrapperUtilities {
 				throw new DriverRegistroServiziException("Port types non presenti");
 			}
 			java.util.Iterator<?> portTypeIterator = portTypes.values().iterator();
+			HashMap<String,QName> mapPartQName_input = new HashMap<String,QName>();
+			HashMap<String,QName> mapPartQName_output = new HashMap<String,QName>();
 			while(portTypeIterator.hasNext()) {
 				portTypeWSDL = (javax.wsdl.PortType) portTypeIterator.next();
 				
@@ -521,10 +590,10 @@ public class AccordoServizioWrapperUtilities {
 					this.logger.debug("add operation: ["+operationWSDL.getName()+"]");
 					
 					// Prendo la definizione del messaggio di input
-					addMessageInputOperation(operationWSDL, this.logger, operationAS);
+					addMessageInputOperation(operationWSDL, this.logger, operationAS, mapPartQName_input);
 					
 					// Prendo la definizione del messaggio di output
-					addMessageOutputOperation(operationWSDL, this.logger, operationAS);
+					addMessageOutputOperation(operationWSDL, this.logger, operationAS, mapPartQName_output);
 					
 					ptAS.addAzione(operationAS);
 				}
@@ -577,10 +646,10 @@ public class AccordoServizioWrapperUtilities {
 						setOperationSoapBindingInformation(bindingOperation, this.logger, operationAS, ptAS);
 											
 						// Raccolgo Message-Input
-						setMessageInputSoapBindingInformation(bindingOperation, this.logger, operationAS, ptAS);
+						setMessageInputSoapBindingInformation(bindingOperation, this.logger, operationAS, ptAS, mapPartQName_input);
 						
 						// Raccolgo Message-Output
-						setMessageOutputSoapBindingInformation(bindingOperation, this.logger, operationAS, ptAS);
+						setMessageOutputSoapBindingInformation(bindingOperation, this.logger, operationAS, ptAS, mapPartQName_output);
 						
 						ptAS.addAzione(operationAS);
 					}		

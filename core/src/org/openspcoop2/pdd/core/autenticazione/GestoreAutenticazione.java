@@ -278,51 +278,54 @@ public class GestoreAutenticazione {
 
 		}
 
-		if( (idleTime > 0) ||
-				(itemLifeSecond > 0) ){
-
-			if( idleTime > 0  ){
-				try{
-					String msg = "Attributo 'IdleTime' (Autenticazione) impostato al valore: "+idleTime;
-					if(log!=null)
-						log.info(msg);
-					GestoreAutenticazione.logConsole.info(msg);
-					GestoreAutenticazione.cacheAutenticazione.setItemIdleTime(idleTime);
-				}catch(Exception error){
-					throw new AutenticazioneException("Parametro errato per l'attributo 'IdleTime' (Gestore Messaggi): "+error.getMessage(),error);
-				}
+		if( idleTime > 0  ){
+			try{
+				String msg = "Attributo 'IdleTime' (Autenticazione) impostato al valore: "+idleTime;
+				if(log!=null)
+					log.info(msg);
+				GestoreAutenticazione.logConsole.info(msg);
+				GestoreAutenticazione.cacheAutenticazione.setItemIdleTime(idleTime);
+			}catch(Exception error){
+				throw new AutenticazioneException("Parametro errato per l'attributo 'IdleTime' (Gestore Messaggi): "+error.getMessage(),error);
 			}
-			if( itemLifeSecond > 0  ){
-				try{
-					String msg = "Attributo 'MaxLifeSecond' (Autenticazione) impostato al valore: "+itemLifeSecond;
-					if(log!=null)
-						log.info(msg);
-					GestoreAutenticazione.logConsole.info(msg);
-					GestoreAutenticazione.cacheAutenticazione.setItemLifeTime(itemLifeSecond);
-				}catch(Exception error){
-					throw new AutenticazioneException("Parametro errato per l'attributo 'MaxLifeSecond' (Gestore Messaggi): "+error.getMessage(),error);
-				}
-			}
-
 		}
+
+		try{
+			String msg = "Attributo 'MaxLifeSecond' (Autenticazione) impostato al valore: "+itemLifeSecond;
+			if(log!=null)
+				log.info(msg);
+			GestoreAutenticazione.logConsole.info(msg);
+			GestoreAutenticazione.cacheAutenticazione.setItemLifeTime(itemLifeSecond);
+		}catch(Exception error){
+			throw new AutenticazioneException("Parametro errato per l'attributo 'MaxLifeSecond' (Gestore Messaggi): "+error.getMessage(),error);
+		}
+
 	}
 	
 
-    public static EsitoAutenticazionePortaDelegata verificaAutenticazionePortaDelegata(String tipoAutenticazione, DatiInvocazionePortaDelegata datiInvocazione,
+    public static EsitoAutenticazionePortaDelegata verificaAutenticazionePortaDelegata(String tipoAutenticazione, 
+    		DatiInvocazionePortaDelegata datiInvocazione, ParametriAutenticazione parametriAutenticazione,
  		  PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg) throws Exception{
-    	return _verificaAutenticazionePortaDelegata(false, tipoAutenticazione, datiInvocazione, pddContext, protocolFactory, msg);
+    	return _verificaAutenticazionePortaDelegata(false, tipoAutenticazione, 
+    			datiInvocazione, parametriAutenticazione, 
+    			pddContext, protocolFactory, msg);
     }
-    public static EsitoAutenticazionePortaDelegata verificaAutenticazioneMessageBox(String tipoAutenticazione, DatiInvocazionePortaDelegata datiInvocazione,
+    public static EsitoAutenticazionePortaDelegata verificaAutenticazioneMessageBox(String tipoAutenticazione, 
+    		DatiInvocazionePortaDelegata datiInvocazione, ParametriAutenticazione parametriAutenticazione,
    		  PdDContext pddContext,IProtocolFactory<?> protocolFactory) throws Exception{
-    	return _verificaAutenticazionePortaDelegata(true, tipoAutenticazione, datiInvocazione, pddContext, protocolFactory, null);
+    	return _verificaAutenticazionePortaDelegata(true, tipoAutenticazione, 
+    			datiInvocazione, parametriAutenticazione, 
+    			pddContext, protocolFactory, null);
     }
     
-    private static EsitoAutenticazionePortaDelegata _verificaAutenticazionePortaDelegata(boolean messageBox, String tipoAutenticazione, DatiInvocazionePortaDelegata datiInvocazione,
+    private static EsitoAutenticazionePortaDelegata _verificaAutenticazionePortaDelegata(boolean messageBox, String tipoAutenticazione, 
+    		DatiInvocazionePortaDelegata datiInvocazione, ParametriAutenticazione parametriAutenticazione,
    		  PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg) throws Exception{
     	
     	checkDatiPortaDelegata(messageBox,datiInvocazione);
     	
     	IAutenticazionePortaDelegata auth = newInstanceAuthPortaDelegata(tipoAutenticazione, pddContext, protocolFactory);
+    	auth.initParametri(parametriAutenticazione);
     	
     	try {
 	    	if(GestoreAutenticazione.cacheAutenticazione==null || !auth.saveAuthenticationResultInCache()){
@@ -379,12 +382,14 @@ public class GestoreAutenticazione {
     	}
     }
 	
-    public static EsitoAutenticazionePortaApplicativa verificaAutenticazionePortaApplicativa(String tipoAutenticazione, DatiInvocazionePortaApplicativa datiInvocazione,
+    public static EsitoAutenticazionePortaApplicativa verificaAutenticazionePortaApplicativa(String tipoAutenticazione, 
+    		DatiInvocazionePortaApplicativa datiInvocazione, ParametriAutenticazione parametriAutenticazione,
     		PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg) throws Exception{
     	  
     	checkDatiPortaApplicativa(datiInvocazione);
     	
     	IAutenticazionePortaApplicativa auth = newInstanceAuthPortaApplicativa(tipoAutenticazione, pddContext, protocolFactory);
+    	auth.initParametri(parametriAutenticazione);
     	
     	try {
 	    	if(GestoreAutenticazione.cacheAutenticazione==null || !auth.saveAuthenticationResultInCache()){

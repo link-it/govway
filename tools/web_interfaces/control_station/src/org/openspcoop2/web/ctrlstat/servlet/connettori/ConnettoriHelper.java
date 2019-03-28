@@ -1733,11 +1733,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setValue(tmpUrl);
 			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 				if ( !this.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)) {
-					de.setType(DataElementType.TEXT_EDIT);
+					de.setType(DataElementType.TEXT_AREA);
 					de.setRequired(true);
 				} else {
-					de.setType(DataElementType.TEXT);
+					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 				}
+				de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL_SIZE);
 			}else{
 				de.setType(DataElementType.HIDDEN);
 			}
@@ -1958,11 +1959,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setValue(tmpUrl);
 			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
 				if (!this.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)) {
-					de.setType(DataElementType.TEXT_EDIT);
+					de.setType(DataElementType.TEXT_AREA);
 					de.setRequired(true);
 				} else {
-					de.setType(DataElementType.TEXT);
+					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 				}
+				de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL_SIZE);
 			}
 			else{
 				de.setType(DataElementType.HIDDEN);
@@ -3101,7 +3103,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					return false;
 				}else{
 					try{
-						DynamicStringReplace.validate(requestOutputFileName);
+						DynamicStringReplace.validate(requestOutputFileName, false);
 					}catch(Exception e){
 						this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME+"' ("+
 								ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT+") non risulta corretto: "+e.getMessage());
@@ -3114,7 +3116,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				if(requestOutputFileNameHeaders!=null && !"".equals(requestOutputFileNameHeaders)){
 					try{
-						DynamicStringReplace.validate(requestOutputFileNameHeaders);
+						DynamicStringReplace.validate(requestOutputFileNameHeaders, false);
 					}catch(Exception e){
 						this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS+"' ("+
 								ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT+") non risulta corretto: "+e.getMessage());
@@ -3133,7 +3135,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						return false;
 					}else{
 						try{
-							DynamicStringReplace.validate(responseInputFileName);
+							DynamicStringReplace.validate(responseInputFileName, false);
 						}catch(Exception e){
 							this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME+"' ("+
 									ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT+") non risulta corretto: "+e.getMessage());
@@ -3146,7 +3148,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					
 					if(responseInputFileNameHeaders!=null && !"".equals(responseInputFileNameHeaders)){
 						try{
-							DynamicStringReplace.validate(responseInputFileNameHeaders);
+							DynamicStringReplace.validate(responseInputFileNameHeaders, false);
 						}catch(Exception e){
 							this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS+"' ("+
 									ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT+") non risulta corretto: "+e.getMessage());

@@ -50,6 +50,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.TestSignature;
 import org.openspcoop2.utils.security.XmlSignature;
 import org.openspcoop2.utils.service.beans.TransazioneBase;
@@ -109,6 +110,9 @@ public class Client {
 		pSignatureConf.setProperty("key.alias", "openspcoop");
 		pSignatureConf.setProperty("key.password", "key123456");
 		pSignatureConf.setProperty("json.signatureAlgorithm", "RS256");
+		pSignatureConf.setProperty("json.signatureSerialization", JOSESerialization.COMPACT.name());
+		pSignatureConf.setProperty("json.signatureDetached", "true");
+		pSignatureConf.setProperty("json.signaturePayloadEncoding", "true");
 		pSignatureConf.setProperty("xml.signatureAlgorithm", XmlSignature.DEFAULT_SIGNATURE_METHOD);
 		pSignatureConf.setProperty("xml.digestAlgorithm", XmlSignature.DEFAULT_DIGEST_METHOD);
 		pSignatureConf.setProperty("xml.canonicalizationAlgorithm", XmlSignature.DEFAULT_CANONICALIZATION_METHOD);
@@ -303,7 +307,8 @@ public class Client {
 	
 	private static DumpMessaggio newDumpMessaggio(TipoMessaggio tipo) {
 		DumpMessaggio msg = new DumpMessaggio();
-
+		msg.setTipoMessaggio(tipo);
+		
 		boolean isRichiesta = tipo.name().startsWith("Richiesta");
 		
 		String jsonInput = "\n{\n\t\"name\":\"Messaggio "+tipo+"\",\n\t\"name2\":\"value2\"\n}";

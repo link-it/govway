@@ -164,7 +164,7 @@ public final class ConfigurazioneAccessoRegistro extends Action {
 				arcNew.setDimensione(dimensionecache);
 				arcNew.setAlgoritmo(AlgoritmoCache.toEnumConstant(algoritmocache));
 				arcNew.setItemIdleTime(idlecache);
-				arcNew.setItemLifeSecond(lifecache);
+				arcNew.setItemLifeSecond(confHelper.convertLifeCacheValue(lifecache));
 				ar.setCache(arcNew);
 			} else {
 				ar.setCache(null);

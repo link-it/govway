@@ -524,10 +524,14 @@ public class CostantiPdD {
     public final static String KEY_TIPO_PROCESSAMENTO_MTOM_RICHIESTA = "@TIPO_PROCESSAMENTO_MTOM_RICHIESTA@";
     /** Costante che identifica la tipologia di processamento MTOM della risposta */
     public final static String KEY_TIPO_PROCESSAMENTO_MTOM_RISPOSTA = "@TIPO_PROCESSAMENTO_MTOM_RISPOSTA@";
-    /** Costante che identifica lil tipo di sicurezza sul messaggio applicato alla richiesta */
+    /** Costante che identifica il tipo di sicurezza sul messaggio applicato alla richiesta */
     public final static String KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA = "@TIPO_SICUREZZA_MESSAGGIO_RICHIESTA@";
-    /** Costante che identifica lil tipo di sicurezza sul messaggio applicato alla risposta */
+    /** Costante che identifica il tipo di sicurezza sul messaggio applicato alla risposta */
     public final static String KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA = "@TIPO_SICUREZZA_MESSAGGIO_RISPOSTA@";    
+    /** Costante che identifica la trasformazione applicata alla richiesta */
+    public final static String KEY_TIPO_TRASFORMAZIONE_RICHIESTA = "@TIPO_TRASFORMAZIONE_RICHIESTA@";
+    /** Costante che identifica la trasformazione applicata alla risposta */
+    public final static String KEY_TIPO_TRASFORMAZIONE_RISPOSTA = "@TIPO_TRASFORMAZIONE_RISPOSTA@";       
     /** Costante che identifica il tipo di messaggio (normale, ricevuta asincrona...) */
     public final static String KEY_TIPO_MESSAGGIO_BUSTA = "@TIPO_MESSAGGIO_BUSTA@"; 
     /** Costante che identifica tipo/nome mittente e tipo/nome destinatario erogatore del servizio da autorizzare, calcolato in base al tipo di messaggio ricevuto.  */

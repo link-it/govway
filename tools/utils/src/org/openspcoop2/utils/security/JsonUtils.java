@@ -67,11 +67,11 @@ public class JsonUtils {
 	public static boolean DECRYPT = false;
 	public static boolean SENDER = true;
 	public static boolean RECEIVER = false;
-	public static UtilsException convert(JOSERepresentation representation, boolean signature, boolean roleSender, Throwable t) {
+	public static UtilsException convert(JOSESerialization serialization, boolean signature, boolean roleSender, Throwable t) {
 		
 		StringBuffer bf = new StringBuffer();
-		if(representation!=null) {
-			bf.append("[").append(representation.name()).append("] ");
+		if(serialization!=null) {
+			bf.append("[").append(serialization.name()).append("] ");
 		}
 		
 		if(t instanceof JwsException) {

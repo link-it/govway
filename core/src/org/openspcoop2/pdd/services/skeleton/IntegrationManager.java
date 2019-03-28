@@ -342,7 +342,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			
 			EsitoAutenticazionePortaDelegata esito = null;
 			try{
-				esito = GestoreAutenticazione.verificaAutenticazioneMessageBox(tipoAutenticazione[i], datiInvocazione, pddContext, protocolFactory); 
+				esito = GestoreAutenticazione.verificaAutenticazioneMessageBox(tipoAutenticazione[i], 
+						datiInvocazione, null, 
+						pddContext, protocolFactory); 
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"Autenticazione("+tipoAutenticazione[i]+")");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

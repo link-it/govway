@@ -25,6 +25,8 @@
 package org.openspcoop2.pdd.core.autenticazione.pd;
 
 import org.openspcoop2.pdd.core.AbstractCore;
+import org.openspcoop2.pdd.core.autenticazione.AutenticazioneException;
+import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazione;
 
 /**
  * AbstractAutenticazioneBase
@@ -36,6 +38,12 @@ import org.openspcoop2.pdd.core.AbstractCore;
 
 public abstract class AbstractAutenticazioneBase extends AbstractCore implements IAutenticazionePortaDelegata {
 
+	protected ParametriAutenticazione parametri;
+	@Override
+	public void initParametri(ParametriAutenticazione parametri) throws AutenticazioneException {
+		this.parametri = parametri;
+	}
+	
 	@Override
 	public boolean saveAuthenticationResultInCache() {
 		return true;

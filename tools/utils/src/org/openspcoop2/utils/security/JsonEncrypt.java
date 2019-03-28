@@ -52,81 +52,68 @@ import org.openspcoop2.utils.certificate.KeyStore;
 public class JsonEncrypt {
 
 	private JweEncryptionProvider provider;
-	private JOSERepresentation representation;
 	
 	private ContentAlgorithm contentAlgorithm;
 	private KeyAlgorithm keyAlgorithm;
 	
-	private boolean deflate = false;
+	private JWEOptions options;
 	
 	private JweHeaders headers;
 	private JwtHeaders jwtHeaders;
 	
-	public JsonEncrypt(Properties props, JOSERepresentation representation) throws UtilsException{
-		this(props, null, representation);
+	public JsonEncrypt(Properties props, JWEOptions options) throws UtilsException{
+		this(props, null, options);
 	}
-	public JsonEncrypt(Properties props, JwtHeaders jwtHeaders, JOSERepresentation representation) throws UtilsException{
+	public JsonEncrypt(Properties props, JwtHeaders jwtHeaders, JWEOptions options) throws UtilsException{
 		try {
 			this.headers = new JweHeaders();
+			
+			this.options=options;
+			String tmp = props.getProperty(JoseConstants.RSSEC_ENCRYPTION_ZIP_ALGORITHM);
+			if(tmp!=null && JoseConstants.JWE_DEFLATE_ZIP_ALGORITHM.equalsIgnoreCase(tmp.trim())) {
+				this.options.setDeflate(true); // overwrite options
+			}
+			
 			this.provider = JweUtils.loadEncryptionProvider(props, JsonUtils.newMessage(), this.headers);
-			this.representation=representation;
 			
 			this.contentAlgorithm = JweUtils.getContentEncryptionAlgorithm(props, ContentAlgorithm.A256GCM);
 			this.keyAlgorithm = JweUtils.getKeyEncryptionAlgorithm(props, null);
 //			if(this.keyAlgorithm==null) {
 //				throw new Exception("KeyAlgorithm undefined");
 //			}
-			
-			String tmp = props.getProperty(JoseConstants.RSSEC_ENCRYPTION_ZIP_ALGORITHM);
-			if(tmp!=null && JoseConstants.JWE_DEFLATE_ZIP_ALGORITHM.equalsIgnoreCase(tmp.trim())) {
-				this.deflate = true;
-			}
-			
+						
 			this.jwtHeaders = jwtHeaders;
 			
 		}catch(Throwable t) {
-			throw JsonUtils.convert(representation, JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
+			throw JsonUtils.convert(options.getSerialization(), JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
 	
 	public JsonEncrypt(java.security.KeyStore keystore, String alias, String keyAlgorithm, String contentAlgorithm, 
-			JOSERepresentation representation) throws UtilsException{
-		this(new KeyStore(keystore), alias, keyAlgorithm, contentAlgorithm, false, null, representation);
+			JWEOptions options) throws UtilsException{
+		initTrustStore(new KeyStore(keystore), alias, keyAlgorithm, contentAlgorithm, null, options);
 	}
 	public JsonEncrypt(KeyStore keystore, String alias, String keyAlgorithm, String contentAlgorithm, 
-			JOSERepresentation representation) throws UtilsException{
-		this(keystore, alias, keyAlgorithm, contentAlgorithm, false, null, representation);	
+			JWEOptions options) throws UtilsException{
+		initTrustStore(keystore, alias, keyAlgorithm, contentAlgorithm, null, options);	
 	}
-	public JsonEncrypt(java.security.KeyStore keystore, String alias, String keyAlgorithm, String contentAlgorithm, boolean deflate, 
-			JOSERepresentation representation) throws UtilsException{
-		this(new KeyStore(keystore), alias, keyAlgorithm, contentAlgorithm, deflate, null, representation);
+	public JsonEncrypt(java.security.KeyStore keystore, String alias, String keyAlgorithm, String contentAlgorithm,
+			JwtHeaders jwtHeaders, JWEOptions options) throws UtilsException{
+		initTrustStore(new KeyStore(keystore), alias, keyAlgorithm, contentAlgorithm, jwtHeaders, options);
 	}
-	public JsonEncrypt(KeyStore keystore, String alias, String keyAlgorithm, String contentAlgorithm, boolean deflate, 
-			JOSERepresentation representation) throws UtilsException{
-		this(keystore, alias, keyAlgorithm, contentAlgorithm, deflate, null, representation);	
+	public JsonEncrypt(KeyStore keystore, String alias, String keyAlgorithm, String contentAlgorithm,
+			JwtHeaders jwtHeaders, JWEOptions options) throws UtilsException{
+		initTrustStore(keystore, alias, keyAlgorithm, contentAlgorithm, jwtHeaders, options);
 	}
-	public JsonEncrypt(java.security.KeyStore keystore, String alias, String keyAlgorithm, String contentAlgorithm, 
-			JwtHeaders jwtHeaders, JOSERepresentation representation) throws UtilsException{
-		this(new KeyStore(keystore), alias, keyAlgorithm, contentAlgorithm, false, jwtHeaders, representation);
-	}
-	public JsonEncrypt(KeyStore keystore, String alias, String keyAlgorithm, String contentAlgorithm, 
-			JwtHeaders jwtHeaders, JOSERepresentation representation) throws UtilsException{
-		this(keystore, alias, keyAlgorithm, contentAlgorithm, false, jwtHeaders, representation);	
-	}
-	public JsonEncrypt(java.security.KeyStore keystore, String alias, String keyAlgorithm, String contentAlgorithm, boolean deflate, 
-			JwtHeaders jwtHeaders, JOSERepresentation representation) throws UtilsException{
-		this(new KeyStore(keystore), alias, keyAlgorithm, contentAlgorithm, deflate, jwtHeaders, representation);
-	}
-	public JsonEncrypt(KeyStore keystore, String alias, String keyAlgorithm, String contentAlgorithm, boolean deflate, 
-			JwtHeaders jwtHeaders, JOSERepresentation representation) throws UtilsException{
+	private void initTrustStore(KeyStore keystore, String alias, String keyAlgorithm, String contentAlgorithm,
+			JwtHeaders jwtHeaders, JWEOptions options) throws UtilsException{
 		try {
-			this.representation=representation;
+			this.options=options;
 			
 			this.keyAlgorithm  = org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm.getAlgorithm(keyAlgorithm);
 			this.contentAlgorithm = org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm.getAlgorithm(contentAlgorithm);
 			String compression = null;
-			if(deflate) {
-				this.deflate = deflate;
+			if(this.options.isDeflate()) {
 				compression = JoseConstants.JWE_DEFLATE_ZIP_ALGORITHM;
 			}
 			
@@ -134,48 +121,35 @@ public class JsonEncrypt {
 			
 			this.jwtHeaders = jwtHeaders;
 		}catch(Throwable t) {
-			throw JsonUtils.convert(representation, JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
+			throw JsonUtils.convert(options.getSerialization(), JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
 	
 	public JsonEncrypt(java.security.KeyStore keystore, String alias, String passwordPrivateKey, String keyAlgorithm, String contentAlgorithm, 
-			JOSERepresentation representation) throws UtilsException{
-		this(new KeyStore(keystore), alias, passwordPrivateKey, keyAlgorithm, contentAlgorithm, false, null, representation);
+			JWEOptions options) throws UtilsException{
+		initKeystore(new KeyStore(keystore), alias, passwordPrivateKey, keyAlgorithm, contentAlgorithm, null, options);
 	}
 	public JsonEncrypt(KeyStore keystore, String alias, String passwordPrivateKey, String keyAlgorithm, String contentAlgorithm, 
-			JOSERepresentation representation) throws UtilsException{
-		this(keystore, alias, passwordPrivateKey, keyAlgorithm, contentAlgorithm, false, null, representation);	
+			JWEOptions options) throws UtilsException{
+		initKeystore(keystore, alias, passwordPrivateKey, keyAlgorithm, contentAlgorithm, null, options);	
 	}
-	public JsonEncrypt(java.security.KeyStore keystore, String alias, String passwordPrivateKey, String keyAlgorithm, String contentAlgorithm, boolean deflate, 
-			JOSERepresentation representation) throws UtilsException{
-		this(new KeyStore(keystore), alias, passwordPrivateKey, keyAlgorithm, contentAlgorithm, deflate, null, representation);
+	public JsonEncrypt(java.security.KeyStore keystore, String alias, String passwordPrivateKey, String keyAlgorithm, String contentAlgorithm,
+			JwtHeaders jwtHeaders, JWEOptions options) throws UtilsException{
+		initKeystore(new KeyStore(keystore), alias, passwordPrivateKey, keyAlgorithm, contentAlgorithm, jwtHeaders, options);
 	}
-	public JsonEncrypt(KeyStore keystore, String alias, String passwordPrivateKey, String keyAlgorithm, String contentAlgorithm, boolean deflate, 
-			JOSERepresentation representation) throws UtilsException{
-		this(keystore, alias, passwordPrivateKey, keyAlgorithm, contentAlgorithm, deflate, null, representation);	
+	public JsonEncrypt(KeyStore keystore, String alias, String passwordPrivateKey, String keyAlgorithm, String contentAlgorithm,
+			JwtHeaders jwtHeaders, JWEOptions options) throws UtilsException{
+		initKeystore(keystore, alias, passwordPrivateKey, keyAlgorithm, contentAlgorithm, jwtHeaders, options);
 	}
-	public JsonEncrypt(java.security.KeyStore keystore, String alias, String passwordPrivateKey, String keyAlgorithm, String contentAlgorithm, 
-			JwtHeaders jwtHeaders, JOSERepresentation representation) throws UtilsException{
-		this(new KeyStore(keystore), alias, passwordPrivateKey, keyAlgorithm, contentAlgorithm, false, jwtHeaders, representation);
-	}
-	public JsonEncrypt(KeyStore keystore, String alias, String passwordPrivateKey, String keyAlgorithm, String contentAlgorithm, 
-			JwtHeaders jwtHeaders, JOSERepresentation representation) throws UtilsException{
-		this(keystore, alias, passwordPrivateKey, keyAlgorithm, contentAlgorithm, false, jwtHeaders, representation);	
-	}
-	public JsonEncrypt(java.security.KeyStore keystore, String alias, String passwordPrivateKey, String keyAlgorithm, String contentAlgorithm, boolean deflate, 
-			JwtHeaders jwtHeaders, JOSERepresentation representation) throws UtilsException{
-		this(new KeyStore(keystore), alias, passwordPrivateKey, keyAlgorithm, contentAlgorithm, deflate, jwtHeaders, representation);
-	}
-	public JsonEncrypt(KeyStore keystore, String alias, String passwordPrivateKey, String keyAlgorithm, String contentAlgorithm, boolean deflate, 
-			JwtHeaders jwtHeaders, JOSERepresentation representation) throws UtilsException{
+	private void initKeystore(KeyStore keystore, String alias, String passwordPrivateKey, String keyAlgorithm, String contentAlgorithm,
+			JwtHeaders jwtHeaders, JWEOptions options) throws UtilsException{
 		try {
-			this.representation=representation;
+			this.options=options;
 			
 			this.keyAlgorithm  = org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm.getAlgorithm(keyAlgorithm);
 			this.contentAlgorithm = org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm.getAlgorithm(contentAlgorithm);
 			String compression = null;
-			if(deflate) {
-				this.deflate = deflate;
+			if(this.options.isDeflate()) {
 				compression = JoseConstants.JWE_DEFLATE_ZIP_ALGORITHM;
 			}
 			
@@ -183,49 +157,35 @@ public class JsonEncrypt {
 			
 			this.jwtHeaders = jwtHeaders;
 		}catch(Throwable t) {
-			throw JsonUtils.convert(representation, JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
+			throw JsonUtils.convert(options.getSerialization(), JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
 
 	public JsonEncrypt(JsonWebKeys jsonWebKeys, String alias, String keyAlgorithm, String contentAlgorithm, 
-			JOSERepresentation representation) throws UtilsException{
-		this(jsonWebKeys, alias, keyAlgorithm, contentAlgorithm, false, null, representation);	
-	}
-	public JsonEncrypt(JsonWebKeys jsonWebKeys, String alias, String keyAlgorithm, String contentAlgorithm, boolean deflate, 
-			JOSERepresentation representation) throws UtilsException{
-		this(jsonWebKeys, alias, keyAlgorithm, contentAlgorithm, deflate, null, representation);	
+			JWEOptions options) throws UtilsException{
+		initJsonWebKey(JsonUtils.readKey(jsonWebKeys, alias), keyAlgorithm, contentAlgorithm, null, options);	
 	}
 	public JsonEncrypt(JsonWebKeys jsonWebKeys, String alias, String keyAlgorithm, String contentAlgorithm, 
-			JwtHeaders jwtHeaders, JOSERepresentation representation) throws UtilsException{
-		this(jsonWebKeys, alias, keyAlgorithm, contentAlgorithm, false, jwtHeaders, representation);	
-	}
-	public JsonEncrypt(JsonWebKeys jsonWebKeys, String alias, String keyAlgorithm, String contentAlgorithm, boolean deflate, 
-			JwtHeaders jwtHeaders, JOSERepresentation representation) throws UtilsException{
-		this(JsonUtils.readKey(jsonWebKeys, alias),keyAlgorithm,contentAlgorithm,deflate,jwtHeaders,representation);
-	}
-
-	public JsonEncrypt(JsonWebKey jsonWebKey, String keyAlgorithm, String contentAlgorithm, 
-			JOSERepresentation representation) throws UtilsException{
-		this(jsonWebKey, keyAlgorithm, contentAlgorithm, false, null, representation);	
-	}
-	public JsonEncrypt(JsonWebKey jsonWebKey, String keyAlgorithm, String contentAlgorithm, boolean deflate, 
-			JOSERepresentation representation) throws UtilsException{
-		this(jsonWebKey, keyAlgorithm, contentAlgorithm, deflate, null, representation);	
+			JwtHeaders jwtHeaders, JWEOptions options) throws UtilsException{
+		initJsonWebKey(JsonUtils.readKey(jsonWebKeys, alias), keyAlgorithm, contentAlgorithm, jwtHeaders, options);	
 	}
 	public JsonEncrypt(JsonWebKey jsonWebKey, String keyAlgorithm, String contentAlgorithm, 
-			JwtHeaders jwtHeaders, JOSERepresentation representation) throws UtilsException{
-		this(jsonWebKey, keyAlgorithm, contentAlgorithm, false, jwtHeaders, representation);	
+			JWEOptions options) throws UtilsException{
+		initJsonWebKey(jsonWebKey, keyAlgorithm, contentAlgorithm, null, options);	
 	}
-	public JsonEncrypt(JsonWebKey jsonWebKey, String keyAlgorithm, String contentAlgorithm, boolean deflate, 
-			JwtHeaders jwtHeaders, JOSERepresentation representation) throws UtilsException{
+	public JsonEncrypt(JsonWebKey jsonWebKey, String keyAlgorithm, String contentAlgorithm, 
+			JwtHeaders jwtHeaders, JWEOptions options) throws UtilsException{
+		initJsonWebKey(jsonWebKey, keyAlgorithm, contentAlgorithm, jwtHeaders, options);	
+	}
+	private void initJsonWebKey(JsonWebKey jsonWebKey, String keyAlgorithm, String contentAlgorithm, 
+			JwtHeaders jwtHeaders, JWEOptions options) throws UtilsException{
 		try {
-			this.representation=representation;
+			this.options=options;
 			
 			this.keyAlgorithm  = org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm.getAlgorithm(keyAlgorithm);
 			this.contentAlgorithm = org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm.getAlgorithm(contentAlgorithm);
 			String compression = null;
-			if(deflate) {
-				this.deflate = deflate;
+			if(this.options.isDeflate()) {
 				compression = JoseConstants.JWE_DEFLATE_ZIP_ALGORITHM;
 			}
 			
@@ -233,38 +193,37 @@ public class JsonEncrypt {
 			
 			this.jwtHeaders = jwtHeaders;
 		}catch(Throwable t) {
-			throw JsonUtils.convert(representation, JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
+			throw JsonUtils.convert(options.getSerialization(), JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
 	
 	public String encrypt(String jsonString) throws UtilsException{
 		try {
-			switch(this.representation) {
-				case SELF_CONTAINED: return encryptSelfContained(jsonString);
+			switch(this.options.getSerialization()) {
+				case JSON: return encryptJson(jsonString);
 				case COMPACT: return encryptCompact(jsonString);
-				default: throw new UtilsException("Unsupported representation '"+this.representation+"'");
+				default: throw new UtilsException("Unsupported serialization '"+this.options.getSerialization()+"'");
 			}
 		}
 		catch(Throwable t) {
-			throw JsonUtils.convert(this.representation, JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
+			throw JsonUtils.convert(this.options.getSerialization(), JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
-
 
 	private String encryptCompact(String jsonString) throws Exception {	
 		JweHeaders headers = null;
 		if(this.keyAlgorithm!=null) {
-			headers = new JweHeaders(this.keyAlgorithm,this.contentAlgorithm,this.deflate);
+			headers = new JweHeaders(this.keyAlgorithm,this.contentAlgorithm,this.options.isDeflate());
 		}
 		else {
-			headers = new JweHeaders(this.contentAlgorithm,this.deflate);
+			headers = new JweHeaders(this.contentAlgorithm,this.options.isDeflate());
 		}
 		fillJwtHeaders(headers, this.keyAlgorithm);
 		return this.provider.encrypt(jsonString.getBytes(), headers);
 	}
 
 
-	private String encryptSelfContained(String jsonString) {
+	private String encryptJson(String jsonString) throws Exception {
 		
 		JweHeaders sharedUnprotectedHeaders = null;
 		if(this.keyAlgorithm!=null) {
@@ -272,10 +231,12 @@ public class JsonEncrypt {
 			sharedUnprotectedHeaders.setKeyEncryptionAlgorithm(this.keyAlgorithm);
 		}
 
-		JweHeaders protectedHeaders = new JweHeaders(this.contentAlgorithm, this.deflate);
+		JweHeaders protectedHeaders = new JweHeaders(this.contentAlgorithm, this.options.isDeflate());
+		fillJwtHeaders(protectedHeaders, this.keyAlgorithm);
 		
 		JweJsonProducer producer = null;
 		if(sharedUnprotectedHeaders!=null) {
+			protectedHeaders.removeProperty("alg"); // e' in sharedUnprotectedHeaders
 			producer = new JweJsonProducer(protectedHeaders, sharedUnprotectedHeaders, jsonString.getBytes());
 		}
 		else {

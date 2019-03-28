@@ -513,6 +513,15 @@ public class Dump {
 					}
 				}
 			}
+			if(msg!=null &&
+					!transportHeader.containsKey(HttpConstants.CONTENT_TYPE) && 
+					!transportHeader.containsKey(HttpConstants.CONTENT_TYPE.toLowerCase()) &&
+					!transportHeader.containsKey(HttpConstants.CONTENT_TYPE.toUpperCase())) {
+				String contentType = msg.getContentType();
+				if(contentType!=null) {
+					transportHeader.put(HttpConstants.CONTENT_TYPE, contentType);
+				}
+			}
 		}catch(Exception e){
 			// Registro solo l'errore sul file dump.log
 			// Si tratta di un errore che non dovrebbe mai avvenire
