@@ -23,6 +23,8 @@
 package org.openspcoop2.protocol.trasparente.testsuite.units.rest;
 
 import java.io.ByteArrayInputStream;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Properties;
 
 import javax.mail.internet.ContentType;
@@ -141,6 +143,28 @@ public class RESTCore {
 	}
 	
 	
+	public void postInvokeCheckHeader(HttpResponse httpResponse, HashMap<String, String> headers) throws TestSuiteException, Exception{
+		
+		Iterator<String> itKeys = headers.keySet().iterator();
+		while (itKeys.hasNext()) {
+			String hdrName = (String) itKeys.next();
+			String hdrValue = headers.get(hdrName);
+			
+			String trovato = httpResponse.getHeader(hdrName);
+			
+			if(hdrValue!=null) {
+				Reporter.log("Atteso header '"+hdrName+"' ["+hdrValue+"] trovato ["+trovato+"]");
+				Assert.assertTrue(trovato!=null);
+				Assert.assertTrue(trovato.equals(hdrValue));
+			}
+			else {
+				Reporter.log("Non atteso header ["+hdrName+"] trovato ["+trovato+"]");
+				Assert.assertTrue(trovato==null);
+			}
+		}
+		
+	}
+	
 	public void postInvoke(Repository repository) throws TestSuiteException, Exception{
 	
 		
@@ -232,33 +256,66 @@ public class RESTCore {
 		}
 
 	}
-
+	
 	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
 			String contentType) throws TestSuiteException, Exception{
-		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, false, contentType);
+		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
+				false, contentType, false, 
+				null);
+	}
+	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
+			String contentType,
+			HashMap<String, String> headersRequest) throws TestSuiteException, Exception{
+		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
+				false, contentType, false,
+				headersRequest);
 	}
 	
 	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
 			boolean isHttpMethodOverride, String contentType) throws TestSuiteException, Exception{
-		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, false, contentType, false);
+		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
+				isHttpMethodOverride, contentType, false,
+				null);
+	}
+	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
+			boolean isHttpMethodOverride, String contentType,
+			HashMap<String, String> headersRequest) throws TestSuiteException, Exception{
+		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
+				isHttpMethodOverride, contentType, false,
+				headersRequest);
 	}
 	
 	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
 			boolean isHttpMethodOverride, String contentType, boolean authorizationError) throws TestSuiteException, Exception{
+		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
+				isHttpMethodOverride, contentType, authorizationError, 
+				null);
+	}
+	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
+			boolean isHttpMethodOverride, String contentType, boolean authorizationError,
+			HashMap<String, String> headersRequest) throws TestSuiteException, Exception{
 		
-		TestFileEntry fileEntry = FileCache.get(tipoTest);
+		TestFileEntry fileEntry = null;
+		if(!"preflight".equals(tipoTest)) {
+			fileEntry = FileCache.get(tipoTest);
+		}
 
 		try{
 		
 			// 1. Tipo di richiesta da inviare: XML, JSON, DOC, PDF, ZIP e Multipart
-			byte[] richiesta = fileEntry.getBytesRichiesta();
+			byte[] richiesta = null;
+			String extRichiesta = null;
+			if(fileEntry!=null) {
+				richiesta = fileEntry.getBytesRichiesta();
+				extRichiesta = fileEntry.getExtRichiesta();
+			}
 			// Definiire un content type corretto rispetto al tipo di file che si invia
 			// Per conoscere il tipo di file corretto è possibile utilizzare l'utility sottostante (spostata in TestFileEntry)
-			String contentTypeRichiesta = contentType != null ? contentType : fileEntry.getExtRichiesta();
+			String contentTypeRichiesta = contentType != null ? contentType : extRichiesta;
 			
 			// 2. Variabile sul tipo di HttpRequestMethod
 			// Per sapere se il metodo prevede un input od un output come contenuto è possibile usare la seguente utility
-			HttpBodyParameters httpBody = new HttpBodyParameters(this.method, fileEntry.getExtRichiesta());
+			HttpBodyParameters httpBody = new HttpBodyParameters(this.method, extRichiesta);
 			boolean contenutoRichiesta = httpBody.isDoOutput();
 			
 			
@@ -290,15 +347,24 @@ public class RESTCore {
 			// Header HTTP da inviare
 			String nomeHeaderHttpInviato = null;
 			String valoreHeaderRichiesto = null;
-			if(isHttpMethodOverride) {
-				nomeHeaderHttpInviato = "X-HTTP-Method-Override";
-				valoreHeaderRichiesto = "PUT";
-			} else {
-				nomeHeaderHttpInviato = "ProvaHeaderRequest";
-				valoreHeaderRichiesto = "TEST_"+org.openspcoop2.utils.id.IDUtilities.getUniqueSerialNumber();
+			if(headersRequest!=null) {
+				Iterator<String> itKeys = headersRequest.keySet().iterator();
+				while (itKeys.hasNext()) {
+					String hdrName = (String) itKeys.next();
+					String hdrValue = headersRequest.get(hdrName);
+					request.addHeader(hdrName, hdrValue);
+				}
 			}
-
-			request.addHeader(nomeHeaderHttpInviato, valoreHeaderRichiesto);
+			else {
+				if(isHttpMethodOverride) {
+					nomeHeaderHttpInviato = "X-HTTP-Method-Override";
+					valoreHeaderRichiesto = "PUT";
+				} else {
+					nomeHeaderHttpInviato = "ProvaHeaderRequest";
+					valoreHeaderRichiesto = "TEST_"+org.openspcoop2.utils.id.IDUtilities.getUniqueSerialNumber();
+				}
+				request.addHeader(nomeHeaderHttpInviato, valoreHeaderRichiesto);
+			}
 
 			// Header HTTP da ricevere
 			String nomeHeaderHttpDaRicevere = "ProvaHeaderResponse";
@@ -316,10 +382,14 @@ public class RESTCore {
 			StringBuffer bf = new StringBuffer();
 			bf.append(this.servizioRichiesto);
 			bf.append(this.portaApplicativaDelegata);
-			bf.append("/service/").append(action);
+			if(!"soap11".equals(tipoTest) && !"soap12".equals(tipoTest)) {
+				bf.append("/service/").append(action);
+			}
 			Properties propertiesURLBased = new Properties();
 			propertiesURLBased.put("checkEqualsHttpMethod", this.method.name());
-			propertiesURLBased.put("checkEqualsHttpHeader", nomeHeaderHttpInviato + ":" + valoreHeaderRichiesto);
+			if(nomeHeaderHttpInviato!=null) {
+				propertiesURLBased.put("checkEqualsHttpHeader", nomeHeaderHttpInviato + ":" + valoreHeaderRichiesto);
+			}
 			
 			boolean redirect = false;
 			
@@ -389,12 +459,26 @@ public class RESTCore {
 			Reporter.log("Atteso ["+returnCodeAtteso+"] ritornato ["+httpResponse.getResultHTTPOperation()+"], raccolgo id ...");
 			
 			// Raccolgo identificativo per verifica traccia
-			String idMessaggio = httpResponse.getHeader(TestSuiteProperties.getInstance().getIdMessaggioTrasporto());
-			Assert.assertTrue(idMessaggio!=null);
-			Reporter.log("Ricevuto id ["+idMessaggio+"]");
-			repository.add(idMessaggio);
+			String idMessaggio = null;
+			if(!"preflight".equals(tipoTest)) {
+				idMessaggio = httpResponse.getHeader(TestSuiteProperties.getInstance().getIdMessaggioTrasporto());
+				Assert.assertTrue(idMessaggio!=null);
+				Reporter.log("Ricevuto id ["+idMessaggio+"]");
+				repository.add(idMessaggio);
+			}
+			else {
+				idMessaggio = "Preflight-"+httpResponse.getHeader(TestSuiteProperties.getInstance().getIDTransazioneTrasporto());
+			}
 			
 			Reporter.log("["+idMessaggio+"] Atteso ["+returnCodeAtteso+"] ritornato ["+httpResponse.getResultHTTPOperation()+"]");
+			if(returnCodeAtteso != httpResponse.getResultHTTPOperation()) {
+				if(httpResponse.getContent()!=null) {
+					Reporter.log("["+idMessaggio+"] body ["+new String(httpResponse.getContent())+"]");
+				}
+				else {
+					Reporter.log("["+idMessaggio+"] body empty");
+				}
+			}
 			Assert.assertTrue(returnCodeAtteso == httpResponse.getResultHTTPOperation());
 			
 			// Controllo risposta redirect
@@ -427,7 +511,8 @@ public class RESTCore {
 			}
 			
 			// Controllo header di risposta atteso
-			if(!redirect && !authorizationError) {
+			if(!redirect && !authorizationError &&
+					!"soap11".equals(tipoTest) && !"soap12".equals(tipoTest) && !"preflight".equals(tipoTest)) {
 				String headerRispostaRitornatoValore = httpResponse.getHeader(nomeHeaderHttpDaRicevere);
 				Reporter.log("["+idMessaggio+"] Atteso Header ["+nomeHeaderHttpDaRicevere+"] con valore atteso ["+valoreHeaderHttpDaRicevere+"] e valore ritornato ["+headerRispostaRitornatoValore+"]");
 				Assert.assertTrue(headerRispostaRitornatoValore!=null);
@@ -454,7 +539,7 @@ public class RESTCore {
 
 				byte[] contentRisposta = httpResponse.getContent();
 
-				if(tipoTest.equals("xml")) {
+				if(tipoTest.equals("xml") || tipoTest.equals("soap11") || tipoTest.equals("soap12")) {
 					XMLDiff xmlDiffEngine = new XMLDiff();
 					XMLDiffOptions xmlDiffOptions = new XMLDiffOptions();
 					xmlDiffEngine.initialize(XMLDiffImplType.XML_UNIT, xmlDiffOptions);

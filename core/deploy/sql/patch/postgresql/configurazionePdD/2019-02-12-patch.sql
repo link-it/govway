@@ -363,3 +363,9 @@ CREATE TABLE pa_transform_risp_hdr
 CREATE INDEX idx_pa_trasf_hdr_resp_1 ON pa_transform_risp_hdr (id_transform_risp);
 
 
+
+
+
+-- Inizializzo per avere nuove visualizzazioni
+delete from users_stati ;
+

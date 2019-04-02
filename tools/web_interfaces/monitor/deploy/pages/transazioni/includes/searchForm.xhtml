@@ -12,7 +12,27 @@
 		<a4j:outputPanel id="searchPnl" ajaxRendered="false" layout="block">
 			
 			<a4j:outputPanel id="idModalitaRicercaPnl" layout="block" 
-				rendered="#{sf_bean.periodo != 'Live' and ( (sf_bean.showListaProtocolli and (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo')) or (appInfo.transazioni_im_enabled and sf_bean.modalitaRicercaStorico == 'intervalloTemporale') )  }">
+				rendered="#{
+					(sf_bean.periodo == 'Live') 
+					or 
+					(
+						(sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo') 
+						and 
+						( 
+							sf_bean.showListaProtocolli 
+							or 
+							(applicationBean.amministratore and sf_bean.showFiltroSoggettoLocale)
+							or
+							(applicationBean.user and !applicationBean.amministratore and sf_bean.showFiltroSoggettoLocale)
+							or
+							(appInfo.transazioni_im_enabled and sf_bean.modalitaRicercaStorico == 'intervalloTemporale')
+							or
+							sf_bean.tipoRicercaSPCoop != 'im'
+							or
+							sf_bean.visualizzaIdCluster 
+						)
+					)
+				}" >
 				<div class="subtitle">
 					<h:outputText id="idModalitaRicerca" value="Modalità Ricerca" styleClass="subtitle" />
 				</div>
@@ -31,6 +51,56 @@
 				</link:prop>
 			</a4j:outputPanel>
 			
+			<a4j:outputPanel id="panelSoggettoLocale" layout="block" rendered="#{(applicationBean.amministratore and sf_bean.showFiltroSoggettoLocale) and (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo') }">
+				<c:if test="#{not sf_bean.visualizzaFiltroSoggettiSelectList}">
+					<link:prop label="#{msg['transazioni.search.soggettoLocale']}">
+						<h:inputText id="sogLocaleInput" value="#{sf_labelSoggettoLocale}" styleClass="inputLinkLong"/>
+						<rich:suggestionbox id="sogLocaleSuggestion" width="416"
+							for="sogLocaleInput" listWidth="#{sf_mbean.soggettiLocaleSelectItemsWidth}"
+							suggestionAction="#{sf_mbean.soggettiLocaleAutoComplete}" var="selectItem" fetchValue="#{selectItem.label}"
+							ajaxSingle="true" nothingLabel="--" param="sogLocaleInput">
+							<h:column>
+								<h:outputText value="#{selectItem.label}" rendered="true" />
+							</h:column>
+							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.soggettoLocaleSelected}" reRender="searchPnl,saComboCtr" limitToList="true">
+								<f:setPropertyActionListener value="#{selectItem.value}" target="#{sf_soggettoLocale}" />  
+							</a4j:support>
+						</rich:suggestionbox>
+						<h:inputHidden id="sogLocaleInputHidden" value="#{sf_soggettoLocale}" />
+						<rich:toolTip rendered="#{not empty sf_soggettoLocale}" direction="top-right" for="sogLocaleInput" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeSoggettoLocaleTooltip}"/>
+					</link:prop>
+				</c:if>   
+   				<c:if test="#{sf_bean.visualizzaFiltroSoggettiSelectList}">
+					<link:prop label="#{msg['transazioni.search.soggettoLocale']}">
+						<rich:comboBox id="sogLocaleCombo" value="#{sf_soggettoLocale}" converter="selectItemConverter"
+							defaultLabel="#{msg['transazioni.search.soggettoLocale.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiLocaleSelectItemsWidth}"
+							width="416"   enableManualInput="false">
+							<f:selectItem itemValue="--" itemLabel="--"/>
+							<f:selectItems value="#{sf_soggettiLocale}"  />
+							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.soggettoLocaleSelected}" reRender="searchPnl,saComboCtr" limitToList="true"/>
+						</rich:comboBox>
+						<rich:toolTip rendered="#{not empty sf_soggettoLocale}" direction="top-right" for="sogLocaleCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeSoggettoLocaleTooltip}"/>
+					</link:prop>
+   				</c:if>
+			</a4j:outputPanel>
+			<a4j:outputPanel id="panelSoggettoLocaleNonAmministratore" layout="block" rendered="#{(applicationBean.user and !applicationBean.amministratore and sf_bean.showFiltroSoggettoLocale) and (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo') }">
+				<link:prop label="#{msg['transazioni.search.soggettoLocale']}">
+					<rich:comboBox width="416" id="sogLocaleSuggestion"  converter="selectItemConverter"
+									value="#{sf_soggettoLocale}" listWidth="#{sf_mbean.soggettiAssociatiSelectItemsWidth}"
+									defaultLabel="#{msg['transazioni.search.soggettoLocale.defaultLabel']}" directInputSuggestions="true"
+									enableManualInput="false">
+								<f:selectItem itemValue="--" itemLabel="--"/>
+								<f:selectItems value="#{sf_mbean.tipiNomiSoggettiAssociati}"  />
+								<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.soggettoLocaleSelected}" reRender="searchPnl,saComboCtr" limitToList="true"/>
+					</rich:comboBox>
+					<rich:toolTip rendered="#{not empty sf_soggettoLocale}" direction="top-right" for="sogLocaleSuggestion" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeSoggettoLocaleTooltip}"/>
+				</link:prop>
+				<h:panelGroup>
+					<h:inputHidden value="#{sf_nomeMittente}" rendered="#{sf_tipologiaRicerca eq 'uscita'}" />
+					<h:inputHidden value="#{sf_nomeDestinatario}" rendered="#{sf_tipologiaRicerca eq 'ingresso'}" />
+				</h:panelGroup>
+			</a4j:outputPanel>
+			
 			<a4j:outputPanel id="panelFunzionePorta" layout="block" rendered="#{appInfo.transazioni_im_enabled and sf_bean.modalitaRicercaStorico == 'intervalloTemporale'}">
 				<link:prop label="Funzione Gateway">
 					<rich:comboBox id="tipologiaTransazioneCombo" value="#{sf_bean.tipoRicercaSPCoop}" defaultLabel="Seleziona Funzione Gateway" converter="selectItemConverter"
@@ -39,6 +109,30 @@
 						<f:selectItem itemLabel="Integration Manager" itemValue="im" />
 						<f:selectItem itemLabel="Entrambe" itemValue="all" />
 						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true" />
+					</rich:comboBox>
+				</link:prop>
+			</a4j:outputPanel>
+
+			<a4j:outputPanel id="panelTipo" layout="block"
+				rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo')}" >
+				<link:prop label="Tipo">
+					<rich:comboBox id="tipologiaCombo" value="#{sf_tipologiaRicerca}" defaultLabel="Seleziona Tipologia" converter="selectItemConverter"
+							width="416" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
+						<f:selectItems value="#{sf_bean.tipologieRicerca}"/>
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl, ctr-ricerca-personal" actionListener="#{sf_bean.tipologiaRicercaListener}" limitToList="true"/>
+					</rich:comboBox>
+				</link:prop>
+			</a4j:outputPanel>
+			
+			<a4j:outputPanel id="panelIdCluster" layout="block" rendered="#{sf_bean.visualizzaIdCluster and (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo')}">
+				<link:prop label="ID Cluster">
+					<h:inputText id="idCluster" value="#{sf_bean.clusterId}" styleClass="inputLinkLong" rendered="#{sf_bean.visualizzaIdClusterAsSelectList == false}"/>
+					<rich:comboBox id="idClusterCombo" value="#{sf_bean.clusterId}"
+						defaultLabel="Seleziona Id" directInputSuggestions="true"
+						width="416" converter="selectItemConverter" enableManualInput="false"
+						rendered="#{sf_bean.visualizzaIdClusterAsSelectList == true}">
+						<f:selectItems value="#{sf_bean.listIdCluster}"/>
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
 					</rich:comboBox>
 				</link:prop>
 			</a4j:outputPanel>
@@ -94,15 +188,7 @@
 				<div class="subtitle">
 					<h:outputText id="idDatiServizio" value="#{msg['transazioni.search.sezioneFiltroDatiServizio.label']}" styleClass="subtitle"/>
 				</div>
-													
-				<link:prop label="Tipo" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}">
-					<rich:comboBox id="tipologiaCombo" value="#{sf_tipologiaRicerca}" defaultLabel="Seleziona Tipologia" converter="selectItemConverter"
-							width="416" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
-						<f:selectItems value="#{sf_bean.tipologieRicerca}"/>
-						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl, ctr-ricerca-personal" actionListener="#{sf_bean.tipologiaRicercaListener}" limitToList="true"/>
-					</rich:comboBox>
-				</link:prop>
-				
+																	
 				<ui:include src="/transazioni/includes/searchFormFiltroSoggetto.xhtml">
 					<ui:param name="outOfRegionToRefresh" value="#{outOfRegionToRefresh}"/>
 					<ui:param name="sf_nomeMittente" value="#{sf_nomeMittente}" />
@@ -167,8 +253,8 @@
 				<div class="subtitle">
 					<h:outputText id="idDatiMittente" value="Filtro Dati Mittente" styleClass="subtitle"/>
 				</div>	
-				
-				<link:prop label="Tipo" rendered="">
+								
+				<link:prop label="Tipo Ricerca" rendered="">
 					<rich:comboBox id="riconoscimentoCombo" value="#{sf_bean.riconoscimento}" 
 								defaultLabel="Selezione Tipo" converter="selectItemConverter"
 								directInputSuggestions="true" width="416" enableManualInput="false">
@@ -178,7 +264,48 @@
 				</link:prop>
 				
 				<a4j:outputPanel layout="block" id="tipoRiconoscimentoPnl" rendered="#{not empty sf_bean.riconoscimento}">
-					
+							
+					<a4j:outputPanel layout="block" id="sogMitComboCtr" rendered="#{sf_bean.riconoscimento == 'soggetto' or sf_bean.riconoscimento == 'applicativo' or sf_bean.riconoscimento == 'tokenInfo'}">	
+						<c:if test="#{not sf_bean.visualizzaFiltroSoggettiSelectList}">
+							<link:prop label="#{msg['transazioni.search.soggettoMittente']}" 
+								required="#{sf_bean.riconoscimento == 'applicativo' or sf_bean.riconoscimento == 'soggetto'}"
+								rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'ingresso'}">
+								<h:inputText id="sogMitCombo" value="#{sf_labelNomeMittente}"  styleClass="inputLinkLong"/>
+								<rich:suggestionbox
+											id="sogMitSuggestion" 
+											width="416" 
+											for="sogMitCombo" 
+											suggestionAction="#{sf_mbean.soggettiAutoComplete}"
+											ajaxSingle="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
+											nothingLabel="--" var="selectItem" fetchValue="#{selectItem.label}"
+											param="sogMitCombo">
+									<h:column>
+										<h:outputText value="#{selectItem.label}" rendered="true" />
+									</h:column>
+									<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" limitToList="true">
+										<f:setPropertyActionListener value="#{selectItem.value}" target="#{sf_nomeMittente}" />  
+									</a4j:support>
+								</rich:suggestionbox>
+								<h:inputHidden id="sogMitComboHidden" value="#{sf_nomeMittente}" />
+								<rich:toolTip rendered="#{not empty sf_nomeMittente}" direction="top-right" for="sogMitCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeMittenteTooltip}"/>
+							</link:prop>
+						</c:if>
+						<c:if test="#{sf_bean.visualizzaFiltroSoggettiSelectList}">
+							<link:prop label="#{msg['transazioni.search.soggettoMittente']}" 
+								required="#{sf_bean.riconoscimento == 'applicativo' or sf_bean.riconoscimento == 'soggetto'}"
+								rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'ingresso'}">
+								<rich:comboBox id="sogMitCombo" value="#{sf_nomeMittente}" converter="selectItemConverter"
+										defaultLabel="#{msg['transazioni.search.soggettoMittente.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
+										width="416"   enableManualInput="false">
+									<f:selectItem itemValue="--" itemLabel="--"/>
+									<f:selectItems value="#{sf_soggetti}"  />
+									<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" limitToList="true"/>
+								</rich:comboBox>
+								<rich:toolTip rendered="#{not empty sf_nomeMittente}" direction="top-right" for="sogMitCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeMittenteTooltip}"/>
+							</link:prop>
+						</c:if>
+					</a4j:outputPanel>
+									
 					<a4j:outputPanel layout="block" id="saComboCtr" rendered="#{sf_bean.riconoscimento == 'applicativo'}">
 						<link:prop label="Applicativo" required="true">
 							<rich:comboBox id="saCombo" value="#{sf_servizioApplicativo}"
@@ -244,7 +371,7 @@
 				rendered="#{sf_bean.periodo == 'Live' or (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo')}">
 					
 				<div class="subtitle">
-					<h:outputText id="idDatiTransazione" value="Filtro Dati Transazione" styleClass="subtitle"/>
+					<h:outputText id="idDatiTransazione" value="Filtro Esito" styleClass="subtitle"/>
 				</div>	
 							
 				<link:prop label="Esito">
@@ -285,18 +412,7 @@
 							<a4j:support event="onchange" rendered="#{sf_bean.periodo eq 'Live'}" limitToList="true"/>
 						</h:inputText>
 				</link:prop>
-				
-				<link:prop label="ID Cluster" rendered="#{sf_bean.visualizzaIdCluster}">
-					<h:inputText id="idCluster" value="#{sf_bean.clusterId}" styleClass="inputLinkLong" rendered="#{sf_bean.visualizzaIdClusterAsSelectList == false}"/>
-					<rich:comboBox id="idClusterCombo" value="#{sf_bean.clusterId}"
-						defaultLabel="Seleziona Id" directInputSuggestions="true"
-						width="416" converter="selectItemConverter" enableManualInput="false"
-						rendered="#{sf_bean.visualizzaIdClusterAsSelectList == true}">
-						<f:selectItems value="#{sf_bean.listIdCluster}"/>
-						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
-					</rich:comboBox>
-				</link:prop>
-			
+							
 			</a4j:outputPanel>
 						
 			<a4j:outputPanel id="filtriAvanzatiIdCtr" layout="block"

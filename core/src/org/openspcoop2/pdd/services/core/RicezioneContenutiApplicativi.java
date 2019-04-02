@@ -1413,6 +1413,13 @@ public class RicezioneContenutiApplicativi {
 		}
 		
 		boolean corsTrasparente = false;
+				
+		if(!effettuareGestioneCORS) {
+			if(pddContext.containsKey(CostantiPdD.CORS_PREFLIGHT_REQUEST_SOAP)) {
+				effettuareGestioneCORS = true;
+			}
+		}
+		
 		if(effettuareGestioneCORS) {
 			
 			if(TipoGestioneCORS.GATEWAY.equals(cors.getTipo())) {
@@ -1420,7 +1427,11 @@ public class RicezioneContenutiApplicativi {
 				CORSFilter corsFilter = new CORSFilter(logCore, cors);
 				try {
 					CORSWrappedHttpServletResponse res = new CORSWrappedHttpServletResponse(false);
-					corsFilter.doCORS(httpServletRequest, res, CORSRequestType.PRE_FLIGHT);
+					corsFilter.doCORS(httpServletRequest, res, CORSRequestType.PRE_FLIGHT, true);
+					if(this.msgContext.getHeaderIntegrazioneRisposta()==null) {
+						this.msgContext.setHeaderIntegrazioneRisposta(new Properties());
+					}
+					this.msgContext.getHeaderIntegrazioneRisposta().putAll(res.getHeader());
 					this.msgContext.setMessageResponse(res.buildMessage());
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY, "true");
 				}catch(Exception e) {

@@ -62,6 +62,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
+import org.openspcoop2.utils.json.YAMLUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;
 import org.openspcoop2.utils.xml.XMLException;
@@ -195,16 +196,29 @@ public class DocumentoExporter extends HttpServlet {
 						docBytes = as.getByteWsdlDefinitorio();
 					}
 					else if( ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_CONCETTUALE.equals(tipoDocumentoDaScaricare) ){
+						docBytes = as.getByteWsdlConcettuale();
 						if(as.getFormatoSpecifica()!=null) {
 							switch (as.getFormatoSpecifica()) {
 							case WSDL_11:
 								fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_CONCETTUALE_WSDL;
 								break;
 							case OPEN_API_3:
-								fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_OPENAPI_3_0;
+								YAMLUtils yamlUtils = YAMLUtils.getInstance();
+								if(yamlUtils.isYaml(docBytes)) {
+									fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_OPENAPI_3_0_YAML;
+								}
+								else {	
+									fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_OPENAPI_3_0_JSON;
+								}
 								break;
 							case SWAGGER_2:
-								fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_SWAGGER_2_0;
+								yamlUtils = YAMLUtils.getInstance();
+								if(yamlUtils.isYaml(docBytes)) {
+									fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_SWAGGER_2_0_YAML;
+								}
+								else {
+									fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_SWAGGER_2_0_JSON;
+								}
 								break;
 							case WADL:
 								fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WADL;
@@ -214,7 +228,6 @@ public class DocumentoExporter extends HttpServlet {
 						else {
 							fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_CONCETTUALE_WSDL;
 						}
-						docBytes = as.getByteWsdlConcettuale();
 					}
 					else if( ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_LOGICO_EROGATORE.equals(tipoDocumentoDaScaricare) ){
 						fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_LOGICO_EROGATORE_WSDL;

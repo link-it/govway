@@ -564,3 +564,9 @@ end;
 /
 
 
+
+
+
+-- Inizializzo per avere nuove visualizzazioni
+delete from users_stati ;
+

@@ -61,4 +61,12 @@ public class TrasparenteProtocolConfiguration extends BasicConfiguration {
 		}
 		
 	}
+	
+	@Override
+	public boolean isAbilitataGenerazioneTracce() {
+		if(this.properties.isUtilizzaTestSuiteGenerazioneTracce()) {
+			return true;
+		}
+		return super.isAbilitataGenerazioneTracce();
+	}
 }

@@ -30,8 +30,7 @@ il significato dei parametri:
 
    -  **Url**: indirizzo endpoint del connettore
 
-   -  **Tipologia** (SSL, SSLv3, TLS e TLSv1): Tipo e versione del
-      protocollo di trasporto (default: SSLv3)
+   -  **Tipologia** (es. TLSv1.2): Tipo e versione del protocollo di trasporto. Sono selezionabili tutti i tipi supportati dalla versione della jvm utilizzata.
 
    -  **Hostname Verifier** (true/false): Attiva la verifica in fase di
       autenticazione server della corrispondenza tra l'hostname indicato

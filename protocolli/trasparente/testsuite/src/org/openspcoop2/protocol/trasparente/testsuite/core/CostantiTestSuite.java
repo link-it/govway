@@ -24,11 +24,16 @@
 
 package org.openspcoop2.protocol.trasparente.testsuite.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
 /**
  * Costanti utilizzate nelle units test.
@@ -189,6 +194,22 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_REST_SERVICE_WITH_BASIC_AUTH="AuthenticationREST_serviceWithBasicAuth";
 	public static final String PORTA_DELEGATA_REST_SERVICE_WITH_BASIC_AUTH_DOMAIN="AuthenticationREST_serviceWithBasicAuthDomain";
 	
+	/** Porte Delegate per il test degli header CORS */
+	public static final String PORTA_DELEGATA_REST_CORS="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaREST";
+	public static final String PORTA_DELEGATA_SOAP_CORS="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaSOAP";
+	public static final String PORTA_DELEGATA_REST_CORS_ALLORIGINS="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaREST_allOrigins";
+	public static final String PORTA_DELEGATA_SOAP_CORS_ALLORIGINS="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaSOAP_allOrigins";
+	public static final String PORTA_DELEGATA_REST_CORS_ALLORIGINS_CREDENTIALS="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaREST_allOrigins_credentials";
+	public static final String PORTA_DELEGATA_SOAP_CORS_ALLORIGINS_CREDENTIALS="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaSOAP_allOrigins_credentials";
+	public static final String PORTA_DELEGATA_REST_CORS_EXPOSE="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaREST_expose";
+	public static final String PORTA_DELEGATA_SOAP_CORS_EXPOSE="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaSOAP_expose";
+	public static final String PORTA_DELEGATA_REST_CORS_MAXAGE_DISABLED="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaREST_maxAge_disabled";
+	public static final String PORTA_DELEGATA_SOAP_CORS_MAXAGE_DISABLED="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaSOAP_maxAge_disabled";
+	public static final String PORTA_DELEGATA_REST_CORS_MAXAGE="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaREST_maxAge";
+	public static final String PORTA_DELEGATA_SOAP_CORS_MAXAGE="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaSOAP_maxAge";
+
+	public static final String PORTA_DELEGATA_REST_CORS_TRASPARENTE="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaRESTtrasparente";
+	public static final String PORTA_DELEGATA_SOAP_CORS_TRASPARENTE="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaSOAPtrasparente";
 
 	
 	
@@ -289,14 +310,33 @@ public class CostantiTestSuite {
 	public static final String PORTA_APPLICATIVA_AUTHZ_EXTERNAL_XACML_POLICY_NO_AUTHENTICATION = "AuthorizationExternalXacmlPolicy_noAuthentication";
 	
 
-	/** Porte Delegate per il test dei profili di collaborazione: API */
+	/** Porte Applicative per il test dei profili di collaborazione: API */
 	public static final String PORTA_APPLICATIVA_REST_API="APIMinisteroErogatore/RESTAPI";
 	
-	/** Porte Delegate per il test degli header Authorization e WWW-Authenticate: API */
+	/** Porte Applicative per il test degli header Authorization e WWW-Authenticate: API */
 	public static final String PORTA_APPLICATIVA_REST_BASIC_PDD_SERVICE_WITH_BASIC_AUTH="AuthenticationREST_basic";
 	public static final String PORTA_APPLICATIVA_REST_BASIC_PDD_SERVICE_WITH_BASIC_AUTH_FORWARD_CREDENTIALS="AuthenticationREST_basic_forwardCredentials";
 	public static final String PORTA_APPLICATIVA_REST_SERVICE_WITH_BASIC_AUTH="AuthenticationREST_serviceWithBasicAuth";
 	public static final String PORTA_APPLICATIVA_REST_SERVICE_WITH_BASIC_AUTH_DOMAIN="AuthenticationREST_serviceWithBasicAuthDomain";
+	
+	/** Porte Applicative per il test degli header CORS */
+	public static final String PORTA_APPLICATIVA_REST_CORS="APIMinisteroErogatore/gwCORSviaREST";
+	public static final String PORTA_APPLICATIVA_SOAP_CORS="APIMinisteroErogatore/gwCORSviaSOAP";
+	public static final String PORTA_APPLICATIVA_REST_CORS_ALLORIGINS="APIMinisteroErogatore/gwCORSviaREST_allOrigins";
+	public static final String PORTA_APPLICATIVA_SOAP_CORS_ALLORIGINS="APIMinisteroErogatore/gwCORSviaSOAP_allOrigins";
+	public static final String PORTA_APPLICATIVA_REST_CORS_ALLORIGINS_CREDENTIALS="APIMinisteroErogatore/gwCORSviaREST_allOrigins_credentials";
+	public static final String PORTA_APPLICATIVA_SOAP_CORS_ALLORIGINS_CREDENTIALS="APIMinisteroErogatore/gwCORSviaSOAP_allOrigins_credentials";
+	public static final String PORTA_APPLICATIVA_REST_CORS_EXPOSE="APIMinisteroErogatore/gwCORSviaREST_expose";
+	public static final String PORTA_APPLICATIVA_SOAP_CORS_EXPOSE="APIMinisteroErogatore/gwCORSviaSOAP_expose";
+	public static final String PORTA_APPLICATIVA_REST_CORS_MAXAGE_DISABLED="APIMinisteroErogatore/gwCORSviaREST_maxAge_disabled";
+	public static final String PORTA_APPLICATIVA_SOAP_CORS_MAXAGE_DISABLED="APIMinisteroErogatore/gwCORSviaSOAP_maxAge_disabled";
+	public static final String PORTA_APPLICATIVA_REST_CORS_MAXAGE="APIMinisteroErogatore/gwCORSviaREST_maxAge";
+	public static final String PORTA_APPLICATIVA_SOAP_CORS_MAXAGE="APIMinisteroErogatore/gwCORSviaSOAP_maxAge";
+	
+	
+	
+	public static final String PORTA_APPLICATIVA_REST_CORS_TRASPARENTE="APIMinisteroErogatore/gwCORSviaRESTtrasparente";
+	public static final String PORTA_APPLICATIVA_SOAP_CORS_TRASPARENTE="APIMinisteroErogatore/gwCORSviaSOAPtrasparente";
 	
 
 	
@@ -544,4 +584,48 @@ public class CostantiTestSuite {
     public static final String MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_ANONIMO_NON_AUTORIZZATO_XACML_POLICY = "Il mittente"+
     		SUFFIX_MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_NON_AUTORIZZATO+MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_XACML_POLICY;
     
+
+    
+    public static final String ID_GRUPPO_TEST_CORS = "CORS";
+    public static final String ID_GRUPPO_TEST_CORS_PORTA_APPLICATIVA = "CORSPortaApplicativa";
+    public static final String ID_GRUPPO_TEST_CORS_PORTA_DELEGATA = "CORSPortaDelegata";
+    
+    
+    public static final String TEST_HTTPS_ORIGIN = "https://www.govway.org";
+    public static final String TEST_HTTP_ORIGIN = "http://www.govway.org";
+	public static final String TEST_HTTPS_ORIGIN_UPPER_CASE = "https://www.GOVWAY.org";
+	public static final String TEST_HTTPS_ORIGIN_2 = "https://www.govway2.org";
+	public static final String TEST_HTTPS_ORIGIN_PORT_DIFFERENT = "https://www.govway2.org:8443";
+	
+	public static final String TEST_FILE_ORIGIN = "file://";
+	public static final String TEST_NULL_ORIGIN = "null";
+	
+	public static final String TEST_INVALID_ORIGIN_1 = "http://www.w3.org%0d%0a"; 
+	public static final String TEST_INVALID_ORIGIN_2 = "http://www.w3.org%0D%0A"; 
+	public static final String TEST_INVALID_ORIGIN_3 = "http://www.w3.org%0%0d%0ad%0%0d%0aa";
+	public static final String TEST_INVALID_ORIGIN_4 = "http://www.w3.org http://altraUrl"; 
+	
+	public static final String TEST_CORS_EXPOSE_HDR1 = "X-GovWayTest-HDR1";
+	public static final String TEST_CORS_EXPOSE_HDR2 = "X-GovWayTest-HDR2";
+	public static final String TEST_CORS_EXPOSE_HEADERS = TEST_CORS_EXPOSE_HDR1+", "+TEST_CORS_EXPOSE_HDR2;
+    
+	private final static List<String> TEST_CORS_ALLOW_METHOD_DEFAULT = new ArrayList<String> ();
+	static {
+		TEST_CORS_ALLOW_METHOD_DEFAULT.add(HttpRequestMethod.GET.name());
+		TEST_CORS_ALLOW_METHOD_DEFAULT.add(HttpRequestMethod.POST.name());
+		TEST_CORS_ALLOW_METHOD_DEFAULT.add(HttpRequestMethod.PUT.name());
+		TEST_CORS_ALLOW_METHOD_DEFAULT.add(HttpRequestMethod.DELETE.name());
+		TEST_CORS_ALLOW_METHOD_DEFAULT.add(HttpRequestMethod.PATCH.name());
+	}
+	public final static String TEST_CORS_ALLOW_METHOD_DEFAULT_AS_STRING = TEST_CORS_ALLOW_METHOD_DEFAULT.toString().substring(1, TEST_CORS_ALLOW_METHOD_DEFAULT.toString().length()-1);
+
+	private final static List<String> TEST_CORS_ALLOW_HEADER_DEFAULT = new ArrayList<String> ();
+	static {
+		TEST_CORS_ALLOW_HEADER_DEFAULT.add(HttpConstants.AUTHORIZATION);
+		TEST_CORS_ALLOW_HEADER_DEFAULT.add(HttpConstants.CONTENT_TYPE);
+		TEST_CORS_ALLOW_HEADER_DEFAULT.add(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION);
+		TEST_CORS_ALLOW_HEADER_DEFAULT.add(HttpConstants.CACHE_STATUS_HTTP_1_1);
+	}
+	public final static String TEST_CORS_ALLOW_HEADERS_DEFAULT_AS_STRING = TEST_CORS_ALLOW_HEADER_DEFAULT.toString().substring(1, TEST_CORS_ALLOW_HEADER_DEFAULT.toString().length()-1);
+
 }

@@ -99,12 +99,17 @@ public class LiveBean extends DynamicPdDBean<Transazione,String,ISearchFormServi
 	public List<TransazioneBean> getLiveData(){
 		((TransazioniSearchForm) this.search)
 		.setTransazioniService(((ITransazioniService)this.service)) ;
-		
+				
 		if(this.search.getPeriodo().equals("Live")){
 			this.log.debug("Chiamata getLiveData PollEnabled["+this.serverDate+"]"); 
 			
 			if((this.serverDate != null || this.list == null) && this.search.isSessioneLiveValida()){
-				this.log.debug("Chiamata getLiveData Eseguo Query Data Esecuzione["+this.serverDate+"]"); 
+				this.log.debug("Chiamata getLiveData Eseguo Query Data Esecuzione["+this.serverDate+"]");
+				
+				if(this.search.validaSezioneDatiMittente()==false) {
+					return new ArrayList<TransazioneBean>();
+				}
+				
 				this.list =  (((ITransazioniService)this.service)).findAllLive();
 				this.serverDate = null;
 			}

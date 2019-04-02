@@ -2446,7 +2446,10 @@ public class TransazioniService implements ITransazioniService {
 			throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
 		// credenziali mittente
 		if(StringUtils.isNotEmpty(searchForm.getRiconoscimento())) {
-			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO)) {
+				// nop; e' gia' stato impostato il soggetto tramite il filtro apposito
+			}
+			else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
 				if (StringUtils.isNotBlank(searchForm.getServizioApplicativo())) {
 					// sb.append("AND t.servizioApplicativo = :servizio_applicativo ");
 					IExpression saOr = transazioniSearchDAO.newExpression();

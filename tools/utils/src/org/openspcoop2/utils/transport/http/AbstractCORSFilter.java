@@ -80,10 +80,10 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 		
 		CORSRequestType requestType = getRequestType(req, log);
 		
-		this.doCORS(req, res, requestType);
+		this.doCORS(req, res, requestType, false);
 	}
 	
-	public void doCORS(HttpServletRequest req, HttpServletResponse res, CORSRequestType requestType) throws IOException {
+	public void doCORS(HttpServletRequest req, HttpServletResponse res, CORSRequestType requestType, boolean newCheckForInvalidType) throws IOException {
 
 		// https://www.w3.org/TR/cors/#resource-processing-model
 		
@@ -107,6 +107,18 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 		
 		Logger log = this.getLog();
 
+		if(newCheckForInvalidType) {
+			log.debug("Ricevuta richiesta CORS di tipo ["+requestType+"], riverifico il tipo per vedere che non sia una richiesta non valida ...");
+			CORSRequestType requestTypeCheckInvalid = getRequestType(req, log);
+			if(CORSRequestType.INVALID.equals(requestTypeCheckInvalid)) {
+				log.error("Ricevuta richiesta CORS di tipo ["+requestType+"]; è stata rilevata una richiesta invalida");
+				requestType = CORSRequestType.INVALID;
+			}
+			else {
+				log.debug("Ricevuta richiesta CORS di tipo ["+requestType+"], dopo la verifica la richiesta risulta comunque valida");
+			}
+		}
+		
 		req.setAttribute(CORS_REQUEST_TYPE, requestType);
 		
 		if(CORSRequestType.INVALID.equals(requestType)) {
@@ -359,15 +371,27 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 						}
 					}
 					else {
-						// non produco alcun header, sarà il browser a riconoscere che non e' abilitato
+						if(config.isGenerateListAllowIfNotMatchRequestMethod()) {
+							if(!config.allowMethods.isEmpty()) {
+								res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_METHODS, this.convertList(config.allowMethods));
+							}
+						}
+						else {
+							// non produco alcun header, sarà il browser a riconoscere che non e' abilitato
+						}
 					}
 				}
 
 			}
 			else {
-				// se throwExceptionIfNotFoundRequestMethod=true o terminateIfNotFoundRequestMethod=true non si arriva a questo else
-				if(!config.allowMethods.isEmpty()) {
-					res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_METHODS, this.convertList(config.allowMethods));
+				if(config.isGenerateListAllowIfNotMatchRequestMethod()) {
+					// se throwExceptionIfNotFoundRequestMethod=true o terminateIfNotFoundRequestMethod=true non si arriva a questo else
+					if(!config.allowMethods.isEmpty()) {
+						res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_METHODS, this.convertList(config.allowMethods));
+					}
+				}
+				else {
+					// non produco alcun header, sarà il browser a riconoscere che non e' abilitato
 				}
 			}
 
@@ -427,17 +451,32 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 						}
 					}
 					else {
-						// non produco alcun header, sarà il browser a riconoscere che non e' abilitato
+						if(config.isGenerateListAllowIfNotMatchRequestHeaders()) {
+							if(!config.allowHeaders.isEmpty()) {
+								res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS, this.convertList(config.allowHeaders));
+								if(config.generateAllowHeader) {
+									res.addHeader(HttpConstants.ALLOW_HEADERS, this.convertList(config.allowHeaders));
+								}
+							}
+						}
+						else {
+							// non produco alcun header, sarà il browser a riconoscere che non e' abilitato
+						}
 					}
 				}
 			}
 			else {
-				// se throwExceptionIfNotFoundRequestHeaders=true o terminateIfNotFoundRequestHeaders=true non si arriva a questo else
-				if(!config.allowHeaders.isEmpty()) {
-					res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS, this.convertList(config.allowHeaders));
-					if(config.generateAllowHeader) {
-						res.addHeader(HttpConstants.ALLOW_HEADERS, this.convertList(config.allowHeaders));
+				if(config.isGenerateListAllowIfNotMatchRequestHeaders()) {
+					// se throwExceptionIfNotFoundRequestHeaders=true o terminateIfNotFoundRequestHeaders=true non si arriva a questo else
+					if(!config.allowHeaders.isEmpty()) {
+						res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS, this.convertList(config.allowHeaders));
+						if(config.generateAllowHeader) {
+							res.addHeader(HttpConstants.ALLOW_HEADERS, this.convertList(config.allowHeaders));
+						}
 					}
+				}
+				else {
+					// non produco alcun header, sarà il browser a riconoscere che non e' abilitato
 				}
 			}
 	
@@ -503,37 +542,39 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
                 	log.error("Method unknown '"+method+"': "+e.getMessage(),e);
                     requestType = CORSRequestType.INVALID;
                 }
-                if (HttpRequestMethod.OPTIONS.equals(requestMethod)) {
-                	String accessControlRequestMethod = request.getHeader(HttpConstants.ACCESS_CONTROL_REQUEST_METHOD);
-        			if(accessControlRequestMethod==null) {
-        				accessControlRequestMethod = request.getHeader(HttpConstants.ACCESS_CONTROL_REQUEST_METHOD.toLowerCase());
-        			}
-        			if(accessControlRequestMethod==null) {
-        				accessControlRequestMethod = request.getHeader(HttpConstants.ACCESS_CONTROL_REQUEST_METHOD.toUpperCase());
-        			}
-                    if (accessControlRequestMethod != null && !StringUtils.isEmpty(accessControlRequestMethod)) {
-                        requestType = CORSRequestType.PRE_FLIGHT;
-                    } else if (accessControlRequestMethod != null
-                            && StringUtils.isEmpty(accessControlRequestMethod)) {
-                    	log.error("Header '"+HttpConstants.ACCESS_CONTROL_REQUEST_METHOD+"' with empty value");
-                        requestType = CORSRequestType.INVALID;
-                    } else {
-                        requestType = CORSRequestType.ACTUAL;
-                    }
-                } else if (HttpRequestMethod.HEAD.equals(requestMethod) || HttpRequestMethod.GET.equals(requestMethod)) {
-                    requestType = CORSRequestType.SIMPLE;
-                } else if (HttpRequestMethod.POST.equals(requestMethod)) {
-                    String contentType = request.getContentType();
-                    if (contentType != null) {
-                        contentType = contentType.toLowerCase().trim();
-                        if (HttpConstants.ACCESS_CONTROL_SIMPLE_REQUEST_CONTENT_TYPES.contains(contentType)) {
-                            requestType = CORSRequestType.SIMPLE;
-                        } else {
-                            requestType = CORSRequestType.ACTUAL;
-                        }
-                    }
-                } else {
-                    requestType = CORSRequestType.ACTUAL;
+                if(requestMethod!=null) {
+	                if (HttpRequestMethod.OPTIONS.equals(requestMethod)) {
+	                	String accessControlRequestMethod = request.getHeader(HttpConstants.ACCESS_CONTROL_REQUEST_METHOD);
+	        			if(accessControlRequestMethod==null) {
+	        				accessControlRequestMethod = request.getHeader(HttpConstants.ACCESS_CONTROL_REQUEST_METHOD.toLowerCase());
+	        			}
+	        			if(accessControlRequestMethod==null) {
+	        				accessControlRequestMethod = request.getHeader(HttpConstants.ACCESS_CONTROL_REQUEST_METHOD.toUpperCase());
+	        			}
+	                    if (accessControlRequestMethod != null && !StringUtils.isEmpty(accessControlRequestMethod)) {
+	                        requestType = CORSRequestType.PRE_FLIGHT;
+	                    } else if (accessControlRequestMethod != null
+	                            && StringUtils.isEmpty(accessControlRequestMethod)) {
+	                    	log.error("Header '"+HttpConstants.ACCESS_CONTROL_REQUEST_METHOD+"' with empty value");
+	                        requestType = CORSRequestType.INVALID;
+	                    } else {
+	                        requestType = CORSRequestType.ACTUAL;
+	                    }
+	                } else if (HttpRequestMethod.HEAD.equals(requestMethod) || HttpRequestMethod.GET.equals(requestMethod)) {
+	                    requestType = CORSRequestType.SIMPLE;
+	                } else if (HttpRequestMethod.POST.equals(requestMethod)) {
+	                    String contentType = request.getContentType();
+	                    if (contentType != null) {
+	                        contentType = contentType.toLowerCase().trim();
+	                        if (HttpConstants.ACCESS_CONTROL_SIMPLE_REQUEST_CONTENT_TYPES.contains(contentType)) {
+	                            requestType = CORSRequestType.SIMPLE;
+	                        } else {
+	                            requestType = CORSRequestType.ACTUAL;
+	                        }
+	                    }
+	                } else {
+	                    requestType = CORSRequestType.ACTUAL;
+	                }
                 }
             }
         } else {

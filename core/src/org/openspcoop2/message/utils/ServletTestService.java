@@ -30,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -141,13 +142,7 @@ public class ServletTestService extends HttpServlet {
 			String key = split[0];
 			String valore = split[1];
 			
-			String v = request.getHeader(key);
-			if(v==null){
-				v = request.getHeader(key.toLowerCase());
-			}
-			if(v==null){
-				v = request.getHeader(key.toUpperCase());
-			}
+			String v = _getHeader(request, key);
 			if(v==null){
 				throw new ServletException("Ricevuta una richiesta di verifica header ("+key+":"+valore+"). Header ["+key+"] non presente");
 			}
@@ -156,6 +151,44 @@ public class ServletTestService extends HttpServlet {
 			}
 		}
 		
+		String checkCORS = getParameter_checkWhiteList(request, whitePropertiesList, "CORS");
+		if(checkCORS!=null){
+			checkCORS = checkCORS.trim();
+			if("true".equalsIgnoreCase(checkCORS)) {
+				
+				boolean preflight = HttpRequestMethod.OPTIONS.equals(request.getMethod());
+				
+				String origin = _getHeader(request, HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN);
+				if(origin==null || "".equals(origin)) {
+					throw new ServletException("Ricevuta una richiesta di verifica header ("+HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN+"). Header non presente");
+				}
+				
+				if(preflight) {
+					
+					String method = _getHeader(request, HttpConstants.ACCESS_CONTROL_REQUEST_METHOD);
+					if(method==null || "".equals(method)) {
+						throw new ServletException("Ricevuta una richiesta di verifica header ("+HttpConstants.ACCESS_CONTROL_REQUEST_METHOD+"). Header non presente");
+					}
+					String header = _getHeader(request, HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS);
+					if(header==null || "".equals(header)) {
+						throw new ServletException("Ricevuta una richiesta di verifica header ("+HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS+"). Header non presente");
+					}
+					
+				}
+				
+			}
+		}
+		
+	}
+	private static String _getHeader(HttpServletRequest request, String name) {
+		String v = request.getHeader(name);
+		if(v==null){
+			v = request.getHeader(name.toLowerCase());
+		}
+		if(v==null){
+			v = request.getHeader(name.toUpperCase());
+		}
+		return v;
 	}
 	
 	public void doEngine(HttpServletRequest req, HttpServletResponse res, boolean oneway, Properties headerRisposta)
@@ -448,9 +481,8 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			// opzione returnHttpHeader
+			Map<String, String> headers = new HashMap<>();
 			String returnHeaderString = getParameter_checkWhiteList(req, this.whitePropertiesList, "returnHttpHeader");
-			String returnHeaderKey = null; 
-			String returnHeaderValue = null;
 			if(returnHeaderString!=null){
 				returnHeaderString = returnHeaderString.trim();
 				if(returnHeaderString.contains(":")==false){
@@ -463,9 +495,36 @@ public class ServletTestService extends HttpServlet {
 				if(split.length!=2){
 					throw new ServletException("Ricevuta una richiesta di generazione header di risposta non conforme (pattern nome:valore) (split:"+split.length+")");
 				}
+				String returnHeaderKey = null; 
+				String returnHeaderValue = null;
 				returnHeaderKey = split[0];
 				returnHeaderValue = split[1];	
+				headers.put(returnHeaderKey, returnHeaderValue);
 			}
+			
+			String checkCORS = getParameter_checkWhiteList(req, this.whitePropertiesList, "CORS");
+			if(checkCORS!=null){
+				checkCORS = checkCORS.trim();
+				if("true".equalsIgnoreCase(checkCORS)) {
+					boolean preflight = HttpRequestMethod.OPTIONS.equals(req.getMethod());
+					
+					String origin = _getHeader(req, HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN);
+					headers.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN,origin);
+					
+					if(preflight) {
+						
+						String method = _getHeader(req, HttpConstants.ACCESS_CONTROL_REQUEST_METHOD);
+						headers.put(HttpConstants.ACCESS_CONTROL_ALLOW_METHODS,method);
+						
+						String header = _getHeader(req, HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS);
+						headers.put(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS,header);
+						
+					}
+					
+				}	
+			}
+			
+			
 			
 			
 			
@@ -616,8 +675,13 @@ public class ServletTestService extends HttpServlet {
 				soapMsg.setFaultCode(f, SOAPFaultCode.Receiver, qName);
 	            f.setFaultActor(faultActor);
 				
-	            if(returnHeaderKey!=null && returnHeaderValue!=null){
-	            	res.setHeader(returnHeaderKey,returnHeaderValue);
+	            if(headers!=null && !headers.isEmpty()) {
+	            	Iterator<String> itHdr = headers.keySet().iterator();
+	            	while (itHdr.hasNext()) {
+						String returnHeaderKey = (String) itHdr.next();
+						String returnHeaderValue = headers.get(returnHeaderKey);
+						res.setHeader(returnHeaderKey,returnHeaderValue);
+					}
 	            }
 	            
 	            msg.saveChanges();
@@ -632,8 +696,13 @@ public class ServletTestService extends HttpServlet {
 				
 				if(oneway){
 					
-		            if(returnHeaderKey!=null && returnHeaderValue!=null){
-		            	res.setHeader(returnHeaderKey,returnHeaderValue);
+					if(headers!=null && !headers.isEmpty()) {
+		            	Iterator<String> itHdr = headers.keySet().iterator();
+		            	while (itHdr.hasNext()) {
+							String returnHeaderKey = (String) itHdr.next();
+							String returnHeaderValue = headers.get(returnHeaderKey);
+							res.setHeader(returnHeaderKey,returnHeaderValue);
+						}
 		            }
 					
 					res.setStatus(returnCode);
@@ -753,8 +822,13 @@ public class ServletTestService extends HttpServlet {
 				}
 				
 				// Return Header
-	            if(returnHeaderKey!=null && returnHeaderValue!=null){
-	            	res.setHeader(returnHeaderKey,returnHeaderValue);
+	            if(headers!=null && !headers.isEmpty()) {
+	            	Iterator<String> itHdr = headers.keySet().iterator();
+	            	while (itHdr.hasNext()) {
+						String returnHeaderKey = (String) itHdr.next();
+						String returnHeaderValue = headers.get(returnHeaderKey);
+						res.setHeader(returnHeaderKey,returnHeaderValue);
+					}
 	            }
 				
 				// contentType

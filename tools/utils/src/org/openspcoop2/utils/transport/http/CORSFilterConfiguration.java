@@ -67,6 +67,10 @@ public class CORSFilterConfiguration {
 	protected boolean throwExceptionIfNotMatchRequestMethod = false;
 	protected boolean terminateIfNotMatchRequestMethod = false;
 	
+	// indica se produrre la lista dei metodi supportati, anche se la richiesta non presenta un Access-Control-Request-Method header o il valore presente non è permesso.
+	// Se non produco alcun header in risposta, sarà il browser a riconoscere che non e' abilitato, cosi come se ritorna una lista non contenente il metodo richiesto
+	protected boolean generateListAllowIfNotMatchRequestMethod = true;
+	
 	// indica un utilizzo errato del cors come descritto nel capitolo 6.3.4 (https://www.w3.org/TR/cors/#resource-processing-model)
 	// If parsing failed do not set any additional headers and terminate this set of steps.
 	// The request is outside the scope of this specification.
@@ -77,6 +81,10 @@ public class CORSFilterConfiguration {
 	// If any of the header field-names is not a ASCII case-insensitive match for any of the values in list of headers do not set any additional headers and terminate this set of steps.
 	protected boolean throwExceptionIfNotMatchRequestHeaders = false;
 	protected boolean terminateIfNotMatchRequestHeaders = false;
+	
+	// indica se produrre la lista degli headers supportati, anche se la richiesta non presenta un Access-Control-Request-Header header o un degli header presenti non è permesso.
+	// Se non produco alcun header in risposta, sarà il browser a riconoscere che non e' abilitato, cosi come se ritorna una lista non contenente l'header richiesto
+	protected boolean generateListAllowIfNotMatchRequestHeaders = true;
 	
 	
 	
@@ -193,11 +201,13 @@ public class CORSFilterConfiguration {
 		 * cors.terminateIfNotFoundRequestMethod=true/false
 		 * cors.throwExceptionIfNotMatchRequestMethod=true/false
 		 * cors.terminateIfNotMatchRequestMethod=true/false
+		 * cors.generateListAllowIfNotMatchRequestMethod=true/false
 		 * 
 		 * cors.throwExceptionIfNotFoundRequestHeaders=true/false
 		 * cors.terminateIfNotFoundRequestHeaders=true/false
 		 * cors.throwExceptionIfNotMatchRequestHeaders=true/false
 		 * cors.terminateIfNotMatchRequestHeaders=true/false
+		 * cors.generateListAllowIfNotMatchRequestHeaders=true/false
 		 * 
 		 * 
 		 * cors.allowCredentials=true/false
@@ -266,6 +276,10 @@ public class CORSFilterConfiguration {
 		if(tmp!=null) {
 			this.terminateIfNotMatchRequestMethod = "true".equalsIgnoreCase(tmp.trim());
 		}
+		tmp = p.getProperty("cors.generateListAllowIfNotMatchRequestMethod");
+		if(tmp!=null) {
+			this.generateListAllowIfNotMatchRequestMethod = "true".equalsIgnoreCase(tmp.trim());
+		}
 		
 		tmp = p.getProperty("cors.throwExceptionIfNotFoundRequestHeaders");
 		if(tmp!=null) {
@@ -282,6 +296,10 @@ public class CORSFilterConfiguration {
 		tmp = p.getProperty("cors.terminateIfNotMatchRequestHeaders");
 		if(tmp!=null) {
 			this.terminateIfNotMatchRequestHeaders = "true".equalsIgnoreCase(tmp.trim());
+		}
+		tmp = p.getProperty("cors.generateListAllowIfNotMatchRequestHeaders");
+		if(tmp!=null) {
+			this.generateListAllowIfNotMatchRequestHeaders = "true".equalsIgnoreCase(tmp.trim());
 		}
 
 		
@@ -434,6 +452,13 @@ public class CORSFilterConfiguration {
 		this.terminateIfNotMatchRequestMethod = terminateIfNotMatchRequestMethod;
 	}
 
+	
+	public boolean isGenerateListAllowIfNotMatchRequestMethod() {
+		return this.generateListAllowIfNotMatchRequestMethod;
+	}
+	public void setGenerateListAllowIfNotMatchRequestMethod(boolean generateListAllowIfNotMatchRequestMethod) {
+		this.generateListAllowIfNotMatchRequestMethod = generateListAllowIfNotMatchRequestMethod;
+	}
 
 	
 	public boolean isThrowExceptionIfNotFoundRequestHeaders() {
@@ -463,6 +488,14 @@ public class CORSFilterConfiguration {
 	}
 	public void setTerminateIfNotMatchRequestHeaders(boolean terminateIfNotMatchRequestHeaders) {
 		this.terminateIfNotMatchRequestHeaders = terminateIfNotMatchRequestHeaders;
+	}
+	
+	
+	public boolean isGenerateListAllowIfNotMatchRequestHeaders() {
+		return this.generateListAllowIfNotMatchRequestHeaders;
+	}
+	public void setGenerateListAllowIfNotMatchRequestHeaders(boolean generateListAllowIfNotMatchRequestHeaders) {
+		this.generateListAllowIfNotMatchRequestHeaders = generateListAllowIfNotMatchRequestHeaders;
 	}
 	
 

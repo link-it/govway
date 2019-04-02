@@ -429,3 +429,7 @@ INSERT INTO pa_transform_risp_hdr_init_seq VALUES (NEXT VALUE FOR seq_pa_transfo
 
 
 
+
+-- Inizializzo per avere nuove visualizzazioni
+delete from users_stati ;
+

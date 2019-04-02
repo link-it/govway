@@ -21,6 +21,36 @@
 					</rich:comboBox>
 				</link:prop>
 			</a4j:outputPanel>
+			
+			<ui:include src="/stat/includes/searchFormStatisticheFiltroSoggetto.xhtml">
+				<ui:param name="outOfRegionToRefresh" value="#{outOfRegionToRefresh}"/>
+				<ui:param name="sf_nomeMittente" value="#{sf_nomeMittente}" />
+				<ui:param name="sf_nomeDestinatario" value="#{sf_nomeDestinatario}" />
+				<ui:param name="sf_servizio" value="#{sf_servizio}" />
+				<ui:param name="sf_nomeAzione" value="#{sf_nomeAzione}" />
+				<ui:param name="sf_trafficoPerSoggetto" value="#{sf_trafficoPerSoggetto}" />
+				<ui:param name="sf_soggettoLocale" value="#{sf_soggettoLocale}" />
+				<ui:param name="sf_soggetti" value="#{sf_soggetti}" />
+				<ui:param name="sf_mbean" value="#{sf_mbean}" />
+				<ui:param name="sf_tipologiaRicerca" value="#{sf_tipologiaRicerca}" />
+				<ui:param name="sf_tipoReport" value="#{sf_tipoReport}" />
+				<ui:param name="sf_bean" value="#{sf_bean}"  />
+				<ui:param name="sf_showSoggetti" value="#{sf_showSoggetti}" />
+				<ui:param name="sf_labelSoggettoLocale" value="#{sf_labelSoggettoLocale}" />
+				<ui:param name="sf_labelNomeMittente" value="#{sf_labelNomeMittente}" />
+				<ui:param name="sf_labelNomeDestinatario" value="#{sf_labelNomeDestinatario}" />
+				<ui:param name="sf_labelTrafficoPerSoggetto" value="#{sf_labelTrafficoPerSoggetto}" />
+				<ui:param name="tipo_filtro_soggetti" value="soggetto_locale" />
+		 	</ui:include>
+		 	
+	 		<link:prop label="Tipo" rendered="#{sf_showTipologia}">
+				<rich:comboBox id="tipologiaCombo" value="#{sf_bean.tipologiaRicerca}" defaultLabel="Seleziona Tipologia" converter="selectItemConverter"
+						width="416" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
+					<f:selectItems value="#{sf_bean.tipologieRicerca}"/>
+					<a4j:support status="mainStatus" event="onselect" reRender="searchPnl,filtriRicercaDatiMittente" actionListener="#{sf_bean.tipologiaRicercaListener}" />
+				</rich:comboBox>
+			</link:prop>
+			<h:inputHidden value="#{sf_bean.tipologiaRicerca}" rendered="#{not sf_showTipologia}" />
 						
 			<a4j:outputPanel id="periodoCtr" layout="block">
 			
@@ -91,19 +121,12 @@
 			
 			<a4j:outputPanel id="filtriRicercaServizio" layout="block">
 			
-				<div class="subtitle">
-					<h:outputText id="idDatiServizio" value="#{msg['stats.search.sezioneFiltroDatiServizio.label']}" styleClass="subtitle"/>
-				</div>
-			
-				<link:prop label="Tipologia" rendered="#{sf_showTipologia}">
-					<rich:comboBox id="tipologiaCombo" value="#{sf_bean.tipologiaRicerca}" defaultLabel="Seleziona Tipologia" converter="selectItemConverter"
-							width="416" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
-						<f:selectItems value="#{sf_bean.tipologieRicerca}"/>
-						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl,filtriRicercaDatiMittente" actionListener="#{sf_bean.tipologiaRicercaListener}" />
-					</rich:comboBox>
-				</link:prop>
-				<h:inputHidden value="#{sf_bean.tipologiaRicerca}" rendered="#{not sf_showTipologia}" />
-			
+				<c:if test="#{sf_showServizi or sf_tipologiaRicerca eq 'uscita'}">
+					<div class="subtitle">
+						<h:outputText id="idDatiServizio" value="#{msg['stats.search.sezioneFiltroDatiServizio.label']}" styleClass="subtitle"/>
+					</div>
+				</c:if>
+						
 				<ui:include src="/stat/includes/searchFormStatisticheFiltroSoggetto.xhtml">
 					<ui:param name="outOfRegionToRefresh" value="#{outOfRegionToRefresh}"/>
 					<ui:param name="sf_nomeMittente" value="#{sf_nomeMittente}" />
@@ -122,6 +145,7 @@
 					<ui:param name="sf_labelNomeMittente" value="#{sf_labelNomeMittente}" />
 					<ui:param name="sf_labelNomeDestinatario" value="#{sf_labelNomeDestinatario}" />
 					<ui:param name="sf_labelTrafficoPerSoggetto" value="#{sf_labelTrafficoPerSoggetto}" />
+					<ui:param name="tipo_filtro_soggetti" value="soggetto_remoto" />
 			 	</ui:include>
 					
 				<c:if test="#{sf_showServizi}">
@@ -178,6 +202,32 @@
 				</link:prop>
 				
 				<a4j:outputPanel layout="block" id="tipoRiconoscimentoPnl" rendered="#{not empty sf_bean.riconoscimento}">
+				
+					<c:if test="#{sf_showDatiMittente}">	
+						<a4j:outputPanel layout="block" id="sogMitComboCtr" rendered="#{sf_bean.riconoscimento == 'soggetto' or sf_bean.riconoscimento == 'applicativo' or sf_bean.riconoscimento == 'tokenInfo'}">						
+							<ui:include src="/stat/includes/searchFormStatisticheFiltroSoggetto.xhtml">
+								<ui:param name="outOfRegionToRefresh" value="#{outOfRegionToRefresh}"/>
+								<ui:param name="sf_nomeMittente" value="#{sf_nomeMittente}" />
+								<ui:param name="sf_nomeDestinatario" value="#{sf_nomeDestinatario}" />
+								<ui:param name="sf_servizio" value="#{sf_servizio}" />
+								<ui:param name="sf_nomeAzione" value="#{sf_nomeAzione}" />
+								<ui:param name="sf_trafficoPerSoggetto" value="#{sf_trafficoPerSoggetto}" />
+								<ui:param name="sf_soggettoLocale" value="#{sf_soggettoLocale}" />
+								<ui:param name="sf_soggetti" value="#{sf_soggetti}" />
+								<ui:param name="sf_mbean" value="#{sf_mbean}" />
+								<ui:param name="sf_tipologiaRicerca" value="#{sf_tipologiaRicerca}" />
+								<ui:param name="sf_tipoReport" value="#{sf_tipoReport}" />
+								<ui:param name="sf_bean" value="#{sf_bean}"  />
+								<ui:param name="sf_showSoggetti" value="#{sf_showSoggetti}" />
+								<ui:param name="sf_labelSoggettoLocale" value="#{sf_labelSoggettoLocale}" />
+								<ui:param name="sf_labelNomeMittente" value="#{sf_labelNomeMittente}" />
+								<ui:param name="sf_labelNomeDestinatario" value="#{sf_labelNomeDestinatario}" />
+								<ui:param name="sf_labelTrafficoPerSoggetto" value="#{sf_labelTrafficoPerSoggetto}" />
+								<ui:param name="tipo_filtro_soggetti" value="soggetto_mittente" />
+								<ui:param name="tipo_filtro_soggetto_mittente_required" value="#{sf_bean.riconoscimento == 'applicativo' or sf_bean.riconoscimento == 'soggetto'}" />
+						 	</ui:include>
+						 </a4j:outputPanel>
+					</c:if>
 					
 					<a4j:outputPanel layout="block" id="saComboCtr" rendered="#{sf_bean.riconoscimento == 'applicativo'}">
 						<link:prop label="Applicativo" required="true">
@@ -251,6 +301,31 @@
 			
 				<a4j:outputPanel layout="block" id="tipoRiconoscimentoGroupByPnl" rendered="#{not empty sf_bean.riconoscimento}">
 					<a4j:outputPanel layout="block" id="tokenInfoComboGroupByCtr" rendered="#{sf_bean.riconoscimento == 'tokenInfo'}">
+					
+						<c:if test="#{sf_bean.showGroupByDatiMittente and sf_tipologiaRicerca eq 'ingresso'}">	
+							<ui:include src="/stat/includes/searchFormStatisticheFiltroSoggetto.xhtml">
+								<ui:param name="outOfRegionToRefresh" value="#{outOfRegionToRefresh}"/>
+								<ui:param name="sf_nomeMittente" value="#{sf_nomeMittente}" />
+								<ui:param name="sf_nomeDestinatario" value="#{sf_nomeDestinatario}" />
+								<ui:param name="sf_servizio" value="#{sf_servizio}" />
+								<ui:param name="sf_nomeAzione" value="#{sf_nomeAzione}" />
+								<ui:param name="sf_trafficoPerSoggetto" value="#{sf_trafficoPerSoggetto}" />
+								<ui:param name="sf_soggettoLocale" value="#{sf_soggettoLocale}" />
+								<ui:param name="sf_soggetti" value="#{sf_soggetti}" />
+								<ui:param name="sf_mbean" value="#{sf_mbean}" />
+								<ui:param name="sf_tipologiaRicerca" value="#{sf_tipologiaRicerca}" />
+								<ui:param name="sf_tipoReport" value="#{sf_tipoReport}" />
+								<ui:param name="sf_bean" value="#{sf_bean}"  />
+								<ui:param name="sf_showSoggetti" value="#{sf_showSoggetti}" />
+								<ui:param name="sf_labelSoggettoLocale" value="#{sf_labelSoggettoLocale}" />
+								<ui:param name="sf_labelNomeMittente" value="#{sf_labelNomeMittente}" />
+								<ui:param name="sf_labelNomeDestinatario" value="#{sf_labelNomeDestinatario}" />
+								<ui:param name="sf_labelTrafficoPerSoggetto" value="#{sf_labelTrafficoPerSoggetto}" />
+								<ui:param name="tipo_filtro_soggetti" value="soggetto_mittente" />
+								<ui:param name="tipo_filtro_soggetto_mittente_required" value="false" />
+						 	</ui:include>
+						</c:if>
+					
 						<link:prop label="Claim" required="true">
 							<rich:comboBox id="claimComboGroupBy" value="#{sf_bean.tokenClaim}" defaultLabel="Selezione Claim" 
 									converter="selectItemConverter"	directInputSuggestions="true" width="416" enableManualInput="false">
@@ -269,7 +344,7 @@
 			<a4j:outputPanel id="filtriRicercaTransazione" layout="block" rendered="#{(sf_bean.andamentoTemporalePerEsiti == false) or sf_bean.showEsitiContesto}">
 			
 				<div class="subtitle">
-					<h:outputText id="idDatiTransazione" value="Filtro Dati Transazione" styleClass="subtitle"/>
+					<h:outputText id="idDatiTransazione" value="Filtro Esito" styleClass="subtitle"/>
 				</div>
 								
 				<link:prop label="Esito" rendered="#{sf_bean.andamentoTemporalePerEsiti == false}">

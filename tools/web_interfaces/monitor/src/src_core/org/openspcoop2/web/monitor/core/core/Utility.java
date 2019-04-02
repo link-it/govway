@@ -779,11 +779,28 @@ public class Utility {
 			}
 		}
 
+		List<String> listProtocolli = null;
+		
 		if(utente.getProtocolliSupportati()!=null && utente.getProtocolliSupportati().size()>0) {
-			return ProtocolUtils.orderProtocolli(utente.getProtocolliSupportati());
+			listProtocolli = ProtocolUtils.orderProtocolli(utente.getProtocolliSupportati());
 		}
 
-		return getProtocolli(protocolFactories); // ordinato dentro il metodo
+		listProtocolli = getProtocolli(protocolFactories); // ordinato dentro il metodo
+		
+		if(utente.getSoggetti()!=null && !utente.getSoggetti().isEmpty()) {
+			
+			List<String> protocolliNewList = new ArrayList<String>();
+			for (IDSoggetto idSoggetto : utente.getSoggetti()) {
+				String protocollo = pfManager.getProtocolByOrganizationType(idSoggetto.getTipo());
+				if(!protocolliNewList.contains(protocollo)) {
+					protocolliNewList.add(protocollo);
+				}
+			}
+			return protocolliNewList;
+			
+		}
+		
+		return listProtocolli;
 
 	}
 

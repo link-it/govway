@@ -93,6 +93,16 @@ public class FileCache {
 			docFileEntry.setFilenameRispostaKo(Utilities.testSuiteProperties.getJSONFileNameRispostaKo());
 			cache.put("doc", docFileEntry);
 
+			TestFileEntry soap11FileEntry = new TestFileEntry();
+			soap11FileEntry.setExtRichiesta("soap11");
+			soap11FileEntry.setFilenameRichiesta(Utilities.testSuiteProperties.getSoap11FileName());
+			cache.put("soap11", soap11FileEntry);
+			
+			TestFileEntry soap12FileEntry = new TestFileEntry();
+			soap12FileEntry.setExtRichiesta("soap12");
+			soap12FileEntry.setFilenameRichiesta(Utilities.testSuiteProperties.getSoap12FileName());
+			cache.put("soap12", soap12FileEntry);
+			
 			createFileMulti("related", "multi", xmlFileEntry, pdfFileEntry, pngFileEntry);
 			
 			createFileMulti("mixed", "multi-mixed", xmlFileEntry, pdfFileEntry, pngFileEntry);

@@ -59,7 +59,9 @@ public class ParametriAutenticazione implements java.io.Serializable {
 		}
 	}
 	public ParametriAutenticazione(ParametriAutenticazione p) {
-		this.map = p.map;
+		if(p!=null && p.map!=null) {
+			this.map = p.map;
+		}
 	}
 	public ParametriAutenticazione(String dbValue) throws AutenticazioneException {
 		if(dbValue!=null) {

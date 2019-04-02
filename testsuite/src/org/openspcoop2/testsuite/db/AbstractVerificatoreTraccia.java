@@ -3443,6 +3443,7 @@ public abstract class AbstractVerificatoreTraccia {
 
 
 		try {
+			LoggerWrapperFactory.getLogger("govway.testsuite").debug("Trovato, aggiorno isArrived per tracce."+CostantiDB.TRACCE_COLUMN_ID_MESSAGGIO+"='"+id+"'");
 			//System.out.println("UPDATE [UPDATE tracce set "+CostantiDatabase.IS_ARRIVED+"=1 where id="+idTraccia+"]");
 			state=this.con.prepareStatement("UPDATE "+CostantiDB.TRACCE+" set "+CostantiDB.TRACCE_COLUMN_IS_ARRIVED+"=? where "+CostantiDB.TRACCE_COLUMN_ID+"=?");
 			state.setInt(1,1);

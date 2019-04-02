@@ -1055,9 +1055,24 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		return true;
 	}
 	
+	public String validaSezioneDatiMittenteAction() {
+		validaSezioneDatiMittente();
+		return null;
+	}
+	
+	public String validaSezioneDatiMittenteCustomAction() {
+		validaSezioneDatiMittenteCustom();
+		return null;
+	}
+	
 	public boolean validaSezioneDatiMittente() {
 		if(StringUtils.isNotEmpty(this.getRiconoscimento())) {
-			if(this.getRiconoscimento().equals(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+			if(this.getRiconoscimento().equals(Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO)) {
+				if (StringUtils.isEmpty(this.getTipoNomeMittente())) {
+					MessageUtils.addErrorMsg("Indicare un Soggetto");
+					return false;
+				}
+			} else if(this.getRiconoscimento().equals(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
 				if (StringUtils.isEmpty(this.getServizioApplicativo())) {
 					MessageUtils.addErrorMsg("Indicare un Applicativo");
 					return false;
@@ -1861,13 +1876,18 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		
 		lst.add(new SelectItem("--", "--"));  
 		
+		boolean searchModeBySoggetto = TipologiaRicerca.ingresso.equals(this.getTipologiaRicercaEnum());
+		
 		String protocolloSelezionato = this.getProtocollo(); 
 		boolean protocolloSupportaApplicativoinErogazione = false;
 		try{
 			protocolloSupportaApplicativoinErogazione = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolloSelezionato).createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni();
 		}catch(Exception e) {}
 		boolean searchModeByApplicativo = !TipologiaRicerca.ingresso.equals(this.getTipologiaRicercaEnum()) || protocolloSupportaApplicativoinErogazione; 
-		
+				
+		if(searchModeBySoggetto) {
+			lst.add(new SelectItem(Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO, "Soggetto"));  
+		}
 		if(searchModeByApplicativo) {
 			lst.add(new SelectItem(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO, "Applicativo"));  
 		}

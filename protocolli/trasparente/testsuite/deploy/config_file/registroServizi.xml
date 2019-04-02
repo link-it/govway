@@ -8,12 +8,35 @@
 
         <accordo-servizio-parte-comune nome="EsempioREST" profilo-collaborazione="sincrono" 
 		utilizzo-senza-azione="true" versione="1" service-binding="rest">
-                    <soggetto-referente tipo="gw" nome="MinisteroReferente"/>
+                <soggetto-referente tipo="gw" nome="MinisteroReferente"/>
 		<resource nome="invoke" />
 		<resource nome="invokeBasicPdD" path="invokeBasicPdD" />
 		<resource nome="invokeBasicPdD_credenzialiNonBruciate" path="invokeBasicPdD_credenzialiNonBruciate" />
 		<resource nome="invokeWithBasicAuth" path="invokeWithBasicAuth" />
 		<resource nome="invokeWithBasicAuthDomain" path="invokeWithBasicAuthDomain" />
+        </accordo-servizio-parte-comune>
+
+        <accordo-servizio-parte-comune nome="EsempioCORSviaREST" profilo-collaborazione="sincrono" 
+		utilizzo-senza-azione="true" versione="1" service-binding="rest">
+                <soggetto-referente tipo="gw" nome="MinisteroReferente"/>
+		<resource nome="invokePOST" method="POST" path="/service/echo" />
+		<resource nome="invokeGET" method="GET" path="/service/echo" />
+		<resource nome="invokeHEAD" method="HEAD" path="/service/ping" />
+		<resource nome="invokeDELETE" method="DELETE" path="/service/echo" />
+		<resource nome="invokePUT" method="PUT" path="/service/echo" />
+		<resource nome="invokeTRACE" method="TRACE" path="/service/echo" />
+		<!-- Non deve essere registrata come risorsa possibile <resource nome="invoke" method="OPTIONS" /> -->
+        </accordo-servizio-parte-comune>
+        <accordo-servizio-parte-comune nome="EsempioCORSviaRESTtrasparente" profilo-collaborazione="sincrono" 
+		utilizzo-senza-azione="true" versione="1" service-binding="rest">
+                <soggetto-referente tipo="gw" nome="MinisteroReferente"/>
+		<resource nome="invokePOST" method="POST" path="/service/echo" />
+		<resource nome="invokeGET" method="GET" path="/service/echo" />
+		<resource nome="invokeHEAD" method="HEAD" path="/service/ping" />
+		<resource nome="invokeDELETE" method="DELETE" path="/service/echo" />
+		<resource nome="invokePUT" method="PUT" path="/service/echo" />
+		<resource nome="invokeTRACE" method="TRACE" path="/service/echo" />
+		<!-- Non deve essere registrata come risorsa possibile <resource nome="invoke" method="OPTIONS" /> -->
         </accordo-servizio-parte-comune>
 
 
@@ -57,6 +80,20 @@
 		<allegato tipo="XML" file="/etc/govway/mtom/MTOMExample.xsd"/>
 	</accordo-servizio-parte-comune>
 
+        <accordo-servizio-parte-comune nome="EsempioCORSviaSOAP" profilo-collaborazione="sincrono" 
+		utilizzo-senza-azione="true" versione="1" service-binding="soap">
+                <soggetto-referente tipo="gw" nome="MinisteroReferente"/>
+		<port-type nome="CORSviaSOAP" profilo-collaborazione="sincrono" descrizione="Esempio di servizio sincrono">
+		   <azione nome="invoke" />
+		</port-type>
+        </accordo-servizio-parte-comune>
+        <accordo-servizio-parte-comune nome="EsempioCORSviaSOAPtrasparente" profilo-collaborazione="sincrono" 
+		utilizzo-senza-azione="true" versione="1" service-binding="soap">
+                <soggetto-referente tipo="gw" nome="MinisteroReferente"/>
+		<port-type nome="CORSviaSOAPtrasparente" profilo-collaborazione="sincrono" descrizione="Esempio di servizio sincrono">
+		   <azione nome="invoke" />
+		</port-type>
+        </accordo-servizio-parte-comune>
 
 
 
@@ -331,6 +368,24 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdCakNDQk80Q0NRQ2d0TnorbTk
 		        </configurazione-servizio>
                 </accordo-servizio-parte-specifica>
 
+		<accordo-servizio-parte-specifica tipo="gw" nome="CORSviaREST" versione="1" 
+			accordo-servizio-parte-comune="gw/MinisteroReferente:EsempioCORSviaREST:1">
+		        <configurazione-servizio>
+		                <connettore tipo="http" nome="CNT_gw/MinisteroErogatore_REST/API">
+		                        <property nome="location" valore="http://localhost:8080/govwayTestSuite/api?traceIsArrived=mittente"/>
+		                </connettore>
+		        </configurazione-servizio>
+                </accordo-servizio-parte-specifica>
+
+		<accordo-servizio-parte-specifica tipo="gw" nome="CORSviaRESTtrasparente" versione="1" 
+			accordo-servizio-parte-comune="gw/MinisteroReferente:EsempioCORSviaRESTtrasparente:1">
+		        <configurazione-servizio>
+		                <connettore tipo="http" nome="CNT_gw/MinisteroErogatore_REST/API">
+		                        <property nome="location" valore="http://localhost:8080/govwayTestSuite/api?traceIsArrived=mittente&amp;CORS=true"/>
+		                </connettore>
+		        </configurazione-servizio>
+                </accordo-servizio-parte-specifica>
+
 
 		<!-- **** Configurazione SOAP **** -->
 
@@ -392,6 +447,24 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdCakNDQk80Q0NRQ2d0TnorbTk
 			     </configurazione-azione>
 			</configurazione-servizio>
 		</accordo-servizio-parte-specifica>
+
+		<accordo-servizio-parte-specifica tipo="gw" nome="CORSviaSOAP" versione="1" 
+			accordo-servizio-parte-comune="gw/MinisteroReferente:EsempioCORSviaSOAP:1" port-type="CORSviaSOAP">
+		        <configurazione-servizio>
+		                <connettore tipo="http" nome="CNT_gw/MinisteroErogatore_REST/API">
+		                        <property nome="location" valore="http://localhost:8080/govwayTestSuite/api/service/echo?traceIsArrived=mittente"/>
+		                </connettore>
+		        </configurazione-servizio>
+                </accordo-servizio-parte-specifica>
+
+		<accordo-servizio-parte-specifica tipo="gw" nome="CORSviaSOAPtrasparente" versione="1" 
+			accordo-servizio-parte-comune="gw/MinisteroReferente:EsempioCORSviaSOAPtrasparente:1" port-type="CORSviaSOAPtrasparente">
+		        <configurazione-servizio>
+		                <connettore tipo="http" nome="CNT_gw/MinisteroErogatore_REST/API">
+		                        <property nome="location" valore="http://localhost:8080/govwayTestSuite/api/service/echo?traceIsArrived=mittente&amp;CORS=true"/>
+		                </connettore>
+		        </configurazione-servizio>
+                </accordo-servizio-parte-specifica>
 
 	</soggetto>
 

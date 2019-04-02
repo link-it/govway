@@ -144,7 +144,7 @@ public class CostantiGrafici {
 	
 	public static final String DISTRIBUZIONE_TEMPORALE_FILE_NAME = "distribuzione_temporale";
 	public static final String DISTRIBUZIONE_ESITI_FILE_NAME = "distribuzione_esiti";
-	public static final String DISTRIBUZIONE_AZIONE_FILE_NAME = "distribuzione_azione";
+	public static final String DISTRIBUZIONE_AZIONE_FILE_NAME = "distribuzione_operazione";
 	public static final String DISTRIBUZIONE_SA_APPLICATIVO_FILE_NAME = "distribuzione_mittente_applicativo";
 	public static final String DISTRIBUZIONE_SERVIZIO_APPLICATIVO_FILE_NAME = "distribuzione_servizio_applicativo";
 	public static final String DISTRIBUZIONE_SA_IDENTIFICATIVO_AUTENTICATO_FILE_NAME = "distribuzione_mittente_identificativo_autenticato";

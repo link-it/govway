@@ -663,6 +663,9 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO, requestInfo);
 			context.setProprietaErroreAppl(generatoreErrore.getProprietaErroreAppl());
+			if(context.getMsgDiagnostico()==null) {
+				context.setMsgDiagnostico(msgDiag);
+			}
 			
 			// Log elaborazione dati completata
 			msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.completata");

@@ -407,8 +407,6 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
-			
-			
 			/*
 			 * 	Necessario in jboss7 per evitare errore 'error constructing MAC: java.lang.SecurityException: JCE cannot authenticate the provider BC'
 			 *  se vengono utilizzati keystore P12.
@@ -644,7 +642,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				if(eGovIntestazioneMsg!=null){
 					eGovIntestazioneMsg.toString();
 				}
-				
+								
 			} catch(Exception e) {
 				this.logError("Inizializzazione Message/DOM/SOAP: "+e.getMessage(), e);
 				return;

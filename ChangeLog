@@ -1,3 +1,10 @@
+2019-04-XX  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-807
+	- Effettuata riorganizzazione degli elementi presenti nel filtro di ricerca delle transazioni e di generazione delle statistiche
+	- Migliorata gestione del CORS, ed aggiunta possibilità di registrare gli expose headers tramite la modalità standard della console.
+
 2019-03-12  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

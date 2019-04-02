@@ -96,5 +96,22 @@
           <!-- Autenticazione utilizzata dal servizio di Integration Manager -->
           <integration-manager autenticazione="basic,ssl" />
 
+	  <!-- Gestione CORS -->
+	  <gestione-cors stato="abilitato" tipo="gateway" access-control-all-allow-origins="abilitato" access-control-allow-credentials="disabilitato">
+		<access-control-allow-headers>
+			<header>Authorization</header>
+			<header>Content-Type</header>
+			<header>SOAPAction</header>
+			<header>Cache-Control</header>
+		</access-control-allow-headers>
+		<access-control-allow-methods>
+			<method>GET</method>
+			<method>POST</method>
+			<method>PUT</method>
+			<method>DELETE</method>
+			<method>PATCH</method>
+		</access-control-allow-methods>
+	  </gestione-cors>
+
      </configurazione>
 </openspcoop2>

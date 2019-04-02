@@ -198,7 +198,12 @@ public class PorteApplicativeCore extends ControlStationCore {
 		
 		if(gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) {
 			portaApplicativa.getGestioneToken().setPolicy(gestioneTokenPolicy);
-			portaApplicativa.getGestioneToken().setTokenOpzionale(StatoFunzionalita.toEnumConstant(gestioneTokenOpzionale)); 
+			if(ServletUtils.isCheckBoxEnabled(gestioneTokenOpzionale)) {
+				portaApplicativa.getGestioneToken().setTokenOpzionale(StatoFunzionalita.ABILITATO);
+			}
+			else {
+				portaApplicativa.getGestioneToken().setTokenOpzionale(StatoFunzionalita.DISABILITATO);
+			}
 			portaApplicativa.getGestioneToken().setValidazione(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenValidazioneInput));
 			portaApplicativa.getGestioneToken().setIntrospection(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenIntrospection));
 			portaApplicativa.getGestioneToken().setUserInfo(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenUserInfo));

@@ -102,7 +102,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 														process="searchPnl" 
 														reRender="listaTransazioniCtr"
 														rendered="#{searchFormTransazioni.periodo eq 'Live'}"
-														action="#"
+														action="#{searchFormTransazioni.validaSezioneDatiMittenteAction}"
 														oncomplete="completa(event)"
 														/>
 									<a4j:commandButton id="svuotaNotLive" value="Ripulisci"
@@ -173,7 +173,10 @@ xmlns="http://www.w3.org/1999/xhtml"
 				<a4j:form id="formListaTransazioni" rendered="#{not(searchFormTransazioni.periodo eq 'Live')}" prependId="false">
 					<ui:include src="/transazioni/includes/transazioniGrid.xhtml">
 						<ui:param value="#{transazioniDM}" name="value" />
-						<ui:param value="Lista Transazioni" name="headerText" />
+						<ui:param value="Lista #{(searchFormTransazioni.modalitaRicercaStorico == 'intervalloTemporale' or searchFormTransazioni.modalitaRicercaStorico == 'idApplicativo') ? 
+											 (searchFormTransazioni.tipologiaRicerca eq 'ingresso' ? 'Erogazioni' : 'Fruizioni')
+											 :
+											 'Transazioni' }" name="headerText" />
 						<ui:param value="#{transazioniBean.selectedIds[item]}" name="selectionMapTarget" />
 						<ui:param value="#{transazioniBean}" name="mBean" />
 						<ui:param value="#{transazioniBean.tableState}" name="tableState" />
@@ -529,7 +532,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 									</h:outputText>
 								</a4j:htmlCommandLink>
 							</rich:column>
-							<rich:column id="colProtocollo">
+							<rich:column id="colProtocollo" rendered="#{searchFormTransazioni.showListaProtocolli}">
 								<f:facet name="header">
 									<h:outputText id="outProtocollo1" value="#{applicationBean.labelProfiloCompact}" />
 								</f:facet>
@@ -543,6 +546,35 @@ xmlns="http://www.w3.org/1999/xhtml"
 								<h:outputText id="outPddRuolo2" value="#{item.pddRuolo=='DELEGATA' ? 'Fruizione' : item.pddRuolo=='APPLICATIVA' ? 'Erogazione' : item.pddRuolo=='ROUTER' ? 'Router' : 'I.M.'}" />
 								<rich:toolTip for="outPddRuolo2" value="#{item.pddRuolo=='DELEGATA' ? 'Fruizione' : item.pddRuolo=='APPLICATIVA' ? 'Erogazione' : item.pddRuolo=='ROUTER' ? 'Router' : 'I.M.'}" />
 							</rich:column>
+							<rich:column id="colServLive">
+								<f:facet name="header">
+									<h:outputText id="outServLive1" value="#{msg['commons.servizio.label']}" />
+								</f:facet>
+								<h:outputText id="outServLive2" value="#{item.servizio} (#{item.soggettoErogatore})" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
+								<rich:toolTip for="outServLive2" value="#{item.servizio} (#{item.soggettoErogatore})" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
+								<h:outputText id="outServLive3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+								<rich:toolTip for="outServLive3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+							</rich:column>
+							<rich:column id="colAzioneLive">
+								<f:facet name="header">
+									<h:outputText id="outAzioneLive1" value="Operazione" />
+								</f:facet>
+								<h:outputText id="outAzioneLive2" value="#{item.azione}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+								<rich:toolTip for="outAzioneLive2" value="#{item.azione}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+								<h:outputText id="outAzioneLive3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+								<rich:toolTip for="outAzioneLive3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+							</rich:column>
+							<rich:column id="colFruitoreLive">
+								<f:facet name="header">
+									<h:outputText id="outFruitoreLive1" value="Mittente" />
+								</f:facet>
+								<h:outputText id="outServizioApplicativoFruitore2" value="#{item.servizioApplicativoFruitore} (#{item.nomeSoggettoFruitore})" rendered="#{(not empty item.nomeSoggettoFruitore) and (not empty item.servizioApplicativoFruitore)}"/>
+								<rich:toolTip for="outServizioApplicativoFruitore2" value="#{item.servizioApplicativoFruitore} (#{item.nomeSoggettoFruitore})" rendered="#{(not empty item.nomeSoggettoFruitore) and (not empty item.servizioApplicativoFruitore)}"/>
+								<h:outputText id="outServizioApplicativoFruitore3" value="#{item.servizioApplicativoFruitore}" rendered="#{(empty item.nomeSoggettoFruitore) and (not empty item.servizioApplicativoFruitore)}"/>
+								<rich:toolTip for="outServizioApplicativoFruitore3" value="#{item.servizioApplicativoFruitore}" rendered="#{(empty item.nomeSoggettoFruitore) and (not empty item.servizioApplicativoFruitore)}"/>
+								<h:outputText id="outServizioApplicativoFruitore4" value="#{item.nomeSoggettoFruitore}" rendered="#{(not empty item.nomeSoggettoFruitore) and (empty item.servizioApplicativoFruitore)}"/>
+								<rich:toolTip for="outServizioApplicativoFruitore4" value="#{item.nomeSoggettoFruitore}" rendered="#{(not empty item.nomeSoggettoFruitore) and (empty item.servizioApplicativoFruitore)}"/>
+							</rich:column>
 							<rich:column id="colEsitoLive">
 								<f:facet name="header">
 									<h:outputText id="outEsitoLive1" value="Esito" />
@@ -551,38 +583,6 @@ xmlns="http://www.w3.org/1999/xhtml"
 								<rich:toolTip for="outEsitoLive2">
 									<h:outputText value="#{item.esitoLabel}" />
 								</rich:toolTip>
-							</rich:column>
-							<rich:column id="colFruitoreLive">
-								<f:facet name="header">
-									<h:outputText id="outFruitoreLive1" value="Fruitore" />
-								</f:facet>
-								<h:outputText id="outFruitoreLive2" value="#{item.soggettoFruitore}" rendered="#{not empty item.nomeSoggettoFruitore}"/>
-								<rich:toolTip for="outFruitoreLive2" value="#{item.soggettoFruitore}" rendered="#{not empty item.nomeSoggettoFruitore}"/>
-							</rich:column>
-							<rich:column id="colErogatoreLive">
-								<f:facet name="header">
-									<h:outputText id="outErogatoreLive1" value="Erogatore" />
-								</f:facet>
-								<h:outputText id="outErogatoreLive2" value="#{item.soggettoErogatore}"  rendered="#{not empty item.nomeSoggettoErogatore}"/>
-								<rich:toolTip for="outErogatoreLive2" value="#{item.soggettoErogatore}" rendered="#{not empty item.nomeSoggettoErogatore}"/>
-							</rich:column>
-							<rich:column id="colServLive">
-								<f:facet name="header">
-									<h:outputText id="outServLive1" value="#{msg['commons.servizio.label']}" />
-								</f:facet>
-								<h:outputText id="outServLive2" value="#{item.servizio}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
-								<rich:toolTip for="outServLive2" value="#{item.servizio}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
-								<h:outputText id="outServLive3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
-								<rich:toolTip for="outServLive3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
-							</rich:column>
-							<rich:column id="colAzioneLive">
-								<f:facet name="header">
-									<h:outputText id="outAzioneLive1" value="Azione" />
-								</f:facet>
-								<h:outputText id="outAzioneLive2" value="#{item.azione}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
-								<rich:toolTip for="outAzioneLive2" value="#{item.azione}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
-								<h:outputText id="outAzioneLive3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
-								<rich:toolTip for="outAzioneLive3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 							</rich:column>
 						</rich:dataTable>
 					</a4j:form>

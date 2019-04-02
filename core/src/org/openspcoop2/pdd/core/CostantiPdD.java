@@ -118,6 +118,11 @@ public class CostantiPdD {
     /** Costante che indica una busta in uscita */
     public final static String TRACCIAMENTO_OUT = "OUT";
     
+    /**
+     * Gestione Preflight Request in corso su SOAP
+     */
+    public final static String CORS_PREFLIGHT_REQUEST_SOAP = "CORS_PREFLIGHT_REQUEST_SOAP";
+    
     /** Nome Porta Invocata originale */
     public final static String NOME_PORTA_INVOCATA = "NOME_PORTA_INVOCATA";
     

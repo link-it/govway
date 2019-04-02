@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /**
  * MultiKeystore
@@ -95,14 +96,24 @@ public class MultiKeystore {
 				if(keyValue!=null){
 					// Configurazione con keyValue fornita direttamente
 					String keyAlgorithm = getProperty(multiProperties, alias+MultiKeystore.KEY_ALGORITHM);
-					this.keystores.put(alias, new SymmetricKeystore(keyAlias, keyValue, keyAlgorithm));
+					try {
+						this.keystores.put(alias, new SymmetricKeystore(keyAlias, keyValue, keyAlgorithm));
+					}catch(Throwable e) {
+						String idKeystore = "!!! Errore durante il caricamento del SymmetricKeystore !!! [keyAlias:"+keyAlias+"] ";
+						LoggerWrapperFactory.getLogger(MultiKeystore.class).error(idKeystore+e.getMessage(),e);
+					}
 				}
 				else{
 					// Configurazione con MerlinKeystore
 					String keystoreType = getProperty(multiProperties, alias+MultiKeystore.KEYSTORE_TYPE);
 					String keystorePath = getProperty(multiProperties, alias+MultiKeystore.KEYSTORE_PATH);
 					String keystorePassword = getProperty(multiProperties, alias+MultiKeystore.KEYSTORE_PASSWORD);
-					this.keystores.put(alias, new MerlinKeystore(keystorePath, keystoreType, keystorePassword, keyPassword));
+					try {
+						this.keystores.put(alias, new MerlinKeystore(keystorePath, keystoreType, keystorePassword, keyPassword));
+					}catch(Throwable e) {
+						String idKeystore = "!!! Errore durante il caricamento del MerlinKeystore !!! [keyAlias:"+keyAlias+"] ";
+						LoggerWrapperFactory.getLogger(MultiKeystore.class).error(idKeystore+e.getMessage(),e);
+					}
 				}
 				
 				this.mappingAliasToKeyAlias.put(alias, keyAlias);
@@ -136,6 +147,9 @@ public class MultiKeystore {
 			}
 			
 			Object keystore = this.keystores.get(alias);
+			if(keystore==null) {
+				throw new Exception("Non esiste un keystore per l'alias["+alias+"]; verificare che non sia avvenuti errori durante l'inizializzazione (MultiKeystore)");
+			}
 			if(keystore instanceof MerlinKeystore){
 				return ((MerlinKeystore)keystore).getKey(this.mappingAliasToKeyAlias.get(alias));
 			}
@@ -161,6 +175,9 @@ public class MultiKeystore {
 			}
 			
 			Object keystore = this.keystores.get(alias);
+			if(keystore==null) {
+				throw new Exception("Non esiste un keystore per l'alias["+alias+"]; verificare che non sia avvenuti errori durante l'inizializzazione (MultiKeystore)");
+			}
 			if(keystore instanceof MerlinKeystore){
 				return ((MerlinKeystore)keystore).getKeyStore();
 			}

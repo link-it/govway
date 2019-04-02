@@ -35,7 +35,6 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageType;
@@ -43,8 +42,6 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
-import org.openspcoop2.pdd.core.CORSFilter;
-import org.openspcoop2.pdd.core.CORSWrappedHttpServletResponse;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
@@ -67,13 +64,10 @@ import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
-import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.date.DateManager;
-import org.openspcoop2.utils.transport.http.CORSRequestType;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -291,13 +285,15 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				if(StatoFunzionalita.ABILITATO.equals(cors.getStato())) {
 					if(TipoGestioneCORS.GATEWAY.equals(cors.getTipo())) {
 						
-						CORSFilter corsFilter = new CORSFilter(logCore, cors);
-						CORSWrappedHttpServletResponse resCORS = new CORSWrappedHttpServletResponse(false);
-						corsFilter.doCORS(httpServletRequest, resCORS, CORSRequestType.PRE_FLIGHT);
-						OpenSPCoop2Message msgCORSResponse = resCORS.buildMessage();
-						EsitoTransazione esito = 
+						/*
+						
+						org.openspcoop2.pdd.core.CORSFilter corsFilter = new org.openspcoop2.pdd.core.CORSFilter(logCore, cors);
+						org.openspcoop2.pdd.core.CORSWrappedHttpServletResponse resCORS = new org.openspcoop2.pdd.core.CORSWrappedHttpServletResponse(false);
+						corsFilter.doCORS(httpServletRequest, resCORS, org.openspcoop2.utils.transport.http.CORSRequestType.PRE_FLIGHT, true);
+						org.openspcoop2.message.OpenSPCoop2Message msgCORSResponse = resCORS.buildMessage();
+						org.openspcoop2.protocol.sdk.builder.EsitoTransazione esito = 
 								requestInfo.getProtocolFactory().createEsitoBuilder().getEsito(requestInfo.getProtocolContext(),
-										EsitoTransazioneName.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY);
+										org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY);
 						ConnectorDispatcherInfo c = ConnectorDispatcherInfo.getGeneric(msgCORSResponse, 
 								resCORS.getStatus(), null, resCORS.getHeader(), esito);
 						if(pddContextNullable!=null) {
@@ -305,6 +301,21 @@ public class RicezioneContenutiApplicativiServiceUtils {
 						}
 						ConnectorDispatcherUtils.doInfo(c, requestInfo, res, logCore, true);
 						return c;
+						
+						*/
+						
+						// Fix per avere il dump anche nelle comunicazioni soap, converto in REST
+						requestInfo.setIntegrationServiceBinding(ServiceBinding.REST);
+						requestInfo.setProtocolServiceBinding(ServiceBinding.REST);
+						generatoreErrore.updateServiceBinding(ServiceBinding.REST);
+						
+						requestInfo.setIntegrationRequestMessageType(MessageType.BINARY);
+						requestInfo.setProtocolRequestMessageType(MessageType.BINARY);
+						generatoreErrore.updateRequestMessageType(MessageType.BINARY);
+						
+						if(pddContextNullable!=null) {
+							pddContextNullable.addObject(CostantiPdD.CORS_PREFLIGHT_REQUEST_SOAP, "true");
+						}
 						
 					}
 					else {

@@ -57,6 +57,11 @@ import org.testng.annotations.Test;
  */
 public class TestCORS {
 
+	public static void main(String [] args) throws Exception {
+		TestCORS test = new TestCORS();
+		test.testDoFilterNullRequestType();
+	}
+	
 	private static final String ID_TEST = "CORS";
 
 	private static final String TEST_HTTPS_ORIGIN = "https://www.govway.org";
@@ -715,7 +720,7 @@ public class TestCORS {
 		TestLogger.info("Run test '"+ID_TEST+".nullRequestType' ...");
 
 		TestHttpServletRequest request = new TestHttpServletRequest();
-		request.setHeader(HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN,"");
+		request.setHeader(HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN,TEST_HTTPS_ORIGIN);
 		request.setMethod(null);
 		request.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
 		TestHttpServletResponse response = new TestHttpServletResponse();
@@ -845,9 +850,18 @@ public class TestCORS {
 		Assert.assertTrue(trovato!=null);
 		Assert.assertTrue(trovato.equals(TEST_HTTPS_ORIGIN));
 
-		String trovatoAllowMethods = response.getHeader(HttpConstants.ACCESS_CONTROL_ALLOW_METHODS);
-		TestLogger.info("Non atteso header '"+HttpConstants.ACCESS_CONTROL_ALLOW_METHODS+"' trovato ["+trovatoAllowMethods+"]");
-		Assert.assertTrue(trovatoAllowMethods==null); // sara il browser a bloccarlo
+		if(corsFilter.getConfig().isGenerateListAllowIfNotMatchRequestMethod()) {
+			String trovatoAllowMethods = response.getHeader(HttpConstants.ACCESS_CONTROL_ALLOW_METHODS);
+			String attesiMetodi = ALLOW_METHOD_DEFAULT.toString();
+			TestLogger.info("Atteso header '"+HttpConstants.ACCESS_CONTROL_ALLOW_METHODS+"' ["+attesiMetodi+"] trovato ["+trovatoAllowMethods+"]");
+			Assert.assertTrue(trovatoAllowMethods!=null);
+			Assert.assertTrue(("["+trovatoAllowMethods+"]").equals(attesiMetodi));
+		}
+		else {
+			String trovatoAllowMethods = response.getHeader(HttpConstants.ACCESS_CONTROL_ALLOW_METHODS);
+			TestLogger.info("Non atteso header '"+HttpConstants.ACCESS_CONTROL_ALLOW_METHODS+"' trovato ["+trovatoAllowMethods+"]");
+			Assert.assertTrue(trovatoAllowMethods==null); // sara il browser a bloccarlo
+		}
 		
 		String trovatoAllowHeaders = response.getHeader(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS);
 		String attesiHeaders = ALLOW_HEADER_DEFAULT.toString();
@@ -887,9 +901,18 @@ public class TestCORS {
 		Assert.assertTrue(trovato!=null);
 		Assert.assertTrue(trovato.equals(TEST_HTTPS_ORIGIN));
 
-		String trovatoAllowMethods = response.getHeader(HttpConstants.ACCESS_CONTROL_ALLOW_METHODS);
-		TestLogger.info("Non atteso header '"+HttpConstants.ACCESS_CONTROL_ALLOW_METHODS+"' trovato ["+trovatoAllowMethods+"]");
-		Assert.assertTrue(trovatoAllowMethods==null); // sara il browser a bloccarlo
+		if(corsFilter.getConfig().isGenerateListAllowIfNotMatchRequestMethod()) {
+			String trovatoAllowMethods = response.getHeader(HttpConstants.ACCESS_CONTROL_ALLOW_METHODS);
+			String attesiMetodi = ALLOW_METHOD_DEFAULT.toString();
+			TestLogger.info("Atteso header '"+HttpConstants.ACCESS_CONTROL_ALLOW_METHODS+"' ["+attesiMetodi+"] trovato ["+trovatoAllowMethods+"]");
+			Assert.assertTrue(trovatoAllowMethods!=null);
+			Assert.assertTrue(("["+trovatoAllowMethods+"]").equals(attesiMetodi));
+		}
+		else {
+			String trovatoAllowMethods = response.getHeader(HttpConstants.ACCESS_CONTROL_ALLOW_METHODS);
+			TestLogger.info("Non atteso header '"+HttpConstants.ACCESS_CONTROL_ALLOW_METHODS+"' trovato ["+trovatoAllowMethods+"]");
+			Assert.assertTrue(trovatoAllowMethods==null); // sara il browser a bloccarlo
+		}
 		
 		String trovatoAllowHeaders = response.getHeader(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS);
 		String attesiHeaders = ALLOW_HEADER_DEFAULT.toString();
@@ -999,9 +1022,18 @@ public class TestCORS {
 		Assert.assertTrue(trovatoAllowMethods!=null);
 		Assert.assertTrue(("["+trovatoAllowMethods+"]").equals(attesiMetodi));
 		
-		String trovatoAllowHeaders = response.getHeader(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS);
-		TestLogger.info("Non atteso header '"+HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS+"' trovato ["+trovatoAllowHeaders+"]");
-		Assert.assertTrue(trovatoAllowHeaders==null);  // sara il browser a bloccarlo
+		if(corsFilter.getConfig().isGenerateListAllowIfNotMatchRequestHeaders()) {
+			String trovatoAllowHeaders = response.getHeader(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS);
+			String attesiHeaders = ALLOW_HEADER_DEFAULT.toString();
+			TestLogger.info("Atteso header '"+HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS+"' ["+attesiHeaders+"] trovato ["+trovatoAllowHeaders+"]");
+			Assert.assertTrue(trovatoAllowHeaders!=null);
+			Assert.assertTrue(("["+trovatoAllowHeaders+"]").equals(attesiHeaders));
+		}
+		else {
+			String trovatoAllowHeaders = response.getHeader(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS);
+			TestLogger.info("Non atteso header '"+HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS+"' trovato ["+trovatoAllowHeaders+"]");
+			Assert.assertTrue(trovatoAllowHeaders==null);  // sara il browser a bloccarlo
+		}
 		
 		this.checkType(request, response, CORSRequestType.PRE_FLIGHT);
         

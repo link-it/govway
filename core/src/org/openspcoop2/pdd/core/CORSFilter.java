@@ -87,7 +87,7 @@ public class CORSFilter extends AbstractCORSFilter {
 		
 		if(config.getAccessControlExposeHeaders()!=null && config.getAccessControlExposeHeaders().sizeHeaderList()>0) {
 			for (String header: config.getAccessControlExposeHeaders().getHeaderList()) {
-				cors.addAllowHeader(header);
+				cors.addExposeHeader(header);
 			}
 		}
 		

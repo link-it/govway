@@ -73,30 +73,12 @@
 					<h:outputText id="outProtocollo2" value="#{item.protocolloLabel}"/>
 					<rich:toolTip for="outProtocollo2" value="#{item.protocolloLabel}"/>
 				</rich:column>
-				<rich:column id="colPddRuolo" sortable="false" label="Tipologia" width="95px">
+				<rich:column id="colPddRuolo" sortable="false" label="Tipo" width="95px" visible="false">
 					<f:facet name="header">
-						<h:outputText id="outPddRuolo1" value="Tipologia" />
+						<h:outputText id="outPddRuolo1" value="Tipo" />
 					</f:facet>
 					<h:outputText id="outPddRuolo2" value="#{item.pddRuolo=='DELEGATA' ? 'Fruizione' : item.pddRuolo=='APPLICATIVA' ? 'Erogazione' : item.pddRuolo=='ROUTER' ? 'Router' : 'I.M.'}" />
 					<rich:toolTip for="outPddRuolo2" value="#{item.pddRuolo=='DELEGATA' ? 'Fruizione' : item.pddRuolo=='APPLICATIVA' ? 'Erogazione' : item.pddRuolo=='ROUTER' ? 'Router' : 'I.M.'}" />
-				</rich:column>
-				<rich:column id="colEsito" sortable="false" label="Esito" width="97px">
-					<f:facet name="header">
-						<h:outputText id="outEsito1" value="Esito" />
-					</f:facet>
-					<h:outputText id="outEsito2" value="#{item.esitoLabel}" />
-					<rich:toolTip for="outEsito2">
-						<h:outputText value="#{item.esitoLabel}" />
-					</rich:toolTip>
-				</rich:column>
-				<rich:column id="colEsitoContesto" sortable="false" label="Contesto" visible="false">
-					<f:facet name="header">
-						<h:outputText id="outEsitoContesto1" value="Contesto" />
-					</f:facet>
-					<h:outputText id="outEsitoContesto2" value="#{item.esitoContestoLabel}" />
-					<rich:toolTip for="outEsitoContesto2">
-						<h:outputText value="#{item.esitoContestoLabel}" />
-					</rich:toolTip>
 				</rich:column>
 				<rich:column id="colTipoRichiesta" sortable="false" label="Metodo HTTP" visible="false">
 					<f:facet name="header">
@@ -194,7 +176,7 @@
 					<h:outputText id="outIDFruitore2" value="#{item.idportaSoggettoFruitore}" rendered="#{not empty item.idportaSoggettoFruitore}" />
 					<rich:toolTip for="outIDFruitore2" value="#{item.idportaSoggettoFruitore}" rendered="#{not empty item.idportaSoggettoFruitore}"/>
 				</rich:column>
-				<rich:column id="colFruitore" sortable="false" label="Fruitore (Soggetto)" width="146px">
+				<rich:column id="colFruitore" sortable="false" label="Fruitore (Soggetto)" width="146px" visible="false">
 					<f:facet name="header">
 						<h:outputText id="outFruitore1" value="Fruitore" />
 					</f:facet>
@@ -208,14 +190,14 @@
 					<h:outputText id="outIDErogatore2" value="#{item.idportaSoggettoErogatore}" rendered="#{not empty item.idportaSoggettoErogatore}" />
 					<rich:toolTip for="outIDErogatore2" value="#{item.idportaSoggettoErogatore}" rendered="#{not empty item.idportaSoggettoErogatore}"/>
 				</rich:column>
-				<rich:column id="colErogatore" sortable="false" label="Erogatore (Soggetto)" width="150px">
+				<rich:column id="colErogatore" sortable="false" label="Erogatore (Soggetto)" width="150px" visible="false">
 					<f:facet name="header">
 						<h:outputText id="outErogatore1" value="Erogatore" />
 					</f:facet>
 					<h:outputText id="outErogatore2" value="#{item.soggettoErogatore}" rendered="#{not empty item.nomeSoggettoErogatore}" />
 					<rich:toolTip for="outErogatore2" value="#{item.soggettoErogatore}" rendered="#{not empty item.nomeSoggettoErogatore}"/>
 				</rich:column>
-				<rich:column id="colServ" sortable="false" label="#{msg['commons.servizio.label']}" width="128px">
+				<rich:column id="colServ" sortable="false" label="#{msg['commons.servizio.label']}" width="128px" visible="false">
 					<f:facet name="header">
 						<h:outputText id="outServ1" value="#{msg['commons.servizio.label']}" />
 					</f:facet>
@@ -224,14 +206,43 @@
 					<h:outputText id="outServ3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 					<rich:toolTip for="outServ3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 				</rich:column>
-				<rich:column id="colAzione" sortable="false" label="Azione" width="143px">
+				<rich:column id="colServErogatore" sortable="false" label="#{msg['commons.servizio.label']} + Erogatore" width="207px">
 					<f:facet name="header">
-						<h:outputText id="outAzione1" value="Azione" />
+						<h:outputText id="outServErogatore1" value="#{msg['commons.servizio.label']}" />
+					</f:facet>
+					<h:outputText id="outServErogatore2" value="#{item.servizio} (#{item.soggettoErogatore})" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
+					<rich:toolTip for="outServErogatore2" value="#{item.servizio} (#{item.soggettoErogatore})" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
+					<h:outputText id="outServErogatore3" value="[IM] #{item.servizioApplicativoErogatore} (#{item.soggettoErogatore})" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+					<rich:toolTip for="outServErogatore3" value="[IM] #{item.servizioApplicativoErogatore} (#{item.soggettoErogatore})" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+				</rich:column>
+				<rich:column id="colAzione" sortable="false" label="Operazione" width="207px">
+					<f:facet name="header">
+						<h:outputText id="outAzione1" value="Operazione" />
 					</f:facet>
 					<h:outputText id="outAzione2" value="#{item.azione}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
 					<rich:toolTip for="outAzione2" value="#{item.azione}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
 					<h:outputText id="outAzione3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER' and not empty item.operazioneIm}"/>
 					<rich:toolTip for="outAzione3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER' and not empty item.operazioneIm}"/>
+				</rich:column>
+				<rich:column id="colServizioApplicativo" sortable="false" label="Applicativo" visible="false" >
+					<f:facet name="header">
+						<h:outputText id="outServizioApplicativo1" value="Applicativo" />
+					</f:facet>
+					<h:outputText id="outServizioApplicativo2" value="#{item.servizioApplicativoFruitore}" rendered="#{item.pddRuolo=='DELEGATA'}"/>
+					<rich:toolTip for="outServizioApplicativo2" value="#{item.servizioApplicativoFruitore}" rendered="#{item.pddRuolo=='DELEGATA'}"/>
+					<h:outputText id="outServizioApplicativo3" value="#{item.servizioApplicativoFruitore}" rendered="#{item.pddRuolo!='DELEGATA'}"/>
+					<rich:toolTip for="outServizioApplicativo3" value="#{item.servizioApplicativoFruitore}" rendered="#{item.pddRuolo!='DELEGATA'}"/>
+				</rich:column>
+				<rich:column id="colServizioApplicativoFruitore" sortable="false" label="Applicativo + Fruitore" width="207px" >
+					<f:facet name="header">
+						<h:outputText id="outServizioApplicativoFruitore1" value="Mittente" />
+					</f:facet>
+					<h:outputText id="outServizioApplicativoFruitore2" value="#{item.servizioApplicativoFruitore} (#{item.nomeSoggettoFruitore})" rendered="#{(not empty item.nomeSoggettoFruitore) and (not empty item.servizioApplicativoFruitore)}"/>
+					<rich:toolTip for="outServizioApplicativoFruitore2" value="#{item.servizioApplicativoFruitore} (#{item.nomeSoggettoFruitore})" rendered="#{(not empty item.nomeSoggettoFruitore) and (not empty item.servizioApplicativoFruitore)}"/>
+					<h:outputText id="outServizioApplicativoFruitore3" value="#{item.servizioApplicativoFruitore}" rendered="#{(empty item.nomeSoggettoFruitore) and (not empty item.servizioApplicativoFruitore)}"/>
+					<rich:toolTip for="outServizioApplicativoFruitore3" value="#{item.servizioApplicativoFruitore}" rendered="#{(empty item.nomeSoggettoFruitore) and (not empty item.servizioApplicativoFruitore)}"/>
+					<h:outputText id="outServizioApplicativoFruitore4" value="#{item.nomeSoggettoFruitore}" rendered="#{(not empty item.nomeSoggettoFruitore) and (empty item.servizioApplicativoFruitore)}"/>
+					<rich:toolTip for="outServizioApplicativoFruitore4" value="#{item.nomeSoggettoFruitore}" rendered="#{(not empty item.nomeSoggettoFruitore) and (empty item.servizioApplicativoFruitore)}"/>
 				</rich:column>
 				<rich:column id="colLatenzaTotale" sortable="true" sortBy="#{item.latenzaTotale}" sortOrder="#{value.sortOrders['latenzaTotale']}" label="Latenza Totale" width="120px">
 					<f:facet name="header">
@@ -258,6 +269,24 @@
 					<h:outputText id="outLatenzaPorta2" value="#{item.latenzaPorta}" converter="latenzaConverter"/>
 					<rich:toolTip for="outLatenzaPorta2">
 						<h:outputText value="#{item.latenzaPorta}" converter="latenzaConverter"/>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colEsito" sortable="false" label="Esito" width="138px">
+					<f:facet name="header">
+						<h:outputText id="outEsito1" value="Esito" />
+					</f:facet>
+					<h:outputText id="outEsito2" value="#{item.esitoLabel}" />
+					<rich:toolTip for="outEsito2">
+						<h:outputText value="#{item.esitoLabel}" />
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colEsitoContesto" sortable="false" label="Contesto" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outEsitoContesto1" value="Contesto" />
+					</f:facet>
+					<h:outputText id="outEsitoContesto2" value="#{item.esitoContestoLabel}" />
+					<rich:toolTip for="outEsitoContesto2">
+						<h:outputText value="#{item.esitoContestoLabel}" />
 					</rich:toolTip>
 				</rich:column>
 				<rich:column id="colIDApplicativo" sortable="false" label="ID Applicativo Richiesta" visible="false">
@@ -294,15 +323,6 @@
 					</f:facet>
 					<h:outputText id="outProfColl2" value="#{item.profiloCollaborazioneProt}"/>
 					<rich:toolTip for="outProfColl2" value="#{item.profiloCollaborazioneOp2}"/>
-				</rich:column>
-				<rich:column id="colServizioApplicativo" sortable="false" label="Applicativo" visible="false">
-					<f:facet name="header">
-						<h:outputText id="outServizioApplicativo1" value="Applicativo" />
-					</f:facet>
-					<h:outputText id="outServizioApplicativo2" value="#{item.servizioApplicativoFruitore}" rendered="#{item.pddRuolo=='DELEGATA'}"/>
-					<rich:toolTip for="outServizioApplicativo2" value="#{item.servizioApplicativoFruitore}" rendered="#{item.pddRuolo=='DELEGATA'}"/>
-					<h:outputText id="outServizioApplicativo3" value="#{item.servizioApplicativoFruitore}" rendered="#{item.pddRuolo!='DELEGATA'}"/>
-					<rich:toolTip for="outServizioApplicativo3" value="#{item.servizioApplicativoFruitore}" rendered="#{item.pddRuolo!='DELEGATA'}"/>
 				</rich:column>
 				<rich:column id="colCodiceRispostaIngresso" sortable="false" label="Codice Risposta Ingresso" visible="false">
 					<f:facet name="header">

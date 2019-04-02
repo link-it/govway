@@ -698,7 +698,12 @@ public final class PorteDelegateAdd extends Action {
 			
 			if(gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) {
 				portaDelegata.getGestioneToken().setPolicy(gestioneTokenPolicy);
-				portaDelegata.getGestioneToken().setTokenOpzionale(StatoFunzionalita.toEnumConstant(gestioneTokenOpzionale)); 
+				if(ServletUtils.isCheckBoxEnabled(gestioneTokenOpzionale)) {
+					portaDelegata.getGestioneToken().setTokenOpzionale(StatoFunzionalita.ABILITATO);
+				}
+				else {
+					portaDelegata.getGestioneToken().setTokenOpzionale(StatoFunzionalita.DISABILITATO);
+				}
 				portaDelegata.getGestioneToken().setValidazione(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenValidazioneInput));
 				portaDelegata.getGestioneToken().setIntrospection(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenIntrospection));
 				portaDelegata.getGestioneToken().setUserInfo(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenUserInfo));

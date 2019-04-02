@@ -161,7 +161,8 @@ public class StatsSearchForm extends BaseSearchForm{
 	@Override
 	public boolean validaSezioneDatiMittenteCustom() {
 		if(StringUtils.isNotEmpty(this.getRiconoscimento())) {
-			if(this.getRiconoscimento().equals(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+			if(this.getRiconoscimento().equals(Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO)) {
+			} else if(this.getRiconoscimento().equals(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
 			} else if(this.getRiconoscimento().equals(Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
 			} else { // token_info
 				if (StringUtils.isEmpty(this.getTokenClaim())) {
@@ -182,9 +183,21 @@ public class StatsSearchForm extends BaseSearchForm{
 		List<SelectItem> lst = new ArrayList<>();
 		
 		lst.add(new SelectItem("--", "--"));
+
+		boolean searchModeBySoggetto = TipologiaRicerca.ingresso.equals(this.getTipologiaRicercaEnum());
+		if(searchModeBySoggetto) {
+			if(this.tipoStatistica!=null && this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SOGGETTO)) {
+				if(this.distribuzionePerSoggettoRemota) {
+					searchModeBySoggetto = false;
+				}
+			}
+		}
 		
 		boolean searchModeByApplicativo = !TipologiaRicerca.ingresso.equals(this.getTipologiaRicercaEnum()) || isProtocolloSupportaApplicativoInErogazione(); 
 
+		if(searchModeBySoggetto) {
+			lst.add(new SelectItem(Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO, "Soggetto"));  
+		}
 		if(searchModeByApplicativo) {
 			lst.add(new SelectItem(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO, "Applicativo"));
 		}

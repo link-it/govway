@@ -509,6 +509,13 @@ public class HttpUtilities {
 	}
 	
 	
+	
+	public static void enableHttpUrlConnectionForwardRestrictedHeaders() {
+		System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
+	}
+	
+	
+	
 	public static void setChunkedStreamingMode(HttpURLConnection httpConn, int chunkLength, HttpRequestMethod httpMethod, String contentType) throws UtilsException{
 		
 		HttpBodyParameters params = new HttpBodyParameters(httpMethod, contentType);

@@ -218,6 +218,20 @@ Batterie di test che verificano la gestione di MTOM all'interno della PdD
 - 'MTOMPortaApplicativa':  vengono eseguiti tutti i test riguardanti la PortaApplicativa
 
 
+** CORS **
+
+Prerequisito:
+Abilitazione degli header disabilitati per default nella classe HttpUrlConnection (sun.net.http.allowRestrictedHeaders=true)
+Se non viene abilitata la proprietà di sistema, la gestione CORS via gateway trasparente non potrà funzionare poichè non vengono forwardati gli header 'Origin', 'Access-Control-Request-Headers' e 'Access-Control-Request-Method' tramite la classe HttpUrlConnection.
+Impostare nelle proprietà java:
+JAVA_OPTS="$JAVA_OPTS -Dsun.net.http.allowRestrictedHeaders=true"
+
+Batterie di test che verificano la gestione del CORS all'interno della PdD
+- 'CORSPortaApplicativa': vengono eseguiti tutti i test riguardanti la PortaApplicativa
+- 'CORSPortaDelegata': vengono eseguiti tutti i test riguardanti la PortaDelegata
+
+
+
 
 2. Installazione
 

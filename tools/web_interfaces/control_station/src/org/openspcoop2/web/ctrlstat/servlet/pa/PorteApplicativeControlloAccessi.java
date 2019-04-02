@@ -587,7 +587,12 @@ public class PorteApplicativeControlloAccessi extends Action {
 			
 			if(gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) {
 				pa.getGestioneToken().setPolicy(gestioneTokenPolicy);
-				pa.getGestioneToken().setTokenOpzionale(StatoFunzionalita.toEnumConstant(gestioneTokenOpzionale)); 
+				if(ServletUtils.isCheckBoxEnabled(gestioneTokenOpzionale)) {
+					pa.getGestioneToken().setTokenOpzionale(StatoFunzionalita.ABILITATO);
+				}
+				else {
+					pa.getGestioneToken().setTokenOpzionale(StatoFunzionalita.DISABILITATO);
+				}
 				pa.getGestioneToken().setValidazione(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenValidazioneInput));
 				pa.getGestioneToken().setIntrospection(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenIntrospection));
 				pa.getGestioneToken().setUserInfo(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenUserInfo));

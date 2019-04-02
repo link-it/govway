@@ -15694,7 +15694,7 @@ public class OpenSPCoop2Properties {
 		return f;
 	}
 
-	
+
 	/* ------------- REST (Trasporto - Headers - Proxy Pass Reverse) ---------------------*/
 	
 	private static Boolean isRESTServices_inoltroBuste_proxyPassReverse = null;

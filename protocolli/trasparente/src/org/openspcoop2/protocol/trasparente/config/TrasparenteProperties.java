@@ -147,6 +147,9 @@ public class TrasparenteProperties {
 			
 			this.isPortaApplicativaBustaErrore_personalizzaElementiFault();
 			this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo();
+			
+			this.isUtilizzaTestSuiteGenerazioneTracce();
+			this.isUtilizzaTestSuiteProtocolProperties();
 
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo trasparente, "+e.getMessage();
@@ -646,6 +649,33 @@ public class TrasparenteProperties {
     
     /* **** TESTSUITE PROTOCOL PROPERTIES **** */ 
     
+    private static Boolean utilizzaTestSuiteGenerazioneTracce = null;
+	public Boolean isUtilizzaTestSuiteGenerazioneTracce(){
+		if(TrasparenteProperties.utilizzaTestSuiteGenerazioneTracce==null){
+			
+			Boolean defaultValue = false;
+			String propertyName = "org.openspcoop2.protocol.trasparente.generazioneTracce.testsuite.enabled";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					TrasparenteProperties.utilizzaTestSuiteGenerazioneTracce = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
+					TrasparenteProperties.utilizzaTestSuiteGenerazioneTracce = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
+				TrasparenteProperties.utilizzaTestSuiteGenerazioneTracce = defaultValue;
+			}
+		}
+
+		return TrasparenteProperties.utilizzaTestSuiteGenerazioneTracce;
+	}
+    
 	private static Boolean utilizzaTestSuiteProtocolProperties = null;
 	public Boolean isUtilizzaTestSuiteProtocolProperties(){
 		if(TrasparenteProperties.utilizzaTestSuiteProtocolProperties==null){
@@ -660,12 +690,12 @@ public class TrasparenteProperties {
 					value = value.trim();
 					TrasparenteProperties.utilizzaTestSuiteProtocolProperties = Boolean.parseBoolean(value);
 				}else{
-					this.log.warn("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
+					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
 					TrasparenteProperties.utilizzaTestSuiteProtocolProperties = defaultValue;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
+				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
 				TrasparenteProperties.utilizzaTestSuiteProtocolProperties = defaultValue;
 			}
 		}

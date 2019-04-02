@@ -23,6 +23,170 @@
                 </porta-delegata>
 
 
+		<!-- CORS -->
+
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaREST" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="CORSviaREST"/>
+                         <azione identificazione="interfaceBased" />
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="disabilitato" 
+				access-control-allow-credentials="disabilitato">
+				<access-control-allow-origins>
+					<origin>https://www.govway.org</origin>
+				</access-control-allow-origins>
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-delegata>
+
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaREST_allOrigins" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="CORSviaREST"/>
+                         <azione identificazione="interfaceBased" />
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="abilitato" 
+				access-control-allow-credentials="disabilitato">
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-delegata>
+
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaREST_allOrigins_credentials" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="CORSviaREST"/>
+                         <azione identificazione="interfaceBased" />
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="abilitato" 
+				access-control-allow-credentials="abilitato">
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-delegata>
+
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaREST_expose" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="CORSviaREST"/>
+                         <azione identificazione="interfaceBased" />
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="disabilitato" 
+				access-control-allow-credentials="disabilitato">
+				<access-control-allow-origins>
+					<origin>https://www.govway.org</origin>
+				</access-control-allow-origins>
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+				<access-control-expose-headers>
+					<header>X-GovWayTest-HDR1</header>
+					<header>X-GovWayTest-HDR2</header>
+				</access-control-expose-headers>
+			 </gestione-cors>
+                </porta-delegata>
+
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaREST_maxAge_disabled" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="CORSviaREST"/>
+                         <azione identificazione="interfaceBased" />
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="disabilitato" 
+				access-control-allow-credentials="disabilitato" access-control-max-age="-1">
+				<access-control-allow-origins>
+					<origin>https://www.govway.org</origin>
+				</access-control-allow-origins>
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-delegata>
+
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaREST_maxAge" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="CORSviaREST"/>
+                         <azione identificazione="interfaceBased" />
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="disabilitato" 
+				access-control-allow-credentials="disabilitato" access-control-max-age="345">
+				<access-control-allow-origins>
+					<origin>https://www.govway.org</origin>
+				</access-control-allow-origins>
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-delegata>
+
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaRESTtrasparente" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="CORSviaRESTtrasparente"/>
+                         <azione identificazione="interfaceBased" />
+			 <gestione-cors stato="abilitato" tipo="trasparente" />
+                </porta-delegata>
+
+
 		<!-- Authentication -->
 
 		<porta-delegata nome="AuthenticationREST_basic" autenticazione="basic" autorizzazione="none" 
@@ -142,6 +306,168 @@
 		    <local-forward stato="abilitato" porta-applicativa="APIMinisteroErogatore/SOAPSincronoLocalForwardStateless"/>
 		</porta-delegata>
 
+
+		<!-- CORS -->
+
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaSOAP" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="CORSviaSOAP"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="disabilitato" 
+				access-control-allow-credentials="disabilitato">
+				<access-control-allow-origins>
+					<origin>https://www.govway.org</origin>
+				</access-control-allow-origins>
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-delegata>
+
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaSOAP_allOrigins" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="CORSviaSOAP"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="abilitato" 
+				access-control-allow-credentials="disabilitato">
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-delegata>
+
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaSOAP_allOrigins_credentials" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="CORSviaSOAP"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="abilitato" 
+				access-control-allow-credentials="abilitato">
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-delegata>
+
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaSOAP_expose" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="CORSviaSOAP"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="disabilitato" 
+				access-control-allow-credentials="disabilitato">
+				<access-control-allow-origins>
+					<origin>https://www.govway.org</origin>
+				</access-control-allow-origins>
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+				<access-control-expose-headers>
+					<header>X-GovWayTest-HDR1</header>
+					<header>X-GovWayTest-HDR2</header>
+				</access-control-expose-headers>
+			 </gestione-cors>
+                </porta-delegata>
+
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaSOAP_maxAge_disabled" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="CORSviaSOAP"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="disabilitato" 
+				access-control-allow-credentials="disabilitato" access-control-max-age="-1">
+				<access-control-allow-origins>
+					<origin>https://www.govway.org</origin>
+				</access-control-allow-origins>
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-delegata>
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaSOAP_maxAge" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="CORSviaSOAP"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="disabilitato" 
+				access-control-allow-credentials="disabilitato" access-control-max-age="345">
+				<access-control-allow-origins>
+					<origin>https://www.govway.org</origin>
+				</access-control-allow-origins>
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-delegata>
+
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaSOAPtrasparente" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="CORSviaSOAPtrasparente"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <gestione-cors stato="abilitato" tipo="trasparente" />
+                </porta-delegata>
 
 
 		<!-- MTOM -->
@@ -944,6 +1270,8 @@
 
 
 
+
+
 		<!-- **** Configurazione REST **** -->
 
 		<servizio-applicativo nome="TestPerCredenzialiBruciateBasic" >
@@ -1115,6 +1443,170 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                     <azione nome="invoke"/>
                     <servizio-applicativo nome="api"/>
                 </porta-applicativa>
+
+
+		<!-- CORS -->
+
+                <porta-applicativa nome="APIMinisteroErogatore/gwCORSviaREST" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="CORSviaREST"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="disabilitato" 
+				access-control-allow-credentials="disabilitato">
+				<access-control-allow-origins>
+					<origin>https://www.govway.org</origin>
+				</access-control-allow-origins>
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-applicativa>
+
+                <porta-applicativa nome="APIMinisteroErogatore/gwCORSviaREST_allOrigins" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="CORSviaREST"/>
+                        <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="abilitato" 
+				access-control-allow-credentials="disabilitato">
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-applicativa>
+
+                <porta-applicativa nome="APIMinisteroErogatore/gwCORSviaREST_allOrigins_credentials" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="CORSviaREST"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="abilitato" 
+				access-control-allow-credentials="abilitato">
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-applicativa>
+
+                <porta-applicativa nome="APIMinisteroErogatore/gwCORSviaREST_expose" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="CORSviaREST"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="disabilitato" 
+				access-control-allow-credentials="disabilitato">
+				<access-control-allow-origins>
+					<origin>https://www.govway.org</origin>
+				</access-control-allow-origins>
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+				<access-control-expose-headers>
+					<header>X-GovWayTest-HDR1</header>
+					<header>X-GovWayTest-HDR2</header>
+				</access-control-expose-headers>
+			 </gestione-cors>
+                </porta-applicativa>
+
+                <porta-applicativa nome="APIMinisteroErogatore/gwCORSviaREST_maxAge_disabled" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="CORSviaREST"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="disabilitato" 
+				access-control-allow-credentials="disabilitato" access-control-max-age="-1">
+				<access-control-allow-origins>
+					<origin>https://www.govway.org</origin>
+				</access-control-allow-origins>
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-applicativa>
+                <porta-applicativa nome="APIMinisteroErogatore/gwCORSviaREST_maxAge" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="CORSviaREST"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="api"/>
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="disabilitato" 
+				access-control-allow-credentials="disabilitato" access-control-max-age="345">
+				<access-control-allow-origins>
+					<origin>https://www.govway.org</origin>
+				</access-control-allow-origins>
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-applicativa>
+
+                <porta-applicativa nome="APIMinisteroErogatore/gwCORSviaRESTtrasparente" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="CORSviaRESTtrasparente"/>
+                         <azione identificazione="interfaceBased" />
+			 <servizio-applicativo nome="apiEchoTrasparente"/>
+			 <gestione-cors stato="abilitato" tipo="trasparente" />
+                </porta-applicativa>
+
 
 		<!-- Authentication -->
 
@@ -1383,6 +1875,169 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                     <servizio tipo="gw" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault12_500"/>
                     <servizio-applicativo nome="faultSoap12_500"/>
+                </porta-applicativa>
+
+
+		<!-- CORS -->
+
+                <porta-applicativa nome="APIMinisteroErogatore/gwCORSviaSOAP" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="CORSviaSOAP"/>
+                         <azione nome="invoke"/>
+			<servizio-applicativo nome="apiEchoViaSoap"/>
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="disabilitato" 
+				access-control-allow-credentials="disabilitato">
+				<access-control-allow-origins>
+					<origin>https://www.govway.org</origin>
+				</access-control-allow-origins>
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-applicativa>
+
+                <porta-applicativa nome="APIMinisteroErogatore/gwCORSviaSOAP_allOrigins" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="CORSviaSOAP"/>
+                         <azione nome="invoke"/>
+			<servizio-applicativo nome="apiEchoViaSoap"/>
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="abilitato" 
+				access-control-allow-credentials="disabilitato">
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-applicativa>
+
+                <porta-applicativa nome="APIMinisteroErogatore/gwCORSviaSOAP_allOrigins_credentials" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="CORSviaSOAP"/>
+                         <azione nome="invoke"/>
+			<servizio-applicativo nome="apiEchoViaSoap"/>
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="abilitato" 
+				access-control-allow-credentials="abilitato">
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-applicativa>
+
+                <porta-applicativa nome="APIMinisteroErogatore/gwCORSviaSOAP_expose" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="CORSviaSOAP"/>
+                         <azione nome="invoke"/>
+			<servizio-applicativo nome="apiEchoViaSoap"/>
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="disabilitato" 
+				access-control-allow-credentials="disabilitato">
+				<access-control-allow-origins>
+					<origin>https://www.govway.org</origin>
+				</access-control-allow-origins>
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+				<access-control-expose-headers>
+					<header>X-GovWayTest-HDR1</header>
+					<header>X-GovWayTest-HDR2</header>
+				</access-control-expose-headers>
+			 </gestione-cors>
+                </porta-applicativa>
+
+                <porta-applicativa nome="APIMinisteroErogatore/gwCORSviaSOAP_maxAge_disabled" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="CORSviaSOAP"/>
+                         <azione nome="invoke"/>
+			<servizio-applicativo nome="apiEchoViaSoap"/>
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="disabilitato" 
+				access-control-allow-credentials="disabilitato" access-control-max-age="-1">
+				<access-control-allow-origins>
+					<origin>https://www.govway.org</origin>
+				</access-control-allow-origins>
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-applicativa>
+                <porta-applicativa nome="APIMinisteroErogatore/gwCORSviaSOAP_maxAge" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="CORSviaSOAP"/>
+                         <azione nome="invoke"/>
+			<servizio-applicativo nome="apiEchoViaSoap"/>
+			 <gestione-cors stato="abilitato" tipo="gateway" 
+				access-control-all-allow-origins="disabilitato" 
+				access-control-allow-credentials="disabilitato" access-control-max-age="345">
+				<access-control-allow-origins>
+					<origin>https://www.govway.org</origin>
+				</access-control-allow-origins>
+				<access-control-allow-headers>
+					<header>Authorization</header>
+					<header>Content-Type</header>
+					<header>SOAPAction</header>
+					<header>Cache-Control</header>
+				</access-control-allow-headers>
+				<access-control-allow-methods>
+					<method>GET</method>
+					<method>POST</method>
+					<method>PUT</method>
+					<method>DELETE</method>
+					<method>PATCH</method>
+				</access-control-allow-methods>
+			 </gestione-cors>
+                </porta-applicativa>
+
+                <porta-applicativa nome="APIMinisteroErogatore/gwCORSviaSOAPtrasparente" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                        <servizio tipo="gw" nome="CORSviaSOAPtrasparente"/>
+                        <azione nome="invoke"/>
+			<servizio-applicativo nome="apiEchoViaSoapTrasparente"/>
+			<gestione-cors stato="abilitato" tipo="trasparente" />
                 </porta-applicativa>
 
 
@@ -2279,7 +2934,15 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                         </invocazione-servizio>
                 </servizio-applicativo>
 
+		<!-- CORS -->
 
+		<servizio-applicativo nome="apiEchoTrasparente">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="CNT_REST/MinisteroErogatore_REST/CORS">
+                                        <property nome="location" valore="http://localhost:3333/govwayTestSuite/api?CORS=true"/>
+                                </connettore>     
+                        </invocazione-servizio>
+                </servizio-applicativo>
 
 
 	
@@ -2384,6 +3047,24 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                                     <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?fault=true&amp;faultSoapVersion=12&amp;returnCode=500"/>
                                 </connettore>
                             </invocazione-servizio>
+                </servizio-applicativo>
+
+
+		<!-- CORS -->
+
+		<servizio-applicativo nome="apiEchoViaSoap">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="CNT_REST/MinisteroErogatore_REST/CORSViaSOAP">
+                                        <property nome="location" valore="http://localhost:8080/govwayTestSuite/api/service/echo"/>
+                                </connettore>     
+                        </invocazione-servizio>
+                </servizio-applicativo>
+		<servizio-applicativo nome="apiEchoViaSoapTrasparente">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="CNT_REST/MinisteroErogatore_REST/CORSViaSOAP">
+                                        <property nome="location" valore="http://localhost:8080/govwayTestSuite/api/service/echo?CORS=true"/>
+                                </connettore>     
+                        </invocazione-servizio>
                 </servizio-applicativo>
 
 

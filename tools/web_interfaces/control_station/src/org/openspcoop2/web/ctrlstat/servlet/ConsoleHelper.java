@@ -7414,20 +7414,30 @@ public class ConsoleHelper {
 		
 		if(corsStato) {
 			
-			String [] corsTipiValues = new String [] { TipoGestioneCORS.GATEWAY.getValue(), TipoGestioneCORS.TRASPARENTE.getValue()};
-			String [] corsTipiLabels = new String [] { 
-					CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO_GESTITO_GATEWAY,
-					CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO_GESTITO_APPLICATIVO
-					};
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO);
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_TIPO);
-			de.setType(DataElementType.SELECT);
-			de.setPostBack(true);
-			de.setValues(corsTipiValues);
-			de.setLabels(corsTipiLabels);
-			de.setSelected(corsTipo.getValue());
 			de.setValue(corsTipo.getValue());
+			if(
+					TipoGestioneCORS.TRASPARENTE.equals(corsTipo) // impostato in avanzato
+					||
+					!this.isModalitaStandard()
+					) {
+			
+				String [] corsTipiValues = new String [] { TipoGestioneCORS.GATEWAY.getValue(), TipoGestioneCORS.TRASPARENTE.getValue()};
+				String [] corsTipiLabels = new String [] { 
+						CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO_GESTITO_GATEWAY,
+						CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO_GESTITO_APPLICATIVO
+						};
+				de.setType(DataElementType.SELECT);
+				de.setPostBack(true);
+				de.setValues(corsTipiValues);
+				de.setLabels(corsTipiLabels);
+				de.setSelected(corsTipo.getValue());
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+			}
 			dati.addElement(de);
 			
 			if(TipoGestioneCORS.GATEWAY.equals(corsTipo)) {
@@ -9515,7 +9525,7 @@ public class ConsoleHelper {
 			values[0] = valueQualsiasi;
 		}
 		
-		for (int i = 0; i < numeroOptions; i++) {
+		for (int i = 0; i < httpMethods.length; i++) {
 			HttpMethod method = httpMethods[i];
 			labels[(addQualsiasi ? i+1 : i)] = method.name();
 			values[(addQualsiasi ? i+1 : i)] = method.name();

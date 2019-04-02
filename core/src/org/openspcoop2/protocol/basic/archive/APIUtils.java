@@ -39,11 +39,19 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 public class APIUtils {
 
 	public static String normalizeResourceName(HttpMethod requestMethod, String path) {
+		if(requestMethod==null || path==null) {
+			return null;
+		}
 		HttpRequestMethod httpMethodCheck = HttpRequestMethod.valueOf(requestMethod.getValue());
 		return normalizeResourceName(httpMethodCheck, path);
 	}
 	
 	public static String normalizeResourceName(HttpRequestMethod requestMethod, String path) {
+		
+		if(requestMethod==null || path==null) {
+			return null;
+		}
+		
 		List<Character> permit = new ArrayList<Character>();
 		permit.add('.');
 		permit.add('_');
