@@ -160,6 +160,16 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_AUTH_OPTIONAL_BASIC = "AuthenticationOptionalBasic";
 	public static final String PORTA_DELEGATA_AUTH_OPTIONAL_SSL = "AuthenticationOptionalSsl";
 	public static final String PORTA_DELEGATA_AUTH_OPTIONAL_PRINCIPAL = "AuthenticationOptionalPrincipal";
+	public static final String PORTA_DELEGATA_AUTH_BASIC_FORWARD_AUTHORIZATION = "AuthenticationBasicForward";
+	public static final String PORTA_DELEGATA_AUTH_PRINCIPAL_HEADER_CLEAN = "AuthenticationPrincipalHeaderClean";
+	public static final String PORTA_DELEGATA_AUTH_PRINCIPAL_HEADER_NOT_CLEAN = "AuthenticationPrincipalHeaderNotClean";
+	public static final String PORTA_DELEGATA_AUTH_OPTIONAL_PRINCIPAL_HEADER = "AuthenticationOptionalPrincipalHeader";
+	public static final String PORTA_DELEGATA_AUTH_PRINCIPAL_QUERY_CLEAN = "AuthenticationPrincipalQueryClean";
+	public static final String PORTA_DELEGATA_AUTH_PRINCIPAL_QUERY_NOT_CLEAN = "AuthenticationPrincipalQueryNotClean";
+	public static final String PORTA_DELEGATA_AUTH_OPTIONAL_PRINCIPAL_QUERY = "AuthenticationOptionalPrincipalQuery";
+	public static final String PORTA_DELEGATA_AUTH_PRINCIPAL_URL = "AuthenticationPrincipalUrl";
+	public static final String PORTA_DELEGATA_AUTH_OPTIONAL_PRINCIPAL_URL = "AuthenticationOptionalPrincipalUrl";
+	public static final String PORTA_DELEGATA_AUTH_PRINCIPAL_IP = "AuthenticationPrincipalIPAddress";
 	
 	/** Porte Delegate per autorizzazione */
 	public static final String PORTA_DELEGATA_AUTHZ_AUTHENTICATED = "AuthorizationAuthenticated";
@@ -287,6 +297,16 @@ public class CostantiTestSuite {
 	public static final String PORTA_APPLICATIVA_AUTH_OPTIONAL_BASIC = "AuthenticationOptionalBasic";
 	public static final String PORTA_APPLICATIVA_AUTH_OPTIONAL_SSL = "AuthenticationOptionalSsl";
 	public static final String PORTA_APPLICATIVA_AUTH_OPTIONAL_PRINCIPAL = "AuthenticationOptionalPrincipal";
+	public static final String PORTA_APPLICATIVA_AUTH_BASIC_FORWARD_AUTHORIZATION = "AuthenticationBasicForward";
+	public static final String PORTA_APPLICATIVA_AUTH_PRINCIPAL_HEADER_CLEAN = "AuthenticationPrincipalHeaderClean";
+	public static final String PORTA_APPLICATIVA_AUTH_PRINCIPAL_HEADER_NOT_CLEAN = "AuthenticationPrincipalHeaderNotClean";
+	public static final String PORTA_APPLICATIVA_AUTH_OPTIONAL_PRINCIPAL_HEADER = "AuthenticationOptionalPrincipalHeader";
+	public static final String PORTA_APPLICATIVA_AUTH_PRINCIPAL_QUERY_CLEAN = "AuthenticationPrincipalQueryClean";
+	public static final String PORTA_APPLICATIVA_AUTH_PRINCIPAL_QUERY_NOT_CLEAN = "AuthenticationPrincipalQueryNotClean";
+	public static final String PORTA_APPLICATIVA_AUTH_OPTIONAL_PRINCIPAL_QUERY = "AuthenticationOptionalPrincipalQuery";
+	public static final String PORTA_APPLICATIVA_AUTH_PRINCIPAL_URL = "AuthenticationPrincipalUrl";
+	public static final String PORTA_APPLICATIVA_AUTH_OPTIONAL_PRINCIPAL_URL = "AuthenticationOptionalPrincipalUrl";
+	public static final String PORTA_APPLICATIVA_AUTH_PRINCIPAL_IP = "AuthenticationPrincipalIPAddress";
 	
 	/** Porte Applicative per autorizzazione */
 	public static final String PORTA_APPLICATIVA_AUTHZ_AUTHENTICATED = "AuthorizationAuthenticated";

@@ -156,9 +156,7 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
     
     @Override
 	public void cleanPostAuth(OpenSPCoop2Message message) throws AutenticazioneException {
-    	if(this.cleanHeaderAuthorization) {
-    		AutenticazioneUtils.cleanHeaderAuthorization(message);
-    	}
+    	AutenticazioneUtils.finalizeProcessHeaderAuthorization(message, this.cleanHeaderAuthorization);
     }
 
 }

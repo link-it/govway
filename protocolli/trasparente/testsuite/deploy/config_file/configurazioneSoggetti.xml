@@ -905,7 +905,14 @@
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
 		    <servizio tipo="gw" nome="Sincrono"/>
-		    <azione nome="aggiornamento"/>
+		    <azione nome="aggiornamentoBasic"/>
+		</porta-delegata>
+		<porta-delegata nome="AuthenticationBasicForward" autenticazione="basic" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoBasicForward"/>
+		    <proprieta-autenticazione nome="cleanAuthorizationHeader" valore="false"/>
 		</porta-delegata>
 
 		<porta-delegata nome="AuthenticationSsl" autenticazione="ssl" autorizzazione="none" 
@@ -941,6 +948,96 @@
 		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
 		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationPrincipalHeaderClean" autenticazione="principal" 
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoPrincipalHeaderClean"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="header-based"/>
+		    <proprieta-autenticazione nome="nome" valore="PRINCIPAL-HEADER"/>
+		    <proprieta-autenticazione nome="cleanPrincipal" valore="true"/>
+		</porta-delegata>
+		<porta-delegata nome="AuthenticationPrincipalHeaderNotClean" autenticazione="principal" 
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoPrincipalHeaderNotClean"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="header-based"/>
+		    <proprieta-autenticazione nome="nome" valore="PRINCIPAL-HEADER"/>
+		    <proprieta-autenticazione nome="cleanPrincipal" valore="false"/>
+		</porta-delegata>
+		<porta-delegata nome="AuthenticationOptionalPrincipalHeader" autenticazione="principal" autenticazione-opzionale="abilitato"  
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoPrincipalHeaderClean"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="header-based"/>
+		    <proprieta-autenticazione nome="nome" valore="PRINCIPAL-HEADER"/>
+		    <proprieta-autenticazione nome="cleanPrincipal" valore="true"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationPrincipalQueryClean" autenticazione="principal" 
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoPrincipalQueryClean"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="form-based"/>
+		    <proprieta-autenticazione nome="nome" valore="PRINCIPAL"/>
+		    <proprieta-autenticazione nome="cleanPrincipal" valore="true"/>
+		</porta-delegata>
+		<porta-delegata nome="AuthenticationPrincipalQueryNotClean" autenticazione="principal" 
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoPrincipalQueryNotClean"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="form-based"/>
+		    <proprieta-autenticazione nome="nome" valore="PRINCIPAL"/>
+		    <proprieta-autenticazione nome="cleanPrincipal" valore="false"/>
+		</porta-delegata>
+		<porta-delegata nome="AuthenticationOptionalPrincipalQuery" autenticazione="principal" autenticazione-opzionale="abilitato"  
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoPrincipalQueryClean"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="form-based"/>
+		    <proprieta-autenticazione nome="nome" valore="PRINCIPAL"/>
+		    <proprieta-autenticazione nome="cleanPrincipal" valore="true"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationPrincipalUrl" autenticazione="principal" 
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="url-based"/>
+		    <proprieta-autenticazione nome="pattern" valore=".+TEST_PRINCIPAL=([^&amp;]*).*"/>
+		</porta-delegata>
+		<porta-delegata nome="AuthenticationOptionalPrincipalUrl" autenticazione="principal" autenticazione-opzionale="abilitato"  
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="url-based"/>
+		    <proprieta-autenticazione nome="pattern" valore=".+TEST_PRINCIPAL=([^&amp;]*).*"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationPrincipalIPAddress" autenticazione="principal" 
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="indirizzo-ip"/>
 		</porta-delegata>
 
 
@@ -2520,8 +2617,15 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 		<porta-applicativa nome="AuthenticationBasic" autenticazione="basic" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <servizio tipo="gw" nome="Sincrono"/>
-		    <azione nome="aggiornamento"/>
-		    <servizio-applicativo nome="echo"/>
+		    <azione nome="aggiornamentoBasic"/>
+		    <servizio-applicativo nome="echoNotForwardAuthorizationHeader"/>
+		</porta-applicativa>
+		<porta-applicativa nome="AuthenticationBasicForward" autenticazione="basic" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoBasicForward"/>
+		    <servizio-applicativo nome="echoForwardAuthorizationHeader"/>
+		    <proprieta-autenticazione nome="cleanAuthorizationHeader" valore="false"/>
 		</porta-applicativa>
 
 		<porta-applicativa nome="AuthenticationSsl" autenticazione="ssl" autorizzazione="none" 
@@ -2557,6 +2661,96 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationPrincipalHeaderClean" autenticazione="principal" 
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoPrincipalHeaderClean"/>
+		    <servizio-applicativo nome="echoPrincipalHeaderClean"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="header-based"/>
+		    <proprieta-autenticazione nome="nome" valore="PRINCIPAL-HEADER"/>
+		    <proprieta-autenticazione nome="cleanPrincipal" valore="true"/>
+		</porta-applicativa>
+		<porta-applicativa nome="AuthenticationPrincipalHeaderNotClean" autenticazione="principal" 
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoPrincipalHeaderNotClean"/>
+		    <servizio-applicativo nome="echoPrincipalHeaderNotClean"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="header-based"/>
+		    <proprieta-autenticazione nome="nome" valore="PRINCIPAL-HEADER"/>
+		    <proprieta-autenticazione nome="cleanPrincipal" valore="false"/>
+		</porta-applicativa>
+		<porta-applicativa nome="AuthenticationOptionalPrincipalHeader" autenticazione="principal" autenticazione-opzionale="abilitato"  
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoPrincipalHeaderClean"/>
+		    <servizio-applicativo nome="echoPrincipalHeaderClean"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="header-based"/>
+		    <proprieta-autenticazione nome="nome" valore="PRINCIPAL-HEADER"/>
+		    <proprieta-autenticazione nome="cleanPrincipal" valore="true"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationPrincipalQueryClean" autenticazione="principal" 
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoPrincipalQueryClean"/>
+		    <servizio-applicativo nome="echoPrincipalQueryClean"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="form-based"/>
+		    <proprieta-autenticazione nome="nome" valore="PRINCIPAL"/>
+		    <proprieta-autenticazione nome="cleanPrincipal" valore="true"/>
+		</porta-applicativa>
+		<porta-applicativa nome="AuthenticationPrincipalQueryNotClean" autenticazione="principal" 
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoPrincipalQueryNotClean"/>
+		    <servizio-applicativo nome="echoPrincipalQueryNotClean"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="form-based"/>
+		    <proprieta-autenticazione nome="nome" valore="PRINCIPAL"/>
+		    <proprieta-autenticazione nome="cleanPrincipal" valore="false"/>
+		</porta-applicativa>
+		<porta-applicativa nome="AuthenticationOptionalPrincipalQuery" autenticazione="principal" autenticazione-opzionale="abilitato"  
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamentoPrincipalQueryClean"/>
+		    <servizio-applicativo nome="echoPrincipalQueryClean"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="form-based"/>
+		    <proprieta-autenticazione nome="nome" valore="PRINCIPAL"/>
+		    <proprieta-autenticazione nome="cleanPrincipal" valore="true"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationPrincipalUrl" autenticazione="principal" 
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="url-based"/>
+		    <proprieta-autenticazione nome="pattern" valore=".+TEST_PRINCIPAL=([^&amp;]*).*"/>
+		</porta-applicativa>
+		<porta-applicativa nome="AuthenticationOptionalPrincipalUrl" autenticazione="principal" autenticazione-opzionale="abilitato"  
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+                    <servizio-applicativo nome="echo"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="url-based"/>
+		    <proprieta-autenticazione nome="pattern" valore=".+TEST_PRINCIPAL=([^&amp;]*).*"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationPrincipalIPAddress" autenticazione="principal" 
+			autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="gw" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		    <proprieta-autenticazione nome="tipoAutenticazione" valore="indirizzo-ip"/>
 		</porta-applicativa>
 
 
@@ -3047,6 +3241,54 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                                     <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?fault=true&amp;faultSoapVersion=12&amp;returnCode=500"/>
                                 </connettore>
                             </invocazione-servizio>
+                </servizio-applicativo>
+
+
+		<!-- Autenticazione -->
+
+		<servizio-applicativo nome="echoNotForwardAuthorizationHeader">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="ConnettoreINV_echoAPIMinisteroErogatore">
+                                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=Authorization"/>
+                                </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+                <servizio-applicativo nome="echoForwardAuthorizationHeader">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="ConnettoreINV_echoAPIMinisteroErogatore">
+                                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?existsHttpHeaders=Authorization"/>
+                                </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+
+		<servizio-applicativo nome="echoPrincipalHeaderClean">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="ConnettoreINV_echoAPIMinisteroErogatore">
+                                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?notExistsHttpHeaders=PRINCIPAL-HEADER"/>
+                                </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+		<servizio-applicativo nome="echoPrincipalHeaderNotClean">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="ConnettoreINV_echoAPIMinisteroErogatore">
+                                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?existsHttpHeaders=PRINCIPAL-HEADER"/>
+                                </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+
+		<servizio-applicativo nome="echoPrincipalQueryClean">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="ConnettoreINV_echoAPIMinisteroErogatore">
+                                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?notExistsQueryParameters=PRINCIPAL"/>
+                                </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
+		<servizio-applicativo nome="echoPrincipalQueryNotClean">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="ConnettoreINV_echoAPIMinisteroErogatore">
+                                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?existsQueryParameters=PRINCIPAL"/>
+                                </connettore>
+                        </invocazione-servizio>
                 </servizio-applicativo>
 
 

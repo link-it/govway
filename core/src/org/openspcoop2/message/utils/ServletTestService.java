@@ -126,6 +126,98 @@ public class ServletTestService extends HttpServlet {
 			}
 		}
 		
+		String existsHttpHeaders = getParameter_checkWhiteList(request, whitePropertiesList, "existsHttpHeaders");
+		if(existsHttpHeaders!=null){
+			existsHttpHeaders = existsHttpHeaders.trim();
+			if(existsHttpHeaders.contains(",")==false) {
+				String v = _getHeader(request, existsHttpHeaders);
+				if(v==null){
+					throw new ServletException("Ricevuta una richiesta di verifica esistenza header ("+existsHttpHeaders+"). Header non presente");
+				}
+			}
+			else {
+				String [] split = existsHttpHeaders.split(",");
+				if(split==null){
+					throw new ServletException("Ricevuta una richiesta di verifica esistenza header non conforme (split null)");
+				}
+				for (String header : split) {
+					String v = _getHeader(request, header);
+					if(v==null){
+						throw new ServletException("Ricevuta una richiesta di verifica esistenza header ("+header+"). Header non presente");
+					}
+				}
+			}
+		}
+		
+		String notExistsHttpHeaders = getParameter_checkWhiteList(request, whitePropertiesList, "notExistsHttpHeaders");
+		if(notExistsHttpHeaders!=null){
+			notExistsHttpHeaders = notExistsHttpHeaders.trim();
+			if(notExistsHttpHeaders.contains(",")==false) {
+				String v = _getHeader(request, notExistsHttpHeaders);
+				if(v!=null){
+					throw new ServletException("Ricevuta una richiesta di verifica non esistenza header ("+notExistsHttpHeaders+"). Header presente");
+				}
+			}
+			else {
+				String [] split = notExistsHttpHeaders.split(",");
+				if(split==null){
+					throw new ServletException("Ricevuta una richiesta di verifica non esistenza header non conforme (split null)");
+				}
+				for (String header : split) {
+					String v = _getHeader(request, header);
+					if(v!=null){
+						throw new ServletException("Ricevuta una richiesta di verifica non esistenza header ("+header+"). Header presente");
+					}
+				}
+			}
+		}
+		
+		String existsQueryParameters = getParameter_checkWhiteList(request, whitePropertiesList, "existsQueryParameters");
+		if(existsQueryParameters!=null){
+			existsQueryParameters = existsQueryParameters.trim();
+			if(existsQueryParameters.contains(",")==false) {
+				String v = _getQueryParameter(request, existsQueryParameters);
+				if(v==null){
+					throw new ServletException("Ricevuta una richiesta di verifica esistenza query parameter ("+existsQueryParameters+"). Parametro non presente");
+				}
+			}
+			else {
+				String [] split = existsQueryParameters.split(",");
+				if(split==null){
+					throw new ServletException("Ricevuta una richiesta di verifica esistenza query parameter non conforme (split null)");
+				}
+				for (String header : split) {
+					String v = _getQueryParameter(request, header);
+					if(v==null){
+						throw new ServletException("Ricevuta una richiesta di verifica esistenza query parameter ("+header+"). Parametro non presente");
+					}
+				}
+			}
+		}
+		
+		String notExistsQueryParameters = getParameter_checkWhiteList(request, whitePropertiesList, "notExistsQueryParameters");
+		if(notExistsQueryParameters!=null){
+			notExistsQueryParameters = notExistsQueryParameters.trim();
+			if(notExistsQueryParameters.contains(",")==false) {
+				String v = _getQueryParameter(request, notExistsQueryParameters);
+				if(v!=null){
+					throw new ServletException("Ricevuta una richiesta di verifica non esistenza query parameter ("+notExistsQueryParameters+"). Parametro presente");
+				}
+			}
+			else {
+				String [] split = notExistsQueryParameters.split(",");
+				if(split==null){
+					throw new ServletException("Ricevuta una richiesta di verifica non esistenza query parameter non conforme (split null)");
+				}
+				for (String header : split) {
+					String v = _getQueryParameter(request, header);
+					if(v!=null){
+						throw new ServletException("Ricevuta una richiesta di verifica non esistenza query parameter ("+header+"). Parametro presente");
+					}
+				}
+			}
+		}
+		
 		String checkEqualsHttpHeader = getParameter_checkWhiteList(request, whitePropertiesList, "checkEqualsHttpHeader");
 		if(checkEqualsHttpHeader!=null){
 			checkEqualsHttpHeader = checkEqualsHttpHeader.trim();
@@ -148,6 +240,31 @@ public class ServletTestService extends HttpServlet {
 			}
 			if(v.equals(valore)==false){
 				throw new ServletException("Ricevuta una richiesta di verifica header ("+key+":"+valore+"). Valore ["+v+"] differente da quello atteso");
+			}
+		}
+		
+		String checkEqualsQueryParameter = getParameter_checkWhiteList(request, whitePropertiesList, "checkEqualsQueryParameter");
+		if(checkEqualsQueryParameter!=null){
+			checkEqualsQueryParameter = checkEqualsQueryParameter.trim();
+			if(checkEqualsQueryParameter.contains(":")==false){
+				throw new ServletException("Ricevuta una richiesta di verifica query parameter non conforme (pattern nome:valore)");
+			}
+			String [] split = checkEqualsQueryParameter.split(":");
+			if(split==null){
+				throw new ServletException("Ricevuta una richiesta di verifica query parameter non conforme (pattern nome:valore) (split null)");
+			}
+			if(split.length!=2){
+				throw new ServletException("Ricevuta una richiesta di verifica query parameter non conforme (pattern nome:valore) (split:"+split.length+")");
+			}
+			String key = split[0];
+			String valore = split[1];
+			
+			String v = _getQueryParameter(request, key);
+			if(v==null){
+				throw new ServletException("Ricevuta una richiesta di verifica query parameter ("+key+":"+valore+"). Parametro ["+key+"] non presente");
+			}
+			if(v.equals(valore)==false){
+				throw new ServletException("Ricevuta una richiesta di verifica query parameter ("+key+":"+valore+"). Valore ["+v+"] differente da quello atteso");
 			}
 		}
 		
@@ -187,6 +304,16 @@ public class ServletTestService extends HttpServlet {
 		}
 		if(v==null){
 			v = request.getHeader(name.toUpperCase());
+		}
+		return v;
+	}
+	private static String _getQueryParameter(HttpServletRequest request, String name) {
+		String v = request.getParameter(name);
+		if(v==null){
+			v = request.getParameter(name.toLowerCase());
+		}
+		if(v==null){
+			v = request.getParameter(name.toUpperCase());
 		}
 		return v;
 	}

@@ -210,9 +210,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 
     @Override
 	public void cleanPostAuth(OpenSPCoop2Message message) throws AutenticazioneException {
-    	if(this.cleanPrincipal) {
-    		AutenticazioneUtils.cleanPrincipal(message, this.tipoAutenticazionePrincipal, this.nome);
-    	}
+    	AutenticazioneUtils.finalizeProcessPrincipal(message, this.tipoAutenticazionePrincipal, this.nome, this.cleanPrincipal);
     }
 }
 

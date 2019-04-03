@@ -76,36 +76,95 @@ public class AuthUtilities {
 	
 	
 	public static void testPortaDelegata(String nomePorta,
-			CredenzialiInvocazione credenzialiInvocazione, boolean addIDUnivoco,
+			CredenzialiInvocazione credenzialiInvocazione, 
+			boolean addIDUnivoco,
 			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso) throws Exception{
 		testPortaDelegata(nomePorta,
-				credenzialiInvocazione, addIDUnivoco,
+				credenzialiInvocazione, null, null,
+				addIDUnivoco,
 				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso,
 				null);
 	}
 	public static void testPortaDelegata(String nomePorta,
-			CredenzialiInvocazione credenzialiInvocazione, boolean addIDUnivoco,
+			CredenzialiInvocazione credenzialiInvocazione, String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery,  
+			boolean addIDUnivoco,
+			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso) throws Exception{
+		testPortaDelegata(nomePorta,
+				credenzialiInvocazione, generateCredenzialiInvocazioneAsHeader, generateCredenzialiInvocazioneAsQuery,
+				addIDUnivoco,
+				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso,
+				null);
+	}
+	
+	public static void testPortaDelegata(String nomePorta,
+			CredenzialiInvocazione credenzialiInvocazione, 
+			boolean addIDUnivoco,
 			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso,
 			Integer readTimeout) throws Exception{
-		test(true, nomePorta, credenzialiInvocazione, addIDUnivoco, 
+		test(true, nomePorta, 
+				credenzialiInvocazione, null, null,
+				addIDUnivoco, 
 				erroreAtteso, codiceErrore, null, ricercaEsatta, dataInizioTest, 
 				CostantiTestSuite.PROXY_SOGGETTO_FRUITORE, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE_ESTERNO,
 				returnCodeAtteso, false,
 				readTimeout);
 	}
 	public static void testPortaDelegata(String nomePorta,
-			CredenzialiInvocazione credenzialiInvocazione, boolean addIDUnivoco,
+			CredenzialiInvocazione credenzialiInvocazione, String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery, 
+			boolean addIDUnivoco,
+			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso,
+			Integer readTimeout) throws Exception{
+		test(true, nomePorta, 
+				credenzialiInvocazione, generateCredenzialiInvocazioneAsHeader, generateCredenzialiInvocazioneAsQuery,
+				addIDUnivoco, 
+				erroreAtteso, codiceErrore, null, ricercaEsatta, dataInizioTest, 
+				CostantiTestSuite.PROXY_SOGGETTO_FRUITORE, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE_ESTERNO,
+				returnCodeAtteso, false,
+				readTimeout);
+	}
+	
+	public static void testPortaDelegata(String nomePorta,
+			CredenzialiInvocazione credenzialiInvocazione, 
+			boolean addIDUnivoco,
 			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail) throws Exception{
 		testPortaDelegata(nomePorta,
-				credenzialiInvocazione, addIDUnivoco,
+				credenzialiInvocazione, null, null,
+				addIDUnivoco,
 				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso, checkOpenSPCoopDetail,
 				null);
 	}
 	public static void testPortaDelegata(String nomePorta,
-			CredenzialiInvocazione credenzialiInvocazione, boolean addIDUnivoco,
+			CredenzialiInvocazione credenzialiInvocazione, String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery, 
+			boolean addIDUnivoco,
+			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail) throws Exception{
+		testPortaDelegata(nomePorta,
+				credenzialiInvocazione, generateCredenzialiInvocazioneAsHeader, generateCredenzialiInvocazioneAsQuery, 
+				addIDUnivoco,
+				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso, checkOpenSPCoopDetail,
+				null);
+	}
+	
+	public static void testPortaDelegata(String nomePorta,
+			CredenzialiInvocazione credenzialiInvocazione, 
+			boolean addIDUnivoco,
 			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail,
 			Integer readTimeout) throws Exception{
-		test(true, nomePorta, credenzialiInvocazione, addIDUnivoco, 
+		test(true, nomePorta, 
+				credenzialiInvocazione, null, null, 
+				addIDUnivoco, 
+				erroreAtteso, codiceErrore, null, ricercaEsatta, dataInizioTest, 
+				CostantiTestSuite.PROXY_SOGGETTO_FRUITORE, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE_ESTERNO,
+				returnCodeAtteso, checkOpenSPCoopDetail,
+				readTimeout);
+	}
+	public static void testPortaDelegata(String nomePorta,
+			CredenzialiInvocazione credenzialiInvocazione,  String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery, 
+			boolean addIDUnivoco,
+			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail,
+			Integer readTimeout) throws Exception{
+		test(true, nomePorta, 
+				credenzialiInvocazione, generateCredenzialiInvocazioneAsHeader, generateCredenzialiInvocazioneAsQuery, 
+				addIDUnivoco, 
 				erroreAtteso, codiceErrore, null, ricercaEsatta, dataInizioTest, 
 				CostantiTestSuite.PROXY_SOGGETTO_FRUITORE, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE_ESTERNO,
 				returnCodeAtteso, checkOpenSPCoopDetail,
@@ -113,36 +172,95 @@ public class AuthUtilities {
 	}
 	
 	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
-			CredenzialiInvocazione credenzialiInvocazione, boolean addIDUnivoco,
+			CredenzialiInvocazione credenzialiInvocazione, 
+			boolean addIDUnivoco,
 			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso) throws Exception{
 		testPortaApplicativa(nomePorta, soggettoFruitore,
-				credenzialiInvocazione, addIDUnivoco,
+				credenzialiInvocazione, null, null,
+				addIDUnivoco,
 				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso,
 				null);
 	}
 	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
-			CredenzialiInvocazione credenzialiInvocazione, boolean addIDUnivoco,
+			CredenzialiInvocazione credenzialiInvocazione,  String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery,
+			boolean addIDUnivoco,
+			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso) throws Exception{
+		testPortaApplicativa(nomePorta, soggettoFruitore,
+				credenzialiInvocazione, generateCredenzialiInvocazioneAsHeader, generateCredenzialiInvocazioneAsQuery,
+				addIDUnivoco,
+				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso,
+				null);
+	}
+	
+	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
+			CredenzialiInvocazione credenzialiInvocazione, 
+			boolean addIDUnivoco,
 			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso,
 			Integer readTimeout) throws Exception{
-		test(false, nomePorta, credenzialiInvocazione, addIDUnivoco, 
+		test(false, nomePorta, 
+				credenzialiInvocazione, null, null,
+				addIDUnivoco, 
 				erroreAtteso, null, codiceErrore, ricercaEsatta, dataInizioTest, 
 				soggettoFruitore, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE,
 				returnCodeAtteso, false,
 				readTimeout);
 	}
 	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
-			CredenzialiInvocazione credenzialiInvocazione, boolean addIDUnivoco,
+			CredenzialiInvocazione credenzialiInvocazione,  String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery,
+			boolean addIDUnivoco,
+			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso,
+			Integer readTimeout) throws Exception{
+		test(false, nomePorta, 
+				credenzialiInvocazione, generateCredenzialiInvocazioneAsHeader, generateCredenzialiInvocazioneAsQuery,
+				addIDUnivoco, 
+				erroreAtteso, null, codiceErrore, ricercaEsatta, dataInizioTest, 
+				soggettoFruitore, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE,
+				returnCodeAtteso, false,
+				readTimeout);
+	}
+	
+	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
+			CredenzialiInvocazione credenzialiInvocazione, 
+			boolean addIDUnivoco,
 			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail) throws Exception{
 		testPortaApplicativa(nomePorta, soggettoFruitore,
-				credenzialiInvocazione, addIDUnivoco,
+				credenzialiInvocazione, null, null, 
+				addIDUnivoco,
 				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso, checkOpenSPCoopDetail,
 				null);
 	}
 	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
-			CredenzialiInvocazione credenzialiInvocazione, boolean addIDUnivoco,
+			CredenzialiInvocazione credenzialiInvocazione, String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery,
+			boolean addIDUnivoco,
+			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail) throws Exception{
+		testPortaApplicativa(nomePorta, soggettoFruitore,
+				credenzialiInvocazione, generateCredenzialiInvocazioneAsHeader, generateCredenzialiInvocazioneAsQuery, 
+				addIDUnivoco,
+				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso, checkOpenSPCoopDetail,
+				null);
+	}
+	
+	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
+			CredenzialiInvocazione credenzialiInvocazione, 
+			boolean addIDUnivoco,
 			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail,
 			Integer readTimeout) throws Exception{
-		test(false, nomePorta, credenzialiInvocazione, addIDUnivoco, 
+		test(false, nomePorta, 
+				credenzialiInvocazione, null, null, 
+				addIDUnivoco, 
+				erroreAtteso, null, codiceErrore, ricercaEsatta, dataInizioTest, 
+				soggettoFruitore, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE,
+				returnCodeAtteso, checkOpenSPCoopDetail,
+				readTimeout);
+	}
+	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
+			CredenzialiInvocazione credenzialiInvocazione, String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery,
+			boolean addIDUnivoco,
+			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail,
+			Integer readTimeout) throws Exception{
+		test(false, nomePorta, 
+				credenzialiInvocazione, generateCredenzialiInvocazioneAsHeader, generateCredenzialiInvocazioneAsQuery, 
+				addIDUnivoco, 
 				erroreAtteso, null, codiceErrore, ricercaEsatta, dataInizioTest, 
 				soggettoFruitore, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE,
 				returnCodeAtteso, checkOpenSPCoopDetail,
@@ -150,7 +268,8 @@ public class AuthUtilities {
 	}
 	
 	private static void test(boolean portaDelegata, String nomePorta,
-			CredenzialiInvocazione credenzialiInvocazione, boolean addIDUnivoco,
+			CredenzialiInvocazione credenzialiInvocazione, String generateCredenzialiInvocazioneAsHeader, String generateCredenzialiInvocazioneAsQuery,
+			boolean addIDUnivoco,
 			String erroreAtteso, CodiceErroreIntegrazione codiceErroreIntegrazione, CodiceErroreCooperazione codiceErroreCooperazone, boolean ricercaEsatta, Date dataInizioTest,
 			IDSoggetto fruitore,IDSoggetto erogatore, int returnCodeAtteso, 
 			boolean checkOpenSPCoopDetail, // presente solamente in caso di errore di processamento
@@ -199,7 +318,8 @@ public class AuthUtilities {
 			}
 			client.setSoapAction("\"TEST\"");
 			if(portaDelegata) {
-				if(credenzialiInvocazione!=null && TipoAutenticazione.PRINCIPAL.equals(credenzialiInvocazione.getAutenticazione())) {
+				if(credenzialiInvocazione!=null && TipoAutenticazione.PRINCIPAL.equals(credenzialiInvocazione.getAutenticazione()) &&
+						generateCredenzialiInvocazioneAsHeader==null && generateCredenzialiInvocazioneAsQuery==null) {
 					//System.out.println("Location ["+Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore_openspcoop2Sec()+"]");
 					client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore_openspcoop2Sec());
 				}
@@ -212,7 +332,8 @@ public class AuthUtilities {
 				}
 			}
 			else {
-				if(credenzialiInvocazione!=null && TipoAutenticazione.PRINCIPAL.equals(credenzialiInvocazione.getAutenticazione())) {
+				if(credenzialiInvocazione!=null && TipoAutenticazione.PRINCIPAL.equals(credenzialiInvocazione.getAutenticazione())&&
+						generateCredenzialiInvocazioneAsHeader==null && generateCredenzialiInvocazioneAsQuery==null) {
 					//System.out.println("Location ["+Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore_openspcoop2Sec()+"]");
 					client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore_openspcoop2Sec());
 				}
@@ -225,12 +346,32 @@ public class AuthUtilities {
 				}
 			}
 			client.setPortaDelegata(nomePorta);
-			client.connectToSoapEngine();
-			if(credenzialiInvocazione.getUsername()!=null) {
-				client.setUsername(credenzialiInvocazione.getUsername());
+			if(generateCredenzialiInvocazioneAsQuery!=null) {
+				String newUrl = nomePorta;
+				if(newUrl.contains("?")) {
+					newUrl = newUrl + "&";
+				}
+				else {
+					newUrl = newUrl + "?";
+				}
+				newUrl = newUrl + generateCredenzialiInvocazioneAsQuery;
+				newUrl = newUrl + "=";
+				newUrl = newUrl + credenzialiInvocazione.getUsername();
+				client.setPortaDelegata(newUrl);
 			}
-			if(credenzialiInvocazione.getPassword()!=null) {
-				client.setPassword(credenzialiInvocazione.getPassword());
+			client.connectToSoapEngine();
+			if(generateCredenzialiInvocazioneAsHeader!=null) {
+				if(credenzialiInvocazione.getUsername()!=null) {
+					client.setProperty(generateCredenzialiInvocazioneAsHeader, credenzialiInvocazione.getUsername());
+				}
+			}
+			else {
+				if(credenzialiInvocazione.getUsername()!=null) {
+					client.setUsername(credenzialiInvocazione.getUsername());
+				}
+				if(credenzialiInvocazione.getPassword()!=null) {
+					client.setPassword(credenzialiInvocazione.getPassword());
+				}
 			}
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);

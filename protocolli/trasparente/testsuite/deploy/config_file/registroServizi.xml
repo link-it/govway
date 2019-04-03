@@ -61,6 +61,12 @@
                         <azione nome="gestioneSOAPFault12"/>
                         <azione nome="gestioneSOAPFault11_500"/>
                         <azione nome="gestioneSOAPFault12_500"/>
+			<azione nome="aggiornamentoBasic" />
+			<azione nome="aggiornamentoBasicForward" />
+			<azione nome="aggiornamentoPrincipalHeaderClean"/>
+			<azione nome="aggiornamentoPrincipalHeaderNotClean"/>
+			<azione nome="aggiornamentoPrincipalQueryClean"/>
+			<azione nome="aggiornamentoPrincipalQueryNotClean"/>
                     </port-type>
 	</accordo-servizio-parte-comune>
 
@@ -510,6 +516,58 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdCakNDQk80Q0NRQ2d0TnorbTk
                                 <connettore tipo="http" nome="CNT_gw/MinisteroErogatore_SOAP/Sincrono">
                                     <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente"/>
                                 </connettore>
+
+				<configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoBasic">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;notExistsHttpHeaders=Authorization"
+				        />
+				    </connettore>
+				    <azione>aggiornamentoBasic</azione>
+			     </configurazione-azione>
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoBasicForward">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;existsHttpHeaders=Authorization"
+				        />
+				    </connettore>
+				    <azione>aggiornamentoBasicForward</azione>
+			     </configurazione-azione>
+
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoPrincipalHeaderClean">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;notExistsHttpHeaders=PRINCIPAL-HEADER"
+				        />
+				    </connettore>
+				    <azione>aggiornamentoPrincipalHeaderClean</azione>
+			     </configurazione-azione>
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoPrincipalHeaderNotClean">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;existsHttpHeaders=PRINCIPAL-HEADER"
+				        />
+				    </connettore>
+				    <azione>aggiornamentoPrincipalHeaderNotClean</azione>
+			     </configurazione-azione>
+
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoPrincipalQueryClean">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;notExistsQueryParameters=PRINCIPAL"
+				        />
+				    </connettore>
+				    <azione>aggiornamentoPrincipalQueryClean</azione>
+			     </configurazione-azione>
+			     <configurazione-azione>
+				    <connettore tipo="http" nome="aggiornamentoPrincipalQueryNotClean">
+				        <property nome="location"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente&amp;existsQueryParameters=PRINCIPAL"
+				        />
+				    </connettore>
+				    <azione>aggiornamentoPrincipalQueryNotClean</azione>
+			     </configurazione-azione>
+
                         </configurazione-servizio>
                         <fruitore tipo="gw" nome="ClientSoapFault11">
                             <connettore tipo="http" nome="CNT_SF_gw/ClientSoapFault11_SOAP/MinisteroErogatoreEsterno_SOAP/Sincrono">

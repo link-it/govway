@@ -25,6 +25,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.units.soap.authn;
 import java.util.Date;
 import java.util.Vector;
 
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
@@ -135,6 +136,7 @@ public class AutenticazionePortaApplicativa {
 			this.erroriAttesiOpenSPCoopCore.add(err);
 		}
 	}
+	
 	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".BASIC_OPTIONAL"},dataProvider="basicProvider")
 	public void testBasicOptional(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		// Con autenticazione opzionale tutte le invocazioni avvengono con successo.
@@ -143,6 +145,25 @@ public class AutenticazionePortaApplicativa {
 				credenzialiInvocazione, addIDUnivoco, 
 				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta,  DateManager.getDate(), 
 				200);
+	}
+	
+	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".BASIC_FORWARD_AUTHORIZATION"},dataProvider="basicProvider")
+	public void testBasicForwardAuthorization(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		Date dataInizioTest = DateManager.getDate();
+		
+		AuthUtilities.testPortaApplicativa(CostantiTestSuite.PORTA_APPLICATIVA_AUTH_BASIC_FORWARD_AUTHORIZATION, fruitore,
+				credenzialiInvocazione, addIDUnivoco, 
+				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+		
+		if(erroreAtteso!=null) {
+			Date dataFineTest = DateManager.getDate();
+			
+			ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+			err.setIntervalloInferiore(dataInizioTest);
+			err.setIntervalloSuperiore(dataFineTest);
+			err.setMsgErrore(erroreAtteso);
+			this.erroriAttesiOpenSPCoopCore.add(err);
+		}
 	}
 	
 	
@@ -320,6 +341,7 @@ public class AutenticazionePortaApplicativa {
 						null, -1,true, 401} // credenziali errate (non registrate nel container)
 		};
 	}
+	
 	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".PRINCIPAL"},dataProvider="principalProvider")
 	public void testPrincipal(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
@@ -339,6 +361,7 @@ public class AutenticazionePortaApplicativa {
 			this.erroriAttesiOpenSPCoopCore.add(err);
 		}
 	}
+	
 	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".PRINCIPAL_OPTIONAL"},dataProvider="principalProvider")
 	public void testPrincipalOptional(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		// Con autenticazione opzionale tutte le invocazioni avvengono con successo.
@@ -352,6 +375,220 @@ public class AutenticazionePortaApplicativa {
 				credenzialiInvocazione, addIDUnivoco, 
 				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta,  DateManager.getDate(),
 				stato);
+	}
+	
+	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".PRINCIPAL_HEADER_CLEAN"},dataProvider="principalProvider")
+	public void testPrincipalHeaderClean(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		Date dataInizioTest = DateManager.getDate();
+		
+		String header = null;
+		if(credenzialiInvocazione!=null && credenzialiInvocazione.getUsername()!=null && returnCodeAtteso!=401 &&
+				TipoAutenticazione.PRINCIPAL.equals(credenzialiInvocazione.getAutenticazione())) {
+			header = "PRINCIPAL-HEADER";
+		}
+		
+		AuthUtilities.testPortaApplicativa(CostantiTestSuite.PORTA_APPLICATIVA_AUTH_PRINCIPAL_HEADER_CLEAN, fruitore,
+				credenzialiInvocazione, header, null, 
+				addIDUnivoco, 
+				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta, dataInizioTest,
+				returnCodeAtteso);
+		
+		if(erroreAtteso!=null) {
+			Date dataFineTest = DateManager.getDate();
+			
+			ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+			err.setIntervalloInferiore(dataInizioTest);
+			err.setIntervalloSuperiore(dataFineTest);
+			err.setMsgErrore(erroreAtteso);
+			this.erroriAttesiOpenSPCoopCore.add(err);
+		}
+	}
+	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".PRINCIPAL_HEADER_NOT_CLEAN"},dataProvider="principalProvider")
+	public void testPrincipalHeaderNotClean(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		Date dataInizioTest = DateManager.getDate();
+		
+		String header = null;
+		if(credenzialiInvocazione!=null && credenzialiInvocazione.getUsername()!=null && returnCodeAtteso!=401 &&
+				TipoAutenticazione.PRINCIPAL.equals(credenzialiInvocazione.getAutenticazione())) {
+			header = "PRINCIPAL-HEADER";
+		}
+		
+		AuthUtilities.testPortaApplicativa(CostantiTestSuite.PORTA_APPLICATIVA_AUTH_PRINCIPAL_HEADER_NOT_CLEAN, fruitore,
+				credenzialiInvocazione, header, null, 
+				addIDUnivoco, 
+				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta, dataInizioTest,
+				returnCodeAtteso);
+		
+		if(erroreAtteso!=null) {
+			Date dataFineTest = DateManager.getDate();
+			
+			ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+			err.setIntervalloInferiore(dataInizioTest);
+			err.setIntervalloSuperiore(dataFineTest);
+			err.setMsgErrore(erroreAtteso);
+			this.erroriAttesiOpenSPCoopCore.add(err);
+		}
+	}
+	
+	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".PRINCIPAL_HEADER_OPTIONAL"},dataProvider="principalProvider")
+	public void testPrincipalHeaderOptional(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		// Con autenticazione opzionale tutte le invocazioni avvengono con successo.
+		// Fatta eccezione per le credenziali non riconosciute dal container ssl
+		int stato = 200;
+		if(returnCodeAtteso==401) {
+			stato = 401;
+		}
+		ricercaEsatta = false; // il diagnostico e' arricchito dell'informazione che l'autenticazione e' opzionale
+		
+		String header = null;
+		if(credenzialiInvocazione!=null && credenzialiInvocazione.getUsername()!=null && returnCodeAtteso!=401 &&
+				TipoAutenticazione.PRINCIPAL.equals(credenzialiInvocazione.getAutenticazione())) {
+			header = "PRINCIPAL-HEADER";
+		}
+		
+		AuthUtilities.testPortaApplicativa(CostantiTestSuite.PORTA_APPLICATIVA_AUTH_OPTIONAL_PRINCIPAL_HEADER, fruitore,
+				credenzialiInvocazione, header, null, 
+				addIDUnivoco, 
+				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta,  DateManager.getDate(),
+				stato);
+	}
+	
+	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".PRINCIPAL_QUERY_CLEAN"},dataProvider="principalProvider")
+	public void testPrincipalQueryClean(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		Date dataInizioTest = DateManager.getDate();
+		
+		String query = null;
+		if(credenzialiInvocazione!=null && credenzialiInvocazione.getUsername()!=null && returnCodeAtteso!=401 &&
+				TipoAutenticazione.PRINCIPAL.equals(credenzialiInvocazione.getAutenticazione())) {
+			query = "PRINCIPAL";
+		}
+		
+		AuthUtilities.testPortaApplicativa(CostantiTestSuite.PORTA_APPLICATIVA_AUTH_PRINCIPAL_QUERY_CLEAN, fruitore,
+				credenzialiInvocazione, null, query, 
+				addIDUnivoco, 
+				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta, dataInizioTest,
+				returnCodeAtteso);
+		
+		if(erroreAtteso!=null) {
+			Date dataFineTest = DateManager.getDate();
+			
+			ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+			err.setIntervalloInferiore(dataInizioTest);
+			err.setIntervalloSuperiore(dataFineTest);
+			err.setMsgErrore(erroreAtteso);
+			this.erroriAttesiOpenSPCoopCore.add(err);
+		}
+	}
+	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".PRINCIPAL_QUERY_NOT_CLEAN"},dataProvider="principalProvider")
+	public void testPrincipalQueryNotClean(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		Date dataInizioTest = DateManager.getDate();
+		
+		String query = null;
+		if(credenzialiInvocazione!=null && credenzialiInvocazione.getUsername()!=null && returnCodeAtteso!=401 &&
+				TipoAutenticazione.PRINCIPAL.equals(credenzialiInvocazione.getAutenticazione())) {
+			query = "PRINCIPAL";
+		}
+		
+		AuthUtilities.testPortaApplicativa(CostantiTestSuite.PORTA_APPLICATIVA_AUTH_PRINCIPAL_QUERY_NOT_CLEAN, fruitore,
+				credenzialiInvocazione, null, query, 
+				addIDUnivoco, 
+				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta, dataInizioTest,
+				returnCodeAtteso);
+		
+		if(erroreAtteso!=null) {
+			Date dataFineTest = DateManager.getDate();
+			
+			ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+			err.setIntervalloInferiore(dataInizioTest);
+			err.setIntervalloSuperiore(dataFineTest);
+			err.setMsgErrore(erroreAtteso);
+			this.erroriAttesiOpenSPCoopCore.add(err);
+		}
+	}
+	
+	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".PRINCIPAL_QUERY_OPTIONAL"},dataProvider="principalProvider")
+	public void testPrincipalQueryOptional(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		// Con autenticazione opzionale tutte le invocazioni avvengono con successo.
+		// Fatta eccezione per le credenziali non riconosciute dal container ssl
+		int stato = 200;
+		if(returnCodeAtteso==401) {
+			stato = 401;
+		}
+		ricercaEsatta = false; // il diagnostico e' arricchito dell'informazione che l'autenticazione e' opzionale
+		
+		String query = null;
+		if(credenzialiInvocazione!=null && credenzialiInvocazione.getUsername()!=null && returnCodeAtteso!=401 &&
+				TipoAutenticazione.PRINCIPAL.equals(credenzialiInvocazione.getAutenticazione())) {
+			query = "PRINCIPAL";
+		}
+		
+		AuthUtilities.testPortaApplicativa(CostantiTestSuite.PORTA_APPLICATIVA_AUTH_OPTIONAL_PRINCIPAL_QUERY, fruitore,
+				credenzialiInvocazione, null, query, 
+				addIDUnivoco, 
+				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta,  DateManager.getDate(),
+				stato);
+	}
+	
+	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".PRINCIPAL_URL"},dataProvider="principalProvider")
+	public void testPrincipalUrl(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		Date dataInizioTest = DateManager.getDate();
+		
+		String query = null;
+		if(credenzialiInvocazione!=null && credenzialiInvocazione.getUsername()!=null && returnCodeAtteso!=401 &&
+				TipoAutenticazione.PRINCIPAL.equals(credenzialiInvocazione.getAutenticazione())) {
+			query = "TEST_PRINCIPAL";
+		}
+		
+		AuthUtilities.testPortaApplicativa(CostantiTestSuite.PORTA_APPLICATIVA_AUTH_PRINCIPAL_URL, fruitore,
+				credenzialiInvocazione, null, query, 
+				addIDUnivoco, 
+				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta, dataInizioTest,
+				returnCodeAtteso);
+		
+		if(erroreAtteso!=null) {
+			Date dataFineTest = DateManager.getDate();
+			
+			ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+			err.setIntervalloInferiore(dataInizioTest);
+			err.setIntervalloSuperiore(dataFineTest);
+			err.setMsgErrore(erroreAtteso);
+			this.erroriAttesiOpenSPCoopCore.add(err);
+		}
+	}
+	
+	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".PRINCIPAL_URL_OPTIONAL"},dataProvider="principalProvider")
+	public void testPrincipalUrlOptional(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
+		// Con autenticazione opzionale tutte le invocazioni avvengono con successo.
+		// Fatta eccezione per le credenziali non riconosciute dal container ssl
+		int stato = 200;
+		if(returnCodeAtteso==401) {
+			stato = 401;
+		}
+		ricercaEsatta = false; // il diagnostico e' arricchito dell'informazione che l'autenticazione e' opzionale
+		
+		String query = null;
+		if(credenzialiInvocazione!=null && credenzialiInvocazione.getUsername()!=null && returnCodeAtteso!=401 &&
+				TipoAutenticazione.PRINCIPAL.equals(credenzialiInvocazione.getAutenticazione())) {
+			query = "TEST_PRINCIPAL";
+		}
+		
+		AuthUtilities.testPortaApplicativa(CostantiTestSuite.PORTA_APPLICATIVA_AUTH_OPTIONAL_PRINCIPAL_URL, fruitore,
+				credenzialiInvocazione, null, query, 
+				addIDUnivoco, 
+				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta,  DateManager.getDate(),
+				stato);
+	}
+	
+	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".PRINCIPAL_IP"})
+	public void testPrincipalIp() throws Exception{
+		Date dataInizioTest = DateManager.getDate();
+		
+		AuthUtilities.testPortaApplicativa(CostantiTestSuite.PORTA_APPLICATIVA_AUTH_PRINCIPAL_IP, null,
+				CredenzialiInvocazione.getAutenticazioneDisabilitata(), null, null, 
+				addIDUnivoco, 
+				null, null, true, dataInizioTest,
+				200);
+		
 	}
 	
 }

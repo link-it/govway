@@ -38,13 +38,17 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
  */
 public class AutenticazioneUtils {
 
-	public static void cleanHeaderAuthorization(OpenSPCoop2Message message) throws AutenticazioneException {
+	public static void finalizeProcessHeaderAuthorization(OpenSPCoop2Message message, boolean clean) throws AutenticazioneException {
 		try {
 			if(message.getTransportRequestContext()!=null) {
 				if(message.getTransportRequestContext().getParametersTrasporto()!=null) {
-					message.getTransportRequestContext().getParametersTrasporto().remove(HttpConstants.AUTHORIZATION);
-					message.getTransportRequestContext().getParametersTrasporto().remove(HttpConstants.AUTHORIZATION.toLowerCase());
-					message.getTransportRequestContext().getParametersTrasporto().remove(HttpConstants.AUTHORIZATION.toUpperCase());
+					String headerValue = message.getTransportRequestContext().getParameterTrasporto(HttpConstants.AUTHORIZATION);
+					if(headerValue!=null) {
+						message.getTransportRequestContext().removeParameterTrasporto(HttpConstants.AUTHORIZATION);
+						if(!clean) {
+							message.forceTransportHeader(HttpConstants.AUTHORIZATION, headerValue); // serve soprattutto per soap
+						}
+					}
 	    		}
 			}
 		}catch(Throwable t) {
@@ -52,7 +56,7 @@ public class AutenticazioneUtils {
 		}
     }
 	
-	public static void cleanPrincipal(OpenSPCoop2Message message, TipoAutenticazionePrincipal tipoAutenticazionePrincipal, String nome) throws AutenticazioneException {
+	public static void finalizeProcessPrincipal(OpenSPCoop2Message message, TipoAutenticazionePrincipal tipoAutenticazionePrincipal, String nome, boolean clean) throws AutenticazioneException {
 		try {
 			switch (tipoAutenticazionePrincipal) {
 			case CONTAINER:
@@ -62,18 +66,26 @@ public class AutenticazioneUtils {
 			case HEADER:
 				if(nome!=null && message.getTransportRequestContext()!=null) {
 					if(message.getTransportRequestContext().getParametersTrasporto()!=null) {
-						message.getTransportRequestContext().getParametersTrasporto().remove(nome);
-						message.getTransportRequestContext().getParametersTrasporto().remove(nome.toLowerCase());
-						message.getTransportRequestContext().getParametersTrasporto().remove(nome.toUpperCase());
+						String headerValue = message.getTransportRequestContext().getParameterTrasporto(nome);
+						if(headerValue!=null) {
+							message.getTransportRequestContext().removeParameterTrasporto(nome);
+							if(!clean) {
+								message.forceTransportHeader(nome, headerValue); // serve soprattutto per soap
+							}
+						}
 		    		}
 				}
 				break;
 			case FORM:
 				if(message.getTransportRequestContext()!=null) {
 					if(message.getTransportRequestContext().getParametersFormBased()!=null) {
-						message.getTransportRequestContext().getParametersFormBased().remove(nome);
-						message.getTransportRequestContext().getParametersFormBased().remove(nome.toLowerCase());
-						message.getTransportRequestContext().getParametersFormBased().remove(nome.toUpperCase());
+						String propertyValue = message.getTransportRequestContext().getParameterFormBased(nome);
+						if(propertyValue!=null) {
+							message.getTransportRequestContext().removeParameterFormBased(nome);
+							if(!clean) {
+								message.forceUrlProperty(nome, propertyValue); // serve soprattutto per soap
+							}
+						}
 		    		}
 				}
 				break;
