@@ -731,8 +731,11 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 			<equals arg1="${antinstaller_tipo_database}" arg2="mysql"/>
 			<then>
 				<concat destfile="${tmp_sql}/GovWay.sql" append="yes">
-<![CDATA[-- Per MySQL 5.6 (default value)
--- SET @@SESSION.sql_mode=NO_ENGINE_SUBSTITUTION'
+<![CDATA[-- Per MySQL 5.6.x (NOTA: Versione non più certificata da GovWay)
+-- SET @@SESSION.sql_mode='NO_ENGINE_SUBSTITUTION';
+-- SET GLOBAL innodb_large_prefix=ON;
+-- SET GLOBAL innodb_file_format=barracuda;
+-- SET GLOBAL innodb_file_per_table=true;
 
 -- Per MySQL < 5.7.4 
 -- SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
@@ -741,7 +744,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 -- SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
 
 -- Per MySQL >= 5.7.8 
--- SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';]]>
+SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';]]>
 				</concat>
 			</then>
 		</if>

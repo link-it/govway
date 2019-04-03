@@ -47,6 +47,12 @@ public class RicercaBaseTransazione  {
   @Schema(required = true, description = "")
   private TransazioneRuoloEnum tipo = null;
   
+  @Schema(description = "Identificativo del nodo su cui e' stata emessa la transazione")
+ /**
+   * Identificativo del nodo su cui e' stata emessa la transazione  
+  **/
+  private String idCluster = null;
+  
   @Schema(description = "")
   private Object api = null;
   
@@ -56,9 +62,9 @@ public class RicercaBaseTransazione  {
   @Schema(description = "")
   private FiltroEsito esito = null;
   
-  @Schema(description = "Eevento da ricercare per una transazione")
+  @Schema(description = "Evento da ricercare per una transazione")
  /**
-   * Eevento da ricercare per una transazione  
+   * Evento da ricercare per una transazione  
   **/
   private String evento = null;
  /**
@@ -159,6 +165,25 @@ public class RicercaBaseTransazione  {
   }
 
  /**
+   * Identificativo del nodo su cui e' stata emessa la transazione
+   * @return idCluster
+  **/
+  @JsonProperty("id_cluster")
+  @Valid
+  public String getIdCluster() {
+    return this.idCluster;
+  }
+
+  public void setIdCluster(String idCluster) {
+    this.idCluster = idCluster;
+  }
+
+  public RicercaBaseTransazione idCluster(String idCluster) {
+    this.idCluster = idCluster;
+    return this;
+  }
+
+ /**
    * Get api
    * @return api
   **/
@@ -216,7 +241,7 @@ public class RicercaBaseTransazione  {
   }
 
  /**
-   * Eevento da ricercare per una transazione
+   * Evento da ricercare per una transazione
    * @return evento
   **/
   @JsonProperty("evento")
@@ -245,6 +270,7 @@ public class RicercaBaseTransazione  {
     sb.append("    sort: ").append(RicercaBaseTransazione.toIndentedString(this.sort)).append("\n");
     sb.append("    intervalloTemporale: ").append(RicercaBaseTransazione.toIndentedString(this.intervalloTemporale)).append("\n");
     sb.append("    tipo: ").append(RicercaBaseTransazione.toIndentedString(this.tipo)).append("\n");
+    sb.append("    idCluster: ").append(RicercaBaseTransazione.toIndentedString(this.idCluster)).append("\n");
     sb.append("    api: ").append(RicercaBaseTransazione.toIndentedString(this.api)).append("\n");
     sb.append("    azione: ").append(RicercaBaseTransazione.toIndentedString(this.azione)).append("\n");
     sb.append("    esito: ").append(RicercaBaseTransazione.toIndentedString(this.esito)).append("\n");

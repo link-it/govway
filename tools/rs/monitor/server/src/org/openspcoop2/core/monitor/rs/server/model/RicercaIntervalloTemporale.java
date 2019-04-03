@@ -21,7 +21,6 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
-import org.openspcoop2.core.monitor.rs.server.model.FiltroMittente;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaBaseTransazione;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,22 +29,22 @@ import javax.validation.Valid;
 public class RicercaIntervalloTemporale extends RicercaBaseTransazione {
   
   @Schema(description = "")
-  private FiltroMittente mittente = null;
+  private Object mittente = null;
  /**
    * Get mittente
    * @return mittente
   **/
   @JsonProperty("mittente")
   @Valid
-  public FiltroMittente getMittente() {
+  public Object getMittente() {
     return this.mittente;
   }
 
-  public void setMittente(FiltroMittente mittente) {
+  public void setMittente(Object mittente) {
     this.mittente = mittente;
   }
 
-  public RicercaIntervalloTemporale mittente(FiltroMittente mittente) {
+  public RicercaIntervalloTemporale mittente(Object mittente) {
     this.mittente = mittente;
     return this;
   }

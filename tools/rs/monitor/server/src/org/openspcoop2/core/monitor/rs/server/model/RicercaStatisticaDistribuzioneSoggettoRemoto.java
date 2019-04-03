@@ -22,7 +22,6 @@
 package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroMittente;
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReport;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaBaseStatistica;
 import javax.validation.constraints.*;
@@ -43,7 +42,7 @@ public class RicercaStatisticaDistribuzioneSoggettoRemoto extends RicercaBaseSta
   private String azione = null;
   
   @Schema(description = "")
-  private FiltroMittente mittente = null;
+  private Object mittente = null;
   
   @Schema(description = "")
   private FiltroEsito esito = null;
@@ -111,15 +110,15 @@ public class RicercaStatisticaDistribuzioneSoggettoRemoto extends RicercaBaseSta
   **/
   @JsonProperty("mittente")
   @Valid
-  public FiltroMittente getMittente() {
+  public Object getMittente() {
     return this.mittente;
   }
 
-  public void setMittente(FiltroMittente mittente) {
+  public void setMittente(Object mittente) {
     this.mittente = mittente;
   }
 
-  public RicercaStatisticaDistribuzioneSoggettoRemoto mittente(FiltroMittente mittente) {
+  public RicercaStatisticaDistribuzioneSoggettoRemoto mittente(Object mittente) {
     this.mittente = mittente;
     return this;
   }

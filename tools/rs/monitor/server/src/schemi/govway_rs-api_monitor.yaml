@@ -44,6 +44,7 @@ paths:
         - $ref: 'govway_core.yaml#/components/parameters/data_inizio'
         - $ref: 'govway_core.yaml#/components/parameters/data_fine'
         - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: '#/components/parameters/id_cluster'
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
@@ -131,6 +132,7 @@ paths:
         - $ref: 'govway_core.yaml#/components/parameters/data_inizio'
         - $ref: 'govway_core.yaml#/components/parameters/data_fine'
         - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: '#/components/parameters/id_cluster'
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
@@ -1316,7 +1318,7 @@ components:
       required: true
       schema:
         $ref: 'govway_trace.yaml#/components/schemas/TransazioneRuoloEnum'
-
+        
     id_correlazione_applicativa:
       in: query
       name: id_applicativo
@@ -1353,6 +1355,14 @@ components:
       required: false
       schema:
         $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+        
+    id_cluster: 
+      in: query
+      name: id_cluster 
+      description: Identificativo del nodo su cui e' stata emessa la transazione
+      required: false
+      schema:
+        type: string
 
     esito_transazione:
       in: query
@@ -1755,6 +1765,10 @@ components:
           $ref: '#/components/schemas/FiltroTemporale'
         tipo:
           $ref: 'govway_trace.yaml#/components/schemas/TransazioneRuoloEnum'
+        id_cluster:  
+          description: >-
+            Identificativo del nodo su cui e' stata emessa la transazione
+          type: string
         api:
           discriminator:
             propertyName: tipo
@@ -1770,7 +1784,7 @@ components:
           $ref: '#/components/schemas/FiltroEsito'
         evento:  
           description: >-
-            Eevento da ricercare per una transazione
+            Evento da ricercare per una transazione
           type: string
      
     RicercaIntervalloTemporale:
@@ -1780,7 +1794,14 @@ components:
         - type: object
           properties:
             mittente:
-              $ref: '#/components/schemas/FiltroMittente'
+              discriminator:
+                propertyName: tipo
+                mapping:
+                  erogazione: '#/components/schemas/FiltroMittenteErogazione'
+                  fruizione: '#/components/schemas/FiltroMittenteFruizione'
+              oneOf:
+                - $ref: '#/components/schemas/FiltroMittenteErogazione'
+                - $ref: '#/components/schemas/FiltroMittenteFruizione'
               
     RicercaIdApplicativo:
       type: object
@@ -1836,7 +1857,14 @@ components:
             azione:
               $ref: 'govway_core.yaml#/components/schemas/NCName'
             mittente:
-              $ref: '#/components/schemas/FiltroMittente'
+              discriminator:
+                propertyName: tipo
+                mapping:
+                  erogazione: '#/components/schemas/FiltroMittenteErogazione'
+                  fruizione: '#/components/schemas/FiltroMittenteFruizione'
+              oneOf:
+                - $ref: '#/components/schemas/FiltroMittenteErogazione'
+                - $ref: '#/components/schemas/FiltroMittenteFruizione'
             esito:
               $ref: '#/components/schemas/FiltroEsito'
 
@@ -1853,7 +1881,14 @@ components:
             azione:
               $ref: 'govway_core.yaml#/components/schemas/NCName'
             mittente:
-              $ref: '#/components/schemas/FiltroMittente'
+              discriminator:
+                propertyName: tipo
+                mapping:
+                  erogazione: '#/components/schemas/FiltroMittenteErogazione'
+                  fruizione: '#/components/schemas/FiltroMittenteFruizione'
+              oneOf:
+                - $ref: '#/components/schemas/FiltroMittenteErogazione'
+                - $ref: '#/components/schemas/FiltroMittenteFruizione'
 
     RicercaStatisticaDistribuzioneSoggettoRemoto:
        type: object
@@ -1877,7 +1912,14 @@ components:
             azione:
               $ref: 'govway_core.yaml#/components/schemas/NCName'
             mittente:
-              $ref: '#/components/schemas/FiltroMittente'
+              discriminator:
+                propertyName: tipo
+                mapping:
+                  erogazione: '#/components/schemas/FiltroMittenteErogazioneDistribuzioneSoggettoRemoto'
+                  fruizione: '#/components/schemas/FiltroMittenteFruizione'
+              oneOf:
+                - $ref: '#/components/schemas/FiltroMittenteErogazioneDistribuzioneSoggettoRemoto'
+                - $ref: '#/components/schemas/FiltroMittenteFruizione'
             esito:
               $ref: '#/components/schemas/FiltroEsito'
 
@@ -1894,7 +1936,14 @@ components:
             azione:
               $ref: 'govway_core.yaml#/components/schemas/NCName'
             mittente:
-              $ref: '#/components/schemas/FiltroMittente'
+              discriminator:
+                propertyName: tipo
+                mapping:
+                  erogazione: '#/components/schemas/FiltroMittenteErogazione'
+                  fruizione: '#/components/schemas/FiltroMittenteFruizione'
+              oneOf:
+                - $ref: '#/components/schemas/FiltroMittenteErogazione'
+                - $ref: '#/components/schemas/FiltroMittenteFruizione'
             esito:
               $ref: '#/components/schemas/FiltroEsito'
 
@@ -1908,10 +1957,22 @@ components:
           properties:
             report:
               $ref: '#/components/schemas/OpzioniGenerazioneReport'
-            soggetto_remoto:
-              $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+            soggetto_erogatore:
+              discriminator:
+                propertyName: tipo
+                mapping:
+                  fruizione: 'govway_core.yaml#/components/schemas/SimpleName'
+              oneOf:
+                - $ref: 'govway_core.yaml#/components/schemas/SimpleName'
             mittente:
-              $ref: '#/components/schemas/FiltroMittente'
+              discriminator:
+                propertyName: tipo
+                mapping:
+                  erogazione: '#/components/schemas/FiltroMittenteErogazione'
+                  fruizione: '#/components/schemas/FiltroMittenteFruizione'
+              oneOf:
+                - $ref: '#/components/schemas/FiltroMittenteErogazione'
+                - $ref: '#/components/schemas/FiltroMittenteFruizione'
             esito:
               $ref: '#/components/schemas/FiltroEsito'
  
@@ -1926,7 +1987,14 @@ components:
             report:
               $ref: '#/components/schemas/OpzioniGenerazioneReport'
             mittente:
-              $ref: '#/components/schemas/FiltroMittente'
+              discriminator:
+                propertyName: tipo
+                mapping:
+                  erogazione: '#/components/schemas/FiltroMittenteErogazione'
+                  fruizione: '#/components/schemas/FiltroMittenteFruizione'
+              oneOf:
+                - $ref: '#/components/schemas/FiltroMittenteErogazione'
+                - $ref: '#/components/schemas/FiltroMittenteFruizione'
             esito:
               $ref: '#/components/schemas/FiltroEsito'
 
@@ -1960,6 +2028,13 @@ components:
           properties:
             claim:
               $ref: '#/components/schemas/TokenClaimEnum'
+            soggetto:
+              discriminator:
+                propertyName: tipo
+                mapping:
+                  erogazione: 'govway_core.yaml#/components/schemas/SimpleName'
+              oneOf:
+                - $ref: 'govway_core.yaml#/components/schemas/SimpleName'
 
     # Ricerche Report Configurazione
 
@@ -2017,10 +2092,6 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/FiltroApiBase'
-        - type: object
-          properties:
-            fruitore:
-              $ref: 'govway_core.yaml#/components/schemas/SimpleName'
            
     FiltroEsito:
       type: object
@@ -2046,39 +2117,108 @@ components:
       items:
           $ref: '#/components/schemas/DettaglioEsitoCode'
 
-    FiltroMittente:
+    FiltroMittenteFruizione:
       type: object
       description: >-
-        Descrive le informazioni di filtraggio relative al mittente per la ricerca di transazioni
+        Descrive le informazioni di filtraggio relative al mittente per la ricerca di transazioni relative a fruizioni di servizio
       properties:
         tipo: 
-          $ref: '#/components/schemas/TipoFiltroMittenteEnum'
+          $ref: '#/components/schemas/TipoFiltroMittenteFruizioneEnum'
         id:
           discriminator:
-            propertyName: tipo_filtro_mittente
+            propertyName: tipo
             mapping:
-              applicativo:  '#/components/schemas/FiltroMittenteApplicativo' 
+              applicativo:  '#/components/schemas/FiltroMittenteFruizioneApplicativo' 
               identificativo_autenticato: '#/components/schemas/FiltroMittenteIdAutenticato'
               token_info: '#/components/schemas/FiltroMittenteTokenClaim'
           oneOf:
-            - $ref: '#/components/schemas/FiltroMittenteApplicativo' 
+            - $ref: '#/components/schemas/FiltroMittenteFruizioneApplicativo' 
             - $ref: '#/components/schemas/FiltroMittenteIdApplicativo'
             - $ref: '#/components/schemas/FiltroMittenteTokenClaim'
-    FiltroMittenteApplicativo:
-      $ref: 'govway_core.yaml#/components/schemas/NCName'
+    FiltroMittenteErogazione:
+      type: object
+      description: >-
+        Descrive le informazioni di filtraggio relative al mittente per la ricerca di transazioni relative ad erogazioni di servizio
+      properties:
+        tipo: 
+          $ref: '#/components/schemas/TipoFiltroMittenteErogazioneEnum'
+        id:
+          discriminator:
+            propertyName: tipo
+            mapping:
+              soggetto:  '#/components/schemas/FiltroMittenteErogazioneSoggetto' 
+              applicativo:  '#/components/schemas/FiltroMittenteErogazioneApplicativo' 
+              identificativo_autenticato: '#/components/schemas/FiltroMittenteIdAutenticato'
+              token_info: '#/components/schemas/FiltroMittenteTokenClaim'
+          oneOf:
+            - $ref: '#/components/schemas/FiltroMittenteErogazioneSoggetto'
+            - $ref: '#/components/schemas/FiltroMittenteErogazioneApplicativo' 
+            - $ref: '#/components/schemas/FiltroMittenteIdApplicativo'
+            - $ref: '#/components/schemas/FiltroMittenteTokenClaim'
+    FiltroMittenteErogazioneDistribuzioneSoggettoRemoto:
+      type: object
+      description: >-
+        Descrive le informazioni di filtraggio relative al mittente per la ricerca di transazioni relative ad erogazioni di servizio
+      properties:
+        tipo: 
+          $ref: '#/components/schemas/TipoFiltroMittenteErogazioneEnum'
+        id:
+          discriminator:
+            propertyName: tipo
+            mapping: 
+              identificativo_autenticato: '#/components/schemas/FiltroMittenteIdAutenticato'
+              token_info: '#/components/schemas/FiltroMittenteTokenClaim'
+          oneOf:
+            - $ref: '#/components/schemas/FiltroMittenteIdApplicativo'
+            - $ref: '#/components/schemas/FiltroMittenteTokenClaim'
+    FiltroMittenteErogazioneSoggetto:
+      type: object
+      required:
+      - soggetto
+      properties:
+        soggetto:
+         $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+    FiltroMittenteErogazioneApplicativo:
+      type: object
+      required:
+      - soggetto
+      - applicativo
+      properties:
+        soggetto:
+          $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+        applicativo:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+    FiltroMittenteFruizioneApplicativo:
+      type: object
+      required:
+      - applicativo
+      properties:
+        applicativo:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
     FiltroMittenteIdApplicativo:
-      $ref: 'govway_core.yaml#/components/schemas/FiltroRicercaId'
+      type: object
+      allOf:
+        - $ref: 'govway_core.yaml#/components/schemas/FiltroRicercaId'
+        - type: object
+          required:
+            - autenticazione
+          properties:
+            autenticazione:
+              $ref: '#/components/schemas/TipoFiltroMittenteIdentificativoAutenticatoEnum' 
     FiltroMittenteTokenClaim:
       type: object
       allOf:
         - $ref: '#/components/schemas/FiltroTokenClaimBase'
-        - $ref: 'govway_core.yaml#/components/schemas/FiltroRicercaId'
-      
+        - $ref: 'govway_core.yaml#/components/schemas/FiltroRicercaId'    
     FiltroTokenClaimBase:
       type: object
+      required:
+      - claim
       properties:
         claim:
           $ref: '#/components/schemas/TokenClaimEnum'
+        soggetto:
+          $ref: 'govway_core.yaml#/components/schemas/SimpleName'
       
 
 
@@ -2098,13 +2238,28 @@ components:
         - error
         - error_or_fault
         - personalizzato
-        
-    TipoFiltroMittenteEnum:
+ 
+    TipoFiltroMittenteFruizioneEnum:
       type: string
       enum:
         - applicativo
         - identificativo_autenticato
         - token_info
+        
+    TipoFiltroMittenteErogazioneEnum:
+      type: string
+      enum:
+        - soggetto
+        - applicativo
+        - identificativo_autenticato
+        - token_info
+
+    TipoFiltroMittenteIdentificativoAutenticatoEnum:
+      type: string
+      enum:
+        - basic
+        - ssl
+        - principal
         
     TokenClaimEnum:
       type: string

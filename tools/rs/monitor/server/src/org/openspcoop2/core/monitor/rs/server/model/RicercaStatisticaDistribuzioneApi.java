@@ -22,7 +22,6 @@
 package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroMittente;
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReport;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaBaseStatistica;
 import javax.validation.constraints.*;
@@ -37,10 +36,10 @@ public class RicercaStatisticaDistribuzioneApi extends RicercaBaseStatistica {
   private OpzioniGenerazioneReport report = null;
   
   @Schema(description = "")
-  private String soggettoRemoto = null;
+  private Object soggettoErogatore = null;
   
   @Schema(description = "")
-  private FiltroMittente mittente = null;
+  private Object mittente = null;
   
   @Schema(description = "")
   private FiltroEsito esito = null;
@@ -65,21 +64,21 @@ public class RicercaStatisticaDistribuzioneApi extends RicercaBaseStatistica {
   }
 
  /**
-   * Get soggettoRemoto
-   * @return soggettoRemoto
+   * Get soggettoErogatore
+   * @return soggettoErogatore
   **/
-  @JsonProperty("soggetto_remoto")
+  @JsonProperty("soggetto_erogatore")
   @Valid
- @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getSoggettoRemoto() {
-    return this.soggettoRemoto;
+  public Object getSoggettoErogatore() {
+    return this.soggettoErogatore;
   }
 
-  public void setSoggettoRemoto(String soggettoRemoto) {
-    this.soggettoRemoto = soggettoRemoto;
+  public void setSoggettoErogatore(Object soggettoErogatore) {
+    this.soggettoErogatore = soggettoErogatore;
   }
 
-  public RicercaStatisticaDistribuzioneApi soggettoRemoto(String soggettoRemoto) {
-    this.soggettoRemoto = soggettoRemoto;
+  public RicercaStatisticaDistribuzioneApi soggettoErogatore(Object soggettoErogatore) {
+    this.soggettoErogatore = soggettoErogatore;
     return this;
   }
 
@@ -89,15 +88,15 @@ public class RicercaStatisticaDistribuzioneApi extends RicercaBaseStatistica {
   **/
   @JsonProperty("mittente")
   @Valid
-  public FiltroMittente getMittente() {
+  public Object getMittente() {
     return this.mittente;
   }
 
-  public void setMittente(FiltroMittente mittente) {
+  public void setMittente(Object mittente) {
     this.mittente = mittente;
   }
 
-  public RicercaStatisticaDistribuzioneApi mittente(FiltroMittente mittente) {
+  public RicercaStatisticaDistribuzioneApi mittente(Object mittente) {
     this.mittente = mittente;
     return this;
   }
@@ -128,7 +127,7 @@ public class RicercaStatisticaDistribuzioneApi extends RicercaBaseStatistica {
     sb.append("class RicercaStatisticaDistribuzioneApi {\n");
     sb.append("    ").append(RicercaStatisticaDistribuzioneApi.toIndentedString(super.toString())).append("\n");
     sb.append("    report: ").append(RicercaStatisticaDistribuzioneApi.toIndentedString(this.report)).append("\n");
-    sb.append("    soggettoRemoto: ").append(RicercaStatisticaDistribuzioneApi.toIndentedString(this.soggettoRemoto)).append("\n");
+    sb.append("    soggettoErogatore: ").append(RicercaStatisticaDistribuzioneApi.toIndentedString(this.soggettoErogatore)).append("\n");
     sb.append("    mittente: ").append(RicercaStatisticaDistribuzioneApi.toIndentedString(this.mittente)).append("\n");
     sb.append("    esito: ").append(RicercaStatisticaDistribuzioneApi.toIndentedString(this.esito)).append("\n");
     sb.append("}");

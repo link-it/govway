@@ -33,6 +33,9 @@ public class RicercaStatisticaDistribuzioneTokenInfo extends RicercaStatisticaDi
   
   @Schema(required = true, description = "")
   private TokenClaimEnum claim = null;
+  
+  @Schema(description = "")
+  private Object soggetto = null;
  /**
    * Get claim
    * @return claim
@@ -53,6 +56,25 @@ public class RicercaStatisticaDistribuzioneTokenInfo extends RicercaStatisticaDi
     return this;
   }
 
+ /**
+   * Get soggetto
+   * @return soggetto
+  **/
+  @JsonProperty("soggetto")
+  @Valid
+  public Object getSoggetto() {
+    return this.soggetto;
+  }
+
+  public void setSoggetto(Object soggetto) {
+    this.soggetto = soggetto;
+  }
+
+  public RicercaStatisticaDistribuzioneTokenInfo soggetto(Object soggetto) {
+    this.soggetto = soggetto;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -60,6 +82,7 @@ public class RicercaStatisticaDistribuzioneTokenInfo extends RicercaStatisticaDi
     sb.append("class RicercaStatisticaDistribuzioneTokenInfo {\n");
     sb.append("    ").append(RicercaStatisticaDistribuzioneTokenInfo.toIndentedString(super.toString())).append("\n");
     sb.append("    claim: ").append(RicercaStatisticaDistribuzioneTokenInfo.toIndentedString(this.claim)).append("\n");
+    sb.append("    soggetto: ").append(RicercaStatisticaDistribuzioneTokenInfo.toIndentedString(this.soggetto)).append("\n");
     sb.append("}");
     return sb.toString();
   }

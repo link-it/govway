@@ -277,7 +277,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
      *
      */
 	@Override
-    public ListaTransazioni findAllTransazioniByIdApplicativoSimpleSearch(DateTime dataInizio, DateTime dataFine, TransazioneRuoloEnum tipo, String idApplicativo, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit, String sort,  String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean ricercaEsatta, Boolean caseSensitive) {
+    public ListaTransazioni findAllTransazioniByIdApplicativoSimpleSearch(DateTime dataInizio, DateTime dataFine, TransazioneRuoloEnum tipo, String idApplicativo, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit, String sort, String idCluster,  String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean ricercaEsatta, Boolean caseSensitive) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -339,7 +339,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
      *
      */
 	@Override
-    public ListaTransazioni findAllTransazioniBySimpleSearch(DateTime dataInizio, DateTime dataFine, TransazioneRuoloEnum tipo, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit, String sort,  String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito) {
+    public ListaTransazioni findAllTransazioniBySimpleSearch(DateTime dataInizio, DateTime dataFine, TransazioneRuoloEnum tipo, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit, String sort,  String idCluster,  String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     

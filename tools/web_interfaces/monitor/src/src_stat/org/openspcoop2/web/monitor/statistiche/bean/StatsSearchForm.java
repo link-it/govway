@@ -185,15 +185,23 @@ public class StatsSearchForm extends BaseSearchForm{
 		lst.add(new SelectItem("--", "--"));
 
 		boolean searchModeBySoggetto = TipologiaRicerca.ingresso.equals(this.getTipologiaRicercaEnum());
+		boolean searchModeByApplicativo = !TipologiaRicerca.ingresso.equals(this.getTipologiaRicercaEnum()) || isProtocolloSupportaApplicativoInErogazione();
+		
 		if(searchModeBySoggetto) {
-			if(this.tipoStatistica!=null && this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SOGGETTO)) {
+			if(this.tipoStatistica!=null && 
+					(
+							this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SOGGETTO)
+							||
+							this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO)
+					)
+				) {
 				if(this.distribuzionePerSoggettoRemota) {
 					searchModeBySoggetto = false;
+					searchModeByApplicativo = false; // per scegliere un applicativo bisogna selezionare il soggetto operativo mittente (remoto in questo caso)
 				}
 			}
 		}
 		
-		boolean searchModeByApplicativo = !TipologiaRicerca.ingresso.equals(this.getTipologiaRicercaEnum()) || isProtocolloSupportaApplicativoInErogazione(); 
 
 		if(searchModeBySoggetto) {
 			lst.add(new SelectItem(Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO, "Soggetto"));  

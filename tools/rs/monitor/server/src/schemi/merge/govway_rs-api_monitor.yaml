@@ -35,6 +35,7 @@ paths:
       - $ref: "#/components/parameters/data_inizio"
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
+      - $ref: "#/components/parameters/id_cluster"
       - $ref: "#/components/parameters/soggetto_remoto"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
@@ -115,6 +116,7 @@ paths:
       - $ref: "#/components/parameters/data_inizio"
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
+      - $ref: "#/components/parameters/id_cluster"
       - $ref: "#/components/parameters/soggetto_remoto"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
@@ -1431,6 +1433,9 @@ components:
           $ref: "#/components/schemas/FiltroTemporale"
         tipo:
           $ref: "#/components/schemas/TransazioneRuoloEnum"
+        id_cluster:
+          type: "string"
+          description: "Identificativo del nodo su cui e' stata emessa la transazione"
         api:
           discriminator:
             propertyName: "tipo"
@@ -1446,7 +1451,7 @@ components:
           $ref: "#/components/schemas/FiltroEsito"
         evento:
           type: "string"
-          description: "Eevento da ricercare per una transazione"
+          description: "Evento da ricercare per una transazione"
     RicercaIntervalloTemporale:
       type: "object"
       allOf:
@@ -1454,7 +1459,14 @@ components:
       - type: "object"
         properties:
           mittente:
-            $ref: "#/components/schemas/FiltroMittente"
+            discriminator:
+              propertyName: "tipo"
+              mapping:
+                erogazione: "#/components/schemas/FiltroMittenteErogazione"
+                fruizione: "#/components/schemas/FiltroMittenteFruizione"
+            oneOf:
+            - $ref: "#/components/schemas/FiltroMittenteErogazione"
+            - $ref: "#/components/schemas/FiltroMittenteFruizione"
     RicercaIdApplicativo:
       type: "object"
       allOf:
@@ -1503,7 +1515,14 @@ components:
           azione:
             $ref: "#/components/schemas/NCName"
           mittente:
-            $ref: "#/components/schemas/FiltroMittente"
+            discriminator:
+              propertyName: "tipo"
+              mapping:
+                erogazione: "#/components/schemas/FiltroMittenteErogazione"
+                fruizione: "#/components/schemas/FiltroMittenteFruizione"
+            oneOf:
+            - $ref: "#/components/schemas/FiltroMittenteErogazione"
+            - $ref: "#/components/schemas/FiltroMittenteFruizione"
           esito:
             $ref: "#/components/schemas/FiltroEsito"
     RicercaStatisticaDistribuzioneEsiti:
@@ -1519,7 +1538,14 @@ components:
           azione:
             $ref: "#/components/schemas/NCName"
           mittente:
-            $ref: "#/components/schemas/FiltroMittente"
+            discriminator:
+              propertyName: "tipo"
+              mapping:
+                erogazione: "#/components/schemas/FiltroMittenteErogazione"
+                fruizione: "#/components/schemas/FiltroMittenteFruizione"
+            oneOf:
+            - $ref: "#/components/schemas/FiltroMittenteErogazione"
+            - $ref: "#/components/schemas/FiltroMittenteFruizione"
     RicercaStatisticaDistribuzioneSoggettoRemoto:
       type: "object"
       allOf:
@@ -1542,7 +1568,14 @@ components:
           azione:
             $ref: "#/components/schemas/NCName"
           mittente:
-            $ref: "#/components/schemas/FiltroMittente"
+            discriminator:
+              propertyName: "tipo"
+              mapping:
+                erogazione: "#/components/schemas/FiltroMittenteErogazioneDistribuzioneSoggettoRemoto"
+                fruizione: "#/components/schemas/FiltroMittenteFruizione"
+            oneOf:
+            - $ref: "#/components/schemas/FiltroMittenteErogazioneDistribuzioneSoggettoRemoto"
+            - $ref: "#/components/schemas/FiltroMittenteFruizione"
           esito:
             $ref: "#/components/schemas/FiltroEsito"
     RicercaStatisticaDistribuzioneSoggettoLocale:
@@ -1558,7 +1591,14 @@ components:
           azione:
             $ref: "#/components/schemas/NCName"
           mittente:
-            $ref: "#/components/schemas/FiltroMittente"
+            discriminator:
+              propertyName: "tipo"
+              mapping:
+                erogazione: "#/components/schemas/FiltroMittenteErogazione"
+                fruizione: "#/components/schemas/FiltroMittenteFruizione"
+            oneOf:
+            - $ref: "#/components/schemas/FiltroMittenteErogazione"
+            - $ref: "#/components/schemas/FiltroMittenteFruizione"
           esito:
             $ref: "#/components/schemas/FiltroEsito"
     RicercaStatisticaDistribuzioneApi:
@@ -1571,10 +1611,22 @@ components:
         properties:
           report:
             $ref: "#/components/schemas/OpzioniGenerazioneReport"
-          soggetto_remoto:
-            $ref: "#/components/schemas/SimpleName"
+          soggetto_erogatore:
+            discriminator:
+              propertyName: "tipo"
+              mapping:
+                fruizione: "govway_core.yaml#/components/schemas/SimpleName"
+            oneOf:
+            - $ref: "#/components/schemas/SimpleName"
           mittente:
-            $ref: "#/components/schemas/FiltroMittente"
+            discriminator:
+              propertyName: "tipo"
+              mapping:
+                erogazione: "#/components/schemas/FiltroMittenteErogazione"
+                fruizione: "#/components/schemas/FiltroMittenteFruizione"
+            oneOf:
+            - $ref: "#/components/schemas/FiltroMittenteErogazione"
+            - $ref: "#/components/schemas/FiltroMittenteFruizione"
           esito:
             $ref: "#/components/schemas/FiltroEsito"
     RicercaStatisticaDistribuzioneAzione:
@@ -1588,7 +1640,14 @@ components:
           report:
             $ref: "#/components/schemas/OpzioniGenerazioneReport"
           mittente:
-            $ref: "#/components/schemas/FiltroMittente"
+            discriminator:
+              propertyName: "tipo"
+              mapping:
+                erogazione: "#/components/schemas/FiltroMittenteErogazione"
+                fruizione: "#/components/schemas/FiltroMittenteFruizione"
+            oneOf:
+            - $ref: "#/components/schemas/FiltroMittenteErogazione"
+            - $ref: "#/components/schemas/FiltroMittenteFruizione"
           esito:
             $ref: "#/components/schemas/FiltroEsito"
     RicercaStatisticaDistribuzioneApplicativo:
@@ -1619,6 +1678,13 @@ components:
         properties:
           claim:
             $ref: "#/components/schemas/TokenClaimEnum"
+          soggetto:
+            discriminator:
+              propertyName: "tipo"
+              mapping:
+                erogazione: "govway_core.yaml#/components/schemas/SimpleName"
+            oneOf:
+            - $ref: "#/components/schemas/SimpleName"
     RicercaConfigurazioneApi:
       required:
       - "tipo"
@@ -1665,10 +1731,6 @@ components:
       type: "object"
       allOf:
       - $ref: "#/components/schemas/FiltroApiBase"
-      - type: "object"
-        properties:
-          fruitore:
-            $ref: "#/components/schemas/SimpleName"
     FiltroEsito:
       type: "object"
       properties:
@@ -1692,38 +1754,108 @@ components:
       type: "array"
       items:
         $ref: "#/components/schemas/DettaglioEsitoCode"
-    FiltroMittente:
+    FiltroMittenteFruizione:
       type: "object"
       properties:
         tipo:
-          $ref: "#/components/schemas/TipoFiltroMittenteEnum"
+          $ref: "#/components/schemas/TipoFiltroMittenteFruizioneEnum"
         id:
           discriminator:
-            propertyName: "tipo_filtro_mittente"
+            propertyName: "tipo"
             mapping:
-              applicativo: "#/components/schemas/FiltroMittenteApplicativo"
+              applicativo: "#/components/schemas/FiltroMittenteFruizioneApplicativo"
               identificativo_autenticato: "#/components/schemas/FiltroMittenteIdAutenticato"
               token_info: "#/components/schemas/FiltroMittenteTokenClaim"
           oneOf:
-          - $ref: "#/components/schemas/FiltroMittenteApplicativo"
+          - $ref: "#/components/schemas/FiltroMittenteFruizioneApplicativo"
           - $ref: "#/components/schemas/FiltroMittenteIdApplicativo"
           - $ref: "#/components/schemas/FiltroMittenteTokenClaim"
       description: "Descrive le informazioni di filtraggio relative al mittente per\
-        \ la ricerca di transazioni"
-    FiltroMittenteApplicativo:
-      $ref: "#/components/schemas/NCName"
+        \ la ricerca di transazioni relative a fruizioni di servizio"
+    FiltroMittenteErogazione:
+      type: "object"
+      properties:
+        tipo:
+          $ref: "#/components/schemas/TipoFiltroMittenteErogazioneEnum"
+        id:
+          discriminator:
+            propertyName: "tipo"
+            mapping:
+              soggetto: "#/components/schemas/FiltroMittenteErogazioneSoggetto"
+              applicativo: "#/components/schemas/FiltroMittenteErogazioneApplicativo"
+              identificativo_autenticato: "#/components/schemas/FiltroMittenteIdAutenticato"
+              token_info: "#/components/schemas/FiltroMittenteTokenClaim"
+          oneOf:
+          - $ref: "#/components/schemas/FiltroMittenteErogazioneSoggetto"
+          - $ref: "#/components/schemas/FiltroMittenteErogazioneApplicativo"
+          - $ref: "#/components/schemas/FiltroMittenteIdApplicativo"
+          - $ref: "#/components/schemas/FiltroMittenteTokenClaim"
+      description: "Descrive le informazioni di filtraggio relative al mittente per\
+        \ la ricerca di transazioni relative ad erogazioni di servizio"
+    FiltroMittenteErogazioneDistribuzioneSoggettoRemoto:
+      type: "object"
+      properties:
+        tipo:
+          $ref: "#/components/schemas/TipoFiltroMittenteErogazioneEnum"
+        id:
+          discriminator:
+            propertyName: "tipo"
+            mapping:
+              identificativo_autenticato: "#/components/schemas/FiltroMittenteIdAutenticato"
+              token_info: "#/components/schemas/FiltroMittenteTokenClaim"
+          oneOf:
+          - $ref: "#/components/schemas/FiltroMittenteIdApplicativo"
+          - $ref: "#/components/schemas/FiltroMittenteTokenClaim"
+      description: "Descrive le informazioni di filtraggio relative al mittente per\
+        \ la ricerca di transazioni relative ad erogazioni di servizio"
+    FiltroMittenteErogazioneSoggetto:
+      required:
+      - "soggetto"
+      type: "object"
+      properties:
+        soggetto:
+          $ref: "#/components/schemas/SimpleName"
+    FiltroMittenteErogazioneApplicativo:
+      required:
+      - "applicativo"
+      - "soggetto"
+      type: "object"
+      properties:
+        soggetto:
+          $ref: "#/components/schemas/SimpleName"
+        applicativo:
+          $ref: "#/components/schemas/NCName"
+    FiltroMittenteFruizioneApplicativo:
+      required:
+      - "applicativo"
+      type: "object"
+      properties:
+        applicativo:
+          $ref: "#/components/schemas/NCName"
     FiltroMittenteIdApplicativo:
-      $ref: "#/components/schemas/FiltroRicercaId"
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/FiltroRicercaId"
+      - required:
+        - "autenticazione"
+        type: "object"
+        properties:
+          autenticazione:
+            $ref: "#/components/schemas/TipoFiltroMittenteIdentificativoAutenticatoEnum"
     FiltroMittenteTokenClaim:
       type: "object"
       allOf:
       - $ref: "#/components/schemas/FiltroTokenClaimBase"
       - $ref: "#/components/schemas/FiltroRicercaId"
     FiltroTokenClaimBase:
+      required:
+      - "claim"
       type: "object"
       properties:
         claim:
           $ref: "#/components/schemas/TokenClaimEnum"
+        soggetto:
+          $ref: "#/components/schemas/SimpleName"
     EsitoTransazioneSimpleSearchEnum:
       type: "string"
       enum:
@@ -1739,12 +1871,25 @@ components:
       - "error"
       - "error_or_fault"
       - "personalizzato"
-    TipoFiltroMittenteEnum:
+    TipoFiltroMittenteFruizioneEnum:
       type: "string"
       enum:
       - "applicativo"
       - "identificativo_autenticato"
       - "token_info"
+    TipoFiltroMittenteErogazioneEnum:
+      type: "string"
+      enum:
+      - "soggetto"
+      - "applicativo"
+      - "identificativo_autenticato"
+      - "token_info"
+    TipoFiltroMittenteIdentificativoAutenticatoEnum:
+      type: "string"
+      enum:
+      - "basic"
+      - "ssl"
+      - "principal"
     TokenClaimEnum:
       type: "string"
       enum:
@@ -2645,6 +2790,13 @@ components:
       required: false
       schema:
         $ref: "#/components/schemas/SimpleName"
+    id_cluster:
+      name: "id_cluster"
+      in: "query"
+      description: "Identificativo del nodo su cui e' stata emessa la transazione"
+      required: false
+      schema:
+        type: "string"
     esito_transazione:
       name: "esito"
       in: "query"

@@ -94,8 +94,6 @@
 					
 				<!-- monitor -->
 				<include name="DettaglioEsitoCode.java"/>
-				<include name="FiltroMittenteApplicativo.java"/>
-				<include name="FiltroMittenteIdApplicativo.java"/>
 				<include name="LarghezzaReportGrafico.java"/>
 
 			</fileset>

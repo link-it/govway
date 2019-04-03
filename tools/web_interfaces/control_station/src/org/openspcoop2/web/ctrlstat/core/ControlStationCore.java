@@ -4910,7 +4910,39 @@ public class ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().getConfigurazioneGenerale();
+			Configurazione config = driver.getDriverConfigurazioneDB().getConfigurazioneGenerale();
+			StatoFunzionalita statoMultitenant = (config.getMultitenant()==null || config.getMultitenant().getStato()==null) ? StatoFunzionalita.DISABILITATO :  config.getMultitenant().getStato();
+			if(StatoFunzionalita.DISABILITATO.equals(statoMultitenant)) {
+				// Fix #20
+				SoggettiCore soggettiCore = new SoggettiCore(this);
+				List<IDSoggetto> l = soggettiCore.getIdSoggettiOperativi();
+				boolean existsMoreThanOneSoggettoOperativoPerProtocollo = false;
+				Map<String, Integer> countSoggettoOperativiByProtocol = new HashMap<>();
+				if(l!=null && !l.isEmpty()) {
+					for (IDSoggetto soggetto : l) {
+						String protocol = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
+						int count = 0;
+						if(countSoggettoOperativiByProtocol.containsKey(protocol)) {
+							count = countSoggettoOperativiByProtocol.remove(protocol);
+						}
+						count ++;
+						if(count>1) {
+							existsMoreThanOneSoggettoOperativoPerProtocollo = true;
+							break;
+						}
+						countSoggettoOperativiByProtocol.put(protocol, count);
+					}
+				}
+				if(existsMoreThanOneSoggettoOperativoPerProtocollo) {
+					// può succedere nel passaggio dalla 3.0.0 alla 3.0.1 quando più soggetti operativi erano già stati creati in una gestione multitenant completamente differente
+					if(config.getMultitenant()==null) {
+						config.setMultitenant(new ConfigurazioneMultitenant());
+					}
+					config.getMultitenant().setStato(StatoFunzionalita.ABILITATO);
+				}
+			}
+			
+			return config;
 
 		} catch (DriverConfigurazioneNotFound de) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);

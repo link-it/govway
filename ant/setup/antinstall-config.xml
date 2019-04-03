@@ -158,7 +158,7 @@
         <comment displayText=""/>
 
 	<comment bold="true" displayText="Attenzione:"/>
-	<comment displayText="In fase di aggiornamento indicare lo stesso DBMS della precedente installazione"/>
+	<comment displayText="Deve essere indicato lo stesso DBMS della precedente installazione"/>
         
         <!-- <comment displayText="DB Platform" bold="true"/>  sotto come display c'era tipo -->
         <large-select defaultValue="postgresql" property="antinstaller_tipo_database" displayText="DBMS">
@@ -294,6 +294,9 @@
         <hidden property="antinstaller_pddconsole_password" value=""/>
         <hidden property="antinstaller_pddmonitor_username" value=""/>
         <hidden property="antinstaller_pddmonitor_password" value=""/>
+
+	<comment bold="true" displayText="Attenzione:"/>
+	<comment displayText="Devono essere selezionati almeno gli stessi profili della precedente installazione"/>
 
         <comment displayText="Profilo" bold="true"/>
         <checkbox defaultValue="true" property="antinstaller_protocollo_trasparente" value="trasparente" displayText="API Gateway"/>

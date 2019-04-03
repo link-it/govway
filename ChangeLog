@@ -5,6 +5,32 @@
 	- Effettuata riorganizzazione degli elementi presenti nel filtro di ricerca delle transazioni e di generazione delle statistiche
 	- Migliorata gestione del CORS, ed aggiunta possibilità di registrare gli expose headers tramite la modalità standard della console.
 
+2019-04-03  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug #20
+	L'aggiornamento dalla versione 3.0.0 alla versione 3.0.1 non permette di attivare il multi-tenant 
+	se nella precedente versione era stato creato più di un soggetto di dominio interno.
+	Il problema è stato risolto.
+
+2019-04-03  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Risolto Bug #24
+	Dalla versione 3.0.1 gli script sql contengono nella descrizione di ogni tabella anche la definizione del row format 'ROW_FORMAT DYNAMIC'. 
+	Il motivo risiede nella possibilità di avere indici fino a 3072 bytes.
+	La versione di mysql 5.6.4 o superiore supporta tale formato come indicato nella documentazione 
+	(https://dev.mysql.com/doc/refman/5.6/en/innodb-row-format.html#innodb-row-format-dynamic)
+	ma richiede che la variabile globale 'innodb_large_prefix' sia abilitata mentre per default è disabilitata.
+	L'abilitazione richiede a sua volta l'impostazione di altre variabili globali:
+	- SET GLOBAL innodb_large_prefix=ON;
+	- SET GLOBAL innodb_file_format=barracuda;
+	- SET GLOBAL innodb_file_per_table=true;
+	Le versioni di mysql 5.7.x richiedono, per i motivi di cui sopra, una configurazione opportuna della variabile di sessione sql_mode.
+	La configurazione di tale variabile varia da versione a versione fino alla versione 5.7.8, 
+	a partire dalla quale è possibile utilizzare una configurazione unica.
+	Quanto premesso dalla nuova versione di GovWay verrà richiesto una versione di MySQL >= 5.7.8.
+
 2019-03-12  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

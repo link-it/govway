@@ -22,42 +22,14 @@
 package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
-import javax.validation.constraints.*;
-
-import io.swagger.v3.oas.annotations.media.Schema;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import javax.validation.Valid;
 
 public class FiltroErogazione extends FiltroApiBase {
-  
-  @Schema(description = "")
-  private String fruitore = null;
- /**
-   * Get fruitore
-   * @return fruitore
-  **/
-  @JsonProperty("fruitore")
-  @Valid
- @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getFruitore() {
-    return this.fruitore;
-  }
-
-  public void setFruitore(String fruitore) {
-    this.fruitore = fruitore;
-  }
-
-  public FiltroErogazione fruitore(String fruitore) {
-    this.fruitore = fruitore;
-    return this;
-  }
-
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class FiltroErogazione {\n");
     sb.append("    ").append(FiltroErogazione.toIndentedString(super.toString())).append("\n");
-    sb.append("    fruitore: ").append(FiltroErogazione.toIndentedString(this.fruitore)).append("\n");
     sb.append("}");
     return sb.toString();
   }

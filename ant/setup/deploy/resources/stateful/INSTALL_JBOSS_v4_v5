@@ -10,7 +10,11 @@ Per completare il processo di installazione si devono effettuare i seguenti pass
 
    3. Impostare i permessi di accesso in modo che l'utente creato al passo 1 abbia i diritti di lettura/scrittura sul database creato al passo 2. 
 
-   4. Eseguire lo script sql/GovWay.sql per la creazione dello schema del database. Ad esempio, nel caso di PostgreSQL, si potrà eseguire il comando psql <hostname> <username> -f sql/GovWay.sql
+   4. Eseguire lo script sql/GovWay.sql per la creazione dello schema del database. 
+      Successivamente eseguire lo script sql/GovWay_init.sql per inserire i dati di inizializzazione del database.
+      Ad esempio, nel caso di PostgreSQL, si potranno eseguire i comandi:
+      - psql <hostname> <username> -f sql/GovWay.sql
+      - psql <hostname> <username> -f sql/GovWay_init.sql
 
    5. Copiare i files datasource/govway_console-ds.xml e datasource/govway-ds.xml, contenenti le definizioni dei datasources, nella directory <JBOSS_HOME>/server/default/deploy
 

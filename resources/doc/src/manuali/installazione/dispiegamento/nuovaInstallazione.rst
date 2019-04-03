@@ -19,11 +19,16 @@ seguenti:
     riferito alla piattaforma PostgreSQL, in sezione :ref:`inst_setupDB`.
 
 #.  Eseguire lo script *sql/GovWay.sql* per la creazione dello schema
-    del database. Ad esempio, nel caso di PostgreSQL, si potrà eseguire
-    il comando *psql <hostname> <username> -f sql/GovWay.sql*
+    del database.
 
     Successivamente eseguire lo script *sql/GovWay_init.sql* per
     inserire i dati di inizializzazione del database.
+
+    Ad esempio, nel caso di PostgreSQL, si potranno eseguire i comandi:
+
+    - *psql <hostname> <username> -f sql/GovWay.sql*
+
+    - *psql <hostname> <username> -f sql/GovWay_init.sql*
 
 #.  Installare il DriverJDBC, relativo al tipo di RDBMS indicato in fase
     di setup, nella directory:

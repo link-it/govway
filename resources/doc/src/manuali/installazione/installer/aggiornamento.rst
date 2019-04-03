@@ -10,7 +10,7 @@ al caso di una nuova installazione:
 #. Il primo passo è quello di indicare la versione di GovWay da cui si
    parte per l'aggiornamento.
    
-   .. figure:: ../_figure_installazione/installer-scr9.png
+   .. figure:: ../_figure_installazione/installer-update-1.png
     :scale: 100%
     :align: center
 
@@ -20,11 +20,20 @@ al caso di una nuova installazione:
    è il vincolo di indicare la medesima piattaforma database utilizzata
    per l'installazione che si vuole aggiornare.
 
-   .. figure:: ../_figure_installazione/installer-scr10.png
+   .. figure:: ../_figure_installazione/installer-update-2.png
     :scale: 100%
     :align: center
 
     Scelta piattaforma database identica all'installazione di provenienza
+
+#. Nella maschera che permette la scelta dei profili di interoperabilità,
+   vi è il vincolo di indicare almeno i medesimi profili utilizzati per l'installazione che si vuole aggiornare.
+
+   .. figure:: ../_figure_installazione/installer-update-3.png
+    :scale: 100%
+    :align: center
+
+    Scelta Profilo di Interoperabilità
 
 #. I rimanenti passaggi sono uguali al caso della nuova installazione
    con la differenza che non sarà disponibile la funzione per impostare
