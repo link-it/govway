@@ -689,4 +689,16 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 			return false;
 		}
 	}
+	
+	
+	public boolean isEnabledTestCORSTrasparente(){
+		try{
+			return "true".equals(this.reader.getProperty("org.openspcoop2.testsuite.testCORS.trasparente").trim());
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.testCORS.trasparente':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return false;
+		}
+	}
+	
 }

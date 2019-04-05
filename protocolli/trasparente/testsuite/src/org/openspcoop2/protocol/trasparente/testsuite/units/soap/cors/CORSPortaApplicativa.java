@@ -28,6 +28,7 @@ import java.util.Vector;
 
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.trasparente.testsuite.core.FileSystemUtilities;
+import org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.protocol.trasparente.testsuite.units.rest.RESTCore;
 import org.openspcoop2.protocol.trasparente.testsuite.units.rest.RESTCore.RUOLO;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
@@ -38,6 +39,7 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.testng.Reporter;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.DataProvider;
@@ -58,12 +60,18 @@ public class CORSPortaApplicativa {
 
 	
 	private Date dataAvvioGruppoTest = null;
+	private boolean enabledTestCORSTrasparente = true;
 	@BeforeGroups (alwaysRun=true , groups={CORSPortaApplicativa.ID_GRUPPO})
 	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
 		
 		// Abilito generazione headers 'Origin' come quelli del CORS
 		HttpUtilities.enableHttpUrlConnectionForwardRestrictedHeaders();
+					
+		this.enabledTestCORSTrasparente = TestSuiteProperties.getInstance().isEnabledTestCORSTrasparente();
+		if(!this.enabledTestCORSTrasparente) {
+			System.out.println("WARN: Tests per CORS Trasparente disabilitati");
+		}
 	} 	
 	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
 	@AfterGroups (alwaysRun=true , groups={CORSPortaApplicativa.ID_GRUPPO})
@@ -666,6 +674,12 @@ public class CORSPortaApplicativa {
 	 */
 	@Test(groups={CostantiTestSuite.ID_GRUPPO_TEST_CORS, CostantiTestSuite.ID_GRUPPO_TEST_CORS_PORTA_APPLICATIVA, CORSPortaApplicativa.ID_GRUPPO,CORSPortaApplicativa.ID_GRUPPO+".actualRequestTrasparente"})
 	public void testDoFilterActualRequestTrasparente() throws TestSuiteException, Exception{
+
+		if(!this.enabledTestCORSTrasparente) {
+			Reporter.log("Tests per CORS Trasparente disabilitati");
+			return;
+		}
+		
 		Repository repository=new Repository();
 		RESTCore restCore = new RESTCore(HttpRequestMethod.POST, RUOLO.PORTA_APPLICATIVA);
 		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_APPLICATIVA_SOAP_CORS_TRASPARENTE);
@@ -689,6 +703,12 @@ public class CORSPortaApplicativa {
 	 */
 	@Test(groups={CostantiTestSuite.ID_GRUPPO_TEST_CORS, CostantiTestSuite.ID_GRUPPO_TEST_CORS_PORTA_APPLICATIVA, CORSPortaApplicativa.ID_GRUPPO,CORSPortaApplicativa.ID_GRUPPO+".preflightTrasparente"})
 	public void testDoFilterPreflightTrasparente() throws TestSuiteException, Exception{
+
+		if(!this.enabledTestCORSTrasparente) {
+			Reporter.log("Tests per CORS Trasparente disabilitati");
+			return;
+		}
+		
 		Repository repository=new Repository();
 		RESTCore restCore = new RESTCore(HttpRequestMethod.OPTIONS, RUOLO.PORTA_APPLICATIVA);
 		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_APPLICATIVA_SOAP_CORS_TRASPARENTE);

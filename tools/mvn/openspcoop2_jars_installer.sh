@@ -86,7 +86,7 @@ rm -f "dist/${UTILS_JAR}_${MVN_VERSION}.pom"
 
 echo "Deploy del JAR $UTILS_JAR completato."
 
-LIST_PACKAGE_UTILS="beans cache checksum crypt csv datasource date dch digest id io jaxb jaxrs jdbc jmx json logger mail mime openapi properties regexp resources rest security semaphore serialization service sonde sql threads transport wadl wsdl xacml xml2json xml"
+LIST_PACKAGE_UTILS="beans cache certificate checksum crypt csv datasource date dch digest id io jaxb jaxrs jdbc jmx json logger mail mime openapi properties regexp resources rest security semaphore serialization service sonde sql threads transport wadl wsdl xacml xml2json xml"
 
 for packageName in ${LIST_PACKAGE_UTILS}
 do
