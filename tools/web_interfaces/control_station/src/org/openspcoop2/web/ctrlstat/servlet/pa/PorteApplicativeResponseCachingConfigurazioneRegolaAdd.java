@@ -224,7 +224,7 @@ public final class PorteApplicativeResponseCachingConfigurazioneRegolaAdd extend
 
 			List<ResponseCachingConfigurazioneRegola> lista = porteApplicativeCore.getResponseCachingConfigurazioneRegolaList(Long.parseLong(idPorta), ricerca); 
 
-			porteApplicativeHelper.prepareResponseCachingConfigurazioneRegolaList(nomePorta, ricerca, lista);
+			porteApplicativeHelper.prepareResponseCachingConfigurazioneRegolaList(nomePorta, ricerca, lista, configurazione.getCacheTimeoutSeconds());
 						
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

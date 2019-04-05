@@ -26,7 +26,9 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.logger.LogLevels;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.trasparente.testsuite.core.Utilities;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -46,7 +48,15 @@ import org.testng.Reporter;
  */
 public class CooperazioneTrasparenteBase extends CooperazioneBase {
 
-	public static boolean protocolloEmetteTracce = false;
+	public static boolean protocolloEmetteTracce = true;
+	static {
+		try {
+			protocolloEmetteTracce = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(CostantiTestSuite.PROTOCOL_NAME).createProtocolConfiguration().isAbilitataGenerazioneTracce();
+		}catch(Exception e) {
+			System.err.println("Errore durante l'inizializzazione dell'informazione sull'emissione delle tracce");
+			e.printStackTrace(System.err);
+		}
+	}
 	
 	public CooperazioneTrasparenteBase(boolean soapWithAttachments, boolean portaDelegata,
 			MessageType messageType, CooperazioneBaseInformazioni info,

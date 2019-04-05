@@ -399,6 +399,20 @@ public class TestSuiteProperties {
 		}
 	}
 	
+	/**
+	 * Ritorna il nome della proprieta' nel trasporto contenente la cache key
+	 *
+	 */
+	public String getCacheKeyTrasporto(){
+		try{
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_CACHE_KEY_TRASPORTO).trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_CACHE_KEY_TRASPORTO+"':"+e.getMessage();
+			this.log.error(msgErrore);
+			return null;
+		}
+	}
+	
 	
 	
 	/* ************* URL BASED ************ */

@@ -289,7 +289,14 @@ public abstract class OpenSPCoop2MessageFactory {
 				contentType = (String) context;
 			}
 			else{
-				throw new MessageException("Unsupported Context ["+context.getClass().getName()+"]");
+				if(context==null) {
+					if(!MessageType.BINARY.equals(messageType)) {
+						throw new MessageException("Unsupported Empty Context for message '"+messageType+"' (No Content Type?)");
+					}
+				}
+				else {
+					throw new MessageException("Unsupported Context ["+context.getClass().getName()+"]");
+				}
 			}
 			
 			

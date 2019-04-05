@@ -42,7 +42,7 @@ import java.util.List;
  * &lt;complexType name="response-caching-configurazione">
  * 		&lt;sequence>
  * 			&lt;element name="hash-generator" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-hash-generator" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="control" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-control" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="control" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-control" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="regola" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-regola" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
@@ -172,7 +172,7 @@ public class ResponseCachingConfigurazione extends org.openspcoop2.utils.beans.B
   @XmlElement(name="hash-generator",required=false,nillable=false)
   protected ResponseCachingConfigurazioneHashGenerator hashGenerator;
 
-  @XmlElement(name="control",required=true,nillable=false)
+  @XmlElement(name="control",required=false,nillable=false)
   protected ResponseCachingConfigurazioneControl control;
 
   @XmlElement(name="regola",required=true,nillable=false)

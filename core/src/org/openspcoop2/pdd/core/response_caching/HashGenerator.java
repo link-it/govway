@@ -102,7 +102,7 @@ public class HashGenerator {
 					}
 				}
 				
-				if(pTrasportoForDigest.isEmpty()) {
+				if(!pTrasportoForDigest.isEmpty()) {
 					sb = new StringBuilder("HEADER");
 					this.addList(pTrasportoForDigest, true, sb);
 					digest.update(sb.toString().getBytes());

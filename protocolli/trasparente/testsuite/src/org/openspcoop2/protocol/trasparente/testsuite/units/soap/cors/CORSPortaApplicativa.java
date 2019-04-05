@@ -96,7 +96,7 @@ public class CORSPortaApplicativa {
 		headersRichiesta.put(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\"TEST-CORS\"");
 		
 		HttpResponse httpResponse = restCore.invoke("soap11", 200, repository, true, true, HttpConstants.CONTENT_TYPE_SOAP_1_1, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.SOAP_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP_AZIONE_INVOKER);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);
@@ -122,7 +122,7 @@ public class CORSPortaApplicativa {
 		restCore.setCredenziali("testsuiteOp2","12345678");
 		
 		HttpResponse httpResponse = restCore.invoke("soap12", 200, repository, true, true, HttpConstants.CONTENT_TYPE_SOAP_1_2, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.SOAP_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP_AZIONE_INVOKER);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);
@@ -147,7 +147,7 @@ public class CORSPortaApplicativa {
 		restCore.setCredenziali("testsuiteOp2","12345678");
 		
 		HttpResponse httpResponse = restCore.invoke("soap12", 200, repository, true, true, HttpConstants.CONTENT_TYPE_SOAP_1_2, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.SOAP_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP_AZIONE_INVOKER);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN_ALL_VALUE);
@@ -171,7 +171,7 @@ public class CORSPortaApplicativa {
 		headersRichiesta.put(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\"TEST-CORS\"");
 		
 		HttpResponse httpResponse = restCore.invoke("soap11", 200, repository, true, true, HttpConstants.CONTENT_TYPE_SOAP_1_1, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.SOAP_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP_AZIONE_INVOKER);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);
@@ -411,7 +411,7 @@ public class CORSPortaApplicativa {
 		headersRichiesta.put(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\"TEST-CORS\"");
 		
 		HttpResponse httpResponse = restCore.invoke("soap11", 200, repository, true, true, HttpConstants.CONTENT_TYPE_SOAP_1_1, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.SOAP_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP_AZIONE_INVOKER);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, null);
@@ -434,7 +434,7 @@ public class CORSPortaApplicativa {
 		headersRichiesta.put(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\"TEST-CORS\"");
 		
 		HttpResponse httpResponse = restCore.invoke("soap11", 200, repository, true, true, HttpConstants.CONTENT_TYPE_SOAP_1_1, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.SOAP_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP_AZIONE_INVOKER);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, null);
@@ -458,7 +458,7 @@ public class CORSPortaApplicativa {
 		headersRichiesta.put(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\"TEST-CORS\"");
 		
 		HttpResponse httpResponse = restCore.invoke("soap11", 200, repository, true, true, HttpConstants.CONTENT_TYPE_SOAP_1_1, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.SOAP_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP_AZIONE_INVOKER);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, null);
@@ -611,7 +611,7 @@ public class CORSPortaApplicativa {
 		headersRichiesta.put(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\"TEST-CORS\"");
 		
 		HttpResponse httpResponse = restCore.invoke("soap11", 200, repository, true, true, HttpConstants.CONTENT_TYPE_SOAP_1_1, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.SOAP_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP_AZIONE_INVOKER);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN_ALL_VALUE);
@@ -643,7 +643,7 @@ public class CORSPortaApplicativa {
 		headersRichiesta.put(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\"TEST-CORS\"");
 		
 		HttpResponse httpResponse = restCore.invoke("soap11", 200, repository, true, true, HttpConstants.CONTENT_TYPE_SOAP_1_1, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.SOAP_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP_AZIONE_INVOKER);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, null);
@@ -675,7 +675,7 @@ public class CORSPortaApplicativa {
 		headersRichiesta.put(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\"TEST-CORS\"");
 		
 		HttpResponse httpResponse = restCore.invoke("soap11", 200, repository, true, true, HttpConstants.CONTENT_TYPE_SOAP_1_1, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.SOAP_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP_TRASPARENTE, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP_AZIONE_INVOKER);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);
@@ -699,7 +699,7 @@ public class CORSPortaApplicativa {
 		headersRichiesta.put(HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS,HttpConstants.CONTENT_TYPE+", "+HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION+", HeaderProva");
 		
 		HttpResponse httpResponse = restCore.invoke("soap11", 200, repository, true, true, HttpConstants.CONTENT_TYPE_SOAP_1_1, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.SOAP_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP_TRASPARENTE, CostantiTestSuite.NOME_SERVIZIO_CORS_SOAP_AZIONE_INVOKER);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);

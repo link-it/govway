@@ -58,11 +58,15 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.mime.MultipartUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.rest.problem.JsonSerializer;
+import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
+import org.openspcoop2.utils.rest.problem.XmlSerializer;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 
 /**
@@ -530,6 +534,62 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			
+			// problem detail
+			String problem = getParameter_checkWhiteList(req, this.whitePropertiesList, "problem");
+			byte[] problemDetailSerialization = null;
+			String problemDetailContentType = null;
+			int problemDetailStatus = -1;
+			if(problem!=null && problem.equalsIgnoreCase("true")){
+				ProblemRFC7807 problemRFC7807 = new ProblemRFC7807();
+				
+				int status = 500;
+				String problemStatus = getParameter_checkWhiteList(req, this.whitePropertiesList, "problemStatus");
+				if(problemStatus!=null) {
+					status = Integer.valueOf(problemStatus);
+					problemRFC7807.setStatus(status);
+				}
+				problemDetailStatus = status;
+				
+				String title = HttpUtilities.getHttpReason(status);
+				String problemTitle = getParameter_checkWhiteList(req, this.whitePropertiesList, "problemTitle");
+				if(problemTitle!=null) {
+					title = problemTitle;
+				}
+				problemRFC7807.setTitle(title);
+				
+				String type = String.format("https://httpstatuses.com/%d", status);
+				String problemType = getParameter_checkWhiteList(req, this.whitePropertiesList, "problemType");
+				if(problemType!=null) {
+					type = problemType;
+				}
+				problemRFC7807.setType(type);
+				
+				String detail = "Problem ritornato dalla servlet di trace, esempio di OpenSPCoop";
+				String problemDetail = getParameter_checkWhiteList(req, this.whitePropertiesList, "problemDetail");
+				if(problemDetail!=null) {
+					detail = problemDetail;
+				}
+				problemRFC7807.setDetail(detail);
+				
+				String serializationType = "json";
+				String problemSerializationType = getParameter_checkWhiteList(req, this.whitePropertiesList, "problemSerializationType");
+				if(problemSerializationType!=null) {
+					serializationType = problemSerializationType;
+				}
+				if("xml".equalsIgnoreCase(serializationType)) {
+					XmlSerializer xmlSerializer = new XmlSerializer();	
+					problemDetailSerialization = xmlSerializer.toByteArray(problemRFC7807, true);
+					problemDetailContentType = HttpConstants.CONTENT_TYPE_XML_PROBLEM_DETAILS_RFC_7807;
+				}
+				else {
+					JsonSerializer jsonSerializer = new JsonSerializer();
+					problemDetailSerialization = jsonSerializer.toByteArray(problemRFC7807);
+					problemDetailContentType = HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807;
+				}
+			}
+			
+			
+			
 			
 			// opzioni tunnel SOAP
 			String tunnelSoap = getParameter_checkWhiteList(req, this.whitePropertiesList, "govway_soap_tunnel");
@@ -819,7 +879,27 @@ public class ServletTestService extends HttpServlet {
 	            ServletOutputStream sout = res.getOutputStream();
 	            msg.writeTo(sout,true);
 				
-			}else{
+			}
+			else if(problemDetailSerialization!=null) {
+				
+				 if(headers!=null && !headers.isEmpty()) {
+	            	Iterator<String> itHdr = headers.keySet().iterator();
+	            	while (itHdr.hasNext()) {
+						String returnHeaderKey = (String) itHdr.next();
+						String returnHeaderValue = headers.get(returnHeaderKey);
+						res.setHeader(returnHeaderKey,returnHeaderValue);
+					}
+	            }
+				 
+				 res.setContentType(problemDetailContentType);
+				 
+				 res.setStatus(problemDetailStatus);
+				 
+				 res.getOutputStream().write(problemDetailSerialization);
+				 res.getOutputStream().flush();
+				 res.getOutputStream().close();
+			}
+			else{
 				
 				if(oneway){
 					

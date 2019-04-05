@@ -912,7 +912,7 @@
 	<xsd:complexType name="response-caching-configurazione">
 		<xsd:sequence>
 			<xsd:element name="hash-generator" type="response-caching-configurazione-hash-generator" maxOccurs="1" minOccurs="0"/>
-			<xsd:element name="control" type="response-caching-configurazione-control" maxOccurs="1" minOccurs="1"/>
+			<xsd:element name="control" type="response-caching-configurazione-control" maxOccurs="1" minOccurs="0"/>
 			<xsd:element name="regola" type="response-caching-configurazione-regola" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="stato" type="StatoFunzionalita" default="disabilitato"/>

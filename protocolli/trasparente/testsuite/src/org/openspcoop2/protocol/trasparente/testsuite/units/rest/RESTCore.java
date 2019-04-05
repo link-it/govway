@@ -165,7 +165,44 @@ public class RESTCore {
 		
 	}
 	
+	public String postInvokeCheckExistsHeader(HttpResponse httpResponse, String hdrName) throws TestSuiteException, Exception{
+		String trovato = httpResponse.getHeader(hdrName);
+		if(trovato!=null) {
+			Reporter.log("Atteso header '"+hdrName+"', trovato con valore: ["+trovato+"]");
+		}
+		else {
+			Reporter.log("Atteso header '"+hdrName+"', non trovato");
+		}
+		Assert.assertTrue(trovato!=null);
+		return trovato;
+	}
+	public String postInvokeCheckNotExistsHeader(HttpResponse httpResponse, String hdrName) throws TestSuiteException, Exception{
+		String trovato = httpResponse.getHeader(hdrName);
+		if(trovato!=null) {
+			Reporter.log("Non atteso header '"+hdrName+"', trovato con valore: ["+trovato+"]");
+		}
+		else {
+			Reporter.log("Non atteso header '"+hdrName+"', non trovato");
+		}
+		Assert.assertTrue(trovato==null);
+		return trovato;
+	}
+	
 	public void postInvoke(Repository repository) throws TestSuiteException, Exception{
+		this.postInvoke(repository, false);
+	}
+	public void postInvoke(Repository repository, boolean checkNotIsArrived) throws TestSuiteException, Exception{
+		this.postInvoke(repository, false,
+				CostantiTestSuite.REST_TIPO_SERVIZIO,
+				CostantiTestSuite.SOAP_NOME_SERVIZIO_API, null);
+	}
+	public void postInvoke(Repository repository,
+			String tipoServizio, String nomeServizio, String azione) throws TestSuiteException, Exception{
+		this.postInvoke(repository, false,
+				tipoServizio, nomeServizio, azione);
+	}
+	public void postInvoke(Repository repository, boolean checkNotIsArrived,
+			String tipoServizio, String nomeServizio, String azione) throws TestSuiteException, Exception{
 	
 		
 		String id=repository.getNext();
@@ -187,20 +224,28 @@ public class RESTCore {
 			}
 		}
 		
-		if(!isDelegata) {
-			try {
-				//Thread.sleep(2000); // in modo da dare il tempo al servizio di Testsuite di fare l'update delle tracce
-				// provo a ridurre il tempo di sleep, per far terminare prima la testsuite
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		try {
+			//Thread.sleep(2000); // in modo da dare il tempo al servizio di Testsuite di fare l'update delle tracce
+			// provo a ridurre il tempo di sleep, per far terminare prima la testsuite
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 		
 		if(org.openspcoop2.protocol.trasparente.testsuite.units.utils.CooperazioneTrasparenteBase.protocolloEmetteTracce) {
 			try{
-				this.collaborazioneTrasparenteBase.testSincrono(data,id, CostantiTestSuite.REST_TIPO_SERVIZIO,
-						CostantiTestSuite.SOAP_NOME_SERVIZIO_API, null, !isDelegata,null);
+				//boolean checkServizioApplicativo = !isDelegata;
+				boolean checkServizioApplicativo = true; // lo voglio controllare sempre
+				if(checkNotIsArrived) {
+					checkServizioApplicativo = false;
+				}
+				this.collaborazioneTrasparenteBase.testSincrono(data,id, tipoServizio, nomeServizio, azione, checkServizioApplicativo,null); 
+				
+				if(checkNotIsArrived) {
+					Reporter.log("Numero messaggi arrivati al servizio applicativo: "+data.getVerificatoreTracciaRichiesta().isArrivedCount(id));
+					Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isArrivedCount(id)==0);
+				}
+				
 			}catch(Exception e){
 				throw e;
 			}finally{
@@ -261,39 +306,60 @@ public class RESTCore {
 			String contentType) throws TestSuiteException, Exception{
 		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
 				false, contentType, false, 
-				null);
+				null, null);
 	}
 	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
 			String contentType,
 			HashMap<String, String> headersRequest) throws TestSuiteException, Exception{
 		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
 				false, contentType, false,
-				headersRequest);
+				headersRequest, null);
+	}
+	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
+			String contentType,
+			HashMap<String, String> headersRequest, HashMap<String, String> propertiesRequest) throws TestSuiteException, Exception{
+		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
+				false, contentType, false,
+				headersRequest, propertiesRequest);
 	}
 	
 	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
 			boolean isHttpMethodOverride, String contentType) throws TestSuiteException, Exception{
 		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
 				isHttpMethodOverride, contentType, false,
-				null);
+				null, null);
 	}
 	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
 			boolean isHttpMethodOverride, String contentType,
 			HashMap<String, String> headersRequest) throws TestSuiteException, Exception{
 		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
 				isHttpMethodOverride, contentType, false,
-				headersRequest);
+				headersRequest, null);
+	}
+	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
+			boolean isHttpMethodOverride, String contentType,
+			HashMap<String, String> headersRequest, HashMap<String, String> propertiesRequest) throws TestSuiteException, Exception{
+		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
+				isHttpMethodOverride, contentType, false,
+				headersRequest, propertiesRequest);
 	}
 	
 	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
 			boolean isHttpMethodOverride, String contentType, boolean authorizationError) throws TestSuiteException, Exception{
 		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
 				isHttpMethodOverride, contentType, authorizationError, 
-				null);
+				null, null);
 	}
 	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
 			boolean isHttpMethodOverride, String contentType, boolean authorizationError,
 			HashMap<String, String> headersRequest) throws TestSuiteException, Exception{
+		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, 
+				isHttpMethodOverride, contentType, authorizationError, 
+				headersRequest, null);
+	}
+	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
+			boolean isHttpMethodOverride, String contentType, boolean authorizationError,
+			HashMap<String, String> headersRequest, HashMap<String, String> propertiesRequest) throws TestSuiteException, Exception{
 		
 		TestFileEntry fileEntry = null;
 		if(!"preflight".equals(tipoTest)) {
@@ -369,6 +435,9 @@ public class RESTCore {
 			// Header HTTP da ricevere
 			String nomeHeaderHttpDaRicevere = "ProvaHeaderResponse";
 			String valoreHeaderHttpDaRicevere = "TEST_RESPONSE_"+org.openspcoop2.utils.id.IDUtilities.getUniqueSerialNumber();
+			if(propertiesRequest!=null && !propertiesRequest.isEmpty()) {
+				valoreHeaderHttpDaRicevere = "TEST_RESPONSE"; // non dinamico, usato in response caching
+			}
 			
 			String action = null;
 			if(contenutoRisposta) {
@@ -386,13 +455,16 @@ public class RESTCore {
 				bf.append("/service/").append(action);
 			}
 			Properties propertiesURLBased = new Properties();
+			if(propertiesRequest!=null && !propertiesRequest.isEmpty()) {
+				propertiesURLBased.putAll(propertiesRequest);
+			}
+
 			propertiesURLBased.put("checkEqualsHttpMethod", this.method.name());
 			if(nomeHeaderHttpInviato!=null) {
 				propertiesURLBased.put("checkEqualsHttpHeader", nomeHeaderHttpInviato + ":" + valoreHeaderRichiesto);
 			}
-			
+							
 			boolean redirect = false;
-			
 			if(returnCodeAtteso != 200) {
 				if(returnCodeAtteso==301 || returnCodeAtteso==303  || returnCodeAtteso==304|| returnCodeAtteso==307) {
 					// gli altri return code (302) li gestisco normali per vedere cmq di essere trasparente
@@ -437,8 +509,10 @@ public class RESTCore {
 						}
 					}
 				} else {
-					propertiesURLBased.put("destFileContentType", contentType != null ? contentType : fileEntry.getExtRispostaKo());
-					propertiesURLBased.put("destFile", fileEntry.getFilenameRispostaKo());
+					if(!propertiesURLBased.contains("fault") && !propertiesURLBased.contains("problem")) {
+						propertiesURLBased.put("destFileContentType", contentType != null ? contentType : fileEntry.getExtRispostaKo());
+						propertiesURLBased.put("destFile", fileEntry.getFilenameRispostaKo());
+					}
 				}
 			}
 			
@@ -451,6 +525,7 @@ public class RESTCore {
 			}
 			String urlDaUtilizzare = TransportUtils.buildLocationWithURLBasedParameter(propertiesURLBased, urlBase);
 
+			Reporter.log("URL: "+urlDaUtilizzare);
 			request.setUrl(urlDaUtilizzare);
 			
 			// invocazione
@@ -539,35 +614,42 @@ public class RESTCore {
 
 				byte[] contentRisposta = httpResponse.getContent();
 
-				if(tipoTest.equals("xml") || tipoTest.equals("soap11") || tipoTest.equals("soap12")) {
-					XMLDiff xmlDiffEngine = new XMLDiff();
-					XMLDiffOptions xmlDiffOptions = new XMLDiffOptions();
-					xmlDiffEngine.initialize(XMLDiffImplType.XML_UNIT, xmlDiffOptions);
-					Assert.assertTrue(xmlDiffEngine.diff(xmlDiffEngine.getXMLUtils().newDocument(contentRisposta),xmlDiffEngine.getXMLUtils().newDocument(contentAttesoRisposta))
-							, "File di risposta ["+new String(contentRisposta)+"]diverso da quello atteso ["+new String(contentAttesoRisposta)+"]: " + xmlDiffEngine.getDifferenceDetails());
-				} else if(tipoTest.equals("multi") || tipoTest.equals("multi-mixed")) {
-					if(!isRichiesta && rispostaOk) {
-						MimeMultipart mm = new MimeMultipart(new ByteArrayInputStream(contentRisposta), contentTypeRisposta);
-						MimeMultipart mmAtteso = 
-								new MimeMultipart(new ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getMultipartFileName())),
-										contentTypeRisposta);
-									// questo e' prodotto male	contentTypeAttesoRisposta);
-						Reporter.log("BodyParts ["+mm.countBodyParts()+"] == ["+mmAtteso.countBodyParts()+"]");
-						Assert.assertEquals(mm.countBodyParts(),mmAtteso.countBodyParts());
-
-						for(int i = 0; i < mm.countBodyParts(); i++) {
-							Reporter.log("BodyParts["+i+"] ContentType ["+mm.getBodyPart(i).getContentType()+"] == ["+mmAtteso.getBodyPart(i).getContentType()+"]");
-							Assert.assertEquals(mm.getBodyPart(i).getContentType(),mmAtteso.getBodyPart(i).getContentType());
-							Reporter.log("BodyParts["+i+"] Size ["+mm.getBodyPart(i).getSize()+"] == ["+mmAtteso.getBodyPart(i).getSize()+"]");
-							Assert.assertEquals(mm.getBodyPart(i).getSize(),mmAtteso.getBodyPart(i).getSize());
-//							Assert.assertEquals(mm.getBodyPart(i).getContent(),mmAtteso.getBodyPart(i).getContent());
+				if (!propertiesURLBased.containsKey("fault") && !propertiesURLBased.containsKey("problem")) {
+				
+					if(tipoTest.equals("xml") || tipoTest.equals("soap11") || tipoTest.equals("soap12")) {
+						XMLDiff xmlDiffEngine = new XMLDiff();
+						XMLDiffOptions xmlDiffOptions = new XMLDiffOptions();
+						xmlDiffEngine.initialize(XMLDiffImplType.XML_UNIT, xmlDiffOptions);
+						Assert.assertTrue(xmlDiffEngine.diff(xmlDiffEngine.getXMLUtils().newDocument(contentRisposta),xmlDiffEngine.getXMLUtils().newDocument(contentAttesoRisposta))
+								, "File di risposta ["+new String(contentRisposta)+"]diverso da quello atteso ["+new String(contentAttesoRisposta)+"]: " + xmlDiffEngine.getDifferenceDetails());
+					} else if(tipoTest.equals("multi") || tipoTest.equals("multi-mixed")) {
+						if(!isRichiesta && rispostaOk) {
+							MimeMultipart mm = new MimeMultipart(new ByteArrayInputStream(contentRisposta), contentTypeRisposta);
+							MimeMultipart mmAtteso = 
+									new MimeMultipart(new ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getMultipartFileName())),
+											contentTypeRisposta);
+										// questo e' prodotto male	contentTypeAttesoRisposta);
+							Reporter.log("BodyParts ["+mm.countBodyParts()+"] == ["+mmAtteso.countBodyParts()+"]");
+							Assert.assertEquals(mm.countBodyParts(),mmAtteso.countBodyParts());
+	
+							for(int i = 0; i < mm.countBodyParts(); i++) {
+								Reporter.log("BodyParts["+i+"] ContentType ["+mm.getBodyPart(i).getContentType()+"] == ["+mmAtteso.getBodyPart(i).getContentType()+"]");
+								Assert.assertEquals(mm.getBodyPart(i).getContentType(),mmAtteso.getBodyPart(i).getContentType());
+								Reporter.log("BodyParts["+i+"] Size ["+mm.getBodyPart(i).getSize()+"] == ["+mmAtteso.getBodyPart(i).getSize()+"]");
+								Assert.assertEquals(mm.getBodyPart(i).getSize(),mmAtteso.getBodyPart(i).getSize());
+	//							Assert.assertEquals(mm.getBodyPart(i).getContent(),mmAtteso.getBodyPart(i).getContent());
+							}
+						} else {
+							Assert.assertEquals(contentRisposta,contentAttesoRisposta, "File di risposta ["+new String(contentRisposta)+"]diverso da quello atteso ["+new String(contentAttesoRisposta)+"]");
 						}
+						
 					} else {
-						Assert.assertEquals(contentRisposta,contentAttesoRisposta, "File di risposta ["+new String(contentRisposta)+"]diverso da quello atteso ["+new String(contentAttesoRisposta)+"]");
+						if(!HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807.equals(contentTypeRisposta) &&
+								!HttpConstants.CONTENT_TYPE_XML_PROBLEM_DETAILS_RFC_7807.equals(contentTypeRisposta)) {
+							Assert.assertEquals(contentRisposta,contentAttesoRisposta, "File di risposta ["+new String(contentRisposta)+"]diverso da quello atteso ["+new String(contentAttesoRisposta)+"]");
+						}
 					}
 					
-				} else {
-					Assert.assertEquals(contentRisposta,contentAttesoRisposta, "File di risposta ["+new String(contentRisposta)+"]diverso da quello atteso ["+new String(contentAttesoRisposta)+"]");
 				}
 				
 			}

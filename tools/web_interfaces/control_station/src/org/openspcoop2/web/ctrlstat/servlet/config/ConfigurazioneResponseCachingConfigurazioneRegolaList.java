@@ -34,6 +34,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -83,7 +86,11 @@ public final class ConfigurazioneResponseCachingConfigurazioneRegolaList extends
 
 			List<ResponseCachingConfigurazioneRegola> lista = confCore.responseCachingConfigurazioneRegolaList(ricerca); 
 
-			confHelper.prepareResponseCachingConfigurazioneRegolaList(ricerca, lista);
+			Configurazione configurazioneGenerale = confCore.getConfigurazioneGenerale();
+			ResponseCachingConfigurazioneGenerale responseCaching = configurazioneGenerale.getResponseCaching();
+			ResponseCachingConfigurazione configurazione = responseCaching.getConfigurazione();
+			
+			confHelper.prepareResponseCachingConfigurazioneRegolaList(ricerca, lista,  configurazione.getCacheTimeoutSeconds());
 			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

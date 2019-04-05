@@ -88,7 +88,6 @@ import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
@@ -3753,7 +3752,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 	
 	
 	
-	public void prepareResponseCachingConfigurazioneRegolaList(String nomePorta, ISearch ricerca, List<ResponseCachingConfigurazioneRegola> lista) throws Exception {
+	public void prepareResponseCachingConfigurazioneRegolaList(String nomePorta, ISearch ricerca, List<ResponseCachingConfigurazioneRegola> lista, Integer defaultCacheSeconds) throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
@@ -3872,7 +3871,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					e.addElement(de);
 					
 					de = new DataElement();
-					de.setValue(regola.getCacheTimeoutSeconds() != null ? regola.getCacheTimeoutSeconds() + "" : "--");
+					de.setValue(regola.getCacheTimeoutSeconds() != null ? regola.getCacheTimeoutSeconds() + "" : "default ("+defaultCacheSeconds+")");
 					e.addElement(de);
 
 					dati.addElement(e);
@@ -3893,96 +3892,40 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 		try{
 			
-			String returnCode = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE);
+			if(this.checkRegolaResponseCaching() == false) {
+				return false;
+			}
+			
+			String returnCode = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE);
 			String statusMinS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN);
 			String statusMaxS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX);
 			String faultS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT);
-			String cacheSecondsS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS);
 			
 			Integer statusMin = null;
 			Integer statusMax = null;
-			Integer cacheSeconds = null;
 			boolean fault = ServletUtils.isCheckBoxEnabled(faultS);
 			
 			if(!returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI)) {
 				
-				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO)) {
-					if(StringUtils.isEmpty(statusMinS)) {
-						this.pd.setMessage("Il campo "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE + " &egrave; obbligatorio.");
-						return false;
-					}
-				}
-				
-				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
-					if(StringUtils.isEmpty(statusMinS) || StringUtils.isEmpty(statusMaxS)) {
-						this.pd.setMessage("Il campo "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE + " &egrave; obbligatorio.");
-						return false;
-					}
-				}
-				
 				if(StringUtils.isNotEmpty(statusMinS)) {
-					try {
-						statusMin = Integer.parseInt(statusMinS);
-						
-						if(statusMin < 1) {
-							this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
-							return false;
-						}
-						if(statusMin > 999) {
-							this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
-							return false;
-						}
-						
-						// return code esatto, ho salvato lo stesso valore nel campo return code;
-						if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO))
-							statusMax = statusMin;
-					}catch(Exception e) {
-						this.pd.setMessage("Il formato del campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido.");
-						return false;
-					}
+					statusMin = Integer.parseInt(statusMinS);
 				}
 				
 				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
 					if(StringUtils.isNotEmpty(statusMaxS)) {
-						try {
-							statusMax = Integer.parseInt(statusMaxS);
-							
-							if(statusMax < 1) {
-								this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
-								return false;
-							}
-							if(statusMax > 999) {
-								this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
-								return false;
-							}
-						}catch(Exception e) {
-							this.pd.setMessage("Il formato del campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido.");
-							return false;
-						}
+						statusMax = Integer.parseInt(statusMaxS);
 					}
 				}
-			}
-			
-			if(StringUtils.isNotEmpty(cacheSecondsS)) {
-				try {
-					cacheSeconds = Integer.parseInt(cacheSecondsS);
-					
-					if(cacheSeconds < 1) {
-						this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
-						return false;
-					}
-				}catch(Exception e) {
-					this.pd.setMessage("Il formato del campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS + " non &egrave; valido.");
-					return false;
-				}
-			}
-			
-			
 
+				// return code esatto, ho salvato lo stesso valore nel campo return code;
+				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO))
+					statusMax = statusMin;
+			}
+			
 			// Se tipoOp = add, controllo che il registro non sia gia' stato
 			// registrata
 			if (tipoOp.equals(TipoOperazione.ADD)) {
-				boolean giaRegistrato = this.porteDelegateCore.existsResponseCachingConfigurazioneRegola(idPorta,statusMin, statusMax, fault, cacheSeconds);
+				boolean giaRegistrato = this.porteDelegateCore.existsResponseCachingConfigurazioneRegola(idPorta,statusMin, statusMax, fault);
 
 				if (giaRegistrato) {
 					this.pd.setMessage("&Egrave; gi&agrave; presente una Regola di Response Caching con in parametri indicati.");

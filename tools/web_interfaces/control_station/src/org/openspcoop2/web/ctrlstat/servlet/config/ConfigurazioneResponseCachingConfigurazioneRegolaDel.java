@@ -118,7 +118,7 @@ public final class ConfigurazioneResponseCachingConfigurazioneRegolaDel extends 
 
 			List<ResponseCachingConfigurazioneRegola> lista = confCore.responseCachingConfigurazioneRegolaList(ricerca); 
 
-			confHelper.prepareResponseCachingConfigurazioneRegolaList(ricerca, lista);
+			confHelper.prepareResponseCachingConfigurazioneRegolaList(ricerca, lista,  configurazione.getCacheTimeoutSeconds());
 						
 			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_MODIFICATA_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
 			

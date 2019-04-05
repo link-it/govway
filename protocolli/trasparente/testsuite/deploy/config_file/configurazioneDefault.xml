@@ -122,6 +122,12 @@
 		</access-control-allow-methods>
 	  </gestione-cors>
 
+	  <!-- Response Caching -->
+	  <response-caching>
+		<configurazione stato="disabilitato"/>
+		<cache dimensione="10000" algoritmo="lru" item-life-second="7200"/>
+	  </response-caching>
+
      </configurazione>
 </openspcoop2>
 

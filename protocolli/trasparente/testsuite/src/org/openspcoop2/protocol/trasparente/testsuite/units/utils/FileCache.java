@@ -96,11 +96,15 @@ public class FileCache {
 			TestFileEntry soap11FileEntry = new TestFileEntry();
 			soap11FileEntry.setExtRichiesta("soap11");
 			soap11FileEntry.setFilenameRichiesta(Utilities.testSuiteProperties.getSoap11FileName());
+			soap11FileEntry.setExtRispostaKo("soap11"); // metto la stessa della richiesta
+			soap11FileEntry.setFilenameRispostaKo(Utilities.testSuiteProperties.getSoap11FileName()); // metto la stessa della richiesta
 			cache.put("soap11", soap11FileEntry);
 			
 			TestFileEntry soap12FileEntry = new TestFileEntry();
 			soap12FileEntry.setExtRichiesta("soap12");
 			soap12FileEntry.setFilenameRichiesta(Utilities.testSuiteProperties.getSoap12FileName());
+			soap12FileEntry.setExtRispostaKo("soap12");  // metto la stessa della richiesta
+			soap12FileEntry.setFilenameRispostaKo(Utilities.testSuiteProperties.getSoap12FileName()); // metto la stessa della richiesta
 			cache.put("soap12", soap12FileEntry);
 			
 			createFileMulti("related", "multi", xmlFileEntry, pdfFileEntry, pngFileEntry);

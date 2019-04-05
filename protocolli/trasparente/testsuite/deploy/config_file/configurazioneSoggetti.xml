@@ -23,6 +23,100 @@
                 </porta-delegata>
 
 
+		<!-- Response Caching -->
+
+		<porta-delegata nome="ResponseCaching" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <response-caching stato="abilitato"/>			
+                </porta-delegata>
+		<porta-delegata nome="ResponseCachingTimeoutSeconds" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <response-caching stato="abilitato" cache-timeout-seconds="10"/>
+                </porta-delegata>
+		<porta-delegata nome="ResponseCachingDigestConHeaders" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <response-caching stato="abilitato">
+				<hash-generator headers="abilitato">
+					<header>X-DIGEST-TEST-1</header>
+					<header>X-DIGEST-TEST-2</header>
+				</hash-generator>
+			 </response-caching>
+                </porta-delegata>
+		<porta-delegata nome="ResponseCachingDigestUriBodyDisabilitato" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <response-caching stato="abilitato">
+				<hash-generator request-uri="disabilitato" payload="disabilitato" headers="abilitato">
+					<header>X-DIGEST-TEST-1</header>
+					<header>X-DIGEST-TEST-2</header>
+				</hash-generator>
+			 </response-caching>
+                </porta-delegata>
+		<porta-delegata nome="ResponseCachingNoCacheDisabled" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <response-caching stato="abilitato">
+				<control noCache="false"/>				
+			 </response-caching>
+                </porta-delegata>
+		<porta-delegata nome="ResponseCachingNoStoreDisabled" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <response-caching stato="abilitato">
+				<control noStore="false"/>				
+			 </response-caching>
+                </porta-delegata>
+		<porta-delegata nome="ResponseCachingNoCacheNoStoreDisabled" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <response-caching stato="abilitato">
+				<control noCache="false" noStore="false"/>				
+			 </response-caching>
+                </porta-delegata>
+		<porta-delegata nome="ResponseCachingMaxAgeDisabled" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <response-caching stato="abilitato">
+				<control maxAge="false"/>				
+			 </response-caching>
+                </porta-delegata>
+		<porta-delegata nome="ResponseCachingMaxMessageSize" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <response-caching stato="abilitato" max-message-size="1"/>				
+                </porta-delegata>
+		<porta-delegata nome="ResponseCachingRegole" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <response-caching stato="abilitato">	
+				<regola return-code-min="410" return-code-max="410" fault="true"/>	
+				<regola return-code-min="411" return-code-max="415" fault="false"/>
+				<regola return-code-min="416" cache-timeout-seconds="10"/>
+			 </response-caching>
+                </porta-delegata>
+		<porta-delegata nome="ResponseCachingRegolaDefault" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <response-caching stato="abilitato">				
+				<regola fault="false"/>
+			 </response-caching>
+                </porta-delegata>
+
+
 		<!-- CORS -->
 
                 <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaREST" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
@@ -305,6 +399,42 @@
 		    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatelessLocalForward/([^/|^?]*).*"/>
 		    <local-forward stato="abilitato" porta-applicativa="APIMinisteroErogatore/SOAPSincronoLocalForwardStateless"/>
 		</porta-delegata>
+
+
+		<!-- Response Caching -->
+
+		<porta-delegata nome="ResponseCachingRegolaIncludeSOAPFault11" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="Sincrono"/>
+                         <azione identificazione="static" nome="gestioneSOAPFault11_500"/>
+			 <response-caching stato="abilitato">	
+				<regola return-code-min="500" return-code-max="500" fault="true"/>	
+			 </response-caching>
+                </porta-delegata>
+		<porta-delegata nome="ResponseCachingRegolaExcludeSOAPFault11" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="Sincrono"/>
+                         <azione identificazione="static" nome="gestioneSOAPFault11_500"/>
+			 <response-caching stato="abilitato">	
+				<regola return-code-min="500" return-code-max="500" fault="false"/>	
+			 </response-caching>
+                </porta-delegata>
+		<porta-delegata nome="ResponseCachingRegolaIncludeSOAPFault12" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="Sincrono"/>
+                         <azione identificazione="static" nome="gestioneSOAPFault12_500"/>
+			 <response-caching stato="abilitato">	
+				<regola return-code-min="500" return-code-max="500" fault="true"/>	
+			 </response-caching>
+                </porta-delegata>
+		<porta-delegata nome="ResponseCachingRegolaExcludeSOAPFault12" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="Sincrono"/>
+                         <azione identificazione="static" nome="gestioneSOAPFault12_500"/>
+			 <response-caching stato="abilitato">	
+				<regola return-code-min="500" return-code-max="500" fault="false"/>	
+			 </response-caching>
+                </porta-delegata>
 
 
 		<!-- CORS -->
@@ -1542,6 +1672,100 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                 </porta-applicativa>
 
 
+		<!-- Response Caching -->
+
+		<porta-applicativa nome="ResponseCaching" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <servizio-applicativo nome="api"/>
+			 <response-caching stato="abilitato"/>			
+                </porta-applicativa>
+		<porta-applicativa nome="ResponseCachingTimeoutSeconds" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <servizio-applicativo nome="api"/>
+			 <response-caching stato="abilitato" cache-timeout-seconds="10"/>
+                </porta-applicativa>
+		<porta-applicativa nome="ResponseCachingDigestConHeaders" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <servizio-applicativo nome="api"/>
+			 <response-caching stato="abilitato">
+				<hash-generator headers="abilitato">
+					<header>X-DIGEST-TEST-1</header>
+					<header>X-DIGEST-TEST-2</header>
+				</hash-generator>
+			 </response-caching>
+                </porta-applicativa>
+		<porta-applicativa nome="ResponseCachingDigestUriBodyDisabilitato" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <servizio-applicativo nome="api"/>
+			 <response-caching stato="abilitato">
+				<hash-generator request-uri="disabilitato" payload="disabilitato" headers="abilitato">
+					<header>X-DIGEST-TEST-1</header>
+					<header>X-DIGEST-TEST-2</header>
+				</hash-generator>
+			 </response-caching>
+                </porta-applicativa>
+		<porta-applicativa nome="ResponseCachingNoCacheDisabled" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <servizio-applicativo nome="api"/>
+			 <response-caching stato="abilitato">
+				<control noCache="false"/>				
+			 </response-caching>
+                </porta-applicativa>
+		<porta-applicativa nome="ResponseCachingNoStoreDisabled" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <servizio-applicativo nome="api"/>
+			 <response-caching stato="abilitato">
+				<control noStore="false"/>				
+			 </response-caching>
+                </porta-applicativa>
+		<porta-applicativa nome="ResponseCachingNoCacheNoStoreDisabled" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <servizio-applicativo nome="api"/>
+			 <response-caching stato="abilitato">
+				<control noCache="false" noStore="false"/>				
+			 </response-caching>
+                </porta-applicativa>
+		<porta-applicativa nome="ResponseCachingMaxAgeDisabled" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <servizio-applicativo nome="api"/>
+			 <response-caching stato="abilitato">
+				<control maxAge="false"/>				
+			 </response-caching>
+                </porta-applicativa>
+		<porta-applicativa nome="ResponseCachingMaxMessageSize" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <servizio-applicativo nome="api"/>
+			 <response-caching stato="abilitato" max-message-size="1"/>				
+                </porta-applicativa>
+		<porta-applicativa nome="ResponseCachingRegole" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <servizio-applicativo nome="api"/>
+			 <response-caching stato="abilitato">	
+				<regola return-code-min="410" return-code-max="410" fault="true"/>	
+				<regola return-code-min="411" return-code-max="415" fault="false"/>
+				<regola return-code-min="416" cache-timeout-seconds="10"/>
+			 </response-caching>
+                </porta-applicativa>
+		<porta-applicativa nome="ResponseCachingRegolaDefault" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <servizio-applicativo nome="api"/>
+			 <response-caching stato="abilitato">				
+				<regola fault="false"/>
+			 </response-caching>
+                </porta-applicativa>
+
+
 		<!-- CORS -->
 
                 <porta-applicativa nome="APIMinisteroErogatore/gwCORSviaREST" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
@@ -1972,6 +2196,42 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
                     <servizio tipo="gw" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault12_500"/>
                     <servizio-applicativo nome="faultSoap12_500"/>
+                </porta-applicativa>
+
+
+		<!-- Response Caching -->
+
+		<porta-applicativa nome="ResponseCachingRegolaIncludeSOAPFault11" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="Sincrono"/>
+                         <azione identificazione="static" nome="gestioneSOAPFault11_500"/>
+			 <servizio-applicativo nome="faultPingSoap11_500"/>
+			 <response-caching stato="abilitato">	
+				<regola return-code-min="500" return-code-max="500" fault="true"/>	
+			 </response-caching>
+                </porta-applicativa>
+		<porta-applicativa nome="ResponseCachingRegolaExcludeSOAPFault11" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="Sincrono"/>
+                         <azione identificazione="static" nome="gestioneSOAPFault11_500"/>
+			 <servizio-applicativo nome="faultPingSoap11_500"/>
+			 <response-caching stato="abilitato">	
+				<regola return-code-min="500" return-code-max="500" fault="false"/>	
+			 </response-caching>
+                </porta-applicativa>
+		<porta-applicativa nome="ResponseCachingRegolaIncludeSOAPFault12" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="Sincrono"/>
+                         <azione identificazione="static" nome="gestioneSOAPFault12_500"/>
+			 <servizio-applicativo nome="faultPingSoap12_500"/>
+			 <response-caching stato="abilitato">	
+				<regola return-code-min="500" return-code-max="500" fault="true"/>	
+			 </response-caching>
+                </porta-applicativa>
+		<porta-applicativa nome="ResponseCachingRegolaExcludeSOAPFault12" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="Sincrono"/>
+                         <azione identificazione="static" nome="gestioneSOAPFault12_500"/>
+			 <servizio-applicativo nome="faultPingSoap12_500"/>
+			 <response-caching stato="abilitato">	
+				<regola return-code-min="500" return-code-max="500" fault="false"/>	
+			 </response-caching>
                 </porta-applicativa>
 
 
@@ -3133,7 +3393,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 		<servizio-applicativo nome="apiEchoTrasparente">
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="CNT_REST/MinisteroErogatore_REST/CORS">
-                                        <property nome="location" valore="http://localhost:3333/govwayTestSuite/api?CORS=true"/>
+                                        <property nome="location" valore="http://localhost:8080/govwayTestSuite/api?CORS=true"/>
                                 </connettore>     
                         </invocazione-servizio>
                 </servizio-applicativo>

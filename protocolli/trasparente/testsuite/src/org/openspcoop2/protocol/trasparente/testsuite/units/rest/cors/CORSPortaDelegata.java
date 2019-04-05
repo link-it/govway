@@ -96,7 +96,7 @@ public class CORSPortaDelegata {
 		//restCore.setCredenziali("testsuiteOp2","12345678");
 		
 		HttpResponse httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.REST_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_REST, CostantiTestSuite.NOME_SERVIZIO_CORS_REST_RISORSA_GET);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);
@@ -118,7 +118,7 @@ public class CORSPortaDelegata {
 		headersRichiesta.put(HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);
 		
 		HttpResponse httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.REST_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_REST, CostantiTestSuite.NOME_SERVIZIO_CORS_REST_RISORSA_POST);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);
@@ -140,7 +140,7 @@ public class CORSPortaDelegata {
 		headersRichiesta.put(HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);
 		
 		HttpResponse httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.REST_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_REST, CostantiTestSuite.NOME_SERVIZIO_CORS_REST_RISORSA_HEAD);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);
@@ -162,7 +162,7 @@ public class CORSPortaDelegata {
 		headersRichiesta.put(HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);
 		
 		HttpResponse httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.REST_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_REST, CostantiTestSuite.NOME_SERVIZIO_CORS_REST_RISORSA_PUT);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);
@@ -187,7 +187,7 @@ public class CORSPortaDelegata {
 		restCore.setCredenziali("testsuiteOp2","12345678");
 		
 		HttpResponse httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.REST_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_REST, CostantiTestSuite.NOME_SERVIZIO_CORS_REST_RISORSA_POST);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);
@@ -211,7 +211,7 @@ public class CORSPortaDelegata {
 		restCore.setCredenziali("testsuiteOp2","12345678");
 		
 		HttpResponse httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.REST_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_REST, CostantiTestSuite.NOME_SERVIZIO_CORS_REST_RISORSA_POST);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN_ALL_VALUE);
@@ -234,7 +234,7 @@ public class CORSPortaDelegata {
 		headersRichiesta.put(HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);
 		
 		HttpResponse httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.REST_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_REST, CostantiTestSuite.NOME_SERVIZIO_CORS_REST_RISORSA_POST);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);
@@ -473,7 +473,7 @@ public class CORSPortaDelegata {
 		//headersRichiesta.put(HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);
 		
 		HttpResponse httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.REST_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_REST, CostantiTestSuite.NOME_SERVIZIO_CORS_REST_RISORSA_POST);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, null);
@@ -495,7 +495,7 @@ public class CORSPortaDelegata {
 		headersRichiesta.put(HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN, "");
 		
 		HttpResponse httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.REST_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_REST, CostantiTestSuite.NOME_SERVIZIO_CORS_REST_RISORSA_POST);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, null);
@@ -518,7 +518,7 @@ public class CORSPortaDelegata {
 		headersRichiesta.put(HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN, origin);
 		
 		HttpResponse httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.REST_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_REST, CostantiTestSuite.NOME_SERVIZIO_CORS_REST_RISORSA_POST);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, null);
@@ -670,7 +670,7 @@ public class CORSPortaDelegata {
 		headersRichiesta.put(HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN, origin);
 		
 		HttpResponse httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.REST_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_REST, CostantiTestSuite.NOME_SERVIZIO_CORS_REST_RISORSA_POST);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN_ALL_VALUE);
@@ -701,7 +701,7 @@ public class CORSPortaDelegata {
 		headersRichiesta.put(HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN, origin);
 		
 		HttpResponse httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.REST_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_REST, CostantiTestSuite.NOME_SERVIZIO_CORS_REST_RISORSA_POST);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, null);
@@ -732,7 +732,7 @@ public class CORSPortaDelegata {
 		headersRichiesta.put(HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);
 		
 		HttpResponse httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.REST_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_REST_TRASPARENTE, CostantiTestSuite.NOME_SERVIZIO_CORS_REST_RISORSA_GET);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);
@@ -756,7 +756,7 @@ public class CORSPortaDelegata {
 		headersRichiesta.put(HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS,HttpConstants.CONTENT_TYPE+", HeaderProva");
 		
 		HttpResponse httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta);
-		restCore.postInvoke(repository);
+		restCore.postInvoke(repository, CostantiTestSuite.REST_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_REST_TRASPARENTE, CostantiTestSuite.NOME_SERVIZIO_CORS_REST_RISORSA_GET);
 		
 		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
 		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);

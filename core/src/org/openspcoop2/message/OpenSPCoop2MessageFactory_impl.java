@@ -193,7 +193,14 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 				contentType = (String) context;
 			}
 			else{
-				throw new MessageException("Unsupported Context ["+context+"]");
+				if(context==null) {
+					if(!MessageType.BINARY.equals(messageType)) {
+						throw new MessageException("Unsupported Empty Context for message '"+messageType+"' (No Content Type?)");
+					}
+				}
+				else {
+					throw new MessageException("Unsupported Context ["+context+"]");
+				}
 			}
 			
 			switch (messageType) {

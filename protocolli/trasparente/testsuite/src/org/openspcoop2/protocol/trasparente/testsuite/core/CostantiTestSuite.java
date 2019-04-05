@@ -217,11 +217,26 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_SOAP_CORS_MAXAGE_DISABLED="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaSOAP_maxAge_disabled";
 	public static final String PORTA_DELEGATA_REST_CORS_MAXAGE="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaREST_maxAge";
 	public static final String PORTA_DELEGATA_SOAP_CORS_MAXAGE="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaSOAP_maxAge";
-
 	public static final String PORTA_DELEGATA_REST_CORS_TRASPARENTE="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaRESTtrasparente";
 	public static final String PORTA_DELEGATA_SOAP_CORS_TRASPARENTE="APIMinisteroFruitore/APIMinisteroErogatore/gwCORSviaSOAPtrasparente";
 
 	
+	/** Porte Delegate per il test Response Caching */
+	public static final String PORTA_DELEGATA_RESPONSE_CACHING = "ResponseCaching";
+	public static final String PORTA_DELEGATA_RESPONSE_CACHING_TIMEOUT_SECONDS = "ResponseCachingTimeoutSeconds";
+	public static final String PORTA_DELEGATA_RESPONSE_CACHING_DIGEST_CON_HEADERS = "ResponseCachingDigestConHeaders";
+	public static final String PORTA_DELEGATA_RESPONSE_CACHING_DIGEST_URI_BODY_DISABILITATO = "ResponseCachingDigestUriBodyDisabilitato";
+	public static final String PORTA_DELEGATA_RESPONSE_CACHING_NO_CACHE_DISABLED = "ResponseCachingNoCacheDisabled";
+	public static final String PORTA_DELEGATA_RESPONSE_CACHING_NO_STORE_DISABLED = "ResponseCachingNoStoreDisabled";
+	public static final String PORTA_DELEGATA_RESPONSE_CACHING_NO_CACHE_NO_STORE_DISABLED = "ResponseCachingNoCacheNoStoreDisabled";
+	public static final String PORTA_DELEGATA_RESPONSE_CACHING_MAX_AGE_DISABLED = "ResponseCachingMaxAgeDisabled";
+	public static final String PORTA_DELEGATA_RESPONSE_CACHING_MAX_MESSAGE_SIZE = "ResponseCachingMaxMessageSize";
+	public static final String PORTA_DELEGATA_RESPONSE_CACHING_REGOLE = "ResponseCachingRegole";
+	public static final String PORTA_DELEGATA_RESPONSE_CACHING_REGOLA_DEFAULT = "ResponseCachingRegolaDefault";
+	public static final String PORTA_DELEGATA_RESPONSE_CACHING_INCLUDE_SOAP_FAULT_11 = "ResponseCachingRegolaIncludeSOAPFault11";
+	public static final String PORTA_DELEGATA_RESPONSE_CACHING_EXCLUDE_SOAP_FAULT_11 = "ResponseCachingRegolaExcludeSOAPFault11";
+	public static final String PORTA_DELEGATA_RESPONSE_CACHING_INCLUDE_SOAP_FAULT_12 = "ResponseCachingRegolaIncludeSOAPFault12";
+	public static final String PORTA_DELEGATA_RESPONSE_CACHING_EXCLUDE_SOAP_FAULT_12 = "ResponseCachingRegolaExcludeSOAPFault12";
 	
 
 	/** Porte Applicative per il test dei profili di collaborazione: OneWay */
@@ -351,13 +366,26 @@ public class CostantiTestSuite {
 	public static final String PORTA_APPLICATIVA_REST_CORS_MAXAGE_DISABLED="APIMinisteroErogatore/gwCORSviaREST_maxAge_disabled";
 	public static final String PORTA_APPLICATIVA_SOAP_CORS_MAXAGE_DISABLED="APIMinisteroErogatore/gwCORSviaSOAP_maxAge_disabled";
 	public static final String PORTA_APPLICATIVA_REST_CORS_MAXAGE="APIMinisteroErogatore/gwCORSviaREST_maxAge";
-	public static final String PORTA_APPLICATIVA_SOAP_CORS_MAXAGE="APIMinisteroErogatore/gwCORSviaSOAP_maxAge";
-	
-	
-	
+	public static final String PORTA_APPLICATIVA_SOAP_CORS_MAXAGE="APIMinisteroErogatore/gwCORSviaSOAP_maxAge";	
 	public static final String PORTA_APPLICATIVA_REST_CORS_TRASPARENTE="APIMinisteroErogatore/gwCORSviaRESTtrasparente";
 	public static final String PORTA_APPLICATIVA_SOAP_CORS_TRASPARENTE="APIMinisteroErogatore/gwCORSviaSOAPtrasparente";
 	
+	/** Porte Delegate per il test Response Caching */
+	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING = "ResponseCaching";
+	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_TIMEOUT_SECONDS = "ResponseCachingTimeoutSeconds";
+	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_DIGEST_CON_HEADERS = "ResponseCachingDigestConHeaders";
+	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_DIGEST_URI_BODY_DISABILITATO = "ResponseCachingDigestUriBodyDisabilitato";
+	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_NO_CACHE_DISABLED = "ResponseCachingNoCacheDisabled";
+	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_NO_STORE_DISABLED = "ResponseCachingNoStoreDisabled";
+	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_NO_CACHE_NO_STORE_DISABLED = "ResponseCachingNoCacheNoStoreDisabled";
+	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_MAX_AGE_DISABLED = "ResponseCachingMaxAgeDisabled";
+	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_MAX_MESSAGE_SIZE = "ResponseCachingMaxMessageSize";
+	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_REGOLE = "ResponseCachingRegole";
+	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_REGOLA_DEFAULT = "ResponseCachingRegolaDefault";
+	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_INCLUDE_SOAP_FAULT_11 = "ResponseCachingRegolaIncludeSOAPFault11";
+	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_EXCLUDE_SOAP_FAULT_11 = "ResponseCachingRegolaExcludeSOAPFault11";
+	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_INCLUDE_SOAP_FAULT_12 = "ResponseCachingRegolaIncludeSOAPFault12";
+	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_EXCLUDE_SOAP_FAULT_12 = "ResponseCachingRegolaExcludeSOAPFault12";
 
 	
 		
@@ -505,6 +533,14 @@ public class CostantiTestSuite {
 	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_CERT2_SERIALNUMBERDIFFERENTE = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_CERT2_SERIALNUMBERDIFFERENTE, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_CERT2_SERIALNUMBERDIFFERENTE);
 	
+	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteCert2 - serialNumberDifferente */
+	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_CERT2_MULTIPLEOU_SERIALNUMBERDIFFERENTE="EsempioSoggettoTrasparenteCert2_multipleOU_serialNumberDifferente";
+	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteSsl */
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_CERT2_MULTIPLEOU_SERIALNUMBERDIFFERENTE=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TRASPARENTE_CERT2_MULTIPLEOU_SERIALNUMBERDIFFERENTE);
+	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteSsl */
+	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_CERT2_MULTIPLEOU_SERIALNUMBERDIFFERENTE = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
+			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_CERT2_MULTIPLEOU_SERIALNUMBERDIFFERENTE, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_CERT2_MULTIPLEOU_SERIALNUMBERDIFFERENTE);
+	
 	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparentePrincipal  */
 	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_PRINCIPAL="EsempioSoggettoTrasparentePrincipal";
 	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparentePrincipal */
@@ -552,6 +588,14 @@ public class CostantiTestSuite {
     public static final String SOAP_SERVIZIO_SINCRONO_AZIONE_WSS_TIMESTAMP="WSSTimestamp";
     /** ENTITA SPCOOP: Nome Azione Aggiornamento del Servizio RichiestaStatoAvanzamento */
     public static final String PROXY_SERVIZIO_SINCRONO_AZIONE_AGGIORNAMENTO="aggiornamento";
+    public static final String PROXY_SERVIZIO_SINCRONO_AZIONE_AGGIORNAMENTO_BASIC="aggiornamentoBasic";
+    public static final String PROXY_SERVIZIO_SINCRONO_AZIONE_AGGIORNAMENTO_BASIC_FORWARD="aggiornamentoBasicForward";
+    public static final String PROXY_SERVIZIO_SINCRONO_AZIONE_AGGIORNAMENTO_PRINCIPAL_HEADER_CLEAN="aggiornamentoPrincipalHeaderClean";
+    public static final String PROXY_SERVIZIO_SINCRONO_AZIONE_AGGIORNAMENTO_PRINCIPAL_HEADER_NOT_CLEAN ="aggiornamentoPrincipalHeaderNotClean";
+    public static final String PROXY_SERVIZIO_SINCRONO_AZIONE_AGGIORNAMENTO_PRINCIPAL_QUERY_CLEAN="aggiornamentoPrincipalQueryClean";
+    public static final String PROXY_SERVIZIO_SINCRONO_AZIONE_AGGIORNAMENTO_PRINCIPAL_QUERY_NOT_CLEAN ="aggiornamentoPrincipalQueryNotClean";
+    public static final String PROXY_SERVIZIO_SINCRONO_AZIONE_SOAPFAULT_11_500 = "gestioneSOAPFault11_500";
+    public static final String PROXY_SERVIZIO_SINCRONO_AZIONE_SOAPFAULT_12_500 = "gestioneSOAPFault12_500";
     
     
     
@@ -575,9 +619,21 @@ public class CostantiTestSuite {
 	/** Nome Servizio API */
 	public static final String SOAP_NOME_SERVIZIO_API="API";
 	
-
+	
+	/** Nome Servizio CORS */
+	
+	public static final String NOME_SERVIZIO_CORS_REST="CORSviaREST";
+	public static final String NOME_SERVIZIO_CORS_REST_TRASPARENTE="CORSviaRESTtrasparente";
+	public static final String NOME_SERVIZIO_CORS_REST_RISORSA_POST = "invokePOST";
+	public static final String NOME_SERVIZIO_CORS_REST_RISORSA_GET = "invokeGET";
+	public static final String NOME_SERVIZIO_CORS_REST_RISORSA_HEAD = "invokeHEAD";
+	public static final String NOME_SERVIZIO_CORS_REST_RISORSA_DELETE = "invokeDELETE";
+	public static final String NOME_SERVIZIO_CORS_REST_RISORSA_PUT = "invokePUT";
+	public static final String NOME_SERVIZIO_CORS_REST_RISORSA_TRACE = "invokeTRACE";
     
-    
+	public static final String NOME_SERVIZIO_CORS_SOAP="CORSviaSOAP"; 
+	public static final String NOME_SERVIZIO_CORS_SOAP_TRASPARENTE="CORSviaSOAPtrasparente"; 
+	public static final String NOME_SERVIZIO_CORS_SOAP_AZIONE_INVOKER="invoke"; 
     
     
     
@@ -609,6 +665,15 @@ public class CostantiTestSuite {
     public static final String ID_GRUPPO_TEST_CORS = "CORS";
     public static final String ID_GRUPPO_TEST_CORS_PORTA_APPLICATIVA = "CORSPortaApplicativa";
     public static final String ID_GRUPPO_TEST_CORS_PORTA_DELEGATA = "CORSPortaDelegata";
+    
+    public static final String ID_GRUPPO_TEST_RESPONSE_CACHING = "ResponseCaching";
+    public static final String ID_GRUPPO_TEST_RESPONSE_CACHING_PORTA_APPLICATIVA = "ResponseCachingPortaApplicativa";
+    public static final String ID_GRUPPO_TEST_RESPONSE_CACHING_PORTA_DELEGATA = "ResponseCachingPortaDelegata";
+    public static final String TEST_RESPONSE_CACHING_HEADER_1 = "X-DIGEST-TEST-1";
+    public static final String TEST_RESPONSE_CACHING_HEADER_1_VALUE = "v1";
+    public static final String TEST_RESPONSE_CACHING_HEADER_2 = "X-DIGEST-TEST-2";
+    public static final String TEST_RESPONSE_CACHING_HEADER_2_VALUE = "v2";
+    public static final String TEST_RESPONSE_CACHING_URL_OPERATION_ID = "testId";
     
     
     public static final String TEST_HTTPS_ORIGIN = "https://www.govway.org";

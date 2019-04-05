@@ -1226,7 +1226,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 
 	}
 	
-	public boolean existsResponseCachingConfigurazioneRegola(long idPorta, Integer statusMin, Integer statusMax, boolean fault, Integer cacheSeconds) throws DriverConfigurazioneException{
+	public boolean existsResponseCachingConfigurazioneRegola(long idPorta, Integer statusMin, Integer statusMax, boolean fault) throws DriverConfigurazioneException{
 		Connection con = null;
 		String nomeMetodo = "existsResponseCachingConfigurazioneRegola";
 		DriverControlStationDB driver = null;
@@ -1236,7 +1236,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-			return driver.getDriverConfigurazioneDB().existsPortaApplicativaResponseCachingConfigurazioneRegola(idPorta, statusMin,statusMax,fault,cacheSeconds);
+			return driver.getDriverConfigurazioneDB().existsPortaApplicativaResponseCachingConfigurazioneRegola(idPorta, statusMin,statusMax,fault);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

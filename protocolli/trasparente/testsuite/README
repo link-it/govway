@@ -231,6 +231,13 @@ Batterie di test che verificano la gestione del CORS all'interno della PdD
 - 'CORSPortaDelegata': vengono eseguiti tutti i test riguardanti la PortaDelegata
 
 
+** ResponseCaching **
+
+Batterie di test che verificano la gestione del response caching all'interno della PdD
+- 'ResponseCachingPortaApplicativa': vengono eseguiti tutti i test riguardanti la PortaApplicativa
+- 'ResponseCachingPortaDelegata': vengono eseguiti tutti i test riguardanti la PortaDelegata
+
+
 
 
 2. Installazione

@@ -4780,19 +4780,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		return lista;
 	}
 	
-	public boolean existsPortaApplicativaResponseCachingConfigurazioneRegola(long idPA, Integer statusMin, Integer statusMax, boolean fault, Integer cacheSeconds) throws DriverConfigurazioneException {
+	public boolean existsPortaApplicativaResponseCachingConfigurazioneRegola(long idPA, Integer statusMin, Integer statusMax, boolean fault) throws DriverConfigurazioneException {
 		String nomeMetodo = "existsPortaApplicativaResponseCachingConfigurazioneRegola";
 		boolean delegata = false;
-		return _existsResponseCachingConfigurazioneRegola(idPA, statusMin, statusMax, fault, cacheSeconds, nomeMetodo, delegata);
+		return _existsResponseCachingConfigurazioneRegola(idPA, statusMin, statusMax, fault, nomeMetodo, delegata);
 	}
 	
-	public boolean existsPortaDelegataResponseCachingConfigurazioneRegola(long idPA, Integer statusMin, Integer statusMax, boolean fault, Integer cacheSeconds) throws DriverConfigurazioneException {
+	public boolean existsPortaDelegataResponseCachingConfigurazioneRegola(long idPA, Integer statusMin, Integer statusMax, boolean fault) throws DriverConfigurazioneException {
 		String nomeMetodo = "existsPortaDelegataResponseCachingConfigurazioneRegola";
 		boolean delegata = true;
-		return _existsResponseCachingConfigurazioneRegola(idPA, statusMin, statusMax, fault, cacheSeconds, nomeMetodo, delegata);
+		return _existsResponseCachingConfigurazioneRegola(idPA, statusMin, statusMax, fault, nomeMetodo, delegata);
 	}
 	
-	private boolean _existsResponseCachingConfigurazioneRegola(long idPA, Integer statusMin, Integer statusMax, boolean fault, Integer cacheSeconds,String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private boolean _existsResponseCachingConfigurazioneRegola(long idPA, Integer statusMin, Integer statusMax, boolean fault,String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt=null;
@@ -4835,12 +4835,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addWhereIsNullCondition("status_max");
 			}
 			
-			if(cacheSeconds != null) {
-				sqlQueryObject.addWhereCondition("cache_seconds = ?");
-			} else {
-				sqlQueryObject.addWhereIsNullCondition("cache_seconds");
-			}
-			
 			if(fault) {
 				sqlQueryObject.addWhereCondition("fault = ?");
 			} else {
@@ -4855,8 +4849,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stmt.setInt(parameterIndex ++, statusMin);
 			if(statusMax != null)
 				stmt.setInt(parameterIndex ++, statusMax);
-			if(cacheSeconds != null)
-				stmt.setInt(parameterIndex ++, cacheSeconds);
 			if(fault) {
 				stmt.setInt(parameterIndex ++, CostantiDB.TRUE);
 			} else {
@@ -14628,7 +14620,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 	}
 	
-	public boolean existsResponseCachingConfigurazioneRegola(Integer statusMin, Integer statusMax, boolean fault, Integer cacheSeconds) throws DriverConfigurazioneException {
+	public boolean existsResponseCachingConfigurazioneRegola(Integer statusMin, Integer statusMax, boolean fault) throws DriverConfigurazioneException {
 		String nomeMetodo = "existsResponseCachingConfigurazioneRegola";
 
 		Connection con = null;
@@ -14671,12 +14663,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addWhereIsNullCondition("status_max");
 			}
 			
-			if(cacheSeconds != null) {
-				sqlQueryObject.addWhereCondition("cache_seconds = ?");
-			} else {
-				sqlQueryObject.addWhereIsNullCondition("cache_seconds");
-			}
-			
 			if(fault) {
 				sqlQueryObject.addWhereCondition("fault = ?");
 			} else {
@@ -14690,8 +14676,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stmt.setInt(parameterIndex ++, statusMin);
 			if(statusMax != null)
 				stmt.setInt(parameterIndex ++, statusMax);
-			if(cacheSeconds != null)
-				stmt.setInt(parameterIndex ++, cacheSeconds);
 			if(fault) {
 				stmt.setInt(parameterIndex ++, CostantiDB.TRUE);
 			} else {

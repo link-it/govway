@@ -78,7 +78,7 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 		
 		Logger log = this.getLog();
 		
-		CORSRequestType requestType = getRequestType(req, log);
+		CORSRequestType requestType = getRequestType(req, log, false);
 		
 		this.doCORS(req, res, requestType, false);
 	}
@@ -107,11 +107,16 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 		
 		Logger log = this.getLog();
 
+		boolean errorAsDebug = false; 
+		
 		if(newCheckForInvalidType) {
+			
+			errorAsDebug = true; // il livello error è troppo verboso nel caso venga utilizzato sull'api gateway con gestione di default, poichè ogni richiesta fatta senza browser riporterebbe l'errore
+						
 			log.debug("Ricevuta richiesta CORS di tipo ["+requestType+"], riverifico il tipo per vedere che non sia una richiesta non valida ...");
-			CORSRequestType requestTypeCheckInvalid = getRequestType(req, log);
+			CORSRequestType requestTypeCheckInvalid = getRequestType(req, log, errorAsDebug);
 			if(CORSRequestType.INVALID.equals(requestTypeCheckInvalid)) {
-				log.error("Ricevuta richiesta CORS di tipo ["+requestType+"]; è stata rilevata una richiesta invalida");
+				log.debug("Ricevuta richiesta CORS di tipo ["+requestType+"]; è stata rilevata una richiesta invalida"); 
 				requestType = CORSRequestType.INVALID;
 			}
 			else {
@@ -124,7 +129,10 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 		if(CORSRequestType.INVALID.equals(requestType)) {
 			if(config.throwExceptionIfInvalid || config.terminateIfInvalid) {
 				String msgError = "CORSE Configuration error: the request is invalid";
-				log.error(msgError);
+				if(errorAsDebug)
+					log.debug(msgError);
+				else
+					log.error(msgError);
 				if(config.throwExceptionIfInvalid) {
 					throw new IOException(msgError);
 				}
@@ -154,7 +162,10 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 		if(accessControlRequestOrigin==null) {
 			if(config.throwExceptionIfNotFoundOrigin || config.terminateIfNotFoundOrigin) {
 				String msgError = "CORSE Configuration error: the request hasn't "+HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN+" header";
-				log.error(msgError);
+				if(errorAsDebug)
+					log.debug(msgError);
+				else
+					log.error(msgError);
 				if(config.throwExceptionIfNotFoundOrigin) {
 					throw new IOException(msgError);
 				}
@@ -207,7 +218,10 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 				else {
 					if(config.throwExceptionIfNotMatchOrigin || config.terminateIfNotMatchOrigin) {
 						String msgError = "CORSE Configuration error: the request has an "+HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN+" header, a response header '"+HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN+"' is required";
-						log.error(msgError);
+						if(errorAsDebug)
+							log.debug(msgError);
+						else
+							log.error(msgError);
 						if(config.throwExceptionIfNotMatchOrigin) {
 							throw new IOException(msgError);
 						}
@@ -242,7 +256,10 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 			
 			if(allowOriginStar && config.throwExceptionIfAllowCredentialAndAllowOrigin) {
 				String msgError = "CORSE Configuration error: the response header '"+HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN+"=*' cannot be used for a resource that supports credentials ("+HttpConstants.ACCESS_CONTROL_ALLOW_CREDENTIALS+"=true)";
-				log.error(msgError);
+				if(errorAsDebug)
+					log.debug(msgError);
+				else
+					log.error(msgError);
 				throw new IOException(msgError);
 			}
 			
@@ -277,7 +294,10 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 			if(accessControlRequestMethod==null) {
 				if(config.throwExceptionIfNotFoundRequestMethod || config.terminateIfNotFoundRequestMethod) {
 					String msgError = "CORSE Configuration error: the request hasn't an "+HttpConstants.ACCESS_CONTROL_REQUEST_METHOD+" header";
-					log.error(msgError);
+					if(errorAsDebug)
+						log.debug(msgError);
+					else
+						log.error(msgError);
 					if(config.throwExceptionIfNotFoundRequestMethod) {
 						throw new IOException(msgError);
 					}
@@ -315,7 +335,10 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 					}catch(Exception e) {
 						if(config.throwExceptionIfNotFoundRequestHeaders || config.terminateIfNotFoundRequestHeaders) {
 							String msgError = "CORSE Configuration error: the request has an uncorrect "+HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS+" header";
-							log.error(msgError,e);
+							if(errorAsDebug)
+								log.debug(msgError,e);
+							else
+								log.error(msgError,e);
 							if(config.throwExceptionIfNotFoundRequestHeaders) {
 								throw new IOException(msgError,e);
 							}
@@ -362,7 +385,10 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 				else {
 					if(config.isThrowExceptionIfNotMatchRequestMethod() || config.terminateIfNotMatchRequestMethod) {
 						String msgError = "CORSE Configuration error: the request has an "+HttpConstants.ACCESS_CONTROL_REQUEST_METHOD+" header not permitted";
-						log.error(msgError);
+						if(errorAsDebug)
+							log.debug(msgError);
+						else
+							log.error(msgError);
 						if(config.isThrowExceptionIfNotMatchRequestMethod()) {
 							throw new IOException(msgError);
 						}
@@ -442,7 +468,10 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 				else {
 					if(config.isThrowExceptionIfNotMatchRequestHeaders() || config.terminateIfNotMatchRequestHeaders) {
 						String msgError = "CORSE Configuration error: the request has an header defined in "+HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS+" not permitted: "+headerNotMatch.toString();
-						log.error(msgError);
+						if(errorAsDebug)
+							log.debug(msgError);
+						else
+							log.error(msgError);
 						if(config.isThrowExceptionIfNotMatchRequestHeaders()) {
 							throw new IOException(msgError);
 						}
@@ -509,7 +538,7 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 		return sb.toString();
 	}
 
-	public CORSRequestType getRequestType(final HttpServletRequest request, Logger log) {
+	public CORSRequestType getRequestType(final HttpServletRequest request, Logger log, boolean errorAsDebug) {
         CORSRequestType requestType = CORSRequestType.INVALID;
         if (request == null) {
             throw new IllegalArgumentException(
@@ -525,10 +554,18 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
         // Section 6.1.1 and Section 6.2.1
         if (accessControlRequestOrigin != null) {
             if (accessControlRequestOrigin.isEmpty()) {
-            	log.error("Header '"+HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN+"' is empty");
+            	String msg = "Header '"+HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN+"' is empty";
+            	if(errorAsDebug) 
+            		log.debug(msg); 
+            	else 
+            		log.error(msg);
                 requestType = CORSRequestType.INVALID;
             } else if (!isValidOrigin(accessControlRequestOrigin)) {
-            	log.error("Header '"+HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN+"' with uncorrect origin value");
+            	String msg = "Header '"+HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN+"' with uncorrect origin value";
+            	if(errorAsDebug) 
+            		log.debug(msg); 
+            	else 
+            		log.error(msg);
                 requestType = CORSRequestType.INVALID;
             } else {
                 String method = request.getMethod();
@@ -539,7 +576,11 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
                 	}
                 	requestMethod = HttpRequestMethod.valueOf(method);
                 }catch(Exception e) {
-                	log.error("Method unknown '"+method+"': "+e.getMessage(),e);
+                	String msg = "Method unknown '"+method+"': "+e.getMessage();
+                	if(errorAsDebug) 
+                		log.debug(msg,e); 
+                	else 
+                		log.error(msg,e);
                     requestType = CORSRequestType.INVALID;
                 }
                 if(requestMethod!=null) {
@@ -555,7 +596,11 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 	                        requestType = CORSRequestType.PRE_FLIGHT;
 	                    } else if (accessControlRequestMethod != null
 	                            && StringUtils.isEmpty(accessControlRequestMethod)) {
-	                    	log.error("Header '"+HttpConstants.ACCESS_CONTROL_REQUEST_METHOD+"' with empty value");
+	                    	String msg = "Header '"+HttpConstants.ACCESS_CONTROL_REQUEST_METHOD+"' with empty value";
+	                    	if(errorAsDebug) 
+	                    		log.debug(msg); 
+	                    	else 
+	                    		log.error(msg);
 	                        requestType = CORSRequestType.INVALID;
 	                    } else {
 	                        requestType = CORSRequestType.ACTUAL;
@@ -578,7 +623,11 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
                 }
             }
         } else {
-        	log.error("Header '"+HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN+"' not defined");
+        	String msg = "Header '"+HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN+"' not defined";
+        	if(errorAsDebug) 
+        		log.debug(msg); 
+        	else 
+        		log.error(msg);
             requestType = CORSRequestType.INVALID;
         }
 

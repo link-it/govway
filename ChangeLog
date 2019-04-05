@@ -7,6 +7,11 @@
 	- Nel controllo degli accessi di una erogazione o fruizione è adesso possibile configurare una autenticazione 'principal' 
 	  nella quale l'identita del client è ottenibile non solo dal container ma anche da un header http, da un query parameter, 
 	  dalla url o è possibile indicare di utilizzare l'indirizzo ip.
+	- Migliorata gestione della funzionalità di Response Caching.
+	  E' adesso possibile indicare quali header concorrono alla generazione del digest.
+	  E' inoltre possibile utilizzare l'header Cache-Control attraverso le direttive 'no-cache', 'no-store' e 'max-age' 
+	  per ottenere e/o memorizzare le risposte in cache. Nella configurazione è possibile disabiltare una o più direttive.
+	  Infine il caching delle risposte è attivabile in funzione del return code http e del tipo di risposta ottenuta (fault).
 
 2019-04-03  Andrea Poli <apoli@link.it>
 

@@ -439,6 +439,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 						
 						boolean isFault = this.responseMsg.isFault();
 						
+						ResponseCachingConfigurazioneRegola regolaGeneraleIncludeFault = null;
+						
 						saveInCache = false; // se ci sono delle regole, salvo solamente se la regola ha un match
 						for (ResponseCachingConfigurazioneRegola regola : this.responseCachingConfig.getRegolaList()) {
 							
@@ -456,6 +458,15 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 							if(isFault && !regola.isFault()) {
 								continue;
 							}
+							else if(!isFault && regola.isFault()) {
+								// in questo caso la regola va bene poichè l'istruzione fault indica semplicemente se includere o meno un fault
+								// e quindi essendo il messaggio non un fault la regola match.
+								// Però prima di usarla verifico se esiste una regola specifica senza fault
+								if(regolaGeneraleIncludeFault==null) {
+									regolaGeneraleIncludeFault = regola;
+								}
+								continue;
+							}
 							
 							// ho un match
 							saveInCache = true;
@@ -463,6 +474,14 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 								cacheTimeoutSeconds = regola.getCacheTimeoutSeconds().intValue();
 							}
 							break;
+						}
+						
+						if(!saveInCache && regolaGeneraleIncludeFault!=null) {
+							// ho il match di un messaggio che non è un fault con una regola che fa includere anche i fault
+							saveInCache = true;
+							if(regolaGeneraleIncludeFault.getCacheTimeoutSeconds()!=null) {
+								cacheTimeoutSeconds = regolaGeneraleIncludeFault.getCacheTimeoutSeconds().intValue();
+							}
 						}
 					}
 				}

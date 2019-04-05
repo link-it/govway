@@ -7979,18 +7979,6 @@ public class ConsoleHelper {
 				dati.addElement(de);
 			}
 			
-			if(visualizzaLinkConfigurazioneRegola) {
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				boolean contaListeFromSession = ServletUtils.getContaListeFromSession(this.session) != null ? ServletUtils.getContaListeFromSession(this.session) : false;
-				if (contaListeFromSession)
-					de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE+" (" + numeroResponseCachingConfigurazioneRegola + ")");
-				else
-					de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE);
-				de.setUrl(servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList.toArray(new Parameter[paramsResponseCachingConfigurazioneRegolaList.size()]));
-				dati.addElement(de);
-			}
-			
 			
 			de = new DataElement();
 			de.setType(DataElementType.SUBTITLE);
@@ -8065,6 +8053,26 @@ public class ConsoleHelper {
 			de.setSelected(responseCachingCacheControlNoStore);
 			de.setValue(responseCachingCacheControlNoStore+"");
 			dati.addElement(de);
+			
+			
+						
+			if(visualizzaLinkConfigurazioneRegola) {
+				
+				de = new DataElement();
+				de.setType(DataElementType.SUBTITLE);
+				de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIOME_AVANZATA);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				boolean contaListeFromSession = ServletUtils.getContaListeFromSession(this.session) != null ? ServletUtils.getContaListeFromSession(this.session) : false;
+				if (contaListeFromSession)
+					de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE+" (" + numeroResponseCachingConfigurazioneRegola + ")");
+				else
+					de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE);
+				de.setUrl(servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList.toArray(new Parameter[paramsResponseCachingConfigurazioneRegolaList.size()]));
+				dati.addElement(de);
+			}
 		}
 	}
 	
@@ -8189,6 +8197,100 @@ public class ConsoleHelper {
 		return true;
 	}
 	
+	public boolean checkRegolaResponseCaching() throws Exception {
+		
+		String returnCode = getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE);
+		String statusMinS = getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN);
+		String statusMaxS = getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX);
+		@SuppressWarnings("unused")
+		String faultS = getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT);
+		String cacheSecondsS = getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS);
+		
+		Integer statusMin = null;
+		Integer statusMax = null;
+		Integer cacheSeconds = null;
+		
+		if(!returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI)) {
+			
+			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO)) {
+				if(StringUtils.isEmpty(statusMinS)) {
+					this.pd.setMessage("Il campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE + " &egrave; obbligatorio.");
+					return false;
+				}
+			}
+			
+			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
+				if(StringUtils.isEmpty(statusMinS) || StringUtils.isEmpty(statusMaxS)) {
+					this.pd.setMessage("Tutt gli intervalli del campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE + " sono obbligatori.");
+					return false;
+				}
+			}
+			
+			if(StringUtils.isNotEmpty(statusMinS)) {
+				try {
+					statusMin = Integer.parseInt(statusMinS);
+					
+					if(statusMin < 200 || statusMin > 599) {
+						if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO)) {
+							this.pd.setMessage("Il valore inserito nel campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE + " non &egrave; valido, sono ammessi valori compresi tra 200 e 599.");
+						}
+						else {
+							this.pd.setMessage("Il valore inserito nell'intervallo sinistro non &egrave; valido, sono ammessi valori compresi tra 200 e 599.");
+						}
+						return false;
+					}
+					// return code esatto, ho salvato lo stesso valore nel campo return code;
+					if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO))
+						statusMax = statusMin;
+				}catch(Exception e) {
+					this.pd.setMessage("Il formato del campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido.");
+					return false;
+				}
+			}
+			
+			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
+				if(StringUtils.isNotEmpty(statusMaxS)) {
+					try {
+						statusMax = Integer.parseInt(statusMaxS);
+						
+						if(statusMax < 200 || statusMax > 599) {
+							this.pd.setMessage("Il valore inserito nell'intervallo destro non &egrave; valido, sono ammessi valori compresi tra 200 e 599.");
+							return false;
+						}
+					}catch(Exception e) {
+						this.pd.setMessage("Il formato del campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido.");
+						return false;
+					}
+				}
+			}
+			
+			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
+				if(statusMax!=null && statusMin!=null) {
+					if(statusMin>=statusMax) {
+						this.pd.setMessage("Il valore inserito nell'intervallo sinistro deve essere minore del valore inserito nell'intervallo destro.");
+						return false;
+					}
+				}
+			}
+		}
+		
+		if(StringUtils.isNotEmpty(cacheSecondsS)) {
+			try {
+				cacheSeconds = Integer.parseInt(cacheSecondsS);
+				
+				if(cacheSeconds < 1) {
+					this.pd.setMessage("Il valore inserito nel campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+					return false;
+				}
+			}catch(Exception e) {
+				this.pd.setMessage("Il formato del campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS + " non &egrave; valido.");
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
 	public Vector<DataElement> addResponseCachingConfigurazioneRegola(TipoOperazione tipoOP, String returnCode, String statusMin, String statusMax, String fault, String cacheSeconds, Vector<DataElement> dati) {
 		
 		DataElement dataElement = new DataElement();
@@ -8213,8 +8315,8 @@ public class ConsoleHelper {
 				de.setValue(statusMin);
 				de.setType(DataElementType.NUMBER);
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN);
-				de.setMinValue(1);
-				de.setMaxValue(999);
+				de.setMinValue(200);
+				de.setMaxValue(599);
 				de.setSize(getSize());
 				de.reloadMinValue(false);
 				de.setRequired(true); 
@@ -8228,8 +8330,8 @@ public class ConsoleHelper {
 				de.setType(DataElementType.INTERVAL_NUMBER);
 				de.setNames(Arrays.asList(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN,
 						CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX));
-				de.setMinValue(1);
-				de.setMaxValue(999);
+				de.setMinValue(200);
+				de.setMaxValue(599);
 				de.setSize(getSize());
 				de.reloadMinValue(false);
 				de.setRequired(true); 

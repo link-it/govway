@@ -212,7 +212,7 @@ public class AutenticazionePortaApplicativa {
 						new String[] {"CN=soggetto2_multipleOU","OU=\" Piano=2, Scala=B, porta=3\"","caratteri accentati"},
 						null},
 				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/soggetto2_multipleOU_serialNumberDifferente.jks", "123456", "123456"), 
-						CostantiTestSuite.PROXY_SOGGETTO_TRASPARENTE_CERT2_SERIALNUMBERDIFFERENTE,
+						CostantiTestSuite.PROXY_SOGGETTO_TRASPARENTE_CERT2_MULTIPLEOU_SERIALNUMBERDIFFERENTE,
 						null, -1,true, 200,
 						new String[] {"CN=soggetto2_multipleOU","OU=\" Piano=2, Scala=B, porta=3\"","caratteri accentati"},
 						null},

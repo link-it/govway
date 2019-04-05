@@ -169,7 +169,8 @@ public final class PorteDelegateResponseCachingConfigurazioneRegolaAdd extends A
 
 				dati = porteDelegateHelper.addResponseCachingConfigurazioneRegola(TipoOperazione.ADD, returnCode, statusMin, statusMax, fault, cacheSeconds, dati);
 				
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  
+						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
 
 				pd.setDati(dati);
 
@@ -190,7 +191,8 @@ public final class PorteDelegateResponseCachingConfigurazioneRegolaAdd extends A
 				
 				dati = porteDelegateHelper.addResponseCachingConfigurazioneRegola(TipoOperazione.ADD, returnCode, statusMin, statusMax, fault, cacheSeconds, dati);
 				
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,    
+						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
 
 				pd.setDati(dati);
 
@@ -230,7 +232,7 @@ public final class PorteDelegateResponseCachingConfigurazioneRegolaAdd extends A
 
 			List<ResponseCachingConfigurazioneRegola> lista = porteDelegateCore.getResponseCachingConfigurazioneRegolaList(Long.parseLong(idPorta), ricerca); 
 
-			porteDelegateHelper.prepareResponseCachingConfigurazioneRegolaList(nomePorta, ricerca, lista);
+			porteDelegateHelper.prepareResponseCachingConfigurazioneRegolaList(nomePorta, ricerca, lista, configurazione.getCacheTimeoutSeconds());
 						
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

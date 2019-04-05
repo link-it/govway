@@ -124,7 +124,7 @@ public final class PorteApplicativeResponseCachingConfigurazioneRegolaDel extend
 
 			List<ResponseCachingConfigurazioneRegola> lista = porteApplicativeCore.getResponseCachingConfigurazioneRegolaList(Long.parseLong(idPorta), ricerca); 
 
-			porteApplicativeHelper.prepareResponseCachingConfigurazioneRegolaList(nomePorta, ricerca, lista);
+			porteApplicativeHelper.prepareResponseCachingConfigurazioneRegolaList(nomePorta, ricerca, lista, configurazione.getCacheTimeoutSeconds());
 						
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

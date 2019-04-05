@@ -550,6 +550,39 @@ public class AuthUtilities {
 		}
 		if(checkDB) {
 			if(org.openspcoop2.protocol.trasparente.testsuite.units.utils.CooperazioneTrasparenteBase.protocolloEmetteTracce) {
+				
+				String tipoServizio = CostantiTestSuite.SOAP_TIPO_SERVIZIO;
+				String nomeServizio = CostantiTestSuite.SOAP_NOME_SERVIZIO_SINCRONO;
+				String nomeAzione = CostantiTestSuite.PROXY_SERVIZIO_SINCRONO_AZIONE_AGGIORNAMENTO;
+				if(CostantiTestSuite.PORTA_DELEGATA_AUTH_BASIC.equals(nomePorta) ||
+						CostantiTestSuite.PORTA_APPLICATIVA_AUTH_BASIC.equals(nomePorta)) {
+					nomeAzione = CostantiTestSuite.PROXY_SERVIZIO_SINCRONO_AZIONE_AGGIORNAMENTO_BASIC;
+				}
+				else if(CostantiTestSuite.PORTA_DELEGATA_AUTH_BASIC_FORWARD_AUTHORIZATION.equals(nomePorta) ||
+						CostantiTestSuite.PORTA_APPLICATIVA_AUTH_BASIC_FORWARD_AUTHORIZATION.equals(nomePorta)) {
+					nomeAzione = CostantiTestSuite.PROXY_SERVIZIO_SINCRONO_AZIONE_AGGIORNAMENTO_BASIC_FORWARD;
+				}
+				else if(CostantiTestSuite.PORTA_DELEGATA_AUTH_PRINCIPAL_HEADER_CLEAN.equals(nomePorta) ||
+						CostantiTestSuite.PORTA_APPLICATIVA_AUTH_PRINCIPAL_HEADER_CLEAN.equals(nomePorta) ||
+						CostantiTestSuite.PORTA_DELEGATA_AUTH_OPTIONAL_PRINCIPAL_HEADER.equals(nomePorta) ||
+						CostantiTestSuite.PORTA_APPLICATIVA_AUTH_OPTIONAL_PRINCIPAL_HEADER.equals(nomePorta)) {
+					nomeAzione = CostantiTestSuite.PROXY_SERVIZIO_SINCRONO_AZIONE_AGGIORNAMENTO_PRINCIPAL_HEADER_CLEAN;
+				}
+				else if(CostantiTestSuite.PORTA_DELEGATA_AUTH_PRINCIPAL_HEADER_NOT_CLEAN.equals(nomePorta) ||
+						CostantiTestSuite.PORTA_APPLICATIVA_AUTH_PRINCIPAL_HEADER_NOT_CLEAN.equals(nomePorta)) {
+					nomeAzione = CostantiTestSuite.PROXY_SERVIZIO_SINCRONO_AZIONE_AGGIORNAMENTO_PRINCIPAL_HEADER_NOT_CLEAN;
+				}
+				else if(CostantiTestSuite.PORTA_DELEGATA_AUTH_PRINCIPAL_QUERY_CLEAN.equals(nomePorta) ||
+						CostantiTestSuite.PORTA_APPLICATIVA_AUTH_PRINCIPAL_QUERY_CLEAN.equals(nomePorta) ||
+						CostantiTestSuite.PORTA_DELEGATA_AUTH_OPTIONAL_PRINCIPAL_QUERY.equals(nomePorta) ||
+						CostantiTestSuite.PORTA_APPLICATIVA_AUTH_OPTIONAL_PRINCIPAL_QUERY.equals(nomePorta)) {
+					nomeAzione = CostantiTestSuite.PROXY_SERVIZIO_SINCRONO_AZIONE_AGGIORNAMENTO_PRINCIPAL_QUERY_CLEAN;
+				}
+				else if(CostantiTestSuite.PORTA_DELEGATA_AUTH_PRINCIPAL_QUERY_NOT_CLEAN.equals(nomePorta) ||
+						CostantiTestSuite.PORTA_APPLICATIVA_AUTH_PRINCIPAL_QUERY_NOT_CLEAN.equals(nomePorta)) {
+					nomeAzione = CostantiTestSuite.PROXY_SERVIZIO_SINCRONO_AZIONE_AGGIORNAMENTO_PRINCIPAL_QUERY_NOT_CLEAN;
+				}
+				
 				try{
 					boolean checkServizioApplicativo = false;
 					if(portaDelegata)
@@ -558,7 +591,7 @@ public class AuthUtilities {
 						data = DatabaseProperties.getDatabaseComponentErogatore();
 					testSincrono(data, id,
 							fruitore, erogatore,
-							CostantiTestSuite.SOAP_TIPO_SERVIZIO, CostantiTestSuite.SOAP_NOME_SERVIZIO_SINCRONO, CostantiTestSuite.PROXY_SERVIZIO_SINCRONO_AZIONE_AGGIORNAMENTO,
+							tipoServizio, nomeServizio, nomeAzione,
 							false,CostantiTestSuite.PROXY_PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI,
 							checkServizioApplicativo, null, null, null);
 				}catch(Exception e){
