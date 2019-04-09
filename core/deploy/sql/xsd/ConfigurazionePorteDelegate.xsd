@@ -1878,9 +1878,14 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                             reference-primary-key="true">
                             <linkit:sql-table-fk-field name="id_porta"/>
                         </linkit:sql-table-foreign-key>
-                        <linkit:sql-table-index>
-                            <linkit:sql-table-index-column name="id_porta" />
-                        </linkit:sql-table-index>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-column name="id_porta" />
+                            <linkit:sql-table-unique-column name="nome" />
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-column name="id_porta" />
+                            <linkit:sql-table-unique-column name="posizione" />
+                        </linkit:sql-table-unique>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -1894,6 +1899,26 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_porta"/>
                                 <linkit:sql-ddl-column-comment>Identificativo della porta delegata [FK verso tabella porte_delegate(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="nome" type="xsd:string" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-ddl-column-comment>Identificativo univoco della regola, all'interno della porta delegata</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="posizione" type="xsd:integer" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-ddl-column-comment>Posizione di applicabilità della regola, all'interno della porta delegata</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -2245,9 +2270,14 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                             reference-primary-key="true">
                             <linkit:sql-table-fk-field name="id_trasformazione"/>
                         </linkit:sql-table-foreign-key>
-                        <linkit:sql-table-index>
-                            <linkit:sql-table-index-column name="id_trasformazione" />
-                        </linkit:sql-table-index>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-column name="id_trasformazione" />
+                            <linkit:sql-table-unique-column name="nome" />
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-column name="id_trasformazione" />
+                            <linkit:sql-table-unique-column name="posizione" />
+                        </linkit:sql-table-unique>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -2261,6 +2291,26 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_trasformazione"/>
                                 <linkit:sql-ddl-column-comment>Identificativo della trasformazione [FK verso tabella pd_transform(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="nome" type="xsd:string" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-ddl-column-comment>Identificativo univoco della regola, all'interno della porta delegata</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="posizione" type="xsd:integer" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-ddl-column-comment>Posizione di applicabilità della regola, all'interno della porta delegata</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

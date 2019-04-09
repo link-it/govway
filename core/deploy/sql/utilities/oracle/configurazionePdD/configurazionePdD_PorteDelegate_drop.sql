@@ -1,9 +1,7 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
 -- DROP INDEX idx_pd_trasf_hdr_resp_1;
--- DROP INDEX idx_pd_trasf_resp_1;
 -- DROP INDEX idx_pd_trasf_url_1;
 -- DROP INDEX idx_pd_trasf_hdr_1;
--- DROP INDEX index_pd_transform_1;
 -- DROP INDEX INDEX_PD_WSSRES;
 -- DROP INDEX INDEX_PD_WSSREQ;
 -- DROP INDEX INDEX_PD_MTOMTRES;

@@ -337,7 +337,9 @@
 			<xsd:element name="applicabilita" type="trasformazione-regola-applicabilita-richiesta" maxOccurs="1" minOccurs="0"/>
 			<xsd:element name="richiesta" type="trasformazione-regola-richiesta" maxOccurs="1" minOccurs="1"/>
 			<xsd:element name="risposta" type="trasformazione-regola-risposta" maxOccurs="unbounded" minOccurs="1"/>
-		</xsd:sequence>	
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="posizione" type="xsd:int" use="required"/>
 	</xsd:complexType>
 	<xsd:complexType name="trasformazione-regola-applicabilita-richiesta">
 		<xsd:sequence>
@@ -384,6 +386,8 @@
 			<xsd:element name="header" type="trasformazione-regola-parametro" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="trasformazione-soap" type="trasformazione-soap-risposta" maxOccurs="1" minOccurs="0"/>
 		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="posizione" type="xsd:int" use="required"/>
 		<xsd:attribute name="conversione" type="xsd:boolean" default="false"/>
 		<xsd:attribute name="conversione-tipo" type="xsd:string" />
 		<xsd:attribute name="content-type" type="xsd:string" />

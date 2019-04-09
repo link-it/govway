@@ -9517,6 +9517,8 @@ public class DriverConfigurazioneDB_LIB {
 					
 					List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("id_porta", idProprietario , InsertAndGeneratedKeyJDBCType.LONG) );
+					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", regola.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
+					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("posizione", regola.getPosizione() , InsertAndGeneratedKeyJDBCType.INT) );
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_azioni", applicabilita_azioni , InsertAndGeneratedKeyJDBCType.STRING) );
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_ct", applicabilita_ct , InsertAndGeneratedKeyJDBCType.STRING) );
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_pattern", (regola.getApplicabilita()!=null ? regola.getApplicabilita().getPattern() : null) , InsertAndGeneratedKeyJDBCType.STRING) );
@@ -9667,6 +9669,8 @@ public class DriverConfigurazioneDB_LIB {
 							
 							listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
 							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("id_trasformazione", idtrasformazione , InsertAndGeneratedKeyJDBCType.LONG) );
+							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", regolaRisposta.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
+							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("posizione", regolaRisposta.getPosizione() , InsertAndGeneratedKeyJDBCType.INT) );
 							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_status_min", 
 									(regolaRisposta.getApplicabilita()!=null && regolaRisposta.getApplicabilita().getReturnCodeMin()!=null && 
 									regolaRisposta.getApplicabilita().getReturnCodeMin().intValue()>0) ? regolaRisposta.getApplicabilita().getReturnCodeMin().intValue() : null , InsertAndGeneratedKeyJDBCType.INT) );
@@ -9930,6 +9934,9 @@ public class DriverConfigurazioneDB_LIB {
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("id_porta=?");
+			sqlQueryObject.addOrderBy("posizione");
+			sqlQueryObject.addOrderBy("nome");
+			sqlQueryObject.setSortType(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 			stm.setLong(1, idPorta);
@@ -9944,6 +9951,12 @@ public class DriverConfigurazioneDB_LIB {
 				}
 				
 				TrasformazioneRegola regola = new TrasformazioneRegola();
+				
+				String nome = rs.getString("nome");
+				regola.setNome(nome);
+				
+				int posizione = rs.getInt("posizione");
+				regola.setPosizione(posizione);
 				
 				String applicabilita_azioni = rs.getString("applicabilita_azioni");
 				String applicabilita_ct = rs.getString("applicabilita_ct");
@@ -9992,7 +10005,7 @@ public class DriverConfigurazioneDB_LIB {
 					richiesta.setConversione(true);
 				}
 				else {
-					richiesta.setConversione(true);
+					richiesta.setConversione(false);
 				}
 				richiesta.setConversioneTipo(rs.getString("req_conversione_tipo"));
 				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDB);
@@ -10114,6 +10127,9 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addFromTable(nomeTabella);
 				sqlQueryObject.addSelectField("*");
 				sqlQueryObject.addWhereCondition("id_trasformazione=?");
+				sqlQueryObject.addOrderBy("posizione");
+				sqlQueryObject.addOrderBy("nome");
+				sqlQueryObject.setSortType(true);
 				sqlQuery = sqlQueryObject.createSQLQuery();
 				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, regola.getId());
@@ -10124,6 +10140,12 @@ public class DriverConfigurazioneDB_LIB {
 				while (rs.next()) {
 				
 					TrasformazioneRegolaRisposta risposta = new TrasformazioneRegolaRisposta();
+					
+					String nome = rs.getString("nome");
+					risposta.setNome(nome);
+					
+					int posizione = rs.getInt("posizione");
+					risposta.setPosizione(posizione);
 					
 					int applicabilita_status_min = rs.getInt("applicabilita_status_min");
 					int applicabilita_status_max = rs.getInt("applicabilita_status_max");
@@ -10166,7 +10188,7 @@ public class DriverConfigurazioneDB_LIB {
 						risposta.setConversione(true);
 					}
 					else {
-						risposta.setConversione(true);
+						risposta.setConversione(false);
 					}
 					risposta.setConversioneTipo(rs.getString("conversione_tipo"));
 					IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDB);

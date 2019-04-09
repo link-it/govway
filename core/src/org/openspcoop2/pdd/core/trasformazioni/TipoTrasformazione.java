@@ -39,9 +39,9 @@ import org.openspcoop2.message.constants.ServiceBinding;
  */
 public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneable {
 
-	EMPTY ("empty-payload", null),
-	TEMPLATE ("template", null),
-	FREEMARKER_TEMPLATE ("freemarker", null);
+	EMPTY ("empty-payload", "HTTP Payload vuoto", null),
+	TEMPLATE ("template", "Template", null),
+	FREEMARKER_TEMPLATE ("freemarker", "Freemarker Template", null);
 //	XSLT ("xslt", null),
 //	XML2JSON ("xml2json", ServiceBinding.REST),
 //	JSON2XML ("xml2json", ServiceBinding.REST);
@@ -49,18 +49,31 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 	
 	/** Value */
 	private String value;
+	private String label;
 	private ServiceBinding serviceBinding;
 	@Override
 	public String getValue()
 	{
 		return this.value;
 	}
+	public String getLabel() {
+		return this.label;
+	}
+	public String getLabel(ServiceBinding serviceBinding) {
+		if(this.equals(TipoTrasformazione.EMPTY) && ServiceBinding.SOAP.equals(serviceBinding)) {
+			return "SOAP Body vuoto";
+		}
+		else {
+			return this.label;
+		}
+	}
 
 
 	/** Official Constructor */
-	TipoTrasformazione(String value, ServiceBinding serviceBinding)
+	TipoTrasformazione(String value, String label, ServiceBinding serviceBinding)
 	{
 		this.value = value;
+		this.label = label;
 		this.serviceBinding = serviceBinding;
 	}
 
@@ -78,7 +91,8 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 	}
 	
 	public boolean isTrasformazioneProtocolloEnabled() {
-		return !TipoTrasformazione.EMPTY.equals(this);
+		//return !TipoTrasformazione.EMPTY.equals(this);
+		return true; // sempre
 	}
 	
 	@Override
@@ -139,7 +153,7 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 	public static List<String> toList(ServiceBinding serviceBinding){		
 		List<String> res = new ArrayList<>();
 		for (TipoTrasformazione tmp : values()) {
-			if(serviceBinding!=null && !serviceBinding.equals(tmp.serviceBinding)) {
+			if(serviceBinding!=null && tmp.serviceBinding!=null && !serviceBinding.equals(tmp.serviceBinding)) {
 				continue;
 			}
 			res.add(tmp.getValue());
@@ -147,6 +161,30 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 		return res;
 	}	
 	
+	
+	public static String[] toLabelArray(){
+		return toLabelArray(null);
+	}
+	public static String[] toLabelArray(ServiceBinding serviceBinding){
+		List<String> l = toLabelList(serviceBinding);
+		if(l!=null && l.size()>0) {
+			return l.toArray(new String[1]);
+		}
+		return null;
+	}
+	public static List<String> toLabelList(){
+		return toLabelList(null);
+	}
+	public static List<String> toLabelList(ServiceBinding serviceBinding){		
+		List<String> res = new ArrayList<>();
+		for (TipoTrasformazione tmp : values()) {
+			if(serviceBinding!=null && tmp.serviceBinding!=null && !serviceBinding.equals(tmp.serviceBinding)) {
+				continue;
+			}
+			res.add(tmp.getLabel(serviceBinding));
+		}
+		return res;
+	}
 	
 	public static String[] toStringArray(){
 		return toStringArray(null);
@@ -164,7 +202,7 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 	public static List<String> toStringList(ServiceBinding serviceBinding){		
 		List<String> res = new ArrayList<>();
 		for (TipoTrasformazione tmp : values()) {
-			if(serviceBinding!=null && !serviceBinding.equals(tmp.serviceBinding)) {
+			if(serviceBinding!=null && tmp.serviceBinding!=null && !serviceBinding.equals(tmp.serviceBinding)) {
 				continue;
 			}
 			res.add(tmp.toString());
@@ -189,7 +227,7 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 	public static List<String> toEnumNameList(ServiceBinding serviceBinding){		
 		List<String> res = new ArrayList<>();
 		for (TipoTrasformazione tmp : values()) {
-			if(serviceBinding!=null && !serviceBinding.equals(tmp.serviceBinding)) {
+			if(serviceBinding!=null && tmp.serviceBinding!=null && !serviceBinding.equals(tmp.serviceBinding)) {
 				continue;
 			}
 			res.add(tmp.name());

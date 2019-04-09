@@ -23,6 +23,7 @@ package org.openspcoop2.core.config;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -43,6 +44,8 @@ import java.util.List;
  * 			&lt;element name="richiesta" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-richiesta" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="risposta" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-risposta" minOccurs="1" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="posizione" type="{http://www.w3.org/2001/XMLSchema}int" use="required"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -121,6 +124,22 @@ public class TrasformazioneRegola extends org.openspcoop2.utils.beans.BaseBean i
     return this.risposta.size();
   }
 
+  public java.lang.String getNome() {
+    return this.nome;
+  }
+
+  public void setNome(java.lang.String nome) {
+    this.nome = nome;
+  }
+
+  public int getPosizione() {
+    return this.posizione;
+  }
+
+  public void setPosizione(int posizione) {
+    this.posizione = posizione;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -163,5 +182,13 @@ public class TrasformazioneRegola extends org.openspcoop2.utils.beans.BaseBean i
   public int sizeRisposta() {
   	return this.risposta.size();
   }
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="nome",required=true)
+  protected java.lang.String nome;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @XmlAttribute(name="posizione",required=true)
+  protected int posizione;
 
 }

@@ -201,7 +201,7 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 				}
 			}
 			
-			String nomeTrasformazione = "Modifica Trasformazione" ; // regola.getApplicabilita().getNome();
+			String nomeTrasformazione = oldRegola.getNome();
 			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazioneS);
 			
 			// parametri visualizzazione link
@@ -467,7 +467,7 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 			TrasformazioneRegola trasformazioneAggiornata = porteDelegateCore.getTrasformazione(portaDelegata.getId(), azioniDBCheck, patternDBCheck, contentTypeDBCheck);
 			
 			// setto il titolo della pagina
-			nomeTrasformazione = "Modifica Trasformazione" ; // trasformazioneAggiornata.getApplicabilita().getNome();
+			nomeTrasformazione = oldRegola.getNome();
 			pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, trasformazioneAggiornata.getId() + "");
 			
 			// parametri visualizzazione link

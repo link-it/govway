@@ -1155,6 +1155,25 @@ public class PorteDelegateCore extends ControlStationCore {
 		}
 	}
 	
+	public boolean existsTrasformazione(long idPorta, String nome) throws DriverConfigurazioneException{
+		Connection con = null;
+		String nomeMetodo = "existsTrasformazione";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().existsPortaDelegataTrasformazione(idPorta, nome);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public TrasformazioneRegola getTrasformazione(long idPorta, String azioni, String pattern, String contentType) throws DriverConfigurazioneException{
 		Connection con = null;
 		String nomeMetodo = "getTrasformazione";
@@ -1166,6 +1185,25 @@ public class PorteDelegateCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			return driver.getDriverConfigurazioneDB().getPortaDelegataTrasformazione(idPorta, azioni, pattern, contentType);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public TrasformazioneRegola getTrasformazione(long idPorta, String nome) throws DriverConfigurazioneException{
+		Connection con = null;
+		String nomeMetodo = "getTrasformazione";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().getPortaDelegataTrasformazione(idPorta, nome);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -1214,6 +1252,25 @@ public class PorteDelegateCore extends ControlStationCore {
 		}
 	}
 	
+	public boolean existsTrasformazioneRisposta(long idPorta, long idTrasformazione, String nome) throws DriverConfigurazioneException{
+		Connection con = null;
+		String nomeMetodo = "existsTrasformazioneRisposta";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().existsPortaDelegataTrasformazioneRisposta(idPorta, idTrasformazione, nome);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public TrasformazioneRegolaRisposta getTrasformazioneRisposta(long idPorta, long idTrasformazione, Integer statusMin, Integer statusMax, String pattern, String contentType) throws DriverConfigurazioneException{
 		Connection con = null;
 		String nomeMetodo = "getTrasformazioneRisposta";
@@ -1225,6 +1282,25 @@ public class PorteDelegateCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			return driver.getDriverConfigurazioneDB().getPortaDelegataTrasformazioneRisposta(idPorta, idTrasformazione, statusMin, statusMax, pattern, contentType);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public TrasformazioneRegolaRisposta getTrasformazioneRisposta(long idPorta, long idTrasformazione, String nome) throws DriverConfigurazioneException{
+		Connection con = null;
+		String nomeMetodo = "getTrasformazioneRisposta";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().getPortaDelegataTrasformazioneRisposta(idPorta, idTrasformazione, nome);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -1254,7 +1330,7 @@ public class PorteDelegateCore extends ControlStationCore {
 		}
 	}
 	
-	public boolean existsTrasformazioneRispostaHeader(long idPorta, long idTrasformazione,  long idTrasformazioneRisposta,  String nome, String tipo) throws DriverConfigurazioneException{
+	public boolean existsTrasformazioneRispostaHeader(long idPorta, long idTrasformazione,  long idTrasformazioneRisposta,  String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException{
 		Connection con = null;
 		String nomeMetodo = "existsTrasformazioneRispostaHeader";
 		DriverControlStationDB driver = null;
@@ -1264,7 +1340,7 @@ public class PorteDelegateCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-			return driver.getDriverConfigurazioneDB().existsPortaDelegataTrasformazioneRispostaHeader(idPorta, idTrasformazione, idTrasformazioneRisposta, nome, tipo);
+			return driver.getDriverConfigurazioneDB().existsPortaDelegataTrasformazioneRispostaHeader(idPorta, idTrasformazione, idTrasformazioneRisposta, nome, tipo, checkTipo);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -1273,7 +1349,7 @@ public class PorteDelegateCore extends ControlStationCore {
 		}
 	}
 	
-	public TrasformazioneRegolaParametro getTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo) throws DriverConfigurazioneException{
+	public TrasformazioneRegolaParametro getTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException{
 		Connection con = null;
 		String nomeMetodo = "getTrasformazioneRispostaHeader";
 		DriverControlStationDB driver = null;
@@ -1283,7 +1359,7 @@ public class PorteDelegateCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-			return driver.getDriverConfigurazioneDB().getPortaDelegataTrasformazioneRispostaHeader(idPorta, idTrasformazione, idTrasformazioneRisposta, nome, tipo);
+			return driver.getDriverConfigurazioneDB().getPortaDelegataTrasformazioneRispostaHeader(idPorta, idTrasformazione, idTrasformazioneRisposta, nome, tipo, checkTipo);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -1334,7 +1410,7 @@ public class PorteDelegateCore extends ControlStationCore {
 		}
 	}
 	
-	public boolean existsTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione, String nome, String tipo) throws DriverConfigurazioneException{
+	public boolean existsTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException{
 		Connection con = null;
 		String nomeMetodo = "existsTrasformazioneRichiestaHeader";
 		DriverControlStationDB driver = null;
@@ -1344,7 +1420,7 @@ public class PorteDelegateCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-			return driver.getDriverConfigurazioneDB().existsPortaDelegataTrasformazioneRichiestaHeader(idPorta, idTrasformazione, nome, tipo);
+			return driver.getDriverConfigurazioneDB().existsPortaDelegataTrasformazioneRichiestaHeader(idPorta, idTrasformazione, nome, tipo, checkTipo);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -1353,7 +1429,7 @@ public class PorteDelegateCore extends ControlStationCore {
 		}
 	}
 	
-	public TrasformazioneRegolaParametro getTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione, String nome, String tipo) throws DriverConfigurazioneException{
+	public TrasformazioneRegolaParametro getTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException{
 		Connection con = null;
 		String nomeMetodo = "getTrasformazioneRichiestaHeader";
 		DriverControlStationDB driver = null;
@@ -1363,7 +1439,7 @@ public class PorteDelegateCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-			return driver.getDriverConfigurazioneDB().getPortaDelegataTrasformazioneRichiestaHeader(idPorta, idTrasformazione, nome, tipo);
+			return driver.getDriverConfigurazioneDB().getPortaDelegataTrasformazioneRichiestaHeader(idPorta, idTrasformazione, nome, tipo, checkTipo);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -1372,7 +1448,7 @@ public class PorteDelegateCore extends ControlStationCore {
 		}
 	}
 	
-	public boolean existsTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione, String nome, String tipo) throws DriverConfigurazioneException{
+	public boolean existsTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException{
 		Connection con = null;
 		String nomeMetodo = "existsTrasformazioneRichiestaUrlParameter";
 		DriverControlStationDB driver = null;
@@ -1382,7 +1458,7 @@ public class PorteDelegateCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-			return driver.getDriverConfigurazioneDB().existsPortaDelegataTrasformazioneRichiestaUrlParameter(idPorta, idTrasformazione, nome, tipo);
+			return driver.getDriverConfigurazioneDB().existsPortaDelegataTrasformazioneRichiestaUrlParameter(idPorta, idTrasformazione, nome, tipo, checkTipo);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -1391,7 +1467,7 @@ public class PorteDelegateCore extends ControlStationCore {
 		}
 	}
 	
-	public TrasformazioneRegolaParametro getTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione, String nome, String tipo) throws DriverConfigurazioneException{
+	public TrasformazioneRegolaParametro getTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException{
 		Connection con = null;
 		String nomeMetodo = "getTrasformazioneRichiestaUrlParameter";
 		DriverControlStationDB driver = null;
@@ -1401,7 +1477,7 @@ public class PorteDelegateCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-			return driver.getDriverConfigurazioneDB().getPortaDelegataTrasformazioneRichiestaUrlParameter(idPorta, idTrasformazione, nome, tipo);
+			return driver.getDriverConfigurazioneDB().getPortaDelegataTrasformazioneRichiestaUrlParameter(idPorta, idTrasformazione, nome, tipo, checkTipo);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

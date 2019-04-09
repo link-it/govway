@@ -45,6 +45,8 @@ public class TrasformazioneRegolaModel extends AbstractModel<TrasformazioneRegol
 		this.APPLICABILITA = new org.openspcoop2.core.config.model.TrasformazioneRegolaApplicabilitaRichiestaModel(new Field("applicabilita",org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta.class,"trasformazione-regola",TrasformazioneRegola.class));
 		this.RICHIESTA = new org.openspcoop2.core.config.model.TrasformazioneRegolaRichiestaModel(new Field("richiesta",org.openspcoop2.core.config.TrasformazioneRegolaRichiesta.class,"trasformazione-regola",TrasformazioneRegola.class));
 		this.RISPOSTA = new org.openspcoop2.core.config.model.TrasformazioneRegolaRispostaModel(new Field("risposta",org.openspcoop2.core.config.TrasformazioneRegolaRisposta.class,"trasformazione-regola",TrasformazioneRegola.class));
+		this.NOME = new Field("nome",java.lang.String.class,"trasformazione-regola",TrasformazioneRegola.class);
+		this.POSIZIONE = new Field("posizione",int.class,"trasformazione-regola",TrasformazioneRegola.class);
 	
 	}
 	
@@ -55,6 +57,8 @@ public class TrasformazioneRegolaModel extends AbstractModel<TrasformazioneRegol
 		this.APPLICABILITA = new org.openspcoop2.core.config.model.TrasformazioneRegolaApplicabilitaRichiestaModel(new ComplexField(father,"applicabilita",org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta.class,"trasformazione-regola",TrasformazioneRegola.class));
 		this.RICHIESTA = new org.openspcoop2.core.config.model.TrasformazioneRegolaRichiestaModel(new ComplexField(father,"richiesta",org.openspcoop2.core.config.TrasformazioneRegolaRichiesta.class,"trasformazione-regola",TrasformazioneRegola.class));
 		this.RISPOSTA = new org.openspcoop2.core.config.model.TrasformazioneRegolaRispostaModel(new ComplexField(father,"risposta",org.openspcoop2.core.config.TrasformazioneRegolaRisposta.class,"trasformazione-regola",TrasformazioneRegola.class));
+		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"trasformazione-regola",TrasformazioneRegola.class);
+		this.POSIZIONE = new ComplexField(father,"posizione",int.class,"trasformazione-regola",TrasformazioneRegola.class);
 	
 	}
 	
@@ -65,6 +69,10 @@ public class TrasformazioneRegolaModel extends AbstractModel<TrasformazioneRegol
 	public org.openspcoop2.core.config.model.TrasformazioneRegolaRichiestaModel RICHIESTA = null;
 	 
 	public org.openspcoop2.core.config.model.TrasformazioneRegolaRispostaModel RISPOSTA = null;
+	 
+	public IField NOME = null;
+	 
+	public IField POSIZIONE = null;
 	 
 
 	@Override

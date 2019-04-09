@@ -3216,7 +3216,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.setSelectDistinct(true);
 			sqlQueryObject.setANDLogicOperator(true);
-			sqlQueryObject.addOrderBy(nomeTabella+".id");
+			sqlQueryObject.addOrderBy(nomeTabella+".posizione");
+			sqlQueryObject.addOrderBy(nomeTabella+".nome");
 			sqlQueryObject.setSortType(true);
 			sqlQueryObject.setLimit(limit);
 			sqlQueryObject.setOffset(offset);
@@ -3229,6 +3230,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			while (rs.next()) {
 				
 				TrasformazioneRegola regola = new TrasformazioneRegola();
+				
+				String nome = rs.getString("nome");
+				regola.setNome(nome);
+
+				int posizione = rs.getInt("posizione");
+				regola.setPosizione(posizione);
 				
 				String applicabilita_azioni = rs.getString("applicabilita_azioni");
 				String applicabilita_ct = rs.getString("applicabilita_ct");
@@ -3277,7 +3284,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					richiesta.setConversione(true);
 				}
 				else {
-					richiesta.setConversione(true);
+					richiesta.setConversione(false);
 				}
 				richiesta.setConversioneTipo(rs.getString("req_conversione_tipo"));
 				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
@@ -3438,102 +3445,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			risultato = stmt.executeQuery();
 			if (risultato.next()) {
 				
-				regola = new TrasformazioneRegola();
-				
-				String applicabilita_azioni = risultato.getString("applicabilita_azioni");
-				String applicabilita_ct = risultato.getString("applicabilita_ct");
-				String applicabilita_pattern = risultato.getString("applicabilita_pattern");
-				if( (applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ||
-						(applicabilita_ct!=null && !"".equals(applicabilita_ct)) ||
-						(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)) 
-						) {
-					TrasformazioneRegolaApplicabilitaRichiesta applicabilita = new TrasformazioneRegolaApplicabilitaRichiesta();
-					
-					if( (applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ) {
-						if(applicabilita_azioni.contains(",")) {
-							String [] tmp = applicabilita_azioni.split(",");
-							for (int i = 0; i < tmp.length; i++) {
-								applicabilita.addAzione(tmp[i].trim());
-							}
-						}
-						else {
-							applicabilita.addAzione(applicabilita_azioni);
-						}
-					}
-					
-					if( (applicabilita_ct!=null && !"".equals(applicabilita_ct)) ) {
-						if(applicabilita_ct.contains(",")) {
-							String [] tmp = applicabilita_ct.split(",");
-							for (int i = 0; i < tmp.length; i++) {
-								applicabilita.addContentType(tmp[i].trim());
-							}
-						}
-						else {
-							applicabilita.addContentType(applicabilita_ct);
-						}
-					}
-					
-					if(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)){
-						applicabilita.setPattern(applicabilita_pattern);
-					}
-					
-					regola.setApplicabilita(applicabilita);
-				}
-				
-				TrasformazioneRegolaRichiesta richiesta = new TrasformazioneRegolaRichiesta();
-				
-				int req_conversione_enabled = risultato.getInt("req_conversione_enabled");
-				if(CostantiDB.TRUE == req_conversione_enabled) {
-					richiesta.setConversione(true);
-				}
-				else {
-					richiesta.setConversione(true);
-				}
-				richiesta.setConversioneTipo(risultato.getString("req_conversione_tipo"));
-				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
-				richiesta.setConversioneTemplate(jdbcAdapter.getBinaryData(risultato, "req_conversione_template"));
-				richiesta.setContentType(risultato.getString("req_content_type"));
-				
-				int trasformazione_rest = risultato.getInt("rest_transformation");
-				if(CostantiDB.TRUE == trasformazione_rest) {
-					TrasformazioneRest trasformazioneRest = new TrasformazioneRest();
-					trasformazioneRest.setMetodo(risultato.getString("rest_method"));
-					trasformazioneRest.setPath(risultato.getString("rest_path"));
-					richiesta.setTrasformazioneRest(trasformazioneRest);
-				}
-					
-				int trasformazione_soap = risultato.getInt("soap_transformation");
-				if(CostantiDB.TRUE == trasformazione_soap) {
-					TrasformazioneSoap trasformazioneSoap = new TrasformazioneSoap();
-					
-					trasformazioneSoap.setVersione(DriverConfigurazioneDB_LIB.getEnumVersioneSOAP(risultato.getString("soap_version")));
-					trasformazioneSoap.setSoapAction(risultato.getString("soap_action"));
-					
-					int envelope = risultato.getInt("soap_envelope");
-					if(CostantiDB.TRUE == envelope) {
-						trasformazioneSoap.setEnvelope(true);
-					}
-					else {
-						trasformazioneSoap.setEnvelope(false);
-					}
-					
-					int envelope_as_attach = risultato.getInt("soap_envelope_as_attach");
-					if(CostantiDB.TRUE == envelope_as_attach) {
-						trasformazioneSoap.setEnvelopeAsAttachment(true);
-						
-						trasformazioneSoap.setEnvelopeBodyConversioneTipo(risultato.getString("soap_envelope_tipo"));
-						trasformazioneSoap.setEnvelopeBodyConversioneTemplate(jdbcAdapter.getBinaryData(risultato, "soap_envelope_template"));
-					}
-					else {
-						trasformazioneSoap.setEnvelopeAsAttachment(false);
-					}
-					
-					richiesta.setTrasformazioneSoap(trasformazioneSoap);
-				}
-				
-				regola.setId(risultato.getLong("id"));
-				
-				regola.setRichiesta(richiesta);
+				regola = _getTrasformazione(risultato);
 			}
 			
 			risultato.close();
@@ -3572,6 +3484,203 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				// ignore exception
 			}
 		}
+	}
+	
+	public TrasformazioneRegola getPortaApplicativaTrasformazione(long idPorta, String nome) throws DriverConfigurazioneException {
+		String nomeMetodo = "getPortaApplicativaTrasformazione";
+		boolean delegata = false;
+		return _getTrasformazione(idPorta, nome, nomeMetodo, delegata);
+	}
+	
+	public TrasformazioneRegola getPortaDelegataTrasformazione(long idPorta, String nome) throws DriverConfigurazioneException {
+		String nomeMetodo = "getPortaDelegataTrasformazione";
+		boolean delegata = true;
+		return _getTrasformazione(idPorta, nome, nomeMetodo, delegata);
+	}
+	
+	private TrasformazioneRegola _getTrasformazione(long idPorta, String nome, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		String queryString;
+		String nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		TrasformazioneRegola regola = null;
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(nomeTabella);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			sqlQueryObject.addWhereCondition("id_porta = ?");
+			sqlQueryObject.addWhereCondition("nome = ?");
+			
+			
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			int parameterIndex = 1;
+			stmt.setLong(parameterIndex ++, idPorta);
+			stmt.setString(parameterIndex ++, nome);
+						
+			risultato = stmt.executeQuery();
+			if (risultato.next()) {
+				
+				regola = _getTrasformazione(risultato);
+			}
+			
+			risultato.close();
+			stmt.close();
+
+			return regola;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	private TrasformazioneRegola _getTrasformazione(ResultSet risultato) throws Exception {
+		TrasformazioneRegola regola  = new TrasformazioneRegola();
+				
+		String applicabilita_azioni = risultato.getString("applicabilita_azioni");
+		String applicabilita_ct = risultato.getString("applicabilita_ct");
+		String applicabilita_pattern = risultato.getString("applicabilita_pattern");
+		if( (applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ||
+				(applicabilita_ct!=null && !"".equals(applicabilita_ct)) ||
+				(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)) 
+				) {
+			TrasformazioneRegolaApplicabilitaRichiesta applicabilita = new TrasformazioneRegolaApplicabilitaRichiesta();
+			
+			if( (applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ) {
+				if(applicabilita_azioni.contains(",")) {
+					String [] tmp = applicabilita_azioni.split(",");
+					for (int i = 0; i < tmp.length; i++) {
+						applicabilita.addAzione(tmp[i].trim());
+					}
+				}
+				else {
+					applicabilita.addAzione(applicabilita_azioni);
+				}
+			}
+			
+			if( (applicabilita_ct!=null && !"".equals(applicabilita_ct)) ) {
+				if(applicabilita_ct.contains(",")) {
+					String [] tmp = applicabilita_ct.split(",");
+					for (int i = 0; i < tmp.length; i++) {
+						applicabilita.addContentType(tmp[i].trim());
+					}
+				}
+				else {
+					applicabilita.addContentType(applicabilita_ct);
+				}
+			}
+			
+			if(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)){
+				applicabilita.setPattern(applicabilita_pattern);
+			}
+			
+			regola.setApplicabilita(applicabilita);
+		}
+		
+		TrasformazioneRegolaRichiesta richiesta = new TrasformazioneRegolaRichiesta();
+		
+		int req_conversione_enabled = risultato.getInt("req_conversione_enabled");
+		if(CostantiDB.TRUE == req_conversione_enabled) {
+			richiesta.setConversione(true);
+		}
+		else {
+			richiesta.setConversione(false);
+		}
+		richiesta.setConversioneTipo(risultato.getString("req_conversione_tipo"));
+		IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
+		richiesta.setConversioneTemplate(jdbcAdapter.getBinaryData(risultato, "req_conversione_template"));
+		richiesta.setContentType(risultato.getString("req_content_type"));
+		
+		int trasformazione_rest = risultato.getInt("rest_transformation");
+		if(CostantiDB.TRUE == trasformazione_rest) {
+			TrasformazioneRest trasformazioneRest = new TrasformazioneRest();
+			trasformazioneRest.setMetodo(risultato.getString("rest_method"));
+			trasformazioneRest.setPath(risultato.getString("rest_path"));
+			richiesta.setTrasformazioneRest(trasformazioneRest);
+		}
+			
+		int trasformazione_soap = risultato.getInt("soap_transformation");
+		if(CostantiDB.TRUE == trasformazione_soap) {
+			TrasformazioneSoap trasformazioneSoap = new TrasformazioneSoap();
+			
+			trasformazioneSoap.setVersione(DriverConfigurazioneDB_LIB.getEnumVersioneSOAP(risultato.getString("soap_version")));
+			trasformazioneSoap.setSoapAction(risultato.getString("soap_action"));
+			
+			int envelope = risultato.getInt("soap_envelope");
+			if(CostantiDB.TRUE == envelope) {
+				trasformazioneSoap.setEnvelope(true);
+			}
+			else {
+				trasformazioneSoap.setEnvelope(false);
+			}
+			
+			int envelope_as_attach = risultato.getInt("soap_envelope_as_attach");
+			if(CostantiDB.TRUE == envelope_as_attach) {
+				trasformazioneSoap.setEnvelopeAsAttachment(true);
+				
+				trasformazioneSoap.setEnvelopeBodyConversioneTipo(risultato.getString("soap_envelope_tipo"));
+				trasformazioneSoap.setEnvelopeBodyConversioneTemplate(jdbcAdapter.getBinaryData(risultato, "soap_envelope_template"));
+			}
+			else {
+				trasformazioneSoap.setEnvelopeAsAttachment(false);
+			}
+			
+			richiesta.setTrasformazioneSoap(trasformazioneSoap);
+		}
+		
+		regola.setId(risultato.getLong("id"));
+		
+		regola.setRichiesta(richiesta);
+		
+		return regola;
+
 	}
 	
 	public boolean existsPortaApplicativaTrasformazione(long idPorta, String azioni, String pattern, String contentType) throws DriverConfigurazioneException {
@@ -3645,6 +3754,98 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stmt.setString(parameterIndex ++, pattern);
 			if(contentType != null)
 				stmt.setString(parameterIndex ++, contentType);
+			
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				count = risultato.getInt(1);
+			risultato.close();
+			stmt.close();
+
+			return count > 0;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public boolean existsPortaApplicativaTrasformazione(long idPorta, String nome) throws DriverConfigurazioneException {
+		String nomeMetodo = "existsPortaApplicativaTrasformazione";
+		boolean delegata = false;
+		return _existsTrasformazione(idPorta, nome, nomeMetodo, delegata);
+	}
+	
+	public boolean existsPortaDelegataTrasformazione(long idPorta, String nome) throws DriverConfigurazioneException {
+		String nomeMetodo = "existsPortaDelegataTrasformazione";
+		boolean delegata = true;
+		return _existsTrasformazione(idPorta, nome, nomeMetodo, delegata);
+	}
+	
+	private boolean _existsTrasformazione(long idPorta, String nome, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		String queryString;
+		String nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			int count = 0;
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(nomeTabella);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			sqlQueryObject.addWhereCondition("id_porta = ?");
+			sqlQueryObject.addWhereCondition("nome = ?");
+						
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			int parameterIndex = 1;
+			stmt.setLong(parameterIndex ++, idPorta);
+			stmt.setString(parameterIndex ++, nome);
 			
 			risultato = stmt.executeQuery();
 			if (risultato.next())
@@ -3762,6 +3963,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addFromTable(nomeTabellaRisposta);
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".nome");
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".posizione");
 			sqlQueryObject.addSelectField(nomeTabellaRisposta+".applicabilita_status_min");
 			sqlQueryObject.addSelectField(nomeTabellaRisposta+".applicabilita_status_max");
 			sqlQueryObject.addSelectField(nomeTabellaRisposta+".applicabilita_ct");
@@ -3783,7 +3986,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRisposta+".id_trasformazione");
 			sqlQueryObject.setSelectDistinct(true);
 			sqlQueryObject.setANDLogicOperator(true);
-			sqlQueryObject.addOrderBy(nomeTabellaRisposta+".id_trasformazione");
+			sqlQueryObject.addOrderBy(nomeTabellaRisposta+".posizione");
+			sqlQueryObject.addOrderBy(nomeTabellaRisposta+".nome");
 			sqlQueryObject.setSortType(true);
 			sqlQueryObject.setLimit(limit);
 			sqlQueryObject.setOffset(offset);
@@ -3795,89 +3999,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			rs = stmt.executeQuery();
 
 			while (rs.next()) { 
-				TrasformazioneRegolaRisposta risposta = new TrasformazioneRegolaRisposta();
-				
-				int applicabilita_status_min = rs.getInt("applicabilita_status_min");
-				int applicabilita_status_max = rs.getInt("applicabilita_status_max");
-				String applicabilita_ct = rs.getString("applicabilita_ct");
-				String applicabilita_pattern = rs.getString("applicabilita_pattern");
-				if( (applicabilita_status_min >0 || applicabilita_status_max>0) ||
-						(applicabilita_ct!=null && !"".equals(applicabilita_ct)) ||
-						(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)) 
-						) {
-					TrasformazioneRegolaApplicabilitaRisposta applicabilita = new TrasformazioneRegolaApplicabilitaRisposta();
-					
-					if(applicabilita_status_min>0) {
-						applicabilita.setReturnCodeMin(applicabilita_status_min);
-					}
-					if(applicabilita_status_max>0) {
-						applicabilita.setReturnCodeMax(applicabilita_status_max);
-					}
-
-					if( (applicabilita_ct!=null && !"".equals(applicabilita_ct)) ) {
-						if(applicabilita_ct.contains(",")) {
-							String [] tmp = applicabilita_ct.split(",");
-							for (int i = 0; i < tmp.length; i++) {
-								applicabilita.addContentType(tmp[i].trim());
-							}
-						}
-						else {
-							applicabilita.addContentType(applicabilita_ct);
-						}
-					}
-					
-					if(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)){
-						applicabilita.setPattern(applicabilita_pattern);
-					}
-					
-					risposta.setApplicabilita(applicabilita);
-				}
-				
-				int conversione_enabled = rs.getInt("conversione_enabled");
-				if(CostantiDB.TRUE == conversione_enabled) {
-					risposta.setConversione(true);
-				}
-				else {
-					risposta.setConversione(true);
-				}
-				risposta.setConversioneTipo(rs.getString("conversione_tipo"));
-				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
-				risposta.setConversioneTemplate(jdbcAdapter.getBinaryData(rs, "conversione_template"));
-				risposta.setContentType(rs.getString("content_type"));
-				int return_code = rs.getInt("return_code");
-				if(return_code>0) {
-					risposta.setReturnCode(return_code);
-				}
-				
-				int trasformazione_soap = rs.getInt("soap_transformation");
-				if(CostantiDB.TRUE == trasformazione_soap) {
-				
-					TrasformazioneSoapRisposta trasformazioneSoap = new TrasformazioneSoapRisposta();
-					
-					int envelope = rs.getInt("soap_envelope");
-					if(CostantiDB.TRUE == envelope) {
-						trasformazioneSoap.setEnvelope(true);
-					}
-					else {
-						trasformazioneSoap.setEnvelope(false);
-					}
-					
-					int envelope_as_attach = rs.getInt("soap_envelope_as_attach");
-					if(CostantiDB.TRUE == envelope_as_attach) {
-						trasformazioneSoap.setEnvelopeAsAttachment(true);
-						
-						trasformazioneSoap.setEnvelopeBodyConversioneTipo(rs.getString("soap_envelope_tipo"));
-						trasformazioneSoap.setEnvelopeBodyConversioneTemplate(jdbcAdapter.getBinaryData(rs, "soap_envelope_template"));
-					}
-					else {
-						trasformazioneSoap.setEnvelopeAsAttachment(false);
-					}
-					
-					risposta.setTrasformazioneSoap(trasformazioneSoap);
-					
-				}
-
-				risposta.setId(rs.getLong("id"));
+				TrasformazioneRegolaRisposta risposta = _readTrasformazioneRegolaRisposta(rs);
 				lista.add(risposta);
 			}
 
@@ -3956,6 +4078,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addFromTable(nomeTabellaRisposta);
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".nome");
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".posizione");
 			sqlQueryObject.addSelectField(nomeTabellaRisposta+".applicabilita_status_min");
 			sqlQueryObject.addSelectField(nomeTabellaRisposta+".applicabilita_status_max");
 			sqlQueryObject.addSelectField(nomeTabellaRisposta+".applicabilita_ct");
@@ -4019,89 +4143,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			rs = stmt.executeQuery();
 			if (rs.next()) {
 				
-				risposta = new TrasformazioneRegolaRisposta();
-				
-				int applicabilita_status_min = rs.getInt("applicabilita_status_min");
-				int applicabilita_status_max = rs.getInt("applicabilita_status_max");
-				String applicabilita_ct = rs.getString("applicabilita_ct");
-				String applicabilita_pattern = rs.getString("applicabilita_pattern");
-				if( (applicabilita_status_min >0 || applicabilita_status_max>0) ||
-						(applicabilita_ct!=null && !"".equals(applicabilita_ct)) ||
-						(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)) 
-						) {
-					TrasformazioneRegolaApplicabilitaRisposta applicabilita = new TrasformazioneRegolaApplicabilitaRisposta();
-					
-					if(applicabilita_status_min>0) {
-						applicabilita.setReturnCodeMin(applicabilita_status_min);
-					}
-					if(applicabilita_status_max>0) {
-						applicabilita.setReturnCodeMax(applicabilita_status_max);
-					}
-
-					if( (applicabilita_ct!=null && !"".equals(applicabilita_ct)) ) {
-						if(applicabilita_ct.contains(",")) {
-							String [] tmp = applicabilita_ct.split(",");
-							for (int i = 0; i < tmp.length; i++) {
-								applicabilita.addContentType(tmp[i].trim());
-							}
-						}
-						else {
-							applicabilita.addContentType(applicabilita_ct);
-						}
-					}
-					
-					if(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)){
-						applicabilita.setPattern(applicabilita_pattern);
-					}
-					
-					risposta.setApplicabilita(applicabilita);
-				}
-				
-				int conversione_enabled = rs.getInt("conversione_enabled");
-				if(CostantiDB.TRUE == conversione_enabled) {
-					risposta.setConversione(true);
-				}
-				else {
-					risposta.setConversione(true);
-				}
-				risposta.setConversioneTipo(rs.getString("conversione_tipo"));
-				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
-				risposta.setConversioneTemplate(jdbcAdapter.getBinaryData(rs, "conversione_template"));
-				risposta.setContentType(rs.getString("content_type"));
-				int return_code = rs.getInt("return_code");
-				if(return_code>0) {
-					risposta.setReturnCode(return_code);
-				}
-				
-				int trasformazione_soap = rs.getInt("soap_transformation");
-				if(CostantiDB.TRUE == trasformazione_soap) {
-				
-					TrasformazioneSoapRisposta trasformazioneSoap = new TrasformazioneSoapRisposta();
-					
-					int envelope = rs.getInt("soap_envelope");
-					if(CostantiDB.TRUE == envelope) {
-						trasformazioneSoap.setEnvelope(true);
-					}
-					else {
-						trasformazioneSoap.setEnvelope(false);
-					}
-					
-					int envelope_as_attach = rs.getInt("soap_envelope_as_attach");
-					if(CostantiDB.TRUE == envelope_as_attach) {
-						trasformazioneSoap.setEnvelopeAsAttachment(true);
-						
-						trasformazioneSoap.setEnvelopeBodyConversioneTipo(rs.getString("soap_envelope_tipo"));
-						trasformazioneSoap.setEnvelopeBodyConversioneTemplate(jdbcAdapter.getBinaryData(rs, "soap_envelope_template"));
-					}
-					else {
-						trasformazioneSoap.setEnvelopeAsAttachment(false);
-					}
-					
-					risposta.setTrasformazioneSoap(trasformazioneSoap);
-					
-				}
-
-				risposta.setId(rs.getLong("id"));
+				risposta = _readTrasformazioneRegolaRisposta(rs);
 			}
 			
 			rs.close();
@@ -4140,6 +4182,217 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				// ignore exception
 			}
 		}
+	}
+	
+	public TrasformazioneRegolaRisposta getPortaApplicativaTrasformazioneRisposta(long idPorta, long idTrasformazione, String nome) throws DriverConfigurazioneException {
+		String nomeMetodo = "getPortaApplicativaTrasformazioneRisposta";
+		boolean delegata = false;
+		return _getTrasformazioneRisposta(idPorta, idTrasformazione, nome, nomeMetodo, delegata);
+	}
+	
+	public TrasformazioneRegolaRisposta getPortaDelegataTrasformazioneRisposta(long idPorta, long idTrasformazione, String nome) throws DriverConfigurazioneException {
+		String nomeMetodo = "getPortaDelegataTrasformazioneRisposta";
+		boolean delegata = true;
+		return _getTrasformazioneRisposta(idPorta, idTrasformazione, nome, nomeMetodo, delegata);
+	}
+	
+	private TrasformazioneRegolaRisposta _getTrasformazioneRisposta(long idPorta, long idTrasformazione, String nome, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet rs =null;
+		String queryString;
+		String nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI;
+		String nomeTabellaRisposta = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE;
+		
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		TrasformazioneRegolaRisposta risposta = null;
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(nomeTabella);
+			sqlQueryObject.addFromTable(nomeTabellaRisposta);
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".nome");
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".posizione");
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".applicabilita_status_min");
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".applicabilita_status_max");
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".applicabilita_ct");
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".applicabilita_pattern");
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".conversione_enabled");
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".conversione_tipo");
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".conversione_template");
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".content_type");
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".return_code");
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".soap_envelope");
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".soap_envelope_as_attach");
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".soap_envelope_tipo");
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".soap_envelope_template");
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".id");
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".id_trasformazione");
+			sqlQueryObject.addSelectField(nomeTabella+".soap_transformation");
+			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
+			sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".id_trasformazione=?");
+			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRisposta+".id_trasformazione");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".nome = ?");
+			
+			
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			int parameterIndex = 1;
+			stmt.setLong(parameterIndex ++, idPorta);
+			stmt.setLong(parameterIndex ++, idTrasformazione);
+			
+			stmt.setString(parameterIndex ++, nome);
+			
+			rs = stmt.executeQuery();
+			if (rs.next()) {
+				
+				risposta = _readTrasformazioneRegolaRisposta(rs);
+			}
+			
+			rs.close();
+			stmt.close();
+
+			return risposta;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	private TrasformazioneRegolaRisposta _readTrasformazioneRegolaRisposta(ResultSet rs) throws Exception{
+		TrasformazioneRegolaRisposta risposta = new TrasformazioneRegolaRisposta();
+		
+		String nome = rs.getString("nome");
+		risposta.setNome(nome);
+
+		int posizione = rs.getInt("posizione");
+		risposta.setPosizione(posizione);
+		
+		int applicabilita_status_min = rs.getInt("applicabilita_status_min");
+		int applicabilita_status_max = rs.getInt("applicabilita_status_max");
+		String applicabilita_ct = rs.getString("applicabilita_ct");
+		String applicabilita_pattern = rs.getString("applicabilita_pattern");
+		if( (applicabilita_status_min >0 || applicabilita_status_max>0) ||
+				(applicabilita_ct!=null && !"".equals(applicabilita_ct)) ||
+				(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)) 
+				) {
+			TrasformazioneRegolaApplicabilitaRisposta applicabilita = new TrasformazioneRegolaApplicabilitaRisposta();
+			
+			if(applicabilita_status_min>0) {
+				applicabilita.setReturnCodeMin(applicabilita_status_min);
+			}
+			if(applicabilita_status_max>0) {
+				applicabilita.setReturnCodeMax(applicabilita_status_max);
+			}
+
+			if( (applicabilita_ct!=null && !"".equals(applicabilita_ct)) ) {
+				if(applicabilita_ct.contains(",")) {
+					String [] tmp = applicabilita_ct.split(",");
+					for (int i = 0; i < tmp.length; i++) {
+						applicabilita.addContentType(tmp[i].trim());
+					}
+				}
+				else {
+					applicabilita.addContentType(applicabilita_ct);
+				}
+			}
+			
+			if(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)){
+				applicabilita.setPattern(applicabilita_pattern);
+			}
+			
+			risposta.setApplicabilita(applicabilita);
+		}
+		
+		int conversione_enabled = rs.getInt("conversione_enabled");
+		if(CostantiDB.TRUE == conversione_enabled) {
+			risposta.setConversione(true);
+		}
+		else {
+			risposta.setConversione(false);
+		}
+		risposta.setConversioneTipo(rs.getString("conversione_tipo"));
+		IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
+		risposta.setConversioneTemplate(jdbcAdapter.getBinaryData(rs, "conversione_template"));
+		risposta.setContentType(rs.getString("content_type"));
+		int return_code = rs.getInt("return_code");
+		if(return_code>0) {
+			risposta.setReturnCode(return_code);
+		}
+		
+		int trasformazione_soap = rs.getInt("soap_transformation");
+		if(CostantiDB.TRUE == trasformazione_soap) {
+		
+			TrasformazioneSoapRisposta trasformazioneSoap = new TrasformazioneSoapRisposta();
+			
+			int envelope = rs.getInt("soap_envelope");
+			if(CostantiDB.TRUE == envelope) {
+				trasformazioneSoap.setEnvelope(true);
+			}
+			else {
+				trasformazioneSoap.setEnvelope(false);
+			}
+			
+			int envelope_as_attach = rs.getInt("soap_envelope_as_attach");
+			if(CostantiDB.TRUE == envelope_as_attach) {
+				trasformazioneSoap.setEnvelopeAsAttachment(true);
+				
+				trasformazioneSoap.setEnvelopeBodyConversioneTipo(rs.getString("soap_envelope_tipo"));
+				trasformazioneSoap.setEnvelopeBodyConversioneTemplate(jdbcAdapter.getBinaryData(rs, "soap_envelope_template"));
+			}
+			else {
+				trasformazioneSoap.setEnvelopeAsAttachment(false);
+			}
+			
+			risposta.setTrasformazioneSoap(trasformazioneSoap);
+			
+		}
+
+		risposta.setId(rs.getLong("id"));
+		
+		return  risposta;
 	}
 	
 	public boolean existsPortaApplicativaTrasformazioneRisposta(long idPorta, long idTrasformazione, Integer statusMin, Integer statusMax, String pattern, String contentType) throws DriverConfigurazioneException {
@@ -4270,6 +4523,105 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 	}
 	
+	public boolean existsPortaApplicativaTrasformazioneRisposta(long idPorta, long idTrasformazione, String nome) throws DriverConfigurazioneException {
+		String nomeMetodo = "existsPortaApplicativaTrasformazioneRisposta";
+		boolean delegata = false;
+		return _existsTrasformazioneRisposta(idPorta, idTrasformazione, nome, nomeMetodo, delegata);
+	}
+	
+	public boolean existsPortaDelegataTrasformazioneRisposta(long idPorta, long idTrasformazione, String nome) throws DriverConfigurazioneException {
+		String nomeMetodo = "existsPortaDelegataTrasformazioneRisposta";
+		boolean delegata = true;
+		return _existsTrasformazioneRisposta(idPorta, idTrasformazione, nome, nomeMetodo, delegata);
+	}
+	
+	private boolean _existsTrasformazioneRisposta(long idPorta, long idTrasformazione, String nome, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		String queryString;
+		String nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI;
+		String nomeTabellaRisposta = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			int count = 0;
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(nomeTabella);
+			sqlQueryObject.addFromTable(nomeTabellaRisposta);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
+			sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".id_trasformazione=?");
+			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRisposta+".id_trasformazione");
+			sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".nome = ?");
+			
+			
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			int parameterIndex = 1;
+			stmt.setLong(parameterIndex ++, idPorta);
+			stmt.setLong(parameterIndex ++, idTrasformazione);
+			
+			stmt.setString(parameterIndex ++, nome);
+			
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				count = risultato.getInt(1);
+			risultato.close();
+			stmt.close();
+
+			return count > 0;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	
 	public List<TrasformazioneRegolaParametro> porteDelegateTrasformazioniRispostaHeaderList(long idPD, long idTrasformazione, long idTrasformazioneRisposta, ISearch ricerca) throws DriverConfigurazioneException {
 		int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER;
 		String nomeMetodo = "porteDelegateTrasformazioniRispostaHeaderList";
@@ -4362,7 +4714,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".id="+nomeTabellaRispostaHeader+".id_transform_risp");
 			sqlQueryObject.setSelectDistinct(true);
 			sqlQueryObject.setANDLogicOperator(true);
-			sqlQueryObject.addOrderBy(nomeTabellaRispostaHeader+".id");
+			sqlQueryObject.addOrderBy(nomeTabellaRispostaHeader+".nome");
 			sqlQueryObject.setSortType(true);
 			sqlQueryObject.setLimit(limit);
 			sqlQueryObject.setOffset(offset);
@@ -4418,19 +4770,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		return lista;
 	} 
 	
-	public boolean existsPortaApplicativaTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo) throws DriverConfigurazioneException {
+	public boolean existsPortaApplicativaTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException {
 		String nomeMetodo = "existsPortaApplicativaTrasformazioneRispostaHeader";
 		boolean delegata = false;
-		return _existsTrasformazioneRispostaHeader(idPorta, idTrasformazione, idTrasformazioneRisposta, nome, tipo, nomeMetodo, delegata);
+		return _existsTrasformazioneRispostaHeader(idPorta, idTrasformazione, idTrasformazioneRisposta, nome, tipo, checkTipo, nomeMetodo, delegata);
 	}
 	
-	public boolean existsPortaDelegataTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo) throws DriverConfigurazioneException {
+	public boolean existsPortaDelegataTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException {
 		String nomeMetodo = "existsPortaDelegataTrasformazioneRispostaHeader";
 		boolean delegata = true;
-		return _existsTrasformazioneRispostaHeader(idPorta, idTrasformazione, idTrasformazioneRisposta, nome, tipo, nomeMetodo, delegata);
+		return _existsTrasformazioneRispostaHeader(idPorta, idTrasformazione, idTrasformazioneRisposta, nome, tipo, checkTipo, nomeMetodo, delegata);
 	}
 	
-	private boolean _existsTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private boolean _existsTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo, boolean checkTipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt=null;
@@ -4469,7 +4821,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRisposta+".id_trasformazione");
 			sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".id="+nomeTabellaRispostaHeader+".id_transform_risp");
 			sqlQueryObject.addWhereCondition(nomeTabellaRispostaHeader+".nome = ?");
-			sqlQueryObject.addWhereCondition(nomeTabellaRispostaHeader+".tipo = ?");
+			if(checkTipo) {
+				sqlQueryObject.addWhereCondition(nomeTabellaRispostaHeader+".tipo = ?");
+			}
 			
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
@@ -4478,7 +4832,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt.setLong(parameterIndex ++, idTrasformazione);
 			stmt.setLong(parameterIndex ++, idTrasformazioneRisposta);
 			stmt.setString(parameterIndex ++, nome);
-			stmt.setString(parameterIndex ++, tipo);
+			if(checkTipo) {
+				stmt.setString(parameterIndex ++, tipo);
+			}
 			
 			risultato = stmt.executeQuery();
 			if (risultato.next())
@@ -4521,19 +4877,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 	}
 	
-	public TrasformazioneRegolaParametro getPortaApplicativaTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo) throws DriverConfigurazioneException {
+	public TrasformazioneRegolaParametro getPortaApplicativaTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaApplicativaTrasformazioneRispostaHeader";
 		boolean delegata = false;
-		return _getTrasformazioneRispostaHeader(idPorta, idTrasformazione,  idTrasformazioneRisposta, nome, tipo, nomeMetodo, delegata);
+		return _getTrasformazioneRispostaHeader(idPorta, idTrasformazione,  idTrasformazioneRisposta, nome, tipo, checkTipo, nomeMetodo, delegata);
 	}
 	
-	public TrasformazioneRegolaParametro getPortaDelegataTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo) throws DriverConfigurazioneException {
+	public TrasformazioneRegolaParametro getPortaDelegataTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaDelegataTrasformazioneRispostaHeader";
 		boolean delegata = true;
-		return _getTrasformazioneRispostaHeader(idPorta, idTrasformazione,  idTrasformazioneRisposta, nome, tipo, nomeMetodo, delegata);
+		return _getTrasformazioneRispostaHeader(idPorta, idTrasformazione,  idTrasformazioneRisposta, nome, tipo, checkTipo, nomeMetodo, delegata);
 	}
 	
-	private TrasformazioneRegolaParametro _getTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private TrasformazioneRegolaParametro _getTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo, boolean checkTipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt=null;
@@ -4573,7 +4929,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRisposta+".id_trasformazione");
 			sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".id="+nomeTabellaRispostaHeader+".id_transform_risp");
 			sqlQueryObject.addWhereCondition(nomeTabellaRispostaHeader+".nome = ?");
-			sqlQueryObject.addWhereCondition(nomeTabellaRispostaHeader+".tipo = ?");
+			if(checkTipo) {
+				sqlQueryObject.addWhereCondition(nomeTabellaRispostaHeader+".tipo = ?");
+			}
 			sqlQueryObject.setANDLogicOperator(true);
 
 			queryString = sqlQueryObject.createSQLQuery();
@@ -4583,7 +4941,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt.setLong(parameterIndex ++, idTrasformazione);
 			stmt.setLong(parameterIndex ++, idTrasformazioneRisposta);
 			stmt.setString(parameterIndex ++, nome);
-			stmt.setString(parameterIndex ++, tipo);
+			if(checkTipo) {
+				stmt.setString(parameterIndex ++, tipo);
+			}
 			
 			rs = stmt.executeQuery();
 			if (rs.next()) {
@@ -4980,7 +5340,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRichiestaHeader+".id_trasformazione");
 			sqlQueryObject.setSelectDistinct(true);
 			sqlQueryObject.setANDLogicOperator(true);
-			sqlQueryObject.addOrderBy(nomeTabellaRichiestaHeader+".id");
+			sqlQueryObject.addOrderBy(nomeTabellaRichiestaHeader+".nome");
 			sqlQueryObject.setSortType(true);
 			sqlQueryObject.setLimit(limit);
 			sqlQueryObject.setOffset(offset);
@@ -5035,19 +5395,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		return lista;
 	} 
 	
-	public boolean existsPortaApplicativaTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione, String nome, String tipo) throws DriverConfigurazioneException {
+	public boolean existsPortaApplicativaTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException {
 		String nomeMetodo = "existsPortaApplicativaTrasformazioneRichiestaHeader";
 		boolean delegata = false;
-		return _existsTrasformazioneRichiestaHeader(idPorta, idTrasformazione, nome, tipo, nomeMetodo, delegata);
+		return _existsTrasformazioneRichiestaHeader(idPorta, idTrasformazione, nome, tipo, checkTipo, nomeMetodo, delegata);
 	}
 	
-	public boolean existsPortaDelegataTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione, String nome, String tipo) throws DriverConfigurazioneException {
+	public boolean existsPortaDelegataTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException {
 		String nomeMetodo = "existsPortaDelegataTrasformazioneRichiestaHeader";
 		boolean delegata = true;
-		return _existsTrasformazioneRichiestaHeader(idPorta, idTrasformazione, nome, tipo, nomeMetodo, delegata);
+		return _existsTrasformazioneRichiestaHeader(idPorta, idTrasformazione, nome, tipo, checkTipo, nomeMetodo, delegata);
 	}
 	
-	private boolean _existsTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione, String nome, String tipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private boolean _existsTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt=null;
@@ -5082,7 +5442,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".id_trasformazione=?");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRichiestaHeader+".id_trasformazione");
 			sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".nome = ?");
-			sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".tipo = ?");
+			if(checkTipo) {
+				sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".tipo = ?");
+			}
 			
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
@@ -5090,7 +5452,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt.setLong(parameterIndex ++, idPorta);
 			stmt.setLong(parameterIndex ++, idTrasformazione);
 			stmt.setString(parameterIndex ++, nome);
-			stmt.setString(parameterIndex ++, tipo);
+			if(checkTipo) {
+				stmt.setString(parameterIndex ++, tipo);
+			}
 			
 			risultato = stmt.executeQuery();
 			if (risultato.next())
@@ -5133,19 +5497,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 	}
 	
-	public TrasformazioneRegolaParametro getPortaApplicativaTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione,  String nome, String tipo) throws DriverConfigurazioneException {
+	public TrasformazioneRegolaParametro getPortaApplicativaTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione,  String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaApplicativaTrasformazioneRichiestaHeader";
 		boolean delegata = false;
-		return _getTrasformazioneRichiestaHeader(idPorta, idTrasformazione, nome, tipo, nomeMetodo, delegata);
+		return _getTrasformazioneRichiestaHeader(idPorta, idTrasformazione, nome, tipo, checkTipo, nomeMetodo, delegata);
 	}
 	
-	public TrasformazioneRegolaParametro getPortaDelegataTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione,  String nome, String tipo) throws DriverConfigurazioneException {
+	public TrasformazioneRegolaParametro getPortaDelegataTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione,  String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaDelegataTrasformazioneRichiestaHeader";
 		boolean delegata = true;
-		return _getTrasformazioneRichiestaHeader(idPorta, idTrasformazione, nome, tipo, nomeMetodo, delegata);
+		return _getTrasformazioneRichiestaHeader(idPorta, idTrasformazione, nome, tipo, checkTipo, nomeMetodo, delegata);
 	}
 	
-	private TrasformazioneRegolaParametro _getTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione, String nome, String tipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private TrasformazioneRegolaParametro _getTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt=null;
@@ -5181,7 +5545,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".id_trasformazione=?");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRichiestaHeader+".id_trasformazione");
 			sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".nome = ?");
-			sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".tipo = ?");
+			if(checkTipo) {
+				sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".tipo = ?");
+			}
 			sqlQueryObject.setANDLogicOperator(true);
 
 			queryString = sqlQueryObject.createSQLQuery();
@@ -5190,7 +5556,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt.setLong(parameterIndex ++, idPorta);
 			stmt.setLong(parameterIndex ++, idTrasformazione);
 			stmt.setString(parameterIndex ++, nome);
-			stmt.setString(parameterIndex ++, tipo);
+			if(checkTipo) {
+				stmt.setString(parameterIndex ++, tipo);
+			}
 			
 			rs = stmt.executeQuery();
 			if (rs.next()) {
@@ -5323,7 +5691,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRichiestaHeader+".id_trasformazione");
 			sqlQueryObject.setSelectDistinct(true);
 			sqlQueryObject.setANDLogicOperator(true);
-			sqlQueryObject.addOrderBy(nomeTabellaRichiestaHeader+".id");
+			sqlQueryObject.addOrderBy(nomeTabellaRichiestaHeader+".nome");
 			sqlQueryObject.setSortType(true);
 			sqlQueryObject.setLimit(limit);
 			sqlQueryObject.setOffset(offset);
@@ -5378,19 +5746,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		return lista;
 	} 
 	
-	public boolean existsPortaApplicativaTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione, String nome, String tipo) throws DriverConfigurazioneException {
+	public boolean existsPortaApplicativaTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException {
 		String nomeMetodo = "existsPortaApplicativaTrasformazioneRichiestaUrlParameter";
 		boolean delegata = false;
-		return _existsTrasformazioneRichiestaUrlParameter(idPorta, idTrasformazione, nome, tipo, nomeMetodo, delegata);
+		return _existsTrasformazioneRichiestaUrlParameter(idPorta, idTrasformazione, nome, tipo, checkTipo, nomeMetodo, delegata);
 	}
 	
-	public boolean existsPortaDelegataTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione, String nome, String tipo) throws DriverConfigurazioneException {
+	public boolean existsPortaDelegataTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException {
 		String nomeMetodo = "existsPortaDelegataTrasformazioneRichiestaUrlParameter";
 		boolean delegata = true;
-		return _existsTrasformazioneRichiestaUrlParameter(idPorta, idTrasformazione, nome, tipo, nomeMetodo, delegata);
+		return _existsTrasformazioneRichiestaUrlParameter(idPorta, idTrasformazione, nome, tipo, checkTipo, nomeMetodo, delegata);
 	}
 	
-	private boolean _existsTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione, String nome, String tipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private boolean _existsTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt=null;
@@ -5425,7 +5793,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".id_trasformazione=?");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRichiestaHeader+".id_trasformazione");
 			sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".nome = ?");
-			sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".tipo = ?");
+			if(checkTipo) {
+				sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".tipo = ?");
+			}
 			
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
@@ -5433,7 +5803,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt.setLong(parameterIndex ++, idPorta);
 			stmt.setLong(parameterIndex ++, idTrasformazione);
 			stmt.setString(parameterIndex ++, nome);
-			stmt.setString(parameterIndex ++, tipo);
+			if(checkTipo) {
+				stmt.setString(parameterIndex ++, tipo);
+			}
 			
 			risultato = stmt.executeQuery();
 			if (risultato.next())
@@ -5476,19 +5848,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 	}
 	
-	public TrasformazioneRegolaParametro getPortaApplicativaTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione,  String nome, String tipo) throws DriverConfigurazioneException {
+	public TrasformazioneRegolaParametro getPortaApplicativaTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione,  String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaApplicativaTrasformazioneRichiestaUrlParameter";
 		boolean delegata = false;
-		return _getTrasformazioneRichiestaUrlParameter(idPorta, idTrasformazione, nome, tipo, nomeMetodo, delegata);
+		return _getTrasformazioneRichiestaUrlParameter(idPorta, idTrasformazione, nome, tipo, checkTipo, nomeMetodo, delegata);
 	}
 	
-	public TrasformazioneRegolaParametro getPortaDelegataTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione,  String nome, String tipo) throws DriverConfigurazioneException {
+	public TrasformazioneRegolaParametro getPortaDelegataTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione,  String nome, String tipo, boolean checkTipo) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaDelegataTrasformazioneRichiestaUrlParameter";
 		boolean delegata = true;
-		return _getTrasformazioneRichiestaUrlParameter(idPorta, idTrasformazione, nome, tipo, nomeMetodo, delegata);
+		return _getTrasformazioneRichiestaUrlParameter(idPorta, idTrasformazione, nome, tipo, checkTipo, nomeMetodo, delegata);
 	}
 	
-	private TrasformazioneRegolaParametro _getTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione, String nome, String tipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private TrasformazioneRegolaParametro _getTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt=null;
@@ -5524,7 +5896,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".id_trasformazione=?");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRichiestaHeader+".id_trasformazione");
 			sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".nome = ?");
-			sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".tipo = ?");
+			if(checkTipo) {
+				sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".tipo = ?");
+			}
 			sqlQueryObject.setANDLogicOperator(true);
 
 			queryString = sqlQueryObject.createSQLQuery();
@@ -5533,7 +5907,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt.setLong(parameterIndex ++, idPorta);
 			stmt.setLong(parameterIndex ++, idTrasformazione);
 			stmt.setString(parameterIndex ++, nome);
-			stmt.setString(parameterIndex ++, tipo);
+			if(checkTipo) {
+				stmt.setString(parameterIndex ++, tipo);
+			}
 			
 			rs = stmt.executeQuery();
 			if (rs.next()) {

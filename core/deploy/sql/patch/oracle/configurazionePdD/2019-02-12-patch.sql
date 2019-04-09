@@ -187,6 +187,8 @@ CREATE SEQUENCE seq_pd_transform MINVALUE 1 MAXVALUE 9223372036854775807 START W
 CREATE TABLE pd_transform
 (
 	id_porta NUMBER NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
+	posizione NUMBER NOT NULL,
 	applicabilita_azioni CLOB,
 	applicabilita_ct CLOB,
 	applicabilita_pattern CLOB,
@@ -206,13 +208,14 @@ CREATE TABLE pd_transform
 	soap_envelope_template BLOB,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pd_transform_1 UNIQUE (id_porta,nome),
+	CONSTRAINT unique_pd_transform_2 UNIQUE (id_porta,posizione),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_transform_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_pd_transform PRIMARY KEY (id)
 );
 
--- index
-CREATE INDEX index_pd_transform_1 ON pd_transform (id_porta);
 
 ALTER TABLE pd_transform MODIFY req_conversione_enabled DEFAULT 0;
 ALTER TABLE pd_transform MODIFY rest_transformation DEFAULT 0;
@@ -301,6 +304,8 @@ CREATE SEQUENCE seq_pd_transform_risp MINVALUE 1 MAXVALUE 9223372036854775807 ST
 CREATE TABLE pd_transform_risp
 (
 	id_trasformazione NUMBER NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
+	posizione NUMBER NOT NULL,
 	applicabilita_status_min NUMBER,
 	applicabilita_status_max NUMBER,
 	applicabilita_ct CLOB,
@@ -316,13 +321,14 @@ CREATE TABLE pd_transform_risp
 	soap_envelope_template BLOB,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT uniq_pd_trasf_resp_1 UNIQUE (id_trasformazione,nome),
+	CONSTRAINT uniq_pd_trasf_resp_2 UNIQUE (id_trasformazione,posizione),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_transform_risp_1 FOREIGN KEY (id_trasformazione) REFERENCES pd_transform(id),
 	CONSTRAINT pk_pd_transform_risp PRIMARY KEY (id)
 );
 
--- index
-CREATE INDEX idx_pd_trasf_resp_1 ON pd_transform_risp (id_trasformazione);
 
 ALTER TABLE pd_transform_risp MODIFY conversione_enabled DEFAULT 0;
 ALTER TABLE pd_transform_risp MODIFY soap_envelope DEFAULT 0;
@@ -379,6 +385,8 @@ CREATE SEQUENCE seq_pa_transform MINVALUE 1 MAXVALUE 9223372036854775807 START W
 CREATE TABLE pa_transform
 (
 	id_porta NUMBER NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
+	posizione NUMBER NOT NULL,
 	applicabilita_azioni CLOB,
 	applicabilita_ct CLOB,
 	applicabilita_pattern CLOB,
@@ -398,13 +406,14 @@ CREATE TABLE pa_transform
 	soap_envelope_template BLOB,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pa_transform_1 UNIQUE (id_porta,nome),
+	CONSTRAINT unique_pa_transform_2 UNIQUE (id_porta,posizione),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pa_transform_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
 	CONSTRAINT pk_pa_transform PRIMARY KEY (id)
 );
 
--- index
-CREATE INDEX index_pa_transform_1 ON pa_transform (id_porta);
 
 ALTER TABLE pa_transform MODIFY req_conversione_enabled DEFAULT 0;
 ALTER TABLE pa_transform MODIFY rest_transformation DEFAULT 0;
@@ -493,6 +502,8 @@ CREATE SEQUENCE seq_pa_transform_risp MINVALUE 1 MAXVALUE 9223372036854775807 ST
 CREATE TABLE pa_transform_risp
 (
 	id_trasformazione NUMBER NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
+	posizione NUMBER NOT NULL,
 	applicabilita_status_min NUMBER,
 	applicabilita_status_max NUMBER,
 	applicabilita_ct CLOB,
@@ -508,13 +519,14 @@ CREATE TABLE pa_transform_risp
 	soap_envelope_template BLOB,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT uniq_pa_trasf_resp_1 UNIQUE (id_trasformazione,nome),
+	CONSTRAINT uniq_pa_trasf_resp_2 UNIQUE (id_trasformazione,posizione),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pa_transform_risp_1 FOREIGN KEY (id_trasformazione) REFERENCES pa_transform(id),
 	CONSTRAINT pk_pa_transform_risp PRIMARY KEY (id)
 );
 
--- index
-CREATE INDEX idx_pa_trasf_resp_1 ON pa_transform_risp (id_trasformazione);
 
 ALTER TABLE pa_transform_risp MODIFY conversione_enabled DEFAULT 0;
 ALTER TABLE pa_transform_risp MODIFY soap_envelope DEFAULT 0;

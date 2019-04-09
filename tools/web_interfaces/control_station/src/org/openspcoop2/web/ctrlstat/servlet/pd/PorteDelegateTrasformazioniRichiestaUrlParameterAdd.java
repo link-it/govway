@@ -132,7 +132,7 @@ public class PorteDelegateTrasformazioniRichiestaUrlParameterAdd extends Action 
 				}
 			}
 			
-			String nomeTrasformazione = "Modifica Trasformazione" ; // regola.getApplicabilita().getNome();
+			String nomeTrasformazione = regola.getNome();
 			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazione+"");
 
 			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
@@ -200,10 +200,10 @@ public class PorteDelegateTrasformazioniRichiestaUrlParameterAdd extends Action 
 			
 			// Se tipoOp = add, controllo che la trasformazione risposta non sia gia' stato registrata
 			if (isOk) {
-				boolean giaRegistrato = porteDelegateCore.existsTrasformazioneRichiestaUrlParameter(Long.parseLong(id), idTrasformazione, nome, tipo);
+				boolean giaRegistrato = porteDelegateCore.existsTrasformazioneRichiestaUrlParameter(Long.parseLong(id), idTrasformazione, nome, tipo, CostantiControlStation.VALUE_TRASFORMAZIONI_CHECK_UNIQUE_NOME_TIPO_HEADER_URL);
 
 				if (giaRegistrato) {
-					pd.setMessage("&Egrave; gi&agrave; presente un URL Parameter con in parametri indicati.");
+					pd.setMessage(CostantiControlStation.MESSAGGIO_TRASFORMAZIONI_CHECK_UNIQUE_NOME_TIPO_URL);
 					isOk = false;
 				}
 			} 

@@ -4394,9 +4394,19 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
 
 			// setto le label delle colonne
-			String[] labels = { PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_AZIONI,
-					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_PATTERN,
-					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_CT};
+			String nomeColonnaAzione = null;
+			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(apc.getServiceBinding())) {
+				nomeColonnaAzione = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_RISORSE;
+			}
+			else {
+				nomeColonnaAzione = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI;
+			}
+			String[] labels = { 
+					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_POSIZIONE,
+					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_NOME,
+					nomeColonnaAzione,
+					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_CT,
+					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_PATTERN};
 			this.pd.setLabels(labels);
 
 			// preparo i dati
@@ -4409,9 +4419,28 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 
 					Vector<DataElement> e = new Vector<DataElement>();
 					
-					// Azioni
+					// Posizione
 					DataElement de = new DataElement();
+					de.setValue(regola.getPosizione()+"");
+					e.addElement(de);
+					
+					// Nome
+					de = new DataElement();
 					de.setIdToRemove(regola.getId() + "");
+					
+					de.setValue(regola.getNome());
+					de.setToolTip(regola.getNome());
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_CHANGE, 
+							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
+							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
+							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps),
+							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE, regola.getId() + "")
+							);
+					e.addElement(de);
+					
+					
+					// Azioni
+					de = new DataElement();
 					
 					TrasformazioneRegolaApplicabilitaRichiesta applicabilita = regola.getApplicabilita();
 					
@@ -4438,20 +4467,10 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					
 					de.setValue(nomiAzioni);
 					de.setToolTip(nomiAzioni);
-					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_CHANGE, 
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps),
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE, regola.getId() + "")
-							);
+
 					e.addElement(de);
 					
-					// Pattern
-					de = new DataElement();
-					de.setValue((applicabilita != null && applicabilita.getPattern() != null) ? applicabilita.getPattern() + "" : "&nbsp;");
-					e.addElement(de);
-					
-					
+
 					// Content-type
 					
 					String ct = "";
@@ -4475,6 +4494,16 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					de.setValue(ct);
 					e.addElement(de);
 
+					
+					// Pattern
+					de = new DataElement();
+					String p = (applicabilita != null && applicabilita.getPattern() != null) ? applicabilita.getPattern() + "" : "&nbsp;";
+					de.setValue(p.length()>CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PATTERN_LIST_MAX_VALUE ? 
+								p.substring(0, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PATTERN_LIST_MAX_VALUE)+"..." :
+								p);
+					e.addElement(de);
+					
+					
 					dati.addElement(e);
 				}
 			}
@@ -4530,7 +4559,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				}
 			}
 			
-			String nomeTrasformazione = "Modifica Trasformazione" ; // oldRegola.getApplicabilita().getNome();
+			String nomeTrasformazione = oldRegola.getNome();
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
@@ -4565,9 +4594,12 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
 
 			// setto le label delle colonne
-			String[] labels = { PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS,
-					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN,
-					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_CT};
+			String[] labels = { 
+					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_POSIZIONE,
+					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_NOME,
+					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS,
+					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_CT,
+					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN};
 			this.pd.setLabels(labels);
 
 			// preparo i dati
@@ -4580,10 +4612,30 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 
 					Vector<DataElement> e = new Vector<DataElement>();
 					
-					// Status Code
+					// Posizione
 					DataElement de = new DataElement();
-					de.setIdToRemove(risposta.getId() + "");
+					de.setValue(risposta.getPosizione()+"");
+					e.addElement(de);
 					
+					// Nome
+					de = new DataElement();
+					de.setIdToRemove(risposta.getId() + "");
+					de.setValue(risposta.getNome());
+					de.setToolTip(risposta.getNome());
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CHANGE, 
+							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
+							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
+							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps),
+							pIdTrasformazione,
+							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RISPOSTA, risposta.getId() + "")
+							);
+					e.addElement(de);
+					
+					
+					
+					// Status Code
+					de = new DataElement();
+										
 					TrasformazioneRegolaApplicabilitaRisposta applicabilita = risposta.getApplicabilita();
 					
 					Integer statusMin = applicabilita != null ? applicabilita.getReturnCodeMin() : null;
@@ -4614,19 +4666,9 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					}
 					
 					de.setValue(statusValue);
-					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CHANGE, 
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps),
-							pIdTrasformazione,
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RISPOSTA, risposta.getId() + "")
-							);
+					
 					e.addElement(de);
 					
-					// Pattern
-					de = new DataElement();
-					de.setValue((applicabilita != null && applicabilita.getPattern() != null) ? applicabilita.getPattern() + "" : "&nbsp;");
-					e.addElement(de);
 					
 					
 					// Content-type
@@ -4651,6 +4693,17 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					de.setValue(ct);
 					e.addElement(de);
 
+					
+					// Pattern
+					de = new DataElement();
+					String p = (applicabilita != null && applicabilita.getPattern() != null) ? applicabilita.getPattern() + "" : "&nbsp;";
+					de.setValue(p.length()>CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PATTERN_LIST_MAX_VALUE ? 
+								p.substring(0, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PATTERN_LIST_MAX_VALUE)+"..." :
+								p);
+					e.addElement(de);
+					
+					
+					
 					dati.addElement(e);
 				}
 			}
@@ -4716,9 +4769,8 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				}
 			}
 			
-			// TODO
-			String nomeRisposta = "Modifica Risposta"; // oldRisposta.getApplicabilita().getNome();
-			String nomeTrasformazione = "Modifica Trasformazione" ; // oldRegola.getApplicabilita().getNome();
+			String nomeRisposta = oldRisposta.getNome();
+			String nomeTrasformazione = oldRegola.getNome();
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
@@ -4862,8 +4914,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				}
 			}
 			
-			// TODO
-			String nomeTrasformazione = "Modifica Trasformazione" ; // oldRegola.getApplicabilita().getNome();
+			String nomeTrasformazione = oldRegola.getNome();
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
@@ -5001,8 +5052,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				}
 			}
 			
-			// TODO
-			String nomeTrasformazione = "Modifica Trasformazione" ; // oldRegola.getApplicabilita().getNome();
+			String nomeTrasformazione = oldRegola.getNome();
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);

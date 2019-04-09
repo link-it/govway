@@ -91,6 +91,8 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 			String idTrasformazioneS = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE);
 			long idTrasformazione = Long.parseLong(idTrasformazioneS);
 			
+			String nome = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_NOME);
+			
 			String returnCode = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS);
 			if(returnCode == null)
 				returnCode = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI;
@@ -125,7 +127,7 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 				}
 			}
 			
-			String nomeTrasformazione = "Modifica Trasformazione" ; // regola.getApplicabilita().getNome();
+			String nomeTrasformazione = regola.getNome();
 			Parameter pIdTrasformazione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE, idTrasformazione+"");
 			
 			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
@@ -184,7 +186,7 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, returnCode, statusMin, statusMax, pattern, contentType);
+				dati = porteApplicativeHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, nome, returnCode, statusMin, statusMax, pattern, contentType);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
 				
@@ -207,10 +209,16 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 				String patternDBCheck = StringUtils.isNotEmpty(pattern) ? pattern : null;
 				String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
 				boolean giaRegistrato = porteApplicativeCore.existsTrasformazioneRisposta(Long.parseLong(idPorta), idTrasformazione, statusMinDBCheck, statusMaxDBCheck, patternDBCheck, contentTypeDBCheck);
-
 				if (giaRegistrato) {
-					pd.setMessage("&Egrave; gi&agrave; presente una Trasformazione con in parametri di applicabilit&agrave; indicati.");
+					pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA);
 					isOk = false;
+				}
+				if (isOk) {
+					giaRegistrato = porteApplicativeCore.existsTrasformazioneRisposta(Long.parseLong(idPorta), idTrasformazione, nome);
+					if (giaRegistrato) {
+						pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_NOME);
+						isOk = false;
+					}
 				}
 			}
 			
@@ -221,7 +229,7 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, returnCode, statusMin, statusMax, pattern, contentType);
+				dati = porteApplicativeHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, nome, returnCode, statusMin, statusMax, pattern, contentType);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
 				
@@ -242,6 +250,18 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 			}
 			
 			TrasformazioneRegolaRisposta risposta = new TrasformazioneRegolaRisposta();
+
+			// calcolo prossima posizione
+			int posizione = 1;
+			for (TrasformazioneRegolaRisposta check : regola.getRispostaList()) {
+				if(check.getPosizione()>=posizione) {
+					posizione = check.getPosizione()+1;
+				}
+			}
+			
+			risposta.setNome(nome);
+			risposta.setPosizione(posizione);
+			
 			TrasformazioneRegolaApplicabilitaRisposta applicabilita = new TrasformazioneRegolaApplicabilitaRisposta();
 			
 			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI)) {

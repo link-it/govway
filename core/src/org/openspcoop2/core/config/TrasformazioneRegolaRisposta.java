@@ -45,6 +45,8 @@ import java.util.List;
  * 			&lt;element name="header" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-parametro" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="trasformazione-soap" type="{http://www.openspcoop2.org/core/config}trasformazione-soap-risposta" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="posizione" type="{http://www.w3.org/2001/XMLSchema}int" use="required"/>
  * 		&lt;attribute name="conversione" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="conversione-tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
@@ -136,6 +138,22 @@ public class TrasformazioneRegolaRisposta extends org.openspcoop2.utils.beans.Ba
     this.trasformazioneSoap = trasformazioneSoap;
   }
 
+  public java.lang.String getNome() {
+    return this.nome;
+  }
+
+  public void setNome(java.lang.String nome) {
+    this.nome = nome;
+  }
+
+  public int getPosizione() {
+    return this.posizione;
+  }
+
+  public void setPosizione(int posizione) {
+    this.posizione = posizione;
+  }
+
   public boolean isConversione() {
     return this.conversione;
   }
@@ -218,6 +236,14 @@ public class TrasformazioneRegolaRisposta extends org.openspcoop2.utils.beans.Ba
 
   @XmlElement(name="trasformazione-soap",required=false,nillable=false)
   protected TrasformazioneSoapRisposta trasformazioneSoap;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="nome",required=true)
+  protected java.lang.String nome;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @XmlAttribute(name="posizione",required=true)
+  protected int posizione;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="conversione",required=false)

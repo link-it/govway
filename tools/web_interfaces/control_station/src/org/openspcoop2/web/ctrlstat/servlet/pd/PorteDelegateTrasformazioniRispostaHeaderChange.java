@@ -43,6 +43,7 @@ import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.constants.TrasformazioneRegolaParametroTipoAzione;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -148,9 +149,8 @@ public class PorteDelegateTrasformazioniRispostaHeaderChange extends Action {
 				}
 			}
 			
-			// TODO
-			String nomeRisposta = "Modifica Risposta"; // oldRisposta.getApplicabilita().getNome();
-			String nomeTrasformazione = "Modifica Trasformazione" ; // regola.getApplicabilita().getNome();
+			String nomeRisposta = oldRisposta.getNome();
+			String nomeTrasformazione = oldRegola.getNome();
 			String nomeParametro = oldParametro.getNome();
 			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazione+"");
 			Parameter pIdTrasformazioneRisposta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE_RISPOSTA, idTrasformazioneRisposta+"");
@@ -229,6 +229,15 @@ public class PorteDelegateTrasformazioniRispostaHeaderChange extends Action {
 			}
 			
 			boolean isOk = porteDelegateHelper.trasformazioniRispostaHeaderCheckData(TipoOperazione.CHANGE);
+			if (isOk && (oldParametro!=null && !oldParametro.getNome().equals(nome))) {
+				boolean giaRegistrato = porteDelegateCore.existsTrasformazioneRispostaHeader(Long.parseLong(id), idTrasformazione, idTrasformazioneRisposta, nome, tipo, CostantiControlStation.VALUE_TRASFORMAZIONI_CHECK_UNIQUE_NOME_TIPO_HEADER_URL);
+
+				if (giaRegistrato) {
+					pd.setMessage(CostantiControlStation.MESSAGGIO_TRASFORMAZIONI_CHECK_UNIQUE_NOME_TIPO_HEADER);
+					isOk = false;
+				}
+			} 
+			
 			if (!isOk) {
 
 				// preparo i campi

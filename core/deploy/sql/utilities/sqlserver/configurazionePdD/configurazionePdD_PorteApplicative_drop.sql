@@ -1,14 +1,16 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX idx_pa_trasf_resp_2 ON pa_transform_risp ;
+-- DROP INDEX idx_pa_trasf_resp_1 ON pa_transform_risp ;
+-- DROP INDEX index_pa_transform_2 ON pa_transform ;
+-- DROP INDEX index_pa_transform_1 ON pa_transform ;
 -- DROP INDEX index_pa_azioni_1 ON pa_azioni ;
 -- DROP INDEX index_pa_soggetti_1 ON pa_soggetti ;
 -- DROP INDEX index_pa_scope_1 ON pa_scope ;
 -- DROP INDEX index_pa_ruoli_1 ON pa_ruoli ;
 -- DROP INDEX index_porte_applicative_1 ON porte_applicative ;
 -- DROP INDEX idx_pa_trasf_hdr_resp_1 ON pa_transform_risp_hdr ;
--- DROP INDEX idx_pa_trasf_resp_1 ON pa_transform_risp ;
 -- DROP INDEX idx_pa_trasf_url_1 ON pa_transform_url ;
 -- DROP INDEX idx_pa_trasf_hdr_1 ON pa_transform_hdr ;
--- DROP INDEX index_pa_transform_1 ON pa_transform ;
 -- DROP INDEX INDEX_PA_SA_AUTH ON porte_applicative_sa_auth ;
 -- DROP INDEX INDEX_PA_WSSRES ON pa_security_response ;
 -- DROP INDEX INDEX_PA_WSSREQ ON pa_security_request ;

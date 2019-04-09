@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.constants.TrasformazioneRegolaParametroTipoAzione;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -125,8 +126,7 @@ public class PorteApplicativeTrasformazioniRichiestaUrlParameterChange extends A
 				}
 			}
 			
-			// TODO
-			String nomeTrasformazione = "Modifica Trasformazione" ; // regola.getApplicabilita().getNome();
+			String nomeTrasformazione = oldRegola.getNome();
 			String nomeParametro = oldParametro.getNome();
 			Parameter pIdTrasformazione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE, idTrasformazione+"");
 			
@@ -203,6 +203,14 @@ public class PorteApplicativeTrasformazioniRichiestaUrlParameterChange extends A
 			}
 			
 			boolean isOk = porteApplicativeHelper.trasformazioniRichiestaUrlParameterCheckData(TipoOperazione.CHANGE);
+			if (isOk && (oldParametro!=null && !oldParametro.getNome().equals(nome))) {
+				boolean giaRegistrato = porteApplicativeCore.existsTrasformazioneRichiestaUrlParameter(Long.parseLong(idPorta), idTrasformazione, nome, tipo, CostantiControlStation.VALUE_TRASFORMAZIONI_CHECK_UNIQUE_NOME_TIPO_HEADER_URL);
+
+				if (giaRegistrato) {
+					pd.setMessage(CostantiControlStation.MESSAGGIO_TRASFORMAZIONI_CHECK_UNIQUE_NOME_TIPO_URL);
+					isOk = false;
+				}
+			}
 			if (!isOk) {
 
 				// preparo i campi

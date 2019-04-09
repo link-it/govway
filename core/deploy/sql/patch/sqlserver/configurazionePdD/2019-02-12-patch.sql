@@ -104,6 +104,8 @@ ALTER TABLE porte_delegate ADD response_cache_control_nostore INT;
 CREATE TABLE pd_transform
 (
 	id_porta BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	posizione INT NOT NULL,
 	applicabilita_azioni VARCHAR(max),
 	applicabilita_ct VARCHAR(max),
 	applicabilita_pattern VARCHAR(max),
@@ -123,13 +125,17 @@ CREATE TABLE pd_transform
 	soap_envelope_template VARBINARY(MAX),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
+	-- unique constraints
+	CONSTRAINT unique_pd_transform_1 UNIQUE (id_porta,nome),
+	CONSTRAINT unique_pd_transform_2 UNIQUE (id_porta,posizione),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_transform_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_pd_transform PRIMARY KEY (id)
 );
 
 -- index
-CREATE INDEX index_pd_transform_1 ON pd_transform (id_porta);
+CREATE UNIQUE INDEX index_pd_transform_1 ON pd_transform (id_porta,nome);
+CREATE UNIQUE INDEX index_pd_transform_2 ON pd_transform (id_porta,posizione);
 
 
 
@@ -172,6 +178,8 @@ CREATE INDEX idx_pd_trasf_url_1 ON pd_transform_url (id_trasformazione);
 CREATE TABLE pd_transform_risp
 (
 	id_trasformazione BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	posizione INT NOT NULL,
 	applicabilita_status_min INT,
 	applicabilita_status_max INT,
 	applicabilita_ct VARCHAR(max),
@@ -187,13 +195,17 @@ CREATE TABLE pd_transform_risp
 	soap_envelope_template VARBINARY(MAX),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
+	-- unique constraints
+	CONSTRAINT uniq_pd_trasf_resp_1 UNIQUE (id_trasformazione,nome),
+	CONSTRAINT uniq_pd_trasf_resp_2 UNIQUE (id_trasformazione,posizione),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_transform_risp_1 FOREIGN KEY (id_trasformazione) REFERENCES pd_transform(id),
 	CONSTRAINT pk_pd_transform_risp PRIMARY KEY (id)
 );
 
 -- index
-CREATE INDEX idx_pd_trasf_resp_1 ON pd_transform_risp (id_trasformazione);
+CREATE UNIQUE INDEX idx_pd_trasf_resp_1 ON pd_transform_risp (id_trasformazione,nome);
+CREATE UNIQUE INDEX idx_pd_trasf_resp_2 ON pd_transform_risp (id_trasformazione,posizione);
 
 
 
@@ -220,6 +232,8 @@ CREATE INDEX idx_pd_trasf_hdr_resp_1 ON pd_transform_risp_hdr (id_transform_risp
 CREATE TABLE pa_transform
 (
 	id_porta BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	posizione INT NOT NULL,
 	applicabilita_azioni VARCHAR(max),
 	applicabilita_ct VARCHAR(max),
 	applicabilita_pattern VARCHAR(max),
@@ -239,13 +253,17 @@ CREATE TABLE pa_transform
 	soap_envelope_template VARBINARY(MAX),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
+	-- unique constraints
+	CONSTRAINT unique_pa_transform_1 UNIQUE (id_porta,nome),
+	CONSTRAINT unique_pa_transform_2 UNIQUE (id_porta,posizione),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pa_transform_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
 	CONSTRAINT pk_pa_transform PRIMARY KEY (id)
 );
 
 -- index
-CREATE INDEX index_pa_transform_1 ON pa_transform (id_porta);
+CREATE UNIQUE INDEX index_pa_transform_1 ON pa_transform (id_porta,nome);
+CREATE UNIQUE INDEX index_pa_transform_2 ON pa_transform (id_porta,posizione);
 
 
 
@@ -288,6 +306,8 @@ CREATE INDEX idx_pa_trasf_url_1 ON pa_transform_url (id_trasformazione);
 CREATE TABLE pa_transform_risp
 (
 	id_trasformazione BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	posizione INT NOT NULL,
 	applicabilita_status_min INT,
 	applicabilita_status_max INT,
 	applicabilita_ct VARCHAR(max),
@@ -303,13 +323,17 @@ CREATE TABLE pa_transform_risp
 	soap_envelope_template VARBINARY(MAX),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
+	-- unique constraints
+	CONSTRAINT uniq_pa_trasf_resp_1 UNIQUE (id_trasformazione,nome),
+	CONSTRAINT uniq_pa_trasf_resp_2 UNIQUE (id_trasformazione,posizione),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pa_transform_risp_1 FOREIGN KEY (id_trasformazione) REFERENCES pa_transform(id),
 	CONSTRAINT pk_pa_transform_risp PRIMARY KEY (id)
 );
 
 -- index
-CREATE INDEX idx_pa_trasf_resp_1 ON pa_transform_risp (id_trasformazione);
+CREATE UNIQUE INDEX idx_pa_trasf_resp_1 ON pa_transform_risp (id_trasformazione,nome);
+CREATE UNIQUE INDEX idx_pa_trasf_resp_2 ON pa_transform_risp (id_trasformazione,posizione);
 
 
 

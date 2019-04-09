@@ -121,6 +121,8 @@ CREATE SEQUENCE seq_pd_transform start 1 increment 1 maxvalue 922337203685477580
 CREATE TABLE pd_transform
 (
 	id_porta BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	posizione INT NOT NULL,
 	applicabilita_azioni TEXT,
 	applicabilita_ct TEXT,
 	applicabilita_pattern TEXT,
@@ -140,13 +142,14 @@ CREATE TABLE pd_transform
 	soap_envelope_template BYTEA,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_pd_transform') NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pd_transform_1 UNIQUE (id_porta,nome),
+	CONSTRAINT unique_pd_transform_2 UNIQUE (id_porta,posizione),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_transform_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_pd_transform PRIMARY KEY (id)
 );
 
--- index
-CREATE INDEX index_pd_transform_1 ON pd_transform (id_porta);
 
 
 
@@ -195,6 +198,8 @@ CREATE SEQUENCE seq_pd_transform_risp start 1 increment 1 maxvalue 9223372036854
 CREATE TABLE pd_transform_risp
 (
 	id_trasformazione BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	posizione INT NOT NULL,
 	applicabilita_status_min INT,
 	applicabilita_status_max INT,
 	applicabilita_ct TEXT,
@@ -210,13 +215,14 @@ CREATE TABLE pd_transform_risp
 	soap_envelope_template BYTEA,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_pd_transform_risp') NOT NULL,
+	-- unique constraints
+	CONSTRAINT uniq_pd_trasf_resp_1 UNIQUE (id_trasformazione,nome),
+	CONSTRAINT uniq_pd_trasf_resp_2 UNIQUE (id_trasformazione,posizione),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_transform_risp_1 FOREIGN KEY (id_trasformazione) REFERENCES pd_transform(id),
 	CONSTRAINT pk_pd_transform_risp PRIMARY KEY (id)
 );
 
--- index
-CREATE INDEX idx_pd_trasf_resp_1 ON pd_transform_risp (id_trasformazione);
 
 
 
@@ -245,6 +251,8 @@ CREATE SEQUENCE seq_pa_transform start 1 increment 1 maxvalue 922337203685477580
 CREATE TABLE pa_transform
 (
 	id_porta BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	posizione INT NOT NULL,
 	applicabilita_azioni TEXT,
 	applicabilita_ct TEXT,
 	applicabilita_pattern TEXT,
@@ -264,13 +272,14 @@ CREATE TABLE pa_transform
 	soap_envelope_template BYTEA,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_pa_transform') NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pa_transform_1 UNIQUE (id_porta,nome),
+	CONSTRAINT unique_pa_transform_2 UNIQUE (id_porta,posizione),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pa_transform_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
 	CONSTRAINT pk_pa_transform PRIMARY KEY (id)
 );
 
--- index
-CREATE INDEX index_pa_transform_1 ON pa_transform (id_porta);
 
 
 
@@ -319,6 +328,8 @@ CREATE SEQUENCE seq_pa_transform_risp start 1 increment 1 maxvalue 9223372036854
 CREATE TABLE pa_transform_risp
 (
 	id_trasformazione BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	posizione INT NOT NULL,
 	applicabilita_status_min INT,
 	applicabilita_status_max INT,
 	applicabilita_ct TEXT,
@@ -334,13 +345,14 @@ CREATE TABLE pa_transform_risp
 	soap_envelope_template BYTEA,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_pa_transform_risp') NOT NULL,
+	-- unique constraints
+	CONSTRAINT uniq_pa_trasf_resp_1 UNIQUE (id_trasformazione,nome),
+	CONSTRAINT uniq_pa_trasf_resp_2 UNIQUE (id_trasformazione,posizione),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pa_transform_risp_1 FOREIGN KEY (id_trasformazione) REFERENCES pa_transform(id),
 	CONSTRAINT pk_pa_transform_risp PRIMARY KEY (id)
 );
 
--- index
-CREATE INDEX idx_pa_trasf_resp_1 ON pa_transform_risp (id_trasformazione);
 
 
 

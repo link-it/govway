@@ -125,8 +125,7 @@ public class PorteApplicativeTrasformazioniRichiestaHeaderChange extends Action 
 				}
 			}
 			
-			// TODO
-			String nomeTrasformazione = "Modifica Trasformazione" ; // regola.getApplicabilita().getNome();
+			String nomeTrasformazione = oldRegola.getNome();
 			String nomeParametro = oldParametro.getNome();
 			Parameter pIdTrasformazione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE, idTrasformazione+"");
 			

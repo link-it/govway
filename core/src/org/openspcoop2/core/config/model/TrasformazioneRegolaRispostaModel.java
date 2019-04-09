@@ -46,6 +46,8 @@ public class TrasformazioneRegolaRispostaModel extends AbstractModel<Trasformazi
 		this.APPLICABILITA = new org.openspcoop2.core.config.model.TrasformazioneRegolaApplicabilitaRispostaModel(new Field("applicabilita",org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class));
 		this.HEADER = new org.openspcoop2.core.config.model.TrasformazioneRegolaParametroModel(new Field("header",org.openspcoop2.core.config.TrasformazioneRegolaParametro.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class));
 		this.TRASFORMAZIONE_SOAP = new org.openspcoop2.core.config.model.TrasformazioneSoapRispostaModel(new Field("trasformazione-soap",org.openspcoop2.core.config.TrasformazioneSoapRisposta.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class));
+		this.NOME = new Field("nome",java.lang.String.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
+		this.POSIZIONE = new Field("posizione",int.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
 		this.CONVERSIONE = new Field("conversione",boolean.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
 		this.CONVERSIONE_TIPO = new Field("conversione-tipo",java.lang.String.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
 		this.CONTENT_TYPE = new Field("content-type",java.lang.String.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
@@ -61,6 +63,8 @@ public class TrasformazioneRegolaRispostaModel extends AbstractModel<Trasformazi
 		this.APPLICABILITA = new org.openspcoop2.core.config.model.TrasformazioneRegolaApplicabilitaRispostaModel(new ComplexField(father,"applicabilita",org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class));
 		this.HEADER = new org.openspcoop2.core.config.model.TrasformazioneRegolaParametroModel(new ComplexField(father,"header",org.openspcoop2.core.config.TrasformazioneRegolaParametro.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class));
 		this.TRASFORMAZIONE_SOAP = new org.openspcoop2.core.config.model.TrasformazioneSoapRispostaModel(new ComplexField(father,"trasformazione-soap",org.openspcoop2.core.config.TrasformazioneSoapRisposta.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class));
+		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
+		this.POSIZIONE = new ComplexField(father,"posizione",int.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
 		this.CONVERSIONE = new ComplexField(father,"conversione",boolean.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
 		this.CONVERSIONE_TIPO = new ComplexField(father,"conversione-tipo",java.lang.String.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
 		this.CONTENT_TYPE = new ComplexField(father,"content-type",java.lang.String.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
@@ -77,6 +81,10 @@ public class TrasformazioneRegolaRispostaModel extends AbstractModel<Trasformazi
 	public org.openspcoop2.core.config.model.TrasformazioneRegolaParametroModel HEADER = null;
 	 
 	public org.openspcoop2.core.config.model.TrasformazioneSoapRispostaModel TRASFORMAZIONE_SOAP = null;
+	 
+	public IField NOME = null;
+	 
+	public IField POSIZIONE = null;
 	 
 	public IField CONVERSIONE = null;
 	 

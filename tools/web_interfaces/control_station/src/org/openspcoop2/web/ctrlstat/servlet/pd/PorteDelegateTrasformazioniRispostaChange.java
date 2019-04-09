@@ -104,6 +104,9 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 				idFruizione = "";
 			
 			
+			String first = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_FIRST);
+			String nome = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_NOME);
+			
 			String returnCode = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS);
 			
 			String statusMin = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN);
@@ -184,9 +187,8 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 				trasformazioneRichiestaRestAbilitato = oldRegola.getRichiesta().getTrasformazioneRest() != null;
 			}
 			
-			// TODO
-			String nomeRisposta = "Modifica Risposta"; // oldRisposta.getApplicabilita().getNome();
-			String nomeTrasformazione = "Modifica Trasformazione" ; // regola.getApplicabilita().getNome();
+			String nomeRisposta = oldRisposta.getNome();
+			String nomeTrasformazione = oldRegola.getNome();
 			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazione+"");
 			
 			String postBackElementName = porteDelegateHelper.getPostBackElementName();
@@ -278,7 +280,10 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				// primo accesso
-				if(returnCode == null) {
+				if(first == null) {
+					
+					nome = oldRegola.getNome();
+					
 					TrasformazioneRegolaApplicabilitaRisposta applicabilita = oldRisposta.getApplicabilita();
 					
 					Integer statusMinInteger = applicabilita != null ? applicabilita.getReturnCodeMin() : null;
@@ -352,7 +357,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 					}
 				}
 
-				dati = porteDelegateHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRispostaS, 
+				dati = porteDelegateHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRispostaS, nome,
 						returnCode, statusMin, statusMax, pattern, contentType, servletTrasformazioniRispostaHeadersList, parametriInvocazioneServletTrasformazioniRispostaHeaders, numeroTrasformazioniRispostaHeaders, 
 						trasformazioneContenutoRichiestaAbilitato, trasformazioneRichiestaRestAbilitato, 
 						trasformazioneContenutoRispostaAbilitato, trasformazioneContenutoRispostaTipo, trasformazioneContenutoRispostaTemplate, trasformazioneContenutoRispostaContentType, trasformazioneContenutoRispostaReturnCode,
@@ -379,11 +384,16 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 					statusMaxDBCheck = statusMinDBCheck;
 				String patternDBCheck = StringUtils.isNotEmpty(pattern) ? pattern : null;
 				String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
-				TrasformazioneRegolaRisposta regolaRispostaDBCheck = porteDelegateCore.getTrasformazioneRisposta(Long.parseLong(id), idTrasformazione, statusMinDBCheck, statusMaxDBCheck, patternDBCheck, contentTypeDBCheck);
-			
+				TrasformazioneRegolaRisposta regolaRispostaDBCheck_applicabilita = porteDelegateCore.getTrasformazioneRisposta(Long.parseLong(id), idTrasformazione, statusMinDBCheck, statusMaxDBCheck, patternDBCheck, contentTypeDBCheck);
+				TrasformazioneRegolaRisposta regolaRispostaDBCheck_nome = porteDelegateCore.getTrasformazioneRisposta(Long.parseLong(id), idTrasformazione, nome);
+				
 				// controllo che le modifiche ai parametri non coincidano con altre regole gia' presenti
-				if(regolaRispostaDBCheck != null && regolaRispostaDBCheck.getId().longValue() != oldRisposta.getId().longValue()) {
-					pd.setMessage("Le modifiche ai parametri di applicabilit&agrave; effettuate violano il vincolo di univocit&agrave; di una Trasformazione.");
+				if(regolaRispostaDBCheck_applicabilita != null && regolaRispostaDBCheck_applicabilita.getId().longValue() != oldRisposta.getId().longValue()) {
+					pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA);
+					isOk = false;
+				}
+				if(isOk && regolaRispostaDBCheck_nome != null && regolaRispostaDBCheck_nome.getId().longValue() != oldRisposta.getId().longValue()) {
+					pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_NOME);
 					isOk = false;
 				}
 			}
@@ -395,7 +405,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRispostaS, 
+				dati = porteDelegateHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRispostaS, nome,
 						returnCode, statusMin, statusMax, pattern, contentType, servletTrasformazioniRispostaHeadersList, parametriInvocazioneServletTrasformazioniRispostaHeaders, numeroTrasformazioniRispostaHeaders, 
 						trasformazioneContenutoRichiestaAbilitato, trasformazioneRichiestaRestAbilitato, 
 						trasformazioneContenutoRispostaAbilitato, trasformazioneContenutoRispostaTipo, trasformazioneContenutoRispostaTemplate, trasformazioneContenutoRispostaContentType, trasformazioneContenutoRispostaReturnCode,
@@ -421,6 +431,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 			}
 			
 			TrasformazioneRegolaRisposta rispostaDaAggiornare = null;
+			
 			for (int j = 0; j < regola.sizeRispostaList(); j++) {
 				TrasformazioneRegolaRisposta risposta = regola.getRisposta(j);
 				if (risposta.getId().longValue() == idTrasformazioneRisposta) {
@@ -428,6 +439,8 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 					break;
 				}
 			}
+			
+			rispostaDaAggiornare.setNome(nome);
 			
 			if(rispostaDaAggiornare.getApplicabilita() == null)
 				rispostaDaAggiornare.setApplicabilita(new TrasformazioneRegolaApplicabilitaRisposta());

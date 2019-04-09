@@ -121,7 +121,7 @@ public class PorteApplicativeTrasformazioniRichiestaHeaderAdd extends Action {
 				}
 			}
 			
-			String nomeTrasformazione = "Modifica Trasformazione" ; // regola.getApplicabilita().getNome();
+			String nomeTrasformazione = regola.getNome();
 			Parameter pIdTrasformazione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE, idTrasformazione+"");
 
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
@@ -192,10 +192,10 @@ public class PorteApplicativeTrasformazioniRichiestaHeaderAdd extends Action {
 			boolean isOk = porteApplicativeHelper.trasformazioniRichiestaHeaderCheckData(TipoOperazione.ADD);
 			
 			if (isOk) {
-				boolean giaRegistrato = porteApplicativeCore.existsTrasformazioneRichiestaHeader(Long.parseLong(idPorta), idTrasformazione, nome, tipo);
+				boolean giaRegistrato = porteApplicativeCore.existsTrasformazioneRichiestaHeader(Long.parseLong(idPorta), idTrasformazione, nome, tipo, CostantiControlStation.VALUE_TRASFORMAZIONI_CHECK_UNIQUE_NOME_TIPO_HEADER_URL);
 
 				if (giaRegistrato) {
-					pd.setMessage("&Egrave; gi&agrave; presente un Header con in parametri indicati.");
+					pd.setMessage(CostantiControlStation.MESSAGGIO_TRASFORMAZIONI_CHECK_UNIQUE_NOME_TIPO_HEADER);
 					isOk = false;
 				}
 			} 
