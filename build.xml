@@ -208,6 +208,35 @@
 		</then>
 	</if>
 	<import file="${web.govwayLoader.dir}/build.xml" />
+
+	<!-- Tools - RS - config -->
+	<property name="rs.config.dir" location="${rootDir}/tools/rs/config/server" />
+	<property name="webInterfaces" location="${rootDir}/tools/web_interfaces" />
+	<available file="${rs.config.dir}/local_env.xml" property="rs_config_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${rs_config_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			<copy file="${rs.config.dir}/local_env.xml.template" tofile="${rs.config.dir}/local_env.xml"/>
+			<replace file="${rs.config.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${rs.config.dir}/build.xml" />
+
+	<!-- Tools - RS - monitor -->
+	<property name="rs.monitor.dir" location="${rootDir}/tools/rs/monitor/server" />
+	<available file="${rs.monitor.dir}/local_env.xml" property="rs_monitor_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${rs_monitor_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			<copy file="${rs.monitor.dir}/local_env.xml.template" tofile="${rs.monitor.dir}/local_env.xml"/>
+			<replace file="${rs.monitor.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${rs.monitor.dir}/build.xml" />
 	
 	
 	
@@ -388,6 +417,24 @@
 			<param name="as" value="${as}"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_loaderConsole" value="${web.govwayLoader.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false"/>
+		</antcall>
+
+		<antcall target="compile_openspcoop2_govwayConfigApiRS" >
+			<param name="as" value="${as}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_govwayConfigApiRS" value="${rs.config.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false"/>
+		</antcall>
+
+		<antcall target="compile_openspcoop2_govwayMonitorApiRS" >
+			<param name="as" value="${as}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_govwayMonitorApiRS" value="${rs.monitor.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
 			<param name="buildAPI" value="false"/>

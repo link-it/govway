@@ -59,16 +59,16 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/saaj-impl-1.3.28.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/stax-ex-1.7.8.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/mimepull-1.9.7.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aop-5.1.5.RELEASE.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aspects-5.1.5.RELEASE.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-beans-5.1.5.RELEASE.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-5.1.5.RELEASE.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-support-5.1.5.RELEASE.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-core-5.1.5.RELEASE.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-expression-5.1.5.RELEASE.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-tx-5.1.5.RELEASE.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-web-5.1.5.RELEASE.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-5.1.4.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aop-5.1.6.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aspects-5.1.6.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-beans-5.1.6.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-5.1.6.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-support-5.1.6.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-core-5.1.6.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-expression-5.1.6.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-tx-5.1.6.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-web-5.1.6.RELEASE.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-5.1.5.RELEASE.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/uddi4j-2.0.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xalan-2.7.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xml-resolver-1.2.jar"/>	

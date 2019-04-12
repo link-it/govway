@@ -211,19 +211,19 @@
         <archive path="/op2_3.1.dev/lib/soapbox/ultraesb-api-1.7.1.jar"/>
         <archive path="/op2_3.1.dev/lib/soapbox/metro-webservices_xwss_com_sun_xml-2.2.jar"/>
 	<!-- spring -->
-        <archive path="/op2_3.1.dev/lib/spring/spring-web-5.1.5.RELEASE.jar"/>
-        <archive path="/op2_3.1.dev/lib/spring/spring-tx-5.1.5.RELEASE.jar"/>
-        <archive path="/op2_3.1.dev/lib/spring/spring-expression-5.1.5.RELEASE.jar"/>
-        <archive path="/op2_3.1.dev/lib/spring/spring-core-5.1.5.RELEASE.jar"/>
-        <archive path="/op2_3.1.dev/lib/spring/spring-context-5.1.5.RELEASE.jar"/>
-	<archive path="/op2_3.1.dev/lib/spring/spring-context-support-5.1.5.RELEASE.jar"/>
-        <archive path="/op2_3.1.dev/lib/spring/spring-beans-5.1.5.RELEASE.jar"/>
-        <archive path="/op2_3.1.dev/lib/spring/spring-aop-5.1.5.RELEASE.jar"/>
-	<archive path="/op2_3.1.dev/lib/spring/spring-aspects-5.1.5.RELEASE.jar"/>
-        <archive path="/op2_3.1.dev/lib/spring/spring-orm-5.1.5.RELEASE.jar"/>
+        <archive path="/op2_3.1.dev/lib/spring/spring-web-5.1.6.RELEASE.jar"/>
+        <archive path="/op2_3.1.dev/lib/spring/spring-tx-5.1.6.RELEASE.jar"/>
+        <archive path="/op2_3.1.dev/lib/spring/spring-expression-5.1.6.RELEASE.jar"/>
+        <archive path="/op2_3.1.dev/lib/spring/spring-core-5.1.6.RELEASE.jar"/>
+        <archive path="/op2_3.1.dev/lib/spring/spring-context-5.1.6.RELEASE.jar"/>
+	<archive path="/op2_3.1.dev/lib/spring/spring-context-support-5.1.6.RELEASE.jar"/>
+        <archive path="/op2_3.1.dev/lib/spring/spring-beans-5.1.6.RELEASE.jar"/>
+        <archive path="/op2_3.1.dev/lib/spring/spring-aop-5.1.6.RELEASE.jar"/>
+	<archive path="/op2_3.1.dev/lib/spring/spring-aspects-5.1.6.RELEASE.jar"/>
+        <archive path="/op2_3.1.dev/lib/spring/spring-orm-5.1.6.RELEASE.jar"/>
 	<!-- spring-security -->
-	<archive path="/op2_3.1.dev/lib/spring-security/spring-security-core-5.1.4.RELEASE.jar"/>
-	<archive path="/op2_3.1.dev/lib/spring-security/spring-security-web-5.1.4.RELEASE.jar"/>
+	<archive path="/op2_3.1.dev/lib/spring-security/spring-security-core-5.1.5.RELEASE.jar"/>
+	<archive path="/op2_3.1.dev/lib/spring-security/spring-security-web-5.1.5.RELEASE.jar"/>
 	<!-- swagger -->
 	<archive path="/op2_3.1.dev/lib/swagger/swagger-annotations-2.0.3.jar"/>
 	<archive path="/op2_3.1.dev/lib/swagger/swagger-core-2.0.3.jar"/>
