@@ -5,42 +5,24 @@ Background:
 * call read('classpath:crud_commons.feature')
 
 * def applicativo = read('applicativo.json') 
-* eval applicativo.nome = applicativo.nome + random()
+
+* eval randomize(applicativo, ["nome", "credenziali.username"])
+
 
 @FindAll200
-Scenario: FindAll 200 OK
+Scenario: Applicativi FindAll 200 OK
 
-    * call create { resourcePath: 'applicativi', body: '#(applicativo)' }
-
-    Given url configUrl
-    And path 'applicativi'
-    And header Authorization = govwayConfAuth
-    When method get
-    Then status 200
-
-    * call delete { resourcePath: '#("applicativi/" + applicativo.nome)'}
+    * call findall_200 { resourcePath: 'applicativi', body: '#(applicativo)', key: '#(applicativo.nome)' }
 
 @Get200
-Scenario: Get 200 OK
+Scenario: Applicativi Get 200 OK
 
-    * call create { resourcePath: 'applicativi', body: '#(applicativo)' }
-
-    Given url configUrl
-    And path 'applicativi' , applicativo.nome
-    And header Authorization = govwayConfAuth
-    When method get
-    Then status 200
-
-    * call delete { resourcePath: '#("applicativi/" + applicativo.nome)'}
+    * call get_200 { resourcePath: 'applicativi', body: '#(applicativo)', key: '#(applicativo.nome)' }
 
 @Get404
-Scenario: Get 404
+Scenario: Applicativi Get 404
 
-    Given url configUrl
-    And path 'applicativi' , applicativo.nome
-    And header Authorization = govwayConfAuth
-    When method get
-    Then status 404
+    * call get_404 { resourcePath: '#("applicativi/" + applicativo.nome)' }
 
 
 # Scenario: Findall 404 TODO: Questo dipende da property

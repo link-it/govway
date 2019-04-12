@@ -1,0 +1,14 @@
+{
+    "nome": "SoggettoJson2",
+    "modalita_accesso": "https",
+    "credenziali": {
+        "tipo": "configurazione-manuale",
+        "certificato": {
+        "subject": "cn=esterno",
+        "issuer": "cn=issuer2"
+        }
+    },
+    "dominio": "esterno",
+    "descrizione": "Descrizione Soggetto Json2",
+    "ruoli": [ ]
+}

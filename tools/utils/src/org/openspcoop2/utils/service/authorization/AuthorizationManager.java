@@ -121,7 +121,7 @@ public class AuthorizationManager {
 			throw new Exception("Acl rule '"+acl.getName()+"' not satisfied");
 
 		}catch(Exception eAuthorized) {
-			FaultCode.AUTORIZZAZIONE.throwException(String.format("L'utente <%s> non è autorizzato ad invocare l'operazione '%s': %s",
+			FaultCode.AUTORIZZAZIONE.throwException(String.format("L'utente '%s' non è autorizzato ad invocare l'operazione '%s': %s",
 					context.getAuthentication().getName(), context.getMethodName(), eAuthorized.getMessage()));
 		}
 	}

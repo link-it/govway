@@ -33,6 +33,10 @@ Esecuzione dell'Installer
       procedendo con l'aggiornamento di una versione di GovWay
       precedentemente installata.
 
+.. figure:: ../_figure_installazione/installer-scr0b.jpg
+   :scale: 100%
+   :align: center
+
 .. toctree::
         :maxdepth: 2
 

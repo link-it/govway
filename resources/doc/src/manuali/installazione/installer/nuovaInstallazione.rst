@@ -83,6 +83,16 @@ come si sviluppa il processo di installazione:
    -  *Username/Password* relativi all'utente operatore della
       govwayMonitor.
 
+#. Nel successivo passo è possibile indicare se tra gli archivi generati 
+   devono essere inclusi i servizi che permettono la configurazione ed il monitoraggio
+   di GovWay tramite API REST.
+
+   .. _apiREST_fig:
+   
+   .. figure:: ../_figure_installazione/installer-scr3b.jpg
+    :scale: 100%
+    :align: center
+
 #. Al passo successivo si dovranno inserire i dati relativi ai profili
    di interoperabilità supportati dal gateway:
 
@@ -94,11 +104,9 @@ come si sviluppa il processo di installazione:
 
     Profili di Interoperabilità
 
-   -  *Profilo*: contrassegnare con un flag i profili che saranno
+   -  *Profilo*: contrassegnare con un flag i profili aggiuntivi che saranno
       gestite da GovWay, scelti tra quelli offerti built-in dal
       prodotto:
-
-      -  *API Gateway*
 
       -  *SPCoop*
 
@@ -106,10 +114,20 @@ come si sviluppa il processo di installazione:
 
       -  *SdI (Fatturazione Elettronica)*
 
+      .. note::
+         Il profilo 'API Gateway' viene sempre installato.
+
    -  *Soggetto*: nome del soggetto interno che verrà creato
       automaticamente.
 
-#. Se si è scelto di includere la modalità eDelivery viene richiesto di
+#. Se si è scelto di includere il profilo eDelivery verranno presentati tre ulteriori tre passi di installazione.
+   Nel primo passo viene richiesto di immettere la versione dell'Application Server e del Database associato alla versione di Domibus utilizzata. 
+
+   .. figure:: ../_figure_installazione/installer-scr5menu.jpg
+    :scale: 100%
+    :align: center
+
+#. Nel secondo passo, relativamente alla configurazione del profilo eDelivery, viene richiesto di
    immettere i relativi dati di configurazione. 
 
    .. figure:: ../_figure_installazione/installer-scr5.jpg
@@ -140,13 +158,8 @@ come si sviluppa il processo di installazione:
       -  Username/Password: credenziali per l'accesso ai servizi del
          Broker JMS
 
-   -  DBMS
-
-      -  Tipo: la piattaforma database utilizzata da Domibus.
-
-#. Se si è scelto di includere il protocollo eDelivery, in aggiunta allo
-   step precedente, verranno richiesti i dati di accesso al database
-   utilizzato da Domibus:
+#. Nell'ultimo passo, relativamente alla configurazione del profilo eDelivery, 
+   verranno richiesti i dati di accesso al database utilizzato da Domibus:
    
    .. figure:: ../_figure_installazione/installer-scr6.jpg
     :scale: 100%

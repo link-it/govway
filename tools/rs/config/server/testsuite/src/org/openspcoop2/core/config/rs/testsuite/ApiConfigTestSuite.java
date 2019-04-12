@@ -20,7 +20,7 @@
  *
  */
 
-package org.openspcoop2.core.config.rs.testsuite.applicativi;
+package org.openspcoop2.core.config.rs.testsuite;
 
 import com.intuit.karate.junit4.Karate;
 
@@ -34,6 +34,6 @@ import org.junit.runner.RunWith;
  */
 
 @RunWith(Karate.class)
-public class ApplicativiTest {
+public class ApiConfigTestSuite {
 
 }

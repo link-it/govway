@@ -1,0 +1,9 @@
+{
+    "nome": "GruppoJsonEredita",
+    "modalita": "eredita",
+    "azioni": ["DELETE_pet.petId", "GET_pet.petId"],
+    "configurazione": {
+        "nome": "GruppoJson"
+    }
+
+}

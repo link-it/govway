@@ -57,7 +57,7 @@
 	
 	<!-- FaultBean Exception Mapper -->
 	<b:bean id="typeStatusGenerator" class="org.openspcoop2.utils.service.fault.jaxrs.TypeStatusGenerator">
-		<b:property name="typeTemplate" value="https://govpay.readthedocs.io/it/latest/integrazione/99_errori.html#http-@CODE@"/>
+		<b:property name="typeTemplate" value="https://httpstatuses.com/@CODE@"/>
 	</b:bean>
 	<b:bean id="webApplicationExceptionMapper" class="org.openspcoop2.utils.service.fault.jaxrs.WebApplicationExceptionMapper">
 		<b:property name="typeGenerator" >

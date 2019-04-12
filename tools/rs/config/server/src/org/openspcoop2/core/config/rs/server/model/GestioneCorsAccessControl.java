@@ -45,6 +45,9 @@ public class GestioneCorsAccessControl  {
   
   @Schema(description = "")
   private Boolean allowCredentials = false;
+  
+  @Schema(description = "")
+  private List<String> exposeHeaders = null;
  /**
    * Get allAllowOrigins
    * @return allAllowOrigins
@@ -156,6 +159,30 @@ public class GestioneCorsAccessControl  {
     return this;
   }
 
+ /**
+   * Get exposeHeaders
+   * @return exposeHeaders
+  **/
+  @JsonProperty("expose_headers")
+  @Valid
+  public List<String> getExposeHeaders() {
+    return this.exposeHeaders;
+  }
+
+  public void setExposeHeaders(List<String> exposeHeaders) {
+    this.exposeHeaders = exposeHeaders;
+  }
+
+  public GestioneCorsAccessControl exposeHeaders(List<String> exposeHeaders) {
+    this.exposeHeaders = exposeHeaders;
+    return this;
+  }
+
+  public GestioneCorsAccessControl addExposeHeadersItem(String exposeHeadersItem) {
+    this.exposeHeaders.add(exposeHeadersItem);
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -167,6 +194,7 @@ public class GestioneCorsAccessControl  {
     sb.append("    allowHeaders: ").append(GestioneCorsAccessControl.toIndentedString(this.allowHeaders)).append("\n");
     sb.append("    allowMethods: ").append(GestioneCorsAccessControl.toIndentedString(this.allowMethods)).append("\n");
     sb.append("    allowCredentials: ").append(GestioneCorsAccessControl.toIndentedString(this.allowCredentials)).append("\n");
+    sb.append("    exposeHeaders: ").append(GestioneCorsAccessControl.toIndentedString(this.exposeHeaders)).append("\n");
     sb.append("}");
     return sb.toString();
   }

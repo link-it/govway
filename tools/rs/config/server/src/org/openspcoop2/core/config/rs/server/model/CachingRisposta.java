@@ -21,7 +21,9 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import java.util.List;
 import org.openspcoop2.core.config.rs.server.model.ApiImplConfigurazioneStato;
+import org.openspcoop2.core.config.rs.server.model.CachingRispostaRegola;
 import org.openspcoop2.core.config.rs.server.model.StatoDefaultRidefinitoEnum;
 import javax.validation.constraints.*;
 
@@ -50,10 +52,22 @@ public class CachingRisposta extends ApiImplConfigurazioneStato {
   private Boolean hashRequestUri = true;
   
   @Schema(description = "")
-  private Boolean hashHeaders = true;
+  private List<String> hashHeaders = null;
   
   @Schema(description = "")
   private Boolean hashPayload = true;
+  
+  @Schema(description = "")
+  private Boolean controlNoCache = true;
+  
+  @Schema(description = "")
+  private Boolean controlNoStore = true;
+  
+  @Schema(description = "")
+  private Boolean controlMaxAge = true;
+  
+  @Schema(description = "")
+  private List<CachingRispostaRegola> regole = null;
  /**
    * Get stato
    * @return stato
@@ -175,16 +189,21 @@ public class CachingRisposta extends ApiImplConfigurazioneStato {
   **/
   @JsonProperty("hash_headers")
   @Valid
-  public Boolean isHashHeaders() {
+  public List<String> getHashHeaders() {
     return this.hashHeaders;
   }
 
-  public void setHashHeaders(Boolean hashHeaders) {
+  public void setHashHeaders(List<String> hashHeaders) {
     this.hashHeaders = hashHeaders;
   }
 
-  public CachingRisposta hashHeaders(Boolean hashHeaders) {
+  public CachingRisposta hashHeaders(List<String> hashHeaders) {
     this.hashHeaders = hashHeaders;
+    return this;
+  }
+
+  public CachingRisposta addHashHeadersItem(String hashHeadersItem) {
+    this.hashHeaders.add(hashHeadersItem);
     return this;
   }
 
@@ -207,6 +226,87 @@ public class CachingRisposta extends ApiImplConfigurazioneStato {
     return this;
   }
 
+ /**
+   * Get controlNoCache
+   * @return controlNoCache
+  **/
+  @JsonProperty("control_no_cache")
+  @Valid
+  public Boolean isControlNoCache() {
+    return this.controlNoCache;
+  }
+
+  public void setControlNoCache(Boolean controlNoCache) {
+    this.controlNoCache = controlNoCache;
+  }
+
+  public CachingRisposta controlNoCache(Boolean controlNoCache) {
+    this.controlNoCache = controlNoCache;
+    return this;
+  }
+
+ /**
+   * Get controlNoStore
+   * @return controlNoStore
+  **/
+  @JsonProperty("control_no_store")
+  @Valid
+  public Boolean isControlNoStore() {
+    return this.controlNoStore;
+  }
+
+  public void setControlNoStore(Boolean controlNoStore) {
+    this.controlNoStore = controlNoStore;
+  }
+
+  public CachingRisposta controlNoStore(Boolean controlNoStore) {
+    this.controlNoStore = controlNoStore;
+    return this;
+  }
+
+ /**
+   * Get controlMaxAge
+   * @return controlMaxAge
+  **/
+  @JsonProperty("control_max_age")
+  @Valid
+  public Boolean isControlMaxAge() {
+    return this.controlMaxAge;
+  }
+
+  public void setControlMaxAge(Boolean controlMaxAge) {
+    this.controlMaxAge = controlMaxAge;
+  }
+
+  public CachingRisposta controlMaxAge(Boolean controlMaxAge) {
+    this.controlMaxAge = controlMaxAge;
+    return this;
+  }
+
+ /**
+   * Get regole
+   * @return regole
+  **/
+  @JsonProperty("regole")
+  @Valid
+  public List<CachingRispostaRegola> getRegole() {
+    return this.regole;
+  }
+
+  public void setRegole(List<CachingRispostaRegola> regole) {
+    this.regole = regole;
+  }
+
+  public CachingRisposta regole(List<CachingRispostaRegola> regole) {
+    this.regole = regole;
+    return this;
+  }
+
+  public CachingRisposta addRegoleItem(CachingRispostaRegola regoleItem) {
+    this.regole.add(regoleItem);
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -221,6 +321,10 @@ public class CachingRisposta extends ApiImplConfigurazioneStato {
     sb.append("    hashRequestUri: ").append(CachingRisposta.toIndentedString(this.hashRequestUri)).append("\n");
     sb.append("    hashHeaders: ").append(CachingRisposta.toIndentedString(this.hashHeaders)).append("\n");
     sb.append("    hashPayload: ").append(CachingRisposta.toIndentedString(this.hashPayload)).append("\n");
+    sb.append("    controlNoCache: ").append(CachingRisposta.toIndentedString(this.controlNoCache)).append("\n");
+    sb.append("    controlNoStore: ").append(CachingRisposta.toIndentedString(this.controlNoStore)).append("\n");
+    sb.append("    controlMaxAge: ").append(CachingRisposta.toIndentedString(this.controlMaxAge)).append("\n");
+    sb.append("    regole: ").append(CachingRisposta.toIndentedString(this.regole)).append("\n");
     sb.append("}");
     return sb.toString();
   }

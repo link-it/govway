@@ -439,7 +439,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED) &&
 					!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED) &&
 					!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_DELEGATED_BY) &&
-					(azione.indexOf(" ") != -1)) {
+					(azione != null && azione.indexOf(" ") != -1)) {
 				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}

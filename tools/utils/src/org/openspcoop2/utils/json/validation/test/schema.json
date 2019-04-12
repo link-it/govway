@@ -1,4 +1,6 @@
-{"definitions" : {
+{
+"$schema": "http://json-schema.org/draft-04/schema#",
+"definitions" : {
   "Order" : {
     "type" : "object",
     "properties" : {
@@ -128,6 +130,9 @@
         "type" : "string",
         "description" : "pet status in the store",
         "enum" : [ "available", "pending", "sold" ]
+      },
+      "costante" : {
+      	"const" : "valoreCostante"
       }
     },
     "additionalProperties" : false,

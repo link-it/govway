@@ -167,11 +167,6 @@ public class ServerProperties  {
 	}
 	
 	
-	public boolean isMultitenant() throws UtilsException {
-		return Boolean.parseBoolean(this.readProperty(true, "multitenant"));
-	}
-	
-	
 	public boolean isEnabledAutoMapping() throws UtilsException {
 		return Boolean.parseBoolean(this.readProperty(true, "enableAutoMapping"));
 	}

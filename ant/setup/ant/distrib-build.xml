@@ -114,7 +114,7 @@
 		<!-- Cfg -->
 		<mkdir dir="${dist}/cfg"/>
 		<copy todir="${dist}/cfg">
-		    <fileset dir="${deploy_resources}/core" />
+			<fileset dir="${deploy_resources}/core"/>
 		</copy>
 		<copy todir="${dist}/cfg">
 		    <fileset dir="${tmp_cfg}" />
@@ -138,6 +138,22 @@
 			</not>
 			<then>
 				<delete file="${dist}/cfg/loader_local.properties"/>
+			</then>
+		</if>
+		<if>
+			<not>
+				<istrue value="${antinstaller_rs_config}" />
+			</not>
+			<then>
+				<delete file="${dist}/cfg/rs-api-config_local.properties"/>
+			</then>
+		</if>
+		<if>
+			<not>
+				<istrue value="${antinstaller_rs_monitor}" />
+			</not>
+			<then>
+				<delete file="${dist}/cfg/rs-api-monitor_local.properties"/>
 			</then>
 		</if>
 		<replace file="${dist}/cfg/govway_local.jcs.properties" token="/etc/govway/indexed-disk-cache" value="${work_dir}"/>
@@ -531,6 +547,22 @@
 				
 			</then>
 		</if>
+
+		<!-- *** Aggiunta dell'applicazione govwayAPIConfig.war ***-->
+		<if>
+			<istrue value="${antinstaller_rs_config}"/>
+			<then>
+				<zip destfile="${dist}/archivi/govwayAPIConfig.war" basedir="${tmp_archivi}/govwayAPIConfig.war"/>
+			</then>
+		</if>
+
+		<!-- *** Aggiunta dell'applicazione govwayAPIMonitor.war ***-->
+		<if>
+			<istrue value="${antinstaller_rs_monitor}"/>
+			<then>
+				<zip destfile="${dist}/archivi/govwayAPIMonitor.war" basedir="${tmp_archivi}/govwayAPIMonitor.war"/>
+			</then>
+		</if>
 		
 		<!-- ** end ** -->
 		<zip destfile="${dist}/archivi/govway.ear" basedir="${dist}/archivi/OpenSPCoop2"/>
@@ -539,22 +571,47 @@
 	</target>
 	
 	<target name="_prepareArchivioTomcat">
+
+		<!-- govway -->
 		<zip destfile="${dist}/archivi/govway.war" basedir="${tmp_archivi}/govway.war"/>
-		<!-- govwaySec -->
+		
+		<!-- *** Aggiunta dell'applicazione govwaySec *** -->
 		<if>
 			<istrue value="${build_openspcoop_sec_archive}" />
 			<then>
 				<zip destfile="${dist}/archivi/govwaySec.war" basedir="${tmp_archivi}/govwaySec.war"/>
 			</then>
 		</if>
+		
+		<!-- *** Aggiunta dell'applicazione govwayConsole ***-->
 		<zip destfile="${dist}/archivi/govwayConsole.war" basedir="${tmp_archivi}/govwayConsole.war"/>
+		
+		<!-- *** Aggiunta dell'applicazione govwayMonitor ***-->
 		<zip destfile="${dist}/archivi/govwayMonitor.war" basedir="${tmp_archivi}/govwayMonitor.war"/>
+		
+		<!-- *** Aggiunta dell'applicazione govwayLoader ***-->
 		<if>
 			<and>
 				<istrue value="${antinstaller_loader}"/>
 			</and>
 			<then>
 				<zip destfile="${dist}/archivi/govwayLoader.war" basedir="${tmp_archivi}/govwayLoader.war"/>
+			</then>
+		</if>
+
+		<!-- *** Aggiunta dell'applicazione govwayAPIConfig.war ***-->
+		<if>
+			<istrue value="${antinstaller_rs_config}"/>
+			<then>
+				<zip destfile="${dist}/archivi/govwayAPIConfig.war" basedir="${tmp_archivi}/govwayAPIConfig.war"/>
+			</then>
+		</if>
+
+		<!-- *** Aggiunta dell'applicazione govwayAPIMonitor.war ***-->
+		<if>
+			<istrue value="${antinstaller_rs_monitor}"/>
+			<then>
+				<zip destfile="${dist}/archivi/govwayAPIMonitor.war" basedir="${tmp_archivi}/govwayAPIMonitor.war"/>
 			</then>
 		</if>
 	</target>

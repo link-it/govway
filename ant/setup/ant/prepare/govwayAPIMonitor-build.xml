@@ -1,0 +1,79 @@
+
+<project name="prepare-setup-govwayAPIMonitor" basedir=".">
+	
+	<description>
+        	PREPARE SETUP RS API  MONITOR
+	</description>
+
+	
+	<target name="prepare_govwayAPIMonitor_setup">
+		
+		<if>
+			<not>
+				<available file="${govwayMonitor}/local_env.xml"/>
+			</not>
+			<then>
+				<copy file="${govwayMonitor}/local_env.xml.template" tofile="${govwayMonitor}/local_env.xml" />
+			</then>
+		</if>
+				
+		<foreach list="${application_server_version}" param="TIPO_AS" target="_buildGovwayAPIMonitor" />
+		
+	</target>
+	
+	<target name="_buildGovwayAPIMonitor">
+
+		<mkdir dir="${deploy_sw}/${TIPO_AS}/dist"/>
+		<antcall target="build_govwayMonitorApiRS">
+		    	<param name="as" value="${TIPO_AS}" />
+			<param name="dist_govwayMonitorApiRS" value="${deploy_sw}/${TIPO_AS}/dist"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_govwayMonitorApiRS" value="${src_govwayMonitorApiRS}"/>
+			<param name="src_webinf_govwayMonitorApiRS" value="${src_govwayMonitorApiRS}/WEB-INF"/>
+			<param name="build_govwayMonitorApiRS" location="build/govwayMonitor" />
+			<param name="build_govwayMonitorApiRS_war" location="build/govwayMonitorWar" />
+			<param name="properties_govwayMonitorApiRS" value="${govwayMonitorApiRS}/deploy/properties"/>
+			<param name="deploy_govwayMonitorApiRS" value="${govwayMonitorApiRS}/deploy"/>
+			<param name="deploy.dir" value="${govwayMonitorApiRS}/deploy"/>
+			<param name="printServerInfo" value="true"/>
+			<param name="openspcoop2" value="${rootDir}"/>
+			<param name="openspcoop2_jars" value="${deploy_sw_openspcoop2_jars}"/> <!-- usato per prendere i jar di openspcoop2 -->
+			<param name="build_govwayMonitor" value="build"/>
+			<param name="queue" value="${queue}"/>
+			<param name="plugins_govwayMonitor" value="${govwayMonitor}/deploy/plugins"/>
+			<param name="deploy_govwayMonitor" value="${govwayMonitor}/deploy"/>
+			<param name="buildJsfAsModule" value="false"/>
+	 		<param name="data_content_handler_dir" value="${core}/deploy/data_content_handler" />
+			<param name="src_govwayMonitor" value="${src_govwayMonitor}"/>
+			<param name="dist_govwayMonitor" value="${deploy_sw}/${TIPO_AS}/dist"/>
+			<param name="build_govwayMonitor" value="build"/>
+			<param name="queue" value="${queue}"/>
+			<param name="dist_mvc" value="${deploy_sw}/${TIPO_AS}/dist"/>
+			<param name="dist_queue" value="${deploy_sw}/${TIPO_AS}/dist"/>
+			<param name="dist_users" value="${deploy_sw}/${TIPO_AS}/dist"/>
+			<param name="dist_audit" value="${deploy_sw}/${TIPO_AS}/dist"/>
+			<param name="required_lib_govwayMonitorApiRS" value="${required_lib_govwayMonitorApiRS}"/>
+			<param name="tmp_jboss_conf" value="tmp_govwayMonitorApiRS" />
+		</antcall>
+		<delete includeEmptyDirs="true" dir="tmp_govwayMonitorApiRS"/>
+	
+		<move file="${deploy_sw}/${TIPO_AS}/dist/govwayAPIMonitor.war" todir="${deploy_sw}/${TIPO_AS}"/>
+		
+		<delete includeEmptyDirs="true">
+		    <fileset dir="${deploy_sw}/${TIPO_AS}/dist" includes="*"/>
+		</delete>
+		<delete dir="${deploy_sw}/${TIPO_AS}/dist"/>
+		<delete dir="build" includeEmptyDirs="true"/>
+			
+		<var name="archiveFile" value="${deploy_sw}/${TIPO_AS}/govwayAPIMonitor.war" />
+		
+		<antcall target="read_jar">
+		    <param name="archiveFile" value="${archiveFile}"/>
+			<param name="as" value="${TIPO_AS}"/>
+			<param name="archiveType" value="WAR"/>
+		</antcall>
+		
+	</target>
+	
+	
+</project>

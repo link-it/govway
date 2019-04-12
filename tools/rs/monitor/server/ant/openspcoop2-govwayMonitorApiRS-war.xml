@@ -47,7 +47,7 @@
 			</then>
 		</if>
 		
-		<war destfile="${dist_govwayMonitorApiRS}/govwayAPIMonitor.war" webxml="src/WEB-INF/web.xml">
+		<war destfile="${dist_govwayMonitorApiRS}/govwayAPIMonitor.war" webxml="${src_govwayMonitorApiRS}/WEB-INF/web.xml">
 
 			<webinf dir="${tmp_jboss_conf}">
 				<include name="jbossws-cxf.xml"/>
@@ -153,7 +153,7 @@
 			</classes>			
 			<classes dir="${properties_govwayMonitorApiRS}">
 				<include name="rs-api-monitor.properties"/>
-				<include name="rs-api-monitor.users.properties"/>
+				<!-- integrato utenti della console <include name="rs-api-monitor.users.properties"/> -->
 				<include name="rs-api-monitor.log4j2.properties"/>
 				<include name="messages_it.properties"/>
 				<include name="log4j2.properties"/>

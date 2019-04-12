@@ -23,6 +23,7 @@ package org.openspcoop2.core.config.rs.server.api.impl;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.registry.IdSoggetto;
@@ -31,6 +32,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.PageData;
 
@@ -69,6 +71,8 @@ public class Environment {
 	
 	public final boolean findall_404;
 
+	public final boolean multitenant;
+
 	
 	public Environment(HttpServletRequest req, ProfiloEnum profilo, String soggetto, IContext ctx) throws Exception {
 		
@@ -93,6 +97,9 @@ public class Environment {
 		this.idSoggetto.setNome(soggetto);
 		this.idSoggetto.setTipo(this.tipo_soggetto);
 		this.idSoggetto.setId(-1L);
+		
+		ConfigurazioneCore confCore = new ConfigurazioneCore(this.stationCore);
+		this.multitenant = confCore.getConfigurazioneGenerale().getMultitenant().getStato() == StatoFunzionalita.ABILITATO;
 		
 		try {
 			this.idSoggetto.setId(this.soggettiCore.getIdSoggetto(soggetto,this.tipo_soggetto));

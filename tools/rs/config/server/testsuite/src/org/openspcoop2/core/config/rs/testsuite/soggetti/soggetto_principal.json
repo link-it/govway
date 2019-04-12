@@ -1,0 +1,10 @@
+{
+ 	"nome": "SoggettoJson1",
+   	"modalita_accesso": "principal",
+   	"credenziali": {
+       		"userid": "username"
+	},
+	"dominio": "esterno",
+	"descrizione": "Descrizione Soggetto Json1",
+	"ruoli": [ "RuoloTestSoggetto" ]
+}

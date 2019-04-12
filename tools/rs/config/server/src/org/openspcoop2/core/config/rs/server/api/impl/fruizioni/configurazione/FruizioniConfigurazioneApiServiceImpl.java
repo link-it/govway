@@ -173,7 +173,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final org.openspcoop2.core.config.constants.CredenzialeTipo tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(pd.getAutenticazione());
 			
 			List<ServizioApplicativo> saCompatibili = env.saCore.soggettiServizioApplicativoList(env.idSoggetto.toIDSoggetto(),env.userLogin,tipoAutenticazione);
-			if (!Helper.findFirst(saCompatibili, s -> s.getId() == sa.getId()).isPresent()) {
+			if (!Helper.findFirst(saCompatibili, s -> s.getId().equals(sa.getId())).isPresent()) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La modalità di autenticazione del servizio Applicativo scelto non è compatibile con il gruppo che si vuole configurare");
 			}
 
@@ -906,7 +906,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			policies.forEach( p -> {
 				RateLimitingPolicyItem item = new RateLimitingPolicyItem();
 				item.setIdentificativo(p.getIdActivePolicy());
-				item.setNome(p.getAlias());ret.addItemsItem(item);
+				item.setNome(p.getAlias());
 				ret.addItemsItem(item);
 			});
 			
@@ -1013,7 +1013,8 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				item.setElemento( StringUtils.isEmpty(c.getNome()) 
 						? "*"
 						: c.getNome() 
-					);				item.setIdentificazioneTipo(CorrelazioneApplicativaRispostaEnum.valueOf(c.getIdentificazione().name()));
+					);			
+				item.setIdentificazioneTipo(CorrelazioneApplicativaRispostaEnum.valueOf(c.getIdentificazione().name()));
 				ret.addItemsItem(item);
 			});        
 			
@@ -1641,7 +1642,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final PortaDelegata oldPd = env.pdCore.getPortaDelegata(env.idPd);
 			final PortaDelegata newPd = env.pdCore.getPortaDelegata(env.idPd);
 			
-			ErogazioniApiHelper.fillPortaDelegata(body, newPd);
+			ErogazioniApiHelper.fillPortaDelegata(env, body, newPd);
 			
 			if (! ErogazioniApiHelper.controlloAccessiCheckPD(env, oldPd, newPd)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(  env.pd.getMessage() ));
@@ -2040,7 +2041,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			if ( oldElem == null ) 
 				throw FaultCode.NOT_FOUND.toException("Correlazione Applicativa Risposta per l'elemento " + elemento + " non trovata ");
 			
-			if ( !correlazioneApplicativaRispostaCheckData(TipoOperazione.CHANGE, env.requestWrapper, env.pdHelper, false, body, idPorta, oldElem.getId())) {
+			if ( !correlazioneApplicativaRispostaCheckData(TipoOperazione.CHANGE, env.requestWrapper, env.pdHelper, true, body, idPorta, oldElem.getId())) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			

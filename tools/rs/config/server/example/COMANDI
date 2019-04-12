@@ -251,18 +251,13 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 	+ UPDATE INFO GENERALI
 ./update erogazioni/PetStore/2/informazioni bodies/informazioni_generali_petstore.json
 
-
-	
 	+ UPDATE URL INVOCAZIONE
 ./update erogazioni/PetStore/2/url-invocazione bodies/erogazione_petstore_url_invocazione.json
 ./update erogazioni/EsempioServizioComposto/1/url-invocazione bodies/erogazione_petstore_url_invocazione.json profilo=SPCoop tipo_servizio=ldap
 
-
-
 	+ GET URL INVOCAZIONE
 ./get erogazioni/PetStore/2/url-invocazione
 ./get erogazioni/EsempioServizioComposto/1/url-invocazione profilo=SPCoop tipo_servizio=ldap
-
 
 
 	+ DELETE
@@ -336,7 +331,7 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 	+ FINDALL GRUPPI
 ./get erogazioni/PetStore/2/gruppi
 
-	+ GET AZIONI
+	+ GET GRUPPI
 ./get erogazioni/PetStore/2/gruppi/GruppoJson
 
 	

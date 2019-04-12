@@ -50,10 +50,13 @@ public class LoginHelper extends ConsoleHelper {
 	}
 	
 	public boolean loginCheckData(LoginTipologia tipoCheck) throws Exception {
+		String login = this.getParameter(LoginCostanti.PARAMETRO_LOGIN_LOGIN);
+		String password = this.getParameter(LoginCostanti.PARAMETRO_LOGIN_PASSWORD);
+		return this.loginCheckData(tipoCheck, login, password);
+	}
+	public boolean loginCheckData(LoginTipologia tipoCheck, String login, String password) throws Exception {
 		try{
-			String login = this.getParameter(LoginCostanti.PARAMETRO_LOGIN_LOGIN);
-			String password = this.getParameter(LoginCostanti.PARAMETRO_LOGIN_PASSWORD);
-
+				
 			// Campi obbligatori
 			if (login.equals("")) {
 				this.pd.setMessage("Dati incompleti. E' necessario indicare una Login",MessageType.ERROR_SINTETICO);

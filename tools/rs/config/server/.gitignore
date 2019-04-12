@@ -9,3 +9,4 @@ target
 local_env.xml
 # Except this file
 !.gitignore
+!testsuite/local_env.xml

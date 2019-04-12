@@ -33,7 +33,6 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
-import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.rs.server.api.FruizioniApi;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
@@ -53,7 +52,6 @@ import org.openspcoop2.core.config.rs.server.model.FruizioneViewItem;
 import org.openspcoop2.core.config.rs.server.model.ListaApiImplAllegati;
 import org.openspcoop2.core.config.rs.server.model.ListaFruizioni;
 import org.openspcoop2.core.config.rs.server.model.ModalitaIdentificazioneAzioneEnum;
-import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -73,6 +71,7 @@ import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -139,7 +138,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
             
           
             ServletUtils.setObjectIntoSession(context.getServletRequest().getSession(), AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);  
-            ErogazioniApiHelper.serviziCheckData(TipoOperazione.ADD, env, as, asps, env.idSoggetto, body, false);
+            ErogazioniApiHelper.serviziCheckData(TipoOperazione.ADD, env, as, asps, Optional.of(env.idSoggetto), body);
             
    
 			org.openspcoop2.core.registry.Connettore regConnettore = ErogazioniApiHelper.buildConnettoreRegistro(env, body.getConnettore());
@@ -725,7 +724,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			
 			asps.setOldIDServizioForUpdate(env.idServizioFactory.getIDServizioFromAccordo(asps));
 			
-			ErogazioniApiHelper.serviziCheckData(TipoOperazione.CHANGE, env, as, asps, null, null, true);
+			ErogazioniApiHelper.serviziUpdateCheckData(as, asps, false, env);
 			
 			List<Object> oggettiDaAggiornare = AccordiServizioParteSpecificaUtilities.getOggettiDaAggiornare(asps, env.apsCore);
 			
@@ -804,10 +803,12 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 					
 		    long idServizioFruitoreInt = env.apsCore.getServizioFruitore(IDServizioFactory.getInstance().getIDServizioFromAccordo(asps), env.idSoggetto.getId());
 			final Fruitore servFru = env.apsCore.getServizioFruitore(idServizioFruitoreInt);
-			final Fruitore fruitore = Helper.findAndRemoveFirst(fruitori, f -> f.getId() == servFru.getId());
 			
-			if (fruitore == null)
+			if ( servFru == null)
 				throw FaultCode.NOT_FOUND.toException("Soggetto fruitore " + env.idSoggetto.toString() + "non registrato per la fruizione scelta" );
+			
+			// Prendo pero poi immagine del fruitore dall'asps
+			final Fruitore fruitore = Helper.findAndRemoveFirst(fruitori, f -> f.getTipo().equals(servFru.getTipo()) && f.getNome().equals(servFru.getNome()));
 			
 			final org.openspcoop2.core.registry.Connettore connettore = fruitore.getConnettore();
 			
@@ -866,7 +867,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
  		    final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
 			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			
-		    ErogazioniApiHelper.updateInformazioniGenerali(body, env, asps);
+		    ErogazioniApiHelper.updateInformazioniGenerali(body, env, asps, false);
         
 			context.getLogger().info("Invocazione completata con successo");        
 		}
@@ -898,6 +899,11 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			Helper.throwIfNull(body);
 	
 			final ApiImplUrlInvocazione urlInvocazione = JSONUtils.getInstance().getAsObject((InputStream) body, ApiImplUrlInvocazione.class);
+			
+			if (urlInvocazione.getModalita() == null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare una modalità di identificazione azione valida");
+			}
+			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 		    final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
 			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
@@ -907,15 +913,11 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			final PortaDelegataAzione pdAzione =  new PortaDelegataAzione(); //pd.getAzione() == null ? new PortaDelegataAzione() : pd.getAzione();
 			
 			final AccordoServizioParteComune apc = env.apcCore.getAccordoServizio(asps.getIdAccordo());
-			List<PortaApplicativaAzioneIdentificazione> identModes = env.paHelper.getModalitaIdentificazionePorta(env.tipo_protocollo, env.apcCore.toMessageServiceBinding(apc.getServiceBinding()));
-			if ( identModes.contains(PortaApplicativaAzioneIdentificazione.PROTOCOL_BASED) && identModes.size() == 1 ) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non puoi modificare la url-invocazione il cui metodo di identificazione azioni può essere solo " + PortaApplicativaAzioneIdentificazione.PROTOCOL_BASED.toString() );
-			}
 			
+			List<PortaDelegataAzioneIdentificazione> identModes = env.pdHelper.getModalitaIdentificazionePorta(env.tipo_protocollo, env.apcCore.toMessageServiceBinding(apc.getServiceBinding()));
 			
-			if ( !identModes.contains( PortaApplicativaAzioneIdentificazione.valueOf(urlInvocazione.getModalita().name()) )) {
+			if ( !identModes.contains( PortaDelegataAzioneIdentificazione.valueOf(urlInvocazione.getModalita().name()) ))
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La modalità di identificazione azione deve essere una fra: " + identModes.toString() );
-			}
 				
 			switch (urlInvocazione.getModalita()) {
 			case CONTENT_BASED:

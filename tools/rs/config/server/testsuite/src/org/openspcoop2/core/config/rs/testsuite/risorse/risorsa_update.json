@@ -1,0 +1,8 @@
+{
+	"descrizione": "DescrizioneRisorsaJson1",
+	"http_method": "POST",
+	"path":	"motore/azione",
+	"id_collaborazione": false,
+	"riferimento_id_richiesta": true
+}
+

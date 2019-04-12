@@ -81,6 +81,9 @@ public class UserDetailsBean implements Serializable {
 	}
 
 	public void setUtente(User u) throws UserInvalidException{
+		this.setUtente(u, true);
+	}
+	public void setUtente(User u, boolean check) throws UserInvalidException{
 		this.username = u.getLogin();
 		this.password = u.getPassword();
 		
@@ -105,16 +108,20 @@ public class UserDetailsBean implements Serializable {
 			this.authorities.add(new RuoloBean(UserDetailsBean.RUOLO_CONFIGURATORE));
 		}
 		
-		if(this.authorities.size() == 1) {
-			throw new UserInvalidException("Utente non dispone di alcun ruolo necessario per accedere alla console");
-		}
+		if(check) {
 		
-		if(!u.isConfigurazioneValidaAbilitazioni()) {
-			throw new UserInvalidException("L'utente non è abilitato ad utilizzare la console: configurazione incompleta");
+			if(this.authorities.size() == 1) {
+				throw new UserInvalidException("Utente non dispone di alcun ruolo necessario per accedere alla console");
+			}
+			
+			if(!u.isConfigurazioneValidaAbilitazioni()) {
+				throw new UserInvalidException("L'utente non è abilitato ad utilizzare la console: configurazione incompleta");
+			}
+			
 		}
-		
+			
 		this.utente = u;
-		
+			
 		try {
 			List<String> protocolli = Utility.getProtocolli(this.utente,true);
 			

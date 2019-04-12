@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="GovWayConfigApiRSTestSuite_LocalEnv" basedir=".">
+
+      <!-- root di OpenSPCoop -->
+      <property name="openspcoop2" location="../../../../.."/>
+      <property name="openspcoop2.dist" location="${openspcoop2}/core/dist"/>
+      
+      <property name="required_lib_govwayConfigApiRSTestSuite" location="${openspcoop2}/lib/"/>
+      <property name="required_lib" value="${required_lib_govwayConfigApiRSTestSuite}"/>
+      <property name="openspcoop2.lib" location="${required_lib_govwayConfigApiRSTestSuite}"/>
+
+      <!-- Specifica se inserire le informazioni di debug nelle classi -->
+      <property name="debug" value="true" />
+
+      <!-- Risultati -->
+      <property name="output" location="RisultatiTestSuite" />
+
+      <!-- Opzioni -->
+      <property name="haltOnFailure" value="no"/>
+      <property name="showOutput" value="yes"/>
+
+</project>

@@ -78,7 +78,9 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 		
 		Logger log = this.getLog();
 		
-		CORSRequestType requestType = getRequestType(req, log, false);
+		CORSFilterConfiguration config = this.getConfig();
+		
+		CORSRequestType requestType = getRequestType(req, log, config.isErrorAsDebug());
 		
 		this.doCORS(req, res, requestType, false);
 	}
@@ -107,7 +109,7 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 		
 		Logger log = this.getLog();
 
-		boolean errorAsDebug = false; 
+		boolean errorAsDebug = config.isErrorAsDebug(); 
 		
 		if(newCheckForInvalidType) {
 			

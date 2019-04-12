@@ -115,6 +115,52 @@
 			<param name="value" value="${work_dir}/controlloTraffico"/>
 		</antcall>
 
+		<!-- Preloading -->
+		<if>
+			<and>
+				<istrue value="${antinstaller_rs_config}"/>
+				<istrue value="${antinstaller_rs_monitor}"/>
+			</and>
+			<then>
+				<antcall target="set_property">
+					<param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.config.preLoading.locale"/>
+					<param name="value" value="/configurazione.zip,/apiConfig.zip,/apiMonitor.zip"/>
+				</antcall>
+			</then>
+			<elseif>
+				<and>
+					<istrue value="${antinstaller_rs_config}"/>
+				</and>
+				<then>
+					<antcall target="set_property">
+						<param name="file" value="${file}"/>
+						<param name="token" value="org.openspcoop2.pdd.config.preLoading.locale"/>
+						<param name="value" value="/configurazione.zip,/apiConfig.zip"/>
+					</antcall>
+				</then>
+			</elseif>
+			<elseif>
+				<and>
+					<istrue value="${antinstaller_rs_monitor}"/>
+				</and>
+				<then>
+					<antcall target="set_property">
+						<param name="file" value="${file}"/>
+						<param name="token" value="org.openspcoop2.pdd.config.preLoading.locale"/>
+						<param name="value" value="/configurazione.zip,/apiMonitor.zip"/>
+					</antcall>
+				</then>
+			</elseif>
+			<else>
+				<antcall target="set_property">
+					<param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.config.preLoading.locale"/>
+					<param name="value" value="/configurazione.zip"/>
+				</antcall>
+			</else>
+		</if>
+
 		<!-- DEBUG -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>

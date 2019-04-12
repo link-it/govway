@@ -86,7 +86,13 @@ public class PreLoadingConfig  {
 		this.dominio = dominio;
 	}
 	
-	
+	public void loadConfig(List<byte[]> zipContent) throws Exception {
+		if(zipContent!=null && !zipContent.isEmpty()) {
+			for (byte[] bs : zipContent) {
+				this.loadConfig(bs);
+			}
+		}
+	}
 	public void loadConfig(byte[] zipContent) throws Exception {
 		
 		List<String> configNameList = new ArrayList<>();
@@ -280,7 +286,7 @@ public class PreLoadingConfig  {
 											this.log,this.log);
 							boolean reset = false;
 							boolean aggiornamentoSoggetti = false;
-							boolean createMappingErogazioneFruizione = false;
+							boolean createMappingErogazioneFruizione = true; // serve per creare il mapping ad es. sulle fruizioni ed erogazioni
 							boolean updateEnabled = false; // per non modificare eventuali configurazioni gia' caricate, che possono essere state modificate
 							xmlDataConverter.convertXML(reset, aggiornamentoSoggetti, createMappingErogazioneFruizione, updateEnabled);
 						}finally {

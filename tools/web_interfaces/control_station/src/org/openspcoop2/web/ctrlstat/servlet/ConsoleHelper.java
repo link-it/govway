@@ -3525,6 +3525,29 @@ public class ConsoleHelper {
 		return l;
 	}
 	
+	public void controlloAccessiAdd(Vector<DataElement> dati, TipoOperazione tipoOperazione, String statoControlloAccessiAdd) {
+		
+		if(!this.isModalitaCompleta() && TipoOperazione.ADD.equals(tipoOperazione)) {
+			
+			DataElement de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI );
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO);
+			de.setType(DataElementType.SELECT);
+			de.setValues(CostantiControlStation.SELECT_VALUES_PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO);
+			de.setLabels(CostantiControlStation.SELECT_VALUES_PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO);
+			de.setSelected(statoControlloAccessiAdd);
+			dati.addElement(de);
+			
+		}
+		
+	}
+			
+	
 	public void controlloAccessiAutenticazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String autenticazione, String autenticazioneCustom, String autenticazioneOpzionale,
 			TipoAutenticazionePrincipal autenticazionePrincipal,  List<String> autenticazioneParametroList,
 			boolean confPers, boolean isSupportatoAutenticazioneSoggetti,boolean isPortaDelegata,
@@ -3536,9 +3559,14 @@ public class ConsoleHelper {
 		boolean mostraSezione = !tipoOperazione.equals(TipoOperazione.ADD) || 
 				(isPortaDelegata ? this.core.isEnabledAutenticazione_generazioneAutomaticaPorteDelegate() : this.core.isEnabledAutenticazione_generazioneAutomaticaPorteApplicative());
 		
+		boolean allHidden = false;
+		if(!this.isModalitaCompleta() && TipoOperazione.ADD.equals(tipoOperazione)) {
+			allHidden = true;
+		}
+		
 		if(mostraSezione){
 			
-			if(isSupportatoAutenticazioneSoggetti || tokenAbilitato) {
+			if(!allHidden && (isSupportatoAutenticazioneSoggetti || tokenAbilitato)) {
 				DataElement de = new DataElement();
 				de.setType(DataElementType.TITLE); //SUBTITLE);
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE);
@@ -3547,10 +3575,12 @@ public class ConsoleHelper {
 			
 			if(isSupportatoAutenticazioneSoggetti){
 				
-				DataElement de = new DataElement();
-				de.setType(DataElementType.SUBTITLE); //SUBTITLE);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE_TRASPORTO);
-				dati.addElement(de);
+				if(!allHidden) {
+					DataElement de = new DataElement();
+					de.setType(DataElementType.SUBTITLE); //SUBTITLE);
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE_TRASPORTO);
+					dati.addElement(de);
+				}
 			
 				List<String> autenticazioneValues = TipoAutenticazione.getValues();
 				List<String> autenticazioneLabels = TipoAutenticazione.getLabels();
@@ -3567,24 +3597,34 @@ public class ConsoleHelper {
 					tipoAutenticazione[totEl-1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
 					labelTipoAutenticazione[totEl-1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
 				}
-				de = new DataElement();
+				DataElement de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE);
-				de.setType(DataElementType.SELECT);
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE);
-				de.setValues(tipoAutenticazione);
-				de.setLabels(labelTipoAutenticazione);
-				//		de.setOnChange("CambiaTipoAuth('" + tipoOp + "', " + numCorrApp + ")");
-				de.setPostBack(true);
-				de.setSelected(autenticazione);
+				if(allHidden) {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(autenticazione);
+				}
+				else {
+					de.setType(DataElementType.SELECT);
+					de.setValues(tipoAutenticazione);
+					de.setLabels(labelTipoAutenticazione);
+					//		de.setOnChange("CambiaTipoAuth('" + tipoOp + "', " + numCorrApp + ")");
+					de.setPostBack(true);
+					de.setSelected(autenticazione);
+				}
 				dati.addElement(de);
 		
 				de = new DataElement();
 				de.setLabel("");
-				if (autenticazione == null ||
-						!autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM))
+				if(allHidden) {
 					de.setType(DataElementType.HIDDEN);
-				else
+				}
+				else if (autenticazione == null ||
+						!autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM)) {
+					de.setType(DataElementType.HIDDEN);
+				}else {
 					de.setType(DataElementType.TEXT_EDIT);
+				}
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM);
 				de.setValue(autenticazioneCustom);
 				dati.addElement(de);
@@ -3606,11 +3646,17 @@ public class ConsoleHelper {
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_BASIC_FORWARD);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
-					de.setType(DataElementType.CHECKBOX);
-					if(autenticazioneParametro==null || "".equals(autenticazioneParametro)) {
-						autenticazioneParametro = Costanti.CHECK_BOX_DISABLED;
+					if(allHidden) {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(ServletUtils.isCheckBoxEnabled(autenticazioneParametro)+"");
 					}
-					de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneParametro));
+					else {
+						de.setType(DataElementType.CHECKBOX);
+						if(autenticazioneParametro==null || "".equals(autenticazioneParametro)) {
+							autenticazioneParametro = Costanti.CHECK_BOX_DISABLED;
+						}
+						de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneParametro));
+					}
 					dati.addElement(de);
 				}
 				else if(TipoAutenticazione.PRINCIPAL.equals(autenticazione)) {
@@ -3618,16 +3664,22 @@ public class ConsoleHelper {
 					List<String> autenticazionePrincipalValues = TipoAutenticazionePrincipal.getValues();
 					List<String> autenticazionePrincipalLabels = TipoAutenticazionePrincipal.getLabels();
 					de = new DataElement();
-					de.setType(DataElementType.SELECT);
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO);
-					de.setValues(autenticazionePrincipalValues);
-					de.setLabels(autenticazionePrincipalLabels);
 					if(autenticazionePrincipal==null) {
 						autenticazionePrincipal = TipoAutenticazionePrincipal.CONTAINER;	
 					}
-					de.setPostBack(true);
-					de.setSelected(autenticazionePrincipal.getValue());
+					if(allHidden) {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(autenticazionePrincipal.getValue());
+					}
+					else {
+						de.setType(DataElementType.SELECT);
+						de.setValues(autenticazionePrincipalValues);
+						de.setLabels(autenticazionePrincipalLabels);
+						de.setPostBack(true);
+						de.setSelected(autenticazionePrincipal.getValue());
+					}
 					dati.addElement(de);
 					
 					switch (autenticazionePrincipal) {
@@ -3643,11 +3695,16 @@ public class ConsoleHelper {
 							autenticazioneParametro = autenticazioneParametroList.get(0);
 						}
 						de = new DataElement();
+						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_NOME);
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
 						de.setValue(autenticazioneParametro);
-						de.setType(DataElementType.TEXT_EDIT);
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_NOME);
-						de.setRequired(true);
+						if(allHidden) {
+							de.setType(DataElementType.HIDDEN);
+						}
+						else {
+							de.setType(DataElementType.TEXT_EDIT);
+							de.setRequired(true);
+						}
 						dati.addElement(de);
 						
 						// posizione 1: clean
@@ -3657,15 +3714,21 @@ public class ConsoleHelper {
 						}
 						de = new DataElement();
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+1);
-						de.setType(DataElementType.CHECKBOX);
-						if(autenticazioneParametro==null || "".equals(autenticazioneParametro)) {
-							autenticazioneParametro = Costanti.CHECK_BOX_DISABLED;
-						}
-						de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneParametro));
 						if(TipoAutenticazionePrincipal.HEADER.equals(autenticazionePrincipal)) {
 							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORWARD_HEADER);
 						}else {
 							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORWARD_FORM);
+						}
+						if(autenticazioneParametro==null || "".equals(autenticazioneParametro)) {
+							autenticazioneParametro = Costanti.CHECK_BOX_DISABLED;
+						}
+						if(allHidden) {
+							de.setType(DataElementType.HIDDEN);
+							de.setValue(autenticazioneParametro);
+						}
+						else {
+							de.setType(DataElementType.CHECKBOX);
+							de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneParametro));
 						}
 						dati.addElement(de);
 						
@@ -3678,11 +3741,16 @@ public class ConsoleHelper {
 							autenticazioneParametro = autenticazioneParametroList.get(0);
 						}
 						de = new DataElement();
+						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_ESPRESSIONE);
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
 						de.setValue(autenticazioneParametro);
-						de.setType(DataElementType.TEXT_AREA);
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_ESPRESSIONE);
-						de.setRequired(true);
+						if(allHidden) {
+							de.setType(DataElementType.HIDDEN);
+						}
+						else {
+							de.setType(DataElementType.TEXT_AREA);
+							de.setRequired(true);
+						}
 						dati.addElement(de);
 						
 						break;
@@ -3692,7 +3760,7 @@ public class ConsoleHelper {
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
-				if(TipoAutenticazione.DISABILITATO.getValue().equals(autenticazione)==false){
+				if(!allHidden && TipoAutenticazione.DISABILITATO.getValue().equals(autenticazione)==false){
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale));
 				}
@@ -3705,44 +3773,76 @@ public class ConsoleHelper {
 			
 			if(tokenAbilitato) {
 
-				DataElement de = new DataElement();
-				de.setType(DataElementType.SUBTITLE); //SUBTITLE);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE_TOKEN);
-				dati.addElement(de);
+				if(!allHidden) {
+					DataElement de = new DataElement();
+					de.setType(DataElementType.SUBTITLE); //SUBTITLE);
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE_TOKEN);
+					dati.addElement(de);
+				}
 				
-				de = new DataElement();
+				DataElement de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_ISSUER);
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_ISSUER);
-				de.setType(DataElementType.CHECKBOX);
-				de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenIssuer));
+				if(allHidden) {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(ServletUtils.isCheckBoxEnabled(autenticazioneTokenIssuer)+"");
+				}
+				else {
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenIssuer));
+				}
 				dati.addElement(de);
 				
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_CLIENT_ID);
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_CLIENT_ID);
-				de.setType(DataElementType.CHECKBOX);
-				de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenClientId));
+				if(allHidden) {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(ServletUtils.isCheckBoxEnabled(autenticazioneTokenClientId)+"");
+				}
+				else {
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenClientId));
+				}
 				dati.addElement(de);
 				
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_SUBJECT);
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_SUBJECT);
-				de.setType(DataElementType.CHECKBOX);
-				de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenSubject));
+				if(allHidden) {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(ServletUtils.isCheckBoxEnabled(autenticazioneTokenSubject)+"");
+				}
+				else {
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenSubject));
+				}
 				dati.addElement(de);
 				
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME);
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME);
-				de.setType(DataElementType.CHECKBOX);
-				de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenUsername));
+				if(allHidden) {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(ServletUtils.isCheckBoxEnabled(autenticazioneTokenUsername)+"");
+				}
+				else {
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenUsername));
+				}
 				dati.addElement(de);
 				
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL);
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL);
-				de.setType(DataElementType.CHECKBOX);
-				de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenEMail));
+				if(allHidden) {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(ServletUtils.isCheckBoxEnabled(autenticazioneTokenEMail)+"");
+				}
+				else {
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenEMail));
+				}
 				dati.addElement(de);
 				
 			}
@@ -3907,6 +4007,11 @@ public class ConsoleHelper {
 			String gestioneToken, String gestioneTokenPolicy, String autorizzazione_token, String autorizzazione_tokenOptions, BinaryParameter allegatoXacmlPolicy,
 			String urlAutorizzazioneErogazioneApplicativiAutenticati, int numErogazioneApplicativiAutenticati) throws Exception{
 		
+		boolean allHidden = false;
+		if(!this.isModalitaCompleta() && TipoOperazione.ADD.equals(tipoOperazione)) {
+			allHidden = true;
+		}
+		
 		String protocollo = null;
 		if(oggetto!=null){
 			if(isPortaDelegata){
@@ -3931,10 +4036,13 @@ public class ConsoleHelper {
 				gestioneTokenPolicy != null && !gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
 		
 		if(mostraSezione) {
-			DataElement de = new DataElement();
-			de.setType(DataElementType.TITLE); //SUBTITLE);
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE);
-			dati.addElement(de);
+			
+			if(!allHidden) {
+				DataElement de = new DataElement();
+				de.setType(DataElementType.TITLE); //SUBTITLE);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE);
+				dati.addElement(de);
+			}
 			
 			List<String> auturizzazioneValues = AutorizzazioneUtilities.getStati();
 			int totEl = auturizzazioneValues.size();
@@ -3947,22 +4055,32 @@ public class ConsoleHelper {
 			if (confPers ){
 				tipoAutorizzazione[totEl-1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
 			}
-			de = new DataElement();
+			DataElement de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE);
-			de.setType(DataElementType.SELECT);
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE);
-			de.setValues(tipoAutorizzazione);
-			de.setPostBack(true);
-			de.setSelected(autorizzazione);
+			if(allHidden) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(autorizzazione);
+			}
+			else {
+				de.setType(DataElementType.SELECT);
+				de.setValues(tipoAutorizzazione);
+				de.setPostBack(true);
+				de.setSelected(autorizzazione);
+			}
 			dati.addElement(de);
 			
 			de = new DataElement();
 			de.setLabel("");
-			if (autorizzazione == null ||
-					!autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM))
+			if(allHidden) {
 				de.setType(DataElementType.HIDDEN);
-			else
+			}
+			else if (autorizzazione == null ||
+					!autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM)) {
+				de.setType(DataElementType.HIDDEN);
+			} else {
 				de.setType(DataElementType.TEXT_EDIT);
+			}
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
 			de.setValue(autorizzazioneCustom);
 			dati.addElement(de);
@@ -4012,29 +4130,36 @@ public class ConsoleHelper {
 							
 				if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione)){
 				
-					if( !isSupportatoAutenticazione ||  (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione)) ){   
-						de = new DataElement();
-						de.setType(DataElementType.SUBTITLE);
-						if(isPortaDelegata){
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI);
+					if(!allHidden) {
+						if( !isSupportatoAutenticazione ||  (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione)) ){   
+							de = new DataElement();
+							de.setType(DataElementType.SUBTITLE);
+							if(isPortaDelegata){
+								de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI);
+							}
+							else{
+								String labelSoggetti = (isSupportatoAutenticazione && (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))) ? CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI : CostantiControlStation.LABEL_PARAMETRO_SOGGETTI;
+								de.setLabel(labelSoggetti);
+							}
+							dati.addElement(de);
 						}
-						else{
-							String labelSoggetti = (isSupportatoAutenticazione && (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))) ? CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI : CostantiControlStation.LABEL_PARAMETRO_SOGGETTI;
-							de.setLabel(labelSoggetti);
-						}
-						dati.addElement(de);
 					}
 					
 					autorizzazione_autenticazione = ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati);
 					
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_ABILITATO);
-					
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE);
-					if( !isSupportatoAutenticazione ||  (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione)) ){   
-						de.setType(DataElementType.CHECKBOX);
-						de.setSelected(autorizzazione_autenticazione);
-						de.setPostBack(true);
+					if( !isSupportatoAutenticazione ||  (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione)) ){
+						if(allHidden) {
+							de.setType(DataElementType.HIDDEN);
+							de.setValue(autorizzazione_autenticazione+"");
+						}
+						else {
+							de.setType(DataElementType.CHECKBOX);
+							de.setSelected(autorizzazione_autenticazione);
+							de.setPostBack(true);
+						}
 					}
 					else{
 						de.setType(DataElementType.HIDDEN);
@@ -4095,25 +4220,27 @@ public class ConsoleHelper {
 					}
 				}
 				else{
-					if(!isSupportatoAutenticazione ||  (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))) {
-						if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) && autorizzazione_autenticazione && isPortaDelegata){
-							String [] saArray = null;
-							if(autenticati!=null && autenticati.size()>0){
-								saArray = autenticati.toArray(new String[1]);
-							}
-							this.addPorteServizioApplicativoToDati(tipoOperazione, dati, autenticato, saArray, 0, false, false);
-						}
-	//					if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante) && autorizzazione_autenticazione && !isPortaDelegata && isSupportatoAutenticazione) {
-						if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante) && autorizzazione_autenticazione && !isPortaDelegata) {
-							String soggettiList [] = null;
-							String soggettiLabelList[] = null;
-							if(autenticati!=null && autenticati.size()>0){
-								soggettiList = autenticati.toArray(new String[1]);
-								if(autenticatiLabel!=null && autenticatiLabel.size()>0){
-									soggettiLabelList = autenticatiLabel.toArray(new String[1]);
+					if(!allHidden) {
+						if(!isSupportatoAutenticazione ||  (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))) {
+							if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) && autorizzazione_autenticazione && isPortaDelegata){
+								String [] saArray = null;
+								if(autenticati!=null && autenticati.size()>0){
+									saArray = autenticati.toArray(new String[1]);
 								}
+								this.addPorteServizioApplicativoToDati(tipoOperazione, dati, autenticato, saArray, 0, false, false);
 							}
-							this.addPorteSoggettoToDati(tipoOperazione, dati, soggettiLabelList, soggettiList, autenticato, 0, false, false);
+		//					if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante) && autorizzazione_autenticazione && !isPortaDelegata && isSupportatoAutenticazione) {
+							if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante) && autorizzazione_autenticazione && !isPortaDelegata) {
+								String soggettiList [] = null;
+								String soggettiLabelList[] = null;
+								if(autenticati!=null && autenticati.size()>0){
+									soggettiList = autenticati.toArray(new String[1]);
+									if(autenticatiLabel!=null && autenticatiLabel.size()>0){
+										soggettiLabelList = autenticatiLabel.toArray(new String[1]);
+									}
+								}
+								this.addPorteSoggettoToDati(tipoOperazione, dati, soggettiLabelList, soggettiList, autenticato, 0, false, false);
+							}
 						}
 					}
 				}
@@ -4125,19 +4252,27 @@ public class ConsoleHelper {
 				
 				if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione)){
 					
-					de = new DataElement();
-					de.setType(DataElementType.SUBTITLE);
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
-					dati.addElement(de);
+					if(!allHidden) {
+						de = new DataElement();
+						de.setType(DataElementType.SUBTITLE);
+						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
+						dati.addElement(de);
+					}
 				
 					autorizzazione_ruoli = ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli);
 					
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_ABILITATO);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
-					de.setType(DataElementType.CHECKBOX);
-					de.setSelected(autorizzazione_ruoli);
-					de.setPostBack(true);
+					if(allHidden) {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(autorizzazione_ruoli+"");
+					}
+					else {
+						de.setType(DataElementType.CHECKBOX);
+						de.setSelected(autorizzazione_ruoli);
+						de.setPostBack(true);
+					}
 					dati.addElement(de);
 				
 				}
@@ -4152,14 +4287,19 @@ public class ConsoleHelper {
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA_XACML_POLICY);
 					}
 					de.setName(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
-					de.setValue(autorizzazioneRuoliTipologia);			
-					de.setType(DataElementType.SELECT);
-					de.setValues(RuoliCostanti.RUOLI_TIPOLOGIA);
-					de.setLabels(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL);
-					de.setSelected(autorizzazioneRuoliTipologia);
-					if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) ||
-							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante)){
-						de.setPostBack(true);
+					de.setValue(autorizzazioneRuoliTipologia);		
+					if(allHidden) {
+						de.setType(DataElementType.HIDDEN);
+					}
+					else {
+						de.setType(DataElementType.SELECT);
+						de.setValues(RuoliCostanti.RUOLI_TIPOLOGIA);
+						de.setLabels(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL);
+						de.setSelected(autorizzazioneRuoliTipologia);
+						if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) ||
+								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante)){
+							de.setPostBack(true);
+						}
 					}
 					dati.add(de);
 					
@@ -4204,10 +4344,15 @@ public class ConsoleHelper {
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO_MATCH);
 					de.setName(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
 					de.setValue(autorizzazioneRuoliMatch);			
-					de.setType(DataElementType.SELECT);
-					de.setValues(tipoRole);
-					de.setLabels(labelRole);
-					de.setSelected(autorizzazioneRuoliMatch);
+					if(allHidden) {
+						de.setType(DataElementType.HIDDEN);
+					}
+					else {
+						de.setType(DataElementType.SELECT);
+						de.setValues(tipoRole);
+						de.setLabels(labelRole);
+						de.setSelected(autorizzazioneRuoliMatch);
+					}
 					dati.add(de);
 				}
 				
@@ -4226,25 +4371,27 @@ public class ConsoleHelper {
 					}
 				}
 				else{
-					if( (AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) ||
-							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante))
-							&& autorizzazione_ruoli){
-						FiltroRicercaRuoli filtroRuoli = new FiltroRicercaRuoli();
-						if(isPortaDelegata){
-							filtroRuoli.setContesto(RuoloContesto.PORTA_DELEGATA);
+					if(!allHidden) {
+						if( (AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) ||
+								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante))
+								&& autorizzazione_ruoli){
+							FiltroRicercaRuoli filtroRuoli = new FiltroRicercaRuoli();
+							if(isPortaDelegata){
+								filtroRuoli.setContesto(RuoloContesto.PORTA_DELEGATA);
+							}
+							else{
+								filtroRuoli.setContesto(RuoloContesto.PORTA_APPLICATIVA);
+							}
+							filtroRuoli.setTipologia(RuoloTipologia.QUALSIASI);
+							if(RuoloTipologia.INTERNO.equals(autorizzazioneRuoliTipologia) ){
+								filtroRuoli.setTipologia(RuoloTipologia.INTERNO);
+							}
+							else if(RuoloTipologia.ESTERNO.equals(autorizzazioneRuoliTipologia) ){
+								filtroRuoli.setTipologia(RuoloTipologia.ESTERNO);
+							}
+							this.addRuoliToDati(tipoOperazione, dati, false, filtroRuoli, ruolo, null, true, false,
+									AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_RUOLO, addTitoloSezione, null);
 						}
-						else{
-							filtroRuoli.setContesto(RuoloContesto.PORTA_APPLICATIVA);
-						}
-						filtroRuoli.setTipologia(RuoloTipologia.QUALSIASI);
-						if(RuoloTipologia.INTERNO.equals(autorizzazioneRuoliTipologia) ){
-							filtroRuoli.setTipologia(RuoloTipologia.INTERNO);
-						}
-						else if(RuoloTipologia.ESTERNO.equals(autorizzazioneRuoliTipologia) ){
-							filtroRuoli.setTipologia(RuoloTipologia.ESTERNO);
-						}
-						this.addRuoliToDati(tipoOperazione, dati, false, filtroRuoli, ruolo, null, true, false,
-								AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_RUOLO, addTitoloSezione, null);
 					}
 				}
 				
@@ -4254,19 +4401,27 @@ public class ConsoleHelper {
 			
 				if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione) && tokenAbilitato){
 					
-					de = new DataElement();
-					de.setType(DataElementType.SUBTITLE);
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
-					dati.addElement(de);
+					if(!allHidden) {
+						de = new DataElement();
+						de.setType(DataElementType.SUBTITLE);
+						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
+						dati.addElement(de);
+					}
 				
 					autorizzazione_scope = ServletUtils.isCheckBoxEnabled(autorizzazioneScope);
 					
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_ABILITATO);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
-					de.setType(DataElementType.CHECKBOX);
-					de.setSelected(autorizzazione_scope);
-					de.setPostBack(true);
+					if(allHidden) {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(autorizzazione_scope+"");
+					}
+					else {
+						de.setType(DataElementType.CHECKBOX);
+						de.setSelected(autorizzazione_scope);
+						de.setPostBack(true);
+					}
 					dati.addElement(de);
 				
 					if(autorizzazione_scope){
@@ -4275,10 +4430,16 @@ public class ConsoleHelper {
 						de = new DataElement();
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SCOPE_MATCH);
 						de.setName(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
-						de.setType(DataElementType.SELECT);
-						de.setValues(tipoScope);
-						de.setLabels(labelScope);
-						de.setSelected(autorizzazioneScopeMatch);
+						if(allHidden) {
+							de.setType(DataElementType.HIDDEN);
+							de.setValue(autorizzazioneScopeMatch+"");
+						}
+						else {
+							de.setType(DataElementType.SELECT);
+							de.setValues(tipoScope);
+							de.setLabels(labelScope);
+							de.setSelected(autorizzazioneScopeMatch);
+						}
 						dati.add(de);
 					}
 					
@@ -4297,45 +4458,56 @@ public class ConsoleHelper {
 						}
 					}
 					else{
-						if( (AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) ||
-								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante))
-								&& autorizzazione_scope){
-							FiltroRicercaScope filtroScope = new FiltroRicercaScope();
-							if(isPortaDelegata){
-								filtroScope.setContesto(ScopeContesto.PORTA_DELEGATA); 
+						if(!allHidden) {
+							if( (AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) ||
+									AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante))
+									&& autorizzazione_scope){
+								FiltroRicercaScope filtroScope = new FiltroRicercaScope();
+								if(isPortaDelegata){
+									filtroScope.setContesto(ScopeContesto.PORTA_DELEGATA); 
+								}
+								else{
+									filtroScope.setContesto(ScopeContesto.PORTA_APPLICATIVA);
+								}
+								// tipologia non impostata
+							//	filtroScope.setTipologia(RuoloTipologia.QUALSIASI);
+		//						if(RuoloTipologia.INTERNO.equals(autorizzazioneRuoliTipologia) ){
+		//							filtroScope.setTipologia(RuoloTipologia.INTERNO);
+		//						}
+		//						else if(RuoloTipologia.ESTERNO.equals(autorizzazioneRuoliTipologia) ){
+		//							filtroScope.setTipologia(RuoloTipologia.ESTERNO);
+		//						}
+								this.addScopeToDati(tipoOperazione, dati, false, filtroScope, scope, null, true, false,
+										AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_SCOPE, addTitoloSezione);
 							}
-							else{
-								filtroScope.setContesto(ScopeContesto.PORTA_APPLICATIVA);
-							}
-							// tipologia non impostata
-						//	filtroScope.setTipologia(RuoloTipologia.QUALSIASI);
-	//						if(RuoloTipologia.INTERNO.equals(autorizzazioneRuoliTipologia) ){
-	//							filtroScope.setTipologia(RuoloTipologia.INTERNO);
-	//						}
-	//						else if(RuoloTipologia.ESTERNO.equals(autorizzazioneRuoliTipologia) ){
-	//							filtroScope.setTipologia(RuoloTipologia.ESTERNO);
-	//						}
-							this.addScopeToDati(tipoOperazione, dati, false, filtroScope, scope, null, true, false,
-									AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_SCOPE, addTitoloSezione);
 						}
 					}
 					
 				}
 				
 				if(tokenAbilitato && !AutorizzazioneUtilities.STATO_XACML_POLICY.equals(autorizzazione)) {
-					de = new DataElement();
-					de.setType(DataElementType.SUBTITLE);
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_SUBTITLE);
-					dati.addElement(de);
+					
+					if(!allHidden) {
+						de = new DataElement();
+						de.setType(DataElementType.SUBTITLE);
+						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_SUBTITLE);
+						dati.addElement(de);
+					}
 
 					boolean autorizzazioneTokenEnabled = ServletUtils.isCheckBoxEnabled(autorizzazione_token);
 					
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_ABILITATO);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
-					de.setType(DataElementType.CHECKBOX);
-					de.setSelected(autorizzazioneTokenEnabled);
-					de.setPostBack(true);
+					if(allHidden) {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(autorizzazioneTokenEnabled+"");
+					}
+					else {
+						de.setType(DataElementType.CHECKBOX);
+						de.setSelected(autorizzazioneTokenEnabled);
+						de.setPostBack(true);
+					}
 					dati.addElement(de);
 					
 					if(autorizzazioneTokenEnabled) {
@@ -4343,10 +4515,15 @@ public class ConsoleHelper {
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
 						de.setNote(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_NOTE);
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
-						de.setType(DataElementType.TEXT_AREA);
-						de.setRows(6);
-						de.setCols(55);
 						de.setValue(autorizzazione_tokenOptions);
+						if(allHidden) {
+							de.setType(DataElementType.HIDDEN);
+						}
+						else {
+							de.setType(DataElementType.TEXT_AREA);
+							de.setRows(6);
+							de.setCols(55);
+						}
 						dati.addElement(de);
 					}
 				}

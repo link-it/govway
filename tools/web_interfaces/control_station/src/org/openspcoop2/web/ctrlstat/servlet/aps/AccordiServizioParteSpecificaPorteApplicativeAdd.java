@@ -141,6 +141,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String identificazione = apsHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_IDENTIFICAZIONE);
 			String mappingPA = apsHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MAPPING);
 
+			String controlloAccessiStato = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO);
+			
 			String erogazioneRuolo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_RUOLO);
 			String erogazioneAutenticazione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE);
 			String erogazioneAutenticazioneOpzionale = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE_OPZIONALE);
@@ -637,7 +639,9 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, null, null, dati);
 					dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, nomeGruppo, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoErogatoreDelServizio,
 							identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
-							mappingPA, mappingLabel, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList,
+							mappingPA, mappingLabel, nomeSA, saSoggetti, 
+							controlloAccessiStato,
+							erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList,
 							erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
 							erogazioneAutorizzazioneRuoli, erogazioneRuolo, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,soggettiAutenticati,soggettiAutenticatiLabel,erogazioneSoggettoAutenticato,
 							gestioneToken, policyLabels, policyValues, 
@@ -715,7 +719,9 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 
 				dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, nomeGruppo, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoErogatoreDelServizio,
 						identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
-						mappingPA, mappingLabel, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList,
+						mappingPA, mappingLabel, nomeSA, saSoggetti, 
+						controlloAccessiStato,
+						erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList,
 						erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
 						erogazioneAutorizzazioneRuoli, erogazioneRuolo, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,soggettiAutenticati,soggettiAutenticatiLabel,erogazioneSoggettoAutenticato,
 						gestioneToken, policyLabels, policyValues, 
@@ -756,6 +762,21 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						ForwardParams.ADD());
 			}
 
+			if(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA.equals(modeCreazione)
+					&& CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO_PUBBLICO.equals(controlloAccessiStato)) {
+				
+				erogazioneAutenticazione = TipoAutenticazione.DISABILITATO.getValue();
+				erogazioneAutenticazioneOpzionale = null;
+				erogazioneAutenticazionePrincipal = null;
+				erogazioneAutenticazioneParametroList = null;
+				
+				erogazioneAutorizzazione = TipoAutorizzazione.DISABILITATO.getValue();
+				erogazioneAutorizzazioneAutenticati = null;
+				erogazioneAutorizzazioneRuoli = null;
+				erogazioneAutorizzazioneRuoliTipologia = null;
+				erogazioneAutorizzazioneRuoliMatch = null;
+				
+			}
 
 			AccordiServizioParteSpecificaUtilities.addAccordoServizioParteSpecificaPorteApplicative(mappingDefault,
 					mappingSelezionato,

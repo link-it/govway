@@ -19,6 +19,11 @@
 	<!-- Implementazione custom di un authenticationProvider per gestire l'autenticazione degli utenti registrati su wildfly -->
         <!-- <b:bean id="wildflyApplicationAuthenticationProvider" class="org.openspcoop2.utils.service.authentication.provider.WildflyApplicationAuthenticationProvider" /> -->
 
+	<!-- Implementazione custom di un authenticationProvider per utilizzare le utenze della console -->
+	<b:bean id="consoleAuthenticationProvider" class="org.openspcoop2.core.config.rs.server.config.AuthenticationProvider" >
+		<b:property name="configuratorRoleName" value="configuratore"/>
+	</b:bean>
+
 	<!-- Abilito gestione della sicurezza tramite annotazioni nel codice Java -->
 	<global-method-security
 		secured-annotations="enabled">
@@ -27,11 +32,14 @@
 	<!-- Definisco il sistema di autenticazione, nel nostro caso utilizziamo una sorgente degli utenti basata su file di proprietà -->
         <authentication-manager alias="authenticationManager">
 		<!-- <authentication-provider ref="wildflyApplicationAuthenticationProvider"/> -->
+		<authentication-provider ref="consoleAuthenticationProvider"/>
+		<!-- 
 		<authentication-provider >
 		    <password-encoder ref="passwordEncoder"/>
 		    <user-service properties="classpath:rs-api-config.users.properties">
 		    </user-service>
 		</authentication-provider>
+		-->
 	</authentication-manager>
 	
 	<!-- Configurazione della sicurezza su tutte le url esposte dall'applicazione
@@ -75,4 +83,14 @@
 			<xss-protection disabled="true"/>
 	      	</headers>
 	</http>
+
+	<b:bean id="httpFirewall" class="org.springframework.security.web.firewall.StrictHttpFirewall">
+		<!-- <b:property name="allowBackSlash" value="true"/> -->
+		<!-- <b:property name="allowSemicolon" value="true"/> -->
+		<b:property name="allowUrlEncodedSlash" value="true"/>
+		<b:property name="allowUrlEncodedPercent" value="true"/>
+		<!-- <b:property name="allowUrlEncodedPeriod" value="true"/> -->
+	</b:bean>
+	<http-firewall ref="httpFirewall"/>
+
 </b:beans>

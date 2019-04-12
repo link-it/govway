@@ -146,7 +146,7 @@ public class SoggettiApiHelper {
 			
 			body.getRuoli().forEach( rname -> {
 				if (!ruoliAmmessi.contains(rname))
-					throw new RuntimeException("Non esiste alcun ruolo con nome " + rname + " da associare al soggetto.");
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non esiste alcun ruolo con nome " + rname + " da associare al soggetto.");
 				RuoloSoggetto rs = new RuoloSoggetto();
 				rs.setNome(rname);
 				ruoliSoggetto.addRuolo(rs);

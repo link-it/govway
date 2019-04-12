@@ -3075,33 +3075,56 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.pathConfigurazionePDD;
 	} 
 
-	private static byte[] configPreLoadingLocale = null;
+	private static List<byte[]> configPreLoadingLocale = null;
 	private static Boolean configPreLoadingLocale_read = null;
-	public byte[] getConfigPreLoadingLocale() {	
+	public List<byte[]> getConfigPreLoadingLocale() {	
 		if(OpenSPCoop2Properties.configPreLoadingLocale_read==null){
 			try{ 
-				String resource = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.config.preLoading.locale");
-				if(resource!=null){
-					resource = resource.trim();
-					File f = new File(resource);
-					if(f.exists()) {
-						OpenSPCoop2Properties.configPreLoadingLocale = FileSystemUtilities.readBytesFromFile(f);
-					}
-					else {
-						if(resource.startsWith("/")==false) {
-							resource = "/" + resource;
-						}
-						InputStream is = OpenSPCoop2Properties.class.getResourceAsStream(resource);
-						if(is!=null) {
-							try {
-								OpenSPCoop2Properties.configPreLoadingLocale = Utilities.getAsByteArray(is);
-							}finally {
-								try {
-									is.close();
-								}catch(Exception eClose) {}
+				String resourceTmp = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.config.preLoading.locale");
+				if(resourceTmp!=null){
+					resourceTmp = resourceTmp.trim();
+					
+					List<String> lResources = new ArrayList<>();
+					if(resourceTmp.contains(",")) {
+						String [] tmp = resourceTmp.split(",");
+						for (int i = 0; i < tmp.length; i++) {
+							String r = tmp[i];
+							if(r!=null) {
+								r = r.trim();
+								if(!"".equals(r)) {
+									lResources.add(r);
+								}
 							}
 						}
 					}
+					else {
+						lResources.add(resourceTmp);
+					}
+					
+					OpenSPCoop2Properties.configPreLoadingLocale = new ArrayList<>();
+					
+					for (String resource : lResources) {
+						File f = new File(resource);
+						if(f.exists()) {
+							OpenSPCoop2Properties.configPreLoadingLocale.add(FileSystemUtilities.readBytesFromFile(f));
+						}
+						else {
+							if(resource.startsWith("/")==false) {
+								resource = "/" + resource;
+							}
+							InputStream is = OpenSPCoop2Properties.class.getResourceAsStream(resource);
+							if(is!=null) {
+								try {
+									OpenSPCoop2Properties.configPreLoadingLocale.add(Utilities.getAsByteArray(is));
+								}finally {
+									try {
+										is.close();
+									}catch(Exception eClose) {}
+								}
+							}
+						}	
+					}
+					
 				}
 
 			}catch(java.lang.Exception e) {

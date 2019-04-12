@@ -77,6 +77,18 @@
 	<property name="src_loaderConsole" value="${loaderConsole}/src" />
 	<property name="required_lib_loaderConsole" value="${required_lib}"/>
 	<import file="${loaderConsole}/build.xml"/>
+
+	<!-- APIConfig -->
+	<property name="govwayConfigApiRS" value="${rootDir}/tools/rs/config/server/" />
+	<property name="required_lib_govwayConfigApiRS" location="${required_lib}"/>
+	<property name="src_govwayConfigApiRS" value="${govwayConfigApiRS}/src" />
+	<import file="${govwayConfigApiRS}/build.xml"/>
+
+	<!-- APIMonitor -->
+	<property name="govwayMonitorApiRS" value="${rootDir}/tools/rs/monitor/server/" />
+	<property name="required_lib_govwayMonitorApiRS" location="${required_lib}"/>
+	<property name="src_govwayMonitorApiRS" value="${govwayMonitorApiRS}/src" />
+	<import file="${govwayMonitorApiRS}/build.xml"/>
 		
 	<!-- Trasparente -->
 	<property name="trasparente" value="${rootDir}/protocolli/trasparente"/>

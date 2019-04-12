@@ -52,7 +52,6 @@ import org.openspcoop2.core.config.rs.server.model.ListaApiAllegati;
 import org.openspcoop2.core.config.rs.server.model.ListaApiAzioni;
 import org.openspcoop2.core.config.rs.server.model.ListaApiRisorse;
 import org.openspcoop2.core.config.rs.server.model.ListaApiServizi;
-import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.config.rs.server.model.RuoloAllegatoAPI;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.config.rs.server.utils.WrapperFormFile;
@@ -74,6 +73,7 @@ import org.openspcoop2.protocol.basic.archive.APIUtils;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -208,7 +208,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			AccordoServizioParteComune as = Helper.getAccordo(nome, versione, env.idSoggetto.toIDSoggetto(), env.apcCore);
 			
 			if (as == null)
-				throw FaultCode.NOT_FOUND.toException("Nessuna Api corrisponde ai parametri indicati");
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nessuna Api corrisponde ai parametri indicati");
 			
 			Documento documento = ApiApiHelper.apiAllegatoToDocumento(body, as, env);
 			
@@ -278,7 +278,9 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione,env);
 			
 			if (as == null)
-				throw FaultCode.NOT_FOUND.toException("Nessuna Api con nome: " + nome + " e versione " + versione );
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nessuna Api con nome: " + nome + " e versione " + versione );
+			if (as.getServiceBinding() == ServiceBinding.REST)
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile registrare Azioni e Servizi su Api con interfaccia REST");
 			
 			PortType pt = as.getPortTypeList().stream()
 					.filter( p -> nomeServizio.equals(p.getNome()))
@@ -362,7 +364,11 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
 			
 			if (as == null)
-				throw FaultCode.NOT_FOUND.toException("Nessuna Api con nome: " + nome + " e versione " + versione );
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nessuna Api con nome: " + nome + " e versione " + versione );
+			
+			if ( as.getServiceBinding() != ServiceBinding.REST) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("E' possibile registrare risorse solo su API con interfaccia REST");
+			}
 			
 			Resource newRes = ApiApiHelper.apiRisorsaToRegistro(body, as);
 
@@ -441,7 +447,11 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
 			
 			if (as == null)
-				throw FaultCode.NOT_FOUND.toException("Nessuna Api con nome: " + nome + " e versione " + versione );
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nessuna Api con nome: " + nome + " e versione " + versione );
+			
+			if ( as.getServiceBinding() == ServiceBinding.REST ) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile associare un servizio ad una api REST" );
+			}
 			
 			// Il Servizio assumiamo che di base RIDEFINISCA il profilo della api, dato che
 			// abbiamo nei campi dei valori che dalla console sono configurabili sono in quel caso.

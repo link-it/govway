@@ -20,6 +20,8 @@
 	<import file="./ant/govwayConsole-build.xml" />
 	<import file="./ant/govwayMonitor-build.xml" />
 	<import file="./ant/loader-build.xml" />
+	<import file="./ant/govwayAPIConfig-build.xml" />
+	<import file="./ant/govwayAPIMonitor-build.xml" />
 	<import file="./ant/distrib-build.xml" />
 	<import file="./ant/jar-build.xml" />
 	<import file="../commons/utils.xml" />
@@ -77,11 +79,15 @@
 			antinstaller_dbpassword=openspcoop
 			antinstaller_oracle_mode=SID/serviceName
 			
-		Utenze
+		Configurazione Utenze
 			antinstaller_pddconsole_username=amministratore
 			antinstaller_pddconsole_password=
 			antinstaller_pddmonitor_username=operatore
 			antinstaller_pddmonitor_password=
+
+		Configurazione Servizi
+			antinstaller_rs_config=true
+			antinstaller_rs_monitor=true
 
 		Cooperazione Applicativa
 			antinstaller_protocollo_trasparente=true
@@ -570,6 +576,35 @@
 					</then>
 				</if>
 
+				<!-- preloading -->
+				<if>
+					<and>
+						<istrue value="${antinstaller_rs_config}"/>
+					</and>
+					<then>
+						<unzip src="${tmp_archivi}/govway.ear/properties/apiConfig.zip" dest="${tmp_archivi}/apiConfigZIP"/>
+						<replace dir="${tmp_archivi}/apiConfigZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiConfigZIP" token="USERNAME_CONFIG" value="${antinstaller_pddconsole_username}"/>
+						<replace dir="${tmp_archivi}/apiConfigZIP" token="PASSWORD_CONFIG" value="${antinstaller_pddconsole_password}"/>
+						<delete file="${tmp_archivi}/govway.ear/properties/apiConfig.zip" />
+						<zip destfile="${tmp_archivi}/govway.ear/properties/apiConfig.zip" basedir="${tmp_archivi}/apiConfigZIP"/>
+						<delete dir="${tmp_archivi}/apiConfigZIP"/>
+					</then>
+				</if>
+				<if>
+					<and>
+						<istrue value="${antinstaller_rs_monitor}"/>
+					</and>
+					<then>
+						<unzip src="${tmp_archivi}/govway.ear/properties/apiMonitor.zip" dest="${tmp_archivi}/apiMonitorZIP"/>
+						<replace dir="${tmp_archivi}/apiMonitorZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiMonitorZIP" token="USERNAME_MONITOR" value="${antinstaller_pddmonitor_username}"/>
+						<replace dir="${tmp_archivi}/apiMonitorZIP" token="PASSWORD_MONITOR" value="${antinstaller_pddmonitor_password}"/>
+						<delete file="${tmp_archivi}/govway.ear/properties/apiMonitor.zip" />
+						<zip destfile="${tmp_archivi}/govway.ear/properties/apiMonitor.zip" basedir="${tmp_archivi}/apiMonitorZIP"/>
+						<delete dir="${tmp_archivi}/apiMonitorZIP"/>
+					</then>
+				</if>
 	
 				<!-- govwaySec -->
 				<if>
@@ -603,6 +638,35 @@
 					<param name="as" value="${build_for_as}"/>
 				</antcall>
 
+				<!-- preloading -->
+				<if>
+					<and>
+						<istrue value="${antinstaller_rs_config}"/>
+					</and>
+					<then>
+						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/apiConfig.zip" dest="${tmp_archivi}/apiConfigZIP"/>
+						<replace dir="${tmp_archivi}/apiConfigZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiConfigZIP" token="USERNAME_CONFIG" value="${antinstaller_pddconsole_username}"/>
+						<replace dir="${tmp_archivi}/apiConfigZIP" token="PASSWORD_CONFIG" value="${antinstaller_pddconsole_password}"/>
+						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/apiConfig.zip" />
+						<zip destfile="${tmp_archivi}/govway.war/WEB-INF/classes/apiConfig.zip" basedir="${tmp_archivi}/apiConfigZIP"/>
+						<delete dir="${tmp_archivi}/apiConfigZIP"/>
+					</then>
+				</if>
+				<if>
+					<and>
+						<istrue value="${antinstaller_rs_monitor}"/>
+					</and>
+					<then>
+						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/apiMonitor.zip" dest="${tmp_archivi}/apiMonitorZIP"/>
+						<replace dir="${tmp_archivi}/apiMonitorZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiMonitorZIP" token="USERNAME_MONITOR" value="${antinstaller_pddmonitor_username}"/>
+						<replace dir="${tmp_archivi}/apiMonitorZIP" token="PASSWORD_MONITOR" value="${antinstaller_pddmonitor_password}"/>
+						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/apiMonitor.zip" />
+						<zip destfile="${tmp_archivi}/govway.war/WEB-INF/classes/apiMonitor.zip" basedir="${tmp_archivi}/apiMonitorZIP"/>
+						<delete dir="${tmp_archivi}/apiMonitorZIP"/>
+					</then>
+				</if>
 
 				<!-- govwaySec -->
 				<if>
@@ -695,6 +759,7 @@
 				</copy>
 			</then>
 		</if>
+
 	</target>
 	
 	<target name="setup_sql" >
@@ -1076,6 +1141,24 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 				    <param name="file" value="${tmp_ds}/govwayMonitor.xml"/>
 				</antcall>
 
+				<!-- govwayAPIConfig.war -->
+				<if>
+					<istrue value="${antinstaller_rs_config}" />
+					<then>
+						<copy file="${tmp_ds}/govwayMonitor.xml" tofile="${tmp_ds}/govwayAPIConfig.xml"/>
+						<replace file="${tmp_ds}/govwayAPIConfig.xml" token="grafica govwayMonitor" value="govwayAPIConfig.war"/>
+					</then>
+				</if>
+
+				<!-- govwayAPIMonitor.war -->
+				<if>
+					<istrue value="${antinstaller_rs_monitor}" />
+					<then>
+						<copy file="${tmp_ds}/govwayMonitor.xml" tofile="${tmp_ds}/govwayAPIMonitor.xml"/>
+						<replace file="${tmp_ds}/govwayAPIMonitor.xml" token="grafica govwayMonitor" value="govwayAPIMonitor.war"/>
+					</then>
+				</if>
+
 				<if>
 					<istrue value="${antinstaller_protocollo_as4}" />
 					<then>
@@ -1331,6 +1414,166 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 				<!-- Ripristino jar -->
 				<antcall target="ripristina_jar">
 				    <param name="archiveFile" value="${tmp_archivi}/govwayLoader.war"/>
+					<param name="as" value="${build_for_as}"/>
+					<param name="archiveType" value="WAR"/>
+				</antcall>
+			</then>
+		</if>
+	</target>
+
+
+	<target name="setup_apiConfig" depends="_setup_apiConfig"/>
+	<target name="_setup_apiConfig">
+		<if>
+			<and>
+				<istrue value="${antinstaller_rs_config}"/>
+			</and>
+			<then>
+				<unzip src="${deploy_sw}/${build_for_as}/govwayAPIConfig.war" dest="${tmp_archivi}/govwayAPIConfig.war"/>
+				<antcall target="api_config_properties_settings">
+				    <param name="file" value="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/classes/rs-api-config.properties"/>
+				</antcall>
+				<antcall target="api_config_datasource_properties_settings">
+				    <param name="file" value="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/classes/rs-api-config.datasource.properties"/>
+				</antcall>
+				<antcall target="api_config_log4j_properties_settings">
+				    <param name="file" value="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/classes/rs-api-config.log4j2.properties"/>
+				</antcall>
+				<antcall target="api_config_default_log4j_properties_settings">
+				    <param name="file" value="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/classes/log4j2.properties"/>
+				</antcall>
+				<antcall target="dos2unix">
+					<param name="dir" value="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/classes"/>
+				    <param name="file" value="*.properties"/>
+				</antcall>
+				<!-- trasparente -->
+				<if>
+					<istrue value="${antinstaller_protocollo_trasparente}" />
+					<then>
+						<copy todir="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/lib">
+						    <fileset dir="${deploy_sw}">
+						      <include name="openspcoop2_trasparente-protocol_*.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
+				<!-- spcoop -->
+				<if>
+					<istrue value="${antinstaller_protocollo_spcoop}"/>
+					<then>
+						<copy todir="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/lib">
+						    <fileset dir="${deploy_sw}">
+						      <include name="openspcoop2_spcoop-protocol_*.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
+				<!-- as4 -->
+				<if>
+					<istrue value="${antinstaller_protocollo_as4}" />
+					<then>
+						<copy todir="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/lib">
+						    <fileset dir="${deploy_sw}">
+							<include name="openspcoop2_as4-protocol_*.jar"/>
+							<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
+				<!-- sdi -->
+				<if>
+					<istrue value="${antinstaller_protocollo_sdi}"/>
+					<then>
+						<copy todir="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/lib">
+						    <fileset dir="${deploy_sw}">
+						      <include name="openspcoop2_sdi-protocol_*.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
+				<!-- Ripristino jar -->
+				<antcall target="ripristina_jar">
+				    <param name="archiveFile" value="${tmp_archivi}/govwayAPIConfig.war"/>
+					<param name="as" value="${build_for_as}"/>
+					<param name="archiveType" value="WAR"/>
+				</antcall>
+			</then>
+		</if>
+	</target>
+
+
+	<target name="setup_apiMonitor" depends="_setup_apiMonitor"/>
+	<target name="_setup_apiMonitor">
+		<if>
+			<and>
+				<istrue value="${antinstaller_rs_monitor}"/>
+			</and>
+			<then>
+				<unzip src="${deploy_sw}/${build_for_as}/govwayAPIMonitor.war" dest="${tmp_archivi}/govwayAPIMonitor.war"/>
+				<antcall target="api_monitor_properties_settings">
+				    <param name="file" value="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/classes/rs-api-monitor.properties"/>
+				</antcall>
+				<antcall target="api_monitor_datasource_properties_settings">
+				    <param name="file" value="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/classes/rs-api-monitor.datasource.properties"/>
+				</antcall>
+				<antcall target="api_monitor_log4j_properties_settings">
+				    <param name="file" value="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/classes/rs-api-monitor.log4j2.properties"/>
+				</antcall>
+				<antcall target="api_monitor_default_log4j_properties_settings">
+				    <param name="file" value="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/classes/log4j2.properties"/>
+				</antcall>
+				<antcall target="dos2unix">
+					<param name="dir" value="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/classes"/>
+				    <param name="file" value="*.properties"/>
+				</antcall>
+				<!-- trasparente -->
+				<if>
+					<istrue value="${antinstaller_protocollo_trasparente}" />
+					<then>
+						<copy todir="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/lib">
+						    <fileset dir="${deploy_sw}">
+						      <include name="openspcoop2_trasparente-protocol_*.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
+				<!-- spcoop -->
+				<if>
+					<istrue value="${antinstaller_protocollo_spcoop}"/>
+					<then>
+						<copy todir="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/lib">
+						    <fileset dir="${deploy_sw}">
+						      <include name="openspcoop2_spcoop-protocol_*.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
+				<!-- as4 -->
+				<if>
+					<istrue value="${antinstaller_protocollo_as4}" />
+					<then>
+						<copy todir="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/lib">
+						    <fileset dir="${deploy_sw}">
+							<include name="openspcoop2_as4-protocol_*.jar"/>
+							<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
+				<!-- sdi -->
+				<if>
+					<istrue value="${antinstaller_protocollo_sdi}"/>
+					<then>
+						<copy todir="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/lib">
+						    <fileset dir="${deploy_sw}">
+						      <include name="openspcoop2_sdi-protocol_*.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
+				<!-- Ripristino jar -->
+				<antcall target="ripristina_jar">
+				    <param name="archiveFile" value="${tmp_archivi}/govwayAPIMonitor.war"/>
 					<param name="as" value="${build_for_as}"/>
 					<param name="archiveType" value="WAR"/>
 				</antcall>

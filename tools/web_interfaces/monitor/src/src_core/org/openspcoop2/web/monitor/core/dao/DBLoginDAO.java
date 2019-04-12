@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.web.monitor.core.dao;
 
+import java.sql.Connection;
 import java.util.Properties;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
@@ -38,6 +39,7 @@ import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.crypt.Password;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
@@ -87,6 +89,48 @@ public class DBLoginDAO implements ILoginDAO {
 			Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(DBLoginDAO.log).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 
 			this.driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, DBLoginDAO.log, tipoDatabase);
+
+		} catch (ServiceException e) {
+
+			DBLoginDAO.log.error(e.getMessage(), e);
+		} catch (NotImplementedException e) {
+			DBLoginDAO.log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			DBLoginDAO.log.error(e.getMessage(), e);
+		}
+	}
+	
+	public DBLoginDAO(Connection con, boolean autoCommit){
+		this(con, autoCommit, null, DBLoginDAO.log);
+	}
+	public DBLoginDAO(Connection con, boolean autoCommit, Logger log){
+		this(con, autoCommit, null, log);
+	}
+	public DBLoginDAO(Connection con, boolean autoCommit, ServiceManagerProperties serviceManagerProperties){
+		this(con, autoCommit, serviceManagerProperties, DBLoginDAO.log);
+	}
+	public DBLoginDAO(Connection con, boolean autoCommit, ServiceManagerProperties serviceManagerProperties, Logger log){
+		try {	
+
+			// init Service Manager utenti
+			this.utenteDAO = (org.openspcoop2.web.lib.users.DriverUsersDB) DAOFactory.getInstance(log).
+					getServiceManager(org.openspcoop2.web.lib.users.ProjectInfo.getInstance(),con,autoCommit,serviceManagerProperties,log);
+
+			// init Service Manager utils
+			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory.getInstance(log).
+					getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(),con,autoCommit,serviceManagerProperties,log);
+			this.soggettoDAO = this.utilsServiceManager.getSoggettoServiceSearch();
+			
+			
+			String tipoDatabase = null;
+			if(serviceManagerProperties!=null) {
+				tipoDatabase = serviceManagerProperties.getDatabaseType();
+			}
+			else {
+				tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			}
+			
+			this.driverConfigDB = new DriverConfigurazioneDB(con, DBLoginDAO.log, tipoDatabase);
 
 		} catch (ServiceException e) {
 
@@ -191,6 +235,10 @@ public class DBLoginDAO implements ILoginDAO {
 	@Override
 	public UserDetailsBean loadUserByUsername(String username)
 			throws NotFoundException, ServiceException, UserInvalidException {
+		return this.loadUserByUsername(username, false);
+	}
+	public UserDetailsBean loadUserByUsername(String username, boolean check)
+			throws NotFoundException, ServiceException, UserInvalidException {
 
 		log.debug("cerco utente " + username);
 
@@ -210,7 +258,7 @@ public class DBLoginDAO implements ILoginDAO {
 			//			boolean operatore = (foundServizi + foundSoggetti) > 0;
 
 			UserDetailsBean details = new UserDetailsBean();
-			details.setUtente(u);
+			details.setUtente(u,check);
 
 			return details;
 

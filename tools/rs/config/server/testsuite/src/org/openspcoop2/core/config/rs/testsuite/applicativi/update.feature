@@ -5,37 +5,23 @@ Background:
     * call read('classpath:crud_commons.feature')
 
     * def applicativo = read('applicativo.json') 
-    * eval applicativo.nome = applicativo.nome + "_" + random()
+    * eval randomize(applicativo, ["nome", "credenziali.username"]);
 
     * def applicativo_update = read('applicativo_update.json')
     * eval applicativo_update.nome = applicativo.nome
 
 @Update204
-Scenario: Aggiornamento 204 OK
+Scenario: Applicativi Aggiornamento 204 OK
 
-    * call create { resourcePath: 'applicativi', body: '#(applicativo)' }
-
-    Given url configUrl
-    And path 'applicativi', applicativo.nome
-    And header Authorization = govwayConfAuth
-    And request applicativo_update
-    When method put
-    Then status 204
-
-    * call delete ( { resourcePath: 'applicativi/' + applicativo.nome } )
+    * call update_204 { resourcePath: 'applicativi',  body: '#(applicativo)',  body_update: '#(applicativo_update)',  key: '#(applicativo.nome)',  delete_key: '#(applicativo_update.nome)' }
 
 @Update404
-Scenario: Aggiornamento 404 
+Scenario: Applicativi Aggiornamento 404 
 
-    Given url configUrl
-    And path 'applicativi', applicativo.nome
-    And header Authorization = govwayConfAuth
-    And request applicativo_update
-    When method put
-    Then status 404
+    * call update_404 { resourcePath: 'applicativi', body: '#(applicativo)', key: '#(applicativo.nome)' }
 
 @Update400
-Scenario: Aggiornamento Ruolo Inesistente 400
+Scenario: Applicativi Aggiornamento Ruolo Inesistente 400
 
     * call create { resourcePath: 'applicativi', body: '#(applicativo)' }
 

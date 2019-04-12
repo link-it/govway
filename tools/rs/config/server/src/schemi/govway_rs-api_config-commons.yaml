@@ -504,10 +504,45 @@ components:
       properties:
         tipo:
           $ref: '#/components/schemas/TipoAutenticazioneNewEnum'
+        configurazione:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/APIImplAutenticazioneConfigurazioneBasic'
+            - $ref: '#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal'
+          discriminator:
+            propertyName: tipo
+            mapping:
+              'basic': '#/components/schemas/APIImplAutenticazioneConfigurazioneBasic'
+              'principal': '#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal'
         opzionale:
           type: boolean
           default: false
-          example: false 
+          example: false
+    APIImplAutenticazioneConfigurazioneBasic:
+      type: object
+      properties:
+        forward:
+          type: boolean
+          default: false
+          example: false
+    APIImplAutenticazioneConfigurazionePrincipal:
+      type: object
+      required:
+        - tipo
+      properties:
+        tipo:
+          $ref: '#/components/schemas/TipoAutenticazionePrincipal'
+        nome:
+          type: string
+          example: indica il nome dell'header http in caso di autenticazione 'header-based' o il nome del parametro della query nel caso di autenticazione 'form-based'
+          maxLength: 255
+        pattern:
+          type: string
+          example: indica l'espressione regolare da utilizzare in caso di autenticazione 'url-based'
+        forward:
+          type: boolean
+          default: false
+          example: false
     APIImplAutenticazione:
       type: object
       required:
@@ -515,6 +550,16 @@ components:
       properties:
         tipo:
           $ref: '#/components/schemas/TipoAutenticazioneEnum'
+        configurazione:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/APIImplAutenticazioneConfigurazioneBasic'
+            - $ref: '#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal'
+          discriminator:
+            propertyName: tipo
+            mapping:
+              'basic': '#/components/schemas/APIImplAutenticazioneConfigurazioneBasic'
+              'principal': '#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal'
         opzionale:
           type: boolean
           default: false
@@ -938,6 +983,11 @@ components:
         allow_credentials:
           type: boolean
           default: false
+        expose_headers:
+          type: array
+          items:
+            type: string
+            maxLength: 255 
     GestioneCors:
       type: object
       required:
@@ -1159,10 +1209,6 @@ components:
               soglia_valore:
                  type: integer
                  format: int32
-              filtro:
-                 $ref: '#/components/schemas/RateLimitingPolicyFiltro'
-              criterio_collezionamento_dati:
-                 $ref: '#/components/schemas/RateLimitingPolicyGroupBy'
     RateLimitingPolicyBaseErogazione:
        type: object
        allOf:
@@ -1349,11 +1395,39 @@ components:
                 type: boolean
                 default: true
               hash_headers:
-                type: boolean
-                default: true
+                type: array
+                items:
+                  type: string
+                  maxLength: 255
               hash_payload:
                 type: boolean
                 default: true
+              control_no_cache:
+                type: boolean
+                default: true
+              control_no_store:
+                type: boolean
+                default: true
+              control_max_age:
+                type: boolean
+                default: true
+              regole:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CachingRispostaRegola'
+    CachingRispostaRegola:
+       type: object
+       properties:
+          return-code-min:
+            $ref: 'govway_core.yaml#/components/schemas/HttpStatusCode'
+          return-code-max:
+            $ref: 'govway_core.yaml#/components/schemas/HttpStatusCode'
+          fault:
+            type: boolean
+            default: false
+          cache_timeout_seconds:
+            type: integer
+            format: int32
 
     CorrelazioneApplicativaRichiestaItem:
        type: object
@@ -1421,7 +1495,7 @@ components:
           - $ref: '#/components/schemas/CorrelazioneApplicativaBase'
           - type: object
             required:
-            - identificazione
+            - identificazione_tipo
             properties:
               identificazione_tipo:
                 $ref: '#/components/schemas/CorrelazioneApplicativaRichiestaEnum'
@@ -1440,7 +1514,7 @@ components:
           - $ref: '#/components/schemas/CorrelazioneApplicativaBase'
           - type: object
             required:
-            - identificazione
+            - identificazione_tipo
             properties:
               identificazione_tipo:
                 $ref: '#/components/schemas/CorrelazioneApplicativaRispostaEnum'
@@ -1572,7 +1646,11 @@ components:
     TipoAutenticazioneHttps:
       type: string
       enum: ['certificato', 'configurazione-manuale']
-      example: 'certificato' 
+      example: 'certificato'
+    TipoAutenticazionePrincipal:
+      type: string
+      enum: ['container', 'header-based', 'form-based', 'url-based', 'ip-address']
+      example: 'container'  
     TipoKeystore:
       type: string
       enum: ['JKS', 'PKCS12', 'CER']

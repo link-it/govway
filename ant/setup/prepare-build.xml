@@ -16,6 +16,8 @@
 	<import file="./ant/prepare/loader-build.xml" />
 	<import file="./ant/prepare/govwayConsole-build.xml" />
 	<import file="./ant/prepare/govwayMonitor-build.xml" />
+	<import file="./ant/prepare/govwayAPIConfig-build.xml" />
+	<import file="./ant/prepare/govwayAPIMonitor-build.xml" />
 	<import file="./ant/prepare/backwardCompatibility-build.xml" />
 
 	<property name="build" location="build" />
@@ -37,6 +39,8 @@
 		<antcall target="prepare_loader_setup" />
 		<antcall target="prepare_govwayConsole_setup" />
 		<antcall target="prepare_govwayMonitor_setup" />
+		<antcall target="prepare_govwayAPIConfig_setup" />
+		<antcall target="prepare_govwayAPIMonitor_setup" />
 		<antcall target="prepare_backwardCompatibility_setup" />
 		<antcall target="prepare_sql_setup" />
 		<!-- Elimina i openspcoop2_jars singoli creati -->
@@ -117,7 +121,6 @@
 		<copy todir="${deploy_sql}/sql_upgrade">
 			<fileset dir="${sql_update}"/>
 		</copy>
-
 	</target>
 
 	

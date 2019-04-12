@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.rs.server.api.ErogazioniGruppiApi;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
@@ -44,13 +45,13 @@ import org.openspcoop2.core.config.rs.server.model.GruppoNome;
 import org.openspcoop2.core.config.rs.server.model.GruppoNuovaConfigurazione;
 import org.openspcoop2.core.config.rs.server.model.ListaGruppi;
 import org.openspcoop2.core.config.rs.server.model.ModalitaConfigurazioneGruppoEnum;
-import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -161,14 +162,19 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 	
 			String mappingPadre = null;
 			String erogazioneAutenticazione = null;
-			String erogazioneAutenticazioneOpzionale = null;				
+			String erogazioneAutenticazioneOpzionale = null;
+			TipoAutenticazionePrincipal erogazioneAutenticazionePrincipal = null;
+			List<String> erogazioneAutenticazioneParametroList = null;
 			
 			if ( body.getModalita() == ModalitaConfigurazioneGruppoEnum.NUOVA ) {
 				
 				final GruppoNuovaConfigurazione confNuova = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getModalita(), body.getConfigurazione());
 				erogazioneAutenticazione = confNuova.getAutenticazione().getTipo().toString();
 				erogazioneAutenticazioneOpzionale = ServletUtils.boolToCheckBoxStatus(confNuova.getAutenticazione().isOpzionale());
-				
+				if(confNuova.getAutenticazione()!=null) {
+					erogazioneAutenticazionePrincipal = ErogazioniApiHelper.getTipoAutenticazionePrincipal(confNuova.getAutenticazione().getTipo(), confNuova.getAutenticazione().getConfigurazione()); 
+					erogazioneAutenticazioneParametroList = ErogazioniApiHelper.getAutenticazioneParametroList(env, confNuova.getAutenticazione().getTipo(), confNuova.getAutenticazione().getConfigurazione());
+				}
 			}
 			
 			else if ( body.getModalita() == ModalitaConfigurazioneGruppoEnum.EREDITA ) {
@@ -281,6 +287,8 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 					null,							// listExtendedConnettore
 	        		erogazioneAutenticazione,
 	        		erogazioneAutenticazioneOpzionale,
+	        		erogazioneAutenticazionePrincipal,
+	        		erogazioneAutenticazioneParametroList,
 					"disabilitato",					// erogazioneAutorizzazione, Come da debug. 
 					null,							// erogazioneAutorizzazioneAutenticati, 
 					null,							// erogazioneAutorizzazioneRuoli, 

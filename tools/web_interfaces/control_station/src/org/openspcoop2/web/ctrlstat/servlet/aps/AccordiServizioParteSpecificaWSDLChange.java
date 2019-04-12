@@ -750,6 +750,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					descrizione,soggettoErogatoreID.getId(), statoPackage,statoPackage,
 					versioneservizio.intValue()+"", versioniProtocollo,this.validazioneDocumenti,
 					null,null,true,null,
+					null,
 					null,null,null,null,null,null,false,
 					null,null,null,null,null,null,null,
 					protocollo, null,

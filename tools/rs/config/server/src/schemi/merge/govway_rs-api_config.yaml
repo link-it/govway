@@ -6850,12 +6850,12 @@ components:
           example: "abc123"
     ProfiloEnum:
       type: "string"
-      default: "APIGateway"
       enum:
       - "APIGateway"
       - "SPCoop"
       - "FatturaPA"
       - "eDelivery"
+      default: "APIGateway"
     ProfiloCollaborazioneEnum:
       type: "string"
       example: "sincrono"
@@ -7258,7 +7258,42 @@ components:
       properties:
         tipo:
           $ref: "#/components/schemas/TipoAutenticazioneNewEnum"
+        configurazione:
+          type: "object"
+          discriminator:
+            propertyName: "tipo"
+            mapping:
+              basic: "#/components/schemas/APIImplAutenticazioneConfigurazioneBasic"
+              principal: "#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal"
+          oneOf:
+          - $ref: "#/components/schemas/APIImplAutenticazioneConfigurazioneBasic"
+          - $ref: "#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal"
         opzionale:
+          type: "boolean"
+          default: false
+    APIImplAutenticazioneConfigurazioneBasic:
+      type: "object"
+      properties:
+        forward:
+          type: "boolean"
+          default: false
+    APIImplAutenticazioneConfigurazionePrincipal:
+      required:
+      - "tipo"
+      type: "object"
+      properties:
+        tipo:
+          $ref: "#/components/schemas/TipoAutenticazionePrincipal"
+        nome:
+          maxLength: 255
+          type: "string"
+          example: "indica il nome dell'header http in caso di autenticazione 'header-based'\
+            \ o il nome del parametro della query nel caso di autenticazione 'form-based'"
+        pattern:
+          type: "string"
+          example: "indica l'espressione regolare da utilizzare in caso di autenticazione\
+            \ 'url-based'"
+        forward:
           type: "boolean"
           default: false
     APIImplAutenticazione:
@@ -7268,6 +7303,16 @@ components:
       properties:
         tipo:
           $ref: "#/components/schemas/TipoAutenticazioneEnum"
+        configurazione:
+          type: "object"
+          discriminator:
+            propertyName: "tipo"
+            mapping:
+              basic: "#/components/schemas/APIImplAutenticazioneConfigurazioneBasic"
+              principal: "#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal"
+          oneOf:
+          - $ref: "#/components/schemas/APIImplAutenticazioneConfigurazioneBasic"
+          - $ref: "#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal"
         opzionale:
           type: "boolean"
           default: false
@@ -7685,6 +7730,11 @@ components:
         allow_credentials:
           type: "boolean"
           default: false
+        expose_headers:
+          type: "array"
+          items:
+            maxLength: 255
+            type: "string"
     GestioneCors:
       required:
       - "ridefinito"
@@ -7918,10 +7968,6 @@ components:
           soglia_valore:
             type: "integer"
             format: "int32"
-          filtro:
-            $ref: "#/components/schemas/RateLimitingPolicyFiltro"
-          criterio_collezionamento_dati:
-            $ref: "#/components/schemas/RateLimitingPolicyGroupBy"
     RateLimitingPolicyBaseErogazione:
       type: "object"
       allOf:
@@ -8097,11 +8143,39 @@ components:
             type: "boolean"
             default: true
           hash_headers:
-            type: "boolean"
-            default: true
+            type: "array"
+            items:
+              maxLength: 255
+              type: "string"
           hash_payload:
             type: "boolean"
             default: true
+          control_no_cache:
+            type: "boolean"
+            default: true
+          control_no_store:
+            type: "boolean"
+            default: true
+          control_max_age:
+            type: "boolean"
+            default: true
+          regole:
+            type: "array"
+            items:
+              $ref: "#/components/schemas/CachingRispostaRegola"
+    CachingRispostaRegola:
+      type: "object"
+      properties:
+        return-code-min:
+          $ref: "#/components/schemas/HttpStatusCode"
+        return-code-max:
+          $ref: "#/components/schemas/HttpStatusCode"
+        fault:
+          type: "boolean"
+          default: false
+        cache_timeout_seconds:
+          type: "integer"
+          format: "int32"
     CorrelazioneApplicativaRichiestaItem:
       required:
       - "elemento"
@@ -8165,7 +8239,7 @@ components:
       allOf:
       - $ref: "#/components/schemas/CorrelazioneApplicativaBase"
       - required:
-        - "identificazione"
+        - "identificazione_tipo"
         type: "object"
         properties:
           identificazione_tipo:
@@ -8184,7 +8258,7 @@ components:
       allOf:
       - $ref: "#/components/schemas/CorrelazioneApplicativaBase"
       - required:
-        - "identificazione"
+        - "identificazione_tipo"
         type: "object"
         properties:
           identificazione_tipo:
@@ -8237,16 +8311,16 @@ components:
           type: "boolean"
     FormatoSoapEnum:
       type: "string"
-      default: "Wsdl1.1"
       enum:
       - "Wsdl1.1"
+      default: "Wsdl1.1"
     FormatoRestEnum:
       type: "string"
-      default: "OpenApi3.0"
       enum:
       - "Wadl"
       - "Swagger2.0"
       - "OpenApi3.0"
+      default: "OpenApi3.0"
     TipoApiEnum:
       type: "string"
       example: "rest"
@@ -8275,35 +8349,35 @@ components:
     ContestoEnum:
       type: "string"
       example: "qualsiasi"
-      default: "qualsiasi"
       enum:
       - "qualsiasi"
       - "erogazione"
       - "fruizione"
+      default: "qualsiasi"
     FonteEnum:
       type: "string"
       example: "qualsiasi"
-      default: "qualsiasi"
       enum:
       - "qualsiasi"
       - "registro"
       - "esterna"
+      default: "qualsiasi"
     RuoloAllegatoAPI:
       type: "string"
       example: "specificaSemiFormale"
-      default: "allegato"
       enum:
       - "allegato"
       - "specificaSemiFormale"
+      default: "allegato"
     RuoloAllegatoAPIImpl:
       type: "string"
       example: "specificaSemiFormale"
-      default: "allegato"
       enum:
       - "allegato"
       - "specificaSemiFormale"
       - "specificaSicurezza"
       - "specificaLivelloServizio"
+      default: "allegato"
     TipoSpecificaSemiformaleEnum:
       type: "string"
       example: "XML"
@@ -8331,13 +8405,13 @@ components:
     SslTipologiaEnum:
       type: "string"
       example: "TLSv1.2"
-      default: "TLSv1.2"
       enum:
       - "SSLv2Hello"
       - "SSLv3"
       - "TLSv1"
       - "TLSv1.1"
       - "TLSv1.2"
+      default: "TLSv1.2"
     KeystoreEnum:
       type: "string"
       example: "jks"
@@ -8371,6 +8445,15 @@ components:
       enum:
       - "certificato"
       - "configurazione-manuale"
+    TipoAutenticazionePrincipal:
+      type: "string"
+      example: "container"
+      enum:
+      - "container"
+      - "header-based"
+      - "form-based"
+      - "url-based"
+      - "ip-address"
     TipoKeystore:
       type: "string"
       example: "JKS"
@@ -8396,10 +8479,10 @@ components:
     AllAnyEnum:
       type: "string"
       example: "all"
-      default: "all"
       enum:
       - "all"
       - "any"
+      default: "all"
     ModalitaIdentificazioneAzioneEnum:
       type: "string"
       example: "interface-based"
@@ -8746,6 +8829,13 @@ components:
       schema:
         type: "string"
         format: "date-time"
+    nome_servizio_obbligatorio:
+      name: "nome_servizio"
+      in: "query"
+      description: "Nome identificativo"
+      required: true
+      schema:
+        $ref: "#/components/schemas/NCName"
     ricerca_esatta:
       name: "ricerca_esatta"
       in: "query"

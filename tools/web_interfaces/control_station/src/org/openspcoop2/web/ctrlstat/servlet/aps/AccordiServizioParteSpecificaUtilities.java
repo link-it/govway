@@ -48,6 +48,7 @@ import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
@@ -334,7 +335,28 @@ public class AccordiServizioParteSpecificaUtilities {
 			sa.setRispostaAsincrona(rispostaAsinc);
 			
 			InvocazioneServizio invServizio = new InvocazioneServizio();
-			invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
+			String user = null;
+			String password = null;
+			if(connettore.sizePropertyList()>0) {
+				for (int i = 0; i < connettore.sizePropertyList(); i++) {
+					if(CostantiDB.CONNETTORE_USER.equals(connettore.getProperty(i).getNome())) {
+						user = connettore.getProperty(i).getValore();
+					}
+					else if(CostantiDB.CONNETTORE_PWD.equals(connettore.getProperty(i).getNome())) {
+						password = connettore.getProperty(i).getValore();
+					}
+				}
+			}
+			if(user!=null) {
+				invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
+				InvocazioneCredenziali credenziali = new InvocazioneCredenziali();
+				credenziali.setUser(user);
+				credenziali.setPassword(password);
+				invServizio.setCredenziali(credenziali);
+			}
+			else {
+				invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
+			}
 			invServizio.setGetMessage(CostantiConfigurazione.DISABILITATO);
 			invServizio.setConnettore(connettore.mappingIntoConnettoreConfigurazione());
 			sa.setInvocazioneServizio(invServizio);

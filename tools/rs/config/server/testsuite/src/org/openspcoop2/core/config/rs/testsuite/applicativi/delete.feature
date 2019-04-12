@@ -5,19 +5,14 @@ Background:
 * call read('classpath:crud_commons.feature')
 
 * def applicativo = read('applicativo.json') 
-* eval applicativo.nome = applicativo.nome + random()
+* eval randomize(applicativo, ["nome", "credenziali.username"])
 
 @Delete204
-Scenario: Delete 204 OK
+Scenario: Applicativi Delete 204 OK
 
-    * call create { resourcePath: 'applicativi', body: '#(applicativo)' }
-    * call delete { resourcePath: '#("applicativi/" + applicativo.nome)'}
+    * call delete_204 { resourcePath: 'applicativi', body: '#(applicativo)', key:'#(applicativo.nome)'}
 
 @Delete404
-Scenario: Delete 404
+Scenario: Applicativi Delete 404
 
-    Given url configUrl
-    And path 'applicativi' , applicativo.nome
-    And header Authorization = govwayConfAuth
-    When method delete
-    Then status 404
+    * call delete_404 { resourcePath: 'applicativi', key:'#(applicativo.nome)'}

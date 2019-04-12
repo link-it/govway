@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.rs.server.api.FruizioniGruppiApi;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
@@ -44,15 +45,14 @@ import org.openspcoop2.core.config.rs.server.model.GruppoNome;
 import org.openspcoop2.core.config.rs.server.model.GruppoNuovaConfigurazione;
 import org.openspcoop2.core.config.rs.server.model.ListaGruppi;
 import org.openspcoop2.core.config.rs.server.model.ModalitaConfigurazioneGruppoEnum;
-import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -169,21 +169,26 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 
 		
 			String mappingPadre = null;
-			String erogazioneAutenticazione = null;
-			String erogazioneAutenticazioneOpzionale = null;				
+			String fruizioneAutenticazione = null;
+			String fruizioneAutenticazioneOpzionale = null;				
+			TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal = null;
+			List<String> fruizioneAutenticazioneParametroList = null;
 			
 			if ( body.getModalita() == ModalitaConfigurazioneGruppoEnum.NUOVA ) {
 				
 				final GruppoNuovaConfigurazione confNuova = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getModalita(), body.getConfigurazione());
-				erogazioneAutenticazione = confNuova.getAutenticazione().getTipo().toString();
-				erogazioneAutenticazioneOpzionale = ServletUtils.boolToCheckBoxStatus(confNuova.getAutenticazione().isOpzionale());
-				
+				fruizioneAutenticazione = confNuova.getAutenticazione().getTipo().toString();
+				fruizioneAutenticazioneOpzionale = ServletUtils.boolToCheckBoxStatus(confNuova.getAutenticazione().isOpzionale());
+				if(confNuova.getAutenticazione()!=null) {
+					fruizioneAutenticazionePrincipal = ErogazioniApiHelper.getTipoAutenticazionePrincipal(confNuova.getAutenticazione().getTipo(), confNuova.getAutenticazione().getConfigurazione()); 
+					fruizioneAutenticazioneParametroList = ErogazioniApiHelper.getAutenticazioneParametroList(env, confNuova.getAutenticazione().getTipo(), confNuova.getAutenticazione().getConfigurazione());
+				}
 			}
 			
 			else if ( body.getModalita() == ModalitaConfigurazioneGruppoEnum.EREDITA ) {
 				
 				GruppoEreditaConfigurazione confEredita = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getModalita(), body.getConfigurazione());
-				List<MappingErogazionePortaApplicativa> mappings = ErogazioniApiHelper.getMappingGruppiPA( confEredita.getNome(), idAsps, env.apsCore);
+				List<MappingFruizionePortaDelegata> mappings = ErogazioniApiHelper.getMappingGruppiPD( confEredita.getNome(), env.idSoggetto.toIDSoggetto(), idAsps, env.apsCore);
 				if ( mappings.isEmpty() ) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il gruppo " + confEredita.getNome() + " da cui ereditare è inesistente");
 				}
@@ -283,9 +288,11 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 					null,							// responseInputFileNameHeaders, 
 					null,							// responseInputDeleteAfterRead, 
 					null,							// responseInputWaitTime,
-					null,							// listExtendedConnettore, TOWAIT: mailandrea, cosa ne faccio di questa? cos'è?
-	        		erogazioneAutenticazione,
-	        		erogazioneAutenticazioneOpzionale,
+					null,							// listExtendedConnettore, 
+	        		fruizioneAutenticazione,
+	        		fruizioneAutenticazioneOpzionale,
+	        		fruizioneAutenticazionePrincipal,
+	        		fruizioneAutenticazioneParametroList,
 					"disabilitato",					// erogazioneAutorizzazione, Come da debug. 
 					null,							// erogazioneAutorizzazioneAutenticati, 
 					null,							// erogazioneAutorizzazioneRuoli, 
@@ -370,7 +377,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 				if (inUsoMessage.length() > 0)
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
 			} else if ( env.delete_404 ) {
-				throw FaultCode.NOT_FOUND.toException("Gruppo " + nomeGruppo + " non associato all'erogazione");
+				throw FaultCode.NOT_FOUND.toException("Gruppo " + nomeGruppo + " non associato alla fruizione");
 			}
 			context.getLogger().info("Invocazione completata con successo");
         

@@ -1,0 +1,196 @@
+
+<project name="setup-govwayAPIConfig" basedir=".">
+	
+	<description>
+        	SETUP RS API CONFIG
+	</description>
+
+	<import file="../../commons/utils.xml" />
+	
+	<!-- rs-api-config.properties -->
+	<target name="api_config_properties_settings">
+
+		<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+		</concat>
+
+		<!-- WORKING DIR -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="confDirectory"/>
+			<param name="value" value="${work_dir}"/>
+		</antcall>
+		
+		<!-- 
+		  PROTOCOL DEFAULT
+		  Se è abilitato spcoop in backward compatibility è spcoop, 
+		  altrimenti se abilitati verrano scelto nell'ordine:
+		  - trasparente
+		  - spcoop
+		  - as4
+		  - sdi
+		-->
+		<if>
+			<and>
+				<istrue value="${antinstaller_protocollo_spcoop}"/>
+				<istrue value="${antinstaller_backward_compatibility}"/>
+			</and>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="protocolloDefault"/>
+					<param name="value" value="spcoop"/>
+				</antcall>
+			</then>
+			<else>
+				<if>
+					<istrue value="${antinstaller_protocollo_trasparente}"/>
+					<then>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="protocolloDefault"/>
+							<param name="value" value="trasparente"/>
+						</antcall>
+					</then>
+					<else>
+						<if>
+							<istrue value="${antinstaller_protocollo_spcoop}"/>
+							<then>
+								<antcall target="set_property">
+								    <param name="file" value="${file}"/>
+									<param name="token" value="protocolloDefault"/>
+									<param name="value" value="spcoop"/>
+								</antcall>
+							</then>
+							<else>
+								<if>
+									<istrue value="${antinstaller_protocollo_as4}"/>
+									<then>
+										<antcall target="set_property">
+										    <param name="file" value="${file}"/>
+											<param name="token" value="protocolloDefault"/>
+											<param name="value" value="as4"/>
+										</antcall>
+									</then>
+									<else>
+										<if>
+											<istrue value="${antinstaller_protocollo_sdi}"/>
+											<then>
+												<antcall target="set_property">
+												    <param name="file" value="${file}"/>
+													<param name="token" value="protocolloDefault"/>
+													<param name="value" value="sdi"/>
+												</antcall>
+											</then>
+										</if>
+									</else>
+								</if>
+							</else>
+						</if>
+					</else>
+				</if>
+			</else>
+		</if>
+
+		<!-- SOGGETTO DEFAULT (NOME) -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="soggetto"/>
+			<param name="value" value="${antinstaller_nomesoggetto}"/>
+		</antcall>
+		
+		<!-- LOG -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="transaction"/>
+			<param name="value" value="true"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="dump"/>
+			<param name="value" value="false"/>
+		</antcall>
+		
+	</target>
+	
+	<!-- rs-api-config.datasource.properties -->
+	<target name="api_config_datasource_properties_settings">
+		
+		<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+		</concat>
+				
+		<!-- TIPO DATABASE -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="db.tipoDatabase"/>
+			<param name="value" value="${antinstaller_tipo_database}"/>
+		</antcall>
+		
+		<!-- DATASOURCE -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="db.dataSource"/>
+			<param name="value" value="${datasource_console_name}"/>
+		</antcall>
+				
+	</target>
+	
+	
+	<!-- rs-api-config.log4j2.properties -->
+	<target name="api_config_log4j_properties_settings">
+		
+		<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+		</concat>
+		
+		<!-- WORKING DIR -->
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="/var/govway/log"/>
+			<param name="value" value="${log_dir}"/>
+		</antcall>
+		
+		<!-- TIPI DI LOG -->
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="DEBUG"/>
+			<param name="value" value="ERROR"/>
+		</antcall>
+	
+	</target>
+	
+	<!-- log4j2.properties -->
+	<target name="api_config_default_log4j_properties_settings">
+		
+		<available file="${file}" property="file.present"/>
+		
+		<if>
+			<istrue value="${file.present}"/>
+			<then>
+				<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+				</concat>
+				<!-- WORKING DIR -->
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="/var/govway/log"/>
+					<param name="value" value="${log_dir}"/>
+				</antcall>
+
+				<!-- TIPI DI LOG -->
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="DEBUG"/>
+					<param name="value" value="ERROR"/>
+				</antcall>
+			</then>
+		</if>
+		
+	</target>
+		
+</project>

@@ -47,7 +47,7 @@
 			</then>
 		</if>
 		
-		<war destfile="${dist_govwayConfigApiRS}/govwayAPIConfig.war" webxml="src/WEB-INF/web.xml">
+		<war destfile="${dist_govwayConfigApiRS}/govwayAPIConfig.war" webxml="${src_govwayConfigApiRS}/WEB-INF/web.xml">
 
 			<webinf dir="${tmp_jboss_conf}">
 				<include name="jbossws-cxf.xml"/>
@@ -66,7 +66,6 @@
 			</lib>
 			<lib dir="${dist_govwayConfigApiRS}">
 				<include name="openspcoop2_*.jar"/>
-				<!-- Risolvere problematiche di deploy? -->
 				<exclude name="openspcoop2_web-govwayConfig*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/cxf">
@@ -137,7 +136,7 @@
 			</classes>			
 			<classes dir="${properties_govwayConfigApiRS}">
 				<include name="rs-api-config.properties"/>
-				<include name="rs-api-config.users.properties"/>
+				<!-- integrato utenti della console <include name="rs-api-config.users.properties"/> -->
 				<include name="rs-api-config.log4j2.properties"/>
 				<include name="log4j2.properties"/>
 				<include name="console.audit.log4j2.properties"/>

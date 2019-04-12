@@ -54,7 +54,7 @@ tematiche:
    massimo 200 richieste. Per modificare tale configurazione seguire le
    indicazioni presenti nella sezione :ref:`maxRequests`.
 
-5. *Tempi Risposta*
+#. *Tempi Risposta*
 
    GovWay è preconfigurato con dei parametri di timeout per quanto
    concerne la gestione delle connessioni verso gli applicativi interni
@@ -62,7 +62,7 @@ tematiche:
    effettuare un tuning di tali parametri seguire le indicazioni
    descritte nella sezione :ref:`tempiRisposta`.
 
-6. *Caching della Risposta - Disk Cache*
+#. *Caching della Risposta - Disk Cache*
 
    In GovWay è possibile abilitare il salvataggio delle risposte in una
    cache sia globalmente, in modo che sia attivo per tutte le APIs, che
@@ -81,7 +81,21 @@ tematiche:
    in eccesso. Per abilitare la memoria secondaria seguire le
    indicazioni descritte nella sezione :ref:`cachingRisposta`.
 
-7. *Load Balancing*
+#. *Configurazione e Monitoraggio*
+
+   GovWay fornisce sia una console che dei servizi che espongono API REST per la sua configurazione e per il monitoraggio.
+   L'installer genera per default le console mentre i servizi devono essere selezionati puntualmente dall'utente (:numref:`apiREST_fig`).
+
+   Gli indirizzi per accedere alle console sono già stati forniti nella fase di :ref:`inst_verifica`.
+
+   Nel caso invece siano stati generati i servizi, gli indirizzi base per utilizzarli sono:
+
+   - *http://<hostname-pdd>/govway/ENTE/api-config/v1/*
+   - *http://<hostname-pdd>/govway/ENTE/api-monitor/v1/*
+
+   ma deve essere completata la configurazione del Controllo degli Accessi per poterli invocare correttamente seguendo le indicazioni descritte nella sezione :ref:`apiRest`.
+
+#. *Load Balancing*
 
    Il prodotto è preconfigurato per funzionare su di una singola
    istanza. Per realizzare un'installazione in load balancing seguire le
@@ -96,4 +110,5 @@ tematiche:
 	maxRequests
 	tempiRisposta
 	cachingRisposta
+	apiRest
 	cluster/index

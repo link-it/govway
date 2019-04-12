@@ -13,6 +13,14 @@
 	  per ottenere e/o memorizzare le risposte in cache. Nella configurazione è possibile disabiltare una o più direttive.
 	  Infine il caching delle risposte è attivabile in funzione del return code http e del tipo di risposta ottenuta (fault).
 
+2019-04-12  Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione, GovWayConsole]
+	Aggiunta funzionalità OP-782
+	Realizzato servizio che espone una API Rest per la configurazione del Gateway.
+	L'interfaccia del servizio è definita in OpenAPI v3.0.
+	L'installer è stato esteso al fine di poter includere tra gli archivi prodotti anche il servizio di configurazione tramite API.
+
 2019-04-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

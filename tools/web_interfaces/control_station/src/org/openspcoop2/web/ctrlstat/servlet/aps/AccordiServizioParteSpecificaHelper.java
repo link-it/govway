@@ -463,7 +463,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 			}
 			if (!trovatoProv) {
-				this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IL_SOGGETTO_DEV_ESSERE_SCELTO_TRA_QUELLI_DEFINITI_NEL_PANNELLO_SOGGETTI);
+				this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IL_SOGGETTO_INDICATO_NON_AUTORIZZATO_A_EROGARE);
 				return false;
 			}
 
@@ -4522,6 +4522,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			List<String> versioni,boolean validazioneDocumenti, 
 			String [] saSoggetti, String nomeSA, boolean generaPACheckSoggetto,
 			List<AccordoServizioParteComune> asCompatibili,
+			String controlloAccessiStato,
 			String erogazioneRuolo,String erogazioneAutenticazione,String erogazioneAutenticazioneOpzionale, TipoAutenticazionePrincipal erogazioneAutenticazionePrincipal, List<String> erogazioneAutenticazioneParametroList, String erogazioneAutorizzazione, boolean erogazioneIsSupportatoAutenticazioneSoggetti,
 			String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,
 			List<String> soggettiAutenticati, List<String> soggettiAutenticatiLabel, String soggettoAutenticato,
@@ -5607,6 +5608,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			pa.setServizio(new PortaApplicativaServizio());
 			pa.getServizio().setTipo(tipoServizio);
 			
+			this.controlloAccessiAdd(dati, tipoOp, controlloAccessiStato);
+			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale, 
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,false);
@@ -5634,6 +5637,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			PortaDelegata pd = new PortaDelegata();
 			pd.setServizio(new PortaDelegataServizio());
 			pd.getServizio().setTipo(tipoServizio);
+			
+			this.controlloAccessiAdd(dati, tipoOp, controlloAccessiStato);
 			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale, 
@@ -6382,6 +6387,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			TipoOperazione tipoOp, String idSoggettoErogatoreDelServizio, String nomeprov, String tipoprov,
 			String nomeservizio, String tiposervizio, Integer versioneservizio, String correlato, String stato, String oldStato, String statoServizio,
 			String tipoAccordo, boolean validazioneDocumenti,
+			String controlloAccessiStato,
 			String fruizioneServizioApplicativo,String fruizioneRuolo,String fruizioneAutenticazione,String fruizioneAutenticazioneOpzionale, TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal, List<String> fruizioneAutenticazioneParametroList, String fruizioneAutorizzazione,
 			String fruizioneAutorizzazioneAutenticati,String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
 			List<String> saList, ServiceBinding serviceBinding, org.openspcoop2.protocol.manifest.constants.InterfaceType interfaceType,
@@ -6495,6 +6501,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 
 			if(isSoggettoGestitoPorta){
+				
+				this.controlloAccessiAdd(dati, tipoOp, controlloAccessiStato);
 				
 				this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 						gestioneTokenPolicy, gestioneTokenOpzionale,
@@ -7294,6 +7302,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String idAsps, String idSoggettoErogatoreDelServizio, String identificazione, 
 			AccordoServizioParteSpecifica asps, AccordoServizioParteComune as, ServiceBinding serviceBinding, String modeCreazione, String modeCreazioneConnettore,
 			String[] listaMappingLabels, String[] listaMappingValues, String mapping, String mappingLabel, String nomeSA, String [] saSoggetti, 
+			String controlloAccessiStato,
 			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale, TipoAutenticazionePrincipal erogazioneAutenticazionePrincipal, List<String> erogazioneAutenticazioneParametroList, boolean erogazioneIsSupportatoAutenticazioneSoggetti,
 			String erogazioneAutorizzazione, String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli,
 			String erogazioneRuolo, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,
@@ -7396,6 +7405,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		if(!modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA)) {
 			
 			// Controllo Accesso
+			
+			this.controlloAccessiAdd(dati, tipoOperazione, controlloAccessiStato);
 			
 			this.controlloAccessiGestioneToken(dati, tipoOperazione, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale,
@@ -7652,8 +7663,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String [] azioni, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String idAsps,
 			IDSoggetto idSoggettoFruitore, String identificazione, AccordoServizioParteSpecifica asps,
 			AccordoServizioParteComune as, ServiceBinding serviceBinding, String modeCreazione, String modeCreazioneConnettore,
-			String[] listaMappingLabels, String[] listaMappingValues, String mapping, String mappingLabel, List<String> saList,
-			String nomeSA, String fruizioneAutenticazione, String fruizioneAutenticazioneOpzionale, TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal, List<String> fruizioneAutenticazioneParametroList, boolean erogazioneIsSupportatoAutenticazioneSoggetti,
+			String[] listaMappingLabels, String[] listaMappingValues, String mapping, String mappingLabel, List<String> saList, String nomeSA, 
+			String controlloAccessiStato,
+			String fruizioneAutenticazione, String fruizioneAutenticazioneOpzionale, TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal, List<String> fruizioneAutenticazioneParametroList, boolean erogazioneIsSupportatoAutenticazioneSoggetti,
 			String fruizioneAutorizzazione, String fruizioneAutorizzazioneAutenticati,
 			String fruizioneAutorizzazioneRuoli, String fruizioneRuolo, String fruizioneAutorizzazioneRuoliTipologia,
 			String fruizioneAutorizzazioneRuoliMatch, String fruizioneServizioApplicativo,
@@ -7760,6 +7772,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		dati.addElement(de);
 		
 		if(!modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
+			
+			this.controlloAccessiAdd(dati, tipoOp, controlloAccessiStato);
 			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale,

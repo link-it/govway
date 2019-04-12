@@ -262,17 +262,25 @@
 
     </page>
 
+    <page name="serviziRs" type="input" displayText="Configurazione Servizi">
+
+	<comment displayText="API Rest" bold="true"/>
+        <checkbox defaultValue="false" property="antinstaller_rs_config" value="rsConfig" displayText="API di Configurazione"/>
+        <checkbox defaultValue="false" property="antinstaller_rs_monitor" value="rsMonitor" displayText="API di Monitoraggio"/>
+
+    </page>
+
     <page name="profili_nuovaInstallazione" type="input" displayText="Profili di Interoperabilità"
 	ifProperty="${antinstaller_modalita_installazione}==nuova">
 
         <comment displayText="Profilo" bold="true"/>
-        <checkbox defaultValue="true" property="antinstaller_protocollo_trasparente" value="trasparente" displayText="API Gateway"/>
+        <checkbox defaultValue="true" property="antinstaller_protocollo_trasparente" force="true" value="trasparente" displayText="API Gateway"/>
         <checkbox defaultValue="false" property="antinstaller_protocollo_spcoop" value="spcoop" displayText="SPCoop"/>
 	<checkbox defaultValue="false" property="antinstaller_protocollo_as4" value="as4" displayText="eDelivery"/>
         <checkbox defaultValue="false" property="antinstaller_protocollo_sdi" value="sdi" displayText="Fatturazione Elettronica"/>
          
 
-		<comment displayText=""/>	
+	<comment displayText=""/>	
         <!-- <comment displayText="Soggetto della PdD" bold="true"/> -->
         <hidden property="antinstaller_tiposoggetto_trasparente" value="gw"/>
         <hidden property="antinstaller_tiposoggetto_as4" value="as4"/>
@@ -299,7 +307,7 @@
 	<comment displayText="Devono essere selezionati almeno gli stessi profili della precedente installazione"/>
 
         <comment displayText="Profilo" bold="true"/>
-        <checkbox defaultValue="true" property="antinstaller_protocollo_trasparente" value="trasparente" displayText="API Gateway"/>
+        <checkbox defaultValue="true" property="antinstaller_protocollo_trasparente" force="true" value="trasparente" displayText="API Gateway"/>
         <checkbox defaultValue="false" property="antinstaller_protocollo_spcoop" value="spcoop" displayText="SPCoop"/>
 	<checkbox defaultValue="false" property="antinstaller_protocollo_as4" value="as4" displayText="eDelivery"/>
         <checkbox defaultValue="false" property="antinstaller_protocollo_sdi" value="sdi" displayText="Fatturazione Elettronica"/>
@@ -456,6 +464,6 @@
 -->
 
    <page name="Fine" displayText="Installazione" type="progress" showTargets="true"
-        target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_loader,setup_backward_compatibility,setup_finished"/>
+        target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_loader,setup_apiConfig,setup_apiMonitor,setup_backward_compatibility,setup_finished"/>
 
 </installer>

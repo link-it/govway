@@ -39,8 +39,7 @@ public class RateLimitingPolicyBaseFruizione extends RateLimitingPolicyBase {
    * Get filtro
    * @return filtro
   **/
-  @Override
-@JsonProperty("filtro")
+  @JsonProperty("filtro")
   @Valid
   public RateLimitingPolicyFiltroFruizione getFiltro() {
     return this.filtro;
@@ -59,8 +58,7 @@ public class RateLimitingPolicyBaseFruizione extends RateLimitingPolicyBase {
    * Get criterioCollezionamentoDati
    * @return criterioCollezionamentoDati
   **/
-  @Override
-@JsonProperty("criterio_collezionamento_dati")
+  @JsonProperty("criterio_collezionamento_dati")
   @Valid
   public RateLimitingPolicyGroupByFruizione getCriterioCollezionamentoDati() {
     return this.criterioCollezionamentoDati;

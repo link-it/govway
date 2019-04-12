@@ -256,18 +256,18 @@
 	
 		
 	<!-- Compilazioni dipendenze -->
-	<target name="compile_dipendenze_apiRS">
+	<target name="compile_dipendenze_apiMonitorRS">
 		<if>
 			<istrue value="${buildGovwayMonitorCore}"/>
 			<then>
-				<runtarget target="compile_dipendenze_apiRS_invoke" />
+				<runtarget target="compile_dipendenze_apiMonitorRS_invoke" />
 			</then>
 		</if>
 	</target>
-	<target name="compile_dipendenze_apiRS_invoke" depends="compile_users,compile_audit,compile_openspcoop2_govwayMonitor" description="compila le dipendenze" />
+	<target name="compile_dipendenze_apiMonitorRS_invoke" depends="compile_users,compile_audit,compile_openspcoop2_govwayMonitor" description="compila le dipendenze" />
 
 	<!-- Compilazione del servizio-->
-	<target name="compile_govwayMonitorApiRS" depends="init_compile_govwayMonitorApiRS,compile_dipendenze_apiRS,compile_openspcoop2_govwayMonitorApiRS" description="compila govwayMonitor"/>
+	<target name="compile_govwayMonitorApiRS" depends="init_compile_govwayMonitorApiRS,compile_dipendenze_apiMonitorRS,compile_openspcoop2_govwayMonitorApiRS" description="compila govwayMonitor"/>
 
 
 	<!-- Creazione del modulo .WAR -->

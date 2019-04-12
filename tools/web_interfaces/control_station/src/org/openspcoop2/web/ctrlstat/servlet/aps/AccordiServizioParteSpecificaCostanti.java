@@ -364,6 +364,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String MESSAGGIO_ERRORE_USO_SOGGETTO_EROGATORE_CON_VISIBILITA_PRIVATA_IN_UN_SERVIZIO_CON_VISIBILITA_PUBBLICA = "Non &egrave; possibile utilizzare un soggetto erogatore con visibilit&agrave; privata, in un servizio con visibilit&agrave; pubblica.";
 	public static final String MESSAGGIO_ERRORE_ACCORDO_SERVIZIO_DEV_ESSERE_SCELTO_TRA_QUELLI_DEFINITI_NEL_PANNELLO_ACCORDI_SERVIZIO = "L'accordo servizio dev'essere scelto tra quelli definiti nel pannello Accordi servizio";
 	public static final String MESSAGGIO_ERRORE_IL_SOGGETTO_DEV_ESSERE_SCELTO_TRA_QUELLI_DEFINITI_NEL_PANNELLO_SOGGETTI = "Il soggetto dev'essere scelto tra quelli definiti nel pannello Soggetti";
+	public static final String MESSAGGIO_ERRORE_IL_SOGGETTO_INDICATO_NON_AUTORIZZATO_A_EROGARE = "Il soggetto indicato non è autorizzato ad erogare una API";
 	public static final String MESSAGGIO_ERRORE_SERVIZIO_CORRELATO_DEV_ESSERE_SELEZIONATO_O_DESELEZIONATO = "Servizio correlato dev'essere selezionato o deselezionato";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_CON_PARAMETRO = "Dati incompleti. &Egrave; necessario indicare: {0}";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_SOGGETTO_MANCANTE = "Dati incompleti. &Egrave; necessario indicare un Soggetto";
@@ -375,4 +376,5 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String MESSAGGIO_ERRORE_NON_E_POSSIBILE_CREARE_L_ACCORDO_PARTE_SPECIFICA_SENZA_SELEZIONARE_UN_SERVIZIO_APPLICATIVO_EROGATORE = "Non &egrave; possibile creare l'accordo parte specifica senza selezionare un servizio applicativo erogatore";
 	public static final String MESSAGGIO_ERRORE_IMPOSSIBILE_ELIMINARE_LA_CONFIGURAZIONE_DI_DEFAULT_EROGAZIONE = "Non è possibile eliminare il gruppo '"+Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT+"'";
 	public static final String MESSAGGIO_ERRORE_IMPOSSIBILE_ELIMINARE_LA_CONFIGURAZIONE_DI_DEFAULT_FRUIZIONE = "Non è possibile eliminare il gruppo '"+Costanti.MAPPING_FRUIZIONE_PD_DESCRIZIONE_DEFAULT+"'";
+	public static final String MESSAGGIO_ERRORE_ABILITARE_AUTENTICAZIONE_PER_AUTORIZZAZIONE_PUNTUALE = "Per poter abilitare l'autorizzazione puntuale, devi abilitare l'autenticazione";
 }

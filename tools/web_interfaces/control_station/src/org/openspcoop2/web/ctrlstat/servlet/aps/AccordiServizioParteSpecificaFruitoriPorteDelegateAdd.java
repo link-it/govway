@@ -45,6 +45,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -140,6 +141,8 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			String identificazione = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_IDENTIFICAZIONE);
 			String mappingPD = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MAPPING);
 
+			String controlloAccessiStato = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO);
+			
 			String fruizioneServizioApplicativo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUIZIONE_NOME_SA);
 			String fruizioneRuolo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_RUOLO);
 			String fruizioneAutenticazione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE);
@@ -560,7 +563,9 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							idFruizione, tipoSoggettoFruitore, nomeSoggettoFruitore, dati);
 					dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, nomeGruppo, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoFruitore,
 							identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
-							mappingPD, mappingLabel, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList,
+							mappingPD, mappingLabel, saList, nomeSA, 
+							controlloAccessiStato,
+							fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList,
 							true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
 							fruizioneAutorizzazioneRuoli, fruizioneRuolo, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, fruizioneServizioApplicativo,
 							gestioneToken, policyLabels, policyValues, 
@@ -637,7 +642,9 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 				dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, nomeGruppo, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoFruitore,
 						identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
-						mappingPD, mappingLabel, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList,
+						mappingPD, mappingLabel, saList, nomeSA, 
+						controlloAccessiStato,
+						fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList,
 						true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
 						fruizioneAutorizzazioneRuoli, fruizioneRuolo, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, fruizioneServizioApplicativo,
 						gestioneToken, policyLabels, policyValues, 
@@ -678,6 +685,23 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						ForwardParams.ADD());
 			}
 
+			if(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_NUOVA.equals(modeCreazione)
+					&& CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO_PUBBLICO.equals(controlloAccessiStato)) {
+				
+				fruizioneAutenticazione = TipoAutenticazione.DISABILITATO.getValue();
+				fruizioneAutenticazioneOpzionale = null;
+				fruizioneAutenticazionePrincipal = null;
+				fruizioneAutenticazioneParametroList = null;
+				
+				fruizioneAutorizzazione = TipoAutorizzazione.DISABILITATO.getValue();
+				fruizioneAutorizzazioneAutenticati = null;
+				fruizioneAutorizzazioneRuoli = null;
+				fruizioneAutorizzazioneRuoliTipologia = null;
+				fruizioneAutorizzazioneRuoliMatch = null;
+				
+			}
+
+			
 			AccordiServizioParteSpecificaUtilities.addAccordoServizioParteSpecificaPorteDelegate(
 					mappingDefault,
 					mappingSelezionato,

@@ -66,7 +66,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
  * 
  * @author Andrea Poli (poli@link.it)
  * @author $Author$
- * @version $Rev$, $Date
+ * @version $Rev$, $Date$
  */
 /**
  * @author poli

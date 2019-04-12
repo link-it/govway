@@ -179,7 +179,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			final org.openspcoop2.core.config.constants.CredenzialeTipo tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(pa.getAutenticazione());	
 			List<ServizioApplicativo> saCompatibili = env.saCore.soggettiServizioApplicativoList(env.idSoggetto.toIDSoggetto(),env.userLogin,tipoAutenticazione);
-			if (!Helper.findFirst(saCompatibili, s -> s.getId() == sa.getId()).isPresent()) {
+			if (!Helper.findFirst(saCompatibili, s -> s.getId().equals(sa.getId())).isPresent()) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La modalità di autenticazione del servizio Applicativo scelto non è compatibile con il gruppo che si vuole configurare");
 			}
 			
@@ -261,7 +261,9 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			// L'ultimo parametro è da configurare quando utilizzeremo il multitenant 
 			final List<org.openspcoop2.core.registry.Soggetto> soggettiCompatibili = env.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, null);
 			
-			if (!Helper.findFirst(soggettiCompatibili, s -> s.getId() == daAutenticare.getId()).isPresent()) {
+			if (!Helper.findFirst(soggettiCompatibili, s -> { 
+					return s.getId().equals(daAutenticare.getId()); 
+				}).isPresent()) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto scelto non supporta l'autenticazione per il gruppo");
 			}
 			
@@ -1033,7 +1035,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			policies.forEach( p -> {
 				RateLimitingPolicyItem item = new RateLimitingPolicyItem();
 				item.setIdentificativo(p.getIdActivePolicy());
-				item.setNome(p.getAlias());ret.addItemsItem(item);
+				item.setNome(p.getAlias());
 				ret.addItemsItem(item);
 			});
                               
@@ -1809,7 +1811,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final PortaApplicativa newPa = env.paCore.getPortaApplicativa(env.idPa);
 			final PortaApplicativa oldPa = env.paCore.getPortaApplicativa(env.idPa);			
 
-			ErogazioniApiHelper.fillPortaApplicativa(body, newPa);
+			ErogazioniApiHelper.fillPortaApplicativa(env, body, newPa);
 			
 			if (! ErogazioniApiHelper.controlloAccessiCheckPA(env, oldPa, newPa)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(  env.pd.getMessage() ));

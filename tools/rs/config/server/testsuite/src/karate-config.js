@@ -11,13 +11,14 @@ function() {
     // customize
   }
   karate.configure('connectTimeout', 5000);
-  karate.configure('readTimeout', 5000);  
+  karate.configure('readTimeout', 5000);
   var protocol = 'http';
   var govwayUrl = 'http://localhost:8080';
 
   var config = {
       basicCred: { username: 'amministratore', password: '123456' },
-      configUrl: govwayUrl + '/govwayAPIConfig'
+      configUrl: govwayUrl + '/govwayAPIConfig',
+      soggettoDefault: 'ENTE'
   };
   return config;
 }

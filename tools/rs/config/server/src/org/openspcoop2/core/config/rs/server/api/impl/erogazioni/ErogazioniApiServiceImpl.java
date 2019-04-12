@@ -117,13 +117,13 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			Helper.throwIfNull(body);
 			
 			Erogazione ero = Helper.fromJson(body, Erogazione.class);
+			ErogazioniApiHelper.fillErogazioneWithDefaults(ero);
             
             final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
             final Soggetto soggettoErogatore = env.soggettiCore.getSoggettoRegistro(env.idSoggetto.toIDSoggetto());
 
             final IDSoggetto idReferente = ErogazioniApiHelper.getIdReferente(ero, env);
             final AccordoServizioParteComune as = Helper.getAccordo(ero.getApiNome(), ero.getApiVersione(), idReferente ,env.apcCore);
-            
             
             if ( as == null ) {
             	throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nessuna Api registrata con nome " + ero.getApiNome() + " e versione " + ero.getApiVersione());
@@ -139,7 +139,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
                        
             ServletUtils.setObjectIntoSession(context.getServletRequest().getSession(), AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
             
-            ErogazioniApiHelper.serviziCheckData(TipoOperazione.ADD, env, as, asps, null,  ero, true);            	
+            ErogazioniApiHelper.serviziCheckData(TipoOperazione.ADD, env, as, asps, Optional.empty(),  ero);            	
 			
             org.openspcoop2.core.registry.Connettore regConnettore = ErogazioniApiHelper.buildConnettoreRegistro(env, ero.getConnettore());     
 			ErogazioniApiHelper.createAps(env, asps, regConnettore, ero, alreadyExists, true);
@@ -702,7 +702,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			
 			asps.setOldIDServizioForUpdate(env.idServizioFactory.getIDServizioFromAccordo(asps));
 			
-			ErogazioniApiHelper.serviziCheckData(TipoOperazione.CHANGE, env, as, asps, null, null, true);
+			ErogazioniApiHelper.serviziUpdateCheckData(as, asps, true, env);
 			
 			List<Object> oggettiDaAggiornare = AccordiServizioParteSpecificaUtilities.getOggettiDaAggiornare(asps, env.apsCore);
 			
@@ -882,7 +882,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
  		    final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 		    final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 		    
-		    ErogazioniApiHelper.updateInformazioniGenerali(body, env, asps);
+		    ErogazioniApiHelper.updateInformazioniGenerali(body, env, asps, true);
         
 			context.getLogger().info("Invocazione completata con successo");
      
@@ -918,10 +918,12 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			
 			final ApiImplUrlInvocazione urlInvocazione = JSONUtils.getInstance().getAsObject((InputStream) body, ApiImplUrlInvocazione.class);
 			
+			if (urlInvocazione.getModalita() == null)
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare una modalità di identificazione azione valida");
+		
+			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			
 			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Accordo Servizio Parte Specifica");
-			
 
 			final IDPortaApplicativa idPorta 	= Helper.supplyOrNotFound( () -> env.paCore.getIDPortaApplicativaAssociataDefault(env.idServizioFactory.getIDServizioFromAccordo(asps)), "Porta Applicativa Default");
 			final PortaApplicativa pa 			= Helper.supplyOrNotFound( () -> env.paCore.getPortaApplicativa(idPorta), "Porta Applicativa Default");

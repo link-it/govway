@@ -22,8 +22,6 @@
 package org.openspcoop2.core.config.rs.server.model;
 
 import org.openspcoop2.core.config.rs.server.model.ApiImplConfigurazioneStato;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFiltro;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyGroupBy;
 import org.openspcoop2.core.config.rs.server.model.StatoFunzionalitaConWarningEnum;
 import javax.validation.constraints.*;
 
@@ -44,12 +42,6 @@ public class RateLimitingPolicyBase extends ApiImplConfigurazioneStato {
   
   @Schema(description = "")
   private Integer sogliaValore = null;
-  
-  @Schema(description = "")
-  private RateLimitingPolicyFiltro filtro = null;
-  
-  @Schema(description = "")
-  private RateLimitingPolicyGroupBy criterioCollezionamentoDati = null;
  /**
    * Get nome
    * @return nome
@@ -127,44 +119,6 @@ public class RateLimitingPolicyBase extends ApiImplConfigurazioneStato {
     return this;
   }
 
- /**
-   * Get filtro
-   * @return filtro
-  **/
-  @JsonProperty("filtro")
-  @Valid
-  public RateLimitingPolicyFiltro getFiltro() {
-    return this.filtro;
-  }
-
-  public void setFiltro(RateLimitingPolicyFiltro filtro) {
-    this.filtro = filtro;
-  }
-
-  public RateLimitingPolicyBase filtro(RateLimitingPolicyFiltro filtro) {
-    this.filtro = filtro;
-    return this;
-  }
-
- /**
-   * Get criterioCollezionamentoDati
-   * @return criterioCollezionamentoDati
-  **/
-  @JsonProperty("criterio_collezionamento_dati")
-  @Valid
-  public RateLimitingPolicyGroupBy getCriterioCollezionamentoDati() {
-    return this.criterioCollezionamentoDati;
-  }
-
-  public void setCriterioCollezionamentoDati(RateLimitingPolicyGroupBy criterioCollezionamentoDati) {
-    this.criterioCollezionamentoDati = criterioCollezionamentoDati;
-  }
-
-  public RateLimitingPolicyBase criterioCollezionamentoDati(RateLimitingPolicyGroupBy criterioCollezionamentoDati) {
-    this.criterioCollezionamentoDati = criterioCollezionamentoDati;
-    return this;
-  }
-
 
   @Override
   public String toString() {
@@ -175,8 +129,6 @@ public class RateLimitingPolicyBase extends ApiImplConfigurazioneStato {
     sb.append("    stato: ").append(RateLimitingPolicyBase.toIndentedString(this.stato)).append("\n");
     sb.append("    sogliaRidefinita: ").append(RateLimitingPolicyBase.toIndentedString(this.sogliaRidefinita)).append("\n");
     sb.append("    sogliaValore: ").append(RateLimitingPolicyBase.toIndentedString(this.sogliaValore)).append("\n");
-    sb.append("    filtro: ").append(RateLimitingPolicyBase.toIndentedString(this.filtro)).append("\n");
-    sb.append("    criterioCollezionamentoDati: ").append(RateLimitingPolicyBase.toIndentedString(this.criterioCollezionamentoDati)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -175,6 +175,11 @@ public class ApiApiHelper {
 			idSoggReferente.setNome(idSogg.getNome());
 			idSoggReferente.setTipo(idSogg.getTipo());
 		}
+		
+		if (!env.soggettiCore.existsSoggetto(idSoggReferente.toIDSoggetto())) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto referente " + idSoggReferente.toString() + " non è presente nel registro");
+		}
+		
 		idSoggReferente.setId(env.soggettiCore.getIdSoggetto(idSoggReferente.getNome(),idSoggReferente.getTipo()));
 		
 		as.setSoggettoReferente(idSoggReferente);

@@ -183,6 +183,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	
 	private BinaryParameter wsdlimpler, wsdlimplfru;
 
+	private String controlloAccessiStato;
+	
 	private String erogazioneRuolo;
 	private String erogazioneAutenticazione;
 	private String erogazioneAutenticazioneOpzionale;
@@ -249,6 +251,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			this.connettoreDebug = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
 
+			this.controlloAccessiStato = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO);
+			
 			this.erogazioneRuolo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_RUOLO);
 			this.erogazioneAutenticazione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE);
 			this.erogazioneAutenticazioneOpzionale = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE_OPZIONALE);
@@ -1400,6 +1404,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,this.statoPackage,
 						this.versione,versioniProtocollo,this.validazioneDocumenti,
 						saSoggetti,this.nomeSA,generaPortaApplicativa,null,
+						this.controlloAccessiStato,
 						this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutenticazionePrincipal, this.erogazioneAutenticazioneParametroList,this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
 						this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
 						soggettiAutenticati,soggettiAutenticatiLabel, this.erogazioneSoggettoAutenticato,
@@ -1559,6 +1564,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,
 						this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,
 						saSoggetti,this.nomeSA,generaPortaApplicativa,null,
+						this.controlloAccessiStato,
 						this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutenticazionePrincipal, this.erogazioneAutenticazioneParametroList, this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
 						this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
 						soggettiAutenticati, soggettiAutenticatiLabel, this.erogazioneSoggettoAutenticato,
@@ -1780,6 +1786,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,
 							this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,
 							saSoggetti,this.nomeSA,generaPortaApplicativa,null,
+							this.controlloAccessiStato,
 							this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutenticazionePrincipal, this.erogazioneAutenticazioneParametroList, this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
 							this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
 							soggettiAutenticati, soggettiAutenticatiLabel, this.erogazioneSoggettoAutenticato,
@@ -1851,33 +1858,43 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			String autenticazione = null, autenticazioneOpzionale = null;
 			TipoAutenticazionePrincipal autenticazionePrincipal = null;
 			List<String> autenticazioneParametroList = null;
-			if(generaPortaApplicativa){
-				autenticazione = this.erogazioneAutenticazione;
-				autenticazioneOpzionale = this.erogazioneAutenticazioneOpzionale;
-				autenticazionePrincipal = this.erogazioneAutenticazionePrincipal;
-				autenticazioneParametroList = this.erogazioneAutenticazioneParametroList;
+			if(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO_PUBBLICO.equals(this.controlloAccessiStato)) {
+				autenticazione = TipoAutenticazione.DISABILITATO.getValue();
 			}
-			if(generaPortaDelegata){
-				autenticazione = this.fruizioneAutenticazione;
-				autenticazioneOpzionale = this.fruizioneAutenticazioneOpzionale;
-				autenticazionePrincipal = this.fruizioneAutenticazionePrincipal;
-				autenticazioneParametroList = this.fruizioneAutenticazioneParametroList;
+			else {
+				if(generaPortaApplicativa){
+					autenticazione = this.erogazioneAutenticazione;
+					autenticazioneOpzionale = this.erogazioneAutenticazioneOpzionale;
+					autenticazionePrincipal = this.erogazioneAutenticazionePrincipal;
+					autenticazioneParametroList = this.erogazioneAutenticazioneParametroList;
+				}
+				if(generaPortaDelegata){
+					autenticazione = this.fruizioneAutenticazione;
+					autenticazioneOpzionale = this.fruizioneAutenticazioneOpzionale;
+					autenticazionePrincipal = this.fruizioneAutenticazionePrincipal;
+					autenticazioneParametroList = this.fruizioneAutenticazioneParametroList;
+				}
 			}
 			
 			String autorizzazione = null, autorizzazioneAutenticati = null, autorizzazioneRuoli = null, autorizzazioneRuoliTipologia = null, autorizzazioneRuoliMatch = null;
-			if(generaPortaApplicativa){
-				autorizzazione = this.erogazioneAutorizzazione;
-				autorizzazioneAutenticati = this.erogazioneAutorizzazioneAutenticati;
-				autorizzazioneRuoli = this.erogazioneAutorizzazioneRuoli;
-				autorizzazioneRuoliTipologia = this.erogazioneAutorizzazioneRuoliTipologia;
-				autorizzazioneRuoliMatch = this.erogazioneAutorizzazioneRuoliMatch;
+			if(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO_PUBBLICO.equals(this.controlloAccessiStato)) {
+				autorizzazione = TipoAutorizzazione.DISABILITATO.getValue();
 			}
-			if(generaPortaDelegata){
-				autorizzazione = this.fruizioneAutorizzazione;
-				autorizzazioneAutenticati = this.fruizioneAutorizzazioneAutenticati;
-				autorizzazioneRuoli = this.fruizioneAutorizzazioneRuoli;
-				autorizzazioneRuoliTipologia = this.fruizioneAutorizzazioneRuoliTipologia;
-				autorizzazioneRuoliMatch = this.fruizioneAutorizzazioneRuoliMatch;
+			else {
+				if(generaPortaApplicativa){
+					autorizzazione = this.erogazioneAutorizzazione;
+					autorizzazioneAutenticati = this.erogazioneAutorizzazioneAutenticati;
+					autorizzazioneRuoli = this.erogazioneAutorizzazioneRuoli;
+					autorizzazioneRuoliTipologia = this.erogazioneAutorizzazioneRuoliTipologia;
+					autorizzazioneRuoliMatch = this.erogazioneAutorizzazioneRuoliMatch;
+				}
+				if(generaPortaDelegata){
+					autorizzazione = this.fruizioneAutorizzazione;
+					autorizzazioneAutenticati = this.fruizioneAutorizzazioneAutenticati;
+					autorizzazioneRuoli = this.fruizioneAutorizzazioneRuoli;
+					autorizzazioneRuoliTipologia = this.fruizioneAutorizzazioneRuoliTipologia;
+					autorizzazioneRuoliMatch = this.fruizioneAutorizzazioneRuoliMatch;
+				}
 			}
 		
 			String servizioApplicativo = null, ruolo = null;

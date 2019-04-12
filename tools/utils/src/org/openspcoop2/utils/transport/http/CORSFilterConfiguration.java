@@ -36,6 +36,7 @@ public class CORSFilterConfiguration {
 
 	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/
 
+	protected boolean errorAsDebug = true;
 	
 	// indicazione se una richiesta invalida deve cmq essere continuata ad essere gestita (e pilotata con le opzioni seguenti)
 	protected boolean throwExceptionIfInvalid = false;
@@ -187,6 +188,8 @@ public class CORSFilterConfiguration {
 	public void init(Properties p) {
 						
 		/*
+		 * cors.errorAsDebug=true/false
+		 * 
 		 * cors.throwExceptionIfInvalid=true/false
 		 * cors.terminateIfInvalid=true/false
 		 * 
@@ -229,7 +232,12 @@ public class CORSFilterConfiguration {
 		 * 
 		 **/
 		
-		String tmp = p.getProperty("cors.throwExceptionIfInvalid");
+		String tmp = p.getProperty("cors.errorAsDebug");
+		if(tmp!=null) {
+			this.errorAsDebug = "true".equalsIgnoreCase(tmp.trim());
+		}
+		
+		tmp = p.getProperty("cors.throwExceptionIfInvalid");
 		if(tmp!=null) {
 			this.throwExceptionIfInvalid = "true".equalsIgnoreCase(tmp.trim());
 		}
@@ -366,7 +374,13 @@ public class CORSFilterConfiguration {
 		}
 		
 	}
-	
+
+	public boolean isErrorAsDebug() {
+		return this.errorAsDebug;
+	}
+	public void setErrorAsDebug(boolean errorAsDebug) {
+		this.errorAsDebug = errorAsDebug;
+	}
 
 	public boolean isThrowExceptionIfInvalid() {
 		return this.throwExceptionIfInvalid;

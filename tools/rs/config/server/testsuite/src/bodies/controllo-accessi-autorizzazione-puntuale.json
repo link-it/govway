@@ -1,0 +1,15 @@
+{
+    
+    "autorizzazione": {
+        "tipo": "abilitato",
+
+        "configurazione": {
+            "puntuale": true,
+            "ruoli": false,
+            "scope": false
+            
+            
+        }
+    }
+
+}

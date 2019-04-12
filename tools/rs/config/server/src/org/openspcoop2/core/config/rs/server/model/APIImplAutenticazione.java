@@ -34,6 +34,9 @@ public class APIImplAutenticazione  {
   private TipoAutenticazioneEnum tipo = null;
   
   @Schema(description = "")
+  private Object configurazione = null;
+  
+  @Schema(description = "")
   private Boolean opzionale = false;
   
   @Schema(description = "nome autenticazione 'custom', set tipo='custom'")
@@ -58,6 +61,25 @@ public class APIImplAutenticazione  {
 
   public APIImplAutenticazione tipo(TipoAutenticazioneEnum tipo) {
     this.tipo = tipo;
+    return this;
+  }
+
+ /**
+   * Get configurazione
+   * @return configurazione
+  **/
+  @JsonProperty("configurazione")
+  @Valid
+  public Object getConfigurazione() {
+    return this.configurazione;
+  }
+
+  public void setConfigurazione(Object configurazione) {
+    this.configurazione = configurazione;
+  }
+
+  public APIImplAutenticazione configurazione(Object configurazione) {
+    this.configurazione = configurazione;
     return this;
   }
 
@@ -106,6 +128,7 @@ public class APIImplAutenticazione  {
     sb.append("class APIImplAutenticazione {\n");
     
     sb.append("    tipo: ").append(APIImplAutenticazione.toIndentedString(this.tipo)).append("\n");
+    sb.append("    configurazione: ").append(APIImplAutenticazione.toIndentedString(this.configurazione)).append("\n");
     sb.append("    opzionale: ").append(APIImplAutenticazione.toIndentedString(this.opzionale)).append("\n");
     sb.append("    nome: ").append(APIImplAutenticazione.toIndentedString(this.nome)).append("\n");
     sb.append("}");
