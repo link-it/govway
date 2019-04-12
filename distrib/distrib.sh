@@ -360,7 +360,7 @@ sed -r -i -e 's# *<property +name="lib" +(value|location)=".*" */>#<property nam
 cd ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}
 tar -h -c -z -f ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}.tgz --xform="s@^@${OPENSPCOOP_PDD_FILE}/@" --exclude-vcs *
 cd ${WORK_DIR}/ 
-echo "/bin/rm -f ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}"
+echo "/bin/rm -rf ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}"
 
 infoPrintln "Generazione pacchetto installer terminata correttamente."
 
