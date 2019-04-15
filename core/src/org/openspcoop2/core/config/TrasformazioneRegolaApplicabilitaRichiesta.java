@@ -42,6 +42,8 @@ import java.util.List;
  * 			&lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-applicabilita-soggetto" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-applicabilita-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -57,7 +59,9 @@ import java.util.List;
   propOrder = {
   	"azione",
   	"contentType",
-  	"pattern"
+  	"pattern",
+  	"soggetto",
+  	"servizioApplicativo"
   }
 )
 
@@ -137,6 +141,54 @@ public class TrasformazioneRegolaApplicabilitaRichiesta extends org.openspcoop2.
     this.pattern = pattern;
   }
 
+  public void addSoggetto(TrasformazioneRegolaApplicabilitaSoggetto soggetto) {
+    this.soggetto.add(soggetto);
+  }
+
+  public TrasformazioneRegolaApplicabilitaSoggetto getSoggetto(int index) {
+    return this.soggetto.get( index );
+  }
+
+  public TrasformazioneRegolaApplicabilitaSoggetto removeSoggetto(int index) {
+    return this.soggetto.remove( index );
+  }
+
+  public List<TrasformazioneRegolaApplicabilitaSoggetto> getSoggettoList() {
+    return this.soggetto;
+  }
+
+  public void setSoggettoList(List<TrasformazioneRegolaApplicabilitaSoggetto> soggetto) {
+    this.soggetto=soggetto;
+  }
+
+  public int sizeSoggettoList() {
+    return this.soggetto.size();
+  }
+
+  public void addServizioApplicativo(TrasformazioneRegolaApplicabilitaServizioApplicativo servizioApplicativo) {
+    this.servizioApplicativo.add(servizioApplicativo);
+  }
+
+  public TrasformazioneRegolaApplicabilitaServizioApplicativo getServizioApplicativo(int index) {
+    return this.servizioApplicativo.get( index );
+  }
+
+  public TrasformazioneRegolaApplicabilitaServizioApplicativo removeServizioApplicativo(int index) {
+    return this.servizioApplicativo.remove( index );
+  }
+
+  public List<TrasformazioneRegolaApplicabilitaServizioApplicativo> getServizioApplicativoList() {
+    return this.servizioApplicativo;
+  }
+
+  public void setServizioApplicativoList(List<TrasformazioneRegolaApplicabilitaServizioApplicativo> servizioApplicativo) {
+    this.servizioApplicativo=servizioApplicativo;
+  }
+
+  public int sizeServizioApplicativoList() {
+    return this.servizioApplicativo.size();
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -209,5 +261,65 @@ public class TrasformazioneRegolaApplicabilitaRichiesta extends org.openspcoop2.
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="pattern",required=false,nillable=false)
   protected java.lang.String pattern;
+
+  @XmlElement(name="soggetto",required=true,nillable=false)
+  protected List<TrasformazioneRegolaApplicabilitaSoggetto> soggetto = new ArrayList<TrasformazioneRegolaApplicabilitaSoggetto>();
+
+  /**
+   * @deprecated Use method getSoggettoList
+   * @return List<TrasformazioneRegolaApplicabilitaSoggetto>
+  */
+  @Deprecated
+  public List<TrasformazioneRegolaApplicabilitaSoggetto> getSoggetto() {
+  	return this.soggetto;
+  }
+
+  /**
+   * @deprecated Use method setSoggettoList
+   * @param soggetto List<TrasformazioneRegolaApplicabilitaSoggetto>
+  */
+  @Deprecated
+  public void setSoggetto(List<TrasformazioneRegolaApplicabilitaSoggetto> soggetto) {
+  	this.soggetto=soggetto;
+  }
+
+  /**
+   * @deprecated Use method sizeSoggettoList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeSoggetto() {
+  	return this.soggetto.size();
+  }
+
+  @XmlElement(name="servizio-applicativo",required=true,nillable=false)
+  protected List<TrasformazioneRegolaApplicabilitaServizioApplicativo> servizioApplicativo = new ArrayList<TrasformazioneRegolaApplicabilitaServizioApplicativo>();
+
+  /**
+   * @deprecated Use method getServizioApplicativoList
+   * @return List<TrasformazioneRegolaApplicabilitaServizioApplicativo>
+  */
+  @Deprecated
+  public List<TrasformazioneRegolaApplicabilitaServizioApplicativo> getServizioApplicativo() {
+  	return this.servizioApplicativo;
+  }
+
+  /**
+   * @deprecated Use method setServizioApplicativoList
+   * @param servizioApplicativo List<TrasformazioneRegolaApplicabilitaServizioApplicativo>
+  */
+  @Deprecated
+  public void setServizioApplicativo(List<TrasformazioneRegolaApplicabilitaServizioApplicativo> servizioApplicativo) {
+  	this.servizioApplicativo=servizioApplicativo;
+  }
+
+  /**
+   * @deprecated Use method sizeServizioApplicativoList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeServizioApplicativo() {
+  	return this.servizioApplicativo.size();
+  }
 
 }

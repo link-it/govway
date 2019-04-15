@@ -102,15 +102,17 @@ public final class CostantiDB {
     public static final String PORTE_APPLICATIVE_AZIONI = "pa_azioni";
     public static final String PORTE_APPLICATIVE_CACHE_REGOLE = "pa_cache_regole";
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI = "pa_transform";
-    public final static String PORTE_APPLICATIVE_TRASFORMAZIONI_COLUMN_ID = "id";
-    public final static String PORTE_APPLICATIVE_TRASFORMAZIONI_SEQUENCE = "seq_pa_transform";
-    public final static String PORTE_APPLICATIVE_TRASFORMAZIONI_TABLE_FOR_ID = "pa_transform_init_seq";
+    public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_COLUMN_ID = "id";
+    public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_SEQUENCE = "seq_pa_transform";
+    public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_TABLE_FOR_ID = "pa_transform_init_seq";
+    public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTI = "pa_transform_soggetti";
+    public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_SA = "pa_transform_sa";
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_HEADER = "pa_transform_hdr";
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_URL = "pa_transform_url";
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE = "pa_transform_risp";
-    public final static String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_COLUMN_ID = "id";
-    public final static String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_SEQUENCE = "seq_pa_transform_risp";
-    public final static String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_TABLE_FOR_ID = "pa_transform_risp_init_seq";
+    public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_COLUMN_ID = "id";
+    public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_SEQUENCE = "seq_pa_transform_risp";
+    public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_TABLE_FOR_ID = "pa_transform_risp_init_seq";
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_HEADER = "pa_transform_risp_hdr";
     public static final String PORTE_DELEGATE = "porte_delegate";
     public static final String PORTE_DELEGATE_SA = "porte_delegate_sa";
@@ -127,15 +129,16 @@ public final class CostantiDB {
     public static final String PORTE_DELEGATE_AZIONI = "pd_azioni";
     public static final String PORTE_DELEGATE_CACHE_REGOLE = "pd_cache_regole";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI = "pd_transform";
-    public final static String PORTE_DELEGATE_TRASFORMAZIONI_COLUMN_ID = "id";
-    public final static String PORTE_DELEGATE_TRASFORMAZIONI_SEQUENCE = "seq_pd_transform";
-    public final static String PORTE_DELEGATE_TRASFORMAZIONI_TABLE_FOR_ID = "pd_transform_init_seq";
+    public static final String PORTE_DELEGATE_TRASFORMAZIONI_COLUMN_ID = "id";
+    public static final String PORTE_DELEGATE_TRASFORMAZIONI_SEQUENCE = "seq_pd_transform";
+    public static final String PORTE_DELEGATE_TRASFORMAZIONI_TABLE_FOR_ID = "pd_transform_init_seq";
+    public static final String PORTE_DELEGATE_TRASFORMAZIONI_SA = "pa_transform_sa";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_HEADER = "pd_transform_hdr";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_URL = "pd_transform_url";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE = "pd_transform_risp";
-    public final static String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_COLUMN_ID = "id";
-    public final static String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_SEQUENCE = "seq_pd_transform_risp";
-    public final static String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_TABLE_FOR_ID = "pd_transform_risp_init_seq";
+    public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_COLUMN_ID = "id";
+    public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_SEQUENCE = "seq_pd_transform_risp";
+    public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_TABLE_FOR_ID = "pd_transform_risp_init_seq";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER = "pd_transform_risp_hdr";
     public static final String REGISTRI = "registri";
     public static final String SERVIZI_PDD = "servizi_pdd";
@@ -151,9 +154,9 @@ public final class CostantiDB {
     public static final String CONFIG_PROTOCOLLI = "config_protocolli";
     
     public static final String CONFIG_GENERIC_PROPERTIES = "generic_properties";
-    public final static String CONFIG_GENERIC_PROPERTIES_COLUMN_ID = "id";
-    public final static String CONFIG_GENERIC_PROPERTIES_SEQUENCE = "seq_generic_properties";
-    public final static String CONFIG_GENERIC_PROPERTIES_TABLE_FOR_ID = "generic_properties_init_seq";
+    public static final String CONFIG_GENERIC_PROPERTIES_COLUMN_ID = "id";
+    public static final String CONFIG_GENERIC_PROPERTIES_SEQUENCE = "seq_generic_properties";
+    public static final String CONFIG_GENERIC_PROPERTIES_TABLE_FOR_ID = "generic_properties_init_seq";
     public static final String CONFIG_GENERIC_PROPERTY = "generic_property";
     
     public static final String CONTROLLO_TRAFFICO_CONFIG = "ct_config";
@@ -161,59 +164,59 @@ public final class CostantiDB {
     public static final String CONTROLLO_TRAFFICO_ACTIVE_POLICY = "ct_active_policy";
     
     public static final String MSG_DIAGN_APPENDER = "msgdiag_appender";
-    public final static String MSG_DIAGN_APPENDER_COLUMN_ID = "id";
-    public final static String MSG_DIAGN_APPENDER_SEQUENCE = "seq_msgdiag_appender";
-    public final static String MSG_DIAGN_APPENDER_TABLE_FOR_ID = "msgdiag_appender_init_seq";
+    public static final String MSG_DIAGN_APPENDER_COLUMN_ID = "id";
+    public static final String MSG_DIAGN_APPENDER_SEQUENCE = "seq_msgdiag_appender";
+    public static final String MSG_DIAGN_APPENDER_TABLE_FOR_ID = "msgdiag_appender_init_seq";
     public static final String MSG_DIAGN_APPENDER_PROP = "msgdiag_appender_prop";
     
     public static final String MSG_DIAGN_DS = "msgdiag_ds";
-    public final static String MSG_DIAGN_DS_COLUMN_ID = "id";
-    public final static String MSG_DIAGN_DS_SEQUENCE = "seq_msgdiag_ds";
-    public final static String MSG_DIAGN_DS_TABLE_FOR_ID = "msgdiag_ds_init_seq";
+    public static final String MSG_DIAGN_DS_COLUMN_ID = "id";
+    public static final String MSG_DIAGN_DS_SEQUENCE = "seq_msgdiag_ds";
+    public static final String MSG_DIAGN_DS_TABLE_FOR_ID = "msgdiag_ds_init_seq";
     public static final String MSG_DIAGN_DS_PROP = "msgdiag_ds_prop";
     
     public static final String TRACCIAMENTO_APPENDER = "tracce_appender";
-    public final static String TRACCIAMENTO_APPENDER_COLUMN_ID = "id";
-    public final static String TRACCIAMENTO_APPENDER_SEQUENCE = "seq_tracce_appender";
-    public final static String TRACCIAMENTO_APPENDER_TABLE_FOR_ID = "tracce_appender_init_seq";
+    public static final String TRACCIAMENTO_APPENDER_COLUMN_ID = "id";
+    public static final String TRACCIAMENTO_APPENDER_SEQUENCE = "seq_tracce_appender";
+    public static final String TRACCIAMENTO_APPENDER_TABLE_FOR_ID = "tracce_appender_init_seq";
     public static final String TRACCIAMENTO_APPENDER_PROP = "tracce_appender_prop";
     
     // Utilizzabile anche per le transazioni
     public static final String TRACCIAMENTO_DS = "tracce_ds";
-    public final static String TRACCIAMENTO_DS_COLUMN_ID = "id";
-    public final static String TRACCIAMENTO_DS_SEQUENCE = "seq_tracce_ds";
-    public final static String TRACCIAMENTO_DS_TABLE_FOR_ID = "tracce_ds_init_seq";
+    public static final String TRACCIAMENTO_DS_COLUMN_ID = "id";
+    public static final String TRACCIAMENTO_DS_SEQUENCE = "seq_tracce_ds";
+    public static final String TRACCIAMENTO_DS_TABLE_FOR_ID = "tracce_ds_init_seq";
     public static final String TRACCIAMENTO_DS_PROP = "tracce_ds_prop";
     
     public static final String DUMP_APPENDER = "dump_appender";
-    public final static String DUMP_APPENDER_COLUMN_ID = "id";
-    public final static String DUMP_APPENDER_SEQUENCE = "seq_dump_appender";
-    public final static String DUMP_APPENDER_TABLE_FOR_ID = "dump_appender_init_seq";
+    public static final String DUMP_APPENDER_COLUMN_ID = "id";
+    public static final String DUMP_APPENDER_SEQUENCE = "seq_dump_appender";
+    public static final String DUMP_APPENDER_TABLE_FOR_ID = "dump_appender_init_seq";
     
     public static final String DUMP_APPENDER_PROP = "dump_appender_prop";
     
     public static final String DUMP_CONFIGURAZIONE = "dump_config";
     
     public static final String DUMP_CONFIGURAZIONE_REGOLA = "dump_config_regola";
-    public final static String DUMP_CONFIGURAZIONE_REGOLA_COLUMN_ID = "id";
-    public final static String DUMP_CONFIGURAZIONE_REGOLA_SEQUENCE = "seq_dump_config_regola";
-    public final static String DUMP_CONFIGURAZIONE_REGOLA_TABLE_FOR_ID = "dump_config_regola_init_seq";
+    public static final String DUMP_CONFIGURAZIONE_REGOLA_COLUMN_ID = "id";
+    public static final String DUMP_CONFIGURAZIONE_REGOLA_SEQUENCE = "seq_dump_config_regola";
+    public static final String DUMP_CONFIGURAZIONE_REGOLA_TABLE_FOR_ID = "dump_config_regola_init_seq";
 
     public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG = "config";
     public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_PD = "pd";
     public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_PA = "pa";
     
     /*DIAGNOSTICA*/
-    public final static String MSG_DIAGNOSTICI = "msgdiagnostici";
-    public final static String MSG_DIAGNOSTICI_SEQUENCE = "seq_msgdiagnostici";
-    public final static String MSG_DIAGNOSTICI_TABLE_FOR_ID = "msgdiagnostici_init_seq";
+    public static final String MSG_DIAGNOSTICI = "msgdiagnostici";
+    public static final String MSG_DIAGNOSTICI_SEQUENCE = "seq_msgdiagnostici";
+    public static final String MSG_DIAGNOSTICI_TABLE_FOR_ID = "msgdiagnostici_init_seq";
     
     /*DIAGNOSTICA CORRELAZIONE*/
-    public final static String MSG_DIAGNOSTICI_CORRELAZIONE = "msgdiag_correlazione";
-    public final static String MSG_DIAGNOSTICI_CORRELAZIONE_SEQUENCE = "seq_msgdiag_correlazione";
-    public final static String MSG_DIAGNOSTICI_CORRELAZIONE_TABLE_FOR_ID = "msgdiag_correlazione_init_seq";
-    public final static String MSG_DIAGNOSTICI_CORRELAZIONE_SA = "msgdiag_correlazione_sa";
-    public final static String MSG_CORR_INDEX = "MSG_CORR_INDEX";
+    public static final String MSG_DIAGNOSTICI_CORRELAZIONE = "msgdiag_correlazione";
+    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_SEQUENCE = "seq_msgdiag_correlazione";
+    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_TABLE_FOR_ID = "msgdiag_correlazione_init_seq";
+    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_SA = "msgdiag_correlazione_sa";
+    public static final String MSG_CORR_INDEX = "MSG_CORR_INDEX";
     
     /*TRACCIAMENTO*/
     public static final String TRACCE = "tracce";
@@ -222,16 +225,16 @@ public final class CostantiDB {
     public static final String TRACCE_TRASMISSIONI = "tracce_trasmissioni";
     public static final String TRACCE_ALLEGATI = "tracce_allegati";
     public static final String TRACCE_EXT_INFO = "tracce_ext_protocol_info";
-    public final static String TRACCE_COLUMN_ID = "id";
-    public final static String TRACCE_SEQUENCE = "seq_tracce";
-    public final static String TRACCE_TABLE_FOR_ID = "tracce_init_seq";
+    public static final String TRACCE_COLUMN_ID = "id";
+    public static final String TRACCE_SEQUENCE = "seq_tracce";
+    public static final String TRACCE_TABLE_FOR_ID = "tracce_init_seq";
     
     /*TRANSAZIONI*/
     public static final String TRANSAZIONI = "transazioni";
-	public final static String TABLE_TRANSAZIONI_INDEX_FILTRO_REQ_1 = "INDEX_TR_FILTROD_REQ";
-	public final static String TABLE_TRANSAZIONI_INDEX_FILTRO_RES_1 = "INDEX_TR_FILTROD_RES";
-	public final static String TABLE_TRANSAZIONI_INDEX_FILTRO_REQ_2 = "INDEX_TR_FILTROD_REQ_2";
-	public final static String TABLE_TRANSAZIONI_INDEX_FILTRO_RES_2 = "INDEX_TR_FILTROD_RES_2";
+	public static final String TABLE_TRANSAZIONI_INDEX_FILTRO_REQ_1 = "INDEX_TR_FILTROD_REQ";
+	public static final String TABLE_TRANSAZIONI_INDEX_FILTRO_RES_1 = "INDEX_TR_FILTROD_RES";
+	public static final String TABLE_TRANSAZIONI_INDEX_FILTRO_REQ_2 = "INDEX_TR_FILTROD_REQ_2";
+	public static final String TABLE_TRANSAZIONI_INDEX_FILTRO_RES_2 = "INDEX_TR_FILTROD_RES_2";
     
     /*EVENTI*/
     public static final String DUMP_EVENTI = "notifiche_eventi";
@@ -261,8 +264,8 @@ public final class CostantiDB {
     public static final int UPDATE = 2;
     public static final int DELETE = 3;
     
-    public final static int TRUE = 1;
-    public final static int FALSE = 0;
+    public static final int TRUE = 1;
+    public static final int FALSE = 0;
     
     
     /*COLONNE TABELLA TRACCE*/
@@ -480,15 +483,15 @@ public final class CostantiDB {
     public static final String CONNETTORE_HTTPS_CLASSNAME_HOSTNAME_VERIFIER = CostantiConnettori.CONNETTORE_HTTPS_CLASSNAME_HOSTNAME_VERIFIER;
     public static final String CONNETTORE_HTTPS_SSL_TYPE = CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE;
     
-	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
-	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS;
-	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR;
-	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE;
-	public final static String CONNETTORE_FILE_RESPONSE_INPUT_MODE = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_MODE;
-	public final static String CONNETTORE_FILE_RESPONSE_INPUT_FILE = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_FILE;
-	public final static String CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS;
-	public final static String CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ;
-	public final static String CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME;
+	public static final String CONNETTORE_FILE_REQUEST_OUTPUT_FILE = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
+	public static final String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS;
+	public static final String CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR;
+	public static final String CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE;
+	public static final String CONNETTORE_FILE_RESPONSE_INPUT_MODE = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_MODE;
+	public static final String CONNETTORE_FILE_RESPONSE_INPUT_FILE = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_FILE;
+	public static final String CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS;
+	public static final String CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ;
+	public static final String CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME;
 	
     public static final String COMPONENTE_SERVIZIO_PD = "pd";
     public static final String COMPONENTE_SERVIZIO_PA = "pa";

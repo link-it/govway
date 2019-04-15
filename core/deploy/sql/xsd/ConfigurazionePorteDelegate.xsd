@@ -34,6 +34,7 @@
                                 <linkit:sql-table object-name="porte-delegate-azioni" object-type="porte-delegate-azioni"/>
                                 <linkit:sql-table object-name="porte-delegate-cache-regola" object-type="porte-delegate-cache-regola"/>
                                 <linkit:sql-table object-name="porte-delegate-trasformazioni" object-type="porte-delegate-trasformazioni"/>
+                                <linkit:sql-table object-name="porte-delegate-trasformazioni-sa" object-type="porte-delegate-trasformazioni-sa" />
                                 <linkit:sql-table object-name="porte-delegate-trasformazioni-header" object-type="porte-delegate-trasformazioni-header"/>
                                 <linkit:sql-table object-name="porte-delegate-trasformazioni-url" object-type="porte-delegate-trasformazioni-url"/>
                                 <linkit:sql-table object-name="porte-delegate-trasformazioni-risposta" object-type="porte-delegate-trasformazioni-risposta"/>
@@ -2106,6 +2107,59 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="soap_envelope_template" long-binary="true" />
                                 <linkit:sql-ddl-column-comment>Template di conversione dell'envelope soap da utilizzare</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+       
+    <xsd:element name="porte-delegate-trasformazioni-sa">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pd_transform_sa"
+                        comment="Elenco di servizi applicativi per cui la trasformazione è applicabile">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-delegate-trasformazioni"
+                            reference-object-type="porte-delegate-trasformazioni"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_trasformazione"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-foreign-key reference-table="servizi_applicativi">
+                            <linkit:sql-table-fk-field name="id_servizio_applicativo"/>
+                            <linkit:sql-table-fk-reference-column name="id"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="id_trasformazione"/>
+                            <linkit:sql-table-unique-field name="id_servizio_applicativo"/>
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_trasformazione" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_trasformazione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della trasformazione [FK verso tabella pd_transform(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_servizio_applicativo" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_servizio_applicativo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del servizio applicativo associato alla porta [FK verso tabella servizi_applicativi(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

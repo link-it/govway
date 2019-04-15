@@ -86,6 +86,8 @@ import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.IdServizioApplicativo;
 import org.openspcoop2.core.config.CorsConfigurazioneHeaders;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.SystemProperties;
@@ -4115,6 +4117,132 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public TrasformazioneRegolaApplicabilitaRichiesta readTrasformazioneRegolaApplicabilitaRichiestaFromString(String in) throws DeserializerException {
 		return (TrasformazioneRegolaApplicabilitaRichiesta) this.xmlToObj(in.getBytes(), TrasformazioneRegolaApplicabilitaRichiesta.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: trasformazione-regola-applicabilita-soggetto
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TrasformazioneRegolaApplicabilitaSoggetto readTrasformazioneRegolaApplicabilitaSoggetto(String fileName) throws DeserializerException {
+		return (TrasformazioneRegolaApplicabilitaSoggetto) this.xmlToObj(fileName, TrasformazioneRegolaApplicabilitaSoggetto.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TrasformazioneRegolaApplicabilitaSoggetto readTrasformazioneRegolaApplicabilitaSoggetto(File file) throws DeserializerException {
+		return (TrasformazioneRegolaApplicabilitaSoggetto) this.xmlToObj(file, TrasformazioneRegolaApplicabilitaSoggetto.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TrasformazioneRegolaApplicabilitaSoggetto readTrasformazioneRegolaApplicabilitaSoggetto(InputStream in) throws DeserializerException {
+		return (TrasformazioneRegolaApplicabilitaSoggetto) this.xmlToObj(in, TrasformazioneRegolaApplicabilitaSoggetto.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TrasformazioneRegolaApplicabilitaSoggetto readTrasformazioneRegolaApplicabilitaSoggetto(byte[] in) throws DeserializerException {
+		return (TrasformazioneRegolaApplicabilitaSoggetto) this.xmlToObj(in, TrasformazioneRegolaApplicabilitaSoggetto.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TrasformazioneRegolaApplicabilitaSoggetto readTrasformazioneRegolaApplicabilitaSoggettoFromString(String in) throws DeserializerException {
+		return (TrasformazioneRegolaApplicabilitaSoggetto) this.xmlToObj(in.getBytes(), TrasformazioneRegolaApplicabilitaSoggetto.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: trasformazione-regola-applicabilita-servizio-applicativo
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * @return Object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TrasformazioneRegolaApplicabilitaServizioApplicativo readTrasformazioneRegolaApplicabilitaServizioApplicativo(String fileName) throws DeserializerException {
+		return (TrasformazioneRegolaApplicabilitaServizioApplicativo) this.xmlToObj(fileName, TrasformazioneRegolaApplicabilitaServizioApplicativo.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * @return Object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TrasformazioneRegolaApplicabilitaServizioApplicativo readTrasformazioneRegolaApplicabilitaServizioApplicativo(File file) throws DeserializerException {
+		return (TrasformazioneRegolaApplicabilitaServizioApplicativo) this.xmlToObj(file, TrasformazioneRegolaApplicabilitaServizioApplicativo.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * @return Object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TrasformazioneRegolaApplicabilitaServizioApplicativo readTrasformazioneRegolaApplicabilitaServizioApplicativo(InputStream in) throws DeserializerException {
+		return (TrasformazioneRegolaApplicabilitaServizioApplicativo) this.xmlToObj(in, TrasformazioneRegolaApplicabilitaServizioApplicativo.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * @return Object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TrasformazioneRegolaApplicabilitaServizioApplicativo readTrasformazioneRegolaApplicabilitaServizioApplicativo(byte[] in) throws DeserializerException {
+		return (TrasformazioneRegolaApplicabilitaServizioApplicativo) this.xmlToObj(in, TrasformazioneRegolaApplicabilitaServizioApplicativo.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * @return Object type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TrasformazioneRegolaApplicabilitaServizioApplicativo readTrasformazioneRegolaApplicabilitaServizioApplicativoFromString(String in) throws DeserializerException {
+		return (TrasformazioneRegolaApplicabilitaServizioApplicativo) this.xmlToObj(in.getBytes(), TrasformazioneRegolaApplicabilitaServizioApplicativo.class);
 	}	
 	
 	

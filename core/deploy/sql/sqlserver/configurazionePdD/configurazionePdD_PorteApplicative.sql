@@ -445,6 +445,44 @@ CREATE UNIQUE INDEX index_pa_transform_2 ON pa_transform (id_porta,posizione);
 
 
 
+CREATE TABLE pa_transform_soggetti
+(
+	id_trasformazione BIGINT NOT NULL,
+	tipo_soggetto VARCHAR(255) NOT NULL,
+	nome_soggetto VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT IDENTITY,
+	-- unique constraints
+	CONSTRAINT unique_pa_transform_soggetti_1 UNIQUE (id_trasformazione,tipo_soggetto,nome_soggetto),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_transform_soggetti_1 FOREIGN KEY (id_trasformazione) REFERENCES pa_transform(id),
+	CONSTRAINT pk_pa_transform_soggetti PRIMARY KEY (id)
+);
+
+-- index
+CREATE UNIQUE INDEX index_pa_transform_soggetti_1 ON pa_transform_soggetti (id_trasformazione,tipo_soggetto,nome_soggetto);
+
+
+
+CREATE TABLE pa_transform_sa
+(
+	id_trasformazione BIGINT NOT NULL,
+	id_servizio_applicativo BIGINT NOT NULL,
+	-- fk/pk columns
+	id BIGINT IDENTITY,
+	-- unique constraints
+	CONSTRAINT unique_pa_transform_sa_1 UNIQUE (id_trasformazione,id_servizio_applicativo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_transform_sa_1 FOREIGN KEY (id_servizio_applicativo) REFERENCES servizi_applicativi(id),
+	CONSTRAINT fk_pa_transform_sa_2 FOREIGN KEY (id_trasformazione) REFERENCES pa_transform(id),
+	CONSTRAINT pk_pa_transform_sa PRIMARY KEY (id)
+);
+
+-- index
+CREATE UNIQUE INDEX index_pa_transform_sa_1 ON pa_transform_sa (id_trasformazione,id_servizio_applicativo);
+
+
+
 CREATE TABLE pa_transform_hdr
 (
 	id_trasformazione BIGINT NOT NULL,

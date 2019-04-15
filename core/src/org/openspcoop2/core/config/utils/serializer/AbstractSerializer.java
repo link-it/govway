@@ -88,6 +88,8 @@ import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.IdServizioApplicativo;
 import org.openspcoop2.core.config.CorsConfigurazioneHeaders;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.SystemProperties;
@@ -7656,6 +7658,242 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(TrasformazioneRegolaApplicabilitaRichiesta trasformazioneRegolaApplicabilitaRichiesta,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(TrasformazioneRegolaApplicabilitaRichiesta.class, trasformazioneRegolaApplicabilitaRichiesta, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: trasformazione-regola-applicabilita-soggetto
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneRegolaApplicabilitaSoggetto</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneRegolaApplicabilitaSoggetto</var>
+	 * @param trasformazioneRegolaApplicabilitaSoggetto Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneRegolaApplicabilitaSoggetto trasformazioneRegolaApplicabilitaSoggetto) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneRegolaApplicabilitaSoggetto.class, trasformazioneRegolaApplicabilitaSoggetto, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneRegolaApplicabilitaSoggetto</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneRegolaApplicabilitaSoggetto</var>
+	 * @param trasformazioneRegolaApplicabilitaSoggetto Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneRegolaApplicabilitaSoggetto trasformazioneRegolaApplicabilitaSoggetto,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneRegolaApplicabilitaSoggetto.class, trasformazioneRegolaApplicabilitaSoggetto, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneRegolaApplicabilitaSoggetto</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneRegolaApplicabilitaSoggetto</var>
+	 * @param trasformazioneRegolaApplicabilitaSoggetto Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneRegolaApplicabilitaSoggetto trasformazioneRegolaApplicabilitaSoggetto) throws SerializerException {
+		this.objToXml(file, TrasformazioneRegolaApplicabilitaSoggetto.class, trasformazioneRegolaApplicabilitaSoggetto, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneRegolaApplicabilitaSoggetto</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneRegolaApplicabilitaSoggetto</var>
+	 * @param trasformazioneRegolaApplicabilitaSoggetto Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneRegolaApplicabilitaSoggetto trasformazioneRegolaApplicabilitaSoggetto,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, TrasformazioneRegolaApplicabilitaSoggetto.class, trasformazioneRegolaApplicabilitaSoggetto, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneRegolaApplicabilitaSoggetto</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneRegolaApplicabilitaSoggetto</var>
+	 * @param trasformazioneRegolaApplicabilitaSoggetto Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneRegolaApplicabilitaSoggetto trasformazioneRegolaApplicabilitaSoggetto) throws SerializerException {
+		this.objToXml(out, TrasformazioneRegolaApplicabilitaSoggetto.class, trasformazioneRegolaApplicabilitaSoggetto, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneRegolaApplicabilitaSoggetto</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneRegolaApplicabilitaSoggetto</var>
+	 * @param trasformazioneRegolaApplicabilitaSoggetto Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneRegolaApplicabilitaSoggetto trasformazioneRegolaApplicabilitaSoggetto,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, TrasformazioneRegolaApplicabilitaSoggetto.class, trasformazioneRegolaApplicabilitaSoggetto, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>trasformazioneRegolaApplicabilitaSoggetto</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * 
+	 * @param trasformazioneRegolaApplicabilitaSoggetto Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneRegolaApplicabilitaSoggetto trasformazioneRegolaApplicabilitaSoggetto) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaApplicabilitaSoggetto.class, trasformazioneRegolaApplicabilitaSoggetto, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>trasformazioneRegolaApplicabilitaSoggetto</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * 
+	 * @param trasformazioneRegolaApplicabilitaSoggetto Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneRegolaApplicabilitaSoggetto trasformazioneRegolaApplicabilitaSoggetto,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaApplicabilitaSoggetto.class, trasformazioneRegolaApplicabilitaSoggetto, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>trasformazioneRegolaApplicabilitaSoggetto</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * 
+	 * @param trasformazioneRegolaApplicabilitaSoggetto Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneRegolaApplicabilitaSoggetto trasformazioneRegolaApplicabilitaSoggetto) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaApplicabilitaSoggetto.class, trasformazioneRegolaApplicabilitaSoggetto, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>trasformazioneRegolaApplicabilitaSoggetto</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto}
+	 * 
+	 * @param trasformazioneRegolaApplicabilitaSoggetto Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneRegolaApplicabilitaSoggetto trasformazioneRegolaApplicabilitaSoggetto,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaApplicabilitaSoggetto.class, trasformazioneRegolaApplicabilitaSoggetto, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: trasformazione-regola-applicabilita-servizio-applicativo
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneRegolaApplicabilitaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneRegolaApplicabilitaServizioApplicativo</var>
+	 * @param trasformazioneRegolaApplicabilitaServizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneRegolaApplicabilitaServizioApplicativo trasformazioneRegolaApplicabilitaServizioApplicativo) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneRegolaApplicabilitaServizioApplicativo.class, trasformazioneRegolaApplicabilitaServizioApplicativo, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneRegolaApplicabilitaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneRegolaApplicabilitaServizioApplicativo</var>
+	 * @param trasformazioneRegolaApplicabilitaServizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneRegolaApplicabilitaServizioApplicativo trasformazioneRegolaApplicabilitaServizioApplicativo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneRegolaApplicabilitaServizioApplicativo.class, trasformazioneRegolaApplicabilitaServizioApplicativo, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneRegolaApplicabilitaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneRegolaApplicabilitaServizioApplicativo</var>
+	 * @param trasformazioneRegolaApplicabilitaServizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneRegolaApplicabilitaServizioApplicativo trasformazioneRegolaApplicabilitaServizioApplicativo) throws SerializerException {
+		this.objToXml(file, TrasformazioneRegolaApplicabilitaServizioApplicativo.class, trasformazioneRegolaApplicabilitaServizioApplicativo, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneRegolaApplicabilitaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneRegolaApplicabilitaServizioApplicativo</var>
+	 * @param trasformazioneRegolaApplicabilitaServizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneRegolaApplicabilitaServizioApplicativo trasformazioneRegolaApplicabilitaServizioApplicativo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, TrasformazioneRegolaApplicabilitaServizioApplicativo.class, trasformazioneRegolaApplicabilitaServizioApplicativo, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneRegolaApplicabilitaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneRegolaApplicabilitaServizioApplicativo</var>
+	 * @param trasformazioneRegolaApplicabilitaServizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneRegolaApplicabilitaServizioApplicativo trasformazioneRegolaApplicabilitaServizioApplicativo) throws SerializerException {
+		this.objToXml(out, TrasformazioneRegolaApplicabilitaServizioApplicativo.class, trasformazioneRegolaApplicabilitaServizioApplicativo, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneRegolaApplicabilitaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneRegolaApplicabilitaServizioApplicativo</var>
+	 * @param trasformazioneRegolaApplicabilitaServizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneRegolaApplicabilitaServizioApplicativo trasformazioneRegolaApplicabilitaServizioApplicativo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, TrasformazioneRegolaApplicabilitaServizioApplicativo.class, trasformazioneRegolaApplicabilitaServizioApplicativo, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>trasformazioneRegolaApplicabilitaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * 
+	 * @param trasformazioneRegolaApplicabilitaServizioApplicativo Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneRegolaApplicabilitaServizioApplicativo trasformazioneRegolaApplicabilitaServizioApplicativo) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaApplicabilitaServizioApplicativo.class, trasformazioneRegolaApplicabilitaServizioApplicativo, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>trasformazioneRegolaApplicabilitaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * 
+	 * @param trasformazioneRegolaApplicabilitaServizioApplicativo Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneRegolaApplicabilitaServizioApplicativo trasformazioneRegolaApplicabilitaServizioApplicativo,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaApplicabilitaServizioApplicativo.class, trasformazioneRegolaApplicabilitaServizioApplicativo, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>trasformazioneRegolaApplicabilitaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * 
+	 * @param trasformazioneRegolaApplicabilitaServizioApplicativo Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneRegolaApplicabilitaServizioApplicativo trasformazioneRegolaApplicabilitaServizioApplicativo) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaApplicabilitaServizioApplicativo.class, trasformazioneRegolaApplicabilitaServizioApplicativo, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>trasformazioneRegolaApplicabilitaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo}
+	 * 
+	 * @param trasformazioneRegolaApplicabilitaServizioApplicativo Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneRegolaApplicabilitaServizioApplicativo trasformazioneRegolaApplicabilitaServizioApplicativo,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaApplicabilitaServizioApplicativo.class, trasformazioneRegolaApplicabilitaServizioApplicativo, prettyPrint).toString();
 	}
 	
 	

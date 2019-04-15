@@ -97,7 +97,7 @@ public class PorteDelegateTrasformazioniRispostaAdd extends Action {
 			String idTrasformazioneS = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE);
 			long idTrasformazione = Long.parseLong(idTrasformazioneS);
 			
-			String nome = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_NOME);
+			String nomeRisposta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_NOME);
 						
 			String returnCode = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS);
 			if(returnCode == null)
@@ -189,7 +189,7 @@ public class PorteDelegateTrasformazioniRispostaAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, nome, returnCode, statusMin, statusMax, pattern, contentType);
+				dati = porteDelegateHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, nomeRisposta, returnCode, statusMin, statusMax, pattern, contentType);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -218,7 +218,7 @@ public class PorteDelegateTrasformazioniRispostaAdd extends Action {
 					isOk = false;
 				}
 				if (isOk) {
-					giaRegistrato = porteDelegateCore.existsTrasformazioneRisposta(Long.parseLong(id), idTrasformazione, nome);
+					giaRegistrato = porteDelegateCore.existsTrasformazioneRisposta(Long.parseLong(id), idTrasformazione, nomeRisposta);
 					if (giaRegistrato) {
 						pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_NOME);
 						isOk = false;
@@ -233,7 +233,7 @@ public class PorteDelegateTrasformazioniRispostaAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, nome, returnCode, statusMin, statusMax, pattern, contentType);
+				dati = porteDelegateHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, nomeRisposta, returnCode, statusMin, statusMax, pattern, contentType);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -264,7 +264,7 @@ public class PorteDelegateTrasformazioniRispostaAdd extends Action {
 				}
 			}
 			
-			risposta.setNome(nome);
+			risposta.setNome(nomeRisposta);
 			risposta.setPosizione(posizione);
 			
 			TrasformazioneRegolaApplicabilitaRisposta applicabilita = new TrasformazioneRegolaApplicabilitaRisposta();

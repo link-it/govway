@@ -667,6 +667,66 @@ end;
 
 
 
+CREATE SEQUENCE seq_pa_transform_soggetti MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE pa_transform_soggetti
+(
+	id_trasformazione NUMBER NOT NULL,
+	tipo_soggetto VARCHAR2(255) NOT NULL,
+	nome_soggetto VARCHAR2(255) NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pa_transform_soggetti_1 UNIQUE (id_trasformazione,tipo_soggetto,nome_soggetto),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_transform_soggetti_1 FOREIGN KEY (id_trasformazione) REFERENCES pa_transform(id),
+	CONSTRAINT pk_pa_transform_soggetti PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_pa_transform_soggetti
+BEFORE
+insert on pa_transform_soggetti
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_pa_transform_soggetti.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_pa_transform_sa MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE pa_transform_sa
+(
+	id_trasformazione NUMBER NOT NULL,
+	id_servizio_applicativo NUMBER NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pa_transform_sa_1 UNIQUE (id_trasformazione,id_servizio_applicativo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_transform_sa_1 FOREIGN KEY (id_servizio_applicativo) REFERENCES servizi_applicativi(id),
+	CONSTRAINT fk_pa_transform_sa_2 FOREIGN KEY (id_trasformazione) REFERENCES pa_transform(id),
+	CONSTRAINT pk_pa_transform_sa PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_pa_transform_sa
+BEFORE
+insert on pa_transform_sa
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_pa_transform_sa.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
 CREATE SEQUENCE seq_pa_transform_hdr MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
 
 CREATE TABLE pa_transform_hdr

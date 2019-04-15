@@ -2,6 +2,8 @@ DELETE FROM pa_transform_risp_hdr;
 DELETE FROM pa_transform_risp;
 DELETE FROM pa_transform_url;
 DELETE FROM pa_transform_hdr;
+DELETE FROM pa_transform_sa;
+DELETE FROM pa_transform_soggetti;
 DELETE FROM pa_transform;
 DELETE FROM pa_cache_regole;
 DELETE FROM pa_azioni;

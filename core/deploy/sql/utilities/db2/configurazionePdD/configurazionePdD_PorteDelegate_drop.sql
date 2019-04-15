@@ -1,6 +1,7 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
 -- DROP INDEX idx_pd_trasf_resp_2;
 -- DROP INDEX idx_pd_trasf_resp_1;
+-- DROP INDEX index_pd_transform_sa_1;
 -- DROP INDEX index_pd_transform_2;
 -- DROP INDEX index_pd_transform_1;
 -- DROP INDEX index_pd_azioni_1;
@@ -21,6 +22,7 @@ DROP TABLE pd_transform_risp_hdr;
 DROP TABLE pd_transform_risp;
 DROP TABLE pd_transform_url;
 DROP TABLE pd_transform_hdr;
+DROP TABLE pd_transform_sa;
 DROP TABLE pd_transform;
 DROP TABLE pd_cache_regole;
 DROP TABLE pd_azioni;

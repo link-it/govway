@@ -91,7 +91,7 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 			String idTrasformazioneS = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE);
 			long idTrasformazione = Long.parseLong(idTrasformazioneS);
 			
-			String nome = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_NOME);
+			String nomeRisposta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_NOME);
 			
 			String returnCode = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS);
 			if(returnCode == null)
@@ -186,7 +186,7 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, nome, returnCode, statusMin, statusMax, pattern, contentType);
+				dati = porteApplicativeHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, nomeRisposta, returnCode, statusMin, statusMax, pattern, contentType);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
 				
@@ -214,7 +214,7 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 					isOk = false;
 				}
 				if (isOk) {
-					giaRegistrato = porteApplicativeCore.existsTrasformazioneRisposta(Long.parseLong(idPorta), idTrasformazione, nome);
+					giaRegistrato = porteApplicativeCore.existsTrasformazioneRisposta(Long.parseLong(idPorta), idTrasformazione, nomeRisposta);
 					if (giaRegistrato) {
 						pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_NOME);
 						isOk = false;
@@ -229,7 +229,7 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, nome, returnCode, statusMin, statusMax, pattern, contentType);
+				dati = porteApplicativeHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, nomeRisposta, returnCode, statusMin, statusMax, pattern, contentType);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
 				
@@ -259,7 +259,7 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 				}
 			}
 			
-			risposta.setNome(nome);
+			risposta.setNome(nomeRisposta);
 			risposta.setPosizione(posizione);
 			
 			TrasformazioneRegolaApplicabilitaRisposta applicabilita = new TrasformazioneRegolaApplicabilitaRisposta();

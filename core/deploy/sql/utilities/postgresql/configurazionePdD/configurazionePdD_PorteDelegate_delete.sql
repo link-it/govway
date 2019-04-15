@@ -2,6 +2,7 @@ DELETE FROM pd_transform_risp_hdr;
 DELETE FROM pd_transform_risp;
 DELETE FROM pd_transform_url;
 DELETE FROM pd_transform_hdr;
+DELETE FROM pd_transform_sa;
 DELETE FROM pd_transform;
 DELETE FROM pd_cache_regole;
 DELETE FROM pd_azioni;

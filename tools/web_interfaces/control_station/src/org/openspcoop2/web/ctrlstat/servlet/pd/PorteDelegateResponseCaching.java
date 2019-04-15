@@ -276,7 +276,8 @@ public class PorteDelegateResponseCaching extends Action {
 								responseCachingCacheControlNoStore = oldConfigurazione.getControl().isNoStore();
 							}
 							
-							visualizzaLinkConfigurazioneRegola = true;
+							//visualizzaLinkConfigurazioneRegola = true;
+							visualizzaLinkConfigurazioneRegola = porteDelegateHelper.isResponseCachingAbilitato(oldConfigurazione) && responseCachingEnabled;
 							listaRegoleCachingConfigurazione = oldConfigurazione.getRegolaList();
 							numeroResponseCachingConfigurazioneRegola = porteDelegateHelper.numeroRegoleResponseCaching(oldConfigurazione);
 						}
@@ -371,7 +372,7 @@ public class PorteDelegateResponseCaching extends Action {
 									responseCachingCacheControlNoStore = configurazioneTmp.getControl().isNoStore();
 								}
 								
-								visualizzaLinkConfigurazioneRegola = true;
+								visualizzaLinkConfigurazioneRegola = false;
 								listaRegoleCachingConfigurazione = configurazioneTmp.getRegolaList();
 								numeroResponseCachingConfigurazioneRegola = porteDelegateHelper.numeroRegoleResponseCaching(configurazioneTmp);
 							}

@@ -105,7 +105,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 			
 			
 			String first = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_FIRST);
-			String nome = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_NOME);
+			String nomeRisposta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_NOME);
 			
 			String returnCode = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS);
 			
@@ -187,7 +187,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 				trasformazioneRichiestaRestAbilitato = oldRegola.getRichiesta().getTrasformazioneRest() != null;
 			}
 			
-			String nomeRisposta = oldRisposta.getNome();
+			String nomeRispostaTitle = oldRisposta.getNome();
 			String nomeTrasformazione = oldRegola.getNome();
 			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazione+"");
 			
@@ -268,7 +268,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 			
 			lstParam.add(new Parameter(labelPag,PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_LIST,parametriInvocazioneServletTrasformazioniRisposta));
 			
-			lstParam.add(new Parameter(nomeRisposta, null));
+			lstParam.add(new Parameter(nomeRispostaTitle, null));
 
 			ServletUtils.setPageDataTitle(pd, lstParam);
 			
@@ -282,7 +282,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 				// primo accesso
 				if(first == null) {
 					
-					nome = oldRegola.getNome();
+					nomeRisposta = oldRisposta.getNome();
 					
 					TrasformazioneRegolaApplicabilitaRisposta applicabilita = oldRisposta.getApplicabilita();
 					
@@ -357,7 +357,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 					}
 				}
 
-				dati = porteDelegateHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRispostaS, nome,
+				dati = porteDelegateHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRispostaS, nomeRisposta,
 						returnCode, statusMin, statusMax, pattern, contentType, servletTrasformazioniRispostaHeadersList, parametriInvocazioneServletTrasformazioniRispostaHeaders, numeroTrasformazioniRispostaHeaders, 
 						trasformazioneContenutoRichiestaAbilitato, trasformazioneRichiestaRestAbilitato, 
 						trasformazioneContenutoRispostaAbilitato, trasformazioneContenutoRispostaTipo, trasformazioneContenutoRispostaTemplate, trasformazioneContenutoRispostaContentType, trasformazioneContenutoRispostaReturnCode,
@@ -385,7 +385,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 				String patternDBCheck = StringUtils.isNotEmpty(pattern) ? pattern : null;
 				String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
 				TrasformazioneRegolaRisposta regolaRispostaDBCheck_applicabilita = porteDelegateCore.getTrasformazioneRisposta(Long.parseLong(id), idTrasformazione, statusMinDBCheck, statusMaxDBCheck, patternDBCheck, contentTypeDBCheck);
-				TrasformazioneRegolaRisposta regolaRispostaDBCheck_nome = porteDelegateCore.getTrasformazioneRisposta(Long.parseLong(id), idTrasformazione, nome);
+				TrasformazioneRegolaRisposta regolaRispostaDBCheck_nome = porteDelegateCore.getTrasformazioneRisposta(Long.parseLong(id), idTrasformazione, nomeRisposta);
 				
 				// controllo che le modifiche ai parametri non coincidano con altre regole gia' presenti
 				if(regolaRispostaDBCheck_applicabilita != null && regolaRispostaDBCheck_applicabilita.getId().longValue() != oldRisposta.getId().longValue()) {
@@ -405,7 +405,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRispostaS, nome,
+				dati = porteDelegateHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRispostaS, nomeRisposta,
 						returnCode, statusMin, statusMax, pattern, contentType, servletTrasformazioniRispostaHeadersList, parametriInvocazioneServletTrasformazioniRispostaHeaders, numeroTrasformazioniRispostaHeaders, 
 						trasformazioneContenutoRichiestaAbilitato, trasformazioneRichiestaRestAbilitato, 
 						trasformazioneContenutoRispostaAbilitato, trasformazioneContenutoRispostaTipo, trasformazioneContenutoRispostaTemplate, trasformazioneContenutoRispostaContentType, trasformazioneContenutoRispostaReturnCode,
@@ -440,7 +440,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 				}
 			}
 			
-			rispostaDaAggiornare.setNome(nome);
+			rispostaDaAggiornare.setNome(nomeRisposta);
 			
 			if(rispostaDaAggiornare.getApplicabilita() == null)
 				rispostaDaAggiornare.setApplicabilita(new TrasformazioneRegolaApplicabilitaRisposta());

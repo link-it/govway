@@ -439,6 +439,25 @@ CREATE TABLE pd_transform
 
 
 
+CREATE SEQUENCE seq_pd_transform_sa start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE pd_transform_sa
+(
+	id_trasformazione BIGINT NOT NULL,
+	id_servizio_applicativo BIGINT NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_pd_transform_sa') NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pd_transform_sa_1 UNIQUE (id_trasformazione,id_servizio_applicativo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pd_transform_sa_1 FOREIGN KEY (id_servizio_applicativo) REFERENCES servizi_applicativi(id),
+	CONSTRAINT fk_pd_transform_sa_2 FOREIGN KEY (id_trasformazione) REFERENCES pd_transform(id),
+	CONSTRAINT pk_pd_transform_sa PRIMARY KEY (id)
+);
+
+
+
+
 CREATE SEQUENCE seq_pd_transform_hdr start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
 
 CREATE TABLE pd_transform_hdr

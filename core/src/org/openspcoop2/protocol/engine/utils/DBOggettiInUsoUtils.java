@@ -973,6 +973,8 @@ public class DBOggettiInUsoUtils  {
 			List<String> ct_list = whereIsInUso.get(ErrorsHandlerCostant.CONTROLLO_TRAFFICO);
 			List<String> autorizzazionePA_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.AUTORIZZAZIONE_MAPPING);
 			List<String> autorizzazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.AUTORIZZAZIONE);
+			List<String> trasformazionePA_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PA);
+			List<String> trasformazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_PA);
 
 			if (servizi_fruitori_list == null) {
 				servizi_fruitori_list = new ArrayList<String>();
@@ -1029,6 +1031,14 @@ public class DBOggettiInUsoUtils  {
 			if (autorizzazionePA_list == null) {
 				autorizzazionePA_list = new ArrayList<String>();
 				whereIsInUso.put(ErrorsHandlerCostant.AUTORIZZAZIONE, autorizzazionePA_list);
+			}
+			if (trasformazionePA_mapping_list == null) {
+				trasformazionePA_mapping_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PA, trasformazionePA_mapping_list);
+			}
+			if (trasformazionePA_list == null) {
+				trasformazionePA_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_PA, trasformazionePA_list);
 			}
 
 
@@ -1442,6 +1452,38 @@ public class DBOggettiInUsoUtils  {
 			}
 			risultato.close();
 			stmt.close();
+
+			
+			// controllo se in uso in porte applicative nella trasformazione
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTI);
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE+".nome_porta");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".id_porta = "+CostantiDB.PORTE_APPLICATIVE+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".id = "+CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTI+".id_trasformazione");
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTI+".tipo_soggetto=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTI+".nome_soggetto=?");	
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setString(1, tipoSoggetto);
+			stmt.setString(2, nomeSoggetto);
+			risultato = stmt.executeQuery();
+			while (risultato.next()) {
+				String nome = risultato.getString("nome_porta");
+				ResultPorta resultPorta = formatPortaApplicativa(nome, tipoDB, con, normalizeObjectIds);
+				if(resultPorta.mapping) {
+					trasformazionePA_mapping_list.add(resultPorta.label);
+				}
+				else {
+					trasformazionePA_list.add(resultPorta.label);
+				}
+				isInUso = true;
+			}
+			risultato.close();
+			stmt.close();
+			
 			
 			return isInUso;
 
@@ -1555,6 +1597,16 @@ public class DBOggettiInUsoUtils  {
 			case AUTORIZZAZIONE:
 				if ( messages!=null && messages.size() > 0) {
 					msg += "utilizzato nelle Porte Inbound (Controllo degli Accessi - Soggetti Autenticati): " + formatList(messages,separator) + separator;
+				}
+				break;
+			case TRASFORMAZIONE_MAPPING_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nel criterio di applicabilità della Trasformazione (Soggetti) per le Erogazioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case TRASFORMAZIONE_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Inbound (Criterio di applicabilità della Trasformazione - Soggetti): " + formatList(messages,separator) + separator;
 				}
 				break;
 			default:
@@ -2702,6 +2754,10 @@ public class DBOggettiInUsoUtils  {
 			List<String> autorizzazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.AUTORIZZAZIONE_PA);
 			List<String> porte_applicative_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE);
 			List<String> ct_list = whereIsInUso.get(ErrorsHandlerCostant.CONTROLLO_TRAFFICO);
+			List<String> trasformazionePD_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PD);
+			List<String> trasformazionePD_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_PD);
+			List<String> trasformazionePA_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PA);
+			List<String> trasformazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_PA);
 			
 			if (autorizzazionePD_mapping_list == null) {
 				autorizzazionePD_mapping_list = new ArrayList<String>();
@@ -2727,7 +2783,22 @@ public class DBOggettiInUsoUtils  {
 				ct_list = new ArrayList<String>();
 				whereIsInUso.put(ErrorsHandlerCostant.CONTROLLO_TRAFFICO, ct_list);
 			}
-
+			if (trasformazionePD_mapping_list == null) {
+				trasformazionePD_mapping_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PD, trasformazionePD_mapping_list);
+			}
+			if (trasformazionePD_list == null) {
+				trasformazionePD_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_PD, trasformazionePD_list);
+			}
+			if (trasformazionePA_mapping_list == null) {
+				trasformazionePA_mapping_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PA, trasformazionePA_mapping_list);
+			}
+			if (trasformazionePA_list == null) {
+				trasformazionePA_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_PA, trasformazionePA_list);
+			}
 
 			// Porte delegate, autorizzazione
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
@@ -2883,6 +2954,67 @@ public class DBOggettiInUsoUtils  {
 			stmt.close();
 			
 			
+			
+			// Porte delegate, trasformazioni
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_SA);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+			sqlQueryObject.addSelectField("nome_porta");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI+".id_porta="+CostantiDB.PORTE_DELEGATE+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_SA+".id_trasformazione="+CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI+".id");
+			sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idServizioApplicativoLong);
+			risultato = stmt.executeQuery();
+			while (risultato.next()){
+				String nome = risultato.getString("nome_porta");
+				ResultPorta resultPorta = formatPortaDelegata(nome, tipoDB, con, normalizeObjectIds);
+				if(resultPorta.mapping) {
+					trasformazionePD_mapping_list.add(resultPorta.label);
+				}
+				else {
+					trasformazionePD_list.add(resultPorta.label);
+				}
+				isInUso = true;
+			}
+			risultato.close();
+			stmt.close();
+			
+			
+			
+			// Porte applicative, trasformazioni
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SA);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+			sqlQueryObject.addSelectField("nome_porta");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".id_porta="+CostantiDB.PORTE_APPLICATIVE+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SA+".id_trasformazione="+CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".id");
+			sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idServizioApplicativoLong);
+			risultato = stmt.executeQuery();
+			while (risultato.next()){
+				String nome = risultato.getString("nome_porta");
+				ResultPorta resultPorta = formatPortaApplicativa(nome, tipoDB, con, normalizeObjectIds);
+				if(resultPorta.mapping) {
+					trasformazionePA_mapping_list.add(resultPorta.label);
+				}
+				else {
+					trasformazionePA_list.add(resultPorta.label);
+				}
+				isInUso = true;
+			}
+			risultato.close();
+			stmt.close();
+			
+			
+			
 			return isInUso;
 
 		} catch (Exception se) {
@@ -2974,6 +3106,26 @@ public class DBOggettiInUsoUtils  {
 			case CONTROLLO_TRAFFICO:
 				if ( messages!=null && messages.size() > 0 ) {
 					msg += "utilizzato in policy di Rate Limiting: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case TRASFORMAZIONE_MAPPING_PD:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nel criterio di applicabilità della Trasformazione (Applicativi) per le Fruizioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case TRASFORMAZIONE_PD:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Outbound (Criterio di applicabilità della Trasformazione - Applicativi): " + formatList(messages,separator) + separator;
+				}
+				break;
+			case TRASFORMAZIONE_MAPPING_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nel criterio di applicabilità della Trasformazione (Applicativi) per le Erogazioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case TRASFORMAZIONE_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Inbound (Criterio di applicabilità della Trasformazione - Applicativi): " + formatList(messages,separator) + separator;
 				}
 				break;
 			default:

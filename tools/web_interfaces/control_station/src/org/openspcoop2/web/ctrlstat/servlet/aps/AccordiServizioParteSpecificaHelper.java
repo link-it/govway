@@ -5224,10 +5224,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							de.setType(DataElementType.HIDDEN);
 						}
 						else {
-							de.setType(DataElementType.NUMBER);
-							de.setMinValue(1);
-							de.setMaxValue(999);
-							//	de.setRequired(true);
+							de = this.getVersionDataElement(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_VERSIONE, 
+									AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE, 
+									versioneSelezionata, false);
 						}
 					}else{
 						de.setType(DataElementType.TEXT);

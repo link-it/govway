@@ -123,6 +123,8 @@ import org.openspcoop2.core.config.Transazioni;
 import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
 import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
 import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
@@ -9594,6 +9596,75 @@ public class DriverConfigurazioneDB_LIB {
 					
 					if(regola.getRichiesta()!=null) {
 						
+						if(regola.getApplicabilita()!=null) {
+							
+							if(!portaDelegata && regola.getApplicabilita().sizeSoggettoList()>0) {
+								// Soggetti
+								int n=0;
+								for (int j = 0; j < regola.getApplicabilita().sizeSoggettoList(); j++) {
+									TrasformazioneRegolaApplicabilitaSoggetto soggetto = regola.getApplicabilita().getSoggetto(j);
+									ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+									sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTI);
+									sqlQueryObject.addInsertField("id_trasformazione", "?");
+									sqlQueryObject.addInsertField("tipo_soggetto", "?");
+									sqlQueryObject.addInsertField("nome_soggetto", "?");
+									String sqlQuery = sqlQueryObject.createSQLInsert();
+									updateStmt = con.prepareStatement(sqlQuery);
+									updateStmt.setLong(1, idtrasformazione);
+									updateStmt.setString(2, soggetto.getTipo());
+									updateStmt.setString(3, soggetto.getNome());
+									updateStmt.executeUpdate();
+									updateStmt.close();
+									n++;
+									DriverConfigurazioneDB_LIB.log.debug("Aggiunto soggetto [" + soggetto.getTipo() + "/"+soggetto.getNome()+"] alla Trasformazione[" + idtrasformazione + "]");
+								}
+								
+								DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " soggetti alla Trasformazione[" + idtrasformazione + "]");
+							}
+							
+							
+							// serviziapplicativi
+							if(regola.getApplicabilita().sizeServizioApplicativoList()>0) {
+								ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+								if(portaDelegata) {
+									sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_SA);
+								}
+								else {
+									sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SA);
+								}
+								sqlQueryObject.addInsertField("id_trasformazione", "?");
+								sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
+								String sqlQuery = sqlQueryObject.createSQLInsert();
+								updateStmt = con.prepareStatement(sqlQuery);
+				
+								int i = 0;
+								for (i = 0; i < regola.getApplicabilita().sizeServizioApplicativoList(); i++) {
+									TrasformazioneRegolaApplicabilitaServizioApplicativo servizioApplicativo = regola.getApplicabilita().getServizioApplicativo(i);
+									String nomeSA = servizioApplicativo.getNome();
+									String nomeProprietarioSA = servizioApplicativo.getNomeSoggettoProprietario();
+									String tipoProprietarioSA = servizioApplicativo.getTipoSoggettoProprietario();
+									if (nomeSA == null || nomeSA.equals(""))
+										throw new DriverConfigurazioneException("[CRUDPortaApplicativa(CREATE)[Transf]::Nome del ServizioApplicativo associato non valido.");
+									if (nomeProprietarioSA == null || nomeProprietarioSA.equals(""))
+										throw new DriverConfigurazioneException("[CRUDPortaApplicativa(CREATE)[Transf]::Nome Proprietario del ServizioApplicativo associato non valido.");
+									if (tipoProprietarioSA == null || tipoProprietarioSA.equals(""))
+										throw new DriverConfigurazioneException("[CRUDPortaApplicativa(CREATE)[Transf]::Tipo Proprietario del ServizioApplicativo associato non valido.");
+				
+									long idSA = DriverConfigurazioneDB_LIB.getIdServizioApplicativo(nomeSA, tipoProprietarioSA, nomeProprietarioSA, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+				
+									if (idSA <= 0)
+										throw new DriverConfigurazioneException("Impossibile recuperare l'id del Servizio Applicativo [" + nomeSA + "] di [" + tipoProprietarioSA + "/" + nomeProprietarioSA + "]");
+				
+									updateStmt.setLong(1, idtrasformazione);
+									updateStmt.setLong(2, idSA);
+									updateStmt.executeUpdate();
+								}
+								updateStmt.close();
+								DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " servizi applicativi autorizzati associati alla Trasformazione[" + idtrasformazione + "]");
+							}
+							
+						}
+						
 						if(regola.getRichiesta().sizeHeaderList()>0) {
 							for (TrasformazioneRegolaParametro parametro : regola.getRichiesta().getHeaderList()) {
 								
@@ -9796,6 +9867,8 @@ public class DriverConfigurazioneDB_LIB {
 				}
 				
 				String tableName = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI;
+				String tableNameSoggetti = portaDelegata ? null : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTI;
+				String tableNameSA = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_SA : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SA;
 				String tableNameHeader = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_HEADER : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_HEADER;
 				String tableNameUrl = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_URL : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_URL;
 				String tableNameRisposte = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE;
@@ -9821,6 +9894,28 @@ public class DriverConfigurazioneDB_LIB {
 				}
 				
 				for (Long idTrasformazione : idTrasformazioneList) {
+					
+					if(tableNameSoggetti!=null) {
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addDeleteTable(tableNameSoggetti);
+						sqlQueryObject.addWhereCondition("id_trasformazione=?");
+						sqlQueryObject.setANDLogicOperator(true);
+						updateQuery = sqlQueryObject.createSQLDelete();
+						updateStmt = con.prepareStatement(updateQuery);
+						updateStmt.setLong(1, idTrasformazione);
+						updateStmt.executeUpdate();
+						updateStmt.close();
+					}
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addDeleteTable(tableNameSA);
+					sqlQueryObject.addWhereCondition("id_trasformazione=?");
+					sqlQueryObject.setANDLogicOperator(true);
+					updateQuery = sqlQueryObject.createSQLDelete();
+					updateStmt = con.prepareStatement(updateQuery);
+					updateStmt.setLong(1, idTrasformazione);
+					updateStmt.executeUpdate();
+					updateStmt.close();
 					
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 					sqlQueryObject.addDeleteTable(tableNameHeader);
@@ -9926,6 +10021,8 @@ public class DriverConfigurazioneDB_LIB {
 		
 		PreparedStatement stm = null;
 		ResultSet rs = null;
+		PreparedStatement stm1 = null;
+		ResultSet rs1 = null;
 		Trasformazioni trasformazioni = null;
 		try {
 			
@@ -10064,6 +10161,98 @@ public class DriverConfigurazioneDB_LIB {
 			}
 			
 			for (TrasformazioneRegola regola : trasformazioni.getRegolaList()) {
+				
+
+				// ** SOGGETTI **
+				
+				if(!portaDelegata) {
+					
+					nomeTabella = CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTI;
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+					sqlQueryObject.addFromTable(nomeTabella);
+					sqlQueryObject.addSelectField("*");
+					sqlQueryObject.addWhereCondition("id_trasformazione=?");
+					sqlQuery = sqlQueryObject.createSQLQuery();
+					stm = con.prepareStatement(sqlQuery);
+					stm.setLong(1, regola.getId());
+					rs = stm.executeQuery();
+	
+					while (rs.next()) {
+						
+						if(regola.getApplicabilita()==null) {
+							regola.setApplicabilita(new TrasformazioneRegolaApplicabilitaRichiesta());
+						}
+						
+						TrasformazioneRegolaApplicabilitaSoggetto soggetto = new TrasformazioneRegolaApplicabilitaSoggetto();
+						soggetto.setTipo(rs.getString("tipo_soggetto"));
+						soggetto.setNome(rs.getString("nome_soggetto"));
+						
+						regola.getApplicabilita().addSoggetto(soggetto);
+					
+					}
+					rs.close();
+					stm.close();
+				}
+				
+				
+				// ** APPLICATIVI **
+				
+				nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_SA : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SA;
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(nomeTabella);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_trasformazione=?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, regola.getId());
+				rs = stm.executeQuery();
+
+				// per ogni entry 
+				// prendo l'id del servizio associato, recupero il nome e
+				// aggiungo
+				// il servizio applicativo alla PortaDelegata da ritornare
+				while (rs.next()) {
+					long idSA = rs.getLong("id_servizio_applicativo");
+
+					if (idSA != 0) {
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+						sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+						sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+						sqlQueryObject.addSelectField("nome");
+						sqlQueryObject.addSelectField("tipo_soggetto");
+						sqlQueryObject.addSelectField("nome_soggetto");
+						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id=?");
+						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
+						sqlQueryObject.setANDLogicOperator(true);
+						sqlQuery = sqlQueryObject.createSQLQuery();
+						stm1 = con.prepareStatement(sqlQuery);
+						stm1.setLong(1, idSA);
+
+						log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idSA));
+
+						rs1 = stm1.executeQuery();
+
+						TrasformazioneRegolaApplicabilitaServizioApplicativo servizioApplicativo = null;
+						if (rs1.next()) {
+							// setto solo il nome come da specifica
+							servizioApplicativo = new TrasformazioneRegolaApplicabilitaServizioApplicativo();
+							servizioApplicativo.setId(idSA);
+							servizioApplicativo.setNome(rs1.getString("nome"));
+							servizioApplicativo.setTipoSoggettoProprietario(rs1.getString("tipo_soggetto"));
+							servizioApplicativo.setNomeSoggettoProprietario(rs1.getString("nome_soggetto"));
+							if(regola.getApplicabilita()==null) {
+								regola.setApplicabilita(new TrasformazioneRegolaApplicabilitaRichiesta());
+							}
+							regola.getApplicabilita().addServizioApplicativo(servizioApplicativo);
+						}
+						rs1.close();
+						stm1.close();
+					}
+				}
+				rs.close();
+				stm.close();
+				
 				
 				// ** HEADER **
 				
@@ -10269,10 +10458,20 @@ public class DriverConfigurazioneDB_LIB {
 			
 		}finally {
 			try {
-				rs.close();
+				if(rs1!=null)
+					rs1.close();
 			}catch(Exception eClose) {}
 			try {
-				stm.close();
+				if(rs!=null)
+					rs.close();
+			}catch(Exception eClose) {}
+			try {
+				if(stm1!=null)
+					stm1.close();
+			}catch(Exception eClose) {}
+			try {
+				if(stm!=null)
+					stm.close();
 			}catch(Exception eClose) {}
 		}
 		

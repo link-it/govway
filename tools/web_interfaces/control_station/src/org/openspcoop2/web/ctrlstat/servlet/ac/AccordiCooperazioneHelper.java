@@ -650,32 +650,17 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		}		
 		dati.addElement(de);
 
-		de = new DataElement();
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE);
-		de.setValue(versione);
 		if( modificheAbilitate ){
-//			if (gestioneWSBL.equals(Costanti.CHECK_BOX_ENABLED)){
-				de.setType(DataElementType.NUMBER);
-				de.setMinValue(1);
-				de.setMaxValue(999);
-				//if(this.core.isBackwardCompatibilityAccordo11()==false){
-				//de.setRequired(true);
-				// version spinner parte da 1
-			
-				/*}else{
-						// version spinner parte da 0
-						if(versione==null || "".equals(versione)){
-							de.setValue("0");
-						}
-						this.session.setAttribute("version", "optional");
-					}*/
-//			}else
-//				de.setType(DataElementType.HIDDEN);
-		}else{
+			de = this.getVersionDataElement(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE, 
+					AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE, 
+					versione, false);
+		}
+		else {
+			de = new DataElement();
+			de.setValue(versione);
+			de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE);
 			de.setType(DataElementType.TEXT);
 		}
-		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE);
-		dati.addElement(de);
 
 		de = new DataElement();
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO);

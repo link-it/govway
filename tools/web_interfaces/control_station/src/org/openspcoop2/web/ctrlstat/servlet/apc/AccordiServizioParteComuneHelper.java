@@ -3254,13 +3254,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);		
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VERSIONE);
-		de.setValue(versione);
 		if( gestioneInformazioniGenerali && modificheAbilitate ){
-			de.setType(DataElementType.NUMBER);
-			de.setMinValue(1);
-			de.setMaxValue(999);
+			de = this.getVersionDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VERSIONE, 
+					AccordiServizioParteComuneCostanti.PARAMETRO_APC_VERSIONE, 
+					versione, false);
 		}else{
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VERSIONE);
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VERSIONE);
+			de.setValue(versione);
 			if(gestioneInformazioniGenerali) {
 				de.setType(DataElementType.TEXT);
 			}
@@ -3268,7 +3269,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				de.setType(DataElementType.HIDDEN);
 			}
 		}
-		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VERSIONE);
 		dati.addElement(de);
 
 		de = new DataElement();

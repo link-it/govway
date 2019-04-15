@@ -8486,33 +8486,21 @@ public class ConsoleHelper {
 		de.setSelected(returnCode);
 		dati.addElement(de);
 		
-		if(!returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI)) {
-			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO)) {
-				de = new DataElement();
-				de.setLabel("&nbsp;");
-				de.setValue(statusMin);
-				de.setType(DataElementType.NUMBER);
-				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN);
-				de.setMinValue(200);
-				de.setMaxValue(599);
-				de.setSize(getSize());
-				de.reloadMinValue(false);
-				de.setRequired(true); 
+		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI.equals(returnCode)) {
+			if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO.equals(returnCode)) {
+				de = this.getHttpReturnCodeDataElement(CostantiControlStation.LABEL_EMPTY, 
+						CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN, 
+						statusMin, true);
 				dati.addElement(de);
 			}
 			
-			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
-				de = new DataElement();
-				de.setLabel("&nbsp;");
-				de.setValues(Arrays.asList(statusMin + "", statusMax + ""));
-				de.setType(DataElementType.INTERVAL_NUMBER);
-				de.setNames(Arrays.asList(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN,
-						CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX));
-				de.setMinValue(200);
-				de.setMaxValue(599);
-				de.setSize(getSize());
-				de.reloadMinValue(false);
-				de.setRequired(true); 
+			if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO.equals(returnCode)) {
+				de = getHttpReturnCodeIntervallDataElement(CostantiControlStation.LABEL_EMPTY, 
+						CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN,
+						CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX,
+						statusMin,
+						statusMax,
+						true);
 				dati.addElement(de);
 			}
 		} 
@@ -8562,10 +8550,10 @@ public class ConsoleHelper {
 		
 		// Nome
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOME);
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_NOME);
 		de.setValue(nome);
 		de.setType(DataElementType.TEXT_EDIT);
-		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOME);
+		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_NOME);
 		de.setRequired(true); 
 		dati.addElement(de);
 		
@@ -8606,33 +8594,21 @@ public class ConsoleHelper {
 		de.setSelected(returnCode);
 		dati.addElement(de);
 		
-		if(!returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI)) {
-			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO)) {
-				de = new DataElement();
-				de.setLabel("&nbsp;");
-				de.setValue(statusMin);
-				de.setType(DataElementType.NUMBER);
-				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN);
-				de.setMinValue(1);
-				de.setMaxValue(999);
-				de.setSize(getSize());
-				de.reloadMinValue(false);
-				de.setRequired(true); 
+		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI.equals(returnCode)) {
+			if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO.equals(returnCode)) {
+				de = this.getHttpReturnCodeDataElement(CostantiControlStation.LABEL_EMPTY, 
+						CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN, 
+						statusMin, true);
 				dati.addElement(de);
 			}
 			
-			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
-				de = new DataElement();
-				de.setLabel("&nbsp;");
-				de.setValues(Arrays.asList(statusMin + "", statusMax + ""));
-				de.setType(DataElementType.INTERVAL_NUMBER);
-				de.setNames(Arrays.asList(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN,
-						CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MAX));
-				de.setMinValue(1);
-				de.setMaxValue(999);
-				de.setSize(getSize());
-				de.reloadMinValue(false);
-				de.setRequired(true); 
+			if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO.equals(returnCode)) {
+				de = getHttpReturnCodeIntervallDataElement(CostantiControlStation.LABEL_EMPTY, 
+						CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN,
+						CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MAX,
+						statusMin,
+						statusMax,
+						true);
 				dati.addElement(de);
 			}
 		} 
@@ -8741,19 +8717,13 @@ public class ConsoleHelper {
 					dati.addElement(de);
 				}
 				
-				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE);
-				de.setValue(trasformazioneContenutoRispostaReturnCode);
-				de.setType(DataElementType.NUMBER);
-				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE);
-				de.setMinValue(200);
-				de.setMaxValue(599);
-				de.setSize(getSize());
-				de.reloadMinValue(false);
+				de = this.getHttpReturnCodeDataElement(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE, 
+						CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE, 
+						trasformazioneContenutoRispostaReturnCode, false);
 				dati.addElement(de);
 				
 				if(trasformazioneContenutoRispostaTipo.isTrasformazioneProtocolloEnabled() && trasformazioneRichiestaRestAbilitato &&
-						!trasformazioneContenutoRispostaTipo.equals(TipoTrasformazione.EMPTY)) {
+						!TipoTrasformazione.EMPTY.equals(trasformazioneContenutoRispostaTipo)) {
 					
 					trasformazioneRispostaSoapAbilitato = true; // forzo
 					
@@ -8783,7 +8753,7 @@ public class ConsoleHelper {
 					de.setPostBack(true);
 					dati.addElement(de);
 											
-					if(trasformazioneRispostaSoapEnvelope!=null && trasformazioneRispostaSoapEnvelope.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT)) {
+					if(trasformazioneRispostaSoapEnvelope!=null && CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT.equals(trasformazioneRispostaSoapEnvelope)) {
 						
 						de = new DataElement();
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TITLE_BODY);
@@ -8901,7 +8871,7 @@ public class ConsoleHelper {
 						
 						String trasformazioneSoapEnvelope = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE);
 						
-						if(trasformazioneSoapEnvelope.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT)) {
+						if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT.equals(trasformazioneSoapEnvelope)) {
 							String trasformazioneSoapEnvelopeTipoS = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO);
 							org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneSoapEnvelopeTipo =
 									trasformazioneSoapEnvelopeTipoS != null ? org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(trasformazioneSoapEnvelopeTipoS) : 
@@ -8989,16 +8959,16 @@ public class ConsoleHelper {
 			Integer statusMin = null;
 			Integer statusMax = null;
 			
-			if(!returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI)) {
+			if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI.equals(returnCode)) {
 				
-				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO)) {
+				if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO.equals(returnCode)) {
 					if(StringUtils.isEmpty(statusMinS)) {
 						this.pd.setMessage("Il campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS + " &egrave; obbligatorio.");
 						return false;
 					}
 				}
 				
-				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
+				if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO.equals(returnCode)) {
 					if(StringUtils.isEmpty(statusMinS) || StringUtils.isEmpty(statusMaxS)) {
 						this.pd.setMessage("Il campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS + " &egrave; obbligatorio.");
 						return false;
@@ -9019,7 +8989,7 @@ public class ConsoleHelper {
 						}
 						
 						// return code esatto, ho salvato lo stesso valore nel campo return code;
-						if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO))
+						if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO.equals(returnCode))
 							statusMax = statusMin;
 					}catch(Exception e) {
 						this.pd.setMessage("Il formato del campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN + " non &egrave; valido.");
@@ -9027,7 +8997,7 @@ public class ConsoleHelper {
 					}
 				}
 				
-				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
+				if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO.equals(returnCode)) {
 					if(StringUtils.isNotEmpty(statusMaxS)) {
 						try {
 							statusMax = Integer.parseInt(statusMaxS);
@@ -9113,7 +9083,7 @@ public class ConsoleHelper {
 							
 							String trasformazioneSoapEnvelope = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE);
 							
-							if(trasformazioneSoapEnvelope.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT)) {
+							if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT.equals(trasformazioneSoapEnvelope)) {
 								String trasformazioneSoapEnvelopeTipoS = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO);
 								org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneSoapEnvelopeTipo =
 										trasformazioneSoapEnvelopeTipoS != null ? org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(trasformazioneSoapEnvelopeTipoS) : 
@@ -9698,42 +9668,44 @@ public class ConsoleHelper {
 						de.setValue(trasformazioneSoapAction);
 						dati.addElement(de);
 						
-						// Envelope
-						de = new DataElement();
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE);
-						de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE);
-						de.setLabels(CostantiControlStation.SELECT_LABELS_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE);
-						de.setValues(CostantiControlStation.SELECT_VALUES_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE);
-						de.setType(DataElementType.SELECT);
-						de.setSelected(trasformazioneSoapEnvelope);
-						de.setPostBack(true);
-						dati.addElement(de);
-												
-						if(trasformazioneSoapEnvelope.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT)) {
-							
+						if(!TipoTrasformazione.EMPTY.equals(trasformazioneContenutoTipo)) {
+							// Envelope
 							de = new DataElement();
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TITLE_BODY);
-							de.setType(DataElementType.SUBTITLE);
-							dati.addElement(de);							
-							
-							// tipo envelope attachement
-							de = new DataElement();
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO);
-							de.setLabels(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toLabelList(ServiceBinding.SOAP));
-							de.setValues(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toStringList(ServiceBinding.SOAP));
+							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE);
+							de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE);
+							de.setLabels(CostantiControlStation.SELECT_LABELS_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE);
+							de.setValues(CostantiControlStation.SELECT_VALUES_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE);
 							de.setType(DataElementType.SELECT);
-							de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO);
-							de.setSelected(trasformazioneSoapEnvelopeTipo.getValue());
+							de.setSelected(trasformazioneSoapEnvelope);
 							de.setPostBack(true);
 							dati.addElement(de);
-							
-							if(trasformazioneSoapEnvelopeTipo.isTemplateRequired()) {
-								// 	template envelope attachement
-								DataElement trasformazioneSoapEnvelopeTemplateDataElement = trasformazioneSoapEnvelopeTemplate.getFileDataElement(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE, "", getSize());
-								trasformazioneSoapEnvelopeTemplateDataElement.setRequired(true);
-								dati.add(trasformazioneSoapEnvelopeTemplateDataElement);
-								dati.addAll(trasformazioneContenutoTemplate.getFileNameDataElement());
-								dati.add(trasformazioneContenutoTemplate.getFileIdDataElement());
+													
+							if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT.equals(trasformazioneSoapEnvelope)) {
+								
+								de = new DataElement();
+								de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TITLE_BODY);
+								de.setType(DataElementType.SUBTITLE);
+								dati.addElement(de);							
+								
+								// tipo envelope attachement
+								de = new DataElement();
+								de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO);
+								de.setLabels(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toLabelList(ServiceBinding.SOAP));
+								de.setValues(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toStringList(ServiceBinding.SOAP));
+								de.setType(DataElementType.SELECT);
+								de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO);
+								de.setSelected(trasformazioneSoapEnvelopeTipo.getValue());
+								de.setPostBack(true);
+								dati.addElement(de);
+								
+								if(trasformazioneSoapEnvelopeTipo.isTemplateRequired()) {
+									// 	template envelope attachement
+									DataElement trasformazioneSoapEnvelopeTemplateDataElement = trasformazioneSoapEnvelopeTemplate.getFileDataElement(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE, "", getSize());
+									trasformazioneSoapEnvelopeTemplateDataElement.setRequired(true);
+									dati.add(trasformazioneSoapEnvelopeTemplateDataElement);
+									dati.addAll(trasformazioneContenutoTemplate.getFileNameDataElement());
+									dati.add(trasformazioneContenutoTemplate.getFileIdDataElement());
+								}
 							}
 						}
 					}
@@ -9922,6 +9894,51 @@ public class ConsoleHelper {
 		de.setLabels(labels);
 		de.setValues(values);
 		
+		return de;
+	}
+	
+	public DataElement getHttpReturnCodeDataElement(String label, String name, String value, boolean required) {
+		DataElement de = new DataElement();
+		de.setLabel(label);
+		de.setValue(value);
+		de.setType(DataElementType.NUMBER);
+		de.setName(name);
+		de.setMinValue(200);
+		de.setMaxValue(599);
+		de.setSize(getSize());
+		de.reloadMinValue(false);
+		de.setRequired(required); 
+		return de;
+	}
+	
+	public DataElement getHttpReturnCodeIntervallDataElement(String label, 
+			String nameMin, String nameMax, 
+			String valueMin, String valueMax, 
+			boolean required) {
+		DataElement de = new DataElement();
+		de.setLabel("&nbsp;");
+		de.setValues(Arrays.asList(valueMin + "", valueMax + ""));
+		de.setType(DataElementType.INTERVAL_NUMBER);
+		de.setNames(Arrays.asList(nameMin, nameMax));
+		de.setMinValue(200);
+		de.setMaxValue(599);
+		de.setSize(getSize());
+		de.reloadMinValue(false);
+		de.setRequired(required); 
+		return de;
+	}
+	
+	public DataElement getVersionDataElement(String label, String name, String value, boolean required) {
+		DataElement de = new DataElement();
+		de.setLabel(label);
+		de.setValue(value);
+		de.setType(DataElementType.NUMBER);
+		de.setName(name);
+		de.setMinValue(1);
+		de.setMaxValue(999);
+		de.setSize(getSize());
+		//de.reloadMinValue(false);
+		de.setRequired(required); 
 		return de;
 	}
 }

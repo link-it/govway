@@ -1,6 +1,8 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
 -- DROP INDEX idx_pa_trasf_resp_2;
 -- DROP INDEX idx_pa_trasf_resp_1;
+-- DROP INDEX index_pa_transform_sa_1;
+-- DROP INDEX index_pa_transform_soggetti_1;
 -- DROP INDEX index_pa_transform_2;
 -- DROP INDEX index_pa_transform_1;
 -- DROP INDEX index_pa_azioni_1;
@@ -27,6 +29,10 @@ DROP TABLE pa_transform_url_init_seq;
 DROP TABLE pa_transform_url;
 DROP TABLE pa_transform_hdr_init_seq;
 DROP TABLE pa_transform_hdr;
+DROP TABLE pa_transform_sa_init_seq;
+DROP TABLE pa_transform_sa;
+DROP TABLE pa_transform_soggetti_init_seq;
+DROP TABLE pa_transform_soggetti;
 DROP TABLE pa_transform_init_seq;
 DROP TABLE pa_transform;
 DROP TABLE pa_cache_regole_init_seq;
@@ -65,6 +71,8 @@ DROP SEQUENCE seq_pa_transform_risp_hdr;
 DROP SEQUENCE seq_pa_transform_risp;
 DROP SEQUENCE seq_pa_transform_url;
 DROP SEQUENCE seq_pa_transform_hdr;
+DROP SEQUENCE seq_pa_transform_sa;
+DROP SEQUENCE seq_pa_transform_soggetti;
 DROP SEQUENCE seq_pa_transform;
 DROP SEQUENCE seq_pa_cache_regole;
 DROP SEQUENCE seq_pa_azioni;

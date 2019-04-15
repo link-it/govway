@@ -152,6 +152,24 @@ CREATE TABLE pd_transform
 
 
 
+CREATE SEQUENCE seq_pd_transform_sa start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE pd_transform_sa
+(
+	id_trasformazione BIGINT NOT NULL,
+	id_servizio_applicativo BIGINT NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_pd_transform_sa') NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pd_transform_sa_1 UNIQUE (id_trasformazione,id_servizio_applicativo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pd_transform_sa_1 FOREIGN KEY (id_servizio_applicativo) REFERENCES servizi_applicativi(id),
+	CONSTRAINT fk_pd_transform_sa_2 FOREIGN KEY (id_trasformazione) REFERENCES pd_transform(id),
+	CONSTRAINT pk_pd_transform_sa PRIMARY KEY (id)
+);
+
+
+
 
 CREATE SEQUENCE seq_pd_transform_hdr start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
 
@@ -278,6 +296,44 @@ CREATE TABLE pa_transform
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pa_transform_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
 	CONSTRAINT pk_pa_transform PRIMARY KEY (id)
+);
+
+
+
+
+CREATE SEQUENCE seq_pa_transform_soggetti start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE pa_transform_soggetti
+(
+	id_trasformazione BIGINT NOT NULL,
+	tipo_soggetto VARCHAR(255) NOT NULL,
+	nome_soggetto VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_pa_transform_soggetti') NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pa_transform_soggetti_1 UNIQUE (id_trasformazione,tipo_soggetto,nome_soggetto),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_transform_soggetti_1 FOREIGN KEY (id_trasformazione) REFERENCES pa_transform(id),
+	CONSTRAINT pk_pa_transform_soggetti PRIMARY KEY (id)
+);
+
+
+
+
+CREATE SEQUENCE seq_pa_transform_sa start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE pa_transform_sa
+(
+	id_trasformazione BIGINT NOT NULL,
+	id_servizio_applicativo BIGINT NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_pa_transform_sa') NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pa_transform_sa_1 UNIQUE (id_trasformazione,id_servizio_applicativo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_transform_sa_1 FOREIGN KEY (id_servizio_applicativo) REFERENCES servizi_applicativi(id),
+	CONSTRAINT fk_pa_transform_sa_2 FOREIGN KEY (id_trasformazione) REFERENCES pa_transform(id),
+	CONSTRAINT pk_pa_transform_sa PRIMARY KEY (id)
 );
 
 

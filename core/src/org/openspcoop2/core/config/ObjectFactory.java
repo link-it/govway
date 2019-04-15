@@ -103,6 +103,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TrasformazioneRegolaApplicabilitaServizioApplicativo }
+     */
+    public TrasformazioneRegolaApplicabilitaServizioApplicativo createTrasformazioneRegolaApplicabilitaServizioApplicativo() {
+        return new TrasformazioneRegolaApplicabilitaServizioApplicativo();
+    }
+
+    /**
      * Create an instance of {@link ValidazioneBuste }
      */
     public ValidazioneBuste createValidazioneBuste() {
@@ -786,6 +793,13 @@ public class ObjectFactory {
      */
     public Attachments createAttachments() {
         return new Attachments();
+    }
+
+    /**
+     * Create an instance of {@link TrasformazioneRegolaApplicabilitaSoggetto }
+     */
+    public TrasformazioneRegolaApplicabilitaSoggetto createTrasformazioneRegolaApplicabilitaSoggetto() {
+        return new TrasformazioneRegolaApplicabilitaSoggetto();
     }
 
     /**

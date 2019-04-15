@@ -420,6 +420,25 @@ CREATE UNIQUE INDEX index_pd_transform_2 ON pd_transform (id_porta,posizione);
 
 
 
+CREATE TABLE pd_transform_sa
+(
+	id_trasformazione BIGINT NOT NULL,
+	id_servizio_applicativo BIGINT NOT NULL,
+	-- fk/pk columns
+	id BIGINT IDENTITY,
+	-- unique constraints
+	CONSTRAINT unique_pd_transform_sa_1 UNIQUE (id_trasformazione,id_servizio_applicativo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pd_transform_sa_1 FOREIGN KEY (id_servizio_applicativo) REFERENCES servizi_applicativi(id),
+	CONSTRAINT fk_pd_transform_sa_2 FOREIGN KEY (id_trasformazione) REFERENCES pd_transform(id),
+	CONSTRAINT pk_pd_transform_sa PRIMARY KEY (id)
+);
+
+-- index
+CREATE UNIQUE INDEX index_pd_transform_sa_1 ON pd_transform_sa (id_trasformazione,id_servizio_applicativo);
+
+
+
 CREATE TABLE pd_transform_hdr
 (
 	id_trasformazione BIGINT NOT NULL,
