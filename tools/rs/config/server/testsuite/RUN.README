@@ -1,3 +1,7 @@
+NOTA!!:
+  su Tomcat aggiungere la seguente opzione JVM in setenv.sh:
+  JAVA_OPTS="$JAVA_OPTS -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true"
+
 Prerequisito:
 Compilare i test con il comando 'ant clean build'
 

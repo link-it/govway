@@ -2,38 +2,74 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openspcoop2</groupId>
 	<version>${revision}</version>
-	<artifactId>org.openspcoop2.testsuite.applicationServer.wildfly9</artifactId>
+	<artifactId>org.openspcoop2.bean-validation</artifactId>
 	<packaging>pom</packaging>
-	<name>dependencies.testsuite.as.wildfly9</name>
+	<name>dependencies.bean-validation</name>
 
 	<parent>
 		<groupId>org.openspcoop2</groupId>
-		<artifactId>org.openspcoop2.testsuite.applicationServer</artifactId>
+		<artifactId>org.openspcoop2.dependencies</artifactId>
 		<version>${revision}</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<properties>
 
-		<jar.group.name>wildfly9</jar.group.name>
+		<jar.group.name>bean-validation</jar.group.name>
 		
-		<wildfly.version>wf9</wildfly.version>
+		<hibernate-validator.version>6.0.15.Final</hibernate-validator.version>
+		<classmate.version>1.5.0</classmate.version>
+		<jboss-logging.version>3.3.2.Final</jboss-logging.version>
 
 	</properties>
 
 	<dependencies>
 	
 		<dependency>
-			<groupId>org.wildfly</groupId>
-			<artifactId>jboss-client</artifactId>
-			<version>${wildfly.version}</version>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate-validator.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator-cdi</artifactId>
+			<version>${hibernate-validator.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml</groupId>
+			<artifactId>classmate</artifactId>
+			<version>${classmate.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging</artifactId>
+			<version>${jboss-logging.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 	</dependencies>
@@ -55,7 +91,7 @@
 							<excludeDefaultDirectories>true</excludeDefaultDirectories>
 							<filesets>
 								<filesets>
-									<directory>../../../../../lib/${jar.group.name}</directory>
+									<directory>../../../lib/${jar.group.name}</directory>
 									<includes>
 										<include>*.jar</include>
 									</includes>
@@ -77,7 +113,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>../../../../../lib/applicationServer/${jar.group.name}</outputDirectory>
+							<outputDirectory>../../../lib/${jar.group.name}</outputDirectory>
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>

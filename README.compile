@@ -50,3 +50,11 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
  
     Verranno identificate tutte le dipendenze relative a jar 3parti e saranno verificate se esistono vulnerabilità conosciute.
     Un report viene prodotto nella directory 'dependency-check-result'
+
+2.5 Librerie 3parti
+
+    I precedenti comandi utilizzano tutti la fase maven 'initialize' per salvare le librerie 3parti nella directory lib.
+    Tali librerie vengono poi utilizzati dagli script ant che implementano la compilazione ed il packaging dei tools.
+
+    Per re-inizializzare solamente le librerie è possibile utilizzare il comando:
+	mvn initialize

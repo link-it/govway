@@ -9,7 +9,7 @@ del software di base nell'ambiente di esercizio. Verificare i passi
 seguenti, procedendo eventualmente all'installazione dei componenti
 mancanti.
 
-#. *Java Runtime Environment (JRE) 8 o superiore* (è possibile scaricare
+#. *Java Runtime Environment (JRE) 8* (è possibile scaricare
    JRE al seguente indirizzo:
    http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 

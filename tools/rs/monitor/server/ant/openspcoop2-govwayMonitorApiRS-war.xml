@@ -108,6 +108,12 @@
 			<lib dir="${openspcoop2.lib}/jackson">
 				<include name="*.jar"/>
 			</lib>
+			<lib dir="${openspcoop2.lib}/javax">
+				<include name="${validation-api-2.0.1_jar}"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/bean-validation">
+				<include name="${bean-validation_jars}"/>
+			</lib>
 			<lib dir="${openspcoop2.lib}/commons">
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-lang3-3.8.jar"/>
@@ -136,6 +142,7 @@
                                 <include name="richfaces-impl-3.3.4.Final-gov4j-1.jar" />
 				<include name="jsf-facelets-1.1.15.jar" />
 				<include name="jsf-impl-1.2_15-06.jar" />
+				<include name="${jsf-api-1.2_15-06_jar}"/>
                         </lib>
 			<lib dir="${required_lib}/json">
 				<include name="*.jar"/>

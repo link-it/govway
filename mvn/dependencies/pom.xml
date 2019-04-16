@@ -18,6 +18,7 @@
 		<module>ant</module>
 		<module>antinstaller</module>
 		<module>axiom</module> 
+		<module>bean-validation</module>
 		<module>cxf</module>
 		<module>commons</module>
 		<module>faces</module>
@@ -73,6 +74,7 @@
 								<suppressionFile>${owasp.falsePositives.dir}/swagger-codegen-linkit.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/console-back-office.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/commons-net-echo.xml</suppressionFile>
+								<suppressionFile>${owasp.falsePositives.dir}/dependency-check-false-positive.xml</suppressionFile>
 							</suppressionFiles>
 						</configuration>
 						<goals>

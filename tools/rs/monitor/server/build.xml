@@ -59,6 +59,9 @@
 	<var name="jsf_api_jar" value="" />
 	<var name="el_impl_jar" value="" />
 	<var name="el-api-1.0.jar" value="" />
+	<var name="jsf-api-1.2_15-06_jar" value="" />
+	<var name="validation-api-2.0.1_jar" value="" />
+	<var name="bean-validation_jars" value="" />
 	<var name="jboss_classloading" value="" />
 	<var name="jboss_scanning" value="" />
 	<var name="jboss_deployment_structure" value="" />
@@ -177,6 +180,33 @@
 			<var name="el-api-1.0.jar" value="el-api-1.0.jar" />
 		</then>
 	</if>
+	<!-- jsf-api-1.2_15-06.jar -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="jsf-api-1.2_15-06_jar" value="jsf-api-1.2_15-06.jar" />
+		</then>
+	</if>
+	<!-- validation-api-2.0.1 -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="validation-api-2.0.1_jar" value="validation-api-2.0.1.Final.jar" />
+		</then>
+	</if>
+	<!-- bean-validation/* -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="bean-validation_jars" value="*.jar" />
+		</then>
+	</if>	
 
 	<!-- jboss_classloading -->
 	<if>

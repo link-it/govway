@@ -107,6 +107,12 @@
 			<lib dir="${openspcoop2.lib}/jackson">
 				<include name="*.jar"/>
 			</lib>
+			<lib dir="${openspcoop2.lib}/javax">
+				<include name="${validation-api-2.0.1_jar}"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/bean-validation">
+				<include name="${bean-validation_jars}"/>
+			</lib>
 			<lib dir="${openspcoop2.lib}/commons">
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-lang3-3.8.jar"/>

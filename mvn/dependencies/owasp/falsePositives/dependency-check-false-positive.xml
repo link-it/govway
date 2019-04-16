@@ -1,0 +1,20 @@
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.2.xsd">
+   <suppress>
+      <notes><![CDATA[
+	In attesa che viene risolto l'issue che provoca un falso positivo:      	
+	- https://github.com/jeremylong/DependencyCheck/issues/1827
+	La vulnerabilità 'CVE-2018-1258' è chiara, poichè definisce come configurazione per l'individuazione in 'https://nvd.nist.gov/vuln/detail/CVE-2018-1258':
+
+	Configuration 1
+	AND
+	 cpe:2.3:a:pivotal_software:spring_framework:5.0.5:*:*:*:*:*:*:*
+	     Show Matching CPE(s)
+	 cpe:2.3:a:pivotal_software:spring_security:*:*:*:*:*:*:*:*
+	     Show Matching CPE(s)
+
+	e quindi siccome in govway si utilizza una versione di spring_framework superiore, la vulnerabilità non deve essere sollevata.
+      ]]></notes>
+      <cpe>cpe:2.3:a:pivotal_software:spring_security:5.1.5:*:*:*:*:*:*:*</cpe>
+      <cvssBelow>10</cvssBelow>
+   </suppress>
+</suppressions>
