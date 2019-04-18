@@ -11,7 +11,7 @@ function() {
     // customize
   }
   karate.configure('connectTimeout', 5000);
-  karate.configure('readTimeout', 5000);
+  karate.configure('readTimeout', 60000);
   var protocol = 'http';
   var govwayUrl = 'http://localhost:8080';
 
