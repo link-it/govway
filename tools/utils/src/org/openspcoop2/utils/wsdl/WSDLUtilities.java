@@ -36,10 +36,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.wsdl.Binding;
 import javax.wsdl.Definition;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
 import javax.wsdl.Types;
 import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.schema.Schema;
+import javax.xml.namespace.QName;
 import javax.xml.transform.TransformerException;
 
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
@@ -531,6 +535,140 @@ public class WSDLUtilities {
 	
 	
 	
+	
+	
+	
+	/* ------------------ READ URL ---------------------------- */
+	
+	public String getServiceEndpoint(byte [] wsdl) throws org.openspcoop2.utils.wsdl.WSDLException{
+		return this.getServiceEndpoint(wsdl, null);
+	}
+	public String getServiceEndpoint(byte [] wsdl, String portType) throws org.openspcoop2.utils.wsdl.WSDLException{
+		try{
+			Document d = this.xmlUtils.newDocument(wsdl);
+			this.removeImports(d);
+			this.removeSchemiIntoTypes(d);
+			return this.getServiceEndpoint(new DefinitionWrapper(d, this.xmlUtils, false, false),portType);
+		}catch(Exception e){
+			throw new org.openspcoop2.utils.wsdl.WSDLException(e.getMessage(),e);
+		}
+	}
+	public String getServiceEndpoint(Definition wsdl) throws org.openspcoop2.utils.wsdl.WSDLException{
+		return this.getServiceEndpoint(wsdl, null);
+	}
+	public String getServiceEndpoint(Definition wsdl, String portType) throws org.openspcoop2.utils.wsdl.WSDLException{
+		try {
+			return this.getServiceEndpoint(new DefinitionWrapper(wsdl, this.xmlUtils),portType);
+		}catch(Exception e){
+			throw new org.openspcoop2.utils.wsdl.WSDLException(e.getMessage(),e);
+		}
+	}
+	public String getServiceEndpoint(DefinitionWrapper wsdl) throws org.openspcoop2.utils.wsdl.WSDLException{
+		return this.getServiceEndpoint(wsdl, null);
+	}
+	public String getServiceEndpoint(DefinitionWrapper wsdl, String portType) throws org.openspcoop2.utils.wsdl.WSDLException{
+		try {
+			if(wsdl==null || wsdl.getServices()==null || wsdl.getServices().isEmpty()) {
+				return null;
+			}
+			if(portType==null) {
+				if(wsdl.getServices().size()>1) {
+					throw new Exception("Found more than one service, select port type");
+				}
+				Service service = (Service) wsdl.getServices().values().iterator().next();
+				if(service.getPorts()==null || service.getPorts().isEmpty()) {
+					return null;
+				}
+				if(service.getPorts().size()>1) {
+					throw new Exception("Found more than one port, select port type");
+				}
+				List<?> list = ((Port) service.getPorts().values().iterator().next()).getExtensibilityElements();
+				if(list==null || list.isEmpty()) {
+					return null;
+				} 
+				for (Object object : list) {
+					if(object instanceof  javax.wsdl.extensions.soap.SOAPAddress) {
+						javax.wsdl.extensions.soap.SOAPAddress addr = (javax.wsdl.extensions.soap.SOAPAddress) object;
+						return addr.getLocationURI();
+					}
+					else if(object instanceof  javax.wsdl.extensions.soap12.SOAP12Address) {
+						javax.wsdl.extensions.soap12.SOAP12Address addr = (javax.wsdl.extensions.soap12.SOAP12Address) object;
+						return addr.getLocationURI();
+					}
+				}
+				return null;
+			}
+			else {
+				if(wsdl.getPortTypes()==null || wsdl.getPortTypes().isEmpty()) {
+					return null;
+				}
+				QName qNamePT = null;
+				for (Object o : wsdl.getPortTypes().keySet()) {
+					if(o instanceof QName) {
+						QName qName = (QName) o;
+						if(portType.equals(qName.getLocalPart())) {
+							qNamePT = qName;
+							break;
+						}
+					}
+				}
+				if(qNamePT==null) {
+					return null;
+				}
+				if(wsdl.getBindings()==null || wsdl.getBindings().isEmpty()) {
+					return null;
+				}
+				QName qNameBinding = null;
+				for (Object o : wsdl.getBindings().values()) {
+					if(o instanceof Binding) {
+						Binding bindingCheck = (Binding) o;
+						if(bindingCheck.getPortType()!=null) {
+							if(qNamePT.equals(bindingCheck.getPortType().getQName())) {
+								qNameBinding = bindingCheck.getQName();
+								break;
+							}
+						}
+					}
+				}
+				if(qNameBinding==null) {
+					return null;
+				}
+				for (Object o : wsdl.getServices().values()) {
+					if(o instanceof Service) {
+						Service serviceCheck = (Service) o;
+						if(serviceCheck.getPorts()!=null && !serviceCheck.getPorts().isEmpty()) {
+							for (Object oP : serviceCheck.getPorts().values()) {
+								if(oP instanceof Port) {
+									Port portCheck = (Port) oP;
+									if(portCheck.getBinding()!=null ) {
+										if(qNameBinding.equals(portCheck.getBinding().getQName())) {
+											List<?> list = portCheck.getExtensibilityElements();
+											if(list==null || list.isEmpty()) {
+												return null;
+											} 
+											for (Object object : list) {
+												if(object instanceof  javax.wsdl.extensions.soap.SOAPAddress) {
+													javax.wsdl.extensions.soap.SOAPAddress addr = (javax.wsdl.extensions.soap.SOAPAddress) object;
+													return addr.getLocationURI();
+												}
+												else if(object instanceof  javax.wsdl.extensions.soap12.SOAP12Address) {
+													javax.wsdl.extensions.soap12.SOAP12Address addr = (javax.wsdl.extensions.soap12.SOAP12Address) object;
+													return addr.getLocationURI();
+												}
+											}		
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				return null;
+			}
+		}catch(Exception e){
+			throw new org.openspcoop2.utils.wsdl.WSDLException(e.getMessage(),e);
+		}
+	}
 	
 	
 	

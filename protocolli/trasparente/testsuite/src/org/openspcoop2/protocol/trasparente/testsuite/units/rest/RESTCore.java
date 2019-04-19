@@ -465,8 +465,12 @@ public class RESTCore {
 			}
 							
 			boolean redirect = false;
+			String headerLocation = HttpConstants.REDIRECT_LOCATION;
 			if(returnCodeAtteso != 200) {
-				if(returnCodeAtteso==301 || returnCodeAtteso==303  || returnCodeAtteso==304|| returnCodeAtteso==307) {
+				if(returnCodeAtteso==301 || returnCodeAtteso==303  || returnCodeAtteso==304|| returnCodeAtteso==307 ||
+						returnCodeAtteso==201 || // aggiunto per verificare che anche in questo caso sia corretto header Location (proxy pass revers)
+						returnCodeAtteso==204  // aggiunto per verificare che anche in caso sia corretto header Content-Location (proxy pass revers)
+				) {
 					// gli altri return code (302) li gestisco normali per vedere cmq di essere trasparente
 					redirect = true;
 					propertiesURLBased.put("redirect", "true");
@@ -477,6 +481,15 @@ public class RESTCore {
 					else if(returnCodeAtteso==304) {
 						propertiesURLBased.put("redirectContext", "/");
 					}
+					else if(returnCodeAtteso==307) {
+						propertiesURLBased.put("redirectAbsoluteUrl", "false");
+					}
+					
+					if(returnCodeAtteso==204) {
+						headerLocation = HttpConstants.CONTENT_LOCATION;
+						propertiesURLBased.put("redirectHeaderLocation", headerLocation);
+					}
+					//else { viene tornato HttpConstants.REDIRECT_LOCATION }
 				}
 				else {
 					if(!authorizationError) {
@@ -558,7 +571,8 @@ public class RESTCore {
 			
 			// Controllo risposta redirect
 			if(redirect) {
-				String location = httpResponse.getHeader(HttpConstants.REDIRECT_LOCATION);
+				String location = httpResponse.getHeader(headerLocation);
+				Reporter.log("Location ricevuta ["+location+"]");
 				Assert.assertTrue(location!=null);
 				String urlBaseSenzaHostPort = urlBase.substring(urlBase.indexOf("/govway/"), urlBase.length());
 				String urlAttesa = null;
@@ -569,8 +583,11 @@ public class RESTCore {
 				else if(returnCodeAtteso==304) {
 					urlAttesa = "/";
 				}
-				else {
+				else if(returnCodeAtteso==307) {
 					urlAttesa = TransportUtils.buildLocationWithURLBasedParameter(new Properties(), urlBaseSenzaHostPort);
+				}
+				else {
+					urlAttesa = TransportUtils.buildLocationWithURLBasedParameter(new Properties(), urlBase);
 				}
 				
 				if(returnCodeAtteso!=303 && returnCodeAtteso!=304) {

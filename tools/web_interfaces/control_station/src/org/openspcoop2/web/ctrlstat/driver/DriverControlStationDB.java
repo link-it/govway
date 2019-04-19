@@ -87,6 +87,8 @@ import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.protocol.engine.archive.UtilitiesMappingFruizioneErogazione;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
@@ -194,6 +196,12 @@ public class DriverControlStationDB  {
 		try {
 			this.configDB = new DriverConfigurazioneDB(connection, this.tipoDB);
 			this.regservDB = new DriverRegistroServiziDB(connection, this.tipoDB);
+			boolean useSuperUser = false;
+			if(ControlStationCore.isAPIMode()==false) {
+				useSuperUser = !ConsoleProperties.getInstance().isVisibilitaOggettiGlobale();
+			}
+			this.configDB.setUseSuperUser(useSuperUser);
+			this.regservDB.setUseSuperUser(useSuperUser);
 			this.usersDB = new DriverUsersDB(connection, this.tipoDB, this.log);
 			this.auditDB = new DriverAudit(connection, this.tipoDB);
 			this.auditDBappender = new DriverAuditDBAppender(connection, this.tipoDB);

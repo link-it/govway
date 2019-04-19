@@ -24,14 +24,17 @@ package org.openspcoop2.pdd.core.connettori;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
+import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.RestUtilities;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -76,6 +79,8 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	
 	/** REST Proxy Pass Reverse */
 	protected boolean rest_proxyPassReverse = false;
+	protected boolean rest_proxyPassReverse_usePrefixProtocol = false;
+	protected List<String> rest_proxyPassReverse_headers = null;
 	
 	
 	@Override
@@ -91,10 +96,24 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 		if(this.isRest) {
 			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
 				this.rest_proxyPassReverse = this.openspcoopProperties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse();
+				this.rest_proxyPassReverse_usePrefixProtocol = this.openspcoopProperties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix();
+				try {
+					this.rest_proxyPassReverse_headers = this.openspcoopProperties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_headers();
+				}catch(Exception e) {
+					this.errore = e.getMessage();
+					return false;
+				}
 			}
 			else{
 				// InoltroBuste e InoltroRisposte
 				this.rest_proxyPassReverse = this.openspcoopProperties.isRESTServices_inoltroBuste_proxyPassReverse();
+				this.rest_proxyPassReverse_usePrefixProtocol = this.openspcoopProperties.isRESTServices_inoltroBuste_proxyPassReverse_useProtocolPrefix();
+				try {
+					this.rest_proxyPassReverse_headers = this.openspcoopProperties.getRESTServices_inoltroBuste_proxyPassReverse_headers();
+				}catch(Exception e) {
+					this.errore = e.getMessage();
+					return false;
+				}
 			}
 		}
 		
@@ -179,40 +198,57 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 		 if(this.debug)
 			 this.logger.debug("gestione REST - proxyPassReverse:"+this.rest_proxyPassReverse+" ...");
 			                                 
-		 if(this.rest_proxyPassReverse) {
-			 String redirectLocation = this.propertiesTrasportoRisposta.getProperty(HttpConstants.REDIRECT_LOCATION);
-			 if(redirectLocation==null){
-				 redirectLocation = this.propertiesTrasportoRisposta.getProperty(HttpConstants.REDIRECT_LOCATION.toLowerCase());
-			 }
-			 if(redirectLocation==null){
-				 redirectLocation = this.propertiesTrasportoRisposta.getProperty(HttpConstants.REDIRECT_LOCATION.toUpperCase());
-			 }
-			 if(redirectLocation!=null) {
-				 if(this.debug)
-					 this.logger.debug("Trovato Header '"+HttpConstants.REDIRECT_LOCATION+"':["+redirectLocation+"] ...");
-                   
-				 // Aggiorno url
-				 try {
-					 String baseUrl = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
-					 if(baseUrl==null) {
-						 throw new Exception("BaseURL undefined");
+		 if(this.rest_proxyPassReverse && this.rest_proxyPassReverse_headers!=null) {
+			 
+			 for (String header : this.rest_proxyPassReverse_headers) {
+				 String redirectLocation = this.propertiesTrasportoRisposta.getProperty(header);
+				 if(redirectLocation==null){
+					 redirectLocation = this.propertiesTrasportoRisposta.getProperty(header.toLowerCase());
+				 }
+				 if(redirectLocation==null){
+					 redirectLocation = this.propertiesTrasportoRisposta.getProperty(header.toUpperCase());
+				 }
+				 if(redirectLocation!=null) {
+					 if(this.debug)
+						 this.logger.debug("Trovato Header '"+header+"':["+redirectLocation+"] ...");
+	                   
+					 // Aggiorno url
+					 try {
+						 String baseUrl = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
+						 if(baseUrl==null) {
+							 throw new Exception("BaseURL undefined");
+						 }
+						 if(this.debug)
+							 this.logger.debug("Base URL: ["+baseUrl+"] ...");
+						 
+						 String prefixGatewayUrl = null;
+						 if(this.rest_proxyPassReverse_usePrefixProtocol) {
+							 ConfigurazioneProtocollo configurazioneProtocollo = ConfigurazionePdDManager.getInstance().getConfigurazioneProtocollo(this.getProtocolFactory().getProtocol());
+							 if(configurazioneProtocollo!=null) {
+								 if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+									 prefixGatewayUrl = configurazioneProtocollo.getUrlInvocazioneServizioPA();
+								 }
+								 else {
+									 prefixGatewayUrl = configurazioneProtocollo.getUrlInvocazioneServizioPD();
+								 }
+							 }
+						 }
+						 
+						 String newRedirectLocation = RestUtilities.buildPassReverseUrl(this.requestMsg.getTransportRequestContext(), baseUrl, redirectLocation, prefixGatewayUrl);
+						 if(this.debug)
+							 this.logger.debug("Nuovo Header '"+header+"':["+newRedirectLocation+"] ...");
+	               
+						 this.propertiesTrasportoRisposta.remove(header);
+						 this.propertiesTrasportoRisposta.remove(header.toLowerCase());
+						 this.propertiesTrasportoRisposta.remove(header.toUpperCase());
+						 this.propertiesTrasportoRisposta.put(header, newRedirectLocation);
+					 }catch(Exception e) {
+						 throw new Exception("Errore durante l'aggiornamento dell'header '"+header+
+								 "' attraverso la funzione di proxy pass reverse: "+e.getMessage(),e);
 					 }
-					 if(this.debug)
-						 this.logger.debug("Base URL: ["+baseUrl+"] ...");
-					 
-					 String newRedirectLocation = RestUtilities.buildPassReverseUrl(this.requestMsg.getTransportRequestContext(), baseUrl, redirectLocation);
-					 if(this.debug)
-						 this.logger.debug("Nuovo Header '"+HttpConstants.REDIRECT_LOCATION+"':["+newRedirectLocation+"] ...");
-               
-					 this.propertiesTrasportoRisposta.remove(HttpConstants.REDIRECT_LOCATION);
-					 this.propertiesTrasportoRisposta.remove(HttpConstants.REDIRECT_LOCATION.toLowerCase());
-					 this.propertiesTrasportoRisposta.remove(HttpConstants.REDIRECT_LOCATION.toUpperCase());
-					 this.propertiesTrasportoRisposta.put(HttpConstants.REDIRECT_LOCATION, newRedirectLocation);
-				 }catch(Exception e) {
-					 throw new Exception("Errore durante l'aggiornamento della Redirect '"+HttpConstants.REDIRECT_LOCATION+
-							 "' attraverso la funzione di proxy pass reverse: "+e.getMessage(),e);
 				 }
 			 }
+			 
 		 }
 
 		

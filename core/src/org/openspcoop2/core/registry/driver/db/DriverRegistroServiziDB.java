@@ -206,7 +206,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 		return this.tipoDB;
 	}
 
-
+	private boolean useSuperUser = true;
+	public boolean isUseSuperUser() {
+		return this.useSuperUser;
+	}
+	public void setUseSuperUser(boolean useSuperUser) {
+		this.useSuperUser = useSuperUser;
+	}
+	
 
 	// Factory
 	private IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
@@ -6238,7 +6245,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.RUOLI);
 				sqlQueryObject.addSelectCountField("*", "cont");
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);	
 				if(ruoloContesto!=null) {
@@ -6253,7 +6260,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.RUOLI);
 				sqlQueryObject.addSelectCountField("*", "cont");
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if(ruoloContesto!=null) {
 					sqlQueryObject.addWhereCondition("contesto_utilizzo = ?");
@@ -6266,7 +6273,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			stmt = con.prepareStatement(queryString);
 			int index = 1;
-			if (superuser!=null && (!superuser.equals(""))){
+			if(this.useSuperUser && superuser!=null && (!superuser.equals(""))){
 				stmt.setString(index++, superuser);
 			}
 			if(ruoloContesto!=null) {
@@ -6289,7 +6296,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.RUOLI);
 				sqlQueryObject.addSelectField("nome");
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
 				if(ruoloContesto!=null) {
@@ -6309,7 +6316,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.RUOLI);
 				sqlQueryObject.addSelectField("nome");
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if(ruoloContesto!=null) {
 					sqlQueryObject.addWhereCondition("contesto_utilizzo = ?");
@@ -6326,7 +6333,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			stmt = con.prepareStatement(queryString);
 			index = 1;
-			if (superuser!=null && (!superuser.equals(""))){
+			if(this.useSuperUser && superuser!=null && (!superuser.equals(""))){
 				stmt.setString(index++, superuser);
 			}
 			if(ruoloContesto!=null) {
@@ -7050,7 +7057,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SCOPE);
 				sqlQueryObject.addSelectCountField("*", "cont");
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);	
 				if(scopeContesto!=null) {
@@ -7065,7 +7072,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SCOPE);
 				sqlQueryObject.addSelectCountField("*", "cont");
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if(scopeContesto!=null) {
 					sqlQueryObject.addWhereCondition("contesto_utilizzo = ?");
@@ -7078,7 +7085,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			stmt = con.prepareStatement(queryString);
 			int index = 1;
-			if (superuser!=null && (!superuser.equals(""))){
+			if(this.useSuperUser && superuser!=null && (!superuser.equals(""))){
 				stmt.setString(index++, superuser);
 			}
 			if(scopeContesto!=null) {
@@ -7101,7 +7108,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SCOPE);
 				sqlQueryObject.addSelectField("nome");
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
 				if(scopeContesto!=null) {
@@ -7121,7 +7128,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SCOPE);
 				sqlQueryObject.addSelectField("nome");
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if(scopeContesto!=null) {
 					sqlQueryObject.addWhereCondition("contesto_utilizzo = ?");
@@ -7138,7 +7145,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			stmt = con.prepareStatement(queryString);
 			index = 1;
-			if (superuser!=null && (!superuser.equals(""))){
+			if(this.useSuperUser && superuser!=null && (!superuser.equals(""))){
 				stmt.setString(index++, superuser);
 			}
 			if(scopeContesto!=null) {
@@ -7953,7 +7960,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			if(tipiSoggetto!=null && tipiSoggetto.size()>0) {
 				sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipiSoggetto.toArray(new String[1]));
 			}
-			if (superuser!=null && !superuser.equals(""))
+			if(this.useSuperUser && superuser!=null && !superuser.equals(""))
 				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
 			if(credenziale != null) {
 				sqlQueryObject.addWhereCondition("tipoauth = ?");
@@ -7977,7 +7984,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			
 			stmt = con.prepareStatement(queryString);
 			int index = 1;
-			if (superuser!=null && !superuser.equals(""))
+			if(this.useSuperUser && superuser!=null && !superuser.equals(""))
 				stmt.setString(index++, superuser);
 			if(credenziale != null) {
 				stmt.setString(index++, credenziale.toString());
@@ -12033,7 +12040,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectCountField("*", "cont");
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addWhereLikeCondition("nome_servizio", search, true, true);
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 
 				queryString = sqlQueryObject.createSQLQuery();
@@ -12042,12 +12049,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addSelectCountField("*", "cont");
 				sqlQueryObject.setANDLogicOperator(true);
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			if (superuser!=null && (!superuser.equals("")))
+			if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 				stmt.setString(1, superuser);
 			risultato = stmt.executeQuery();
 			if (risultato.next())
@@ -12071,7 +12078,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("stato");
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addWhereLikeCondition("nome_servizio", search, true, true);
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				sqlQueryObject.addOrderBy("tipo_servizio");
 				sqlQueryObject.addOrderBy("nome_servizio");
@@ -12092,7 +12099,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("servizio_correlato");
 				sqlQueryObject.addSelectField("stato");
 				sqlQueryObject.setANDLogicOperator(true);
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				sqlQueryObject.addOrderBy("tipo_servizio");
 				sqlQueryObject.addOrderBy("nome_servizio");
@@ -12105,7 +12112,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("query : " + queryString);
 
 			stmt = con.prepareStatement(queryString);
-			if (superuser!=null && (!superuser.equals("")))
+			if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 				stmt.setString(1, superuser);
 			risultato = stmt.executeQuery();
 
@@ -12350,7 +12357,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
 			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".id_referente="+CostantiDB.SOGGETTI+".id");
 			sqlQueryObject.addSelectCountField("*", "cont");
-			if (superuser!=null && (!superuser.equals("")))
+			if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".superuser = ?");
 			
 			//query con search
@@ -12383,7 +12390,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
 			int index = 1;
-			if (superuser!=null && (!superuser.equals("")))
+			if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 				stmt.setString(index++, superuser);
 			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
 				stmt.setString(index++, filterTipoAPI);
@@ -12411,7 +12418,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI, "nome_soggetto");
 			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".id_referente="+CostantiDB.SOGGETTI+".id");
 			//sqlQueryObject.addSelectField("id_referente");
-			if (superuser!=null && (!superuser.equals("")))
+			if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".superuser = ?");
 			
 			if (!search.equals("")) { // con search
@@ -12451,7 +12458,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			stmt = con.prepareStatement(queryString);
 			index = 1;
-			if (superuser!=null && (!superuser.equals("")))
+			if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 				stmt.setString(index++, superuser);
 			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
 				stmt.setString(index++, filterTipoAPI);
@@ -12555,7 +12562,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.ACCORDI_COOPERAZIONE);
 				sqlQueryObject.addSelectCountField("*", "cont");
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				sqlQueryObject.addWhereCondition(false, 
 						sqlQueryObject.getWhereLikeCondition("nome", search, true, true));
@@ -12574,7 +12581,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.ACCORDI_COOPERAZIONE);
 				sqlQueryObject.addSelectCountField("*", "cont");
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
 					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
@@ -12590,7 +12597,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			stmt = con.prepareStatement(queryString);
 			int index = 1;
-			if (superuser!=null && (!superuser.equals("")))
+			if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 				stmt.setString(index++, superuser);
 			if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 				stmt.setString(index++, filterStatoAccordo);
@@ -12612,7 +12619,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("id_referente");
 				sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI_COOPERAZIONE,"descrizione","descrizioneAccordoCooperazione");
 				sqlQueryObject.addSelectField("versione");
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				sqlQueryObject.addWhereCondition(false, 
 						sqlQueryObject.getWhereLikeCondition("nome", search, true, true));
@@ -12641,7 +12648,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("id_referente");
 				sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI_COOPERAZIONE,"descrizione","descrizioneAccordoCooperazione");
 				sqlQueryObject.addSelectField("versione");
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
 					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
@@ -12665,7 +12672,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			stmt = con.prepareStatement(queryString);
 			index = 1;
-			if (superuser!=null && (!superuser.equals("")))
+			if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 				stmt.setString(index++, superuser);
 			if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 				stmt.setString(index++, filterStatoAccordo);
@@ -14629,7 +14636,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(filterSoggettoDefault) {
 					sqlQueryObject.addWhereCondition("is_default = ?");
 				}
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if(tipoSoggetto!=null){
 					sqlQueryObject.addWhereCondition("tipo_soggetto=?");
@@ -14668,7 +14675,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(filterSoggettoDefault) {
 					sqlQueryObject.addWhereCondition("is_default = ?");
 				}
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if(tipoSoggetto!=null)
 					sqlQueryObject.addWhereCondition("tipo_soggetto=?");
@@ -14699,7 +14706,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			if(filterSoggettoDefault) {
 				stmt.setInt(index++, 1);
 			}
-			if (superuser!=null && (!superuser.equals(""))){
+			if(this.useSuperUser && superuser!=null && (!superuser.equals(""))){
 				stmt.setString(index++, superuser);
 			}
 			if (!search.equals("")) {
@@ -14740,7 +14747,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(filterSoggettoDefault) {
 					sqlQueryObject.addWhereCondition("is_default = ?");
 				}
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if(tipoSoggetto!=null){
 					sqlQueryObject.addWhereCondition("tipo_soggetto=?");
@@ -14792,7 +14799,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(filterSoggettoDefault) {
 					sqlQueryObject.addWhereCondition("is_default = ?");
 				}
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if(tipoSoggetto!=null)
 					sqlQueryObject.addWhereCondition("tipo_soggetto=?");
@@ -14828,7 +14835,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			if(filterSoggettoDefault) {
 				stmt.setInt(index++, 1);
 			}
-			if (superuser!=null && (!superuser.equals(""))){
+			if(this.useSuperUser && superuser!=null && (!superuser.equals(""))){
 				stmt.setString(index++, superuser);
 			}
 			if (!search.equals("")) {
@@ -19129,7 +19136,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto=?");
 					}
 				}
-				if(superuser!=null && (!"".equals(superuser)))
+				if(this.useSuperUser && superuser!=null && (!"".equals(superuser)))
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
 				if(tipoServiziProtocollo!=null && tipoServiziProtocollo.size()>0) {
 					sqlQueryObject.addWhereINCondition(CostantiDB.SERVIZI+".tipo_servizio", true, tipoServiziProtocollo.toArray(new String[1]));
@@ -19204,7 +19211,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto=?");
 					}
 				}
-				if(superuser!=null && (!"".equals(superuser)))
+				if(this.useSuperUser && superuser!=null && (!"".equals(superuser)))
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
 				if(tipoServiziProtocollo!=null && tipoServiziProtocollo.size()>0) {
 					sqlQueryObject.addWhereINCondition(CostantiDB.SERVIZI+".tipo_servizio", true, tipoServiziProtocollo.toArray(new String[1]));
@@ -19246,7 +19253,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				stmt.setString(index++, filterSoggettoTipo);
 				stmt.setString(index++, filterSoggettoNome);
 			}
-			if(superuser!=null && (!"".equals(superuser)))
+			if(this.useSuperUser && superuser!=null && (!"".equals(superuser)))
 				stmt.setString(index++, superuser);
 			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
 				stmt.setString(index++, filterTipoAPI);
@@ -19317,7 +19324,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto=?");
 					}
 				}
-				if(superuser!=null && (!"".equals(superuser)))
+				if(this.useSuperUser && superuser!=null && (!"".equals(superuser)))
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
 				if(tipoServiziProtocollo!=null && tipoServiziProtocollo.size()>0) {
 					sqlQueryObject.addWhereINCondition(CostantiDB.SERVIZI+".tipo_servizio", true, tipoServiziProtocollo.toArray(new String[1]));
@@ -19424,7 +19431,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto=?");
 					}
 				}
-				if(superuser!=null && (!"".equals(superuser)))
+				if(this.useSuperUser && superuser!=null && (!"".equals(superuser)))
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
 				
 				if(tipoServiziProtocollo!=null && tipoServiziProtocollo.size()>0) {
@@ -19483,7 +19490,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				stmt.setString(index++, filterSoggettoTipo);
 				stmt.setString(index++, filterSoggettoNome);
 			}
-			if(superuser!=null && (!"".equals(superuser)))
+			if(this.useSuperUser && superuser!=null && (!"".equals(superuser)))
 				stmt.setString(index++, superuser);
 			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
 				stmt.setString(index++, filterTipoAPI);
@@ -19815,7 +19822,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				.addFromTable(CostantiDB.PDD);
 				sqlQueryObject.addSelectCountField("*",
 						"cont");
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if (tipo!=null && (!tipo.equals("")))
 					sqlQueryObject.addWhereCondition("tipo = ?");
@@ -19830,7 +19837,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				.addFromTable(CostantiDB.PDD);
 				sqlQueryObject.addSelectCountField("*",
 						"cont");
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if (tipo!=null && (!tipo.equals("")))
 					sqlQueryObject.addWhereCondition("tipo = ?");
@@ -19840,7 +19847,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			stmt = con.prepareStatement(queryString);
 			int index = 1;
-			if (superuser!=null && (!superuser.equals("")))
+			if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 				stmt.setString(index++, superuser);
 			if (tipo!=null && (!tipo.equals("")))
 				stmt.setString(index++, tipo);
@@ -19860,7 +19867,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject
 				.addFromTable(CostantiDB.PDD);
 				sqlQueryObject.addSelectField("nome");
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if (tipo!=null && (!tipo.equals("")))
 					sqlQueryObject.addWhereCondition("tipo = ?");
@@ -19879,7 +19886,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject
 				.addFromTable(CostantiDB.PDD);
 				sqlQueryObject.addSelectField("nome");
-				if (superuser!=null && (!superuser.equals("")))
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if (tipo!=null && (!tipo.equals("")))
 					sqlQueryObject.addWhereCondition("tipo = ?");
@@ -19893,7 +19900,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			stmt = con.prepareStatement(queryString);
 			index = 1;
-			if (superuser!=null && (!superuser.equals("")))
+			if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
 				stmt.setString(index++, superuser);
 			if (tipo!=null && (!tipo.equals("")))
 				stmt.setString(index++, tipo);

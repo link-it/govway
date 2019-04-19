@@ -483,6 +483,21 @@ public class ServletTestService extends HttpServlet {
 					p.put("redirectHop", hop+"");
 				}
 				
+				boolean absoluteUrl = true;
+				String absoluteUrlParam = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectAbsoluteUrl");
+				if(absoluteUrlParam!=null) {
+					absoluteUrl = Boolean.parseBoolean(absoluteUrlParam.trim());
+					p.put("redirectAbsoluteUrl", absoluteUrlParam+"");
+				}
+				
+				String headerLocationName = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectHeaderLocation");
+				if(headerLocationName!=null) {
+					headerLocationName = headerLocationName.trim();
+				}
+				else {
+					headerLocationName = HttpConstants.REDIRECT_LOCATION;
+				}
+				
 				if(hop<maxHop) {
 					p.remove("redirectHop");
 					p.put("redirectHop", (hop+1)+"");
@@ -494,9 +509,12 @@ public class ServletTestService extends HttpServlet {
 				}
 				
 				String redirectUrl = protocol+"://"+host+":"+port+contesto;
+				if(!absoluteUrl) {
+					redirectUrl = contesto;
+				}
 				redirectUrl = TransportUtils.buildLocationWithURLBasedParameter(p, redirectUrl, this.log);
 				
-				res.setHeader(HttpConstants.REDIRECT_LOCATION,redirectUrl);
+				res.setHeader(headerLocationName,redirectUrl);
 			
 				res.setStatus(returnCode);
 				

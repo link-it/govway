@@ -22,6 +22,8 @@
 
 package org.openspcoop2.message.rest;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Properties;
 
 import org.openspcoop2.message.constants.Costanti;
@@ -131,48 +133,109 @@ public class RestUtilities {
 		
 	}
 	
-	public static String buildPassReverseUrl(TransportRequestContext transportRequestContext, String baseUrl, String redirectLocationUrl) {
+	public static String buildPassReverseUrl(TransportRequestContext transportRequestContext, String baseUrl, String redirectLocationUrl, String prefixGatewayUrl) throws MalformedURLException {
                
 		String r = baseUrl;
 		if(r.contains("?")) {
 			r = baseUrl.split("\\?")[0];
 		}
-               
-		if(redirectLocationUrl.startsWith(r)) {
+         
+		URL uri = new URL(r);
+		String rRelative= uri.getPath();
+		
+		if(redirectLocationUrl.startsWith(r) || redirectLocationUrl.startsWith(rRelative)) {
 			
-			// Context path rappresenta il prefisso della richiesta contenente il contesto dell'applicazione (es. /openspcoop2),
-			// il protocollo e il servizio. Ad esempio /govway/spcoop/out
-			String contextPath = transportRequestContext.getWebContext();
-			if(contextPath.endsWith("/")==false) {
-				contextPath = contextPath + "/";
+//			if(redirectLocationUrl.startsWith(r)) {
+//				System.out.println("AbsoluteURL redirect["+redirectLocationUrl+"]");
+//			}
+//			else {
+//				System.out.println("RelativeURL redirect["+redirectLocationUrl+"]");
+//			}
+			
+			String contextPath = null;
+			if(prefixGatewayUrl==null) {
+				// Context path rappresenta il prefisso della richiesta contenente il contesto dell'applicazione (es. /openspcoop2),
+				// il protocollo e il servizio. Ad esempio /govway/spcoop/out
+				contextPath = transportRequestContext.getWebContext();
+				if(contextPath.endsWith("/")==false) {
+					contextPath = contextPath + "/";
+				}
+				String protocollo = transportRequestContext.getProtocolWebContext();
+				if(Costanti.CONTEXT_EMPTY.equals(protocollo)==false) {
+					contextPath = contextPath + protocollo + "/";
+				}
+				contextPath = contextPath + transportRequestContext.getFunction();
 			}
-			String protocollo = transportRequestContext.getProtocolWebContext();
-			if(Costanti.CONTEXT_EMPTY.equals(protocollo)==false) {
-				contextPath = contextPath + protocollo + "/";
-			}
-			contextPath = contextPath + transportRequestContext.getFunction();
-
+			
 			// Il suffisso contiene la parte della url ritornata dalla redirect senza la parte iniziale rappresentata dalla base url del servizio
 			String suffix = "";
-			if(redirectLocationUrl.equals(r)==false) {
-				suffix=redirectLocationUrl.substring(r.length());
+			if(redirectLocationUrl.startsWith(r)) {
+				if(redirectLocationUrl.equals(r)==false) {
+					suffix=redirectLocationUrl.substring(r.length());
+				}
+			}
+			else {
+				if(redirectLocationUrl.equals(rRelative)==false) {
+					suffix=redirectLocationUrl.substring(rRelative.length());
+				}
 			}
 			
 			// Viene costruita una nuova url contenente la richiesta iniziale e il nuovo suffisso,
 			// in modo che la url ritornata tramite la redirect possa contenere una nuova url che viene veicolata nuovamente sulla PdD
 			StringBuffer bf = new StringBuffer();
-			bf.append(contextPath);
-			if(contextPath.endsWith("/")==false) {
-				bf.append("/");
+			if(redirectLocationUrl.startsWith(r)) {
+				// absolute
+				if(prefixGatewayUrl!=null) {
+					prefixGatewayUrl = prefixGatewayUrl.trim();
+					bf.append(prefixGatewayUrl);
+					if(prefixGatewayUrl.endsWith("/")==false) {
+						bf.append("/");
+					}
+				}
+				else {
+					bf.append(contextPath);
+					if(contextPath.endsWith("/")==false) {
+						bf.append("/");
+					}
+				}
+			}
+			else {
+				// relative
+				if(prefixGatewayUrl!=null) {
+					URL urlPrefixGatewayUrl = new URL(prefixGatewayUrl);
+					String urlPrefixGatewayUrlAsString = urlPrefixGatewayUrl.getPath();
+					bf.append(urlPrefixGatewayUrlAsString);
+					if(urlPrefixGatewayUrlAsString.endsWith("/")==false) {
+						bf.append("/");
+					}
+				}
+				else {
+					bf.append(contextPath);
+					if(contextPath.endsWith("/")==false) {
+						bf.append("/");
+					}
+				}
 			}
 			bf.append(transportRequestContext.getInterfaceName());
 			if(suffix.startsWith("/")==false) {
 				bf.append("/");
 			}
 			bf.append(suffix);
+			
+//			if(redirectLocationUrl.startsWith(r)) {
+//				System.out.println("AbsoluteURL new["+bf.toString()+"]");
+//			}
+//			else {
+//				System.out.println("RelativeURL new["+bf.toString()+"]");
+//			}
+				
 			return bf.toString();
+			
 		}
 		else {
+			
+//			System.out.println("ProxyPass nop redirect["+redirectLocationUrl+"] relative["+rRelative+"] absolute["+r+"]");
+			
 			return redirectLocationUrl;
 		}
 	}

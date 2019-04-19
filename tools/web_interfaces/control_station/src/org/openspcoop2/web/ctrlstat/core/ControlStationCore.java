@@ -1359,6 +1359,16 @@ public class ControlStationCore {
 
 	/* --- COSTRUTTORI --- */
 
+	public static Boolean API = null;
+	public static synchronized void initAPIMode() {
+		if(API==null) {
+			API = true;
+		}
+	}
+	public static boolean isAPIMode() {
+		return API!=null ? API : false;
+	}
+	
 	protected boolean usedByApi = false;
 	public boolean isUsedByApi() {
 		return this.usedByApi;
@@ -1374,6 +1384,9 @@ public class ControlStationCore {
 		
 		if(initForApi) {
 			ControlStationCore.log = LoggerWrapperFactory.getLogger(ControlStationCore.class);
+			if(API==null) {
+				ControlStationCore.initAPIMode();
+			}
 		}
 		else {
 			ControlStationCore.checkInitLogger();

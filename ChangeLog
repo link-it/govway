@@ -12,6 +12,11 @@
 	  E' inoltre possibile utilizzare l'header Cache-Control attraverso le direttive 'no-cache', 'no-store' e 'max-age' 
 	  per ottenere e/o memorizzare le risposte in cache. Nella configurazione è possibile disabiltare una o più direttive.
 	  Infine il caching delle risposte è attivabile in funzione del return code http e del tipo di risposta ottenuta (fault).
+	- Gestita funzionalità ProxyReverse per header 'Location' e 'Content-Location' in modo da utilizzare i prefissi definiti per i protocolli.
+	- Risolto problema minore sulla console che non consentiva l'aggiunta di un applicativo o soggetto tra la lista degli autorizzati 
+	  se alla console ci si collegava con una utenza differente da quella utilizzata per creare l'applicativo o il soggetto.
+	- Nella creazione di una erogazione o fruizione di una API, tramite la console di gestione, 
+	  se l'API implementata definisce un connettore, questo viene proposto come connettore di default da utilizzare.
 
 2019-04-12  Andrea Poli <apoli@link.it>
 

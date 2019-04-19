@@ -45,6 +45,7 @@ import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
@@ -4888,6 +4889,48 @@ public class ConfigurazionePdDReader {
 			c = new ResponseCachingConfigurazioneGenerale();
 		}
 		return c.getCache();
+	}
+	
+	public ConfigurazioneProtocollo getConfigurazioneProtocollo(Connection connectionPdD, String protocollo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		Configurazione config = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
+		ConfigurazioneProtocollo configProtocollo = null;
+		if(config.getProtocolli()!=null && config.getProtocolli().sizeProtocolloList()>0) {
+			for (ConfigurazioneProtocollo check : config.getProtocolli().getProtocolloList()) {
+				if(check.getNome().equals(protocollo)) {
+					configProtocollo = check;
+					break;
+				}
+			}
+		}
+		if(configProtocollo==null) {
+			configProtocollo = new ConfigurazioneProtocollo();
+			configProtocollo.setNome(protocollo);
+		}
+		if(configProtocollo.getUrlInvocazioneServizioPD()==null || configProtocollo.getUrlInvocazioneServizioPA()==null) {
+			initConfigurazioneProtocolloUrlInvocazione(configProtocollo);
+		}
+		return configProtocollo;
+	}
+	
+	public static void initConfigurazioneProtocolloUrlInvocazione(ConfigurazioneProtocollo configProtocollo) throws DriverConfigurazioneException {
+		try {
+			ProtocolFactoryManager pManager = ProtocolFactoryManager.getInstance();
+			IProtocolFactory<?> pFactory = pManager.getProtocolFactoryByName(configProtocollo.getNome());
+			String context = "";
+			if(pFactory.getManifest().getWeb().sizeContextList()>0) {
+				context = pFactory.getManifest().getWeb().getContext(0).getName();
+			}
+			
+			if(configProtocollo.getUrlInvocazioneServizioPD()==null) {
+				configProtocollo.setUrlInvocazioneServizioPD(CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(context));
+			}
+			
+			if(configProtocollo.getUrlInvocazioneServizioPA()==null) {
+				configProtocollo.setUrlInvocazioneServizioPA(CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(context));
+			}
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
 	}
 
 

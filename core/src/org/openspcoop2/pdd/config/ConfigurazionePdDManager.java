@@ -35,6 +35,7 @@ import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Cache;
+import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
@@ -972,6 +973,10 @@ public class ConfigurazionePdDManager {
 	
 	public Cache getConfigurazioneResponseCachingCache() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		return this.configurazionePdDReader.getConfigurazioneResponseCachingCache(this.getConnection());
+	}
+	
+	public ConfigurazioneProtocollo getConfigurazioneProtocollo(String protocollo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getConfigurazioneProtocollo(this.getConnection(), protocollo);
 	}
 	
 	public List<Object> getExtendedInfoConfigurazione() throws DriverConfigurazioneException{

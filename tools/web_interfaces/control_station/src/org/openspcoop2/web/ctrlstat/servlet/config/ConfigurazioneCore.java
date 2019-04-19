@@ -57,8 +57,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
-import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
@@ -415,20 +414,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			configProtocollo.setNome(protocollo);
 		}
 		if(configProtocollo.getUrlInvocazioneServizioPD()==null || configProtocollo.getUrlInvocazioneServizioPA()==null) {
-			ProtocolFactoryManager pManager = ProtocolFactoryManager.getInstance();
-			IProtocolFactory<?> pFactory = pManager.getProtocolFactoryByName(protocollo);
-			String context = "";
-			if(pFactory.getManifest().getWeb().sizeContextList()>0) {
-				context = pFactory.getManifest().getWeb().getContext(0).getName();
-			}
-			
-			if(configProtocollo.getUrlInvocazioneServizioPD()==null) {
-				configProtocollo.setUrlInvocazioneServizioPD(ConfigurazioneCostanti.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(context));
-			}
-			
-			if(configProtocollo.getUrlInvocazioneServizioPA()==null) {
-				configProtocollo.setUrlInvocazioneServizioPA(ConfigurazioneCostanti.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(context));
-			}
+			ConfigurazionePdDReader.initConfigurazioneProtocolloUrlInvocazione(configProtocollo);
 		}
 		
 		return configProtocollo;

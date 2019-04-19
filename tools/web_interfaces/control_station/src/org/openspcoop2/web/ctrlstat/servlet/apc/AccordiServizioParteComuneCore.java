@@ -47,6 +47,7 @@ import org.openspcoop2.core.registry.MessagePart;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.ParameterType;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -62,6 +63,12 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.rest.ApiFactory;
+import org.openspcoop2.utils.rest.ApiFormats;
+import org.openspcoop2.utils.rest.ApiReaderConfig;
+import org.openspcoop2.utils.rest.IApiReader;
+import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
@@ -71,9 +78,12 @@ import org.openspcoop2.web.ctrlstat.core.UtilitiesSQLQuery;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.ctrlstat.registro.GestoreRegistroServiziRemoto;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaAdd;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -1806,6 +1816,82 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			return null;
 		}catch(Throwable t){
 			log.error("Compare failed: "+t.getMessage(),t);
+			return null;
+		}
+	}
+	
+	public String readEndpoint(AccordoServizioParteComune as, String portTypeParam, String servcorr, 
+			BinaryParameter wsdlimpler, BinaryParameter wsdlimplfru) {
+		if(as==null) {
+			return null;
+		}
+		String portType = portTypeParam;
+		if("".equals(portTypeParam)) {
+			portType = null;
+		}
+		try {
+			FormatoSpecifica formato = as.getFormatoSpecifica();
+			String urlSuggerita = null;
+			switch (formato) {
+			case OPEN_API_3:
+			case SWAGGER_2:
+			case WADL:
+				if(as.getByteWsdlConcettuale()!=null) {
+					IApiReader apiReader = null;
+					if(FormatoSpecifica.OPEN_API_3.equals(formato)) {
+						apiReader = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+					}
+					else if(FormatoSpecifica.SWAGGER_2.equals(formato)) {
+						apiReader = ApiFactory.newApiReader(ApiFormats.SWAGGER_2);
+					}
+					else {
+						apiReader = ApiFactory.newApiReader(ApiFormats.WADL);
+					}
+					ApiReaderConfig config = new ApiReaderConfig();
+					config.setProcessInclude(false);
+					config.setProcessInlineSchema(false);
+					apiReader.init(LoggerWrapperFactory.getLogger(AccordiServizioParteSpecificaAdd.class), as.getByteWsdlConcettuale(), config);
+					Api api = apiReader.read();
+					if(api.getBaseURL()!=null) {
+						urlSuggerita = api.getBaseURL().toString();
+					}
+				}
+				break;
+			case WSDL_11:
+				byte [] wsdl = null;
+				if(ServletUtils.isCheckBoxEnabled(servcorr)) {
+					if(wsdlimplfru!=null && wsdlimplfru.getValue()!=null) {
+						wsdl = wsdlimplfru.getValue();
+					}
+					else {
+						wsdl = as.getByteWsdlLogicoFruitore();
+					}
+				}
+				else{
+					if(wsdlimpler!=null && wsdlimpler.getValue()!=null) {
+						wsdl = wsdlimpler.getValue();
+					}
+					else {
+						wsdl = as.getByteWsdlLogicoErogatore();
+					}
+				}
+				if(wsdl==null) {
+					wsdl = as.getByteWsdlConcettuale();
+				}
+				if(wsdl!=null) {
+					WSDLUtilities utilities = new WSDLUtilities(org.openspcoop2.utils.xml.XMLUtils.getInstance());
+					urlSuggerita = utilities.getServiceEndpoint(wsdl, portType);
+				}
+				break;
+			}
+			return urlSuggerita;
+		}catch(Throwable t){
+			if( portType!=null || !FormatoSpecifica.WSDL_11.equals(as.getFormatoSpecifica()) ) {
+				log.error("Read endpoint from interface failed: "+t.getMessage(),t);
+			}
+			else {
+				log.debug("Read endpoint from interface failed: "+t.getMessage(),t);
+			}
 			return null;
 		}
 	}

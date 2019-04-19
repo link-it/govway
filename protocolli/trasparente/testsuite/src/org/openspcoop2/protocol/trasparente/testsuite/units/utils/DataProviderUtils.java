@@ -187,7 +187,10 @@ public class DataProviderUtils {
 	}
 	
 	private static Object[] returnCodeRedirect() {
-		return new Object[] {301, 302, 303, 304, 307};
+		return new Object[] {301, 302, 303, 304, 307,
+							201, // aggiunto per verificare che anche in questo caso sia corretto header Location (proxy pass revers)
+							204  // aggiunto per verificare che anche in caso sia corretto header Content-Location (proxy pass revers)
+		};
 	}
 	
 	private static Object[] contentTypeJSONLst(){

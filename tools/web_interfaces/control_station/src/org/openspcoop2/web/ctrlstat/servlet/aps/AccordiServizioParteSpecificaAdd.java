@@ -586,6 +586,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.fruizioneAutorizzazione = null;
 					}
 					
+					this.url = null;
+					
 					this.provider = null;
 					this.tiposervizio = null;
 
@@ -601,6 +603,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				
 				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE)){
 					this.nomeservizio = "";
+					this.url = null;
 				}
 				
 			}
@@ -683,6 +686,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}					
 				}
 			}
+			
+			// Calcolo url presente nell'API
+			String urlAPI = apcCore.readEndpoint(as, this.portType, this.servcorr, this.wsdlimpler, this.wsdlimplfru);
+			//System.out.println("Endpoint ricavato dall'API ["+urlSuggerita+"]");
 			
 			//String profiloValue = profiloSoggettoErogatore;
 			//if(this.profilo!=null && !"".equals(this.profilo) && !"-".equals(this.profilo)){
@@ -1448,11 +1455,23 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 							listExtendedConnettore, forceEnableConnettore);
+					
+					// url suggerita
+					if(urlAPI!=null) {
+						for (DataElement dataElement : dati) {
+							if(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL.equals(dataElement.getName())) {
+								if(dataElement.getValue()==null || dataElement.getValue().endsWith("://")) {
+									dataElement.setValue(urlAPI);
+								}
+								break;
+							}
+						}
+					}
 				}
 					
 				// aggiunta campi custom
 				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
-
+				
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -1606,6 +1625,19 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 							listExtendedConnettore, forceEnableConnettore);
+					
+					// url suggerita
+					if(urlAPI!=null) {
+						for (DataElement dataElement : dati) {
+							if(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL.equals(dataElement.getName())) {
+								if(dataElement.getValue()==null || dataElement.getValue().endsWith("://")) {
+									dataElement.setValue(urlAPI);
+								}
+								break;
+							}
+						}
+					}
+					
 				}
 
 				// aggiunta campi custom
