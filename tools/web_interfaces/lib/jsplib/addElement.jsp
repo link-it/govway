@@ -112,8 +112,28 @@ function CheckDati() {
 	    	}
 	    }
 	}
+	
+	function mostraDataElementInfoModal(title,body){
+		$("#dataElementInfoModal").prev().children('span').text(title);
+		$("#dataElementInfoModalBody").html(body);
+		$("#dataElementInfoModal").dialog("open");
+	}
 
         $(document).ready(function(){
+
+        	// info
+        	if($(".iconInfoBox").length>0){
+        		$(".iconInfoBox").click(function(){
+        			var iconInfoBoxId = $(this).attr('id');
+        			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
+        			console.log(idx);
+        			if(idx) {
+						var label = $("#hidden_title_iconInfo_"+ idx).val();
+						var body = $("#hidden_body_iconInfo_"+ idx).val();
+						mostraDataElementInfoModal(label,body);
+        			}
+    			});
+        	}
                 //date time tracciamento
                 //date time diagnostica
                 $(":input[name='datainizio']").datepicker({dateFormat: 'yy-mm-dd'});
@@ -179,6 +199,9 @@ function CheckDati() {
 		<jsp:include page="/jsplib/templateFooter.jsp" flush="true" />
 	</tbody>
 </table>
+<div id="dataElementInfoModal" title="Info">
+	<div id="dataElementInfoModalBody" class="contenutoModal"></div>
+</div>
 <jsp:include page="/jsplib/conferma.jsp" flush="true" />
 </body>
 </html>

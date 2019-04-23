@@ -35,7 +35,9 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -9472,6 +9474,55 @@ public class DriverConfigurazioneDB_LIB {
 		}
 	}
 	
+	private static void _normalizePositions(Trasformazioni trasformazioni) {
+		if(trasformazioni==null || trasformazioni.sizeRegolaList()<=0) {
+			return;
+		}
+		
+		List<Integer> posizioni = new ArrayList<Integer>();
+		HashMap<Integer, TrasformazioneRegola> regole = new HashMap<>();
+		for (TrasformazioneRegola regola : trasformazioni.getRegolaList()) {
+			posizioni.add(regola.getPosizione());
+			regole.put(regola.getPosizione(), regola);
+		}
+		while(trasformazioni.sizeRegolaList()>0) {
+			trasformazioni.removeRegola(0);
+		}
+		Collections.sort( posizioni );
+		int posNew = 1;
+		for (Integer pos : posizioni) {
+			TrasformazioneRegola regola = regole.get(pos);
+			regola.setPosizione(posNew);
+			trasformazioni.addRegola(regola);
+			posNew++;
+		}
+		
+		// normalizzazione delle risposte
+		for (TrasformazioneRegola regola : trasformazioni.getRegolaList()) {
+			
+			if(regola.getRispostaList()==null || regola.sizeRispostaList()<=0){
+				continue;
+			}
+			
+			List<Integer> posizioniRisposta = new ArrayList<Integer>();
+			HashMap<Integer, TrasformazioneRegolaRisposta> regoleRisposta = new HashMap<>();
+			for (TrasformazioneRegolaRisposta regolaRisposta : regola.getRispostaList()) {
+				posizioniRisposta.add(regolaRisposta.getPosizione());
+				regoleRisposta.put(regolaRisposta.getPosizione(), regolaRisposta);
+			}
+			while(regola.sizeRispostaList()>0) {
+				regola.removeRisposta(0);
+			}
+			Collections.sort( posizioniRisposta );
+			int posRispostaNew = 1;
+			for (Integer posRisposta : posizioniRisposta) {
+				TrasformazioneRegolaRisposta regolaRisposta = regoleRisposta.get(posRisposta);
+				regolaRisposta.setPosizione(posRispostaNew);
+				regola.addRisposta(regolaRisposta);
+				posRispostaNew++;
+			}
+		}
+	}
 	
 	private static void CRUDTrasformazioni(int type, Connection con, Trasformazioni trasformazioni, 
 			Long idProprietario, boolean portaDelegata) throws Exception {
@@ -9486,6 +9537,8 @@ public class DriverConfigurazioneDB_LIB {
 				if(trasformazioni==null || trasformazioni.sizeRegolaList()<=0) {
 					break;
 				}
+				
+				_normalizePositions(trasformazioni);
 				
 				for (TrasformazioneRegola regola : trasformazioni.getRegolaList()) {
 					
@@ -9856,6 +9909,9 @@ public class DriverConfigurazioneDB_LIB {
 				
 				// Creo la nuova immagine
 				if(trasformazioni!=null) {
+					
+					_normalizePositions(trasformazioni);
+					
 					CRUDTrasformazioni(CREATE, con, trasformazioni, idProprietario, portaDelegata);
 				}
 				break;

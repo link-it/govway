@@ -33,7 +33,8 @@
     },
     trimValue: true,
     allowDuplicates: false,
-    triggerChange: true
+    triggerChange: true,
+    allowWhiteSpaces: false
   };
 
   /**
@@ -466,8 +467,16 @@
          if (self.options.freeInput && (keyCombinationInList(event, self.options.confirmKeys) || maxLengthReached)) {
             // Only attempt to add a tag if there is data in the field
             if (text.length !== 0) {
-               self.add(maxLengthReached ? text.substr(0, self.options.maxChars) : text);
-               $input.val('');
+            	if(self.options.allowWhiteSpaces){
+                    self.add(maxLengthReached ? text.substr(0, self.options.maxChars) : text);
+            	} else { // split 
+            		var textSplit = text.split(' ');
+            		for (var i = 0; i < textSplit.length; i++) {
+						var text_i = textSplit[i];
+						self.add(maxLengthReached ? text_i.substr(0, self.options.maxChars) : text_i);
+					}
+            	}
+            	$input.val('');
             }
 
             // If the field is empty, let the event triggered fire as usual

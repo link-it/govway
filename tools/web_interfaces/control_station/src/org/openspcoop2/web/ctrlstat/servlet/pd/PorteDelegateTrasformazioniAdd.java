@@ -229,8 +229,8 @@ public class PorteDelegateTrasformazioniAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addTrasformazioneToDatiOpAdd(dati, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
-						apc.getServiceBinding());
+				dati = porteDelegateHelper.addTrasformazioneToDatiOpAdd(dati, portaDelegata, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
+						apc.getServiceBinding(),true);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -258,8 +258,8 @@ public class PorteDelegateTrasformazioniAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addTrasformazioneToDatiOpAdd(dati, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
-						apc.getServiceBinding());
+				dati = porteDelegateHelper.addTrasformazioneToDatiOpAdd(dati, portaDelegata, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
+						apc.getServiceBinding(),true);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);

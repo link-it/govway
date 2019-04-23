@@ -206,8 +206,8 @@ public class PorteApplicativeTrasformazioniAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneToDatiOpAdd(dati, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
-						apc.getServiceBinding());
+				dati = porteApplicativeHelper.addTrasformazioneToDatiOpAdd(dati, pa, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
+						apc.getServiceBinding(),false);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
 				
@@ -234,8 +234,8 @@ public class PorteApplicativeTrasformazioniAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneToDatiOpAdd(dati, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
-						apc.getServiceBinding());
+				dati = porteApplicativeHelper.addTrasformazioneToDatiOpAdd(dati, pa, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
+						apc.getServiceBinding(),false);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
 				

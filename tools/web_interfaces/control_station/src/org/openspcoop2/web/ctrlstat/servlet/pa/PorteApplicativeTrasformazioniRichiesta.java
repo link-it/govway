@@ -90,7 +90,7 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 			
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
 			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-			int idInt = Integer.parseInt(idPorta);
+			long idInt = Long.parseLong(idPorta);
 			String idsogg = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 			String idAsps = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
 			if(idAsps == null) 
@@ -126,6 +126,7 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 						org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
 			
 			BinaryParameter trasformazioneContenutoTemplate = porteApplicativeHelper.getBinaryParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE);
+			String trasformazioneContenutoTipoCheck = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK);
 			String trasformazioneRichiestaContentType = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONTENT_TYPE);
 			String trasformazioneRestAbilitatoS = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REST_TRANSFORMATION);
 			boolean trasformazioneRestAbilitato =  trasformazioneRestAbilitatoS != null ? ServletUtils.isCheckBoxEnabled(trasformazioneRestAbilitatoS) : false;
@@ -141,6 +142,7 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 					trasformazioneSoapEnvelopeTipoS != null ? org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(trasformazioneSoapEnvelopeTipoS) : 
 						org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
 			BinaryParameter trasformazioneSoapEnvelopeTemplate = porteApplicativeHelper.getBinaryParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE);
+			String trasformazioneSoapEnvelopeTipoCheck = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO_CHECK);
 			
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
@@ -166,6 +168,16 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 					porteApplicativeHelper.deleteBinaryParameters(trasformazioneContenutoTemplate, trasformazioneSoapEnvelopeTemplate);
 				}
 				
+				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO)) {
+					trasformazioneContenutoTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_TIPO;
+					porteApplicativeHelper.deleteBinaryParameters(trasformazioneContenutoTemplate);
+				}
+				
+				if(postBackElementName.equals(trasformazioneContenutoTemplate.getName())) {
+					if(StringUtils.isEmpty(trasformazioneContenutoTipoCheck))
+						trasformazioneContenutoTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
+				}
+				
 				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_TRANSFORMATION)) {
 					porteApplicativeHelper.deleteBinaryParameters(trasformazioneSoapEnvelopeTemplate);
 					if(trasformazioneSoapAbilitato) {
@@ -183,6 +195,16 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 					}
 				}
 				
+				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO)) {
+					trasformazioneSoapEnvelopeTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_TIPO;
+					porteApplicativeHelper.deleteBinaryParameters(trasformazioneSoapEnvelopeTemplate);
+				}
+				
+				if(postBackElementName.equals(trasformazioneSoapEnvelopeTemplate.getName())) {
+					if(StringUtils.isEmpty(trasformazioneSoapEnvelopeTipoCheck))
+						trasformazioneSoapEnvelopeTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
+				}
+				
 				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REST_TRANSFORMATION)) {
 					if(trasformazioneRestAbilitato) {
 						trasformazioneRestMethod = "";
@@ -197,8 +219,9 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 			// parametri visualizzazione link
 			String servletTrasformazioniRichiestaHeadersList = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_HEADER_LIST;
 			String servletTrasformazioniRichiestaParametriList = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_LIST;
-			int numeroTrasformazioniRichiestaHeaders= oldRegola.getRichiesta() != null ? oldRegola.getRichiesta().sizeHeaderList() : 0;
-			int numeroTrasformazioniRichiestaParametri = oldRegola.getRichiesta() != null ? oldRegola.getRichiesta().sizeParametroUrlList() : 0;
+			TrasformazioneRegolaRichiesta oldRichiesta = oldRegola.getRichiesta();
+			int numeroTrasformazioniRichiestaHeaders= oldRichiesta != null ? oldRichiesta.sizeHeaderList() : 0;
+			int numeroTrasformazioniRichiestaParametri = oldRichiesta != null ? oldRichiesta.sizeParametroUrlList() : 0;
 			
 			List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaHeaders = new ArrayList<Parameter>();
 			parametriInvocazioneServletTrasformazioniRichiestaHeaders.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
@@ -249,9 +272,8 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 				
 				// primo accesso
 				if(trasformazioneContenutoAbilitatoS == null) {
-					TrasformazioneRegolaRichiesta richiesta = oldRegola.getRichiesta();
 					
-					if(richiesta == null) {
+					if(oldRichiesta == null) {
 						trasformazioneContenutoAbilitato = false;
 						trasformazioneContenutoTipo = org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
 						trasformazioneRichiestaContentType = "";
@@ -264,13 +286,13 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 						trasformazioneRestMethod = "";
 						trasformazioneRestPath = ""; 
 					} else {
-						trasformazioneContenutoAbilitato = richiesta.getConversione();
-						trasformazioneContenutoTipo = StringUtils.isNotEmpty(richiesta.getConversioneTipo()) ? 
-								org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(richiesta.getConversioneTipo()) : org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
-						trasformazioneContenutoTemplate.setValue(richiesta.getConversioneTemplate());
-						trasformazioneRichiestaContentType = StringUtils.isNotEmpty(richiesta.getContentType()) ? richiesta.getContentType() : "";
+						trasformazioneContenutoAbilitato = oldRichiesta.getConversione();
+						trasformazioneContenutoTipo = StringUtils.isNotEmpty(oldRichiesta.getConversioneTipo()) ? 
+								org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(oldRichiesta.getConversioneTipo()) : org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
+						trasformazioneContenutoTemplate.setValue(oldRichiesta.getConversioneTemplate());
+						trasformazioneRichiestaContentType = StringUtils.isNotEmpty(oldRichiesta.getContentType()) ? oldRichiesta.getContentType() : "";
 						
-						if(richiesta.getTrasformazioneSoap() == null) {
+						if(oldRichiesta.getTrasformazioneSoap() == null) {
 							trasformazioneSoapAbilitato = false;
 							trasformazioneSoapAction = "";
 							trasformazioneSoapEnvelope = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_DISABILITATO;
@@ -278,10 +300,10 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 							trasformazioneSoapVersion = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_SOAP_VERSION_11;
 						} else {
 							trasformazioneSoapAbilitato = true;
-							trasformazioneSoapAction = StringUtils.isNotEmpty(richiesta.getTrasformazioneSoap().getSoapAction()) ? richiesta.getTrasformazioneSoap().getSoapAction() : "";
+							trasformazioneSoapAction = StringUtils.isNotEmpty(oldRichiesta.getTrasformazioneSoap().getSoapAction()) ? oldRichiesta.getTrasformazioneSoap().getSoapAction() : "";
 							
-							if(richiesta.getTrasformazioneSoap().isEnvelope()) {
-								if(richiesta.getTrasformazioneSoap().isEnvelopeAsAttachment()) {
+							if(oldRichiesta.getTrasformazioneSoap().isEnvelope()) {
+								if(oldRichiesta.getTrasformazioneSoap().isEnvelopeAsAttachment()) {
 									trasformazioneSoapEnvelope = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT;
 								} else {
 									trasformazioneSoapEnvelope = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_BODY;
@@ -290,12 +312,12 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 								trasformazioneSoapEnvelope = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_DISABILITATO;
 							}
 							
-							trasformazioneSoapEnvelopeTipo = StringUtils.isNotEmpty(richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo()) ? 
-									org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo())
+							trasformazioneSoapEnvelopeTipo = StringUtils.isNotEmpty(oldRichiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo()) ? 
+									org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(oldRichiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo())
 									: org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
-							if(richiesta.getTrasformazioneSoap().getVersione() != null) {
+							if(oldRichiesta.getTrasformazioneSoap().getVersione() != null) {
 								
-								switch (richiesta.getTrasformazioneSoap().getVersione()) {
+								switch (oldRichiesta.getTrasformazioneSoap().getVersione()) {
 								case _1_2:
 									trasformazioneSoapVersion = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_SOAP_VERSION_12;
 									break;
@@ -307,27 +329,27 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 							}else {
 								trasformazioneSoapVersion = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_SOAP_VERSION_11;
 							}
-							trasformazioneSoapEnvelopeTemplate.setValue(richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate()); 
+							trasformazioneSoapEnvelopeTemplate.setValue(oldRichiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate()); 
 						}
 							
 						
-						if(richiesta.getTrasformazioneRest() == null) {
+						if(oldRichiesta.getTrasformazioneRest() == null) {
 							trasformazioneRestAbilitato = false;
 							trasformazioneRestMethod = "";
 							trasformazioneRestPath = "";
 						} else {
 							trasformazioneRestAbilitato = true;
-							trasformazioneRestMethod = StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getMetodo()) ? richiesta.getTrasformazioneRest().getMetodo() : "";
-							trasformazioneRestPath = StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getPath()) ? richiesta.getTrasformazioneRest().getPath() : "";
+							trasformazioneRestMethod = StringUtils.isNotEmpty(oldRichiesta.getTrasformazioneRest().getMetodo()) ? oldRichiesta.getTrasformazioneRest().getMetodo() : "";
+							trasformazioneRestPath = StringUtils.isNotEmpty(oldRichiesta.getTrasformazioneRest().getPath()) ? oldRichiesta.getTrasformazioneRest().getPath() : "";
 						}
  
 					}
 				}
 
-				dati = porteApplicativeHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, dati, idTrasformazioneS, trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
-						trasformazioneContenutoTemplate, trasformazioneRichiestaContentType, serviceBindingMessage, trasformazioneRestAbilitato, 
+				dati = porteApplicativeHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, dati, idInt, oldRichiesta, false, idTrasformazioneS, trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
+						trasformazioneContenutoTemplate, trasformazioneContenutoTipoCheck, trasformazioneRichiestaContentType, serviceBindingMessage, trasformazioneRestAbilitato, 
 						trasformazioneRestMethod, trasformazioneRestPath, trasformazioneSoapAbilitato, trasformazioneSoapAction, 
-						trasformazioneSoapVersion, trasformazioneSoapEnvelope, trasformazioneSoapEnvelopeTipo, trasformazioneSoapEnvelopeTemplate, 
+						trasformazioneSoapVersion, trasformazioneSoapEnvelope, trasformazioneSoapEnvelopeTipo, trasformazioneSoapEnvelopeTemplate, trasformazioneSoapEnvelopeTipoCheck, 
 						servletTrasformazioniRichiestaHeadersList, parametriInvocazioneServletTrasformazioniRichiestaHeaders, numeroTrasformazioniRichiestaHeaders,
 						servletTrasformazioniRichiestaParametriList, parametriInvocazioneServletTrasformazioniRichiestaParametri, numeroTrasformazioniRichiestaParametri);
 				
@@ -348,10 +370,10 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, dati, idTrasformazioneS, trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
-						trasformazioneContenutoTemplate, trasformazioneRichiestaContentType, serviceBindingMessage, trasformazioneRestAbilitato, 
+				dati = porteApplicativeHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, dati, idInt, oldRichiesta, false, idTrasformazioneS, trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
+						trasformazioneContenutoTemplate, trasformazioneContenutoTipoCheck, trasformazioneRichiestaContentType, serviceBindingMessage, trasformazioneRestAbilitato, 
 						trasformazioneRestMethod, trasformazioneRestPath, trasformazioneSoapAbilitato, trasformazioneSoapAction, 
-						trasformazioneSoapVersion, trasformazioneSoapEnvelope, trasformazioneSoapEnvelopeTipo, trasformazioneSoapEnvelopeTemplate, 
+						trasformazioneSoapVersion, trasformazioneSoapEnvelope, trasformazioneSoapEnvelopeTipo, trasformazioneSoapEnvelopeTemplate, trasformazioneSoapEnvelopeTipoCheck,
 						servletTrasformazioniRichiestaHeadersList, parametriInvocazioneServletTrasformazioniRichiestaHeaders, numeroTrasformazioniRichiestaHeaders,
 						servletTrasformazioniRichiestaParametriList, parametriInvocazioneServletTrasformazioniRichiestaParametri, numeroTrasformazioniRichiestaParametri);
 				
@@ -584,10 +606,13 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 
 			}
 			
-			dati = porteApplicativeHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, dati, trasformazioneAggiornata.getId() + "", trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
-					trasformazioneContenutoTemplate, trasformazioneRichiestaContentType, serviceBindingMessage, trasformazioneRestAbilitato, 
+			trasformazioneContenutoTipoCheck= "";
+			trasformazioneSoapEnvelopeTipoCheck = "";
+			
+			dati = porteApplicativeHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, dati, idInt, richiesta, false, trasformazioneAggiornata.getId() + "", trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
+					trasformazioneContenutoTemplate, trasformazioneContenutoTipoCheck, trasformazioneRichiestaContentType, serviceBindingMessage, trasformazioneRestAbilitato, 
 					trasformazioneRestMethod, trasformazioneRestPath, trasformazioneSoapAbilitato, trasformazioneSoapAction, 
-					trasformazioneSoapVersion, trasformazioneSoapEnvelope, trasformazioneSoapEnvelopeTipo, trasformazioneSoapEnvelopeTemplate, 
+					trasformazioneSoapVersion, trasformazioneSoapEnvelope, trasformazioneSoapEnvelopeTipo, trasformazioneSoapEnvelopeTemplate, trasformazioneSoapEnvelopeTipoCheck,
 					servletTrasformazioniRichiestaHeadersList, parametriInvocazioneServletTrasformazioniRichiestaHeaders, numeroTrasformazioniRichiestaHeaders,
 					servletTrasformazioniRichiestaParametriList, parametriInvocazioneServletTrasformazioniRichiestaParametri, numeroTrasformazioniRichiestaParametri);
 			

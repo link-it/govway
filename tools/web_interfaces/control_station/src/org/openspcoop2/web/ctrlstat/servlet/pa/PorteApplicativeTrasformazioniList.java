@@ -27,17 +27,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.TrasformazioneRegola;
+import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
@@ -55,6 +60,7 @@ public class PorteApplicativeTrasformazioniList extends Action {
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		HttpSession session = request.getSession(true);
+		String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 		// Inizializzo PageData
 		PageData pd = new PageData();
@@ -67,11 +73,48 @@ public class PorteApplicativeTrasformazioniList extends Action {
 
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
-			String idPorta = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-			String nomePorta = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
-	
+			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
+			String cambiaPosizione = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE);
+			String idTrasformazioneS = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE);
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
+			
+			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
+			if(StringUtils.isNotEmpty(cambiaPosizione)) {
+				long idTrasformazione = Long.parseLong(idTrasformazioneS);
+				PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta));
+				
+				Trasformazioni trasformazioni = portaApplicativa.getTrasformazioni();
+				if(trasformazioni != null) {
+					TrasformazioneRegola regolaToMove = null;
+					for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+						if(reg.getId().longValue() == idTrasformazione) {
+							regolaToMove = reg;
+							break;
+						}
+					}
+					
+					int posizioneAttuale = regolaToMove.getPosizione();
+					int posizioneNuova = cambiaPosizione.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SU) ? (posizioneAttuale - 1) : (posizioneAttuale + 1);
+					
+					TrasformazioneRegola regolaToSwitch = null;
+					for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+						if(reg.getPosizione() == posizioneNuova) {
+							regolaToSwitch = reg;
+							break;
+						}
+					}
+					
+					regolaToMove.setPosizione(posizioneNuova);
+					regolaToSwitch.setPosizione(posizioneAttuale);
+					
+					porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), portaApplicativa);
+					if(CostantiControlStation.VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_REGOLA_TRASFORMAZIONE)
+						pd.setMessage(CostantiControlStation.MESSAGGIO_CONFERMA_REGOLA_TRASFORMAZIONE_SPOSTATA_CORRETTAMENTE, MessageType.INFO);
+				}
+			}
 	
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
@@ -80,7 +123,7 @@ public class PorteApplicativeTrasformazioniList extends Action {
 			
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 			
-			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
+			
 			List<TrasformazioneRegola> lista = porteApplicativeCore.porteAppTrasformazioniList(Long.parseLong(idPorta), ricerca);
 			
 			porteApplicativeHelper.preparePorteAppTrasformazioniRegolaList(nomePorta, ricerca, lista);

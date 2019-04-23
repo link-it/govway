@@ -45,6 +45,7 @@ import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.Scope;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.TrasformazioneRegola;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
 import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
@@ -1486,4 +1487,25 @@ public class PorteDelegateCore extends ControlStationCore {
 		}
 	}
 	
+	public List<TrasformazioneRegolaApplicabilitaServizioApplicativo> porteDelegateTrasformazioniServiziApplicativiAutorizzatiList(long idPortaApplicativa, long idTrasformazione, ISearch ricerca) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "porteDelegateTrasformazioniServiziApplicativiAutorizzatiList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().porteDelegateTrasformazioniServiziApplicativiList(idPortaApplicativa, idTrasformazione, ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
 }

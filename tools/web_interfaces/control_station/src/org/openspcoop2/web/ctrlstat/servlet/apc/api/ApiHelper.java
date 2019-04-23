@@ -53,6 +53,7 @@ import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
@@ -377,9 +378,12 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
 		de.setValue(getLabelIdAccordoSenzaReferente(tipoProtocollo, idAccordo));
 		listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI);
-		de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
-		de.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, ApiCostanti.APC_API_LABEL_APS_INFO_GENERALI));
-		de.setIcon(ApiCostanti.APC_API_ICONA_MODIFICA_API);
+		DataElementImage image = new DataElementImage();
+		
+		image.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
+		image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, ApiCostanti.APC_API_LABEL_APS_INFO_GENERALI));
+		image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
+		de.setImage(image);
 		dati.addElement(de);
 		
 		
@@ -441,10 +445,12 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE);
 			de.setValue(this.getLabelNomeSoggetto(tipoProtocollo,as.getSoggettoReferente().getTipo(),as.getSoggettoReferente().getNome())); 
 			de.setType(DataElementType.TEXT);
+			image = new DataElementImage();
 			listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_SOGGETTO_REFERENTE);
-			de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
-			de.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE));
-			de.setIcon(ApiCostanti.APC_API_ICONA_MODIFICA_API);
+			image.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
+			image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE));
+			image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
+			de.setImage(image);
 			dati.addElement(de);
 		}
 		
@@ -497,16 +503,19 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		listParametersApiWsdlChange.add(pTipoAccordo);
 		listParametersApiWsdlChange.add(pTipoWsdl);
 		listParametersApiWsdlChange.add(pNascondiSezioneDownload);
+		image = new DataElementImage();
 		if(this.isModalitaStandard()) {
-			de.addUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, listParametersApiWsdlChange.toArray(new Parameter[1]));
+			image.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, listParametersApiWsdlChange.toArray(new Parameter[1]));
 		}
 		else {
 			listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_GESTIONE_SPECIFICA_INTERFACCE);
-			de.addUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
+			image.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
 		}
-		de.addToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, ApiCostanti.APC_API_LABEL_PARAMETRO_INTERFACCIA));
-		de.addIcon(ApiCostanti.APC_API_ICONA_MODIFICA_API);
-		de.addTarget(TargetType.SELF);
+		image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, ApiCostanti.APC_API_LABEL_PARAMETRO_INTERFACCIA));
+		image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
+		image.setTarget(TargetType.SELF);
+		
+		de.addImage(image);
 		// download
 		if(download) {
 			List<Parameter> listParametersApiWsdlDownload = new ArrayList<>();
@@ -516,10 +525,14 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			listParametersApiWsdlDownload.add(pIdAccordoDownload);
 			listParametersApiWsdlDownload.add(pTipoDocumentoDownload);
 			listParametersApiWsdlDownload.add(pTipoAccordoDownload);
-			de.addUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, listParametersApiWsdlDownload.toArray(new Parameter[1]));
-			de.addToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_DOWNLOAD_DOCUMENTO_INTERFACCIA_TOOLTIP_CON_PARAMETRO, ApiCostanti.APC_API_LABEL_PARAMETRO_INTERFACCIA));
-			de.addIcon(ApiCostanti.APC_API_ICONA_DOWNLOAD_DOCUMENTO_INTERFACCIA);
-			de.addTarget(TargetType.SELF);
+			
+			image = new DataElementImage();
+			image.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, listParametersApiWsdlDownload.toArray(new Parameter[1]));
+			image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_DOWNLOAD_DOCUMENTO_INTERFACCIA_TOOLTIP_CON_PARAMETRO, ApiCostanti.APC_API_LABEL_PARAMETRO_INTERFACCIA));
+			image.setImage(ApiCostanti.APC_API_ICONA_DOWNLOAD_DOCUMENTO_INTERFACCIA);
+			image.setTarget(TargetType.SELF);
+			
+			de.addImage(image);
 		}
 		
 		dati.addElement(de);
@@ -567,7 +580,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		de = new DataElement();
 		de.setType(DataElementType.LINK);
 		listParametersApi.get(0).setValue("");
-		de.addUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_ALLEGATI_LIST, listParametersApi.toArray(new Parameter[1]));
+		de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_ALLEGATI_LIST, listParametersApi.toArray(new Parameter[1]));
 		de.setValue(ApiCostanti.APC_API_LABEL_GESTIONE_ALLEGATI);
 		de.setIcon(ApiCostanti.APC_API_ICONA_GESTIONE_ALLEGATI);
 		dati.addElement(de);
@@ -577,7 +590,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
 			listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_OPZIONI_AVANZATE);
-			de.addUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
+			de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
 			de.setValue(ApiCostanti.APC_API_LABEL_GESTIONE_OPZIONI_AVANZATE);
 			de.setIcon(ApiCostanti.APC_API_ICONA_GESTIONE_OPZIONI_AVANZATE);
 			dati.addElement(de);

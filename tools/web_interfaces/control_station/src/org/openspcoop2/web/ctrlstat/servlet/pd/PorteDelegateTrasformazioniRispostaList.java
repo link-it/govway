@@ -27,17 +27,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
+import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
@@ -55,6 +61,7 @@ public class PorteDelegateTrasformazioniRispostaList extends Action {
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		HttpSession session = request.getSession(true);
+		String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 		// Inizializzo PageData
 		PageData pd = new PageData();
@@ -73,8 +80,69 @@ public class PorteDelegateTrasformazioniRispostaList extends Action {
 			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE);
 			long idTrasformazione = Long.parseLong(id);
 			
+			String cambiaPosizione = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE);
+			String idTrasformazioneRispostaS = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE_RISPOSTA);
+			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
+			
+			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
+			if(StringUtils.isNotEmpty(cambiaPosizione)) {
+				long idTrasformazioneRisposta = Long.parseLong(idTrasformazioneRispostaS);
+				PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(Long.parseLong(idPorta));
+				
+				Trasformazioni trasformazioni = portaDelegata.getTrasformazioni();
+				if(trasformazioni != null) {
+					TrasformazioneRegola oldRegola = null;
+					for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+						if(reg.getId().longValue() == idTrasformazione) {
+							oldRegola = reg;
+							break;
+						}
+					}
+					
+					TrasformazioneRegolaRisposta rispostaToMove = null;
+					
+					for (int j = 0; j < oldRegola.sizeRispostaList(); j++) {
+						TrasformazioneRegolaRisposta risposta = oldRegola.getRisposta(j);
+						if (risposta.getId().longValue() == idTrasformazioneRisposta) {
+							rispostaToMove = risposta;
+							break;
+						}
+					}
+					
+					int posizioneAttuale = rispostaToMove.getPosizione();
+					int posizioneNuova = cambiaPosizione.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SU) ? (posizioneAttuale - 1) : (posizioneAttuale + 1);
+					
+					TrasformazioneRegolaRisposta rispostaToSwitch = null;
+					for (int j = 0; j < oldRegola.sizeRispostaList(); j++) {
+						TrasformazioneRegolaRisposta risposta = oldRegola.getRisposta(j);
+						if (risposta.getPosizione() == posizioneNuova) {
+							rispostaToSwitch = risposta;
+							break;
+						}
+					}
+					
+					rispostaToMove.setPosizione(posizioneNuova);
+					rispostaToSwitch.setPosizione(posizioneAttuale);
+					
+					porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
+					if(CostantiControlStation.VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_RISPOSTA_REGOLA_TRASFORMAZIONE)
+						pd.setMessage(CostantiControlStation.MESSAGGIO_CONFERMA_REGOLA_TRASFORMAZIONE_RISPOSTA_SPOSTATA_CORRETTAMENTE, MessageType.INFO);
+					
+					// ricaricare id trasformazione
+					portaDelegata = porteDelegateCore.getPortaDelegata(Long.parseLong(idPorta));
+
+					String patternDBCheck = (oldRegola.getApplicabilita() != null && StringUtils.isNotEmpty(oldRegola.getApplicabilita().getPattern())) ? oldRegola.getApplicabilita().getPattern() : null;
+					String contentTypeAsString = (oldRegola.getApplicabilita() != null && oldRegola.getApplicabilita().getContentTypeList() != null) ? StringUtils.join(oldRegola.getApplicabilita().getContentTypeList(), ",") : "";
+					String contentTypeDBCheck = StringUtils.isNotEmpty(contentTypeAsString) ? contentTypeAsString : null;
+					String azioniAsString = (oldRegola.getApplicabilita() != null && oldRegola.getApplicabilita().getAzioneList() != null) ? StringUtils.join(oldRegola.getApplicabilita().getAzioneList(), ",") : "";
+					String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
+					TrasformazioneRegola trasformazioneAggiornata = porteDelegateCore.getTrasformazione(portaDelegata.getId(), azioniDBCheck, patternDBCheck, contentTypeDBCheck);
+					
+					idTrasformazione = trasformazioneAggiornata.getId();
+				}
+			}
 	
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
@@ -83,7 +151,6 @@ public class PorteDelegateTrasformazioniRispostaList extends Action {
 			
 			ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 			
-			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 			List<TrasformazioneRegolaRisposta> lista = porteDelegateCore.porteDelegateTrasformazioniRispostaList(Long.parseLong(idPorta), idTrasformazione, ricerca);
 			
 			porteDelegateHelper.preparePorteDelegateTrasformazioniRispostaList(nomePorta, idTrasformazione, ricerca, lista); 

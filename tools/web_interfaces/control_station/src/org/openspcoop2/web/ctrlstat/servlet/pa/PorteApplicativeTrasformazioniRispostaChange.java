@@ -92,7 +92,7 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 			
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
 			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-			int idInt = Integer.parseInt(idPorta);
+			long idInt = Long.parseLong(idPorta);
 			String idsogg = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 			String idAsps = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
 			if(idAsps == null) 
@@ -126,6 +126,7 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 					trasformazioneContenutoRispostaTipoS != null ? org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(trasformazioneContenutoRispostaTipoS) : 
 						org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
 			BinaryParameter trasformazioneContenutoRispostaTemplate = porteApplicativeHelper.getBinaryParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE);
+			String trasformazioneContenutoRispostaTipoCheck = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO_CHECK); 
 			String trasformazioneContenutoRispostaContentType = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE);
 			String trasformazioneContenutoRispostaReturnCode = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE);
 			
@@ -137,6 +138,7 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 					trasformazioneRispostaSoapEnvelopeTipoS != null ? org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(trasformazioneRispostaSoapEnvelopeTipoS) : 
 						org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
 			BinaryParameter trasformazioneRispostaSoapEnvelopeTemplate = porteApplicativeHelper.getBinaryParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE);
+			String trasformazioneRispostaSoapEnvelopeTipoCheck = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO_CHECK);
 
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
@@ -201,6 +203,16 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 					porteApplicativeHelper.deleteBinaryParameters(trasformazioneContenutoRispostaTemplate, trasformazioneRispostaSoapEnvelopeTemplate);
 				}
 				
+				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO)) {
+					trasformazioneContenutoRispostaTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_TIPO;
+					porteApplicativeHelper.deleteBinaryParameters(trasformazioneContenutoRispostaTemplate);
+				}
+				
+				if(postBackElementName.equals(trasformazioneContenutoRispostaTemplate.getName())) {
+					if(StringUtils.isEmpty(trasformazioneContenutoRispostaTipoCheck))
+						trasformazioneContenutoRispostaTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
+				}
+				
 				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_TRANSFORMATION)) {
 					porteApplicativeHelper.deleteBinaryParameters(trasformazioneRispostaSoapEnvelopeTemplate);
 					if(trasformazioneRispostaSoapAbilitato) {
@@ -214,6 +226,16 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 					if(trasformazioneRispostaSoapEnvelope.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT)) {
 						trasformazioneRispostaSoapEnvelopeTipo = org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY; 
 					}
+				}
+				
+				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO)) {
+					trasformazioneRispostaSoapEnvelopeTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_TIPO;
+					porteApplicativeHelper.deleteBinaryParameters(trasformazioneRispostaSoapEnvelopeTemplate);
+				}
+				
+				if(postBackElementName.equals(trasformazioneRispostaSoapEnvelopeTemplate.getName())) {
+					if(StringUtils.isEmpty(trasformazioneRispostaSoapEnvelopeTipoCheck))
+						trasformazioneRispostaSoapEnvelopeTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
 				}
 			}
 			
@@ -353,11 +375,11 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 					}
 				}
 
-				dati = porteApplicativeHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRispostaS, nomeRisposta,
+				dati = porteApplicativeHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idInt, oldRisposta, false, idTrasformazioneS, idTrasformazioneRispostaS, nomeRisposta,
 						returnCode, statusMin, statusMax, pattern, contentType, servletTrasformazioniRispostaHeadersList, parametriInvocazioneServletTrasformazioniRispostaHeaders, numeroTrasformazioniRispostaHeaders, 
 						trasformazioneContenutoRichiestaAbilitato, trasformazioneRichiestaRestAbilitato, 
-						trasformazioneContenutoRispostaAbilitato, trasformazioneContenutoRispostaTipo, trasformazioneContenutoRispostaTemplate, trasformazioneContenutoRispostaContentType, trasformazioneContenutoRispostaReturnCode, 
-						serviceBindingMessage, trasformazioneRispostaSoapAbilitato, trasformazioneRispostaSoapEnvelope, trasformazioneRispostaSoapEnvelopeTipo, trasformazioneRispostaSoapEnvelopeTemplate);
+						trasformazioneContenutoRispostaAbilitato, trasformazioneContenutoRispostaTipo, trasformazioneContenutoRispostaTemplate, trasformazioneContenutoRispostaTipoCheck, trasformazioneContenutoRispostaContentType, trasformazioneContenutoRispostaReturnCode, 
+						serviceBindingMessage, trasformazioneRispostaSoapAbilitato, trasformazioneRispostaSoapEnvelope, trasformazioneRispostaSoapEnvelopeTipo, trasformazioneRispostaSoapEnvelopeTemplate, trasformazioneRispostaSoapEnvelopeTipoCheck);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta,idAsps,  dati);
 				
@@ -400,11 +422,11 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRispostaS, nomeRisposta,
+				dati = porteApplicativeHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idInt, oldRisposta, false, idTrasformazioneS, idTrasformazioneRispostaS, nomeRisposta,
 						returnCode, statusMin, statusMax, pattern, contentType, servletTrasformazioniRispostaHeadersList, parametriInvocazioneServletTrasformazioniRispostaHeaders, numeroTrasformazioniRispostaHeaders, 
 						trasformazioneContenutoRichiestaAbilitato, trasformazioneRichiestaRestAbilitato, 
-						trasformazioneContenutoRispostaAbilitato, trasformazioneContenutoRispostaTipo, trasformazioneContenutoRispostaTemplate, trasformazioneContenutoRispostaContentType, trasformazioneContenutoRispostaReturnCode,
-						serviceBindingMessage, trasformazioneRispostaSoapAbilitato, trasformazioneRispostaSoapEnvelope, trasformazioneRispostaSoapEnvelopeTipo, trasformazioneRispostaSoapEnvelopeTemplate);
+						trasformazioneContenutoRispostaAbilitato, trasformazioneContenutoRispostaTipo, trasformazioneContenutoRispostaTemplate, trasformazioneContenutoRispostaTipoCheck, trasformazioneContenutoRispostaContentType, trasformazioneContenutoRispostaReturnCode,
+						serviceBindingMessage, trasformazioneRispostaSoapAbilitato, trasformazioneRispostaSoapEnvelope, trasformazioneRispostaSoapEnvelopeTipo, trasformazioneRispostaSoapEnvelopeTemplate, trasformazioneRispostaSoapEnvelopeTipoCheck);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta,idAsps,  dati);
 				

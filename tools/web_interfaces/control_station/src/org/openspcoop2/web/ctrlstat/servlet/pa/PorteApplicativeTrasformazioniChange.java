@@ -130,6 +130,9 @@ public class PorteApplicativeTrasformazioniChange extends Action {
 			}
 			
 			String nomeTrasformazione = oldRegola.getNome();
+			Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta);
+			Parameter pIdSoggetto = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
 			Parameter pIdTrasformazione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE, id);
 			
 			// parametri visualizzazione link
@@ -138,15 +141,32 @@ public class PorteApplicativeTrasformazioniChange extends Action {
 			int numeroTrasformazioniRisposte = oldRegola.sizeRispostaList();
 			
 			List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta = new ArrayList<Parameter>();
-			parametriInvocazioneServletTrasformazioniRichiesta.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
-			parametriInvocazioneServletTrasformazioniRichiesta.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
-			parametriInvocazioneServletTrasformazioniRichiesta.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
+			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdPorta);
+			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdSoggetto);
+			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdAsps);
 			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdTrasformazione);
+			
 			List<Parameter> parametriInvocazioneServletTrasformazioniRisposta = new ArrayList<Parameter>();
-			parametriInvocazioneServletTrasformazioniRisposta.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
-			parametriInvocazioneServletTrasformazioniRisposta.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
-			parametriInvocazioneServletTrasformazioniRisposta.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
+			parametriInvocazioneServletTrasformazioniRisposta.add(pIdPorta);
+			parametriInvocazioneServletTrasformazioniRisposta.add(pIdSoggetto);
+			parametriInvocazioneServletTrasformazioniRisposta.add(pIdAsps);
 			parametriInvocazioneServletTrasformazioniRisposta.add(pIdTrasformazione);
+			
+			String servletTrasformazioniAutorizzazioneAutenticati =   PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO_LIST;
+			List<Parameter> parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati = new ArrayList<Parameter>();
+			parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdPorta);
+			parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdSoggetto);
+			parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdAsps);
+			parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdTrasformazione);
+			int numAutenticati = oldRegola.getApplicabilita() != null ? oldRegola.getApplicabilita().sizeSoggettoList() : 0;
+			String servletTrasformazioniApplicativiAutenticati = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO_LIST;
+			List<Parameter> parametriInvocazioneServletTrasformazioniApplicativiAutenticati  = new ArrayList<Parameter>();
+			parametriInvocazioneServletTrasformazioniApplicativiAutenticati.add(pIdPorta);
+			parametriInvocazioneServletTrasformazioniApplicativiAutenticati.add(pIdSoggetto);
+			parametriInvocazioneServletTrasformazioniApplicativiAutenticati.add(pIdAsps);
+			parametriInvocazioneServletTrasformazioniApplicativiAutenticati.add(pIdTrasformazione);
+			int numApplicativiAutenticati = oldRegola.getApplicabilita() != null ? oldRegola.getApplicabilita().sizeServizioApplicativoList() : 0;
+			
 			
 			MappingErogazionePortaApplicativa mappingAssociatoPorta = porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
 			
@@ -218,9 +238,9 @@ public class PorteApplicativeTrasformazioniChange extends Action {
 
 			lstParam.add(new Parameter(labelPerPorta,
 					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_LIST,
-					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
-					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
-					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)
+					pIdPorta,
+					pIdSoggetto,
+					pIdAsps
 					));
 			
 			lstParam.add(new Parameter(nomeTrasformazione, null));
@@ -254,9 +274,11 @@ public class PorteApplicativeTrasformazioniChange extends Action {
 					azioniAll = (azioni==null || azioni.length<=0);
 				}
 
-				dati = porteApplicativeHelper.addTrasformazioneToDati(TipoOperazione.CHANGE, dati, id, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
+				dati = porteApplicativeHelper.addTrasformazioneToDati(TipoOperazione.CHANGE, dati, pa, id, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
 						apc.getServiceBinding(),
-						servletTrasformazioniRichiesta, parametriInvocazioneServletTrasformazioniRichiesta, servletTrasformazioniRispostaList, parametriInvocazioneServletTrasformazioniRisposta, numeroTrasformazioniRisposte);
+						servletTrasformazioniRichiesta, parametriInvocazioneServletTrasformazioniRichiesta, servletTrasformazioniRispostaList, parametriInvocazioneServletTrasformazioniRisposta, numeroTrasformazioniRisposte, false,
+						servletTrasformazioniAutorizzazioneAutenticati, parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati , numAutenticati,
+						servletTrasformazioniApplicativiAutenticati,  parametriInvocazioneServletTrasformazioniApplicativiAutenticati , numApplicativiAutenticati);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta,idAsps,  dati);
 				
@@ -283,9 +305,11 @@ public class PorteApplicativeTrasformazioniChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneToDati(TipoOperazione.CHANGE, dati, id, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
+				dati = porteApplicativeHelper.addTrasformazioneToDati(TipoOperazione.CHANGE, dati, pa, id, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
 						apc.getServiceBinding(),
-						servletTrasformazioniRichiesta, parametriInvocazioneServletTrasformazioniRichiesta, servletTrasformazioniRispostaList, parametriInvocazioneServletTrasformazioniRisposta, numeroTrasformazioniRisposte);
+						servletTrasformazioniRichiesta, parametriInvocazioneServletTrasformazioniRichiesta, servletTrasformazioniRispostaList, parametriInvocazioneServletTrasformazioniRisposta, numeroTrasformazioniRisposte, false,
+						servletTrasformazioniAutorizzazioneAutenticati, parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati , numAutenticati,
+						servletTrasformazioniApplicativiAutenticati,  parametriInvocazioneServletTrasformazioniApplicativiAutenticati , numApplicativiAutenticati);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta,idAsps,  dati);
 				

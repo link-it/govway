@@ -54,6 +54,8 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
 import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.Trasformazioni;
@@ -99,6 +101,7 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
@@ -4349,10 +4352,13 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			String idPorta = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			String idsogg = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 
+			Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta);
+			Parameter pIdSoggetto = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
 			ServletUtils.addListElementIntoSession(this.session,  PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI,
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
+					pIdPorta,
+					pIdSoggetto,
+					pIdAsps);
 
 			int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI;
 			int limit = ricerca.getPageSize(idLista);
@@ -4401,40 +4407,71 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			else {
 				nomeColonnaAzione = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI;
 			}
-			String[] labels = { 
-					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_POSIZIONE,
-					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_NOME,
-					nomeColonnaAzione,
-					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_CT,
-					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_PATTERN};
-			this.pd.setLabels(labels);
+			List<String> lstLabels = new ArrayList<>();
+			if(lista != null && lista.size() > 1)
+				lstLabels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_POSIZIONE);
+			lstLabels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_NOME);
+			lstLabels.add(nomeColonnaAzione);
+			lstLabels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_CT);
+			lstLabels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
+			
+			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
 
 			if (lista != null) {
 				Iterator<TrasformazioneRegola> it = lista.iterator();
+				int numeroElementi = lista.size();
+				int i = 0;
 				while (it.hasNext()) {
 					TrasformazioneRegola regola = it.next();
-
+					Parameter pIdTrasformazione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE, regola.getId() + "");
+					
 					Vector<DataElement> e = new Vector<DataElement>();
 					
 					// Posizione
-					DataElement de = new DataElement();
-					de.setValue(regola.getPosizione()+"");
-					e.addElement(de);
-					
+					if(lista.size() > 1) {
+						DataElement de = new DataElement();
+						de.setWidthPx(46);
+						de.setType(DataElementType.IMAGE);
+						DataElementImage imageUp = new DataElementImage();
+						Parameter pDirezioneSu = new Parameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE, 
+								CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SU);
+						Parameter pDirezioneGiu = new Parameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE, 
+								CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_GIU);
+								
+						if(i > 0) {
+							imageUp.setImage(CostantiControlStation.ICONA_FRECCIA_SU);
+							imageUp.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SPOSTA_SU);
+							imageUp.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_LIST, pIdPorta, pIdSoggetto, pIdAsps,pIdTrasformazione, pDirezioneSu); 
+						}
+						else {
+							imageUp.setImage("&#160;&#160;&#160;&#160;&#160;");
+						}
+						de.addImage(imageUp);
+						
+						if(i < numeroElementi -1) {
+							DataElementImage imageDown = new DataElementImage();
+							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
+							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SPOSTA_GIU);
+							imageDown.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_LIST, pIdPorta, pIdSoggetto, pIdAsps,pIdTrasformazione, pDirezioneGiu);
+							de.addImage(imageDown);
+						}
+						de.setValue(regola.getPosizione()+"");
+						e.addElement(de);
+					}
 					// Nome
-					de = new DataElement();
+					DataElement de = new DataElement();
 					de.setIdToRemove(regola.getId() + "");
 					
 					de.setValue(regola.getNome());
 					de.setToolTip(regola.getNome());
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_CHANGE, 
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps),
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE, regola.getId() + "")
+							pIdPorta,
+							pIdSoggetto,
+							pIdAsps,
+							pIdTrasformazione
 							);
 					e.addElement(de);
 					
@@ -4467,6 +4504,15 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					
 					de.setValue(nomiAzioni);
 					de.setToolTip(nomiAzioni);
+					if(nomiAzioni!=null && nomiAzioni.length()>197) {
+						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_CHANGE, 
+								pIdPorta,
+								pIdSoggetto,
+								pIdAsps,
+								pIdTrasformazione
+								);
+					}
+					de.setSize(200);
 
 					e.addElement(de);
 					
@@ -4505,6 +4551,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					
 					
 					dati.addElement(e);
+					i++;
 				}
 			}
 
@@ -4529,11 +4576,11 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			String idsogg = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 			
 			Parameter pIdTrasformazione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE, idTrasformazione+"");
+			Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta);
+			Parameter pIdSoggetto = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
 			ServletUtils.addListElementIntoSession(this.session,  PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA,
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps),
-					pIdTrasformazione);
+					pIdPorta, pIdSoggetto, pIdAsps, pIdTrasformazione);
 
 			int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE;
 			int limit = ricerca.getPageSize(idLista);
@@ -4576,15 +4623,15 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			}
 			
 			lstParam.add(new Parameter(labelPerPorta, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_LIST, 
-					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
-					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)));
+					pIdPorta,
+					pIdSoggetto,
+					pIdAsps));
 			
 			
 			lstParam.add(new Parameter(nomeTrasformazione, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_CHANGE, 
-					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
-					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps), pIdTrasformazione));
+					pIdPorta,
+					pIdSoggetto,
+					pIdAsps, pIdTrasformazione));
 			
 			String labelPag = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE;
 			
@@ -4594,40 +4641,72 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
 
 			// setto le label delle colonne
-			String[] labels = { 
-					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_POSIZIONE,
-					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_NOME,
-					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS,
-					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_CT,
-					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN};
-			this.pd.setLabels(labels);
+			List<String> lstLabels = new ArrayList<>();
+			if(lista != null && lista.size() > 1)
+				lstLabels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_POSIZIONE);
+			lstLabels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_NOME);
+			lstLabels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS);
+			lstLabels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_CT);
+			lstLabels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN);
+			
+			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
 
 			if (lista != null) {
 				Iterator<TrasformazioneRegolaRisposta> it = lista.iterator();
+				int numeroElementi = lista.size();
+				int i = 0;
 				while (it.hasNext()) {
 					TrasformazioneRegolaRisposta risposta = it.next();
-
+					Parameter pIdTrasformazioneRisposta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RISPOSTA, risposta.getId() + "");
+					
 					Vector<DataElement> e = new Vector<DataElement>();
 					
 					// Posizione
-					DataElement de = new DataElement();
-					de.setValue(risposta.getPosizione()+"");
-					e.addElement(de);
-					
+					if(lista.size() > 1) {
+						DataElement de = new DataElement();
+						de.setWidthPx(46);
+						de.setType(DataElementType.IMAGE);
+						DataElementImage imageUp = new DataElementImage();
+						Parameter pDirezioneSu = new Parameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE, 
+								CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SU);
+						Parameter pDirezioneGiu = new Parameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE, 
+								CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_GIU);
+								
+						if(i > 0) {
+							imageUp.setImage(CostantiControlStation.ICONA_FRECCIA_SU);
+							imageUp.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SPOSTA_SU);
+							imageUp.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_LIST, pIdPorta, pIdSoggetto, pIdAsps,pIdTrasformazione, pIdTrasformazioneRisposta, pDirezioneSu); 
+						}
+						else {
+							imageUp.setImage("&#160;&#160;&#160;&#160;&#160;");
+						}
+						de.addImage(imageUp);
+						
+						if(i < numeroElementi -1) {
+							DataElementImage imageDown = new DataElementImage();
+							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
+							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SPOSTA_GIU);
+							imageDown.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_LIST, pIdPorta, pIdSoggetto, pIdAsps,pIdTrasformazione, pIdTrasformazioneRisposta, pDirezioneGiu);
+							de.addImage(imageDown);
+						}
+						de.setValue(risposta.getPosizione()+"");
+						e.addElement(de);
+					}
 					// Nome
-					de = new DataElement();
+					DataElement de = new DataElement();
 					de.setIdToRemove(risposta.getId() + "");
 					de.setValue(risposta.getNome());
 					de.setToolTip(risposta.getNome());
+					
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CHANGE, 
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps),
+							pIdPorta,
+							pIdSoggetto,
+							pIdAsps,
 							pIdTrasformazione,
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RISPOSTA, risposta.getId() + "")
+							pIdTrasformazioneRisposta
 							);
 					e.addElement(de);
 					
@@ -4705,6 +4784,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					
 					
 					dati.addElement(e);
+					i++;
 				}
 			}
 
@@ -5147,4 +5227,413 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			throw new Exception(e);
 		}
 	}
+	
+	
+	public void preparePorteAppTrasformazioniServizioApplicativoAutorizzatoList(String nomePorta, long idTrasformazione, ISearch ricerca, List<TrasformazioneRegolaApplicabilitaServizioApplicativo> lista) throws Exception {
+		try {
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
+			String idAsps = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+	
+			String idPorta = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			String idsogg = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
+			
+			Parameter pIdTrasformazione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE, idTrasformazione+"");
+			Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta);
+			Parameter pIdSoggetto = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
+	
+			ServletUtils.addListElementIntoSession(this.session,  PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO,
+					pIdPorta, pIdSoggetto, pIdAsps, pIdTrasformazione);
+	
+			int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+	
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+	
+			String protocollo = null;
+			if(this.core.isRegistroServiziLocale()){
+				Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
+				protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(mySogg.getTipo());
+			}
+			else{
+				org.openspcoop2.core.config.Soggetto mySogg = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
+				protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(mySogg.getTipo());
+			}
+	
+			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
+			String idporta = myPA.getNome();
+			
+			Trasformazioni trasformazioni = myPA.getTrasformazioni();
+			TrasformazioneRegola oldRegola = null;
+			for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+				if(reg.getId().longValue() == idTrasformazione) {
+					oldRegola = reg;
+					break;
+				}
+			}
+	
+			String nomeTrasformazione = oldRegola.getNome();
+			
+			// setto la barra del titolo
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
+	
+			String labelPerPorta = null;
+			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta = this.porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_DI,
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI,
+						myPA);
+			}
+			else {
+				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_DI+idporta;
+			}
+			
+			lstParam.add(new Parameter(labelPerPorta, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_LIST, 
+					pIdPorta,
+					pIdSoggetto,
+					pIdAsps));
+			
+			
+			lstParam.add(new Parameter(nomeTrasformazione, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_CHANGE, 
+					pIdPorta,
+					pIdSoggetto,
+					pIdAsps, pIdTrasformazione));
+			
+			String labelPag = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICATIVI_CONFIG;
+			
+			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
+			if(search.equals("")){
+				this.pd.setSearchDescription("");
+				lstParam.add(new Parameter(labelPag,null));
+			}else{
+				lstParam.add(new Parameter(labelPag,
+						PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO_LIST,
+						pIdPorta, pIdSoggetto, pIdAsps, pIdTrasformazione));
+				
+				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE_RISULTATI_RICERCA, null));
+			}
+	
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+	
+			// controllo eventuali risultati ricerca
+	//			if (!search.equals("")) {
+	//				this.pd.setSearch("on");
+	//				this.pd.setSearchDescription("Soggetti contenenti la stringa '" + search + "'");
+	//			}
+	
+			// setto le label delle colonne
+			List<String> labels = new ArrayList<>();
+			if(this.porteApplicativeCore.isMultitenant()) {
+				labels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO);
+			}
+			labels.add(CostantiControlStation.LABEL_PARAMETRO_APPLICATIVO);
+			this.pd.setLabels(labels.toArray(new String[1]));
+	
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+	
+			if (lista != null) {
+				Iterator<TrasformazioneRegolaApplicabilitaServizioApplicativo> it = lista.iterator();
+				while (it.hasNext()) {
+					TrasformazioneRegolaApplicabilitaServizioApplicativo sa = it.next();
+	
+					Vector<DataElement> e = new Vector<DataElement>();
+	
+					if(this.porteApplicativeCore.isMultitenant()) {
+						Long idSoggetto =this.soggettiCore.getIdSoggetto(sa.getNomeSoggettoProprietario(), sa.getTipoSoggettoProprietario());	
+						DataElement de = new DataElement();
+						if(this.isModalitaCompleta()) {
+							de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
+									new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,idSoggetto+""),
+									new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,sa.getNomeSoggettoProprietario()),
+									new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,sa.getTipoSoggettoProprietario()));
+						}
+						de.setValue(this.getLabelNomeSoggetto(protocollo, sa.getTipoSoggettoProprietario() , sa.getNomeSoggettoProprietario()));
+						e.addElement(de);
+					}
+					
+					
+					DataElement de = new DataElement();
+					de.setValue(sa.getNome());
+					de.setIdToRemove(sa.getNome()+"@"+sa.getTipoSoggettoProprietario() + "/" + sa.getNomeSoggettoProprietario());
+					e.addElement(de);
+	
+					dati.addElement(e);
+				}
+			}
+	
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+	
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+
+// Prepara la lista di soggetti associati alla pa
+	public void preparePorteAppTrasformazioniSoggettoList(String nomePorta, long idTrasformazione, ISearch ricerca, List<TrasformazioneRegolaApplicabilitaSoggetto> lista) throws Exception {
+		try {
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
+			String idAsps = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+
+			String idPorta = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			String idsogg = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
+			
+			Parameter pIdTrasformazione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE, idTrasformazione+"");
+			Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta);
+			Parameter pIdSoggetto = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
+
+			ServletUtils.addListElementIntoSession(this.session,  PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO,
+					pIdPorta, pIdSoggetto, pIdAsps, pIdTrasformazione);
+
+			int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+
+			String protocollo = null;
+			if(this.core.isRegistroServiziLocale()){
+				Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
+				protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(mySogg.getTipo());
+			}
+			else{
+				org.openspcoop2.core.config.Soggetto mySogg = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
+				protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(mySogg.getTipo());
+			}
+
+			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
+			String idporta = myPA.getNome();
+			
+			Trasformazioni trasformazioni = myPA.getTrasformazioni();
+			TrasformazioneRegola oldRegola = null;
+			for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+				if(reg.getId().longValue() == idTrasformazione) {
+					oldRegola = reg;
+					break;
+				}
+			}
+
+			String nomeTrasformazione = oldRegola.getNome();
+
+			// setto la barra del titolo
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
+
+			String labelPerPorta = null;
+			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta = this.porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_DI,
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI,
+						myPA);
+			}
+			else {
+				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_DI+idporta;
+			}
+			
+			lstParam.add(new Parameter(labelPerPorta, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_LIST, 
+					pIdPorta,
+					pIdSoggetto,
+					pIdAsps));
+			
+			
+			lstParam.add(new Parameter(nomeTrasformazione, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_CHANGE, 
+					pIdPorta,
+					pIdSoggetto,
+					pIdAsps, pIdTrasformazione));
+			
+			String labelPag = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO_CONFIG;
+			
+			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
+			if(search.equals("")){
+				this.pd.setSearchDescription("");
+				lstParam.add(new Parameter(labelPag,null));
+			}else{
+				lstParam.add(new Parameter(labelPag,
+						PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO_LIST ,
+						pIdPorta, pIdSoggetto, pIdAsps, pIdTrasformazione));
+				
+				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE_RISULTATI_RICERCA, null));
+			}
+
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+
+			// controllo eventuali risultati ricerca
+//				if (!search.equals("")) {
+//					this.pd.setSearch("on");
+//					this.pd.setSearchDescription("Soggetti contenenti la stringa '" + search + "'");
+//				}
+
+			// setto le label delle colonne
+			String[] labels = { PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO};
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<TrasformazioneRegolaApplicabilitaSoggetto> it = lista.iterator();
+				while (it.hasNext()) {
+					TrasformazioneRegolaApplicabilitaSoggetto sog = it.next();
+
+					Vector<DataElement> e = new Vector<DataElement>();
+
+					Long idSoggetto =this.soggettiCore.getIdSoggetto(sog.getNome(), sog.getTipo());
+					DataElement de = new DataElement();
+					if(this.isModalitaCompleta()) {
+						de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
+								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,idSoggetto+""),
+								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,sog.getNome()),
+								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,sog.getTipo()));
+					}
+					de.setValue(this.getLabelNomeSoggetto(protocollo, sog.getTipo() , sog.getNome()));
+					de.setIdToRemove(sog.getTipo() + "/" + sog.getNome());
+					e.addElement(de);
+
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	// Controlla i dati dell soggetto della porta applicativa
+	public boolean porteAppTrasformazioniSoggettoCheckData(TipoOperazione tipoOp) throws Exception {
+		try {
+			String idPorta = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			int idInt = Integer.parseInt(idPorta);
+			String soggetto = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO);
+			if (soggetto == null) {
+				soggetto = "";
+			}
+
+			// Campi obbligatori
+			if (soggetto.equals("")) {
+				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_UN_SOGGETTO);
+				return false;
+			}
+
+			long idSoggetto = Integer.parseInt(soggetto);
+			// Controllo che il servizioApplicativo appartenga alla lista di
+			// servizioApplicativo disponibili per il soggetto
+			// Prendo il nome e il tipo del soggetto
+			String nomeSoggettoSelezionato = null;
+			String tipoSoggettoSelezionato = null;
+			if(this.core.isRegistroServiziLocale()){
+				Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(idSoggetto);
+				nomeSoggettoSelezionato = mySogg.getNome();
+				tipoSoggettoSelezionato = mySogg.getTipo();
+			}else{
+				org.openspcoop2.core.config.Soggetto mySogg = this.soggettiCore.getSoggetto(idSoggetto);
+				nomeSoggettoSelezionato = mySogg.getNome();
+				tipoSoggettoSelezionato = mySogg.getTipo();
+			}
+
+			// Se tipoOp = add, controllo che il servizioApplicativo non sia
+			// gia'
+			// stato
+			// registrato per la porta applicativa
+			if (tipoOp.equals(TipoOperazione.ADD)) {
+				boolean giaRegistrato = false;
+
+				// Prendo il nome della porta applicativa
+				PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(idInt);
+				
+				
+				String idTrasformazioneS = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE);
+				long idTrasformazione = Long.parseLong(idTrasformazioneS);
+				
+				Trasformazioni trasformazioni = pa.getTrasformazioni();
+				TrasformazioneRegola regola = null;
+				for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+					if(reg.getId().longValue() == idTrasformazione) {
+						regola = reg;
+						break;
+					}
+				}
+				
+//				String nometrasformazione = regola.getNome();
+
+				TrasformazioneRegolaApplicabilitaRichiesta applicabilita = regola.getApplicabilita();
+				if(applicabilita != null) {
+					for (int i = 0; i < applicabilita.sizeSoggettoList(); i++) {
+						TrasformazioneRegolaApplicabilitaSoggetto tmpSoggetto = applicabilita.getSoggetto(i); 
+						if (tipoSoggettoSelezionato.equals(tmpSoggetto.getTipo()) && nomeSoggettoSelezionato.equals(tmpSoggetto.getNome())) {
+							giaRegistrato = true;
+							break;
+						}
+					}
+				}
+
+				if (giaRegistrato) {
+					String nomeSoggettoMessaggio = tipoSoggettoSelezionato + "/"+ nomeSoggettoSelezionato;
+					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_IL_SOGGETTO_XX_EGRAVE_GIA_STATO_ASSOCIATO_ALLA_TRASFORMAZIONE,
+							nomeSoggettoMessaggio));
+					return false;
+				}
+			}
+
+			return true;
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+
+
+	
+	// Controlla i dati dell soggetto della porta applicativa
+	public boolean porteAppTrasformazioniServizioApplicativoAutorizzatiCheckData(TipoOperazione tipoOp) throws Exception {
+		try {
+			String idPorta = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			@SuppressWarnings("unused")
+			int idInt = Integer.parseInt(idPorta);
+			String soggetto = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO);
+			if (soggetto == null) {
+				soggetto = "";
+			}
+			String sa = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO);
+			if (sa == null) {
+				sa = "";
+			}
+
+			// Campi obbligatori
+			if (soggetto.equals("")) {
+				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_UN_SOGGETTO);
+				return false;
+			}
+			if (sa.equals("")) {
+				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_UN_APPLICATIVO);
+				return false;
+			}
+
+			return true;
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+
 }

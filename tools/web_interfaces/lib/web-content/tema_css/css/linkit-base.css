@@ -1616,6 +1616,19 @@ td.riepilogo-spacer {
     margin-top: 12px;
 }
 
+.iconInfoBox{
+    padding-left: 8px;
+    display: inline;
+    cursor: pointer;
+    position: absolute;
+}
 
+.image-link {
+	padding: 0px 2px 0px 2px;
+	text-decoration: none;
+}
 
+.image-link span.icon-box {
+	vertical-align: middle;
+}
 

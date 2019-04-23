@@ -49,6 +49,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
 import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.Trasformazioni;
@@ -89,12 +90,14 @@ import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
@@ -4015,37 +4018,68 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			else {
 				nomeColonnaAzione = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI;
 			}
-			String[] labels = { 
-					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_POSIZIONE,
-					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_NOME,
-					nomeColonnaAzione,
-					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_CT,
-					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_PATTERN,
-					};
-			this.pd.setLabels(labels);
+			
+			
+			List<String> lstLabels = new ArrayList<>();
+			if(lista != null && lista.size() > 1)
+				lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_POSIZIONE);
+			lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_NOME);
+			lstLabels.add(nomeColonnaAzione);
+			lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_CT);
+			lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
+			
+			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
 
 			if (lista != null) {
 				Iterator<TrasformazioneRegola> it = lista.iterator();
+				int numeroElementi = lista.size();
+				int i = 0;
 				while (it.hasNext()) {
 					TrasformazioneRegola regola = it.next();
-
+					Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, regola.getId() + "");
 					Vector<DataElement> e = new Vector<DataElement>();
 					
 					// Posizione
-					DataElement de = new DataElement();
-					de.setValue(regola.getPosizione()+"");
-					e.addElement(de);
-					
+					if(lista.size() > 1) {
+						DataElement de = new DataElement();
+						de.setWidthPx(46);
+						de.setType(DataElementType.IMAGE);
+						DataElementImage imageUp = new DataElementImage();
+						Parameter pDirezioneSu = new Parameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE, 
+								CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SU);
+						Parameter pDirezioneGiu = new Parameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE, 
+								CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_GIU);
+								
+						if(i > 0) {
+							imageUp.setImage(CostantiControlStation.ICONA_FRECCIA_SU);
+							imageUp.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SPOSTA_SU);
+							imageUp.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_LIST,pId, pIdSoggetto, pIdAsps, pIdFrizione, pNomePorta,pIdTrasformazione, pDirezioneSu); 
+						}
+						else {
+							imageUp.setImage("&#160;&#160;&#160;&#160;&#160;");
+						}
+						de.addImage(imageUp);
+						
+						if(i < numeroElementi -1) {
+							DataElementImage imageDown = new DataElementImage();
+							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
+							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SPOSTA_GIU);
+							imageDown.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_LIST, pId, pIdSoggetto, pIdAsps, pIdFrizione, pNomePorta,pIdTrasformazione, pDirezioneGiu);
+							de.addImage(imageDown);
+						}
+						de.setValue(regola.getPosizione()+"");
+						e.addElement(de);
+					}
 					// Nome
-					de = new DataElement();
+					DataElement de = new DataElement();
 					de.setIdToRemove(regola.getId() + "");
 					de.setValue(regola.getNome());
 					de.setToolTip(regola.getNome());
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
-							pId, pIdSoggetto, pIdAsps, pIdFrizione, pNomePorta, new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, regola.getId() + "")
+							pId, pIdSoggetto, pIdAsps, pIdFrizione, pNomePorta, pIdTrasformazione
 							);
 					e.addElement(de);
 					
@@ -4078,6 +4112,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					
 					de.setValue(nomiAzioni);
 					de.setToolTip(nomiAzioni);
+					if(nomiAzioni!=null && nomiAzioni.length()>197) {
+						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
+								pId, pIdSoggetto, pIdAsps, pIdFrizione, pNomePorta, pIdTrasformazione
+								);
+					}
+					de.setSize(200);
+					
 					e.addElement(de);
 					
 
@@ -4116,6 +4157,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					
 					
 					dati.addElement(e);
+					i++;
 				}
 			}
 
@@ -4212,32 +4254,62 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
 
 			// setto le label delle colonne
-			String[] labels = { 
-					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_POSIZIONE,
-					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_NOME,
-					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS,
-					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_CT,
-					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN};
-			this.pd.setLabels(labels);
+			List<String> lstLabels = new ArrayList<>();
+			if(lista != null && lista.size() > 1)
+				lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_POSIZIONE);
+			lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_NOME);
+			lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS);
+			lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_CT);
+			lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN);
+			
+			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
 
 			if (lista != null) {
 				Iterator<TrasformazioneRegolaRisposta> it = lista.iterator();
+				int numeroElementi = lista.size();
+				int i = 0;
 				while (it.hasNext()) {
 					TrasformazioneRegolaRisposta risposta = it.next();
+					Parameter pIdTrasformazioneRisposta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RISPOSTA, risposta.getId() + "");
 
 					Vector<DataElement> e = new Vector<DataElement>();
 					
-					
 					// Posizione
-					DataElement de = new DataElement();
-					de.setValue(risposta.getPosizione()+"");
-					e.addElement(de);
-					
+					if(lista.size() > 1) {
+						DataElement de = new DataElement();
+						de.setWidthPx(46);
+						de.setType(DataElementType.IMAGE);
+						DataElementImage imageUp = new DataElementImage();
+						Parameter pDirezioneSu = new Parameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE, 
+								CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SU);
+						Parameter pDirezioneGiu = new Parameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE, 
+								CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_GIU);
+								
+						if(i > 0) {
+							imageUp.setImage(CostantiControlStation.ICONA_FRECCIA_SU);
+							imageUp.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SPOSTA_SU);
+							imageUp.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_LIST, pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione, pIdTrasformazioneRisposta, pDirezioneSu); 
+						}
+						else {
+							imageUp.setImage("&#160;&#160;&#160;&#160;&#160;");
+						}
+						de.addImage(imageUp);
+						
+						if(i < numeroElementi -1) {
+							DataElementImage imageDown = new DataElementImage();
+							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
+							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SPOSTA_GIU);
+							imageDown.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_LIST, pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione, pIdTrasformazioneRisposta, pDirezioneGiu);
+							de.addImage(imageDown);
+						}
+						de.setValue(risposta.getPosizione()+"");
+						e.addElement(de);
+					}
 					// Nome
-					de = new DataElement();
+					DataElement de = new DataElement();
 					de.setIdToRemove(risposta.getId() + "");
 					de.setValue(risposta.getNome());
 					de.setToolTip(risposta.getNome());
@@ -4316,6 +4388,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					
 					
 					dati.addElement(e);
+					i++;
 				}
 			}
 
@@ -4756,6 +4829,235 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	
+	// Prepara la lista di sil delle porte delegate
+	public void preparePorteDelegateTrasformazioniServizioApplicativoList(String nomePorta, long idTrasformazione, ISearch ricerca, List<TrasformazioneRegolaApplicabilitaServizioApplicativo> lista)
+			throws Exception {
+		try {
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+			
+			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			String idsogg = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+			String idAsps = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+			
+			String idFruizione = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
+			if(idFruizione == null)
+				idFruizione = "";
+			
+			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
+			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
+			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
+			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazione+"");
+
+			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO, 
+					pId, pIdSoggetto, pIdAsps, pIdFruizione,pIdTrasformazione);
+
+			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+
+			PortaDelegata myPD = this.porteDelegateCore.getPortaDelegata(Integer.parseInt(id));
+			String idporta = myPD.getNome();
+			
+			Trasformazioni trasformazioni = myPD.getTrasformazioni();
+			TrasformazioneRegola oldRegola = null;
+			for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+				if(reg.getId().longValue() == idTrasformazione) {
+					oldRegola = reg;
+					break;
+				}
+			}
+			
+			String nomeTrasformazione = oldRegola.getNome();
+			
+			// setto la barra del titolo
+			List<Parameter> lstParam = this.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
+			
+			String labelPerPorta = null;
+			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta = this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_DI,
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI,
+						myPD);
+			}
+			else {
+				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_DI+idporta;
+			}
+			
+			lstParam.add(new Parameter(labelPerPorta, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_LIST, 
+					pId, pIdSoggetto, pIdAsps, pIdFruizione));
+			
+			
+			lstParam.add(new Parameter(nomeTrasformazione, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
+					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione));
+			
+			String labelPagLista = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_CONFIG;
+			if(!this.isModalitaCompleta()) {
+				labelPagLista = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVO_CONFIG;
+			}
+			
+			this.pd.setSearchLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+			if(search.equals("")){
+				this.pd.setSearchDescription("");
+				lstParam.add(new Parameter(labelPagLista,null));
+			}
+			else{
+				lstParam.add(new Parameter(labelPagLista,
+						PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_LIST, pId, pIdSoggetto, pIdAsps, pIdFruizione	));
+				lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RISULTATI_RICERCA, null));
+			}
+
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+
+			// controllo eventuali risultati ricerca
+			if (!search.equals("")) {
+				ServletUtils.enabledPageDataSearch(this.pd, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZI_APPLICATIVI, search);
+			}
+
+			// setto le label delle colonne
+			String[] labels = new String[1];
+			if(this.isModalitaCompleta()) {
+				labels[0] = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO;
+			}
+			else {
+				labels[0] = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVO;
+			}
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<TrasformazioneRegolaApplicabilitaServizioApplicativo> it = lista.iterator();
+				while (it.hasNext()) {
+					TrasformazioneRegolaApplicabilitaServizioApplicativo sa = it.next();
+
+					Vector<DataElement> e = new Vector<DataElement>();
+
+					DataElement de = new DataElement();
+					if(this.isModalitaCompleta()) {
+						de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,
+								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId() + ""),
+								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_PROVIDER, idsogg));
+					}
+					de.setValue(sa.getNome());
+					de.setIdToRemove(sa.getNome());
+					e.addElement(de);
+
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	// Controlla i dati del servizioApplicativo della porta delegata
+	public boolean porteDelegateTrasformazioniServizioApplicativoCheckData(TipoOperazione tipoOp)
+			throws Exception {
+		try {
+			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			int idInt = Integer.parseInt(id);
+			String idsogg = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+			int soggInt = Integer.parseInt(idsogg);
+			String servizioApplicativo = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO);
+			String idTrasformazioneS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE);
+			long idTrasformazione = Long.parseLong(idTrasformazioneS);
+			
+			// Campi obbligatori
+			if (servizioApplicativo.equals("")) {
+				this.pd.setMessage("Dati incompleti. E' necessario indicare un Servizio Applicativo");
+				return false;
+			}
+
+			// Controllo che il servizioApplicativo appartenga alla lista di
+			// servizioApplicativo disponibili per il soggetto
+			boolean trovatoServizioApplicativo = false;
+
+			// Prendo il nome e il tipo del soggetto
+			String nomeprov = null;
+			String tipoprov = null;
+			if(this.core.isRegistroServiziLocale()){
+				Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(soggInt);
+				nomeprov = mySogg.getNome();
+				tipoprov = mySogg.getTipo();
+			}else{
+				org.openspcoop2.core.config.Soggetto mySogg = this.soggettiCore.getSoggetto(soggInt);
+				nomeprov = mySogg.getNome();
+				tipoprov = mySogg.getTipo();
+			}
+
+			IDSoggetto ids = new IDSoggetto(tipoprov, nomeprov);
+			IDServizioApplicativo idSA = new IDServizioApplicativo();
+			idSA.setIdSoggettoProprietario(ids);
+			idSA.setNome(servizioApplicativo);
+			trovatoServizioApplicativo = this.saCore.existsServizioApplicativo(idSA);
+			if (!trovatoServizioApplicativo) {
+				this.pd.setMessage("Il Servizio Applicativo dev'essere scelto tra quelli definiti nel pannello Servizi Applicativi ed associati al soggetto " + tipoprov + "/" + nomeprov);
+				return false;
+			}
+
+			// Se tipoOp = add, controllo che il servizioApplicativo non sia
+			// gia'
+			// stato
+			// registrato per la porta delegata
+			if (tipoOp.equals(TipoOperazione.ADD)) {
+				boolean giaRegistrato = false;
+
+				// Prendo il nome della porta delegata
+				PortaDelegata pde = this.porteDelegateCore.getPortaDelegata(idInt);
+				
+				
+				Trasformazioni trasformazioni = pde.getTrasformazioni();
+				TrasformazioneRegola regola = null;
+				for (int j = 0; j < trasformazioni.sizeRegolaList(); j++) {
+					TrasformazioneRegola regolaTmp = trasformazioni.getRegola(j);
+					if (regolaTmp.getId().longValue() == idTrasformazione) {
+						regola = regolaTmp;
+						break;
+					}
+				}
+
+				String nometrasformazione = regola.getNome();
+				
+				if(regola.getApplicabilita() != null) {
+					for (int i = 0; i < regola.getApplicabilita().sizeServizioApplicativoList(); i++) {
+						TrasformazioneRegolaApplicabilitaServizioApplicativo tmpSA = regola.getApplicabilita().getServizioApplicativo(i);
+						if (servizioApplicativo.equals(tmpSA.getNome())) {
+							giaRegistrato = true;
+							break;
+						}
+					}
+				}
+
+				if (giaRegistrato) {
+					this.pd.setMessage("Il Servizio Applicativo " + servizioApplicativo + " &egrave; gi&agrave; stato associato alla trasformazione " + nometrasformazione);
+					return false;
+				}
+			}
+
+			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);

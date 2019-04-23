@@ -183,24 +183,21 @@
 						                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
 					                				
 													<% 
-														if(!de.getListaUrl().isEmpty()){
-															boolean addTooltip = !de.getListaToolTip().isEmpty();
-															boolean addTarget = !de.getListaTarget().isEmpty();
-															boolean addIcon = !de.getListaIcon().isEmpty();
-															
-															for(int idxLink =0; idxLink < de.getListaUrl().size() ; idxLink ++ ){
+														if(!de.getListaImages().isEmpty()){
+															for(int idxLink =0; idxLink < de.getListaImages().size() ; idxLink ++ ){
+																DataElementImage image = de.getListaImages().get(idxLink);
 																String classLink = "";
-																String deIconName = addIcon ? de.getListaIcon().get(idxLink) : ""; 
+																String deIconName = image.getImage(); 
 					                					
-																String deTip = (addTooltip && !de.getListaToolTip().get(idxLink).equals("")) ? " title=\"" + de.getListaToolTip().get(idxLink) + "\"" : "";
+																String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
 					                							
 					                							String deTarget = " ";
-														  		if (addTarget && !de.getListaTarget().get(idxLink).equals("")) {
-														  			deTarget = " target=\""+ de.getListaTarget().get(idxLink) +"\"";
+					                							if (!image.getTarget().equals("")) {
+														  			deTarget = " target=\""+ image.getTarget() +"\"";
 														  		}
 													  			
 						                					%>
-						                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getListaUrl().get(idxLink) %>" type="button">
+						                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 						                						<span class="icon-box">
 																	<i class="material-icons md-18"><%= deIconName %></i>
 																</span>

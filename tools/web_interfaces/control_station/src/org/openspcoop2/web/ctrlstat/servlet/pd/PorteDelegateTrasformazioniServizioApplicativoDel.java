@@ -4,7 +4,7 @@
  *
  * from the Link.it OpenSPCoop project codebase
  * 
- * Copyright (c) 2005-2018 Link.it srl (http://link.it). 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
@@ -36,7 +38,8 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.TrasformazioneRegola;
-import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -49,14 +52,16 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
- * PorteDelegateTrasformazioniRispostaDel
+ * porteDelegateServizioApplicativoDel
  * 
- * @author Giuliano Pintori (pintori@link.it)
+ * @author Andrea Poli (apoli@link.it)
+ * @author Stefano Corallo (corallo@link.it)
+ * @author Sandra Giangrandi (sandra@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  * 
  */
-public class PorteDelegateTrasformazioniRispostaDel extends Action {
+public final class PorteDelegateTrasformazioniServizioApplicativoDel extends Action {
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -74,53 +79,50 @@ public class PorteDelegateTrasformazioniRispostaDel extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		String userLogin = ServletUtils.getUserLoginFromSession(session);	
+	 
 
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
-			
 			String idPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-			// String idsogg = porteDelegateHelper.getParameter("idsogg");
-			// int soggInt = Integer.parseInt(idsogg);
-			String nomePorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE);
-			long idTrasformazione = Long.parseLong(id);
-
-			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
-
-			// Preparo il menu
-			porteDelegateHelper.makeMenu();
-
-			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
+			int idInt = Integer.parseInt(idPorta);
+			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
+			
+			String idTrasformazioneS = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE);
+			long idTrasformazione = Long.parseLong(idTrasformazioneS);
+			String servizioApplicativo = "";
 
-			Long idRisp = null;
-
-			// Prendo l'accesso registro
-			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(Long.parseLong(idPorta));
+			// Prendo la porta delegata
+			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
+			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
 			Trasformazioni trasformazioni = portaDelegata.getTrasformazioni();
 			TrasformazioneRegola regola = null;
-			
-			for (int j = 0; j < trasformazioni.sizeRegolaList(); j++) {
-				TrasformazioneRegola regolaTmp = trasformazioni.getRegola(j);
-				if (regolaTmp.getId().longValue() == idTrasformazione) {
-					regola = regolaTmp;
+			for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+				if(reg.getId().longValue() == idTrasformazione) {
+					regola = reg;
 					break;
 				}
 			}
 			
+			TrasformazioneRegolaApplicabilitaRichiesta applicabilita = regola.getApplicabilita();
+
 			for (int i = 0; i < idsToRemove.size(); i++) {
-				idRisp = Long.parseLong(idsToRemove.get(i));
-				
-				for (int j = 0; j < regola.sizeRispostaList(); j++) {
-					TrasformazioneRegolaRisposta risposta = regola.getRisposta(j);
-					if (risposta.getId().longValue() == idRisp.longValue()) {
-						regola.removeRisposta(j);
+
+				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
+				// .elementAt(idToRemove[i])).elementAt(0);
+				// servizioApplicativo = de.getValue();
+				servizioApplicativo = idsToRemove.get(i);
+				for (int j = 0; j < applicabilita.sizeServizioApplicativoList(); j++) {
+					TrasformazioneRegolaApplicabilitaServizioApplicativo sa = applicabilita.getServizioApplicativo(j);
+					if (servizioApplicativo.equals(sa.getNome())) {
+						applicabilita.removeServizioApplicativo(j);
 						break;
 					}
 				}
 			}
 
+			String userLogin = ServletUtils.getUserLoginFromSession(session);
+			
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
 			
 			// ricaricare id trasformazione
@@ -133,29 +135,30 @@ public class PorteDelegateTrasformazioniRispostaDel extends Action {
 			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
 			TrasformazioneRegola trasformazioneAggiornata = porteDelegateCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck);
 
+
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
-			
+
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
-			
-			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE; 
-			
+
+			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO; 
+
 			ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 
-			List<TrasformazioneRegolaRisposta> lista = porteDelegateCore.porteDelegateTrasformazioniRispostaList(Long.parseLong(idPorta), trasformazioneAggiornata.getId(), ricerca);
-			
-			porteDelegateHelper.preparePorteDelegateTrasformazioniRispostaList(nomePorta, trasformazioneAggiornata.getId(), ricerca, lista); 
-			
+			List<TrasformazioneRegolaApplicabilitaServizioApplicativo> lista = porteDelegateCore.porteDelegateTrasformazioniServiziApplicativiAutorizzatiList(Integer.parseInt(idPorta), trasformazioneAggiornata.getId(), ricerca);
+
+			porteDelegateHelper.preparePorteDelegateTrasformazioniServizioApplicativoList(portaDelegata.getNome(), trasformazioneAggiornata.getId(), ricerca, lista);
+
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
 			// Forward control to the specified success URI
-			return ServletUtils.getStrutsForward (mapping, 
-					PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA,
-					ForwardParams.DEL());
+		 	return ServletUtils.getStrutsForward(mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO,
+		 			ForwardParams.DEL());
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA, ForwardParams.DEL());
+					PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO, 
+					ForwardParams.DEL());
 		} 
 	}
-
 }

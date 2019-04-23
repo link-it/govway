@@ -79,7 +79,7 @@ public class DataElement {
 		DataElement.escapeMap.put("&lt;/br&gt;", "</br>");
 	}
 
-	String label, labelRight, value, type, name, onClick, onChange, selected;
+	String label, labelRight, value, type, name, onChange, selected;
 	String [] values = null, names = null;
 	String [] labels = null;
 	int size, cols, rows, id;
@@ -93,6 +93,7 @@ public class DataElement {
 	String note = null;
 	String styleClass = null;
 	String labelStyleClass = null;
+	DataElementInfo info = null;
 	
 	String [] selezionati = null; // serve per gestire i valori selezionati in una multiselect
 	
@@ -101,7 +102,9 @@ public class DataElement {
 	
 	private Integer minValue = null, maxValue= null;
 	
-	private List<String> icon, url,toolTip, target = null;
+	private List<DataElementImage> image = null;
+	
+	private String icon, url,toolTip, target, onClick = null;
 	
 	private Map<String, String> dataAttributes = null;
 	
@@ -120,14 +123,15 @@ public class DataElement {
 		this.label = "";
 		this.value = "";
 		this.type = "text";
-		this.url = new ArrayList<>();
-		this.target = new ArrayList<>();
-		this.name = "";
+		this.url = "";
+		this.target = "";
 		this.onClick = "";
+		this.name = "";
 		this.onChange = "";
 		this.selected = "";
-		this.toolTip = new ArrayList<>();
-		this.icon = new ArrayList<>();
+		this.toolTip ="";
+		this.icon = "";
+		this.image = new ArrayList<>();
 		this.size = DataElement.DATA_ELEMENT_SIZE;
 		this.cols = DataElement.DATA_ELEMENT_COLS;
 		this.rows = DataElement.DATA_ELEMENT_ROWS;
@@ -228,20 +232,13 @@ public class DataElement {
 	}
 
 	public void setUrl(String s) {
-		this.url.clear();
-		this.url.add(s);
-	}
-	public void addUrl(String s) {
-		this.url.add(s);
+		this.url = s;
 	}
 	public void setUrl(String servletName,Parameter ... parameter) {
-		String urValue = _getUrlValue(servletName, parameter);
-		this.url.clear();
-		this.url.add(urValue);
-		
+		this.url = _getUrlValue(servletName, parameter);
 	}
 
-	private String _getUrlValue(String servletName, Parameter... parameter) {
+	public static String _getUrlValue(String servletName, Parameter... parameter) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(servletName);
 		if(parameter!=null && parameter.length>0){
@@ -262,35 +259,15 @@ public class DataElement {
 		return urValue;
 	}
 	
-	public void addUrl(String servletName,Parameter ... parameter) {
-		String urValue = _getUrlValue(servletName, parameter);
-		this.url.add(urValue);
-	}
 	public String getUrl() {
-		if(this.url.isEmpty())
-			return "";
-		return this.url.get(0);
+		return DataElement.checkNull(this.url);
 	}
 	
-	public List<String> getListaUrl() {
-		return this.url;
-	}
-
 	public void setTarget(TargetType s) {
-		this.target.clear();
-		this.target.add(s.toString());
-	}
-	public void addTarget(TargetType s) {
-		this.target.add(s.toString());
+		this.target = s != null ? s.toString() : null;
 	}
 	public String getTarget() {
-		if(this.target.isEmpty())
-			return "";
-		return this.target.get(0);
-	}
-	
-	public List<String> getListaTarget() {
-		return this.target;
+		return DataElement.checkNull(this.target);
 	}
 
 	public void setName(String s) {
@@ -408,18 +385,13 @@ public class DataElement {
 		return this.labels;
 	}
 	
-	private static String checkNull(String toCheck)
+	public static String checkNull(String toCheck)
 	{
 		return (toCheck==null ? "" : toCheck);
 	}
 
 	public String getToolTip() {
-		if(this.toolTip.isEmpty())
-			return "";
-		return this.toolTip.get(0);
-	}
-	public List<String> getListaToolTip() {
-		return this.toolTip;
+		return DataElement.checkNull(this.toolTip);
 	}
 	/**
 	 * Il tooltip da visualizzare quando si passa con il mouse
@@ -429,13 +401,8 @@ public class DataElement {
 	 * @param toolTip
 	 */
 	public void setToolTip(String toolTip) {
-		this.toolTip.clear();
-		this.toolTip.add(toolTip);
+		this.toolTip = toolTip;
 	}
-	public void addToolTip(String s) {
-		this.toolTip.add(s);
-	}
-	
 	public boolean isBold() {
 		return this.bold;
 	}
@@ -655,21 +622,52 @@ public class DataElement {
 	}
 
 	public String getIcon() {
-		if(this.icon.isEmpty())
-			return "";
-		return this.icon.get(0);
-	}
-	public List<String> getListaIcon() {
-		return this.icon;
+		return DataElement.checkNull(this.icon);
 	}
 
 	public void setIcon(String icon) {
-		this.icon.clear();
-		this.icon.add(icon);
+		this.icon = icon;
 	}
 	
-	public void addIcon(String icon) {
-		this.icon.add(icon);
+	public void setIcon(String icon,String tooltip, String url, TargetType target) {
+		this.image.clear();
+		DataElementImage newImage = new DataElementImage();
+		newImage.setImage(icon);
+		newImage.setTarget(target);
+		newImage.setUrl(url);
+		newImage.setToolTip(tooltip);
+		this.image.add(newImage);
+	}
+	
+	public DataElementImage getImage() {
+		if(this.image.isEmpty())
+			return null;
+		return this.image.get(0);
+	}
+	public List<DataElementImage> getListaImages() {
+		return this.image;
+	}
+	
+	public void setImage(DataElementImage icon) {
+		this.image.clear();
+		this.image.add(icon);
+	}
+
+	public void setImage(String icon) {
+		this.image.clear();
+		DataElementImage newImage = new DataElementImage();
+		newImage.setImage(icon);
+		this.image.add(newImage);
+	}
+	
+	public void addImage(String icon) {
+		DataElementImage newImage = new DataElementImage();
+		newImage.setImage(icon);
+		this.image.add(newImage);
+	}
+	
+	public void addImage(DataElementImage icon) {
+		this.image.add(icon);
 	}
 
 	public Map<String, String> getDataAttributesMap() {
@@ -720,4 +718,16 @@ public class DataElement {
 		return this.names;
 	}
 	
+	public void setInfo(DataElementInfo info) {
+		this.info = info;
+	}
+
+	public void setInfo(String titolo, String info) {
+		this.info = new DataElementInfo(titolo);
+		this.info.setHeaderBody(info);
+	}
+	
+	public DataElementInfo getInfo() {
+		return this.info;
+	}
 }

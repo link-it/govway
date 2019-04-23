@@ -76,7 +76,11 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.TrasformazioneRegola;
+import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
+import org.openspcoop2.core.config.TrasformazioneSoap;
+import org.openspcoop2.core.config.TrasformazioneSoapRisposta;
+import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
@@ -4809,6 +4813,25 @@ public class ConsoleHelper {
 							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTORIZZAZIONE_DISABILITATA);
 							return false;
 						}
+						
+						Trasformazioni trasformazioni = pd.getTrasformazioni();
+						if(trasformazioni != null) {
+							StringBuilder sb = new StringBuilder();
+							for(TrasformazioneRegola regola: trasformazioni.getRegolaList()) {
+								if(regola.getApplicabilita()!= null) {
+									if(regola.getApplicabilita().sizeServizioApplicativoList() > 0) {
+										sb.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+										sb.append("- ");
+										sb.append(regola.getNome());
+									}
+								}
+							}
+							
+							if(sb.length() > 0) {
+								this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_TRASFORMAZIONI_AUTORIZZAZIONE_DISABILITATA + sb.toString());
+								return false;
+							}
+						}
 					}
 					if(isSupportatoAutenticazione && pd.getAutenticazione()!=null && 
 							!pd.getAutenticazione().equals(autenticazione)){
@@ -4816,6 +4839,25 @@ public class ConsoleHelper {
 						if(pd.sizeServizioApplicativoList()>0) {
 							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA);
 							return false;
+						}
+						
+						Trasformazioni trasformazioni = pd.getTrasformazioni();
+						if(trasformazioni != null) {
+							StringBuilder sb = new StringBuilder();
+							for(TrasformazioneRegola regola: trasformazioni.getRegolaList()) {
+								if(regola.getApplicabilita()!= null) {
+									if(regola.getApplicabilita().sizeServizioApplicativoList() > 0) {
+										sb.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+										sb.append("- ");
+										sb.append(regola.getNome());
+									}
+								}
+							}
+							
+							if(sb.length() > 0) {
+								this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_TRASFORMAZIONI_AUTENTICAZIONE_MODIFICATA + sb.toString());
+								return false;
+							}
 						}
 					}
 					
@@ -4845,6 +4887,38 @@ public class ConsoleHelper {
 							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTORIZZAZIONE_DISABILITATA);
 							return false;
 						}
+						
+						Trasformazioni trasformazioni = pa.getTrasformazioni();
+						if(trasformazioni != null) {
+							StringBuilder sbSoggetti = new StringBuilder();
+							StringBuilder sbApplicativi = new StringBuilder();
+							
+							for(TrasformazioneRegola regola: trasformazioni.getRegolaList()) {
+								if(regola.getApplicabilita()!= null) {
+									if(regola.getApplicabilita().sizeSoggettoList() > 0) {
+										sbSoggetti.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+										sbSoggetti.append("- ");
+										sbSoggetti.append(regola.getNome());
+									}
+									
+									if(regola.getApplicabilita().sizeServizioApplicativoList() > 0) {
+										sbApplicativi.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+										sbApplicativi.append("- ");
+										sbApplicativi.append(regola.getNome());
+									}
+								}
+							}
+							
+							if(sbSoggetti.length() > 0) {
+								this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_TRASFORMAZIONI_AUTORIZZAZIONE_DISABILITATA + sbSoggetti.toString());
+								return false;
+							}
+							
+							if(sbApplicativi.length() > 0) {
+								this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_TRASFORMAZIONI_AUTORIZZAZIONE_DISABILITATA + sbApplicativi.toString());
+								return false;
+							}
+						}
 					}
 					if(isSupportatoAutenticazione && pa.getAutenticazione()!=null && 
 							!pa.getAutenticazione().equals(autenticazione)){
@@ -4856,6 +4930,38 @@ public class ConsoleHelper {
 						if(pa.getServiziApplicativiAutorizzati()!=null && pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
 							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA);
 							return false;
+						}
+						
+						Trasformazioni trasformazioni = pa.getTrasformazioni();
+						if(trasformazioni != null) {
+							StringBuilder sbSoggetti = new StringBuilder();
+							StringBuilder sbApplicativi = new StringBuilder();
+							
+							for(TrasformazioneRegola regola: trasformazioni.getRegolaList()) {
+								if(regola.getApplicabilita()!= null) {
+									if(regola.getApplicabilita().sizeSoggettoList() > 0) {
+										sbSoggetti.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+										sbSoggetti.append("- ");
+										sbSoggetti.append(regola.getNome());
+									}
+									
+									if(regola.getApplicabilita().sizeServizioApplicativoList() > 0) {
+										sbApplicativi.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+										sbApplicativi.append("- ");
+										sbApplicativi.append(regola.getNome());
+									}
+								}
+							}
+							
+							if(sbSoggetti.length() > 0) {
+								this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_TRASFORMAZIONI_AUTENTICAZIONE_MODIFICATA + sbSoggetti.toString());
+								return false;
+							}
+							
+							if(sbApplicativi.length() > 0) {
+								this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_TRASFORMAZIONI_AUTENTICAZIONE_MODIFICATA + sbApplicativi.toString());
+								return false;
+							}
 						}
 					}
 					if((ServletUtils.isCheckBoxEnabled(autorizzazioneScope)==false) ){
@@ -8526,22 +8632,22 @@ public class ConsoleHelper {
 		return dati;
 	}
 	
-	public Vector<DataElement> addTrasformazioneRispostaToDatiOpAdd(Vector<DataElement> dati, String idTrasformazione, String nome, String returnCode, String statusMin, String statusMax, String pattern, String contentType) {
-		return addTrasformazioneRispostaToDati(TipoOperazione.ADD, dati, idTrasformazione, null, nome, returnCode, statusMin, statusMax, pattern, contentType, null, null, 0,
-				false,false,false,null,null,null,null,null,false,null,null,null);
+	public Vector<DataElement> addTrasformazioneRispostaToDatiOpAdd(Vector<DataElement> dati, String idTrasformazione, String nome, String returnCode, String statusMin, String statusMax, String pattern, String contentType) throws Exception {
+		return addTrasformazioneRispostaToDati(TipoOperazione.ADD, dati, 0, null, false, idTrasformazione, null, nome, returnCode, statusMin, statusMax, pattern, contentType, null, null, 0,
+				false,false,false,null,null,null,null,null,null,false,null,null,null,null);
 	}
 	
-	public Vector<DataElement> addTrasformazioneRispostaToDati(TipoOperazione tipoOP, Vector<DataElement> dati, String idTrasformazione, String idTrasformazioneRisposta,
+	public Vector<DataElement> addTrasformazioneRispostaToDati(TipoOperazione tipoOP, Vector<DataElement> dati, long idPorta, TrasformazioneRegolaRisposta risposta, boolean isPortaDelegata, String idTrasformazione, String idTrasformazioneRisposta,
 			String nome, String returnCode, String statusMin, String statusMax, String pattern, String contentType,
 			String servletTrasformazioniRispostaHeadersList, List<Parameter> parametriInvocazioneServletTrasformazioniRispostaHeaders, int numeroTrasformazioniRispostaHeaders,
 			boolean trasformazioneContenutoRichiestaAbilitato, boolean trasformazioneRichiestaRestAbilitato,
 			boolean trasformazioneContenutoRispostaAbilitato, org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneContenutoRispostaTipo, 
-			BinaryParameter trasformazioneContenutoRispostaTemplate, String trasformazioneContenutoRispostaContentType, String trasformazioneContenutoRispostaReturnCode,
+			BinaryParameter trasformazioneContenutoRispostaTemplate, String trasformazioneContenutoRispostaTipoCheck, String trasformazioneContenutoRispostaContentType, String trasformazioneContenutoRispostaReturnCode,
 			ServiceBinding serviceBindingMessage, 
 			boolean trasformazioneRispostaSoapAbilitato, String trasformazioneRispostaSoapEnvelope,  
-			org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneRispostaSoapEnvelopeTipo, BinaryParameter trasformazioneRispostaSoapEnvelopeTemplate
+			org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneRispostaSoapEnvelopeTipo, BinaryParameter trasformazioneRispostaSoapEnvelopeTemplate, String trasformazioneRispostaSoapEnvelopeTipoCheck
 			
-			) {
+			) throws Exception {
 		
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_TRASFORMAZIONE);
@@ -8640,6 +8746,11 @@ public class ConsoleHelper {
 				
 		if(tipoOP.equals(TipoOperazione.CHANGE)) {
 			
+			String postbackElement = this.getPostBackElementName();
+			
+			boolean old_trasformazioneRispostaContenutoTemplate = false;
+			boolean old_trasformazioneRispostaSoapEnvelopeTemplate = false;
+			
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_REGOLE_TRASFORMAZIONE);
 			de.setType(DataElementType.TITLE);
@@ -8695,9 +8806,61 @@ public class ConsoleHelper {
 				dati.addElement(de);
 				
 				if(trasformazioneContenutoRispostaTipo.isTemplateRequired()) {	
+					
+					// richiesta null in add
+					boolean templateRequired = true;
+					
+					if(risposta!=null){
+						old_trasformazioneRispostaContenutoTemplate = risposta.getConversioneTemplate() != null && risposta.getConversioneTemplate().length > 0;
+						TipoTrasformazione oldTrasformazioneRispostaContenutoTipo = StringUtils.isNotEmpty(risposta.getConversioneTipo()) 
+								? org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(risposta.getConversioneTipo()) : org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
+						if(trasformazioneContenutoRispostaTipo.equals(oldTrasformazioneRispostaContenutoTipo)) {
+							templateRequired = false;
+						} 
+					}
+								
+					if(postbackElement != null) {
+						if(postbackElement.equals(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO)) {
+							old_trasformazioneRispostaContenutoTemplate = false;
+							templateRequired = true;
+						} 
+//						if(postbackElement.equals(trasformazioneContenutoTemplate.getName())) {
+//							if(StringUtils.isEmpty(trasformazioneContenutoTipoCheck))
+//								trasformazioneContenutoTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
+//						}
+					}
+					
+					de = new DataElement();
+					de.setLabel("");
+					de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO_CHECK);
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(trasformazioneContenutoRispostaTipoCheck);
+					dati.addElement(de);
+					
+					if(StringUtils.isNotEmpty(trasformazioneContenutoRispostaTipoCheck) && trasformazioneContenutoRispostaTipoCheck.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_TIPO))
+						templateRequired = true;
+					
+					String trasformazioneRispostaContenutoLabel = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE;
+					if(old_trasformazioneRispostaContenutoTemplate && StringUtils.isEmpty(trasformazioneContenutoRispostaTipoCheck)) {
+						trasformazioneRispostaContenutoLabel = "";
+						DataElement saveAs = new DataElement();
+						saveAs.setValue(CostantiControlStation.LABEL_DOWNLOAD_DOCUMENTO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE);
+						saveAs.setType(DataElementType.LINK);
+					
+						Parameter pIdTrasformazioneRegola = new Parameter(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE, idTrasformazione);
+						Parameter pIdTrasformazioneRegolaRisposta = new Parameter(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RISPOSTA, idTrasformazioneRisposta);
+						Parameter pIdAccordo = new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_ID_ACCORDO, idPorta+"");
+						Parameter pTipoAllegato = new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, isPortaDelegata ? "pd" : "pa");
+						Parameter pTipoDoc = new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, isPortaDelegata ? 
+								ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE : 
+									ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE);
+						saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, pIdAccordo, pTipoAllegato, pTipoDoc, pIdTrasformazioneRegola,pIdTrasformazioneRegolaRisposta);
+						dati.add(saveAs);
+					}
+					
 					// template
-					DataElement trasformazioneContenutoTemplateDataElement = trasformazioneContenutoRispostaTemplate.getFileDataElement(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE, "", getSize());
-					trasformazioneContenutoTemplateDataElement.setRequired(true);
+					DataElement trasformazioneContenutoTemplateDataElement = trasformazioneContenutoRispostaTemplate.getFileDataElement(trasformazioneRispostaContenutoLabel, "", getSize());
+					trasformazioneContenutoTemplateDataElement.setRequired(templateRequired);
 					dati.add(trasformazioneContenutoTemplateDataElement);
 					dati.addAll(trasformazioneContenutoRispostaTemplate.getFileNameDataElement());
 					dati.add(trasformazioneContenutoRispostaTemplate.getFileIdDataElement());
@@ -8772,9 +8935,63 @@ public class ConsoleHelper {
 						dati.addElement(de);
 						
 						if(trasformazioneRispostaSoapEnvelopeTipo!=null && trasformazioneRispostaSoapEnvelopeTipo.isTemplateRequired()) {
+							
+							// richiesta null in add
+							boolean templateRequired = true;
+							if(risposta!=null){
+								TrasformazioneSoapRisposta oldTrasformazioneSoapRisposta = risposta.getTrasformazioneSoap();
+								old_trasformazioneRispostaSoapEnvelopeTemplate = oldTrasformazioneSoapRisposta != null && oldTrasformazioneSoapRisposta.getEnvelopeBodyConversioneTemplate() != null && oldTrasformazioneSoapRisposta.getEnvelopeBodyConversioneTemplate().length > 0;
+								String oldTrasformazioneSoapEnvelopeTipoS = oldTrasformazioneSoapRisposta != null ? oldTrasformazioneSoapRisposta.getEnvelopeBodyConversioneTipo() : null;
+								TipoTrasformazione oldTrasformazioneSoapEnvelopeTipo = StringUtils.isNotEmpty(oldTrasformazioneSoapEnvelopeTipoS) 
+										? org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(oldTrasformazioneSoapEnvelopeTipoS) : org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
+								if(trasformazioneRispostaSoapEnvelopeTipo.equals(oldTrasformazioneSoapEnvelopeTipo)) {
+									templateRequired = false;
+								}  
+							}
+							
+							if(postbackElement != null) {
+								if(postbackElement.equals(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO)) {
+									old_trasformazioneRispostaSoapEnvelopeTemplate = false;
+									templateRequired = true;
+								}
+								
+//								if(postbackElement.equals(trasformazioneSoapEnvelopeTemplate.getName())) {
+//									trasformazioneSoapEnvelopeTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
+//								}
+							}
+							
+							de = new DataElement();
+							de.setLabel("");
+							de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO_CHECK);
+							de.setType(DataElementType.HIDDEN);
+							de.setValue(trasformazioneRispostaSoapEnvelopeTipoCheck);
+							dati.addElement(de);
+							
+							if(StringUtils.isNotEmpty(trasformazioneRispostaSoapEnvelopeTipoCheck) && trasformazioneRispostaSoapEnvelopeTipoCheck.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_TIPO))
+								templateRequired = true;
+							
+							String trasformazioneSoapEnvelopeTemplateLabel = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE;
+							if(old_trasformazioneRispostaSoapEnvelopeTemplate && StringUtils.isEmpty(trasformazioneRispostaSoapEnvelopeTipoCheck)) {
+								trasformazioneSoapEnvelopeTemplateLabel = "";
+								DataElement saveAs = new DataElement();
+								saveAs.setValue(CostantiControlStation.LABEL_DOWNLOAD_DOCUMENTO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE);
+								saveAs.setType(DataElementType.LINK);
+
+								Parameter pIdTrasformazioneRegola = new Parameter(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE, idTrasformazione);
+								Parameter pIdTrasformazioneRegolaRisposta = new Parameter(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RISPOSTA, idTrasformazioneRisposta);
+								Parameter pIdAccordo = new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_ID_ACCORDO, idPorta+"");
+								Parameter pTipoAllegato = new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, isPortaDelegata ? "pd" : "pa");
+								Parameter pTipoDoc = new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, isPortaDelegata 
+										? ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE 
+												: ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE);
+								saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, pIdAccordo, pTipoAllegato, pTipoDoc,pIdTrasformazioneRegola,pIdTrasformazioneRegolaRisposta);
+								dati.add(saveAs);
+							}
+							
+							
 							// 	template envelope attachement
-							DataElement trasformazioneSoapEnvelopeTemplateDataElement = trasformazioneRispostaSoapEnvelopeTemplate.getFileDataElement(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE, "", getSize());
-							trasformazioneSoapEnvelopeTemplateDataElement.setRequired(true);
+							DataElement trasformazioneSoapEnvelopeTemplateDataElement = trasformazioneRispostaSoapEnvelopeTemplate.getFileDataElement(trasformazioneSoapEnvelopeTemplateLabel, "", getSize());
+							trasformazioneSoapEnvelopeTemplateDataElement.setRequired(templateRequired);
 							dati.add(trasformazioneSoapEnvelopeTemplateDataElement);
 							dati.addAll(trasformazioneContenutoRispostaTemplate.getFileNameDataElement());
 							dati.add(trasformazioneContenutoRispostaTemplate.getFileIdDataElement());
@@ -8848,10 +9065,20 @@ public class ConsoleHelper {
 				if(trasformazioneContenutoTipo.isTemplateRequired()) {
 					BinaryParameter trasformazioneContenutoTemplate = this.getBinaryParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE);
 					
-					if((oldRegola.getRichiesta() == null || oldRegola.getRichiesta().getConversioneTemplate() == null) && (trasformazioneContenutoTemplate.getValue() == null || trasformazioneContenutoTemplate.getValue().length == 0)) {
-						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
-								CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE));
-						return false;
+					String trasformazioneContenutoTipoCheck = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK);
+					
+					if(StringUtils.isNotEmpty(trasformazioneContenutoTipoCheck)) { // ho cambiato il tipo conversione
+						if((trasformazioneContenutoTemplate.getValue() == null || trasformazioneContenutoTemplate.getValue().length == 0)) {
+							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
+									CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE));
+							return false;
+						}
+					} else { // non ho cambiato il template
+						if((oldRegola.getRichiesta() == null || oldRegola.getRichiesta().getConversioneTemplate() == null)) {
+							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
+									CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE));
+							return false;
+						}
 					}
 				}
 				
@@ -8880,10 +9107,20 @@ public class ConsoleHelper {
 							if(trasformazioneSoapEnvelopeTipo.isTemplateRequired()) {
 								BinaryParameter trasformazioneSoapEnvelopeTemplate = this.getBinaryParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE);
 								
-								if((oldRegola.getRichiesta() == null || oldRegola.getRichiesta().getTrasformazioneSoap() == null || oldRegola.getRichiesta().getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate() == null) && (trasformazioneSoapEnvelopeTemplate.getValue() == null || trasformazioneSoapEnvelopeTemplate.getValue().length == 0)) {
-									this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
-											CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE));
-									return false;
+								String trasformazioneSoapEnvelopeTipoCheck = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO_CHECK);
+								
+								if(StringUtils.isNotEmpty(trasformazioneSoapEnvelopeTipoCheck)) { // ho cambiato il tipo conversione
+									if((trasformazioneSoapEnvelopeTemplate.getValue() == null || trasformazioneSoapEnvelopeTemplate.getValue().length == 0)) {
+										this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
+												CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE));
+										return false;
+									}
+								} else { // non ho cambiato il template
+									if((oldRegola.getRichiesta() == null || oldRegola.getRichiesta().getTrasformazioneSoap() == null || oldRegola.getRichiesta().getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate() == null)) {
+										this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
+												CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE));
+										return false;
+									}
 								}
 							}
 							
@@ -8943,12 +9180,12 @@ public class ConsoleHelper {
 	public boolean trasformazioniRispostaCheckData(TipoOperazione tipoOp, TrasformazioneRegola regolaRichiesta, TrasformazioneRegolaRisposta oldRegolaRisposta) throws Exception {
 		try{
 
-			String nome = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOME);
+			String nome = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_NOME);
 			if(nome==null || "".equals(nome)) {
-				this.pd.setMessage("Indicare un valore nel campo '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOME+"'");
+				this.pd.setMessage("Indicare un valore nel campo '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_NOME+"'");
 				return false;
 			}
-			if(!this.checkLength255(nome, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOME)) {
+			if(!this.checkLength255(nome, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_NOME)) {
 				return false;
 			}
 			
@@ -9039,11 +9276,20 @@ public class ConsoleHelper {
 					if(trasformazioneContenutoRispostaTipo.isTemplateRequired()) { 
 						BinaryParameter trasformazioneContenutoTemplate = this.getBinaryParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE);
 						
-						// se la regola non aveva un template ed adesso e' obbligatorio devo validare 
-						if(oldRegolaRisposta.getConversioneTemplate() == null && (trasformazioneContenutoTemplate.getValue() == null || trasformazioneContenutoTemplate.getValue().length == 0)) {
-							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
-									CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE));
-							return false;
+						String trasformazioneContenutoRispostaTipoCheck = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO_CHECK);
+						
+						if(StringUtils.isNotEmpty(trasformazioneContenutoRispostaTipoCheck)) { // ho cambiato il tipo conversione
+							if((trasformazioneContenutoTemplate.getValue() == null || trasformazioneContenutoTemplate.getValue().length == 0)) {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
+										CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE));
+								return false;
+							}
+						} else { // non ho cambiato il template
+							if(oldRegolaRisposta.getConversioneTemplate() == null) {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
+										CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE));
+								return false;
+							}
 						}
 					}
 					
@@ -9071,39 +9317,41 @@ public class ConsoleHelper {
 					
 					if(trasformazioneContenutoRispostaTipo.isTrasformazioneProtocolloEnabled() && trasformazioneRichiestaRestAbilitato) {
 					
-						String trasformazioneSoapAbilitatoS = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_TRANSFORMATION);
+						String trasformazioneSoapAbilitatoS = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_TRANSFORMATION);
 						boolean trasformazioneSoapAbilitato =  trasformazioneSoapAbilitatoS != null ? ServletUtils.isCheckBoxEnabled(trasformazioneSoapAbilitatoS) : false;
 						
 						if(trasformazioneSoapAbilitato) {
-							String trasformazioneSoapAction = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ACTION);
-							
-							if(!this.checkLength255(trasformazioneSoapAction, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ACTION)) {
-								return false;
-							}
-							
-							String trasformazioneSoapEnvelope = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE);
+							String trasformazioneSoapEnvelope = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE);
 							
 							if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT.equals(trasformazioneSoapEnvelope)) {
-								String trasformazioneSoapEnvelopeTipoS = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO);
+								String trasformazioneSoapEnvelopeTipoS = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO);
 								org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneSoapEnvelopeTipo =
 										trasformazioneSoapEnvelopeTipoS != null ? org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(trasformazioneSoapEnvelopeTipoS) : 
 										org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
 										
 								if(trasformazioneSoapEnvelopeTipo.isTemplateRequired()) {
-									BinaryParameter trasformazioneSoapEnvelopeTemplate = this.getBinaryParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE);
+									BinaryParameter trasformazioneSoapEnvelopeTemplate = this.getBinaryParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE);
 									
-									// se la regola non aveva un template ed adesso e' obbligatorio devo validare 
-									if(oldRegolaRisposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate() == null && (trasformazioneSoapEnvelopeTemplate.getValue() == null || trasformazioneSoapEnvelopeTemplate.getValue().length == 0)) {
-										this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
-												CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE));
-										return false;
+									String trasformazioneSoapEnvelopeTipoCheck = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO_CHECK);
+									
+									if(StringUtils.isNotEmpty(trasformazioneSoapEnvelopeTipoCheck)) { // ho cambiato il tipo conversione
+										if((trasformazioneSoapEnvelopeTemplate.getValue() == null || trasformazioneSoapEnvelopeTemplate.getValue().length == 0)) {
+											this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
+													CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE));
+											return false;
+										}
+									} else { // non ho cambiato il template
+										if(oldRegolaRisposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate() == null) {
+											this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
+													CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE));
+											return false;
+										}
 									}
 								}
-								
 							}
 						} else {
 							// dimensione content-type
-							if(!this.checkLength255(trasformazioneRichiestaContentType, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_REQ_CONTENT_TYPE)) {
+							if(!this.checkLength255(trasformazioneRichiestaContentType, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE)) {
 								return false;
 							}
 						}
@@ -9119,17 +9367,18 @@ public class ConsoleHelper {
 		}
 	}
 	
-	public Vector<DataElement> addTrasformazioneToDatiOpAdd(Vector<DataElement> dati, String nome, boolean azioniAll, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String[] azioni, String pattern, String contentType,
-			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
-		return addTrasformazioneToDati(TipoOperazione.ADD, dati, null, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType, 
+	public Vector<DataElement> addTrasformazioneToDatiOpAdd(Vector<DataElement> dati, Object oggetto, String nome, boolean azioniAll, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String[] azioni, String pattern, String contentType,
+			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding, boolean isPortaDelegata) throws Exception {
+		return addTrasformazioneToDati(TipoOperazione.ADD, dati, oggetto, null, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType, 
 				serviceBinding,
-				null, null, null, null, 0);
+				null, null, null, null, 0, isPortaDelegata, null,null,0,null,null,0);
 	}
 	
-	public Vector<DataElement> addTrasformazioneToDati(TipoOperazione tipoOP, Vector<DataElement> dati, String idTrasformazione, String nome, boolean azioniAll, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String[] azioni, String pattern, String contentType,
+	public Vector<DataElement> addTrasformazioneToDati(TipoOperazione tipoOP, Vector<DataElement> dati, Object oggetto, String idTrasformazione, String nome, boolean azioniAll, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String[] azioni, String pattern, String contentType,
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding,
 			String servletTrasformazioniRichiesta, List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta, String servletTrasformazioniRispostaList, List<Parameter> parametriInvocazioneServletTrasformazioniRisposta,
-			int numeroTrasformazioniRisposte) {
+			int numeroTrasformazioniRisposte, boolean isPortaDelegata, String servletTrasformazioniAutorizzazioneAutenticati,  List<Parameter> parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati , int numAutenticati,
+			String servletTrasformazioniApplicativiAutenticati,  List<Parameter> parametriInvocazioneServletTrasformazioniApplicativiAutenticati , int numApplicativiAutenticati) throws Exception {
 		
 		// Id hidden
 		DataElement de = new DataElement();
@@ -9230,6 +9479,78 @@ public class ConsoleHelper {
 						
 		// in edit faccio vedere i link per configurare la richiesta e le risposte
 		if(tipoOP.equals(TipoOperazione.CHANGE)) {
+			
+			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
+			boolean old_autorizzazione_autenticazione = false;
+			String old_autorizzazione = null;
+			String protocollo = null;
+			boolean isSupportatoAutenticazione;
+			
+			if(isPortaDelegata){
+				PortaDelegata pd = (PortaDelegata) oggetto;
+				old_autorizzazione = AutorizzazioneUtilities.convertToStato(pd.getAutorizzazione());
+				old_autorizzazione_autenticazione = TipoAutorizzazione.isAuthenticationRequired(pd.getAutorizzazione());
+				isSupportatoAutenticazione = true;
+				if(pd!=null && pd.getServizio()!=null && pd.getServizio().getTipo()!=null) {
+					protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pd.getServizio().getTipo());
+				}
+			}
+			else {
+				PortaApplicativa pa = (PortaApplicativa) oggetto;
+				old_autorizzazione = AutorizzazioneUtilities.convertToStato(pa.getAutorizzazione());
+				old_autorizzazione_autenticazione = TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione());
+				if(pa!=null && pa.getServizio()!=null && pa.getServizio().getTipo()!=null) {
+					protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pa.getServizio().getTipo());
+				}
+				isSupportatoAutenticazione = this.soggettiCore.isSupportatoAutenticazioneApplicativiErogazione(protocollo);
+			}
+			
+			
+			// soggetti
+			if(servletTrasformazioniAutorizzazioneAutenticati !=null && (old_autorizzazione_autenticazione || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(old_autorizzazione)) ){
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(servletTrasformazioniAutorizzazioneAutenticati, parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.toArray(new Parameter[parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.size()]));
+				if(isPortaDelegata){
+					String labelApplicativi = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZI_APPLICATIVI;
+					if(!this.isModalitaCompleta()) {
+						labelApplicativi = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVI;
+					}
+					if (contaListe) {
+						ServletUtils.setDataElementCustomLabel(de,labelApplicativi,Long.valueOf(numAutenticati));
+					} else
+						ServletUtils.setDataElementCustomLabel(de,labelApplicativi);
+				}
+				else{
+					if (contaListe) {
+						ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI,Long.valueOf(numAutenticati));
+					} else
+						ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI);
+				}
+				dati.addElement(de);
+			}
+			
+			// servizi applicativi
+			
+			if(!isPortaDelegata && this.saCore.isSupportatoAutenticazioneApplicativiErogazione(protocollo) 
+					&& isSupportatoAutenticazione // il link degli applicativi sulla pa deve essere visualizzato SOLO se è abilitata l'autenticazione
+					){
+				if(servletTrasformazioniApplicativiAutenticati!=null && (old_autorizzazione_autenticazione || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(old_autorizzazione)) ){
+					de = new DataElement();
+					de.setType(DataElementType.LINK);
+					de.setUrl(servletTrasformazioniApplicativiAutenticati, parametriInvocazioneServletTrasformazioniApplicativiAutenticati.toArray(new Parameter[parametriInvocazioneServletTrasformazioniApplicativiAutenticati.size()]));
+					String labelApplicativi = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZI_APPLICATIVI; // uso cmq label PD
+					if(!this.isModalitaCompleta()) {
+						labelApplicativi = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVI;// uso cmq label PD
+					}
+					if (contaListe) {
+						ServletUtils.setDataElementCustomLabel(de,labelApplicativi,Long.valueOf(numApplicativiAutenticati));
+					} else {
+						ServletUtils.setDataElementCustomLabel(de,labelApplicativi);
+					}
+					dati.addElement(de);
+				}
+			}
 		
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_REGOLE_TRASFORMAZIONE);
@@ -9491,13 +9812,15 @@ public class ConsoleHelper {
 				false, null, null);
 	}
 	
-	public Vector<DataElement> addTrasformazioneRichiestaToDati(TipoOperazione tipoOP, Vector<DataElement> dati, String idTrasformazione,
-			boolean trasformazioneContenutoAbilitato, org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneContenutoTipo, BinaryParameter trasformazioneContenutoTemplate, String trasformazioneRichiestaContentType, 
+	public Vector<DataElement> addTrasformazioneRichiestaToDati(TipoOperazione tipoOP, Vector<DataElement> dati, long idPorta, TrasformazioneRegolaRichiesta richiesta, boolean isPortaDelegata, String idTrasformazione,
+			boolean trasformazioneContenutoAbilitato, org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneContenutoTipo, BinaryParameter trasformazioneContenutoTemplate, String trasformazioneContenutoTipoCheck,
+			String trasformazioneRichiestaContentType, 
 			ServiceBinding serviceBindingMessage, boolean trasformazioneRestAbilitato, String trasformazioneRestMethod, String trasformazioneRestPath,
 			boolean trasformazioneSoapAbilitato, String trasformazioneSoapAction, String trasformazioneSoapVersion, String trasformazioneSoapEnvelope,  
-			org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneSoapEnvelopeTipo, BinaryParameter trasformazioneSoapEnvelopeTemplate, 
+			org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneSoapEnvelopeTipo, BinaryParameter trasformazioneSoapEnvelopeTemplate, String trasformazioneSoapEnvelopeTipoCheck,
 			String servletTrasformazioniRichiestaHeadersList, List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaHeaders, int numeroTrasformazioniRichiestaHeaders,
-			String servletTrasformazioniRichiestaParametriList, List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaParametri, int numeroTrasformazioniRichiestaParametri) {
+			String servletTrasformazioniRichiestaParametriList, List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaParametri, int numeroTrasformazioniRichiestaParametri) throws Exception {
+		
 		
 		// Id trasformazione hidden
 		DataElement  de = new DataElement();
@@ -9555,6 +9878,11 @@ public class ConsoleHelper {
 		de.setPostBack(true);
 		dati.addElement(de);
 		
+		String postbackElement = this.getPostBackElementName();
+		
+		boolean old_trasformazioneContenutoTemplate = false;
+		boolean old_trasformazioneSoapEnvelopeTemplate = false;
+		
 		if(trasformazioneContenutoAbilitato) {
 			// tipo
 			de = new DataElement();
@@ -9595,9 +9923,60 @@ public class ConsoleHelper {
 			dati.addElement(de);
 			
 			if(trasformazioneContenutoTipo.isTemplateRequired()) {
+				
+				// richiesta null in add
+				boolean templateRequired = true;
+				
+				if(richiesta!=null){
+					old_trasformazioneContenutoTemplate = richiesta.getConversioneTemplate() != null && richiesta.getConversioneTemplate().length > 0;
+					TipoTrasformazione oldTrasformazioneContenutoTipo = StringUtils.isNotEmpty(richiesta.getConversioneTipo()) 
+							? org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(richiesta.getConversioneTipo()) : org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
+					if(trasformazioneContenutoTipo.equals(oldTrasformazioneContenutoTipo)) {
+						templateRequired = false;
+					} 
+				}
+							
+				if(postbackElement != null) {
+					if(postbackElement.equals(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO)) {
+						old_trasformazioneContenutoTemplate = false;
+						templateRequired = true;
+					} 
+//					if(postbackElement.equals(trasformazioneContenutoTemplate.getName())) {
+//						if(StringUtils.isEmpty(trasformazioneContenutoTipoCheck))
+//							trasformazioneContenutoTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
+//					}
+				}
+				
+				de = new DataElement();
+				de.setLabel("");
+				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(trasformazioneContenutoTipoCheck);
+				dati.addElement(de);
+				
+				if(StringUtils.isNotEmpty(trasformazioneContenutoTipoCheck) && trasformazioneContenutoTipoCheck.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_TIPO))
+					templateRequired = true;
+				
+				String trasformazioneContenutoLabel = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE;
+				if(old_trasformazioneContenutoTemplate && StringUtils.isEmpty(trasformazioneContenutoTipoCheck)) {
+					trasformazioneContenutoLabel = "";
+					DataElement saveAs = new DataElement();
+					saveAs.setValue(CostantiControlStation.LABEL_DOWNLOAD_DOCUMENTO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE);
+					saveAs.setType(DataElementType.LINK);
+				
+					Parameter pIdTrasformazioneRegola = new Parameter(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE, idTrasformazione);
+					Parameter pIdAccordo = new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_ID_ACCORDO, idPorta+"");
+					Parameter pTipoAllegato = new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, isPortaDelegata ? "pd" : "pa");
+					Parameter pTipoDoc = new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, isPortaDelegata ? 
+							ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE : 
+								ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE);
+					saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, pIdAccordo, pTipoAllegato, pTipoDoc, pIdTrasformazioneRegola);
+					dati.add(saveAs);
+				}
+				
 				// template
-				DataElement trasformazioneContenutoTemplateDataElement = trasformazioneContenutoTemplate.getFileDataElement(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE, "", getSize());
-				trasformazioneContenutoTemplateDataElement.setRequired(true);
+				DataElement trasformazioneContenutoTemplateDataElement = trasformazioneContenutoTemplate.getFileDataElement(trasformazioneContenutoLabel, "", getSize());
+				trasformazioneContenutoTemplateDataElement.setRequired(templateRequired);
 				dati.add(trasformazioneContenutoTemplateDataElement);
 				dati.addAll(trasformazioneContenutoTemplate.getFileNameDataElement());
 				dati.add(trasformazioneContenutoTemplate.getFileIdDataElement());
@@ -9699,12 +10078,64 @@ public class ConsoleHelper {
 								dati.addElement(de);
 								
 								if(trasformazioneSoapEnvelopeTipo.isTemplateRequired()) {
+									
+									// richiesta null in add
+									boolean templateRequired = true;
+									if(richiesta!=null){
+										TrasformazioneSoap oldTrasformazioneSoap = richiesta.getTrasformazioneSoap();
+										old_trasformazioneSoapEnvelopeTemplate = oldTrasformazioneSoap != null && oldTrasformazioneSoap.getEnvelopeBodyConversioneTemplate() != null && oldTrasformazioneSoap.getEnvelopeBodyConversioneTemplate().length > 0;
+										String oldTrasformazioneSoapEnvelopeTipoS = oldTrasformazioneSoap != null ? oldTrasformazioneSoap.getEnvelopeBodyConversioneTipo() : null;
+										TipoTrasformazione oldTrasformazioneSoapEnvelopeTipo = StringUtils.isNotEmpty(oldTrasformazioneSoapEnvelopeTipoS) 
+												? org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(oldTrasformazioneSoapEnvelopeTipoS) : org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
+										if(trasformazioneSoapEnvelopeTipo.equals(oldTrasformazioneSoapEnvelopeTipo)) {
+											templateRequired = false;
+										}  
+									}
+									
+									if(postbackElement != null) {
+										if(postbackElement.equals(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO)) {
+											old_trasformazioneSoapEnvelopeTemplate = false;
+											templateRequired = true;
+										}
+										
+//										if(postbackElement.equals(trasformazioneSoapEnvelopeTemplate.getName())) {
+//											trasformazioneSoapEnvelopeTipoCheck = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_FILE;
+//										}
+									}
+									
+									de = new DataElement();
+									de.setLabel("");
+									de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO_CHECK);
+									de.setType(DataElementType.HIDDEN);
+									de.setValue(trasformazioneSoapEnvelopeTipoCheck);
+									dati.addElement(de);
+									
+									if(StringUtils.isNotEmpty(trasformazioneSoapEnvelopeTipoCheck) && trasformazioneSoapEnvelopeTipoCheck.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK_UPDATE_TIPO))
+										templateRequired = true;
+									
+									String trasformazioneSoapEnvelopeTemplateLabel = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE;
+									if(old_trasformazioneSoapEnvelopeTemplate && StringUtils.isEmpty(trasformazioneSoapEnvelopeTipoCheck)) {
+										trasformazioneSoapEnvelopeTemplateLabel = "";
+										DataElement saveAs = new DataElement();
+										saveAs.setValue(CostantiControlStation.LABEL_DOWNLOAD_DOCUMENTO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE);
+										saveAs.setType(DataElementType.LINK);
+
+										Parameter pIdTrasformazioneRegola = new Parameter(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE, idTrasformazione);
+										Parameter pIdAccordo = new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_ID_ACCORDO, idPorta+"");
+										Parameter pTipoAllegato = new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, isPortaDelegata ? "pd" : "pa");
+										Parameter pTipoDoc = new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, isPortaDelegata 
+												? ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE 
+														: ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE);
+										saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, pIdAccordo, pTipoAllegato, pTipoDoc,pIdTrasformazioneRegola);
+										dati.add(saveAs);
+									}
+									
 									// 	template envelope attachement
-									DataElement trasformazioneSoapEnvelopeTemplateDataElement = trasformazioneSoapEnvelopeTemplate.getFileDataElement(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE, "", getSize());
-									trasformazioneSoapEnvelopeTemplateDataElement.setRequired(true);
+									DataElement trasformazioneSoapEnvelopeTemplateDataElement = trasformazioneSoapEnvelopeTemplate.getFileDataElement(trasformazioneSoapEnvelopeTemplateLabel, "", getSize());
+									trasformazioneSoapEnvelopeTemplateDataElement.setRequired(templateRequired);
 									dati.add(trasformazioneSoapEnvelopeTemplateDataElement);
-									dati.addAll(trasformazioneContenutoTemplate.getFileNameDataElement());
-									dati.add(trasformazioneContenutoTemplate.getFileIdDataElement());
+									dati.addAll(trasformazioneSoapEnvelopeTemplate.getFileNameDataElement());
+									dati.add(trasformazioneSoapEnvelopeTemplate.getFileIdDataElement());
 								}
 							}
 						}
@@ -9862,6 +10293,179 @@ public class ConsoleHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	
+	public Vector<DataElement> addPorteTrasformazioniServizioApplicativoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idTrasformazione, 
+		String servizioApplicativo, String[] servizioApplicativoList, int sizeAttuale, 
+		boolean addMsgServiziApplicativoNonDisponibili, boolean addTitle) {
+		
+		DataElement  de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(idTrasformazione);
+		dati.addElement(de);
+		
+		if(servizioApplicativoList!=null && servizioApplicativoList.length>0){
+		
+			String labelApplicativo = CostantiControlStation.LABEL_PARAMETRO_SERVIZIO_APPLICATIVO;
+			if(!this.isModalitaCompleta()) {
+				labelApplicativo = CostantiControlStation.LABEL_PARAMETRO_APPLICATIVO;
+			}
+			
+			if(addTitle) {
+				de = new DataElement();
+				de.setType(DataElementType.TITLE);
+				de.setLabel(labelApplicativo);
+				dati.addElement(de);
+			}
+			
+			de = new DataElement();
+			de.setLabel( CostantiControlStation.LABEL_PARAMETRO_NOME );
+			de.setType(DataElementType.SELECT);
+			de.setName(CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO);
+			de.setValues(servizioApplicativoList);
+			de.setSelected(servizioApplicativo);
+			dati.addElement(de);
+			
+		}else{
+			if(addMsgServiziApplicativoNonDisponibili){
+				if(sizeAttuale>0){
+					this.pd.setMessage("Non esistono ulteriori servizi applicativi associabili alla trasformazione",org.openspcoop2.web.lib.mvc.MessageType.INFO);
+				}
+				else{
+					this.pd.setMessage("Non esistono servizi applicativi associabili alla trasformazione",org.openspcoop2.web.lib.mvc.MessageType.INFO);
+				}
+				this.pd.disableEditMode();
+			}
+		}
+
+		return dati;
+	}
+	
+	public Vector<DataElement> addPorteTrasformazioniSoggettoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idTrasformazione, 
+		String[] soggettiLabelList, String[] soggettiList, String soggetto, int sizeAttuale, 
+			boolean addMsgSoggettiNonDisponibili, boolean addTitle) {
+		
+		DataElement  de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(idTrasformazione);
+		dati.addElement(de);
+			
+		if(soggettiList!=null && soggettiList.length>0){
+		
+			if(addTitle) {
+				  de = new DataElement();
+				de.setType(DataElementType.TITLE);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SOGGETTO);
+				dati.addElement(de);
+			}
+			
+			  de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+			de.setType(DataElementType.SELECT);
+			de.setName(CostantiControlStation.PARAMETRO_SOGGETTO);
+			de.setLabels(soggettiLabelList);
+			de.setValues(soggettiList);
+			de.setSelected(soggetto);
+			dati.addElement(de);
+			
+		}else{
+			if(addMsgSoggettiNonDisponibili){
+				if(sizeAttuale>0){
+					this.pd.setMessage("Non esistono ulteriori soggetti associabili",org.openspcoop2.web.lib.mvc.MessageType.INFO);
+				}
+				else{
+					this.pd.setMessage("Non esistono soggetti associabili",org.openspcoop2.web.lib.mvc.MessageType.INFO);
+				}
+				this.pd.disableEditMode();
+			}
+		}
+
+		return dati;
+	}
+
+	public Vector<DataElement> addPorteTrasformazioniServizioApplicativoAutorizzatiToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idTrasformazione, 
+		String[] soggettiLabelList, String[] soggettiList, String soggetto, int sizeAttuale, 
+		Map<String,List<ServizioApplicativo>> listServiziApplicativi, String sa,
+			boolean addMsgApplicativiNonDisponibili) {
+		
+		if(soggettiList!=null && soggettiList.length>0 && listServiziApplicativi!=null && listServiziApplicativi.size()>0){
+		
+			DataElement de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_APPLICATIVO);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+			de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(idTrasformazione);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SOGGETTO);
+			de.setName(CostantiControlStation.PARAMETRO_SOGGETTO);
+			de.setValue(soggetto);
+			if(this.core.isMultitenant()) {
+				de.setType(DataElementType.SELECT);
+				de.setLabels(soggettiLabelList);
+				de.setValues(soggettiList);
+				de.setSelected(soggetto);
+				de.setPostBack(true);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+			}
+			dati.addElement(de);
+			
+			List<ServizioApplicativo> listSA = null;
+			if(soggetto!=null && !"".equals(soggetto)) {
+				listSA = listServiziApplicativi.get(soggetto);
+			}
+			
+			if(listSA!=null && !listSA.isEmpty()) {
+				
+				String [] saValues = new String[listSA.size()];
+				String [] saLabels = new String[listSA.size()];
+				int index =0;
+				for (ServizioApplicativo saObject : listSA) {
+					saValues[index] = saObject.getId().longValue()+"";
+					saLabels[index] = saObject.getNome();
+					index++;
+				}
+				
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+				de.setType(DataElementType.SELECT);
+				de.setName(CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO_AUTORIZZATO);
+				de.setLabels(saLabels);
+				de.setValues(saValues);
+				de.setSelected(sa);
+				dati.addElement(de);
+				
+			}
+			else {
+				this.pd.setMessage("Non esistono applicativi associabili per il soggetto selezionato",org.openspcoop2.web.lib.mvc.MessageType.INFO);
+				this.pd.disableEditMode();
+			}
+			
+		}else{
+			if(addMsgApplicativiNonDisponibili){
+				if(sizeAttuale>0){
+					this.pd.setMessage("Non esistono ulteriori applicativi associabili",org.openspcoop2.web.lib.mvc.MessageType.INFO);
+				}
+				else{
+					this.pd.setMessage("Non esistono applicativi associabili",org.openspcoop2.web.lib.mvc.MessageType.INFO);
+				}
+				this.pd.disableEditMode();
+			}
+		}
+
+		return dati;
 	}
 	
 	public DataElement getHttpMethodDataElement(TipoOperazione tipoOperazione, String httpMethod, String label, String name, boolean addQualsiasi, String labelQualsiasi, String valueQualsiasi) {

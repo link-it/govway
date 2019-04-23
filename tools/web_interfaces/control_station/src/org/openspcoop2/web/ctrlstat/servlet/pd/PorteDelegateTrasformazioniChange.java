@@ -164,7 +164,19 @@ public class PorteDelegateTrasformazioniChange extends Action {
 			parametriInvocazioneServletTrasformazioniRisposta.add(pIdFruizione);
 			parametriInvocazioneServletTrasformazioniRisposta.add(pIdTrasformazione);
 			
-			MappingFruizionePortaDelegata mappingAssociatoPorta = porteDelegateCore.getMappingFruizionePortaDelegata(portaDelegata);
+			String servletTrasformazioniAutorizzazioneAutenticati =  PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_LIST;
+			List<Parameter> parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati = new ArrayList<Parameter>();
+			parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pId);
+			parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdSoggetto);
+			parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdAsps);
+			parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdFruizione);
+			parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdTrasformazione);
+			int numAutenticati = oldRegola.getApplicabilita() != null ? oldRegola.getApplicabilita().sizeServizioApplicativoList() : 0;
+			String servletTrasformazioniApplicativiAutenticati = null;
+			List<Parameter> parametriInvocazioneServletTrasformazioniApplicativiAutenticati  = null;
+			int numApplicativiAutenticati = 0;
+			
+ 			MappingFruizionePortaDelegata mappingAssociatoPorta = porteDelegateCore.getMappingFruizionePortaDelegata(portaDelegata);
 			
 			String[] azioniDisponibiliList = null;
 			String[] azioniDisponibiliLabelList = null;
@@ -279,9 +291,12 @@ public class PorteDelegateTrasformazioniChange extends Action {
 					azioniAll = (azioni==null || azioni.length<=0);
 				}
 
-				dati = porteDelegateHelper.addTrasformazioneToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
+				dati = porteDelegateHelper.addTrasformazioneToDati(TipoOperazione.CHANGE, dati, portaDelegata, idTrasformazioneS, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
 						apc.getServiceBinding(),
-						servletTrasformazioniRichiesta, parametriInvocazioneServletTrasformazioniRichiesta, servletTrasformazioniRispostaList, parametriInvocazioneServletTrasformazioniRisposta, numeroTrasformazioniRisposte);
+						servletTrasformazioniRichiesta, parametriInvocazioneServletTrasformazioniRichiesta, servletTrasformazioniRispostaList, parametriInvocazioneServletTrasformazioniRisposta, numeroTrasformazioniRisposte,
+						true,
+						servletTrasformazioniAutorizzazioneAutenticati, parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati , numAutenticati,
+						servletTrasformazioniApplicativiAutenticati,  parametriInvocazioneServletTrasformazioniApplicativiAutenticati , numApplicativiAutenticati);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -309,9 +324,12 @@ public class PorteDelegateTrasformazioniChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addTrasformazioneToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
+				dati = porteDelegateHelper.addTrasformazioneToDati(TipoOperazione.CHANGE, dati, portaDelegata, idTrasformazioneS, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
 						apc.getServiceBinding(),
-						servletTrasformazioniRichiesta, parametriInvocazioneServletTrasformazioniRichiesta, servletTrasformazioniRispostaList, parametriInvocazioneServletTrasformazioniRisposta, numeroTrasformazioniRisposte);
+						servletTrasformazioniRichiesta, parametriInvocazioneServletTrasformazioniRichiesta, servletTrasformazioniRispostaList, parametriInvocazioneServletTrasformazioniRisposta, numeroTrasformazioniRisposte,
+						true,
+						servletTrasformazioniAutorizzazioneAutenticati, parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati , numAutenticati,
+						servletTrasformazioniApplicativiAutenticati,  parametriInvocazioneServletTrasformazioniApplicativiAutenticati , numApplicativiAutenticati);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);

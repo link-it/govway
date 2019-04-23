@@ -44,6 +44,12 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
+import org.openspcoop2.core.config.TrasformazioneRegola;
+import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
+import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
+import org.openspcoop2.core.config.TrasformazioneSoap;
+import org.openspcoop2.core.config.TrasformazioneSoapRisposta;
+import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -338,7 +344,7 @@ public class DocumentoExporter extends HttpServlet {
 						Long idPorta = Long.parseLong(idAccordo);
 						PortaApplicativa portaApplicativa = paCore.getPortaApplicativa(idPorta);
 						fileName = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_XACML_POLICY_FILENAME;
-
+						
 						String policy = portaApplicativa.getXacmlPolicy();
 
 						if(StringUtils.isEmpty(policy)) {
@@ -346,7 +352,227 @@ public class DocumentoExporter extends HttpServlet {
 						}
 
 						docBytes = policy.getBytes();
-					}else{
+					}else if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE.equals(tipoDocumentoDaScaricare)){
+						Long idPorta = Long.parseLong(idAccordo);
+						PortaApplicativa portaApplicativa = paCore.getPortaApplicativa(idPorta);
+						fileName = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE_FILENAME;
+						
+						String idTrasformazioneRegola = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_REQ_ID);
+						long idTrasformazione = Long.parseLong(idTrasformazioneRegola);
+						
+						Trasformazioni trasformazioni = portaApplicativa.getTrasformazioni();
+						TrasformazioneRegola oldRegola = null;
+						for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+							if(reg.getId().longValue() == idTrasformazione) {
+								oldRegola = reg;
+								break;
+							}
+						}
+
+						if(oldRegola == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						TrasformazioneRegolaRichiesta richiesta = oldRegola.getRichiesta();
+					
+						if(richiesta == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						if(richiesta.getConversioneTemplate() == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione tipo = StringUtils.isNotEmpty(richiesta.getConversioneTipo()) ? 
+								org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(richiesta.getConversioneTipo()) : org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
+
+						switch(tipo) {
+						case FREEMARKER_TEMPLATE:
+							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_FREEMARKER;
+							break;
+						case TEMPLATE:
+							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_GOVWAY;
+							break;
+						case EMPTY:
+						default:
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+
+						docBytes = richiesta.getConversioneTemplate();
+					}else if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE.equals(tipoDocumentoDaScaricare)){
+						Long idPorta = Long.parseLong(idAccordo);
+						PortaApplicativa portaApplicativa = paCore.getPortaApplicativa(idPorta);
+						fileName = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE_FILENAME;
+						
+						String idTrasformazioneRegola = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_REQ_ID);
+						long idTrasformazione = Long.parseLong(idTrasformazioneRegola);
+						
+						Trasformazioni trasformazioni = portaApplicativa.getTrasformazioni();
+						TrasformazioneRegola oldRegola = null;
+						for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+							if(reg.getId().longValue() == idTrasformazione) {
+								oldRegola = reg;
+								break;
+							}
+						}
+
+						if(oldRegola == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						TrasformazioneRegolaRichiesta richiesta = oldRegola.getRichiesta();
+					
+						if(richiesta == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						if(richiesta.getTrasformazioneSoap() == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+
+						TrasformazioneSoap trasformazioneSoap = richiesta.getTrasformazioneSoap();
+						
+						if( trasformazioneSoap.getEnvelopeBodyConversioneTemplate() == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione tipo = StringUtils.isNotEmpty(trasformazioneSoap.getEnvelopeBodyConversioneTipo()) ? 
+								org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(trasformazioneSoap.getEnvelopeBodyConversioneTipo()) : org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
+
+						switch(tipo) {
+						case FREEMARKER_TEMPLATE:
+							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_FREEMARKER;
+							break;
+						case TEMPLATE:
+							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_GOVWAY;
+							break;
+						case EMPTY:
+						default:
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+
+						docBytes = trasformazioneSoap.getEnvelopeBodyConversioneTemplate();
+					}else if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE.equals(tipoDocumentoDaScaricare)){
+						Long idPorta = Long.parseLong(idAccordo);
+						PortaApplicativa portaApplicativa = paCore.getPortaApplicativa(idPorta);
+						fileName = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE_FILENAME;
+
+						String idTrasformazioneRegola = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_REQ_ID);
+						long idTrasformazione = Long.parseLong(idTrasformazioneRegola);
+						
+						String idTrasformazioneRegolaRes = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_RES_ID);
+						long idTrasformazioneRisposta = Long.parseLong(idTrasformazioneRegolaRes);
+						
+						Trasformazioni trasformazioni = portaApplicativa.getTrasformazioni();
+						TrasformazioneRegola oldRegola = null;
+						for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+							if(reg.getId().longValue() == idTrasformazione) {
+								oldRegola = reg;
+								break;
+							}
+						}
+
+						if(oldRegola == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						TrasformazioneRegolaRisposta oldRisposta = null;
+						for (int j = 0; j < oldRegola.sizeRispostaList(); j++) {
+							TrasformazioneRegolaRisposta risposta = oldRegola.getRisposta(j);
+							if (risposta.getId().longValue() == idTrasformazioneRisposta) {
+								oldRisposta = risposta;
+								break;
+							}
+						}
+						
+						if(oldRisposta == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						if(oldRisposta.getConversioneTemplate() == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione tipo = StringUtils.isNotEmpty(oldRisposta.getConversioneTipo()) ? 
+								org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(oldRisposta.getConversioneTipo()) : org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
+
+						switch(tipo) {
+						case FREEMARKER_TEMPLATE:
+							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_FREEMARKER;
+							break;
+						case TEMPLATE:
+							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_GOVWAY;
+							break;
+						case EMPTY:
+						default:
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+								
+						docBytes = oldRisposta.getConversioneTemplate();
+					}else if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE.equals(tipoDocumentoDaScaricare)){
+						Long idPorta = Long.parseLong(idAccordo);
+						PortaApplicativa portaApplicativa = paCore.getPortaApplicativa(idPorta);
+						fileName = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE_FILENAME;
+						
+						String idTrasformazioneRegola = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_REQ_ID);
+						long idTrasformazione = Long.parseLong(idTrasformazioneRegola);
+						
+						String idTrasformazioneRegolaRes = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_RES_ID);
+						long idTrasformazioneRisposta = Long.parseLong(idTrasformazioneRegolaRes);
+
+						Trasformazioni trasformazioni = portaApplicativa.getTrasformazioni();
+						TrasformazioneRegola oldRegola = null;
+						for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+							if(reg.getId().longValue() == idTrasformazione) {
+								oldRegola = reg;
+								break;
+							}
+						}
+
+						if(oldRegola == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						TrasformazioneRegolaRisposta oldRisposta = null;
+						for (int j = 0; j < oldRegola.sizeRispostaList(); j++) {
+							TrasformazioneRegolaRisposta risposta = oldRegola.getRisposta(j);
+							if (risposta.getId().longValue() == idTrasformazioneRisposta) {
+								oldRisposta = risposta;
+								break;
+							}
+						}
+						
+						if(oldRisposta == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						if(oldRisposta.getTrasformazioneSoap() == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+
+						TrasformazioneSoapRisposta trasformazioneSoap = oldRisposta.getTrasformazioneSoap();
+						
+						if( trasformazioneSoap.getEnvelopeBodyConversioneTemplate() == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione tipo = StringUtils.isNotEmpty(trasformazioneSoap.getEnvelopeBodyConversioneTipo()) ? 
+								org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(trasformazioneSoap.getEnvelopeBodyConversioneTipo()) : org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
+
+						switch(tipo) {
+						case FREEMARKER_TEMPLATE:
+							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_FREEMARKER;
+							break;
+						case TEMPLATE:
+							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_GOVWAY;
+							break;
+						case EMPTY:
+						default:
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+
+						docBytes = trasformazioneSoap.getEnvelopeBodyConversioneTemplate();
+					}else {
 						throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non gestito per il tipo archivio ["+tipoDocumento+"]");
 					}
 				}
@@ -363,7 +589,227 @@ public class DocumentoExporter extends HttpServlet {
 						}
 
 						docBytes = policy.getBytes();
-					}else{
+					}else if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE.equals(tipoDocumentoDaScaricare)){
+						Long idPorta = Long.parseLong(idAccordo);
+						PortaDelegata portaDelegata = pdCore.getPortaDelegata(idPorta);
+						fileName = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE_FILENAME;
+
+						String idTrasformazioneRegola = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_CONFIGURAZIONE_TRASFORMAZIONI_REQ_ID);
+						long idTrasformazione = Long.parseLong(idTrasformazioneRegola);
+						
+						Trasformazioni trasformazioni = portaDelegata.getTrasformazioni();
+						TrasformazioneRegola oldRegola = null;
+						for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+							if(reg.getId().longValue() == idTrasformazione) {
+								oldRegola = reg;
+								break;
+							}
+						}
+
+						if(oldRegola == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						TrasformazioneRegolaRichiesta richiesta = oldRegola.getRichiesta();
+					
+						if(richiesta == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						if(richiesta.getConversioneTemplate() == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione tipo = StringUtils.isNotEmpty(richiesta.getConversioneTipo()) ? 
+								org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(richiesta.getConversioneTipo()) : org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
+
+						switch(tipo) {
+						case FREEMARKER_TEMPLATE:
+							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_FREEMARKER;
+							break;
+						case TEMPLATE:
+							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_GOVWAY;
+							break;
+						case EMPTY:
+						default:
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+								
+						docBytes = richiesta.getConversioneTemplate();
+					}else if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE.equals(tipoDocumentoDaScaricare)){
+						Long idPorta = Long.parseLong(idAccordo);
+						PortaDelegata portaDelegata = pdCore.getPortaDelegata(idPorta);
+						fileName = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE_FILENAME;
+						
+						String idTrasformazioneRegola = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_CONFIGURAZIONE_TRASFORMAZIONI_REQ_ID);
+						long idTrasformazione = Long.parseLong(idTrasformazioneRegola);
+
+						Trasformazioni trasformazioni = portaDelegata.getTrasformazioni();
+						TrasformazioneRegola oldRegola = null;
+						for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+							if(reg.getId().longValue() == idTrasformazione) {
+								oldRegola = reg;
+								break;
+							}
+						}
+
+						if(oldRegola == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						TrasformazioneRegolaRichiesta richiesta = oldRegola.getRichiesta();
+					
+						if(richiesta == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						if(richiesta.getTrasformazioneSoap() == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+
+						TrasformazioneSoap trasformazioneSoap = richiesta.getTrasformazioneSoap();
+						
+						if( trasformazioneSoap.getEnvelopeBodyConversioneTemplate() == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione tipo = StringUtils.isNotEmpty(trasformazioneSoap.getEnvelopeBodyConversioneTipo()) ? 
+								org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(trasformazioneSoap.getEnvelopeBodyConversioneTipo()) : org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
+
+						switch(tipo) {
+						case FREEMARKER_TEMPLATE:
+							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_FREEMARKER;
+							break;
+						case TEMPLATE:
+							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_GOVWAY;
+							break;
+						case EMPTY:
+						default:
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+
+						docBytes = trasformazioneSoap.getEnvelopeBodyConversioneTemplate();
+					}else if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE.equals(tipoDocumentoDaScaricare)){
+						Long idPorta = Long.parseLong(idAccordo);
+						PortaDelegata portaDelegata = pdCore.getPortaDelegata(idPorta);
+						fileName = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE_FILENAME;
+
+						String idTrasformazioneRegola = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_CONFIGURAZIONE_TRASFORMAZIONI_REQ_ID);
+						long idTrasformazione = Long.parseLong(idTrasformazioneRegola);
+						
+						String idTrasformazioneRegolaRes = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_CONFIGURAZIONE_TRASFORMAZIONI_RES_ID);
+						long idTrasformazioneRisposta = Long.parseLong(idTrasformazioneRegolaRes);
+						
+						Trasformazioni trasformazioni = portaDelegata.getTrasformazioni();
+						TrasformazioneRegola oldRegola = null;
+						for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+							if(reg.getId().longValue() == idTrasformazione) {
+								oldRegola = reg;
+								break;
+							}
+						}
+
+						if(oldRegola == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						TrasformazioneRegolaRisposta oldRisposta = null;
+						for (int j = 0; j < oldRegola.sizeRispostaList(); j++) {
+							TrasformazioneRegolaRisposta risposta = oldRegola.getRisposta(j);
+							if (risposta.getId().longValue() == idTrasformazioneRisposta) {
+								oldRisposta = risposta;
+								break;
+							}
+						}
+						
+						if(oldRisposta == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						if(oldRisposta.getConversioneTemplate() == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione tipo = StringUtils.isNotEmpty(oldRisposta.getConversioneTipo()) ? 
+								org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(oldRisposta.getConversioneTipo()) : org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
+
+						switch(tipo) {
+						case FREEMARKER_TEMPLATE:
+							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_FREEMARKER;
+							break;
+						case TEMPLATE:
+							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_GOVWAY;
+							break;
+						case EMPTY:
+						default:
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+								
+						docBytes = oldRisposta.getConversioneTemplate();
+					}else if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE.equals(tipoDocumentoDaScaricare)){
+						Long idPorta = Long.parseLong(idAccordo);
+						PortaDelegata portaDelegata = pdCore.getPortaDelegata(idPorta);
+						fileName = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE_FILENAME;
+						
+						String idTrasformazioneRegola = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_CONFIGURAZIONE_TRASFORMAZIONI_REQ_ID);
+						long idTrasformazione = Long.parseLong(idTrasformazioneRegola);
+						
+						String idTrasformazioneRegolaRes = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_CONFIGURAZIONE_TRASFORMAZIONI_RES_ID);
+						long idTrasformazioneRisposta = Long.parseLong(idTrasformazioneRegolaRes);
+
+						Trasformazioni trasformazioni = portaDelegata.getTrasformazioni();
+						TrasformazioneRegola oldRegola = null;
+						for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+							if(reg.getId().longValue() == idTrasformazione) {
+								oldRegola = reg;
+								break;
+							}
+						}
+
+						if(oldRegola == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						TrasformazioneRegolaRisposta oldRisposta = null;
+						for (int j = 0; j < oldRegola.sizeRispostaList(); j++) {
+							TrasformazioneRegolaRisposta risposta = oldRegola.getRisposta(j);
+							if (risposta.getId().longValue() == idTrasformazioneRisposta) {
+								oldRisposta = risposta;
+								break;
+							}
+						}
+						
+						if(oldRisposta == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						if(oldRisposta.getTrasformazioneSoap() == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+
+						TrasformazioneSoapRisposta trasformazioneSoap = oldRisposta.getTrasformazioneSoap();
+						
+						if( trasformazioneSoap.getEnvelopeBodyConversioneTemplate() == null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+						
+						org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione tipo = StringUtils.isNotEmpty(trasformazioneSoap.getEnvelopeBodyConversioneTipo()) ? 
+								org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(trasformazioneSoap.getEnvelopeBodyConversioneTipo()) : org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
+
+						switch(tipo) {
+						case FREEMARKER_TEMPLATE:
+							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_FREEMARKER;
+							break;
+						case TEMPLATE:
+							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_GOVWAY;
+							break;
+						case EMPTY:
+						default:
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						}
+
+						docBytes = trasformazioneSoap.getEnvelopeBodyConversioneTemplate();
+					}else {
 						throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non gestito per il tipo archivio ["+tipoDocumento+"]");
 					}
 				}else if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_SOGGETTO.equals(tipoDocumento)){

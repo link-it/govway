@@ -222,4 +222,6 @@ public class Costanti {
 	
 	public final static String LABEL_TITOLO_SEZIONE_DEFAULT = "Filtri di Ricerca";
 	
+	public final static String INFO_BUTTON_ICON = "&#xE88E;";
+	public final static String INFO_BUTTON_ICON_WHITE = "&#xE88F;";
 }

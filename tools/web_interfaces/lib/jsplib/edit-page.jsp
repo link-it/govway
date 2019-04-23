@@ -176,9 +176,11 @@ for (int i = 0; i < dati.size(); i++) {
   	String type = de.getType();
   	String rowName="row_"+deName;
   	String deLabel = !de.getLabel(elementsRequiredEnabled).equals("") ? de.getLabel(elementsRequiredEnabled) : "&nbsp;";
+  	String deLabelId = "de_label_"+i;
   	String deNote = de.getNote();
   	String classInput= de.getStyleClass();
   	String labelStyleClass= de.getLabelStyleClass();
+  	DataElementInfo deInfo = de.getInfo();
 	
     	if (type.equals("hidden")) {
     		%><input type="hidden" name="<%= deName  %>" value="<%= de.getValue()  %>"/><%
@@ -211,7 +213,7 @@ for (int i = 0; i < dati.size(); i++) {
 	    				
 	    				%>
 	        			<div class="prop">
-						<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+						<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" ><%=deLabel %></label>
         					<div class="<%=classDivNoEdit %>">
 							<span class="<%=classSpanNoEdit %>"><%=noteValue %></span>
 						</div>
@@ -222,8 +224,20 @@ for (int i = 0; i < dati.size(); i++) {
 	        				String selEvtOnClick = !de.getOnClick().equals("") ? (" onClick=\"" + de.getOnClick() + "\" " ) : " ";
 	        				%>
 	            			<div class="prop prop-link">
-	            				<label class="<%= labelStyleClass %>">&nbsp;</label>
+	            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>">&nbsp;</label>
 	            				<span><a href="<%= de.getUrl() %>" <%= selEvtOnClick %> ><%= de.getValue() %></a></span>
+	            				<% 
+						      		if(deInfo != null){
+						      			String idDivIconInfo = "divIconInfo_"+i;
+						      			String idIconInfo = "iconInfo_"+i; 
+						      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
+						      			<input type="hidden" name="hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+						      			<input type="hidden" name="hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+								      	<span class="spanIconInfoBox">
+											<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+										</span>
+									</div>
+						      	<% } %>
 	            			</div>
 	            			<%
 	            		} else { // else link
@@ -231,7 +245,7 @@ for (int i = 0; i < dati.size(); i++) {
 	            				String textValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
 	            				%>
 	                			<div class="prop">
-	                				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+	                				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" ><%=deLabel %></label>
 	                				<div class="<%=classDivNoEdit %>"> 
 		                				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>
 		                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
@@ -245,7 +259,7 @@ for (int i = 0; i < dati.size(); i++) {
 	                			if (type.equals("textedit")){
 	                				%>
 	                    			<div class="prop">
-	                    				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+	                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 	                    				<%
 								    	if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 								    		String taeditValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
@@ -258,6 +272,18 @@ for (int i = 0; i < dati.size(); i++) {
 								      	<%
 								    	}
 								      	%>
+								      	<% 
+								      		if(deInfo != null){
+								      			String idDivIconInfo = "divIconInfo_"+i;
+								      			String idIconInfo = "iconInfo_"+i; 
+								      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
+								      			<input type="hidden" name="hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+								      			<input type="hidden" name="hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+										      	<span class="spanIconInfoBox">
+													<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+												</span>
+											</div>
+								      	<% } %>
 								      	<% if(!deNote.equals("")){ %>
 								      		<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 								      	<% } %>
@@ -267,7 +293,7 @@ for (int i = 0; i < dati.size(); i++) {
 	                    			if (type.equals("number")){
 		                				%>
 		                    			<div class="prop">
-		                    				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+		                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 		                    				<%
 									    	if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 									    		String taeditValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
@@ -283,6 +309,18 @@ for (int i = 0; i < dati.size(); i++) {
 									      	<%
 									    	}
 									      	%>
+									      	<% 
+								      		if(deInfo != null){
+								      			String idDivIconInfo = "divIconInfo_"+i;
+								      			String idIconInfo = "iconInfo_"+i; 
+									      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
+									      			<input type="hidden" name="hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+									      			<input type="hidden" name="hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+											      	<span class="spanIconInfoBox">
+														<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+													</span>
+												</div>
+									      	<% } %>
 									      	<% if(!deNote.equals("")){ %>
 									      		<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 									      	<% } %>
@@ -292,7 +330,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                    			if (type.equals("crypt")){
 		                    				%>
 		                        			<div class="prop">
-		                        				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+		                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" ><%=deLabel %></label>
 		                        				<%
 							          			if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 													%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>">********</span></div><%
@@ -300,6 +338,18 @@ for (int i = 0; i < dati.size(); i++) {
 													%><input class="<%= classInput %>" type="password" name="<%= deName  %>" value="<%= de.getValue()  %>"><%
 							   					}
 						     					%>
+						     					<% 
+									      		if(deInfo != null){
+									      			String idDivIconInfo = "divIconInfo_"+i;
+									      			String idIconInfo = "iconInfo_"+i; 
+											      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
+											      			<input type="hidden" name="hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+											      			<input type="hidden" name="hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+													      	<span class="spanIconInfoBox">
+																<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+															</span>
+														</div>
+											      	<% } %>
 						     					<% if(!deNote.equals("")){ %>
 									      			<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 									      		<% } %>
@@ -313,7 +363,7 @@ for (int i = 0; i < dati.size(); i++) {
 		            	     					}
 		                        				%>
 		                            			<div class="prop">
-		                            				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+		                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 		                            				<%
 							     					if ((pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) && de.isLabelAffiancata()) {
 							     						String taValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
@@ -322,6 +372,18 @@ for (int i = 0; i < dati.size(); i++) {
 							     						String taNoEdit = type.equals("textarea") ? " " : " readonly ";
 							     						%><div class="txtA_div">
 							     							<textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= deName  %>" class="<%= classInput %>"><%= de.getValue() %></textarea>
+							     							<% 
+													      		if(deInfo != null){
+													      			String idDivIconInfo = "divIconInfo_"+i;
+													      			String idIconInfo = "iconInfo_"+i; 
+													      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
+													      			<input type="hidden" name="hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+													      			<input type="hidden" name="hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+															      	<span class="spanIconInfoBox">
+																		<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																	</span>
+																</div>
+													      	<% } %>
 						     							</div><%
 							     					}
 													%>
@@ -334,7 +396,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                            			if (type.equals("button")){
 		                            				%>
 		                                			<div class="prop">
-		                                				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+		                                				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 		                                				<input type="button" onClick="<%= de.getOnClick() %>" value="<%= de.getValue() %>">
 		                                				<% if(!deNote.equals("")){ %>
 									      					<p class="note <%= labelStyleClass %>"><%=deNote %></p>
@@ -345,7 +407,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                                			if (type.equals("file")){
 		                                				%>
 		                                    			<div class="prop">
-		                                    				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+		                                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 		                                    				<%
 		                                    				if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 		                                    	     			String fileValue = (de.getValue() != null && !de.getValue().equals("")) ? de.getValue() : "not defined";
@@ -360,6 +422,18 @@ for (int i = 0; i < dati.size(); i++) {
 													  %>  	/><%
 		                                    	      		}
 		                                    				%>
+		                                    				<% 
+													      		if(deInfo != null){
+													      			String idDivIconInfo = "divIconInfo_"+i;
+													      			String idIconInfo = "iconInfo_"+i; 
+													      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
+													      			<input type="hidden" name="hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+													      			<input type="hidden" name="hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+															      	<span class="spanIconInfoBox">
+																		<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																	</span>
+																</div>
+													      	<% } %>
 		                                    				<% if(!deNote.equals("")){ %>
 									      						<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 									      					<% } %>
@@ -369,7 +443,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                                    			if (type.equals("select")){
 		                                    				%>
 		                                        			<div class="prop">
-		                                        				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+		                                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 		                                        				<%
 		                                        				if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 		                                      						String selValNoEdit = (de.getSelected() != "") ? de.getSelected() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
@@ -395,6 +469,18 @@ for (int i = 0; i < dati.size(); i++) {
 		                          									%></select><%
 		                               							}
 		                                        				%>
+		                                        				<% 
+														      		if(deInfo != null){
+														      			String idDivIconInfo = "divIconInfo_"+i;
+												      					String idIconInfo = "iconInfo_"+i; 
+														      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
+														      			<input type="hidden" name="hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+														      			<input type="hidden" name="hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+																      	<span class="spanIconInfoBox">
+																			<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																		</span>
+																	</div>
+														      	<% } %>
 		                                        				<% if(!deNote.equals("")){ %>
 									      							<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 									      						<% } %>
@@ -404,7 +490,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                                        			if(type.equals("multi-select")){
 		                                        				%>
 	                                        					<div class="prop">
-			                                        				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+			                                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 			                                        				<%
 			                                        				if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 			                                      						String selValNoEdit = (de.getSelezionatiAsString() != "") ? de.getSelezionatiAsString() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
@@ -431,6 +517,18 @@ for (int i = 0; i < dati.size(); i++) {
 			                          									%></select><%
 			                               							}
 			                                        				%>
+			                                        				<% 
+															      		if(deInfo != null){
+															      			String idDivIconInfo = "divIconInfo_"+i;
+															      			String idIconInfo = "iconInfo_"+i; 
+															      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
+															      			<input type="hidden" name="hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+															      			<input type="hidden" name="hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+																	      	<span class="spanIconInfoBox">
+																				<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																			</span>
+																		</div>
+															      	<% } %>
 			                                        				<% if(!deNote.equals("")){ %>
 										      							<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 										      						<% } %>
@@ -440,7 +538,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                                        				if (type.equals("checkbox")){
 			                                        				%>
 			                                            			<div class="prop">
-			                                            				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+			                                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 			                                            				<%
 								    									String chkEvtOnClick = !de.getOnClick().equals("") ? (" onClick=\"" + de.getOnClick() + "\" ") :" ";
 								    									String chkVal = de.getSelected().equals("yes") ? " checked='true' " : " ";
@@ -467,7 +565,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                                            			if (type.equals("radio")){
 			                                            				%>
 			                                                			<div class="prop">
-			                                                				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+			                                                				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 			                                                				<%
 						   	        										if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 						   	        											String radioValNoEdit = !de.getSelected().equals("") ? de.getSelected() : "not defined";
@@ -505,7 +603,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                                                			if(type.equals("interval-number")){
 			                                                				%>
 			                                                					<div class="prop">
-												                    				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+												                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 												                    				<%
 																			    	if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 																			    		String taeditValNoEdit = de.getValuesNoEdit(pd.getMode());
@@ -534,7 +632,18 @@ for (int i = 0; i < dati.size(); i++) {
 																			      	<%
 																			      		} // end else
 																			      	%>
-																			      		
+																			      	<% 
+																			      		if(deInfo != null){
+																			      			String idDivIconInfo = "divIconInfo_"+i;
+																			      			String idIconInfo = "iconInfo_"+i; 
+																			      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
+																			      			<input type="hidden" name="hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+																			      			<input type="hidden" name="hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+																					      	<span class="spanIconInfoBox">
+																								<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																							</span>
+																						</div>
+																			      	<% } %>
 																			      	<% if(!deNote.equals("")){ %>
 																			      		<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 																			      	<% } %>

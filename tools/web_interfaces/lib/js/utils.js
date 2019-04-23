@@ -43,6 +43,16 @@
  	    });
  	}
  	
+ 	if($( "#dataElementInfoModal" ).length > 0){
+ 		$( "#dataElementInfoModal" ).dialog({
+ 	      resizable: false,
+ 	      autoOpen: false,
+ 	      height: "auto",
+ 	      width: 400,
+ 	      modal: true
+ 	    });
+ 	}
+ 	
 	if($("[name=selectcheckbox]").length>0){
 		if($("#rem_btn").length==1){
 		    $("#rem_btn").click(function(){

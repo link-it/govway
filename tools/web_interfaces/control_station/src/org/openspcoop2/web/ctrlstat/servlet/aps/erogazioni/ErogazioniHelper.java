@@ -89,6 +89,7 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
@@ -1085,13 +1086,15 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			listParametersServizio.add(pNomeSoggettoFruitore);
 		}
 		listParametersServizio.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_API, "false")); // lasciare come ultimo! Si leva e si riaggiunge dopo
-		de.setUrl(
+		DataElementImage image = new DataElementImage();
+		image.setUrl(
 				AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,
 				listParametersServizio.toArray(new Parameter[1]));
-		de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,
+		image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,
 				AccordiServizioParteSpecificaCostanti.LABEL_APS_INFO_GENERALI));
 				//AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO));
-		de.setIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+		image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+		de.setImage(image);
 		dati.addElement(de);
 		
 		// soggetto erogatore
@@ -1135,22 +1138,24 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		if(asParteComuneCompatibili!=null && asParteComuneCompatibili.size()>1) {
 			listParametersServizio.remove(listParametersServizio.size()-1);
 			listParametersServizio.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_API, "true"));
-			de.addUrl(
-					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,
-					listParametersServizio.toArray(new Parameter[1]));
-			de.addToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, 
+			
+			image = new DataElementImage();
+			image.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,	listParametersServizio.toArray(new Parameter[1]));
+			image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, 
 					"Versione "+AccordiServizioParteSpecificaCostanti.LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE));
-			de.addIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
-			de.addTarget(TargetType.SELF);
+			image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+			image.setTarget(TargetType.SELF);
+			de.addImage(image);
 		}
 		
-		de.addUrl(ApiCostanti.SERVLET_NAME_APC_API_CHANGE, 
-				new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getIdAccordo() + ""),
+		image = new DataElementImage();
+		image.setUrl(ApiCostanti.SERVLET_NAME_APC_API_CHANGE, new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getIdAccordo() + ""),
 				new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME, as.getNome()), pTipoAccordo);
-		de.addToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO, AccordiServizioParteSpecificaCostanti.LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE));
-		de.addIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VISUALIZZA);
-		de.addTarget(TargetType.BLANK); 
+		image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO, AccordiServizioParteSpecificaCostanti.LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE));
+		image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VISUALIZZA);
+		image.setTarget(TargetType.BLANK); 
 		
+		de.addImage(image);
 		dati.addElement(de);
 
 
@@ -1190,8 +1195,6 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			de = new DataElement();
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE);
-			de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE));
-			de.setIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 			de.setType(DataElementType.TEXT);
 			String urlInvocazione = "";
 
@@ -1236,8 +1239,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			listParametersUrlInvocazione.add(paIdPorta);
 			listParametersUrlInvocazione.add(paIdAsps);
 			listParametersUrlInvocazione.add(paConfigurazioneDati);
-			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,
-					listParametersUrlInvocazione.toArray(new Parameter[1]));
+			
+			image = new DataElementImage();
+			image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE));
+			image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+			image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE, listParametersUrlInvocazione.toArray(new Parameter[1]));
+			de.setImage(image);
 			dati.addElement(de);
 			
 			boolean visualizzaConnettore = true;
@@ -1287,10 +1294,13 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				listParametersConnettore.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()));
 				listParametersConnettore.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getId()+""));
 				listParametersConnettore.add(paConnettoreDaListaAPS);
-				de.addToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE));
-				de.addIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
-				de.addUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, 
+				
+				image = new DataElementImage();
+				image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE));
+				image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+				image.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, 
 						listParametersConnettore.toArray(new Parameter[1]));
+				de.addImage(image);
 
 				if(checkConnettore) {
 					List<Parameter> listParametersVerificaConnettore = new ArrayList<>();
@@ -1302,10 +1312,13 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID, idConnettore+""));
 					listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, "false"));
 					listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, "false"));
-					de.addToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTIVITA));
-					de.addIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE);
-					de.addUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE, 
+					
+					image = new DataElementImage();
+					image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTIVITA));
+					image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE);
+					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE, 
 							listParametersVerificaConnettore.toArray(new Parameter[1]));
+					de.addImage(image);
 				}
 				
 				dati.addElement(de);
@@ -1314,12 +1327,16 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			// CORS
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CORS);
-			de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CORS));
-			de.setIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 			de.setType(DataElementType.TEXT);
 			de.setValue(this.getStatoGestioneCorsPortaApplicativa(paDefault, false));
 			paIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, asps.getIdSoggetto() + "");
-			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_GESTIONE_CORS, paIdSogg, paIdPorta, pIdAsps);
+			
+			image = new DataElementImage();
+			image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CORS));
+			image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+			image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_GESTIONE_CORS, paIdSogg, paIdPorta, pIdAsps);
+			
+			de.setImage(image);
 			dati.addElement(de);
 		}
 		
@@ -1348,8 +1365,6 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			// url invocazione
 			de = new DataElement();
 			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE);
-			de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE));
-			de.setIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 			de.setType(DataElementType.TEXT);
 			String urlInvocazione = "";
 			ConfigurazioneProtocollo configProt = this.confCore.getConfigurazioneProtocollo(protocollo);
@@ -1380,8 +1395,13 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			listParametersUrlInvocazione.add(pConfigurazioneDati);
 			listParametersUrlInvocazione.add(pTipoSoggettoFruitore);
 			listParametersUrlInvocazione.add(pNomeSoggettoFruitore);
-			de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,
-					listParametersUrlInvocazione.toArray(new Parameter[1]));
+			
+			image = new DataElementImage();
+			image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE, listParametersUrlInvocazione.toArray(new Parameter[1]));
+			image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE));
+			image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+			
+			de.setImage(image);
 			dati.addElement(de);
 			
 			
@@ -1452,12 +1472,14 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					listParametersConnettore.add(pConnettoreDaListaAPS);
 					listParametersConnettore.add(pTipoSoggettoFruitore);
 					listParametersConnettore.add(pNomeSoggettoFruitore);
-					de.addToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE));
-					de.addIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
-					de.addUrl(
+					image = new DataElementImage();
+					image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE));
+					image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+					image.setUrl(
 							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE,
 							listParametersConnettore.toArray(new Parameter[1])
 							);
+					de.addImage(image);
 					
 					if(checkConnettore) {
 						List<Parameter> listParametersVerificaConnettore = new ArrayList<>();
@@ -1473,10 +1495,14 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID, idConnettore+""));
 						listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, "false"));
 						listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, "true"));
-						de.addToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTIVITA));
-						de.addIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE);
-						de.addUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VERIFICA_CONNETTORE, 
+						image = new DataElementImage();
+						
+						image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTIVITA));
+						image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE);
+						image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VERIFICA_CONNETTORE, 
 								listParametersVerificaConnettore.toArray(new Parameter[1]));
+						
+						de.addImage(image);
 					}
 				}
 				else {
@@ -1489,11 +1515,13 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			// CORS
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CORS);
-			de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CORS));
-			de.setIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 			de.setType(DataElementType.TEXT);
 			de.setValue(this.getStatoGestioneCorsPortaDelegata(pdDefault, false)); 
-			de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_GESTIONE_CORS, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+			image = new DataElementImage();
+			image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CORS));
+			image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+			image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_GESTIONE_CORS, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+			de.setImage(image);
 			dati.addElement(de);
 		}
 		

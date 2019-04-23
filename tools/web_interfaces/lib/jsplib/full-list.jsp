@@ -388,29 +388,47 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 								      } else {
 										// Tipo image
 										if (de.getType().equals("image")) {
-									
-										  String[] stValue = de.getValue().split("\\s");
-										  String[] stUrl = de.getUrl().split("\\s");
-										  String[] stOnClick = de.getOnClick().split("\\s");
-									
-										  // Ciclo sulla lista di immagini
-										  for (int x=0; x<stValue.length; x++) {
-									
-										    // Se e' definito 'Url'
-										    if (stUrl.length > x && stUrl[x] != "") {
-										      %><a class="<%= stile %>" href="<%= stUrl[x] %>"><img src="images/<%= stValue[x] %>"></a>&nbsp;<%
-										    } else {
-									
-										      // Se e' definito 'OnClick'
-										      if (stOnClick.length > x && stOnClick[x] != "") {
-											%><a class="<%= stile %>" href='' onClick="<%= stOnClick[x] %>; return false;"><img src="images/<%= stValue[x] %>"></a>&nbsp;<%
-										      } else {
-									
-											// Solo immagine
-											%><img src="images/<%= stValue[x] %>">&nbsp;<%
-										      }
-										    }
-										  }
+											
+											if(!de.getListaImages().isEmpty()){
+												for(int idxLink =0; idxLink < de.getListaImages().size() ; idxLink ++ ){
+													DataElementImage image = de.getListaImages().get(idxLink);
+													String deIconName = image.getImage(); 
+		                					
+													String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
+		                							
+		                							String deTarget = " ";
+											  		if (!image.getTarget().equals("")) {
+											  			deTarget = " target=\""+ image.getTarget() +"\"";
+											  		}
+										  			
+											  		String deUrl = !image.getUrl().equals("") ? image.getUrl() : "";
+											  		String deOnClick = !image.getOnClick().equals("") ? image.getOnClick() : "";
+											  		
+											  		if(!deUrl.equals("")){ // Url definita
+				                					%>
+					                					<a class="image-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
+					                						<span class="icon-box">
+																<i class="material-icons md-18"><%= deIconName %></i>
+															</span>
+					                					</a>
+					                				<%
+											  		} else if (!deOnClick.equals("")){ // Se e' definito 'OnClick' 
+											  			%>
+					                					<a class="image-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="" onClick="<%= deOnClick %>; return false;" type="button">
+					                						<span class="icon-box">
+																<i class="material-icons md-18"><%= deIconName %></i>
+															</span>
+					                					</a>
+					                				<%
+											  		} else { // Solo immagine
+											  			%>
+				                						<span class="icon-box" <%= deTip %> >
+															<i class="material-icons md-18"><%= deIconName %></i>
+														</span>
+					                				<%
+											  		}
+												}// end for-edit-link
+											} // end edit-link
 										} else {
 								        	  if (de.getType().equals("radio")) {
 										   		String[] stValues = de.getValues();
@@ -456,7 +474,10 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 										      		}else {
 									  				 	%><div style="text-align: center;"><img src="images/tema_link/<%= image %>" <%= tooltip %>/>&nbsp;</div><%
 										      		}
-									  			 } // enc checkbox
+									  			 } else {
+									  				 
+									  				 
+									  			 } // end checkbox
 									  		} // end else radio
 										} // end else image
 						      		} // end else hidden

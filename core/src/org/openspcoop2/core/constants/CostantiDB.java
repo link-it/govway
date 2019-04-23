@@ -132,7 +132,7 @@ public final class CostantiDB {
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_COLUMN_ID = "id";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_SEQUENCE = "seq_pd_transform";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_TABLE_FOR_ID = "pd_transform_init_seq";
-    public static final String PORTE_DELEGATE_TRASFORMAZIONI_SA = "pa_transform_sa";
+    public static final String PORTE_DELEGATE_TRASFORMAZIONI_SA = "pd_transform_sa";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_HEADER = "pd_transform_hdr";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_URL = "pd_transform_url";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE = "pd_transform_risp";

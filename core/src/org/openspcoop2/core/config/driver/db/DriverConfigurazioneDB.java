@@ -4628,6 +4628,283 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 	}
 	
+	public List<TrasformazioneRegolaApplicabilitaServizioApplicativo> porteDelegateTrasformazioniServiziApplicativiList(long idPD, long idTrasformazione, ISearch ricerca) throws DriverConfigurazioneException {
+		int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO;
+		String nomeMetodo = "porteDelegateTrasformazioniServiziApplicativiList";
+		boolean delegata = true;
+		return _getTrasformazioniServiziApplicativiList(idPD, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
+	}
+	
+	public List<TrasformazioneRegolaApplicabilitaServizioApplicativo> porteApplicativeTrasformazioniServiziApplicativiList(long idPA, long idTrasformazione, ISearch ricerca) throws DriverConfigurazioneException {
+		int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO;
+		String nomeMetodo = "porteApplicativeTrasformazioniServiziApplicativiList";
+		boolean delegata = false;
+		return _getTrasformazioniServiziApplicativiList(idPA, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
+	}
+	
+	private List<TrasformazioneRegolaApplicabilitaServizioApplicativo> _getTrasformazioniServiziApplicativiList(long idPA, long idTrasformazione, ISearch ricerca, int idLista, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+		int offset; 
+		int limit;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		String nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI;
+		String nomeTabellaTrasformazioneSA = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_SA : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SA;
+		String nomeTabellaSA = CostantiDB.SERVIZI_APPLICATIVI;
+		String nomeTabellaSoggetti = CostantiDB.SOGGETTI;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		List<TrasformazioneRegolaApplicabilitaServizioApplicativo> lista = new ArrayList<TrasformazioneRegolaApplicabilitaServizioApplicativo>();
+		try {
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(nomeTabella);
+			sqlQueryObject.addFromTable(nomeTabellaTrasformazioneSA);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
+			sqlQueryObject.addWhereCondition(nomeTabellaTrasformazioneSA+".id_trasformazione=?");
+			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaTrasformazioneSA+".id_trasformazione");
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.setANDLogicOperator(true);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idPA);
+			stmt.setLong(2, idTrasformazione);
+
+			rs = stmt.executeQuery();
+			if (rs.next())
+				ricerca.setNumEntries(idLista,rs.getInt(1));
+			rs.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(nomeTabella);
+			sqlQueryObject.addFromTable(nomeTabellaTrasformazioneSA);
+			sqlQueryObject.addFromTable(nomeTabellaSA);
+			sqlQueryObject.addFromTable(nomeTabellaSoggetti);
+			sqlQueryObject.addSelectField(nomeTabellaSA+".nome");
+			sqlQueryObject.addSelectField(nomeTabellaSoggetti+".tipo_soggetto");
+			sqlQueryObject.addSelectField(nomeTabellaSoggetti+".nome_soggetto");
+			sqlQueryObject.addSelectField(nomeTabellaTrasformazioneSA+".id");
+			sqlQueryObject.addSelectField(nomeTabellaTrasformazioneSA+".id_trasformazione");
+			sqlQueryObject.addSelectField(nomeTabellaTrasformazioneSA+".id_servizio_applicativo");
+			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
+			sqlQueryObject.addWhereCondition(nomeTabellaTrasformazioneSA+".id_trasformazione=?");
+			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaTrasformazioneSA+".id_trasformazione");
+			sqlQueryObject.addWhereCondition(nomeTabellaSA+".id="+nomeTabellaTrasformazioneSA+".id_servizio_applicativo");
+			sqlQueryObject.addWhereCondition(nomeTabellaSA+".id_soggetto="+nomeTabellaSoggetti+".id");
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addOrderBy(nomeTabellaSA+".nome");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idPA);
+			stmt.setLong(2, idTrasformazione);
+
+			rs = stmt.executeQuery();
+
+			while (rs.next()) { 
+				TrasformazioneRegolaApplicabilitaServizioApplicativo risposta = new TrasformazioneRegolaApplicabilitaServizioApplicativo();
+				risposta.setId(rs.getLong("id"));
+				risposta.setNome(rs.getString("nome"));
+				risposta.setTipoSoggettoProprietario(rs.getString("tipo_soggetto"));
+				risposta.setNomeSoggettoProprietario(rs.getString("nome_soggetto"));
+				lista.add(risposta);
+			}
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return lista;
+	} 
+	
+	public List<TrasformazioneRegolaApplicabilitaSoggetto> porteApplicativeTrasformazioniSoggettiList(long idPA, long idTrasformazione, ISearch ricerca) throws DriverConfigurazioneException {
+		int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO;
+		String nomeMetodo = "porteApplicativeTrasformazioniSoggettiList";
+		boolean delegata = false;
+		return _getTrasformazioniSoggettiList(idPA, idTrasformazione, ricerca, idLista, nomeMetodo, delegata);
+	}
+	
+	private List<TrasformazioneRegolaApplicabilitaSoggetto> _getTrasformazioniSoggettiList(long idPA, long idTrasformazione, ISearch ricerca, int idLista, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+		int offset; 
+		int limit;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		String nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI;
+		String nomeTabellaSoggetti = CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTI;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		List<TrasformazioneRegolaApplicabilitaSoggetto> lista = new ArrayList<TrasformazioneRegolaApplicabilitaSoggetto>();
+		try {
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(nomeTabella);
+			sqlQueryObject.addFromTable(nomeTabellaSoggetti);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
+			sqlQueryObject.addWhereCondition(nomeTabellaSoggetti+".id_trasformazione=?");
+			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaSoggetti+".id_trasformazione");
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.setANDLogicOperator(true);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idPA);
+			stmt.setLong(2, idTrasformazione);
+
+			rs = stmt.executeQuery();
+			if (rs.next())
+				ricerca.setNumEntries(idLista,rs.getInt(1));
+			rs.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(nomeTabella);
+			sqlQueryObject.addFromTable(nomeTabellaSoggetti);
+			sqlQueryObject.addSelectField(nomeTabellaSoggetti+".tipo_soggetto");
+			sqlQueryObject.addSelectField(nomeTabellaSoggetti+".nome_soggetto");
+			sqlQueryObject.addSelectField(nomeTabellaSoggetti+".id");
+			sqlQueryObject.addSelectField(nomeTabellaSoggetti+".id_trasformazione");
+			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
+			sqlQueryObject.addWhereCondition(nomeTabellaSoggetti+".id_trasformazione=?");
+			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaSoggetti+".id_trasformazione");
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addOrderBy(nomeTabellaSoggetti+".tipo_soggetto");
+			sqlQueryObject.addOrderBy(nomeTabellaSoggetti+".nome_soggetto");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idPA);
+			stmt.setLong(2, idTrasformazione);
+
+			rs = stmt.executeQuery();
+
+			while (rs.next()) { 
+				TrasformazioneRegolaApplicabilitaSoggetto risposta = new TrasformazioneRegolaApplicabilitaSoggetto();
+				risposta.setId(rs.getLong("id"));
+				risposta.setTipo(rs.getString("tipo_soggetto"));
+				risposta.setNome(rs.getString("nome_soggetto"));
+				lista.add(risposta);
+			}
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return lista;
+	} 
+	
 	
 	public List<TrasformazioneRegolaParametro> porteDelegateTrasformazioniRispostaHeaderList(long idPD, long idTrasformazione, long idTrasformazioneRisposta, ISearch ricerca) throws DriverConfigurazioneException {
 		int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER;
