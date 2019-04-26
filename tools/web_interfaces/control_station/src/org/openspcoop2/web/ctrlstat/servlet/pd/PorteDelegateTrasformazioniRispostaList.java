@@ -133,12 +133,7 @@ public class PorteDelegateTrasformazioniRispostaList extends Action {
 					// ricaricare id trasformazione
 					portaDelegata = porteDelegateCore.getPortaDelegata(Long.parseLong(idPorta));
 
-					String patternDBCheck = (oldRegola.getApplicabilita() != null && StringUtils.isNotEmpty(oldRegola.getApplicabilita().getPattern())) ? oldRegola.getApplicabilita().getPattern() : null;
-					String contentTypeAsString = (oldRegola.getApplicabilita() != null && oldRegola.getApplicabilita().getContentTypeList() != null) ? StringUtils.join(oldRegola.getApplicabilita().getContentTypeList(), ",") : "";
-					String contentTypeDBCheck = StringUtils.isNotEmpty(contentTypeAsString) ? contentTypeAsString : null;
-					String azioniAsString = (oldRegola.getApplicabilita() != null && oldRegola.getApplicabilita().getAzioneList() != null) ? StringUtils.join(oldRegola.getApplicabilita().getAzioneList(), ",") : "";
-					String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
-					TrasformazioneRegola trasformazioneAggiornata = porteDelegateCore.getTrasformazione(portaDelegata.getId(), azioniDBCheck, patternDBCheck, contentTypeDBCheck);
+					TrasformazioneRegola trasformazioneAggiornata = porteDelegateCore.getTrasformazione(portaDelegata.getId(), oldRegola.getNome());
 					
 					idTrasformazione = trasformazioneAggiornata.getId();
 				}

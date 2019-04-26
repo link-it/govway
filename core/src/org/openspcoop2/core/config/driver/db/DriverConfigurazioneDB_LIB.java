@@ -10444,7 +10444,7 @@ public class DriverConfigurazioneDB_LIB {
 						risposta.setReturnCode(return_code);
 					}
 					
-					if(regola.getRichiesta().getTrasformazioneSoap()!=null) {
+					if(regola.getRichiesta().getTrasformazioneRest()!=null) { // La risposta deve essere ritrasformata in soap
 					
 						TrasformazioneSoapRisposta trasformazioneSoap = new TrasformazioneSoapRisposta();
 						

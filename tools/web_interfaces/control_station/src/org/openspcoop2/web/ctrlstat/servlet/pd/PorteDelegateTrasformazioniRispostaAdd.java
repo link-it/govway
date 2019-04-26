@@ -41,10 +41,14 @@ import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.Trasformazioni;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -101,7 +105,7 @@ public class PorteDelegateTrasformazioniRispostaAdd extends Action {
 						
 			String returnCode = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS);
 			if(returnCode == null)
-				returnCode = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI;
+				returnCode = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI;
 			
 			String statusMin = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN);
 			if(statusMin == null)
@@ -119,6 +123,9 @@ public class PorteDelegateTrasformazioniRispostaAdd extends Action {
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
+			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
+			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 
@@ -135,6 +142,9 @@ public class PorteDelegateTrasformazioniRispostaAdd extends Action {
 					break;
 				}
 			}
+			
+			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+			AccordoServizioParteComune apc = apcCore.getAccordoServizio(asps.getIdAccordo()); 
 			
 			String nomeTrasformazione = regola.getNome();
 			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazione+"");
@@ -189,7 +199,9 @@ public class PorteDelegateTrasformazioniRispostaAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, nomeRisposta, returnCode, statusMin, statusMax, pattern, contentType);
+				dati = porteDelegateHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, 
+						apc.getServiceBinding(),
+						nomeRisposta, returnCode, statusMin, statusMax, pattern, contentType);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -208,7 +220,7 @@ public class PorteDelegateTrasformazioniRispostaAdd extends Action {
 				// quando un parametro viene inviato come vuoto, sul db viene messo null, gestisco il caso
 				Integer statusMinDBCheck = StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null;
 				Integer statusMaxDBCheck = StringUtils.isNotEmpty(statusMax) ? Integer.parseInt(statusMax) : null;
-				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO))
+				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO))
 					statusMaxDBCheck = statusMinDBCheck;
 				String patternDBCheck = StringUtils.isNotEmpty(pattern) ? pattern : null;
 				String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
@@ -233,7 +245,9 @@ public class PorteDelegateTrasformazioniRispostaAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, nomeRisposta, returnCode, statusMin, statusMax, pattern, contentType);
+				dati = porteDelegateHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, 
+						apc.getServiceBinding(),
+						nomeRisposta, returnCode, statusMin, statusMax, pattern, contentType);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -269,10 +283,10 @@ public class PorteDelegateTrasformazioniRispostaAdd extends Action {
 			
 			TrasformazioneRegolaApplicabilitaRisposta applicabilita = new TrasformazioneRegolaApplicabilitaRisposta();
 			
-			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI)) {
+			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI)) {
 				applicabilita.setReturnCodeMin(null);
 				applicabilita.setReturnCodeMax(null);
-			} else if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO)) {
+			} else if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO)) {
 				applicabilita.setReturnCodeMin(StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null);
 				applicabilita.setReturnCodeMax(StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null);
 			} else { // intervallo
@@ -293,12 +307,7 @@ public class PorteDelegateTrasformazioniRispostaAdd extends Action {
 			// ricaricare id trasformazione
 			portaDelegata = porteDelegateCore.getPortaDelegata(Long.parseLong(id));
 
-			String patternDBCheck = (regola.getApplicabilita() != null && StringUtils.isNotEmpty(regola.getApplicabilita().getPattern())) ? regola.getApplicabilita().getPattern() : null;
-			String contentTypeAsString = (regola.getApplicabilita() != null &&regola.getApplicabilita().getContentTypeList() != null) ? StringUtils.join(regola.getApplicabilita().getContentTypeList(), ",") : "";
-			String contentTypeDBCheck = StringUtils.isNotEmpty(contentTypeAsString) ? contentTypeAsString : null;
-			String azioniAsString = (regola.getApplicabilita() != null && regola.getApplicabilita().getAzioneList() != null) ? StringUtils.join(regola.getApplicabilita().getAzioneList(), ",") : "";
-			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
-			TrasformazioneRegola trasformazioneAggiornata = porteDelegateCore.getTrasformazione(portaDelegata.getId(), azioniDBCheck, patternDBCheck, contentTypeDBCheck);
+			TrasformazioneRegola trasformazioneAggiornata = porteDelegateCore.getTrasformazione(portaDelegata.getId(), regola.getNome());
 			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

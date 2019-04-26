@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -40,10 +39,14 @@ import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.constants.TrasformazioneRegolaParametroTipoAzione;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -111,6 +114,9 @@ public class PorteDelegateTrasformazioniRichiestaHeaderChange extends Action {
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
+			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
+			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 
@@ -135,6 +141,9 @@ public class PorteDelegateTrasformazioniRichiestaHeaderChange extends Action {
 					break;
 				}
 			}
+			
+			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+			AccordoServizioParteComune apc = apcCore.getAccordoServizio(asps.getIdAccordo()); 
 			
 			String nomeTrasformazione = oldRegola.getNome();
 			String nomeParametro = oldParametro.getNome();
@@ -196,7 +205,7 @@ public class PorteDelegateTrasformazioniRichiestaHeaderChange extends Action {
 					valore = oldParametro.getValore();
 				}
 
-				dati = porteDelegateHelper.addTrasformazioneRichiestaHeaderToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRichiestaHeaderS, nome, tipo, valore);
+				dati = porteDelegateHelper.addTrasformazioneRichiestaHeaderToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRichiestaHeaderS, nome, tipo, valore, apc.getServiceBinding());
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -225,7 +234,7 @@ public class PorteDelegateTrasformazioniRichiestaHeaderChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addTrasformazioneRichiestaHeaderToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRichiestaHeaderS, nome, tipo, valore);
+				dati = porteDelegateHelper.addTrasformazioneRichiestaHeaderToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRichiestaHeaderS, nome, tipo, valore, apc.getServiceBinding());
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -264,12 +273,7 @@ public class PorteDelegateTrasformazioniRichiestaHeaderChange extends Action {
 			// ricaricare id trasformazione
 			portaDelegata = porteDelegateCore.getPortaDelegata(Long.parseLong(id));
 
-			String patternDBCheck = (regola.getApplicabilita() != null && StringUtils.isNotEmpty(regola.getApplicabilita().getPattern())) ? regola.getApplicabilita().getPattern() : null;
-			String contentTypeAsString = (regola.getApplicabilita() != null &&regola.getApplicabilita().getContentTypeList() != null) ? StringUtils.join(regola.getApplicabilita().getContentTypeList(), ",") : "";
-			String contentTypeDBCheck = StringUtils.isNotEmpty(contentTypeAsString) ? contentTypeAsString : null;
-			String azioniAsString = (regola.getApplicabilita() != null && regola.getApplicabilita().getAzioneList() != null) ? StringUtils.join(regola.getApplicabilita().getAzioneList(), ",") : "";
-			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
-			TrasformazioneRegola trasformazioneAggiornata = porteDelegateCore.getTrasformazione(portaDelegata.getId(), azioniDBCheck, patternDBCheck, contentTypeDBCheck);
+			TrasformazioneRegola trasformazioneAggiornata = porteDelegateCore.getTrasformazione(portaDelegata.getId(), regola.getNome());
 			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

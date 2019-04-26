@@ -95,6 +95,7 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCos
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
+import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
@@ -1470,11 +1471,11 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 						bf.append(azioni.get(az));
 					}
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-					if(azioni.size()<=5) {
+					if(azioni.size()<=CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_AZIONI_SIZE) {
 						de.setRows(azioni.size());
 					}
 					else {
-						de.setRows(5);
+						de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_AZIONI_SIZE);
 					}
 					de.setValue(bf.toString());
 					dati.addElement(de);
@@ -4260,7 +4261,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					} else if(statusMin == null && statusMax != null) { // definito solo l'estremo superiore
 						statusValue = "&lt;" + statusMax;
 					} else { //entrambi null 
-						statusValue = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI;
+						statusValue = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI;
 					}
 					
 					de.setValue(statusValue);
@@ -4305,20 +4306,20 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			Integer statusMax = null;
 			boolean fault = ServletUtils.isCheckBoxEnabled(faultS);
 			
-			if(!returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI)) {
+			if(!returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI)) {
 				
 				if(StringUtils.isNotEmpty(statusMinS)) {
 					statusMin = Integer.parseInt(statusMinS);
 				}
 				
-				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
+				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_INTERVALLO)) {
 					if(StringUtils.isNotEmpty(statusMaxS)) {
 						statusMax = Integer.parseInt(statusMaxS);
 					}
 				}
 
 				// return code esatto, ho salvato lo stesso valore nel campo return code;
-				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO))
+				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO))
 					statusMax = statusMin;
 			}
 			
@@ -4359,7 +4360,8 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					pIdPorta,
 					pIdSoggetto,
 					pIdAsps);
-
+			Parameter pFromList = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_LIST, "true");
+			
 			int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI;
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
@@ -4380,6 +4382,12 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(asps.getIdAccordo()); 
 			Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
 
+			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
+			boolean autenticazione = !TipoAutenticazione.DISABILITATO.equals(myPA.getAutenticazione());
+			String protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(myPA.getServizio().getTipo());
+			boolean isSupportatoAutenticazione = this.soggettiCore.isSupportatoAutenticazioneApplicativiErogazione(protocollo);
+
+			
 			// setto la barra del titolo
 			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
 
@@ -4414,7 +4422,12 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			lstLabels.add(nomeColonnaAzione);
 			lstLabels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_CT);
 			lstLabels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
-			
+			if(autenticazione){
+				lstLabels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI);
+			}
+			if(isSupportatoAutenticazione && autenticazione) {
+				lstLabels.add( PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVI);// uso cmq label PD
+			}
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
@@ -4549,6 +4562,51 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 								p);
 					e.addElement(de);
 					
+					if(autenticazione){
+						
+						String servletTrasformazioniAutorizzazioneAutenticati =   PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO_LIST;
+						List<Parameter> parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati = new ArrayList<Parameter>();
+						parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdPorta);
+						parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdSoggetto);
+						parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdAsps);
+						parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdTrasformazione);
+						parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pFromList);
+						int numAutenticati = applicabilita != null ? applicabilita.sizeSoggettoList() : 0;
+						
+						de = new DataElement();
+						de.setUrl(servletTrasformazioniAutorizzazioneAutenticati, parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.toArray(new Parameter[parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.size()]));
+						if (contaListe) {
+							ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI,Long.valueOf(numAutenticati));
+						} else {
+							ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI);
+						}
+						e.addElement(de);
+					}
+					
+					if(isSupportatoAutenticazione && autenticazione) {
+						
+						String servletTrasformazioniApplicativiAutenticati = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO_LIST;
+						List<Parameter> parametriInvocazioneServletTrasformazioniApplicativiAutenticati  = new ArrayList<Parameter>();
+						parametriInvocazioneServletTrasformazioniApplicativiAutenticati.add(pIdPorta);
+						parametriInvocazioneServletTrasformazioniApplicativiAutenticati.add(pIdSoggetto);
+						parametriInvocazioneServletTrasformazioniApplicativiAutenticati.add(pIdAsps);
+						parametriInvocazioneServletTrasformazioniApplicativiAutenticati.add(pIdTrasformazione);
+						parametriInvocazioneServletTrasformazioniApplicativiAutenticati.add(pFromList);
+						int numApplicativiAutenticati = applicabilita != null ? applicabilita.sizeServizioApplicativoList() : 0;
+						
+						de = new DataElement();
+						de.setUrl(servletTrasformazioniApplicativiAutenticati, parametriInvocazioneServletTrasformazioniApplicativiAutenticati.toArray(new Parameter[parametriInvocazioneServletTrasformazioniApplicativiAutenticati.size()]));
+						String labelApplicativi = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZI_APPLICATIVI; // uso cmq label PD
+						if(!this.isModalitaCompleta()) {
+							labelApplicativi = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVI;// uso cmq label PD
+						}
+						if (contaListe) {
+							ServletUtils.setDataElementCustomLabel(de,labelApplicativi,Long.valueOf(numApplicativiAutenticati));
+						} else {
+							ServletUtils.setDataElementCustomLabel(de,labelApplicativi);
+						}
+						e.addElement(de);
+					}
 					
 					dati.addElement(e);
 					i++;
@@ -4741,7 +4799,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					} else if(statusMin == null && statusMax != null) { // definito solo l'estremo superiore
 						statusValue = "&lt;" + statusMax;
 					} else { //entrambi null 
-						statusValue = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI;
+						statusValue = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI;
 					}
 					
 					de.setValue(statusValue);
@@ -5240,13 +5298,27 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			String idPorta = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			String idsogg = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 			
+			String listaTmp = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_LIST);
+			boolean fromList = false;
+			if(listaTmp != null && !"".equals(listaTmp))
+				fromList = true;
+			
 			Parameter pIdTrasformazione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE, idTrasformazione+"");
 			Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta);
 			Parameter pIdSoggetto = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg);
 			Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
 	
+			List<Parameter> parameters = new ArrayList<>();
+			parameters.add(pIdPorta);
+			parameters.add(pIdSoggetto);
+			parameters.add(pIdAsps);
+			parameters.add(pIdTrasformazione);
+			if(fromList) {
+				parameters.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_LIST, listaTmp));
+			}
+			
 			ServletUtils.addListElementIntoSession(this.session,  PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO,
-					pIdPorta, pIdSoggetto, pIdAsps, pIdTrasformazione);
+					parameters);
 	
 			int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO;
 			int limit = ricerca.getPageSize(idLista);
@@ -5300,11 +5372,12 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					pIdSoggetto,
 					pIdAsps));
 			
-			
-			lstParam.add(new Parameter(nomeTrasformazione, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_CHANGE, 
-					pIdPorta,
-					pIdSoggetto,
-					pIdAsps, pIdTrasformazione));
+			if(!fromList) {
+				lstParam.add(new Parameter(nomeTrasformazione, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_CHANGE, 
+						pIdPorta,
+						pIdSoggetto,
+						pIdAsps, pIdTrasformazione));
+			}
 			
 			String labelPag = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICATIVI_CONFIG;
 			
@@ -5388,6 +5461,11 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			if(idAsps == null)
 				idAsps = "";
 
+			String listaTmp = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_LIST);
+			boolean fromList = false;
+			if(listaTmp != null && !"".equals(listaTmp))
+				fromList = true;
+			
 			String idPorta = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			String idsogg = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 			
@@ -5396,8 +5474,17 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			Parameter pIdSoggetto = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg);
 			Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
 
+			List<Parameter> parameters = new ArrayList<>();
+			parameters.add(pIdPorta);
+			parameters.add(pIdSoggetto);
+			parameters.add(pIdAsps);
+			parameters.add(pIdTrasformazione);
+			if(fromList) {
+				parameters.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_LIST, listaTmp));
+			}
+			
 			ServletUtils.addListElementIntoSession(this.session,  PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO,
-					pIdPorta, pIdSoggetto, pIdAsps, pIdTrasformazione);
+					parameters);
 
 			int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO;
 			int limit = ricerca.getPageSize(idLista);
@@ -5451,11 +5538,12 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					pIdSoggetto,
 					pIdAsps));
 			
-			
-			lstParam.add(new Parameter(nomeTrasformazione, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_CHANGE, 
-					pIdPorta,
-					pIdSoggetto,
-					pIdAsps, pIdTrasformazione));
+			if(!fromList) {
+				lstParam.add(new Parameter(nomeTrasformazione, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_CHANGE, 
+						pIdPorta,
+						pIdSoggetto,
+						pIdAsps, pIdTrasformazione));
+			}
 			
 			String labelPag = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO_CONFIG;
 			

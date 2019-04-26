@@ -1706,7 +1706,8 @@ public class InoltroBuste extends GenericLib{
 			OpenSPCoop2Message requestMessageTrasformato = requestMessage;
 			if(trasformazioni!=null) {
 				try {
-					gestoreTrasformazioni = new GestoreTrasformazioni(this.log, msgDiag, idServizio, trasformazioni, transactionNullable, pddContext, requestInfo);
+					gestoreTrasformazioni = new GestoreTrasformazioni(this.log, msgDiag, idServizio, soggettoFruitore, servizioApplicativoFruitore, 
+							trasformazioni, transactionNullable, pddContext, requestInfo, tipoPdD);
 					requestMessageTrasformato = gestoreTrasformazioni.trasformazioneRichiesta(requestMessage, bustaRichiesta);
 				}
 				catch(GestoreTrasformazioniException e) {

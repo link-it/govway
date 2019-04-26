@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core.dynamic;
 
 import java.util.List;
 
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.json.JsonPathNotFoundException;
 import org.openspcoop2.utils.json.JsonPathNotValidException;
@@ -47,12 +48,13 @@ public class PatternExtractor {
 	private Logger log;
 	
 	private Element element = null;
+	private Boolean refresh = null;
 	private DynamicNamespaceContext dnc;
 	
 	private String elementJson = null;
 	
 	public PatternExtractor(Element element, Logger log) {
-		this.element = element;
+		this.element = element; 
 		this.dnc = new DynamicNamespaceContext();
 		this.dnc.findPrefixNamespace(element);
 		this.log = log;
@@ -60,6 +62,24 @@ public class PatternExtractor {
 	public PatternExtractor(String elementJson, Logger log) {
 		this.elementJson = elementJson;
 		this.log = log;
+	}
+	
+	public void refreshContent() {
+		if(this.element!=null && this.refresh==null) {
+			this._refreshContent();
+		}
+	}
+	private synchronized void _refreshContent() {
+		// effettuo il refresh, altrimenti le regole xpath applicate sulla richiesta, nel flusso di risposta (es. header http della risposta) non funzionano.
+		try {
+			this.refresh = true;
+			if(this.element!=null) {
+				XMLUtils xmlUtils = XMLUtils.getInstance();
+				this.element = xmlUtils.newElement(xmlUtils.toByteArray(this.element));
+			}
+		}catch(Exception e){
+			this.log.error("Refresh fallito: "+e.getMessage(),e);
+		}
 	}
 	
 	public boolean match(String pattern) throws DynamicException {

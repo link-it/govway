@@ -46,6 +46,7 @@ import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
@@ -1183,8 +1184,8 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 					de.setLabel("");//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO);
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 					de.setValue(contenutoAllegato.toString());
-					de.setRows(30);
-					de.setCols(80);
+					de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_API_SIZE);
+					de.setCols(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_API_COLUMNS);
 					dati.addElement(de);
 				}
 			}

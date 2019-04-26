@@ -41,10 +41,14 @@ import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.constants.TrasformazioneRegolaParametroTipoAzione;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -105,6 +109,9 @@ public class PorteApplicativeTrasformazioniRispostaHeaderChange extends Action {
 			String valore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE);
 
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
+			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -138,6 +145,9 @@ public class PorteApplicativeTrasformazioniRispostaHeaderChange extends Action {
 					break;
 				}
 			}
+			
+			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+			AccordoServizioParteComune apc = apcCore.getAccordoServizio(asps.getIdAccordo()); 
 			
 			String nomeRisposta = oldRisposta.getNome();
 			String nomeTrasformazione = oldRegola.getNome();
@@ -214,7 +224,7 @@ public class PorteApplicativeTrasformazioniRispostaHeaderChange extends Action {
 					valore = oldParametro.getValore();
 				}
 
-				dati = porteApplicativeHelper.addTrasformazioneRispostaHeaderToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRispostaS, idTrasformazioneRispostaHeaderS, nome, tipo, valore);
+				dati = porteApplicativeHelper.addTrasformazioneRispostaHeaderToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRispostaS, idTrasformazioneRispostaHeaderS, nome, tipo, valore, apc.getServiceBinding());
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta,idAsps,  dati);
 				
@@ -241,7 +251,7 @@ public class PorteApplicativeTrasformazioniRispostaHeaderChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneRispostaHeaderToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRispostaS, idTrasformazioneRispostaHeaderS, nome, tipo, valore);
+				dati = porteApplicativeHelper.addTrasformazioneRispostaHeaderToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRispostaS, idTrasformazioneRispostaHeaderS, nome, tipo, valore, apc.getServiceBinding());
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta,idAsps,  dati);
 				
@@ -288,12 +298,7 @@ public class PorteApplicativeTrasformazioniRispostaHeaderChange extends Action {
 			// ricaricare id trasformazione
 			pa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta));
 
-			String patternDBCheck = (regola.getApplicabilita() != null && StringUtils.isNotEmpty(regola.getApplicabilita().getPattern())) ? regola.getApplicabilita().getPattern() : null;
-			String contentTypeAsString = (regola.getApplicabilita() != null &&regola.getApplicabilita().getContentTypeList() != null) ? StringUtils.join(regola.getApplicabilita().getContentTypeList(), ",") : "";
-			String contentTypeDBCheck = StringUtils.isNotEmpty(contentTypeAsString) ? contentTypeAsString : null;
-			String azioniAsString = (regola.getApplicabilita() != null && regola.getApplicabilita().getAzioneList() != null) ? StringUtils.join(regola.getApplicabilita().getAzioneList(), ",") : "";
-			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
-			TrasformazioneRegola trasformazioneAggiornata = porteApplicativeCore.getTrasformazione(pa.getId(), azioniDBCheck, patternDBCheck, contentTypeDBCheck);
+			TrasformazioneRegola trasformazioneAggiornata = porteApplicativeCore.getTrasformazione(pa.getId(), regola.getNome());
 			
 			// ricarico la risposta
 			String patternRispostaDBCheck = (risposta.getApplicabilita() != null && StringUtils.isNotEmpty(risposta.getApplicabilita().getPattern())) ? risposta.getApplicabilita().getPattern() : null;

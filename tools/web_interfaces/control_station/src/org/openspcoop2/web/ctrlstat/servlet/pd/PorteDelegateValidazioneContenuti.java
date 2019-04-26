@@ -283,7 +283,9 @@ public class PorteDelegateValidazioneContenuti extends Action {
 			pd.setDati(dati);
 
 			pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
-
+			//pd.disableEditMode();
+			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 			// Forward control to the specified success URI

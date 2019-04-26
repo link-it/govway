@@ -1981,7 +1981,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					} else if(statusMin == null && statusMax != null) { // definito solo l'estremo superiore
 						statusValue = "&lt;" + statusMax;
 					} else { //entrambi null 
-						statusValue = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI;
+						statusValue = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI;
 					}
 					
 					de.setValue(statusValue);
@@ -2025,20 +2025,20 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			Integer statusMax = null;
 			boolean fault = ServletUtils.isCheckBoxEnabled(faultS);
 			
-			if(!returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI)) {
+			if(!returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI)) {
 
 				if(StringUtils.isNotEmpty(statusMinS)) {
 					statusMin = Integer.parseInt(statusMinS);
 				}
 				
-				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
+				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_INTERVALLO)) {
 					if(StringUtils.isNotEmpty(statusMaxS)) {
 						statusMax = Integer.parseInt(statusMaxS);
 					}
 				}
 				
 				// return code esatto, ho salvato lo stesso valore nel campo return code;
-				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO))
+				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO))
 					statusMax = statusMin;
 			}
 			

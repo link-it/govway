@@ -23,6 +23,9 @@
 
 package org.openspcoop2.web.ctrlstat.costanti;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
@@ -454,6 +457,7 @@ public class CostantiControlStation {
 	public final static String LABEL_AGGIORNAMENTO_DOCUMENTO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE = "Modifica Template";
 	public final static String LABEL_DOWNLOAD_DOCUMENTO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE = "Download Template Attuale";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE = "Content Type";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE_ATTACHMENT = "Content Type Attachment";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_TRANSFORMATION = "Abilitato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_METHOD = "HTTP Method";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH = "Path";
@@ -479,6 +483,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE = "Template";
 	public final static String LABEL_DOWNLOAD_DOCUMENTO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE = "Download Template Attuale";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE = "Content Type";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE_ATTACHMENT = "Content Type Attachment";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE = "Codice Risposta";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_TRANSFORMATION = "Abilitato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE = "Imbustamento SOAP";
@@ -670,6 +675,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI = "trAppAzioni";
 	public final static String PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_CT = "trAppCT";
 	public final static String PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN = "trAppPat";
+	public final static String PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_LIST = "trAppList";
 	public final static String PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_ENABLED = "trReqConvEn";
 	public final static String PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO = "trReqConvTp";
 	public final static String PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO_CHECK = "trReqConvTpChk";
@@ -844,22 +850,22 @@ public class CostantiControlStation {
 	public final static String VALUE_PARAMETRO_RESPONSE_CACHING_STATO_DEFAULT = "default";
 	public final static String VALUE_PARAMETRO_RESPONSE_CACHING_STATO_RIDEFINITO = "ridefinito";
 	
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI = "Qualsiasi";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO = "Singolo";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO = "Intervallo";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI = "Qualsiasi";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO = "Singolo";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_INTERVALLO = "Intervallo";
 	
-	public final static String[] SELECT_LABELS_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE = {
-			LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI,LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO,LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO
+	public final static String[] SELECT_LABELS_CONFIGURAZIONE_RETURN_CODE = {
+			LABEL_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI,LABEL_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO,LABEL_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_INTERVALLO
 	};
 	
-	public final static String VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI = "qualsiasi";
-	public final static String VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO = "esatto";
-	public final static String VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO = "intervallo";
+	public final static String VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI = "qualsiasi";
+	public final static String VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO = "esatto";
+	public final static String VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_INTERVALLO = "intervallo";
 	
-	public final static String[] SELECT_VALUES_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE = {
-			 VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI,
-			 VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO,
-			 VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO
+	public final static String[] SELECT_VALUES_CONFIGURAZIONE_RETURN_CODE = {
+			 VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI,
+			 VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO,
+			 VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_INTERVALLO
 	};
 	
 	public final static String VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SU = "su";
@@ -934,6 +940,210 @@ public class CostantiControlStation {
 	public static final boolean VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_REGOLA_TRASFORMAZIONE = false;
 	public static final boolean VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_RISPOSTA_REGOLA_TRASFORMAZIONE = false;
 	
+	/** COSTANTE DIMENSIONE TEXT_AREAD */
+	public final static int LABEL_PARAMETRO_TEXT_AREA_SIZE = 3;
+	
+	public final static int LABEL_PARAMETRO_TEXT_AREA_AZIONI_SIZE = 5;
+	
+	public final static int LABEL_PARAMETRO_TEXT_AREA_API_SIZE = 30;
+	public final static int LABEL_PARAMETRO_TEXT_AREA_API_COLUMNS = 110;
+	
+	/** INFO */
+	public final static String LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE = "Lista di Content-Type per i quali la regola di trasformazione verrà utilizzata; di seguito i formati utilizzabili:";
+	public final static String LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORE_EMPTY = "<b>empty</b>: valore speciale che rappresenta una richiesta senza Content-Type"; 
+	public final static String LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORE_1 = "<b>type/subtype</b>: indicazione puntuale di un Content-Type"; 
+	public final static String LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORE_2 = "<b>type/*</b>: hanno un match tutti i Content-Type appartenenti al tipo indicato"; 
+	public final static String LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORE_3 = "<b>*/*+xml</b>: hanno un match tutti i Content-Type che terminano con '+xml'";
+	public final static String LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORE_4 = "<b>regexpType/regexpSubType</b>: hanno un match tutti i Content-Type che soddisfano le espressioni regolari indicate"; 
+	public final static List<String> LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORI = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORI.add(LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORE_1);
+		LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORI.add(LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORE_2);
+		LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORI.add(LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORE_3);
+		LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORI.add(LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORE_4);
+		LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORI.add(LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORE_EMPTY);
+	}
+	
+	public final static String LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTARN_REST = "Espressione da applicare sul messaggio di richiesta; se si ha un match la regola di trasformazione verrà utilizzata.<br/>I tipi di espressioni utilizzabili sono:";
+	public final static String LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTARN_SOAP = "Espressione XPath da applicare sul messaggio di richiesta; se si ha un match la regola di trasformazione verrà utilizzata.";
+	public final static String LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTARN_XPATH = "<b>XPath</b>: utilizzabile con messaggi XML";
+	public final static String LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTARN_JSONPATH = "<b>JSONPath</b>: utilizzabile con messaggi JSON";
+	public final static List<String> LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_VALORI_REST = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_VALORI_REST.add(LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTARN_XPATH);
+		LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_VALORI_REST.add(LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTARN_JSONPATH);
+	}
+	
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO = "Il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway.<br/>Le espressioni utilizzabili sono:";
+	
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_ID_TRANSAZIONE = "<b>${transaction:id}</b>: identificativo UUID della transazione";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_DATA = "<b>${date:FORMAT}</b>: data di elaborazione del messaggio; il formato fornito deve essere conforme a quanto richiesto dalla classe java 'java.text.SimpleDateFormat' (es. ${date:yyyyMMdd_HHmmssSSS})";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_HEADER = "<b>${header:NAME}</b>: valore presente nell'header http che possiede il nome 'NAME'";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_QUERY = "<b>${query:NAME}</b>: valore associato al parametro della url con nome 'NAME'";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_BUSTA = "<b>${busta:FIELD}</b>: permette di utilizzare informazioni generiche del profilo; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.protocol.sdk.Busta' (es. per il mittente usare ${busta:mittente})";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_PROPERTY_BUSTA = "<b>${property:NAME}</b>: permette di riferire informazioni specifiche del profilo presenti nella traccia (es. identificativo SDI). Il valore 'NAME' indica il nome della proprietà da utilizzare";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_XPATH_SOAP = "<b>${xPath:EXPR}</b>: espressione XPath"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_XPATH = "<b>${xPath:EXPR}</b>: espressione XPath applicata su un messaggio XML"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_JSONPATH = "<b>${jsonPath:EXPR}</b>: espressione JSONPath applicata su un messaggio JSON"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_URL = "<b>${urlRegExp:EXPR}</b>: espressione regolare applicata sulla url"; 
+	
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_DATA = "<b>${dateResponse:FORMAT}</b>: data di elaborazione del messaggio di risposta; il formato fornito deve essere conforme a quanto richiesto dalla classe java 'java.text.SimpleDateFormat' (es. ${date:yyyyMMdd_HHmmssSSS})";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_HEADER = "<b>${headerResponse:NAME}</b>: valore presente nell'header http della risposta che possiede il nome 'NAME'";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_XPATH_SOAP = "<b>${xPathResponse:EXPR}</b>: espressione XPath applicata sulla risposta"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_XPATH = "<b>${xPathResponse:EXPR}</b>: espressione XPath applicata su una risposta XML"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_JSONPATH = "<b>${jsonPathResponse:EXPR}</b>: espressione JSONPath applicata su una risposta JSON"; 
+	
+	
+	public final static List<String> LABEL_CONFIGURAZIONE_INFO_ALL_VALORI = new ArrayList<>();
+	static {
+		// NOTA: non modificare le posizioni, poiche' utilizzate sotto per inizializzare le varie liste
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_HEADER);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_QUERY);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_XPATH_SOAP);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_XPATH);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_JSONPATH);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_URL);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_ID_TRANSAZIONE);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_DATA);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_BUSTA);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_PROPERTY_BUSTA);
+	}
+	public final static List<String> LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI.addAll(LABEL_CONFIGURAZIONE_INFO_ALL_VALORI);
+		LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI.remove(2); // elimino xpath su soap
+	}
+	public final static List<String> LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI.addAll(LABEL_CONFIGURAZIONE_INFO_ALL_VALORI);
+		LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI.remove(3); // elimino xpath su xml
+		LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI.remove(3); // elimino json path
+	}
+	public final static List<String> LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI.addAll(LABEL_CONFIGURAZIONE_INFO_ALL_VALORI);
+		LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI.remove(2); // elimino xpath su soap
+		LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI.remove(2); // elimino xpath su xml
+		LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI.remove(2); // elimino json path
+		LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI.remove(2); // elimino espressione regolare
+	}
+
+	public final static List<String> LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE = new ArrayList<>();
+	static {
+		// NOTA: non modificare le posizioni, poiche' utilizzate sotto per inizializzare le varie liste
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_HEADER);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_HEADER);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_QUERY);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_XPATH_SOAP);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_XPATH_SOAP);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_XPATH);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_XPATH);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_JSONPATH);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_JSONPATH);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_URL);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_ID_TRANSAZIONE);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_DATA);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_DATA);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_BUSTA);
+		LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_TRASPORTO_PROPERTY_BUSTA);
+	}
+	public final static List<String> LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE.addAll(LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE);
+		LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE.remove(3); // elimino xpath su soap
+		LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE.remove(3); // elimino xpath su soap per la risposta
+	}
+	public final static List<String> LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE.addAll(LABEL_CONFIGURAZIONE_INFO_ALL_VALORI_CON_RISPOSTE);
+		LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE.remove(5); // elimino xpath su xml
+		LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE.remove(5); // elimino xpath su xml per la risposta
+		LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE.remove(5); // elimino json path
+		LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE.remove(5); // elimino json path per la risposta
+	}
+	
+	public final static String LABEL_CONFIGURAZIONE_INFO_TEMPLATE = "Il template fornito può contenere parti dinamiche risolte a runtime dal Gateway.<br/>Le espressioni utilizzabili sono:";
+	
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE = "Il template fornito può accedere ai seguenti oggetti resi disponibili a runtime dal Gateway:";
+	
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_ID_TRANSAZIONE = "<b>transactionId</b>: identificativo UUID della transazione (java.lang.String)";
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_DATA = "<b>date</b>: data di elaborazione del messaggio (java.util.Date)";
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_HEADER = "<b>header</b>: headers http (java.util.Properties)";
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_QUERY = "<b>query</b>: parametri della url (java.util.Properties)";
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_BUSTA = "<b>busta</b>: informazioni generiche del profilo (org.openspcoop2.protocol.sdk.Busta)";
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_PROPERTY_BUSTA = "<b>property</b>: permette di riferire informazioni specifiche del profilo presenti nella traccia (java.util.Properties).";
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_XPATH_SOAP = "<b>xPath</b>: fornisce metodi per verificare la presenza o estrarre informazioni dal messaggio tramite espressioni XPath. (org.openspcoop2.pdd.core.dynamic.PatternExtractor)"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_XPATH= "<b>xPath</b>: fornisce metodi per verificare la presenza o estrarre informazioni da messaggi XML tramite espressioni XPath. (org.openspcoop2.pdd.core.dynamic.PatternExtractor)"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_JSONPATH= "<b>jsonPath</b>: fornisce metodi per verificare la presenza o estrarre informazioni da messaggi JSON tramite espressioni JSONPath. (org.openspcoop2.pdd.core.dynamic.PatternExtractor)"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_URL = "<b>urlRegExp</b>: fornisce metodi per verificare la presenza o estrarre informazioni dalla url tramite espressioni regolari. (org.openspcoop2.pdd.core.dynamic.URLRegExpExtractor)"; 
+	
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_DATA = "<b>dateResponse</b>: data di elaborazione del messaggio di risposta (java.util.Date)";
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_HEADER = "<b>headerResponse</b>: headers http della risposta (java.util.Properties)";
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_XPATH_SOAP = "<b>xPathResponse</b>: fornisce metodi per verificare la presenza o estrarre informazioni dal messaggio di risposta tramite espressioni XPath. (org.openspcoop2.pdd.core.dynamic.PatternExtractor)"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_XPATH= "<b>xPathResponse</b>: fornisce metodi per verificare la presenza o estrarre informazioni dal messaggio XML di risposta tramite espressioni XPath. (org.openspcoop2.pdd.core.dynamic.PatternExtractor)"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_JSONPATH= "<b>jsonPathResponse</b>: fornisce metodi per verificare la presenza o estrarre informazioni dal messaggio JSON di risposta tramite espressioni JSONPath. (org.openspcoop2.pdd.core.dynamic.PatternExtractor)"; 
+	
+	
+	public final static List<String> LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI = new ArrayList<>();
+	static {
+		// NOTA: non modificare le posizioni, poiche' utilizzate sotto per inizializzare le varie liste
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_HEADER);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_QUERY);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_XPATH_SOAP);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_XPATH);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_JSONPATH);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_URL);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_ID_TRANSAZIONE);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_DATA);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_BUSTA);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_PROPERTY_BUSTA);
+	}
+	public final static List<String> LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI.addAll(LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI.remove(2); // elimino xpath su soap
+	}
+	public final static List<String> LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI.addAll(LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI.remove(3); // elimino xpath su xml
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI.remove(3); // elimino json path
+	}
+	
+	public final static List<String> LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE = new ArrayList<>();
+	static {
+		// NOTA: non modificare le posizioni, poiche' utilizzate sotto per inizializzare le varie liste
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_HEADER);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_HEADER);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_QUERY);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_XPATH_SOAP);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_XPATH_SOAP);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_XPATH);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_XPATH);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_JSONPATH);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_JSONPATH);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_URL);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_ID_TRANSAZIONE);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_DATA);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_DATA);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_BUSTA);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_PROPERTY_BUSTA);
+	}
+	public final static List<String> LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE.addAll(LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE.remove(3); // elimino xpath su soap
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE.remove(3); // elimino xpath su soap per la risposta
+	}
+	public final static List<String> LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE.addAll(LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE.remove(5); // elimino xpath su xml
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE.remove(5); // elimino xpath su xml per la risposta
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE.remove(5); // elimino json path
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE.remove(5); // elimino json path per la risposta
+	}
+	
 	/** MESSAGGI */
 	public static final String MESSAGGIO_CONFERMA_REGOLA_TRASFORMAZIONE_SPOSTATA_CORRETTAMENTE = "Posizione della regola modificata correttamente.";
 	public static final String MESSAGGIO_CONFERMA_REGOLA_TRASFORMAZIONE_RISPOSTA_SPOSTATA_CORRETTAMENTE ="Posizione della reogla di risposta modificata correttamente.";
@@ -984,8 +1194,8 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_AUTORIZZAZIONE_DISABILITATA = "Non &egrave; possibile disabilitare l'autorizzazione senza prima di eliminare i soggetti associati";
 	public static final String MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA = "Non &egrave; possibile modificare l'autenticazione senza prima di eliminare gli applicativi associati";
 	public static final String MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_AUTENTICAZIONE_MODIFICATA = "Non &egrave; possibile modificare l'autenticazione senza prima di eliminare i soggetti associati";
-	public static final String MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_TRASFORMAZIONI_AUTORIZZAZIONE_DISABILITATA = "Non &egrave; possibile disabilitare l'autorizzazione senza prima di eliminare gli applicativi associati alle trasformazioni:";
-	public static final String MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_TRASFORMAZIONI_AUTORIZZAZIONE_DISABILITATA = "Non &egrave; possibile disabilitare l'autorizzazione senza prima di eliminare i soggetti associati alle trasformazioni:";
+//	public static final String MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_TRASFORMAZIONI_AUTORIZZAZIONE_DISABILITATA = "Non &egrave; possibile disabilitare l'autorizzazione senza prima di eliminare gli applicativi associati alle trasformazioni:";
+//	public static final String MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_TRASFORMAZIONI_AUTORIZZAZIONE_DISABILITATA = "Non &egrave; possibile disabilitare l'autorizzazione senza prima di eliminare i soggetti associati alle trasformazioni:";
 	public static final String MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_TRASFORMAZIONI_AUTENTICAZIONE_MODIFICATA = "Non &egrave; possibile modificare l'autenticazione senza prima di eliminare gli applicativi associati alle trasformazioni:";
 	public static final String MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_TRASFORMAZIONI_AUTENTICAZIONE_MODIFICATA = "Non &egrave; possibile modificare l'autenticazione senza prima di eliminare i soggetti associati alle trasformazioni:";
 	public static final String MESSAGGIO_ERRORE_VALIDAZIONE_XSD_DEV_ESSERE_ABILITATO_DISABILITATO_O_WARNING_ONLY = "Validazione XSD dev'essere abilitato, disabilitato o warningOnly";
@@ -1003,4 +1213,7 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_CORS_ALLOW_METHOD_NON_VALIDO = "Il valore {0} indicato per il campo {1} non rappresenta un HTTP-Method valido";
 	public static final String MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA = "&Egrave; gi&agrave; presente una regola di trasformazione con i parametri di applicabilit&agrave; indicati.";
 	public static final String MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_NOME = "&Egrave; gi&agrave; presente una regola di trasformazione con il nome indicato.";
+	public static final String MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA_APPLICATIVO = "&Egrave; gi&agrave; presente una regola di trasformazione, con gli stessi parametri di applicabilit&agrave; e l'applicativo selezionato.";
+	public static final String MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA_SOGGETTO = "&Egrave; gi&agrave; presente una regola di trasformazione, con gli stessi parametri di applicabilit&agrave; e il soggetto selezionato.";
+	
 }

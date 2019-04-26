@@ -92,6 +92,13 @@ public abstract class AbstractUtils {
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
+	public JsonNode getAsNode(Map<?,?> map) throws UtilsException {
+		try {
+			return _getObjectMapper().valueToTree(map);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
 	
 	// GET AS OBJECT
 	

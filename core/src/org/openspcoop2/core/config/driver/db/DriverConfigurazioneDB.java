@@ -3177,6 +3177,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		boolean error = false;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
+		PreparedStatement stm1 = null;
+		ResultSet rs1 = null;
+		PreparedStatement stm0 = null;
+		ResultSet rs0 = null;
 		
 		String nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI;
 
@@ -3335,10 +3339,103 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					richiesta.setTrasformazioneSoap(trasformazioneSoap);
 				}
 				
+				
 				regola.setId(rs.getLong("id"));
 				
 				regola.setRichiesta(richiesta);
 				
+				
+				// ** SOGGETTI **
+				
+				if(!portaDelegata) {
+					
+					nomeTabella = CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTI;
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(nomeTabella);
+					sqlQueryObject.addSelectField("*");
+					sqlQueryObject.addWhereCondition("id_trasformazione=?");
+					String sqlQuery = sqlQueryObject.createSQLQuery();
+					stm0 = con.prepareStatement(sqlQuery);
+					stm0.setLong(1, regola.getId());
+					rs0 = stm0.executeQuery();
+	
+					while (rs0.next()) {
+						
+						if(regola.getApplicabilita()==null) {
+							regola.setApplicabilita(new TrasformazioneRegolaApplicabilitaRichiesta());
+						}
+						
+						TrasformazioneRegolaApplicabilitaSoggetto soggetto = new TrasformazioneRegolaApplicabilitaSoggetto();
+						soggetto.setTipo(rs0.getString("tipo_soggetto"));
+						soggetto.setNome(rs0.getString("nome_soggetto"));
+						
+						regola.getApplicabilita().addSoggetto(soggetto);
+					
+					}
+					rs0.close();
+					stm0.close();
+				}
+				
+				
+				// ** APPLICATIVI **
+				
+				nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_SA : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SA;
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(nomeTabella);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_trasformazione=?");
+				String sqlQuery = sqlQueryObject.createSQLQuery();
+				stm0 = con.prepareStatement(sqlQuery);
+				stm0.setLong(1, regola.getId());
+				rs0 = stm0.executeQuery();
+
+				// per ogni entry 
+				// prendo l'id del servizio associato, recupero il nome e
+				// aggiungo
+				// il servizio applicativo alla PortaDelegata da ritornare
+				while (rs0.next()) {
+					long idSA = rs0.getLong("id_servizio_applicativo");
+
+					if (idSA != 0) {
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+						sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+						sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+						sqlQueryObject.addSelectField("nome");
+						sqlQueryObject.addSelectField("tipo_soggetto");
+						sqlQueryObject.addSelectField("nome_soggetto");
+						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id=?");
+						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
+						sqlQueryObject.setANDLogicOperator(true);
+						sqlQuery = sqlQueryObject.createSQLQuery();
+						stm1 = con.prepareStatement(sqlQuery);
+						stm1.setLong(1, idSA);
+
+						this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idSA));
+
+						rs1 = stm1.executeQuery();
+
+						TrasformazioneRegolaApplicabilitaServizioApplicativo servizioApplicativo = null;
+						if (rs1.next()) {
+							// setto solo il nome come da specifica
+							servizioApplicativo = new TrasformazioneRegolaApplicabilitaServizioApplicativo();
+							servizioApplicativo.setId(idSA);
+							servizioApplicativo.setNome(rs1.getString("nome"));
+							servizioApplicativo.setTipoSoggettoProprietario(rs1.getString("tipo_soggetto"));
+							servizioApplicativo.setNomeSoggettoProprietario(rs1.getString("nome_soggetto"));
+							if(regola.getApplicabilita()==null) {
+								regola.setApplicabilita(new TrasformazioneRegolaApplicabilitaRichiesta());
+							}
+							regola.getApplicabilita().addServizioApplicativo(servizioApplicativo);
+						}
+						rs1.close();
+						stm1.close();
+					}
+				}
+				rs0.close();
+				stm0.close();
+				
+								
 				lista.add(regola);
 
 			}
@@ -3349,12 +3446,30 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} finally {
 
 			//Chiudo statement and resultset
-			try{
-				if(rs!=null) rs.close();
-				if(stmt!=null) stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
+			try {
+				if(rs1!=null)
+					rs1.close();
+			}catch(Exception eClose) {}
+			try {
+				if(rs0!=null)
+					rs0.close();
+			}catch(Exception eClose) {}
+			try {
+				if(rs!=null)
+					rs.close();
+			}catch(Exception eClose) {}
+			try {
+				if(stm1!=null)
+					stm1.close();
+			}catch(Exception eClose) {}
+			try {
+				if(stm0!=null)
+					stm0.close();
+			}catch(Exception eClose) {}
+			try {
+				if(stmt!=null)
+					stmt.close();
+			}catch(Exception eClose) {}
 
 			try {
 				if (error && this.atomica) {
@@ -3378,26 +3493,38 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		return lista;
 	}
 	
-	public TrasformazioneRegola getPortaApplicativaTrasformazione(long idPorta, String azioni, String pattern, String contentType) throws DriverConfigurazioneException {
+	public TrasformazioneRegola getPortaApplicativaTrasformazione(long idPorta, String azioni, String pattern, String contentType,
+			List<TrasformazioneRegolaApplicabilitaSoggetto> soggetti,
+			List<TrasformazioneRegolaApplicabilitaServizioApplicativo> applicativi,
+			boolean interpretaNullList) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaApplicativaTrasformazione";
 		boolean delegata = false;
-		return _getTrasformazione(idPorta, azioni, pattern, contentType, nomeMetodo, delegata);
+		
+		return _getTrasformazione(idPorta, azioni, pattern, contentType, soggetti, applicativi, nomeMetodo, delegata, interpretaNullList);
+		
 	}
 	
-	public TrasformazioneRegola getPortaDelegataTrasformazione(long idPorta, String azioni, String pattern, String contentType) throws DriverConfigurazioneException {
+	public TrasformazioneRegola getPortaDelegataTrasformazione(long idPorta, String azioni, String pattern, String contentType,
+			List<TrasformazioneRegolaApplicabilitaServizioApplicativo> applicativi) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaDelegataTrasformazione";
 		boolean delegata = true;
-		return _getTrasformazione(idPorta, azioni, pattern, contentType, nomeMetodo, delegata);
+		return _getTrasformazione(idPorta, azioni, pattern, contentType, null, applicativi, nomeMetodo, delegata, 
+				true); // esiste solo una lista
 	}
 	
-	private TrasformazioneRegola _getTrasformazione(long idPorta, String azioni, String pattern, String contentType, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private TrasformazioneRegola _getTrasformazione(long idPorta, String azioni, String pattern, String contentType, 
+			List<TrasformazioneRegolaApplicabilitaSoggetto> soggetti,
+			List<TrasformazioneRegolaApplicabilitaServizioApplicativo> applicativi,
+			String nomeMetodo, boolean portaDelegata, boolean interpretaNullList) throws DriverConfigurazioneException {
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		String queryString;
 		String nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI;
-
+		String nomeTabellaSoggetti = CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTI; //portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_SOGGETTI : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTI;
+		String nomeTabellaSA = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_SA : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SA;
+		
 		if (this.atomica) {
 			try {
 				con = getConnectionFromDatasource(nomeMetodo);
@@ -3438,6 +3565,58 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addWhereIsNullCondition("applicabilita_ct");
 			}
 			
+			if(!portaDelegata) {
+				if(soggetti==null || soggetti.isEmpty()) {
+					if(interpretaNullList) {
+						ISQLQueryObject sqlQueryObjectExists = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+						sqlQueryObjectExists.addFromTable(nomeTabellaSoggetti);
+						sqlQueryObjectExists.addSelectField("id_trasformazione");
+						sqlQueryObjectExists.setANDLogicOperator(true);
+						sqlQueryObjectExists.addWhereCondition("id_trasformazione="+nomeTabella+".id");
+						sqlQueryObject.addWhereExistsCondition(true, sqlQueryObjectExists);	
+					}
+				}
+				else {
+					sqlQueryObject.addFromTable(nomeTabellaSoggetti);
+					sqlQueryObject.addWhereCondition(nomeTabellaSoggetti+".id_trasformazione="+nomeTabella+".id");
+					List<String> conditions = new ArrayList<>();
+					for (@SuppressWarnings("unused") TrasformazioneRegolaApplicabilitaSoggetto trasformazioneRegolaApplicabilitaSoggetto : soggetti) {
+						StringBuffer bf = new StringBuffer();
+						bf.append("( ");
+						bf.append(nomeTabellaSoggetti).append(".tipo_soggetto=?");
+						bf.append(" AND ");
+						bf.append(nomeTabellaSoggetti).append(".nome_soggetto=?");
+						bf.append(") ");
+						conditions.add(bf.toString());
+					}
+					sqlQueryObject.addWhereCondition(false, conditions.toArray(new String[1]));
+				}
+			}
+			
+			if(applicativi==null || applicativi.isEmpty()) {
+				if(interpretaNullList) {
+					ISQLQueryObject sqlQueryObjectExists = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObjectExists.addFromTable(nomeTabellaSA);
+					sqlQueryObjectExists.addSelectField("id_trasformazione");
+					sqlQueryObjectExists.setANDLogicOperator(true);
+					sqlQueryObjectExists.addWhereCondition("id_trasformazione="+nomeTabella+".id");
+					sqlQueryObject.addWhereExistsCondition(true, sqlQueryObjectExists);	
+				}
+			}
+			else {
+				sqlQueryObject.addFromTable(nomeTabellaSA);
+				sqlQueryObject.addWhereCondition(nomeTabellaSA+".id_trasformazione="+nomeTabella+".id");
+				List<String> conditions = new ArrayList<>();
+				for (@SuppressWarnings("unused") TrasformazioneRegolaApplicabilitaServizioApplicativo trasformazioneRegolaApplicabilitaSA : applicativi) {
+					StringBuffer bf = new StringBuffer();
+					bf.append("( ");
+					bf.append(nomeTabellaSA).append(".id_servizio_applicativo=?");
+					bf.append(") ");
+					conditions.add(bf.toString());
+				}
+				sqlQueryObject.addWhereCondition(false, conditions.toArray(new String[1]));
+			}
+			
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
 			int parameterIndex = 1;
@@ -3448,6 +3627,29 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stmt.setString(parameterIndex ++, pattern);
 			if(contentType != null)
 				stmt.setString(parameterIndex ++, contentType);
+			
+			if(!portaDelegata) {
+				if(soggetti==null || soggetti.isEmpty()) {
+					// nop;
+				}
+				else {
+					for (TrasformazioneRegolaApplicabilitaSoggetto trasformazioneRegolaApplicabilitaSoggetto : soggetti) {
+						stmt.setString(parameterIndex ++, trasformazioneRegolaApplicabilitaSoggetto.getTipo());
+						stmt.setString(parameterIndex ++, trasformazioneRegolaApplicabilitaSoggetto.getNome());
+					}
+				}
+			}
+			
+			if(applicativi==null || applicativi.isEmpty()) {
+				// nop;
+			}
+			else {
+				for (TrasformazioneRegolaApplicabilitaServizioApplicativo trasformazioneRegolaApplicabilitaSA : applicativi) {
+					long idSA = DBUtils.getIdServizioApplicativo(trasformazioneRegolaApplicabilitaSA.getNome(), 
+							trasformazioneRegolaApplicabilitaSA.getTipoSoggettoProprietario(), trasformazioneRegolaApplicabilitaSA.getNomeSoggettoProprietario(), con, this.tipoDB);
+					stmt.setLong(parameterIndex ++, idSA);
+				}
+			}
 			
 			risultato = stmt.executeQuery();
 			if (risultato.next()) {
@@ -3987,7 +4189,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField(nomeTabellaRisposta+".soap_envelope_template");
 			sqlQueryObject.addSelectField(nomeTabellaRisposta+".id");
 			sqlQueryObject.addSelectField(nomeTabellaRisposta+".id_trasformazione");
-			sqlQueryObject.addSelectField(nomeTabella+".soap_transformation");
+			sqlQueryObject.addSelectField(nomeTabella+".rest_transformation"); // serve per capire se nella risposta devo abilitare la soap trasformation
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".id_trasformazione=?");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRisposta+".id_trasformazione");
@@ -4102,7 +4304,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField(nomeTabellaRisposta+".soap_envelope_template");
 			sqlQueryObject.addSelectField(nomeTabellaRisposta+".id");
 			sqlQueryObject.addSelectField(nomeTabellaRisposta+".id_trasformazione");
-			sqlQueryObject.addSelectField(nomeTabella+".soap_transformation");
+			sqlQueryObject.addSelectField(nomeTabella+".rest_transformation"); // serve per capire se nella risposta devo abilitare la soap trasformation
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".id_trasformazione=?");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRisposta+".id_trasformazione");
@@ -4248,7 +4450,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField(nomeTabellaRisposta+".soap_envelope_template");
 			sqlQueryObject.addSelectField(nomeTabellaRisposta+".id");
 			sqlQueryObject.addSelectField(nomeTabellaRisposta+".id_trasformazione");
-			sqlQueryObject.addSelectField(nomeTabella+".soap_transformation");
+			sqlQueryObject.addSelectField(nomeTabella+".rest_transformation"); // serve per capire se nella risposta devo abilitare la soap trasformation
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".id_trasformazione=?");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRisposta+".id_trasformazione");
@@ -4369,9 +4571,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			risposta.setReturnCode(return_code);
 		}
 		
-		int trasformazione_soap = rs.getInt("soap_transformation");
-		if(CostantiDB.TRUE == trasformazione_soap) {
+		int trasformazione_rest = rs.getInt("rest_transformation");
+		if(CostantiDB.TRUE == trasformazione_rest) {
 		
+			// la risposta deve essere ritornata in SOAP
+			
 			TrasformazioneSoapRisposta trasformazioneSoap = new TrasformazioneSoapRisposta();
 			
 			int envelope = rs.getInt("soap_envelope");

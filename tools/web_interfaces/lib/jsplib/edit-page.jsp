@@ -269,9 +269,6 @@ for (int i = 0; i < dati.size(); i++) {
 								    	} else {
 								    		String selDataAttributes = !de.getDataAttributes().equals("") ? de.getDataAttributes() : " ";
 								      		%><input type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%= selDataAttributes %> >
-								      	<%
-								    	}
-								      	%>
 								      	<% 
 								      		if(deInfo != null){
 								      			String idDivIconInfo = "divIconInfo_"+i;
@@ -283,7 +280,9 @@ for (int i = 0; i < dati.size(); i++) {
 													<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 												</span>
 											</div>
-								      	<% } %>
+								      	<% } 
+								    	}
+								      	%>
 								      	<% if(!deNote.equals("")){ %>
 								      		<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 								      	<% } %>
@@ -306,9 +305,6 @@ for (int i = 0; i < dati.size(); i++) {
 									    		String customJsFunction = de.getCustomJsFunction() != null && !de.getCustomJsFunction().equals("")  ? " gw-function=\"" + de.getCustomJsFunction() + "\"" : "";
 									    		
 									      		%><input type="number" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> >
-									      	<%
-									    	}
-									      	%>
 									      	<% 
 								      		if(deInfo != null){
 								      			String idDivIconInfo = "divIconInfo_"+i;
@@ -320,7 +316,9 @@ for (int i = 0; i < dati.size(); i++) {
 														<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 													</span>
 												</div>
-									      	<% } %>
+									      	<% } 
+									    	}
+									      	%>
 									      	<% if(!deNote.equals("")){ %>
 									      		<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 									      	<% } %>
@@ -335,9 +333,7 @@ for (int i = 0; i < dati.size(); i++) {
 							          			if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 													%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>">********</span></div><%
 							   					} else {
-													%><input class="<%= classInput %>" type="password" name="<%= deName  %>" value="<%= de.getValue()  %>"><%
-							   					}
-						     					%>
+													%><input class="<%= classInput %>" type="password" name="<%= deName  %>" value="<%= de.getValue()  %>">
 						     					<% 
 									      		if(deInfo != null){
 									      			String idDivIconInfo = "divIconInfo_"+i;
@@ -349,7 +345,9 @@ for (int i = 0; i < dati.size(); i++) {
 																<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 															</span>
 														</div>
-											      	<% } %>
+											      	<% }
+							   					}
+						     					%>
 						     					<% if(!deNote.equals("")){ %>
 									      			<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 									      		<% } %>
@@ -420,9 +418,6 @@ for (int i = 0; i < dati.size(); i++) {
 													    %> onChange="postVersion_<%= de.getOnChange() %>"<%
 													  }
 													  %>  	/><%
-		                                    	      		}
-		                                    				%>
-		                                    				<% 
 													      		if(deInfo != null){
 													      			String idDivIconInfo = "divIconInfo_"+i;
 													      			String idIconInfo = "iconInfo_"+i; 
@@ -433,7 +428,9 @@ for (int i = 0; i < dati.size(); i++) {
 																		<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																	</span>
 																</div>
-													      	<% } %>
+													      	<% }
+		                                    	      		}
+		                                    				%>
 		                                    				<% if(!deNote.equals("")){ %>
 									      						<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 									      					<% } %>
@@ -467,9 +464,6 @@ for (int i = 0; i < dati.size(); i++) {
 		                            									} //end for values
 		                                        					}
 		                          									%></select><%
-		                               							}
-		                                        				%>
-		                                        				<% 
 														      		if(deInfo != null){
 														      			String idDivIconInfo = "divIconInfo_"+i;
 												      					String idIconInfo = "iconInfo_"+i; 
@@ -480,7 +474,9 @@ for (int i = 0; i < dati.size(); i++) {
 																			<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																		</span>
 																	</div>
-														      	<% } %>
+														      	<% }
+		                               							}
+		                                        				%>
 		                                        				<% if(!deNote.equals("")){ %>
 									      							<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 									      						<% } %>
@@ -515,9 +511,6 @@ for (int i = 0; i < dati.size(); i++) {
 			                            									} //end for values
 			                                        					}
 			                          									%></select><%
-			                               							}
-			                                        				%>
-			                                        				<% 
 															      		if(deInfo != null){
 															      			String idDivIconInfo = "divIconInfo_"+i;
 															      			String idIconInfo = "iconInfo_"+i; 
@@ -528,7 +521,9 @@ for (int i = 0; i < dati.size(); i++) {
 																				<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																			</span>
 																		</div>
-															      	<% } %>
+															      	<% } 
+			                               							}
+															      	%>
 			                                        				<% if(!deNote.equals("")){ %>
 										      							<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 										      						<% } %>
@@ -629,9 +624,6 @@ for (int i = 0; i < dati.size(); i++) {
 																				      		} // end for
 																				      	%>
 																			      		</div>
-																			      	<%
-																			      		} // end else
-																			      	%>
 																			      	<% 
 																			      		if(deInfo != null){
 																			      			String idDivIconInfo = "divIconInfo_"+i;
@@ -643,7 +635,9 @@ for (int i = 0; i < dati.size(); i++) {
 																								<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																							</span>
 																						</div>
-																			      	<% } %>
+																			      	<% } 
+																			    	} // end else
+																			      	%>
 																			      	<% if(!deNote.equals("")){ %>
 																			      		<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 																			      	<% } %>

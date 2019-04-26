@@ -379,8 +379,22 @@
               // HACK: only process on focusout when no typeahead opened, to
               //       avoid adding the typeahead text as tag
               if ($('.typeahead, .twitter-typeahead', self.$container).length === 0) {
-                self.add(self.$input.val());
-                self.$input.val('');
+            	  var text = self.$input.val();
+            	// Only attempt to add a tag if there is data in the field
+                  if (text.length !== 0) {
+                  	if(self.options.allowWhiteSpaces){
+                  		 self.add(self.$input.val());
+                  	} else { // split 
+                  		var textSplit = text.split(' ');
+                  		for (var i = 0; i < textSplit.length; i++) {
+      						var text_i = textSplit[i];
+      						self.add(text_i);
+      					}
+                  	}
+                  } else {
+                	 self.add(self.$input.val());
+                  }
+                  self.$input.val('');
               }
           }, self));
         }

@@ -25,6 +25,9 @@
 package org.openspcoop2.pdd.core.trasformazioni;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -35,9 +38,12 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
 import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
 import org.openspcoop2.core.config.constants.TrasformazioneRegolaParametroTipoAzione;
 import org.openspcoop2.core.config.constants.VersioneSOAP;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -48,8 +54,10 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.dynamic.Costanti;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.core.dynamic.PatternExtractor;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.utils.dch.DataContentHandlerManager;
@@ -83,14 +91,35 @@ public class GestoreTrasformazioniUtilities {
 				elementJson, 
 				busta, trasporto, url);	
     }
-	public static void fillDynamicMapResponse(Logger log, Map<String, Object> dynamicMap, PdDContext pddContext,
+	public static void fillDynamicMapResponse(Logger log, Map<String, Object> dynamicMap, Map<String, Object> dynamicMapRequest, PdDContext pddContext,
 			Element element,
 			String elementJson,
 			Busta busta, Properties trasporto) {
-		_fillDynamicMap(log, dynamicMap, pddContext, null, 
+		Map<String, Object> dynamicMapResponse = new HashMap<>();
+		_fillDynamicMap(log, dynamicMapResponse, pddContext, null, 
 				element, 
 				elementJson, 
 				busta, trasporto, null);
+		if(dynamicMapResponse!=null && !dynamicMapResponse.isEmpty()) {
+			Iterator<String> it = dynamicMapResponse.keySet().iterator();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				Object o = dynamicMapResponse.get(key);
+				dynamicMap.put(key+Costanti.MAP_SUFFIX_RESPONSE, o);
+			}
+		}
+		if(dynamicMapRequest!=null && !dynamicMapRequest.isEmpty()) {
+			Iterator<String> it = dynamicMapRequest.keySet().iterator();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				Object o = dynamicMapRequest.get(key);
+				if(o instanceof PatternExtractor) {
+					PatternExtractor pe = (PatternExtractor) o;
+					pe.refreshContent();
+				}
+				dynamicMap.put(key, o);
+			}
+		}
 	}
 	public static void _fillDynamicMap(Logger log, Map<String, Object> dynamicMap, PdDContext pddContext, String urlInvocazione,
 			Element element,
@@ -99,8 +128,16 @@ public class GestoreTrasformazioniUtilities {
 		DynamicInfo dInfo = new DynamicInfo();
 		dInfo.setBusta(busta);
 		dInfo.setPddContext(pddContext);
-		dInfo.setTrasporto(trasporto);
-		dInfo.setQueryParameters(url);
+		if(trasporto!=null && !trasporto.isEmpty()) {
+			Properties pNew = new Properties();
+			pNew.putAll(trasporto);
+			dInfo.setTrasporto(pNew);
+		}
+		if(url!=null && !url.isEmpty()) {
+			Properties pNew = new Properties();
+			pNew.putAll(url);
+			dInfo.setQueryParameters(pNew);
+		}
 		if(urlInvocazione!=null) {
 			dInfo.setUrl(urlInvocazione);
 		}
@@ -137,6 +174,30 @@ public class GestoreTrasformazioniUtilities {
 						checkContentType.endsWith("/")) {
 					throw new Exception("Configurazione errata, content type indicato ("+checkContentType+") possiede un formato non corretto (atteso: type/subtype)");
 				}
+				String [] ctVerifica = checkContentType.split("/");
+				if(ctVerifica!=null && ctVerifica.length==2) {
+					StringBuffer bf = new StringBuffer();
+					String part1 = ctVerifica[0].trim();
+					if("*".equals(part1)) {
+						bf.append("(.+)");
+					}
+					else {
+						bf.append(part1);
+					}
+					bf.append("/");
+					String part2 = ctVerifica[1].trim();
+					if("*".equals(part2)) {
+						bf.append("(.+)");
+					}
+					else if(part2.startsWith("*")) {
+						bf.append("(.+)");
+						bf.append(part2.substring(1));
+					}
+					else {
+						bf.append(part2);
+					}
+					checkContentType = bf.toString();
+				}
 				if(RegularExpressionEngine.isMatch(contentType, checkContentType)) {
 					found = true;
 					break;
@@ -147,7 +208,50 @@ public class GestoreTrasformazioniUtilities {
 		return found;
 	}
 	
-	public static void trasformazione(Logger log, List<TrasformazioneRegolaParametro> list, Properties properties, String oggetto,
+	public static boolean isMatchServizioApplicativo(IDSoggetto soggettoFruitore, String sa, List<TrasformazioneRegolaApplicabilitaServizioApplicativo> saCheckList) throws Exception {
+		
+		if(saCheckList==null || saCheckList.size()<=0) {
+			return true;
+		}
+		
+		if(soggettoFruitore==null || soggettoFruitore.getTipo()==null || soggettoFruitore.getNome()==null || sa==null) {
+			return true;
+		}
+		
+		for (TrasformazioneRegolaApplicabilitaServizioApplicativo saCheck : saCheckList) {
+			if(soggettoFruitore.getTipo().equals(saCheck.getTipoSoggettoProprietario()) &&
+					soggettoFruitore.getNome().equals(saCheck.getNomeSoggettoProprietario()) &&
+					sa.equals(saCheck.getNome()) ) {
+				return true;
+			}			
+		}
+		
+		return false;
+		
+	}
+	
+	public static boolean isMatchSoggetto(IDSoggetto soggettoFruitore, List<TrasformazioneRegolaApplicabilitaSoggetto> soggettoCheckList) throws Exception {
+		
+		if(soggettoCheckList==null || soggettoCheckList.size()<=0) {
+			return true;
+		}
+		
+		if(soggettoFruitore==null || soggettoFruitore.getTipo()==null || soggettoFruitore.getNome()==null) {
+			return true;
+		}
+		
+		for (TrasformazioneRegolaApplicabilitaSoggetto soggettoCheck : soggettoCheckList) {
+			if(soggettoFruitore.getTipo().equals(soggettoCheck.getTipo()) &&
+					soggettoFruitore.getNome().equals(soggettoCheck.getNome()) ) {
+				return true;
+			}			
+		}
+		
+		return false;
+		
+	}
+	
+	public static void trasformazione(Logger log, List<TrasformazioneRegolaParametro> list, Properties properties, Properties forceAddProperties, String oggetto,
 			Map<String, Object> dynamicMap, PdDContext pddContext) throws Exception {
 		if(list!=null && list.size()>0) {
 			for (TrasformazioneRegolaParametro parametro : list) {
@@ -156,53 +260,78 @@ public class GestoreTrasformazioniUtilities {
 				String valore = parametro.getValore();
 				log.debug("Trasformazione ["+oggetto+"] parametro '"+nome+"', tipo operazione '"+tipo+"' ...");
 				if(nome==null) {
-					throw new Exception("["+oggetto+"] Nome del parametro non indicato");
+					throw new Exception("["+oggetto+"] Nome non indicato");
 				}
 				if(tipo==null) {
-					throw new Exception("["+oggetto+"] Tipo di operazione da effettuare non indicata per il parametro '"+nome+"'");
+					throw new Exception("["+oggetto+"] Tipo di operazione da effettuare non indicata per '"+nome+"'");
 				}
 				if(valore!=null) {
 					try {
 						valore = DynamicUtils.convertDynamicPropertyValue(oggetto+"-"+nome, valore, dynamicMap, pddContext, true);
 					}catch(Exception e) {
-						throw new Exception("["+oggetto+"] Conversione valore per il parametro '"+nome+"' non riuscita (valore: "+valore+"): "+e.getMessage(),e);
+						throw new Exception("["+oggetto+"] Conversione valore per '"+nome+"' non riuscita (valore: "+valore+"): "+e.getMessage(),e);
 					}
 				}
 				switch (tipo) {
 				case ADD:
 					if(valore==null) {
-						throw new Exception("["+oggetto+"] Valore del parametro '"+nome+"' non indicato");
+						throw new Exception("["+oggetto+"] Valore per '"+nome+"' non indicato");
 					}
-					properties.put(nome, valore);
+					Object vOld = null;
+					if(properties!=null) {
+						vOld = properties.remove(nome);
+						if(vOld==null) {
+							vOld = properties.remove(nome.toLowerCase());
+						}
+						if(vOld==null) {
+							vOld = properties.remove(nome.toUpperCase());
+						}
+						if(vOld!=null) {
+							throw new Exception("["+oggetto+"] '"+nome+"' già esistente; utilizzare direttiva 'updateOrAdd' per aggiornarlo");
+						}
+					}
+					if(properties!=null) {
+						properties.put(nome, valore);
+					}
+					forceAddProperties.put(nome, valore);
 					break;
 				case UPDATE_OR_ADD:
-					properties.remove(nome);
-					properties.remove(nome.toLowerCase());
-					properties.remove(nome.toUpperCase());
 					if(valore==null) {
-						throw new Exception("["+oggetto+"] Valore del parametro '"+nome+"' non indicato");
+						throw new Exception("["+oggetto+"] Valore per '"+nome+"' non indicato");
 					}
-					properties.put(nome, valore);
+					if(properties!=null) {
+						properties.remove(nome);
+						properties.remove(nome.toLowerCase());
+						properties.remove(nome.toUpperCase());
+						properties.put(nome, valore);
+					}
+					forceAddProperties.put(nome, valore);
 					break;
 				case UPDATE:
-					Object v = properties.remove(nome);
-					if(v==null) {
-						v = properties.remove(nome.toLowerCase());
-					}
-					if(v==null) {
-						v = properties.remove(nome.toUpperCase());
-					}
-					if(v!=null) {
-						if(valore==null) {
-							throw new Exception("["+oggetto+"] Valore del parametro '"+nome+"' non indicato");
+					Object v = null;
+					if(properties!=null) {
+						v = properties.remove(nome);
+						if(v==null) {
+							v = properties.remove(nome.toLowerCase());
 						}
-						properties.put(nome, valore);
+						if(v==null) {
+							v = properties.remove(nome.toUpperCase());
+						}
+						if(v!=null) {
+							if(valore==null) {
+								throw new Exception("["+oggetto+"] Valore del parametro '"+nome+"' non indicato");
+							}
+							properties.put(nome, valore);
+							forceAddProperties.put(nome, valore);
+						}
 					}
 					break;
 				case DELETE:
-					properties.remove(nome);
-					properties.remove(nome.toLowerCase());
-					properties.remove(nome.toUpperCase());
+					if(properties!=null) {
+						properties.remove(nome);
+						properties.remove(nome.toLowerCase());
+						properties.remove(nome.toUpperCase());
+					}
 					break;
 				default:
 					break;
@@ -286,7 +415,9 @@ public class GestoreTrasformazioniUtilities {
 	
 	public static OpenSPCoop2Message trasformaMessaggio(Logger log, OpenSPCoop2Message message, Element element, 
 			RequestInfo requestInfo, Map<String, Object> dynamicMap, PdDContext pddContext, OpenSPCoop2Properties op2Properties,
-			Properties trasporto, Properties url, int status,
+			Properties trasporto, Properties forceAddTrasporto, 
+			Properties url, Properties forceAddUrl,
+			int status,
 			String contentTypeInput, Integer returnCodeInput,
 			RisultatoTrasformazioneContenuto risultato,
 			boolean trasformazioneRest, 
@@ -297,6 +428,7 @@ public class GestoreTrasformazioniUtilities {
 			String trasformazioneSoap_tipoConversione, byte[] trasformazioneSoap_templateConversione) throws Throwable {
 		
 		// TransportRequest
+		Integer forceResponseStatus = null;
 		TransportRequestContext transportRequestContext = null;
 		TransportResponseContext transportResponseContext = null;
 		if(MessageRole.REQUEST.equals(message.getMessageRole())) {
@@ -309,9 +441,11 @@ public class GestoreTrasformazioniUtilities {
 			transportResponseContext.setParametersTrasporto(trasporto);
 			if(returnCodeInput!=null) {
 				transportResponseContext.setCodiceTrasporto(returnCodeInput.intValue()+"");
+				forceResponseStatus = returnCodeInput;
 			}
 			else {
 				transportResponseContext.setCodiceTrasporto(status+"");
+				forceResponseStatus = status;
 			}
 		}
 		
@@ -325,6 +459,13 @@ public class GestoreTrasformazioniUtilities {
 				String contentType = contentTypeInput;
 				if(risultato.isEmpty()) {
 					contentType = null;
+					// aggiorno contentType
+					if(transportRequestContext!=null) {
+						transportRequestContext.removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
+					}
+					else {
+						transportResponseContext.removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
+					}
 				}
 				else {
 					if(contentType==null) {
@@ -335,20 +476,27 @@ public class GestoreTrasformazioniUtilities {
 				MessageType messageType = null;
 				if(transportRequestContext!=null) {
 					transportRequestContext.setRequestType(trasformazioneRest_method);
-					transportRequestContext.setFunctionParameters(trasformazioneRest_path);
+					String trasformazioneRest_path_real = null;
+					if(trasformazioneRest_path!=null) {
+						trasformazioneRest_path_real = DynamicUtils.convertDynamicPropertyValue("trasformazioneRest_path", trasformazioneRest_path, dynamicMap, pddContext, true);
+					}
+					transportRequestContext.setFunctionParameters(trasformazioneRest_path_real);
 					messageType = requestInfo.getBindingConfig().getRequestMessageType(ServiceBinding.REST, transportRequestContext, contentType);
 				}
 				else {
 					messageType = requestInfo.getBindingConfig().getResponseMessageType(ServiceBinding.REST, new TransportRequestContext(), contentType, status);
 				}
 				
+				OpenSPCoop2Message newMsg = null;
 				OpenSPCoop2MessageParseResult pr = null;
 				if(risultato.isEmpty()) {
 					if(transportRequestContext!=null) {
-						pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, null);
+						newMsg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.REQUEST);
+						newMsg.setTransportRequestContext(transportRequestContext);
 					}
 					else {
-						pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportResponseContext, null);
+						newMsg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.RESPONSE);
+						newMsg.setTransportResponseContext(transportResponseContext);
 					}
 				}
 				else {
@@ -358,10 +506,12 @@ public class GestoreTrasformazioniUtilities {
 					else {
 						pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportResponseContext, risultato.getContenuto());
 					}
+					newMsg = pr.getMessage_throwParseThrowable();
 				}
 				
-				OpenSPCoop2Message newMsg = pr.getMessage_throwParseThrowable();
 				message.copyResourcesTo(newMsg, skipTransportInfo);
+				
+				addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, newMsg);
 				return newMsg;
 				
 			}
@@ -383,6 +533,12 @@ public class GestoreTrasformazioniUtilities {
 						soapMessage.getSOAPPart().getEnvelope().getBody().removeContents();
 						soapMessage.getSOAPPart().getEnvelope().getBody().addChildElement(newElement);
 					}
+				}
+				
+				addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
+				
+				if(contentTypeInput!=null) {
+					message.setContentType(contentTypeInput);
 				}
 				
 				return message;
@@ -429,14 +585,14 @@ public class GestoreTrasformazioniUtilities {
 				
 				OpenSPCoop2Message messageSoap = null;
 				if(risultato.isEmpty()) {
-					OpenSPCoop2MessageParseResult pr = null;
 					if(transportRequestContext!=null) {
-						pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, null);
+						messageSoap = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.REQUEST);
+						messageSoap.setTransportRequestContext(transportRequestContext);
 					}
 					else {
-						pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportResponseContext, null);
+						messageSoap = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.RESPONSE);
+						messageSoap.setTransportResponseContext(transportResponseContext);
 					}
-					messageSoap = pr.getMessage_throwParseThrowable();
 				}
 				else {
 												
@@ -451,7 +607,14 @@ public class GestoreTrasformazioniUtilities {
 										trasformazioneSoap_templateConversione, 
 										"envelope-body", dynamicMap, pddContext);
 						if(risultatoEnvelopeBody.isEmpty()) {
-							messageSoap = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.REQUEST);
+							if(transportRequestContext!=null) {
+								messageSoap = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.REQUEST);
+								messageSoap.setTransportRequestContext(transportRequestContext);
+							}
+							else {
+								messageSoap = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.RESPONSE);
+								messageSoap.setTransportResponseContext(transportResponseContext);
+							}
 						}
 						else {
 							if(trasformazioneSoap_envelope) {
@@ -565,6 +728,12 @@ public class GestoreTrasformazioniUtilities {
 				
 				message.copyResourcesTo(messageSoap, skipTransportInfo);
 				
+				addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, messageSoap);
+				
+				if(messageSoap!=null && soapAction!=null) {
+					messageSoap.castAsSoap().setSoapAction(soapAction);
+				}
+				
 				return messageSoap;
 				
 			}
@@ -573,6 +742,10 @@ public class GestoreTrasformazioniUtilities {
 				if(risultato.isEmpty()) {
 					
 					message.castAsRest().updateContent(null);
+					message.castAsRest().setContentType(null);
+					
+					addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
+					
 					return message;
 					
 				}
@@ -596,13 +769,22 @@ public class GestoreTrasformazioniUtilities {
 					if(messageType.equals(message.getMessageType())) {
 						
 						if(MessageType.XML.equals(messageType)) {
+							
 							message.castAsRestXml().updateContent(XMLUtils.getInstance().newElement(risultato.getContenuto()));
+							
+							addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
+							
 							return message;
 							
 						}
 						else if(MessageType.JSON.equals(messageType)) {
+							
 							message.castAsRestJson().updateContent(risultato.getContenutoAsString());
+							
+							addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
+							
 							return message;
+							
 						}
 						
 					}
@@ -616,13 +798,42 @@ public class GestoreTrasformazioniUtilities {
 						pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportResponseContext, risultato.getContenuto());
 					}
 					OpenSPCoop2Message newMsg = pr.getMessage_throwParseThrowable();
-					message.copyResourcesTo(newMsg, skipTransportInfo);
+					message.copyResourcesTo(newMsg, !skipTransportInfo); // devo preservare gli header in questo caso
+					addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
 					return newMsg;
 					
 				}
 				
 			}
 			
+		}
+	}
+	
+	public static void addTransportInfo(Properties forceAddTrasporto, Properties forceAddUrl, Integer forceResponseStatus, OpenSPCoop2Message msg) {
+		if(forceAddTrasporto!=null && !forceAddTrasporto.isEmpty()) {
+			Enumeration<?> keys = forceAddTrasporto.keys();
+			while (keys.hasMoreElements()) {
+				Object object = (Object) keys.nextElement();
+				if(object instanceof String) {
+					String key = (String) object;
+					String value = forceAddTrasporto.getProperty(key);
+					msg.forceTransportHeader(key, value);	
+				}
+			}
+		}
+		if(forceAddUrl!=null && !forceAddUrl.isEmpty()) {
+			Enumeration<?> keys = forceAddUrl.keys();
+			while (keys.hasMoreElements()) {
+				Object object = (Object) keys.nextElement();
+				if(object instanceof String) {
+					String key = (String) object;
+					String value = forceAddUrl.getProperty(key);
+					msg.forceUrlProperty(key, value);	
+				}
+			}
+		}
+		if(forceResponseStatus!=null && forceResponseStatus.intValue()>0) {
+			msg.setForcedResponseCode(forceResponseStatus.intValue()+"");
 		}
 	}
 }

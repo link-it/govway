@@ -33,7 +33,9 @@ import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.constants.VersioneSOAP;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
@@ -71,14 +73,20 @@ public class GestoreTrasformazioni {
 	private Logger log = null;
 
 	private IDServizio idServizio;
+	private IDSoggetto soggettoFruitore;
+	private String servizioApplicativoFruitore;
 	private Trasformazioni trasformazioni;
 	private Transaction transaction;
 	private PdDContext pddContext;
 	private RequestInfo requestInfo;
 	private ErroreIntegrazione errore;
 	private MsgDiagnostico msgDiag;
+	private TipoPdD tipoPdD;
 
 	private OpenSPCoop2Properties op2Properties;
+	
+	private Map<String, Object> dynamicMapRequest = null;
+	private OpenSPCoop2Message messageRequest = null;
 	
 	
 	/* ********  C O S T R U T T O R E  ******** */
@@ -89,10 +97,13 @@ public class GestoreTrasformazioni {
 	public GestoreTrasformazioni(Logger alog,
 			MsgDiagnostico msgDiag, 
 			IDServizio idServizio,
+			IDSoggetto soggettoFruitore,
+			String servizioApplicativoFruitore,
 			Trasformazioni trasformazioni,
 			Transaction transaction,
 			PdDContext pddContext,
-			RequestInfo requestInfo){
+			RequestInfo requestInfo,
+			TipoPdD tipoPdD){
 		if(alog!=null){
 			this.log = alog;
 		}else{
@@ -100,11 +111,14 @@ public class GestoreTrasformazioni {
 		}
 		this.msgDiag = msgDiag;
 		this.idServizio = idServizio;
+		this.soggettoFruitore = soggettoFruitore;
+		this.servizioApplicativoFruitore = servizioApplicativoFruitore;
 		this.trasformazioni = trasformazioni;
 		this.transaction = transaction;
 		this.pddContext = pddContext;
 		this.requestInfo = requestInfo;
 		this.op2Properties = OpenSPCoop2Properties.getInstance();
+		this.tipoPdD = tipoPdD;
 	}
 
 
@@ -215,8 +229,6 @@ public class GestoreTrasformazioni {
 		
 		try {
 			
-			TrasformazioneRegola checkDefault = null;
-			
 			this.log.debug("Identificazione regola di trasformazione tra le "+this.trasformazioni.sizeRegolaList()+" disponibili ...");
 			
 			for (int i = 0; i < this.trasformazioni.sizeRegolaList(); i++) {
@@ -227,70 +239,82 @@ public class GestoreTrasformazioni {
 				
 				TrasformazioneRegola check = this.trasformazioni.getRegola(i);
 				
-				if(check.getApplicabilita()==null || 
-						(
-								check.getApplicabilita().sizeAzioneList()<=0 && 
-								check.getApplicabilita().sizeContentTypeList()<=0 && 
-								(check.getApplicabilita().getPattern()==null || "".equals(check.getApplicabilita().getPattern()))
-						)
-					) {
-					checkDefault = check;
-					this.log.debug(suffix+"Regola di default, la utilizzo se non trovo altre regole");
-					continue; // la uso in fondo.
-				}
 				
 				// prendo la prima che ha un match nell'ordine
 				
-				// controllo azione
-				this.log.debug(suffix+" check applicabilità tre le '"+check.getApplicabilita().sizeAzioneList()+"' azioni ");
-				if(check.getApplicabilita().sizeAzioneList()>0) {
-					boolean found = false;
-					for (String checkAzione : check.getApplicabilita().getAzioneList()) {
-						if(checkAzione.equals(this.idServizio.getAzione())) {
-							found = true;
-							break;
-						}
-					}
-					if(!found) {
-						continue;
-					}
-				}
+				if(check.getApplicabilita()!=null) {
 				
-				// controllo contentType
-				if(GestoreTrasformazioniUtilities.isMatchContentType(message.getContentType(), check.getApplicabilita().getContentTypeList())==false) {
-					continue;
-				}
-	
-				// Controllo Pattern
-				if(check.getApplicabilita().getPattern()!=null && !"".equals(check.getApplicabilita().getPattern())) {
-					
-					this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+") ...");
-					
-					if(contenutoNonNavigabile) {
-						this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), messaggio non conforme al match: "+message.getMessageType());
-						continue; // no match
-					}
-					
-					if(element==null && elementJson==null){
-						this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), messaggio ("+message.getMessageType()+") senza contenuto");
-						continue; // no match
-					}
-					String valore = null;
-					try {
-						if(element!=null) {
-							AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
-							valore = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, check.getApplicabilita().getPattern(), this.log);
+					// controllo azione
+					this.log.debug(suffix+" check applicabilità tra le '"+check.getApplicabilita().sizeAzioneList()+"' azioni ");
+					if(check.getApplicabilita().sizeAzioneList()>0) {
+						boolean found = false;
+						for (String checkAzione : check.getApplicabilita().getAzioneList()) {
+							if(checkAzione.equals(this.idServizio.getAzione())) {
+								found = true;
+								break;
+							}
 						}
-						else {
-							valore = JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, check.getApplicabilita().getPattern(), this.log);
+						if(!found) {
+							continue;
 						}
-					}catch(Exception e){
-						this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+") fallita: "+e.getMessage(),e);
 					}
-					if(valore==null) {
-						this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), match fallito ("+message.getMessageType()+")");
-						continue;
+					
+					// controllo contentType
+					this.log.debug(suffix+" check applicabilità tra i "+check.getApplicabilita().sizeContentTypeList()+" content types ");
+					if(check.getApplicabilita().sizeContentTypeList()>0) {
+						if(GestoreTrasformazioniUtilities.isMatchContentType(message.getContentType(), check.getApplicabilita().getContentTypeList())==false) {
+							continue;
+						}
 					}
+		
+					// Controllo Pattern
+					if(check.getApplicabilita().getPattern()!=null && !"".equals(check.getApplicabilita().getPattern())) {
+						
+						this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+") ...");
+						
+						if(contenutoNonNavigabile) {
+							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), messaggio non conforme al match: "+message.getMessageType());
+							continue; // no match
+						}
+						
+						if(element==null && elementJson==null){
+							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), messaggio ("+message.getMessageType()+") senza contenuto");
+							continue; // no match
+						}
+						String valore = null;
+						try {
+							if(element!=null) {
+								AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
+								valore = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, check.getApplicabilita().getPattern(), this.log);
+							}
+							else {
+								valore = JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, check.getApplicabilita().getPattern(), this.log);
+							}
+						}catch(Exception e){
+							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+") fallita: "+e.getMessage(),e);
+						}
+						if(valore==null) {
+							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), match fallito ("+message.getMessageType()+")");
+							continue;
+						}
+					}
+					
+					// controllo applicativi e soggetti
+					this.log.debug(suffix+" check applicabilità tra i "+check.getApplicabilita().sizeServizioApplicativoList()+" servizi applicativi e i "+check.getApplicabilita().sizeSoggettoList()+" soggetti");
+					if(check.getApplicabilita().sizeServizioApplicativoList()>0 || check.getApplicabilita().sizeSoggettoList()>0) {
+						boolean applicativi = true;
+						boolean soggetti = TipoPdD.APPLICATIVA.equals(this.tipoPdD);
+						if(check.getApplicabilita().sizeServizioApplicativoList()>0) {
+							applicativi = GestoreTrasformazioniUtilities.isMatchServizioApplicativo(this.soggettoFruitore, this.servizioApplicativoFruitore, check.getApplicabilita().getServizioApplicativoList());
+						}
+						if(check.getApplicabilita().sizeSoggettoList()>0) {
+							soggetti = GestoreTrasformazioniUtilities.isMatchSoggetto(this.soggettoFruitore, check.getApplicabilita().getSoggettoList());
+						}
+						if(!applicativi && !soggetti) {
+							continue;
+						}
+					}
+				
 				}
 				
 				this.log.debug(suffix+" check applicabilità, regola applicabile alla richiesta in corso");
@@ -298,10 +322,7 @@ public class GestoreTrasformazioni {
 				break; // trovata!
 				
 			}
-			if(this.regolaTrasformazione==null && checkDefault!=null) {
-				this.regolaTrasformazione = checkDefault;
-			}
-			
+
 		} catch(Throwable er) {
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(er, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
@@ -316,6 +337,8 @@ public class GestoreTrasformazioni {
 			this.log.debug("Nessuna regola di trasformazione trovata");
 			return message;
 		}
+		
+		this.messageRequest = message;
 		
 		
 		
@@ -363,6 +386,7 @@ public class GestoreTrasformazioni {
 		GestoreTrasformazioniUtilities.fillDynamicMapRequest(this.log, dynamicMap, this.pddContext, urlInvocazione,
 				element, elementJson, 
 				busta, parametriTrasporto, parametriUrl);
+		this.dynamicMapRequest = dynamicMap;
 		this.log.debug("Costruzione dynamic map completata");
 		
 		
@@ -386,7 +410,8 @@ public class GestoreTrasformazioni {
 			
 			// conversione header
 			Properties trasporto = parametriTrasporto;
-			GestoreTrasformazioniUtilities.trasformazione(this.log, richiesta.getHeaderList(), trasporto, "Header", dynamicMap, this.pddContext);
+			Properties forceAddTrasporto = new Properties();
+			GestoreTrasformazioniUtilities.trasformazione(this.log, richiesta.getHeaderList(), trasporto, forceAddTrasporto, "Header", dynamicMap, this.pddContext);
 			if(richiesta.getContentType()!=null) {
 				trasporto.remove(HttpConstants.CONTENT_TYPE);
 				trasporto.remove(HttpConstants.CONTENT_TYPE.toLowerCase());
@@ -396,9 +421,11 @@ public class GestoreTrasformazioni {
 			
 			// conversione url
 			Properties url = parametriUrl;
-			GestoreTrasformazioniUtilities.trasformazione(this.log, richiesta.getParametroUrlList(), url, "QueryParameter", dynamicMap, this.pddContext);
+			Properties forceAddUrl = new Properties();
+			GestoreTrasformazioniUtilities.trasformazione(this.log, richiesta.getParametroUrlList(), url, forceAddUrl, "QueryParameter", dynamicMap, this.pddContext);
 			
 			if(!trasformazioneContenuto) {
+				GestoreTrasformazioniUtilities.addTransportInfo(forceAddTrasporto, forceAddUrl, null, message);
 				return message;
 			}
 			
@@ -430,7 +457,9 @@ public class GestoreTrasformazioni {
 			
 			OpenSPCoop2Message msg = GestoreTrasformazioniUtilities.trasformaMessaggio(this.log, message, element, 
 					this.requestInfo, dynamicMap, this.pddContext, this.op2Properties, 
-					trasporto, url, -1, 
+					trasporto, forceAddTrasporto,
+					url, forceAddUrl,
+					-1, 
 					richiesta.getContentType(), null, 
 					risultato, 
 					trasformazioneRest, 
@@ -521,8 +550,6 @@ public class GestoreTrasformazioni {
 		TrasformazioneRegolaRisposta trasformazioneRisposta = null;
 		try {
 			
-			TrasformazioneRegolaRisposta checkDefault = null;
-			
 			this.log.debug("Identificazione regola di trasformazione della risposta tra le "+this.regolaTrasformazione.sizeRispostaList()+" disponibili ...");
 			
 			for (int i = 0; i < this.regolaTrasformazione.sizeRispostaList(); i++) {
@@ -533,89 +560,76 @@ public class GestoreTrasformazioni {
 				
 				TrasformazioneRegolaRisposta check = this.regolaTrasformazione.getRisposta(i);
 				
-				if(check.getApplicabilita()==null || 
-						(
-								(check.getApplicabilita().getReturnCodeMax()==null && check.getApplicabilita().getReturnCodeMin()==null) 
-								&& 
-								check.getApplicabilita().sizeContentTypeList()<=0 
-								&& 
-								(check.getApplicabilita().getPattern()==null || "".equals(check.getApplicabilita().getPattern()))
-						)
-					) {
-					checkDefault = check;
-					this.log.debug(suffix+"Regola di default, la utilizzo se non trovo altre regole");
-					continue; // la uso in fondo.
-				}
-				
 				// prendo la prima che ha un match nell'ordine
 				
-				// controllo status code
-				if(check.getApplicabilita().getReturnCodeMax()!=null || check.getApplicabilita().getReturnCodeMin()!=null) {
-					String min = "*";
-					if(check.getApplicabilita().getReturnCodeMin()!=null) {
-						min = check.getApplicabilita().getReturnCodeMin().intValue()+"";
-					} 
-					String max = "*";
-					if(check.getApplicabilita().getReturnCodeMax()!=null) {
-						max = check.getApplicabilita().getReturnCodeMax().intValue()+"";
-					} 
-					this.log.debug(suffix+" check applicabilità return code ["+min+"-"+max+"]");
-					if(check.getApplicabilita().getReturnCodeMin()!=null) {
-						if(httpStatus< check.getApplicabilita().getReturnCodeMin().intValue()) {
-							continue;
-						}
-					}
-					if(check.getApplicabilita().getReturnCodeMax()!=null) {
-						if(httpStatus> check.getApplicabilita().getReturnCodeMax().intValue()) {
-							continue;
-						}
-					}
-				}
+				if(check.getApplicabilita()!=null) {
 				
-				// controllo contentType
-				if(GestoreTrasformazioniUtilities.isMatchContentType(message.getContentType(), check.getApplicabilita().getContentTypeList())==false) {
-					continue;
-				}
-	
-				// Controllo Pattern
-				if(check.getApplicabilita().getPattern()!=null && !"".equals(check.getApplicabilita().getPattern())) {
-					
-					this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+") ...");
-					
-					if(contenutoNonNavigabile) {
-						this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), messaggio non conforme al match: "+message.getMessageType());
-						continue; // no match
-					}
-					
-					if(element==null && elementJson==null){
-						this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), messaggio ("+message.getMessageType()+") senza contenuto");
-						continue; // no match
-					}
-					String valore = null;
-					try {
-						if(element!=null) {
-							AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
-							valore = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, check.getApplicabilita().getPattern(), this.log);
+					// controllo status code
+					if(check.getApplicabilita().getReturnCodeMax()!=null || check.getApplicabilita().getReturnCodeMin()!=null) {
+						String min = "*";
+						if(check.getApplicabilita().getReturnCodeMin()!=null) {
+							min = check.getApplicabilita().getReturnCodeMin().intValue()+"";
+						} 
+						String max = "*";
+						if(check.getApplicabilita().getReturnCodeMax()!=null) {
+							max = check.getApplicabilita().getReturnCodeMax().intValue()+"";
+						} 
+						this.log.debug(suffix+" check applicabilità return code ["+min+"-"+max+"]");
+						if(check.getApplicabilita().getReturnCodeMin()!=null) {
+							if(httpStatus< check.getApplicabilita().getReturnCodeMin().intValue()) {
+								continue;
+							}
 						}
-						else {
-							valore = JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, check.getApplicabilita().getPattern(), this.log);
+						if(check.getApplicabilita().getReturnCodeMax()!=null) {
+							if(httpStatus> check.getApplicabilita().getReturnCodeMax().intValue()) {
+								continue;
+							}
 						}
-					}catch(Exception e){
-						this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+") fallita: "+e.getMessage(),e);
 					}
-					if(valore==null) {
-						this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), match fallito ("+message.getMessageType()+")");
+					
+					// controllo contentType
+					if(GestoreTrasformazioniUtilities.isMatchContentType(message.getContentType(), check.getApplicabilita().getContentTypeList())==false) {
 						continue;
 					}
+		
+					// Controllo Pattern
+					if(check.getApplicabilita().getPattern()!=null && !"".equals(check.getApplicabilita().getPattern())) {
+						
+						this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+") ...");
+						
+						if(contenutoNonNavigabile) {
+							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), messaggio non conforme al match: "+message.getMessageType());
+							continue; // no match
+						}
+						
+						if(element==null && elementJson==null){
+							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), messaggio ("+message.getMessageType()+") senza contenuto");
+							continue; // no match
+						}
+						String valore = null;
+						try {
+							if(element!=null) {
+								AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
+								valore = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, check.getApplicabilita().getPattern(), this.log);
+							}
+							else {
+								valore = JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, check.getApplicabilita().getPattern(), this.log);
+							}
+						}catch(Exception e){
+							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+") fallita: "+e.getMessage(),e);
+						}
+						if(valore==null) {
+							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), match fallito ("+message.getMessageType()+")");
+							continue;
+						}
+					}
+					
 				}
 				
 				this.log.debug(suffix+" check applicabilità, regola applicabile alla risposta in corso");
 				trasformazioneRisposta = check;
 				break; // trovata!
 				
-			}
-			if(trasformazioneRisposta==null && checkDefault!=null) {
-				trasformazioneRisposta = checkDefault;
 			}
 			
 		} catch(Throwable er) {
@@ -670,7 +684,7 @@ public class GestoreTrasformazioni {
 		
 		this.log.debug("Costruzione dynamic map ...");
 		Map<String, Object> dynamicMap = new Hashtable<String, Object>();
-		GestoreTrasformazioniUtilities.fillDynamicMapResponse(this.log, dynamicMap, this.pddContext, element, elementJson, busta, parametriTrasporto);
+		GestoreTrasformazioniUtilities.fillDynamicMapResponse(this.log, dynamicMap, this.dynamicMapRequest, this.pddContext, element, elementJson, busta, parametriTrasporto);
 		this.log.debug("Costruzione dynamic map completata");
 		
 		
@@ -693,7 +707,8 @@ public class GestoreTrasformazioni {
 			
 			// conversione header
 			Properties trasporto = parametriTrasporto;
-			GestoreTrasformazioniUtilities.trasformazione(this.log, trasformazioneRisposta.getHeaderList(), trasporto, "Header", dynamicMap, this.pddContext);
+			Properties forceAddTrasporto = new Properties();
+			GestoreTrasformazioniUtilities.trasformazione(this.log, trasformazioneRisposta.getHeaderList(), trasporto, forceAddTrasporto, "Header", dynamicMap, this.pddContext);
 			if(trasformazioneRisposta.getContentType()!=null) {
 				trasporto.remove(HttpConstants.CONTENT_TYPE);
 				trasporto.remove(HttpConstants.CONTENT_TYPE.toLowerCase());
@@ -702,6 +717,14 @@ public class GestoreTrasformazioni {
 			}
 			
 			if(!trasformazioneContenuto) {
+				Integer forceResponseStatus = null;
+				if(trasformazioneRisposta.getReturnCode()!=null) {
+					forceResponseStatus = trasformazioneRisposta.getReturnCode();
+				}
+				else {
+					forceResponseStatus = httpStatus;
+				}
+				GestoreTrasformazioniUtilities.addTransportInfo(forceAddTrasporto, null, forceResponseStatus, message);
 				return message;
 			}
 			
@@ -720,8 +743,22 @@ public class GestoreTrasformazioni {
 			if(this.regolaTrasformazione.getRichiesta().getTrasformazioneRest()!=null) {
 				// devo tornare soap
 				trasformazioneSoap = true;
-				trasformazioneSoap_versione = this.regolaTrasformazione.getRichiesta().getTrasformazioneSoap().getVersione();
-				trasformazioneSoap_soapAction = this.regolaTrasformazione.getRichiesta().getTrasformazioneSoap().getSoapAction();
+				if(this.messageRequest!=null) {
+					if(MessageType.SOAP_11.equals(this.messageRequest.getMessageType())) {
+						trasformazioneSoap_versione = VersioneSOAP._1_1;
+					}
+					else if(MessageType.SOAP_12.equals(this.messageRequest.getMessageType())) {
+						trasformazioneSoap_versione = VersioneSOAP._1_2;
+					}
+					else {
+						throw new Exception("Atteso messaggio di richiesta di tipo SOAP, in presenza di una trasformazione REST attiva");
+					}
+					trasformazioneSoap_soapAction = this.messageRequest.castAsSoap().getSoapAction();
+				}
+				else {
+					// non dovrebbe mai succedere
+					trasformazioneSoap_versione = VersioneSOAP._1_1;
+				}
 				if(trasformazioneRisposta.getTrasformazioneSoap()!=null) {
 					trasformazioneSoap_envelope = trasformazioneRisposta.getTrasformazioneSoap().isEnvelope();
 					trasformazioneSoap_envelopeAsAttachment = trasformazioneRisposta.getTrasformazioneSoap().isEnvelopeAsAttachment();
@@ -732,7 +769,9 @@ public class GestoreTrasformazioni {
 			
 			OpenSPCoop2Message msg = GestoreTrasformazioniUtilities.trasformaMessaggio(this.log, message, element, 
 					this.requestInfo, dynamicMap, this.pddContext, this.op2Properties, 
-					trasporto, null, httpStatus, 
+					trasporto, forceAddTrasporto, 
+					null, null,
+					httpStatus, 
 					trasformazioneRisposta.getContentType(), trasformazioneRisposta.getReturnCode(), 
 					risultato, 
 					trasformazioneRest, 

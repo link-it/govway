@@ -204,7 +204,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 				if(postBackElementName.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_ENABLED)) {
 					trasformazioneContenutoRispostaTipo = org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
 					trasformazioneContenutoRispostaContentType = "";
-					trasformazioneContenutoRispostaReturnCode = "";
+					//trasformazioneContenutoRispostaReturnCode = "";
 					trasformazioneRispostaSoapAbilitato = false;
 					trasformazioneRispostaSoapEnvelope = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_DISABILITATO;
 					trasformazioneRispostaSoapEnvelopeTipo = org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
@@ -232,7 +232,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 				
 				if(postBackElementName.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE)) {
 					porteDelegateHelper.deleteBinaryParameters(trasformazioneRispostaSoapEnvelopeTemplate);
-					if(trasformazioneRispostaSoapEnvelope.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT)) {
+					if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT.equals(trasformazioneRispostaSoapEnvelope)) {
 						trasformazioneRispostaSoapEnvelopeTipo = org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY; 
 					}
 				}
@@ -331,15 +331,15 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 					// Intervallo
 					if(statusMinInteger != null && statusMaxInteger != null) {
 						if(statusMaxInteger.longValue() == statusMinInteger.longValue()) // esatto
-							returnCode = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO;
+							returnCode = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO;
 						else 
-							returnCode = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO;
+							returnCode = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_INTERVALLO;
 					} else if(statusMinInteger != null && statusMaxInteger == null) { // definito solo l'estremo inferiore
-						returnCode = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO;
+						returnCode = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_INTERVALLO;
 					} else if(statusMinInteger == null && statusMaxInteger != null) { // definito solo l'estremo superiore
-						returnCode = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO;
+						returnCode = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_INTERVALLO;
 					} else { //entrambi null 
-						returnCode = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI;
+						returnCode = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI;
 					}
 					
 					if(applicabilita != null) {
@@ -379,7 +379,9 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 					}
 				}
 
-				dati = porteDelegateHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idInt, oldRisposta, true, idTrasformazioneS, idTrasformazioneRispostaS, nomeRisposta,
+				dati = porteDelegateHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idInt, oldRisposta, true, idTrasformazioneS, idTrasformazioneRispostaS, 
+						apc.getServiceBinding(),
+						nomeRisposta,
 						returnCode, statusMin, statusMax, pattern, contentType, servletTrasformazioniRispostaHeadersList, parametriInvocazioneServletTrasformazioniRispostaHeaders, numeroTrasformazioniRispostaHeaders, 
 						trasformazioneContenutoRichiestaAbilitato, trasformazioneRichiestaRestAbilitato, 
 						trasformazioneContenutoRispostaAbilitato, trasformazioneContenutoRispostaTipo, trasformazioneContenutoRispostaTemplate, trasformazioneContenutoRispostaTipoCheck, trasformazioneContenutoRispostaContentType, trasformazioneContenutoRispostaReturnCode,
@@ -402,7 +404,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 				// quando un parametro viene inviato come vuoto, sul db viene messo null, gestisco il caso
 				Integer statusMinDBCheck = StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null;
 				Integer statusMaxDBCheck = StringUtils.isNotEmpty(statusMax) ? Integer.parseInt(statusMax) : null;
-				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO))
+				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO))
 					statusMaxDBCheck = statusMinDBCheck;
 				String patternDBCheck = StringUtils.isNotEmpty(pattern) ? pattern : null;
 				String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
@@ -427,7 +429,9 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idInt, oldRisposta, true, idTrasformazioneS, idTrasformazioneRispostaS, nomeRisposta,
+				dati = porteDelegateHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idInt, oldRisposta, true, idTrasformazioneS, idTrasformazioneRispostaS, 
+						apc.getServiceBinding(),
+						nomeRisposta,
 						returnCode, statusMin, statusMax, pattern, contentType, servletTrasformazioniRispostaHeadersList, parametriInvocazioneServletTrasformazioniRispostaHeaders, numeroTrasformazioniRispostaHeaders, 
 						trasformazioneContenutoRichiestaAbilitato, trasformazioneRichiestaRestAbilitato, 
 						trasformazioneContenutoRispostaAbilitato, trasformazioneContenutoRispostaTipo, trasformazioneContenutoRispostaTemplate, trasformazioneContenutoRispostaTipoCheck, trasformazioneContenutoRispostaContentType, trasformazioneContenutoRispostaReturnCode,
@@ -467,10 +471,10 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 			if(rispostaDaAggiornare.getApplicabilita() == null)
 				rispostaDaAggiornare.setApplicabilita(new TrasformazioneRegolaApplicabilitaRisposta());
 
-			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI)) {
+			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI)) {
 				rispostaDaAggiornare.getApplicabilita().setReturnCodeMin(null);
 				rispostaDaAggiornare.getApplicabilita().setReturnCodeMax(null);
-			} else if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO)) {
+			} else if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO)) {
 				rispostaDaAggiornare.getApplicabilita().setReturnCodeMin(StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null);
 				rispostaDaAggiornare.getApplicabilita().setReturnCodeMax(StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null);
 			} else { // intervallo
@@ -484,6 +488,8 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 				rispostaDaAggiornare.getApplicabilita().getContentTypeList().addAll(Arrays.asList(contentType.split(",")));
 			}
 			
+			rispostaDaAggiornare.setReturnCode(StringUtils.isNotEmpty(trasformazioneContenutoRispostaReturnCode) ? Integer.parseInt(trasformazioneContenutoRispostaReturnCode) : null);
+			
 			rispostaDaAggiornare.setConversione(trasformazioneContenutoRispostaAbilitato);
 			
 			if(trasformazioneContenutoRispostaAbilitato) {
@@ -494,19 +500,20 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 				}else {
 					rispostaDaAggiornare.setConversioneTemplate(null);
 				}
-				rispostaDaAggiornare.setContentType(trasformazioneContenutoRispostaContentType);
-				rispostaDaAggiornare.setReturnCode(StringUtils.isNotEmpty(trasformazioneContenutoRispostaReturnCode) ? Integer.parseInt(trasformazioneContenutoRispostaReturnCode) : null);
-				
+
+				if(trasformazioneContenutoRispostaContentType!=null && !"".equals(trasformazioneContenutoRispostaContentType)) {
+					rispostaDaAggiornare.setContentType(trasformazioneContenutoRispostaContentType);
+				}
+				else {
+					rispostaDaAggiornare.setContentType(null);
+				}
 				rispostaDaAggiornare.setConversioneTipo(trasformazioneContenutoRispostaTipo.getValue());
 				
 				if(trasformazioneRispostaSoapAbilitato) {
 					if(rispostaDaAggiornare.getTrasformazioneSoap() == null)
 						rispostaDaAggiornare.setTrasformazioneSoap(new TrasformazioneSoapRisposta());
 					
-					// ct null se trasformazione soap abilitata
-					rispostaDaAggiornare.setContentType(null);
-					
-					if(trasformazioneRispostaSoapEnvelope.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT)) { // attachment
+					if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT.equals(trasformazioneRispostaSoapEnvelope)) { // attachment
 						rispostaDaAggiornare.getTrasformazioneSoap().setEnvelope(true);
 						rispostaDaAggiornare.getTrasformazioneSoap().setEnvelopeAsAttachment(true);
 						
@@ -519,7 +526,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 						}
 						
 						rispostaDaAggiornare.getTrasformazioneSoap().setEnvelopeBodyConversioneTipo(trasformazioneRispostaSoapEnvelopeTipo.getValue());
-					} else if(trasformazioneRispostaSoapEnvelope.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_BODY)) { // body
+					} else if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_BODY.equals(trasformazioneRispostaSoapEnvelope)) { // body
 						rispostaDaAggiornare.getTrasformazioneSoap().setEnvelope(true);
 						rispostaDaAggiornare.getTrasformazioneSoap().setEnvelopeAsAttachment(false);
 						rispostaDaAggiornare.getTrasformazioneSoap().setEnvelopeBodyConversioneTemplate(null);
@@ -537,7 +544,6 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 			} else {
 				rispostaDaAggiornare.setConversioneTemplate(null);
 				rispostaDaAggiornare.setContentType(null);
-				rispostaDaAggiornare.setReturnCode(null);
 				rispostaDaAggiornare.setConversioneTipo(null);
 				rispostaDaAggiornare.setTrasformazioneSoap(null);
 			}
@@ -547,12 +553,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 			// ricaricare id trasformazione
 			portaDelegata = porteDelegateCore.getPortaDelegata(Long.parseLong(id));
 
-			String patternDBCheck = (regola.getApplicabilita() != null && StringUtils.isNotEmpty(regola.getApplicabilita().getPattern())) ? regola.getApplicabilita().getPattern() : null;
-			String contentTypeAsString = (regola.getApplicabilita() != null &&regola.getApplicabilita().getContentTypeList() != null) ? StringUtils.join(regola.getApplicabilita().getContentTypeList(), ",") : "";
-			String contentTypeDBCheck = StringUtils.isNotEmpty(contentTypeAsString) ? contentTypeAsString : null;
-			String azioniAsString = (regola.getApplicabilita() != null && regola.getApplicabilita().getAzioneList() != null) ? StringUtils.join(regola.getApplicabilita().getAzioneList(), ",") : "";
-			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
-			TrasformazioneRegola trasformazioneAggiornata = porteDelegateCore.getTrasformazione(portaDelegata.getId(), azioniDBCheck, patternDBCheck, contentTypeDBCheck);
+			TrasformazioneRegola trasformazioneAggiornata = porteDelegateCore.getTrasformazione(portaDelegata.getId(), regola.getNome());
 			
 			
 			// Preparo la lista

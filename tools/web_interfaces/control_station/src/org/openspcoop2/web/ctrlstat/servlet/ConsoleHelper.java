@@ -157,6 +157,7 @@ import org.openspcoop2.protocol.sdk.properties.StringProperty;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.DynamicStringReplace;
 import org.openspcoop2.utils.crypt.Password;
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.regexp.RegExpException;
@@ -213,6 +214,7 @@ import org.openspcoop2.web.lib.audit.web.AuditHelper;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.MenuEntry;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -4814,6 +4816,8 @@ public class ConsoleHelper {
 							return false;
 						}
 						
+						/*
+						 * Vale solo per l'autenticazione
 						Trasformazioni trasformazioni = pd.getTrasformazioni();
 						if(trasformazioni != null) {
 							StringBuilder sb = new StringBuilder();
@@ -4832,6 +4836,7 @@ public class ConsoleHelper {
 								return false;
 							}
 						}
+						*/
 					}
 					if(isSupportatoAutenticazione && pd.getAutenticazione()!=null && 
 							!pd.getAutenticazione().equals(autenticazione)){
@@ -4888,6 +4893,8 @@ public class ConsoleHelper {
 							return false;
 						}
 						
+						/*
+						 * Vale solo per l'autenticazione
 						Trasformazioni trasformazioni = pa.getTrasformazioni();
 						if(trasformazioni != null) {
 							StringBuilder sbSoggetti = new StringBuilder();
@@ -4919,6 +4926,7 @@ public class ConsoleHelper {
 								return false;
 							}
 						}
+						*/
 					}
 					if(isSupportatoAutenticazione && pa.getAutenticazione()!=null && 
 							!pa.getAutenticazione().equals(autenticazione)){
@@ -8490,74 +8498,14 @@ public class ConsoleHelper {
 		String faultS = getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT);
 		String cacheSecondsS = getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS);
 		
-		Integer statusMin = null;
-		Integer statusMax = null;
-		Integer cacheSeconds = null;
-		
-		if(!returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI)) {
-			
-			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO)) {
-				if(StringUtils.isEmpty(statusMinS)) {
-					this.pd.setMessage("Il campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE + " &egrave; obbligatorio.");
-					return false;
-				}
-			}
-			
-			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
-				if(StringUtils.isEmpty(statusMinS) || StringUtils.isEmpty(statusMaxS)) {
-					this.pd.setMessage("Tutt gli intervalli del campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE + " sono obbligatori.");
-					return false;
-				}
-			}
-			
-			if(StringUtils.isNotEmpty(statusMinS)) {
-				try {
-					statusMin = Integer.parseInt(statusMinS);
-					
-					if(statusMin < 200 || statusMin > 599) {
-						if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO)) {
-							this.pd.setMessage("Il valore inserito nel campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE + " non &egrave; valido, sono ammessi valori compresi tra 200 e 599.");
-						}
-						else {
-							this.pd.setMessage("Il valore inserito nell'intervallo sinistro non &egrave; valido, sono ammessi valori compresi tra 200 e 599.");
-						}
-						return false;
-					}
-					// return code esatto, ho salvato lo stesso valore nel campo return code;
-					if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO))
-						statusMax = statusMin;
-				}catch(Exception e) {
-					this.pd.setMessage("Il formato del campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido.");
-					return false;
-				}
-			}
-			
-			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
-				if(StringUtils.isNotEmpty(statusMaxS)) {
-					try {
-						statusMax = Integer.parseInt(statusMaxS);
-						
-						if(statusMax < 200 || statusMax > 599) {
-							this.pd.setMessage("Il valore inserito nell'intervallo destro non &egrave; valido, sono ammessi valori compresi tra 200 e 599.");
-							return false;
-						}
-					}catch(Exception e) {
-						this.pd.setMessage("Il formato del campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido.");
-						return false;
-					}
-				}
-			}
-			
-			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
-				if(statusMax!=null && statusMin!=null) {
-					if(statusMin>=statusMax) {
-						this.pd.setMessage("Il valore inserito nell'intervallo sinistro deve essere minore del valore inserito nell'intervallo destro.");
-						return false;
-					}
-				}
-			}
+		if(_checkReturnCode(returnCode, statusMinS, statusMaxS, 
+				CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE, 
+				CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN, 
+				CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX)==false) {
+			return false;
 		}
 		
+		Integer cacheSeconds = null;
 		if(StringUtils.isNotEmpty(cacheSecondsS)) {
 			try {
 				cacheSeconds = Integer.parseInt(cacheSecondsS);
@@ -8575,6 +8523,79 @@ public class ConsoleHelper {
 		return true;
 	}
 	
+	public boolean _checkReturnCode(String returnCode, String statusMinS, String statusMaxS,
+			String labelReturnCode, String labelReturnCodeMin, String labelReturnCodeMax) throws Exception {
+		
+		Integer statusMin = null;
+		Integer statusMax = null;
+		
+		if(!returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI)) {
+			
+			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO)) {
+				if(StringUtils.isEmpty(statusMinS)) {
+					this.pd.setMessage("Il campo "+ labelReturnCode + " &egrave; obbligatorio.");
+					return false;
+				}
+			}
+			
+			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_INTERVALLO)) {
+				if(StringUtils.isEmpty(statusMinS) || StringUtils.isEmpty(statusMaxS)) {
+					this.pd.setMessage("Tutt gli intervalli del campo "+ labelReturnCode + " sono obbligatori.");
+					return false;
+				}
+			}
+			
+			if(StringUtils.isNotEmpty(statusMinS)) {
+				try {
+					statusMin = Integer.parseInt(statusMinS);
+					
+					if(statusMin < 200 || statusMin > 599) {
+						if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO)) {
+							this.pd.setMessage("Il valore inserito nel campo "+ labelReturnCode + " non &egrave; valido, sono ammessi valori compresi tra 200 e 599.");
+						}
+						else {
+							this.pd.setMessage("Il valore inserito nell'intervallo sinistro non &egrave; valido, sono ammessi valori compresi tra 200 e 599.");
+						}
+						return false;
+					}
+					// return code esatto, ho salvato lo stesso valore nel campo return code;
+					if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO))
+						statusMax = statusMin;
+				}catch(Exception e) {
+					this.pd.setMessage("Il formato del campo "+ labelReturnCodeMin + " non &egrave; valido.");
+					return false;
+				}
+			}
+			
+			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_INTERVALLO)) {
+				if(StringUtils.isNotEmpty(statusMaxS)) {
+					try {
+						statusMax = Integer.parseInt(statusMaxS);
+						
+						if(statusMax < 200 || statusMax > 599) {
+							this.pd.setMessage("Il valore inserito nell'intervallo destro non &egrave; valido, sono ammessi valori compresi tra 200 e 599.");
+							return false;
+						}
+					}catch(Exception e) {
+						this.pd.setMessage("Il formato del campo "+ labelReturnCodeMax + " non &egrave; valido.");
+						return false;
+					}
+				}
+			}
+			
+			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_INTERVALLO)) {
+				if(statusMax!=null && statusMin!=null) {
+					if(statusMin>=statusMax) {
+						this.pd.setMessage("Il valore inserito nell'intervallo sinistro deve essere minore del valore inserito nell'intervallo destro.");
+						return false;
+					}
+				}
+			}
+		}
+		
+		return true;
+	}
+	
 	public Vector<DataElement> addResponseCachingConfigurazioneRegola(TipoOperazione tipoOP, String returnCode, String statusMin, String statusMax, String fault, String cacheSeconds, Vector<DataElement> dati) {
 		
 		DataElement dataElement = new DataElement();
@@ -8584,23 +8605,23 @@ public class ConsoleHelper {
 		
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE);
-		de.setLabels(CostantiControlStation.SELECT_LABELS_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE);
-		de.setValues(CostantiControlStation.SELECT_VALUES_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE);
+		de.setLabels(CostantiControlStation.SELECT_LABELS_CONFIGURAZIONE_RETURN_CODE);
+		de.setValues(CostantiControlStation.SELECT_VALUES_CONFIGURAZIONE_RETURN_CODE);
 		de.setType(DataElementType.SELECT);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE);
 		de.setPostBack(true);
 		de.setSelected(returnCode);
 		dati.addElement(de);
 		
-		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI.equals(returnCode)) {
-			if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO.equals(returnCode)) {
+		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI.equals(returnCode)) {
+			if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO.equals(returnCode)) {
 				de = this.getHttpReturnCodeDataElement(CostantiControlStation.LABEL_EMPTY, 
 						CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN, 
 						statusMin, true);
 				dati.addElement(de);
 			}
 			
-			if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO.equals(returnCode)) {
+			if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_INTERVALLO.equals(returnCode)) {
 				de = getHttpReturnCodeIntervallDataElement(CostantiControlStation.LABEL_EMPTY, 
 						CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN,
 						CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX,
@@ -8632,12 +8653,17 @@ public class ConsoleHelper {
 		return dati;
 	}
 	
-	public Vector<DataElement> addTrasformazioneRispostaToDatiOpAdd(Vector<DataElement> dati, String idTrasformazione, String nome, String returnCode, String statusMin, String statusMax, String pattern, String contentType) throws Exception {
-		return addTrasformazioneRispostaToDati(TipoOperazione.ADD, dati, 0, null, false, idTrasformazione, null, nome, returnCode, statusMin, statusMax, pattern, contentType, null, null, 0,
+	public Vector<DataElement> addTrasformazioneRispostaToDatiOpAdd(Vector<DataElement> dati, String idTrasformazione, 
+			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding,
+			String nome, String returnCode, String statusMin, String statusMax, String pattern, String contentType) throws Exception {
+		return addTrasformazioneRispostaToDati(TipoOperazione.ADD, dati, 0, null, false, idTrasformazione, null, 
+				serviceBinding,
+				nome, returnCode, statusMin, statusMax, pattern, contentType, null, null, 0,
 				false,false,false,null,null,null,null,null,null,false,null,null,null,null);
 	}
 	
 	public Vector<DataElement> addTrasformazioneRispostaToDati(TipoOperazione tipoOP, Vector<DataElement> dati, long idPorta, TrasformazioneRegolaRisposta risposta, boolean isPortaDelegata, String idTrasformazione, String idTrasformazioneRisposta,
+			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding,
 			String nome, String returnCode, String statusMin, String statusMax, String pattern, String contentType,
 			String servletTrasformazioniRispostaHeadersList, List<Parameter> parametriInvocazioneServletTrasformazioniRispostaHeaders, int numeroTrasformazioniRispostaHeaders,
 			boolean trasformazioneContenutoRichiestaAbilitato, boolean trasformazioneRichiestaRestAbilitato,
@@ -8692,23 +8718,23 @@ public class ConsoleHelper {
 		
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS);
-		de.setLabels(CostantiControlStation.SELECT_LABELS_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE);
-		de.setValues(CostantiControlStation.SELECT_VALUES_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE);
+		de.setLabels(CostantiControlStation.SELECT_LABELS_CONFIGURAZIONE_RETURN_CODE);
+		de.setValues(CostantiControlStation.SELECT_VALUES_CONFIGURAZIONE_RETURN_CODE);
 		de.setType(DataElementType.SELECT);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS);
 		de.setPostBack(true);
 		de.setSelected(returnCode);
 		dati.addElement(de);
 		
-		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI.equals(returnCode)) {
-			if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO.equals(returnCode)) {
+		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI.equals(returnCode)) {
+			if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO.equals(returnCode)) {
 				de = this.getHttpReturnCodeDataElement(CostantiControlStation.LABEL_EMPTY, 
 						CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN, 
 						statusMin, true);
 				dati.addElement(de);
 			}
 			
-			if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO.equals(returnCode)) {
+			if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_INTERVALLO.equals(returnCode)) {
 				de = getHttpReturnCodeIntervallDataElement(CostantiControlStation.LABEL_EMPTY, 
 						CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN,
 						CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MAX,
@@ -8727,6 +8753,10 @@ public class ConsoleHelper {
 		de.setValue(contentType);
 		de.enableTags();
 //		de.setRequired(true);
+		DataElementInfo dInfoCT = new DataElementInfo(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA+" - "+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_CT);
+		dInfoCT.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE);
+		dInfoCT.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORI);
+		de.setInfo(dInfoCT);
 		dati.addElement(de);
 		
 		// Pattern
@@ -8734,11 +8764,19 @@ public class ConsoleHelper {
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN);
 		de.setType(DataElementType.TEXT_AREA);
-		de.setCols(110);
-		de.setRows(3);
+		de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
 		de.setSize(this.getSize());
 		de.setValue(pattern);
 //		de.setRequired(true);
+		DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA+" - "+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
+		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTARN_REST);
+			dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_VALORI_REST);
+		}
+		else {
+			dInfoPattern.setBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTARN_SOAP);
+		}
+		de.setInfo(dInfoPattern);
 		dati.addElement(de);
 		
 		
@@ -8762,7 +8800,13 @@ public class ConsoleHelper {
 			de.setType(DataElementType.SUBTITLE);
 			dati.addElement(de);
 			
-			// Header Risposta
+			// Return Code e Header Risposta
+			
+			de = this.getHttpReturnCodeDataElement(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE, 
+					CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE, 
+					trasformazioneContenutoRispostaReturnCode, false);
+			dati.addElement(de);
+			
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
 			boolean contaListeFromSession = ServletUtils.getContaListeFromSession(this.session) != null ? ServletUtils.getContaListeFromSession(this.session) : false;
@@ -8803,6 +8847,7 @@ public class ConsoleHelper {
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO);
 				de.setPostBack(true);
 				de.setSelected(trasformazioneContenutoRispostaTipo.getValue());
+				setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO, trasformazioneContenutoRispostaTipo, serviceBinding, true);
 				dati.addElement(de);
 				
 				if(trasformazioneContenutoRispostaTipo.isTemplateRequired()) {	
@@ -8866,7 +8911,14 @@ public class ConsoleHelper {
 					dati.add(trasformazioneContenutoRispostaTemplate.getFileIdDataElement());
 				}
 				
-				if(trasformazioneContenutoRispostaTipo.isContentTypeEnabled()) {
+				boolean contentTypePerAttachmentSOAP = false;
+				if(trasformazioneContenutoRispostaTipo.isTrasformazioneProtocolloEnabled() && trasformazioneRichiestaRestAbilitato &&
+						!TipoTrasformazione.EMPTY.equals(trasformazioneContenutoRispostaTipo) &&
+						CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT.equals(trasformazioneRispostaSoapEnvelope)) {
+					contentTypePerAttachmentSOAP = true;
+				}
+				
+				if(!contentTypePerAttachmentSOAP && trasformazioneContenutoRispostaTipo.isContentTypeEnabled()) {
 					// Content-type
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE);
@@ -8879,12 +8931,7 @@ public class ConsoleHelper {
 					}   
 					dati.addElement(de);
 				}
-				
-				de = this.getHttpReturnCodeDataElement(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE, 
-						CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE, 
-						trasformazioneContenutoRispostaReturnCode, false);
-				dati.addElement(de);
-				
+								
 				if(trasformazioneContenutoRispostaTipo.isTrasformazioneProtocolloEnabled() && trasformazioneRichiestaRestAbilitato &&
 						!TipoTrasformazione.EMPTY.equals(trasformazioneContenutoRispostaTipo)) {
 					
@@ -8918,6 +8965,15 @@ public class ConsoleHelper {
 											
 					if(trasformazioneRispostaSoapEnvelope!=null && CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT.equals(trasformazioneRispostaSoapEnvelope)) {
 						
+						// Content-type
+						de = new DataElement();
+						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE_ATTACHMENT);
+						de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE);
+						de.setType(DataElementType.TEXT_EDIT);
+						de.setValue(trasformazioneContenutoRispostaContentType);
+						de.setRequired(true);
+						dati.addElement(de);
+						
 						de = new DataElement();
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TITLE_BODY);
 						de.setType(DataElementType.SUBTITLE);
@@ -8932,6 +8988,7 @@ public class ConsoleHelper {
 						de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO);
 						de.setSelected(trasformazioneRispostaSoapEnvelopeTipo.getValue());
 						de.setPostBack(true);
+						setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO, trasformazioneRispostaSoapEnvelopeTipo, serviceBinding, true);
 						dati.addElement(de);
 						
 						if(trasformazioneRispostaSoapEnvelopeTipo!=null && trasformazioneRispostaSoapEnvelopeTipo.isTemplateRequired()) {
@@ -8993,8 +9050,8 @@ public class ConsoleHelper {
 							DataElement trasformazioneSoapEnvelopeTemplateDataElement = trasformazioneRispostaSoapEnvelopeTemplate.getFileDataElement(trasformazioneSoapEnvelopeTemplateLabel, "", getSize());
 							trasformazioneSoapEnvelopeTemplateDataElement.setRequired(templateRequired);
 							dati.add(trasformazioneSoapEnvelopeTemplateDataElement);
-							dati.addAll(trasformazioneContenutoRispostaTemplate.getFileNameDataElement());
-							dati.add(trasformazioneContenutoRispostaTemplate.getFileIdDataElement());
+							dati.addAll(trasformazioneRispostaSoapEnvelopeTemplate.getFileNameDataElement());
+							dati.add(trasformazioneRispostaSoapEnvelopeTemplate.getFileIdDataElement());
 						}
 					}
 					
@@ -9096,9 +9153,29 @@ public class ConsoleHelper {
 							return false;
 						}
 						
+						if(trasformazioneSoapAction!=null && !"".equals(trasformazioneSoapAction)) {
+							try{
+								DynamicStringReplace.validate(trasformazioneSoapAction, true);
+							}catch(Exception e){
+								this.pd.setMessage("Il valore indicato nel parametro '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ACTION+"' non risulta corretto: "+e.getMessage());
+								return false;
+							}
+						}
+						
 						String trasformazioneSoapEnvelope = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE);
 						
 						if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT.equals(trasformazioneSoapEnvelope)) {
+							
+							// content-type obbligatorio
+							if (StringUtils.isEmpty(trasformazioneRichiestaContentType)) {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
+										CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE_ATTACHMENT));
+								return false;
+							}
+							if(!this.checkLength255(trasformazioneRichiestaContentType, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE_ATTACHMENT)) {
+								return false;
+							}
+							
 							String trasformazioneSoapEnvelopeTipoS = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO);
 							org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneSoapEnvelopeTipo =
 									trasformazioneSoapEnvelopeTipoS != null ? org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(trasformazioneSoapEnvelopeTipoS) : 
@@ -9193,68 +9270,12 @@ public class ConsoleHelper {
 			String statusMinS = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN);
 			String statusMaxS = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MAX);
 			
-			Integer statusMin = null;
-			Integer statusMax = null;
-			
-			if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI.equals(returnCode)) {
-				
-				if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO.equals(returnCode)) {
-					if(StringUtils.isEmpty(statusMinS)) {
-						this.pd.setMessage("Il campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS + " &egrave; obbligatorio.");
-						return false;
-					}
-				}
-				
-				if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO.equals(returnCode)) {
-					if(StringUtils.isEmpty(statusMinS) || StringUtils.isEmpty(statusMaxS)) {
-						this.pd.setMessage("Il campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS + " &egrave; obbligatorio.");
-						return false;
-					}
-				}
-			
-				if(StringUtils.isNotEmpty(statusMinS)) {
-					try {
-						statusMin = Integer.parseInt(statusMinS);
-						
-						if(statusMin < 1) {
-							this.pd.setMessage("Il valore inserito nel campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
-							return false;
-						}
-						if(statusMin > 999) {
-							this.pd.setMessage("Il valore inserito nel campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
-							return false;
-						}
-						
-						// return code esatto, ho salvato lo stesso valore nel campo return code;
-						if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO.equals(returnCode))
-							statusMax = statusMin;
-					}catch(Exception e) {
-						this.pd.setMessage("Il formato del campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN + " non &egrave; valido.");
-						return false;
-					}
-				}
-				
-				if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO.equals(returnCode)) {
-					if(StringUtils.isNotEmpty(statusMaxS)) {
-						try {
-							statusMax = Integer.parseInt(statusMaxS);
-							
-							if(statusMax < 1) {
-								this.pd.setMessage("Il valore inserito nel campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MAX + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
-								return false;
-							}
-							if(statusMax > 999) {
-								this.pd.setMessage("Il valore inserito nel campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MAX + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
-								return false;
-							}
-						}catch(Exception e) {
-							this.pd.setMessage("Il formato del campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MAX + " non &egrave; valido.");
-							return false;
-						}
-					}
-				}
+			if(_checkReturnCode(returnCode, statusMinS, statusMaxS, 
+					CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS, 
+					CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN, 
+					CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MAX)==false) {
+				return false;
 			}
-			
 			
 			// Se tipoOp = add, controllo che la trasformazione risposta non sia gia' stato registrata
 			if (tipoOp.equals(TipoOperazione.CHANGE)) {
@@ -9293,7 +9314,7 @@ public class ConsoleHelper {
 						}
 					}
 					
-					String trasformazioneRichiestaContentType = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE);
+					String trasformazioneRispostaContentType = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE);
 					
 					String trasformazioneRispostaReturnCode = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE);
 					
@@ -9324,6 +9345,17 @@ public class ConsoleHelper {
 							String trasformazioneSoapEnvelope = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE);
 							
 							if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT.equals(trasformazioneSoapEnvelope)) {
+								
+								// content-type obbligatorio
+								if (StringUtils.isEmpty(trasformazioneRispostaContentType)) {
+									this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
+											CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE_ATTACHMENT));
+									return false;
+								}
+								if(!this.checkLength255(trasformazioneRispostaContentType, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE_ATTACHMENT)) {
+									return false;
+								}
+								
 								String trasformazioneSoapEnvelopeTipoS = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO);
 								org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneSoapEnvelopeTipo =
 										trasformazioneSoapEnvelopeTipoS != null ? org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(trasformazioneSoapEnvelopeTipoS) : 
@@ -9351,7 +9383,7 @@ public class ConsoleHelper {
 							}
 						} else {
 							// dimensione content-type
-							if(!this.checkLength255(trasformazioneRichiestaContentType, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE)) {
+							if(!this.checkLength255(trasformazioneRispostaContentType, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE)) {
 								return false;
 							}
 						}
@@ -9462,6 +9494,10 @@ public class ConsoleHelper {
 		de.setValue(contentType);
 		de.enableTags();
 //		de.setRequired(true);
+		DataElementInfo dInfoCT = new DataElementInfo(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA+" - "+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_CT);
+		dInfoCT.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE);
+		dInfoCT.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORI);
+		de.setInfo(dInfoCT);
 		dati.addElement(de);
 		
 		// Pattern
@@ -9469,11 +9505,19 @@ public class ConsoleHelper {
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
 		de.setType(DataElementType.TEXT_AREA);
-		de.setCols(110);
-		de.setRows(3);
+		de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
 		de.setSize(this.getSize());
 		de.setValue(pattern);
 //		de.setRequired(true);
+		DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA+" - "+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
+		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTARN_REST);
+			dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_VALORI_REST);
+		}
+		else {
+			dInfoPattern.setBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTARN_SOAP);
+		}
+		de.setInfo(dInfoPattern);
 		dati.addElement(de);
 		
 						
@@ -9481,15 +9525,13 @@ public class ConsoleHelper {
 		if(tipoOP.equals(TipoOperazione.CHANGE)) {
 			
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
-			boolean old_autorizzazione_autenticazione = false;
-			String old_autorizzazione = null;
+			boolean autenticazione = false;
 			String protocollo = null;
 			boolean isSupportatoAutenticazione;
 			
 			if(isPortaDelegata){
 				PortaDelegata pd = (PortaDelegata) oggetto;
-				old_autorizzazione = AutorizzazioneUtilities.convertToStato(pd.getAutorizzazione());
-				old_autorizzazione_autenticazione = TipoAutorizzazione.isAuthenticationRequired(pd.getAutorizzazione());
+				autenticazione = !TipoAutenticazione.DISABILITATO.equals(pd.getAutenticazione());
 				isSupportatoAutenticazione = true;
 				if(pd!=null && pd.getServizio()!=null && pd.getServizio().getTipo()!=null) {
 					protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pd.getServizio().getTipo());
@@ -9497,8 +9539,7 @@ public class ConsoleHelper {
 			}
 			else {
 				PortaApplicativa pa = (PortaApplicativa) oggetto;
-				old_autorizzazione = AutorizzazioneUtilities.convertToStato(pa.getAutorizzazione());
-				old_autorizzazione_autenticazione = TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione());
+				autenticazione = !TipoAutenticazione.DISABILITATO.equals(pa.getAutenticazione());
 				if(pa!=null && pa.getServizio()!=null && pa.getServizio().getTipo()!=null) {
 					protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pa.getServizio().getTipo());
 				}
@@ -9507,7 +9548,7 @@ public class ConsoleHelper {
 			
 			
 			// soggetti
-			if(servletTrasformazioniAutorizzazioneAutenticati !=null && (old_autorizzazione_autenticazione || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(old_autorizzazione)) ){
+			if(servletTrasformazioniAutorizzazioneAutenticati !=null && (autenticazione) ){
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(servletTrasformazioniAutorizzazioneAutenticati, parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.toArray(new Parameter[parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.size()]));
@@ -9532,10 +9573,9 @@ public class ConsoleHelper {
 			
 			// servizi applicativi
 			
-			if(!isPortaDelegata && this.saCore.isSupportatoAutenticazioneApplicativiErogazione(protocollo) 
-					&& isSupportatoAutenticazione // il link degli applicativi sulla pa deve essere visualizzato SOLO se è abilitata l'autenticazione
+			if(!isPortaDelegata && isSupportatoAutenticazione // il link degli applicativi sulla pa deve essere visualizzato SOLO se è abilitata l'autenticazione
 					){
-				if(servletTrasformazioniApplicativiAutenticati!=null && (old_autorizzazione_autenticazione || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(old_autorizzazione)) ){
+				if(servletTrasformazioniApplicativiAutenticati!=null && (autenticazione) ){
 					de = new DataElement();
 					de.setType(DataElementType.LINK);
 					de.setUrl(servletTrasformazioniApplicativiAutenticati, parametriInvocazioneServletTrasformazioniApplicativiAutenticati.toArray(new Parameter[parametriInvocazioneServletTrasformazioniApplicativiAutenticati.size()]));
@@ -9579,7 +9619,9 @@ public class ConsoleHelper {
 		return dati;
 	}
 	
-	public Vector<DataElement> addTrasformazioneRichiestaHeaderToDati(TipoOperazione tipoOP, Vector<DataElement> dati, String idTrasformazione, String idTrasformazioneRichiestaHeader, String nome, String tipo, String valore) {
+	public Vector<DataElement> addTrasformazioneRichiestaHeaderToDati(TipoOperazione tipoOP, Vector<DataElement> dati, 
+			String idTrasformazione, String idTrasformazioneRichiestaHeader, String nome, String tipo, String valore,
+			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
 		
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER);
@@ -9638,10 +9680,19 @@ public class ConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE);
 		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE.equals(tipo)) {
 			de.setType(DataElementType.TEXT_AREA);
-			de.setCols(110);
-			de.setRows(3);
+			de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
 			de.setSize(this.getSize());
 			de.setRequired(true);
+			
+			DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE);
+			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+				dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
+			}
+			else {
+				dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
+			}
+			de.setInfo(dInfoPattern);
 		}
 		else {
 			de.setType(DataElementType.HIDDEN);
@@ -9652,7 +9703,9 @@ public class ConsoleHelper {
 		return dati;
 	}
 	
-	public Vector<DataElement> addTrasformazioneRichiestaUrlParameterToDati(TipoOperazione tipoOP, Vector<DataElement> dati, String idTrasformazione, String idTrasformazioneRichiestaUrlParameter, String nome, String tipo, String valore) {
+	public Vector<DataElement> addTrasformazioneRichiestaUrlParameterToDati(TipoOperazione tipoOP, Vector<DataElement> dati, 
+			String idTrasformazione, String idTrasformazioneRichiestaUrlParameter, String nome, String tipo, String valore,
+			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
 		
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO);
@@ -9711,10 +9764,19 @@ public class ConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE);
 		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE.equals(tipo)) {
 			de.setType(DataElementType.TEXT_AREA);
-			de.setCols(110);
-			de.setRows(3);
+			de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
 			de.setSize(this.getSize());
 			de.setRequired(true);
+			
+			DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE);
+			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+				dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
+			}
+			else {
+				dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
+			}
+			de.setInfo(dInfoPattern);
 		}
 		else {
 			de.setType(DataElementType.HIDDEN);
@@ -9725,7 +9787,9 @@ public class ConsoleHelper {
 		return dati;
 	}
 	
-	public Vector<DataElement> addTrasformazioneRispostaHeaderToDati(TipoOperazione tipoOP, Vector<DataElement> dati, String idTrasformazione, String idTrasformazioneRisposta, String idTrasformazioneRispostaHeader, String nome, String tipo, String valore) {
+	public Vector<DataElement> addTrasformazioneRispostaHeaderToDati(TipoOperazione tipoOP, Vector<DataElement> dati, 
+			String idTrasformazione, String idTrasformazioneRisposta, String idTrasformazioneRispostaHeader, String nome, String tipo, String valore,
+			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
 		
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER);
@@ -9793,9 +9857,18 @@ public class ConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE);
 		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE.equals(tipo)) {
 			de.setType(DataElementType.TEXT_AREA);
-			de.setCols(110);
-			de.setRows(3);
+			de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
 			de.setRequired(true);
+			
+			DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE);
+			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+				dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
+			}
+			else {
+				dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
+			}
+			de.setInfo(dInfoPattern);
 		}
 		else {
 			de.setType(DataElementType.HIDDEN);
@@ -9819,8 +9892,17 @@ public class ConsoleHelper {
 			boolean trasformazioneSoapAbilitato, String trasformazioneSoapAction, String trasformazioneSoapVersion, String trasformazioneSoapEnvelope,  
 			org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneSoapEnvelopeTipo, BinaryParameter trasformazioneSoapEnvelopeTemplate, String trasformazioneSoapEnvelopeTipoCheck,
 			String servletTrasformazioniRichiestaHeadersList, List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaHeaders, int numeroTrasformazioniRichiestaHeaders,
-			String servletTrasformazioniRichiestaParametriList, List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaParametri, int numeroTrasformazioniRichiestaParametri) throws Exception {
+			String servletTrasformazioniRichiestaParametriList, List<Parameter> parametriInvocazioneServletTrasformazioniRichiestaParametri, int numeroTrasformazioniRichiestaParametri,
+			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) throws Exception {
 		
+		DataElementInfo dInfoPatternTrasporto = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE);
+		dInfoPatternTrasporto.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+			dInfoPatternTrasporto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
+		}
+		else {
+			dInfoPatternTrasporto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
+		}
 		
 		// Id trasformazione hidden
 		DataElement  de = new DataElement();
@@ -9920,6 +10002,7 @@ public class ConsoleHelper {
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO);
 			de.setPostBack(true);
 			de.setSelected(trasformazioneContenutoTipo.getValue());
+			setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO, trasformazioneContenutoTipo, serviceBinding, false);
 			dati.addElement(de);
 			
 			if(trasformazioneContenutoTipo.isTemplateRequired()) {
@@ -9982,7 +10065,17 @@ public class ConsoleHelper {
 				dati.add(trasformazioneContenutoTemplate.getFileIdDataElement());
 			}
 			
-			if(trasformazioneContenutoTipo.isContentTypeEnabled()) {
+			boolean contentTypePerAttachmentSOAP = false;
+			if(trasformazioneContenutoTipo.isTrasformazioneProtocolloEnabled()) {
+				if(ServiceBinding.REST.equals(serviceBindingMessage) && 
+						trasformazioneSoapAbilitato &&
+						(!TipoTrasformazione.EMPTY.equals(trasformazioneContenutoTipo)) &&
+						CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT.equals(trasformazioneSoapEnvelope)) {
+					contentTypePerAttachmentSOAP = true;
+				}
+			}
+			
+			if(!contentTypePerAttachmentSOAP && trasformazioneContenutoTipo.isContentTypeEnabled()) {
 				// Content-type
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE);
@@ -10045,6 +10138,7 @@ public class ConsoleHelper {
 						de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ACTION);
 						de.setType(DataElementType.TEXT_EDIT);
 						de.setValue(trasformazioneSoapAction);
+						de.setInfo(dInfoPatternTrasporto);
 						dati.addElement(de);
 						
 						if(!TipoTrasformazione.EMPTY.equals(trasformazioneContenutoTipo)) {
@@ -10061,6 +10155,15 @@ public class ConsoleHelper {
 													
 							if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT.equals(trasformazioneSoapEnvelope)) {
 								
+								// Content-type
+								de = new DataElement();
+								de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE_ATTACHMENT);
+								de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE);
+								de.setType(DataElementType.TEXT_EDIT);
+								de.setValue(trasformazioneRichiestaContentType);
+								de.setRequired(true);
+								dati.addElement(de);
+								
 								de = new DataElement();
 								de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TITLE_BODY);
 								de.setType(DataElementType.SUBTITLE);
@@ -10075,6 +10178,7 @@ public class ConsoleHelper {
 								de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO);
 								de.setSelected(trasformazioneSoapEnvelopeTipo.getValue());
 								de.setPostBack(true);
+								setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO, trasformazioneSoapEnvelopeTipo, serviceBinding, false);
 								dati.addElement(de);
 								
 								if(trasformazioneSoapEnvelopeTipo.isTemplateRequired()) {
@@ -10168,6 +10272,7 @@ public class ConsoleHelper {
 						de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH);
 						de.setSize(this.getSize());
 						de.setRequired(true);
+						de.setInfo(dInfoPatternTrasporto);
 						dati.addElement(de);
 						
 						// method
@@ -10182,6 +10287,56 @@ public class ConsoleHelper {
 		}
 		
 		return dati;
+	}
+	
+	private void setTemplateInfo(DataElement de, String label, org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneContenutoTipo, 
+			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding, boolean risposta) {
+		switch (trasformazioneContenutoTipo) {
+		case TEMPLATE:
+			DataElementInfo dInfoPatternContenuto = new DataElementInfo(label);
+			dInfoPatternContenuto.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TEMPLATE);
+			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+				if(risposta) {
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
+				}
+				else {
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
+				}
+			}
+			else {
+				if(risposta) {
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
+				}
+				else {
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
+				}
+			}
+			de.setInfo(dInfoPatternContenuto);
+			break;
+		case FREEMARKER_TEMPLATE:
+			 dInfoPatternContenuto = new DataElementInfo(label);
+			dInfoPatternContenuto.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE);
+			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+				if(risposta) {
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE);
+				}
+				else {
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI);
+				}
+			}
+			else {
+				if(risposta) {
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE);
+				}
+				else {
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI);
+				}
+			}
+			de.setInfo(dInfoPatternContenuto);
+			break;
+		case EMPTY:
+			break;
+		}
 	}
 	
 	public boolean trasformazioniRispostaHeaderCheckData(TipoOperazione tipoOp) throws Exception {
@@ -10210,6 +10365,12 @@ public class ConsoleHelper {
 			if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE.equals(tipo)) {
 				if (StringUtils.isEmpty(valore)) {
 					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE));
+					return false;
+				}
+				try{
+					DynamicStringReplace.validate(valore, true);
+				}catch(Exception e){
+					this.pd.setMessage("Il valore indicato nel parametro '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE+"' non risulta corretto: "+e.getMessage());
 					return false;
 				}
 			}
@@ -10249,6 +10410,12 @@ public class ConsoleHelper {
 					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE));
 					return false;
 				}
+				try{
+					DynamicStringReplace.validate(valore, true);
+				}catch(Exception e){
+					this.pd.setMessage("Il valore indicato nel parametro '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE+"' non risulta corretto: "+e.getMessage());
+					return false;
+				}
 			}
 			
 			return true;
@@ -10286,6 +10453,12 @@ public class ConsoleHelper {
 					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE));
 					return false;
 				}
+				try{
+					DynamicStringReplace.validate(valore, true);
+				}catch(Exception e){
+					this.pd.setMessage("Il valore indicato nel parametro '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE+"' non risulta corretto: "+e.getMessage());
+					return false;
+				}
 			}
 			
 			return true;
@@ -10295,9 +10468,17 @@ public class ConsoleHelper {
 		}
 	}
 	
-	public Vector<DataElement> addPorteTrasformazioniServizioApplicativoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idTrasformazione, 
+	public Vector<DataElement> addPorteTrasformazioniServizioApplicativoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idTrasformazione, boolean fromList,
 		String servizioApplicativo, String[] servizioApplicativoList, int sizeAttuale, 
 		boolean addMsgServiziApplicativoNonDisponibili, boolean addTitle) {
+		
+		if(fromList) {
+			DataElement de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_LIST);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(fromList+"");
+			dati.addElement(de);
+		}
 		
 		DataElement  de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
@@ -10343,9 +10524,17 @@ public class ConsoleHelper {
 		return dati;
 	}
 	
-	public Vector<DataElement> addPorteTrasformazioniSoggettoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idTrasformazione, 
+	public Vector<DataElement> addPorteTrasformazioniSoggettoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idTrasformazione, boolean fromList,
 		String[] soggettiLabelList, String[] soggettiList, String soggetto, int sizeAttuale, 
 			boolean addMsgSoggettiNonDisponibili, boolean addTitle) {
+		
+		if(fromList) {
+			DataElement de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_LIST);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(fromList+"");
+			dati.addElement(de);
+		}
 		
 		DataElement  de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
@@ -10387,10 +10576,18 @@ public class ConsoleHelper {
 		return dati;
 	}
 
-	public Vector<DataElement> addPorteTrasformazioniServizioApplicativoAutorizzatiToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idTrasformazione, 
+	public Vector<DataElement> addPorteTrasformazioniServizioApplicativoAutorizzatiToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idTrasformazione, boolean fromList, 
 		String[] soggettiLabelList, String[] soggettiList, String soggetto, int sizeAttuale, 
 		Map<String,List<ServizioApplicativo>> listServiziApplicativi, String sa,
 			boolean addMsgApplicativiNonDisponibili) {
+		
+		if(fromList) {
+			DataElement de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_LIST);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(fromList+"");
+			dati.addElement(de);
+		}
 		
 		if(soggettiList!=null && soggettiList.length>0 && listServiziApplicativi!=null && listServiziApplicativi.size()>0){
 		

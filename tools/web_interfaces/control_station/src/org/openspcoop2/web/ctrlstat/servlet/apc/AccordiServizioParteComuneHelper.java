@@ -694,8 +694,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						de.setLabel("");//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_DOCUMENTO);
 						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 						de.setValue(contenutoAllegato.toString());
-						de.setRows(30);
-						de.setCols(80);
+						de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_API_SIZE);
+						de.setCols(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_API_COLUMNS);
 						dati.addElement(de);
 					}
 				}
@@ -2719,8 +2719,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 //				de.setType(DataElementType.HIDDEN);
 				de.setValue(oldwsdl);
-				de.setRows(30);
-				de.setCols(110);
+				de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_API_SIZE);
+				de.setCols(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_API_COLUMNS);
 				de.setLabel("");
 				dati.addElement(de);
 			}
@@ -2752,8 +2752,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 	//					de.setType(DataElementType.HIDDEN);
 						de.setValue(oldwsdl);
-						de.setRows(30);
-						de.setCols(110);
+						de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_API_SIZE);
+						de.setCols(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_API_COLUMNS);
 						//de.setLabel(AccordiServizioParteComuneCostanti.LABEL_WSDL_ATTUALE );
 						dati.addElement(de);
 					}

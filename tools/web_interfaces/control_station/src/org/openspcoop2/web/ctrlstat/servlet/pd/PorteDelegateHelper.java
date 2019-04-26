@@ -634,11 +634,11 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						bf.append(azioni.get(az));
 					}
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-					if(azioni.size()<=5) {
+					if(azioni.size()<=CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_AZIONI_SIZE) {
 						de.setRows(azioni.size());
 					}
 					else {
-						de.setRows(5);
+						de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_AZIONI_SIZE);
 					}
 					de.setValue(bf.toString());
 					dati.addElement(de);
@@ -3863,7 +3863,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					} else if(statusMin == null && statusMax != null) { // definito solo l'estremo superiore
 						statusValue = "&lt;" + statusMax;
 					} else { //entrambi null 
-						statusValue = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI;
+						statusValue = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI;
 					}
 					
 					de.setValue(statusValue);
@@ -3908,20 +3908,20 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Integer statusMax = null;
 			boolean fault = ServletUtils.isCheckBoxEnabled(faultS);
 			
-			if(!returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI)) {
+			if(!returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI)) {
 				
 				if(StringUtils.isNotEmpty(statusMinS)) {
 					statusMin = Integer.parseInt(statusMinS);
 				}
 				
-				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
+				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_INTERVALLO)) {
 					if(StringUtils.isNotEmpty(statusMaxS)) {
 						statusMax = Integer.parseInt(statusMaxS);
 					}
 				}
 
 				// return code esatto, ho salvato lo stesso valore nel campo return code;
-				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO))
+				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO))
 					statusMax = statusMin;
 			}
 			
@@ -3964,11 +3964,11 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
 			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
-			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
-			
+			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
+			Parameter pFromList = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_LIST, "true");
 
 			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI, 
-					pId, pIdSoggetto, pIdAsps, pIdFrizione);
+					pId, pIdSoggetto, pIdAsps, pIdFruizione);
 
 			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI;
 			int limit = ricerca.getPageSize(idLista);
@@ -3991,6 +3991,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(asps.getIdAccordo()); 
 			Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
 
+			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
+			boolean autenticazione = !TipoAutenticazione.DISABILITATO.equals(myPD.getAutenticazione());
+			
+			
 			// setto la barra del titolo
 			List<Parameter> lstParam = this.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
 			
@@ -4027,6 +4031,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			lstLabels.add(nomeColonnaAzione);
 			lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_CT);
 			lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
+			if(autenticazione) {
+				lstLabels.add( PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVI);
+			}
 			
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
@@ -4056,7 +4063,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						if(i > 0) {
 							imageUp.setImage(CostantiControlStation.ICONA_FRECCIA_SU);
 							imageUp.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SPOSTA_SU);
-							imageUp.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_LIST,pId, pIdSoggetto, pIdAsps, pIdFrizione, pNomePorta,pIdTrasformazione, pDirezioneSu); 
+							imageUp.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_LIST,pId, pIdSoggetto, pIdAsps, pIdFruizione, pNomePorta,pIdTrasformazione, pDirezioneSu); 
 						}
 						else {
 							imageUp.setImage("&#160;&#160;&#160;&#160;&#160;");
@@ -4067,7 +4074,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 							DataElementImage imageDown = new DataElementImage();
 							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
 							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SPOSTA_GIU);
-							imageDown.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_LIST, pId, pIdSoggetto, pIdAsps, pIdFrizione, pNomePorta,pIdTrasformazione, pDirezioneGiu);
+							imageDown.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_LIST, pId, pIdSoggetto, pIdAsps, pIdFruizione, pNomePorta,pIdTrasformazione, pDirezioneGiu);
 							de.addImage(imageDown);
 						}
 						de.setValue(regola.getPosizione()+"");
@@ -4079,7 +4086,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					de.setValue(regola.getNome());
 					de.setToolTip(regola.getNome());
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
-							pId, pIdSoggetto, pIdAsps, pIdFrizione, pNomePorta, pIdTrasformazione
+							pId, pIdSoggetto, pIdAsps, pIdFruizione, pNomePorta, pIdTrasformazione
 							);
 					e.addElement(de);
 					
@@ -4114,7 +4121,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					de.setToolTip(nomiAzioni);
 					if(nomiAzioni!=null && nomiAzioni.length()>197) {
 						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
-								pId, pIdSoggetto, pIdAsps, pIdFrizione, pNomePorta, pIdTrasformazione
+								pId, pIdSoggetto, pIdAsps, pIdFruizione, pNomePorta, pIdTrasformazione
 								);
 					}
 					de.setSize(200);
@@ -4154,6 +4161,33 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 								p.substring(0, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PATTERN_LIST_MAX_VALUE)+"..." :
 								p);
 					e.addElement(de);
+					
+					
+					if(autenticazione) {
+						
+						String servletTrasformazioniAutorizzazioneAutenticati =  PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_LIST;
+						List<Parameter> parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati = new ArrayList<Parameter>();
+						parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pId);
+						parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdSoggetto);
+						parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdAsps);
+						parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdFruizione);
+						parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pIdTrasformazione);
+						parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.add(pFromList);
+						int numAutenticati = applicabilita != null ? applicabilita.sizeServizioApplicativoList() : 0;
+						
+						de = new DataElement();
+						de.setUrl(servletTrasformazioniAutorizzazioneAutenticati, parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.toArray(new Parameter[parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati.size()]));
+						String labelApplicativi = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZI_APPLICATIVI;
+						if(!this.isModalitaCompleta()) {
+							labelApplicativi = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVI;
+						}
+						if (contaListe) {
+							ServletUtils.setDataElementCustomLabel(de,labelApplicativi,Long.valueOf(numAutenticati));
+						} else {
+							ServletUtils.setDataElementCustomLabel(de,labelApplicativi);
+						}
+						e.addElement(de);
+					}
 					
 					
 					dati.addElement(e);
@@ -4349,7 +4383,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					} else if(statusMin == null && statusMax != null) { // definito solo l'estremo superiore
 						statusValue = "&lt;" + statusMax;
 					} else { //entrambi null 
-						statusValue = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI;
+						statusValue = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI;
 					}
 					
 					de.setValue(statusValue);
@@ -4854,14 +4888,30 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			if(idFruizione == null)
 				idFruizione = "";
 			
+			String listaTmp = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_LIST);
+			boolean fromList = false;
+			if(listaTmp != null && !"".equals(listaTmp))
+				fromList = true;
+			
+			
 			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
 			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazione+"");
-
+			
+			List<Parameter> parameters = new ArrayList<>();
+			parameters.add(pId);
+			parameters.add(pIdSoggetto);
+			parameters.add(pIdAsps);
+			parameters.add(pIdFruizione);
+			parameters.add(pIdTrasformazione);
+			if(fromList) {
+				parameters.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_LIST, listaTmp));
+			}
+			
 			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO, 
-					pId, pIdSoggetto, pIdAsps, pIdFruizione,pIdTrasformazione);
+					parameters);
 
 			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO;
 			int limit = ricerca.getPageSize(idLista);
@@ -4903,9 +4953,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			lstParam.add(new Parameter(labelPerPorta, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_LIST, 
 					pId, pIdSoggetto, pIdAsps, pIdFruizione));
 			
-			
-			lstParam.add(new Parameter(nomeTrasformazione, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
-					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione));
+			if(!fromList) {
+				lstParam.add(new Parameter(nomeTrasformazione, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
+						pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione));
+			}
 			
 			String labelPagLista = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_CONFIG;
 			if(!this.isModalitaCompleta()) {

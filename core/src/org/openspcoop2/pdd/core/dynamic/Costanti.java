@@ -32,7 +32,7 @@ package org.openspcoop2.pdd.core.dynamic;
 public class Costanti {
 
     public final static String MAP_DATE_OBJECT = "date";
-    public final static String MAP_TRANSACTION_OBJECT = "transaction";
+    public final static String MAP_TRANSACTION_ID_OBJECT = "transactionId";
     public final static String MAP_TRANSACTION_ID = "{transaction:id}";
     public final static String MAP_BUSTA_OBJECT = "busta";
     public final static String MAP_CTX_OBJECT = "context";
@@ -47,4 +47,6 @@ public class Costanti {
     public final static String MAP_ELEMENT_JSON_PATH = "jsonPath";
     public final static String MAP_ELEMENT_JSON_PATH_PREFIX = "{"+MAP_ELEMENT_JSON_PATH+":";
 	
+    public final static String MAP_SUFFIX_RESPONSE = "Response";
+    
 }

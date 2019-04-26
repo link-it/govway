@@ -223,7 +223,8 @@ public class PorteApplicativeTrasformazioniAdd extends Action {
 			String patternDBCheck = StringUtils.isNotEmpty(pattern) ? pattern : null;
 			String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
 			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
-			TrasformazioneRegola trasformazioneDBCheck_criteri = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck);
+			TrasformazioneRegola trasformazioneDBCheck_criteri = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck, 
+					null, null, true);
 			TrasformazioneRegola trasformazioneDBCheck_nome = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), nome);
 			
 			boolean isOk = porteApplicativeHelper.trasformazioniCheckData(TipoOperazione.ADD, Long.parseLong(idPorta), nome, trasformazioneDBCheck_criteri, trasformazioneDBCheck_nome, null);

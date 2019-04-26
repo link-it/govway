@@ -41,10 +41,14 @@ import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.Trasformazioni;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -95,7 +99,7 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 			
 			String returnCode = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS);
 			if(returnCode == null)
-				returnCode = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI;
+				returnCode = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI;
 			
 			String statusMin = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN);
 			if(statusMin == null)
@@ -110,6 +114,9 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 			
 
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
+			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -126,6 +133,9 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 					break;
 				}
 			}
+			
+			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+			AccordoServizioParteComune apc = apcCore.getAccordoServizio(asps.getIdAccordo()); 
 			
 			String nomeTrasformazione = regola.getNome();
 			Parameter pIdTrasformazione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE, idTrasformazione+"");
@@ -186,7 +196,9 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, nomeRisposta, returnCode, statusMin, statusMax, pattern, contentType);
+				dati = porteApplicativeHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, 
+						apc.getServiceBinding(),
+						nomeRisposta, returnCode, statusMin, statusMax, pattern, contentType);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
 				
@@ -204,7 +216,7 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 				// quando un parametro viene inviato come vuoto, sul db viene messo null, gestisco il caso
 				Integer statusMinDBCheck = StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null;
 				Integer statusMaxDBCheck = StringUtils.isNotEmpty(statusMax) ? Integer.parseInt(statusMax) : null;
-				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO))
+				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO))
 					statusMaxDBCheck = statusMinDBCheck;
 				String patternDBCheck = StringUtils.isNotEmpty(pattern) ? pattern : null;
 				String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
@@ -229,7 +241,9 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, nomeRisposta, returnCode, statusMin, statusMax, pattern, contentType);
+				dati = porteApplicativeHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, 
+						apc.getServiceBinding(),
+						nomeRisposta, returnCode, statusMin, statusMax, pattern, contentType);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
 				
@@ -264,10 +278,10 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 			
 			TrasformazioneRegolaApplicabilitaRisposta applicabilita = new TrasformazioneRegolaApplicabilitaRisposta();
 			
-			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI)) {
+			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_QUALSIASI)) {
 				applicabilita.setReturnCodeMin(null);
 				applicabilita.setReturnCodeMax(null);
-			} else if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO)) {
+			} else if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_ESATTO)) {
 				applicabilita.setReturnCodeMin(StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null);
 				applicabilita.setReturnCodeMax(StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null);
 			} else { // intervallo
@@ -288,12 +302,7 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 			// ricaricare id trasformazione
 			pa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta));
 
-			String patternDBCheck = (regola.getApplicabilita() != null && StringUtils.isNotEmpty(regola.getApplicabilita().getPattern())) ? regola.getApplicabilita().getPattern() : null;
-			String contentTypeAsString = (regola.getApplicabilita() != null &&regola.getApplicabilita().getContentTypeList() != null) ? StringUtils.join(regola.getApplicabilita().getContentTypeList(), ",") : "";
-			String contentTypeDBCheck = StringUtils.isNotEmpty(contentTypeAsString) ? contentTypeAsString : null;
-			String azioniAsString = (regola.getApplicabilita() != null && regola.getApplicabilita().getAzioneList() != null) ? StringUtils.join(regola.getApplicabilita().getAzioneList(), ",") : "";
-			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
-			TrasformazioneRegola trasformazioneAggiornata = porteApplicativeCore.getTrasformazione(pa.getId(), azioniDBCheck, patternDBCheck, contentTypeDBCheck);
+			TrasformazioneRegola trasformazioneAggiornata = porteApplicativeCore.getTrasformazione(pa.getId(), regola.getNome());
 			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

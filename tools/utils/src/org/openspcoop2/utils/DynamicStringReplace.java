@@ -37,6 +37,22 @@ import java.util.Map;
  */
 public class DynamicStringReplace {
 
+	private static boolean containsKey(Map<?, ?> map, String key) {
+		return map.containsKey(key) || map.containsKey(key.toLowerCase()) || map.containsKey(key.toUpperCase());
+	}
+	private static Object get(Map<?, ?> map, String key) {
+		if(map.containsKey(key)) {
+			return map.get(key);
+		}
+		else if(map.containsKey(key.toLowerCase())) {
+			return map.get(key.toLowerCase());
+		}
+		else if(map.containsKey(key.toUpperCase())) {
+			return map.get(key.toUpperCase());
+		}
+		return null;
+	}
+	
 	public static void validate(String messaggioWithPlaceHolder, boolean startWithDollaro) throws UtilsException{
 		
 		String start = "{";
@@ -175,10 +191,12 @@ public class DynamicStringReplace {
 					}
 					String tipo = key.substring(0, key.indexOf(":"));
 					String value = key.substring(key.indexOf(":")+1);
-					if(map.containsKey(tipo)==false){
+					//if(map.containsKey(tipo)==false){
+					if(containsKey(map, tipo)==false) {
 						throw new UtilsException("Placeholder [{"+key+"}] resolution failed: object with key ["+tipo+"] not found");
 					}
-					Object object = map.get(tipo);
+					//Object object = map.get(tipo);
+					Object object = get(map, tipo);
 					if(object==null){
 						throw new UtilsException("Placeholder [{"+key+"}] resolution failed: object with key ["+tipo+"] is null");
 					}
@@ -262,10 +280,12 @@ public class DynamicStringReplace {
 			}
 			else if(object instanceof Map<?,?>){
 				Map<?,?> map = (Map<?,?>) object;
-				if(map.containsKey(position)==false){
+				//if(map.containsKey(position)==false){
+				if(containsKey(map, position)==false) {
 					throw new UtilsException("Placeholder [{"+key+"}] resolution failed: object ["+object.getClass().getName()+"] with wrong position ["+position+"] not exists as key in map )");
 				}
-				oInternal = map.get(position);
+				//oInternal = map.get(position);
+				oInternal = get(map, position);
 			}	
 			
 			if(newValue.contains(".")){
@@ -374,10 +394,12 @@ public class DynamicStringReplace {
 				}
 				else if(ret instanceof Map<?,?>){
 					Map<?,?> map = (Map<?,?>) ret;
-					if(map.containsKey(position)==false){
+					//if(map.containsKey(position)==false){
+					if(containsKey(map, position)==false) {
 						throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position ["+position+"] not exists as key in map )");
 					}
-					ret = map.get(position);
+					//ret = map.get(position);
+					ret = get(map, position);
 				}				
 			}
 		}

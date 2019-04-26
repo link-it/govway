@@ -41,10 +41,14 @@ import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.constants.TrasformazioneRegolaParametroTipoAzione;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -107,6 +111,9 @@ public class PorteApplicativeTrasformazioniRispostaHeaderAdd extends Action {
 				valore = "";
 			
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
+			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -132,6 +139,9 @@ public class PorteApplicativeTrasformazioniRispostaHeaderAdd extends Action {
 					break;
 				}
 			}
+			
+			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+			AccordoServizioParteComune apc = apcCore.getAccordoServizio(asps.getIdAccordo()); 
 			
 			String nomeRisposta = risposta.getNome();
 			String nomeTrasformazione = regola.getNome();
@@ -201,7 +211,7 @@ public class PorteApplicativeTrasformazioniRispostaHeaderAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneRispostaHeaderToDati(TipoOperazione.ADD, dati, idTrasformazioneS, idTrasformazioneRispostaS, null, nome, tipo, valore);
+				dati = porteApplicativeHelper.addTrasformazioneRispostaHeaderToDati(TipoOperazione.ADD, dati, idTrasformazioneS, idTrasformazioneRispostaS, null, nome, tipo, valore, apc.getServiceBinding());
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
 				
@@ -231,7 +241,7 @@ public class PorteApplicativeTrasformazioniRispostaHeaderAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneRispostaHeaderToDati(TipoOperazione.ADD, dati, idTrasformazioneS, idTrasformazioneRispostaS, null, nome, tipo, valore);
+				dati = porteApplicativeHelper.addTrasformazioneRispostaHeaderToDati(TipoOperazione.ADD, dati, idTrasformazioneS, idTrasformazioneRispostaS, null, nome, tipo, valore, apc.getServiceBinding());
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
 				
@@ -271,12 +281,7 @@ public class PorteApplicativeTrasformazioniRispostaHeaderAdd extends Action {
 			// ricaricare id trasformazione
 			pa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta));
 
-			String patternDBCheck = (regola.getApplicabilita() != null && StringUtils.isNotEmpty(regola.getApplicabilita().getPattern())) ? regola.getApplicabilita().getPattern() : null;
-			String contentTypeAsString = (regola.getApplicabilita() != null &&regola.getApplicabilita().getContentTypeList() != null) ? StringUtils.join(regola.getApplicabilita().getContentTypeList(), ",") : "";
-			String contentTypeDBCheck = StringUtils.isNotEmpty(contentTypeAsString) ? contentTypeAsString : null;
-			String azioniAsString = (regola.getApplicabilita() != null && regola.getApplicabilita().getAzioneList() != null) ? StringUtils.join(regola.getApplicabilita().getAzioneList(), ",") : "";
-			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
-			TrasformazioneRegola trasformazioneAggiornata = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck);
+			TrasformazioneRegola trasformazioneAggiornata = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), regola.getNome());
 
 			// ricarico la risposta
 			String patternRispostaDBCheck = (risposta.getApplicabilita() != null && StringUtils.isNotEmpty(risposta.getApplicabilita().getPattern())) ? risposta.getApplicabilita().getPattern() : null;

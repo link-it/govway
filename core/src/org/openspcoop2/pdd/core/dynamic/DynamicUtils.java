@@ -50,8 +50,16 @@ public class DynamicUtils {
 			dynamicMap.put(Costanti.MAP_DATE_OBJECT, DateManager.getDate());
 		}
 		
-		if(dynamicMap.containsKey(Costanti.MAP_CTX_OBJECT)==false && dynamicInfo!=null && dynamicInfo.getPddContext()!=null && dynamicInfo.getPddContext().getContext()!=null) {
-			dynamicMap.put(Costanti.MAP_CTX_OBJECT, dynamicInfo.getPddContext().getContext());
+		if(dynamicInfo!=null && dynamicInfo.getPddContext()!=null && dynamicInfo.getPddContext().getContext()!=null) {
+			if(dynamicMap.containsKey(Costanti.MAP_CTX_OBJECT)==false) {
+				dynamicMap.put(Costanti.MAP_CTX_OBJECT, dynamicInfo.getPddContext().getContext());
+			}
+			if(dynamicMap.containsKey(Costanti.MAP_TRANSACTION_ID_OBJECT)==false) {
+				if(dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
+					String idTransazione = (String)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+					dynamicMap.put(Costanti.MAP_TRANSACTION_ID_OBJECT, idTransazione);
+				}
+			}
 		}
 		
 		if(dynamicMap.containsKey(Costanti.MAP_BUSTA_OBJECT)==false && dynamicInfo!=null && dynamicInfo.getBusta()!=null) {
@@ -125,20 +133,32 @@ public class DynamicUtils {
 			}
 		}
 		
+		boolean request = false;
+		boolean response = true;
+		
 		// conversione url
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
 				false, false, true, 
-				forceStartWithDollaro);
+				forceStartWithDollaro, request);
+		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
+				false, false, true, 
+				forceStartWithDollaro, response);
 		
 		// conversione xpath
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
 				true, false, false, 
-				forceStartWithDollaro);
+				forceStartWithDollaro, request);
+		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
+				true, false, false, 
+				forceStartWithDollaro, response);
 		
 		// conversione jsonpath
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
 				false, true, false, 
-				forceStartWithDollaro);
+				forceStartWithDollaro, request);
+		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
+				false, true, false, 
+				forceStartWithDollaro, response);
 		
 		try{
 			tmp = DynamicStringReplace.replace(tmp, dynamicMap, forceStartWithDollaro);
@@ -150,7 +170,7 @@ public class DynamicUtils {
 	
 	private static String convertDynamicPropertyContent(String tmp, Map<String,Object> dynamicMap, 
 			boolean xml, boolean json, boolean url, 
-			boolean forceStartWithDollaro) throws DynamicException {
+			boolean forceStartWithDollaro, boolean response) throws DynamicException {
 		
 		String istruzione = Costanti.MAP_ELEMENT_XML_XPATH;
 		String prefix = Costanti.MAP_ELEMENT_XML_XPATH_PREFIX;
@@ -164,6 +184,11 @@ public class DynamicUtils {
 		}
 		if(forceStartWithDollaro) {
 			prefix = "$"+prefix;
+		}
+		if(response) {
+			istruzione = istruzione+Costanti.MAP_SUFFIX_RESPONSE;
+			prefix = prefix.substring(0,prefix.length()-1);
+			prefix = prefix + Costanti.MAP_SUFFIX_RESPONSE + ":";
 		}
 		
 		String tmpLowerCase = tmp.toLowerCase();

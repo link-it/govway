@@ -1308,7 +1308,10 @@ public class PorteApplicativeCore extends ControlStationCore {
 		}
 	}
 	
-	public TrasformazioneRegola getTrasformazione(long idPorta, String azioni, String pattern, String contentType) throws DriverConfigurazioneException{
+	public TrasformazioneRegola getTrasformazione(long idPorta, String azioni, String pattern, String contentType,
+			List<TrasformazioneRegolaApplicabilitaSoggetto> soggetti,
+			List<TrasformazioneRegolaApplicabilitaServizioApplicativo> applicativi,
+			boolean interpretaNullList) throws DriverConfigurazioneException{
 		Connection con = null;
 		String nomeMetodo = "getTrasformazione";
 		DriverControlStationDB driver = null;
@@ -1318,7 +1321,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-			return driver.getDriverConfigurazioneDB().getPortaApplicativaTrasformazione(idPorta, azioni, pattern, contentType);
+			return driver.getDriverConfigurazioneDB().getPortaApplicativaTrasformazione(idPorta, azioni, pattern, contentType, soggetti, applicativi, interpretaNullList);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

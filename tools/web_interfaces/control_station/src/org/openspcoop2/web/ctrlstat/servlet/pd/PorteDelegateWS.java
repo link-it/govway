@@ -467,7 +467,9 @@ public final class PorteDelegateWS extends Action {
 			pd.setDati(dati);
 			
 			pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
-
+			//pd.disableEditMode();
+			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_MESSAGE_SECURITY,

@@ -418,8 +418,8 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 			pd.setDati(dati);
 						
 			pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
-
-			pd.disableEditMode();
+			//pd.disableEditMode();
+			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

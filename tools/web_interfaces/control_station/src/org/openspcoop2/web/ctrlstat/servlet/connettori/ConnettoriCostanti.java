@@ -198,7 +198,7 @@ public class ConnettoriCostanti {
 	
 	/* LABEL PARAMETRI */
 
-	public final static int LABEL_PARAMETRO_CONNETTORE_TEXT_AREA_SIZE = 3;
+	public final static int LABEL_PARAMETRO_CONNETTORE_TEXT_AREA_SIZE = CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE;
 	
 	public final static String LABEL_PARAMETRO_CONNETTORE_ENDPOINT_TYPE = "Tipo";
 	public final static String LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO = "Tipo Personalizzato";

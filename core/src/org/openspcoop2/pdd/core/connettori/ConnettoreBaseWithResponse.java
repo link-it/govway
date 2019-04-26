@@ -316,13 +316,15 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 				}
 				if(msgErrore!=null){
 					if(this.checkContentType){
+						Exception e = null;
 						if(exErrore!=null){
 							this.logger.error(msgErrore,exErrore);
+							e = new Exception(msgErrore, exErrore);
 						}
 						else{
 							this.logger.error(msgErrore);
+							e = new Exception(msgErrore);
 						}
-						Exception e = new Exception(msgErrore);
 						this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
 						this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION,
 								ParseExceptionUtils.buildParseException(e));

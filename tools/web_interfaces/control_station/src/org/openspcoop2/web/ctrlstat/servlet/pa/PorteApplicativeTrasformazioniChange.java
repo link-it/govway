@@ -40,6 +40,8 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
@@ -166,6 +168,9 @@ public class PorteApplicativeTrasformazioniChange extends Action {
 			parametriInvocazioneServletTrasformazioniApplicativiAutenticati.add(pIdAsps);
 			parametriInvocazioneServletTrasformazioniApplicativiAutenticati.add(pIdTrasformazione);
 			int numApplicativiAutenticati = oldRegola.getApplicabilita() != null ? oldRegola.getApplicabilita().sizeServizioApplicativoList() : 0;
+			
+			List<TrasformazioneRegolaApplicabilitaServizioApplicativo> applicabilitaApplicativi = oldRegola.getApplicabilita() != null ? oldRegola.getApplicabilita().getServizioApplicativoList() : null;
+			List<TrasformazioneRegolaApplicabilitaSoggetto> applicabilitaSoggetti = oldRegola.getApplicabilita() != null ? oldRegola.getApplicabilita().getSoggettoList() : null;
 			
 			
 			MappingErogazionePortaApplicativa mappingAssociatoPorta = porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
@@ -294,7 +299,8 @@ public class PorteApplicativeTrasformazioniChange extends Action {
 			String patternDBCheck = StringUtils.isNotEmpty(pattern) ? pattern : null;
 			String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
 			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
-			TrasformazioneRegola trasformazioneDBCheck_criteri = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck);
+			TrasformazioneRegola trasformazioneDBCheck_criteri = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck, 
+					applicabilitaSoggetti, applicabilitaApplicativi, true);
 			TrasformazioneRegola trasformazioneDBCheck_nome = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), nome);
 			
 			boolean isOk = porteApplicativeHelper.trasformazioniCheckData(TipoOperazione.CHANGE, Long.parseLong(idPorta), nome, trasformazioneDBCheck_criteri, trasformazioneDBCheck_nome, oldRegola);

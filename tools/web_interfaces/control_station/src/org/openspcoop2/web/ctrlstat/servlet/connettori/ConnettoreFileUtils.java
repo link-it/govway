@@ -25,7 +25,9 @@ import java.util.Vector;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
@@ -197,8 +199,11 @@ public class ConnettoreFileUtils {
 	public static void addFileDati(Vector<DataElement> dati,int pageSize,
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime){
-		
 
+		DataElementInfo dInfoPattern = new DataElementInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
+		dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+		dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI);
+		
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT);
 		de.setType(DataElementType.TITLE);
@@ -212,6 +217,7 @@ public class ConnettoreFileUtils {
 		de.setRequired(true);	
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
 		de.setSize(pageSize);
+		de.setInfo(dInfoPattern);
 		dati.addElement(de);
 		
 		de = new DataElement();
@@ -222,6 +228,7 @@ public class ConnettoreFileUtils {
 		de.setRequired(false);	
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
 		de.setSize(pageSize);
+		de.setInfo(dInfoPattern);
 		dati.addElement(de);
 		
 		de = new DataElement();
@@ -267,6 +274,7 @@ public class ConnettoreFileUtils {
 			de.setType(DataElementType.TEXT_AREA);
 			de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_SIZE);
 			de.setRequired(true);
+			de.setInfo(dInfoPattern);
 		}
 		else{
 			de.setType(DataElementType.HIDDEN);
@@ -281,6 +289,7 @@ public class ConnettoreFileUtils {
 		if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){
 			de.setType(DataElementType.TEXT_AREA);
 			de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS_SIZE);
+			de.setInfo(dInfoPattern);
 		}
 		else{
 			de.setType(DataElementType.HIDDEN);

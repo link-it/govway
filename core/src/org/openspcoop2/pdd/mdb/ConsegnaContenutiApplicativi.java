@@ -427,6 +427,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					}
 				}
 			}
+			if(azione!=null && !"".equals(azione) && idServizio!=null && 
+					(idServizio.getAzione()==null || "".equals(idServizio.getAzione()))) {
+				idServizio.setAzione(azione);
+			}
 			idAccordoServizio = richiestaApplicativa.getIdAccordo();
 			soggettoErogatoreServizioHeaderIntegrazione = idServizio.getSoggettoErogatore();
 			profiloGestione = richiestaApplicativa.getProfiloGestione();
@@ -449,6 +453,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						idServizio.getSoggettoErogatore().setCodicePorta(bustaRichiesta.getIdentificativoPortaDestinatario());
 					}
 				}
+			}
+			if(azione!=null && !"".equals(azione) && idServizio!=null && 
+					(idServizio.getAzione()==null || "".equals(idServizio.getAzione()))) {
+				idServizio.setAzione(azione);
 			}
 			idAccordoServizio = richiestaDelegata.getIdAccordo();
 			if ( bustaRichiesta!=null && Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA.equals(scenarioCooperazione) ){
@@ -1402,7 +1410,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			OpenSPCoop2Message consegnaMessageTrasformato = consegnaMessage;
 			if(trasformazioni!=null) {
 				try {
-					gestoreTrasformazioni = new GestoreTrasformazioni(this.log, msgDiag, idServizio, trasformazioni, transactionNullable, pddContext, requestInfo);
+					gestoreTrasformazioni = new GestoreTrasformazioni(this.log, msgDiag, idServizio, soggettoFruitore, servizioApplicativoFruitore, 
+							trasformazioni, transactionNullable, pddContext, requestInfo, tipoPdD);
 					consegnaMessageTrasformato = gestoreTrasformazioni.trasformazioneRichiesta(consegnaMessage, bustaRichiesta);
 				}
 				catch(GestoreTrasformazioniException e) {

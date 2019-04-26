@@ -200,7 +200,7 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 				
 				if(postBackElementName.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_SOAP_ENVELOPE)) {
 					porteDelegateHelper.deleteBinaryParameters(trasformazioneSoapEnvelopeTemplate);
-					if(trasformazioneSoapEnvelope.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT)) {
+					if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT.equals(trasformazioneSoapEnvelope)) {
 						trasformazioneSoapEnvelopeTipo = org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY; 
 					}
 				}
@@ -356,7 +356,8 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 						trasformazioneRestMethod, trasformazioneRestPath, trasformazioneSoapAbilitato, trasformazioneSoapAction, 
 						trasformazioneSoapVersion, trasformazioneSoapEnvelope, trasformazioneSoapEnvelopeTipo, trasformazioneSoapEnvelopeTemplate, trasformazioneSoapEnvelopeTipoCheck,
 						servletTrasformazioniRichiestaHeadersList, parametriInvocazioneServletTrasformazioniRichiestaHeaders, numeroTrasformazioniRichiestaHeaders,
-						servletTrasformazioniRichiestaParametriList, parametriInvocazioneServletTrasformazioniRichiestaParametri, numeroTrasformazioniRichiestaParametri);
+						servletTrasformazioniRichiestaParametriList, parametriInvocazioneServletTrasformazioniRichiestaParametri, numeroTrasformazioniRichiestaParametri,
+						apc.getServiceBinding());
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -381,7 +382,8 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 						trasformazioneRestMethod, trasformazioneRestPath, trasformazioneSoapAbilitato, trasformazioneSoapAction, 
 						trasformazioneSoapVersion, trasformazioneSoapEnvelope, trasformazioneSoapEnvelopeTipo, trasformazioneSoapEnvelopeTemplate, trasformazioneSoapEnvelopeTipoCheck,
 						servletTrasformazioniRichiestaHeadersList, parametriInvocazioneServletTrasformazioniRichiestaHeaders, numeroTrasformazioniRichiestaHeaders,
-						servletTrasformazioniRichiestaParametriList, parametriInvocazioneServletTrasformazioniRichiestaParametri, numeroTrasformazioniRichiestaParametri);
+						servletTrasformazioniRichiestaParametriList, parametriInvocazioneServletTrasformazioniRichiestaParametri, numeroTrasformazioniRichiestaParametri,
+						apc.getServiceBinding());
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -412,7 +414,12 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 							reg.getRichiesta().setConversioneTemplate(null);
 						}
 						
-						reg.getRichiesta().setContentType(trasformazioneRichiestaContentType);
+						if(trasformazioneRichiestaContentType!=null && !"".equals(trasformazioneRichiestaContentType)) {
+							reg.getRichiesta().setContentType(trasformazioneRichiestaContentType);
+						}
+						else {
+							reg.getRichiesta().setContentType(null);
+						}
 						reg.getRichiesta().setConversioneTipo(trasformazioneContenutoTipo.getValue());
 						
 						if(trasformazioneRestAbilitato) {
@@ -429,12 +436,9 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 							if(reg.getRichiesta().getTrasformazioneSoap() == null)
 								reg.getRichiesta().setTrasformazioneSoap(new TrasformazioneSoap());
 							
-							// ct null se trasformazione soap abilitata
-							reg.getRichiesta().setContentType(null);
-							
 							reg.getRichiesta().getTrasformazioneSoap().setSoapAction(trasformazioneSoapAction);
 							reg.getRichiesta().getTrasformazioneSoap().setVersione(VersioneSOAP.toEnumConstant(trasformazioneSoapVersion));
-							if(trasformazioneSoapEnvelope.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT)) { // attachment
+							if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT.equals(trasformazioneSoapEnvelope)) { // attachment
 								reg.getRichiesta().getTrasformazioneSoap().setEnvelope(true);
 								reg.getRichiesta().getTrasformazioneSoap().setEnvelopeAsAttachment(true);
 								reg.getRichiesta().getTrasformazioneSoap().setEnvelopeBodyConversioneTipo(trasformazioneSoapEnvelopeTipo.getValue());
@@ -447,7 +451,7 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 									reg.getRichiesta().getTrasformazioneSoap().setEnvelopeBodyConversioneTemplate(null);
 								}
 								
-							} else if(trasformazioneSoapEnvelope.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_BODY)) { // body
+							} else if(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_BODY.equals(trasformazioneSoapEnvelope)) { // body
 								reg.getRichiesta().getTrasformazioneSoap().setEnvelope(true);
 								reg.getRichiesta().getTrasformazioneSoap().setEnvelopeAsAttachment(false);
 								reg.getRichiesta().getTrasformazioneSoap().setEnvelopeBodyConversioneTemplate(null);
@@ -481,12 +485,7 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 			// ricaricare id trasformazione
 			portaDelegata = porteDelegateCore.getPortaDelegata(Long.parseLong(id));
 
-			String patternDBCheck = (oldRegola.getApplicabilita() != null && StringUtils.isNotEmpty(oldRegola.getApplicabilita().getPattern())) ? oldRegola.getApplicabilita().getPattern() : null;
-			String contentTypeAsString = (oldRegola.getApplicabilita() != null && oldRegola.getApplicabilita().getContentTypeList() != null) ? StringUtils.join(oldRegola.getApplicabilita().getContentTypeList(), ",") : "";
-			String contentTypeDBCheck = StringUtils.isNotEmpty(contentTypeAsString) ? contentTypeAsString : null;
-			String azioniAsString = (oldRegola.getApplicabilita() != null && oldRegola.getApplicabilita().getAzioneList() != null) ? StringUtils.join(oldRegola.getApplicabilita().getAzioneList(), ",") : "";
-			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
-			TrasformazioneRegola trasformazioneAggiornata = porteDelegateCore.getTrasformazione(portaDelegata.getId(), azioniDBCheck, patternDBCheck, contentTypeDBCheck);
+			TrasformazioneRegola trasformazioneAggiornata = porteDelegateCore.getTrasformazione(portaDelegata.getId(), oldRegola.getNome());
 			
 			// setto il titolo della pagina
 			nomeTrasformazione = oldRegola.getNome();
@@ -617,7 +616,8 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 					trasformazioneRestMethod, trasformazioneRestPath, trasformazioneSoapAbilitato, trasformazioneSoapAction, 
 					trasformazioneSoapVersion, trasformazioneSoapEnvelope, trasformazioneSoapEnvelopeTipo, trasformazioneSoapEnvelopeTemplate, trasformazioneSoapEnvelopeTipoCheck,
 					servletTrasformazioniRichiestaHeadersList, parametriInvocazioneServletTrasformazioniRichiestaHeaders, numeroTrasformazioniRichiestaHeaders,
-					servletTrasformazioniRichiestaParametriList, parametriInvocazioneServletTrasformazioniRichiestaParametri, numeroTrasformazioniRichiestaParametri);
+					servletTrasformazioniRichiestaParametriList, parametriInvocazioneServletTrasformazioniRichiestaParametri, numeroTrasformazioniRichiestaParametri,
+					apc.getServiceBinding());
 			
 			dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, 
 					idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -625,6 +625,8 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 			pd.setDati(dati);
 						
 			pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+			//pd.disableEditMode();
+			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			

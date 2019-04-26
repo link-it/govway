@@ -40,6 +40,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -175,6 +176,8 @@ public class PorteDelegateTrasformazioniChange extends Action {
 			String servletTrasformazioniApplicativiAutenticati = null;
 			List<Parameter> parametriInvocazioneServletTrasformazioniApplicativiAutenticati  = null;
 			int numApplicativiAutenticati = 0;
+			
+			List<TrasformazioneRegolaApplicabilitaServizioApplicativo> applicabilitaApplicativi = oldRegola.getApplicabilita() != null ? oldRegola.getApplicabilita().getServizioApplicativoList() : null;
 			
  			MappingFruizionePortaDelegata mappingAssociatoPorta = porteDelegateCore.getMappingFruizionePortaDelegata(portaDelegata);
 			
@@ -313,7 +316,7 @@ public class PorteDelegateTrasformazioniChange extends Action {
 			String patternDBCheck = StringUtils.isNotEmpty(pattern) ? pattern : null;
 			String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
 			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
-			TrasformazioneRegola trasformazioneDBCheck_criteri = porteDelegateCore.getTrasformazione(Long.parseLong(id), azioniDBCheck, patternDBCheck, contentTypeDBCheck);
+			TrasformazioneRegola trasformazioneDBCheck_criteri = porteDelegateCore.getTrasformazione(Long.parseLong(id), azioniDBCheck, patternDBCheck, contentTypeDBCheck, applicabilitaApplicativi);
 			TrasformazioneRegola trasformazioneDBCheck_nome = porteDelegateCore.getTrasformazione(Long.parseLong(id), nome);
 			
 			boolean isOk = porteDelegateHelper.trasformazioniCheckData(TipoOperazione.CHANGE, Long.parseLong(id), nome, trasformazioneDBCheck_criteri, trasformazioneDBCheck_nome, oldRegola);

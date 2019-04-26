@@ -23,6 +23,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -46,7 +47,9 @@ import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -101,6 +104,11 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 			String idTrasformazioneS = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE);
 			long idTrasformazione = Long.parseLong(idTrasformazioneS);
 			
+			String listaTmp = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_LIST);
+			boolean fromList = false;
+			if(listaTmp != null && !"".equals(listaTmp))
+				fromList = true;
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
@@ -149,8 +157,7 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
-			Parameter[] urlParms = { pId,pIdSoggetto,pIdAsps,pIdFruizione,pIdTrasformazione};
-			
+						
 			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
 			
 			String labelPerPorta = null;
@@ -166,16 +173,27 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 
 			lstParam.add(new Parameter(labelPerPorta, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_LIST, pId, pIdSoggetto, pIdAsps, pIdFruizione));
 			
-			lstParam.add(new Parameter(nomeTrasformazione, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
-					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione));
+			if(!fromList) {
+				lstParam.add(new Parameter(nomeTrasformazione, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
+						pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione));
+			}
 			
 			String labelPagLista = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_CONFIG;
 			if(!porteDelegateHelper.isModalitaCompleta()) {
 				labelPagLista = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICATIVO_CONFIG;
 			}
 			
+			List<Parameter> parametersList = new ArrayList<>();
+			parametersList.add(pId);
+			parametersList.add(pIdSoggetto);
+			parametersList.add(pIdAsps);
+			parametersList.add(pIdFruizione);
+			parametersList.add(pIdTrasformazione);
+			if(fromList) {
+				parametersList.add(new Parameter (PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_LIST, listaTmp));
+			}
 			lstParam.add(new Parameter(labelPagLista, 
-					PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_LIST,urlParms));
+					PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_LIST,parametersList));
 			lstParam.add(ServletUtils.getParameterAggiungi());
 			
 			// Se servizioApplicativohid = null, devo visualizzare la pagina per
@@ -218,7 +236,7 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 						servizioApplicativoList[j] = silV.get(j);
 				}
 
-				dati = porteDelegateHelper.addPorteTrasformazioniServizioApplicativoToDati(TipoOperazione.ADD,dati, idTrasformazioneS, "", servizioApplicativoList, oldSilList.size(),true, true);
+				dati = porteDelegateHelper.addPorteTrasformazioniServizioApplicativoToDati(TipoOperazione.ADD,dati, idTrasformazioneS, fromList, "", servizioApplicativoList, oldSilList.size(),true, true);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, null, idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -234,6 +252,29 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 
 			// Controlli sui campi immessi
 			boolean isOk = porteDelegateHelper.porteDelegateTrasformazioniServizioApplicativoCheckData(TipoOperazione.ADD);
+
+			TrasformazioneRegolaApplicabilitaServizioApplicativo sa = new TrasformazioneRegolaApplicabilitaServizioApplicativo();
+			sa.setNome(servizioApplicativo);
+			sa.setTipoSoggettoProprietario(portaDelegata.getTipoSoggettoProprietario());
+			sa.setNomeSoggettoProprietario(portaDelegata.getNomeSoggettoProprietario());
+			
+			if(isOk) {
+				
+				List<TrasformazioneRegolaApplicabilitaServizioApplicativo> sacheckList = new ArrayList<>();
+				sacheckList.add(sa);
+				
+				String patternDBCheck = (regola.getApplicabilita() != null && StringUtils.isNotEmpty(regola.getApplicabilita().getPattern())) ? regola.getApplicabilita().getPattern() : null;
+				String contentTypeAsString = (regola.getApplicabilita() != null &&regola.getApplicabilita().getContentTypeList() != null) ? StringUtils.join(regola.getApplicabilita().getContentTypeList(), ",") : "";
+				String contentTypeDBCheck = StringUtils.isNotEmpty(contentTypeAsString) ? contentTypeAsString : null;
+				String azioniAsString = (regola.getApplicabilita() != null && regola.getApplicabilita().getAzioneList() != null) ? StringUtils.join(regola.getApplicabilita().getAzioneList(), ",") : "";
+				String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
+				TrasformazioneRegola trasformazioneDBCheck_criteri = porteDelegateCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck, sacheckList);
+				if(trasformazioneDBCheck_criteri!=null) {
+					isOk = false;
+					pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA_APPLICATIVO);
+				}
+				
+			}
 			if (!isOk) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);
@@ -271,7 +312,7 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 						servizioApplicativoList[j] = silV.get(j);
 				}
 
-				dati = porteDelegateHelper.addPorteTrasformazioniServizioApplicativoToDati(TipoOperazione.ADD, dati, idTrasformazioneS,servizioApplicativo, servizioApplicativoList, oldSilList.size(),true, true);
+				dati = porteDelegateHelper.addPorteTrasformazioniServizioApplicativoToDati(TipoOperazione.ADD, dati, idTrasformazioneS, fromList, servizioApplicativo, servizioApplicativoList, oldSilList.size(),true, true);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, null, idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -294,12 +335,7 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 				}
 			}
 						
-			// Inserisco il servizioApplicativo nel db
-			TrasformazioneRegolaApplicabilitaServizioApplicativo sa = new TrasformazioneRegolaApplicabilitaServizioApplicativo();
-			sa.setNome(servizioApplicativo);
-			sa.setTipoSoggettoProprietario(portaDelegata.getTipoSoggettoProprietario());
-			sa.setNomeSoggettoProprietario(portaDelegata.getNomeSoggettoProprietario());
-			
+			// Inserisco il servizioApplicativo nel db			
 			if(regola.getApplicabilita() == null)
 				regola.setApplicabilita(new TrasformazioneRegolaApplicabilitaRichiesta());
 			
@@ -310,13 +346,7 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 			// ricaricare id trasformazione
 			portaDelegata = porteDelegateCore.getPortaDelegata(Long.parseLong(idPorta));
 
-			String patternDBCheck = (regola.getApplicabilita() != null && StringUtils.isNotEmpty(regola.getApplicabilita().getPattern())) ? regola.getApplicabilita().getPattern() : null;
-			String contentTypeAsString = (regola.getApplicabilita() != null &&regola.getApplicabilita().getContentTypeList() != null) ? StringUtils.join(regola.getApplicabilita().getContentTypeList(), ",") : "";
-			String contentTypeDBCheck = StringUtils.isNotEmpty(contentTypeAsString) ? contentTypeAsString : null;
-			String azioniAsString = (regola.getApplicabilita() != null && regola.getApplicabilita().getAzioneList() != null) ? StringUtils.join(regola.getApplicabilita().getAzioneList(), ",") : "";
-			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
-			TrasformazioneRegola trasformazioneAggiornata = porteDelegateCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck);
-
+			TrasformazioneRegola trasformazioneAggiornata = porteDelegateCore.getTrasformazione(Long.parseLong(idPorta), regola.getNome());
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
@@ -325,7 +355,7 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 
 			ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 			
-			List<TrasformazioneRegolaApplicabilitaServizioApplicativo> lista = porteDelegateCore.porteDelegateTrasformazioniServiziApplicativiAutorizzatiList(Integer.parseInt(idPorta), trasformazioneAggiornata.getId(), ricerca);
+			List<TrasformazioneRegolaApplicabilitaServizioApplicativo> lista = porteDelegateCore.porteDelegateTrasformazioniServiziApplicativiAutorizzatiList(Long.parseLong(idPorta), trasformazioneAggiornata.getId(), ricerca);
 
 			porteDelegateHelper.preparePorteDelegateTrasformazioniServizioApplicativoList(portaDelegata.getNome(), trasformazioneAggiornata.getId(), ricerca, lista);
 

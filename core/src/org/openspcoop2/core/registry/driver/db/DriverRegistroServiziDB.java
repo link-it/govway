@@ -19532,8 +19532,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				serv.setTipoSoggettoErogatore(tipoErogatore);
 
 				// informazioni su accordo
-				AccordoServizioParteComune as = this.getAccordoServizioParteComune(serv.getIdAccordo(),con);
-				serv.setAccordoServizioParteComune(this.idAccordoFactory.getUriFromAccordo(as));
+				IDAccordo idAccordo = this.getIdAccordoServizioParteComune(serv.getIdAccordo(), con);
+				serv.setAccordoServizioParteComune(this.idAccordoFactory.getUriFromIDAccordo(idAccordo));
 
 				// Stato
 				serv.setStatoPackage(risultato.getString("statoServizio"));

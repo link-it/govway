@@ -237,38 +237,44 @@ public class ServicesUtils {
 		if(protocolManager.isHttpEmptyResponseOneWay()){
 			if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())){
 				OpenSPCoop2SoapMessage soap = responseMessage.castAsSoap();
-				Object b = soap.getSOAPBody();
-				SOAPBody body = null;
-				if(b != null){
-					body = (SOAPBody) b;
+				
+				if(soap.countAttachments()>0) {
+					rispostaPresente = true;
 				}
-				Object h = null;
-				SOAPHeader header = null;
-				if(b==null || body==null || body.getFirstChild()==null ){
-					//potenziale msg inutile.
-					h = soap.getSOAPHeader();
-					if(h!=null){
-						header = (SOAPHeader) h;
+				else {
+					Object b = soap.getSOAPBody();
+					SOAPBody body = null;
+					if(b != null){
+						body = (SOAPBody) b;
 					}
-					if(h==null || header==null || header.getFirstChild()==null ){
-						//System.out.println("MESSAGGIO INUTILE");
-						rispostaPresente = false;
-					}else{
-						if(gestioneLatoPortaDelegata){
-							if( protocolManager.isHttpOneWay_PD_HTTPEmptyResponse() == false ) {
-								// E' possibile impostare una opzione che non torni nulla anche in questo caso
-								rispostaPresente = false;
+					Object h = null;
+					SOAPHeader header = null;
+					if(b==null || body==null || SoapUtils.getFirstNotEmptyChildNode(body, false)==null ){
+						//potenziale msg inutile.
+						h = soap.getSOAPHeader();
+						if(h!=null){
+							header = (SOAPHeader) h;
+						}
+						if(h==null || header==null ||  SoapUtils.getFirstNotEmptyChildNode(header,false)==null ){
+							//System.out.println("MESSAGGIO INUTILE");
+							rispostaPresente = false;
+						}else{
+							if(gestioneLatoPortaDelegata){
+								if( protocolManager.isHttpOneWay_PD_HTTPEmptyResponse() == false ) {
+									// E' possibile impostare una opzione che non torni nulla anche in questo caso
+									rispostaPresente = false;
+								}
 							}
 						}
 					}
+					
+					// *** GB ***
+					body = null;
+					b = null;
+					header = null;
+					h = null;
+					// *** GB ***
 				}
-				
-				// *** GB ***
-				body = null;
-				b = null;
-				header = null;
-				h = null;
-				// *** GB ***
 			}
 			else{
 //				OpenSPCoop2RestMessage<?> rest = responseMessage.castAsRest();

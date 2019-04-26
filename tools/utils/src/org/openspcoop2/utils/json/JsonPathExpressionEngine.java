@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
@@ -468,6 +469,10 @@ public class JsonPathExpressionEngine {
 		else if(object instanceof JSONObject) {
 			JSONObject jsonObject = (JSONObject) object;
 			return getJsonUtils().getAsNode(jsonObject.toString());
+		}
+		else if(object instanceof Map<?, ?>) {
+			Map<?, ?> map = (Map<?, ?>) object;
+			return getJsonUtils().getAsNode(map);
 		}
 		else {
 			return getJsonUtils().getAsNode(object.toString());

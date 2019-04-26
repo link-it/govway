@@ -112,6 +112,10 @@ public class HttpBodyParameters {
 				throw new UtilsException("HttpMethod ["+httpMethod+"] unsupported");
 		}
 		
+		if(contentType==null || "".equals(contentType)){
+			this.doOutput = false;
+		}
+		
 	}
 
 	public boolean isDoOutput() {
