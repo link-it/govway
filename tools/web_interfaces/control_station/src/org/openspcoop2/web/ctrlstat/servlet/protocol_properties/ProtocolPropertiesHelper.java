@@ -48,6 +48,8 @@ import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
@@ -118,7 +120,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					return idAps;
 				case AZIONE_ACCORDO:
 					Azione azione = (Azione) proprietario;
-					AccordoServizioParteComune apca = this.apcCore.getAccordoServizio(Integer.parseInt(idProprietario));
+					AccordoServizioParteComuneSintetico apca = this.apcCore.getAccordoServizioSintetico(Integer.parseInt(idProprietario));
 					IDAccordo idAccordoAz = this.idAccordoFactory.getIDAccordoFromValues(apca.getNome(),BeanUtilities.getSoggettoReferenteID(apca.getSoggettoReferente()),apca.getVersione());
 					IDAccordoAzione idAccordoAzione = new IDAccordoAzione();
 					idAccordoAzione.setIdAccordo(idAccordoAz);
@@ -139,8 +141,8 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					org.openspcoop2.core.registry.Operation azionePt = (Operation) proprietario;
 					IDPortType idPortTypeAz = new IDPortType();
 					int idProp = Integer.parseInt(idProprietario);
-					AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(idProp);
-					for (PortType pt : apc.getPortTypeList()) {
+					AccordoServizioParteComuneSintetico apc = this.apcCore.getAccordoServizioSintetico(idProp);
+					for (PortTypeSintetico pt : apc.getPortType()) {
 						if(pt.getNome().equals(nomeParentProprieta)){
 							IDAccordo idAccordoPt = this.idAccordoFactory.getIDAccordoFromValues(apc.getNome(),BeanUtilities.getSoggettoReferenteID(apc.getSoggettoReferente()),apc.getVersione());
 							idPortTypeAz.setIdAccordo(idAccordoPt);
@@ -157,7 +159,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 				case PORT_TYPE:
 					PortType pt = (PortType) proprietario;
 					IDPortType idPt = new IDPortType();
-					AccordoServizioParteComune apcPt = this.apcCore.getAccordoServizio(pt.getIdAccordo());
+					AccordoServizioParteComuneSintetico apcPt = this.apcCore.getAccordoServizioSintetico(pt.getIdAccordo());
 					IDAccordo idAccordoPt = this.idAccordoFactory.getIDAccordoFromValues(apcPt.getNome(),BeanUtilities.getSoggettoReferenteID(apcPt.getSoggettoReferente()),apcPt.getVersione());
 					idPt.setIdAccordo(idAccordoPt);
 					idPt.setNome(pt.getNome());
@@ -165,7 +167,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					return idPt;
 				case RESOURCE:
 					org.openspcoop2.core.registry.Resource risorsa = (org.openspcoop2.core.registry.Resource) proprietario;
-					AccordoServizioParteComune apcr = this.apcCore.getAccordoServizio(Integer.parseInt(idProprietario));
+					AccordoServizioParteComuneSintetico apcr = this.apcCore.getAccordoServizioSintetico(Integer.parseInt(idProprietario));
 					IDAccordo idAccordoRisorsa = this.idAccordoFactory.getIDAccordoFromValues(apcr.getNome(),
 							BeanUtilities.getSoggettoReferenteID(apcr.getSoggettoReferente()),apcr.getVersione());
 					IDResource idAccordoR = new IDResource();
@@ -196,13 +198,13 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					AccordoCooperazione ac = this.acCore.getAccordoCooperazione(idProp);
 					return ac;
 				case ACCORDO_SERVIZIO_PARTE_COMUNE:
-					AccordoServizioParteComune as = this.apcCore.getAccordoServizio(idProp);
+					AccordoServizioParteComune as = this.apcCore.getAccordoServizioFull(idProp);
 					return as;
 				case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
 					AccordoServizioParteSpecifica aps = this.apsCore.getAccordoServizioParteSpecifica(idProp);
 					return aps;
 				case AZIONE_ACCORDO:
-					AccordoServizioParteComune apca = this.apcCore.getAccordoServizio(idProp);
+					AccordoServizioParteComune apca = this.apcCore.getAccordoServizioFull(idProp);
 					for(Azione azione: apca.getAzioneList()){
 						if(azione.getNome().equals(nomeProprieta))
 							return azione;
@@ -212,7 +214,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					Fruitore servFru = this.apsCore.getServizioFruitore(idProp);
 					return servFru;
 				case OPERATION:
-					AccordoServizioParteComune apcop = this.apcCore.getAccordoServizio(idProp);
+					AccordoServizioParteComune apcop = this.apcCore.getAccordoServizioFull(idProp);
 					for (PortType pt : apcop.getPortTypeList()) {
 						if(pt.getNome().equals(nomeParentProprieta)){
 							for (org.openspcoop2.core.registry.Operation azione : pt.getAzioneList()) {
@@ -223,14 +225,14 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					}
 					return null;
 				case PORT_TYPE:
-					AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(idProp);
+					AccordoServizioParteComune apc = this.apcCore.getAccordoServizioFull(idProp);
 					for (PortType pt : apc.getPortTypeList()) {
 						if(pt.getNome().equals(nomeProprieta))
 							return pt;
 					}
 					return null;
 				case RESOURCE:
-					AccordoServizioParteComune apcr = this.apcCore.getAccordoServizio(idProp);
+					AccordoServizioParteComune apcr = this.apcCore.getAccordoServizioFull(idProp);
 					for(Resource risorsa: apcr.getResourceList()){
 						if(risorsa.getNome().equals(nomeProprieta))
 							return risorsa;
@@ -260,25 +262,25 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					AccordoCooperazione ac = this.acCore.getAccordoCooperazione(idProp);
 					return ac.getStatoPackage();
 				case ACCORDO_SERVIZIO_PARTE_COMUNE:
-					AccordoServizioParteComune as = this.apcCore.getAccordoServizio(idProp);
+					AccordoServizioParteComuneSintetico as = this.apcCore.getAccordoServizioSintetico(idProp);
 					return as.getStatoPackage();
 				case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
 					AccordoServizioParteSpecifica aps = this.apsCore.getAccordoServizioParteSpecifica(idProp);
 					return aps.getStatoPackage();
 				case AZIONE_ACCORDO:
-					AccordoServizioParteComune apca = this.apcCore.getAccordoServizio(idProp);
+					AccordoServizioParteComuneSintetico apca = this.apcCore.getAccordoServizioSintetico(idProp);
 					return apca.getStatoPackage();
 				case FRUITORE:
 					Fruitore servFru = this.apsCore.getServizioFruitore(idProp);
 					return servFru.getStatoPackage();
 				case OPERATION:
-					AccordoServizioParteComune apcop = this.apcCore.getAccordoServizio(idProp);
+					AccordoServizioParteComuneSintetico apcop = this.apcCore.getAccordoServizioSintetico(idProp);
 					return apcop.getStatoPackage();
 				case PORT_TYPE:
-					AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(idProp);
+					AccordoServizioParteComuneSintetico apc = this.apcCore.getAccordoServizioSintetico(idProp);
 					return apc.getStatoPackage();
 				case RESOURCE:
-					AccordoServizioParteComune apcr = this.apcCore.getAccordoServizio(idProp);
+					AccordoServizioParteComuneSintetico apcr = this.apcCore.getAccordoServizioSintetico(idProp);
 					return apcr.getStatoPackage();
 				case SOGGETTO:
 					return null;
@@ -674,7 +676,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					break;
 				case AZIONE_ACCORDO:
 					Azione newAzione = (Azione) proprietario;
-					AccordoServizioParteComune apca = this.apcCore.getAccordoServizio(idProp);
+					AccordoServizioParteComune apca = this.apcCore.getAccordoServizioFull(idProp);
 					for(Azione azione: apca.getAzioneList()){
 						if(azione.getNome().equals(newAzione.getNome())){
 							azione.setProtocolPropertyList(protocolPropertiesAggiornate);
@@ -705,7 +707,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					break;
 				case OPERATION:
 					org.openspcoop2.core.registry.Operation newAzionePt = (Operation) proprietario;
-					AccordoServizioParteComune apcop = this.apcCore.getAccordoServizio(idProp);
+					AccordoServizioParteComune apcop = this.apcCore.getAccordoServizioFull(idProp);
 					for (PortType pt : apcop.getPortTypeList()) {
 						if(pt.getNome().equals(nomeParentProprietario)){
 							for (org.openspcoop2.core.registry.Operation azione : pt.getAzioneList()) {
@@ -722,7 +724,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 						this.core.performUpdateOperation(userLogin, smista, apcop);
 					break;
 				case PORT_TYPE:
-					AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(idProp);
+					AccordoServizioParteComune apc = this.apcCore.getAccordoServizioFull(idProp);
 					PortType newPt = (PortType) proprietario;
 
 					for (PortType pt : apc.getPortTypeList()) {
@@ -739,7 +741,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					break;
 				case RESOURCE:
 					Resource newResource = (Resource) proprietario;
-					AccordoServizioParteComune apcr = this.apcCore.getAccordoServizio(idProp);
+					AccordoServizioParteComune apcr = this.apcCore.getAccordoServizioFull(idProp);
 					for(Resource resource: apcr.getResourceList()){
 						if(resource.getNome().equals(newResource.getNome())){
 							resource.setProtocolPropertyList(protocolPropertiesAggiornate);
@@ -929,7 +931,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					break;
 				case AZIONE_ACCORDO:
 					Azione newAzione = (Azione) proprietario;
-					AccordoServizioParteComune apca = this.apcCore.getAccordoServizio(idProp);
+					AccordoServizioParteComune apca = this.apcCore.getAccordoServizioFull(idProp);
 					for(Azione azione: apca.getAzioneList()){
 						if(azione.getNome().equals(newAzione.getNome())){
 							labelProprietario = azione.getNome();
@@ -1007,7 +1009,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 				case OPERATION:
 					apcHelper = new AccordiServizioParteComuneHelper(this.request, this.pd, this.session); 
 					org.openspcoop2.core.registry.Operation newAzionePt = (Operation) proprietario;
-					AccordoServizioParteComune apcop = this.apcCore.getAccordoServizio(idProp);
+					AccordoServizioParteComune apcop = this.apcCore.getAccordoServizioFull(idProp);
 					for (PortType pt : apcop.getPortTypeList()) {
 						if(pt.getNome().equals(nomeParentProprietario)){
 							for (org.openspcoop2.core.registry.Operation azione : pt.getAzioneList()) {
@@ -1033,7 +1035,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					break;
 				case PORT_TYPE:
 					apcHelper = new AccordiServizioParteComuneHelper(this.request, this.pd, this.session); 
-					AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(idProp);
+					AccordoServizioParteComune apc = this.apcCore.getAccordoServizioFull(idProp);
 					PortType newPt = (PortType) proprietario;
 
 					for (PortType pt : apc.getPortTypeList()) {
@@ -1057,7 +1059,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 				case RESOURCE:
 					apcHelper = new AccordiServizioParteComuneHelper(this.request, this.pd, this.session); 
 					Resource newResource = (Resource) proprietario;
-					AccordoServizioParteComune apcr = this.apcCore.getAccordoServizio(idProp);
+					AccordoServizioParteComune apcr = this.apcCore.getAccordoServizioFull(idProp);
 					Long idRs = newResource.getId();
 					for(Resource resource: apcr.getResourceList()){
 						if(resource.getNome().equals(newResource.getNome())){

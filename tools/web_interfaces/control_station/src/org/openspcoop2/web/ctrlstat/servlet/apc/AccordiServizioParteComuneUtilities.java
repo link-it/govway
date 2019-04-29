@@ -43,6 +43,7 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
@@ -558,6 +559,16 @@ public class AccordiServizioParteComuneUtilities {
 					AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE);
 		}
 	}
+	public static Parameter getParametroAccordoServizio(AccordoServizioParteComuneSintetico apc){
+		if(apc.getServizioComposto()!=null){
+			return new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO,
+					AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO);
+		}else
+		{
+			return new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO,
+					AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE);
+		}
+	}
 
 	public static Parameter getParametroAccordoServizio(String tipo){
 		if(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE.equals(tipo)){
@@ -582,8 +593,8 @@ public class AccordiServizioParteComuneUtilities {
 		return false;
 	}
 
-	public static List<AccordoServizioParteComune> accordiList(AccordiServizioParteComuneCore core,String userLogin,Search ricerca,String tipoAccordo) throws DriverRegistroServiziException{
-		List<AccordoServizioParteComune> lista = null;
+	public static List<AccordoServizioParteComuneSintetico> accordiList(AccordiServizioParteComuneCore core,String userLogin,Search ricerca,String tipoAccordo) throws DriverRegistroServiziException{
+		List<AccordoServizioParteComuneSintetico> lista = null;
 		if(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE.equals(tipoAccordo)){
 			if(core.isVisioneOggettiGlobale(userLogin)){
 				lista = core.accordiServizioParteComuneList(null, ricerca);
@@ -608,8 +619,8 @@ public class AccordiServizioParteComuneUtilities {
 		return lista;
 	}
 
-	public static List<AccordoServizioParteComune> accordiListFromPermessiUtente(AccordiServizioParteComuneCore core,String userLogin,Search ricerca,boolean[] permessiUtente) throws DriverRegistroServiziException{
-		List<AccordoServizioParteComune> lista = null;
+	public static List<AccordoServizioParteComuneSintetico> accordiListFromPermessiUtente(AccordiServizioParteComuneCore core,String userLogin,Search ricerca,boolean[] permessiUtente) throws DriverRegistroServiziException{
+		List<AccordoServizioParteComuneSintetico> lista = null;
 		if(permessiUtente != null){
 			if(permessiUtente[0] && !permessiUtente[1]){
 				if(core.isVisioneOggettiGlobale(userLogin)){

@@ -71,7 +71,7 @@ public class ApiChange extends Action {
 			long idInt  = Long.parseLong(id);
 			
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(idInt);
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idInt);
 			
 			apiHelper.prepareApiChange(tipoOp, as);
 			

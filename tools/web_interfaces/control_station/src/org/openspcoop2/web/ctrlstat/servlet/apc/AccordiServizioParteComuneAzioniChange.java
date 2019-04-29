@@ -181,7 +181,7 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
 
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.valueOf(idAccordo));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idAccordo));
 			String uriAS = idAccordoFactory.getUriFromAccordo(as);
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 			IDAccordo idAs = idAccordoFactory.getIDAccordoFromAccordo(as);

@@ -215,7 +215,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 			apcHelper.makeMenu();
 
 			// Prendo il nome dal db
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(idInt);
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idInt);
 			String uriAS = idAccordoFactory.getUriFromAccordo(as);
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 			IDAccordo idAs = idAccordoFactory.getIDAccordoFromAccordo(as);

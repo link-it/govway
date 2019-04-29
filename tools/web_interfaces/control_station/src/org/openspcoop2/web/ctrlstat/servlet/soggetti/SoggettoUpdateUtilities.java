@@ -260,7 +260,7 @@ public class SoggettoUpdateUtilities {
 				}catch(DriverRegistroServiziNotFound dNot){}
 				if(idAccordoServizio!=null){
 					for(int i=0; i<idAccordoServizio.size(); i++){
-						AccordoServizioParteComune as = this.apcCore.getAccordoServizio(idAccordoServizio.get(i));
+						AccordoServizioParteComune as = this.apcCore.getAccordoServizioFull(idAccordoServizio.get(i));
 						as.getSoggettoReferente().setTipo(this.tipoprov);
 						as.getSoggettoReferente().setNome(this.nomeprov);
 						IDAccordo idAccordoOLD = this.idAccordoFactory.getIDAccordoFromValues(as.getNome(), this.oldtipoprov, this.oldnomeprov, as.getVersione());

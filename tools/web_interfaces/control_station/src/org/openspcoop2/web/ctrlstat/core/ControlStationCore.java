@@ -95,6 +95,8 @@ import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -4669,8 +4671,8 @@ public class ControlStationCore {
 			String nomeAS = "notdefined";
 			try{
 				AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(this);
-				AccordoServizioParteComune as = apcCore.getAccordoServizio(idAcc);
-				nomeAS = as.getNome();
+				IDAccordo idAccordo = apcCore.getIdAccordoServizio(idAcc);
+				nomeAS = idAccordo.getNome();
 			}catch (Exception e) {}
 
 			msg+=":"+oggetto.getClass().getSimpleName();
@@ -5200,7 +5202,7 @@ public class ControlStationCore {
 		Search s = new Search();
 		s.setPageSize(Liste.ACCORDI, 1); // serve solo per il count
 		s.addFilter(Liste.ACCORDI, Filtri.FILTRO_PROTOCOLLO, protocollo); // imposto protocollo
-		List<AccordoServizioParteComune> lista = null;
+		List<AccordoServizioParteComuneSintetico> lista = null;
 		if(this.isVisioneOggettiGlobale(userLogin)){
 			lista = this.accordiList(null, s);
 		}else{
@@ -5302,7 +5304,7 @@ public class ControlStationCore {
 		}
 	}
 	
-	public List<AccordoServizioParteComune> accordiList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<AccordoServizioParteComuneSintetico> accordiList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "accordiList";
 		DriverControlStationDB driver = null;
@@ -5740,7 +5742,7 @@ public class ControlStationCore {
 		}
 	}
 	
-	public List<String> getAzioni(AccordoServizioParteSpecifica asps,AccordoServizioParteComune aspc, 
+	public List<String> getAzioni(AccordoServizioParteSpecifica asps,AccordoServizioParteComuneSintetico aspc, 
 			boolean addTrattinoSelezioneNonEffettuata, boolean throwException, List<String> filtraAzioniUtilizzate) throws DriverConfigurazioneException{
 		String nomeMetodo = "getAzioni";
 		try {
@@ -5757,30 +5759,30 @@ public class ControlStationCore {
 							
 							if(asps.getPortType()!=null){
 								// Bisogna prendere le operations del port type
-								PortType pt = null;
-								for (int i = 0; i < aspc.sizePortTypeList(); i++) {
-									if(aspc.getPortType(i).getNome().equals(asps.getPortType())){
-										pt = aspc.getPortType(i);
+								PortTypeSintetico pt = null;
+								for (int i = 0; i < aspc.getPortType().size(); i++) {
+									if(aspc.getPortType().get(i).getNome().equals(asps.getPortType())){
+										pt = aspc.getPortType().get(i);
 										break;
 									}
 								}
 								if(pt==null){
 									throw new Exception("Servizio ["+idServizio.toString()+"] possiede il port type ["+asps.getPortType()+"] che non risulta essere registrato nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"]");
 								}
-								if(pt.sizeAzioneList()>0){
+								if(pt.getAzione().size()>0){
 									azioniList = new ArrayList<String>();
-									for (int i = 0; i < pt.sizeAzioneList(); i++) {
-										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(pt.getAzione(i).getNome())) {
-											azioniList.add(pt.getAzione(i).getNome());
+									for (int i = 0; i < pt.getAzione().size(); i++) {
+										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(pt.getAzione().get(i).getNome())) {
+											azioniList.add(pt.getAzione().get(i).getNome());
 										}
 									}
 								}
 							}else{
-								if(aspc.sizeAzioneList()>0){
+								if(aspc.getAzione().size()>0){
 									azioniList = new ArrayList<String>();
-									for (int i = 0; i < aspc.sizeAzioneList(); i++) {
-										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getAzione(i).getNome())) {
-											azioniList.add(aspc.getAzione(i).getNome());
+									for (int i = 0; i < aspc.getAzione().size(); i++) {
+										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getAzione().get(i).getNome())) {
+											azioniList.add(aspc.getAzione().get(i).getNome());
 										}
 									}
 								}
@@ -5789,11 +5791,11 @@ public class ControlStationCore {
 						break;
 
 					case REST:
-						if(aspc.sizeResourceList()>0){
+						if(aspc.getResource().size()>0){
 							azioniList = new ArrayList<String>();
-							for (int i = 0; i < aspc.sizeResourceList(); i++) {
-								if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getResource(i).getNome())) {
-									azioniList.add(aspc.getResource(i).getNome());
+							for (int i = 0; i < aspc.getResource().size(); i++) {
+								if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getResource().get(i).getNome())) {
+									azioniList.add(aspc.getResource().get(i).getNome());
 								}
 							}
 						}
@@ -5827,7 +5829,7 @@ public class ControlStationCore {
 		
 	}
 	
-	public Map<String,String> getMapAzioni(AccordoServizioParteSpecifica asps,AccordoServizioParteComune aspc, 
+	public Map<String,String> getMapAzioni(AccordoServizioParteSpecifica asps,AccordoServizioParteComuneSintetico aspc, 
 			boolean addTrattinoSelezioneNonEffettuata, boolean throwException, List<String> filtraAzioniUtilizzate, 
 			boolean sortByLabel, boolean sortFirstByPath // per soap questi due parametri sono  ininfluenti
 			) throws DriverConfigurazioneException{
@@ -5848,34 +5850,34 @@ public class ControlStationCore {
 							
 							if(asps.getPortType()!=null){
 								// Bisogna prendere le operations del port type
-								PortType pt = null;
-								for (int i = 0; i < aspc.sizePortTypeList(); i++) {
-									if(aspc.getPortType(i).getNome().equals(asps.getPortType())){
-										pt = aspc.getPortType(i);
+								PortTypeSintetico pt = null;
+								for (int i = 0; i < aspc.getPortType().size(); i++) {
+									if(aspc.getPortType().get(i).getNome().equals(asps.getPortType())){
+										pt = aspc.getPortType().get(i);
 										break;
 									}
 								}
 								if(pt==null){
 									throw new Exception("Servizio ["+idServizio.toString()+"] possiede il port type ["+asps.getPortType()+"] che non risulta essere registrato nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"]");
 								}
-								if(pt.sizeAzioneList()>0){
+								if(pt.getAzione().size()>0){
 									azioniMap = new HashMap<String,String>();
 									sortList = new ArrayList<String>();
-									for (int i = 0; i < pt.sizeAzioneList(); i++) {
-										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(pt.getAzione(i).getNome())) {
-											sortList.add(pt.getAzione(i).getNome());
-											azioniMap.put(pt.getAzione(i).getNome(),pt.getAzione(i).getNome());
+									for (int i = 0; i < pt.getAzione().size(); i++) {
+										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(pt.getAzione().get(i).getNome())) {
+											sortList.add(pt.getAzione().get(i).getNome());
+											azioniMap.put(pt.getAzione().get(i).getNome(),pt.getAzione().get(i).getNome());
 										}
 									}
 								}
 							}else{
-								if(aspc.sizeAzioneList()>0){
+								if(aspc.getAzione().size()>0){
 									azioniMap = new HashMap<String,String>();
 									sortList = new ArrayList<String>();
-									for (int i = 0; i < aspc.sizeAzioneList(); i++) {
-										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getAzione(i).getNome())) {
-											sortList.add(aspc.getAzione(i).getNome());
-											azioniMap.put(aspc.getAzione(i).getNome(),aspc.getAzione(i).getNome());
+									for (int i = 0; i < aspc.getAzione().size(); i++) {
+										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getAzione().get(i).getNome())) {
+											sortList.add(aspc.getAzione().get(i).getNome());
+											azioniMap.put(aspc.getAzione().get(i).getNome(),aspc.getAzione().get(i).getNome());
 										}
 									}
 								}
@@ -5884,31 +5886,31 @@ public class ControlStationCore {
 						break;
 
 					case REST:
-						if(aspc.sizeResourceList()>0){
+						if(aspc.getResource().size()>0){
 							azioniMap = new HashMap<String,String>();
 							sortList = new ArrayList<String>();
 							if(sortByLabel) {
 								sortMap = new HashMap<>();
 							}
-							for (int i = 0; i < aspc.sizeResourceList(); i++) {
-								if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getResource(i).getNome())) {
+							for (int i = 0; i < aspc.getResource().size(); i++) {
+								if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getResource().get(i).getNome())) {
 									if(sortByLabel) {
 										String sortLabelId = null;
 										if(!sortFirstByPath) {
-											sortLabelId = NamingUtils.getLabelResource(aspc.getResource(i));
+											sortLabelId = NamingUtils.getLabelResource(aspc.getResource().get(i));
 										}
 										else {
-											String path = aspc.getResource(i).getPath()!=null ? aspc.getResource(i).getPath() : CostantiDB.API_RESOURCE_PATH_ALL_VALUE;
-											String method = aspc.getResource(i).getMethod()!=null ? aspc.getResource(i).getMethod().getValue() : CostantiDB.API_RESOURCE_HTTP_METHOD_ALL_VALUE;
+											String path = aspc.getResource().get(i).getPath()!=null ? aspc.getResource().get(i).getPath() : CostantiDB.API_RESOURCE_PATH_ALL_VALUE;
+											String method = aspc.getResource().get(i).getMethod()!=null ? aspc.getResource().get(i).getMethod().getValue() : CostantiDB.API_RESOURCE_HTTP_METHOD_ALL_VALUE;
 											sortLabelId = path+" "+method;
 										}
 										sortList.add(sortLabelId);
-										sortMap.put(sortLabelId, aspc.getResource(i).getNome());
+										sortMap.put(sortLabelId, aspc.getResource().get(i).getNome());
 									}
 									else {
-										sortList.add(aspc.getResource(i).getNome());
+										sortList.add(aspc.getResource().get(i).getNome());
 									}
-									azioniMap.put(aspc.getResource(i).getNome(),NamingUtils.getLabelResource(aspc.getResource(i)));
+									azioniMap.put(aspc.getResource().get(i).getNome(),NamingUtils.getLabelResource(aspc.getResource().get(i)));
 								}
 							}
 						}
@@ -5951,7 +5953,7 @@ public class ControlStationCore {
 		}
 	}
 	
-	public Map<String,String> getAzioniConLabel(AccordoServizioParteSpecifica asps,AccordoServizioParteComune aspc, 
+	public Map<String,String> getAzioniConLabel(AccordoServizioParteSpecifica asps,AccordoServizioParteComuneSintetico aspc, 
 			boolean addTrattinoSelezioneNonEffettuata, boolean throwException, List<String> filtraAzioniUtilizzate) throws Exception{
 		Map<String,String> mapAzioni = getMapAzioni(asps, aspc, addTrattinoSelezioneNonEffettuata, throwException, filtraAzioniUtilizzate,
 				true, true);

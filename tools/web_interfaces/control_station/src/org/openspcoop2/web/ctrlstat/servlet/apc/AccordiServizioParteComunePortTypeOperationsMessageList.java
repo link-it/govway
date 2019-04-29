@@ -90,7 +90,7 @@ public class AccordiServizioParteComunePortTypeOperationsMessageList extends Act
 
 				// Prendo l'id del port-type e dell'azione
 				int idOperation = 0;
-				AccordoServizioParteComune as = apcCore.getAccordoServizio(idAcc);
+				AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAcc);
 				for (int i = 0; i < as.sizePortTypeList(); i++) {
 					PortType pt = as.getPortType(i);
 					if (nomept.equals(pt.getNome())) {

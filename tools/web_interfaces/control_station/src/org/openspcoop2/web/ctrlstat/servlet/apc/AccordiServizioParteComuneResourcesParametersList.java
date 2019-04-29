@@ -102,7 +102,7 @@ public final class AccordiServizioParteComuneResourcesParametersList extends Act
 			// Prendo l'id della risorsa
 			Long idRisorsa = 0L;
 			Resource res =  null;
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordo);
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordo);
 			for (int i = 0; i < as.sizeResourceList(); i++) {
 				res = as.getResource(i);
 				if (nomeRisorsa.equals(res.getNome())) {

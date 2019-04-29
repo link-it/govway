@@ -61,9 +61,9 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
@@ -868,10 +868,10 @@ public final class PorteDelegateChange extends Action {
 					}
 				}
 				
-				AccordoServizioParteComune as = null;
+				AccordoServizioParteComuneSintetico as = null;
 				if ( servS!=null ) {
 					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(servS.getAccordoServizioParteComune());
-					as = apcCore.getAccordoServizio(idAccordo);
+					as = apcCore.getAccordoServizioSintetico(idAccordo);
 					
 					if(serviceBinding == null) {
 						serviceBinding = porteDelegateCore.toMessageServiceBinding(as.getServiceBinding());
@@ -1035,10 +1035,10 @@ public final class PorteDelegateChange extends Action {
 					}
 				}
 				
-				AccordoServizioParteComune as = null;
+				AccordoServizioParteComuneSintetico as = null;
 				if(servS!=null){
 					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(servS.getAccordoServizioParteComune());
-					as = apcCore.getAccordoServizio(idAccordo);
+					as = apcCore.getAccordoServizioSintetico(idAccordo);
 				}
 				
 				// Se modeaz = register-input, prendo la lista delle azioni

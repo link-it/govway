@@ -180,7 +180,7 @@ public final class AccordiServizioParteComunePortTypesAdd extends Action {
 			apcHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.valueOf(idInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 			IDAccordo idAs = idAccordoFactory.getIDAccordoFromAccordo(as);
 			String uri = idAccordoFactory.getUriFromAccordo(as);
@@ -405,7 +405,7 @@ public final class AccordiServizioParteComunePortTypesAdd extends Action {
 
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id dei port-type
-			as = apcCore.getAccordoServizio(Long.valueOf(idInt));
+			as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
 
 			apcHelper.prepareAccordiPorttypeList(id,as, lista, ricerca,tipoAccordo);
 

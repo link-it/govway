@@ -24,6 +24,8 @@
 	  se alla console ci si collegava con una utenza differente da quella utilizzata per creare l'applicativo o il soggetto.
 	- Nella creazione di una erogazione o fruizione di una API, tramite la console di gestione, 
 	  se l'API implementata definisce un connettore, questo viene proposto come connettore di default da utilizzare.
+	- Ottimizzata l'acquisizione delle informazioni relative alle API sulle varie maschere della console di gestione, 
+	  rendendo la navigazione sulle varie sezioni della console più veloce.
 
 2019-04-12  Andrea Poli <apoli@link.it>
 

@@ -833,7 +833,7 @@ public class HttpUtilities {
 			if(request.getMethod()==null){
 				throw new UtilsException("HttpMethod required");
 			}
-			setStream(httpConn, request.getMethod());
+			setStream(httpConn, request.getMethod(), request.getContentType());
 
 			HttpBodyParameters httpContent = new  HttpBodyParameters(request.getMethod(), request.getContentType());
 			// Spedizione byte

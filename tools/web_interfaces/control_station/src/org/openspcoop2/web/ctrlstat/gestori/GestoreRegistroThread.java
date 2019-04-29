@@ -768,7 +768,7 @@ public class GestoreRegistroThread extends GestoreGeneral {
 
 							// Ottengo nuova immagine dell'accordo
 							try {
-								accordoServizioParteComune = this.apcCore.getAccordoServizio(idAccordoServizioParteComune,true);
+								accordoServizioParteComune = this.apcCore.getAccordoServizioFull(idAccordoServizioParteComune,true);
 							} catch (DriverRegistroServiziNotFound de) {
 								operazioneInGestione.waitBeforeInvalid("Accordo di Servizio non esistente nel database della govwayConsole: " + de.toString());
 								continue;

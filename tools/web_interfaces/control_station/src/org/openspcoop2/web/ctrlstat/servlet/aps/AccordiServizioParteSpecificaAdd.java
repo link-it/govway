@@ -55,14 +55,14 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
-import org.openspcoop2.core.registry.Operation;
-import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.beans.OperationSintetica;
+import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
@@ -523,7 +523,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			IDSoggetto soggettoReferente = null;
 			int idReferente = -1;
 
-			List<AccordoServizioParteComune> listaAPI = AccordiServizioParteSpecificaUtilities.getListaAPI(this.tipoProtocollo, userLogin, apsCore, apsHelper);
+			List<AccordoServizioParteComuneSintetico> listaAPI = AccordiServizioParteSpecificaUtilities.getListaAPI(this.tipoProtocollo, userLogin, apsCore, apsHelper);
 
 			
 
@@ -533,7 +533,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				accordiList = new String[listaAPI.size()];
 				accordiListLabel = new String[listaAPI.size()];
 				int i = 0;
-				for (AccordoServizioParteComune as : listaAPI) {
+				for (AccordoServizioParteComuneSintetico as : listaAPI) {
 					accordiList[i] = as.getId().toString();
 					soggettoReferente = null;
 					idReferente = -1;
@@ -610,13 +610,13 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 
 			// Lista port-type associati all'accordo di servizio
-			AccordoServizioParteComune as = null;
+			AccordoServizioParteComuneSintetico as = null;
 			if (this.accordo != null && !"".equals(this.accordo)) {
-				as = apcCore.getAccordoServizio(Long.parseLong(this.accordo));
+				as = apcCore.getAccordoServizioSintetico(Long.parseLong(this.accordo));
 			} else {
 				if (accordiList != null){
 					if(accordoPrimoAccesso >= 0 && accordoPrimoAccesso < accordiList.length)
-						as = apcCore.getAccordoServizio(Long.parseLong(accordiList[accordoPrimoAccesso]));
+						as = apcCore.getAccordoServizioSintetico(Long.parseLong(accordiList[accordoPrimoAccesso]));
 					if(as!=null)
 						this.accordo = as.getId() + "";
 				}
@@ -632,14 +632,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				accordoPrivato = as.getPrivato()!=null && as.getPrivato();
 				uriAccordo = idAccordoFactory.getUriFromAccordo(as);
 
-				List<PortType> portTypes = AccordiServizioParteSpecificaUtilities.getListaPortTypes(as, apsCore, apsHelper);
+				List<PortTypeSintetico> portTypes = AccordiServizioParteSpecificaUtilities.getListaPortTypes(as, apsCore, apsHelper);
 				
 				if (portTypes.size() > 0) {
 					ptList = new String[portTypes.size() + 1];
 					ptList[0] = "-";
 					int i = 1;
-					for (Iterator<PortType> iterator = portTypes.iterator(); iterator.hasNext();) {
-						PortType portType2 = iterator.next();
+					for (Iterator<PortTypeSintetico> iterator = portTypes.iterator(); iterator.hasNext();) {
+						PortTypeSintetico portType2 = iterator.next();
 						ptList[i] = portType2.getNome();
 						i++;
 					}
@@ -647,17 +647,17 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 				if( apsCore.isShowCorrelazioneAsincronaInAccordi() ){
 					if (this.portType != null && !"".equals(this.portType) && !"-".equals(this.portType)){
-						PortType pt = null;
-						for(int i=0; i<as.sizePortTypeList(); i++){
-							if(this.portType.equals(as.getPortType(i).getNome())){
-								pt = as.getPortType(i);
+						PortTypeSintetico pt = null;
+						for(int i=0; i<as.getPortType().size(); i++){
+							if(this.portType.equals(as.getPortType().get(i).getNome())){
+								pt = as.getPortType().get(i);
 								break;
 							}
 						}
 						boolean servizioCorrelato = false;
 						if(pt!=null){
-							for(int i=0; i<pt.sizeAzioneList(); i++){
-								Operation op = pt.getAzione(i);
+							for(int i=0; i<pt.getAzione().size(); i++){
+								OperationSintetica op = pt.getAzione().get(i);
 								if(op.getCorrelataServizio()!=null && !pt.getNome().equals(op.getCorrelataServizio()) && op.getCorrelata()!=null){
 									servizioCorrelato = true;
 									break;
@@ -1672,7 +1672,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 			
 			// nome accordo
-			as = apcCore.getAccordoServizio(idAcc);
+			as = apcCore.getAccordoServizioSintetico(idAcc);
 			
 			if(!alreadyExists) {
 				asps.setNome(this.nomeservizio);

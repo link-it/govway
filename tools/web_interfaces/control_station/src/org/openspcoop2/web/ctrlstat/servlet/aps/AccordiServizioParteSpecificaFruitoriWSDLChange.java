@@ -185,7 +185,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			String titleServizio = apsHelper.getLabelIdServizio(asps);
 			
 			// Prendo Accordo di servizio parte comune
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 
 			// Mi calcolo IDServizio, che servirà per recuperare il fruitore una

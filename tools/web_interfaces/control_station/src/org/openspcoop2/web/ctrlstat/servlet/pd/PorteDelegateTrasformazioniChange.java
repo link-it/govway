@@ -45,8 +45,8 @@ import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -189,7 +189,7 @@ public class PorteDelegateTrasformazioniChange extends Action {
 				azioniAssociatePorta.addAll(portaDelegata.getAzione().getAzioneDelegataList());
 
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
-			AccordoServizioParteComune apc = apcCore.getAccordoServizio(asps.getIdAccordo()); 
+			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 			Map<String,String> azioniAccordo = porteDelegateCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
 			
 			if(azioniAccordo!=null && azioniAccordo.size()>0) {

@@ -35,6 +35,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -93,7 +94,7 @@ public final class AccordiServizioParteComuneDel extends Action {
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.parseLong(idsToRemove.get(i)));
+				AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.parseLong(idsToRemove.get(i)));
 				
 				AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComune(as, userLogin, apcCore, apcHelper, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				
@@ -111,7 +112,7 @@ public final class AccordiServizioParteComuneDel extends Action {
 			apcHelper.makeMenu();
 
 			// preparo la lista
-			List<AccordoServizioParteComune> lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, tipoAccordo);
+			List<AccordoServizioParteComuneSintetico> lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, tipoAccordo);
 			
 			if(isModalitaVistaApiCustom) {
 				apcHelper.prepareApiList(lista, ricerca, tipoAccordo); 

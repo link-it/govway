@@ -54,10 +54,10 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -331,11 +331,11 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				tipoSoggettoProprietario = soggetto.getTipo();
 			}
 
-			AccordoServizioParteComune as = null;
+			AccordoServizioParteComuneSintetico as = null;
 			ServiceBinding serviceBinding = null;
 			if (asps != null) {
 				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-				as = apcCore.getAccordoServizio(idAccordo);
+				as = apcCore.getAccordoServizioSintetico(idAccordo);
 				serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 			}
 

@@ -98,7 +98,7 @@ public class AccordiServizioParteComunePortTypeOperationsMessageAdd extends Acti
 			apcHelper.makeMenu();
 
 			// Prendo il nome dal db
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(idInt);
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idInt);
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 			
 			// Prendo il port-type e l'operation

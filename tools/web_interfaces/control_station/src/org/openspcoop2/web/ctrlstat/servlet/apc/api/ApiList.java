@@ -32,7 +32,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -87,8 +87,15 @@ public class ApiList  extends Action {
 			ricerca = apiHelper.checkSearchParameters(idLista, ricerca);
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
-			List<AccordoServizioParteComune> lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, tipoAccordo);
+//			long before = org.openspcoop2.utils.date.DateManager.getTimeMillis();
+			List<AccordoServizioParteComuneSintetico> lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, tipoAccordo);
+//			long after = org.openspcoop2.utils.date.DateManager.getTimeMillis();
+//			System.out.println("READ: "+org.openspcoop2.utils.Utilities.convertSystemTimeIntoString_millisecondi((after-before), true));
+//			
+//			before = org.openspcoop2.utils.date.DateManager.getTimeMillis();
 			apiHelper.prepareApiList(lista, ricerca, tipoAccordo);
+//			after = org.openspcoop2.utils.date.DateManager.getTimeMillis();
+//			System.out.println("PRESENTATION: "+org.openspcoop2.utils.Utilities.convertSystemTimeIntoString_millisecondi((after-before), true));
 
 			String msg = apiHelper.getParameter(Costanti.PARAMETER_NAME_MSG_ERROR_EXPORT);
 			if(msg!=null && !"".equals(msg)){

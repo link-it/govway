@@ -103,7 +103,7 @@ public final class AccordiServizioParteComuneAllegatiDel extends Action {
 				
 				if(as==null) {
 					Documento doc = archiviCore.getDocumento(idAllegato, false);
-					as = apcCore.getAccordoServizio(doc.getIdProprietarioDocumento());
+					as = apcCore.getAccordoServizioFull(doc.getIdProprietarioDocumento());
 				}
 			}
 				

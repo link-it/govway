@@ -42,8 +42,8 @@ import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.mvc.properties.utils.ConfigManager;
 import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -126,7 +126,7 @@ public final class PorteDelegateWS extends Action {
 			String idporta = pde.getNome();
 			
 			AccordoServizioParteSpecifica asps = aspsCore.getAccordoServizioParteSpecifica(Long.parseLong(idAsps));
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(asps.getIdAccordo());
+			AccordoServizioParteComuneSintetico as = apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding()); 
 
 			// Calcolo lo stato MTOM

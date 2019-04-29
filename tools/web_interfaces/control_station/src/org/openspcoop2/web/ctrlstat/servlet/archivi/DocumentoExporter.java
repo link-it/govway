@@ -195,7 +195,7 @@ public class DocumentoExporter extends HttpServlet {
 				if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_COMUNE.equals(tipoDocumento)){
 
 					AccordiServizioParteComuneCore asCore = new AccordiServizioParteComuneCore(archiviCore);
-					AccordoServizioParteComune as = asCore.getAccordoServizio(idAccordoInt);
+					AccordoServizioParteComune as = asCore.getAccordoServizioFull(idAccordoInt);
 
 					if( ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_DEFINITORIO.equals(tipoDocumentoDaScaricare) ){
 						fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_INTERFACCIA_DEFINITORIA;
@@ -257,7 +257,7 @@ public class DocumentoExporter extends HttpServlet {
 					}
 					else if( ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_XSD_SCHEMA_COLLECTION.equals(tipoDocumentoDaScaricare) ){
 
-						AccordoServizioParteComune asConAllegati = asCore.getAccordoServizio(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as), true);
+						AccordoServizioParteComune asConAllegati = asCore.getAccordoServizioFull(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as), true);
 						try{
 							AccordoServizioUtils asUtils = new AccordoServizioUtils(ControlStationCore.getLog());
 							XSDSchemaCollection schemaCollection = asUtils.buildSchemaCollection(asConAllegati, true);

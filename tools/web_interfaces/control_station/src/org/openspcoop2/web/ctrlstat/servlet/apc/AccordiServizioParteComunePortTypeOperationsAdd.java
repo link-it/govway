@@ -201,7 +201,7 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 			apcHelper.makeMenu();
 
 			// Prendo il nome dal db
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(idInt);
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idInt);
 			String uriAS = idAccordoFactory.getUriFromAccordo(as);
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 			IDAccordo idAs = idAccordoFactory.getIDAccordoFromAccordo(as);
@@ -642,7 +642,7 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 			int idPT = pt.getId().intValue();
 			if(updateAccordo) {		
 				// ricarico l'accordo	
-				as = apcCore.getAccordoServizio(idInt);
+				as = apcCore.getAccordoServizioFull(idInt);
 				for (PortType ptCheck : as.getPortTypeList()) {
 					if(ptCheck.getNome().equals(pt.getNome())) {
 						idPT = ptCheck.getId().intValue();

@@ -48,12 +48,11 @@ import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpsCertificat
 import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpsConfigurazioneManuale;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationPrincipal;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
-import org.openspcoop2.utils.service.beans.ProfiloEnum;
-import org.openspcoop2.utils.service.beans.utils.ProfiloUtils;
 import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneHttps;
 import org.openspcoop2.core.config.rs.server.model.TipoKeystore;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
@@ -61,10 +60,12 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
-import org.openspcoop2.utils.service.beans.Lista;
-import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.service.beans.Lista;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.utils.ProfiloUtils;
+import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
@@ -696,10 +697,13 @@ public class Helper {
 		return ret;
 	}
 	
-	public static final AccordoServizioParteComune getAccordo(String nome, int versione, IDSoggetto idSoggReferente,	AccordiServizioParteComuneCore apcCore)  {
-		return evalnull( () -> apcCore.getAccordoServizio(IDAccordoFactory.getInstance().getIDAccordoFromValues(nome, idSoggReferente, versione)));
+	public static final AccordoServizioParteComune getAccordoFull(String nome, int versione, IDSoggetto idSoggReferente,	AccordiServizioParteComuneCore apcCore)  {
+		return evalnull( () -> apcCore.getAccordoServizioFull(IDAccordoFactory.getInstance().getIDAccordoFromValues(nome, idSoggReferente, versione)));
 	}
-
+	
+	public static final AccordoServizioParteComuneSintetico getAccordoSintetico(String nome, int versione, IDSoggetto idSoggReferente,	AccordiServizioParteComuneCore apcCore)  {
+		return evalnull( () -> apcCore.getAccordoServizioSintetico(IDAccordoFactory.getInstance().getIDAccordoFromValues(nome, idSoggReferente, versione)));
+	}
 
 	public static final ServiceBinding toManifestServiceBinding(
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {

@@ -113,20 +113,20 @@ public final class ErogazioniList extends Action {
 			permessi[0] = pu.isServizi();
 			permessi[1] = pu.isAccordiCooperazione();
 			
-			//long before = org.openspcoop2.utils.date.DateManager.getTimeMillis();
+//			long before = org.openspcoop2.utils.date.DateManager.getTimeMillis();
 			List<AccordoServizioParteSpecifica> lista = null;
 			if(apsCore.isVisioneOggettiGlobale(superUser)){
 				lista = apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori, gestioneErogatori);
 			}else{
 				lista = apsCore.soggettiServizioList(superUser, ricerca,permessi, gestioneFruitori, gestioneErogatori);
 			}
-			//long after = org.openspcoop2.utils.date.DateManager.getTimeMillis();
-			//System.out.println("READ: "+org.openspcoop2.utils.Utilities.convertSystemTimeIntoString_millisecondi((after-before), true));
-
-			//before = org.openspcoop2.utils.date.DateManager.getTimeMillis();
+//			long after = org.openspcoop2.utils.date.DateManager.getTimeMillis();
+//			System.out.println("READ: "+org.openspcoop2.utils.Utilities.convertSystemTimeIntoString_millisecondi((after-before), true));
+//
+//			before = org.openspcoop2.utils.date.DateManager.getTimeMillis();
 			erogazioniHelper.prepareErogazioniList(ricerca, lista);
-			//after = org.openspcoop2.utils.date.DateManager.getTimeMillis();
-			//System.out.println("PRESENTATION: "+org.openspcoop2.utils.Utilities.convertSystemTimeIntoString_millisecondi((after-before), true));
+//			after = org.openspcoop2.utils.date.DateManager.getTimeMillis();
+//			System.out.println("PRESENTATION: "+org.openspcoop2.utils.Utilities.convertSystemTimeIntoString_millisecondi((after-before), true));
 
 			String msg = erogazioniHelper.getParameter(Costanti.PARAMETER_NAME_MSG_ERROR_EXPORT);
 			if(msg!=null && !"".equals(msg)){

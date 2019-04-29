@@ -51,6 +51,7 @@ import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -189,7 +190,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String tmpTitle = apsHelper.getLabelIdServizio(asps);
 
 			// Prendo Accordo di servizio parte comune
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 			org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
 			
@@ -362,7 +363,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			boolean [] permessi = new boolean[2];
 			permessi[0] = pu.isServizi();
 			permessi[1] = pu.isAccordiCooperazione();
-			List<AccordoServizioParteComune> listAccordi =  
+			List<AccordoServizioParteComuneSintetico> listAccordi =  
 					AccordiServizioParteComuneUtilities.accordiListFromPermessiUtente(apcCore, superUser, new Search(true), permessi);
 
 			//				List<AccordoServizioParteComune> listAccordi = apcCore.accordiList("", new Search(true));
@@ -370,7 +371,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 				accordiList = new String[listAccordi.size()];
 				accordiListLabel = new String[listAccordi.size()];
 				int i = 0;
-				for (AccordoServizioParteComune accordoServizio : listAccordi) {
+				for (AccordoServizioParteComuneSintetico accordoServizio : listAccordi) {
 					accordiList[i] = accordoServizio.getId().toString();
 					accordiListLabel[i] = accordoServizio.getNome();
 					i++;
@@ -695,9 +696,9 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			// altrimenti il primo
 			// della lista
 			if (accordo != null && !"".equals(accordo)) {
-				as = apcCore.getAccordoServizio(Long.parseLong(accordo));
+				as = apcCore.getAccordoServizioFull(Long.parseLong(accordo));
 			} else {
-				as = apcCore.getAccordoServizio(idAccordoFactory.getIDAccordoFromUri(aspsT.getAccordoServizioParteComune()));
+				as = apcCore.getAccordoServizioFull(idAccordoFactory.getIDAccordoFromUri(aspsT.getAccordoServizioParteComune()));
 			}
 
 			List<PortType> portTypes = apcCore.accordiPorttypeList(as.getId().intValue(), new Search(true));

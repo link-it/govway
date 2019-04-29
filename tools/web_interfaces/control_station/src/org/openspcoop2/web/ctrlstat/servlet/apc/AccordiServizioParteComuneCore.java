@@ -47,6 +47,7 @@ import org.openspcoop2.core.registry.MessagePart;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.ParameterType;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
@@ -299,7 +300,38 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 
 	}
 
-	public AccordoServizioParteComune getAccordoServizio(IDAccordo idAccordo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public AccordoServizioParteComuneSintetico getAccordoServizioSintetico(IDAccordo idAccordo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "getAccordoServizioSintetico";
+		DriverControlStationDB driver = null;
+
+		try {
+			if(this.isRegistroServiziLocale()){
+				// prendo una connessione
+				con = ControlStationCore.dbM.getConnection();
+				// istanzio il driver
+				driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+				return driver.getDriverRegistroServiziDB().getAccordoServizioParteComuneSintetico(idAccordo);
+			}
+			else{
+				AccordoServizioParteComune aspc = GestoreRegistroServiziRemoto.getDriverRegistroServizi(ControlStationCore.log).getAccordoServizioParteComune(idAccordo);
+				return new AccordoServizioParteComuneSintetico(aspc);
+			}
+
+		} catch (DriverRegistroServiziNotFound de) {
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			throw de;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	public AccordoServizioParteComune getAccordoServizioFull(IDAccordo idAccordo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getAccordoServizio";
 		DriverControlStationDB driver = null;
@@ -329,7 +361,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 
 	}
 
-	public AccordoServizioParteComune getAccordoServizio(IDAccordo idAccordo,boolean deepRead) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+	public AccordoServizioParteComune getAccordoServizioFull(IDAccordo idAccordo,boolean deepRead) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		Connection con = null;
 		String nomeMetodo = "getAccordoServizio";
 		DriverControlStationDB driver = null;
@@ -979,7 +1011,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 
-	public List<AccordoServizioParteComune> accordiServizioParteComuneList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<AccordoServizioParteComuneSintetico> accordiServizioParteComuneList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "accordiServizioParteComuneList";
 		DriverControlStationDB driver = null;
@@ -1001,7 +1033,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
-	public List<AccordoServizioParteComune> accordiServizioCompostiList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<AccordoServizioParteComuneSintetico> accordiServizioCompostiList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "accordiServizioCompostiList";
 		DriverControlStationDB driver = null;
@@ -1162,7 +1194,32 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 
 	}
 
-	public AccordoServizioParteComune getAccordoServizio(long id) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public AccordoServizioParteComuneSintetico getAccordoServizioSintetico(long id) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "getAccordoServizioSintetico";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().getAccordoServizioParteComuneSintetico(id);
+
+		} catch (DriverRegistroServiziNotFound de) {
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			throw de;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	public AccordoServizioParteComune getAccordoServizioFull(long id) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getAccordoServizio";
 		DriverControlStationDB driver = null;
@@ -1820,7 +1877,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 	
-	public String readEndpoint(AccordoServizioParteComune as, String portTypeParam, String servcorr, 
+	public String readEndpoint(AccordoServizioParteComuneSintetico as, String portTypeParam, String servcorr, 
 			BinaryParameter wsdlimpler, BinaryParameter wsdlimplfru) {
 		if(as==null) {
 			return null;

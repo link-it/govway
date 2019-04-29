@@ -92,7 +92,7 @@ public final class AccordiServizioParteComuneComponentiDel extends Action {
 			// Preparo il menu
 			apcHelper.makeMenu();
 
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.parseLong(idAccordo));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.parseLong(idAccordo));
 
 			for (int i = 0; i < idsToRemove.size(); i++) {
 

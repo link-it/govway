@@ -63,6 +63,7 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -123,7 +124,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
             final Soggetto fruitore  = env.soggettiCore.getSoggettoRegistro(env.idSoggetto.toIDSoggetto());
             
             IDSoggetto idReferente = ErogazioniApiHelper.getIdReferente(body, env);
-            final AccordoServizioParteComune as = Helper.getAccordo(body.getApiNome(), body.getApiVersione(), idReferente,env.apcCore);
+            final AccordoServizioParteComuneSintetico as = Helper.getAccordoSintetico(body.getApiNome(), body.getApiVersione(), idReferente,env.apcCore);
             
             if ( as == null ) {
             	throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nessuna Api registrata con nome " + body.getApiNome() + " e versione " + body.getApiVersione());
@@ -653,7 +654,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 		    final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
 			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
-			final AccordoServizioParteComune aspc = env.apcCore.getAccordoServizio(asps.getIdAccordo());
+			final AccordoServizioParteComuneSintetico aspc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 			final IDPortaDelegata idPorta = Helper.supplyOrNotFound( () -> env.pdCore.getIDPortaDelegataAssociataDefault(env.idServizioFactory.getIDServizioFromAccordo(asps), env.idSoggetto.toIDSoggetto()), "Porta Delegata");
 			final PortaDelegata pd  = Helper.supplyOrNotFound( () -> env.pdCore.getPortaDelegata(idPorta), "Porta Delegata");
 			final PortaDelegataAzione pdAzione =  pd.getAzione();
@@ -706,7 +707,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
             idErogatore.setId(soggErogatore.getId());
             
 			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore.toIDSoggetto(), env.idSoggetto.toIDSoggetto(), env), "Fruizione");
-			final AccordoServizioParteComune as = env.apcCore.getAccordoServizio(asps.getIdAccordo());
+			final AccordoServizioParteComuneSintetico as = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 
 	        List<AccordoServizioParteComune> asParteComuneCompatibili = env.apsCore.findAccordiParteComuneBySoggettoAndNome(
 	        		as.getNome(),
@@ -912,7 +913,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			final PortaDelegata pd  = Helper.supplyOrNotFound( () -> env.pdCore.getPortaDelegata(idPorta), "Porta Delegata");
 			final PortaDelegataAzione pdAzione =  new PortaDelegataAzione(); //pd.getAzione() == null ? new PortaDelegataAzione() : pd.getAzione();
 			
-			final AccordoServizioParteComune apc = env.apcCore.getAccordoServizio(asps.getIdAccordo());
+			final AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 			
 			List<PortaDelegataAzioneIdentificazione> identModes = env.pdHelper.getModalitaIdentificazionePorta(env.tipo_protocollo, env.apcCore.toMessageServiceBinding(apc.getServiceBinding()));
 			

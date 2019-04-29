@@ -74,6 +74,7 @@ import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
@@ -550,7 +551,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			long idSoggettoErogatoreLong = Long.parseLong(idSoggErogatore);
 			Soggetto soggettoErogatore = this.soggettiCore.getSoggettoRegistro(idSoggettoErogatoreLong);
 			long idAccordoServizioParteComuneLong = Long.parseLong(idAccordo);
-			AccordoServizioParteComune accordoServizioParteComune = this.apcCore.getAccordoServizio(idAccordoServizioParteComuneLong);
+			AccordoServizioParteComuneSintetico accordoServizioParteComune = this.apcCore.getAccordoServizioSintetico(idAccordoServizioParteComuneLong);
 			String uriAccordoServizioParteComune = this.idAccordoFactory.getUriFromAccordo(accordoServizioParteComune);
 			IDServizio idAccordoServizioParteSpecifica = this.idServizioFactory.getIDServizioFromValues(tiposervizio, nomeservizio, 
 					tipoErogatore, nomeErogatore, versioneInt);
@@ -645,7 +646,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// Lettura accordo di servizio
 			AccordoServizioParteComune as = null;
 			try{
-				as = this.apcCore.getAccordoServizio(Long.parseLong(idAccordo));
+				as = this.apcCore.getAccordoServizioFull(Long.parseLong(idAccordo));
 			}catch(Exception e){
 				this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_API_SELEZIONATA_NON_ESISTENTE_CON_PARAMETRI, idAccordo,
 						e.getMessage()));
@@ -934,7 +935,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				AccordoServizioParteComune as = null;
 				IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune());
 				try{
-					as = this.apcCore.getAccordoServizio(idAccordo);
+					as = this.apcCore.getAccordoServizioFull(idAccordo);
 				}catch(Exception e){
 					this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_API_SELEZIONATA_NON_ESISTENTE_CON_PARAMETRI, idAccordo,e.getMessage()));
 					return false;
@@ -1452,12 +1453,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String fruitoriLabel = AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI;
 
 			
-			List<AccordoServizioParteComune> listApc = new ArrayList<AccordoServizioParteComune>();
+			List<AccordoServizioParteComuneSintetico> listApc = new ArrayList<AccordoServizioParteComuneSintetico>();
 			List<String> protocolli = new ArrayList<String>();
 			
 			boolean showRuoli = false;
 			for (AccordoServizioParteSpecifica asps : lista) {
-				AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(asps.getIdAccordo());
+				AccordoServizioParteComuneSintetico apc = this.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 				ServiceBinding serviceBinding = this.apcCore.toMessageServiceBinding(apc.getServiceBinding());
 				String tipoSoggetto = asps.getTipoSoggettoErogatore();
 				String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggetto);
@@ -1597,7 +1598,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 				
 				de = new DataElement();
-				AccordoServizioParteComune apc = listApc.get(i);
+				AccordoServizioParteComuneSintetico apc = listApc.get(i);
 				ServiceBinding serviceBinding = this.apcCore.toMessageServiceBinding(apc.getServiceBinding());
 
 				Parameter pTipoAccordo = AccordiServizioParteComuneUtilities.getParametroAccordoServizio(apc);
@@ -2205,7 +2206,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(id));
-			AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(asps.getIdAccordo()); 
+			AccordoServizioParteComuneSintetico apc = this.apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = apc.getServiceBinding();
 			ServiceBinding serviceBindingMessage = this.apcCore.toMessageServiceBinding(apc.getServiceBinding());
 			
@@ -3589,7 +3590,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idServizio));
-			AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(asps.getIdAccordo()); 
+			AccordoServizioParteComuneSintetico apc = this.apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = apc.getServiceBinding();
 			ServiceBinding serviceBindingMessage = this.apcCore.toMessageServiceBinding(apc.getServiceBinding());
 			
@@ -7299,7 +7300,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	public Vector<DataElement> addConfigurazioneErogazioneToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String nome, String nomeGruppo,
 			String[] azioni, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, 
 			String idAsps, String idSoggettoErogatoreDelServizio, String identificazione, 
-			AccordoServizioParteSpecifica asps, AccordoServizioParteComune as, ServiceBinding serviceBinding, String modeCreazione, String modeCreazioneConnettore,
+			AccordoServizioParteSpecifica asps, AccordoServizioParteComuneSintetico as, ServiceBinding serviceBinding, String modeCreazione, String modeCreazioneConnettore,
 			String[] listaMappingLabels, String[] listaMappingValues, String mapping, String mappingLabel, String nomeSA, String [] saSoggetti, 
 			String controlloAccessiStato,
 			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale, TipoAutenticazionePrincipal erogazioneAutenticazionePrincipal, List<String> erogazioneAutenticazioneParametroList, boolean erogazioneIsSupportatoAutenticazioneSoggetti,
@@ -7661,7 +7662,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String nome, String nomeGruppo,
 			String [] azioni, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String idAsps,
 			IDSoggetto idSoggettoFruitore, String identificazione, AccordoServizioParteSpecifica asps,
-			AccordoServizioParteComune as, ServiceBinding serviceBinding, String modeCreazione, String modeCreazioneConnettore,
+			AccordoServizioParteComuneSintetico as, ServiceBinding serviceBinding, String modeCreazione, String modeCreazioneConnettore,
 			String[] listaMappingLabels, String[] listaMappingValues, String mapping, String mappingLabel, List<String> saList, String nomeSA, 
 			String controlloAccessiStato,
 			String fruizioneAutenticazione, String fruizioneAutenticazioneOpzionale, TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal, List<String> fruizioneAutenticazioneParametroList, boolean erogazioneIsSupportatoAutenticazioneSoggetti,

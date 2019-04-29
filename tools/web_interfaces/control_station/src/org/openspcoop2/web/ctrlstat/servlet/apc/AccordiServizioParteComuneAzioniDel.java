@@ -106,7 +106,7 @@ public final class AccordiServizioParteComuneAzioniDel extends Action {
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apcCore);
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.valueOf(idAccordo));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idAccordo));
 			//String nomeacc = as.getNome();
 			int totAz = as.sizeAzioneList();
 			String nomeaz = "";

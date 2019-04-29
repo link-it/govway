@@ -116,7 +116,7 @@ public final class AccordiServizioParteComuneResourcesRisposteChange extends Act
 			apcHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.valueOf(idInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 
 			ResourceResponse resourceResponseOLD = null;
@@ -253,7 +253,7 @@ public final class AccordiServizioParteComuneResourcesRisposteChange extends Act
 
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id dei nuovi port-type
-			as = apcCore.getAccordoServizio(Long.valueOf(idInt));
+			as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
 			
 			risorsa = null;
 			for (int j = 0; j < as.sizeResourceList(); j++) {

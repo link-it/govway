@@ -53,11 +53,11 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.Azione;
-import org.openspcoop2.core.registry.Operation;
-import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.beans.AzioneSintetica;
+import org.openspcoop2.core.registry.beans.OperationSintetica;
+import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -244,13 +244,13 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 					}catch(DriverRegistroServiziNotFound dNot){
 					}
 				}
-				AccordoServizioParteComune as = null;
+				AccordoServizioParteComuneSintetico as = null;
 				if(porteApplicativeCore.isRegistroServiziLocale()){
 					int idAcc = servSp.getIdAccordo().intValue();
-					as = apcCore.getAccordoServizio(idAcc);
+					as = apcCore.getAccordoServizioSintetico(idAcc);
 				}
 				else{
-					as = apcCore.getAccordoServizio(IDAccordoFactory.getInstance().getIDAccordoFromUri(servSp.getAccordoServizioParteComune()));
+					as = apcCore.getAccordoServizioSintetico(IDAccordoFactory.getInstance().getIDAccordoFromUri(servSp.getAccordoServizioParteComune()));
 				}
 				String nomeAccordo = as.getNome();
 				// recupero profilo collaborazione accordo
@@ -270,9 +270,9 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 				String profiloCollaborazioneAzione = "";
 				if (nomeAzione != null && !nomeAzione.equals("")) {
 					if(servSp.getPortType()!=null){
-						for (PortType pt : as.getPortTypeList()) {
+						for (PortTypeSintetico pt : as.getPortType()) {
 							if(pt.getNome().equals(servSp.getPortType())){
-								for (Operation op : pt.getAzioneList()) {
+								for (OperationSintetica op : pt.getAzione()) {
 									if(op.getNome().equals(nomeAzione)){
 										if(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(op.getProfAzione())){
 											if(op.getProfiloCollaborazione()!=null)
@@ -290,8 +290,8 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 						}
 					}
 					else{
-						for (int i = 0; i < as.sizeAzioneList(); i++) {
-							Azione tmpAz = as.getAzione(i);
+						for (int i = 0; i < as.getAzione().size(); i++) {
+							AzioneSintetica tmpAz = as.getAzione().get(i);
 							if (tmpAz.getProfAzione().equals(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO)) {
 								if(tmpAz.getProfiloCollaborazione()!=null)
 									profiloCollaborazioneAzione = tmpAz.getProfiloCollaborazione().toString();
@@ -396,13 +396,13 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 					}catch(DriverRegistroServiziNotFound dNot){
 					}
 				}
-				AccordoServizioParteComune as = null;
+				AccordoServizioParteComuneSintetico as = null;
 				if(porteApplicativeCore.isRegistroServiziLocale()){
 					int idAcc = servSp.getIdAccordo().intValue();
-					as = apcCore.getAccordoServizio(idAcc);
+					as = apcCore.getAccordoServizioSintetico(idAcc);
 				}
 				else{
-					as = apcCore.getAccordoServizio(IDAccordoFactory.getInstance().getIDAccordoFromUri(servSp.getAccordoServizioParteComune()));
+					as = apcCore.getAccordoServizioSintetico(IDAccordoFactory.getInstance().getIDAccordoFromUri(servSp.getAccordoServizioParteComune()));
 				}
 				//				String nomeAccordo = as.getNome();
 				// recupero profilo collaborazione accordo
@@ -421,8 +421,8 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 				// specificata e il profilo azione e' ridefinito
 				String profiloCollaborazioneAzione = "";
 				if (nomeAzione != null && !nomeAzione.equals("")) {
-					for (int i = 0; i < as.sizeAzioneList(); i++) {
-						Azione tmpAz = as.getAzione(i);
+					for (int i = 0; i < as.getAzione().size(); i++) {
+						AzioneSintetica tmpAz = as.getAzione().get(i);
 						if (tmpAz.getProfAzione().equals(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO)) {
 							if(tmpAz.getProfiloCollaborazione()!=null){
 								profiloCollaborazioneAzione = tmpAz.getProfiloCollaborazione().toString();

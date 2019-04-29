@@ -41,7 +41,6 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
-import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
@@ -58,6 +57,11 @@ import org.openspcoop2.core.registry.ResourceRepresentation;
 import org.openspcoop2.core.registry.ResourceRequest;
 import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneServizioCompostoSintetico;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.beans.OperationSintetica;
+import org.openspcoop2.core.registry.beans.PortTypeSintetico;
+import org.openspcoop2.core.registry.beans.ResourceSintetica;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ParameterType;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
@@ -928,10 +932,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}
 			}
 
-			AccordoServizioParteComune as = this.apcCore.getAccordoServizio(Integer.parseInt(id));
-			PortType pt = null;
-			for (int i = 0; i < as.sizePortTypeList(); i++) {
-				pt =as.getPortType(i);
+			AccordoServizioParteComuneSintetico as = this.apcCore.getAccordoServizioSintetico(Long.valueOf(id));
+			PortTypeSintetico pt = null;
+			for (int i = 0; i < as.getPortType().size(); i++) {
+				pt =as.getPortType().get(i);
 				if (nomept.equals(pt.getNome()))
 					break;
 			}
@@ -948,8 +952,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			// Controllo che l'azione possieda SOLO azioni correlate o solo azioni NON correlate
 			if(this.core.isShowCorrelazioneAsincronaInAccordi() && pt!=null){
-				for (int i = 0; i < pt.sizeAzioneList(); i++) {
-					Operation op = pt.getAzione(i);
+				for (int i = 0; i < pt.getAzione().size(); i++) {
+					OperationSintetica op = pt.getAzione().get(i);
 					if (tipoOperazione.equals(TipoOperazione.CHANGE)) {
 						if(nomeop.equals(op.getNome()))
 							continue;
@@ -4677,9 +4681,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			int idAcc = 0;
 			IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromValues(nome,soggettoReferente,Integer.parseInt(versione));
 			boolean esisteAS = this.apcCore.existsAccordoServizio(idAccordo);
-			AccordoServizioParteComune as = null;
+			AccordoServizioParteComuneSintetico as = null;
 			if (esisteAS) {
-				as = this.apcCore.getAccordoServizio(idAccordo);
+				as = this.apcCore.getAccordoServizioSintetico(idAccordo);
 				idAcc = as.getId().intValue();
 			}
 			if ((idAcc != 0) && (tipoOperazione.equals(TipoOperazione.ADD) || (tipoOperazione.equals(TipoOperazione.CHANGE) && (idInt != idAcc)))) {
@@ -4696,11 +4700,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			// Controllo visibilita servizi componenti
 			if (tipoOperazione.equals(TipoOperazione.CHANGE)) {
 
-				as = this.apcCore.getAccordoServizio(idAccordoOLD);
+				as = this.apcCore.getAccordoServizioSintetico(idAccordoOLD);
 
 				if((as.getPrivato()==null || as.getPrivato()==false) && as.getServizioComposto()!=null){
-					for(int i=0;i<as.getServizioComposto().sizeServizioComponenteList(); i++){
-						AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(as.getServizioComposto().getServizioComponente(i).getIdServizioComponente());
+					for(int i=0;i<as.getServizioComposto().getServizioComponente().size(); i++){
+						AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(as.getServizioComposto().getServizioComponente().get(i).getIdServizioComponente());
 						if(asps.getPrivato()!=null && asps.getPrivato()){
 							this.pd.setMessage("Non e' possibile impostare una visibilita' pubblica all'accordo di servizio, poiche' possiede un servizio componente ["+
 									IDServizioFactory.getInstance().getUriFromAccordo(asps)+"] con visibilita' privata.");
@@ -4837,7 +4841,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		return idAccordo;
 	}
 
-	public void prepareAccordiList(List<AccordoServizioParteComune> lista, ISearch ricerca, String tipoAccordo) throws Exception {
+	public void prepareAccordiList(List<AccordoServizioParteComuneSintetico> lista, ISearch ricerca, String tipoAccordo) throws Exception {
 		try {
 			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC,
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo));
@@ -5037,8 +5041,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			// inizializzo i dati
 			if (lista != null) {
-				Iterator<AccordoServizioParteComune> it = lista.iterator();
-				AccordoServizioParteComune accordoServizio = null;
+				Iterator<AccordoServizioParteComuneSintetico> it = lista.iterator();
+				AccordoServizioParteComuneSintetico accordoServizio = null;
 				while (it.hasNext()) {
 					accordoServizio = it.next();
 					Vector<DataElement> e = new Vector<DataElement>();
@@ -5070,7 +5074,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					if(showColonnaAccordiCooperazione){
 						de = new DataElement();
 						// calcolo l'accordo di cooperazione
-						AccordoServizioParteComuneServizioComposto servizioComposto = accordoServizio.getServizioComposto();
+						AccordoServizioParteComuneServizioCompostoSintetico servizioComposto = accordoServizio.getServizioComposto();
 
 						if(servizioComposto  != null){
 							AccordoCooperazione accordoCooperazione = this.acCore.getAccordoCooperazione(servizioComposto.getIdAccordoCooperazione());
@@ -5226,8 +5230,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 									new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, accordoServizio.getNome()),
 									AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
 							if (contaListe) {
-								AccordoServizioParteComuneServizioComposto assc = accordoServizio.getServizioComposto();
-								ServletUtils.setDataElementVisualizzaLabel(de,(long)assc.sizeServizioComponenteList());
+								AccordoServizioParteComuneServizioCompostoSintetico assc = accordoServizio.getServizioComposto();
+								ServletUtils.setDataElementVisualizzaLabel(de,(long)assc.getServizioComponente().size());
 							} else
 								ServletUtils.setDataElementVisualizzaLabel(de);
 						}else{
@@ -5700,7 +5704,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			String messagePartNs = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NS);
 			//			String messagePartType = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_TYPE);
 
-			AccordoServizioParteComune as = this.apcCore.getAccordoServizio(idInt);
+			AccordoServizioParteComune as = this.apcCore.getAccordoServizioFull(idInt);
 
 			// Prendo il port-type e l'operation
 			PortType pt = null;
@@ -6435,9 +6439,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			if(tipoOperazione.equals(TipoOperazione.CHANGE)  && !this.isModalitaStandard()) {
 				if(contaListe) {
-					AccordoServizioParteComune as = this.apcCore.getAccordoServizio(Integer.parseInt(idAccordo));
-					for (int i = 0; i < as.sizeResourceList(); i++) {
-						Resource res1 = as.getResource(i);
+					AccordoServizioParteComuneSintetico as = this.apcCore.getAccordoServizioSintetico(Integer.parseInt(idAccordo));
+					for (int i = 0; i < as.getResource().size(); i++) {
+						ResourceSintetica res1 = as.getResource().get(i);
 						if (idRisorsa.intValue() == res1.getId().intValue()) {
 							break;
 						}
@@ -7293,7 +7297,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			Long idResponse = null;
 			if(tipoOperazione.equals(TipoOperazione.CHANGE)) {
 				if(contaListe) {
-					AccordoServizioParteComune as = this.apcCore.getAccordoServizio(Integer.parseInt(id));
+					AccordoServizioParteComune as = this.apcCore.getAccordoServizioFull(Integer.parseInt(id));
 					Resource res1 =  null;
 					for (int i = 0; i < as.sizeResourceList(); i++) {
 						res1 = as.getResource(i);

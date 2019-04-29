@@ -113,7 +113,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			ErogazioniApiHelper.checkAzioniAdd( 
 					body.getAzioni(),
 					azioniOccupate,
-					env.apcCore.getAzioni(asps, env.apcCore.getAccordoServizio(asps.getIdAccordo()), false, false, null)
+					env.apcCore.getAzioni(asps, env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo()), false, false, null)
 				);
 			
 			
@@ -210,7 +210,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			ErogazioniApiHelper.checkAzioniAdd( 
 					body.getAzioni(),
 					azioniOccupate,
-					env.apcCore.getAzioni(asps, env.apcCore.getAccordoServizio(asps.getIdAccordo()), false, false, null)
+					env.apcCore.getAzioni(asps, env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo()), false, false, null)
 				);
 			
 			if (!env.apsHelper.configurazioneFruizioneCheckData(

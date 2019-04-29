@@ -108,8 +108,9 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.ProtocolProperty;
-import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.beans.ResourceSintetica;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.HttpMethod;
@@ -5349,7 +5350,7 @@ public class ConsoleHelper {
 	// Prepara la lista di azioni delle porte
 	public void preparePorteAzioneList(List<String> listaAzioniParam, String idPorta, Integer parentConfigurazione, List<Parameter> lstParametriBreadcrumbs, 
 			String nomePorta, String objectName, List<Parameter> listaParametriSessione,
-			String labelPerPorta, ServiceBinding serviceBinding, AccordoServizioParteComune aspc) throws Exception {
+			String labelPerPorta, ServiceBinding serviceBinding, AccordoServizioParteComuneSintetico aspc) throws Exception {
 		try {
 			ServletUtils.addListElementIntoSession(this.session, objectName,listaParametriSessione);
 
@@ -5363,14 +5364,14 @@ public class ConsoleHelper {
 			this.pd.setPageSize(1000);
 			
 			List<String> listaAzioni = new ArrayList<>();
-			HashMap<String, Resource> mapToResource = new HashMap<>();
+			HashMap<String, ResourceSintetica> mapToResource = new HashMap<>();
 			for (String azione : listaAzioniParam) {
 				if(ServiceBinding.SOAP.equals(serviceBinding)) {
 					listaAzioni.add(azione);
 				}
 				else {
-					Resource risorsa = null;
-					for (Resource resourceTmp : aspc.getResourceList()) {
+					ResourceSintetica risorsa = null;
+					for (ResourceSintetica resourceTmp : aspc.getResource()) {
 						if(resourceTmp.getNome().equals(azione)) {
 							risorsa = resourceTmp;
 							break;
@@ -5424,7 +5425,7 @@ public class ConsoleHelper {
 						e.addElement(de);
 					}
 					else {
-						Resource risorsa = mapToResource.get(nomeAzione);
+						ResourceSintetica risorsa = mapToResource.get(nomeAzione);
 						String labelParametroApcResourcesHttpMethodQualsiasi = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI;
 						//HTTP Method
 						DataElement de = getDataElementHTTPMethodResource(risorsa, labelParametroApcResourcesHttpMethodQualsiasi);   
@@ -5457,17 +5458,24 @@ public class ConsoleHelper {
 		}
 	}
 	
+	public DataElement getDataElementHTTPMethodResource(org.openspcoop2.core.registry.beans.ResourceSintetica risorsa,	String labelParametroApcResourcesHttpMethodQualsiasi) {
+		return getDataElementHTTPMethodResource(risorsa.getMethod(), labelParametroApcResourcesHttpMethodQualsiasi);
+	}
 	public DataElement getDataElementHTTPMethodResource(org.openspcoop2.core.registry.Resource risorsa,	String labelParametroApcResourcesHttpMethodQualsiasi) {
+		return getDataElementHTTPMethodResource(risorsa.getMethod(), labelParametroApcResourcesHttpMethodQualsiasi);
+	}
+	public DataElement getDataElementHTTPMethodResource(HttpMethod httpMethod,	String labelParametroApcResourcesHttpMethodQualsiasi) {
+		
 		DataElement de = new DataElement();
 
 		String styleClass = "resource-method-block resource-method-default";
-		if(risorsa.getMethod()==null) {
+		if(httpMethod==null) {
 			de.setValue(labelParametroApcResourcesHttpMethodQualsiasi);
 		}
 		else {
-			de.setValue(risorsa.getMethod().toString());
+			de.setValue(httpMethod.toString());
 			
-			switch (risorsa.getMethod()) {
+			switch (httpMethod) {
 			case DELETE:
 				styleClass = "resource-method-block resource-method-delete";
 				break;
@@ -5878,6 +5886,9 @@ public class ConsoleHelper {
 	// LABEL API
 	
 	public String getLabelIdAccordo(AccordoServizioParteComune as) throws Exception{
+		return NamingUtils.getLabelAccordoServizioParteComune(as);
+	}
+	public String getLabelIdAccordo(AccordoServizioParteComuneSintetico as) throws Exception{
 		return NamingUtils.getLabelAccordoServizioParteComune(as);
 	}
 	public String getLabelIdAccordo(IDAccordo idAccordo) throws Exception{

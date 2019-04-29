@@ -32,6 +32,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -129,6 +130,11 @@ public class NamingUtils {
 	// API
 	
 	public static String getLabelAccordoServizioParteComune(AccordoServizioParteComune as) throws Exception{
+		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+		String protocollo = protocolFactoryManager.getProtocolByOrganizationType(as.getSoggettoReferente().getTipo());
+		return getLabelAccordoServizioParteComune(protocollo, IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as));
+	}
+	public static String getLabelAccordoServizioParteComune(AccordoServizioParteComuneSintetico as) throws Exception{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		String protocollo = protocolFactoryManager.getProtocolByOrganizationType(as.getSoggettoReferente().getTipo());
 		return getLabelAccordoServizioParteComune(protocollo, IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as));
@@ -249,7 +255,17 @@ public class NamingUtils {
 		return bf.toString();
 	}
 	
+	
+	// RISORSE
+	
 	public static String getLabelResource(org.openspcoop2.core.registry.Resource resource) throws Exception{
+		String method = null;
+		if(resource.getMethod()!=null) {
+			method = resource.getMethod().getValue();
+		}
+		return getLabelResource(method, resource.getPath());
+	}
+	public static String getLabelResource(org.openspcoop2.core.registry.beans.ResourceSintetica resource) throws Exception{
 		String method = null;
 		if(resource.getMethod()!=null) {
 			method = resource.getMethod().getValue();

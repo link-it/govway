@@ -64,8 +64,8 @@ import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
@@ -400,10 +400,10 @@ public final class PorteApplicativeAdd extends Action {
 				}
 			}
 			
-			AccordoServizioParteComune as = null;
+			AccordoServizioParteComuneSintetico as = null;
 			if (servS != null) {
 				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(servS.getAccordoServizioParteComune());
-				as = apcCore.getAccordoServizio(idAccordo);
+				as = apcCore.getAccordoServizioSintetico(idAccordo);
 				if(serviceBinding == null)
 					serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 			}

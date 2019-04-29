@@ -110,7 +110,7 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
 			// }
 			ArrayList<String> optsToRemove = Utilities.parseIdsToRemove(objToRemove);
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.valueOf(idInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
 
 			// Prendo il port-type
 			PortType pt = null;

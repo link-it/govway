@@ -43,6 +43,7 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -407,10 +408,11 @@ public final class UtentiDel extends Action {
 								        tipoModifica.add(CostantiControlStation.PERFORM_OPERATION_UPDATE);
 									}
 									// Recupero gli accordi servizio dell'utente
-									List<AccordoServizioParteComune> asLista = apcCore.accordiServizioParteComuneList(nomesu, new Search());
-									Iterator<AccordoServizioParteComune> itAs = asLista.iterator();
+									List<AccordoServizioParteComuneSintetico> asLista = apcCore.accordiServizioParteComuneList(nomesu, new Search());
+									Iterator<AccordoServizioParteComuneSintetico> itAs = asLista.iterator();
 									while (itAs.hasNext()) {
-										AccordoServizioParteComune as = itAs.next();
+										AccordoServizioParteComuneSintetico asSintetico = itAs.next();
+										AccordoServizioParteComune as = apcCore.getAccordoServizioFull(asSintetico.getId());
 										as.setSuperUser(singleSuServizi);
 								        oggetti.add(as);
 								        tipoModifica.add(CostantiControlStation.PERFORM_OPERATION_UPDATE);
@@ -453,10 +455,11 @@ public final class UtentiDel extends Action {
 								        tipoModifica.add(CostantiControlStation.PERFORM_OPERATION_UPDATE);
 									}
 									// Recupero gli accordi servizio dell'utente
-									List<AccordoServizioParteComune> asLista = apcCore.accordiServizioCompostiList(nomesu, new Search());
-									Iterator<AccordoServizioParteComune> itAs = asLista.iterator();
+									List<AccordoServizioParteComuneSintetico> asLista = apcCore.accordiServizioCompostiList(nomesu, new Search());
+									Iterator<AccordoServizioParteComuneSintetico> itAs = asLista.iterator();
 									while (itAs.hasNext()) {
-										AccordoServizioParteComune as = itAs.next();
+										AccordoServizioParteComuneSintetico asSintetico = itAs.next();
+										AccordoServizioParteComune as = apcCore.getAccordoServizioFull(asSintetico.getId());
 										as.setSuperUser(singleSuAccordiCooperazione);
 								        oggetti.add(as);
 								        tipoModifica.add(CostantiControlStation.PERFORM_OPERATION_UPDATE);

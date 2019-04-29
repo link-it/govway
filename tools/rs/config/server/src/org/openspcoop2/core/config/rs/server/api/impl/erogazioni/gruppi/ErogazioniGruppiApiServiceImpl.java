@@ -109,7 +109,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			ErogazioniApiHelper.checkAzioniAdd( 
 					body.getAzioni(),
 					azioniOccupate,
-					env.apcCore.getAzioni(asps, env.apcCore.getAccordoServizio(asps.getIdAccordo()), false, false, null)
+					env.apcCore.getAzioni(asps, env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo()), false, false, null)
 				);
 			
 			env.requestWrapper.overrideParameterValues(CostantiControlStation.PARAMETRO_AZIONI, body.getAzioni().toArray(new String[0]));
@@ -205,7 +205,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			ErogazioniApiHelper.checkAzioniAdd( 
 					body.getAzioni(),
 					azioniOccupate,
-					env.apcCore.getAzioni(asps, env.apcCore.getAccordoServizio(asps.getIdAccordo()), false, false, null)
+					env.apcCore.getAzioni(asps, env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo()), false, false, null)
 				);
 			
 			if (!env.apsHelper.configurazioneErogazioneCheckData(

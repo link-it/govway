@@ -52,6 +52,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
@@ -274,7 +275,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		AccordiCooperazioneCore acCore = new AccordiCooperazioneCore(apcCore);
 		Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-		AccordoServizioParteComune as = apcCore.getAccordoServizio(idAcc);
+		AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAcc);
 		boolean asWithAllegati = apcHelper.asWithAllegatiXsd(as);
 
 		String[] providersList = null;
@@ -1016,7 +1017,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), operazioniDaEffettuare);
 
 			// preparo lista
-			List<AccordoServizioParteComune> lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, this.tipoAccordo);
+			List<AccordoServizioParteComuneSintetico> lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, this.tipoAccordo);
 			
 			if(isModalitaVistaApiCustom) {
 				apcHelper.prepareApiChange(tipoOp, as); 

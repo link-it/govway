@@ -67,8 +67,9 @@ import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
-import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -130,33 +131,33 @@ public class AccordiServizioParteSpecificaUtilities {
 		return permessi;
 	}
 	
-	public static List<AccordoServizioParteComune> getListaAPI(String tipoProtocollo, String userLogin, AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper) throws Exception {
+	public static List<AccordoServizioParteComuneSintetico> getListaAPI(String tipoProtocollo, String userLogin, AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper) throws Exception {
 		
 		AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 		
 		Search searchAccordi = new Search(true);
 		searchAccordi.addFilter(Liste.ACCORDI, Filtri.FILTRO_PROTOCOLLO, tipoProtocollo);
-		List<AccordoServizioParteComune> listaTmp =  
+		List<AccordoServizioParteComuneSintetico> listaTmp =  
 				AccordiServizioParteComuneUtilities.accordiListFromPermessiUtente(apcCore, userLogin, searchAccordi, 
 						getPermessiUtente(apsHelper));
 		
-		List<AccordoServizioParteComune> listaAPI = null;
+		List<AccordoServizioParteComuneSintetico> listaAPI = null;
 		if(apsHelper.isModalitaCompleta()) {
 			listaAPI = listaTmp;
 		}
 		else {
 			// filtro accordi senza risorse o senza pt/operation
-			listaAPI = new ArrayList<AccordoServizioParteComune>();
-			for (AccordoServizioParteComune accordoServizioParteComune : listaTmp) {
+			listaAPI = new ArrayList<AccordoServizioParteComuneSintetico>();
+			for (AccordoServizioParteComuneSintetico accordoServizioParteComune : listaTmp) {
 				if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(accordoServizioParteComune.getServiceBinding())) {
-					if(accordoServizioParteComune.sizeResourceList()>0) {
+					if(accordoServizioParteComune.getResource().size()>0) {
 						listaAPI.add(accordoServizioParteComune);	
 					}
 				}
 				else {
 					boolean ptValido = false;
-					for (PortType pt : accordoServizioParteComune.getPortTypeList()) {
-						if(pt.sizeAzioneList()>0) {
+					for (PortTypeSintetico pt : accordoServizioParteComune.getPortType()) {
+						if(pt.getAzione().size()>0) {
 							ptValido = true;
 							break;
 						}
@@ -170,21 +171,22 @@ public class AccordiServizioParteSpecificaUtilities {
 		return listaAPI;
 	}
 	
-	public static List<PortType> getListaPortTypes(AccordoServizioParteComune as, AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper) throws Exception{
+	public static List<PortTypeSintetico> getListaPortTypes(AccordoServizioParteComuneSintetico as, AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper) throws Exception{
 		
-		AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
+		//AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 		
-		List<PortType> portTypesTmp = apcCore.accordiPorttypeList(as.getId().intValue(), new Search(true));
-		List<PortType> portTypes = null;
+		//List<PortType> portTypesTmp = apcCore.accordiPorttypeList(as.getId().intValue(), new Search(true));
+		List<PortTypeSintetico> portTypesTmp = as.getPortType();
+		List<PortTypeSintetico> portTypes = null;
 		
 		if(apsHelper.isModalitaCompleta()) {
 			portTypes = portTypesTmp;
 		}
 		else {
 			// filtro pt senza op
-			portTypes = new ArrayList<PortType>();
-			for (PortType portType : portTypesTmp) {
-				if(portType.sizeAzioneList()>0) {
+			portTypes = new ArrayList<PortTypeSintetico>();
+			for (PortTypeSintetico portType : portTypesTmp) {
+				if(portType.getAzione().size()>0) {
 					portTypes.add(portType);
 				}
 			}
@@ -1482,11 +1484,11 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 	
-		AccordoServizioParteComune as = null;
+		AccordoServizioParteComuneSintetico as = null;
 		ServiceBinding serviceBinding = null;
 		if (asps != null) {
 			IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-			as = apcCore.getAccordoServizio(idAccordo);
+			as = apcCore.getAccordoServizioSintetico(idAccordo);
 			serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 		}
 		
@@ -1858,11 +1860,11 @@ public class AccordiServizioParteSpecificaUtilities {
 		String tipoSoggettoFruitore = idSoggettoFruitore.getTipo();
 		String nomeSoggettoFruitore = idSoggettoFruitore.getNome();
 		
-		AccordoServizioParteComune as = null;
+		AccordoServizioParteComuneSintetico as = null;
 		ServiceBinding serviceBinding = null;
 		if (asps != null) {
 			IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-			as = apcCore.getAccordoServizio(idAccordo);
+			as = apcCore.getAccordoServizioSintetico(idAccordo);
 			serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 		}
 	

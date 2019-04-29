@@ -25,6 +25,7 @@ package org.openspcoop2.core.registry.driver;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 
 /**
  * IDAccordoFactory
@@ -92,6 +93,13 @@ public class IDAccordoFactory {
 	}
 	
 	public String getUriFromAccordo(AccordoServizioParteComune accordo)  throws DriverRegistroServiziException{
+		if(accordo==null){
+			throw new DriverRegistroServiziException("Accordo non fornito");
+		}
+		IDAccordo idAccordo = this.build(accordo.getNome(),BeanUtilities.getSoggettoReferenteID(accordo.getSoggettoReferente()),accordo.getVersione());
+		return this.getUriFromIDAccordo(idAccordo);
+	}
+	public String getUriFromAccordo(AccordoServizioParteComuneSintetico accordo)  throws DriverRegistroServiziException{
 		if(accordo==null){
 			throw new DriverRegistroServiziException("Accordo non fornito");
 		}
@@ -207,6 +215,14 @@ public class IDAccordoFactory {
 	}
 	
 	public IDAccordo getIDAccordoFromAccordo(AccordoServizioParteComune accordo) throws DriverRegistroServiziException{
+		if(accordo==null){
+			throw new DriverRegistroServiziException("Accordo non fornito");
+		}
+		IDAccordo idAccordo = this.build(accordo.getNome(),BeanUtilities.getSoggettoReferenteID(accordo.getSoggettoReferente()),accordo.getVersione());
+		return idAccordo;
+	}
+	
+	public IDAccordo getIDAccordoFromAccordo(AccordoServizioParteComuneSintetico accordo) throws DriverRegistroServiziException{
 		if(accordo==null){
 			throw new DriverRegistroServiziException("Accordo non fornito");
 		}

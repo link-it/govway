@@ -68,10 +68,10 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
@@ -142,7 +142,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			int numSA, int numRuoli, String ruoloMatch, String statoMessageSecurity,String statoMTOM ,int numCorrelazioneReq , 
 			int numCorrelazioneRes,String forceWsdlBased, String applicaMTOM,
 			boolean riusoId,
-			AccordoServizioParteSpecifica asps, AccordoServizioParteComune aspc,ServiceBinding serviceBinding,
+			AccordoServizioParteSpecifica asps, AccordoServizioParteComuneSintetico aspc,ServiceBinding serviceBinding,
 			String statoPorta, boolean usataInConfigurazioni, boolean usataInConfigurazioneDefault,
 			boolean ricercaPortaAzioneDelegata, String nomePortaDelegante, String gestioneToken, String[] gestioneTokenPolicyLabels, String[] gestioneTokenPolicyValues,
 			String gestioneTokenPolicy, String gestioneTokenOpzionale, 
@@ -3456,7 +3456,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						gestioneConfigurazioni = Boolean.valueOf(paramGestioneConfigurazioni);
 					}
 					
-					AccordoServizioParteComune as = this.apcCore.getAccordoServizio(asps.getIdAccordo());
+					AccordoServizioParteComuneSintetico as = this.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 					ServiceBinding serviceBinding = this.apcCore.toMessageServiceBinding(as.getServiceBinding());
 					String labelConfigurazione = gestioneConfigurazioni ? ErogazioniCostanti.LABEL_ASPS_GESTIONE_CONFIGURAZIONI : 
 						(gestioneGruppi ? MessageFormat.format(ErogazioniCostanti.LABEL_ASPS_GESTIONE_GRUPPI_CON_PARAMETRO, this.getLabelAzioni(serviceBinding)) : AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE);
@@ -3988,7 +3988,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
-			AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(asps.getIdAccordo()); 
+			AccordoServizioParteComuneSintetico apc = this.apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 			Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);

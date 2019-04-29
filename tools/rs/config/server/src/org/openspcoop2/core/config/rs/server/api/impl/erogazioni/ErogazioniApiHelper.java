@@ -189,8 +189,9 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.IdSoggetto;
-import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
@@ -293,7 +294,7 @@ public class ErogazioniApiHelper {
 		specifico.setPortType(impl.getApiSoapServizio());	
 	}
 	
-	public static final AccordoServizioParteSpecifica apiImplToAps(APIImpl impl, final Soggetto soggErogatore, AccordoServizioParteComune as, ErogazioniEnv env) 
+	public static final AccordoServizioParteSpecifica apiImplToAps(APIImpl impl, final Soggetto soggErogatore, AccordoServizioParteComuneSintetico as, ErogazioniEnv env) 
 			throws DriverRegistroServiziException, DriverRegistroServiziNotFound, CoreException, ProtocolException {
 		final AccordoServizioParteSpecifica ret = new AccordoServizioParteSpecifica();
 				
@@ -337,7 +338,7 @@ public class ErogazioniApiHelper {
 	}
 	
 	
-	public static final void serviziUpdateCheckData(AccordoServizioParteComune as, AccordoServizioParteSpecifica asps, boolean isErogazione, ErogazioniEnv env) throws Exception {
+	public static final void serviziUpdateCheckData(AccordoServizioParteComuneSintetico as, AccordoServizioParteSpecifica asps, boolean isErogazione, ErogazioniEnv env) throws Exception {
 		
 		 // Determino i soggetti compatibili
         Search searchSoggetti = new Search(true);
@@ -715,7 +716,7 @@ public class ErogazioniApiHelper {
 	public static final void serviziCheckData(	
 			TipoOperazione tipoOp,
 			ErogazioniEnv env,
-			AccordoServizioParteComune as,
+			AccordoServizioParteComuneSintetico as,
 			AccordoServizioParteSpecifica asps,
 			Optional<IdSoggetto> fruitore,
 			APIImpl impl
@@ -733,7 +734,7 @@ public class ErogazioniApiHelper {
 		
 		 boolean accordoPrivato = as.getPrivato()!=null && as.getPrivato();		
          
-         List<PortType> ptList = AccordiServizioParteSpecificaUtilities.getListaPortTypes(as, env.apsCore, env.apsHelper);
+         List<PortTypeSintetico> ptList = AccordiServizioParteSpecificaUtilities.getListaPortTypes(as, env.apsCore, env.apsHelper);
          
          String[] ptArray =  ptList.stream()
          		.map( p -> p.getNome() )
@@ -775,7 +776,7 @@ public class ErogazioniApiHelper {
 		
 		
 		// Determino la lista Api
-		List<AccordoServizioParteComune> listaAPI = AccordiServizioParteSpecificaUtilities.getListaAPI(
+		List<AccordoServizioParteComuneSintetico> listaAPI = AccordiServizioParteSpecificaUtilities.getListaAPI(
 				env.tipo_protocollo,
 				env.userLogin,
 				env.apsCore, 
@@ -1378,7 +1379,7 @@ public class ErogazioniApiHelper {
         
         final APIImplAutorizzazioneConfigNew configAuthz = new APIImplAutorizzazioneConfigNew();
         final APIImplAutorizzazioneXACMLConfig configAuthzXacml = new APIImplAutorizzazioneXACMLConfig();
-		final AccordoServizioParteComune as = env.apcCore.getAccordoServizio(asps.getIdAccordo());
+		final AccordoServizioParteComuneSintetico as = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 
         FonteEnum ruoliFonte = FonteEnum.QUALSIASI;
         
@@ -1749,7 +1750,7 @@ public class ErogazioniApiHelper {
 	
 	public static final void updateInformazioniGenerali(ApiImplInformazioniGenerali body, ErogazioniEnv env, AccordoServizioParteSpecifica asps, boolean isErogazione) throws Exception{
 
-		AccordoServizioParteComune as = env.apcCore.getAccordoServizio(asps.getIdAccordo());
+		AccordoServizioParteComuneSintetico as = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 
 		ServiceBinding tipoApi = as.getServiceBinding();
 		
@@ -1790,7 +1791,7 @@ public class ErogazioniApiHelper {
 	public static final void fillApiImplViewItemWithErogazione(final ErogazioniEnv env, final AccordoServizioParteSpecifica asps, final ApiImplViewItem toFill) {
 		try {
 			IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
-			AccordoServizioParteComune apc = env.apcCore.getAccordoServizio(asps.getIdAccordo());
+			AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 		
 			List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa = env.apsCore.mappingServiziPorteAppList(idServizio,asps.getId(), null);
 			List<PortaApplicativa> listaPorteApplicativeAssociate = new ArrayList<>();
@@ -1875,7 +1876,7 @@ public class ErogazioniApiHelper {
 	public static final void fillApiImplViewItemWithFruizione(final ErogazioniEnv env, final AccordoServizioParteSpecifica asps, final IdSoggetto fruitore, final ApiImplViewItem toFill) throws Exception {
 		
 		IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
-		AccordoServizioParteComune apc = env.apcCore.getAccordoServizio(asps.getIdAccordo());
+		AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 		
 		List<MappingFruizionePortaDelegata> listaMappingFruzionePortaDelegata = env.apsCore.serviziFruitoriMappingList(fruitore.getId(), fruitore.toIDSoggetto(), idServizio, null);	
 		List<PortaDelegata> listaPorteDelegateAssociate = new ArrayList<>();
@@ -1943,7 +1944,7 @@ public class ErogazioniApiHelper {
 
 		try {
 			final IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
-			final AccordoServizioParteComune aspc = env.apcCore.getAccordoServizio(asps.getIdAccordo());
+			final AccordoServizioParteComuneSintetico aspc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 			
 			toFill.setTipoServizio(idServizio.getTipo());
 			toFill.setNome(asps.getNome());
@@ -2109,7 +2110,7 @@ public class ErogazioniApiHelper {
 		final IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
 		final IDPortaApplicativa idPA = env.paCore.getIDPortaApplicativaAssociataDefault(idServizio);
 		final PortaApplicativa pa = env.paCore.getPortaApplicativa(idPA);
-		final AccordoServizioParteComune aspc = env.apcCore.getAccordoServizio(asps.getIdAccordo());
+		final AccordoServizioParteComuneSintetico aspc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 		ConfigurazioneCore confCore = new ConfigurazioneCore(env.stationCore);
 		ConfigurazioneProtocollo configProt = confCore.getConfigurazioneProtocollo(env.tipo_protocollo);
 		
@@ -2141,7 +2142,7 @@ public class ErogazioniApiHelper {
 		final IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
 		final IDPortaDelegata idPD = env.pdCore.getIDPortaDelegataAssociataDefault(idServizio, fruitore);
 		final PortaDelegata pd = env.pdCore.getPortaDelegata(idPD);
-		final AccordoServizioParteComune aspc = env.apcCore.getAccordoServizio(asps.getIdAccordo());
+		final AccordoServizioParteComuneSintetico aspc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 		
 		ConfigurazioneCore confCore = new ConfigurazioneCore(env.stationCore);
 		ConfigurazioneProtocollo configProt = confCore.getConfigurazioneProtocollo(env.tipo_protocollo);
@@ -2424,11 +2425,11 @@ public class ErogazioniApiHelper {
 	public static final ApiImplVersioneApiView aspsToApiImplVersioneApiView(final ErogazioniEnv env,
 			final AccordoServizioParteSpecifica asps)
 			throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
-		final AccordoServizioParteComune aspc = env.apcCore.getAccordoServizio(asps.getIdAccordo());
+		final AccordoServizioParteComuneSintetico aspc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 		
 		ApiImplVersioneApiView ret = new ApiImplVersioneApiView();
 		
-		AccordoServizioParteComune api = env.apcCore.getAccordoServizio(asps.getIdAccordo());
+		AccordoServizioParteComuneSintetico api = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 		
 		ret.setApiNome(aspc.getNome());
 		ret.setApiSoapServizio(asps.getPortType());

@@ -41,8 +41,8 @@ import org.openspcoop2.core.config.TrasformazioneRest;
 import org.openspcoop2.core.config.TrasformazioneSoap;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.constants.VersioneSOAP;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -156,7 +156,7 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 			
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
-			AccordoServizioParteComune apc = apcCore.getAccordoServizio(asps.getIdAccordo()); 
+			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 			ServiceBinding serviceBindingMessage = apcCore.toMessageServiceBinding(apc.getServiceBinding());
 			
 			String postBackElementName = porteDelegateHelper.getPostBackElementName();

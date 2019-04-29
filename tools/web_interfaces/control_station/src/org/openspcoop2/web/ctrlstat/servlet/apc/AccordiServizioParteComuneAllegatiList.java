@@ -83,7 +83,7 @@ public final class AccordiServizioParteComuneAllegatiList extends Action {
 				tipoAccordo = null;
 			
 			
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.valueOf(id));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(id));
 
 			// Preparo il menu
 			apcHelper.makeMenu();

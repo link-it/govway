@@ -80,7 +80,7 @@ public final class AccordiServizioParteComuneResourcesList extends Action {
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
 
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.valueOf(id));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(id));
 			
 			// Preparo il menu
 			apcHelper.makeMenu();

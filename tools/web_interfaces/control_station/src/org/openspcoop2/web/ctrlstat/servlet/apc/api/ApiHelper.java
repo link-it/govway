@@ -36,6 +36,7 @@ import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -75,7 +76,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 	}
 
 
-	public void prepareApiList(List<AccordoServizioParteComune> lista, ISearch ricerca, String tipoAccordo) throws Exception {
+	public void prepareApiList(List<AccordoServizioParteComuneSintetico> lista, ISearch ricerca, String tipoAccordo) throws Exception {
 		try {
 
 			ServletUtils.addListElementIntoSession(this.session, ApiCostanti.OBJECT_NAME_APC_API,
@@ -161,7 +162,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 
 			for (int i = 0; i < lista.size(); i++) {
 				Vector<DataElement> e = new Vector<DataElement>();
-				AccordoServizioParteComune accordoServizio = lista.get(i);
+				AccordoServizioParteComuneSintetico accordoServizio = lista.get(i);
 				
 				Parameter pIdAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, accordoServizio.getId()+"");
 				Parameter pNomeAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, accordoServizio.getNome());

@@ -56,6 +56,7 @@ import org.openspcoop2.core.registry.Message;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
@@ -449,7 +450,7 @@ public class ApiApiHelper {
 	}
 
 	
-	public static final ApiItem apiToItem(Api api, AccordoServizioParteComune as, ApiEnv env) {
+	public static final ApiItem apiToItem(Api api, AccordoServizioParteComuneSintetico as, ApiEnv env) {
 		ApiItem ret = new ApiItem();
 
 		ret.setDescrizione(api.getDescrizione());
@@ -522,7 +523,7 @@ public class ApiApiHelper {
 		
 	}
 	
-	public static final Api accordoSpcRegistroToApi(AccordoServizioParteComune as, SoggettiCore soggettiCore) {
+	public static final Api accordoSpcRegistroToApi(AccordoServizioParteComuneSintetico as, SoggettiCore soggettiCore) {
 		Api ret = new Api();
 		
 		ret.setNome(as.getNome());
@@ -556,8 +557,11 @@ public class ApiApiHelper {
 		
 	
 	// Versione "deprecata" in favore di quella più generica nell'Helper
-	public static final AccordoServizioParteComune getAccordo(String nome, Integer versione, ApiEnv env) throws CoreException {
-		return Helper.getAccordo(nome, versione, env.idSoggetto.toIDSoggetto(), env.apcCore);
+	public static final AccordoServizioParteComune getAccordoFull(String nome, Integer versione, ApiEnv env) throws CoreException {
+		return Helper.getAccordoFull(nome, versione, env.idSoggetto.toIDSoggetto(), env.apcCore);
+	}
+	public static final AccordoServizioParteComuneSintetico getAccordoSintetico(String nome, Integer versione, ApiEnv env) throws CoreException {
+		return Helper.getAccordoSintetico(nome, versione, env.idSoggetto.toIDSoggetto(), env.apcCore);
 	}
 
 }

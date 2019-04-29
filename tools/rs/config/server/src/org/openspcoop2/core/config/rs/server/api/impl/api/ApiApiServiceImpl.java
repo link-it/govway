@@ -63,6 +63,7 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.HttpMethod;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
@@ -205,7 +206,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Body non presente");
 			
 			ApiEnv env = new ApiEnv(profilo, soggetto,context);
-			AccordoServizioParteComune as = Helper.getAccordo(nome, versione, env.idSoggetto.toIDSoggetto(), env.apcCore);
+			AccordoServizioParteComune as = Helper.getAccordoFull(nome, versione, env.idSoggetto.toIDSoggetto(), env.apcCore);
 			
 			if (as == null)
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nessuna Api corrisponde ai parametri indicati");
@@ -275,7 +276,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un body");
 			
 			ApiEnv env = new ApiEnv(profilo,soggetto,context);
-			AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione,env);
+			AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione,env);
 			
 			if (as == null)
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nessuna Api con nome: " + nome + " e versione " + versione );
@@ -361,7 +362,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un body");
 			
 			ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if (as == null)
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nessuna Api con nome: " + nome + " e versione " + versione );
@@ -444,7 +445,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un body");
 			
 			ApiEnv env = new ApiEnv(profilo,soggetto,context);
-			AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if (as == null)
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nessuna Api con nome: " + nome + " e versione " + versione );
@@ -506,7 +507,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");     
 			
 			ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome,versione,env);
+			AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome,versione,env);
 			
 			if (as != null) {
 				StringBuffer inUsoMessage = new StringBuffer(); 
@@ -548,7 +549,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			final AccordoServizioParteComune as = Helper.supplyOrNotFound( () -> ApiApiHelper.getAccordo(nome, versione, env), "API");
+			final AccordoServizioParteComune as = Helper.supplyOrNotFound( () -> ApiApiHelper.getAccordoFull(nome, versione, env), "API");
 			final Documento toDel = Helper.evalnull(
 					() -> env.archiviCore.getDocumento(nomeAllegato, null, null, as.getId(), false, ProprietariDocumento.accordoServizio)
 	
@@ -597,7 +598,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			
 			ApiEnv env = new ApiEnv(profilo, soggetto, context);
 			AccordoServizioParteComune as = Helper.supplyOrNotFound(
-					() -> ApiApiHelper.getAccordo(nome, versione, env),
+					() -> ApiApiHelper.getAccordoFull(nome, versione, env),
 					"API"
 				);
 			
@@ -679,7 +680,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
 			final AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(env.apcCore);
 			final AccordoServizioParteComune as = Helper.supplyOrNotFound(
-					() -> ApiApiHelper.getAccordo(nome, versione, env),
+					() -> ApiApiHelper.getAccordoFull(nome, versione, env),
 					"API"
 				);
         
@@ -730,7 +731,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
                         
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
 			final AccordoServizioParteComune as = Helper.supplyOrNotFound(
-					() -> ApiApiHelper.getAccordo(nome, versione, env),
+					() -> ApiApiHelper.getAccordoFull(nome, versione, env),
 					"API"
 				);
 			
@@ -780,7 +781,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			final AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if ( as == null )
 				throw FaultCode.NOT_FOUND.toException("Api non trovata");
@@ -835,7 +836,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			final AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if ( as == null )
 				throw FaultCode.NOT_FOUND.toException("Api non trovata");
@@ -887,7 +888,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				ricerca.addFilter(idLista, Filtri.FILTRO_SERVICE_BINDING, Enums.serviceBindingFromTipo.get(tipoApi).toString());
 			
 			final String tipoAccordo = "apc"; // Dal debug.
-			final List<AccordoServizioParteComune> lista = AccordiServizioParteComuneUtilities.accordiList(env.apcCore, env.userLogin, ricerca, tipoAccordo);
+			final List<AccordoServizioParteComuneSintetico> lista = AccordiServizioParteComuneUtilities.accordiList(env.apcCore, env.userLogin, ricerca, tipoAccordo);
 			final ListaApi ret = ListaUtils.costruisciListaPaginata(
 					context.getServletRequest().getRequestURI(),
 					offset, 
@@ -933,7 +934,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			final AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if ( as == null )
 				throw FaultCode.NOT_FOUND.toException("Api non trovata");
@@ -987,7 +988,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
                         
 			
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			final AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if ( as == null )
 				throw FaultCode.NOT_FOUND.toException("Api non trovata");
@@ -1049,7 +1050,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			
 
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			final AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if ( as == null )
 				throw FaultCode.NOT_FOUND.toException("Api non trovata");                        
@@ -1105,7 +1106,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");     
 		
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			final AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if ( as == null )
 				throw FaultCode.NOT_FOUND.toException("Api non trovata");                        
@@ -1158,7 +1159,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");    
 			
 			ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			AccordoServizioParteComuneSintetico as = ApiApiHelper.getAccordoSintetico(nome, versione, env);
 			
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
@@ -1205,7 +1206,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");
 		
 			ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
@@ -1257,7 +1258,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
 			ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
@@ -1309,7 +1310,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
 			ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
@@ -1347,7 +1348,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
 			ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
@@ -1388,7 +1389,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");     
                                     
 			ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
@@ -1446,7 +1447,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
                         
             
 			ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
@@ -1484,7 +1485,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
 			ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
@@ -1528,7 +1529,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
 			ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
@@ -1575,7 +1576,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un body");
 				
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			final AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
@@ -1643,7 +1644,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un body");
 				
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			final AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
@@ -1739,7 +1740,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un body");
 				
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			final AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			final IDAccordo oldIdAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
 			
 			if (as == null)
@@ -1846,7 +1847,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			Helper.throwIfNull(body);
 			
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			final AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
@@ -1938,7 +1939,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			final AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
@@ -2005,7 +2006,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un body");
 				
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			final AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
@@ -2086,7 +2087,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			final AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 			
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);

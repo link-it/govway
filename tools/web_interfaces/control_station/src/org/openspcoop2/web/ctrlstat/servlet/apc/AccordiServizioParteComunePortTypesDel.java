@@ -104,7 +104,7 @@ public final class AccordiServizioParteComunePortTypesDel extends Action {
 			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
 			// }
 			ArrayList<String> ptsToRemove = Utilities.parseIdsToRemove(objToRemove);
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.valueOf(idInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
 			IDPortType idPT = new IDPortType();
 			idPT.setIdAccordo(idAccordoFactory.getIDAccordoFromAccordo(as));
 			
@@ -128,7 +128,7 @@ public final class AccordiServizioParteComunePortTypesDel extends Action {
 
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id dei port-type
-			as = apcCore.getAccordoServizio(Long.valueOf(idInt));
+			as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
 
 			apcHelper.prepareAccordiPorttypeList(id,as, lista, ricerca, tipoAccordo);
 

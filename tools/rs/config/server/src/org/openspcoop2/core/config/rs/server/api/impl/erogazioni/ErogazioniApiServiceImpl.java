@@ -66,6 +66,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
@@ -123,7 +124,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
             final Soggetto soggettoErogatore = env.soggettiCore.getSoggettoRegistro(env.idSoggetto.toIDSoggetto());
 
             final IDSoggetto idReferente = ErogazioniApiHelper.getIdReferente(ero, env);
-            final AccordoServizioParteComune as = Helper.getAccordo(ero.getApiNome(), ero.getApiVersione(), idReferente ,env.apcCore);
+            final AccordoServizioParteComuneSintetico as = Helper.getAccordoSintetico(ero.getApiNome(), ero.getApiVersione(), idReferente ,env.apcCore);
             
             if ( as == null ) {
             	throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nessuna Api registrata con nome " + ero.getApiNome() + " e versione " + ero.getApiVersione());
@@ -637,7 +638,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 				);
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.paCore.getIDPortaApplicativaAssociataDefault(env.idServizioFactory.getIDServizioFromAccordo(asps)));
 			final PortaApplicativaAzione paAzione = pa.getAzione();
-			final AccordoServizioParteComune aspc = env.apcCore.getAccordoServizio(asps.getIdAccordo());
+			final AccordoServizioParteComuneSintetico aspc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 			
 			String urlInvocazione = ErogazioniApiHelper.getUrlInvocazioneErogazione(asps, env);
 			ApiImplUrlInvocazioneView ret = new ApiImplUrlInvocazioneView();
@@ -684,7 +685,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			
             final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
-			final AccordoServizioParteComune as = env.apcCore.getAccordoServizio(asps.getIdAccordo());
+			final AccordoServizioParteComuneSintetico as = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 
 	        List<AccordoServizioParteComune> asParteComuneCompatibili = env.apsCore.findAccordiParteComuneBySoggettoAndNome(
 	        		as.getNome(),
@@ -930,7 +931,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			
 			final PortaApplicativaAzione paa 	= pa.getAzione() == null ? new PortaApplicativaAzione() : pa.getAzione();
 			
-			final AccordoServizioParteComune apc = env.apcCore.getAccordoServizio(asps.getIdAccordo());
+			final AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 			List<PortaApplicativaAzioneIdentificazione> identModes = env.paHelper.getModalitaIdentificazionePorta(env.tipo_protocollo, env.apcCore.toMessageServiceBinding(apc.getServiceBinding()));
 			
 			if ( identModes.contains(PortaApplicativaAzioneIdentificazione.PROTOCOL_BASED) && identModes.size() == 1 ) {

@@ -66,6 +66,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -179,7 +180,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 	}
 
 	public DataElement newDataElementStatoApiErogazione(boolean setWidthPx,
-			AccordoServizioParteSpecifica asps,AccordoServizioParteComune apc, String nomePortaDefault,
+			AccordoServizioParteSpecifica asps,AccordoServizioParteComuneSintetico apc, String nomePortaDefault,
 			List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa, List<PortaApplicativa> listaPorteApplicativeAssociate) throws Exception {
 		int numeroAbilitate = 0;
 		int numeroConfigurazioni = 0;
@@ -190,7 +191,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		
 		if(listaMappingErogazionePortaApplicativa.size()>1) {
 			List<String> azioniL = new ArrayList<>();
-			Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
+			Map<String,String> azioni = this.apsCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
 			if(azioni != null && azioni.size() > 0)
 				azioniL.addAll(azioni.keySet());
 			allActionRedefined = this.allActionsRedefinedMappingErogazione(azioniL, listaMappingErogazionePortaApplicativa);
@@ -244,7 +245,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 	}
 	
 	public DataElement newDataElementStatoApiFruizione(boolean setWidthPx,
-			AccordoServizioParteSpecifica asps,AccordoServizioParteComune apc, String nomePortaDefault,
+			AccordoServizioParteSpecifica asps,AccordoServizioParteComuneSintetico apc, String nomePortaDefault,
 			List<MappingFruizionePortaDelegata> listaMappingFruzionePortaDelegata, List<PortaDelegata> listaPorteDelegateAssociate) throws Exception {
 		int numeroAbilitate = 0;
 		int numeroConfigurazioni = 0;
@@ -441,11 +442,11 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				ServletUtils.enabledPageDataSearch(this.pd, ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, search);
 			}
 
-			List<AccordoServizioParteComune> listApc = new ArrayList<AccordoServizioParteComune>();
+			List<AccordoServizioParteComuneSintetico> listApc = new ArrayList<AccordoServizioParteComuneSintetico>();
 			List<String> protocolli = new ArrayList<String>();
 
 			for (AccordoServizioParteSpecifica asps : lista) {
-				AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(asps.getIdAccordo());
+				AccordoServizioParteComuneSintetico apc = this.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 				String tipoSoggetto = asps.getTipoSoggettoErogatore();
 				String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggetto);
 
@@ -520,7 +521,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 
 				// Metadati Servizio 
 				de = new DataElement();
-				AccordoServizioParteComune apc = listApc.get(i);
+				AccordoServizioParteComuneSintetico apc = listApc.get(i);
 				ServiceBinding serviceBinding = this.apcCore.toMessageServiceBinding(apc.getServiceBinding());
 
 				String labelAPI = this.getLabelIdAccordo(apc);
@@ -1021,7 +1022,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 	}
 
 	public Vector<Vector<DataElement>> addErogazioneToDati(Vector<Vector<DataElement>> datiPagina, TipoOperazione tipoOp,
-			AccordoServizioParteSpecifica asps, AccordoServizioParteComune as, String protocollo,ServiceBinding serviceBinding ,
+			AccordoServizioParteSpecifica asps, AccordoServizioParteComuneSintetico as, String protocollo,ServiceBinding serviceBinding ,
 			boolean gestioneErogatori, boolean gestioneFruitori,
 			List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa,
 			List<PortaApplicativa> listaPorteApplicativeAssociate,
@@ -2180,7 +2181,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			List<MappingFruizionePortaDelegata> listaMappingFruzionePortaDelegata,
 			List<PortaDelegata> listaPorteDelegateAssociate,
 			Parameter pIdAsps,
-			Parameter pIdFruitore, AccordoServizioParteSpecifica asps, AccordoServizioParteComune as)	throws Exception {
+			Parameter pIdFruitore, AccordoServizioParteSpecifica asps, AccordoServizioParteComuneSintetico as)	throws Exception {
 
 		Map<String,String> azioni = this.core.getAzioniConLabel(asps, as, false, true, new ArrayList<String>());
 		boolean allActionRedefined = false;
@@ -2805,7 +2806,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		
 		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
 		String tipoProtocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore());
-		AccordoServizioParteComune as = this.apcCore.getAccordoServizio(asps.getIdAccordo());
+		AccordoServizioParteComuneSintetico as = this.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 		ServiceBinding serviceBinding = this.apcCore.toMessageServiceBinding(as.getServiceBinding());
 		
 		String tmpTitle = null;

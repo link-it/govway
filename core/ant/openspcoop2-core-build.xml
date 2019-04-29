@@ -82,7 +82,8 @@
 				</antcall>
 				
 				<!-- org.openspcoop.2.core.registry -->	
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.registry,org.openspcoop2.core.registry.constants,org.openspcoop2.core.registry.model,org.openspcoop2.core.registry.utils,org.openspcoop2.core.registry.utisl.serializer" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.registry,org.openspcoop2.core.registry.constants,org.openspcoop2.core.registry.model,org.openspcoop2.core.registry.utils,org.openspcoop2.core.registry.utils.serializer" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.registry.beans" />
 				<antcall target="compile_src_openspcoop2">
 					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/core/registry"/>

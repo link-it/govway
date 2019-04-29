@@ -55,9 +55,9 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -321,11 +321,11 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			List<String> azioniOccupate = mappingInfo.getAzioniOccupate();
 			String nomeNuovaConfigurazione = mappingInfo.getNomeNuovaConfigurazione();
 						
-			AccordoServizioParteComune as = null;
+			AccordoServizioParteComuneSintetico as = null;
 			ServiceBinding serviceBinding = null;
 			if (asps != null) {
 				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-				as = apcCore.getAccordoServizio(idAccordo);
+				as = apcCore.getAccordoServizioSintetico(idAccordo);
 				serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 			}
 
