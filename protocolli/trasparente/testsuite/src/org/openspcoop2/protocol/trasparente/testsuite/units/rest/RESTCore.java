@@ -381,7 +381,7 @@ public class RESTCore {
 			
 			// 2. Variabile sul tipo di HttpRequestMethod
 			// Per sapere se il metodo prevede un input od un output come contenuto è possibile usare la seguente utility
-			HttpBodyParameters httpBody = new HttpBodyParameters(this.method, extRichiesta);
+			HttpBodyParameters httpBody = new HttpBodyParameters(this.method, contentTypeRichiesta);
 			boolean contenutoRichiesta = httpBody.isDoOutput();
 			
 			
