@@ -341,7 +341,7 @@ public class GestoreTrasformazioniUtilities {
 	}
 	
 	public static RisultatoTrasformazioneContenuto trasformazioneContenuto(Logger log, String tipoConversioneContenuto, 
-			byte[] contenuto, String oggetto, Map<String, Object> dynamicMap, PdDContext pddContext) throws Exception {
+			byte[] contenuto, String oggetto, Map<String, Object> dynamicMap, OpenSPCoop2Message msg, Element element, PdDContext pddContext) throws Exception {
 		TipoTrasformazione tipoTrasformazione = null;
 		if(tipoConversioneContenuto!=null) {
 			tipoTrasformazione = TipoTrasformazione.toEnumConstant(tipoConversioneContenuto, true);
@@ -394,6 +394,56 @@ public class GestoreTrasformazioniUtilities {
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template ...");
 			bout = new ByteArrayOutputStream();
 			DynamicUtils.convertFreeMarkerTemplate("template", contenuto, dynamicMap, bout);
+			bout.flush();
+			bout.close();
+			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template completata");
+			if(bout==null || bout.size()<=0) {
+				risultato.setEmpty(true);
+			}
+			else {
+				risultato.setContenuto(bout.toByteArray(), bout.toString());
+			}
+			
+			break;
+			
+		case VELOCITY_TEMPLATE:
+			if(contenuto==null) {
+				throw new Exception("Template "+oggetto+" non definito");
+			}
+						
+			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template ...");
+			bout = new ByteArrayOutputStream();
+			DynamicUtils.convertVelocityTemplate("template", contenuto, dynamicMap, bout);
+			bout.flush();
+			bout.close();
+			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template completata");
+			if(bout==null || bout.size()<=0) {
+				risultato.setEmpty(true);
+			}
+			else {
+				risultato.setContenuto(bout.toByteArray(), bout.toString());
+			}
+			
+			break;
+			
+		case XSLT:
+			if(contenuto==null) {
+				throw new Exception("Template "+oggetto+" non definito");
+			}
+			if(element==null) {
+				if(MessageType.XML.equals(msg.getMessageType()) ||
+						MessageType.SOAP_11.equals(msg.getMessageType()) ||
+						MessageType.SOAP_12.equals(msg.getMessageType())) {
+					throw new Exception("Messaggio da convertire non presente");
+				}
+				else {
+					throw new Exception("Template '"+tipoTrasformazione.getLabel()+"' non utilizzabile con messaggio di tipo '"+msg.getMessageType()+"'");
+				}
+			}
+						
+			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template ...");
+			bout = new ByteArrayOutputStream();
+			DynamicUtils.convertXSLTTemplate("template", contenuto, element, bout);
 			bout.flush();
 			bout.close();
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template completata");
@@ -605,7 +655,7 @@ public class GestoreTrasformazioniUtilities {
 								GestoreTrasformazioniUtilities.trasformazioneContenuto(log, 
 										trasformazioneSoap_tipoConversione, 
 										trasformazioneSoap_templateConversione, 
-										"envelope-body", dynamicMap, pddContext);
+										"envelope-body", dynamicMap, message, element, pddContext);
 						if(risultatoEnvelopeBody.isEmpty()) {
 							if(transportRequestContext!=null) {
 								messageSoap = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.REQUEST);

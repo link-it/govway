@@ -39,9 +39,13 @@ import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIdentificazioneFallita;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRichiestaIdentificazione;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -97,12 +101,16 @@ public final class PorteApplicativeCorrelazioneApplicativaRequestAdd extends Act
 				idAsps = "";
 
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
+			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
 
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
 			// Prendo il nome della porta applicativa
 			PortaApplicativa pde = porteApplicativeCore.getPortaApplicativa(idInt);
+			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 			String nome = pde.getNome();
 			
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
@@ -144,7 +152,7 @@ public final class PorteApplicativeCorrelazioneApplicativaRequestAdd extends Act
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addPorteApplicativeCorrelazioneApplicativeRichiestaToDati(TipoOperazione.ADD, elemxml, mode,
-						pattern, gif, riusoIdMessaggio, dati);
+						pattern, gif, riusoIdMessaggio, dati, apc.getServiceBinding());
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
 
@@ -167,7 +175,7 @@ public final class PorteApplicativeCorrelazioneApplicativaRequestAdd extends Act
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addPorteApplicativeCorrelazioneApplicativeRichiestaToDati(TipoOperazione.ADD, elemxml, mode, pattern, gif, riusoIdMessaggio, dati);
+				dati = porteApplicativeHelper.addPorteApplicativeCorrelazioneApplicativeRichiestaToDati(TipoOperazione.ADD, elemxml, mode, pattern, gif, riusoIdMessaggio, dati, apc.getServiceBinding());
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
 				

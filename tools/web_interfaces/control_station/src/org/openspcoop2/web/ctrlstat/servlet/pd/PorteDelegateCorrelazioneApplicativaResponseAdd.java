@@ -39,9 +39,13 @@ import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIdentificazioneFallita;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRispostaIdentificazione;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -100,12 +104,16 @@ public final class PorteDelegateCorrelazioneApplicativaResponseAdd extends Actio
 				idFruizione = "";
 			
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore( );
+			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
 
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 
 			// Prendo il nome della porta delegata
 			PortaDelegata pde = porteDelegateCore.getPortaDelegata(idInt);
+			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 			String nome = pde.getNome();
 
 			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
@@ -148,7 +156,7 @@ public final class PorteDelegateCorrelazioneApplicativaResponseAdd extends Actio
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 
 				dati = porteDelegateHelper.addPorteDelegateCorrelazioneApplicativaResponseToDati(TipoOperazione.ADD, 
-						pd,   elemxml, mode, pattern, gif,  dati, null);
+						pd,   elemxml, mode, pattern, gif,  dati, null, apc.getServiceBinding());
 
 				pd.setDati(dati);
 
@@ -174,7 +182,7 @@ public final class PorteDelegateCorrelazioneApplicativaResponseAdd extends Actio
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 
 				dati = porteDelegateHelper.addPorteDelegateCorrelazioneApplicativaResponseToDati(TipoOperazione.ADD, 
-						pd,  elemxml, mode, pattern, gif,  dati, null);
+						pd,  elemxml, mode, pattern, gif,  dati, null, apc.getServiceBinding());
 
 				pd.setDati(dati);
 

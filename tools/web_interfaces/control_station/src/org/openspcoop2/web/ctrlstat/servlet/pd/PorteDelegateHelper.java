@@ -98,6 +98,7 @@ import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementImage;
+import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
@@ -1236,7 +1237,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 	public Vector<DataElement> addPorteDelegateCorrelazioneApplicativaRequestToDati(TipoOperazione tipoOp,
 			PageData pd,   String elemxml, String mode,
 			String pattern, String gif, String riusoIdMessaggio, Vector<DataElement> dati, String idcorr,
-			String protocollo) throws ProtocolException {
+			String protocollo, org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) throws ProtocolException {
 
 		DataElement de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA);
@@ -1261,6 +1262,15 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		} else {
 			de.setValue(elemxml);
 		}
+		DataElementInfo dInfoPattern = new DataElementInfo(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
+		dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA);
+		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+			dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_VALORI_REST);
+		}
+		else {
+			dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_VALORI_SOAP);
+		}
+		de.setInfo(dInfoPattern);
 		dati.addElement(de);
 
 		String[] tipoMode = { 
@@ -1292,6 +1302,18 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			else {
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
 				de.setType(DataElementType.TEXT_AREA);
+				
+				if(mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED)) {
+					dInfoPattern = new DataElementInfo(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
+					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+						dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_PATTERN_REST);
+						dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_PATTERN_VALORI_REST);
+					}
+					else {
+						dInfoPattern.setBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_PATTERN_SOAP);
+					}
+					de.setInfo(dInfoPattern);
+				}
 			}
 			if (pattern == null) {
 				de.setValue("");
@@ -1346,7 +1368,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			PageData pd, String elemxml, String mode,
 			String pattern, String gif,
 			//			String riuso,
-			Vector<DataElement> dati, String idcorr) {
+			Vector<DataElement> dati, String idcorr, org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
 
 		DataElement de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA);
@@ -1371,6 +1393,15 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		} else {
 			de.setValue(elemxml);
 		}
+		DataElementInfo dInfoPattern = new DataElementInfo(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
+		dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA);
+		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+			dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_VALORI_REST);
+		}
+		else {
+			dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_VALORI_SOAP);
+		}
+		de.setInfo(dInfoPattern);
 		dati.addElement(de);
 
 		String[] tipoMode = { 
@@ -1401,6 +1432,18 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			else {
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
 				de.setType(DataElementType.TEXT_AREA);
+				
+				if(mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED)) {
+					dInfoPattern = new DataElementInfo(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
+					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+						dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_PATTERN_REST);
+						dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_PATTERN_VALORI_REST);
+					}
+					else {
+						dInfoPattern.setBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_PATTERN_SOAP);
+					}
+					de.setInfo(dInfoPattern);
+				}
 			}
 			if (pattern == null) {
 				de.setValue("");

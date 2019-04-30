@@ -41,8 +41,9 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 
 	EMPTY ("empty-payload", "HTTP Payload vuoto", null),
 	TEMPLATE ("template", "Template", null),
-	FREEMARKER_TEMPLATE ("freemarker", "Freemarker Template", null);
-//	XSLT ("xslt", null),
+	FREEMARKER_TEMPLATE ("freemarker", "Freemarker Template", null),
+	VELOCITY_TEMPLATE ("velocity", "Velocity Template", null),
+	XSLT ("xslt", "XSLT" , null);
 //	XML2JSON ("xml2json", ServiceBinding.REST),
 //	JSON2XML ("xml2json", ServiceBinding.REST);
 	
@@ -81,7 +82,11 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 	public boolean isTemplateRequired() {
 		return TipoTrasformazione.TEMPLATE.equals(this) 
 				|| 
-				TipoTrasformazione.FREEMARKER_TEMPLATE.equals(this);
+				TipoTrasformazione.FREEMARKER_TEMPLATE.equals(this)
+				|| 
+				TipoTrasformazione.VELOCITY_TEMPLATE.equals(this)
+				|| 
+				TipoTrasformazione.XSLT.equals(this);
 //				|| 
 //				TipoTrasformazione.XSLT.equals(this);
 	}

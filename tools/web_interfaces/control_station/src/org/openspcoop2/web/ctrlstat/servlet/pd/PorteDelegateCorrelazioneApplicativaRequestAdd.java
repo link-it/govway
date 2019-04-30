@@ -40,9 +40,13 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIdentificazioneFallita;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRichiestaIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -107,12 +111,16 @@ public final class PorteDelegateCorrelazioneApplicativaRequestAdd extends Action
 			
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore( );
 			SoggettiCore soggettiCore = new SoggettiCore(porteDelegateCore);
+			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
 
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 
 			// Prendo il nome della porta delegata
 			PortaDelegata pde = porteDelegateCore.getPortaDelegata(idInt);
+			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 			String nome = pde.getNome();
 			
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pde.getTipoSoggettoProprietario());
@@ -157,7 +165,8 @@ public final class PorteDelegateCorrelazioneApplicativaRequestAdd extends Action
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 
 				dati = porteDelegateHelper. addPorteDelegateCorrelazioneApplicativaRequestToDati(TipoOperazione.ADD , pd,  
-						elemxml, mode, pattern, gif, riusoIdentificativoMessaggio, dati, null, protocollo);
+						elemxml, mode, pattern, gif, riusoIdentificativoMessaggio, dati, null, protocollo,
+						apc.getServiceBinding());
 
 				pd.setDati(dati);
 
@@ -182,7 +191,8 @@ public final class PorteDelegateCorrelazioneApplicativaRequestAdd extends Action
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 
 				dati = porteDelegateHelper.	addPorteDelegateCorrelazioneApplicativaRequestToDati(TipoOperazione.ADD, pd, 
-						elemxml, mode, pattern, gif, riusoIdentificativoMessaggio, dati, null, protocollo);
+						elemxml, mode, pattern, gif, riusoIdentificativoMessaggio, dati, null, protocollo,
+						apc.getServiceBinding());
 
 				pd.setDati(dati);
 

@@ -405,7 +405,7 @@ public class GestoreTrasformazioni {
 			else {
 				risultato = 
 						GestoreTrasformazioniUtilities.trasformazioneContenuto(this.log, 
-								richiesta.getConversioneTipo(), richiesta.getConversioneTemplate(), "richiesta", dynamicMap, this.pddContext);
+								richiesta.getConversioneTipo(), richiesta.getConversioneTemplate(), "richiesta", dynamicMap, message, element, this.pddContext);
 			}
 			
 			// conversione header
@@ -702,7 +702,7 @@ public class GestoreTrasformazioni {
 			else {
 				risultato = 
 						GestoreTrasformazioniUtilities.trasformazioneContenuto(this.log, 
-								trasformazioneRisposta.getConversioneTipo(), trasformazioneRisposta.getConversioneTemplate(), "risposta", dynamicMap, this.pddContext);
+								trasformazioneRisposta.getConversioneTipo(), trasformazioneRisposta.getConversioneTemplate(), "risposta", dynamicMap, message, element, this.pddContext);
 			}
 			
 			// conversione header

@@ -1,4 +1,4 @@
-2019-04-XX  Andrea Poli <apoli@link.it>
+2019-04-30  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor]
 	Aggiunta funzionalità OP-807
@@ -8,7 +8,8 @@
 	  I valori forniti per gli header, i parametri, i contenuti possono contenere parti dinamiche risolte a runtime dal Gateway in funzione
 	  di altri valori presenti sempre nella richiesta e nella risposta e/o di espressioni regolari, XPath e JSONPath.
 	  E' consentito inoltre fornire template che consentono una trasformazione dei contenuti dinamica rispetto al contesto. 
-	  I templates dinamici possono essere definiti come template 'Freemarker' (https://freemarker.apache.org/)
+	  I templates dinamici possono essere definiti come template 'Freemarker' (https://freemarker.apache.org/), 
+	  'Velocity' ('http://velocity.apache.org/') e fogli di stile XSLT.
 	- Effettuata riorganizzazione degli elementi presenti nel filtro di ricerca delle transazioni e di generazione delle statistiche
 	- Migliorata gestione del CORS, ed aggiunta possibilità di registrare gli expose headers tramite la modalità standard della console.
 	- Nel controllo degli accessi di una erogazione o fruizione è adesso possibile configurare una autenticazione 'principal' 

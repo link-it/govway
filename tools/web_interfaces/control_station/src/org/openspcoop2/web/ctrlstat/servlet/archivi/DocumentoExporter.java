@@ -390,12 +390,21 @@ public class DocumentoExporter extends HttpServlet {
 						case FREEMARKER_TEMPLATE:
 							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_FREEMARKER;
 							break;
+						case VELOCITY_TEMPLATE:
+							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_VELOCITY;
+							break;
 						case TEMPLATE:
 							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_GOVWAY;
 							break;
+						case XSLT:
+							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_XSLT;
+							break;
 						case EMPTY:
-						default:
-							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] '"+tipo+"' non disponibile per il tipo archivio ["+tipoDocumento+"]: tipo non supportato");
+						}
+						
+						if(fileName==null) {
+							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] '"+tipo+"' non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
 						}
 
 						docBytes = richiesta.getConversioneTemplate();

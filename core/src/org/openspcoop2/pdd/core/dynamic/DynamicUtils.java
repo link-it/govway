@@ -22,17 +22,27 @@
 
 package org.openspcoop2.pdd.core.dynamic;
 
+import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.utils.DynamicStringReplace;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.TemplateUtils;
+import org.openspcoop2.utils.resources.VelocityTemplateUtils;
 import org.slf4j.Logger;
+import org.w3c.dom.Element;
 
 import freemarker.template.Template;
 
@@ -282,5 +292,42 @@ public class DynamicUtils {
 			throw new DynamicException(e.getMessage(),e);
 		}
 	}
-			
+	
+	
+	public static void convertVelocityTemplate(String name, byte[] template, Map<String,Object> dynamicMap, OutputStream out) throws DynamicException {
+		try {
+			OutputStreamWriter oow = new OutputStreamWriter(out);
+			_convertVelocityTemplate(name, template, dynamicMap, oow);
+			oow.flush();
+			oow.close();
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	public static void convertVelocityTemplate(String name, byte[] template, Map<String,Object> dynamicMap, Writer writer) throws DynamicException {
+		_convertVelocityTemplate(name, template, dynamicMap, writer);
+	}
+	private static void _convertVelocityTemplate(String name, byte[] template, Map<String,Object> dynamicMap, Writer writer) throws DynamicException {
+		try {
+			org.apache.velocity.Template templateVelocity = VelocityTemplateUtils.buildTemplate(name, template);
+			templateVelocity.merge(VelocityTemplateUtils.toVelocityContext(dynamicMap), writer);
+			writer.flush();
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+		
+	
+	
+	public static void convertXSLTTemplate(String name, byte[] template, Element element, OutputStream out) throws DynamicException {
+		try {
+			Source xsltSource = new StreamSource(new ByteArrayInputStream(template));
+			Source xmlSource = new DOMSource(element);
+			Transformer trans = XMLUtils.getInstance().getTransformerFactory().newTransformer(xsltSource);
+			trans.transform(xmlSource, new StreamResult(out));
+			out.flush();
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
 }

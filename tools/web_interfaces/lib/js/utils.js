@@ -47,8 +47,8 @@
  		$( "#dataElementInfoModal" ).dialog({
  	      resizable: false,
  	      autoOpen: false,
- 	      height: "auto",
- 	      width: 400,
+ 	      height: 350,
+ 	      width: 500,
  	      modal: true
  	    });
  	}

@@ -8781,11 +8781,11 @@ public class ConsoleHelper {
 //		de.setRequired(true);
 		DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA+" - "+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
 		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
-			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTARN_REST);
+			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_REST);
 			dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_VALORI_REST);
 		}
 		else {
-			dInfoPattern.setBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTARN_SOAP);
+			dInfoPattern.setBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_SOAP);
 		}
 		de.setInfo(dInfoPattern);
 		dati.addElement(de);
@@ -9522,11 +9522,11 @@ public class ConsoleHelper {
 //		de.setRequired(true);
 		DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA+" - "+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
 		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
-			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTARN_REST);
+			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_REST);
 			dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_VALORI_REST);
 		}
 		else {
-			dInfoPattern.setBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTARN_SOAP);
+			dInfoPattern.setBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_SOAP);
 		}
 		de.setInfo(dInfoPattern);
 		dati.addElement(de);
@@ -10325,6 +10325,7 @@ public class ConsoleHelper {
 			de.setInfo(dInfoPatternContenuto);
 			break;
 		case FREEMARKER_TEMPLATE:
+		case VELOCITY_TEMPLATE:
 			 dInfoPatternContenuto = new DataElementInfo(label);
 			dInfoPatternContenuto.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE);
 			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
@@ -10346,6 +10347,7 @@ public class ConsoleHelper {
 			de.setInfo(dInfoPatternContenuto);
 			break;
 		case EMPTY:
+		case XSLT:
 			break;
 		}
 	}
