@@ -45,6 +45,7 @@ import org.openspcoop2.core.config.rs.server.model.FormatoRestEnum;
 import org.openspcoop2.core.config.rs.server.model.FormatoSoapEnum;
 import org.openspcoop2.core.config.rs.server.model.HttpMethodEnum;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.core.config.rs.server.model.StatoApiEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoSpecificaSemiformaleEnum;
@@ -119,14 +120,14 @@ public class ApiApiHelper {
 		switch (body.getTipo()) {
 		case REST:
 			as.setByteWsdlConcettuale(interfaccia != null && !interfaccia.trim().replaceAll("\n", "").equals("") ? interfaccia.trim().getBytes() : null);
-			as.setFormatoSpecifica( Helper.evalorElse( () -> 
+			as.setFormatoSpecifica( BaseHelper.evalorElse( () -> 
 				Enums.formatoSpecificaFromRest.get((FormatoRestEnum) body.getFormato()),
 				FormatoSpecifica.OPEN_API_3
 				)); 
 			break;
 		case SOAP: 
 		
-			as.setFormatoSpecifica( Helper.evalorElse( 
+			as.setFormatoSpecifica( BaseHelper.evalorElse( 
 					() -> Enums.formatoSpecificaFromSoap.get((FormatoSoapEnum) body.getFormato() ), 
 					FormatoSpecifica.WSDL_11 
 				));
@@ -211,13 +212,13 @@ public class ApiApiHelper {
 		
 		switch (body.getRuolo()) {
 		case ALLEGATO:
-			@SuppressWarnings("unchecked") AllegatoGenerico ag = Helper.fromMap((Map<String,Object>) body.getAllegato(), AllegatoGenerico.class);
+			@SuppressWarnings("unchecked") AllegatoGenerico ag = BaseHelper.fromMap((Map<String,Object>) body.getAllegato(), AllegatoGenerico.class);
 			documento.setByteContenuto(ag.getDocumento());
 			documento.setFile(ag.getNome());
 			documento.setTipo(ag.getNome().substring( ag.getNome().lastIndexOf('.')+1, ag.getNome().length()));
 			break;
 		case SPECIFICASEMIFORMALE:
-			@SuppressWarnings("unchecked") AllegatoSpecificaSemiformale ass = Helper.fromMap( (Map<String,Object>) body.getAllegato(), AllegatoSpecificaSemiformale.class);
+			@SuppressWarnings("unchecked") AllegatoSpecificaSemiformale ass = BaseHelper.fromMap( (Map<String,Object>) body.getAllegato(), AllegatoSpecificaSemiformale.class);
 			documento.setByteContenuto(ass.getDocumento());
 			documento.setFile(ass.getNome());	
 			documento.setTipo(Enums.tipoDocumentoSemiFormaleFromSpecifica.get(ass.getTipo()).toString());

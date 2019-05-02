@@ -1,3 +1,11 @@
+2019-05-02  Andrea Poli <apoli@link.it>
+
+	* [ApiRsMonitoraggio, GovWayMonitor]
+	Aggiunta funzionalità OP-762
+	Realizzato servizio che espone una API Rest per il monitoraggio del Gateway.
+	L'interfaccia del servizio è definita in OpenAPI v3.0.
+	L'installer è stato esteso al fine di poter includere tra gli archivi prodotti anche il servizio di monitoraggio tramite API.
+
 2019-04-30  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor]

@@ -2,7 +2,5 @@
     "autenticazione": {
         "tipo": "http-basic",
         "opzionale": false
-    },
-
-    "token": { }
+    }   
 }

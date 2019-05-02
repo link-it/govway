@@ -36,4 +36,3 @@ Scenario: Azioni Creazione 409
 * call delete ({ resourcePath: 'api/' + api_path + '/servizi/' + servizio.nome })
 * call delete ({ resourcePath: 'api/' + api_path })
 
-# TODO: Create 400 servizio inesistente

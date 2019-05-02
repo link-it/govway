@@ -4,6 +4,7 @@ antinstaller
 applicationServer
 axiom
 axis14
+bean-validation
 commons
 cxf
 faces

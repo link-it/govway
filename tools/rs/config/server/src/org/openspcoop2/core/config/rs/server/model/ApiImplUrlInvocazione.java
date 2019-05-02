@@ -21,15 +21,122 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.ApiImplModalitaIdentificazioneAzione;
+import org.openspcoop2.core.config.rs.server.model.ModalitaIdentificazioneAzioneEnum;
+import javax.validation.constraints.*;
 
-public class ApiImplUrlInvocazione extends ApiImplModalitaIdentificazioneAzione {
+import io.swagger.v3.oas.annotations.media.Schema;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
+
+public class ApiImplUrlInvocazione  {
+  
+  @Schema(required = true, description = "")
+  private ModalitaIdentificazioneAzioneEnum modalita = null;
+  
+  @Schema(description = "XPath/JsonPath nel caso di modalità 'content-based' o espressione regolare nel caso 'url-based'")
+ /**
+   * XPath/JsonPath nel caso di modalità 'content-based' o espressione regolare nel caso 'url-based'  
+  **/
+  private String pattern = null;
+  
+  @Schema(description = "Nome dell'header http nel caso di modalità 'header-based'")
+ /**
+   * Nome dell'header http nel caso di modalità 'header-based'  
+  **/
+  private String nome = null;
+  
+  @Schema(description = "Indicazione se oltre alla modalità indicata per individuare l'azione viene usata comunque la modalità 'interface-based'")
+ /**
+   * Indicazione se oltre alla modalità indicata per individuare l'azione viene usata comunque la modalità 'interface-based'  
+  **/
+  private Boolean forceInterface = true;
+ /**
+   * Get modalita
+   * @return modalita
+  **/
+  @JsonProperty("modalita")
+  @NotNull
+  @Valid
+  public ModalitaIdentificazioneAzioneEnum getModalita() {
+    return this.modalita;
+  }
+
+  public void setModalita(ModalitaIdentificazioneAzioneEnum modalita) {
+    this.modalita = modalita;
+  }
+
+  public ApiImplUrlInvocazione modalita(ModalitaIdentificazioneAzioneEnum modalita) {
+    this.modalita = modalita;
+    return this;
+  }
+
+ /**
+   * XPath/JsonPath nel caso di modalità 'content-based' o espressione regolare nel caso 'url-based'
+   * @return pattern
+  **/
+  @JsonProperty("pattern")
+  @Valid
+ @Size(max=255)  public String getPattern() {
+    return this.pattern;
+  }
+
+  public void setPattern(String pattern) {
+    this.pattern = pattern;
+  }
+
+  public ApiImplUrlInvocazione pattern(String pattern) {
+    this.pattern = pattern;
+    return this;
+  }
+
+ /**
+   * Nome dell'header http nel caso di modalità 'header-based'
+   * @return nome
+  **/
+  @JsonProperty("nome")
+  @Valid
+ @Size(max=255)  public String getNome() {
+    return this.nome;
+  }
+
+  public void setNome(String nome) {
+    this.nome = nome;
+  }
+
+  public ApiImplUrlInvocazione nome(String nome) {
+    this.nome = nome;
+    return this;
+  }
+
+ /**
+   * Indicazione se oltre alla modalità indicata per individuare l'azione viene usata comunque la modalità 'interface-based'
+   * @return forceInterface
+  **/
+  @JsonProperty("force_interface")
+  @Valid
+  public Boolean isForceInterface() {
+    return this.forceInterface;
+  }
+
+  public void setForceInterface(Boolean forceInterface) {
+    this.forceInterface = forceInterface;
+  }
+
+  public ApiImplUrlInvocazione forceInterface(Boolean forceInterface) {
+    this.forceInterface = forceInterface;
+    return this;
+  }
+
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ApiImplUrlInvocazione {\n");
-    sb.append("    ").append(ApiImplUrlInvocazione.toIndentedString(super.toString())).append("\n");
+    
+    sb.append("    modalita: ").append(ApiImplUrlInvocazione.toIndentedString(this.modalita)).append("\n");
+    sb.append("    pattern: ").append(ApiImplUrlInvocazione.toIndentedString(this.pattern)).append("\n");
+    sb.append("    nome: ").append(ApiImplUrlInvocazione.toIndentedString(this.nome)).append("\n");
+    sb.append("    forceInterface: ").append(ApiImplUrlInvocazione.toIndentedString(this.forceInterface)).append("\n");
     sb.append("}");
     return sb.toString();
   }

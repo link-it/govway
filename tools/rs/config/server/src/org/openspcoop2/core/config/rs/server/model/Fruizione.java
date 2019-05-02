@@ -30,8 +30,30 @@ import javax.validation.Valid;
 
 public class Fruizione extends APIImpl {
   
+  @Schema(description = "")
+  private String descrizione = null;
+  
   @Schema(required = true, description = "")
   private String erogatore = null;
+ /**
+   * Get descrizione
+   * @return descrizione
+  **/
+  @JsonProperty("descrizione")
+  @Valid
+  public String getDescrizione() {
+    return this.descrizione;
+  }
+
+  public void setDescrizione(String descrizione) {
+    this.descrizione = descrizione;
+  }
+
+  public Fruizione descrizione(String descrizione) {
+    this.descrizione = descrizione;
+    return this;
+  }
+
  /**
    * Get erogatore
    * @return erogatore
@@ -58,6 +80,7 @@ public class Fruizione extends APIImpl {
     StringBuilder sb = new StringBuilder();
     sb.append("class Fruizione {\n");
     sb.append("    ").append(Fruizione.toIndentedString(super.toString())).append("\n");
+    sb.append("    descrizione: ").append(Fruizione.toIndentedString(this.descrizione)).append("\n");
     sb.append("    erogatore: ").append(Fruizione.toIndentedString(this.erogatore)).append("\n");
     sb.append("}");
     return sb.toString();

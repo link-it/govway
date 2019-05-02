@@ -38,12 +38,6 @@ public class APIImplAutenticazione  {
   
   @Schema(description = "")
   private Boolean opzionale = false;
-  
-  @Schema(description = "nome autenticazione 'custom', set tipo='custom'")
- /**
-   * nome autenticazione 'custom', set tipo='custom'  
-  **/
-  private String nome = null;
  /**
    * Get tipo
    * @return tipo
@@ -102,25 +96,6 @@ public class APIImplAutenticazione  {
     return this;
   }
 
- /**
-   * nome autenticazione 'custom', set tipo='custom'
-   * @return nome
-  **/
-  @JsonProperty("nome")
-  @Valid
- @Size(max=255)  public String getNome() {
-    return this.nome;
-  }
-
-  public void setNome(String nome) {
-    this.nome = nome;
-  }
-
-  public APIImplAutenticazione nome(String nome) {
-    this.nome = nome;
-    return this;
-  }
-
 
   @Override
   public String toString() {
@@ -130,7 +105,6 @@ public class APIImplAutenticazione  {
     sb.append("    tipo: ").append(APIImplAutenticazione.toIndentedString(this.tipo)).append("\n");
     sb.append("    configurazione: ").append(APIImplAutenticazione.toIndentedString(this.configurazione)).append("\n");
     sb.append("    opzionale: ").append(APIImplAutenticazione.toIndentedString(this.opzionale)).append("\n");
-    sb.append("    nome: ").append(APIImplAutenticazione.toIndentedString(this.nome)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -2,8 +2,10 @@
     "connettore": {
         "endpoint": "https://ginovadifretta.it/petstore"
     },
-    "autenticazione": {},
-    "autorizzazione": {},
+    "autenticazione": {
+        "tipo": "https",
+        "opzionale": false
+    },
 
     "api_nome": "ApiDemoSoap",
     "api_soap_servizio": "AsincronoAsimmetricoRichiesta",

@@ -22,14 +22,14 @@
 package org.openspcoop2.core.config.rs.server.model;
 
 import java.util.List;
-import org.openspcoop2.core.config.rs.server.model.ApiImplModalitaIdentificazioneAzione;
+import org.openspcoop2.core.config.rs.server.model.ApiImplUrlInvocazione;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ApiImplUrlInvocazioneView extends ApiImplModalitaIdentificazioneAzione {
+public class ApiImplUrlInvocazioneView extends ApiImplUrlInvocazione {
   
   @Schema(required = true, description = "")
   private String urlInvocazione = null;

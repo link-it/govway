@@ -24,13 +24,13 @@ package org.openspcoop2.core.config.rs.server.api.impl.erogazioni.configurazione
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniEnv;
-import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
@@ -57,7 +57,7 @@ public class ErogazioniConfEnv extends ErogazioniEnv {
 		this.confCore = new ConfigurazioneCore(this.stationCore);
 		this.confHelper = new ConfigurazioneHelper(this.stationCore, this.requestWrapper, this.pd, req.getSession());
 			
-		this.asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, this.idSoggetto.toIDSoggetto(), this), "Erogazione");
+		this.asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, this.idSoggetto.toIDSoggetto(), this), "Erogazione");
 		this.idAsps = new IdServizio(this.idServizioFactory.getIDServizioFromAccordo(this.asps), this.asps.getId());
 		
 		if ( tipoServizio != null && ! this.protocolFactoryMgr._getServiceTypes().get(this.tipo_protocollo).contains(tipoServizio))
@@ -65,8 +65,8 @@ public class ErogazioniConfEnv extends ErogazioniEnv {
 	
 		
 		this.idPa = StringUtils.isEmpty(gruppo)
-				? Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPADefault(this.idAsps, this.apsCore),  "Gruppo default per l'erogazione scelta")
-				: Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPA(gruppo, this.idAsps, this.apsCore), "Gruppo per l'erogazione scelta");
+				? BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPADefault(this.idAsps, this.apsCore),  "Gruppo default per l'erogazione scelta")
+				: BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPA(gruppo, this.idAsps, this.apsCore), "Gruppo per l'erogazione scelta");
 
 	}
 

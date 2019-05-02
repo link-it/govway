@@ -4,17 +4,15 @@ Background:
 
 * call read('classpath:crud_commons.feature')
 
-* def soggetto_http = read('soggetto_http.json')
-* def soggetto_principal = read('soggetto_principal.json')
-* def ruolo = read('ruolo.json')
+* def soggetto_http = read('classpath:bodies/soggetto-esterno-http.json')
+* def soggetto_principal = read('classpath:bodies/soggetto-esterno-principal.json')
+* def ruolo = read('classpath:bodies/ruolo.json')
 
 * eval randomize(soggetto_http, ["nome", "credenziali.username"])
 * eval randomize(soggetto_principal, ["nome", "credenziali.userid"])
 * eval randomize(ruolo, ["nome"])
 * eval soggetto_http.ruoli = [ ruolo.nome ]
 * eval soggetto_principal.ruoli = [ ruolo.nome ]
-
-# TODO: Come lo facciamo il test multitenant per i soggetti interni?
 
 @CreateCredHttp
 Scenario: Creazione Soggetti 204 OK

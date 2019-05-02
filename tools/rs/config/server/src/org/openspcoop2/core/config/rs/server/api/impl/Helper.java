@@ -21,24 +21,16 @@
  */
 package org.openspcoop2.core.config.rs.server.api.impl;
 
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
@@ -61,10 +53,8 @@ import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.io.Base64Utilities;
-import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.service.beans.Lista;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
-import org.openspcoop2.utils.service.beans.utils.ProfiloUtils;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -80,104 +70,8 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  * @version $Rev$, $Date$
  * 
  */
-public class Helper {
+public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper {
 	
-	@FunctionalInterface
-	public interface ThrowingSupplier<T> {
-		
-	    T get() throws Exception;
-	}
-	
-	public interface ThrowingRunnable {
-		
-		void run() throws Exception;
-	}
-	
-	
-	public static final <T> T evalnull(ThrowingSupplier<T> r) {
-		try {
-			return r.get();
-		} catch (Exception e) {
-			return null;
-		}
-	}
-	
-	public static final <T> T evalorElse(ThrowingSupplier<T> r, T orElse) {
-		T ret = null;
-		try {
-			ret = r.get();	
-		} catch (Exception e) {
-			// Ignoring Exception
-		}
-		if (ret != null) return ret;
-		else return orElse;
-	}
-		
-	
-	public static final <T> T supplyOrNotFound(ThrowingSupplier<T> s, String objName) {
-		T ret = null;
-		try {
-			ret = s.get();
-		} catch (Exception e) {	}
-		
-		if (ret == null)
-			throw FaultCode.NOT_FOUND.toException(objName + " non presente nel registro.");
-		
-		return ret;
-	}
-	
-	public static final <T> T supplyOrNonValida(ThrowingSupplier<T> s, String objName) {
-		T ret = null;
-		try {
-			ret = s.get();
-		} catch (Exception e) {	}
-		
-		if (ret == null)
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(objName + " non presente nel registro.");
-		
-		return ret;
-	}
-	
-	
-	public static final void runNull(ThrowingRunnable r) {
-		try {
-			r.run();
-		} catch (NullPointerException e) {
-			// Ignore
-		} catch ( Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	public static <T> Optional<T> findFirst(Iterable<? extends T> collection, Predicate<? super T> test) {
-	    T value = null;
-	    if (collection != null ) {
-		    for (Iterator<? extends T> it = collection.iterator(); it.hasNext();)
-		        if (test.test(value = it.next())) {
-		            return Optional.of(value);
-		        }
-	    }
-	    return Optional.empty();
-	}
-	
-	
-
-	public static <T> T findAndRemoveFirst(Iterable<? extends T> collection, Predicate<? super T> test) {
-	    T value = null;
-	    for (Iterator<? extends T> it = collection.iterator(); it.hasNext();)
-	        if (test.test(value = it.next())) {
-	            it.remove();
-	            return value;
-	        }
-	    return null;
-	}
-	
-	
-	
-	public static <T> void throwIfNull(T body) {
-		if (body == null)
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un body");
-	}
 	
 	
 	public static <T extends Lista> T returnOrNotFound(T ret ) throws UtilsException {
@@ -188,97 +82,6 @@ public class Helper {
 		
 		return ret;
 	}
-	
-	
-	@SuppressWarnings("unchecked")
-	public static <T extends Enum<T>> Object deserializeFromSwitch(Map<T,Class<?>> typeMap, T discr, Object body) throws UtilsException, InstantiationException, IllegalAccessException {
-		if (body == null) return null;
-
-		// TODO: Se tutto funziona, aggiungere eccezioni per discr non riconosciuto. 
-		return fromMap((Map<String,Object>) body, typeMap.get(discr));
-	}
-	
-	
-	public static final <T> T fromMap(Map<String,Object> mapObject, Class<T> toClass) throws InstantiationException, IllegalAccessException {
-		T ret = toClass.newInstance();
-		fillFromMap(mapObject, ret);
-	
-		return ret;
-	}
-	
-	
-	public static final String jsonNameToUpperCC(String key) {
-		
-		StringBuffer sb = new StringBuffer();
-		
-		Matcher m = Pattern.compile("_(\\w)").matcher(key);
-		
-		while (m.find()) {
-			m.appendReplacement(sb, m.group(1).toUpperCase());
-		}
-		m.appendTail(sb);
-		return sb.toString();
-	}
-	
-	public static final <T> T fromJson(Object json, Class<T> c) {
-		
-		try {
-			return JSONUtils.getInstance().getAsObject(((InputStream)json), c);
-		} catch (Exception e) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(e);
-		}
-	}
-	
-	/**
-	 * Questa funzione completa la deserializzazione di un oggetto jaxrs che arriva nella Api come una LinkedHashMap<String, String | LinkedHashMap<String, etc..>>
-	 * 
-	 * Da notare che questo metodo sebbene generico per i fini di govway, non è da considerare un metodo valido di deserializzazione da una linkedHashmap, rappresentazione
-	 * di un json, in un oggetto destinazione.
-	 * 
-	 * @param mapObject
-	 * @param toFill
-	 */
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static final <T> void fillFromMap(Map<String,Object> mapObject, T toFill) throws InstantiationException {
-	
-		mapObject.forEach( (k, v) -> {
-			
-			try {
-				k = jsonNameToUpperCC(k);
-				// La chiave k non è in upperCamelCase, segue lo  stile del json in cui tutto è minuscolo e i campi sono separati
-				// da trattini bassi.
-				Class<?> dest = PropertyUtils.getPropertyType(toFill, k);
-				Class<?> source = v.getClass();
-				
-
-				if ( source == String.class ) {
-					final String vs = (String) v;
-					
-					if ( dest == (new byte[0]).getClass() ) {					
-						BeanUtils.setProperty(toFill, k, Base64Utilities.decode(vs.getBytes()));
-					}
-					else if ( dest == String.class ) {
-						BeanUtils.setProperty(toFill, k, vs);
-					}
-					else if ( dest.isEnum() ) {
-						BeanUtils.setProperty(toFill, k, Enum.valueOf( (Class<Enum>) dest, vs.toUpperCase(Locale.ENGLISH)));	// TODO: try-catch anche in lowercase
-					}
-				}
-				else if ( source == LinkedHashMap.class ) {
-						BeanUtils.setProperty(toFill, k, fromMap((Map<String,Object>)v, dest));
-				}
-				else {	// Fallback, li assumo dello stesso tipo, se non lo sono, ci pensa setProperty a sollevare eccezione.
-					BeanUtils.setProperty(toFill, k, v);
-				}
-				
-			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
-				throw new RuntimeException(e); 	//TODO: log
-			}
-		});
-		
-	}
-	
 	
 	/**
 	 * Converte un enum in un altro enum supposto che i valori di enumerazione siano identici.
@@ -298,12 +101,6 @@ public class Helper {
 	//	 return Enum.valueOf( (Class<Enum>)toClass, "BASIC")
 	}
 
-
-	
-	public static final Map<ProfiloEnum,String> tipoProtocolloFromProfilo = ProfiloUtils.getMapProfiloToProtocollo();	
-	public static final Map<String,ProfiloEnum> profiloFromTipoProtocollo = ProfiloUtils.getMapProtocolloToProfilo();
-	
-	
 	public static final Map<CredenzialeTipo,ModalitaAccessoEnum> modalitaAccessoFromCredenzialeTipo = new HashMap<>();
 	static {
 		modalitaAccessoFromCredenzialeTipo.put(CredenzialeTipo.BASIC, ModalitaAccessoEnum.HTTP_BASIC);

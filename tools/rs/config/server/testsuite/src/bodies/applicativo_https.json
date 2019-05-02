@@ -3,9 +3,9 @@
    	"modalita_accesso": "https",
    	"credenziali": {
 		"tipo": "configurazione-manuale",
-       		"certificato": {
-			"subject": "cn=subjectTest",
-			"issuer": "cn=issuerTest"
+		"certificato": {
+		"subject": "cn=subjectTest",
+		"issuer": "cn=issuerTest"
 		}
 	}
 }

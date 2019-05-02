@@ -1,0 +1,6 @@
+PLACEHOLDER PLACEHOLDER
+Questo file sostituirà COMANDI.README e descriverà come eseguire i test
+
+- Prima di eseguire i test è necessario modificare l'intervallo con il quale vengono generate le statistiche da parte del monitor.
+  Aggiungere quindi in govway_local.properties nella directory di configurazione esterna indicata in fase di setup la seguente proprietà
+		org.openspcoop2.pdd.statistiche.generazione.timer.intervalloSecondi=30

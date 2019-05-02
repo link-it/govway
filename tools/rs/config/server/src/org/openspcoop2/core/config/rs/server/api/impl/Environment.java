@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -83,7 +84,7 @@ public class Environment {
 		
 		this.userLogin = ctx.getAuthentication().getName();
 		this.profilo = profilo;
-		this.tipo_protocollo = Helper.tipoProtocolloFromProfilo.get(profilo);
+		this.tipo_protocollo = BaseHelper.tipoProtocolloFromProfilo.get(profilo);
 		this.requestWrapper = new HttpRequestWrapper(req);
 		
 		this.stationCore = new ControlStationCore(true, ServerProperties.getInstance().getConfDirectory() ,this.tipo_protocollo);

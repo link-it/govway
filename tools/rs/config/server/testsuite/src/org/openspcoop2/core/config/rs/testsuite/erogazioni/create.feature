@@ -46,7 +46,6 @@ Scenario: Erogazioni Creazione Fallita Erogatore Esterno
     * def query_params = ( { })
     * call delete ({ resourcePath: api_petstore_path })
 
-#TODO: Erogazione SDI
 @CreatePetstore204
 Scenario: Erogazioni Creazione Petstore 204
 
@@ -91,8 +90,6 @@ Scenario: Erogazioni Creazione Errore 400 Nessuna api registrata
     
     * call create_400 ({ resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key })
 
-# TODO Aggiungi i test applicativi che sollevano errore in caso si voglia impostare l'autenticazione
-# su di un servizio spcoop
 @CreateSPCoop204
 Scenario: Erogazioni Creazione SPCoop 204
 

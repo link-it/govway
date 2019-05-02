@@ -10,6 +10,7 @@ Scenario:
 
 * def create = read('classpath:create_stub.feature')
 * def delete = read('classpath:delete_stub.feature')
+* def put = read('classpath:put_stub.feature')
 * def get_200 = read('classpath:get_200.feature')
 * def get_404 = read('classpath:get_404.feature')
 * def findall_200 = read('classpath:findall_200.feature')

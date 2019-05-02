@@ -6377,6 +6377,10 @@ components:
       type: object
       allOf:
         - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/APIImpl'
+        - type: object # inserito per far generare un oggetto Erogazione invece di Object
+          properties:
+            descrizione:
+              type: string
     ErogazioneItem:
       type: object
       allOf:
@@ -6407,6 +6411,8 @@ components:
           required:
             - erogatore
           properties:
+            descrizione: # inserito per essere uguale all'oggetto Erogazione (vedi motivo sopra)
+              type: string
             erogatore:
               $ref: 'govway_core.yaml#/components/schemas/SimpleName'
     FruizioneItem:

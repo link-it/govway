@@ -392,8 +392,6 @@ paths:
         - $ref: "#/components/parameters/unita_tempo_report"
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
-        - $ref: '#/components/parameters/orientamento_etichette'
-        - $ref: '#/components/parameters/larghezza_grafico'
       responses:
         200:
           $ref: '#/components/responses/200ReportStatistico'
@@ -471,8 +469,6 @@ paths:
         - $ref: "#/components/parameters/unita_tempo_report"
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
-        - $ref: '#/components/parameters/orientamento_etichette'
-        - $ref: '#/components/parameters/larghezza_grafico'
       responses:
         200:
           $ref: '#/components/responses/200ReportStatistico'
@@ -549,8 +545,6 @@ paths:
         - $ref: "#/components/parameters/unita_tempo_report"
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
-        - $ref: '#/components/parameters/orientamento_etichette'
-        - $ref: '#/components/parameters/larghezza_grafico'
       responses:
         200:
           $ref: '#/components/responses/200ReportStatistico'
@@ -628,8 +622,6 @@ paths:
         - $ref: "#/components/parameters/unita_tempo_report"
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
-        - $ref: '#/components/parameters/orientamento_etichette'
-        - $ref: '#/components/parameters/larghezza_grafico'
       responses:
         200:
           $ref: '#/components/responses/200ReportStatistico'
@@ -702,8 +694,6 @@ paths:
         - $ref: "#/components/parameters/unita_tempo_report"
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
-        - $ref: '#/components/parameters/orientamento_etichette'
-        - $ref: '#/components/parameters/larghezza_grafico'
       responses:
         200:
           $ref: '#/components/responses/200ReportStatistico'
@@ -779,8 +769,6 @@ paths:
         - $ref: "#/components/parameters/unita_tempo_report"
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
-        - $ref: '#/components/parameters/orientamento_etichette'
-        - $ref: '#/components/parameters/larghezza_grafico'
       responses:
         200:
           $ref: '#/components/responses/200ReportStatistico'
@@ -858,8 +846,6 @@ paths:
         - $ref: "#/components/parameters/unita_tempo_report"
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
-        - $ref: '#/components/parameters/orientamento_etichette'
-        - $ref: '#/components/parameters/larghezza_grafico'
       responses:
         200:
           $ref: '#/components/responses/200ReportStatistico'
@@ -937,8 +923,6 @@ paths:
         - $ref: "#/components/parameters/unita_tempo_report"
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
-        - $ref: '#/components/parameters/orientamento_etichette'
-        - $ref: '#/components/parameters/larghezza_grafico'
       responses:
         200:
           $ref: '#/components/responses/200ReportStatistico'
@@ -969,7 +953,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RicercaStatisticaDistribuzioneIdAutenticato'
+              $ref: '#/components/schemas/RicercaStatisticaDistribuzioneApplicativo'
       responses:
         200:
           $ref: '#/components/responses/200ReportStatistico'
@@ -1015,8 +999,6 @@ paths:
         - $ref: "#/components/parameters/unita_tempo_report"
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
-        - $ref: '#/components/parameters/orientamento_etichette'
-        - $ref: '#/components/parameters/larghezza_grafico'
         - $ref: '#/components/parameters/claim'
       responses:
         200:
@@ -1412,7 +1394,7 @@ components:
     formato_report:
       in: query
       name: formato_report
-      description: Indica la modalità di esportazione (csv, png pdf...) del report statistico
+      description: Indica la modalità di esportazione (csv, pdf...) del report statistico
       schema: 
         $ref: '#/components/schemas/FormatoReportEnum'
       required: true
@@ -1439,22 +1421,6 @@ components:
       description: Specifica l'informazione da visualizzare nel report
       schema:
         $ref: '#/components/schemas/TipoInformazioneReportEnum'
-      required: false
-
-    orientamento_etichette:
-      in: query
-      name: orientamento_etichette
-      description: Specifica l'orientamento delle label nei grafici generati dalle analisi statistiche
-      schema:
-        $ref: '#/components/schemas/OrientamentoEtichetteReportEnum'
-      required: false
-
-    larghezza_grafico:
-      in: query
-      name: larghezza_grafico
-      description: Specifica la largheza del grafico in pixel
-      schema:
-        $ref: '#/components/schemas/LarghezzaReportGrafico'
       required: false
       
     claim:
@@ -1559,11 +1525,7 @@ components:
         formato:
           $ref: '#/components/schemas/FormatoReportEnum'
         tipo:
-          $ref: '#/components/schemas/TipoReportEnum'
-        orientamento_etichette:
-          $ref: '#/components/schemas/OrientamentoEtichetteReportEnum'
-        larghezza_grafico:
-          $ref: '#/components/schemas/LarghezzaReportGrafico'  
+          $ref: '#/components/schemas/TipoReportEnum' 
 
     OpzioniGenerazioneReportMultiLine:
       type: object
@@ -1582,12 +1544,6 @@ components:
           properties:  
             tipo_informazione:
               $ref: '#/components/schemas/TipoInformazioneReport'
-
-    LarghezzaReportGrafico:
-      type: integer
-      format: int32
-      minimum: 1
-      maximum: 2000
 
     TipoInformazioneReport:
       type: object
@@ -1823,6 +1779,8 @@ components:
       - intervallo_temporale
       - tipo
       properties:
+        unita_tempo:
+          $ref: '#/components/schemas/UnitaTempoReportEnum'
         intervallo_temporale:
           $ref: '#/components/schemas/FiltroTemporale'
         tipo:
@@ -2013,10 +1971,10 @@ components:
             esito:
               $ref: '#/components/schemas/FiltroEsito'
 
-    RicercaStatisticaDistribuzioneIdAutenticato:
-       type: object
-       allOf:
-        - $ref: '#/components/schemas/RicercaStatisticaDistribuzioneApplicativo'
+    #RicercaStatisticaDistribuzioneIdAutenticato:
+    #   type: object
+    #   allOf:
+    #    - $ref: '#/components/schemas/RicercaStatisticaDistribuzioneApplicativo'
 
     RicercaStatisticaDistribuzioneTokenInfo:
        type: object
@@ -2130,11 +2088,11 @@ components:
             mapping:
               applicativo:  '#/components/schemas/FiltroMittenteFruizioneApplicativo' 
               identificativo_autenticato: '#/components/schemas/FiltroMittenteIdAutenticato'
-              token_info: '#/components/schemas/FiltroMittenteTokenClaim'
+              token_info: '#/components/schemas/FiltroMittenteFruizioneTokenClaim'
           oneOf:
             - $ref: '#/components/schemas/FiltroMittenteFruizioneApplicativo' 
             - $ref: '#/components/schemas/FiltroMittenteIdApplicativo'
-            - $ref: '#/components/schemas/FiltroMittenteTokenClaim'
+            - $ref: '#/components/schemas/FiltroMittenteFruizioneTokenClaim'
     FiltroMittenteErogazione:
       type: object
       description: >-
@@ -2149,12 +2107,12 @@ components:
               soggetto:  '#/components/schemas/FiltroMittenteErogazioneSoggetto' 
               applicativo:  '#/components/schemas/FiltroMittenteErogazioneApplicativo' 
               identificativo_autenticato: '#/components/schemas/FiltroMittenteIdAutenticato'
-              token_info: '#/components/schemas/FiltroMittenteTokenClaim'
+              token_info: '#/components/schemas/FiltroMittenteErogazioneTokenClaim'
           oneOf:
             - $ref: '#/components/schemas/FiltroMittenteErogazioneSoggetto'
             - $ref: '#/components/schemas/FiltroMittenteErogazioneApplicativo' 
             - $ref: '#/components/schemas/FiltroMittenteIdApplicativo'
-            - $ref: '#/components/schemas/FiltroMittenteTokenClaim'
+            - $ref: '#/components/schemas/FiltroMittenteErogazioneTokenClaim'
     FiltroMittenteErogazioneDistribuzioneSoggettoRemoto:
       type: object
       description: >-
@@ -2167,10 +2125,10 @@ components:
             propertyName: tipo
             mapping: 
               identificativo_autenticato: '#/components/schemas/FiltroMittenteIdAutenticato'
-              token_info: '#/components/schemas/FiltroMittenteTokenClaim'
+              token_info: '#/components/schemas/FiltroMittenteErogazioneTokenClaim'
           oneOf:
             - $ref: '#/components/schemas/FiltroMittenteIdApplicativo'
-            - $ref: '#/components/schemas/FiltroMittenteTokenClaim'
+            - $ref: '#/components/schemas/FiltroMittenteErogazioneTokenClaim'
     FiltroMittenteErogazioneSoggetto:
       type: object
       required:
@@ -2205,7 +2163,16 @@ components:
           properties:
             autenticazione:
               $ref: '#/components/schemas/TipoFiltroMittenteIdentificativoAutenticatoEnum' 
-    FiltroMittenteTokenClaim:
+    FiltroMittenteErogazioneTokenClaim:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/FiltroTokenClaimBase'
+        - $ref: 'govway_core.yaml#/components/schemas/FiltroRicercaId'
+        - type: object
+          properties:
+            soggetto:
+              $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+    FiltroMittenteFruizioneTokenClaim:
       type: object
       allOf:
         - $ref: '#/components/schemas/FiltroTokenClaimBase'
@@ -2217,8 +2184,6 @@ components:
       properties:
         claim:
           $ref: '#/components/schemas/TokenClaimEnum'
-        soggetto:
-          $ref: 'govway_core.yaml#/components/schemas/SimpleName'
       
 
 
@@ -2295,7 +2260,6 @@ components:
         - xls
         - xml
         - json
-        - png
       example: csv
       
     UnitaTempoReportEnum:
@@ -2334,12 +2298,3 @@ components:
         - latenza_gateway
       example: latenza_totale
       default: latenza_totale
-      
-    OrientamentoEtichetteReportEnum:
-      type: string
-      enum:
-        - orizzontale 
-        - obliquo
-        - verticale
-      example: obliquo
-      default: obliquo

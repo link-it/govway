@@ -40,6 +40,7 @@ import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -79,7 +80,7 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
                         
 			Ruolo ruolo = body;
 					
@@ -135,7 +136,7 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 			String userLogin = context.getAuthentication().getName();
 			RuoliEnv rEnv = new RuoliEnv(context.getServletRequest(),context);
 						
-			final org.openspcoop2.core.registry.Ruolo regRuolo = Helper.evalnull( () -> rEnv.ruoliCore.getRuolo(nome) );
+			final org.openspcoop2.core.registry.Ruolo regRuolo = BaseHelper.evalnull( () -> rEnv.ruoliCore.getRuolo(nome) );
 			
 			if ( regRuolo != null ) {
 				StringBuffer inUsoMessage = new StringBuffer();
@@ -280,7 +281,7 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
                         		
 			RuoliEnv rEnv = new RuoliEnv(context.getServletRequest(), context);
 			RuoliApiHelper.overrideRuoloParams(body, rEnv.requestWrapper);

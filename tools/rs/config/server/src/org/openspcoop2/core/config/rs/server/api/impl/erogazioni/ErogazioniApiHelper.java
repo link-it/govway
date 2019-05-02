@@ -21,6 +21,8 @@
  */
 package org.openspcoop2.core.config.rs.server.api.impl.erogazioni;
 
+import static org.openspcoop2.utils.service.beans.utils.BaseHelper.evalnull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -80,6 +82,7 @@ import org.openspcoop2.core.config.rs.server.api.impl.fruizioni.configurazione.F
 import org.openspcoop2.core.config.rs.server.model.APIImpl;
 import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazione;
 import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneConfigurazioneBasic;
+import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneConfigurazioneCustom;
 import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneConfigurazionePrincipal;
 import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneNew;
 import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazione;
@@ -123,7 +126,6 @@ import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRichie
 import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRichiestaEnum;
 import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRispostaEnum;
-import org.openspcoop2.core.config.rs.server.model.Erogazione;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneItem;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneViewItem;
 import org.openspcoop2.core.config.rs.server.model.FonteEnum;
@@ -180,7 +182,6 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
@@ -212,6 +213,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
@@ -233,6 +235,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
@@ -259,7 +262,7 @@ public class ErogazioniApiHelper {
 		typeMap.put(ModalitaConfigurazioneGruppoEnum.NUOVA, GruppoNuovaConfigurazione.class);
 		
 		try {
-			return (T) Helper.deserializeFromSwitch(typeMap, discr, body);
+			return (T) BaseHelper.deserializeFromSwitch(typeMap, discr, body);
 		} catch( Exception e ) {
 			return null;
 		}
@@ -278,7 +281,7 @@ public class ErogazioniApiHelper {
 		typeMap.put(TipoAutorizzazioneEnum.CUSTOM, APIImplAutorizzazioneCustom.class);
 		typeMap.put(TipoAutorizzazioneEnum.XACML_POLICY, APIImplAutorizzazioneXACMLConfig.class);
 		
-		return (T) Helper.deserializeFromSwitch(typeMap, discr, body);		
+		return (T) BaseHelper.deserializeFromSwitch(typeMap, discr, body);		
 	}
 	
 
@@ -380,8 +383,8 @@ public class ErogazioniApiHelper {
 
 		final AuthenticationHttpBasic 		httpConf	 = connRest.getAutenticazioneHttp();
 		// Questa è la cosa diversa per i fruitori, Li invece abbiamo le credenziali direttamente nel connettore.
-        final ConnettoreConfigurazioneHttpsClient httpsClient = Helper.evalnull( () -> httpsConf.getClient() );
-      	final ConnettoreConfigurazioneHttpsServer httpsServer = Helper.evalnull( () -> httpsConf.getServer() );
+        final ConnettoreConfigurazioneHttpsClient httpsClient = evalnull( () -> httpsConf.getClient() );
+      	final ConnettoreConfigurazioneHttpsServer httpsServer = evalnull( () -> httpsConf.getServer() );
       	final ConnettoreConfigurazioneProxy 	  proxy   	  = connRest.getProxy();
       	final ConnettoreConfigurazioneTimeout	  timeoutConf = connRest.getTempiRisposta();
       	
@@ -437,7 +440,7 @@ public class ErogazioniApiHelper {
 			erogazioneAutorizzazioneAutenticati = TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione());
 			erogazioneAutorizzazioneRuoli = TipoAutorizzazione.isRolesRequired(pa.getAutorizzazione());
 			erogazioneAutorizzazioneRuoliTipologia =  AutorizzazioneUtilities.convertToRuoloTipologia(pa.getAutorizzazione()).toString();
-			erogazioneAutorizzazioneRuoliMatch = Helper.evalnull( () -> pa.getRuoli().getMatch().toString() );
+			erogazioneAutorizzazioneRuoliMatch = evalnull( () -> pa.getRuoli().getMatch().toString() );
 			
 			if (pa.getXacmlPolicy() != null) {							
 		        xamlPolicy.setValue(pa.getXacmlPolicy().getBytes());
@@ -458,7 +461,7 @@ public class ErogazioniApiHelper {
 			fruizioneAutorizzazioneAutenticati = TipoAutorizzazione.isAuthenticationRequired(pd.getAutorizzazione());
 			fruizioneAutorizzazioneRuoli =  TipoAutorizzazione.isRolesRequired(pd.getAutorizzazione());
 			fruizioneAutorizzazioneRuoliTipologia =  AutorizzazioneUtilities.convertToRuoloTipologia(pd.getAutorizzazione()).toString();
-			fruizioneAutorizzazioneRuoliMatch = Helper.evalnull( () -> pd.getRuoli().getMatch().toString() );
+			fruizioneAutorizzazioneRuoliMatch = evalnull( () -> pd.getRuoli().getMatch().toString() );
 			
 			if (pd.getXacmlPolicy() != null) {							
 		        xamlPolicy.setValue(pd.getXacmlPolicy().getBytes());
@@ -494,8 +497,8 @@ public class ErogazioniApiHelper {
         		endpoint_url,
         		null, 	// nome JMS
         		null, 	// tipo JMS,
-        		Helper.evalnull( () -> httpConf.getUsername() ),	
-        		Helper.evalnull( () -> httpConf.getUsername() ), 
+        		evalnull( () -> httpConf.getUsername() ),	
+        		evalnull( () -> httpConf.getUsername() ), 
         		null,   // initcont JMS,
         		null,   // urlpgk JMS,
         		null,   // provurl JMS 
@@ -510,34 +513,34 @@ public class ErogazioniApiHelper {
 				accordoPrivato,
 				false, 	// this.privato,
         		endpoint_url,	// httpsurl, 
-        		Helper.evalnull( () ->  httpsConf.getTipologia().toString() ),				// I valori corrispondono con con org.openspcoop2.utils.transport.http.SSLConstants
-        		Helper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),				// this.httpshostverify,
-				Helper.evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
-				Helper.evalnull( () -> httpsServer.getTruststoreTipo().toString() ),		// this.httpstipo,
-				Helper.evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
-				Helper.evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
+        		evalnull( () ->  httpsConf.getTipologia().toString() ),				// I valori corrispondono con con org.openspcoop2.utils.transport.http.SSLConstants
+        		BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),				// this.httpshostverify,
+				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
+				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),		// this.httpstipo,
+				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
+				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
 				httpsstato,	//
         		httpskeystore, 	
         		"", //  this.httpspwdprivatekeytrust
-        		Helper.evalnull( () -> httpsClient.getKeystorePath() ),					// httpspathkey
-        		Helper.evalnull( () -> httpsClient.getKeystoreTipo().toString() ),	 		// httpstipokey, coincide con ConnettoriCostanti.TIPOLOGIE_KEYSTORE
-        		Helper.evalnull( () -> httpsClient.getKeystorePassword() ), 	 		// httpspwdkey
-        		Helper.evalnull( () -> httpsClient.getKeyPassword() ),	 				// httpspwdprivatekey
-        		Helper.evalnull( () -> httpsClient.getAlgoritmo() ),					// httpsalgoritmokey
+        		evalnull( () -> httpsClient.getKeystorePath() ),					// httpspathkey
+        		evalnull( () -> httpsClient.getKeystoreTipo().toString() ),	 		// httpstipokey, coincide con ConnettoriCostanti.TIPOLOGIE_KEYSTORE
+        		evalnull( () -> httpsClient.getKeystorePassword() ), 	 		// httpspwdkey
+        		evalnull( () -> httpsClient.getKeyPassword() ),	 				// httpspwdprivatekey
+        		evalnull( () -> httpsClient.getAlgoritmo() ),					// httpsalgoritmokey
         		null, 								// tipoconn Da debug = null.	
         		as.getVersione().toString(), 		// Versione aspc
         		false,								// validazioneDocumenti Da debug = false
         		null,								// Da Codice console
         		ServletUtils.boolToCheckBoxStatus(http_stato),	// "yes" se utilizziamo http.
         		ServletUtils.boolToCheckBoxStatus(proxy_enabled),			
-    			Helper.evalnull( () -> proxy.getHostname() ),
-    			Helper.evalnull( () -> proxy.getPorta().toString() ),
-    			Helper.evalnull( () -> proxy.getUsername() ),
-    			Helper.evalnull( () -> proxy.getPassword() ),				
+    			evalnull( () -> proxy.getHostname() ),
+    			evalnull( () -> proxy.getPorta().toString() ),
+    			evalnull( () -> proxy.getUsername() ),
+    			evalnull( () -> proxy.getPassword() ),				
     			ServletUtils.boolToCheckBoxStatus(tempiRisposta_enabled), 
-    			Helper.evalnull( () -> timeoutConf.getConnectionTimeout().toString()),		// this.tempiRisposta_connectionTimeout, 
-    			Helper.evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()),  // this.tempiRisposta_readTimeout, 
-    			Helper.evalnull( () -> timeoutConf.getTempoMedioRisposta().toString()),		// this.tempiRisposta_tempoMedioRisposta,
+    			evalnull( () -> timeoutConf.getConnectionTimeout().toString()),		// this.tempiRisposta_connectionTimeout, 
+    			evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()),  // this.tempiRisposta_readTimeout, 
+    			evalnull( () -> timeoutConf.getTempoMedioRisposta().toString()),		// this.tempiRisposta_tempoMedioRisposta,
         		ServletUtils.boolToCheckBoxStatus(false),	// opzioniAvanzate 
         		"",		// transfer_mode, 
         		"",		// transfer_mode_chunk_size, 
@@ -626,25 +629,36 @@ public class ErogazioniApiHelper {
 		return list;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static TipoAutenticazionePrincipal getTipoAutenticazionePrincipal(TipoAutenticazioneNewEnum tipo, Object config){
 		if(TipoAutenticazioneNewEnum.PRINCIPAL.equals(tipo)) {
-			if(config!=null && config instanceof APIImplAutenticazioneConfigurazionePrincipal) {
-        		APIImplAutenticazioneConfigurazionePrincipal authConfig = (APIImplAutenticazioneConfigurazionePrincipal) config;
-        		return Enums.tipoAutenticazionePrincipalFromRest.get(authConfig.getTipo());	
-        	}
+			APIImplAutenticazioneConfigurazionePrincipal authConfig = null;
+			try {
+				authConfig = BaseHelper.fromMap( (Map<String,Object>) config,APIImplAutenticazioneConfigurazionePrincipal.class);
+				return Enums.tipoAutenticazionePrincipalFromRest.get(authConfig.getTipo());
+			} catch (Exception e) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il parametro configurazione per l'autenticazione basic non è correttamente formato: " + e.getMessage() );
+			}
 		}
 		return null;
 	}
 
-	public static List<String> getAutenticazioneParametroList(ErogazioniEnv env,TipoAutenticazioneNewEnum tipo, Object config){
-		if(TipoAutenticazioneNewEnum.PRINCIPAL.equals(tipo)) {
-			if(config!=null && config instanceof APIImplAutenticazioneConfigurazioneBasic) {
-				APIImplAutenticazioneConfigurazioneBasic authConfig = (APIImplAutenticazioneConfigurazioneBasic) config;
+	@SuppressWarnings("unchecked")
+	public static List<String> getAutenticazioneParametroList(ErogazioniEnv env,TipoAutenticazioneNewEnum tipo, Object config) {
+		if(TipoAutenticazioneNewEnum.HTTP_BASIC.equals(tipo)) { 
+			if(config!=null) {
+				APIImplAutenticazioneConfigurazioneBasic authConfig = null;
+				
+				try {
+					authConfig = BaseHelper.fromMap( (Map<String,Object>) config,APIImplAutenticazioneConfigurazioneBasic.class);
+				} catch (Exception e) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il parametro configurazione per l'autenticazione basic non è correttamente formato: " + e.getMessage());
+				}
         		List<Proprieta> listConfig = new ArrayList<>();
-        		if(authConfig.isForward()!=null) {
+        		if(authConfig != null && authConfig.isForward()!=null) {
         			Proprieta propertyAutenticazione = new Proprieta();
 					propertyAutenticazione.setNome(ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION);
-        			if(authConfig.isForward()) {
+        			if(authConfig.isForward()) {	
         				propertyAutenticazione.setValore(ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION_TRUE);
         			}
         			else {
@@ -652,13 +666,33 @@ public class ErogazioniApiHelper {
         			}
         			listConfig.add(propertyAutenticazione);
         		}
+        		
+        		if(!listConfig.isEmpty()) {
+        			return env.stationCore.getParametroAutenticazione(Enums.tipoAutenticazioneNewFromRest.get(tipo).toString(), listConfig);
+        		}
 			}
+			
 		}
 		else if(TipoAutenticazioneNewEnum.PRINCIPAL.equals(tipo)) {
-			if(config!=null && config instanceof APIImplAutenticazioneConfigurazionePrincipal) {
-        		APIImplAutenticazioneConfigurazionePrincipal authConfig = (APIImplAutenticazioneConfigurazionePrincipal) config;
-        		TipoAutenticazionePrincipal autenticazionePrincipal = Enums.tipoAutenticazionePrincipalFromRest.get(authConfig.getTipo());	
+			if(config!=null) {
+        		APIImplAutenticazioneConfigurazionePrincipal authConfig = null;
+        		
+        		try {
+					authConfig = BaseHelper.fromMap( (Map<String,Object>) config,APIImplAutenticazioneConfigurazionePrincipal.class);
+				} catch (Exception e) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il parametro configurazione per l'autenticazione basic non è correttamente formato: " + e.getMessage() );
+				}
+        		if (authConfig == null)
+        			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il parametro configurazione per l'autenticazione basic non è correttamente formato");
+        		
+        		
+        		TipoAutenticazionePrincipal autenticazionePrincipal = Enums.tipoAutenticazionePrincipalFromRest.get(authConfig.getTipo());
+        		Proprieta propTipoAuthn = new Proprieta();
+        		propTipoAuthn.setNome(ParametriAutenticazionePrincipal.TIPO_AUTENTICAZIONE);
+        		propTipoAuthn.setValore(autenticazionePrincipal.getValue());
+        		
         		List<Proprieta> listConfig = new ArrayList<>();
+        		listConfig.add(propTipoAuthn);
         		switch (autenticazionePrincipal) {
 				case CONTAINER:
 				case INDIRIZZO_IP:
@@ -682,12 +716,12 @@ public class ErogazioniApiHelper {
 					listConfig.add(propertyAutenticazione);
 					break;
 				case URL:
-					if(authConfig.getNome()==null) {
+					if(authConfig.getPattern()==null) {
 						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è stata fornita una espressione regolare per l'autenticazione principal '"+authConfig.getTipo()+"' indicata");
 					}
 					propertyAutenticazione = new Proprieta();
 					propertyAutenticazione.setNome(ParametriAutenticazionePrincipal.PATTERN);
-					propertyAutenticazione.setValore(authConfig.getNome());
+					propertyAutenticazione.setValore(authConfig.getPattern());
 					listConfig.add(propertyAutenticazione);
 					break;
 				}
@@ -801,8 +835,8 @@ public class ErogazioniApiHelper {
 							parametersPOST, false, endpointtype); // uso endpointtype per capire se è la prima volta che entro
 	
         
-        final ConnettoreConfigurazioneHttpsClient httpsClient = Helper.evalnull( () -> httpsConf.getClient() );
-      	final ConnettoreConfigurazioneHttpsServer httpsServer = Helper.evalnull( () -> httpsConf.getServer() );
+        final ConnettoreConfigurazioneHttpsClient httpsClient = evalnull( () -> httpsConf.getClient() );
+      	final ConnettoreConfigurazioneHttpsServer httpsServer = evalnull( () -> httpsConf.getServer() );
       	final ConnettoreConfigurazioneProxy 	  proxy   	  = conn.getProxy();
       	final ConnettoreConfigurazioneTimeout	  timeoutConf = conn.getTempiRisposta();
 
@@ -848,7 +882,7 @@ public class ErogazioniApiHelper {
         if ( generaPortaApplicativa && as.getServiceBinding() == ServiceBinding.SOAP && authz != null && authz.getTipo() != null ) {
 	        switch ( authz.getTipo() ) {
 	        case ABILITATO:
-	        	Helper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthz );
+	        	BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthz );
 	         	ruoliFonte = configAuthz.getRuoliFonte();
 	         	erogazioneRuolo = configAuthz.getRuolo();
 	         	isPuntuale = configAuthz.isPuntuale();
@@ -856,7 +890,7 @@ public class ErogazioniApiHelper {
 	         	statoAutorizzazione = AutorizzazioneUtilities.STATO_ABILITATO;
 	        	break;
 	        case XACML_POLICY:
-	        	Helper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthXaml );
+	        	BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthXaml );
 	        	ruoliFonte = configAuthXaml.getRuoliFonte();
 	        	statoAutorizzazione = AutorizzazioneUtilities.STATO_XACML_POLICY;
 	        	
@@ -877,7 +911,7 @@ public class ErogazioniApiHelper {
        	
         	if ( !StringUtils.isEmpty(configAuthz.getSoggetto()) ) {
         		
-        		CredenzialeTipo credTipo = Helper.evalnull( () -> Enums.credenzialeTipoFromTipoAutenticazioneNew.get(authn.getTipo()) );
+        		CredenzialeTipo credTipo = evalnull( () -> Enums.credenzialeTipoFromTipoAutenticazioneNew.get(authn.getTipo()) );
         		Optional<String> soggettoCompatibile = getSoggettiCompatibiliAutorizzazione(credTipo, env.idSoggetto, env)
         	        	.stream()
         	        	.map( Soggetto::getNome )
@@ -919,8 +953,8 @@ public class ErogazioniApiHelper {
 				erogatore.getId(), 
 				env.idServizioFactory.getIDServizioFromAccordo(asps),
 				env.idAccordoFactory.getUriFromAccordo(as),
-				Helper.evalnull( () -> fruitore.get().getTipo() ),
-				Helper.evalnull( () -> fruitore.get().getNome() ),
+				evalnull( () -> fruitore.get().getTipo() ),
+				evalnull( () -> fruitore.get().getNome() ),
 				env.tipo_protocollo,
 				asps.getVersioneProtocollo(),
 				asps.getPortType(),
@@ -959,8 +993,8 @@ public class ErogazioniApiHelper {
         		impl.getConnettore().getEndpoint(),
         		null, 	// nome JMS
         		null, 	// tipo JMS,
-        		Helper.evalnull( () -> httpConf.getUsername() ),	
-        		Helper.evalnull( () -> httpConf.getPassword() ), 
+        		evalnull( () -> httpConf.getUsername() ),	
+        		evalnull( () -> httpConf.getPassword() ), 
         		null,   // initcont JMS,
         		null,   // urlpgk JMS,
         		null,   // provurl JMS 
@@ -968,41 +1002,41 @@ public class ErogazioniApiHelper {
         		null, 	// sendas JMS, 
         		new BinaryParameter(),		//  wsdlimpler
         		new BinaryParameter(),		//  wsdlimplfru
-        		Helper.evalorElse( () -> asps.getId().toString(), "0"), 	
+        		BaseHelper.evalorElse( () -> asps.getId().toString(), "0"), 	
         		asps.getVersioneProtocollo(),	//  Il profilo è la versione protocollo in caso spcoop, è quello del soggetto erogatore.
         		asps.getPortType(),
         		ptArray,
 				accordoPrivato,
 				false, 	// this.privato,
         		conn.getEndpoint(),	// httpsurl, 
-        		Helper.evalnull( () ->  httpsConf.getTipologia().toString() ),				// I valori corrispondono con con org.openspcoop2.utils.transport.http.SSLConstants
-        		Helper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),				// this.httpshostverify,
-				Helper.evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
-				Helper.evalnull( () -> httpsServer.getTruststoreTipo().toString() ),		// this.httpstipo,
-				Helper.evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
-				Helper.evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
+        		evalnull( () ->  httpsConf.getTipologia().toString() ),				// I valori corrispondono con con org.openspcoop2.utils.transport.http.SSLConstants
+        		BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),				// this.httpshostverify,
+				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
+				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),		// this.httpstipo,
+				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
+				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
 				httpsstato,	//
         		httpskeystore, 	
         		"", //  this.httpspwdprivatekeytrust
-        		Helper.evalnull( () -> httpsClient.getKeystorePath() ),					// httpspathkey
-        		Helper.evalnull( () -> httpsClient.getKeystoreTipo().toString() ),	 		// httpstipokey, coincide con ConnettoriCostanti.TIPOLOGIE_KEYSTORE
-        		Helper.evalnull( () -> httpsClient.getKeystorePassword() ), 	 		// httpspwdkey
-        		Helper.evalnull( () -> httpsClient.getKeyPassword() ),	 				// httpspwdprivatekey
-        		Helper.evalnull( () -> httpsClient.getAlgoritmo() ),					// httpsalgoritmokey
+        		evalnull( () -> httpsClient.getKeystorePath() ),					// httpspathkey
+        		evalnull( () -> httpsClient.getKeystoreTipo().toString() ),	 		// httpstipokey, coincide con ConnettoriCostanti.TIPOLOGIE_KEYSTORE
+        		evalnull( () -> httpsClient.getKeystorePassword() ), 	 		// httpspwdkey
+        		evalnull( () -> httpsClient.getKeyPassword() ),	 				// httpspwdprivatekey
+        		evalnull( () -> httpsClient.getAlgoritmo() ),					// httpsalgoritmokey
         		null, 								// tipoconn Da debug = null.	
         		as.getVersione().toString(), 		// Versione aspc
         		false,								// validazioneDocumenti Da debug = false
         		null,								// Da Codice console
         		ServletUtils.boolToCheckBoxStatus(http_stato),	// "yes" se utilizziamo http.
         		ServletUtils.boolToCheckBoxStatus(proxy_enabled),			
-    			Helper.evalnull( () -> proxy.getHostname() ),
-    			Helper.evalnull( () -> proxy.getPorta().toString() ),
-    			Helper.evalnull( () -> proxy.getUsername() ),
-    			Helper.evalnull( () -> proxy.getPassword() ),				
+    			evalnull( () -> proxy.getHostname() ),
+    			evalnull( () -> proxy.getPorta().toString() ),
+    			evalnull( () -> proxy.getUsername() ),
+    			evalnull( () -> proxy.getPassword() ),				
     			ServletUtils.boolToCheckBoxStatus(tempiRisposta_enabled), 
-    			Helper.evalnull( () -> timeoutConf.getConnectionTimeout().toString()),		// this.tempiRisposta_connectionTimeout, 
-    			Helper.evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()),  // this.tempiRisposta_readTimeout, 
-    			Helper.evalnull( () -> timeoutConf.getTempoMedioRisposta().toString()),		// this.tempiRisposta_tempoMedioRisposta,
+    			evalnull( () -> timeoutConf.getConnectionTimeout().toString()),		// this.tempiRisposta_connectionTimeout, 
+    			evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()),  // this.tempiRisposta_readTimeout, 
+    			evalnull( () -> timeoutConf.getTempoMedioRisposta().toString()),		// this.tempiRisposta_tempoMedioRisposta,
         		ServletUtils.boolToCheckBoxStatus(false),	// opzioniAvanzate 
         		"",		// transfer_mode, 
         		"",		// transfer_mode_chunk_size, 
@@ -1019,34 +1053,34 @@ public class ErogazioniApiHelper {
         		null,	// responseInputWaitTime,
         		null,	// erogazioneSoggetto, Come da codice console.
         		erogazioneRuolo,	//, non viene utilizzato.
-        		Helper.evalnull( () -> Enums.tipoAutenticazioneNewFromRest.get(authn.getTipo()).toString() ),		// erogazioneAutenticazione
-        		Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus(authn.isOpzionale()) ),					// erogazioneAutenticazioneOpzionale
+        		evalnull( () -> Enums.tipoAutenticazioneNewFromRest.get(authn.getTipo()).toString() ),		// erogazioneAutenticazione
+        		evalnull( () -> ServletUtils.boolToCheckBoxStatus(authn.isOpzionale()) ),					// erogazioneAutenticazioneOpzionale
         		autenticazionePrincipal, // erogazioneAutenticazionePrincipal
         		autenticazioneParametroList, // erogazioneAutenticazioneParametroList
         		statoAutorizzazione,					   	// erogazioneAutorizzazione QUESTO E' lo STATO dell'autorizzazione
         		ServletUtils.boolToCheckBoxStatus( isPuntuale ), 			// erogazioneAutorizzazioneAutenticati, 
         		ServletUtils.boolToCheckBoxStatus( isRuoli ),				// erogazioneAutorizzazioneRuoli, 
                 Enums.ruoloTipologiaFromRest.get(ruoliFonte).toString(),				// erogazioneAutorizzazioneRuoliTipologia,
-                Helper.evalnull( () -> configAuthz.getRuoliRichiesti().toString() ),  	// erogazioneAutorizzazioneRuoliMatch,  AllAnyEnum == RuoloTipoMatch
+                evalnull( () -> configAuthz.getRuoliRichiesti().toString() ),  	// erogazioneAutorizzazioneRuoliMatch,  AllAnyEnum == RuoloTipoMatch
         		env.isSupportatoAutenticazioneSoggetti,	
         		generaPortaApplicativa,													// generaPACheckSoggetto (Un'erogazione genera una porta applicativa)
         		listExtendedConnettore,
         		null,																	// fruizioneServizioApplicativo
         		null,																	// Ruolo fruizione, non viene utilizzato.
-        		Helper.evalnull( () -> Enums.tipoAutenticazioneNewFromRest.get(authn.getTipo()).toString() ),  // fruizioneAutenticazione 
-        		Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus( authn.isOpzionale() ) ), 			// fruizioneAutenticazioneOpzionale
+        		evalnull( () -> Enums.tipoAutenticazioneNewFromRest.get(authn.getTipo()).toString() ),  // fruizioneAutenticazione 
+        		evalnull( () -> ServletUtils.boolToCheckBoxStatus( authn.isOpzionale() ) ), 			// fruizioneAutenticazioneOpzionale
         		autenticazionePrincipal, // fruizioneAutenticazionePrincipal
         		autenticazioneParametroList, // fruizioneAutenticazioneParametroList
         		statoAutorizzazione,											// fruizioneAutorizzazione 	
         		ServletUtils.boolToCheckBoxStatus( isPuntuale ), 				// fruizioneAutorizzazioneAutenticati, 
         		ServletUtils.boolToCheckBoxStatus( isRuoli ), 					// fruizioneAutorizzazioneRuoli,
                 Enums.ruoloTipologiaFromRest.get(ruoliFonte).toString(), 					// fruizioneAutorizzazioneRuoliTipologia,
-                Helper.evalnull( () -> configAuthz.getRuoliRichiesti().toString() ), 		// fruizioneAutorizzazioneRuoliMatch,
+                evalnull( () -> configAuthz.getRuoliRichiesti().toString() ), 		// fruizioneAutorizzazioneRuoliMatch,
         		env.tipo_protocollo, 
         		xamlPolicy, 																//allegatoXacmlPolicy,
         		"",
-        		Helper.evalnull( () -> fruitore.get().getTipo() ),		// tipoFruitore 
-        		Helper.evalnull( () -> fruitore.get().getNome() )			// nomeFruitore
+        		evalnull( () -> fruitore.get().getTipo() ),		// tipoFruitore 
+        		evalnull( () -> fruitore.get().getNome() )			// nomeFruitore
         	)) {
         	throw FaultCode.RICHIESTA_NON_VALIDA.toException( StringEscapeUtils.unescapeHtml( env.pd.getMessage()) );
         }
@@ -1076,8 +1110,8 @@ public class ErogazioniApiHelper {
 				ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, env.apsHelper, 
 							parametersPOST, false, endpointtype);
 
-	    final ConnettoreConfigurazioneHttpsClient httpsClient = Helper.evalnull( () -> httpsConf.getClient() );
-	  	final ConnettoreConfigurazioneHttpsServer httpsServer = Helper.evalnull( () -> httpsConf.getServer() );
+	    final ConnettoreConfigurazioneHttpsClient httpsClient = evalnull( () -> httpsConf.getClient() );
+	  	final ConnettoreConfigurazioneHttpsServer httpsServer = evalnull( () -> httpsConf.getServer() );
 	  	final ConnettoreConfigurazioneProxy 	  proxy   	  = conn.getProxy();
 	  	final ConnettoreConfigurazioneTimeout	  timeoutConf = conn.getTempiRisposta();
 	  	
@@ -1097,39 +1131,39 @@ public class ErogazioniApiHelper {
 				conn.getEndpoint(),
 				null,	// nome
 				null,	// tipo
-				Helper.evalnull( () -> httpConf.getUsername() ),
-				Helper.evalnull( () -> httpConf.getPassword() ),
+				evalnull( () -> httpConf.getUsername() ),
+				evalnull( () -> httpConf.getPassword() ),
 				null,	// this.initcont, 
 				null,	// this.urlpgk,
 				null,	// provurl jms,
 				null, 	// connfact, 
 				null,	// sendas, 
 				conn.getEndpoint(), 													// this.httpsurl, 
-				Helper.evalnull( () -> httpsConf.getTipologia().toString() ),				// this.httpstipologia
-				Helper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),	// this.httpshostverify,
-				Helper.evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
-				Helper.evalnull( () -> httpsServer.getTruststoreTipo().toString() ),	// this.httpstipo,
-				Helper.evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
-				Helper.evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
+				evalnull( () -> httpsConf.getTipologia().toString() ),				// this.httpstipologia
+				BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),	// this.httpshostverify,
+				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
+				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),	// this.httpstipo,
+				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
+				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
 				httpsstato, 
 				httpskeystore,
 				"",																		// httpspwdprivatekeytrust, 
-				Helper.evalnull( () -> httpsClient.getKeystorePath() ),				// pathkey
-				Helper.evalnull( () -> httpsClient.getKeystoreTipo().toString() ), 		// this.httpstipokey
-				Helper.evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
-				Helper.evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
-				Helper.evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey, 
+				evalnull( () -> httpsClient.getKeystorePath() ),				// pathkey
+				evalnull( () -> httpsClient.getKeystoreTipo().toString() ), 		// this.httpstipokey
+				evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
+				evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
+				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey, 
 				null,																//	tipoconn (personalizzato)
 				ServletUtils.boolToCheckBoxStatus( http_stato ),										 	//autenticazioneHttp,
 				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
-				Helper.evalnull( () -> proxy.getHostname() ),
-				Helper.evalnull( () -> proxy.getPorta().toString() ),
-				Helper.evalnull( () -> proxy.getUsername() ),
-				Helper.evalnull( () -> proxy.getPassword() ),
+				evalnull( () -> proxy.getHostname() ),
+				evalnull( () -> proxy.getPorta().toString() ),
+				evalnull( () -> proxy.getUsername() ),
+				evalnull( () -> proxy.getPassword() ),
 				ServletUtils.boolToCheckBoxStatus( tempiRisposta_enabled ),	
-				Helper.evalnull( () -> timeoutConf.getConnectionTimeout().toString()),	// this.tempiRisposta_connectionTimeout, 
-				Helper.evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()), //null,	// this.tempiRisposta_readTimeout, 
-				Helper.evalnull( () -> timeoutConf.getTempoMedioRisposta().toString()),	// this.tempiRisposta_tempoMedioRisposta,
+				evalnull( () -> timeoutConf.getConnectionTimeout().toString()),	// this.tempiRisposta_connectionTimeout, 
+				evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()), //null,	// this.tempiRisposta_readTimeout, 
+				evalnull( () -> timeoutConf.getTempoMedioRisposta().toString()),	// this.tempiRisposta_tempoMedioRisposta,
 				"no",	// this.opzioniAvanzate, 
 				"", 	// this.transfer_mode, 
 				"", 	// this.transfer_mode_chunk_size, 
@@ -1177,8 +1211,8 @@ public class ErogazioniApiHelper {
 				ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, env.apsHelper, 
 							parametersPOST, false, endpointtype);
 
-	    final ConnettoreConfigurazioneHttpsClient httpsClient = Helper.evalnull( () -> httpsConf.getClient() );
-	  	final ConnettoreConfigurazioneHttpsServer httpsServer = Helper.evalnull( () -> httpsConf.getServer() );
+	    final ConnettoreConfigurazioneHttpsClient httpsClient = evalnull( () -> httpsConf.getClient() );
+	  	final ConnettoreConfigurazioneHttpsServer httpsServer = evalnull( () -> httpsConf.getServer() );
 	  	final ConnettoreConfigurazioneProxy 	  proxy   	  = conn.getProxy();
 	  	final ConnettoreConfigurazioneTimeout	  timeoutConf = conn.getTempiRisposta();
 	  	
@@ -1203,39 +1237,39 @@ public class ErogazioniApiHelper {
 				conn.getEndpoint(),		// this.url,
 				null,	// this.nome,
 				null, 	// this.tipo,
-				Helper.evalnull( () -> httpConf.getUsername() ),
-				Helper.evalnull( () -> httpConf.getPassword() ),
+				evalnull( () -> httpConf.getUsername() ),
+				evalnull( () -> httpConf.getPassword() ),
 				null,	// this.initcont, 
 				null,	// this.urlpgk,
 				conn.getEndpoint(),	// this.url, 
 				null,	// this.connfact,
 				null,	// this.sendas,
 				conn.getEndpoint(), 													// this.httpsurl, 
-				Helper.evalnull( () -> httpsConf.getTipologia().toString() ),				// this.httpstipologia
-				Helper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),	// this.httpshostverify,
-				Helper.evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
-				Helper.evalnull( () -> httpsServer.getTruststoreTipo().toString() ),	// this.httpstipo,
-				Helper.evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
-				Helper.evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
+				evalnull( () -> httpsConf.getTipologia().toString() ),				// this.httpstipologia
+				BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),	// this.httpshostverify,
+				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
+				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),	// this.httpstipo,
+				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
+				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
 				httpsstato,
 				httpskeystore,			// this.httpskeystore, 
 				"",																	//  this.httpspwdprivatekeytrust
-				Helper.evalnull( () -> httpsClient.getKeystorePath() ),				// pathkey
-				Helper.evalnull( () -> httpsClient.getKeystoreTipo().toString() ), 		// this.httpstipokey
-				Helper.evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
-				Helper.evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
-				Helper.evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey,
+				evalnull( () -> httpsClient.getKeystorePath() ),				// pathkey
+				evalnull( () -> httpsClient.getKeystoreTipo().toString() ), 		// this.httpstipokey
+				evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
+				evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
+				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey,
 			
 				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
-				Helper.evalnull( () -> proxy.getHostname() ),
-				Helper.evalnull( () -> proxy.getPorta().toString() ),
-				Helper.evalnull( () -> proxy.getUsername() ),
-				Helper.evalnull( () -> proxy.getPassword() ),
+				evalnull( () -> proxy.getHostname() ),
+				evalnull( () -> proxy.getPorta().toString() ),
+				evalnull( () -> proxy.getUsername() ),
+				evalnull( () -> proxy.getPassword() ),
 				
 				ServletUtils.boolToCheckBoxStatus( tempiRisposta_enabled ),	
-				Helper.evalnull( () -> timeoutConf.getConnectionTimeout().toString()),	// this.tempiRisposta_connectionTimeout, 
-				Helper.evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()), //null,	// this.tempiRisposta_readTimeout, 
-				Helper.evalnull( () -> timeoutConf.getTempoMedioRisposta().toString()),	// this.tempiRisposta_tempoMedioRisposta,
+				evalnull( () -> timeoutConf.getConnectionTimeout().toString()),	// this.tempiRisposta_connectionTimeout, 
+				evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()), //null,	// this.tempiRisposta_readTimeout, 
+				evalnull( () -> timeoutConf.getTempoMedioRisposta().toString()),	// this.tempiRisposta_tempoMedioRisposta,
 				"no",	// this.opzioniAvanzate, 
 				"", 	// this.transfer_mode, 
 				"", 	// this.transfer_mode_chunk_size, 
@@ -1284,8 +1318,8 @@ public class ErogazioniApiHelper {
 				ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, env.apsHelper, 
 							parametersPOST, false, endpointtype);
 
-	    final ConnettoreConfigurazioneHttpsClient httpsClient = Helper.evalnull( () -> httpsConf.getClient() );
-	  	final ConnettoreConfigurazioneHttpsServer httpsServer = Helper.evalnull( () -> httpsConf.getServer() );
+	    final ConnettoreConfigurazioneHttpsClient httpsClient = evalnull( () -> httpsConf.getClient() );
+	  	final ConnettoreConfigurazioneHttpsServer httpsServer = evalnull( () -> httpsConf.getServer() );
 	  	final ConnettoreConfigurazioneProxy 	  proxy   	  = conn.getProxy();
 	  	final ConnettoreConfigurazioneTimeout	  timeoutConf = conn.getTempiRisposta();
 	  	
@@ -1310,39 +1344,39 @@ public class ErogazioniApiHelper {
 				conn.getEndpoint(),		// this.url,
 				null,	// this.nome,
 				null, 	// this.tipo,
-				Helper.evalnull( () -> httpConf.getUsername() ),
-				Helper.evalnull( () -> httpConf.getPassword() ),
+				evalnull( () -> httpConf.getUsername() ),
+				evalnull( () -> httpConf.getPassword() ),
 				null,	// this.initcont, 
 				null,	// this.urlpgk,
 				conn.getEndpoint(),	// this.url, 
 				null,	// this.connfact,
 				null,	// this.sendas,
 				conn.getEndpoint(), 													// this.httpsurl, 
-				Helper.evalnull( () -> httpsConf.getTipologia().toString() ),				// this.httpstipologia
-				Helper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),	// this.httpshostverify,
-				Helper.evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
-				Helper.evalnull( () -> httpsServer.getTruststoreTipo().toString() ),	// this.httpstipo,
-				Helper.evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
-				Helper.evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
+				evalnull( () -> httpsConf.getTipologia().toString() ),				// this.httpstipologia
+				BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),	// this.httpshostverify,
+				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
+				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),	// this.httpstipo,
+				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
+				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
 				httpsstato,
 				httpskeystore,			// this.httpskeystore, 
 				"",																	//  this.httpspwdprivatekeytrust
-				Helper.evalnull( () -> httpsClient.getKeystorePath() ),				// pathkey
-				Helper.evalnull( () -> httpsClient.getKeystoreTipo().toString() ), 		// this.httpstipokey
-				Helper.evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
-				Helper.evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
-				Helper.evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey,
+				evalnull( () -> httpsClient.getKeystorePath() ),				// pathkey
+				evalnull( () -> httpsClient.getKeystoreTipo().toString() ), 		// this.httpstipokey
+				evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
+				evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
+				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey,
 			
 				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
-				Helper.evalnull( () -> proxy.getHostname() ),
-				Helper.evalnull( () -> proxy.getPorta().toString() ),
-				Helper.evalnull( () -> proxy.getUsername() ),
-				Helper.evalnull( () -> proxy.getPassword() ),
+				evalnull( () -> proxy.getHostname() ),
+				evalnull( () -> proxy.getPorta().toString() ),
+				evalnull( () -> proxy.getUsername() ),
+				evalnull( () -> proxy.getPassword() ),
 				
 				ServletUtils.boolToCheckBoxStatus( tempiRisposta_enabled ),	
-				Helper.evalnull( () -> timeoutConf.getConnectionTimeout().toString()),	// this.tempiRisposta_connectionTimeout, 
-				Helper.evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()), //null,	// this.tempiRisposta_readTimeout, 
-				Helper.evalnull( () -> timeoutConf.getTempoMedioRisposta().toString()),	// this.tempiRisposta_tempoMedioRisposta,
+				evalnull( () -> timeoutConf.getConnectionTimeout().toString()),	// this.tempiRisposta_connectionTimeout, 
+				evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()), //null,	// this.tempiRisposta_readTimeout, 
+				evalnull( () -> timeoutConf.getTempoMedioRisposta().toString()),	// this.tempiRisposta_tempoMedioRisposta,
 				"no",	// this.opzioniAvanzate, 
 				"", 	// this.transfer_mode, 
 				"", 	// this.transfer_mode_chunk_size, 
@@ -1395,10 +1429,10 @@ public class ErogazioniApiHelper {
         	autenticazioneParametroList = getAutenticazioneParametroList(env, authn.getTipo(), authn.getConfigurazione());
         }
                 
-        if ( Helper.evalnull( () -> authz.getTipo() ) != null) {
+        if ( evalnull( () -> authz.getTipo() ) != null) {
 		    switch (authz.getTipo()) {
 		    case ABILITATO:	
-		    	Helper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthz );
+		    	BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthz );
 		     	ruoliFonte = configAuthz.getRuoliFonte();
 	         	isPuntuale = configAuthz.isPuntuale();
 	         	isRuoli = configAuthz.isRuoli();
@@ -1408,7 +1442,7 @@ public class ErogazioniApiHelper {
 	         	
 		    	break;
 		    case XACML_POLICY:
-		    	Helper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthzXacml );
+		    	BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthzXacml );
 		    	ruoliFonte = configAuthzXacml.getRuoliFonte();
 		    	statoAutorizzazione = AutorizzazioneUtilities.STATO_XACML_POLICY;
 		    	break;
@@ -1435,17 +1469,17 @@ public class ErogazioniApiHelper {
 				regConnettore, 
 				generaPortaApplicativa,										// generaPortaApplicativa,
 				generaPortaDelegata, 										// generaPortaDelegata
-				Helper.evalnull( () -> Enums.tipoAutenticazioneNewFromRest.get(authn.getTipo()).toString() ),											// erogazioneAutenticazione
-        		Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus( authn.isOpzionale() ) ), 														// erogazioneAutenticazioneOpzionale
+				evalnull( () -> Enums.tipoAutenticazioneNewFromRest.get(authn.getTipo()).toString() ),											// erogazioneAutenticazione
+        		evalnull( () -> ServletUtils.boolToCheckBoxStatus( authn.isOpzionale() ) ), 														// erogazioneAutenticazioneOpzionale
         		autenticazionePrincipal, // erogazioneAutenticazionePrincipal
         		autenticazioneParametroList, // erogazioneAutenticazioneParametroList
         		statoAutorizzazione,	// autorizzazione, è lo STATO 	
 				ServletUtils.boolToCheckBoxStatus( isPuntuale ),			// 	autorizzazioneAutenticati,
 				ServletUtils.boolToCheckBoxStatus( isRuoli ),				//	autorizzazioneRuoli,
 		    	Enums.ruoloTipologiaFromRest.get(ruoliFonte).toString(),				//	erogazioneAutorizzazioneRuoliTipologia
-		    	Helper.evalnull( () -> configAuthz.getRuoliRichiesti().toString() ),			// 	autorizzazioneRuoliMatch
+		    	evalnull( () -> configAuthz.getRuoliRichiesti().toString() ),			// 	autorizzazioneRuoliMatch
 				null,	// servizioApplicativo Come da Debug, 
-		    	Helper.evalnull( () -> configAuthz.getRuolo() ),	// ruolo: E' il ruolo scelto nella label "Ruolo" 
+		    	evalnull( () -> configAuthz.getRuolo() ),	// ruolo: E' il ruolo scelto nella label "Ruolo" 
 		    	soggettoAutenticato,	// soggettoAutenticato TODO BISOGNA AGGIUNGERE IL CONTROLLO CHE IL SOGGETTO AUTENTICATO SIA NEL REGISTRO 
 				null,	// autorizzazione_tokenOptions, 
 				null,	// autorizzazioneScope, 
@@ -1547,28 +1581,28 @@ public class ErogazioniApiHelper {
 		
 		switch (body.getRuolo()) {
 		case ALLEGATO: {
-			@SuppressWarnings("unchecked") AllegatoGenerico all = Helper.fromMap((Map<String,Object>) body.getAllegato(), AllegatoGenerico.class);
+			@SuppressWarnings("unchecked") AllegatoGenerico all = BaseHelper.fromMap((Map<String,Object>) body.getAllegato(), AllegatoGenerico.class);
 			documento.setByteContenuto(all.getDocumento());
 			documento.setFile(all.getNome());
 			documento.setTipo(all.getNome().substring( all.getNome().lastIndexOf('.')+1, all.getNome().length()));
 			break;
 		}
 		case SPECIFICASEMIFORMALE: {
-			@SuppressWarnings("unchecked") AllegatoSpecificaSemiformale all = Helper.fromMap( (Map<String,Object>) body.getAllegato(), AllegatoSpecificaSemiformale.class);
+			@SuppressWarnings("unchecked") AllegatoSpecificaSemiformale all = BaseHelper.fromMap( (Map<String,Object>) body.getAllegato(), AllegatoSpecificaSemiformale.class);
 			documento.setByteContenuto(all.getDocumento());
 			documento.setFile(all.getNome());	
 			documento.setTipo(all.getTipo().toString());
 			break;
 		}
 		case SPECIFICALIVELLOSERVIZIO: {
-			@SuppressWarnings("unchecked") AllegatoSpecificaLivelloServizio all = Helper.fromMap( (Map<String,Object>) body.getAllegato(), AllegatoSpecificaLivelloServizio.class);
+			@SuppressWarnings("unchecked") AllegatoSpecificaLivelloServizio all = BaseHelper.fromMap( (Map<String,Object>) body.getAllegato(), AllegatoSpecificaLivelloServizio.class);
 			documento.setByteContenuto(all.getDocumento());
 			documento.setFile(all.getNome());	
 			documento.setTipo(all.getTipo().toString());
 			break;
 		}
 		case SPECIFICASICUREZZA: {
-			@SuppressWarnings("unchecked") AllegatoSpecificaSicurezza all = Helper.fromMap( (Map<String,Object>) body.getAllegato(), AllegatoSpecificaSicurezza.class);
+			@SuppressWarnings("unchecked") AllegatoSpecificaSicurezza all = BaseHelper.fromMap( (Map<String,Object>) body.getAllegato(), AllegatoSpecificaSicurezza.class);
 			documento.setByteContenuto(all.getDocumento());
 			documento.setFile(all.getNome());	
 			documento.setTipo(all.getTipo().toString());
@@ -1725,7 +1759,7 @@ public class ErogazioniApiHelper {
 	
 	public static void updateAllegatoAsps(ApiImplAllegato body, String nomeAllegato, ErogazioniEnv env, AccordoServizioParteSpecifica asps)
 			throws Exception {
-		Documento oldDoc = Helper.supplyOrNotFound( () -> env.archiviCore.getDocumento(nomeAllegato, null, null, asps.getId(), false, ProprietariDocumento.servizio), "Allegato di nome " + nomeAllegato); 
+		Documento oldDoc = BaseHelper.supplyOrNotFound( () -> env.archiviCore.getDocumento(nomeAllegato, null, null, asps.getId(), false, ProprietariDocumento.servizio), "Allegato di nome " + nomeAllegato); 
 		
 		Documento newDoc = ErogazioniApiHelper.implAllegatoToDocumento(body, asps);
 		newDoc.setId(oldDoc.getId());
@@ -1918,7 +1952,7 @@ public class ErogazioniApiHelper {
 					asps, 
 					toFill, 
 					getUrlInvocazioneFruizione(asps, fruitore.toIDSoggetto(), env),
-					Helper.evalnull( () -> getConnettoreFruizione(asps, fruitore, env).getProperties().get(CostantiDB.CONNETTORE_HTTP_LOCATION) ),
+					evalnull( () -> getConnettoreFruizione(asps, fruitore, env).getProperties().get(CostantiDB.CONNETTORE_HTTP_LOCATION) ),
 					getGestioneCorsFromFruizione(asps, fruitore.toIDSoggetto(), env),
 					fruitore.getNome(),
 					stato.stato,
@@ -2174,20 +2208,20 @@ public class ErogazioniApiHelper {
 		final RegistrazioneMessaggiConfigurazione risposta = dumpConf.getRisposta();
 
 		final String statoDump = dumpConf.getStato().toString(); 
-		final String statoDumpRichiesta 		 	= Helper.boolToStatoFunzionalitaConf( Helper.evalnull( () -> richiesta.isAbilitato() )).toString();
-		final String statoDumpRisposta 				= Helper.boolToStatoFunzionalitaConf( Helper.evalnull( () -> risposta.isAbilitato() )).toString();
-		final String dumpRichiestaIngressoHeader	= Helper.boolToStatoFunzionalitaConf( Helper.evalnull( () -> richiesta.getIngresso().isHeaders() )).toString();
-		final String dumpRichiestaIngressoBody 		= Helper.boolToStatoFunzionalitaConf( Helper.evalnull( () -> richiesta.getIngresso().isBody() )).toString();
-		final String dumpRichiestaIngressoAttachments =  Helper.boolToStatoFunzionalitaConf( Helper.evalnull( () -> richiesta.getIngresso().isAttachments()) ).toString();
-		final String dumpRichiestaUscitaHeader      = Helper.boolToStatoFunzionalitaConf( Helper.evalnull( () -> richiesta.getUscita().isHeaders() )).toString();
-		final String dumpRichiestaUscitaBody        = Helper.boolToStatoFunzionalitaConf( Helper.evalnull( () -> richiesta.getUscita().isBody() )).toString();         
-		final String dumpRichiestaUscitaAttachments = Helper.boolToStatoFunzionalitaConf( Helper.evalnull( () -> richiesta.getUscita().isAttachments() )).toString();  
-		final String dumpRispostaIngressoHeader     = Helper.boolToStatoFunzionalitaConf( Helper.evalnull( () -> risposta.getIngresso().isHeaders() )).toString();     
-		final String dumpRispostaIngressoBody       = Helper.boolToStatoFunzionalitaConf( Helper.evalnull( () -> risposta.getIngresso().isBody() )).toString();        
-		final String dumpRispostaIngressoAttachments= Helper.boolToStatoFunzionalitaConf( Helper.evalnull( () -> risposta.getIngresso().isAttachments() )).toString(); 
-		final String dumpRispostaUscitaHeader       = Helper.boolToStatoFunzionalitaConf( Helper.evalnull( () -> risposta.getUscita().isHeaders() )).toString();       
-		final String dumpRispostaUscitaBody         = Helper.boolToStatoFunzionalitaConf( Helper.evalnull( () -> risposta.getUscita().isBody() )).toString();          
-		final String dumpRispostaUscitaAttachments  = Helper.boolToStatoFunzionalitaConf( Helper.evalnull( () -> risposta.getUscita().isAttachments() )).toString();
+		final String statoDumpRichiesta 		 	= Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.isAbilitato() )).toString();
+		final String statoDumpRisposta 				= Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.isAbilitato() )).toString();
+		final String dumpRichiestaIngressoHeader	= Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getIngresso().isHeaders() )).toString();
+		final String dumpRichiestaIngressoBody 		= Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getIngresso().isBody() )).toString();
+		final String dumpRichiestaIngressoAttachments =  Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getIngresso().isAttachments()) ).toString();
+		final String dumpRichiestaUscitaHeader      = Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getUscita().isHeaders() )).toString();
+		final String dumpRichiestaUscitaBody        = Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getUscita().isBody() )).toString();         
+		final String dumpRichiestaUscitaAttachments = Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getUscita().isAttachments() )).toString();  
+		final String dumpRispostaIngressoHeader     = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getIngresso().isHeaders() )).toString();     
+		final String dumpRispostaIngressoBody       = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getIngresso().isBody() )).toString();        
+		final String dumpRispostaIngressoAttachments= Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getIngresso().isAttachments() )).toString(); 
+		final String dumpRispostaUscitaHeader       = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getUscita().isHeaders() )).toString();       
+		final String dumpRispostaUscitaBody         = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getUscita().isBody() )).toString();          
+		final String dumpRispostaUscitaAttachments  = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getUscita().isAttachments() )).toString();
 		
 		DumpConfigurazione ret = new DumpConfigurazione();
 		
@@ -2364,6 +2398,23 @@ public class ErogazioniApiHelper {
 
 	}
 	
+	public static final List<String> getAzioniDisponibiliRateLimitingPortaApplicativa(IdServizio idAsps, PortaApplicativa pa) {
+		return null;
+	}
+	
+	public static final List<String> getAzioniDisponibiliRateLimitingPortaDelegata(PortaDelegata pd, ErogazioniEnv env) {
+		if (pd.getAzione() != null && pd.getAzione().getAzioneDelegataList().size() > 0) {
+			return pd.getAzione().getAzioneDelegataList();
+		}
+		
+		return null;
+		
+		//env.paCore.getAzioni(asps, aspc, false, false, getAzioniOccupateFruizione()));
+		/*List<String> azioniAll = this.confCore.getAzioni(env.tipo_protocollo, protocolliValue,
+				pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(), 
+				pa.getServizio().getTipo(), pa.getServizio().getNome(), pa.getServizio().getVersione());*/
+	}
+	
 	public static final List<String> getAzioniOccupateFruizione(IdServizio idAsps, IDSoggetto idFruitore, AccordiServizioParteSpecificaCore apsCore, PorteDelegateCore pdCore) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		
 		 return apsCore.serviziFruitoriMappingList(idFruitore, idAsps, null).stream()
@@ -2487,8 +2538,8 @@ public class ErogazioniApiHelper {
 		
 		//TODO: Forse questi nel caso delle erogazioni vanno presi dall'invocazione, guarda la updateConnettore.
 		AuthenticationHttpBasic http = new AuthenticationHttpBasic();
-		http.setPassword(Helper.evalnull( () -> props.get(CostantiDB.CONNETTORE_PWD).trim())); 
-		http.setUsername(Helper.evalnull( () -> props.get(CostantiDB.CONNETTORE_USER).trim()));
+		http.setPassword(evalnull( () -> props.get(CostantiDB.CONNETTORE_PWD).trim())); 
+		http.setUsername(evalnull( () -> props.get(CostantiDB.CONNETTORE_USER).trim()));
 		if ( !StringUtils.isAllEmpty(http.getPassword(), http.getUsername()) ) {
 			c.setAutenticazioneHttp(http);
 		}
@@ -2499,76 +2550,76 @@ public class ErogazioniApiHelper {
 				: null
 			);
 		https.setTipologia(
-				Helper.evalnull( () -> Enums.fromValue(SslTipologiaEnum.class, props.get(CostantiDB.CONNETTORE_HTTPS_SSL_TYPE)))
+				evalnull( () -> Enums.fromValue(SslTipologiaEnum.class, props.get(CostantiDB.CONNETTORE_HTTPS_SSL_TYPE)))
 			);
 		
 		ConnettoreConfigurazioneHttpsServer httpsServer = new ConnettoreConfigurazioneHttpsServer();
 		https.setServer(httpsServer);
 		
-		httpsServer.setAlgoritmo( Helper.evalnull( () -> 
+		httpsServer.setAlgoritmo( evalnull( () -> 
 			props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM))
 			);
 		httpsServer.setTruststorePassword(
-				Helper.evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD))
+				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD))
 			);
 		httpsServer.setTruststorePath(
-				Helper.evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_LOCATION))
+				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_LOCATION))
 			);
 		httpsServer.setTruststoreTipo(
-				Helper.evalnull( () -> Enums.fromValue(KeystoreEnum.class,props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_TYPE)))
+				evalnull( () -> Enums.fromValue(KeystoreEnum.class,props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_TYPE)))
 			);
 		
 		ConnettoreConfigurazioneHttpsClient httpsClient = new ConnettoreConfigurazioneHttpsClient();
 		https.setClient(httpsClient);
 		
 		httpsClient.setAlgoritmo(
-				Helper.evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM))
+				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM))
 			);
 		httpsClient.setKeyPassword(
-				Helper.evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD))
+				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD))
 			);
 		httpsClient.setKeystorePassword(
-				Helper.evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_PASSWORD))
+				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_PASSWORD))
 			);
 		httpsClient.setKeystorePath(
-				Helper.evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_LOCATION))
+				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_LOCATION))
 			);
 		httpsClient.setKeystoreTipo(
-				Helper.evalnull( () -> Enums.fromValue(KeystoreEnum.class, props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_TYPE)))
+				evalnull( () -> Enums.fromValue(KeystoreEnum.class, props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_TYPE)))
 			);
 		
 		if ( https.getTipologia() != null ) {
 			c.setAutenticazioneHttps(https);
 		}
 		
-		String proxy_type = Helper.evalnull( () -> props.get(CostantiDB.CONNETTORE_PROXY_TYPE).trim() );
+		String proxy_type = evalnull( () -> props.get(CostantiDB.CONNETTORE_PROXY_TYPE).trim() );
 		if ( !StringUtils.isEmpty(proxy_type)) {
 			ConnettoreConfigurazioneProxy proxy = new ConnettoreConfigurazioneProxy();
 			c.setProxy(proxy);
 			
 			proxy.setHostname(
-					Helper.evalnull( () -> props.get(CostantiDB.CONNETTORE_PROXY_HOSTNAME).trim())
+					evalnull( () -> props.get(CostantiDB.CONNETTORE_PROXY_HOSTNAME).trim())
 				);
 			proxy.setPassword(
-					Helper.evalnull( () -> props.get(CostantiDB.CONNETTORE_PROXY_PASSWORD).trim())
+					evalnull( () -> props.get(CostantiDB.CONNETTORE_PROXY_PASSWORD).trim())
 				);
 			proxy.setPorta(
-					Helper.evalnull( () -> Integer.valueOf(props.get(CostantiDB.CONNETTORE_PROXY_PORT)))
+					evalnull( () -> Integer.valueOf(props.get(CostantiDB.CONNETTORE_PROXY_PORT)))
 				);
 			proxy.setUsername(
-					Helper.evalnull( () -> props.get(CostantiDB.CONNETTORE_PROXY_USERNAME).trim())
+					evalnull( () -> props.get(CostantiDB.CONNETTORE_PROXY_USERNAME).trim())
 				);
 		}
 		
 		ConnettoreConfigurazioneTimeout tempiRisposta = new ConnettoreConfigurazioneTimeout();		
 		tempiRisposta.setConnectionReadTimeout( 
-				Helper.evalnull( () -> Integer.valueOf(props.get(CostantiDB.CONNETTORE_READ_CONNECTION_TIMEOUT))) 
+				evalnull( () -> Integer.valueOf(props.get(CostantiDB.CONNETTORE_READ_CONNECTION_TIMEOUT))) 
 			);
 		tempiRisposta.setConnectionTimeout(
-				Helper.evalnull( () -> Integer.valueOf(props.get(CostantiDB.CONNETTORE_CONNECTION_TIMEOUT)))
+				evalnull( () -> Integer.valueOf(props.get(CostantiDB.CONNETTORE_CONNECTION_TIMEOUT)))
 			);
 		tempiRisposta.setTempoMedioRisposta(
-				Helper.evalnull( () -> Integer.valueOf(props.get(CostantiDB.CONNETTORE_TEMPO_MEDIO_RISPOSTA)))
+				evalnull( () -> Integer.valueOf(props.get(CostantiDB.CONNETTORE_TEMPO_MEDIO_RISPOSTA)))
 			);
 		
 		if ( tempiRisposta.getConnectionReadTimeout() != null || tempiRisposta.getConnectionTimeout() != null || tempiRisposta.getTempoMedioRisposta() != null) {
@@ -2592,12 +2643,12 @@ public class ErogazioniApiHelper {
 		
 		final String corsStato = Helper.boolToStatoFunzionalita( body.getTipo() != TipoGestioneCorsEnum.DISABILITATO ).toString();
 		final TipoGestioneCORS corsTipo =  Enums.tipoGestioneCorsFromRest.get( body.getTipo() );
-		final String allowOrigins = String.join(",", Helper.evalorElse( () -> c.getAllowOrigins(), new ArrayList<String>()) );
-		final String allowHeaders = String.join(",", Helper.evalorElse( () -> c.getAllowHeaders(), new ArrayList<String>()) );
-		final String exposeHeaders = String.join(",", Helper.evalorElse( () -> c.getExposeHeaders(), new ArrayList<String>()) );
+		final String allowOrigins = String.join(",", BaseHelper.evalorElse( () -> c.getAllowOrigins(), new ArrayList<String>()) );
+		final String allowHeaders = String.join(",", BaseHelper.evalorElse( () -> c.getAllowHeaders(), new ArrayList<String>()) );
+		final String exposeHeaders = String.join(",", BaseHelper.evalorElse( () -> c.getExposeHeaders(), new ArrayList<String>()) );
 		final String allowMethods = String.join(
 				",",
-				Helper.evalorElse( () -> c.getAllowMethods(), new ArrayList<HttpMethodEnum>() )
+				BaseHelper.evalorElse( () -> c.getAllowMethods(), new ArrayList<HttpMethodEnum>() )
 					.stream().map( m -> m.name()).collect(Collectors.toList()) 
 			);
 	
@@ -2623,8 +2674,8 @@ public class ErogazioniApiHelper {
 				allowMethods, 
 				c.isAllowCredentials(),
 				exposeHeaders,
-				Helper.evalorElse( () -> oldConf.getAccessControlMaxAge() != null, false),
-				Helper.evalorElse( () -> oldConf.getAccessControlMaxAge(), -1 )
+				BaseHelper.evalorElse( () -> oldConf.getAccessControlMaxAge() != null, false),
+				BaseHelper.evalorElse( () -> oldConf.getAccessControlMaxAge(), -1 )
 			);
 	}
 	
@@ -2635,13 +2686,22 @@ public class ErogazioniApiHelper {
 		
 		ret.setPolicy( body.getPolicy() );
 		ret.setTokenOpzionale( Helper.boolToStatoFunzionalitaConf(body.isTokenOpzionale()) ); 
-		ret.setValidazione( StatoFunzionalitaConWarning.toEnumConstant(  Helper.evalnull(  () -> body.getValidazioneJwt().toString() )) );
-		ret.setIntrospection( StatoFunzionalitaConWarning.toEnumConstant( Helper.evalnull( () -> body.getIntrospection().toString() )) );
-		ret.setUserInfo( StatoFunzionalitaConWarning.toEnumConstant( Helper.evalnull( () -> body.getUserInfo().toString() )) );
+		ret.setValidazione( StatoFunzionalitaConWarning.toEnumConstant(  evalnull(  () -> body.getValidazioneJwt().toString() )) );
+		ret.setIntrospection( StatoFunzionalitaConWarning.toEnumConstant( evalnull( () -> body.getIntrospection().toString() )) );
+		ret.setUserInfo( StatoFunzionalitaConWarning.toEnumConstant( evalnull( () -> body.getUserInfo().toString() )) );
 		ret.setForward( Helper.boolToStatoFunzionalitaConf(body.isTokenForward()) ); 	
 		
 		return ret;
 		
+	}
+	
+	public static final void fillGestioneToken(GestioneToken ret, ControlloAccessiGestioneToken body) {
+		ret.setPolicy( body.getPolicy() );
+		ret.setTokenOpzionale( Helper.boolToStatoFunzionalitaConf(body.isTokenOpzionale()) ); 
+		ret.setValidazione( StatoFunzionalitaConWarning.toEnumConstant(  evalnull(  () -> body.getValidazioneJwt().toString() )) );
+		ret.setIntrospection( StatoFunzionalitaConWarning.toEnumConstant( evalnull( () -> body.getIntrospection().toString() )) );
+		ret.setUserInfo( StatoFunzionalitaConWarning.toEnumConstant( evalnull( () -> body.getUserInfo().toString() )) );
+		ret.setForward( Helper.boolToStatoFunzionalitaConf(body.isTokenForward()) ); 			
 	}
 	
 	public static final RegistrazioneMessaggiConfigurazioneRegola fromDumpConfigurazioneRegola(DumpConfigurazioneRegola r) {
@@ -2817,6 +2877,8 @@ public class ErogazioniApiHelper {
 			}
 			
 			if(conf.sizeRegolaList()>0) {
+				ret.setRegole(new ArrayList<CachingRispostaRegola>());
+				
 				for (ResponseCachingConfigurazioneRegola regola : conf.getRegolaList()) {
 					CachingRispostaRegola cachingRispostaRegola = new CachingRispostaRegola();
 					if(regola.getReturnCodeMin()!=null) {
@@ -2857,7 +2919,7 @@ public class ErogazioniApiHelper {
 	public static final boolean controlloAccessiCheckPD(FruizioniConfEnv env, PortaDelegata oldPd, PortaDelegata newPd) throws Exception {
 		final BinaryParameter allegatoXacmlPolicy = new BinaryParameter();
 		
-		allegatoXacmlPolicy.setValue( Helper.evalorElse(
+		allegatoXacmlPolicy.setValue( BaseHelper.evalorElse(
 				() -> newPd.getXacmlPolicy(),
 				""
 				).getBytes()
@@ -2887,24 +2949,24 @@ public class ErogazioniApiHelper {
 				stato_autorizzazione,	 			
 				ServletUtils.boolToCheckBoxStatus( TipoAutorizzazione.isAuthenticationRequired(newPd.getAutorizzazione()) ), 
 				ServletUtils.boolToCheckBoxStatus( TipoAutorizzazione.isRolesRequired(newPd.getAutorizzazione()) ), 
-				Helper.evalnull( () -> tipoRuoloFonte.toString() ), 
-				Helper.evalnull( () -> newPd.getRuoli().getMatch().toString() ), 
+				evalnull( () -> tipoRuoloFonte.toString() ), 
+				evalnull( () -> newPd.getRuoli().getMatch().toString() ), 
 				env.isSupportatoAutenticazioneSoggetti, 
 				true,		// isPortaDelegata, 
 				oldPd,
-				Helper.evalnull( () ->
+				evalnull( () ->
 						newPd.getRuoli().getRuoloList().stream().map(Ruolo::getNome).collect(Collectors.toList())
 					),
-				ServletUtils.boolToCheckBoxStatus( tokenAbilitato ),
-				Helper.evalnull( () -> newPd.getGestioneToken().getPolicy() ), 
-				Helper.evalnull( () -> newPd.getGestioneToken().getValidazione().toString() ), 
-				Helper.evalnull( () -> newPd.getGestioneToken().getIntrospection().toString() ), 
-				Helper.evalnull( () -> newPd.getGestioneToken().getUserInfo().toString() ),
-				Helper.evalnull( () -> newPd.getGestioneToken().getForward().toString() ),
-				Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus( newPd.getGestioneToken().getOptions() != null ) ),
-				Helper.evalnull( () -> newPd.getGestioneToken().getOptions() ),
-				Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus( autorizzazioneScope ) ),
-				Helper.evalnull( () -> newPd.getScope().getMatch().toString() ),
+				Helper.boolToStatoFunzionalita(tokenAbilitato).getValue(),
+				evalnull( () -> newPd.getGestioneToken().getPolicy() ), 
+				evalnull( () -> newPd.getGestioneToken().getValidazione().toString() ), 
+				evalnull( () -> newPd.getGestioneToken().getIntrospection().toString() ), 
+				evalnull( () -> newPd.getGestioneToken().getUserInfo().toString() ),
+				evalnull( () -> newPd.getGestioneToken().getForward().toString() ),
+				evalnull( () -> ServletUtils.boolToCheckBoxStatus( newPd.getGestioneToken().getOptions() != null ) ),
+				evalnull( () -> newPd.getGestioneToken().getOptions() ),
+				evalnull( () -> ServletUtils.boolToCheckBoxStatus( autorizzazioneScope ) ),
+				evalnull( () -> newPd.getScope().getMatch().toString() ),
 				allegatoXacmlPolicy,
 				newPd.getAutorizzazioneContenuto(),
 				env.tipo_protocollo);
@@ -2917,7 +2979,7 @@ public class ErogazioniApiHelper {
 		
 		final BinaryParameter allegatoXacmlPolicy = new BinaryParameter();
 		
-		allegatoXacmlPolicy.setValue( Helper.evalorElse(
+		allegatoXacmlPolicy.setValue( BaseHelper.evalorElse(
 				() -> newPa.getXacmlPolicy(),
 				""
 				).getBytes()
@@ -2947,24 +3009,24 @@ public class ErogazioniApiHelper {
 				stato_autorizzazione,	 			
 				ServletUtils.boolToCheckBoxStatus( TipoAutorizzazione.isAuthenticationRequired(newPa.getAutorizzazione()) ), 
 				ServletUtils.boolToCheckBoxStatus( TipoAutorizzazione.isRolesRequired(newPa.getAutorizzazione()) ), 
-				Helper.evalnull( () -> tipoRuoloFonte.toString() ), 
-				Helper.evalnull( () -> newPa.getRuoli().getMatch().toString() ), 
+				evalnull( () -> tipoRuoloFonte.toString() ), 
+				evalnull( () -> newPa.getRuoli().getMatch().toString() ), 
 				env.isSupportatoAutenticazioneSoggetti, 
 				false,		// isPortaDelegata, 
 				oldPa,
-				Helper.evalnull( () ->
+				evalnull( () ->
 						newPa.getRuoli().getRuoloList().stream().map(Ruolo::getNome).collect(Collectors.toList())
 					),
-				ServletUtils.boolToCheckBoxStatus( tokenAbilitato ),
-				Helper.evalnull( () -> newPa.getGestioneToken().getPolicy() ), 
-				Helper.evalnull( () -> newPa.getGestioneToken().getValidazione().toString() ), 
-				Helper.evalnull( () -> newPa.getGestioneToken().getIntrospection().toString() ), 
-				Helper.evalnull( () -> newPa.getGestioneToken().getUserInfo().toString() ),
-				Helper.evalnull( () -> newPa.getGestioneToken().getForward().toString() ),
-				Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus( newPa.getGestioneToken().getOptions() != null ) ),
-				Helper.evalnull( () -> newPa.getGestioneToken().getOptions() ),
-				Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus( autorizzazioneScope ) ),
-				Helper.evalnull( () -> newPa.getScope().getMatch().toString() ),
+				Helper.boolToStatoFunzionalita(tokenAbilitato).getValue(),	// gestioneToken
+				evalnull( () -> newPa.getGestioneToken().getPolicy() ), 	// policy
+				evalnull( () -> newPa.getGestioneToken().getValidazione().toString() ),	// validazioneInput 
+				evalnull( () -> newPa.getGestioneToken().getIntrospection().toString() ), // introspection
+				evalnull( () -> newPa.getGestioneToken().getUserInfo().toString() ),		// userInfo
+				evalnull( () -> newPa.getGestioneToken().getForward().toString() ),		// forward
+				evalnull( () -> ServletUtils.boolToCheckBoxStatus( newPa.getGestioneToken().getOptions() != null ) ),	// autorizzazioneToken
+				evalnull( () -> newPa.getGestioneToken().getOptions() ),
+				evalnull( () -> ServletUtils.boolToCheckBoxStatus( autorizzazioneScope ) ),
+				evalnull( () -> newPa.getScope().getMatch().toString() ),
 				allegatoXacmlPolicy,
 				newPa.getAutorizzazioneContenuto(),
 				env.tipo_protocollo);
@@ -2986,7 +3048,7 @@ public class ErogazioniApiHelper {
 			break;
 		}
 		case ABILITATO: {
-			@SuppressWarnings("unchecked") APIImplAutorizzazioneConfig config = Helper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneConfig.class);
+			@SuppressWarnings("unchecked") APIImplAutorizzazioneConfig config = BaseHelper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneConfig.class);
 			
 
 			// defaults
@@ -3000,8 +3062,8 @@ public class ErogazioniApiHelper {
 			final String autorizzazioneScope = ServletUtils.boolToCheckBoxStatus(config.isScope());
 			final String autorizzazione_tokenOptions = config.getTokenClaims();
 			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(config.getRuoliFonte());
-			final RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant( Helper.evalnull( () -> config.getRuoliRichiesti().toString()) );	// Gli enum coincidono
-			final ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant( Helper.evalnull( () -> config.getScopeRichiesti().toString()) );
+			final RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant( evalnull( () -> config.getRuoliRichiesti().toString()) );	// Gli enum coincidono
+			final ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant( evalnull( () -> config.getScopeRichiesti().toString()) );
 	
 			
 			final String tipoAutorString =	AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(autorizzazione,
@@ -3040,19 +3102,19 @@ public class ErogazioniApiHelper {
 				newPd.getGestioneToken().setOptions(autorizzazione_tokenOptions);
 			}
 			else {
-				Helper.runNull( () -> newPd.getGestioneToken().setOptions(null) );
+				BaseHelper.runNull( () -> newPd.getGestioneToken().setOptions(null) );
 			}
 			break;
 		}
 		case CUSTOM:
 			@SuppressWarnings("unchecked")
-			APIImplAutorizzazioneCustom customConfig = Helper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneCustom.class);
+			APIImplAutorizzazioneCustom customConfig = BaseHelper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneCustom.class);
 			newPd.setAutorizzazione(customConfig.getNome());
 	
 			break;
 		case XACML_POLICY: {
 			@SuppressWarnings("unchecked")
-			APIImplAutorizzazioneXACMLConfig xacmlConfig = Helper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneXACMLConfig.class);
+			APIImplAutorizzazioneXACMLConfig xacmlConfig = BaseHelper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneXACMLConfig.class);
 			
 			if (xacmlConfig.getRuoliFonte() == null)
 				xacmlConfig.setRuoliFonte(FonteEnum.QUALSIASI);
@@ -3068,7 +3130,7 @@ public class ErogazioniApiHelper {
 				);
 			
 			newPd.setAutorizzazione(tipoAutorString);
-			newPd.setXacmlPolicy( Helper.evalnull( () -> new String(xacmlConfig.getPolicy())));				
+			newPd.setXacmlPolicy( evalnull( () -> new String(xacmlConfig.getPolicy())));				
 			break;
 		}
 		}
@@ -3096,7 +3158,7 @@ public class ErogazioniApiHelper {
 		
 		
 		case ABILITATO: {
-			@SuppressWarnings("unchecked") APIImplAutorizzazioneConfig config = Helper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneConfig.class);
+			@SuppressWarnings("unchecked") APIImplAutorizzazioneConfig config = BaseHelper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneConfig.class);
 			
 			// defaults
 			if ( config.isRuoli() && config.getRuoliFonte() == null ) {
@@ -3109,8 +3171,8 @@ public class ErogazioniApiHelper {
 			final String autorizzazioneScope = ServletUtils.boolToCheckBoxStatus(config.isScope());
 			final String autorizzazione_tokenOptions = config.getTokenClaims();
 			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(config.getRuoliFonte());
-			final RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant( Helper.evalnull( () -> config.getRuoliRichiesti().toString()) );	// Gli enum coincidono
-			final ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant( Helper.evalnull( () -> config.getScopeRichiesti().toString()) );
+			final RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant( evalnull( () -> config.getRuoliRichiesti().toString()) );	// Gli enum coincidono
+			final ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant( evalnull( () -> config.getScopeRichiesti().toString()) );
 			
 			final String tipoAutorString =	AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(statoAutorizzazione,
 					ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati),
@@ -3148,19 +3210,19 @@ public class ErogazioniApiHelper {
 				newPa.getGestioneToken().setOptions(autorizzazione_tokenOptions);
 			}
 			else {
-				Helper.runNull( () -> newPa.getGestioneToken().setOptions(null) );
+				BaseHelper.runNull( () -> newPa.getGestioneToken().setOptions(null) );
 			}
 			break;
 		}
 		case CUSTOM:
 			@SuppressWarnings("unchecked")
-			APIImplAutorizzazioneCustom customConfig = Helper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneCustom.class);
+			APIImplAutorizzazioneCustom customConfig = BaseHelper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneCustom.class);
 			newPa.setAutorizzazione(customConfig.getNome());
 	
 			break;
 		case XACML_POLICY: {
 			@SuppressWarnings("unchecked")
-			APIImplAutorizzazioneXACMLConfig xacmlConfig = Helper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneXACMLConfig.class);
+			APIImplAutorizzazioneXACMLConfig xacmlConfig = BaseHelper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneXACMLConfig.class);
 			
 			if (xacmlConfig.getRuoliFonte() == null)
 				xacmlConfig.setRuoliFonte(FonteEnum.QUALSIASI);
@@ -3177,7 +3239,7 @@ public class ErogazioniApiHelper {
 			
 			
 			newPa.setAutorizzazione(tipoAutorString);
-			newPa.setXacmlPolicy( Helper.evalnull( () -> new String(xacmlConfig.getPolicy())));				
+			newPa.setXacmlPolicy( evalnull( () -> new String(xacmlConfig.getPolicy())));				
 			break;
 		}
 		}
@@ -3228,18 +3290,18 @@ public class ErogazioniApiHelper {
 			config.setRuoli( TipoAutorizzazione.isRolesRequired(pa.getAutorizzazione()) );
 			if (config.isRuoli()) {
 			
-				config.setRuoliRichiesti( Helper.evalnull(  () -> AllAnyEnum.fromValue( pa.getRuoli().getMatch().toString()) ) );
-				config.setRuoliFonte( Helper.evalnull( () -> 
+				config.setRuoliRichiesti( evalnull(  () -> AllAnyEnum.fromValue( pa.getRuoli().getMatch().toString()) ) );
+				config.setRuoliFonte( evalnull( () -> 
 						Enums.registroTipologiaToApiFonte(	AutorizzazioneUtilities.convertToRuoloTipologia(pa.getAutorizzazione()) )
 					));
 			}
 			
 			
 			config.setScope( pa.getScope() != null );
-			config.setScopeRichiesti( Helper.evalnull( () -> AllAnyEnum.fromValue( pa.getScope().getMatch().getValue() )));
+			config.setScopeRichiesti( evalnull( () -> AllAnyEnum.fromValue( pa.getScope().getMatch().getValue() )));
 			
-			config.setToken( Helper.evalnull( () -> pa.getGestioneToken().getOptions() != null));
-			config.setTokenClaims( Helper.evalnull( () -> pa.getGestioneToken().getOptions() ));
+			config.setToken( evalnull( () -> pa.getGestioneToken().getOptions() != null));
+			config.setTokenClaims( evalnull( () -> pa.getGestioneToken().getOptions() ));
 			
 			retAuthz.setConfigurazione(config);
 			break;
@@ -3256,7 +3318,7 @@ public class ErogazioniApiHelper {
 		case XACML_POLICY: {
 			APIImplAutorizzazioneXACMLConfig config = new APIImplAutorizzazioneXACMLConfig();
 			config.setPolicy( pa.getXacmlPolicy().getBytes() );
-			config.setRuoliFonte( Helper.evalnull( () -> 
+			config.setRuoliFonte( evalnull( () -> 
 					Enums.registroTipologiaToApiFonte(	AutorizzazioneUtilities.convertToRuoloTipologia(pa.getAutorizzazione()) )
 				));
 			retAuthz.setConfigurazione(config);
@@ -3285,18 +3347,18 @@ public class ErogazioniApiHelper {
 			
 			config.setRuoli( TipoAutorizzazione.isRolesRequired(pd.getAutorizzazione()) );
 			if (config.isRuoli()) {
-				config.setRuoliRichiesti( Helper.evalnull(  () -> AllAnyEnum.fromValue( pd.getRuoli().getMatch().toString()) ) );
-				config.setRuoliFonte( Helper.evalnull( () -> 
+				config.setRuoliRichiesti( evalnull(  () -> AllAnyEnum.fromValue( pd.getRuoli().getMatch().toString()) ) );
+				config.setRuoliFonte( evalnull( () -> 
 						Enums.registroTipologiaToApiFonte(	AutorizzazioneUtilities.convertToRuoloTipologia(pd.getAutorizzazione()) )
 					));
 			}
 			
 			
 			config.setScope( pd.getScope() != null );
-			config.setScopeRichiesti( Helper.evalnull( () -> AllAnyEnum.fromValue( pd.getScope().getMatch().getValue() )));
+			config.setScopeRichiesti( evalnull( () -> AllAnyEnum.fromValue( pd.getScope().getMatch().getValue() )));
 			
-			config.setToken( Helper.evalnull( () -> pd.getGestioneToken().getOptions() != null));
-			config.setTokenClaims( Helper.evalnull( () -> pd.getGestioneToken().getOptions() ));
+			config.setToken( evalnull( () -> pd.getGestioneToken().getOptions() != null));
+			config.setTokenClaims( evalnull( () -> pd.getGestioneToken().getOptions() ));
 						retAuthz.setConfigurazione(config);
 			break;
 		}
@@ -3312,7 +3374,7 @@ public class ErogazioniApiHelper {
 		case XACML_POLICY: {
 			APIImplAutorizzazioneXACMLConfig config = new APIImplAutorizzazioneXACMLConfig();
 			config.setPolicy( pd.getXacmlPolicy().getBytes() );
-			config.setRuoliFonte( Helper.evalnull( () -> 
+			config.setRuoliFonte( evalnull( () -> 
 					Enums.registroTipologiaToApiFonte(	AutorizzazioneUtilities.convertToRuoloTipologia(pd.getAutorizzazione()) )
 				));
 			retAuthz.setConfigurazione(config);
@@ -3326,11 +3388,11 @@ public class ErogazioniApiHelper {
 
 
 
-	public static final void fillPortaApplicativa(final ErogazioniEnv env, ControlloAccessiAutenticazione body, final PortaApplicativa newPa) {
+	public static final void fillPortaApplicativa(final ErogazioniEnv env, ControlloAccessiAutenticazione body, final PortaApplicativa newPa) throws InstantiationException, IllegalAccessException {
 		final APIImplAutenticazione auth = body.getAutenticazione();
 		
-		newPa.setAutenticazioneOpzionale( Helper.evalnull( () -> Helper.boolToStatoFunzionalitaConf(auth.isOpzionale())) );
-		newPa.setAutenticazione( Helper.evalnull( () -> Enums.tipoAutenticazioneFromRest.get(auth.getTipo()).toString()) );
+		newPa.setAutenticazioneOpzionale( evalnull( () -> Helper.boolToStatoFunzionalitaConf(auth.isOpzionale())) );
+		newPa.setAutenticazione( evalnull( () -> Enums.tipoAutenticazioneFromRest.get(auth.getTipo()).toString()) );
 		
         TipoAutenticazionePrincipal autenticazionePrincipal = null;
         List<String> autenticazioneParametroList = null;
@@ -3342,36 +3404,40 @@ public class ErogazioniApiHelper {
 		newPa.setProprietaAutenticazioneList(proprietaAutenticazione);
 		
 		// Imposto l'autenticazione custom
-		if ( Helper.evalnull( () -> auth.getTipo() ) == TipoAutenticazioneEnum.CUSTOM) {
-			newPa.setAutenticazione(auth.getNome());
+		if ( evalnull( () -> auth.getTipo() ) == TipoAutenticazioneEnum.CUSTOM) {
+			@SuppressWarnings("unchecked")
+			APIImplAutenticazioneConfigurazioneCustom customConfig = BaseHelper.fromMap( (Map<String,Object>) auth.getConfigurazione(), APIImplAutenticazioneConfigurazioneCustom.class);
+			newPa.setAutenticazione(customConfig.getNome());
 		}
-		
+		// Gestione Token
 		final ControlloAccessiAutenticazioneToken gToken = body.getToken();
-		final boolean isGestioneToken = gToken.isClientId() || gToken.isEmail() || gToken.isIssuer() || gToken.isSubject() || gToken.isUsername();
-		
-		if (isGestioneToken) {
-			if(newPa.getGestioneToken() == null)
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La gestione token non è abilitata per il gruppo");
+		if (gToken != null) {
+			final boolean isGestioneToken = gToken.isClientId() || gToken.isEmail() || gToken.isIssuer() || gToken.isSubject() || gToken.isUsername();
 			
-			if(newPa.getGestioneToken().getAutenticazione()==null) {
-				newPa.getGestioneToken().setAutenticazione(new GestioneTokenAutenticazione());
+			if (isGestioneToken) {
+				if(newPa.getGestioneToken() == null)
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("La gestione token non è abilitata per il gruppo");
+				
+				if(newPa.getGestioneToken().getAutenticazione()==null) {
+					newPa.getGestioneToken().setAutenticazione(new GestioneTokenAutenticazione());
+				}
+				
+				newPa.getGestioneToken().getAutenticazione().setIssuer(Helper.boolToStatoFunzionalitaConf(gToken.isIssuer())); 
+				newPa.getGestioneToken().getAutenticazione().setClientId(Helper.boolToStatoFunzionalitaConf(gToken.isClientId())); 
+				newPa.getGestioneToken().getAutenticazione().setSubject(Helper.boolToStatoFunzionalitaConf(gToken.isSubject())); 
+				newPa.getGestioneToken().getAutenticazione().setUsername(Helper.boolToStatoFunzionalitaConf(gToken.isUsername())); 
+				newPa.getGestioneToken().getAutenticazione().setEmail(Helper.boolToStatoFunzionalitaConf(gToken.isEmail()));	
 			}
-			
-			newPa.getGestioneToken().getAutenticazione().setIssuer(Helper.boolToStatoFunzionalitaConf(gToken.isIssuer())); 
-			newPa.getGestioneToken().getAutenticazione().setClientId(Helper.boolToStatoFunzionalitaConf(gToken.isClientId())); 
-			newPa.getGestioneToken().getAutenticazione().setSubject(Helper.boolToStatoFunzionalitaConf(gToken.isSubject())); 
-			newPa.getGestioneToken().getAutenticazione().setUsername(Helper.boolToStatoFunzionalitaConf(gToken.isUsername())); 
-			newPa.getGestioneToken().getAutenticazione().setEmail(Helper.boolToStatoFunzionalitaConf(gToken.isEmail()));	
 		}
 		
 	}
 	
 	
-	public static final void fillPortaDelegata(final ErogazioniEnv env, ControlloAccessiAutenticazione body, final PortaDelegata newPd) {
+	public static final void fillPortaDelegata(final ErogazioniEnv env, ControlloAccessiAutenticazione body, final PortaDelegata newPd) throws InstantiationException, IllegalAccessException {
 		final APIImplAutenticazione auth = body.getAutenticazione();
 		
-		newPd.setAutenticazioneOpzionale( Helper.evalnull( () -> Helper.boolToStatoFunzionalitaConf(auth.isOpzionale())) );
-		newPd.setAutenticazione( Helper.evalnull( () -> Enums.tipoAutenticazioneFromRest.get(auth.getTipo()).toString()) );
+		newPd.setAutenticazioneOpzionale( evalnull( () -> Helper.boolToStatoFunzionalitaConf(auth.isOpzionale())) );
+		newPd.setAutenticazione( evalnull( () -> Enums.tipoAutenticazioneFromRest.get(auth.getTipo()).toString()) );
 		
 		TipoAutenticazionePrincipal autenticazionePrincipal = null;
         List<String> autenticazioneParametroList = null;
@@ -3382,27 +3448,30 @@ public class ErogazioniApiHelper {
 		List<Proprieta> proprietaAutenticazione = env.paCore.convertToAutenticazioneProprieta(newPd.getAutenticazione(), autenticazionePrincipal, autenticazioneParametroList);
 		newPd.setProprietaAutenticazioneList(proprietaAutenticazione);
 		
-		// Imposto l'autenticazione custom
-		if ( Helper.evalnull( () -> auth.getTipo() ) == TipoAutenticazioneEnum.CUSTOM) {
-			newPd.setAutenticazione(auth.getNome());
+		if ( evalnull( () -> auth.getTipo() ) == TipoAutenticazioneEnum.CUSTOM) {
+			@SuppressWarnings("unchecked")
+			APIImplAutenticazioneConfigurazioneCustom customConfig = BaseHelper.fromMap( (Map<String,Object>) auth.getConfigurazione(), APIImplAutenticazioneConfigurazioneCustom.class);
+			newPd.setAutenticazione(customConfig.getNome());
 		}
-		
+		// Gestione Token
 		final ControlloAccessiAutenticazioneToken gToken = body.getToken();
-		final boolean isGestioneToken = gToken.isClientId() || gToken.isEmail() || gToken.isIssuer() || gToken.isSubject() || gToken.isUsername();
-
-		if (isGestioneToken) {
-			if(newPd.getGestioneToken() == null)
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La gestione token non è abilitata per il gruppo");
-			
-			if(newPd.getGestioneToken().getAutenticazione()==null) {
-				newPd.getGestioneToken().setAutenticazione(new GestioneTokenAutenticazione());
+		if (gToken != null) {
+			final boolean isGestioneToken = gToken.isClientId() || gToken.isEmail() || gToken.isIssuer() || gToken.isSubject() || gToken.isUsername();
+	
+			if (isGestioneToken) {
+				if(newPd.getGestioneToken() == null)
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("La gestione token non è abilitata per il gruppo");
+				
+				if(newPd.getGestioneToken().getAutenticazione()==null) {
+					newPd.getGestioneToken().setAutenticazione(new GestioneTokenAutenticazione());
+				}
+				
+				newPd.getGestioneToken().getAutenticazione().setIssuer(Helper.boolToStatoFunzionalitaConf(gToken.isIssuer())); 
+				newPd.getGestioneToken().getAutenticazione().setClientId(Helper.boolToStatoFunzionalitaConf(gToken.isClientId())); 
+				newPd.getGestioneToken().getAutenticazione().setSubject(Helper.boolToStatoFunzionalitaConf(gToken.isSubject())); 
+				newPd.getGestioneToken().getAutenticazione().setUsername(Helper.boolToStatoFunzionalitaConf(gToken.isUsername())); 
+				newPd.getGestioneToken().getAutenticazione().setEmail(Helper.boolToStatoFunzionalitaConf(gToken.isEmail()));
 			}
-			
-			newPd.getGestioneToken().getAutenticazione().setIssuer(Helper.boolToStatoFunzionalitaConf(gToken.isIssuer())); 
-			newPd.getGestioneToken().getAutenticazione().setClientId(Helper.boolToStatoFunzionalitaConf(gToken.isClientId())); 
-			newPd.getGestioneToken().getAutenticazione().setSubject(Helper.boolToStatoFunzionalitaConf(gToken.isSubject())); 
-			newPd.getGestioneToken().getAutenticazione().setUsername(Helper.boolToStatoFunzionalitaConf(gToken.isUsername())); 
-			newPd.getGestioneToken().getAutenticazione().setEmail(Helper.boolToStatoFunzionalitaConf(gToken.isEmail()));
 		}
 		
 	}
@@ -3441,12 +3510,12 @@ public class ErogazioniApiHelper {
 				
 				opts.setAllAllowOrigins( Helper.statoFunzionalitaConfToBool( paConf.getAccessControlAllAllowOrigins() ));
 				opts.setAllowCredentials(  Helper.statoFunzionalitaConfToBool( paConf.getAccessControlAllowCredentials() ));
-				opts.setAllowHeaders( Helper.evalnull( () -> paConf.getAccessControlAllowHeaders().getHeaderList()) );
-				opts.setAllowMethods( Helper.evalnull( () -> 
+				opts.setAllowHeaders( evalnull( () -> paConf.getAccessControlAllowHeaders().getHeaderList()) );
+				opts.setAllowMethods( evalnull( () -> 
 						paConf.getAccessControlAllowMethods().getMethodList().stream().map(HttpMethodEnum::valueOf).collect(Collectors.toList())
 						));
-				opts.setAllowOrigins( Helper.evalnull( () -> paConf.getAccessControlAllowOrigins().getOriginList()));	
-				opts.setExposeHeaders( Helper.evalnull( () -> paConf.getAccessControlExposeHeaders().getHeaderList()) );
+				opts.setAllowOrigins( evalnull( () -> paConf.getAccessControlAllowOrigins().getOriginList()));	
+				opts.setExposeHeaders( evalnull( () -> paConf.getAccessControlExposeHeaders().getHeaderList()) );
 				
 				ret.setAccessControl(opts);
 			}
@@ -3495,8 +3564,8 @@ public class ErogazioniApiHelper {
 	
 	public static final RateLimitingPolicyFiltro  convert ( AttivazionePolicyFiltro src, RateLimitingPolicyFiltro dest ) {
 		
-		dest.setApplicativoFruitore(src.getServizioApplicativoFruitore());
-		dest.setAzione(src.getAzione());
+		dest.setApplicativoFruitore( src.getServizioApplicativoFruitore() ); 
+		dest.setAzione( src.getAzione() );
 		dest.setChiaveNome(src.getInformazioneApplicativaNome());
 		dest.setChiaveTipo(
 				Enums.rateLimitingChiaveEnum.get( TipoFiltroApplicativo.toEnumConstant(src.getInformazioneApplicativaTipo()) )
@@ -3625,6 +3694,8 @@ public class ErogazioniApiHelper {
 	
 	
 	public static final void override( RateLimitingPolicyErogazioneNew body, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
+		if (body == null) return;
+
 		override ( (RateLimitingPolicyBaseErogazione) body, idPropietarioSa, wrap );
 		
 		wrap.overrideParameter(
@@ -3635,6 +3706,8 @@ public class ErogazioniApiHelper {
 	
 
 	public static final void override( RateLimitingPolicyFruizioneNew body, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
+		if (body == null) return;
+
 		override ( (RateLimitingPolicyBaseFruizione) body, idPropietarioSa, wrap );
 		
 		wrap.overrideParameter(
@@ -3644,48 +3717,40 @@ public class ErogazioniApiHelper {
 	}
 	
 	public static final void override( RateLimitingPolicyFiltro body, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
+		if (body == null) return;
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_AZIONE,
-				Helper.evalnull( () -> body.getAzione() )
+				body.getAzione()
 			);
 		
-		
-		IDServizioApplicativo idSaFiltroFruitore = new IDServizioApplicativo();
-		idSaFiltroFruitore.setNome(body.getApplicativoFruitore());
-		idSaFiltroFruitore.setIdSoggettoProprietario(idPropietarioSa);
-		
-		wrap.overrideParameter(
-				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE,
-				Helper.evalnull( () -> body.getApplicativoFruitore() != null
-					? idSaFiltroFruitore.toString()
-					: ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI
-				)
-			);
+		wrap.overrideParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE, body.getApplicativoFruitore());
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED,
-				Helper.evalnull( () -> ServletUtils.boolToCheckBoxStatus( body.getChiaveTipo() != null ))	// TOWAIT: mailandrea, non ho in rest un valore per la checkbox isFiltroAbilitato, quindi deduco il valore della checkbox così 
+				evalnull( () -> ServletUtils.boolToCheckBoxStatus( body.getChiaveTipo() != null ))	// TOWAIT: mailandrea, non ho in rest un valore per la checkbox isFiltroAbilitato, quindi deduco il valore della checkbox così 
 			);
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_TIPO,
-				Helper.evalnull( () -> Enums.tipoFiltroApplicativo.get( body.getChiaveTipo() ).toString())	
+				evalnull( () -> Enums.tipoFiltroApplicativo.get( body.getChiaveTipo() ).toString())	
 			);
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME,
-				Helper.evalnull( () -> body.getChiaveNome() )  
+				evalnull( () -> body.getChiaveNome() )  
 			);
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE,
-				Helper.evalnull( () -> body.getFiltroChiaveValore() ) 
+				evalnull( () -> body.getFiltroChiaveValore() ) 
 			);	
 	}
 	
 	public static final void override(	RateLimitingPolicyGroupBy body,  IDSoggetto idPropietarioSa, HttpRequestWrapper wrap )
 	{
+		if (body == null) return;
+
 	
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_ENABLED,
@@ -3696,33 +3761,35 @@ public class ErogazioniApiHelper {
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_FRUITORE,
-				Helper.evalnull(  () -> ServletUtils.boolToCheckBoxStatus( body.isApplicativoFruitore() ) )
+				evalnull(  () -> ServletUtils.boolToCheckBoxStatus( body.isApplicativoFruitore() ) )
 			);
 		
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_AZIONE,
-				Helper.evalnull(  () -> ServletUtils.boolToCheckBoxStatus( body.isAzione() ) )
+				evalnull(  () -> ServletUtils.boolToCheckBoxStatus( body.isAzione() ) )
 			);			
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED,
-				Helper.evalnull(  () -> ServletUtils.boolToCheckBoxStatus( body.getChiaveTipo() != null ) )  
+				evalnull(  () -> ServletUtils.boolToCheckBoxStatus( body.getChiaveTipo() != null ) )  
 			);
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_TIPO,
-				Helper.evalnull( () -> Enums.tipoFiltroApplicativo.get(body.getChiaveTipo()).toString() )
+				evalnull( () -> Enums.tipoFiltroApplicativo.get(body.getChiaveTipo()).toString() )
 			);
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME,
-				Helper.evalnull( () -> body.getChiaveNome() )
+				evalnull( () -> body.getChiaveNome() )
 			); 
 	}
 	
 	
 	public static final void override( RateLimitingPolicyBaseErogazione body, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
+		if (body == null) return;
+
 		override( (RateLimitingPolicyBase) body, idPropietarioSa, wrap );
 		
 		wrap.overrideParameter(
@@ -3734,10 +3801,9 @@ public class ErogazioniApiHelper {
 		RateLimitingPolicyFiltroErogazione filtro = body.getFiltro();
 		override( filtro, idPropietarioSa, wrap );
 		
-
-		final String filtroFruitore = Helper.evalnull( () -> filtro.getSoggettoFruitore() != null 
+		final String filtroFruitore = evalnull(() -> filtro.getSoggettoFruitore()) != null   
 				? new IDSoggetto(idPropietarioSa.getTipo(), filtro.getSoggettoFruitore()).toString()
-				: ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI );
+				: null;
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_FRUITORE,
@@ -3749,7 +3815,7 @@ public class ErogazioniApiHelper {
 
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_FRUITORE,
-				Helper.evalnull(  () -> Helper.evalnull(  () -> ServletUtils.boolToCheckBoxStatus( groupCriteria.isSoggettoFruitore() ) ) ) 
+				evalnull(  () -> evalnull(  () -> ServletUtils.boolToCheckBoxStatus( groupCriteria.isSoggettoFruitore() ) ) ) 
 			);
 	}
 	
@@ -3757,6 +3823,8 @@ public class ErogazioniApiHelper {
 	
 	
 	public static final void override ( RateLimitingPolicyBaseFruizione body,  IDSoggetto idPropietarioSa,  HttpRequestWrapper wrap ) {	// Questa è in comune alla update.
+		if (body == null) return;
+
 		override ( (RateLimitingPolicyBase) body, idPropietarioSa, wrap );
 		override ( body.getFiltro(), idPropietarioSa, wrap );
 		override ( body.getCriterioCollezionamentoDati() , idPropietarioSa, wrap );
@@ -3774,9 +3842,9 @@ public class ErogazioniApiHelper {
 		*/
 	}
 		
-	public static final void override ( RateLimitingPolicyBase body,  IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {	// Questa è in comune alla update.
-		
-		
+	public static final void override ( RateLimitingPolicyBase body,  IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {	// Questa è in comune alla update.		
+		if (body == null) return;
+
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ALIAS,
 				body.getNome()
@@ -3795,7 +3863,7 @@ public class ErogazioniApiHelper {
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VALORE, 
-				Helper.evalnull( () -> body.getSogliaValore().toString() )
+				evalnull( () -> body.getSogliaValore().toString() )
 			);
 		
 		wrap.overrideParameter(
@@ -3827,7 +3895,7 @@ public class ErogazioniApiHelper {
 		
 		wrap.overrideParameter( CostantiControlStation.PARAMETRO_PATTERN, body.getIdentificazione() );
 		
-		wrap.overrideParameter( CostantiControlStation.PARAMETRO_ID_CORRELAZIONE, Helper.evalnull( () -> idCorrelazione.toString() ) );					// Questo va impostato nella update.
+		wrap.overrideParameter( CostantiControlStation.PARAMETRO_ID_CORRELAZIONE, evalnull( () -> idCorrelazione.toString() ) );					// Questo va impostato nella update.
 		
 		return paHelper.correlazioneApplicativaRichiestaCheckData(tipoOp,isDelegata);
 		
@@ -3902,7 +3970,7 @@ public class ErogazioniApiHelper {
 		
 		wrap.overrideParameter( CostantiControlStation.PARAMETRO_PATTERN, body.getIdentificazione() );
 		
-		wrap.overrideParameter( CostantiControlStation.PARAMETRO_ID_CORRELAZIONE, Helper.evalnull( () -> idCorrelazione.toString() ));
+		wrap.overrideParameter( CostantiControlStation.PARAMETRO_ID_CORRELAZIONE, evalnull( () -> idCorrelazione.toString() ));
 	
 		
 		return paHelper.correlazioneApplicativaRichiestaCheckData(TipoOperazione.ADD,isDelegata);
@@ -4012,21 +4080,91 @@ public class ErogazioniApiHelper {
 		
 		return abilitato;
 	}
+	
+	
+	public static final void attivazionePolicyCheckData(
+			TipoOperazione tipoOperazione, 
+			PortaApplicativa pa,
+			AttivazionePolicy policy,
+			InfoPolicy infoPolicy,  
+			ErogazioniConfEnv env ) throws Exception  {
 
-
-
-	public static final void fillErogazioneWithDefaults(Erogazione ero) {
-		//if (//TODO: Continua da qui e determina se la erogaizone è spcoop, se si, popola i campi di default per autenticazione e autorizzazione.)
-		// Fai gli stessi check per il campo autenticazione https, cosa succede se non li specifico tutti?
+		final RuoloPolicy ruoloPorta = RuoloPolicy.APPLICATIVA;
+		final String nomePorta = pa.getNome();
+		// Controllo che l'azione scelta per il filtro sia supportata.
+		boolean hasAzioni = pa.getAzione() != null && pa.getAzione().getAzioneDelegataList().size() > 0;
+		List<String> azioniSupportate = hasAzioni 
+				    ? pa.getAzione().getAzioneDelegataList()
+					: env.confCore.getAzioni(
+						env.asps,
+						env.apcCore.getAccordoServizioSintetico(env.asps.getIdAccordo()), 
+						false, 
+						true, 
+						ErogazioniApiHelper.getAzioniOccupateErogazione(env.idAsps, env.apsCore, env.paCore)
+					);
+		
+		if ( policy.getFiltro().getAzione() != null && !azioniSupportate.contains(policy.getFiltro().getAzione()) ) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'azione " + policy.getFiltro().getAzione() + " non è assegnabile a una policy di rate limiting per il gruppo scelto. le azioni supportare sono: " + azioniSupportate.toString());
+		}
+		
+		// Controllo che l'applicativo fruitore scelto per il filtro sia supportato.
+		if ( policy.getFiltro().getServizioApplicativoFruitore() != null &&				
+				!env.confCore.getServiziApplicativiFruitore(env.tipo_protocollo, null, env.idSoggetto.getTipo(), env.idSoggetto.getNome())
+				.stream()
+				.filter( id -> id.getNome().equals(policy.getFiltro().getServizioApplicativoFruitore()))
+				.findAny().isPresent()
+		) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il servizio applicativo fruitore " + policy.getFiltro().getServizioApplicativoFruitore() + " scelto non è assegnabile alla policy di rate limiting");
+		}
+		
+		org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = env.confCore.getConfigurazioneControlloTraffico();
+		if (! env.confHelper.attivazionePolicyCheckData(tipoOperazione, configurazioneControlloTraffico, policy,infoPolicy, ruoloPorta, nomePorta) ) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+		}
+		
+	
+		// Controllo che il soggetto fruitore scelto per il filtro sia supportato, SOLO IN EROGAZIONI
+		if ( policy.getFiltro().getTipoFruitore() != null && policy.getFiltro().getNomeFruitore() != null ) {
+			List<IDSoggetto> soggettiSupportati = new ArrayList<IDSoggetto>();
+			
+			boolean multitenant = env.confCore.getConfigurazioneGenerale().getMultitenant().getStato() == StatoFunzionalita.ABILITATO;
+			PddCore pddCore = new PddCore(env.stationCore);
+			List<IDSoggetto> listSoggetti = env.confCore.getSoggetti(env.tipo_protocollo, null);
+	
+			for (IDSoggetto idSoggetto : listSoggetti) {
+				if(!multitenant && policy.getFiltro().getRuoloPorta()!=null && 
+						(policy.getFiltro().getRuoloPorta().equals(RuoloPolicy.APPLICATIVA) || policy.getFiltro().getRuoloPorta().equals(RuoloPolicy.DELEGATA))) {
+					
+					Soggetto s = env.soggettiCore.getSoggettoRegistro(idSoggetto);
+					boolean isPddEsterna = pddCore.isPddEsterna(s.getPortaDominio());
+					if( policy.getFiltro().getRuoloPorta().equals(RuoloPolicy.APPLICATIVA)) {
+						// devo prendere i soggetti esterni
+						if(isPddEsterna) {
+							soggettiSupportati.add(idSoggetto);
+						}
+					}
+					else {
+						policy.getFiltro().getRuoloPorta().equals(RuoloPolicy.DELEGATA);
+						// devo prendere i soggetti interni
+						if(!isPddEsterna) {
+							soggettiSupportati.add(idSoggetto);
+						}
+					}
+				}
+				else {
+					soggettiSupportati.add(idSoggetto);
+				}
+			}
+			
+			final IDSoggetto idSoggettoScelto = new IDSoggetto(policy.getFiltro().getTipoFruitore(), policy.getFiltro().getNomeFruitore());
+			if ( !soggettiSupportati.contains(idSoggettoScelto) ) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto fruitore " + idSoggettoScelto.toString() + " scelto non è assegnabile alla policy di rate limiting.\n I soggetti supportati sono: " + soggettiSupportati.toString() ); 
+			}
+		}
+	
 		
 		
 	}
-    
-    
-	
-	
-	
-	
 
 
 }

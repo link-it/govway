@@ -23,6 +23,7 @@ package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.openspcoop2.core.monitor.rs.server.model.FiltroTemporale;
 import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
+import org.openspcoop2.core.monitor.rs.server.model.UnitaTempoReportEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -31,11 +32,33 @@ import javax.validation.Valid;
 
 public class RicercaBaseStatistica  {
   
+  @Schema(description = "")
+  private UnitaTempoReportEnum unitaTempo = null;
+  
   @Schema(required = true, description = "")
   private FiltroTemporale intervalloTemporale = null;
   
   @Schema(required = true, description = "")
   private TransazioneRuoloEnum tipo = null;
+ /**
+   * Get unitaTempo
+   * @return unitaTempo
+  **/
+  @JsonProperty("unita_tempo")
+  @Valid
+  public UnitaTempoReportEnum getUnitaTempo() {
+    return this.unitaTempo;
+  }
+
+  public void setUnitaTempo(UnitaTempoReportEnum unitaTempo) {
+    this.unitaTempo = unitaTempo;
+  }
+
+  public RicercaBaseStatistica unitaTempo(UnitaTempoReportEnum unitaTempo) {
+    this.unitaTempo = unitaTempo;
+    return this;
+  }
+
  /**
    * Get intervalloTemporale
    * @return intervalloTemporale
@@ -82,6 +105,7 @@ public class RicercaBaseStatistica  {
     StringBuilder sb = new StringBuilder();
     sb.append("class RicercaBaseStatistica {\n");
     
+    sb.append("    unitaTempo: ").append(RicercaBaseStatistica.toIndentedString(this.unitaTempo)).append("\n");
     sb.append("    intervalloTemporale: ").append(RicercaBaseStatistica.toIndentedString(this.intervalloTemporale)).append("\n");
     sb.append("    tipo: ").append(RicercaBaseStatistica.toIndentedString(this.tipo)).append("\n");
     sb.append("}");

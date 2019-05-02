@@ -1,0 +1,9 @@
+{
+    "autenticazione": {
+        "tipo": "principal",
+        "opzionale": false,
+        "configurazione": {
+            "tipo": "container"
+        }
+    }
+}

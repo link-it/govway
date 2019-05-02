@@ -83,8 +83,8 @@ public class Converter {
 		return ProfiloUtils.toProtocollo(profilo);
 	}
 	
-	public static Integer toOffset(Integer limit) {
-		return limit!=null ? limit : 0;
+	public static Integer toOffset(Integer offset) {
+		return offset!=null ? offset : 0;
 	}
 	public static Integer toLimit(Integer limit) {
 		return limit!=null ? limit : 25;
@@ -248,25 +248,7 @@ public class Converter {
 		
 		if(eventoDB.getSeverita()>=0) {
 			TipoSeverita tipo = SeveritaConverter.toSeverita(eventoDB.getSeverita());
-			if(tipo!=null) {
-				switch (tipo) {
-				case DEBUG:
-					evento.setSeverita(DiagnosticoSeveritaEnum.DEBUG);
-					break;
-				case INFO:
-					evento.setSeverita(DiagnosticoSeveritaEnum.INFO);
-					break;
-				case WARN:
-					evento.setSeverita(DiagnosticoSeveritaEnum.WARNING);
-					break;
-				case ERROR:
-					evento.setSeverita(DiagnosticoSeveritaEnum.ERROR);
-					break;
-				case FATAL:
-					evento.setSeverita(DiagnosticoSeveritaEnum.FATAL);
-					break;
-				}				
-			}
+			evento.setSeverita(Enums.toDiagnosticoSeverita.get(tipo));
 		}
 		evento.setOrigine(eventoDB.getIdConfigurazione());
 		if(eventoDB.getOraRegistrazione()!=null) {

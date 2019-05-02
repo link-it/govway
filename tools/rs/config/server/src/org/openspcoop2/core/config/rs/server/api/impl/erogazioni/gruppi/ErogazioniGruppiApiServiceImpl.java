@@ -52,6 +52,7 @@ import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -96,12 +97,12 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
-			final IDPortaApplicativa idPa = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPA(nomeGruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta");
+			final IDPortaApplicativa idPa = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPA(nomeGruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta");
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(idPa);
 						
 			List<String> azioniOccupate = ErogazioniApiHelper.getAzioniOccupateErogazione(idAsps, env.apsCore, env.paCore);
@@ -114,7 +115,8 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			
 			env.requestWrapper.overrideParameterValues(CostantiControlStation.PARAMETRO_AZIONI, body.getAzioni().toArray(new String[0]));
 		
-			if (!env.paHelper.porteAppAzioneCheckData(TipoOperazione.ADD,azioniOccupate)) {
+			List<MappingErogazionePortaApplicativa> listaMappingErogazione = env.apsCore.mappingServiziPorteAppList(idAsps,asps.getId(), null);
+			if (!env.paHelper.porteAppAzioneCheckData(TipoOperazione.ADD,azioniOccupate,listaMappingErogazione)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
@@ -153,11 +155,11 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
 	
 			String mappingPadre = null;
@@ -352,7 +354,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps),asps.getId());
 			
 			final IDPortaApplicativa idPortaApplicativa = ErogazioniApiHelper.getIDGruppoPA(nomeGruppo, idAsps, env.apsCore);
@@ -399,12 +401,12 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
-			final IDPortaApplicativa idPa = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPA(nomeGruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta");
+			final IDPortaApplicativa idPa = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPA(nomeGruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta");
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(idPa);
 			
-			if ( Helper.findFirst( pa.getAzione().getAzioneDelegataList(), a -> a.equals(nomeAzione)).isPresent() )	{
+			if ( BaseHelper.findFirst( pa.getAzione().getAzioneDelegataList(), a -> a.equals(nomeAzione)).isPresent() )	{
 				StringBuffer inUsoMessage = new StringBuffer();
 				
 				PorteApplicativeUtilities.deletePortaApplicativaAzioni(pa, env.paCore, env.paHelper, inUsoMessage, new ArrayList<String>(Arrays.asList(nomeAzione)), env.userLogin);
@@ -446,7 +448,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
 			final int idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
 			
@@ -505,15 +507,15 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
 			
-			final IDPortaApplicativa idPa = Helper.supplyOrNotFound( 
+			final IDPortaApplicativa idPa = BaseHelper.supplyOrNotFound( 
 					() -> ErogazioniApiHelper.getIDGruppoPA(nomeGruppo, idAsps, env.apsCore)
 					, "Gruppo per l'erogazione scelta"
 				);
 			
-			final PortaApplicativa pa = Helper.supplyOrNotFound( 
+			final PortaApplicativa pa = BaseHelper.supplyOrNotFound( 
 					() -> env.paCore.getPortaApplicativa(idPa)
 					, "Gruppo per l'erogazione scelta"
 				);
@@ -550,16 +552,16 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
                         
 			// PorteApplicativeConfigurazioneChange
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps),asps.getId());
 			final List<MappingErogazionePortaApplicativa> listaMapping = env.apsCore.mappingServiziPorteAppList(idAsps,idAsps.getId(), null);
 			final List<String> mappingUtilizzati = ErogazioniApiHelper.getDescrizioniMappingPA(listaMapping);
 			
-			Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPA(nomeGruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta");
+			BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPA(nomeGruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta");
 			
 			if (mappingUtilizzati.stream().filter( m -> m.equalsIgnoreCase(body.getNome())).findFirst().isPresent()) {
 				throw FaultCode.CONFLITTO.toException(CostantiControlStation.MESSAGGIO_ERRORE_NOME_GRUPPO_GIA_PRESENTE);

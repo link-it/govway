@@ -2,16 +2,17 @@
     "policy": "numero-richieste-orarie",
     "stato": "abilitato",
     "soglia_ridefinita": true,
-    "soglia_valore": 303,
+    "soglia_valore": 10,
+    "nome": "PolicyProvaKarate",
 
     "filtro": {
-        "azione": "Qualsiasi",
         "chiave_tipo": "content-based",
         "chiave_nome": "chiave1",
         "filtro_chiave_valore": "chiave_valore1"
     },
 
     "criterio_collezionamento_dati": {
+        "applicativo_fruitore": false,
         "azione": true,
         "chiave_tipo": "content-based",
         "chiave_nome": "chiave2"

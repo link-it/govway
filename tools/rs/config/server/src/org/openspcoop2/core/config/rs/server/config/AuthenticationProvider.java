@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.utils.crypt.Password;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.slf4j.Logger;
@@ -73,7 +74,7 @@ public class AuthenticationProvider implements org.springframework.security.auth
 		ControlStationCore core = null;
 		UtentiCore utentiCore = null;
 		try {
-			tipo_protocollo = Helper.tipoProtocolloFromProfilo.get(Helper.getProfiloDefault());
+			tipo_protocollo = BaseHelper.tipoProtocolloFromProfilo.get(Helper.getProfiloDefault());
 			core = new ControlStationCore(true, ServerProperties.getInstance().getConfDirectory() ,tipo_protocollo);
 			utentiCore = new UtentiCore(core);
 		}catch(Exception e) {

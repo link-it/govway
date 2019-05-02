@@ -39,6 +39,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -81,7 +82,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
                 
 			Applicativo applicativo = body;
 			try{
@@ -297,7 +298,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			Applicativo applicativo = body;
 			try{
@@ -309,7 +310,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			final ApplicativiEnv env = new ApplicativiEnv(context.getServletRequest(), profilo, soggetto, context);
 			soggetto = env.idSoggetto.getNome();
 			
-			final ServizioApplicativo oldSa = Helper.supplyOrNotFound( () -> ApplicativiApiHelper.getServizioApplicativo(nome, env.idSoggetto.getNome(), env.tipo_protocollo, env.saCore), "Servizio Applicativo");
+			final ServizioApplicativo oldSa = BaseHelper.supplyOrNotFound( () -> ApplicativiApiHelper.getServizioApplicativo(nome, env.idSoggetto.getNome(), env.tipo_protocollo, env.saCore), "Servizio Applicativo");
 			
 			final ServizioApplicativo tmpSa = ApplicativiApiHelper.applicativoToServizioApplicativo(applicativo, env.tipo_protocollo, soggetto, env.stationCore);
 			final ServizioApplicativo newSa = ApplicativiApiHelper.getServizioApplicativo(nome, env.idSoggetto.getNome(), env.tipo_protocollo, env.saCore);

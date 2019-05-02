@@ -51,7 +51,6 @@
     "api_versione": 1,
     "api_referente": "SoggettoJson1",
     "api_soap_servizio": "EsempioServizioComposto",
-    "tipo_servizio": "ldap",
-    "erogatore": "ComuneDiPisa"
+    "tipo_servizio": "ldap"
 
 }

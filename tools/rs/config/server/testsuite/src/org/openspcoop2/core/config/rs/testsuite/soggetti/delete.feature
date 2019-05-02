@@ -4,7 +4,7 @@ Background:
 
 * call read('classpath:crud_commons.feature')
 
-* def soggetto = read('soggetto2.json') 
+* def soggetto = read('classpath:bodies/soggetto-esterno-https.json') 
 * eval randomize(soggetto, ["nome", "credenziali.certificato.issuer", "credenziali.certificato.subject"])
 * eval soggetto.ruoli = []
 

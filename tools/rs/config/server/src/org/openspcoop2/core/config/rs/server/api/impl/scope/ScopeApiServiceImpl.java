@@ -38,6 +38,7 @@ import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -77,7 +78,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");  
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			ScopeEnv env = new ScopeEnv(context.getServletRequest(),context);
 			ScopeApiHelper.ovverrideParameters(env.requestWrapper, body);
@@ -123,7 +124,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 			
 			ScopeEnv sEnv = new ScopeEnv(context.getServletRequest(),context);
 			
-			final org.openspcoop2.core.registry.Scope scope = Helper.evalnull( () -> sEnv.scopeCore.getScope(nome) );
+			final org.openspcoop2.core.registry.Scope scope = BaseHelper.evalnull( () -> sEnv.scopeCore.getScope(nome) );
 			
 			if ( scope != null ) {
 				StringBuffer inUsoMessage = new StringBuffer();
@@ -259,13 +260,13 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
             
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			ScopeEnv env = new ScopeEnv(context.getServletRequest(), context);
 			ScopeApiHelper.ovverrideParameters(env.requestWrapper, body);
 			
 			org.openspcoop2.core.registry.Scope scopeNEW = ScopeApiHelper.apiScopeToRegistroScope(body, env.userLogin);
-			org.openspcoop2.core.registry.Scope scopeOLD = Helper.evalnull( () -> env.scopeCore.getScope(nome));
+			org.openspcoop2.core.registry.Scope scopeOLD = BaseHelper.evalnull( () -> env.scopeCore.getScope(nome));
 						
 			// Chiedere ad andrea se il detail lo vuole privato o meno.
 			if (scopeOLD == null)

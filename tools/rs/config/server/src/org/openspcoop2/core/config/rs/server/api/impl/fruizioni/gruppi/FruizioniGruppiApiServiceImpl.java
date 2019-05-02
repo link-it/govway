@@ -53,6 +53,7 @@ import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -97,15 +98,15 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
 
-			final IDPortaDelegata idPd = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPD(nomeGruppo, env.idSoggetto.toIDSoggetto(), idAsps, env.apsCore), "Gruppo per la fruizione scelta");
+			final IDPortaDelegata idPd = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPD(nomeGruppo, env.idSoggetto.toIDSoggetto(), idAsps, env.apsCore), "Gruppo per la fruizione scelta");
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(idPd);
 						
 			List<String> azioniOccupate = ErogazioniApiHelper.getAzioniOccupateFruizione(idAsps, env.idSoggetto.toIDSoggetto(), env.apsCore, env.pdCore);
@@ -119,7 +120,9 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			
 			env.requestWrapper.overrideParameterValues(CostantiControlStation.PARAMETRO_AZIONI, body.getAzioni().toArray(new String[0]));
 		
-			if (!env.paHelper.porteAppAzioneCheckData(TipoOperazione.ADD,azioniOccupate)) {
+			long idFruizione = env.apsCore.getIdFruizioneAccordoServizioParteSpecifica(env.idSoggetto.toIDSoggetto(), idAsps);
+			List<MappingFruizionePortaDelegata> listaMappingFruizione = env.apsCore.serviziFruitoriMappingList(idFruizione, env.idSoggetto.toIDSoggetto(), idAsps, null);
+			if (!env.paHelper.porteDelAzioneCheckData(TipoOperazione.ADD,azioniOccupate,listaMappingFruizione)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
@@ -164,7 +167,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(),  env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(),  env), "Fruizione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
 
 		
@@ -356,7 +359,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
                         
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps),asps.getId());
 			
 			// ricevo come parametro l'id della pa associata al mapping da cancellare
@@ -411,12 +414,12 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
             
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps),asps.getId());
-			final IDPortaDelegata idPd = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPD(nomeGruppo, env.idSoggetto.toIDSoggetto(), idAsps, env.apsCore), "Gruppo per la fruizione scelta");
+			final IDPortaDelegata idPd = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPD(nomeGruppo, env.idSoggetto.toIDSoggetto(), idAsps, env.apsCore), "Gruppo per la fruizione scelta");
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(idPd);
 			
-			if ( Helper.findFirst( pd.getAzione().getAzioneDelegataList(), a -> a.equals(nomeAzione)).isPresent() ) {
+			if ( BaseHelper.findFirst( pd.getAzione().getAzioneDelegataList(), a -> a.equals(nomeAzione)).isPresent() ) {
                         
 				StringBuffer inUsoMessage = new StringBuffer();
 				
@@ -459,7 +462,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps),asps.getId());
 			
 			final int idLista = Liste.CONFIGURAZIONE_FRUIZIONE;
@@ -519,15 +522,15 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
             
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps),asps.getId());
 			
 			// ricevo come parametro l'id della pa associata al mapping da cancellare
-			final IDPortaDelegata idPortaDelegata = Helper.supplyOrNotFound( 
+			final IDPortaDelegata idPortaDelegata = BaseHelper.supplyOrNotFound( 
 					() -> ErogazioniApiHelper.getIDGruppoPD(nomeGruppo, env.idSoggetto.toIDSoggetto(), idAsps, env.apsCore)
 					, "Gruppo per la fruizione scelta"
 				);
-			final PortaDelegata pd = Helper.supplyOrNotFound(
+			final PortaDelegata pd = BaseHelper.supplyOrNotFound(
 					() -> env.pdCore.getPortaDelegata(idPortaDelegata)
 					, "Gruppo per la fruizione scelta"
 				);
@@ -568,13 +571,13 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 		      
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps),asps.getId());
 			final List<MappingFruizionePortaDelegata> listaMapping = env.apsCore.serviziFruitoriMappingList(env.idSoggetto.toIDSoggetto(), idAsps, null);
 
 			final List<String> mappingUtilizzati = ErogazioniApiHelper.getDescrizioniMappingPD(listaMapping);
 			
-			Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPD(nomeGruppo, env.idSoggetto.toIDSoggetto(),  idAsps, env.apsCore), "Gruppo per la fruizione scelta");
+			BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPD(nomeGruppo, env.idSoggetto.toIDSoggetto(),  idAsps, env.apsCore), "Gruppo per la fruizione scelta");
 			
 			if (mappingUtilizzati.stream().filter( m -> m.equalsIgnoreCase(body.getNome())).findFirst().isPresent()) {
 				throw FaultCode.CONFLITTO.toException(CostantiControlStation.MESSAGGIO_ERRORE_NOME_GRUPPO_GIA_PRESENTE);

@@ -513,7 +513,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public List<AttivazionePolicy> attivazionePolicyList(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta)  throws DriverControlStationNotFound, DriverControlStationException{
+	public List<AttivazionePolicy> attivazionePolicyList(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta)  throws DriverControlStationException{
 		String nomeMetodo = "attivazionePolicyList";
 		Connection con = null;
 		DriverControlStationDB driver = null;

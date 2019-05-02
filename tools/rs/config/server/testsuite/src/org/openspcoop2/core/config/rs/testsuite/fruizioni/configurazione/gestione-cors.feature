@@ -24,8 +24,6 @@ Background:
 * def fruizione_petstore_path = 'fruizioni/' + fruizione_key
 * def api_petstore_path = 'api/' + api_petstore.nome + '/' + api_petstore.versione
 
-#TODO: Versioni SPCoop
-
 @GestioneCORS
 Scenario: Gestione CORS Fruizioni
 

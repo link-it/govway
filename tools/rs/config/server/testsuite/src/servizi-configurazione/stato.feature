@@ -17,8 +17,16 @@ Scenario: Abilita Configurazione
     When method put
     Then status 204
 
-#TODO: Fare una get che verifichi l'effettiva disabilitazione
-@Abilita 
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'stato'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response == stato_abilitato
+
+
+@Disabilita 
 Scenario: Disabilita Configurazione
 
     Given url configUrl
@@ -29,13 +37,10 @@ Scenario: Disabilita Configurazione
     When method put
     Then status 204
 
-
-@Get200
-Scenario: Get Configurazione
-
     Given url configUrl
-    And path servizio_path, 'configurazioni', 'registrazione-messaggi'
+    And path servizio_path, 'configurazioni', 'stato'
     And header Authorization = govwayConfAuth
     And params query_params
     When method get
     Then status 200
+    And match response == stato_disabilitato

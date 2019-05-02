@@ -41,7 +41,7 @@ public class HttpRequestWrapper extends WrappedHttpServletRequest  {
 	
 	@Override
 	public String getParameter(String key) {
-		if (this.overrides.get(key) != null) {
+		if (this.overrides.containsKey(key)) {
 			return this.overrides.get(key);
 		}
 		

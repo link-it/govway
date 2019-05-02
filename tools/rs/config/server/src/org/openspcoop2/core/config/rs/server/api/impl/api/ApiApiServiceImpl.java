@@ -75,6 +75,7 @@ import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -549,8 +550,8 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			final AccordoServizioParteComune as = Helper.supplyOrNotFound( () -> ApiApiHelper.getAccordoFull(nome, versione, env), "API");
-			final Documento toDel = Helper.evalnull(
+			final AccordoServizioParteComune as = BaseHelper.supplyOrNotFound( () -> ApiApiHelper.getAccordoFull(nome, versione, env), "API");
+			final Documento toDel = BaseHelper.evalnull(
 					() -> env.archiviCore.getDocumento(nomeAllegato, null, null, as.getId(), false, ProprietariDocumento.accordoServizio)
 	
 				);
@@ -597,7 +598,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");   
 			
 			ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			AccordoServizioParteComune as = Helper.supplyOrNotFound(
+			AccordoServizioParteComune as = BaseHelper.supplyOrNotFound(
 					() -> ApiApiHelper.getAccordoFull(nome, versione, env),
 					"API"
 				);
@@ -612,7 +613,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if (pt == null)
 				throw FaultCode.NOT_FOUND.toException("Nessun Servizio registrato sulla api con nome " + nomeServizio);
 			
-			if ( Helper.findFirst(pt.getAzioneList(), op -> op.getNome().equals(nomeAzione)).isPresent() ) {
+			if ( BaseHelper.findFirst(pt.getAzioneList(), op -> op.getNome().equals(nomeAzione)).isPresent() ) {
 				final AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(env.apcCore);
 
 				List<IDServizio> idServiziWithPortType = null;
@@ -679,14 +680,14 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
 			final AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(env.apcCore);
-			final AccordoServizioParteComune as = Helper.supplyOrNotFound(
+			final AccordoServizioParteComune as = BaseHelper.supplyOrNotFound(
 					() -> ApiApiHelper.getAccordoFull(nome, versione, env),
 					"API"
 				);
         
-			if ( Helper.findFirst(as.getResourceList(), res -> res.getNome().equals(nomeRisorsa)).isPresent() ) {
+			if ( BaseHelper.findFirst(as.getResourceList(), res -> res.getNome().equals(nomeRisorsa)).isPresent() ) {
 				
-				List<IDServizio> idServiziWithAccordo = Helper.evalnull(
+				List<IDServizio> idServiziWithAccordo = BaseHelper.evalnull(
 						() -> apsCore.getIdServiziWithAccordo(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as),true)
 					);
 				
@@ -730,12 +731,12 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			final AccordoServizioParteComune as = Helper.supplyOrNotFound(
+			final AccordoServizioParteComune as = BaseHelper.supplyOrNotFound(
 					() -> ApiApiHelper.getAccordoFull(nome, versione, env),
 					"API"
 				);
 			
-			if ( Helper.findFirst(as.getPortTypeList(), pt -> pt.getNome().equals(nomeServizio)).isPresent() ) {
+			if ( BaseHelper.findFirst(as.getPortTypeList(), pt -> pt.getNome().equals(nomeServizio)).isPresent() ) {
 				
 				final IDPortType idPT = new IDPortType();
 				idPT.setIdAccordo(env.idAccordoFactory.getIDAccordoFromAccordo(as));
@@ -1581,7 +1582,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
 		
-			final Documento oldDoc = Helper.supplyOrNotFound(
+			final Documento oldDoc = BaseHelper.supplyOrNotFound(
 					() -> env.archiviCore.getDocumento(nomeAllegato, null, null, as.getId(), false, ProprietariDocumento.accordoServizio)
 					, "Allegato con nome " + nomeAllegato + " per la API scelta."
 				);
@@ -1658,7 +1659,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.NOT_FOUND.toException("Nessun Servizio con nome: " + nomeServizio);
 			
 			
-			final Operation oldOp = Helper.findAndRemoveFirst(pt.getAzioneList(), ( op -> nomeAzione.equals(op.getNome())) );
+			final Operation oldOp = BaseHelper.findAndRemoveFirst(pt.getAzioneList(), ( op -> nomeAzione.equals(op.getNome())) );
 			
 			if (oldOp == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Azione con nome: " + nomeAzione + " associata al servizio " + nomeServizio);
@@ -1844,7 +1845,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
 			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
@@ -2011,7 +2012,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
 			
-			Resource oldResource = Helper.findAndRemoveFirst(as.getResourceList(), r -> nomeRisorsa.equals(r.getNome()));
+			Resource oldResource = BaseHelper.findAndRemoveFirst(as.getResourceList(), r -> nomeRisorsa.equals(r.getNome()));
 			
 			if (oldResource == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna risorsa trovata con nome " + nomeRisorsa);
@@ -2093,7 +2094,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
 			
 			
-			final PortType oldPt = Helper.findAndRemoveFirst(as.getPortTypeList(), ( p -> nomeServizio.equals(p.getNome()) ));
+			final PortType oldPt = BaseHelper.findAndRemoveFirst(as.getPortTypeList(), ( p -> nomeServizio.equals(p.getNome()) ));
 					
 		
 			if (oldPt == null)

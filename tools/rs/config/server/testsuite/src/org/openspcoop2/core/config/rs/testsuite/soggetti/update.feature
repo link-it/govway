@@ -4,9 +4,9 @@ Background:
 
 * call read('classpath:crud_commons.feature')
 
-* def soggetto_https_manuale = read('soggetto2.json')
-* def soggetto_https_cert = read('soggetto2_certificato.json')
-* def ruolo = read('ruolo.json')
+* def soggetto_https_manuale = read('classpath:bodies/soggetto-esterno-https.json') 
+* def soggetto_https_cert = read('classpath:bodies/soggetto-esterno-certificato.json')
+* def ruolo = read('classpath:bodies/ruolo.json')
 
 * eval randomize(soggetto_https_manuale, ["nome", "credenziali.certificato.issuer", "credenziali.certificato.subject"])
 * eval randomize(soggetto_https_cert, ["nome", "credenziali.userid"])

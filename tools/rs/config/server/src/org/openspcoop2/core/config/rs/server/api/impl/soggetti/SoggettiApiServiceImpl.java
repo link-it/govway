@@ -37,6 +37,7 @@ import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -162,8 +163,8 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			SoggettiEnv env = new SoggettiEnv(context.getServletRequest(), profilo, context);
 			IDSoggetto idSogg = new IDSoggetto(env.tipo_soggetto, nome);
 			
-			org.openspcoop2.core.registry.Soggetto soggettoRegistro = Helper.evalnull(() -> env.soggettiCore.getSoggettoRegistro(idSogg) );
-			org.openspcoop2.core.config.Soggetto soggettoConfig = Helper.evalnull(() -> env.soggettiCore.getSoggetto(soggettoRegistro.getId() ));
+			org.openspcoop2.core.registry.Soggetto soggettoRegistro = BaseHelper.evalnull(() -> env.soggettiCore.getSoggettoRegistro(idSogg) );
+			org.openspcoop2.core.config.Soggetto soggettoConfig = BaseHelper.evalnull(() -> env.soggettiCore.getSoggetto(soggettoRegistro.getId() ));
 			
 			if  ( soggettoRegistro != null && soggettoConfig != null ) {
 
@@ -270,9 +271,9 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			SoggettiEnv env = new SoggettiEnv(context.getServletRequest(), profilo, context);			
 			IDSoggetto idSogg = new IDSoggetto(env.tipo_soggetto,nome);
 			
-			org.openspcoop2.core.registry.Soggetto soggettoReg = Helper.supplyOrNotFound( () -> env.soggettiCore.getSoggettoRegistro(idSogg), "Soggetto " + idSogg.toString() );
+			org.openspcoop2.core.registry.Soggetto soggettoReg = BaseHelper.supplyOrNotFound( () -> env.soggettiCore.getSoggettoRegistro(idSogg), "Soggetto " + idSogg.toString() );
 			
-			Soggetto soggettoApi = Helper.supplyOrNotFound( () -> SoggettiApiHelper.soggettoRegistroToApi(soggettoReg, env.pddCore,env.soggettiCore), "Soggetto " + idSogg.toString());
+			Soggetto soggettoApi = BaseHelper.supplyOrNotFound( () -> SoggettiApiHelper.soggettoRegistroToApi(soggettoReg, env.pddCore,env.soggettiCore), "Soggetto " + idSogg.toString());
 			
 			if (soggettoApi == null)
 				throw FaultCode.NOT_FOUND.toException("Nessun soggetto trovato corrisponde al nome " + nome + " e profilo " + profilo.toString());

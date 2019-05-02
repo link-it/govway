@@ -14,13 +14,11 @@ Scenario: Update Registrazione Messaggi
     When method put
     Then status 204
 
-
-@Get200
-Scenario: Get Registrazione Messaggi
-
     Given url configUrl
     And path servizio_path, 'configurazioni', 'registrazione-messaggi'
     And header Authorization = govwayConfAuth
     And params query_params
     When method get
     Then status 200
+    And match response contains registrazione_messaggi
+ 

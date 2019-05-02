@@ -14,8 +14,6 @@ Background:
 * eval randomize(soggetto, ["nome", "credenziali.username"])
 * eval api_spcoop.referente = soggetto.nome
 
-#TODO: CREAZIONE API SDI
-
 @Create204
 Scenario: Api Create 204
     * call create_204 ( { resourcePath: 'api', body: api, key: api.nome + '/' + api.versione } )

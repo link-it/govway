@@ -9728,7 +9728,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// protocollo
 			String protocollo = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO);
-			if(protocollo!=null && !"".equals(protocollo) && !ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI.equals(protocollo)){
+			if(protocollo!=null && !"".equals(protocollo) && !ConfigurazioneCostanti.VALUE_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI.equals(protocollo)){
 				policy.getFiltro().setProtocollo(protocollo);
 			}
 			else{
@@ -9739,7 +9739,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// ruolo erogatore
 			String ruoloErogatore = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_EROGATORE);
-			if(ruoloErogatore!=null && !"".equals(ruoloErogatore) && !ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI.equals(ruoloErogatore) ){
+			if(ruoloErogatore!=null && !"".equals(ruoloErogatore) && !ConfigurazioneCostanti.VALUE_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI.equals(ruoloErogatore) ){
 				policy.getFiltro().setRuoloErogatore(ruoloErogatore);
 			}
 			else{
@@ -9751,7 +9751,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// erogatore
 			String erogatore = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_EROGATORE);
 			boolean erogatoreSelected = false;
-			if(erogatore!=null && !"".equals(erogatore) && !ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI.equals(erogatore) && erogatore.contains("/") ){
+			if(erogatore!=null && !"".equals(erogatore) && !ConfigurazioneCostanti.VALUE_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI.equals(erogatore) && erogatore.contains("/") ){
 				String [] tmp = erogatore.split("/");
 				policy.getFiltro().setTipoErogatore(tmp[0]);
 				policy.getFiltro().setNomeErogatore(tmp[1]);
@@ -9766,7 +9766,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// servizio applicativo erogatore
 			String servizioApplicativoErogatore = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_EROGATORE);
-			if(servizioApplicativoErogatore!=null && !"".equals(servizioApplicativoErogatore) && !ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI.equals(servizioApplicativoErogatore) ){
+			if(servizioApplicativoErogatore!=null && !"".equals(servizioApplicativoErogatore) && !ConfigurazioneCostanti.VALUE_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI.equals(servizioApplicativoErogatore) ){
 				policy.getFiltro().setServizioApplicativoErogatore(servizioApplicativoErogatore);
 			}
 			else{
@@ -9777,7 +9777,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// servizio
 			String servizio = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SERVIZIO);
-			if(servizio!=null && !"".equals(servizio) && !ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI.equals(servizio) && servizio.contains("/") ){
+			if(servizio!=null && !"".equals(servizio) && !ConfigurazioneCostanti.VALUE_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI.equals(servizio) && servizio.contains("/") ){
 				String [] tmp = servizio.split("/");
 				policy.getFiltro().setTipoServizio(tmp[0]);
 				policy.getFiltro().setNomeServizio(tmp[1]);
@@ -9799,7 +9799,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// azione
 			String azione = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_AZIONE);
-			if(azione!=null && !"".equals(azione) && !ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI.equals(azione) ){
+			if(azione!=null && !"".equals(azione) && !ConfigurazioneCostanti.VALUE_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI.equals(azione) ){
 				policy.getFiltro().setAzione(azione);
 			}
 			else{
@@ -9810,7 +9810,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// ruolo fruitore
 			String ruoloFruitore = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_FRUITORE);
-			if(ruoloFruitore!=null && !"".equals(ruoloFruitore) && !ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI.equals(ruoloFruitore) ){
+			if(ruoloFruitore!=null && !"".equals(ruoloFruitore) && !ConfigurazioneCostanti.VALUE_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI.equals(ruoloFruitore) ){
 				policy.getFiltro().setRuoloFruitore(ruoloFruitore);
 			}
 			else{
@@ -9821,7 +9821,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// fruitore
 			String fruitore = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_FRUITORE);
-			if(fruitore!=null && !"".equals(fruitore) && !ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI.equals(fruitore) && fruitore.contains("/") ){
+			if(fruitore!=null && !"".equals(fruitore) && !ConfigurazioneCostanti.VALUE_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI.equals(fruitore) && fruitore.contains("/") ){
 				String [] tmp = fruitore.split("/");
 				policy.getFiltro().setTipoFruitore(tmp[0]);
 				policy.getFiltro().setNomeFruitore(tmp[1]);
@@ -9835,7 +9835,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// servizio applicativo fruitore
 			String servizioApplicativoFruitore = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE);
-			if(servizioApplicativoFruitore!=null && !"".equals(servizioApplicativoFruitore) && !ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI.equals(servizioApplicativoFruitore) ){
+			if(servizioApplicativoFruitore!=null && !"".equals(servizioApplicativoFruitore) && !ConfigurazioneCostanti.VALUE_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI.equals(servizioApplicativoFruitore) ){
 				policy.getFiltro().setServizioApplicativoFruitore(servizioApplicativoFruitore);
 			}
 			else{
@@ -10533,7 +10533,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		String protocolloSelezionatoLabel = null;
 		String protocolloSelezionatoValue = null;
 		
-		List<String> ruoliErogatore = null;
+		List<String> ruoliErogatoreLabel = null;
+		List<String> ruoliErogatoreValue = null;
 		String ruoloErogatoreSelezionatoLabel = null;
 		String ruoloErogatoreSelezionatoValue = null;
 		
@@ -10547,7 +10548,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		String datiIdentificativiServizioSelezionatoLabel = null;
 		String datiIdentificativiServizioSelezionatoValue = null;
 		
-		List<String> azioni = null;
+		List<String> azioniLabel = null;
+		List<String> azioniValue = null;
 		String azioneSelezionataLabel = null;
 		String azioneSelezionataValue = null;
 		
@@ -10556,7 +10558,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		String servizioApplicativoErogatoreSelezionatoLabel = null;
 		String servizioApplicativoErogatoreSelezionatoValue = null;
 		
-		List<String> ruoliFruitore = null;
+		List<String> ruoliFruitoreLabel = null;
+		List<String> ruoliFruitoreValue = null;
 		String ruoloFruitoreSelezionatoLabel = null;
 		String ruoloFruitoreSelezionatoValue = null;
 		
@@ -10623,10 +10626,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(configurazione) {
 				if(protocolloAssociatoFiltroNonSelezionatoUtente) {
 					ruoloErogatoreSelezionatoValue = policy.getFiltro().getRuoloErogatore();
-					ruoloErogatoreSelezionatoLabel = ruoloErogatoreSelezionatoValue!=null ? ruoloErogatoreSelezionatoValue :  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI;
+					ruoloErogatoreSelezionatoLabel = ruoloErogatoreSelezionatoValue!=null ? ruoloErogatoreSelezionatoValue :  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI;
 				}
 				else {
-					ruoliErogatore = this.core.getAllRuoli(filtroRuoli);
+					List<String> ruoliErogatore = this.core.getAllRuoli(filtroRuoli);
 					
 					if(policy.getFiltro().getRuoloErogatore()!=null) {
 						ruoloErogatoreSelezionatoValue = policy.getFiltro().getRuoloErogatore();
@@ -10635,7 +10638,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						policy.getFiltro().setRuoloErogatore(null);
 						ruoloErogatoreSelezionatoValue = null;
 					}
-					ruoliErogatore = enrichListConQualsiasi(ruoliErogatore);
+					ruoliErogatoreLabel = enrichListConLabelQualsiasi(ruoliErogatore);
+					ruoliErogatoreValue = enrichListConValueQualsiasi(ruoliErogatore);
 				}
 			}
 			
@@ -10647,7 +10651,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						datiIdentificativiErogatoreSelezionatoValue = policy.getFiltro().getTipoErogatore() + "/" + policy.getFiltro().getNomeErogatore();
 						idSoggetto = new IDSoggetto(policy.getFiltro().getTipoErogatore() , policy.getFiltro().getNomeErogatore());
 					}
-					datiIdentificativiErogatoreSelezionatoLabel = idSoggetto!=null ? this.getLabelNomeSoggetto(idSoggetto) :  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI;
+					datiIdentificativiErogatoreSelezionatoLabel = idSoggetto!=null ? this.getLabelNomeSoggetto(idSoggetto) :  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI;
 				}
 				else {
 					List<IDSoggetto> listErogatori = this.confCore.getSoggettiErogatori(protocolloSelezionatoValue, protocolliValue);
@@ -10689,8 +10693,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						policy.getFiltro().setNomeErogatore(null);
 						datiIdentificativiErogatoreSelezionatoValue = null;
 					}
-					erogatoriLabel = enrichListConQualsiasi(erogatoriLabel);
-					erogatoriValue = enrichListConQualsiasi(erogatoriValue);
+					erogatoriLabel = enrichListConLabelQualsiasi(erogatoriLabel);
+					erogatoriValue = enrichListConValueQualsiasi(erogatoriValue);
 				}
 			}
 					
@@ -10709,7 +10713,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								policy.getFiltro().getNomeErogatore(), 
 								policy.getFiltro().getVersioneServizio());
 					}
-					datiIdentificativiServizioSelezionatoLabel = idServizio!=null ? this.getLabelIdServizio(idServizio) :  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI;
+					datiIdentificativiServizioSelezionatoLabel = idServizio!=null ? this.getLabelIdServizio(idServizio) :  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI;
 				}
 				else {
 					List<IDServizio> listServizi = this.confCore.getServizi(protocolloSelezionatoValue, protocolliValue,
@@ -10733,8 +10737,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						policy.getFiltro().setVersioneServizio(null);
 						datiIdentificativiServizioSelezionatoValue = null;
 					}
-					serviziLabel = enrichListConQualsiasi(serviziLabel);
-					serviziValue = enrichListConQualsiasi(serviziValue);
+					serviziLabel = enrichListConLabelQualsiasi(serviziLabel);
+					serviziValue = enrichListConValueQualsiasi(serviziValue);
 				}
 			}
 			
@@ -10743,9 +10747,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(policy.getFiltro().getAzione()!=null){
 					azioneSelezionataValue = policy.getFiltro().getAzione();
 				}
-				azioneSelezionataLabel = azioneSelezionataValue!=null ? azioneSelezionataValue :  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI;
+				azioneSelezionataLabel = azioneSelezionataValue!=null ? azioneSelezionataValue :  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI;
 			}
 			else {
+				List<String> azioni = null;
 				if(configurazione && datiIdentificativiServizioSelezionatoValue!=null) {
 					azioni = this.confCore.getAzioni(protocolloSelezionatoValue, protocolliValue,
 							policy.getFiltro().getTipoErogatore(), policy.getFiltro().getNomeErogatore(), 
@@ -10834,7 +10839,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					policy.getFiltro().setAzione(null);
 					azioneSelezionataValue = null;
 				}
-				azioni = enrichListConQualsiasi(azioni);
+				azioniLabel = enrichListConLabelQualsiasi(azioni);
+				azioniValue = enrichListConValueQualsiasi(azioni);
 			}
 				
 			// servizi applicativi erogatore
@@ -10846,7 +10852,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						if(policy.getFiltro().getServizioApplicativoErogatore()!=null){
 							servizioApplicativoErogatoreSelezionatoValue = policy.getFiltro().getServizioApplicativoErogatore();
 						}
-						servizioApplicativoErogatoreSelezionatoLabel = servizioApplicativoErogatoreSelezionatoValue!=null ? servizioApplicativoErogatoreSelezionatoValue :  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI;
+						servizioApplicativoErogatoreSelezionatoLabel = servizioApplicativoErogatoreSelezionatoValue!=null ? servizioApplicativoErogatoreSelezionatoValue :  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI;
 					}
 					else {
 						serviziApplicativiErogatoreLabel = new ArrayList<>();
@@ -10869,8 +10875,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							policy.getFiltro().setServizioApplicativoErogatore(null);
 							servizioApplicativoErogatoreSelezionatoValue = null;
 						}
-						serviziApplicativiErogatoreLabel = enrichListConQualsiasi(serviziApplicativiErogatoreLabel);
-						serviziApplicativiErogatoreValue = enrichListConQualsiasi(serviziApplicativiErogatoreValue);
+						serviziApplicativiErogatoreLabel = enrichListConLabelQualsiasi(serviziApplicativiErogatoreLabel);
+						serviziApplicativiErogatoreValue = enrichListConValueQualsiasi(serviziApplicativiErogatoreValue);
 					}
 				}
 			}
@@ -10881,10 +10887,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(policy.getFiltro().getRuoloFruitore()!=null) {
 						ruoloFruitoreSelezionatoValue = policy.getFiltro().getRuoloFruitore();
 					}
-					ruoloFruitoreSelezionatoLabel = ruoloFruitoreSelezionatoValue!=null ? ruoloFruitoreSelezionatoValue :  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI;
+					ruoloFruitoreSelezionatoLabel = ruoloFruitoreSelezionatoValue!=null ? ruoloFruitoreSelezionatoValue :  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI;
 				}
 				else {
-					ruoliFruitore = this.core.getAllRuoli(filtroRuoli);
+					List<String> ruoliFruitore = this.core.getAllRuoli(filtroRuoli);
 					if(policy.getFiltro().getRuoloFruitore()!=null) {
 						ruoloFruitoreSelezionatoValue = policy.getFiltro().getRuoloFruitore();
 					}
@@ -10892,7 +10898,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						policy.getFiltro().setRuoloFruitore(null);
 						ruoloFruitoreSelezionatoValue = null;
 					}
-					ruoliFruitore = enrichListConQualsiasi(ruoliFruitore);
+					ruoliFruitoreLabel = enrichListConLabelQualsiasi(ruoliFruitore);
+					ruoliFruitoreValue = enrichListConValueQualsiasi(ruoliFruitore);
 				}
 			}
 			
@@ -10904,7 +10911,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						datiIdentificativiFruitoreSelezionatoValue = policy.getFiltro().getTipoFruitore() + "/" + policy.getFiltro().getNomeFruitore();
 						idSoggetto = new IDSoggetto(policy.getFiltro().getTipoFruitore() , policy.getFiltro().getNomeFruitore());
 					}
-					datiIdentificativiFruitoreSelezionatoLabel = idSoggetto!=null ? this.getLabelNomeSoggetto(idSoggetto) :  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI;
+					datiIdentificativiFruitoreSelezionatoLabel = idSoggetto!=null ? this.getLabelNomeSoggetto(idSoggetto) :  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI;
 				}
 				else {
 //					List<IDSoggetto> listFruitori = this.confCore.getSoggettiFruitori(protocolloSelezionatoValue, protocolliValue,
@@ -10947,8 +10954,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						policy.getFiltro().setNomeFruitore(null);
 						datiIdentificativiFruitoreSelezionatoValue = null;
 					}
-					fruitoriLabel = enrichListConQualsiasi(fruitoriLabel);
-					fruitoriValue = enrichListConQualsiasi(fruitoriValue);
+					fruitoriLabel = enrichListConLabelQualsiasi(fruitoriLabel);
+					fruitoriValue = enrichListConValueQualsiasi(fruitoriValue);
 				}
 			}
 			else {
@@ -10968,7 +10975,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						if(policy.getFiltro().getServizioApplicativoFruitore()!=null){
 							servizioApplicativoFruitoreSelezionatoValue = policy.getFiltro().getServizioApplicativoFruitore();
 						}
-						servizioApplicativoFruitoreSelezionatoLabel = servizioApplicativoFruitoreSelezionatoValue!=null ? servizioApplicativoFruitoreSelezionatoValue :  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI;
+						servizioApplicativoFruitoreSelezionatoLabel = servizioApplicativoFruitoreSelezionatoValue!=null ? servizioApplicativoFruitoreSelezionatoValue :  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI;
 					}
 					else {
 						serviziApplicativiFruitoreLabel = new ArrayList<>();
@@ -10988,8 +10995,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							policy.getFiltro().setServizioApplicativoFruitore(null);
 							servizioApplicativoFruitoreSelezionatoValue = null;
 						}
-						serviziApplicativiFruitoreLabel = enrichListConQualsiasi(serviziApplicativiFruitoreLabel);
-						serviziApplicativiFruitoreValue = enrichListConQualsiasi(serviziApplicativiFruitoreValue);
+						serviziApplicativiFruitoreLabel = enrichListConLabelQualsiasi(serviziApplicativiFruitoreLabel);
+						serviziApplicativiFruitoreValue = enrichListConValueQualsiasi(serviziApplicativiFruitoreValue);
 					}
 				}
 			}
@@ -11052,7 +11059,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue(policy.getFiltro().getRuoloPorta().getValue());
 					}
 					else {
-						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI);
+						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI);
 					}
 					de.setType(DataElementType.TEXT);
 				}
@@ -11130,7 +11137,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 				}
 				else {
-					de.setValues(ruoliErogatore);
+					de.setLabels(ruoliErogatoreLabel);
+					de.setValues(ruoliErogatoreValue);
 					de.setSelected(ruoloErogatoreSelezionatoValue);
 					de.setType(DataElementType.SELECT);
 					de.setPostBack(true);
@@ -11211,7 +11219,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.TEXT);
 			}
 			else {
-				de.setValues(azioni);
+				de.setLabels(azioniLabel);
+				de.setValues(azioniValue);
 				de.setSelected(azioneSelezionataValue);
 				de.setType(DataElementType.SELECT);
 				de.setPostBack(true);
@@ -11268,7 +11277,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 				}
 				else {
-					de.setValues(ruoliFruitore);
+					de.setLabels(ruoliFruitoreLabel);
+					de.setValues(ruoliFruitoreValue);
 					de.setSelected(ruoloFruitoreSelezionatoValue);
 					de.setType(DataElementType.SELECT);
 					de.setPostBack(true);
@@ -11736,9 +11746,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 	
-	private List<String> enrichListConQualsiasi(List<String> l){
+	private List<String> enrichListConLabelQualsiasi(List<String> l){
 		List<String> newList = new ArrayList<String>();
-		newList.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI);
+		newList.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI);
+		if(l!=null && l.size()>0){
+			newList.addAll(l);
+		}
+		return newList;
+	}
+	private List<String> enrichListConValueQualsiasi(List<String> l){
+		List<String> newList = new ArrayList<String>();
+		newList.add(ConfigurazioneCostanti.VALUE_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI);
 		if(l!=null && l.size()>0){
 			newList.addAll(l);
 		}

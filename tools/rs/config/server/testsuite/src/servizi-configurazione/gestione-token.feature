@@ -13,13 +13,10 @@ Scenario: Update Gestione Token
     When method put
     Then status 204
 
-Scenario: Get Gestione Token
-
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'gestione-token'
     And header Authorization = govwayConfAuth
     And params query_params
     When method get
     Then status 200
-
-# TODO: File con versione spcoop
+    And match response contains gestione_token_body

@@ -21,26 +21,40 @@
  */
 package org.openspcoop2.core.monitor.rs.server.api.impl;
 
+import static org.openspcoop2.core.monitor.rs.server.api.impl.utils.TransazioniHelper.overrideFiltroApiBase;
+import static org.openspcoop2.core.monitor.rs.server.api.impl.utils.TransazioniHelper.overrideFiltroEsito;
+import static org.openspcoop2.core.monitor.rs.server.api.impl.utils.TransazioniHelper.overrideFiltroFruizione;
+import static org.openspcoop2.core.monitor.rs.server.api.impl.utils.TransazioniHelper.searchTransazioni;
+
 import java.sql.Connection;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.joda.time.DateTime;
 import org.openspcoop2.core.monitor.rs.server.api.MonitoraggioApi;
 import org.openspcoop2.core.monitor.rs.server.api.impl.utils.Converter;
+import org.openspcoop2.core.monitor.rs.server.api.impl.utils.Enums;
 import org.openspcoop2.core.monitor.rs.server.api.impl.utils.SearchFormUtilities;
+import org.openspcoop2.core.monitor.rs.server.api.impl.utils.MonitoraggioEnv;
+import org.openspcoop2.core.monitor.rs.server.api.impl.utils.TransazioniHelper;
 import org.openspcoop2.core.monitor.rs.server.config.DBManager;
 import org.openspcoop2.core.monitor.rs.server.config.LoggerProperties;
 import org.openspcoop2.core.monitor.rs.server.config.ServerProperties;
+import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneSimpleSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.Evento;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroErogazione;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroFruizione;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteIdApplicativo;
 import org.openspcoop2.core.monitor.rs.server.model.ListaEventi;
 import org.openspcoop2.core.monitor.rs.server.model.ListaTransazioni;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaIdApplicativo;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaIntervalloTemporale;
 import org.openspcoop2.core.monitor.rs.server.model.TipoMessaggioEnum;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
-import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
@@ -48,9 +62,12 @@ import org.openspcoop2.utils.service.beans.DiagnosticoSeveritaEnum;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.TransazioneExt;
 import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
+import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
+import org.openspcoop2.web.monitor.core.constants.TipoMatch;
 import org.openspcoop2.web.monitor.eventi.bean.EventiSearchForm;
 import org.openspcoop2.web.monitor.eventi.bean.EventoBean;
 import org.openspcoop2.web.monitor.eventi.dao.EventiService;
@@ -99,8 +116,13 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 				SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
 				
 				EventiSearchForm search = searchFormUtilities.getEventiSearchForm(context, dataInizio, dataFine);
-				// TODO: altri criteri...
-				// TODO: altre impostazioni
+				search.setCodice(codice);
+				search.setTipo(tipo);
+				search.setSeverita(BaseHelper.evalnull( () -> Enums.toTipoSeverita.get(severita).toString()));
+				search.setCaseSensitiveType( (BooleanUtils.isTrue(caseSensitive) ? CaseSensitiveMatch.SENSITIVE : CaseSensitiveMatch.INSENSITIVE).toString() );
+				search.setMatchingType( (BooleanUtils.isTrue(ricercaEsatta) ? TipoMatch.EQUALS : TipoMatch.LIKE ).toString());
+				search.setIdConfigurazione(origine);
+			
 				eventiService.setSearch(search);	
 				List<EventoBean> listEventiDB = eventiService.findAll(Converter.toOffset(offset), Converter.toLimit(limit));
 				ListaEventi ret = ListaUtils.costruisciLista(
@@ -152,82 +174,25 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 	@Override
     public ListaTransazioni findAllTransazioniByFullSearch(RicercaIntervalloTemporale body, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
+		
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
-
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
-                    
-			if(body==null) {
-				FaultCode.RICHIESTA_NON_VALIDA.throwException("Body request undefined");
-			}
+
+			BaseHelper.throwIfNull(body);
+
+			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
+			SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
+			TransazioniSearchForm search = searchFormUtilities.getAndamentoTemporaleSearchForm(env.context, env.profilo, env.soggetto.getNome(), 
+					body.getTipo(), body.getIntervalloTemporale().getDataInizio(), body.getIntervalloTemporale().getDataFine());
 			
-			DBManager dbManager = DBManager.getInstance();
-			Connection connection = null;
-			try {
-				connection = dbManager.getConnection();
-				ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
-				TransazioniService transazioniService = new TransazioniService(connection, true, smp, LoggerProperties.getLoggerDAO());
-				
-				ServerProperties serverProperties = ServerProperties.getInstance();
-				SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
-				
-				TransazioniSearchForm search = searchFormUtilities.getAndamentoTemporaleSearchForm(context, profilo, soggetto, 
-						body.getTipo(), body.getIntervalloTemporale().getDataInizio(), body.getIntervalloTemporale().getDataFine());
-				// TODO: altri criteri...
-				if(body.getEsito()!=null && body.getEsito().getTipo()!=null) {
-					switch (body.getEsito().getTipo()){
-					case OK:
-						search.setEsitoGruppo(EsitoUtils.ALL_OK_VALUE);
-						break;
-					case FAULT:
-						search.setEsitoGruppo(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE);
-						break;
-					case ERROR:
-						search.setEsitoGruppo(EsitoUtils.ALL_ERROR_VALUE);
-						break;
-					case ERROR_OR_FAULT:
-						search.setEsitoGruppo(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE);
-						break;
-					case PERSONALIZZATO:
-						search.setEsitoGruppo(EsitoUtils.ALL_PERSONALIZZATO_VALUE);
-						break;
-					}	
-				}
-				// TODO: altre impostazioni
-				transazioniService.setSearch(search);
-				
-				List<TransazioneBean> listTransazioniDB = transazioniService.findAll(Converter.toOffset(body.getOffset()), Converter.toLimit(body.getLimit()), 
-						Converter.toSortOrder(body.getSort()), Converter.toSortField(body.getSort()));
-				ListaTransazioni ret = ListaUtils.costruisciLista(
-						context.getServletRequest().getRequestURI(),
-						Converter.toOffset(body.getOffset()), Converter.toLimit(body.getLimit()), 
-						listTransazioniDB!=null ? listTransazioniDB.size() : 0, 
-								ListaTransazioni.class
-					); 
-				
-				if ( serverProperties.isFindall404() && (listTransazioniDB==null || listTransazioniDB.isEmpty()) )
-					throw FaultCode.NOT_FOUND.toException("Nessuna transazione trovata corrispondente ai criteri di ricerca");
-				
-				if(listTransazioniDB!=null && !listTransazioniDB.isEmpty()) {
-					listTransazioniDB.forEach( transazioneDB -> 
-						{
-							try {
-								ret.addItemsItem( Converter.toItemTransazione(transazioneDB, this.log) );
-							} catch (Exception e) {
-								throw new RuntimeException(e.getMessage(),e);
-							}
-						}
-						);
-				}
-		
-				context.getLogger().info("Invocazione completata con successo");
-		        return ret;
-			}
-			finally {
-				dbManager.releaseConnection(connection);
-			}
-             
+			TransazioniHelper.overrideRicercaBaseTransazione(body, search, env);
+			TransazioniHelper.overrideFiltroMittente(body, search, env);
+			
+			ListaTransazioni ret = searchTransazioni(search, body.getOffset(), body.getLimit(), body.getSort(), env);
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -250,15 +215,21 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
-
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
-			context.getLogger().debug("Autorizzazione completata con successo");     
-                        
-        // TODO: Implement...
-        
+			context.getLogger().debug("Autorizzazione completata con successo");                             
+			
+			BaseHelper.throwIfNull(body);
+			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
+			SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
+			TransazioniSearchForm search = searchFormUtilities.getAndamentoTemporaleSearchForm(context, profilo, soggetto, 
+					body.getTipo(), body.getIntervalloTemporale().getDataInizio(), body.getIntervalloTemporale().getDataFine());
+			
+			TransazioniHelper.overrideRicercaBaseTransazione(body, search, env);
+			TransazioniHelper.overrideFiltroRicercaId(body.getIdApplicativo(), search, env);
+			
+			ListaTransazioni ret = searchTransazioni(search, body.getOffset(), body.getLimit(), body.getSort(), env);
 			context.getLogger().info("Invocazione completata con successo");
-        return null;
-     
+			return ret;
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -281,15 +252,46 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
-
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
-        // TODO: Implement...
-        
+			SearchFormUtilities searchFormUtilities = new SearchFormUtilities();	
+			TransazioniSearchForm search = searchFormUtilities.getAndamentoTemporaleSearchForm(context, profilo, soggetto, 
+					tipo, dataInizio, dataFine);
+			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
+			
+			// FiltroApi
+			FiltroApiBase filtroApi = tipo == TransazioneRuoloEnum.EROGAZIONE ? new FiltroErogazione() : new FiltroFruizione();
+			filtroApi.setNome(nomeServizio);
+			filtroApi.setTipo(tipoServizio);
+			filtroApi.setVersione(versioneServizio);
+			switch (tipo) {
+			case EROGAZIONE: {
+				overrideFiltroApiBase(filtroApi, azione, search, env);
+				break;
+			}
+			case FRUIZIONE:
+				FiltroFruizione filtro = (FiltroFruizione) filtroApi;
+				filtro.setErogatore(soggettoRemoto);
+				overrideFiltroFruizione(filtro, azione, search, env);
+				break;
+			}
+			// FiltroEsito
+			FiltroEsito filtroEsito = new FiltroEsito();
+			filtroEsito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+			overrideFiltroEsito(filtroEsito, search, env);
+			// Filtro Mittente
+			FiltroMittenteIdApplicativo filtroId = new FiltroMittenteIdApplicativo();
+			filtroId.setRicercaEsatta(ricercaEsatta);
+			filtroId.setCaseSensitive(caseSensitive);
+			filtroId.setId(idApplicativo);
+			TransazioniHelper.overrideFiltroRicercaId(filtroId, search, env);
+			
+			search.setClusterId(idCluster);
+			
+			ListaTransazioni ret = searchTransazioni(search, offset, limit, sort, env);
 			context.getLogger().info("Invocazione completata con successo");
-        return null;
-     
+			return ret;
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -316,11 +318,16 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
-        // TODO: Implement...
+			SearchFormUtilities searchFormUtilities = new SearchFormUtilities();	
+			TransazioniSearchForm search = searchFormUtilities.getIdMessaggioSearchForm(context, profilo, soggetto);
+			
+			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
+			search.setIdEgov(id);
+			search.setTipoIdMessaggio(tipoMessaggio == TipoMessaggioEnum.RICHIESTA ? "Richiesta" : "Risposta" );
         
+			ListaTransazioni ret = searchTransazioni(search, offset, limit, sort, env);
 			context.getLogger().info("Invocazione completata con successo");
-        return null;
-     
+			return ret;
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -346,12 +353,41 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
-                        
-        // TODO: Implement...
+
+			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
+			SearchFormUtilities searchFormUtilities = new SearchFormUtilities();	
+			TransazioniSearchForm search = searchFormUtilities.getAndamentoTemporaleSearchForm(context, env.profilo, env.soggetto.getNome(), 
+					tipo, dataInizio, dataFine);
+		
+			// FiltroApi
+			FiltroApiBase filtroApi = tipo == TransazioneRuoloEnum.EROGAZIONE ? new FiltroErogazione() : new FiltroFruizione();
+			filtroApi.setNome(nomeServizio);
+			filtroApi.setTipo(tipoServizio);
+			filtroApi.setVersione(versioneServizio);	
+			switch (tipo) {
+			case EROGAZIONE: {
+				overrideFiltroApiBase(filtroApi, azione, search, env);
+				break;
+			}
+			case FRUIZIONE:
+				FiltroFruizione filtro = (FiltroFruizione) filtroApi;
+				filtro.setErogatore(soggettoRemoto);
+				overrideFiltroFruizione(filtro, azione, search, env);
+				break;
+			}
+			
+			if (esito != null) {
+				// FiltroEsito
+				FiltroEsito filtroEsito = new FiltroEsito();
+				filtroEsito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				overrideFiltroEsito(filtroEsito, search, env);
+			}
+			
+			search.setClusterId(idCluster);
         
+			ListaTransazioni ret = searchTransazioni(search, offset, limit, sort, env);
 			context.getLogger().info("Invocazione completata con successo");
-        return null;
-     
+			return ret;
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());

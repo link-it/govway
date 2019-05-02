@@ -58,12 +58,9 @@ Scenario: Erogazioni Update Info Generali 204
     * call delete ({ resourcePath: 'erogazioni/' + info_generali.nome + '/' + erogazione_petstore.api_versione })
     * call delete ({ resourcePath: api_petstore_path })
 
-#BUG Mi dice: "La modalità di identificazione azione deve essere una fra: [interfaceBased]
-#    Quando invece da console posso specificarne di più tipi oltre all'interfaceBased
 @UpdateUrlInvocazione204
 Scenario: Erogazioni Update Url Invocazione 204
     
-    # TODO: Check se davvero posso utilizzare solo interface-based
     * eval url_invocazione.modalita = "interface-based"
 
     * call create ({ resourcePath: 'api', body: api_petstore })

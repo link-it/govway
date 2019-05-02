@@ -34,4 +34,6 @@ Scenario: Servizi Get 404
     * def query_params = ({ profilo: "SPCoop", soggetto: soggettoDefault })
     * call create ({ resourcePath: "api", body: api } )    
     * call get_404 ({ resourcePath: 'api/' + api_path + '/servizi/' + servizio.nome })
+    * call delete ( { resourcePath: "api/" + api_path })
+
 

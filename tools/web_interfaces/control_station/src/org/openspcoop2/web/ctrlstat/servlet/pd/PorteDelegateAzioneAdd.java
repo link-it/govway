@@ -233,7 +233,7 @@ public final class PorteDelegateAzioneAdd extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = porteDelegateHelper.porteAppAzioneCheckData(TipoOperazione.ADD,azioniOccupate);
+			boolean isOk = porteDelegateHelper.porteDelAzioneCheckData(TipoOperazione.ADD,azioniOccupate,listaMappingFruizione);
 			if (!isOk) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);

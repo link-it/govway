@@ -93,11 +93,17 @@ import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.mvc.properties.Config;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
@@ -180,6 +186,8 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostan
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaFruitoriPorteDelegateMappingInfo;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaPorteApplicativeMappingInfo;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
@@ -5256,7 +5264,7 @@ public class ConsoleHelper {
 		return de;
 	}
 	
-	public boolean porteAppAzioneCheckData(TipoOperazione add, List<String> azioniOccupate) {
+	public boolean porteAppAzioneCheckData(TipoOperazione add, List<String> azioniOccupate, List<MappingErogazionePortaApplicativa> list) throws Exception {
 		String[] azionis = this.request.getParameterValues(CostantiControlStation.PARAMETRO_AZIONI);
 		
 		if(azionis == null || azionis.length == 0) {
@@ -5269,6 +5277,32 @@ public class ConsoleHelper {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE);
 				return false;			
 			}
+		}
+		
+		if(checkAzioniUtilizzateErogazioneRateLimiting(list, azionis)==false) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean porteDelAzioneCheckData(TipoOperazione add, List<String> azioniOccupate, List<MappingFruizionePortaDelegata> list) throws Exception {
+		String[] azionis = this.request.getParameterValues(CostantiControlStation.PARAMETRO_AZIONI);
+		
+		if(azionis == null || azionis.length == 0) {
+			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA);
+			return false;
+		}
+		
+		for (String azione : azionis) {
+			if(azioniOccupate.contains(azione)) {
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE);
+				return false;			
+			}
+		}
+		
+		if(checkAzioniUtilizzateFruizioneRateLimiting(list, azionis)==false) {
+			return false;
 		}
 		
 		return true;
@@ -10709,6 +10743,77 @@ public class ConsoleHelper {
 		de.setValues(values);
 		
 		return de;
+	}
+	
+	public boolean checkAzioniUtilizzateErogazioneRateLimiting(AccordiServizioParteSpecificaPorteApplicativeMappingInfo mappingInfo, String [] azioni) throws Exception {
+		List<MappingErogazionePortaApplicativa> list = mappingInfo.getListaMappingErogazione();
+		return checkAzioniUtilizzateErogazioneRateLimiting(list, azioni);
+	}
+	public boolean checkAzioniUtilizzateErogazioneRateLimiting(List<MappingErogazionePortaApplicativa> list, String [] azioni) throws Exception {
+		if(azioni==null || azioni.length<=0) {
+			return true;
+		}
+		if(list!=null && !list.isEmpty()) {
+			for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : list) {
+				IDPortaApplicativa idPA = mappingErogazionePortaApplicativa.getIdPortaApplicativa();
+				List<AttivazionePolicy> listPolicies = this.confCore.attivazionePolicyList(null, RuoloPolicy.APPLICATIVA, idPA.getNome());
+				if(this._checkAzioniUtilizzateRateLimiting(listPolicies, azioni, 
+						mappingErogazionePortaApplicativa.getDescrizione(), list.size())==false) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	public boolean checkAzioniUtilizzateFruizioneRateLimiting(AccordiServizioParteSpecificaFruitoriPorteDelegateMappingInfo mappingInfo, String [] azioni) throws Exception {
+		List<MappingFruizionePortaDelegata> list = mappingInfo.getListaMappingFruizione();
+		return this.checkAzioniUtilizzateFruizioneRateLimiting(list, azioni);
+	}
+	public boolean checkAzioniUtilizzateFruizioneRateLimiting(List<MappingFruizionePortaDelegata> list, String [] azioni) throws Exception {
+		if(azioni==null || azioni.length<=0) {
+			return true;
+		}
+		if(list!=null && !list.isEmpty()) {
+			for (MappingFruizionePortaDelegata mappingFruizionePortaDelegata : list) {
+				IDPortaDelegata idPD = mappingFruizionePortaDelegata.getIdPortaDelegata();
+				List<AttivazionePolicy> listPolicies = this.confCore.attivazionePolicyList(null, RuoloPolicy.DELEGATA, idPD.getNome());
+				if(this._checkAzioniUtilizzateRateLimiting(listPolicies, azioni, 
+						mappingFruizionePortaDelegata.getDescrizione(), list.size())==false) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	private boolean _checkAzioniUtilizzateRateLimiting(List<AttivazionePolicy> listPolicies, String [] azioni, String descrizioneGruppo, int sizeGruppi) {
+		if(listPolicies!=null && !listPolicies.isEmpty()) {
+			for (AttivazionePolicy policy : listPolicies) {
+				if(policy.getFiltro()!=null && policy.getFiltro().getAzione()!=null) {
+					for (String azioneTmp : azioni) {
+						if(azioneTmp.equals(policy.getFiltro().getAzione())) {
+							String nomePolicy = policy.getAlias();
+							if(nomePolicy==null || "".equals(nomePolicy)) {
+								nomePolicy = policy.getIdActivePolicy();
+							}
+							if(sizeGruppi>1) {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_GRUPPO, 
+										azioneTmp, nomePolicy, descrizioneGruppo));
+							}
+							else {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE, 
+										azioneTmp, nomePolicy, descrizioneGruppo));
+							}
+							return false;	
+						}
+					}
+				}
+			}
+		}
+		return true;
 	}
 	
 	public DataElement getHttpReturnCodeDataElement(String label, String name, String value, boolean required) {

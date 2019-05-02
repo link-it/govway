@@ -4,12 +4,10 @@
     },
     "autenticazione": {
         "tipo": "https",
-        "opzionale": true
+        "opzionale": false
     },
    
 
     "api_nome": "PetStore",
-    "api_versione": 2,
-
-    "erogatore": "ENTE"
+    "api_versione": 2
 }

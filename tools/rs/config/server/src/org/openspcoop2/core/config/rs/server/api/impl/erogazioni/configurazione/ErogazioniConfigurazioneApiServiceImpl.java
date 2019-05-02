@@ -46,6 +46,7 @@ import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServiziApplicat
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.Scope;
@@ -54,6 +55,7 @@ import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
 import org.openspcoop2.core.config.rs.server.api.ErogazioniConfigurazioneApi;
@@ -64,6 +66,9 @@ import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHe
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniEnv;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazione;
+import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneConfigurazioneBasic;
+import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneConfigurazioneCustom;
+import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneConfigurazionePrincipal;
 import org.openspcoop2.core.config.rs.server.model.ApiImplStato;
 import org.openspcoop2.core.config.rs.server.model.CachingRisposta;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutenticazione;
@@ -89,7 +94,6 @@ import org.openspcoop2.core.config.rs.server.model.GestioneCors;
 import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRichiesta;
 import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.rs.server.model.ListaRateLimitingPolicy;
-import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBaseErogazione;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneNew;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneView;
@@ -113,9 +117,13 @@ import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
+import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
+import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -158,7 +166,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
@@ -171,7 +179,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				idSA.setIdSoggettoProprietario(env.idSoggetto.toIDSoggetto());
 				idSA.setNome(body.getApplicativo());
 			
-			final ServizioApplicativo sa = Helper.supplyOrNonValida( 
+			final ServizioApplicativo sa = BaseHelper.supplyOrNonValida( 
 					() -> env.saCore.getServizioApplicativo(idSA),
 					"Servizio Applicativo " + idSA.toString()
 				);
@@ -179,14 +187,14 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			final org.openspcoop2.core.config.constants.CredenzialeTipo tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(pa.getAutenticazione());	
 			List<ServizioApplicativo> saCompatibili = env.saCore.soggettiServizioApplicativoList(env.idSoggetto.toIDSoggetto(),env.userLogin,tipoAutenticazione);
-			if (!Helper.findFirst(saCompatibili, s -> s.getId().equals(sa.getId())).isPresent()) {
+			if (!BaseHelper.findFirst(saCompatibili, s -> s.getId().equals(sa.getId())).isPresent()) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La modalità di autenticazione del servizio Applicativo scelto non è compatibile con il gruppo che si vuole configurare");
 			}
 			
 			if (pa.getServiziApplicativiAutorizzati() == null)
 				pa.setServiziApplicativiAutorizzati(new PortaApplicativaAutorizzazioneServiziApplicativi());
 			
-			if ( Helper.findFirst(
+			if ( BaseHelper.findFirst(
 						pa.getServiziApplicativiAutorizzati().getServizioApplicativoList(),
 						s -> s.getId() == sa.getId()
 						).isPresent()
@@ -240,7 +248,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
@@ -250,7 +258,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			}
 			
 			final IDSoggetto daAutenticareID = new IDSoggetto(env.tipo_soggetto, body.getSoggetto());
-			final Soggetto daAutenticare = Helper.supplyOrNonValida( 
+			final Soggetto daAutenticare = BaseHelper.supplyOrNonValida( 
 					() -> env.soggettiCore.getSoggetto(daAutenticareID),
 					"Soggetto " + body.getSoggetto() + " da autenticare"
 				);
@@ -261,7 +269,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			// L'ultimo parametro è da configurare quando utilizzeremo il multitenant 
 			final List<org.openspcoop2.core.registry.Soggetto> soggettiCompatibili = env.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, null);
 			
-			if (!Helper.findFirst(soggettiCompatibili, s -> { 
+			if (!BaseHelper.findFirst(soggettiCompatibili, s -> { 
 					return s.getId().equals(daAutenticare.getId()); 
 				}).isPresent()) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto scelto non supporta l'autenticazione per il gruppo");
@@ -269,7 +277,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			if (pa.getSoggetti() == null) pa.setSoggetti(new PortaApplicativaAutorizzazioneSoggetti());
 			
-			if ( Helper.findFirst(
+			if ( BaseHelper.findFirst(
 					pa.getSoggetti().getSoggettoList(),
 					sogg -> new IDSoggetto(sogg.getTipo(),sogg.getNome()).equals(daAutenticareID)
 					).isPresent()
@@ -321,7 +329,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
@@ -331,7 +339,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			}
 			
 			final RuoliCore ruoliCore = new RuoliCore(env.stationCore);
-			Helper.supplyOrNonValida( 
+			BaseHelper.supplyOrNonValida( 
 					() -> ruoliCore.getRuolo(body.getRuolo())
 					, "Ruolo " + body.getRuolo()
 				);
@@ -358,7 +366,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			final List<String> ruoliPresenti = pa.getRuoli().getRuoloList().stream().map( r -> r.getNome()).collect(Collectors.toList());
 			
-			if ( Helper.findFirst( ruoliPresenti, r -> r.equals(body.getRuolo())).isPresent()) {
+			if ( BaseHelper.findFirst( ruoliPresenti, r -> r.equals(body.getRuolo())).isPresent()) {
 				throw FaultCode.CONFLITTO.toException("Il ruolo " + body.getRuolo() + " è già associato al gruppo scelto");
 			}
 			
@@ -400,7 +408,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);			
+			BaseHelper.throwIfNull(body);			
 			
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
@@ -465,11 +473,9 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
-			
-			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = env.confCore.getConfigurazioneControlloTraffico();
 
 			AttivazionePolicy policy = new AttivazionePolicy();
 			policy.setFiltro(new AttivazionePolicyFiltro());
@@ -512,11 +518,9 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				)) {
 				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
 			}
-
-			if (! env.confHelper.attivazionePolicyCheckData(TipoOperazione.ADD, configurazioneControlloTraffico, policy,infoPolicy, ruoloPorta, nomePorta) ) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
-			}
-		
+			
+			ErogazioniApiHelper.attivazionePolicyCheckData(TipoOperazione.ADD, pa, policy, infoPolicy, env);
+			
 			env.confCore.performCreateOperation(env.userLogin, false, policy);
 
 			context.getLogger().info("Invocazione completata con successo");
@@ -548,7 +552,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			if ( body.getElemento() == null )
 				body.setElemento("");
@@ -604,7 +608,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			if ( body.getElemento() == null )
 				body.setElemento("");
@@ -663,7 +667,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			if (pa.getServiziApplicativiAutorizzati() == null)	pa.setServiziApplicativiAutorizzati(new PortaApplicativaAutorizzazioneServiziApplicativi());
 			
-			PortaApplicativaAutorizzazioneServizioApplicativo to_remove = Helper.findAndRemoveFirst(pa.getServiziApplicativiAutorizzati().getServizioApplicativoList(), sa -> sa.getNome().equals(applicativoAutorizzato));
+			PortaApplicativaAutorizzazioneServizioApplicativo to_remove = BaseHelper.findAndRemoveFirst(pa.getServiziApplicativiAutorizzati().getServizioApplicativoList(), sa -> sa.getNome().equals(applicativoAutorizzato));
 			
 			if (env.delete_404 && to_remove == null) {
 				throw FaultCode.NOT_FOUND.toException("Nessun Applicativo " + applicativoAutorizzato + " è associato al gruppo scelto"); 
@@ -705,7 +709,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			if (pa.getSoggetti() == null)	pa.setSoggetti(new PortaApplicativaAutorizzazioneSoggetti());
 			
-			PortaApplicativaAutorizzazioneSoggetto to_remove = Helper.findAndRemoveFirst(pa.getSoggetti().getSoggettoList(), sogg -> sogg.getNome().equals(soggettoAutorizzato));
+			PortaApplicativaAutorizzazioneSoggetto to_remove = BaseHelper.findAndRemoveFirst(pa.getSoggetti().getSoggettoList(), sogg -> sogg.getNome().equals(soggettoAutorizzato));
 			
 			if (env.delete_404 && to_remove == null) {
 				throw FaultCode.NOT_FOUND.toException("Nessun Soggetto " + soggettoAutorizzato + " è associato al gruppo scelto"); 
@@ -748,7 +752,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			if (pa.getRuoli() == null)	pa.setRuoli(new AutorizzazioneRuoli());
 			
-			Ruolo to_remove = Helper.findAndRemoveFirst(pa.getRuoli().getRuoloList(), r -> r.getNome().equals(ruoloAutorizzato));
+			Ruolo to_remove = BaseHelper.findAndRemoveFirst(pa.getRuoli().getRuoloList(), r -> r.getNome().equals(ruoloAutorizzato));
 			
 			if (env.delete_404 && to_remove == null) {
 				throw FaultCode.NOT_FOUND.toException("Nessun Ruolo " + ruoloAutorizzato + " è associato al gruppo scelto"); 
@@ -790,7 +794,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			if (pa.getScope() == null)	pa.setScope(new AutorizzazioneScope());
 			
-			Scope to_remove = Helper.findAndRemoveFirst(pa.getScope().getScopeList(), s -> s.getNome().equals(scopeAutorizzato));
+			Scope to_remove = BaseHelper.findAndRemoveFirst(pa.getScope().getScopeList(), s -> s.getNome().equals(scopeAutorizzato));
 			
 			if (env.delete_404 && to_remove == null) {
 				throw FaultCode.NOT_FOUND.toException("Nessuno Scope " + scopeAutorizzato + " è associato al gruppo scelto"); 
@@ -832,7 +836,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			List<AttivazionePolicy> policies = env.confCore.attivazionePolicyList(null, RuoloPolicy.APPLICATIVA, pa.getNome());
-			AttivazionePolicy policy = Helper.findFirst( policies, p -> p.getIdActivePolicy().equals(idPolicy) ).orElse(null);
+			AttivazionePolicy policy = BaseHelper.findFirst( policies, p -> p.getIdActivePolicy().equals(idPolicy) ).orElse(null);
 			
 			if ( policy != null ) {
 				StringBuffer inUsoMessage = new StringBuffer();
@@ -893,7 +897,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 					? ""
 				  	: elemento;	
 									
-			CorrelazioneApplicativaElemento to_del = Helper.evalnull( () -> Helper.findAndRemoveFirst( 
+			CorrelazioneApplicativaElemento to_del = BaseHelper.evalnull( () -> BaseHelper.findAndRemoveFirst( 
 					correlazioneApplicativa.getElementoList(), 
 					e -> e.getNome().equals(searchElemento)
 				));
@@ -943,7 +947,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 					? ""
 				  	: elemento;	
 									
-			CorrelazioneApplicativaRispostaElemento to_del = Helper.evalnull( () -> Helper.findAndRemoveFirst( 
+			CorrelazioneApplicativaRispostaElemento to_del = BaseHelper.evalnull( () -> BaseHelper.findAndRemoveFirst( 
 					correlazioneApplicativa.getElementoList(), 
 					e -> e.getNome().equals(searchElemento)
 				));
@@ -991,7 +995,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				throw FaultCode.NOT_FOUND.toException("Xacml policy non assegnata al gruppo scelto");
 			
 			context.getLogger().info("Invocazione completata con successo");
-			return Helper.evalnull( () -> pa.getXacmlPolicy().getBytes() );
+			return BaseHelper.evalnull( () -> pa.getXacmlPolicy().getBytes() );
 
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
@@ -1218,16 +1222,76 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			if ( TipoAutenticazione.toEnumConstant(pa.getAutenticazione()) == null ) {
 				autRet.setTipo(TipoAutenticazioneEnum.CUSTOM);
-				autRet.setNome(pa.getAutenticazione());
+				APIImplAutenticazioneConfigurazioneCustom customConfig = new APIImplAutenticazioneConfigurazioneCustom();
+				customConfig.setNome(pa.getAutenticazione());
+				autRet.setConfigurazione(customConfig);
 			}
 			else {
 				autRet.setTipo( Enums.dualizeMap(Enums.tipoAutenticazioneFromRest).get(TipoAutenticazione.toEnumConstant(pa.getAutenticazione())) );
 			}
 			
-			ControlloAccessiAutenticazioneToken token = Helper.evalnull( () -> pa.getGestioneToken().getAutenticazione() ) != null
+			ControlloAccessiAutenticazioneToken token = BaseHelper.evalnull( () -> pa.getGestioneToken().getAutenticazione() ) != null
 					? ErogazioniApiHelper.fromGestioneTokenAutenticazione(pa.getGestioneToken().getAutenticazione())
 					: null;
-					
+			
+			switch(autRet.getTipo()) {
+			case HTTP_BASIC: {
+				APIImplAutenticazioneConfigurazioneBasic config = new APIImplAutenticazioneConfigurazioneBasic();
+				
+				Optional<Proprieta> prop = pa.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION.equals(p.getNome())).findAny();
+				if (prop.isPresent() && prop.get().getValore().equals(ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL_TRUE))
+					config.setForward(true);
+				else
+					config.setForward(false);
+				autRet.setConfigurazione(config);
+				break;
+			}
+			case PRINCIPAL: {
+				APIImplAutenticazioneConfigurazionePrincipal config = new APIImplAutenticazioneConfigurazionePrincipal();				
+				TipoAutenticazionePrincipal tipoAuthnPrincipal = pa.getProprietaAutenticazioneList()
+						.stream()
+						.filter( p -> ParametriAutenticazionePrincipal.TIPO_AUTENTICAZIONE.equals(p.getNome()))
+						.map( p -> TipoAutenticazionePrincipal.toEnumConstant(p.getValore()) )
+						.findAny()
+						.orElse(TipoAutenticazionePrincipal.CONTAINER);
+				config.setTipo(Enums.dualizeMap(Enums.tipoAutenticazionePrincipalFromRest).get(tipoAuthnPrincipal));
+				
+				switch (config.getTipo()) {
+				case CONTAINER:
+				case IP_ADDRESS:
+					break;
+				case HEADER_BASED: {
+					Optional<Proprieta> prop = pa.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.NOME.equals(p.getNome())).findAny();
+					if (prop.isPresent()) config.setNome(prop.get().getValore());					
+					break;
+				}
+				case FORM_BASED: {
+					Optional<Proprieta> prop = pa.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.NOME.equals(p.getNome())).findAny();
+					if (prop.isPresent()) config.setNome(prop.get().getValore());					
+					break;
+				}
+				case URL_BASED: {
+					Optional<Proprieta> prop = pa.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.PATTERN.equals(p.getNome())).findAny();
+					if (prop.isPresent()) config.setPattern(prop.get().getValore());
+					break;
+				}
+				}	// switch config.getTipo
+				
+				// IsForward
+				Optional<Proprieta> prop = pa.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL.equals(p.getNome())).findAny();
+				if (prop.isPresent() && ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL_TRUE.equals(prop.get().getValore()))
+					config.setForward(true);
+				else
+					config.setForward(false);
+				
+				autRet.setConfigurazione(config);
+				break;
+			}  // case principal
+			
+			default:
+				break;
+			}  // switch autRet.getTipo
+			
 			ControlloAccessiAutenticazione ret = new ControlloAccessiAutenticazione();
 			ret.setAutenticazione(autRet);
 			ret.setToken(token);
@@ -1296,9 +1360,13 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
-			
 			ControlloAccessiAutorizzazioneApplicativi ret = new ControlloAccessiAutorizzazioneApplicativi();
-			ret.setApplicativi(pa.getServizioApplicativoList().stream().map( saPA -> saPA.getNome()).collect(Collectors.toList()));
+			
+			int idLista = Liste.PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO;
+			Search ricerca = Helper.setupRicercaPaginata("", -1, 0, idLista);
+			List<PortaApplicativaAutorizzazioneServizioApplicativo> lista = env.paCore.porteAppServiziApplicativiAutorizzatiList(pa.getId(), ricerca);
+			
+			ret.setApplicativi(lista.stream().map( saPA -> saPA.getNome()).collect(Collectors.toList()));
 		
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
@@ -1333,7 +1401,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			ControlloAccessiAutorizzazioneSoggetti ret = new ControlloAccessiAutorizzazioneSoggetti();
-			List<String> soggetti = Helper.evalnull( () -> pa.getSoggetti().getSoggettoList().stream().map( s -> s.getNome()).collect(Collectors.toList()) );
+			List<String> soggetti = BaseHelper.evalnull( () -> pa.getSoggetti().getSoggettoList().stream().map( s -> s.getNome()).collect(Collectors.toList()) );
 					
 			ret.setSoggetti(soggetti);
         
@@ -1370,7 +1438,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			final ControlloAccessiAutorizzazioneRuoli ret = new ControlloAccessiAutorizzazioneRuoli(); 
                         
-			ret.setRuoli(Helper.evalnull( () -> pa.getRuoli().getRuoloList().stream().map(Ruolo::getNome).collect(Collectors.toList()) ));
+			ret.setRuoli(BaseHelper.evalnull( () -> pa.getRuoli().getRuoloList().stream().map(Ruolo::getNome).collect(Collectors.toList()) ));
         
 			context.getLogger().info("Invocazione completata con successo");
         	return ret;
@@ -1405,7 +1473,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);	
 			final ControlloAccessiAutorizzazioneScopes ret = new ControlloAccessiAutorizzazioneScopes();
 			
-			ret.setScope(Helper.evalnull( () -> pa.getScope().getScopeList().stream().map(Scope::getNome).collect(Collectors.toList()) ));
+			ret.setScope(BaseHelper.evalnull( () -> pa.getScope().getScopeList().stream().map(Scope::getNome).collect(Collectors.toList()) ));
 			
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
@@ -1482,10 +1550,10 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio , nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio , nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
 			
-			final IDPortaApplicativa idPa = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPADefault( idAsps, env.apsCore ),  "Gruppo default per l'erogazione scelta" );
+			final IDPortaApplicativa idPa = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPADefault( idAsps, env.apsCore ),  "Gruppo default per l'erogazione scelta" );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(idPa);
 			final CorsConfigurazione paConf = pa.getGestioneCors();
 			
@@ -1524,7 +1592,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			List<AttivazionePolicy> policies = env.confCore.attivazionePolicyList(null, RuoloPolicy.APPLICATIVA, pa.getNome());
-			AttivazionePolicy policy = Helper.findFirst( policies, p -> p.getIdActivePolicy().equals(idPolicy) ).orElse(null);
+			AttivazionePolicy policy = BaseHelper.findFirst( policies, p -> p.getIdActivePolicy().equals(idPolicy) ).orElse(null);
 			
 			if ( policy == null ) 
 				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting con id " + idPolicy );
@@ -1637,9 +1705,9 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final String searchElemento = elemento.equals("*")
 					? ""
 					: elemento;			
-			List<CorrelazioneApplicativaElemento> lista = Helper.evalnull( () -> pa.getCorrelazioneApplicativa().getElementoList() );
+			List<CorrelazioneApplicativaElemento> lista = BaseHelper.evalnull( () -> pa.getCorrelazioneApplicativa().getElementoList() );
             
-			Optional<CorrelazioneApplicativaElemento> el = Helper.findFirst( lista, c -> c.getNome().equals(searchElemento) );
+			Optional<CorrelazioneApplicativaElemento> el = BaseHelper.findFirst( lista, c -> c.getNome().equals(searchElemento) );
 			
 			if ( !el.isPresent() )
 				throw FaultCode.NOT_FOUND.toException("CorrelazioneApplicativaRichiesta per l'elemento " + elemento + " non presente");
@@ -1682,9 +1750,9 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 					? ""
 					: elemento;			
 			
-			List<CorrelazioneApplicativaRispostaElemento> lista = Helper.evalnull( () -> pa.getCorrelazioneApplicativaRisposta().getElementoList() );
+			List<CorrelazioneApplicativaRispostaElemento> lista = BaseHelper.evalnull( () -> pa.getCorrelazioneApplicativaRisposta().getElementoList() );
             
-			Optional<CorrelazioneApplicativaRispostaElemento> el = Helper.findFirst( lista, c -> c.getNome().equals(searchElemento) );
+			Optional<CorrelazioneApplicativaRispostaElemento> el = BaseHelper.findFirst( lista, c -> c.getNome().equals(searchElemento) );
 			
 			if ( !el.isPresent() )
 				throw FaultCode.NOT_FOUND.toException("CorrelazioneApplicativaRisposta per l'elemento " + elemento + " non presente");
@@ -1753,7 +1821,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			// Così prendi le impostazioni di default.
 			//  Configurazione configurazione = confCore.getConfigurazioneGenerale();
@@ -1805,7 +1873,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa newPa = env.paCore.getPortaApplicativa(env.idPa);
@@ -1847,7 +1915,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);					
@@ -1889,14 +1957,17 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa oldPa = env.paCore.getPortaApplicativa(env.idPa);
 			final PortaApplicativa newPa = env.paCore.getPortaApplicativa(env.idPa);
 			
-			if (body.isAbilitato())
-				newPa.setGestioneToken(ErogazioniApiHelper.buildGestioneToken(body, newPa, false, env.paHelper, env));
+			if (body.isAbilitato()) {
+				GestioneToken gTok = newPa.getGestioneToken() != null ? newPa.getGestioneToken() : new GestioneToken();
+				ErogazioniApiHelper.fillGestioneToken(gTok, body);
+				newPa.setGestioneToken(gTok);
+			}
 			else
 				newPa.setGestioneToken(null);
 			
@@ -1934,13 +2005,13 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio , nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio , nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
 			
-			final IDPortaApplicativa idPa = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPADefault( idAsps, env.apsCore ),  "Gruppo default per l'erogazione scelta" );
+			final IDPortaApplicativa idPa = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPADefault( idAsps, env.apsCore ),  "Gruppo default per l'erogazione scelta" );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(idPa);
 			final CorsConfigurazione oldConf = pa.getGestioneCors();
 			
@@ -1981,40 +2052,27 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);            
+			BaseHelper.throwIfNull(body);            
 			
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);		
 			
-			AttivazionePolicy policy = Helper.supplyOrNotFound( 
+			AttivazionePolicy policy = BaseHelper.supplyOrNotFound( 
 					() -> env.confCore.getAttivazionePolicy(idPolicy),
 					"Rate Limiting Policy con id " + idPolicy
 				);
 			InfoPolicy infoPolicy = env.confCore.getInfoPolicy(policy.getIdPolicy());
-			
-
-			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = env.confCore.getConfigurazioneControlloTraffico();
-			
-			final RuoloPolicy ruoloPorta = RuoloPolicy.APPLICATIVA;
-			final String nomePorta = pa.getNome();
- 
-			ErogazioniApiHelper.override(body, env.idSoggetto.toIDSoggetto(), env.requestWrapper);
-
+		
+			ErogazioniApiHelper.override(body, env.idSoggetto.toIDSoggetto(), env.requestWrapper);	
 			String errorAttivazione = env.confHelper.readDatiAttivazionePolicyFromHttpParameters(policy, false, TipoOperazione.CHANGE, infoPolicy);
 			if ( !StringUtils.isEmpty(errorAttivazione) ) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(errorAttivazione));
 			}
 			
-			if (! env.confHelper.attivazionePolicyCheckData(TipoOperazione.CHANGE, configurazioneControlloTraffico, policy,infoPolicy, ruoloPorta, nomePorta) ) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
-			}			
-
-			
+			ErogazioniApiHelper.attivazionePolicyCheckData(TipoOperazione.CHANGE, pa, policy, infoPolicy, env);
 			env.confCore.performUpdateOperation(env.userLogin, false, policy);
 
 			context.getLogger().info("Invocazione completata con successo");
-        
-     
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -2041,7 +2099,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
@@ -2082,7 +2140,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     		
 			
-			Helper.throwIfNull(body);	
+			BaseHelper.throwIfNull(body);	
 			
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
@@ -2121,7 +2179,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			if ( body.getElemento() == null )
 				body.setElemento("");
@@ -2138,7 +2196,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				pa.setCorrelazioneApplicativa(new org.openspcoop2.core.config.CorrelazioneApplicativa());
 			
 			final List<CorrelazioneApplicativaElemento> correlazioni = pa.getCorrelazioneApplicativa().getElementoList();
-			final CorrelazioneApplicativaElemento oldElem = Helper.findAndRemoveFirst(correlazioni, c -> c.getNome().equals(searchElemento));
+			final CorrelazioneApplicativaElemento oldElem = BaseHelper.findAndRemoveFirst(correlazioni, c -> c.getNome().equals(searchElemento));
 			
 			if ( oldElem == null ) 
 				throw FaultCode.NOT_FOUND.toException("Correlazione Applicativa Richiesta per l'elemento " + elemento + " non trovata ");
@@ -2181,7 +2239,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			if ( body.getElemento() == null )
 				body.setElemento("");
@@ -2198,7 +2256,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				pa.setCorrelazioneApplicativaRisposta(new org.openspcoop2.core.config.CorrelazioneApplicativaRisposta());
 			
 			final List<CorrelazioneApplicativaRispostaElemento> correlazioni = pa.getCorrelazioneApplicativaRisposta().getElementoList();
-			final CorrelazioneApplicativaRispostaElemento oldElem = Helper.findAndRemoveFirst(correlazioni, c -> c.getNome().equals(searchElemento));
+			final CorrelazioneApplicativaRispostaElemento oldElem = BaseHelper.findAndRemoveFirst(correlazioni, c -> c.getNome().equals(searchElemento));
 			
 			if ( oldElem == null ) 
 				throw FaultCode.NOT_FOUND.toException("Correlazione Applicativa Risposta per l'elemento " + elemento + " non trovata ");
@@ -2242,13 +2300,13 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);	
+			BaseHelper.throwIfNull(body);	
 			
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
-			final String stato = Helper.evalnull( () -> body.getStato().toString());
-			final String tipoValidazione = Helper.evalnull( () -> body.getTipo().toString() );
+			final String stato = BaseHelper.evalnull( () -> body.getStato().toString());
+			final String tipoValidazione = BaseHelper.evalnull( () -> body.getTipo().toString() );
 			
 			env.requestWrapper.overrideParameter(CostantiControlStation.PARAMETRO_PORTE_XSD, stato);
 			if (!env.paHelper.validazioneContenutiCheck(TipoOperazione.OTHER, false)) {
@@ -2257,7 +2315,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			final ValidazioneContenutiApplicativi vx = new ValidazioneContenutiApplicativi();
 			// Imposto Mtom al valore eventualmente già presente nel db.
-			vx.setAcceptMtomMessage( Helper.evalnull( () -> pa.getValidazioneContenutiApplicativi().getAcceptMtomMessage()) );
+			vx.setAcceptMtomMessage( BaseHelper.evalnull( () -> pa.getValidazioneContenutiApplicativi().getAcceptMtomMessage()) );
 			vx.setStato( StatoFunzionalitaConWarning.toEnumConstant(stato) );
 			vx.setTipo( ValidazioneContenutiApplicativiTipo.toEnumConstant(tipoValidazione) );
 			

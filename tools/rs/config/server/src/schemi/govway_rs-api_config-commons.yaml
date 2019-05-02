@@ -542,7 +542,14 @@ components:
         forward:
           type: boolean
           default: false
-          example: false
+          example: false      
+    APIImplAutenticazioneConfigurazioneCustom:
+      type: object
+      properties:
+        nome:
+          description: nome autenticazione 'custom', set tipo='custom'
+          type: string
+          maxLength: 255   
     APIImplAutenticazione:
       type: object
       required:
@@ -555,19 +562,17 @@ components:
           oneOf:
             - $ref: '#/components/schemas/APIImplAutenticazioneConfigurazioneBasic'
             - $ref: '#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal'
+            - $ref: '#/components/schemas/APIImplAutenticazioneConfigurazioneCustom'
           discriminator:
             propertyName: tipo
             mapping:
               'basic': '#/components/schemas/APIImplAutenticazioneConfigurazioneBasic'
               'principal': '#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal'
+              'custom': '#/components/schemas/APIImplAutenticazioneConfigurazioneCustom'
         opzionale:
           type: boolean
           default: false
           example: false
-        nome:
-          description: nome autenticazione 'custom', set tipo='custom'
-          type: string
-          maxLength: 255
           
     APIImplAutorizzazioneNew:
       type: object
@@ -776,7 +781,7 @@ components:
                   $ref: 'govway_core.yaml#/components/schemas/Versione'
                 example: [1, 2, 3] 
 
-    ApiImplModalitaIdentificazioneAzione:
+    ApiImplUrlInvocazione:
       type: object
       required:
         - modalita
@@ -795,14 +800,10 @@ components:
             description: Indicazione se oltre alla modalità indicata per individuare l'azione viene usata comunque la modalità 'interface-based'
             type: boolean
             default: true 
-    ApiImplUrlInvocazione:
-      type: object
-      allOf:
-          - $ref: '#/components/schemas/ApiImplModalitaIdentificazioneAzione'
     ApiImplUrlInvocazioneView:
       type: object
       allOf:
-          - $ref: '#/components/schemas/ApiImplModalitaIdentificazioneAzione'      
+          - $ref: '#/components/schemas/ApiImplUrlInvocazione'      
           - type: object
             required:
               - url_invocazione

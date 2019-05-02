@@ -50,6 +50,8 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.transport.http.HttpServletCredential;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
+import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
+import org.openspcoop2.web.monitor.core.constants.TipoMatch;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -350,6 +352,10 @@ public class ReportExporter extends HttpServlet{
 			statSearchForm.setAction(tipoDistribuzioneReport);
 			
 
+			ReportExporter.log.debug("Imposto parametri di ricerca nel search form ...");
+			String protocollo = setProtocolParametersInSearchForm(req, statSearchForm);
+			setParametersInSearchForm(req, statSearchForm, protocollo);
+
 					
 			// Istanzio bean
 			
@@ -446,11 +452,7 @@ public class ReportExporter extends HttpServlet{
 			}
 			
 			ReportExporter.log.debug("Inizializzazione bean ["+tipoDistribuzioneReport+"] completata");
-			
-			
-			ReportExporter.log.debug("Imposto parametri di ricerca nel search form ...");
-			setParametersInSearchForm(req, statSearchForm);
-			statSearchForm.saveProtocollo();
+		
 			
 			StringBuffer bf = new StringBuffer();
 			ReflectionToStringBuilder builder = new ReflectionToStringBuilder(statSearchForm, ToStringStyle.MULTI_LINE_STYLE, bf, null, false, false);
@@ -484,8 +486,35 @@ public class ReportExporter extends HttpServlet{
 		}
 	}
 
-
-	private static void setParametersInSearchForm(HttpServletRequest req,StatsSearchForm statSearchForm ) throws Exception{
+	private static String setProtocolParametersInSearchForm(HttpServletRequest req,StatsSearchForm statSearchForm) throws Exception{
+		
+		String protocollo = req.getParameter(CostantiExporter.PROTOCOLLO);
+		if(protocollo!=null){
+			protocollo = protocollo.trim();
+			try{
+				ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			}catch(Exception e){
+				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.PROTOCOLLO+"' fornito possiede un valore '"+protocollo
+						+"' sconosciuto. I tipi supportati sono: "+ProtocolFactoryManager.getInstance().getProtocolNames());
+			}
+			statSearchForm.setProtocollo(protocollo);
+		}
+		else {
+			throw new ParameterUncorrectException("Parametro obbligatorio '"+CostantiExporter.PROTOCOLLO+"' non fornito");
+		}
+		
+		String soggettoLocale = req.getParameter(CostantiExporter.SOGGETTO_LOCALE);
+		if(soggettoLocale!=null){
+			soggettoLocale = soggettoLocale.trim();
+			statSearchForm.setTipoNomeSoggettoLocale(soggettoLocale);
+		}
+		
+		statSearchForm.saveProtocollo();
+		
+		return protocollo;
+	}
+	
+	private static void setParametersInSearchForm(HttpServletRequest req,StatsSearchForm statSearchForm, String protocollo) throws Exception{
 		// Andare in ordine con l'xhtml dei search form
 		
 		
@@ -548,49 +577,6 @@ public class ReportExporter extends HttpServlet{
 		statSearchForm.setDataInizio(dInizio);
 		statSearchForm.setDataFine(dFine);
 		
-
-		
-		// ** Soggetto / Servizio / Azione **
-		
-		String protocollo = req.getParameter(CostantiExporter.PROTOCOLLO);
-		if(protocollo!=null){
-			protocollo = protocollo.trim();
-			try{
-				ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
-			}catch(Exception e){
-				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.PROTOCOLLO+"' fornito possiede un valore '"+protocollo
-						+"' sconosciuto. I tipi supportati sono: "+ProtocolFactoryManager.getInstance().getProtocolNames());
-			}
-			statSearchForm.setProtocollo(protocollo);
-		}
-		else {
-			throw new ParameterUncorrectException("Parametro obbligatorio '"+CostantiExporter.PROTOCOLLO+"' non fornito");
-		}
-		
-		String mittente = req.getParameter(CostantiExporter.MITTENTE);
-		if(mittente!=null){
-			mittente = mittente.trim();
-			statSearchForm.setTipoNomeMittente(mittente);
-		}
-		
-		String destinatario = req.getParameter(CostantiExporter.DESTINATARIO);
-		if(destinatario!=null){
-			destinatario = destinatario.trim();
-			statSearchForm.setTipoNomeDestinatario(destinatario);
-		}
-		
-		String soggettoLocale = req.getParameter(CostantiExporter.SOGGETTO_LOCALE);
-		if(soggettoLocale!=null){
-			soggettoLocale = soggettoLocale.trim();
-			statSearchForm.setTipoNomeSoggettoLocale(soggettoLocale);
-		}
-		
-		String trafficoPerSoggetto = req.getParameter(CostantiExporter.TRAFFICO_PER_SOGGETTO);
-		if(trafficoPerSoggetto!=null){
-			trafficoPerSoggetto = trafficoPerSoggetto.trim();
-			statSearchForm.setTipoNomeTrafficoPerSoggetto(trafficoPerSoggetto);
-		}
-		
 		
 		
 		// ** Tipologia Transazione **
@@ -615,6 +601,171 @@ public class ReportExporter extends HttpServlet{
 		else if(CostantiExporter.TIPOLOGIA_FRUIZIONE.equals(tipologiaTransazione)){
 			statSearchForm.setTipologiaRicerca(CostantiExporter.RICERCA_USCITA);
 		}
+		
+
+		
+		// ** Soggetto / Servizio / Azione **
+				
+		String mittente = req.getParameter(CostantiExporter.MITTENTE);
+		if(mittente!=null){
+			mittente = mittente.trim();
+			statSearchForm.setTipoNomeMittente(mittente);
+		}
+		
+		String destinatario = req.getParameter(CostantiExporter.DESTINATARIO);
+		if(destinatario!=null){
+			destinatario = destinatario.trim();
+			statSearchForm.setTipoNomeDestinatario(destinatario);
+		}
+				
+		String trafficoPerSoggetto = req.getParameter(CostantiExporter.TRAFFICO_PER_SOGGETTO);
+		if(trafficoPerSoggetto!=null){
+			trafficoPerSoggetto = trafficoPerSoggetto.trim();
+			statSearchForm.setTipoNomeTrafficoPerSoggetto(trafficoPerSoggetto);
+		}
+		
+		
+		String servizio = req.getParameter(CostantiExporter.SERVIZIO);
+		if(servizio!=null){
+			servizio = servizio.trim();
+			statSearchForm.setNomeServizio(servizio);
+		}
+		
+		String azione = req.getParameter(CostantiExporter.AZIONE);
+		if(azione!=null){
+			azione = azione.trim();
+			statSearchForm.setNomeAzione(azione);
+		}
+		
+		
+		// ** Mittente **
+		
+		String tipoRicercaMittente = req.getParameter(CostantiExporter.TIPO_RICERCA_MITTENTE);
+		if(tipoRicercaMittente!=null){
+			tipoRicercaMittente = tipoRicercaMittente.trim();
+			if(CostantiExporter.TIPI_RICERCA_MITTENTE.contains(tipoRicercaMittente) == false){
+				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_RICERCA_MITTENTE+"' fornito possiede un valore '"+tipoRicercaMittente
+						+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.TIPI_RICERCA_MITTENTE);
+			}
+			statSearchForm.setRiconoscimento(tipoRicercaMittente);
+			
+			if(CostantiExporter.TIPO_RICERCA_MITTENTE_SOGGETTO.equals(tipoRicercaMittente)) {
+				if(mittente==null || "".equals(mittente)) {
+					throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_RICERCA_MITTENTE+"' valorizzato con '"+tipoRicercaMittente
+							+"' richiede la definizione del parametro '"+CostantiExporter.MITTENTE+"'");
+				}
+			}
+			
+			else if(CostantiExporter.TIPO_RICERCA_MITTENTE_APPLICATIVO.equals(tipoRicercaMittente)) {
+				if(CostantiExporter.TIPOLOGIA_EROGAZIONE.equals(tipologiaTransazione)){
+					if(mittente==null || "".equals(mittente)) {
+						throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_RICERCA_MITTENTE+"' valorizzato con '"+tipoRicercaMittente
+								+"' richiede la definizione del parametro '"+CostantiExporter.MITTENTE+"'");
+					}
+				}
+				else {
+					String soggettoLocale = req.getParameter(CostantiExporter.SOGGETTO_LOCALE); // impostato precedentemente in setProtocolParametersInSearchForm
+					if(soggettoLocale==null || "".equals(soggettoLocale)) {
+						throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_RICERCA_MITTENTE+"' valorizzato con '"+tipoRicercaMittente
+								+"' richiede la definizione del parametro '"+CostantiExporter.SOGGETTO_LOCALE+"'");
+					}
+				}
+				
+				String applicativo = req.getParameter(CostantiExporter.APPLICATIVO);
+				if(applicativo!=null){
+					applicativo = applicativo.trim();
+					statSearchForm.setServizioApplicativo(applicativo);
+				}
+				else {
+					throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_RICERCA_MITTENTE+"' valorizzato con '"+tipoRicercaMittente
+							+"' richiede la definizione del parametro '"+CostantiExporter.APPLICATIVO+"'");
+				}
+			}
+			
+			else if(CostantiExporter.TIPO_RICERCA_MITTENTE_IDENTIFICATIVO_AUTENTICATO.equals(tipoRicercaMittente) ||
+					CostantiExporter.TIPO_RICERCA_MITTENTE_TOKEN_INFO.equals(tipoRicercaMittente)) {
+			
+				if(CostantiExporter.TIPO_RICERCA_MITTENTE_IDENTIFICATIVO_AUTENTICATO.equals(tipoRicercaMittente)) {
+					String tipoAutenticazione = req.getParameter(CostantiExporter.TIPO_AUTENTICAZIONE);
+					if(tipoAutenticazione!=null){
+						tipoAutenticazione = tipoAutenticazione.trim();
+						if(CostantiExporter.TIPI_AUTENTICAZIONE.contains(tipoAutenticazione) == false){
+							throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_AUTENTICAZIONE+"' fornito possiede un valore '"+tipoAutenticazione
+									+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.TIPI_AUTENTICAZIONE);
+						}
+						statSearchForm.setAutenticazione(tipoAutenticazione);
+					}
+					else {
+						throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_RICERCA_MITTENTE+"' valorizzato con '"+tipoRicercaMittente
+								+"' richiede la definizione del parametro '"+CostantiExporter.TIPO_AUTENTICAZIONE+"'");
+					}
+				}
+				else {
+					String tipoClaim = req.getParameter(CostantiExporter.RICERCA_MITTENTE_TIPO_CLAIM);
+					if(tipoClaim!=null){
+						tipoClaim = tipoClaim.trim();
+						if(CostantiExporter.CLAIMS.contains(tipoClaim) == false){
+							throw new ParameterUncorrectException("Parametro '"+CostantiExporter.RICERCA_MITTENTE_TIPO_CLAIM+"' fornito possiede un valore '"+tipoClaim
+									+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.CLAIMS);
+						}
+						statSearchForm.setTokenClaim(tipoClaim);
+					}
+					else {
+						throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_RICERCA_MITTENTE+"' valorizzato con '"+tipoRicercaMittente
+								+"' richiede la definizione del parametro '"+CostantiExporter.RICERCA_MITTENTE_TIPO_CLAIM+"'");
+					}					
+				}
+				
+				String tipoMatch = req.getParameter(CostantiExporter.TIPO_RICERCA_MITTENTE_ESATTA);
+				TipoMatch tipoMatchEnum = TipoMatch.EQUALS;
+				if(tipoMatch!=null){
+					tipoMatch = tipoMatch.trim();
+					if(CostantiExporter.TIPO_RICERCA_MITTENTE_ESATTA_TRUE.equalsIgnoreCase(tipoMatch)) {
+						tipoMatchEnum = TipoMatch.EQUALS;
+					}
+					else if(CostantiExporter.TIPO_RICERCA_MITTENTE_ESATTA_FALSE.equalsIgnoreCase(tipoMatch)) {
+						tipoMatchEnum = TipoMatch.LIKE;
+					}
+					else {
+						throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_RICERCA_MITTENTE_ESATTA+"' contiene un valore non atteso '"+tipoMatch+"' (atteso: "+
+								CostantiExporter.TIPO_RICERCA_MITTENTE_ESATTA_TRUE+"/"+CostantiExporter.TIPO_RICERCA_MITTENTE_ESATTA_FALSE+")");
+					}
+				}
+				statSearchForm.setMittenteMatchingType(tipoMatchEnum.name());
+				
+				String tipoCaseSensitive = req.getParameter(CostantiExporter.TIPO_RICERCA_MITTENTE_CASE_SENSITIVE);
+				CaseSensitiveMatch tipoCaseSensitiveEnum = CaseSensitiveMatch.SENSITIVE;
+				if(tipoCaseSensitive!=null){
+					tipoCaseSensitive = tipoCaseSensitive.trim();
+					if(CostantiExporter.TIPO_RICERCA_MITTENTE_CASE_SENSITIVE_TRUE.equalsIgnoreCase(tipoCaseSensitive)) {
+						tipoCaseSensitiveEnum = CaseSensitiveMatch.SENSITIVE;
+					}
+					else if(CostantiExporter.TIPO_RICERCA_MITTENTE_CASE_SENSITIVE_FALSE.equalsIgnoreCase(tipoCaseSensitive)) {
+						tipoCaseSensitiveEnum = CaseSensitiveMatch.INSENSITIVE;
+					}
+					else {
+						throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_RICERCA_MITTENTE_CASE_SENSITIVE+"' contiene un valore non atteso '"+tipoCaseSensitive+"' (atteso: "+
+								CostantiExporter.TIPO_RICERCA_MITTENTE_CASE_SENSITIVE_TRUE+"/"+CostantiExporter.TIPO_RICERCA_MITTENTE_CASE_SENSITIVE_FALSE+")");
+					}
+				}
+				statSearchForm.setMittenteCaseSensitiveType(tipoCaseSensitiveEnum.name());
+				
+				String identificativoRicercato = req.getParameter(CostantiExporter.IDENTIFICATIVO_RICERCA_MITTENTE);
+				if(identificativoRicercato!=null){
+					identificativoRicercato = identificativoRicercato.trim();
+					statSearchForm.setValoreRiconoscimento(identificativoRicercato);
+				}
+				else {
+					throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_RICERCA_MITTENTE+"' valorizzato con '"+tipoRicercaMittente
+							+"' richiede la definizione del parametro '"+CostantiExporter.IDENTIFICATIVO_RICERCA_MITTENTE+"'");
+				}
+
+			}
+		}
+		
+		
+		
+		
 		
 		
 		// ** Esito **

@@ -44,6 +44,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
@@ -232,7 +233,7 @@ public class SoggettiApiHelper {
 			ret.setCountRuoli(numRuoli);
 	
 			String tipo_protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(s.getTipo());
-			ret.setProfilo(Helper.profiloFromTipoProtocollo.get(tipo_protocollo));
+			ret.setProfilo(BaseHelper.profiloFromTipoProtocollo.get(tipo_protocollo));
 		} 
 		catch (Exception e) {
 			throw new RuntimeException(e);

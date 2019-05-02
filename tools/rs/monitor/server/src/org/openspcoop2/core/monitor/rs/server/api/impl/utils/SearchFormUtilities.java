@@ -127,9 +127,6 @@ public class SearchFormUtilities {
 		case JSON:
 			request.overrideParameter(CostantiExporter.TIPO_FORMATO, CostantiExporter.TIPO_FORMATO_JSON);
 			break;
-		case PNG:
-			// TODO
-			break;
 		default:
 			break;
 		}
@@ -141,8 +138,18 @@ public class SearchFormUtilities {
 		TransazioniSearchForm searchForm = new TransazioniSearchForm();
 		initBaseInfo(searchForm, context, profilo, soggetto, ruolo);
 		searchForm.setModalitaRicercaStorico(ModalitaRicercaTransazioni.ANDAMENTO_TEMPORALE.getValue());
-		searchForm.setDataInizio(dataInizio.toDate());
-		searchForm.setDataFine(dataFine.toDate());
+		if (dataInizio != null && dataFine != null) {
+			searchForm.setDataInizio(dataInizio.toDate());
+			searchForm.setDataFine(dataFine.toDate());
+		}
+		return searchForm;
+	}
+	
+	public TransazioniSearchForm getIdMessaggioSearchForm(IContext context, ProfiloEnum profilo, String soggetto) throws Exception {
+		TransazioniSearchForm searchForm = new TransazioniSearchForm();
+		initBaseInfo(searchForm, context, profilo, soggetto, null);
+		searchForm.setModalitaRicercaStorico(ModalitaRicercaTransazioni.ID_MESSAGGIO.getValue());
+		
 		return searchForm;
 	}
 	

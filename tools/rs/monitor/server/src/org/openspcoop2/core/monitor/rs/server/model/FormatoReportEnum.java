@@ -32,8 +32,7 @@ CSV("csv"),
   PDF("pdf"),
   XLS("xls"),
   XML("xml"),
-  JSON("json"),
-  PNG("png");
+  JSON("json");
 
   private String value;
 

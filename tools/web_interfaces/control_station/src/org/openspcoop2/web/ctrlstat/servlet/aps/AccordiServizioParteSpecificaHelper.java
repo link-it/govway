@@ -7466,6 +7466,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 		}
 		
+		if(checkAzioniUtilizzateErogazioneRateLimiting(mappingInfo, azioni)==false) {
+			return false;
+		}
+		
 		if(modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA)) {
 			
 		} else {
@@ -7543,7 +7547,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 		return true;
 	}
-	
+		
 	public boolean configurazioneFruizioneCheckData(TipoOperazione tipoOp, String nome, String nomeGruppo, String [] azioni,
 			AccordoServizioParteSpecifica asps, List<String> azioniOccupate,
 			String modeCreazione, String idPorta, boolean isSupportatoAutenticazione,
@@ -7580,6 +7584,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE);
 				return false;			
 			}
+		}
+		
+		if(checkAzioniUtilizzateFruizioneRateLimiting(mappingInfo, azioni)==false) {
+			return false;
 		}
 		
 		if(modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA)) {
@@ -7846,4 +7854,5 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 		return listaParams;
 	}
+	
 }

@@ -14,6 +14,14 @@ Scenario: Update Gestione CORS
     When method put
     Then status 204
 
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'gestione-cors'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response == gestione_cors
+
 
 @Get200
 Scenario: Get Gestione CORS

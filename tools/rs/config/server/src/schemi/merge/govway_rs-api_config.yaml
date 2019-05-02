@@ -6507,6 +6507,10 @@ components:
       type: "object"
       allOf:
       - $ref: "#/components/schemas/APIImpl"
+      - type: "object"
+        properties:
+          descrizione:
+            type: "string"
     ErogazioneItem:
       type: "object"
       allOf:
@@ -6535,6 +6539,8 @@ components:
         - "erogatore"
         type: "object"
         properties:
+          descrizione:
+            type: "string"
           erogatore:
             $ref: "#/components/schemas/SimpleName"
     FruizioneItem:
@@ -7296,6 +7302,13 @@ components:
         forward:
           type: "boolean"
           default: false
+    APIImplAutenticazioneConfigurazioneCustom:
+      type: "object"
+      properties:
+        nome:
+          maxLength: 255
+          type: "string"
+          description: "nome autenticazione 'custom', set tipo='custom'"
     APIImplAutenticazione:
       required:
       - "tipo"
@@ -7310,16 +7323,14 @@ components:
             mapping:
               basic: "#/components/schemas/APIImplAutenticazioneConfigurazioneBasic"
               principal: "#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal"
+              custom: "#/components/schemas/APIImplAutenticazioneConfigurazioneCustom"
           oneOf:
           - $ref: "#/components/schemas/APIImplAutenticazioneConfigurazioneBasic"
           - $ref: "#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal"
+          - $ref: "#/components/schemas/APIImplAutenticazioneConfigurazioneCustom"
         opzionale:
           type: "boolean"
           default: false
-        nome:
-          maxLength: 255
-          type: "string"
-          description: "nome autenticazione 'custom', set tipo='custom'"
     APIImplAutorizzazioneNew:
       required:
       - "tipo"
@@ -7522,7 +7533,7 @@ components:
             - 3
             items:
               $ref: "#/components/schemas/Versione"
-    ApiImplModalitaIdentificazioneAzione:
+    ApiImplUrlInvocazione:
       required:
       - "modalita"
       type: "object"
@@ -7543,14 +7554,10 @@ components:
           description: "Indicazione se oltre alla modalità indicata per individuare\
             \ l'azione viene usata comunque la modalità 'interface-based'"
           default: true
-    ApiImplUrlInvocazione:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/ApiImplModalitaIdentificazioneAzione"
     ApiImplUrlInvocazioneView:
       type: "object"
       allOf:
-      - $ref: "#/components/schemas/ApiImplModalitaIdentificazioneAzione"
+      - $ref: "#/components/schemas/ApiImplUrlInvocazione"
       - required:
         - "url_invocazione"
         type: "object"

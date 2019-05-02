@@ -22,7 +22,6 @@
 package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
-import org.openspcoop2.core.monitor.rs.server.model.OrientamentoEtichetteReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoReportEnum;
 import javax.validation.constraints.*;
 
@@ -37,12 +36,6 @@ public class OpzioniGenerazioneReportBase  {
   
   @Schema(description = "")
   private TipoReportEnum tipo = null;
-  
-  @Schema(description = "")
-  private OrientamentoEtichetteReportEnum orientamentoEtichette = null;
-  
-  @Schema(description = "")
-  private Integer larghezzaGrafico = null;
  /**
    * Get formato
    * @return formato
@@ -82,44 +75,6 @@ public class OpzioniGenerazioneReportBase  {
     return this;
   }
 
- /**
-   * Get orientamentoEtichette
-   * @return orientamentoEtichette
-  **/
-  @JsonProperty("orientamento_etichette")
-  @Valid
-  public OrientamentoEtichetteReportEnum getOrientamentoEtichette() {
-    return this.orientamentoEtichette;
-  }
-
-  public void setOrientamentoEtichette(OrientamentoEtichetteReportEnum orientamentoEtichette) {
-    this.orientamentoEtichette = orientamentoEtichette;
-  }
-
-  public OpzioniGenerazioneReportBase orientamentoEtichette(OrientamentoEtichetteReportEnum orientamentoEtichette) {
-    this.orientamentoEtichette = orientamentoEtichette;
-    return this;
-  }
-
- /**
-   * Get larghezzaGrafico
-   * @return larghezzaGrafico
-  **/
-  @JsonProperty("larghezza_grafico")
-  @Valid
-  public Integer getLarghezzaGrafico() {
-    return this.larghezzaGrafico;
-  }
-
-  public void setLarghezzaGrafico(Integer larghezzaGrafico) {
-    this.larghezzaGrafico = larghezzaGrafico;
-  }
-
-  public OpzioniGenerazioneReportBase larghezzaGrafico(Integer larghezzaGrafico) {
-    this.larghezzaGrafico = larghezzaGrafico;
-    return this;
-  }
-
 
   @Override
   public String toString() {
@@ -128,8 +83,6 @@ public class OpzioniGenerazioneReportBase  {
     
     sb.append("    formato: ").append(OpzioniGenerazioneReportBase.toIndentedString(this.formato)).append("\n");
     sb.append("    tipo: ").append(OpzioniGenerazioneReportBase.toIndentedString(this.tipo)).append("\n");
-    sb.append("    orientamentoEtichette: ").append(OpzioniGenerazioneReportBase.toIndentedString(this.orientamentoEtichette)).append("\n");
-    sb.append("    larghezzaGrafico: ").append(OpzioniGenerazioneReportBase.toIndentedString(this.larghezzaGrafico)).append("\n");
     sb.append("}");
     return sb.toString();
   }

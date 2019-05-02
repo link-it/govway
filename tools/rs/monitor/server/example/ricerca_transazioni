@@ -1,0 +1,2 @@
+curl -v -H "Content-Type: application/json" -X POST --data @$1 --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/monitoraggio/transazioni"
+

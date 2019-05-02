@@ -54,6 +54,7 @@ import org.openspcoop2.core.config.rs.server.model.Applicativo;
 import org.openspcoop2.core.config.rs.server.model.ApplicativoItem;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -241,7 +242,7 @@ public class ApplicativiApiHelper {
 			throw new RuntimeException(e);
 		}		
 		
-		ret.setProfilo(Helper.profiloFromTipoProtocollo.get(tipo_protocollo));
+		ret.setProfilo(BaseHelper.profiloFromTipoProtocollo.get(tipo_protocollo));
 		ret.setSoggetto(sa.getNomeSoggettoProprietario());
 		
 		ServizioApplicativoRuoli saRoles = null;
@@ -266,7 +267,7 @@ public class ApplicativiApiHelper {
 	}
 	
 	public static final Soggetto getSoggetto(String nome, ProfiloEnum modalita, SoggettiCore soggettiCore) throws DriverRegistroServiziException, DriverRegistroServiziNotFound, ProtocolException {
-		return soggettiCore.getSoggettoRegistro(getIDSoggetto(nome,Helper.tipoProtocolloFromProfilo.get(modalita)));
+		return soggettiCore.getSoggettoRegistro(getIDSoggetto(nome,BaseHelper.tipoProtocolloFromProfilo.get(modalita)));
 
 	}
 			

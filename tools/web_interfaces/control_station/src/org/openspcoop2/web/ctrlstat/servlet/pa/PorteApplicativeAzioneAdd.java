@@ -242,7 +242,7 @@ public final class PorteApplicativeAzioneAdd extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = porteApplicativeHelper.porteAppAzioneCheckData(TipoOperazione.ADD,azioniOccupate);
+			boolean isOk = porteApplicativeHelper.porteAppAzioneCheckData(TipoOperazione.ADD,azioniOccupate,listaMappingErogazione);
 			if (!isOk) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);

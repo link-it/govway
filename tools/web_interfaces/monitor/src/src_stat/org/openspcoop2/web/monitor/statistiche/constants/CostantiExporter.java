@@ -24,10 +24,12 @@ package org.openspcoop2.web.monitor.statistiche.constants;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.statistiche.constants.TipoBanda;
 import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 
 /**
  * CostantiExporter
@@ -113,6 +115,44 @@ public class CostantiExporter {
 		TIPOLOGIE.add(TIPOLOGIA_EROGAZIONE_FRUIZIONE);
 	}
 	
+	public final static String TIPO_RICERCA_MITTENTE  = "tipoRicercaMittente";
+	public static final String TIPO_RICERCA_MITTENTE_TOKEN_INFO = Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO;
+	public static final String TIPO_RICERCA_MITTENTE_IDENTIFICATIVO_AUTENTICATO = Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO;
+	public static final String TIPO_RICERCA_MITTENTE_APPLICATIVO = Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO;
+	public static final String TIPO_RICERCA_MITTENTE_SOGGETTO = Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO;
+	public static final List<String> TIPI_RICERCA_MITTENTE = new ArrayList<String> ();
+	static{
+		TIPI_RICERCA_MITTENTE.add(TIPO_RICERCA_MITTENTE_TOKEN_INFO);
+		TIPI_RICERCA_MITTENTE.add(TIPO_RICERCA_MITTENTE_IDENTIFICATIVO_AUTENTICATO);
+		TIPI_RICERCA_MITTENTE.add(TIPO_RICERCA_MITTENTE_APPLICATIVO);
+		TIPI_RICERCA_MITTENTE.add(TIPO_RICERCA_MITTENTE_SOGGETTO);
+	}
+	
+	public final static String APPLICATIVO  = "applicativo";
+	
+	public final static String TIPO_AUTENTICAZIONE  = "tipoAutenticazioneRicercaMittente";
+	public final static String TIPO_AUTENTICAZIONE_BASIC  = TipoAutenticazione.BASIC.getValue();
+	public final static String TIPO_AUTENTICAZIONE_SSL  = TipoAutenticazione.SSL.getValue();
+	public final static String TIPO_AUTENTICAZIONE_PRINCIPAL  = TipoAutenticazione.PRINCIPAL.getValue();
+	public static final List<String> TIPI_AUTENTICAZIONE = new ArrayList<String> ();
+	static{
+		TIPI_AUTENTICAZIONE.add(TIPO_AUTENTICAZIONE_BASIC);
+		TIPI_AUTENTICAZIONE.add(TIPO_AUTENTICAZIONE_SSL);
+		TIPI_AUTENTICAZIONE.add(TIPO_AUTENTICAZIONE_PRINCIPAL);
+	}
+	
+	public final static String TIPO_RICERCA_MITTENTE_ESATTA  = "ricercaMittenteEsatta";
+	public final static String TIPO_RICERCA_MITTENTE_ESATTA_TRUE  = "true";
+	public final static String TIPO_RICERCA_MITTENTE_ESATTA_FALSE  = "false";
+	
+	public final static String TIPO_RICERCA_MITTENTE_CASE_SENSITIVE  = "ricercaMittenteCaseSensitive";
+	public final static String TIPO_RICERCA_MITTENTE_CASE_SENSITIVE_TRUE  = "true";
+	public final static String TIPO_RICERCA_MITTENTE_CASE_SENSITIVE_FALSE  = "false";
+	
+	public final static String IDENTIFICATIVO_RICERCA_MITTENTE  = "identificativoRicercaMittente";
+	
+	public final static String RICERCA_MITTENTE_TIPO_CLAIM  = "claimRicercaMittente";
+		
 	public final static String RICERCA_ALL  = "all";
 	public final static String RICERCA_INGRESSO  = "ingresso";
 	public final static String RICERCA_USCITA  = "uscita";

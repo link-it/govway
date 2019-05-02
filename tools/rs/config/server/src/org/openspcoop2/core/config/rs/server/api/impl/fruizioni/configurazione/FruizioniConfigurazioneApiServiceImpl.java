@@ -43,6 +43,7 @@ import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.Scope;
@@ -50,6 +51,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
 import org.openspcoop2.core.config.rs.server.api.FruizioniConfigurazioneApi;
@@ -60,6 +62,9 @@ import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHe
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniEnv;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazione;
+import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneConfigurazioneBasic;
+import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneConfigurazioneCustom;
+import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneConfigurazionePrincipal;
 import org.openspcoop2.core.config.rs.server.model.ApiImplStato;
 import org.openspcoop2.core.config.rs.server.model.CachingRisposta;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutenticazione;
@@ -83,7 +88,6 @@ import org.openspcoop2.core.config.rs.server.model.GestioneCors;
 import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRichiesta;
 import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.rs.server.model.ListaRateLimitingPolicy;
-import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBaseFruizione;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneNew;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneView;
@@ -106,9 +110,13 @@ import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
+import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
+import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -151,7 +159,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio);		
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
@@ -164,7 +172,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autenticazione puntuale non è abilitata");
 				}
 			
-			final ServizioApplicativo sa = Helper.supplyOrNonValida( 
+			final ServizioApplicativo sa = BaseHelper.supplyOrNonValida( 
 					() -> env.saCore.getServizioApplicativo(idSA),
 					"Servizio Applicativo " + idSA.toString()
 				);
@@ -173,11 +181,11 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final org.openspcoop2.core.config.constants.CredenzialeTipo tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(pd.getAutenticazione());
 			
 			List<ServizioApplicativo> saCompatibili = env.saCore.soggettiServizioApplicativoList(env.idSoggetto.toIDSoggetto(),env.userLogin,tipoAutenticazione);
-			if (!Helper.findFirst(saCompatibili, s -> s.getId().equals(sa.getId())).isPresent()) {
+			if (!BaseHelper.findFirst(saCompatibili, s -> s.getId().equals(sa.getId())).isPresent()) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La modalità di autenticazione del servizio Applicativo scelto non è compatibile con il gruppo che si vuole configurare");
 			}
 
-			if ( Helper.findFirst(
+			if ( BaseHelper.findFirst(
 						pd.getServizioApplicativoList(),
 						s -> s.getId() == sa.getId()
 						).isPresent()
@@ -238,7 +246,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			}
 			
 			final RuoliCore ruoliCore = new RuoliCore(env.stationCore);
-			Helper.supplyOrNonValida( 
+			BaseHelper.supplyOrNonValida( 
 					() -> ruoliCore.getRuolo(body.getRuolo())
 					, "Ruolo " + body.getRuolo()
 				);
@@ -266,7 +274,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			final List<String> ruoliPresenti = pd.getRuoli().getRuoloList().stream().map( r -> r.getNome()).collect(Collectors.toList());
 			
-			if ( Helper.findFirst( ruoliPresenti, r -> r.equals(body.getRuolo())).isPresent()) {
+			if ( BaseHelper.findFirst( ruoliPresenti, r -> r.equals(body.getRuolo())).isPresent()) {
 				throw FaultCode.CONFLITTO.toException("Il ruolo " + body.getRuolo() + " è già associato al gruppo scelto");
 			}
 			
@@ -373,16 +381,14 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 
 			final RuoloPolicy ruoloPorta = RuoloPolicy.DELEGATA;
 			final String nomePorta = pd.getNome();
-			
-			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = env.confCore.getConfigurazioneControlloTraffico();
-			
+						
 			AttivazionePolicy policy = new AttivazionePolicy();
 			policy.setFiltro(new AttivazionePolicyFiltro());
 			policy.setGroupBy(new AttivazionePolicyRaggruppamento());
@@ -425,17 +431,11 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				)) {
 				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
 			}
+			// Qui viene sollevata eccezione se il check non viene superato
+			FruizioniConfigurazioneHelper.attivazionePolicyCheckData(TipoOperazione.ADD, pd, policy,infoPolicy, env);
 			
-			if (! env.confHelper.attivazionePolicyCheckData(TipoOperazione.ADD, configurazioneControlloTraffico, policy,infoPolicy, ruoloPorta, nomePorta) ) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
-			}
-
 			env.confCore.performCreateOperation(env.userLogin, false, policy);
-
-			
 			context.getLogger().info("Invocazione completata con successo");
-        
-     
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -462,7 +462,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			if ( body.getElemento() == null )
 				body.setElemento("");              
@@ -519,7 +519,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			if ( body.getElemento() == null )
 				body.setElemento("");              
@@ -576,7 +576,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			
-			PortaDelegataServizioApplicativo to_remove = Helper.findAndRemoveFirst(pd.getServizioApplicativoList(), sa -> sa.getNome().equals(applicativoAutorizzato));
+			PortaDelegataServizioApplicativo to_remove = BaseHelper.findAndRemoveFirst(pd.getServizioApplicativoList(), sa -> sa.getNome().equals(applicativoAutorizzato));
 			
 			if (env.delete_404 && to_remove == null) {
 				throw FaultCode.NOT_FOUND.toException("Nessun Applicativo " + applicativoAutorizzato + " è associato al gruppo scelto"); 
@@ -618,7 +618,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			if (pd.getRuoli() == null)	pd.setRuoli(new AutorizzazioneRuoli());
 			
-			Ruolo to_remove = Helper.findAndRemoveFirst(pd.getRuoli().getRuoloList(), r -> r.getNome().equals(ruoloAutorizzato));
+			Ruolo to_remove = BaseHelper.findAndRemoveFirst(pd.getRuoli().getRuoloList(), r -> r.getNome().equals(ruoloAutorizzato));
 			
 			if (env.delete_404 && to_remove == null) {
 				throw FaultCode.NOT_FOUND.toException("Nessun Ruolo " + ruoloAutorizzato + " è associato al gruppo scelto"); 
@@ -659,7 +659,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			if (pd.getScope() == null)	pd.setScope(new AutorizzazioneScope());
 			
-			Scope to_remove = Helper.findAndRemoveFirst(pd.getScope().getScopeList(), s -> s.getNome().equals(scopeAutorizzato));
+			Scope to_remove = BaseHelper.findAndRemoveFirst(pd.getScope().getScopeList(), s -> s.getNome().equals(scopeAutorizzato));
 			
 			if (env.delete_404 && to_remove == null) {
 				throw FaultCode.NOT_FOUND.toException("Nessuno scope " + scopeAutorizzato + " è associato al gruppo scelto"); 
@@ -702,7 +702,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			
 			List<AttivazionePolicy> policies = env.confCore.attivazionePolicyList(null, RuoloPolicy.DELEGATA, pd.getNome());
-			AttivazionePolicy policy = Helper.findFirst( policies, p -> p.getIdActivePolicy().equals(idPolicy) ).orElse(null);
+			AttivazionePolicy policy = BaseHelper.findFirst( policies, p -> p.getIdActivePolicy().equals(idPolicy) ).orElse(null);
 			
 			if ( policy != null ) {
 				StringBuffer inUsoMessage = new StringBuffer();
@@ -762,7 +762,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 					? ""
 				  	: elemento;	
 									
-			CorrelazioneApplicativaElemento to_del = Helper.evalnull( () -> Helper.findAndRemoveFirst( 
+			CorrelazioneApplicativaElemento to_del = BaseHelper.evalnull( () -> BaseHelper.findAndRemoveFirst( 
 					correlazioneApplicativa.getElementoList(), 
 					e -> e.getNome().equals(searchElemento)
 				));
@@ -814,7 +814,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 					? ""
 				  	: elemento;	
 									
-			CorrelazioneApplicativaRispostaElemento to_del = Helper.evalnull( () -> Helper.findAndRemoveFirst( 
+			CorrelazioneApplicativaRispostaElemento to_del = BaseHelper.evalnull( () -> BaseHelper.findAndRemoveFirst( 
 					correlazioneApplicativa.getElementoList(), 
 					e -> e.getNome().equals(searchElemento)
 				));
@@ -1088,16 +1088,77 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			if ( TipoAutenticazione.toEnumConstant(pd.getAutenticazione()) == null ) {
 				autRet.setTipo(TipoAutenticazioneEnum.CUSTOM);
-				autRet.setNome(pd.getAutenticazione());
+				APIImplAutenticazioneConfigurazioneCustom customConfig = new APIImplAutenticazioneConfigurazioneCustom();
+				customConfig.setNome(pd.getAutenticazione());
+				autRet.setConfigurazione(customConfig);
 			}
 			else {
 				autRet.setTipo( Enums.dualizeMap(Enums.tipoAutenticazioneFromRest).get(TipoAutenticazione.toEnumConstant(pd.getAutenticazione())) );
 			}
 						
-			ControlloAccessiAutenticazioneToken token = Helper.evalnull( () -> pd.getGestioneToken().getAutenticazione() ) != null
+			ControlloAccessiAutenticazioneToken token = BaseHelper.evalnull( () -> pd.getGestioneToken().getAutenticazione() ) != null
 					? ErogazioniApiHelper.fromGestioneTokenAutenticazione(pd.getGestioneToken().getAutenticazione())
 					: null;
 			
+			// TODO: Posso fattorizzare e generalizzare su pa\pd.getProprietaAutenticazioneList e condividere uno stesso metodo anche con le erogazioni
+			switch(autRet.getTipo()) {
+			case HTTP_BASIC: {
+				APIImplAutenticazioneConfigurazioneBasic config = new APIImplAutenticazioneConfigurazioneBasic();
+				
+				Optional<Proprieta> prop = pd.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION.equals(p.getNome())).findAny();
+				if (prop.isPresent() && prop.get().getValore().equals(ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL_TRUE))
+					config.setForward(true);
+				else
+					config.setForward(false);
+				autRet.setConfigurazione(config);
+				break;
+			}
+			case PRINCIPAL: {
+				APIImplAutenticazioneConfigurazionePrincipal config = new APIImplAutenticazioneConfigurazionePrincipal();				
+				TipoAutenticazionePrincipal tipoAuthnPrincipal = pd.getProprietaAutenticazioneList()
+						.stream()
+						.filter( p -> ParametriAutenticazionePrincipal.TIPO_AUTENTICAZIONE.equals(p.getNome()))
+						.map( p -> TipoAutenticazionePrincipal.toEnumConstant(p.getValore()) )
+						.findAny()
+						.orElse(TipoAutenticazionePrincipal.CONTAINER);
+				config.setTipo(Enums.dualizeMap(Enums.tipoAutenticazionePrincipalFromRest).get(tipoAuthnPrincipal));
+				
+				switch (config.getTipo()) {
+				case CONTAINER:
+				case IP_ADDRESS:
+					break;
+				case HEADER_BASED: {
+					Optional<Proprieta> prop = pd.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.NOME.equals(p.getNome())).findAny();
+					if (prop.isPresent()) config.setNome(prop.get().getValore());					
+					break;
+				}
+				case FORM_BASED: {
+					Optional<Proprieta> prop = pd.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.NOME.equals(p.getNome())).findAny();
+					if (prop.isPresent()) config.setNome(prop.get().getValore());					
+					break;
+				}
+				case URL_BASED: {
+					Optional<Proprieta> prop = pd.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.PATTERN.equals(p.getNome())).findAny();
+					if (prop.isPresent()) config.setPattern(prop.get().getValore());
+					break;
+				}
+				}	// switch config.getTipo
+				
+				// IsForward
+				Optional<Proprieta> prop = pd.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL.equals(p.getNome())).findAny();
+				if (prop.isPresent() && ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL_TRUE.equals(prop.get().getValore()))
+					config.setForward(true);
+				else
+					config.setForward(false);
+				
+				autRet.setConfigurazione(config);
+				break;
+			}  // case principal
+			
+			default:
+				break;
+			}  // switch autRet.getTipo
+					
 			ControlloAccessiAutenticazione ret = new ControlloAccessiAutenticazione();
 			ret.setAutenticazione(autRet);
 			ret.setToken(token);
@@ -1167,14 +1228,15 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
-	
 			ControlloAccessiAutorizzazioneApplicativi ret = new ControlloAccessiAutorizzazioneApplicativi();
-			ret.setApplicativi(pd.getServizioApplicativoList().stream().map( saPA -> saPA.getNome()).collect(Collectors.toList()));
+			
+			int idLista = Liste.PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO;
+			Search ricerca = Helper.setupRicercaPaginata("", -1, 0, idLista);
+			List<ServizioApplicativo> lista = env.pdCore.porteDelegateServizioApplicativoList(pd.getId(), ricerca);
+			ret.setApplicativi(lista.stream().map( saPA -> saPA.getNome()).collect(Collectors.toList()));
 		
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
-     
-     
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -1205,7 +1267,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			final ControlloAccessiAutorizzazioneRuoli ret = new ControlloAccessiAutorizzazioneRuoli(); 
             
-			ret.setRuoli(Helper.evalnull( () -> pd.getRuoli().getRuoloList().stream().map(Ruolo::getNome).collect(Collectors.toList()) ));
+			ret.setRuoli(BaseHelper.evalnull( () -> pd.getRuoli().getRuoloList().stream().map(Ruolo::getNome).collect(Collectors.toList()) ));
         
 			context.getLogger().info("Invocazione completata con successo");
         	return ret;
@@ -1240,7 +1302,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			final ControlloAccessiAutorizzazioneScopes ret = new ControlloAccessiAutorizzazioneScopes();
 
-			ret.setScope(Helper.evalnull( () -> pd.getScope().getScopeList().stream().map(Scope::getNome).collect(Collectors.toList()) ));
+			ret.setScope(BaseHelper.evalnull( () -> pd.getScope().getScopeList().stream().map(Scope::getNome).collect(Collectors.toList()) ));
 			
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
@@ -1318,7 +1380,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
                        
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( 
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( 
 					() -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
 					"Fruizione"
 				);
@@ -1367,7 +1429,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			
 			List<AttivazionePolicy> policies = env.confCore.attivazionePolicyList(null, RuoloPolicy.DELEGATA, pd.getNome());
-			AttivazionePolicy policy = Helper.findFirst( policies, p -> p.getIdActivePolicy().equals(idPolicy) ).orElse(null);
+			AttivazionePolicy policy = BaseHelper.findFirst( policies, p -> p.getIdActivePolicy().equals(idPolicy) ).orElse(null);
 			
 			if ( policy == null ) 
 				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting con id " + idPolicy );
@@ -1477,9 +1539,9 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final String searchElemento = elemento.equals("*")
 					? ""
 					: elemento;			
-			List<CorrelazioneApplicativaElemento> lista = Helper.evalnull( () -> pd.getCorrelazioneApplicativa().getElementoList() );
+			List<CorrelazioneApplicativaElemento> lista = BaseHelper.evalnull( () -> pd.getCorrelazioneApplicativa().getElementoList() );
             
-			Optional<CorrelazioneApplicativaElemento> el = Helper.findFirst( lista, c -> c.getNome().equals(searchElemento) );
+			Optional<CorrelazioneApplicativaElemento> el = BaseHelper.findFirst( lista, c -> c.getNome().equals(searchElemento) );
 			
 			if ( !el.isPresent() )
 				throw FaultCode.NOT_FOUND.toException("CorrelazioneApplicativaRichiesta per l'elemento " + elemento + " non presente");
@@ -1522,9 +1584,9 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 					? ""
 					: elemento;			
 			
-			List<CorrelazioneApplicativaRispostaElemento> lista = Helper.evalnull( () -> pd.getCorrelazioneApplicativaRisposta().getElementoList() );
+			List<CorrelazioneApplicativaRispostaElemento> lista = BaseHelper.evalnull( () -> pd.getCorrelazioneApplicativaRisposta().getElementoList() );
       
-			Optional<CorrelazioneApplicativaRispostaElemento> el = Helper.findFirst( lista, c -> c.getNome().equals(searchElemento) );
+			Optional<CorrelazioneApplicativaRispostaElemento> el = BaseHelper.findFirst( lista, c -> c.getNome().equals(searchElemento) );
 			
 			if ( !el.isPresent() )
 				throw FaultCode.NOT_FOUND.toException("CorrelazioneApplicativaRisposta per l'elemento " + elemento + " non presente");
@@ -1593,7 +1655,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 			
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
@@ -1636,7 +1698,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
                         
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
 			final PortaDelegata oldPd = env.pdCore.getPortaDelegata(env.idPd);
@@ -1680,7 +1742,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
                         
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
@@ -1722,14 +1784,17 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
 			final PortaDelegata newPd = env.pdCore.getPortaDelegata(env.idPd);
 			final PortaDelegata oldPd = env.pdCore.getPortaDelegata(env.idPd);
 			
-			if (body.isAbilitato())
-				newPd.setGestioneToken(ErogazioniApiHelper.buildGestioneToken(body, newPd, true, env.paHelper, env));
+			if (body.isAbilitato()) {
+				GestioneToken gTok = newPd.getGestioneToken() != null ? newPd.getGestioneToken() : new GestioneToken();
+				ErogazioniApiHelper.fillGestioneToken(gTok, body);
+				newPd.setGestioneToken(gTok);
+			}
 			else
 				newPd.setGestioneToken(null);
 			
@@ -1739,8 +1804,6 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			env.pdCore.performUpdateOperation(env.userLogin, false, newPd);
 			context.getLogger().info("Invocazione completata con successo");
-        
-     
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -1767,19 +1830,17 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
-			Helper.throwIfNull(body);	
+			BaseHelper.throwIfNull(body);	
 			  
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( 
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( 
 					() -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(),  env),
 					"Fruizione"
 				);
-			
 			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
 			final IDPortaDelegata idPd =  ErogazioniApiHelper.getIDGruppoPDDefault(env.idSoggetto.toIDSoggetto(), idAsps, env.apsCore);
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(idPd);
-			
 			final CorsConfigurazione oldConf = pd.getGestioneCors();
 			
 			if (body.isRidefinito())
@@ -1789,11 +1850,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			env.pdCore.performUpdateOperation(env.userLogin, false, pd);
 			
-			
-			
 			context.getLogger().info("Invocazione completata con successo");
-        
-     
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -1820,36 +1877,27 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
-			Helper.throwIfNull(body);
-			
+			BaseHelper.throwIfNull(body);
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			
-			AttivazionePolicy policy = Helper.supplyOrNotFound( 
+			AttivazionePolicy policy = BaseHelper.supplyOrNotFound( 
 					() -> env.confCore.getAttivazionePolicy(idPolicy),
 					"Rate Limiting Policy con id " + idPolicy
 				);
-			
 			InfoPolicy infoPolicy = env.confCore.getInfoPolicy(policy.getIdPolicy());
-			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = env.confCore.getConfigurazioneControlloTraffico();
-			final RuoloPolicy ruoloPorta = RuoloPolicy.DELEGATA;
-			final String nomePorta = pd.getNome();
-			        
-			context.getLogger().info("Invocazione completata con successo");
-			
 			ErogazioniApiHelper.override(body, env.idSoggetto.toIDSoggetto(), env.requestWrapper);
 
 			String errorAttivazione = env.confHelper.readDatiAttivazionePolicyFromHttpParameters(policy, false, TipoOperazione.CHANGE, infoPolicy);
 			if ( !StringUtils.isEmpty(errorAttivazione) ) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(errorAttivazione));
 			}
+			// Qui viene solevata eccezione se il check non viene superato.
+			FruizioniConfigurazioneHelper.attivazionePolicyCheckData(TipoOperazione.CHANGE, pd, policy,infoPolicy, env);
 			
-			if (! env.confHelper.attivazionePolicyCheckData(TipoOperazione.CHANGE, configurazioneControlloTraffico, policy,infoPolicy, ruoloPorta, nomePorta) ) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
-			}			
-			
-			env.confCore.performUpdateOperation(env.userLogin, false, policy);
-     
+			env.confCore.performUpdateOperation(env.userLogin, false, policy
+					);
+			context.getLogger().info("Invocazione completata con successo");
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -1876,7 +1924,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
 			
-			Helper.throwIfNull(body);	
+			BaseHelper.throwIfNull(body);	
 
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
@@ -1915,7 +1963,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                            
-			Helper.throwIfNull(body);	
+			BaseHelper.throwIfNull(body);	
 
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
@@ -1957,7 +2005,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 
 			if ( body.getElemento() == null )
 				body.setElemento("");
@@ -1974,7 +2022,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				pd.setCorrelazioneApplicativa(new org.openspcoop2.core.config.CorrelazioneApplicativa());
 			
 			final List<CorrelazioneApplicativaElemento> correlazioni = pd.getCorrelazioneApplicativa().getElementoList();
-			final CorrelazioneApplicativaElemento oldElem = Helper.findAndRemoveFirst(correlazioni, c -> c.getNome().equals(searchElemento));
+			final CorrelazioneApplicativaElemento oldElem = BaseHelper.findAndRemoveFirst(correlazioni, c -> c.getNome().equals(searchElemento));
 			
 			if ( oldElem == null ) 
 				throw FaultCode.NOT_FOUND.toException("Correlazione Applicativa Richiesta per l'elemento " + elemento + " non trovata ");
@@ -2019,7 +2067,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
-			Helper.throwIfNull(body);
+			BaseHelper.throwIfNull(body);
 
 			if ( body.getElemento() == null )
 				body.setElemento("");
@@ -2036,7 +2084,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				pd.setCorrelazioneApplicativaRisposta(new org.openspcoop2.core.config.CorrelazioneApplicativaRisposta());
 			
 			final List<CorrelazioneApplicativaRispostaElemento> correlazioni = pd.getCorrelazioneApplicativaRisposta().getElementoList();
-			final CorrelazioneApplicativaRispostaElemento oldElem = Helper.findAndRemoveFirst(correlazioni, c -> c.getNome().equals(searchElemento));
+			final CorrelazioneApplicativaRispostaElemento oldElem = BaseHelper.findAndRemoveFirst(correlazioni, c -> c.getNome().equals(searchElemento));
 			
 			if ( oldElem == null ) 
 				throw FaultCode.NOT_FOUND.toException("Correlazione Applicativa Risposta per l'elemento " + elemento + " non trovata ");
@@ -2079,14 +2127,14 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
              
-			Helper.throwIfNull(body);	
+			BaseHelper.throwIfNull(body);	
 
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			
 			// ============================================
-			final String stato = Helper.evalnull( () -> body.getStato().toString());
-			final String tipoValidazione = Helper.evalnull( () -> body.getTipo().toString() );
+			final String stato = BaseHelper.evalnull( () -> body.getStato().toString());
+			final String tipoValidazione = BaseHelper.evalnull( () -> body.getTipo().toString() );
 			
 			env.requestWrapper.overrideParameter(CostantiControlStation.PARAMETRO_PORTE_XSD, stato);
 			
@@ -2097,7 +2145,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final ValidazioneContenutiApplicativi vx = new ValidazioneContenutiApplicativi();
 			
 			// Imposto Mtom al valore eventualmente già presente nel db.
-			vx.setAcceptMtomMessage( Helper.evalnull( () -> pd.getValidazioneContenutiApplicativi().getAcceptMtomMessage()) );
+			vx.setAcceptMtomMessage( BaseHelper.evalnull( () -> pd.getValidazioneContenutiApplicativi().getAcceptMtomMessage()) );
 			vx.setStato( StatoFunzionalitaConWarning.toEnumConstant(stato) );
 			vx.setTipo( ValidazioneContenutiApplicativiTipo.toEnumConstant(tipoValidazione) );
 			

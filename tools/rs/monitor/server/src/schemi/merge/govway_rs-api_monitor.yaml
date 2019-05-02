@@ -348,8 +348,6 @@ paths:
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
-      - $ref: "#/components/parameters/orientamento_etichette"
-      - $ref: "#/components/parameters/larghezza_grafico"
       responses:
         200:
           $ref: "#/components/responses/200ReportStatistico"
@@ -423,8 +421,6 @@ paths:
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
-      - $ref: "#/components/parameters/orientamento_etichette"
-      - $ref: "#/components/parameters/larghezza_grafico"
       responses:
         200:
           $ref: "#/components/responses/200ReportStatistico"
@@ -498,8 +494,6 @@ paths:
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
-      - $ref: "#/components/parameters/orientamento_etichette"
-      - $ref: "#/components/parameters/larghezza_grafico"
       responses:
         200:
           $ref: "#/components/responses/200ReportStatistico"
@@ -574,8 +568,6 @@ paths:
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
-      - $ref: "#/components/parameters/orientamento_etichette"
-      - $ref: "#/components/parameters/larghezza_grafico"
       responses:
         200:
           $ref: "#/components/responses/200ReportStatistico"
@@ -645,8 +637,6 @@ paths:
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
-      - $ref: "#/components/parameters/orientamento_etichette"
-      - $ref: "#/components/parameters/larghezza_grafico"
       responses:
         200:
           $ref: "#/components/responses/200ReportStatistico"
@@ -719,8 +709,6 @@ paths:
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
-      - $ref: "#/components/parameters/orientamento_etichette"
-      - $ref: "#/components/parameters/larghezza_grafico"
       responses:
         200:
           $ref: "#/components/responses/200ReportStatistico"
@@ -795,8 +783,6 @@ paths:
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
-      - $ref: "#/components/parameters/orientamento_etichette"
-      - $ref: "#/components/parameters/larghezza_grafico"
       responses:
         200:
           $ref: "#/components/responses/200ReportStatistico"
@@ -871,8 +857,6 @@ paths:
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
-      - $ref: "#/components/parameters/orientamento_etichette"
-      - $ref: "#/components/parameters/larghezza_grafico"
       responses:
         200:
           $ref: "#/components/responses/200ReportStatistico"
@@ -902,7 +886,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RicercaStatisticaDistribuzioneIdAutenticato"
+              $ref: "#/components/schemas/RicercaStatisticaDistribuzioneApplicativo"
       responses:
         200:
           $ref: "#/components/responses/200ReportStatistico"
@@ -946,8 +930,6 @@ paths:
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
-      - $ref: "#/components/parameters/orientamento_etichette"
-      - $ref: "#/components/parameters/larghezza_grafico"
       - $ref: "#/components/parameters/claim"
       responses:
         200:
@@ -1247,10 +1229,6 @@ components:
           $ref: "#/components/schemas/FormatoReportEnum"
         tipo:
           $ref: "#/components/schemas/TipoReportEnum"
-        orientamento_etichette:
-          $ref: "#/components/schemas/OrientamentoEtichetteReportEnum"
-        larghezza_grafico:
-          $ref: "#/components/schemas/LarghezzaReportGrafico"
     OpzioniGenerazioneReportMultiLine:
       type: "object"
       allOf:
@@ -1267,11 +1245,6 @@ components:
         properties:
           tipo_informazione:
             $ref: "#/components/schemas/TipoInformazioneReport"
-    LarghezzaReportGrafico:
-      maximum: 2000
-      minimum: 1
-      type: "integer"
-      format: "int32"
     TipoInformazioneReport:
       type: "object"
       properties:
@@ -1483,6 +1456,8 @@ components:
       - "tipo"
       type: "object"
       properties:
+        unita_tempo:
+          $ref: "#/components/schemas/UnitaTempoReportEnum"
         intervallo_temporale:
           $ref: "#/components/schemas/FiltroTemporale"
         tipo:
@@ -1664,10 +1639,6 @@ components:
             $ref: "#/components/schemas/NCName"
           esito:
             $ref: "#/components/schemas/FiltroEsito"
-    RicercaStatisticaDistribuzioneIdAutenticato:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/RicercaStatisticaDistribuzioneApplicativo"
     RicercaStatisticaDistribuzioneTokenInfo:
       type: "object"
       allOf:
@@ -1765,11 +1736,11 @@ components:
             mapping:
               applicativo: "#/components/schemas/FiltroMittenteFruizioneApplicativo"
               identificativo_autenticato: "#/components/schemas/FiltroMittenteIdAutenticato"
-              token_info: "#/components/schemas/FiltroMittenteTokenClaim"
+              token_info: "#/components/schemas/FiltroMittenteFruizioneTokenClaim"
           oneOf:
           - $ref: "#/components/schemas/FiltroMittenteFruizioneApplicativo"
           - $ref: "#/components/schemas/FiltroMittenteIdApplicativo"
-          - $ref: "#/components/schemas/FiltroMittenteTokenClaim"
+          - $ref: "#/components/schemas/FiltroMittenteFruizioneTokenClaim"
       description: "Descrive le informazioni di filtraggio relative al mittente per\
         \ la ricerca di transazioni relative a fruizioni di servizio"
     FiltroMittenteErogazione:
@@ -1784,12 +1755,12 @@ components:
               soggetto: "#/components/schemas/FiltroMittenteErogazioneSoggetto"
               applicativo: "#/components/schemas/FiltroMittenteErogazioneApplicativo"
               identificativo_autenticato: "#/components/schemas/FiltroMittenteIdAutenticato"
-              token_info: "#/components/schemas/FiltroMittenteTokenClaim"
+              token_info: "#/components/schemas/FiltroMittenteErogazioneTokenClaim"
           oneOf:
           - $ref: "#/components/schemas/FiltroMittenteErogazioneSoggetto"
           - $ref: "#/components/schemas/FiltroMittenteErogazioneApplicativo"
           - $ref: "#/components/schemas/FiltroMittenteIdApplicativo"
-          - $ref: "#/components/schemas/FiltroMittenteTokenClaim"
+          - $ref: "#/components/schemas/FiltroMittenteErogazioneTokenClaim"
       description: "Descrive le informazioni di filtraggio relative al mittente per\
         \ la ricerca di transazioni relative ad erogazioni di servizio"
     FiltroMittenteErogazioneDistribuzioneSoggettoRemoto:
@@ -1802,10 +1773,10 @@ components:
             propertyName: "tipo"
             mapping:
               identificativo_autenticato: "#/components/schemas/FiltroMittenteIdAutenticato"
-              token_info: "#/components/schemas/FiltroMittenteTokenClaim"
+              token_info: "#/components/schemas/FiltroMittenteErogazioneTokenClaim"
           oneOf:
           - $ref: "#/components/schemas/FiltroMittenteIdApplicativo"
-          - $ref: "#/components/schemas/FiltroMittenteTokenClaim"
+          - $ref: "#/components/schemas/FiltroMittenteErogazioneTokenClaim"
       description: "Descrive le informazioni di filtraggio relative al mittente per\
         \ la ricerca di transazioni relative ad erogazioni di servizio"
     FiltroMittenteErogazioneSoggetto:
@@ -1842,7 +1813,16 @@ components:
         properties:
           autenticazione:
             $ref: "#/components/schemas/TipoFiltroMittenteIdentificativoAutenticatoEnum"
-    FiltroMittenteTokenClaim:
+    FiltroMittenteErogazioneTokenClaim:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/FiltroTokenClaimBase"
+      - $ref: "#/components/schemas/FiltroRicercaId"
+      - type: "object"
+        properties:
+          soggetto:
+            $ref: "#/components/schemas/SimpleName"
+    FiltroMittenteFruizioneTokenClaim:
       type: "object"
       allOf:
       - $ref: "#/components/schemas/FiltroTokenClaimBase"
@@ -1854,8 +1834,6 @@ components:
       properties:
         claim:
           $ref: "#/components/schemas/TokenClaimEnum"
-        soggetto:
-          $ref: "#/components/schemas/SimpleName"
     EsitoTransazioneSimpleSearchEnum:
       type: "string"
       enum:
@@ -1907,12 +1885,12 @@ components:
     TipoReportEnum:
       type: "string"
       example: "Line"
+      default: "table"
       enum:
       - "line"
       - "pie"
       - "bar"
       - "table"
-      default: "table"
     FormatoReportEnum:
       type: "string"
       example: "csv"
@@ -1922,48 +1900,39 @@ components:
       - "xls"
       - "xml"
       - "json"
-      - "png"
     UnitaTempoReportEnum:
       type: "string"
       example: "orario"
+      default: "giornaliero"
       enum:
       - "orario"
       - "giornaliero"
       - "settimanale"
       - "mensile"
-      default: "giornaliero"
     TipoInformazioneReportEnum:
       type: "string"
       example: "numero_transazioni"
+      default: "numero_transazioni"
       enum:
       - "numero_transazioni"
       - "occupazione_banda"
       - "tempo_medio_risposta"
-      default: "numero_transazioni"
     OccupazioneBandaEnum:
       type: "string"
       example: "banda_complessiva"
+      default: "banda_complessiva"
       enum:
       - "banda_complessiva"
       - "banda_interna"
       - "banda_esterna"
-      default: "banda_complessiva"
     TempoMedioRispostaEnum:
       type: "string"
       example: "latenza_totale"
+      default: "latenza_totale"
       enum:
       - "latenza_totale"
       - "latenza_servizio"
       - "latenza_gateway"
-      default: "latenza_totale"
-    OrientamentoEtichetteReportEnum:
-      type: "string"
-      example: "obliquo"
-      enum:
-      - "orizzontale"
-      - "obliquo"
-      - "verticale"
-      default: "obliquo"
     TransazioneExt:
       type: "object"
       allOf:
@@ -2357,12 +2326,12 @@ components:
           example: "abc123"
     ProfiloEnum:
       type: "string"
+      default: "APIGateway"
       enum:
       - "APIGateway"
       - "SPCoop"
       - "FatturaPA"
       - "eDelivery"
-      default: "APIGateway"
     ProfiloCollaborazioneEnum:
       type: "string"
       example: "sincrono"
@@ -2837,8 +2806,7 @@ components:
     formato_report:
       name: "formato_report"
       in: "query"
-      description: "Indica la modalità di esportazione (csv, png pdf...) del report\
-        \ statistico"
+      description: "Indica la modalità di esportazione (csv, pdf...) del report statistico"
       required: true
       schema:
         $ref: "#/components/schemas/FormatoReportEnum"
@@ -2864,21 +2832,6 @@ components:
       required: false
       schema:
         $ref: "#/components/schemas/TipoInformazioneReportEnum"
-    orientamento_etichette:
-      name: "orientamento_etichette"
-      in: "query"
-      description: "Specifica l'orientamento delle label nei grafici generati dalle\
-        \ analisi statistiche"
-      required: false
-      schema:
-        $ref: "#/components/schemas/OrientamentoEtichetteReportEnum"
-    larghezza_grafico:
-      name: "larghezza_grafico"
-      in: "query"
-      description: "Specifica la largheza del grafico in pixel"
-      required: false
-      schema:
-        $ref: "#/components/schemas/LarghezzaReportGrafico"
     claim:
       name: "claim"
       in: "query"

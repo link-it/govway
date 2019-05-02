@@ -26,18 +26,102 @@ Background:
 * def api_petstore_path = 'api/' + api_petstore.nome + '/' + api_petstore.versione
 
 * def policy = read('classpath:bodies/rate-limiting-policy-fruizione.json')
+
 * def policy_update = read('classpath:bodies/rate-limiting-policy-fruizione-update.json')
 
-#TODO: Versioni SPCoop
+* def policy_types = [ 'numero-richieste-giornaliere', 'numero-richieste-orarie', 'numero-richieste-minuto', 'numero-richieste-simultanee', 'occupazione-banda-oraria', 'tempo-medio-orario']
+* def build_data = 
+    """
+    function(policy_types, policy_body, policy_body_update, servizio_path) {
+        var ret = [];
+        for (var idx=0; idx < policy_types.length; idx++) {
+            ret.push({servizio_path: servizio_path, policy: policy_body, policy_update: policy_body_update, policy_type: policy_types[idx] } )
+        }
 
-@TestGestioneToken
+        return ret;
+    }
+    """
+
+@RateLimitingAllPolicyTypes
 Scenario: Configurazione Rate Limiting Fruizioni
 
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'soggetti', body: erogatore })
     * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
 
-    * def conf = call read('classpath:servizi-configurazione/rate-limiting.feature') ({servizio_path: fruizione_petstore_path, policy: policy, policy_update: policy_update })
+    # Creo un applicativo da utilizzare nel criterio di collezionamento dati
+    * def applicativo = read('classpath:bodies/applicativo_http.json') 
+    * eval randomize(applicativo, ["nome", "credenziali.username"])
+    * call create ({ resourcePath: 'applicativi', body: applicativo })
+    * eval policy.filtro.applicativo_fruitore = applicativo.nome
+    
+    * def data = build_data(policy_types, policy, policy_update, fruizione_petstore_path)
+    * call read('classpath:servizi-configurazione/rate-limiting.feature') data
+
+    * call delete ({ resourcePath: 'applicativi/' + applicativo.nome })
+    * call delete ({ resourcePath: fruizione_petstore_path })
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path })
+
+@FiltroApplicativoFruitoreInesistente400
+Scenario: Configurazione del Rate Limting filtrando per un applicativo inesistente
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
+    * eval policy.filtro.applicativo_fruitore = "ApplicativoInesistente"
+    * eval randomize(policy, ["nome", "filtro.applicativo_fruitore"])
+
+    Given url configUrl
+    And path fruizione_petstore_path, 'configurazioni', 'rate-limiting'
+    And header Authorization = govwayConfAuth
+    And request policy
+    And params query_params
+    When method post
+    Then status 400
+
+    * call delete ({ resourcePath: fruizione_petstore_path })
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path })
+
+
+@FiltroSoggettoFruitoreInesistente400
+Scenario: Configurazione del Rate Limiting filtrando per un soggetto fruitore inesistente
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
+    * eval policy.filtro.soggetto_fruitore = "SoggettoInesistente"
+    * eval randomize(policy, ["nome", "filtro.soggetto_fruitore"])
+
+    Given url configUrl
+    And path fruizione_petstore_path, 'configurazioni', 'rate-limiting'
+    And header Authorization = govwayConfAuth
+    And request policy
+    And params query_params
+    When method post
+    Then status 400
+
+    * call delete ({ resourcePath: fruizione_petstore_path })
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path })
+
+@FiltroAzioneInesistente400
+Scenario: Configurazione del Rate Limiting filtrando per un'azione inesistente
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
+    * eval policy.filtro.azione = "AzioneInesistente"
+    * eval randomize(policy, ["nome", "filtro.azione"])
+
+    Given url configUrl
+    And path fruizione_petstore_path, 'configurazioni', 'rate-limiting'
+    And header Authorization = govwayConfAuth
+    And request policy
+    And params query_params
+    When method post
+    Then status 400
 
     * call delete ({ resourcePath: fruizione_petstore_path })
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })

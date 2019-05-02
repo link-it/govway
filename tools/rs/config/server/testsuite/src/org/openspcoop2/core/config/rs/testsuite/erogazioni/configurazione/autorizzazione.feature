@@ -89,10 +89,6 @@ Scenario: Configurazione Autorizzazione Erogazioni add Soggetto in Autorizzazion
     And params query_params
     When method get
     Then status 200
-    
-    * print "CIAOONE", soggetto_puntuale
-
-    # TODO: matchare la risposta, che deve contenere il soggetto appena aggiunto.
 
     # Rimuovo Il soggetto dall'autorizzazione
     Given url configUrl

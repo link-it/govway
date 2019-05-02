@@ -32,9 +32,6 @@ public class FiltroTokenClaimBase  {
   
   @Schema(required = true, description = "")
   private TokenClaimEnum claim = null;
-  
-  @Schema(description = "")
-  private String soggetto = null;
  /**
    * Get claim
    * @return claim
@@ -55,25 +52,6 @@ public class FiltroTokenClaimBase  {
     return this;
   }
 
- /**
-   * Get soggetto
-   * @return soggetto
-  **/
-  @JsonProperty("soggetto")
-  @Valid
- @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getSoggetto() {
-    return this.soggetto;
-  }
-
-  public void setSoggetto(String soggetto) {
-    this.soggetto = soggetto;
-  }
-
-  public FiltroTokenClaimBase soggetto(String soggetto) {
-    this.soggetto = soggetto;
-    return this;
-  }
-
 
   @Override
   public String toString() {
@@ -81,7 +59,6 @@ public class FiltroTokenClaimBase  {
     sb.append("class FiltroTokenClaimBase {\n");
     
     sb.append("    claim: ").append(FiltroTokenClaimBase.toIndentedString(this.claim)).append("\n");
-    sb.append("    soggetto: ").append(FiltroTokenClaimBase.toIndentedString(this.soggetto)).append("\n");
     sb.append("}");
     return sb.toString();
   }

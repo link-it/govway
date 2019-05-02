@@ -4,10 +4,8 @@ Background:
 
 * call read('classpath:crud_commons.feature')
 
-* def applicativo = read('applicativo.json') 
-
+* def applicativo = read('classpath:bodies/applicativo_http.json') 
 * eval randomize(applicativo, ["nome", "credenziali.username"])
-
 
 @FindAll200
 Scenario: Applicativi FindAll 200 OK
@@ -25,4 +23,3 @@ Scenario: Applicativi Get 404
     * call get_404 { resourcePath: '#("applicativi/" + applicativo.nome)' }
 
 
-# Scenario: Findall 404 TODO: Questo dipende da property

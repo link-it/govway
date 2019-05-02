@@ -68,10 +68,6 @@ Scenario: Update Erogazioni Info Generali 204
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
     * call delete ({ resourcePath: api_petstore_path })
 
-#
-##BUG Mi dice: "La modalità di identificazione azione deve essere una fra: [interfaceBased]
-##    Quando invece da console posso specificarne di più tipi oltre all'interfaceBased
-# TODO: Provare più modalità di invocazione.
 @UpdateUrlInvocazione204
 Scenario: Update Erogazioni Url Invocazione 204
     

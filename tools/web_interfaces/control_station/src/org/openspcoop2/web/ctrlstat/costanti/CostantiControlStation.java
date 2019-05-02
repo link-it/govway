@@ -1251,5 +1251,7 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_NOME = "&Egrave; gi&agrave; presente una regola di trasformazione con il nome indicato.";
 	public static final String MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA_APPLICATIVO = "&Egrave; gi&agrave; presente una regola di trasformazione, con gli stessi parametri di applicabilit&agrave; e l'applicativo selezionato.";
 	public static final String MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA_SOGGETTO = "&Egrave; gi&agrave; presente una regola di trasformazione, con gli stessi parametri di applicabilit&agrave; e il soggetto selezionato.";
-	
+	public static final String MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE = "Azione {0} non assegnabile poich&egrave; utilizzata come filtro della policy di rate limiting ''{1}''";
+	public static final String MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_GRUPPO = "Azione {0} non assegnabile poich&egrave; utilizzata come filtro della policy di rate limiting ''{1}'' (gruppo: {2})";
+
 }

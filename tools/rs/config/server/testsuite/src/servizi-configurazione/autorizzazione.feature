@@ -2,6 +2,7 @@ Feature: Configurazione Controllo Accessi Autorizzazione
 
 Background:
 
+    * def autorizzazione_disabilitata = ({ autorizzazione: { tipo: 'disabilitato' } })
     * def autorizzazione = read('classpath:bodies/controllo-accessi-autorizzazione-puntuale.json')
     * def autorizzazione_xacml = read('classpath:bodies/controllo-accessi-autorizzazione-xacml.json')
     * def autorizzazione_custom = read('classpath:bodies/controllo-accessi-autorizzazione-custom.json')
@@ -20,6 +21,15 @@ Scenario: Update Autorizzazione
     When method put
     Then status 204
 
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response.autorizzazione.tipo == "abilitato"
+    And match response.autorizzazione.configurazione contains ({puntuale: true, ruoli: true, scope: false })
+
 @UpdateAutorizzazioneXacml
 Scenario: Update Autorizzazione Xacml
 
@@ -31,6 +41,16 @@ Scenario: Update Autorizzazione Xacml
     When method put
     Then status 204
 
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response.autorizzazione.tipo == "xacml-Policy"
+    And match response.autorizzazione.configurazione contains ({ ruoli_fonte: 'esterna' })
+
+
 @UpdateAutorizzazioneCustom
 Scenario: Update Autorizzazione Custom
 
@@ -41,6 +61,15 @@ Scenario: Update Autorizzazione Custom
     And params query_params
     When method put
     Then status 204
+
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response.autorizzazione.tipo == "custom"
+    And match response.autorizzazione.configurazione.nome == autorizzazione_custom.autorizzazione.configurazione.nome
 
 @GetAutorizzazione
 Scenario: Get Autorizzazione
@@ -126,8 +155,7 @@ Scenario: Controllo accessi autorizzazione applicativi puntuale
     And params query_params
     When method get
     Then status 200
-
-    # TODO: matchare la risposta, che deve contenere l'applicativo appena aggiunto.
+    And match response.applicativi contains ([applicativo_puntuale.applicativo])
 
     # Rimuovo l'applicativo dall'autorizzazione
     Given url configUrl
@@ -188,16 +216,61 @@ Scenario: Controllo accessi autorizzazione ruoli
     And params query_params
     When method get
     Then status 200
+    And match response.ruoli contains ([ruolo.ruolo])
 
-    # TODO: matchare la risposta, che deve contenere il ruolo appena aggiunto.
-
-    # Rimuovo il ruolo
+    # Rimuovo il ruolo dall'autorizzazione
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione', 'ruoli', ruolo.ruolo
     And header Authorization = govwayConfAuth
     And params query_params
     When method delete
     Then status 204
+
+    # Rimuovo il ruolo dal registro
+    Given url configUrl
+    And path 'ruoli', ruolo_registro.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method delete
+    Then status 204
+
+@AutorizzazioneTokenClaims
+Scenario: Controllo Accessi Autorizzazione Token Claims
+
+    # Disabilito l'autorizzazione
+    * eval autorizzazione.autorizzazione.tipo = 'disabilitato'
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione'
+    And header Authorization = govwayConfAuth
+    And request autorizzazione
+    And params query_params
+    When method put
+    Then status 204
+
+    # Abilito la gestione dei tokens
+    * def gestione_token_body = read('classpath:bodies/gestione-token-petstore.json')
+
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'gestione-token'
+    And header Authorization = govwayConfAuth
+    And request gestione_token_body
+    And params query_params
+    When method put
+    Then status 204
+
+    # Abilito l'autorizzazione per token claim
+    * eval autorizzazione.autorizzazione.configurazione = ({ puntuale: false, ruoli: false, scope: false, token: true, token_claims:"user=pippo" })
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione'
+    And header Authorization = govwayConfAuth
+    And request autorizzazione
+    And params query_params
+    When method put
+    Then status 204
+
+    # TODO: Matcha la risposta.
+
+
 
 @AutorizzazioneScope
 Scenario: Controllo Accessi Autorizzazione Scope
@@ -247,8 +320,7 @@ Scenario: Controllo Accessi Autorizzazione Scope
     And params query_params
     When method get
     Then status 200
-
-    # TODO: matchare la risposta, che deve contenere l'applicativo appena aggiunto.
+    And match response.scope contains ([scope.scope])
 
     # Rimuovo lo scope dall'autorizzazione
     Given url configUrl

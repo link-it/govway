@@ -379,7 +379,8 @@ public class ConfigurazioneCostanti {
 	
 	public final static String LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN = "Token Policy";
 	
-	public final static String LABEL_CONFIGURAZIONE_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+	public final static String VALUE_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI = "-*-";
+	public final static String LABEL_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	
 	public final static String LABEL_CONFIGURAZIONE_DESTINAZIONI = "Destinazioni";
 	public final static String LABEL_CONFIGURAZIONE_ROTTA = "Rotta";

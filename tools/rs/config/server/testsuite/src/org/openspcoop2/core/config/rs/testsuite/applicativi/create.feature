@@ -4,14 +4,13 @@ Background:
 
 * call read('classpath:crud_commons.feature')
 
-* def applicativo = read('applicativo.json') 
+* def applicativo = read('classpath:bodies/applicativo_http.json') 
 * eval randomize(applicativo, ["nome", "credenziali.username"])
 
-* def applicativo_https = read('applicativo_https.json') 
-* eval randomize(applicativo_https, ["nome", "credenziali.username"])
+* def applicativo_https = read('classpath:bodies/applicativo_https.json') 
 
-* def applicativo_https_certificate = read('applicativo_https_certificate.json') 
-* eval randomize(applicativo_https_certificate, ["nome", "credenziali.username"])
+* def applicativo_https_certificate = read('classpath:bodies/applicativo_https_certificate.json') 
+* eval randomize(applicativo_https_certificate, ["nome" ])
 
 @Create204
 Scenario: Applicativi Creazione 204 OK

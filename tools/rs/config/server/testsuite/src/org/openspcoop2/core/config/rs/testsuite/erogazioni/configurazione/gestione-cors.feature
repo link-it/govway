@@ -20,8 +20,6 @@ Background:
 * def erogazione_petstore_path = 'erogazioni/' + petstore_key
 * def api_petstore_path = 'api/' + petstore_key
 
-#TODO: Versioni SPCoop
-
 @GestioneCORS
 Scenario: Gestione CORS Erogazioni
 

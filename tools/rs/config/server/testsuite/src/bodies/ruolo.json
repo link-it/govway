@@ -1,7 +1,7 @@
 { 
-	"nome": "RuoloJson1",
-	"descrizione": "Descrizione del ruoloJson1",
+	"nome": "RuoloTest1",
+	"descrizione": "Descrizione del RuoloTest1",
 	"fonte": "registro",
-	"identificativo_esterno": "IdentEsternoRuoloJson1",
+	"identificativo_esterno": "IdentEsternoRuoloTest1",
 	"contesto": "qualsiasi"
 }
