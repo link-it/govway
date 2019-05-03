@@ -24,7 +24,6 @@
 package org.openspcoop2.security.message.soapbox;
 
 
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,6 +52,7 @@ import org.openspcoop2.security.message.utils.ProcessingPart;
 import org.openspcoop2.security.message.utils.ProcessingPartUtils;
 import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 

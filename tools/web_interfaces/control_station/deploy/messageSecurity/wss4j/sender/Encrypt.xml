@@ -89,7 +89,7 @@
 			</conditions>
 		    <property name="encryptParts" />
 		</item>
-		<item type="text" name="encryptPartsCustom" label="Elementi Obbligatori" required="true" >
+		<item type="textarea" name="encryptPartsCustom" label="Elementi Obbligatori" required="true" >
 			<conditions and="false">
 				<condition>
 					<equals name="encryptPartsSelect" value="custom"/>
@@ -97,7 +97,7 @@
 			</conditions>
 		    <property name="encryptParts" />
 		</item>
-		<item type="text" name="optionalencryptPartsCustom" label="Elementi Opzionali" required="false" note="{Content/Element}{namespace}localName (cid:Attachments in localName for SWA)">
+		<item type="textarea" name="optionalencryptPartsCustom" label="Elementi Opzionali" required="false" note="{Content/Element}{namespace}localName (cid:Attachments in localName for SWA)">
 			<conditions and="false">
 				<condition>
 					<equals name="encryptPartsSelect" value="custom"/>
@@ -198,7 +198,7 @@
 				</values>
 				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="encryptionPropRefId" />
 			</item>
-			<item type="text" name="keystoreFile" label="File" required="true">
+			<item type="textarea" name="keystoreFile" label="File" required="true">
 			    <property name="org.apache.ws.security.crypto.merlin.file" properties="encryptionPropRefId" />
 			</item>
 			<item type="text" name="keystorePassword" label="Password" required="true">
@@ -238,7 +238,7 @@
 				</values>
 				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="encryptionPropRefId" />
 			</item>
-			<item type="text" name="truststoreFile" label="File" required="true">
+			<item type="textarea" name="truststoreFile" label="File" required="true">
 			    <property name="org.apache.ws.security.crypto.merlin.file" properties="encryptionPropRefId" />
 			</item>
 			<item type="text" name="truststorePassword" label="Password" required="true">

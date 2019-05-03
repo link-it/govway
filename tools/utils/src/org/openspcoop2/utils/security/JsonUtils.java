@@ -23,20 +23,38 @@
 package org.openspcoop2.utils.security;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Properties;
+
+import javax.crypto.SecretKey;
 
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
+import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.cxf.rs.security.jose.common.JoseConstants;
+import org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm;
+import org.apache.cxf.rs.security.jose.jwe.ContentEncryptionProvider;
+import org.apache.cxf.rs.security.jose.jwe.JweDecryptionProvider;
+import org.apache.cxf.rs.security.jose.jwe.JweEncryption;
+import org.apache.cxf.rs.security.jose.jwe.JweEncryptionProvider;
 import org.apache.cxf.rs.security.jose.jwe.JweException;
+import org.apache.cxf.rs.security.jose.jwe.JweHeaders;
+import org.apache.cxf.rs.security.jose.jwe.JweUtils;
+import org.apache.cxf.rs.security.jose.jwe.KeyEncryptionProvider;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
+import org.apache.cxf.rs.security.jose.jwk.JwkUtils;
+import org.apache.cxf.rs.security.jose.jwk.KeyOperation;
 import org.apache.cxf.rs.security.jose.jws.JwsException;
+import org.apache.cxf.rs.security.jose.jws.JwsSignatureProvider;
+import org.apache.cxf.rs.security.jose.jws.JwsSignatureVerifier;
+import org.apache.cxf.rs.security.jose.jws.JwsUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -249,4 +267,256 @@ public class JsonUtils {
 		}
 		return jsonWebKey;
 	}
-}
+	
+	public static SecretKey getSecretKey(Properties props) throws Exception {
+		if(props.containsKey("rs.security.keystore.type")) {
+			String type = props.getProperty("rs.security.keystore.type");
+			if("jceks".equalsIgnoreCase(type)) {
+				String fileK = props.getProperty("rs.security.keystore.file");
+				String password = props.getProperty("rs.security.keystore.password");
+				String alias = props.getProperty("rs.security.keystore.alias");
+				String passwordKey = props.getProperty("rs.security.key.password");
+				if(fileK!=null) {
+					
+					if(password==null || "".equals(password)){
+						throw new Exception("(JCEKS) Keystore password undefined");
+					}
+					
+					File file = new File(fileK);
+					KeyStore keystoreJCEKS = null;
+					if(file.exists()) {
+						keystoreJCEKS = new KeyStore(file.getAbsolutePath(), "JCEKS", password);
+					}
+					else {
+						InputStream is = JsonUtils.class.getResourceAsStream(fileK);
+						File fTmp = null;
+						try {
+							if(is!=null) {
+								byte[] f = Utilities.getAsByteArray(is);
+								fTmp = File.createTempFile("keystore", ".jceks");
+								FileSystemUtilities.writeFile(fTmp, f);
+								keystoreJCEKS = new KeyStore(fTmp.getAbsolutePath(), "JCEKS", password);
+							}
+						}finally {
+							try {
+								if(is!=null) {
+									is.close();
+								}
+							}catch(Exception e) {}
+							try {
+								if(fTmp!=null) {
+									fTmp.delete();
+								}
+							}catch(Exception e) {}
+						}
+					}	
+					if(keystoreJCEKS!=null) {
+						
+						if(alias==null || "".equals(alias)){
+							throw new Exception("(JCEKS) Alias key undefined");
+						}
+						if(passwordKey==null || "".equals(passwordKey)){
+							throw new Exception("(JCEKS) Password key undefined");
+						}
+						
+						SecretKey secretKey = (SecretKey) keystoreJCEKS.getSecretKey(alias, passwordKey);
+						return  secretKey;
+					}
+
+				}
+			}
+		}
+		return null;
+	}
+	
+	public static JwsSignatureProvider getJwsSymmetricProvider(Properties props) throws Exception {
+		String algorithm = props.getProperty("rs.security.signature.algorithm");
+		return getJwsSymmetricProvider(props, algorithm);
+	}
+	public static JwsSignatureProvider getJwsSymmetricProvider(Properties props, String algorithm) throws Exception {
+		org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = null;
+		if(algorithm==null || "".equals(algorithm)) {
+			String type = props.getProperty("rs.security.keystore.type");
+			if("jceks".equalsIgnoreCase(type)) {
+				throw new Exception("(JCEKS) Signature Algorithm undefined");	
+			}
+		}
+		else{
+			algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(algorithm);
+		}
+		return getJwsSymmetricProvider(props, algo);
+	}
+	public static JwsSignatureProvider getJwsSymmetricProvider(Properties props, org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algorithm) throws Exception {
+		
+		SecretKey secretKey = getSecretKey(props);
+		if(secretKey!=null) {
+			if(algorithm==null || "".equals(algorithm)) {
+				throw new Exception("(JCEKS) Signature Algorithm undefined");
+			}
+			byte[] encoded = secretKey.getEncoded();
+			JwsSignatureProvider provider = JwsUtils.getHmacSignatureProvider(encoded, algorithm);
+			if(provider==null) {
+				throw new Exception("(JCEKS) JwsSignatureProvider init failed; check signature algorithm ("+algorithm+")");
+			}
+			return provider;
+		}
+		return null;
+	}
+	
+	public static JwsSignatureVerifier getJwsSignatureVerifier(Properties props) throws Exception {
+		String algorithm = props.getProperty("rs.security.signature.algorithm");
+		return getJwsSignatureVerifier(props, algorithm);
+	}
+	public static JwsSignatureVerifier getJwsSignatureVerifier(Properties props, String algorithm) throws Exception {
+		org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = null;
+		if(algorithm==null || "".equals(algorithm)) {
+			String type = props.getProperty("rs.security.keystore.type");
+			if("jceks".equalsIgnoreCase(type)) {
+				throw new Exception("(JCEKS) Signature Algorithm undefined");
+			}
+		}
+		else {
+			algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(algorithm);
+		}
+		return getJwsSignatureVerifier(props, algo);
+	}
+	public static JwsSignatureVerifier getJwsSignatureVerifier(Properties props, org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algorithm) throws Exception {
+		
+		SecretKey secretKey = getSecretKey(props);
+		if(secretKey!=null) {
+			if(algorithm==null || "".equals(algorithm)) {
+				throw new Exception("(JCEKS) Signature Algorithm undefined");
+			}
+			JwsSignatureVerifier verifier = JwsUtils.getHmacSignatureVerifier(secretKey.getEncoded(), algorithm);
+			if(verifier==null) {
+				throw new Exception("(JCEKS) JwsSignatureVerifier init failed; check signature algorithm ("+algorithm+")");
+			}
+			return verifier;
+		}
+		return null;
+	}
+	
+	
+	
+	public static JweEncryptionProvider getJweEncryptionProvider(Properties props) throws Exception {
+		String algorithm = props.getProperty("rs.security.encryption.content.algorithm");
+		return getJweEncryptionProvider(props, algorithm);
+	}
+	public static JweEncryptionProvider getJweEncryptionProvider(Properties props, String algorithm) throws Exception {
+		org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm algo = null;
+		if(algorithm==null || "".equals(algorithm)) {
+			String type = props.getProperty("rs.security.keystore.type");
+			if("jceks".equalsIgnoreCase(type)) {
+				throw new Exception("(JCEKS) Content Algorithm undefined");
+			}
+		}
+		else {
+			algo = org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm.getAlgorithm(algorithm);
+		}
+		return getJweEncryptionProvider(props, algo);
+	}
+	public static JweEncryptionProvider getJweEncryptionProvider(Properties props, org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm algorithm) throws Exception {
+		
+		SecretKey secretKey = getSecretKey(props);
+		if(secretKey!=null) {
+			if(algorithm==null || "".equals(algorithm)) {
+				throw new Exception("(JCEKS) Content Algorithm undefined");
+			}
+			JweEncryptionProvider provider = JweUtils.getDirectKeyJweEncryption(secretKey, algorithm);
+			if(provider==null) {
+				throw new Exception("(JCEKS) JweEncryptionProvider init failed; check content algorithm ("+algorithm+")");
+			}
+			return provider;
+		}
+		return null;
+	}
+	
+	public static JweDecryptionProvider getJweDecryptionProvider(Properties props) throws Exception {
+		String algorithm = props.getProperty("rs.security.encryption.content.algorithm");
+		return getJweDecryptionProvider(props, algorithm);
+	}
+	public static JweDecryptionProvider getJweDecryptionProvider(Properties props, String algorithm) throws Exception {
+		org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm algo = null;
+		if(algorithm==null || "".equals(algorithm)) {
+			String type = props.getProperty("rs.security.keystore.type");
+			if("jceks".equalsIgnoreCase(type)) {
+				throw new Exception("(JCEKS) Content Algorithm undefined");
+			}
+		}
+		else {
+			algo = org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm.getAlgorithm(algorithm);
+		}
+		return getJweDecryptionProvider(props, algo);
+	}
+	public static JweDecryptionProvider getJweDecryptionProvider(Properties props, org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm algorithm) throws Exception {
+		
+		SecretKey secretKey = getSecretKey(props);
+		if(secretKey!=null) {
+			if(algorithm==null || "".equals(algorithm)) {
+				throw new Exception("(JCEKS) Content Algorithm undefined");
+			}
+			JweDecryptionProvider verifier = JweUtils.getDirectKeyJweDecryption(secretKey, algorithm);
+			if(verifier==null) {
+				throw new Exception("(JCEKS) JweDecryptionProvider init failed; check content algorithm ("+algorithm+")");
+			}
+			return verifier;
+		}
+		return null;
+	}
+	
+	public static JweEncryptionProvider getJweEncryptionProviderFromJWKSymmetric(Properties props, JweHeaders headers) {
+
+		// Metodo copiato da JweUtils per risolvere il problema indicato sotto.
+		
+		Message m = PhaseInterceptorChain.getCurrentMessage();
+		
+        KeyEncryptionProvider keyEncryptionProvider = JweUtils.loadKeyEncryptionProvider(props, m, headers);
+        ContentAlgorithm contentAlgo = JweUtils.getContentEncryptionAlgorithm(m, props, null, ContentAlgorithm.A128GCM);
+        if (m != null) {
+            m.put(JoseConstants.RSSEC_ENCRYPTION_CONTENT_ALGORITHM, contentAlgo.getJwaName());
+        }
+        ContentEncryptionProvider ctEncryptionProvider = null;
+        JsonWebKey jwk = JwkUtils.loadJsonWebKey(m, props, KeyOperation.ENCRYPT);
+        // FIX 
+        if(jwk.getAlgorithm()==null) {
+        	jwk.setAlgorithm(contentAlgo.getJwaName());
+        }
+        // FIX
+        contentAlgo = JweUtils.getContentEncryptionAlgorithm(m, props,
+        		jwk.getAlgorithm() != null ? ContentAlgorithm.getAlgorithm(jwk.getAlgorithm()) : null, contentAlgo);
+        ctEncryptionProvider = JweUtils.getContentEncryptionProvider(jwk, contentAlgo);
+        String compression = props.getProperty(JoseConstants.RSSEC_ENCRYPTION_ZIP_ALGORITHM);
+       
+        headers = headers != null ? headers : new JweHeaders();
+        headers.setKeyEncryptionAlgorithm(keyEncryptionProvider.getAlgorithm());
+        headers.setContentEncryptionAlgorithm(contentAlgo);
+        if (compression != null) {
+            headers.setZipAlgorithm(compression);
+        }
+        
+        return new JweEncryption(keyEncryptionProvider, ctEncryptionProvider);
+        
+	}
+	
+	public static JweDecryptionProvider getJweDecryptionProviderFromJWKSymmetric(Properties props, JweHeaders headers) {
+
+		// Metodo copiato da JweUtils per risolvere il problema indicato sotto.
+		
+		Message m = PhaseInterceptorChain.getCurrentMessage();
+		
+		JsonWebKey jwk = JwkUtils.loadJsonWebKey(m, props, KeyOperation.DECRYPT);
+
+        ContentAlgorithm contentAlgo = JweUtils.getContentEncryptionAlgorithm(m, props,
+                                         ContentAlgorithm.getAlgorithm(jwk.getAlgorithm()),
+                                         ContentAlgorithm.A128GCM);
+        // FIX 
+        if(jwk.getAlgorithm()==null) {
+        	jwk.setAlgorithm(contentAlgo.getJwaName());
+        }
+        // FIX
+        
+        SecretKey ctDecryptionKey = JweUtils.getContentDecryptionSecretKey(jwk, contentAlgo.getJwaName());
+
+        return JweUtils.getDirectKeyJweDecryption(ctDecryptionKey, contentAlgo);
+	}
+ }

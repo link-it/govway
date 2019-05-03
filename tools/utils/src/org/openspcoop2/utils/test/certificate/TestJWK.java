@@ -38,7 +38,7 @@ public class TestJWK {
 	private static final String ID_TEST = "JWKs";
 	
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST})
-	public void testEncrypt() throws Exception{
+	public void testJWK() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
 		org.openspcoop2.utils.certificate.TestJWK.main(null);

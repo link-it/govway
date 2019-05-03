@@ -1,4 +1,5 @@
-<config id="messageSecurity.jose.receiver.signature" label="JWT Verifier Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties">
+<config id="messageSecurity.jose.receiver.signature" label="JWS Verifier Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties"
+	provider="org.openspcoop2.security.message.jose.SecurityProvider">
 
 	<compatibility not="false" and="false">
         <tags and="true">
@@ -30,12 +31,19 @@
 		<item type="select" name="signatureMode" label="Tipo" default="compact" reloadOnChange="true" >
 			<values>
 				<value value="compact" label="Compact"/>
-				<value value="selfContained" label="SelfContained"/>
-				<value value="detached" label="Detached"/>
+				<value value="json" label="JSON"/>
 			</values>
 			<property name="signatureMode" />
 		</item>
 		
+		<item type="checkbox" name="joseUseHeaders" label="Use Headers" defaultSelected="false" reloadOnChange="true">
+			<property name="joseUseHeaders"/>
+		</item>
+		
+		<item type="checkbox" name="signatureDetached" label="Detached" defaultSelected="false" reloadOnChange="true">
+			<property name="signatureDetached"/>
+		</item>
+				
 		<item type="checkbox" name="signatureCleanSecurityInfo" label="Ripulisci Messaggio dalle Informazioni Sicurezza" defaultSelected="true">
 			<property name="detachSecurityInfo" />
 		</item>
@@ -43,7 +51,7 @@
 		<subsection label="Detached">
 			<conditions>
                     <condition>
-                            <equals name="signatureMode" value="detached"/>
+                            <selected name="signatureDetached" />
                     </condition>
             </conditions>
 		
@@ -71,6 +79,19 @@
 		      	<property name="signatureDetachedPropertyURL" />
 			</item>
             <item type="checkbox" name="detachedBase64" label="Base64 Encoded" defaultSelected="true">
+                    <conditions>
+		                    <condition>
+		                            <equals name="signatureMode" value="json"/>
+		                    </condition>
+		            </conditions>
+                    <property name="signatureDetachedBase64"/>
+            </item>
+			<item type="hidden" name="detachedBase64Compact" value="false">
+            		<conditions>
+		                    <condition>
+		                            <equals name="signatureMode" value="compact"/>
+		                    </condition>
+		            </conditions>
                     <property name="signatureDetachedBase64"/>
             </item>
 				
@@ -78,16 +99,22 @@
 				
 		<subsection label="TrustStore">
 
+			<conditions>
+                    <condition not="true">
+                            <selected name="joseUseHeaders" />
+                    </condition>
+            </conditions>
+
 			<item type="select" name="truststoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>
-					<!--  <value value="jceks" label="JCEKS"/> -->
-					<value value="jwk" label="JWK"/>
+					<value value="jceks" label="JCEKS"/>
+					<value value="jwk" label="JWK Set"/>
 				</values>
 				<property name="rs.security.keystore.type" properties="signaturePropRefId" />
 			</item>
-			<item type="text" name="truststoreFile" label="File" required="true">
+			<item type="textarea" name="truststoreFile" label="File" required="true">
 			    <property name="rs.security.keystore.file" properties="signaturePropRefId" />
 			</item>
 			<item type="text" name="truststorePassword" label="Password" required="true">
@@ -99,10 +126,130 @@
 			    <property name="rs.security.keystore.password" properties="signaturePropRefId" />
 			</item>
 			<item type="text" name="keystoreCertificateAlias" label="Alias Certificato" required="true">
+			    <conditions>
+					<condition not="true" and="false">
+						<equals name="truststoreType" value="jceks"/>
+						<equals name="truststoreType" value="jwk"/>
+					</condition>
+				</conditions>
 			    <property name="rs.security.keystore.alias" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="keystoreKidAlias" label="Kid Certificato" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="truststoreType" value="jwk"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.keystore.alias" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="keystoreSecretKeyAlias" label="Alias Chiave Segreta" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="truststoreType" value="jceks"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.keystore.alias" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="keystoreSecretKeyPassword" label="Password Chiave Segreta" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="truststoreType" value="jceks"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.key.password" properties="signaturePropRefId" />
+			</item>
+			<item type="select" name="signatureAlgorithm" label="Signature Algorithm" reloadOnChange="true" default="HS256">
+				<conditions>
+					<condition and="true">
+						<equals name="truststoreType" value="jceks"/>
+					</condition>
+				</conditions>
+		      	<property name="rs.security.signature.algorithm" properties="signaturePropRefId" />
 			</item>
 
 		</subsection>
+		
+		<subsection label="Headers">
+
+			<conditions>
+                    <condition>
+                            <selected name="joseUseHeaders" />
+                    </condition>
+            </conditions>
+            
+            <item type="checkbox" name="joseUseHeaders.x5c" label="X.509 Certificate (x5c)" defaultSelected="false" reloadOnChange="true">
+				<property name="joseUseHeaders.x5c"/>
+			</item>
+            <item type="checkbox" name="joseUseHeaders.x5u" label="X.509 URL (x5u)" defaultSelected="false" reloadOnChange="true">
+				<property name="joseUseHeaders.x5u"/>
+			</item>
+			<item type="checkbox" name="joseUseHeaders.jwk" label="JSON Web Key (jwk)" defaultSelected="false" reloadOnChange="true">
+				<property name="joseUseHeaders.jwk"/>
+			</item>
+			<item type="checkbox" name="joseUseHeaders.jku" label="JWK Set URL (jku)" defaultSelected="false" reloadOnChange="true">
+				<property name="joseUseHeaders.jku"/>
+			</item>
+			<item type="hidden" name="joseUseHeaders.kid" value="false">
+				<property name="joseUseHeaders.kid" force="false"/>
+			</item>
+     		
+        </subsection>
+		
+		<subsection label="Configurazione HTTPS (jku/x5u) - TrustStore">
+
+			<conditions and="true">
+			 		<condition>
+                            <selected name="joseUseHeaders" />
+                    </condition>
+                    <condition and="false">
+                            <selected name="joseUseHeaders.jku" />
+                            <selected name="joseUseHeaders.x5u" />
+                    </condition>
+            </conditions>
+            <item type="select" name="joseUseHeaders.ssl.type" label="Tipo" default="jks" reloadOnChange="true">
+				<values>
+					<value value="jks" label="JKS"/>
+					<!--  <value value="pkcs12" label="PKCS12"/>
+					<value value="jwk" label="JWK Set"/> -->
+				</values>
+				<property name="rs.security.keystore.type.ssl" />
+			</item>
+			<item type="textarea" name="joseUseHeaders.ssl.file" label="File" required="false">
+			    <property name="rs.security.keystore.file.ssl" />
+			</item>
+			<item type="text" name="joseUseHeaders.ssl.password" label="Password" required="false">
+			    <property name="rs.security.keystore.password.ssl" />
+			</item>
+            
+        </subsection>
+		
+		<subsection label="Validazione Certificati X.509 - TrustStore">
+
+			<conditions and="true">
+			 		<condition>
+                            <selected name="joseUseHeaders" />
+                    </condition>
+                    <condition and="false">
+                            <selected name="joseUseHeaders.x5c" />
+                            <selected name="joseUseHeaders.x5u" />
+                    </condition>
+            </conditions>
+            <item type="select" name="joseUseHeaders.truststore.type" label="Tipo" default="jks" reloadOnChange="true">
+				<values>
+					<value value="jks" label="JKS"/>
+					<!--  <value value="pkcs12" label="PKCS12"/>
+					<value value="jwk" label="JWK Set"/> -->
+				</values>
+				<property name="joseUseHeaders.truststore.type" />
+			</item>
+			<item type="textarea" name="joseUseHeaders.truststore.file" label="File" required="false">
+			    <property name="joseUseHeaders.truststore.file" />
+			</item>
+			<item type="text" name="joseUseHeaders.truststore.password" label="Password" required="false">
+			    <property name="joseUseHeaders.truststore.password" />
+			</item>
+            
+        </subsection>
 
 	</section>
 

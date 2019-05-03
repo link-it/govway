@@ -24,7 +24,6 @@
 package org.openspcoop2.security.message.jose;
 
 
-import java.security.KeyStore;
 import java.util.Properties;
 
 import org.openspcoop2.generic_project.exception.NotFoundException;
@@ -44,8 +43,11 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWEOptions;
 import org.openspcoop2.utils.security.JWSOptions;
+import org.openspcoop2.utils.certificate.JWKSet;
+import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.security.JsonEncrypt;
 import org.openspcoop2.utils.security.JsonSignature;
+import org.openspcoop2.utils.security.JwtHeaders;
 
 /**
  * MessageSecuritySender_jose
@@ -125,7 +127,7 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 				if(signaturePayloadEncodingParam!=null) {
 					jwsOptions.setPayloadEncoding(SecurityConstants.SIGNATURE_PAYLOAD_ENCODING_TRUE.equalsIgnoreCase(signaturePayloadEncodingParam));
 				}
-				
+								
 				JsonSignature jsonSignature = null;
 				SignatureBean bean = null;
 				NotFoundException notFound = null;
@@ -136,11 +138,13 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 				}
 				if(bean!=null) {
 					Properties signatureProperties = bean.getProperties();
-					jsonSignature = new JsonSignature(signatureProperties, jwsOptions);	
+					JwtHeaders jwtHeaders = JOSEUtils.getJwtHeaders(messageSecurityContext.getOutgoingProperties(), messageParam); // la configurazione per kid, jwk e x5c viene configurata via properties
+					jsonSignature = new JsonSignature(signatureProperties, jwtHeaders, jwsOptions);	
 				}
 				else {	
 					KeyStore signatureKS = null;
 					//KeyStore signatureTrustStoreKS = null;
+					JWKSet signatureJWKSet = null;
 					String aliasSignatureUser = null;
 					String aliasSignaturePassword = null;
 					try {
@@ -158,16 +162,17 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 					
 					signatureKS = bean.getKeystore();
 					//signatureTrustStoreKS = bean.getTruststore();
+					signatureJWKSet = bean.getJwkSet();
 					aliasSignatureUser = bean.getUser();
 					aliasSignaturePassword = bean.getPassword();
 
-					if(signatureKS==null) {
+					if(signatureKS==null && signatureJWKSet==null) {
 						throw new SecurityException(JOSECostanti.JOSE_ENGINE_SIGNATURE_DESCRIPTION+" require keystore");
 					}
 					if(aliasSignatureUser==null) {
 						throw new SecurityException(JOSECostanti.JOSE_ENGINE_SIGNATURE_DESCRIPTION+" require alias private key");
 					}
-					if(aliasSignaturePassword==null) {
+					if(signatureKS!=null && aliasSignaturePassword==null) {
 						throw new SecurityException(JOSECostanti.JOSE_ENGINE_SIGNATURE_DESCRIPTION+" require password private key");
 					}
 					
@@ -176,7 +181,20 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 						throw new SecurityException(JOSECostanti.JOSE_ENGINE_SIGNATURE_DESCRIPTION+" require '"+SecurityConstants.SIGNATURE_ALGORITHM+"' property");
 					}
 					
-					jsonSignature = new JsonSignature(signatureKS, aliasSignatureUser, aliasSignaturePassword, signatureAlgorithm, jwsOptions);	
+					String symmetricKeyParam = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SYMMETRIC_KEY);
+					boolean symmetricKey = false;
+					if(symmetricKeyParam!=null) {
+						symmetricKey = SecurityConstants.SYMMETRIC_KEY_TRUE.equalsIgnoreCase(symmetricKeyParam);
+					}
+					
+					if(signatureKS!=null) {
+						JwtHeaders jwtHeaders = JOSEUtils.getJwtHeaders(messageSecurityContext.getOutgoingProperties(), messageParam, aliasSignatureUser, signatureKS);
+						jsonSignature = new JsonSignature(signatureKS, symmetricKey, aliasSignatureUser, aliasSignaturePassword, signatureAlgorithm, jwtHeaders, jwsOptions);	
+					}
+					else {
+						JwtHeaders jwtHeaders = JOSEUtils.getJwtHeaders(messageSecurityContext.getOutgoingProperties(), messageParam, aliasSignatureUser, signatureJWKSet);
+						jsonSignature = new JsonSignature(signatureJWKSet.getJsonWebKeys(), symmetricKey, aliasSignatureUser, signatureAlgorithm, jwtHeaders, jwsOptions);	
+					}
 				}
 				
 
@@ -235,12 +253,14 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 				}
 				if(bean!=null) {
 					Properties encryptionProperties = bean.getProperties();
-					jsonEncrypt = new JsonEncrypt(encryptionProperties, jweOptions);	
+					JwtHeaders jwtHeaders = JOSEUtils.getJwtHeaders(messageSecurityContext.getOutgoingProperties(), messageParam); // la configurazione per kid, jwk e x5c viene configurata via properties
+					jsonEncrypt = new JsonEncrypt(encryptionProperties, jwtHeaders, jweOptions); 
 				}
 				else {	
 					KeyStore encryptionKS = null;
 					KeyStore encryptionTrustStoreKS = null;
 					boolean encryptionSymmetric = false;
+					JWKSet encryptionJWKSet = null;
 					String aliasEncryptUser = null;
 					String aliasEncryptPassword = null;
 					try {
@@ -259,6 +279,7 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 					encryptionKS = bean.getKeystore();
 					encryptionTrustStoreKS = bean.getTruststore();
 					encryptionSymmetric = bean.isEncryptionSimmetric();
+					encryptionJWKSet = bean.getJwkSet();
 					aliasEncryptUser = bean.getUser();
 					aliasEncryptPassword = bean.getPassword();
 
@@ -274,7 +295,7 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 						}
 					}
 					else {
-						if(encryptionTrustStoreKS==null) {
+						if(encryptionTrustStoreKS==null && encryptionJWKSet==null) {
 							throw new SecurityException(JOSECostanti.JOSE_ENGINE_ENCRYPT_DESCRIPTION+" require truststore");
 						}
 						if(aliasEncryptUser==null) {
@@ -294,9 +315,17 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 					}
 
 					if(encryptionSymmetric) {
-						jsonEncrypt = new JsonEncrypt(encryptionKS, aliasEncryptUser, aliasEncryptPassword, encryptionKeyAlgorithm, encryptionContentAlgorithm, jweOptions);
+						JwtHeaders jwtHeaders = JOSEUtils.getJwtHeaders(messageSecurityContext.getOutgoingProperties(), messageParam, aliasEncryptUser);
+						jsonEncrypt = new JsonEncrypt(encryptionKS, aliasEncryptUser, aliasEncryptPassword, encryptionKeyAlgorithm, encryptionContentAlgorithm,  jwtHeaders, jweOptions);
 					}else {
-						jsonEncrypt = new JsonEncrypt(encryptionTrustStoreKS, aliasEncryptUser, encryptionKeyAlgorithm, encryptionContentAlgorithm, jweOptions);
+						if(encryptionTrustStoreKS!=null) {
+							JwtHeaders jwtHeaders = JOSEUtils.getJwtHeaders(messageSecurityContext.getOutgoingProperties(), messageParam, aliasEncryptUser, encryptionTrustStoreKS);
+							jsonEncrypt = new JsonEncrypt(encryptionTrustStoreKS, aliasEncryptUser, encryptionKeyAlgorithm, encryptionContentAlgorithm, jwtHeaders, jweOptions);
+						}
+						else {
+							JwtHeaders jwtHeaders = JOSEUtils.getJwtHeaders(messageSecurityContext.getOutgoingProperties(), messageParam, aliasEncryptUser, encryptionJWKSet);
+							jsonEncrypt = new JsonEncrypt(encryptionJWKSet.getJsonWebKeys(), encryptionSymmetric, aliasEncryptUser, encryptionKeyAlgorithm, encryptionContentAlgorithm, jwtHeaders, jweOptions);
+						}
 					}
 				}
 		

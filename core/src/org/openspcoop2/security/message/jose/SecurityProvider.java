@@ -31,6 +31,8 @@ import java.util.Properties;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.utils.security.JOSESerialization;
+import org.openspcoop2.utils.security.JWTOptions;
 
 
 /**     
@@ -45,6 +47,18 @@ public class SecurityProvider implements IProvider {
 	@Override
 	public void validate(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
 
+		JWTOptions jwtOptions = new JWTOptions(JOSESerialization.COMPACT); // una qualsaisi per la validazione
+		boolean useHeaders = JOSEUtils.useJwtHeaders(mapProperties, jwtOptions);
+		if(useHeaders) {
+			if(!jwtOptions.isPermitUseHeaderJKU() &&
+					!jwtOptions.isPermitUseHeaderJWK() &&
+					!jwtOptions.isPermitUseHeaderX5C() &&
+					!jwtOptions.isPermitUseHeaderX5U() &&
+					!jwtOptions.isPermitUseHeaderKID()
+					){
+						throw new ProviderValidationException("Selezionare almeno un header");
+					}
+		}
 	}
 
 	@Override

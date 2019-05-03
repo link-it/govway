@@ -21,6 +21,8 @@
  */
 package org.openspcoop2.security.message.utils;
 
+import java.io.File;
+import java.net.URI;
 import java.security.KeyStore;
 import java.util.Properties;
 
@@ -31,6 +33,10 @@ import org.openspcoop2.security.keystore.SymmetricKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.utils.certificate.JWKSet;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.transport.http.HttpResponse;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**
  * KeystoreUtils
@@ -43,6 +49,7 @@ public class KeystoreUtils {
 
 	public static EncryptionBean getSenderEncryptionBean(MessageSecurityContext messageSecurityContext) throws Exception {
 		
+		JWKSet encryptionJWKSet = null;
 		KeyStore encryptionKS = null;
 		KeyStore encryptionTrustStoreKS = null;
 		boolean encryptionSymmetric = false;
@@ -85,6 +92,9 @@ public class KeystoreUtils {
 		if(encryptionSymmetric){
 			encryptionSymmetricKeyValue = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_SYMMETRIC_KEY_VALUE);
 		}
+		// 4 JWKSet
+		String encryptionJWKSetFile = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_JWK_SET_FILE);
+		
 			
 		// Istanzione truststore
 		// 0. TrustStore
@@ -204,8 +214,12 @@ public class KeystoreUtils {
 			aliasEncryptPassword = symmetricKeystore.getPasswordKey();
 		}
 		
+		// Istanzio JWKSet
+		if(encryptionJWKSetFile!=null) {
+			encryptionJWKSet = new JWKSet(new String(readResources(encryptionJWKSetFile)));
+		}
 		
-		if(encryptionKS==null && encryptionTrustStoreKS==null) {
+		if(encryptionKS==null && encryptionTrustStoreKS==null && encryptionJWKSet==null) {
 			throw new Exception("Nessuna modalita' di recupero del Keystore per la funzionalita' di Encryption indicata");
 		}
 
@@ -213,6 +227,7 @@ public class KeystoreUtils {
 		
 		bean.setKeystore(encryptionKS);
 		bean.setTruststore(encryptionTrustStoreKS);
+		bean.setJwkSet(encryptionJWKSet);
 		bean.setUser(aliasEncryptUser);
 		bean.setPassword(aliasEncryptPassword);
 		bean.setEncryptionSimmetric(encryptionSymmetric);
@@ -221,6 +236,7 @@ public class KeystoreUtils {
 	}
 	public static EncryptionBean getReceiverEncryptionBean(MessageSecurityContext messageSecurityContext) throws Exception {
 
+		JWKSet decryptionJWKSet = null;
 		KeyStore decryptionKS = null;
 		KeyStore decryptionTrustStoreKS = null;
 		String aliasDecryptUser = null;
@@ -263,6 +279,9 @@ public class KeystoreUtils {
 		if(decryptionSymmetric){
 			decryptionSymmetricKeyValue = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.DECRYPTION_SYMMETRIC_KEY_VALUE);
 		}
+		// 4 JWKSet
+		String decryptionJWKSetFile = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.DECRYPTION_JWK_SET_FILE);
+				
 		
 		// Istanzione truststore
 		// 0. TrustStore
@@ -382,14 +401,20 @@ public class KeystoreUtils {
 			decryptionKS = symmetricKeystore.getKeyStore();
 			aliasDecryptPassword = symmetricKeystore.getPasswordKey();
 		}
+		// 4. Provo a vedere se è stato fornito un JWKSet
+		else if(decryptionJWKSetFile!=null) {
+			decryptionJWKSet = new JWKSet(new String(readResources(decryptionJWKSetFile)));
+		}
 		else{
 			throw new Exception("Nessuna modalita' di recupero del Keystore per la funzionalita' di Encryption indicata");
 		}
+		
 
 		EncryptionBean bean = new EncryptionBean();
 		
 		bean.setKeystore(decryptionKS);
 		bean.setTruststore(decryptionTrustStoreKS);
+		bean.setJwkSet(decryptionJWKSet);
 		bean.setUser(aliasDecryptUser);
 		bean.setPassword(aliasDecryptPassword);
 		bean.setEncryptionSimmetric(decryptionSymmetric);
@@ -399,6 +424,7 @@ public class KeystoreUtils {
 
 	public static SignatureBean getSenderSignatureBean(MessageSecurityContext messageSecurityContext) throws Exception {
 
+		JWKSet signatureJWKSet = null;
 		KeyStore signatureKS = null;
 		KeyStore signatureTrustStoreKS = null;
 		String aliasSignatureUser = null;
@@ -430,7 +456,10 @@ public class KeystoreUtils {
 		}
 		// 2. Multi Property
 		String multiSignatureStore = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_MULTI_PROPERTY_FILE);
-
+		// 3 JWKSet
+		String signatureJWKSetFile = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_JWK_SET_FILE);
+				
+		
 		// Istanzione truststore
 		// 0. TrustStore
 		if(signatureTrustStore!=null){
@@ -536,6 +565,10 @@ public class KeystoreUtils {
 				aliasSignatureUser = multiKeystore.getKeyAlias(aliasSignatureUser); // aggiorno con identita alias del keystore
 			}
 		}
+		// 3. Provo a vedere se è stato fornito un JWKSet
+		else if(signatureJWKSetFile!=null) {
+			signatureJWKSet = new JWKSet(new String(readResources(signatureJWKSetFile)));
+		}
 		else{
 			throw new Exception("Nessuna modalita' di recupero del Keystore per la funzionalita' di Signature indicata");
 		}
@@ -543,6 +576,7 @@ public class KeystoreUtils {
 		SignatureBean bean = new SignatureBean();
 		bean.setKeystore(signatureKS);
 		bean.setTruststore(signatureTrustStoreKS);
+		bean.setJwkSet(signatureJWKSet);
 		bean.setUser(aliasSignatureUser);
 		bean.setPassword(aliasSignaturePassword);
 		
@@ -551,6 +585,7 @@ public class KeystoreUtils {
 	}	
 	public static SignatureBean getReceiverSignatureBean(MessageSecurityContext messageSecurityContext) throws Exception {
 
+		JWKSet signatureJWKSet = null;
 		KeyStore signatureKS = null;
 		KeyStore signatureTrustStoreKS = null;
 		String aliasSignatureUser = null;
@@ -586,7 +621,10 @@ public class KeystoreUtils {
 		}
 		// 2. Multi Property
 		String multiSignatureStore = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_MULTI_PROPERTY_FILE);
-
+		// 3 JWKSet
+		String signatureJWKSetFile = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_JWK_SET_FILE);
+				
+				
 		// Istanzione truststore
 		// 0. TrustStore
 		if(signatureTrustStore!=null){
@@ -691,14 +729,20 @@ public class KeystoreUtils {
 			}
 		}
 		
+		// Istanzio JWKSet
+		if(signatureJWKSetFile!=null) {
+			signatureJWKSet = new JWKSet(new String(readResources(signatureJWKSetFile)));
+		}
+				
 
-		if(signatureKS==null && signatureTrustStoreKS==null) {
+		if(signatureKS==null && signatureTrustStoreKS==null && signatureJWKSet==null) {
 			throw new Exception("Nessuna modalita' di recupero del TrustStore per la funzionalita' di Signature indicata");
 		}
 		
 		SignatureBean bean = new SignatureBean();
 		bean.setKeystore(signatureKS);
 		bean.setTruststore(signatureTrustStoreKS);
+		bean.setJwkSet(signatureJWKSet);
 		bean.setUser(aliasSignatureUser);
 		bean.setPassword(aliasSignaturePassword);
 		bean.setCrlPath(crlPath);
@@ -707,4 +751,28 @@ public class KeystoreUtils {
 
 	}
 	
+	
+	private static byte[] readResources(String path) throws Exception {
+		if(path!=null && (path.startsWith("http") || path.startsWith("https"))) {
+			HttpResponse httpResponse = HttpUtilities.getHTTPResponse(path, 60000, 10000);
+			if(httpResponse==null || httpResponse.getContent()==null) {
+				throw new Exception("Resource '"+path+"' unavailable");
+			}
+			if(httpResponse.getResultHTTPOperation()!=200) {
+				throw new Exception("Retrieve resource '"+path+"' failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
+			}
+			return httpResponse.getContent();
+		}
+		else if(path!=null && (path.startsWith("file"))){
+			File f = new File(new URI(path));
+			return FileSystemUtilities.readBytesFromFile(f);
+		}
+		else {
+			File f = new File(path);
+			if(f.exists()==false) {
+				throw new Exception("File '"+f.getAbsolutePath()+"' not exists");
+			}
+			return FileSystemUtilities.readBytesFromFile(f);
+		}
+	}
 }

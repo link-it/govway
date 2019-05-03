@@ -23,9 +23,10 @@
 
 package org.openspcoop2.security.message.jose;
 
-import java.security.KeyStore;
+import java.util.HashMap;
 import java.util.Properties;
 
+import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
@@ -43,6 +44,8 @@ import org.openspcoop2.security.message.utils.KeystoreUtils;
 import org.openspcoop2.security.message.utils.PropertiesUtils;
 import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.JWKSet;
+import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWTOptions;
 import org.openspcoop2.utils.security.JsonDecrypt;
@@ -124,6 +127,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					throw new SecurityException(JOSECostanti.JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION+", '"+SecurityConstants.SIGNATURE_MODE+"' property error: "+e.getMessage(),e);
 				}
 				JWTOptions options = new JWTOptions(this.joseSerialization);
+				boolean useHeaders = JOSEUtils.useJwtHeaders(messageSecurityContext.getIncomingProperties(), options);
 				
 				SignatureBean bean = null;
 				NotFoundException notFound = null;
@@ -136,9 +140,15 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					Properties signatureProperties = bean.getProperties();
 					this.jsonVerifierSignature = new JsonVerifySignature(signatureProperties, options);	
 				}
+				else if(useHeaders) {
+					KeyStore trustStore = JOSEUtils.readTrustStoreJwtX509Cert(messageSecurityContext.getIncomingProperties());
+					Properties trustStoreSsl = JOSEUtils.toSslConfigJwtUrlHeader(messageSecurityContext.getIncomingProperties());
+					this.jsonVerifierSignature = new JsonVerifySignature(trustStoreSsl, trustStore, options);
+				}
 				else {	
 					KeyStore signatureKS = null;
 					KeyStore signatureTrustStoreKS = null;
+					JWKSet signatureJWKSet = null;
 					String aliasSignatureUser = null;
 					try {
 						bean = KeystoreUtils.getReceiverSignatureBean(messageSecurityContext);
@@ -155,9 +165,10 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					
 					signatureKS = bean.getKeystore();
 					signatureTrustStoreKS = bean.getTruststore();
+					signatureJWKSet = bean.getJwkSet();
 					aliasSignatureUser = bean.getUser();
 
-					if(signatureKS==null && signatureTrustStoreKS==null) {
+					if(signatureKS==null && signatureTrustStoreKS==null && signatureJWKSet==null) {
 						throw new SecurityException(JOSECostanti.JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION+" require truststore");
 					}
 					if(aliasSignatureUser==null) {
@@ -169,15 +180,24 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 						throw new SecurityException(JOSECostanti.JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION+" require '"+SecurityConstants.SIGNATURE_ALGORITHM+"' property");
 					}
 					
+					String symmetricKeyParam = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.SYMMETRIC_KEY);
+					boolean symmetricKey = false;
+					if(symmetricKeyParam!=null) {
+						symmetricKey = SecurityConstants.SYMMETRIC_KEY_TRUE.equalsIgnoreCase(symmetricKeyParam);
+					}
+					
 					if(signatureTrustStoreKS!=null) {
 						this.jsonVerifierSignature = new JsonVerifySignature(signatureTrustStoreKS, aliasSignatureUser, signatureAlgorithm, options);	
 					}
-					else {
+					else if(signatureKS!=null){
 						this.jsonVerifierSignature = new JsonVerifySignature(signatureKS, aliasSignatureUser, signatureAlgorithm, options);	
+					}
+					else {
+						this.jsonVerifierSignature = new JsonVerifySignature(signatureJWKSet.getJsonWebKeys(), symmetricKey, aliasSignatureUser, signatureAlgorithm, options);	
 					}
 				}
 				
-				String signatureDetachedParam = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_DETACHED);
+				String signatureDetachedParam = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_DETACHED);
 				if(signatureDetachedParam!=null) {
 					this.detached = SecurityConstants.SIGNATURE_DETACHED_TRUE.equalsIgnoreCase(signatureDetachedParam);
 				}
@@ -226,6 +246,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+", '"+SecurityConstants.DECRYPTION_MODE+"' property error: "+e.getMessage(),e);
 				}
 				JWTOptions options = new JWTOptions(this.joseSerialization);
+				boolean useHeaders = JOSEUtils.useJwtHeaders(messageSecurityContext.getIncomingProperties(), options);
 				
 				EncryptionBean bean = null;
 				NotFoundException notFound = null;
@@ -238,9 +259,27 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					Properties encryptionProperties = bean.getProperties();
 					this.jsonDecrypt = new JsonDecrypt(encryptionProperties, options);	
 				}
+				else if(useHeaders) {
+					Properties trustStoreSsl = JOSEUtils.toSslConfigJwtUrlHeader(messageSecurityContext.getIncomingProperties());
+					if(JOSEUtils.isJWKSetKeystore(messageSecurityContext.getIncomingProperties())) {
+						JsonWebKeys jsonWebKeys = null;
+						JWKSet jkwSet = JOSEUtils.readKeyStoreJwtJsonWebKeysCert(messageSecurityContext.getIncomingProperties());
+						if(jkwSet!=null) {
+							jsonWebKeys = jkwSet.getJsonWebKeys();
+						}
+						this.jsonDecrypt = new JsonDecrypt(trustStoreSsl, jsonWebKeys, options);
+					}
+					else {
+						KeyStore trustStore = JOSEUtils.readTrustStoreJwtX509Cert(messageSecurityContext.getIncomingProperties());
+						KeyStore keyStore = JOSEUtils.readKeyStoreJwtX509Cert(messageSecurityContext.getIncomingProperties());
+						HashMap<String, String> keystore_mapAliasPassword = JOSEUtils.readJwtX509Cert_mapAliasPassword(messageSecurityContext.getIncomingProperties());						
+						this.jsonDecrypt = new JsonDecrypt(trustStoreSsl, trustStore, keyStore, keystore_mapAliasPassword, options);
+					}
+				}
 				else {	
 					KeyStore encryptionKS = null;
 					boolean encryptionSymmetric = false;
+					JWKSet encryptionJWKSet = null;
 					String aliasEncryptUser = null;
 					String aliasEncryptPassword = null;
 					try {
@@ -258,10 +297,11 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					
 					encryptionKS = bean.getKeystore();
 					encryptionSymmetric = bean.isEncryptionSimmetric();
+					encryptionJWKSet = bean.getJwkSet();
 					aliasEncryptUser = bean.getUser();
 					aliasEncryptPassword = bean.getPassword();
 
-					if(encryptionKS==null) {
+					if(encryptionKS==null && encryptionJWKSet==null) {
 						throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+" require keystore");
 					}
 					if(aliasEncryptUser==null) {
@@ -272,7 +312,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 							throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+" require alias private key");
 						}
 					}
-					if(aliasEncryptPassword==null) {
+					if(encryptionKS!=null && aliasEncryptPassword==null) {
 						if(encryptionSymmetric) {
 							throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+" require password secret key");
 						}
@@ -281,18 +321,25 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 						}
 					}
 
-					String encryptionKeyAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_KEY_ALGORITHM);
+					String encryptionKeyAlgorithm = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.ENCRYPTION_KEY_ALGORITHM);
 					if(encryptionKeyAlgorithm==null || "".equals(encryptionKeyAlgorithm.trim())){
 						throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_KEY_ALGORITHM+"' property");
 					}
 					
-					String encryptionContentAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_CONTENT_ALGORITHM);
+					String encryptionContentAlgorithm = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.ENCRYPTION_CONTENT_ALGORITHM);
 					if(encryptionContentAlgorithm==null || "".equals(encryptionContentAlgorithm.trim())){
 						throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_CONTENT_ALGORITHM+"' property");
 					}
 					
-					this.jsonDecrypt = new JsonDecrypt(encryptionKS, encryptionSymmetric, aliasEncryptUser, aliasEncryptPassword,
-							encryptionKeyAlgorithm, encryptionContentAlgorithm, options);	
+					if(encryptionKS!=null) {
+						this.jsonDecrypt = new JsonDecrypt(encryptionKS, encryptionSymmetric, aliasEncryptUser, aliasEncryptPassword,
+								encryptionKeyAlgorithm, encryptionContentAlgorithm, options);	
+					}
+					else {
+						this.jsonDecrypt = new JsonDecrypt(encryptionJWKSet.getJsonWebKeys(), encryptionSymmetric, aliasEncryptUser,
+								encryptionKeyAlgorithm, encryptionContentAlgorithm, options);	
+					}
+
 				}
 				
 	

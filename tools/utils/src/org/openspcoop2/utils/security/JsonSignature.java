@@ -57,7 +57,10 @@ public class JsonSignature {
 	public JsonSignature(Properties props, JwtHeaders jwtHeaders, JWSOptions options) throws UtilsException{
 		try {
 			this.headers = new JwsHeaders(props);
-			this.provider = JwsUtils.loadSignatureProvider(JsonUtils.newMessage(), props, this.headers);
+			this.provider = JsonUtils.getJwsSymmetricProvider(props);
+			if(this.provider==null) {
+				this.provider = JwsUtils.loadSignatureProvider(JsonUtils.newMessage(), props, this.headers);
+			}
 			this.options=options;
 			this.jwtHeaders = jwtHeaders;
 		}catch(Throwable t) {
@@ -65,24 +68,32 @@ public class JsonSignature {
 		}
 	}
 
-	public JsonSignature(java.security.KeyStore keystore, String alias, String passwordPrivateKey, String signatureAlgorithm, JWSOptions options) throws UtilsException{
-		this(new KeyStore(keystore), alias, passwordPrivateKey, signatureAlgorithm, 
+	public JsonSignature(java.security.KeyStore keystore, boolean secretKey, String alias, String passwordPrivateKey, String signatureAlgorithm, JWSOptions options) throws UtilsException{
+		this(new KeyStore(keystore), secretKey, alias, passwordPrivateKey, signatureAlgorithm, 
 				null, options);
 	}
-	public JsonSignature(KeyStore keystore, String alias, String passwordPrivateKey, String signatureAlgorithm, JWSOptions options) throws UtilsException{
-		this(keystore, alias, passwordPrivateKey, signatureAlgorithm, 
+	public JsonSignature(KeyStore keystore, boolean secretKey, String alias, String passwordPrivateKey, String signatureAlgorithm, JWSOptions options) throws UtilsException{
+		this(keystore, secretKey, alias, passwordPrivateKey, signatureAlgorithm, 
 				null, options);
 	}
-	public JsonSignature(java.security.KeyStore keystore, String alias, String passwordPrivateKey, String signatureAlgorithm, 
+	public JsonSignature(java.security.KeyStore keystore, boolean secretKey, String alias, String passwordPrivateKey, String signatureAlgorithm, 
 			JwtHeaders jwtHeaders, JWSOptions options) throws UtilsException{
-		this(new KeyStore(keystore), alias, passwordPrivateKey, signatureAlgorithm, jwtHeaders, options);
+		this(new KeyStore(keystore),secretKey, alias, passwordPrivateKey, signatureAlgorithm, jwtHeaders, options);
 	}
-	public JsonSignature(KeyStore keystore, String alias, String passwordPrivateKey, String signatureAlgorithm, 
+	public JsonSignature(KeyStore keystore, boolean secretKey, String alias, String passwordPrivateKey, String signatureAlgorithm, 
 			JwtHeaders jwtHeaders, JWSOptions options) throws UtilsException{
 		try {
 			
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
-			this.provider = JwsUtils.getPrivateKeySignatureProvider(keystore.getPrivateKey(alias, passwordPrivateKey), algo);
+			if(secretKey) {
+				this.provider = JwsUtils.getHmacSignatureProvider(keystore.getSecretKey(alias, passwordPrivateKey).getEncoded(), algo);
+				if(this.provider==null) {
+					throw new Exception("(JCEKS) JwsSignatureProvider init failed; check signature algorithm ("+signatureAlgorithm+")");
+				}
+			}
+			else {
+				this.provider = JwsUtils.getPrivateKeySignatureProvider(keystore.getPrivateKey(alias, passwordPrivateKey), algo);
+			}
 			this.options=options;
 			this.jwtHeaders = jwtHeaders;
 		}catch(Throwable t) {
@@ -90,24 +101,32 @@ public class JsonSignature {
 		}
 	}
 	
-	public JsonSignature(JsonWebKeys jsonWebKeys, String alias, String signatureAlgorithm, JWSOptions options) throws UtilsException{
-		this(jsonWebKeys, alias, signatureAlgorithm, 
+	public JsonSignature(JsonWebKeys jsonWebKeys, boolean secretKey, String alias, String signatureAlgorithm, JWSOptions options) throws UtilsException{
+		this(jsonWebKeys, secretKey, alias, signatureAlgorithm, 
 				null, options);
 	}
-	public JsonSignature(JsonWebKeys jsonWebKeys, String alias, String signatureAlgorithm, 
+	public JsonSignature(JsonWebKeys jsonWebKeys, boolean secretKey, String alias, String signatureAlgorithm, 
 			JwtHeaders jwtHeaders, JWSOptions options) throws UtilsException{
-		this(JsonUtils.readKey(jsonWebKeys, alias),signatureAlgorithm,jwtHeaders,options);
+		this(JsonUtils.readKey(jsonWebKeys, alias),secretKey,signatureAlgorithm,jwtHeaders,options);
 	}
 	
-	public JsonSignature(JsonWebKey jsonWebKey, String signatureAlgorithm, JWSOptions options) throws UtilsException{
-		this(jsonWebKey, signatureAlgorithm, 
+	public JsonSignature(JsonWebKey jsonWebKey, boolean secretKey, String signatureAlgorithm, JWSOptions options) throws UtilsException{
+		this(jsonWebKey, secretKey, signatureAlgorithm, 
 				null, options);
 	}
-	public JsonSignature(JsonWebKey jsonWebKey, String signatureAlgorithm, 
+	public JsonSignature(JsonWebKey jsonWebKey, boolean secretKey, String signatureAlgorithm, 
 			JwtHeaders jwtHeaders, JWSOptions options) throws UtilsException{
 		try {
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
-			this.provider = JwsUtils.getPrivateKeySignatureProvider(JwkUtils.toRSAPrivateKey(jsonWebKey), algo);
+			if(secretKey) {
+				//this.provider = JwsUtils.getHmacSignatureProvider(JwkUtils.toSecretKey(jsonWebKey).getEncoded(), algo);
+				this.provider = JwsUtils.getSignatureProvider(jsonWebKey, algo);
+				if(this.provider==null) {
+					throw new Exception("(JsonWebKey) JwsSignatureProvider init failed; check signature algorithm ("+signatureAlgorithm+")");
+				}
+			}else {
+				this.provider = JwsUtils.getPrivateKeySignatureProvider(JwkUtils.toRSAPrivateKey(jsonWebKey), algo);
+			}
 			this.options=options;
 			this.jwtHeaders = jwtHeaders;
 		}catch(Throwable t) {

@@ -29,6 +29,7 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.cxf.common.util.Base64UrlUtility;
 import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
@@ -74,15 +75,15 @@ public class JsonVerifySignature {
 				this.properties = props;
 			}
 			else {
-				this.provider = loadProviderFromProperties(props);
+				this.provider = loadProviderFromProperties(props, null); // nel caso di jceks deve essere definito l'algoritmo se non e' dinamico
 			}
 			this.options = options;
 		}catch(Throwable t) {
 			throw JsonUtils.convert(options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
 		}
 	}
-	
-	private JwsSignatureVerifier loadProviderFromProperties(Properties props) throws Exception {
+
+	private JwsSignatureVerifier loadProviderFromProperties(Properties props, org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm signatureAlgorithm) throws Exception {
 		File fTmp = null;
 		try {
 			fTmp = JsonUtils.normalizeProperties(props); // in caso di url http viene letta la risorsa remota e salvata in tmp
@@ -91,7 +92,17 @@ public class JsonVerifySignature {
 				String key = (String) en.nextElement();
 				System.out.println("- ["+key+"] ["+props.getProperty(key)+"]");
 			}*/
-			JwsSignatureVerifier provider = JwsUtils.loadSignatureVerifier(JsonUtils.newMessage(), props, new JwsHeaders());
+			
+			JwsSignatureVerifier provider = null;
+			if(signatureAlgorithm!=null) {
+				provider = JsonUtils.getJwsSignatureVerifier(props, signatureAlgorithm);
+			}
+			else {
+				provider = JsonUtils.getJwsSignatureVerifier(props);
+			}
+			if(provider==null) {
+				provider = JwsUtils.loadSignatureVerifier(JsonUtils.newMessage(), props, new JwsHeaders());
+			}
 			if(provider==null) {
 				throw new Exception("JwsSignatureVerifier provider not found");
 			}
@@ -118,14 +129,38 @@ public class JsonVerifySignature {
 		}
 	}
 	
-	public JsonVerifySignature(JsonWebKeys jsonWebKeys, String alias, String signatureAlgorithm, JWTOptions options) throws UtilsException{
-		this(JsonUtils.readKey(jsonWebKeys, alias), signatureAlgorithm, options);
+	public JsonVerifySignature(java.security.KeyStore keystore, String alias, String passwordPrivateKey, String signatureAlgorithm, JWTOptions options) throws UtilsException{
+		this(new KeyStore(keystore), alias, passwordPrivateKey, signatureAlgorithm, options);
 	}
-	
-	public JsonVerifySignature(JsonWebKey jsonWebKey, String signatureAlgorithm, JWTOptions options) throws UtilsException{
+	public JsonVerifySignature(KeyStore keystore, String alias, String passwordPrivateKey, String signatureAlgorithm, JWTOptions options) throws UtilsException{
 		try {
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
-			this.provider = JwsUtils.getPublicKeySignatureVerifier(JwkUtils.toRSAPublicKey(jsonWebKey), algo);
+			this.provider = JwsUtils.getHmacSignatureVerifier(keystore.getSecretKey(alias, passwordPrivateKey).getEncoded(), algo);
+			if(this.provider==null) {
+				throw new Exception("(JCEKS) JwsSignatureVerifier init failed; check signature algorithm ("+signatureAlgorithm+")");
+			}
+			this.options=options;
+		}catch(Throwable t) {
+			throw JsonUtils.convert(options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
+		}
+	}
+	
+	public JsonVerifySignature(JsonWebKeys jsonWebKeys, boolean secretKey, String alias, String signatureAlgorithm, JWTOptions options) throws UtilsException{
+		this(JsonUtils.readKey(jsonWebKeys, alias), secretKey, signatureAlgorithm, options);
+	}	
+	public JsonVerifySignature(JsonWebKey jsonWebKey, boolean secretKey, String signatureAlgorithm, JWTOptions options) throws UtilsException{
+		try {
+			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
+			if(secretKey) {
+				//this.provider = JwsUtils.getHmacSignatureVerifier(JwkUtils.toSecretKey(jsonWebKey).getEncoded(), algo);
+				this.provider = JwsUtils.getSignatureVerifier(jsonWebKey, algo);
+				if(this.provider==null) {
+					throw new Exception("(JsonWebKey) JwsSignatureVerifier init failed; check signature algorithm ("+signatureAlgorithm+")");
+				}
+			}
+			else {
+				this.provider = JwsUtils.getPublicKeySignatureVerifier(JwkUtils.toRSAPublicKey(jsonWebKey), algo);
+			}
 			this.options=options;
 		}catch(Throwable t) {
 			throw JsonUtils.convert(options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
@@ -231,7 +266,7 @@ public class JsonVerifySignature {
 			consumer = new JwsCompactConsumer(jsonSignature);
 		}
 		else {
-			consumer = new JwsCompactConsumer(jsonSignature, jsonDetachedPayload);
+			consumer = new JwsCompactConsumer(jsonSignature, Base64UrlUtility.encode(jsonDetachedPayload));
 		}
 		
 		JwsHeaders jwsHeaders = consumer.getJwsHeaders();
@@ -272,7 +307,7 @@ public class JsonVerifySignature {
 			pNew.putAll(this.properties);
 			//System.out.println("ALIAS ["+alias+"]");
 			pNew.put(JoseConstants.RSSEC_KEY_STORE_ALIAS, alias);
-			provider = loadProviderFromProperties(pNew);
+			provider = loadProviderFromProperties(pNew, jwsHeaders.getSignatureAlgorithm());
 		}
 		
 		if(provider==null) {

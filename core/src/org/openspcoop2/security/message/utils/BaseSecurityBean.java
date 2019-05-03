@@ -21,8 +21,10 @@
  */
 package org.openspcoop2.security.message.utils;
 
-import java.security.KeyStore;
 import java.util.Properties;
+
+import org.openspcoop2.utils.certificate.JWKSet;
+import org.openspcoop2.utils.certificate.KeyStore;
 
 /**
  * BaseSecurityBean
@@ -36,6 +38,7 @@ public abstract class BaseSecurityBean {
 	private Properties properties;
 	private KeyStore keystore;
 	private KeyStore truststore;
+	private JWKSet jwkSet;
 	private String user;
 	private String password;
 	
@@ -51,11 +54,23 @@ public abstract class BaseSecurityBean {
 	public void setKeystore(KeyStore keystore) {
 		this.keystore = keystore;
 	}
+	public void setKeystore(java.security.KeyStore keystore) {
+		this.keystore = new KeyStore(keystore);
+	}
 	public KeyStore getTruststore() {
 		return this.truststore;
 	}
 	public void setTruststore(KeyStore truststore) {
 		this.truststore = truststore;
+	}
+	public void setTruststore(java.security.KeyStore truststore) {
+		this.truststore = new KeyStore(truststore);
+	}
+	public JWKSet getJwkSet() {
+		return this.jwkSet;
+	}
+	public void setJwkSet(JWKSet jwkSet) {
+		this.jwkSet = jwkSet;
 	}
 	public String getUser() {
 		return this.user;

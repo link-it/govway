@@ -44,17 +44,27 @@ public class TestSignature {
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.JAVA_SIGNATURE},
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.XML_SIGNATURE},
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JKS},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS},
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JWK},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC},
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS_HEADER_CUSTOM},
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM},
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY},
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY},
-				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_KEYSTORE},
-				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_KEYSTORE_HEADER_CUSTOM},
-				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_KEYS},
-				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_KEYS_HEADER_CUSTOM},
-				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_KEY},
-				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_KEY_HEADER_CUSTOM}
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JKS_KEYSTORE},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JKS_KEYSTORE_HEADER_CUSTOM},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JCEKS_KEYSTORE},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JCEKS_KEYSTORE_HEADER_CUSTOM},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JWK_KEYS},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JWK_KEYS_HEADER_CUSTOM},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JWK_KEY},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JWK_KEY_HEADER_CUSTOM},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JWK_SYMMETRIC_KEYS},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JWK_SYMMETRIC_KEYS_HEADER_CUSTOM},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JWK_SYMMETRIC_KEY},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JWK_SYMMETRIC_KEY_HEADER_CUSTOM}
 		};
 	}
 	

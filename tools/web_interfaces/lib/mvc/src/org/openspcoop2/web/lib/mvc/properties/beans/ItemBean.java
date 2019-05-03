@@ -72,6 +72,7 @@ public class ItemBean extends BaseItemBean<Item>{
 			case NUMBER:
 			case SELECT:
 			case TEXT:
+			case TEXTAREA:
 			default:
 				if(StringUtils.isNotEmpty(this.getItem().getDefault())) {
 					this.value = this.getItem().getDefault();
@@ -93,6 +94,7 @@ public class ItemBean extends BaseItemBean<Item>{
 			case NUMBER:
 			case SELECT:
 			case TEXT:
+			case TEXTAREA:
 			default:
 				this.value = value;
 				break;
@@ -154,6 +156,11 @@ public class ItemBean extends BaseItemBean<Item>{
 			de.setValue(this.value);
 			de.setType(DataElementType.TEXT_EDIT);
 			break;
+		case TEXTAREA:
+			de.setValue(this.value);
+			de.setType(DataElementType.TEXT_AREA);
+			de.setRows(3);
+			break;
 		default:
 			break;
 		}
@@ -174,6 +181,7 @@ public class ItemBean extends BaseItemBean<Item>{
 			case NUMBER:
 			case SELECT:
 			case TEXT:
+			case TEXTAREA:
 			default:
 				if(StringUtils.isNotEmpty(this.getItem().getDefault())) {
 					this.value = this.getItem().getDefault();
@@ -196,6 +204,7 @@ public class ItemBean extends BaseItemBean<Item>{
 			case NUMBER:
 			case SELECT:
 			case TEXT:
+			case TEXTAREA:
 			default:
 				this.value = parameterValue;
 				break;
@@ -230,6 +239,7 @@ public class ItemBean extends BaseItemBean<Item>{
 		case NUMBER:
 		case SELECT:
 		case TEXT:
+		case TEXTAREA:
 		default:
 			return this.value;
 		}
@@ -361,6 +371,7 @@ public class ItemBean extends BaseItemBean<Item>{
 				}
 				break;
 			case TEXT:
+			case TEXTAREA:
 			case CHECKBOX:
 			case HIDDEN:
 				break;

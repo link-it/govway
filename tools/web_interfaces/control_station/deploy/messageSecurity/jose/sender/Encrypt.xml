@@ -1,4 +1,4 @@
-<config id="messageSecurity.jose.sender.encrypt" label="JWT Encrypt" xmlns="http://www.openspcoop2.org/core/mvc/properties"
+<config id="messageSecurity.jose.sender.encrypt" label="JWE Encrypt" xmlns="http://www.openspcoop2.org/core/mvc/properties"
 	provider="org.openspcoop2.security.message.jose.SecurityProvider">
 
 	<compatibility not="false" and="false">
@@ -31,8 +31,7 @@
 		<item type="select" name="encryptionMode" label="Tipo" default="compact" reloadOnChange="true" >
 			<values>
 				<value value="compact" label="Compact"/>
-				<value value="selfContained" label="SelfContained"/>
-				<!--  <value value="detached" label="Detached"/> -->
+				<value value="json" label="JSON"/>
 			</values>
 			<property name="encryptionMode" />
 		</item>
@@ -44,10 +43,13 @@
 			<property name="rs.security.encryption.content.algorithm" properties="encryptionPropRefId" />
 		</item>
 		
-		<item type="checkbox" name="encryptionDeflater" label="Compressione" defaultSelected="false">
+		<item type="checkbox" name="encryptionDeflater" label="Compressione (Deflate)" defaultSelected="false">
 			<property name="rs.security.encryption.zip.algorithm" properties="encryptionPropRefId" selectedValue="DEF" unselectedValue="NONE"/>
 		</item>
 		
+		<item type="checkbox" name="joseUseHeaders" label="Include Headers" defaultSelected="false" reloadOnChange="true">
+			<property name="joseUseHeaders"/>
+		</item>
 
 		<subsection label="KeyStore">
 
@@ -56,11 +58,11 @@
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>
 					<value value="jceks" label="JCEKS"/>
-					<value value="jwk" label="JWK"/>
+					<value value="jwk" label="JWK Set"/>
 				</values>
 				<property name="rs.security.keystore.type" properties="encryptionPropRefId" />
 			</item>
-			<item type="text" name="keystoreFile" label="File" required="true">
+			<item type="textarea" name="keystoreFile" label="File" required="true">
 			    <property name="rs.security.keystore.file" properties="encryptionPropRefId" />
 			</item>
 			<item type="text" name="keystorePassword" label="Password" required="true">
@@ -79,7 +81,7 @@
 				</conditions>
 			    <property name="rs.security.keystore.alias" properties="encryptionPropRefId" />
 			</item>
-			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
+			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Segreta" required="true">
 				<conditions>
 					<condition not="false">
 						<equals name="keystoreType" value="jceks"/>
@@ -87,7 +89,7 @@
 				</conditions>
 			    <property name="rs.security.keystore.alias" properties="encryptionPropRefId" />
 			</item>
-			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Segreta" required="true">
 				<conditions>
 					<condition not="false">
 						<equals name="keystoreType" value="jceks"/>
@@ -96,6 +98,326 @@
 			    <property name="rs.security.key.password" properties="encryptionPropRefId" />
 			</item>
 
+		</subsection>
+
+		<subsection label="Headers">
+		
+			<conditions and="true">
+                    <condition not="true">
+                            <equals name="encryptionKeyAlgorithm" value="NONE"/>
+                    </condition>
+					<condition>
+                            <selected name="joseUseHeaders" />
+                    </condition>
+            </conditions>
+ 
+ 			<item type="checkbox" name="includeKid" label="Key Id (kid)" defaultSelected="false">
+                    <property name="rs.security.encryption.include.key.id" properties="encryptionPropRefId"/>
+            </item>
+            
+            <item type="select" name="includeCertMode" label="X.509 Certificate" default="-" reloadOnChange="true" >
+	            <conditions>
+	                <condition and="false">
+	                        <equals name="keystoreType" value="jks"/>
+	                        <equals name="keystoreType" value="pkcs12"/>
+	                </condition>
+		        </conditions>
+				<values>
+					<value value="-" label="-"/>
+					<value value="x5c" label="Include (x5c)"/>
+					<value value="x5u" label="URL (x5u)"/>
+				</values>
+				<property name="includeCertMode" />
+			</item>
+			<item type="hidden" name="includeCertModeX5C" value="true">
+				<conditions>
+	                <condition>
+	                        <equals name="includeCertMode" value="x5c"/>
+	                </condition>
+		        </conditions>
+				<property name="rs.security.encryption.include.cert" properties="encryptionPropRefId"/>
+			</item>
+			<item type="textarea" name="includeCertModeX5U" label="URL" required="true">
+				<conditions>
+	                <condition>
+	                        <equals name="includeCertMode" value="x5u"/>
+	                </condition>
+		        </conditions>
+				<property name="joseX509Url" />
+			</item>
+			
+			<item type="select" name="includeCertShaMode" label="Digest X.509 Certificate" default="-" reloadOnChange="true" >
+	            <conditions>
+	                <condition and="false">
+	                        <equals name="keystoreType" value="jks"/>
+	                        <equals name="keystoreType" value="pkcs12"/>
+	                </condition>
+		        </conditions>
+				<values>
+					<value value="-" label="-"/>
+					<value value="sha1" label="SHA-1 (x5t)"/>
+					<value value="sha256" label="SHA-256 (x5t#S256)"/>
+				</values>
+				<property name="includeCertShaMode" />
+			</item>
+			<item type="hidden" name="includeCertShaModeSHA1" value="true">
+				<conditions>
+	                <condition>
+	                        <equals name="includeCertShaMode" value="sha1"/>
+	                </condition>
+		        </conditions>
+				<property name="rs.security.encryption.include.cert.sha1" properties="encryptionPropRefId"/>
+			</item>
+			<item type="hidden" name="includeCertShaModeSHA256" value="true">
+				<conditions>
+	                <condition>
+	                        <equals name="includeCertShaMode" value="sha256"/>
+	                </condition>
+		        </conditions>
+				<property name="rs.security.encryption.include.cert.sha256" properties="encryptionPropRefId"/>
+			</item>
+			
+			
+			<item type="select" name="includePublicKeyMode" label="Public Key" default="-" reloadOnChange="true" >
+	            <conditions>
+	                <condition>
+                            <equals name="keystoreType" value="jwk"/>
+                    </condition>
+		        </conditions>
+				<values>
+					<value value="-" label="-"/>
+					<value value="jwk" label="Include JSON Web Key (jwk)"/>
+					<value value="jku" label="JWK Set URL (jku)"/>
+				</values>
+				<property name="includeCertMode" />
+			</item>
+			<item type="hidden" name="includePublicKeyModeJWK" value="true">
+				<conditions>
+	                <condition>
+	                        <equals name="includePublicKeyMode" value="jwk"/>
+	                </condition>
+		        </conditions>
+				<property name="rs.security.encryption.include.public.key" properties="encryptionPropRefId"/>
+			</item>
+			<item type="textarea" name="includePublicKeyModeJKU" label="URL" required="true">
+				<conditions>
+	                <condition>
+	                        <equals name="includePublicKeyMode" value="jku"/>
+	                </condition>
+		        </conditions>
+				<property name="joseJWKSetUrl" />
+			</item>
+			
+			
+			<item type="checkbox" name="includeContentType" label="Content Type (cty)" defaultSelected="false">
+                <property name="joseContentType"/>
+            </item>
+            <item type="text" name="includeType" label="Type (typ)" required="false">
+				<property name="joseType" />
+			</item>
+			
+			<item type="textarea" name="includeCrit" label="Critical Headers (crit)" required="false" note="elenco di header separati da ','">
+				<property name="joseCriticalHeaders" />
+			</item>
+			
+			<item type="checkbox" name="includeExtendedHeader" label="Custom Headers" defaultSelected="false" reloadOnChange="true">
+                <property name="includeExtendedHeader"/>
+            </item>
+			<item type="select" name="extendedNumber" label="" default="01" reloadOnChange="true">
+				<conditions>
+	                    <condition>
+	                            <selected name="includeExtendedHeader" />
+	                    </condition>
+	            </conditions>
+				<values>
+					<value value="01" label="1" />
+					<value value="02" label="2" />
+					<value value="03" label="3" />
+					<value value="04" label="4" />
+					<value value="05" label="5" />
+					<value value="06" label="6" />
+					<value value="07" label="7" />
+					<value value="08" label="8" />
+					<value value="09" label="9" />
+					<value value="10" label="10" />
+				</values>
+				<property name="includeExtendedHeaderNumber" />
+			</item>
+		            
+		</subsection>
+		
+		<subsection label="Custom Header N.1">
+		
+			<conditions>
+				<condition and="true">
+                    <selected name="joseUseHeaders" />
+                </condition>
+				<condition and="true">
+					<defined name="extendedNumber"/>
+					<lessEquals name="extendedNumber" value="01"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="customHeaderName_1" label="Nome" required="true">
+				<property name="joseExtensionHeader.1.name" />
+			</item>
+			<item type="text" name="customHeaderValue_1" label="Valore" required="true">
+				<property name="joseExtensionHeader.1.value" />
+			</item>
+			
+		</subsection>
+		<subsection label="Custom Header N.2">
+		
+			<conditions>
+				<condition and="true">
+					<defined name="extendedNumber"/>
+					<lessEquals name="extendedNumber" value="02"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="customHeaderName_2" label="Nome" required="true">
+				<property name="joseExtensionHeader.2.name" />
+			</item>
+			<item type="text" name="customHeaderValue_2" label="Valore" required="true">
+				<property name="joseExtensionHeader.2.value" />
+			</item>
+			
+		</subsection>
+		<subsection label="Custom Header N.3">
+		
+			<conditions>
+				<condition and="true">
+					<defined name="extendedNumber"/>
+					<lessEquals name="extendedNumber" value="03"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="customHeaderName_3" label="Nome" required="true">
+				<property name="joseExtensionHeader.3.name" />
+			</item>
+			<item type="text" name="customHeaderValue_3" label="Valore" required="true">
+				<property name="joseExtensionHeader.3.value" />
+			</item>
+			
+		</subsection>
+		<subsection label="Custom Header N.4">
+		
+			<conditions>
+				<condition and="true">
+					<defined name="extendedNumber"/>
+					<lessEquals name="extendedNumber" value="04"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="customHeaderName_4" label="Nome" required="true">
+				<property name="joseExtensionHeader.4.name" />
+			</item>
+			<item type="text" name="customHeaderValue_4" label="Valore" required="true">
+				<property name="joseExtensionHeader.4.value" />
+			</item>
+			
+		</subsection>
+		<subsection label="Custom Header N.5">
+		
+			<conditions>
+				<condition and="true">
+					<defined name="extendedNumber"/>
+					<lessEquals name="extendedNumber" value="05"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="customHeaderName_5" label="Nome" required="true">
+				<property name="joseExtensionHeader.5.name" />
+			</item>
+			<item type="text" name="customHeaderValue_5" label="Valore" required="true">
+				<property name="joseExtensionHeader.5.value" />
+			</item>
+			
+		</subsection>
+		<subsection label="Custom Header N.6">
+		
+			<conditions>
+				<condition and="true">
+					<defined name="extendedNumber"/>
+					<lessEquals name="extendedNumber" value="06"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="customHeaderName_6" label="Nome" required="true">
+				<property name="joseExtensionHeader.6.name" />
+			</item>
+			<item type="text" name="customHeaderValue_6" label="Valore" required="true">
+				<property name="joseExtensionHeader.6.value" />
+			</item>
+			
+		</subsection>
+		<subsection label="Custom Header N.7">
+		
+			<conditions>
+				<condition and="true">
+					<defined name="extendedNumber"/>
+					<lessEquals name="extendedNumber" value="07"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="customHeaderName_7" label="Nome" required="true">
+				<property name="joseExtensionHeader.7.name" />
+			</item>
+			<item type="text" name="customHeaderValue_7" label="Valore" required="true">
+				<property name="joseExtensionHeader.7.value" />
+			</item>
+			
+		</subsection>
+		<subsection label="Custom Header N.8">
+		
+			<conditions>
+				<condition and="true">
+					<defined name="extendedNumber"/>
+					<lessEquals name="extendedNumber" value="08"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="customHeaderName_8" label="Nome" required="true">
+				<property name="joseExtensionHeader.8.name" />
+			</item>
+			<item type="text" name="customHeaderValue_8" label="Valore" required="true">
+				<property name="joseExtensionHeader.8.value" />
+			</item>
+			
+		</subsection>
+		<subsection label="Custom Header N.9">
+		
+			<conditions>
+				<condition and="true">
+					<defined name="extendedNumber"/>
+					<lessEquals name="extendedNumber" value="09"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="customHeaderName_9" label="Nome" required="true">
+				<property name="joseExtensionHeader.9.name" />
+			</item>
+			<item type="text" name="customHeaderValue_9" label="Valore" required="true">
+				<property name="joseExtensionHeader.9.value" />
+			</item>
+			
+		</subsection>
+		<subsection label="Custom Header N.10">
+		
+			<conditions>
+				<condition and="true">
+					<defined name="extendedNumber"/>
+					<lessEquals name="extendedNumber" value="10"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="customHeaderName_10" label="Nome" required="true">
+				<property name="joseExtensionHeader.10.name" />
+			</item>
+			<item type="text" name="customHeaderValue_10" label="Valore" required="true">
+				<property name="joseExtensionHeader.10.value" />
+			</item>
+			
 		</subsection>
 
 	</section>

@@ -1,4 +1,4 @@
-<config id="messageSecurity.jose.receiver.encrypt" label="JWT Decrypt" xmlns="http://www.openspcoop2.org/core/mvc/properties"
+<config id="messageSecurity.jose.receiver.encrypt" label="JWE Decrypt" xmlns="http://www.openspcoop2.org/core/mvc/properties"
 	provider="org.openspcoop2.security.message.jose.SecurityProvider">
 
 	<compatibility not="false" and="false">
@@ -31,17 +31,30 @@
 		<item type="select" name="decryptionMode" label="Tipo" default="compact" reloadOnChange="true" >
 			<values>
 				<value value="compact" label="Compact"/>
-				<value value="selfContained" label="SelfContained"/>
-				<!--  <value value="detached" label="Detached"/> -->
+				<value value="json" label="JSON"/>
 			</values>
 			<property name="decryptionMode" />
 		</item>
+				
+		<item type="checkbox" name="joseUseHeaders" label="Use Headers" defaultSelected="false" reloadOnChange="true">
+			<property name="joseUseHeaders"/>
+		</item>
 		
-		<!-- Per Encrypt ci voglio per forza anche in fase di ricezione -->
+		<!-- Per Encrypt ci voglio per forza anche in fase di ricezione (a meno di use headers) -->
 		<item type="select" name="encryptionKeyAlgorithm" label="Key Algorithm">
+			<conditions>
+                    <condition not="true">
+                            <selected name="joseUseHeaders" />
+                    </condition>
+            </conditions>
 			<property name="rs.security.encryption.key.algorithm" properties="decryptionPropRefId" />
 		</item>
 		<item type="select" name="encryptionContentAlgorithm" label="Content Algorithm">
+			<conditions>
+                    <condition not="true">
+                            <selected name="joseUseHeaders" />
+                    </condition>
+            </conditions>
 			<property name="rs.security.encryption.content.algorithm" properties="decryptionPropRefId" />
 		</item>
 		
@@ -51,16 +64,22 @@
 
 		<subsection label="KeyStore">
 
+			<conditions>
+                    <condition not="true">
+                            <selected name="joseUseHeaders" />
+                    </condition>
+            </conditions>
+
 			<item type="select" name="keystoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>
 					<value value="jceks" label="JCEKS"/>
-					<value value="jwk" label="JWK"/>
+					<value value="jwk" label="JWK Set"/>
 				</values>
 				<property name="rs.security.keystore.type" properties="decryptionPropRefId" />
 			</item>
-			<item type="text" name="keystoreFile" label="File" required="true">
+			<item type="textarea" name="keystoreFile" label="File" required="true">
 			    <property name="rs.security.keystore.file" properties="decryptionPropRefId" />
 			</item>
 			<item type="text" name="keystorePassword" label="Password" required="true">
@@ -72,13 +91,378 @@
 			    <property name="rs.security.keystore.password" properties="decryptionPropRefId" />
 			</item>
 			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
+				<conditions>
+					<condition not="true" and="false">
+						<equals name="keystoreType" value="jceks"/>
+						<equals name="keystoreType" value="jwk"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.keystore.alias" properties="decryptionPropRefId" />
+			</item>
+			<item type="text" name="keystoreKidAlias" label="Kid Chiave Privata" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="keystoreType" value="jwk"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.keystore.alias" properties="decryptionPropRefId" />
+			</item>
+			<item type="text" name="keystoreSecretKeyAlias" label="Alias Chiave Segreta" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="keystoreType" value="jceks"/>
+					</condition>
+				</conditions>
 			    <property name="rs.security.keystore.alias" properties="decryptionPropRefId" />
 			</item>
 			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+				<conditions>
+					<condition not="true" and="false">
+						<equals name="keystoreType" value="jceks"/>
+						<equals name="keystoreType" value="jwk"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.key.password" properties="decryptionPropRefId" />
+			</item>
+			<item type="text" name="keystoreSecretKeyPassword" label="Password Chiave Segreta" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="keystoreType" value="jceks"/>
+					</condition>
+				</conditions>
 			    <property name="rs.security.key.password" properties="decryptionPropRefId" />
 			</item>
 
 		</subsection>
+
+		<subsection label="Headers">
+
+			<conditions>
+                    <condition>
+                            <selected name="joseUseHeaders" />
+                    </condition>
+            </conditions>
+            
+            <item type="checkbox" name="joseUseHeaders.x5c" label="X.509 Certificate (x5c)" defaultSelected="false" reloadOnChange="true">
+				<property name="joseUseHeaders.x5c"/>
+			</item>
+            <item type="checkbox" name="joseUseHeaders.x5u" label="X.509 URL (x5u)" defaultSelected="false" reloadOnChange="true">
+				<property name="joseUseHeaders.x5u"/>
+			</item>
+			<item type="checkbox" name="joseUseHeaders.jwk" label="JSON Web Key (jwk)" defaultSelected="false" reloadOnChange="true">
+				<property name="joseUseHeaders.jwk"/>
+			</item>
+			<item type="checkbox" name="joseUseHeaders.jku" label="JWK Set URL (jku)" defaultSelected="false" reloadOnChange="true">
+				<property name="joseUseHeaders.jku"/>
+			</item>
+			<item type="hidden" name="joseUseHeaders.kid" value="false">
+				<property name="joseUseHeaders.kid" force="false"/>
+			</item>
+     		
+        </subsection>
+		
+		<subsection label="Configurazione HTTPS (jku/x5u) - TrustStore">
+
+			<conditions and="true">
+			 		<condition>
+                            <selected name="joseUseHeaders" />
+                    </condition>
+                    <condition and="false">
+                            <selected name="joseUseHeaders.jku" />
+                            <selected name="joseUseHeaders.x5u" />
+                    </condition>
+            </conditions>
+            <item type="select" name="joseUseHeaders.ssl.type" label="Tipo" default="jks" reloadOnChange="true">
+				<values>
+					<value value="jks" label="JKS"/>
+					<!--  <value value="pkcs12" label="PKCS12"/>
+					<value value="jwk" label="JWK Set"/> -->
+				</values>
+				<property name="rs.security.keystore.type.ssl" />
+			</item>
+			<item type="textarea" name="joseUseHeaders.ssl.file" label="File" required="false">
+			    <property name="rs.security.keystore.file.ssl" />
+			</item>
+			<item type="text" name="joseUseHeaders.ssl.password" label="Password" required="false">
+			    <property name="rs.security.keystore.password.ssl" />
+			</item>
+            
+        </subsection>
+        
+        <subsection label="Certificati JWK (jwk/jku) - KeyStore">
+
+			<conditions and="true">
+			 		<condition>
+                            <selected name="joseUseHeaders" />
+                    </condition>
+                    <condition and="false">
+                            <selected name="joseUseHeaders.jwk" />
+                            <selected name="joseUseHeaders.jku" />
+                    </condition>
+            </conditions>
+            <item type="select" name="joseUseHeaders.keystore.type_JWK" label="Tipo" default="jks" reloadOnChange="true">
+				<values>
+					<!-- <value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/> -->
+					<value value="jwk" label="JWK Set"/>
+				</values>
+				<property name="joseUseHeaders.keystore.type" />
+			</item>
+			<item type="textarea" name="joseUseHeaders.keystore.file_JWK" label="File" required="false">
+			    <property name="joseUseHeaders.keystore.file" />
+			</item>
+            
+        </subsection>
+        
+        <subsection label="Certificati X.509 (x5c/x5u) - KeyStore">
+
+			<conditions and="true">
+			 		<condition>
+                            <selected name="joseUseHeaders" />
+                    </condition>
+                    <condition and="false">
+                            <selected name="joseUseHeaders.x5c" />
+                            <selected name="joseUseHeaders.x5u" />
+                    </condition>
+            </conditions>
+            <item type="select" name="joseUseHeaders.keystore.type" label="Tipo" default="jks" reloadOnChange="true">
+				<values>
+					<value value="jks" label="JKS"/>
+					<!--  <value value="pkcs12" label="PKCS12"/>
+					<value value="jwk" label="JWK Set"/> -->
+				</values>
+				<property name="joseUseHeaders.keystore.type" />
+			</item>
+			<item type="textarea" name="joseUseHeaders.keystore.file" label="File" required="false">
+			    <property name="joseUseHeaders.keystore.file" />
+			</item>
+			<item type="text" name="joseUseHeaders.keystore.password" label="Password" required="false">
+			    <property name="joseUseHeaders.keystore.password" />
+			</item>
+			
+			<item type="select" name="joseUseHeaders.keystore.mapAliasPassword" label="Coppie 'Alias - Password'" default="01" reloadOnChange="true">
+				<values>
+					<value value="01" label="1" />
+					<value value="02" label="2" />
+					<value value="03" label="3" />
+					<value value="04" label="4" />
+					<value value="05" label="5" />
+					<value value="06" label="6" />
+					<value value="07" label="7" />
+					<value value="08" label="8" />
+					<value value="09" label="9" />
+					<value value="10" label="10" />
+				</values>
+				<property name="joseUseHeaders.keystore.mapAliasPassword" />
+			</item>
+            
+        </subsection>
+        
+        <subsection label="Coppia 'Alias - Password' N.1">
+		
+			<conditions>
+				<condition>
+                        <selected name="joseUseHeaders" />
+                </condition>
+                <condition and="false">
+                        <selected name="joseUseHeaders.x5c" />
+                        <selected name="joseUseHeaders.x5u" />
+                </condition>
+				<condition and="true">
+					<defined name="joseUseHeaders.keystore.mapAliasPassword"/>
+					<lessEquals name="joseUseHeaders.keystore.mapAliasPassword" value="01"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="joseUseHeaders.key.1.alias" label="Alias" required="true">
+				<property name="joseUseHeaders.key.1.alias" />
+			</item>
+			<item type="text" name="joseUseHeaders.key.1.password" label="Password" required="true">
+				<property name="joseUseHeaders.key.1.password" />
+			</item>
+			
+		</subsection>
+		<subsection label="Coppia 'Alias - Password' N.2">
+		
+			<conditions>
+				<condition and="true">
+					<defined name="joseUseHeaders.keystore.mapAliasPassword"/>
+					<lessEquals name="joseUseHeaders.keystore.mapAliasPassword" value="02"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="joseUseHeaders.key.2.alias" label="Alias" required="true">
+				<property name="joseUseHeaders.key.2.alias" />
+			</item>
+			<item type="text" name="joseUseHeaders.key.2.password" label="Password" required="true">
+				<property name="joseUseHeaders.key.2.password" />
+			</item>
+			
+		</subsection>
+		<subsection label="Coppia 'Alias - Password' N.3">
+		
+			<conditions>
+				<condition and="true">
+					<defined name="joseUseHeaders.keystore.mapAliasPassword"/>
+					<lessEquals name="joseUseHeaders.keystore.mapAliasPassword" value="03"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="joseUseHeaders.key.3.alias" label="Alias" required="true">
+				<property name="joseUseHeaders.key.3.alias" />
+			</item>
+			<item type="text" name="joseUseHeaders.key.3.password" label="Password" required="true">
+				<property name="joseUseHeaders.key.3.password" />
+			</item>
+			
+		</subsection>
+		<subsection label="Coppia 'Alias - Password' N.4">
+		
+			<conditions>
+				<condition and="true">
+					<defined name="joseUseHeaders.keystore.mapAliasPassword"/>
+					<lessEquals name="joseUseHeaders.keystore.mapAliasPassword" value="04"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="joseUseHeaders.key.4.alias" label="Alias" required="true">
+				<property name="joseUseHeaders.key.4.alias" />
+			</item>
+			<item type="text" name="joseUseHeaders.key.4.password" label="Password" required="true">
+				<property name="joseUseHeaders.key.4.password" />
+			</item>
+			
+		</subsection>
+		<subsection label="Coppia 'Alias - Password' N.5">
+		
+			<conditions>
+				<condition and="true">
+					<defined name="joseUseHeaders.keystore.mapAliasPassword"/>
+					<lessEquals name="joseUseHeaders.keystore.mapAliasPassword" value="05"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="joseUseHeaders.key.5.alias" label="Alias" required="true">
+				<property name="joseUseHeaders.key.5.alias" />
+			</item>
+			<item type="text" name="joseUseHeaders.key.5.password" label="Password" required="true">
+				<property name="joseUseHeaders.key.5.password" />
+			</item>
+			
+		</subsection>
+		<subsection label="Coppia 'Alias - Password' N.6">
+		
+			<conditions>
+				<condition and="true">
+					<defined name="joseUseHeaders.keystore.mapAliasPassword"/>
+					<lessEquals name="joseUseHeaders.keystore.mapAliasPassword" value="06"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="joseUseHeaders.key.6.alias" label="Alias" required="true">
+				<property name="joseUseHeaders.key.6.alias" />
+			</item>
+			<item type="text" name="joseUseHeaders.key.6.password" label="Password" required="true">
+				<property name="joseUseHeaders.key.6.password" />
+			</item>
+			
+		</subsection>
+		<subsection label="Coppia 'Alias - Password' N.7">
+		
+			<conditions>
+				<condition and="true">
+					<defined name="joseUseHeaders.keystore.mapAliasPassword"/>
+					<lessEquals name="joseUseHeaders.keystore.mapAliasPassword" value="07"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="joseUseHeaders.key.7.alias" label="Alias" required="true">
+				<property name="joseUseHeaders.key.7.alias" />
+			</item>
+			<item type="text" name="joseUseHeaders.key.7.password" label="Password" required="true">
+				<property name="joseUseHeaders.key.7.password" />
+			</item>
+			
+		</subsection>
+		<subsection label="Coppia 'Alias - Password' N.8">
+		
+			<conditions>
+				<condition and="true">
+					<defined name="joseUseHeaders.keystore.mapAliasPassword"/>
+					<lessEquals name="joseUseHeaders.keystore.mapAliasPassword" value="08"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="joseUseHeaders.key.8.alias" label="Alias" required="true">
+				<property name="joseUseHeaders.key.8.alias" />
+			</item>
+			<item type="text" name="joseUseHeaders.key.8.password" label="Password" required="true">
+				<property name="joseUseHeaders.key.8.password" />
+			</item>
+			
+		</subsection>
+		<subsection label="Coppia 'Alias - Password' N.9">
+		
+			<conditions>
+				<condition and="true">
+					<defined name="joseUseHeaders.keystore.mapAliasPassword"/>
+					<lessEquals name="joseUseHeaders.keystore.mapAliasPassword" value="09"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="joseUseHeaders.key.9.alias" label="Alias" required="true">
+				<property name="joseUseHeaders.key.9.alias" />
+			</item>
+			<item type="text" name="joseUseHeaders.key.9.password" label="Password" required="true">
+				<property name="joseUseHeaders.key.9.password" />
+			</item>
+			
+		</subsection>
+		<subsection label="Coppia 'Alias - Password' N.10">
+		
+			<conditions>
+				<condition and="true">
+					<defined name="joseUseHeaders.keystore.mapAliasPassword"/>
+					<lessEquals name="joseUseHeaders.keystore.mapAliasPassword" value="10"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="joseUseHeaders.key.10.alias" label="Alias" required="true">
+				<property name="joseUseHeaders.key.10.alias" />
+			</item>
+			<item type="text" name="joseUseHeaders.key.10.password" label="Password" required="true">
+				<property name="joseUseHeaders.key.10.password" />
+			</item>
+			
+		</subsection>
+		
+		<subsection label="Validazione Certificati X.509 (x5c/x5u) - TrustStore">
+
+			<conditions and="true">
+			 		<condition>
+                            <selected name="joseUseHeaders" />
+                    </condition>
+                    <condition and="false">
+                            <selected name="joseUseHeaders.x5c" />
+                            <selected name="joseUseHeaders.x5u" />
+                    </condition>
+            </conditions>
+            <item type="select" name="joseUseHeaders.truststore.type" label="Tipo" default="jks" reloadOnChange="true">
+				<values>
+					<value value="jks" label="JKS"/>
+					<!--  <value value="pkcs12" label="PKCS12"/>
+					<value value="jwk" label="JWK Set"/> -->
+				</values>
+				<property name="joseUseHeaders.truststore.type" />
+			</item>
+			<item type="textarea" name="joseUseHeaders.truststore.file" label="File" required="false">
+			    <property name="joseUseHeaders.truststore.file" />
+			</item>
+			<item type="text" name="joseUseHeaders.truststore.password" label="Password" required="false">
+			    <property name="joseUseHeaders.truststore.password" />
+			</item>
+            
+        </subsection>
 
 	</section>
 

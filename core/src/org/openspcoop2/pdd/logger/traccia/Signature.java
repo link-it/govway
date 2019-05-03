@@ -149,7 +149,7 @@ public class Signature {
 				JWSOptions jwsOptions = new JWSOptions(this.json_signatureSerialization);
 				jwsOptions.setDetached(this.json_signatureDetached);
 				jwsOptions.setPayloadEncoding(this.json_signaturePayloadEncoding);
-				this.jsonCompactSignature = new JsonSignature(keystore, this.key_alias, this.key_password, this.json_signatureAlgorithm, jwsOptions);
+				this.jsonCompactSignature = new JsonSignature(keystore, false, this.key_alias, this.key_password, this.json_signatureAlgorithm, jwsOptions);
 				
 				this.xmlSignature = new XmlSignature(keystore, this.key_alias, this.key_password, this.xml_addBouncyCastleProvider);
 				if(this.xml_addX509KeyInfo) {

@@ -153,7 +153,7 @@
 			</conditions>
 		    <property name="signatureParts" />
 		</item>
-		<item type="text" name="signaturePartsCustom" label="Elementi Obbligatori" required="true" >
+		<item type="textarea" name="signaturePartsCustom" label="Elementi Obbligatori" required="true" >
 			<conditions and="false">
 				<condition>
 					<equals name="signaturePartsSelect" value="custom"/>
@@ -164,7 +164,7 @@
 			</conditions>
 		    <property name="signatureParts" />
 		</item>
-		<item type="text" name="optionalSignaturePartsCustom" label="Elementi Opzionali" required="false" note="{Content/Element}{namespace}localname (cid:Attachments in localname for SWA)">
+		<item type="textarea" name="optionalSignaturePartsCustom" label="Elementi Opzionali" required="false" note="{Content/Element}{namespace}localname (cid:Attachments in localname for SWA)">
 			<conditions and="false">
 				<condition>
 					<equals name="signaturePartsSelect" value="custom"/>
@@ -232,7 +232,7 @@
 				</values>
 				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="signaturePropRefId" />
 			</item>
-			<item type="text" name="keystoreFile" label="File" required="true">
+			<item type="textarea" name="keystoreFile" label="File" required="true">
 			      	<property name="org.apache.ws.security.crypto.merlin.file" properties="signaturePropRefId" />
 			</item>
 			<item type="text" name="keystorePassword" label="Password" required="true">

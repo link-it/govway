@@ -24,8 +24,6 @@
 package org.openspcoop2.security.message.xml;
 
 
-import java.security.KeyStore;
-
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.constants.MessageType;
@@ -38,6 +36,7 @@ import org.openspcoop2.security.message.utils.EncryptionBean;
 import org.openspcoop2.security.message.utils.KeystoreUtils;
 import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.security.SymmetricKeyWrappedMode;
 import org.openspcoop2.utils.security.XmlEncrypt;
 import org.openspcoop2.utils.security.XmlSignature;

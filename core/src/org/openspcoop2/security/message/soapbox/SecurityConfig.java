@@ -93,6 +93,16 @@ public class SecurityConfig extends org.adroitlogic.soapbox.SecurityConfig {
 	
 	private KeyStore identityStore = null;
 	
+	public SecurityConfig(org.openspcoop2.utils.certificate.KeyStore identityStore, org.openspcoop2.utils.certificate.KeyStore trustStore, Map<String, String> keyPasswords)
+	        throws KeyStoreException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, CertificateException {
+		this(identityStore, trustStore, keyPasswords, null);
+	}
+    public SecurityConfig(org.openspcoop2.utils.certificate.KeyStore identityStore, org.openspcoop2.utils.certificate.KeyStore trustStore, Map<String, String> keyPasswords,String crlPath)
+        throws KeyStoreException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, CertificateException {
+    	this(identityStore!=null? identityStore.getKeystore() : null, 
+				trustStore!=null ? trustStore.getKeystore() : null, 
+						keyPasswords, crlPath);
+    }
 	public SecurityConfig(KeyStore identityStore, KeyStore trustStore, Map<String, String> keyPasswords)
 	        throws KeyStoreException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, CertificateException {
 		this(identityStore, trustStore, keyPasswords, null);

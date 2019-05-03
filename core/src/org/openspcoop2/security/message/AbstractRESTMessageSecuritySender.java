@@ -88,7 +88,8 @@ public abstract class AbstractRESTMessageSecuritySender implements IMessageSecur
 						restMessage.getTransportRequestContext().setParametersFormBased(new Properties());
 					}
 					restMessage.getTransportRequestContext().removeParameterFormBased(signatureDetachedPropertyUrl); // sovrascrivo
-					restMessage.getTransportRequestContext().getParametersFormBased().put(signatureDetachedPropertyUrl, detachedSignature);
+					//restMessage.getTransportRequestContext().getParametersFormBased().put(signatureDetachedPropertyUrl, detachedSignature);
+					restMessage.forceUrlProperty(signatureDetachedPropertyUrl, detachedSignature);
 				}
 			}
 			else {
@@ -104,7 +105,8 @@ public abstract class AbstractRESTMessageSecuritySender implements IMessageSecur
 					restMessage.getTransportRequestContext().setParametersTrasporto(new Properties());
 				}
 				restMessage.getTransportRequestContext().removeParameterTrasporto(signatureDetachedHeader); // sovrascrivo
-				restMessage.getTransportRequestContext().getParametersTrasporto().put(signatureDetachedHeader, detachedSignature);
+				//restMessage.getTransportRequestContext().getParametersTrasporto().put(signatureDetachedHeader, detachedSignature);
+				restMessage.forceTransportHeader(signatureDetachedHeader, detachedSignature);
 			}
 			else {
 				if(restMessage.getTransportResponseContext()==null) {
@@ -114,7 +116,8 @@ public abstract class AbstractRESTMessageSecuritySender implements IMessageSecur
 					restMessage.getTransportResponseContext().setParametersTrasporto(new Properties());
 				}
 				restMessage.getTransportResponseContext().removeParameterTrasporto(signatureDetachedHeader); // sovrascrivo
-				restMessage.getTransportResponseContext().getParametersTrasporto().put(signatureDetachedHeader, detachedSignature);
+				//restMessage.getTransportResponseContext().getParametersTrasporto().put(signatureDetachedHeader, detachedSignature);
+				restMessage.forceTransportHeader(signatureDetachedHeader, detachedSignature);
 			}
 			if(detachedSignature==null) {
 				throw new SecurityException(descriptionEngine+" (mode:"+mode+" message-role:"+restMessage.getMessageRole()+") header '"+signatureDetachedHeader+"' not found");

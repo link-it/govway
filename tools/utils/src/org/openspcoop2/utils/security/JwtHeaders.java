@@ -205,16 +205,23 @@ public class JwtHeaders {
 			}
 		}
 		if(this.criticalHeaders!=null && !this.criticalHeaders.isEmpty()) {
-			if(!hdrs.containsHeader(JWT_HDR_CRIT) || forceOverride) {
-				StringBuffer bf = new StringBuffer();
-				for (String ch : this.criticalHeaders) {
-					if(bf.length()>0) {
-						bf.append(",");
-					}
-					bf.append("\"").append(ch).append("\"");
-				}
-				hdrs.setHeader(JWT_HDR_CRIT, "["+bf.toString()+"]");
+			List<String> headers = new ArrayList<>();
+			if(hdrs.containsHeader(JWT_HDR_CRIT)) {
+				headers = hdrs.getCritical();
 			}
+			for (String ch : this.criticalHeaders) {
+				if(headers.contains(ch)==false) {
+					headers.add(ch);
+				}
+			}
+			StringBuffer bf = new StringBuffer();
+			for (String ch : headers) {
+				if(bf.length()>0) {
+					bf.append(",");
+				}
+				bf.append("\"").append(ch).append("\"");
+			}
+			hdrs.setHeader(JWT_HDR_CRIT, "["+bf.toString()+"]");
 		}
 		if(this.x509Url!=null) {
 			if(!hdrs.containsHeader(JWT_HDR_X5U) || forceOverride) {

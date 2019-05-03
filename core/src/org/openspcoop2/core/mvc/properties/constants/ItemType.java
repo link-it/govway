@@ -42,6 +42,8 @@ public enum ItemType implements IEnumeration , Serializable , Cloneable {
 	HIDDEN ("hidden"),
 	@javax.xml.bind.annotation.XmlEnumValue("text")
 	TEXT ("text"),
+	@javax.xml.bind.annotation.XmlEnumValue("textarea")
+	TEXTAREA ("textarea"),
 	@javax.xml.bind.annotation.XmlEnumValue("select")
 	SELECT ("select"),
 	@javax.xml.bind.annotation.XmlEnumValue("checkbox")

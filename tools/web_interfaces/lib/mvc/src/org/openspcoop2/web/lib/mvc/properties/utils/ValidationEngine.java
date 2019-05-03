@@ -161,6 +161,7 @@ public class ValidationEngine {
 				validaSelect(item,metadata);
 				break;
 			case TEXT:
+			case TEXTAREA:
 				validaText(item,metadata);
 				break;
 			}

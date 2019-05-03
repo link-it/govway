@@ -80,6 +80,12 @@ public class TestEncrypt {
 		File jwk_fKeystore = null;
 		InputStream jwk_isTruststore = null;
 		File jwk_fTruststore = null;
+		
+		InputStream jwks_symmetric_isKeystore = null;
+		File jwks_symmetric_fKeystore = null;
+		
+		InputStream jwk_symmetric_isKeystore = null;
+		File jwk_symmetric_fKeystore = null;
 		try{
 			isKeystore = TestEncrypt.class.getResourceAsStream("/org/openspcoop2/utils/security/keystore_example.jks");
 			fKeystore = File.createTempFile("keystore", "jks");
@@ -109,6 +115,14 @@ public class TestEncrypt {
 			jwk_fTruststore = File.createTempFile("truststore", ".jwk");
 			FileSystemUtilities.writeFile(jwk_fTruststore, Utilities.getAsByteArray(jwk_isTruststore));
 			
+			jwks_symmetric_isKeystore = TestSignature.class.getResourceAsStream("/org/openspcoop2/utils/security/keystore_symmetricKey_example.jwks");
+			jwks_symmetric_fKeystore = File.createTempFile("keystore", ".jwks");
+			FileSystemUtilities.writeFile(jwks_symmetric_fKeystore, Utilities.getAsByteArray(jwks_symmetric_isKeystore));
+			
+			jwk_symmetric_isKeystore = TestSignature.class.getResourceAsStream("/org/openspcoop2/utils/security/keystore_symmetricKey_example.jwk");
+			jwk_symmetric_fKeystore = File.createTempFile("keystore", ".jwk");
+			FileSystemUtilities.writeFile(jwk_symmetric_fKeystore, Utilities.getAsByteArray(jwk_symmetric_isKeystore));
+			
 			String passwordChiavePrivata = "key123456";
 			String passwordStore = "123456";
 			String alias = "openspcoop";
@@ -126,6 +140,9 @@ public class TestEncrypt {
 			JsonWebKey jwk_truststore = new JWK(FileSystemUtilities.readFile(jwk_fTruststore)).getJsonWebKey();
 			JsonWebKeys jwks_keystore = new JWKSet(FileSystemUtilities.readFile(jwks_fKeystore)).getJsonWebKeys();
 			JsonWebKeys jwks_truststore = new JWKSet(FileSystemUtilities.readFile(jwks_fTruststore)).getJsonWebKeys();
+			
+			JsonWebKeys jwks_symmetric_keystore = new JWKSet(FileSystemUtilities.readFile(jwks_symmetric_fKeystore)).getJsonWebKeys();
+			JsonWebKey jwk_symmetric_keystore = new JWK(FileSystemUtilities.readFile(jwk_symmetric_fKeystore)).getJsonWebKey();
 			
 			
 			JwtHeaders jwtHeader = new JwtHeaders();
@@ -173,6 +190,23 @@ public class TestEncrypt {
 				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY, fKeystore, fTruststore, jwtHeader,
 						truststore, keystore, keystore_mapAliasPassword, null);
 			}
+			
+			
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS.equals(tipoTest)) {
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS, fKeystoreJCEKS, fKeystoreJCEKS, null,
+						null, null, null, null);
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipoTest)) {
+				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM, fKeystoreJCEKS, fKeystoreJCEKS, jwtHeader,
+						null, null, null, null);
+				jwtHeader.setX509Url(null);
+			}
+			
+			
+			
 
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JWK.equals(tipoTest)) {
 				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK, jwks_fKeystore, jwks_fTruststore, null,
@@ -190,19 +224,38 @@ public class TestEncrypt {
 				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY, jwks_fKeystore, jwks_fTruststore, jwtHeader,
 						null,null,null,jwks_keystore);
 			}
+			
+			
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC.equals(tipoTest)) {
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC, jwks_symmetric_fKeystore, jwks_symmetric_fKeystore, null,
+						null,null,null,null);
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipoTest)) {
+				jwtHeader.setJwkUrl(new URI("file://"+jwks_symmetric_fKeystore.getAbsolutePath()));
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM, jwks_symmetric_fKeystore, jwks_symmetric_fKeystore, jwtHeader,
+						null,null,null,null);
+				jwtHeader.setJwkUrl(null);
+			}
+			
+
+			
+			
+			
 
 			
 			
 			// Esempio Signature JSON con altri costruttori
 			
-			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE.equals(tipoTest)) {
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_JKS_KEYSTORE.equals(tipoTest)) {
 				
 				jwtHeader.addX509cert((X509Certificate)keystore.getCertificate(alias));
 				jwtHeader.setX509IncludeCertSha1(true);
 				jwtHeader.setX509IncludeCertSha256(false);
 				jwtHeader.setKid(alias);
 				
-				testJsonKeystore(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE, keystore, truststore, alias, passwordChiavePrivata, jwtHeader,
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_JKS_KEYSTORE, keystore, truststore, alias, passwordChiavePrivata, jwtHeader,
 						keystore_mapAliasPassword);
 				
 				jwtHeader.getX509c().clear();
@@ -211,7 +264,7 @@ public class TestEncrypt {
 				jwtHeader.setKid(null);
 			}
 			
-			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE_HEADER_CUSTOM.equals(tipoTest)) {
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_HEADER_CUSTOM.equals(tipoTest)) {
 				
 				jwtHeader.addX509cert((X509Certificate)keystore.getCertificate(alias));
 				jwtHeader.setX509IncludeCertSha1(false);
@@ -219,7 +272,7 @@ public class TestEncrypt {
 				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
 				jwtHeader.setKid(alias);
 				
-				testJsonKeystore(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE_HEADER_CUSTOM, keystore, truststore, alias, passwordChiavePrivata, jwtHeader,
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_HEADER_CUSTOM, keystore, truststore, alias, passwordChiavePrivata, jwtHeader,
 						keystore_mapAliasPassword);
 				
 				jwtHeader.getX509c().clear();
@@ -232,14 +285,14 @@ public class TestEncrypt {
 			
 			
 			
-			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE_JCE.equals(tipoTest)) {
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_JCE.equals(tipoTest)) {
 				
 				jwtHeader.addX509cert((X509Certificate)keystore.getCertificate(alias));
 				jwtHeader.setX509IncludeCertSha1(true);
 				jwtHeader.setX509IncludeCertSha256(false);
 				jwtHeader.setKid(alias);
 				
-				testJsonKeystore(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE_JCE, keystoreJCEKS, alias, passwordChiavePrivata, jwtHeader);
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_JCE, keystoreJCEKS, alias, passwordChiavePrivata, jwtHeader);
 				
 				jwtHeader.getX509c().clear();
 				jwtHeader.setX509IncludeCertSha1(false);
@@ -247,7 +300,7 @@ public class TestEncrypt {
 				jwtHeader.setKid(null);
 			}
 			
-			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE_JCE_HEADER_CUSTOM.equals(tipoTest)) {
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_JCE_HEADER_CUSTOM.equals(tipoTest)) {
 				
 				jwtHeader.addX509cert((X509Certificate)keystore.getCertificate(alias));
 				jwtHeader.setX509IncludeCertSha1(false);
@@ -255,7 +308,7 @@ public class TestEncrypt {
 				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
 				jwtHeader.setKid(alias);
 				
-				testJsonKeystore(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE_JCE_HEADER_CUSTOM, keystoreJCEKS, alias, passwordChiavePrivata, jwtHeader);
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_JCE_HEADER_CUSTOM, keystoreJCEKS, alias, passwordChiavePrivata, jwtHeader);
 				
 				jwtHeader.getX509c().clear();
 				jwtHeader.setX509IncludeCertSha1(false);
@@ -267,22 +320,22 @@ public class TestEncrypt {
 			
 
 			
-			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_KEYS.equals(tipoTest)) {
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_JWK_KEYS.equals(tipoTest)) {
 				
 				jwtHeader.setJwKey(jwks_keystore, alias);
 				jwtHeader.setKid(alias);
 				
-				testJsonJwkKeys(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_KEYS, jwks_keystore, jwks_truststore, alias, jwtHeader);
+				testJsonJwkKeys(TipoTest.JSON_ENCRYPT_JWK_KEYS, jwks_keystore, jwks_truststore, alias, jwtHeader);
 				
 				jwtHeader.setJwKey(null);
 				jwtHeader.setKid(null);
 			}
 			
-			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_KEYS_HEADER_CUSTOM.equals(tipoTest)) {
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_JWK_KEYS_HEADER_CUSTOM.equals(tipoTest)) {
 				
 				jwtHeader.setJwkUrl(new URI("file://"+jwks_fTruststore.getAbsolutePath()));
 				
-				testJsonJwkKeys(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_KEYS, jwks_keystore, jwks_truststore, alias, jwtHeader);
+				testJsonJwkKeys(TipoTest.JSON_ENCRYPT_JWK_KEYS_HEADER_CUSTOM, jwks_keystore, jwks_truststore, alias, jwtHeader);
 				
 				jwtHeader.setJwkUrl(null);
 				jwtHeader.setKid(null);
@@ -293,28 +346,74 @@ public class TestEncrypt {
 			
 			
 			
-			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_KEY.equals(tipoTest)) {
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_JWK_KEY.equals(tipoTest)) {
 				
 				jwtHeader.setJwKey(jwk_keystore);
 				jwtHeader.setKid(alias);
 				
-				testJsonJwkKey(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_KEY, jwk_keystore, jwk_truststore, jwtHeader,
+				testJsonJwkKey(TipoTest.JSON_ENCRYPT_JWK_KEY, jwk_keystore, jwk_truststore, jwtHeader,
 						jwks_keystore);
 				
 				jwtHeader.setJwKey(null);
 				jwtHeader.setKid(null);
 			}
 			
-			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_KEY_HEADER_CUSTOM.equals(tipoTest)) {
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_JWK_KEY_HEADER_CUSTOM.equals(tipoTest)) {
 				
 				jwtHeader.setJwkUrl(new URI("file://"+jwks_fTruststore.getAbsolutePath()));
 				
-				testJsonJwkKey(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_KEY, jwk_keystore, jwk_truststore, jwtHeader,
+				testJsonJwkKey(TipoTest.JSON_ENCRYPT_JWK_KEY_HEADER_CUSTOM, jwk_keystore, jwk_truststore, jwtHeader,
 						jwks_keystore);
 				
 				jwtHeader.setJwkUrl(null);
 				jwtHeader.setKid(null);
 			}
+			
+			
+			
+			
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEYS.equals(tipoTest)) {
+				
+				jwtHeader.setKid(alias);
+				
+				testJsonJwkKeys(TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEYS, jwks_symmetric_keystore, jwks_symmetric_keystore, alias, jwtHeader);
+				
+				jwtHeader.setKid(null);
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEYS_HEADER_CUSTOM.equals(tipoTest)) {
+				
+				jwtHeader.setJwkUrl(new URI("file://"+jwks_symmetric_fKeystore.getAbsolutePath()));
+				
+				testJsonJwkKeys(TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEYS_HEADER_CUSTOM, jwks_symmetric_keystore, jwks_symmetric_keystore, alias, jwtHeader);
+				
+				jwtHeader.setJwkUrl(null);
+
+			}
+			
+			
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEY.equals(tipoTest)) {
+				
+				jwtHeader.setKid(alias);
+				
+				testJsonJwkKey(TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEY, jwk_symmetric_keystore, jwk_symmetric_keystore, jwtHeader,
+						null);
+				
+				jwtHeader.setKid(null);
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEY_HEADER_CUSTOM.equals(tipoTest)) {
+				
+				jwtHeader.setJwkUrl(new URI("file://"+jwk_symmetric_fKeystore.getAbsolutePath()));
+				
+				testJsonJwkKey(TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEY_HEADER_CUSTOM, jwk_symmetric_keystore, jwk_symmetric_keystore, jwtHeader,
+						null);
+				
+				jwtHeader.setJwkUrl(null);
+			}
+			
 			
 
 		}finally{
@@ -338,6 +437,7 @@ public class TestEncrypt {
 					fTruststore.delete();
 				}
 			}catch(Exception e){}
+			
 			try{
 				if(isKeystoreJCEKS!=null){
 					isKeystoreJCEKS.close();
@@ -394,6 +494,28 @@ public class TestEncrypt {
 			try{
 				if(jwks_fTruststore!=null){
 					jwks_fTruststore.delete();
+				}
+			}catch(Exception e){}
+			
+			try{
+				if(jwks_symmetric_isKeystore!=null){
+					jwks_symmetric_isKeystore.close();
+				}
+			}catch(Exception e){}
+			try{
+				if(jwks_symmetric_fKeystore!=null){
+					jwks_symmetric_fKeystore.delete();
+				}
+			}catch(Exception e){}
+			
+			try{
+				if(jwk_symmetric_isKeystore!=null){
+					jwk_symmetric_isKeystore.close();
+				}
+			}catch(Exception e){}
+			try{
+				if(jwk_symmetric_fKeystore!=null){
+					jwk_symmetric_fKeystore.delete();
 				}
 			}catch(Exception e){}
 		}
@@ -566,10 +688,33 @@ public class TestEncrypt {
 				encryptProps.put("rs.security.encryption.include.cert.sha256", "false");
 			}
 		}
+		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS.equals(tipo) || 
+				TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo)) {
+			encryptProps.put("rs.security.keystore.type", "jceks");
+			encryptProps.put("rs.security.encryption.content.algorithm","A256GCM");
+			encryptProps.put("rs.security.encryption.key.algorithm","DIRECT");
+			encryptProps.put("rs.security.key.password","key123456");
+			encryptProps.put("rs.security.encryption.include.key.id","false"); // non e' possibile aggiungerlo
+			encryptProps.put("rs.security.encryption.include.cert","false"); // non e' possibile aggiungerlo"
+
+			encryptProps.remove("rs.security.encryption.include.cert.sha1");
+			encryptProps.remove("rs.security.encryption.include.cert.sha256");
+		}
 		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK.equals(tipo) ||
 				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipo)  ||
 				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
 			encryptProps.put("rs.security.keystore.type", "jwk");
+			
+			encryptProps.remove("rs.security.encryption.include.cert.sha1");
+			encryptProps.remove("rs.security.encryption.include.cert.sha256");
+		}
+		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC.equals(tipo) ||
+				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo)  ) {
+			encryptProps.put("rs.security.keystore.type", "jwk");
+			encryptProps.put("rs.security.encryption.content.algorithm","A256GCM");
+			encryptProps.put("rs.security.encryption.key.algorithm","DIRECT");
+			encryptProps.put("rs.security.encryption.include.key.id","false"); // non e' possibile aggiungerlo
+			encryptProps.put("rs.security.encryption.include.public.key","false"); // non e' possibile aggiungerlo"
 			
 			encryptProps.remove("rs.security.encryption.include.cert.sha1");
 			encryptProps.remove("rs.security.encryption.include.cert.sha256");
@@ -589,10 +734,24 @@ public class TestEncrypt {
 				TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM.equals(tipo)) {
 			decryptProps.put("rs.security.keystore.type", "jks");
 		}
+		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS.equals(tipo) || 
+				TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo)) {
+			decryptProps.put("rs.security.keystore.type", "jceks");
+			decryptProps.put("rs.security.encryption.content.algorithm","A256GCM");
+			decryptProps.put("rs.security.encryption.key.algorithm","DIRECT");
+		}
 		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK.equals(tipo) ||
 				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipo) ||
 				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo) ) {
 			decryptProps.put("rs.security.keystore.type", "jwk");
+		}
+		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC.equals(tipo) ||
+				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo)  ) {
+			decryptProps.put("rs.security.keystore.type", "jwk");
+			decryptProps.put("rs.security.encryption.content.algorithm","A256GCM");
+			decryptProps.put("rs.security.encryption.key.algorithm","DIRECT");
+			decryptProps.put("rs.security.encryption.include.key.id","false"); // non e' possibile aggiungerlo
+			decryptProps.put("rs.security.encryption.include.public.key","false"); // non e' possibile aggiungerlo"			
 		}
 		
 		System.out.println("\n\n");
@@ -625,16 +784,21 @@ public class TestEncrypt {
 		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		// Verifica basata sull'header
-		String suffix = "";
-		if(jsonWebKeys!=null) {
-			jsonDecrypt = new JsonDecrypt(jsonWebKeys,optionsDecrypt);
-			suffix = "-jsonWebKeysHDR";
+		if(!TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS.equals(tipo) && 
+				!TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo) &&
+				!TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC.equals(tipo) && 
+				!TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo)) {
+			String suffix = "";
+			if(jsonWebKeys!=null) {
+				jsonDecrypt = new JsonDecrypt(jsonWebKeys,optionsDecrypt);
+				suffix = "-jsonWebKeysHDR";
+			}
+			else {
+				jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
+				suffix = "-jksHDR";
+			}
+			decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
 		}
-		else {
-			jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
-			suffix = "-jksHDR";
-		}
-		decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		System.out.println("\n\n");
 		
@@ -665,15 +829,21 @@ public class TestEncrypt {
 		decrypt(tipo, "encPublic-decryptPrivate-deflateProperties", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		// Verifica basata sull'header
-		if(jsonWebKeys!=null) {
-			jsonDecrypt = new JsonDecrypt(jsonWebKeys,optionsDecrypt);
-			suffix = "-jsonWebKeysHDR";
-		}
-		else {
-			jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
-			suffix = "-jksHDR";
-		}
-		decrypt(tipo, "encPublic-decryptPrivate-deflateProperties", false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if(!TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS.equals(tipo) && 
+				!TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo) &&
+				!TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC.equals(tipo) && 
+				!TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo)) {
+			String suffix = "";
+			if(jsonWebKeys!=null) {
+				jsonDecrypt = new JsonDecrypt(jsonWebKeys,optionsDecrypt);
+				suffix = "-jsonWebKeysHDR";
+			}
+			else {
+				jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
+				suffix = "-jksHDR";
+			}
+			decrypt(tipo, "encPublic-decryptPrivate-deflateProperties"+suffix, false, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}	
 		
 		encryptProps.remove("rs.security.encryption.zip.algorithm");
 		
@@ -705,15 +875,21 @@ public class TestEncrypt {
 		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		// Verifica basata sull'header
-		if(jsonWebKeys!=null) {
-			jsonDecrypt = new JsonDecrypt(jsonWebKeys,optionsDecrypt);
-			suffix = "-jsonWebKeysHDR";
+		if(!TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS.equals(tipo) && 
+				!TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo) &&
+				!TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC.equals(tipo) && 
+				!TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo)) {
+			String suffix = "";
+				if(jsonWebKeys!=null) {
+				jsonDecrypt = new JsonDecrypt(jsonWebKeys,optionsDecrypt);
+				suffix = "-jsonWebKeysHDR";
+			}
+			else {
+				jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
+				suffix = "-jksHDR";
+			}
+			decrypt(tipo, "encPublic-decryptPrivate-deflate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
 		}
-		else {
-			jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
-			suffix = "-jksHDR";
-		}
-		decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		System.out.println("\n\n");
 		
@@ -739,15 +915,21 @@ public class TestEncrypt {
 		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		// Verifica basata sull'header
-		if(jsonWebKeys!=null) {
-			jsonDecrypt = new JsonDecrypt(jsonWebKeys,optionsDecrypt);
-			suffix = "-jsonWebKeysHDR";
+		if(!TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS.equals(tipo) && 
+				!TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo) &&
+				!TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC.equals(tipo) && 
+				!TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo)) {
+			String suffix = "";
+				if(jsonWebKeys!=null) {
+				jsonDecrypt = new JsonDecrypt(jsonWebKeys,optionsDecrypt);
+				suffix = "-jsonWebKeysHDR";
+			}
+			else {
+				jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
+				suffix = "-jksHDR";
+			}
+			decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
 		}
-		else {
-			jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
-			suffix = "-jksHDR";
-		}
-		decrypt(tipo, "encPublic-decryptPrivate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		System.out.println("\n\n");
 		
@@ -778,15 +960,21 @@ public class TestEncrypt {
 		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		// Verifica basata sull'header
-		if(jsonWebKeys!=null) {
-			jsonDecrypt = new JsonDecrypt(jsonWebKeys,optionsDecrypt);
-			suffix = "-jsonWebKeysHDR";
+		if(!TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS.equals(tipo) && 
+				!TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo) &&
+				!TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC.equals(tipo) && 
+				!TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo)) {
+			String suffix = "";
+			if(jsonWebKeys!=null) {
+				jsonDecrypt = new JsonDecrypt(jsonWebKeys,optionsDecrypt);
+				suffix = "-jsonWebKeysHDR";
+			}
+			else {
+				jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
+				suffix = "-jksHDR";
+			}
+			decrypt(tipo, "encPublic-decryptPrivate-deflate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
 		}
-		else {
-			jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
-			suffix = "-jksHDR";
-		}
-		decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		encryptProps.remove("rs.security.encryption.zip.algorithm");
 		
@@ -818,15 +1006,21 @@ public class TestEncrypt {
 		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		// Verifica basata sull'header
-		if(jsonWebKeys!=null) {
-			jsonDecrypt = new JsonDecrypt(jsonWebKeys,optionsDecrypt);
-			suffix = "-jsonWebKeysHDR";
+		if(!TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS.equals(tipo) && 
+				!TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo) &&
+				!TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC.equals(tipo) && 
+				!TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo)) {
+			String suffix = "";
+			if(jsonWebKeys!=null) {
+				jsonDecrypt = new JsonDecrypt(jsonWebKeys,optionsDecrypt);
+				suffix = "-jsonWebKeysHDR";
+			}
+			else {
+				jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
+				suffix = "-jksHDR";
+			}
+			decrypt(tipo, "encPublic-decryptPrivate-deflate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
 		}
-		else {
-			jsonDecrypt = new JsonDecrypt(truststoreJKS,keystoreJKS,keystore_mapAliasPassword,optionsDecrypt);
-			suffix = "-jksHDR";
-		}
-		decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
 
 		System.out.println("\n\n");
 		
@@ -1106,6 +1300,15 @@ public class TestEncrypt {
 		
 		System.out.println("\n\n");
 		
+		boolean symmetric = false;
+		if(TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEYS.equals(tipo) ||
+				TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEYS_HEADER_CUSTOM.equals(tipo)) {
+			symmetric = true;
+			keyAlgorithm = "DIRECT"; 
+			contentAlgorithm = "A256GCM";
+		}
+
+		
 		
 		
 		
@@ -1119,10 +1322,10 @@ public class TestEncrypt {
 		JWEOptions options = new JWEOptions(JOSESerialization.JSON);
 		JsonEncrypt jsonEncrypt = null;
 		if(headers==null) {
-			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, options);
+			jsonEncrypt = new JsonEncrypt(truststore, symmetric, alias, keyAlgorithm, contentAlgorithm, options);
 		}
 		else {
-			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, headers, options);
+			jsonEncrypt = new JsonEncrypt(truststore, symmetric, alias, keyAlgorithm, contentAlgorithm, headers, options);
 		}
 		String attachEncrypt = jsonEncrypt.encrypt(jsonInput);
 		int lengthNotDeflated = attachEncrypt.length();
@@ -1130,14 +1333,16 @@ public class TestEncrypt {
 
 		// Verifica
 		JWTOptions optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
-		JsonDecrypt jsonDecrypt = new JsonDecrypt(keystore, alias, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		JsonDecrypt jsonDecrypt = new JsonDecrypt(keystore, symmetric, alias, keyAlgorithm, contentAlgorithm,optionsDecrypt);
 		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		// Verifica basata sull'header
-		String suffix = "";
-		jsonDecrypt = new JsonDecrypt(keystore,optionsDecrypt);
-		suffix = "-jsonWebKeysHDR";
-		decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if(!symmetric) {
+			String suffix = "";
+			jsonDecrypt = new JsonDecrypt(keystore,optionsDecrypt);
+			suffix = "-jsonWebKeysHDR";
+			decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 		
 		System.out.println("\n\n");
 		
@@ -1150,10 +1355,10 @@ public class TestEncrypt {
 		options = new JWEOptions(JOSESerialization.JSON);
 		options.setDeflate(true);
 		if(headers==null) {
-			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, options);
+			jsonEncrypt = new JsonEncrypt(truststore, symmetric, alias, keyAlgorithm, contentAlgorithm, options);
 		}
 		else {
-			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, headers, options);
+			jsonEncrypt = new JsonEncrypt(truststore, symmetric, alias, keyAlgorithm, contentAlgorithm, headers, options);
 		}
 		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
 		int lengthDeflated = attachEncrypt.length();
@@ -1164,13 +1369,16 @@ public class TestEncrypt {
 
 		// Verifica
 		optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
-		jsonDecrypt = new JsonDecrypt(keystore, alias, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		jsonDecrypt = new JsonDecrypt(keystore, symmetric, alias, keyAlgorithm, contentAlgorithm,optionsDecrypt);
 		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		// Verifica basata sull'header
-		jsonDecrypt = new JsonDecrypt(keystore,optionsDecrypt);
-		suffix = "-jsonWebKeysHDR";
-		decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if(!symmetric) {
+			String suffix = "";
+			jsonDecrypt = new JsonDecrypt(keystore,optionsDecrypt);
+			suffix = "-jsonWebKeysHDR";
+			decrypt(tipo, "encPublic-decryptPrivate-deflate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 		
 		System.out.println("\n\n");
 		
@@ -1181,10 +1389,10 @@ public class TestEncrypt {
 		// Encrypt Json 
 		options = new JWEOptions(JOSESerialization.COMPACT);
 		if(headers==null) {
-			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, options);
+			jsonEncrypt = new JsonEncrypt(truststore, symmetric, alias, keyAlgorithm, contentAlgorithm, options);
 		}
 		else {
-			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, headers, options);
+			jsonEncrypt = new JsonEncrypt(truststore, symmetric, alias, keyAlgorithm, contentAlgorithm, headers, options);
 		}
 		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
 		lengthNotDeflated = attachEncrypt.length();
@@ -1192,13 +1400,16 @@ public class TestEncrypt {
 
 		// Verifica
 		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
-		jsonDecrypt = new JsonDecrypt(keystore, alias, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		jsonDecrypt = new JsonDecrypt(keystore, symmetric, alias, keyAlgorithm, contentAlgorithm,optionsDecrypt);
 		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		// Verifica basata sull'header
-		jsonDecrypt = new JsonDecrypt(keystore,optionsDecrypt);
-		suffix = "-jsonWebKeysHDR";
-		decrypt(tipo, "encPublic-decryptPrivate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if(!symmetric) {
+			String suffix = "";
+			jsonDecrypt = new JsonDecrypt(keystore,optionsDecrypt);
+			suffix = "-jsonWebKeysHDR";
+			decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 		
 		System.out.println("\n\n");
 		
@@ -1211,10 +1422,10 @@ public class TestEncrypt {
 		options = new JWEOptions(JOSESerialization.COMPACT);
 		options.setDeflate(true);
 		if(headers==null) {
-			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, options);
+			jsonEncrypt = new JsonEncrypt(truststore, symmetric, alias, keyAlgorithm, contentAlgorithm, options);
 		}
 		else {
-			jsonEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, headers, options);
+			jsonEncrypt = new JsonEncrypt(truststore, symmetric, alias, keyAlgorithm, contentAlgorithm, headers, options);
 		}
 		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
 		lengthDeflated = attachEncrypt.length();
@@ -1225,13 +1436,16 @@ public class TestEncrypt {
 
 		// Verifica
 		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
-		jsonDecrypt = new JsonDecrypt(keystore, alias, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		jsonDecrypt = new JsonDecrypt(keystore, symmetric, alias, keyAlgorithm, contentAlgorithm,optionsDecrypt);
 		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		// Verifica basata sull'header
-		jsonDecrypt = new JsonDecrypt(keystore,optionsDecrypt);
-		suffix = "-jsonWebKeysHDR";
-		decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if(!symmetric) {
+			String suffix = "";
+			jsonDecrypt = new JsonDecrypt(keystore,optionsDecrypt);
+			suffix = "-jsonWebKeysHDR";
+			decrypt(tipo, "encPublic-decryptPrivate-deflate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 
 		System.out.println("\n\n");
 		
@@ -1251,6 +1465,15 @@ public class TestEncrypt {
 
 		String keyAlgorithm = "RSA-OAEP-256"; 
 		String contentAlgorithm = "A256GCM";
+
+		boolean symmetric = false;
+		if(TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEY.equals(tipo) ||
+				TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEY_HEADER_CUSTOM.equals(tipo)) {
+			symmetric = true;
+			keyAlgorithm = "DIRECT"; 
+			contentAlgorithm = "A256GCM";
+		}
+		
 		
 		
 		
@@ -1264,10 +1487,10 @@ public class TestEncrypt {
 		JWEOptions options = new JWEOptions(JOSESerialization.JSON);
 		JsonEncrypt jsonEncrypt = null;
 		if(headers==null) {
-			jsonEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, options);
+			jsonEncrypt = new JsonEncrypt(truststore, symmetric, keyAlgorithm, contentAlgorithm, options);
 		}
 		else {
-			jsonEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, headers, options);
+			jsonEncrypt = new JsonEncrypt(truststore, symmetric, keyAlgorithm, contentAlgorithm, headers, options);
 		}
 		String attachEncrypt = jsonEncrypt.encrypt(jsonInput);
 		int lengthNotDeflated = attachEncrypt.length();
@@ -1275,14 +1498,16 @@ public class TestEncrypt {
 
 		// Verifica
 		JWTOptions optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
-		JsonDecrypt jsonDecrypt = new JsonDecrypt(keystore, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		JsonDecrypt jsonDecrypt = new JsonDecrypt(keystore, symmetric, keyAlgorithm, contentAlgorithm,optionsDecrypt);
 		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		// Verifica basata sull'header
-		String suffix = "";
-		jsonDecrypt = new JsonDecrypt(keystoreVerificaHeaders,optionsDecrypt);
-		suffix = "-jsonWebKeysHDR";
-		decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if(!symmetric) {
+			String suffix = "";
+			jsonDecrypt = new JsonDecrypt(keystoreVerificaHeaders,optionsDecrypt);
+			suffix = "-jsonWebKeysHDR";
+			decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 		
 		System.out.println("\n\n");
 		
@@ -1295,10 +1520,10 @@ public class TestEncrypt {
 		options = new JWEOptions(JOSESerialization.JSON);
 		options.setDeflate(true);
 		if(headers==null) {
-			jsonEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, options);
+			jsonEncrypt = new JsonEncrypt(truststore, symmetric, keyAlgorithm, contentAlgorithm, options);
 		}
 		else {
-			jsonEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, headers, options);
+			jsonEncrypt = new JsonEncrypt(truststore, symmetric, keyAlgorithm, contentAlgorithm, headers, options);
 		}
 		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
 		int lengthDeflated = attachEncrypt.length();
@@ -1309,13 +1534,16 @@ public class TestEncrypt {
 
 		// Verifica
 		optionsDecrypt = new JWTOptions(JOSESerialization.JSON);
-		jsonDecrypt = new JsonDecrypt(keystore, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		jsonDecrypt = new JsonDecrypt(keystore, symmetric, keyAlgorithm, contentAlgorithm,optionsDecrypt);
 		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		// Verifica basata sull'header
-		jsonDecrypt = new JsonDecrypt(keystoreVerificaHeaders,optionsDecrypt);
-		suffix = "-jsonWebKeysHDR";
-		decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if(!symmetric) {
+			String suffix = "";
+			jsonDecrypt = new JsonDecrypt(keystoreVerificaHeaders,optionsDecrypt);
+			suffix = "-jsonWebKeysHDR";
+			decrypt(tipo, "encPublic-decryptPrivate-deflate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 		
 		System.out.println("\n\n");
 		
@@ -1326,10 +1554,10 @@ public class TestEncrypt {
 		// Encrypt Json 
 		options = new JWEOptions(JOSESerialization.COMPACT);
 		if(headers==null) {
-			jsonEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, options);
+			jsonEncrypt = new JsonEncrypt(truststore, symmetric, keyAlgorithm, contentAlgorithm, options);
 		}
 		else {
-			jsonEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, headers, options);
+			jsonEncrypt = new JsonEncrypt(truststore,symmetric,  keyAlgorithm, contentAlgorithm, headers, options);
 		}
 		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
 		lengthNotDeflated = attachEncrypt.length();
@@ -1337,13 +1565,16 @@ public class TestEncrypt {
 
 		// Verifica
 		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
-		jsonDecrypt = new JsonDecrypt(keystore, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		jsonDecrypt = new JsonDecrypt(keystore, symmetric, keyAlgorithm, contentAlgorithm,optionsDecrypt);
 		decrypt(tipo, "encPublic-decryptPrivate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		// Verifica basata sull'header
-		jsonDecrypt = new JsonDecrypt(keystoreVerificaHeaders,optionsDecrypt);
-		suffix = "-jsonWebKeysHDR";
-		decrypt(tipo, "encPublic-decryptPrivate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if(!symmetric) {
+			String suffix = "";
+			jsonDecrypt = new JsonDecrypt(keystoreVerificaHeaders,optionsDecrypt);
+			suffix = "-jsonWebKeysHDR";
+			decrypt(tipo, "encPublic-decryptPrivate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 		
 		System.out.println("\n\n");
 		
@@ -1356,10 +1587,10 @@ public class TestEncrypt {
 		options = new JWEOptions(JOSESerialization.COMPACT);
 		options.setDeflate(true);
 		if(headers==null) {
-			jsonEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, options);
+			jsonEncrypt = new JsonEncrypt(truststore, symmetric, keyAlgorithm, contentAlgorithm, options);
 		}
 		else {
-			jsonEncrypt = new JsonEncrypt(truststore, keyAlgorithm, contentAlgorithm, headers, options);
+			jsonEncrypt = new JsonEncrypt(truststore, symmetric, keyAlgorithm, contentAlgorithm, headers, options);
 		}
 		attachEncrypt = jsonEncrypt.encrypt(jsonInput);
 		lengthDeflated = attachEncrypt.length();
@@ -1370,13 +1601,16 @@ public class TestEncrypt {
 
 		// Verifica
 		optionsDecrypt = new JWTOptions(JOSESerialization.COMPACT);
-		jsonDecrypt = new JsonDecrypt(keystore, keyAlgorithm, contentAlgorithm,optionsDecrypt);
+		jsonDecrypt = new JsonDecrypt(keystore, symmetric, keyAlgorithm, contentAlgorithm,optionsDecrypt);
 		decrypt(tipo, "encPublic-decryptPrivate-deflate", false, jsonDecrypt, attachEncrypt, jsonInput, options);
 		
 		// Verifica basata sull'header
-		jsonDecrypt = new JsonDecrypt(keystoreVerificaHeaders,optionsDecrypt);
-		suffix = "-jsonWebKeysHDR";
-		decrypt(tipo, "encPublic-decryptPrivate-deflate", true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		if(!symmetric) {
+			String suffix = "";
+			jsonDecrypt = new JsonDecrypt(keystoreVerificaHeaders,optionsDecrypt);
+			suffix = "-jsonWebKeysHDR";
+			decrypt(tipo, "encPublic-decryptPrivate-deflate"+suffix, true, jsonDecrypt, attachEncrypt, jsonInput, options);
+		}
 
 		System.out.println("\n\n");
 		
@@ -1524,19 +1758,27 @@ public class TestEncrypt {
 		JAVA_ENCRYPT, 
 		XML_ENCRYPT,
 		JSON_ENCRYPT_PROPERTIES_JKS,
+		JSON_ENCRYPT_PROPERTIES_JCEKS,
 		JSON_ENCRYPT_PROPERTIES_JWK,
+		JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC,
 		JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM,
+		JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM,
 		JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM,
+		JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM,
 		JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY,
 		JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY,
-		JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE,
-		JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE_HEADER_CUSTOM,
-		JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE_JCE,
-		JSON_ENCRYPT_PROPERTIES_JKS_KEYSTORE_JCE_HEADER_CUSTOM,
-		JSON_ENCRYPT_PROPERTIES_JWK_KEYS,
-		JSON_ENCRYPT_PROPERTIES_JWK_KEYS_HEADER_CUSTOM,
-		JSON_ENCRYPT_PROPERTIES_JWK_KEY,
-		JSON_ENCRYPT_PROPERTIES_JWK_KEY_HEADER_CUSTOM,
+		JSON_ENCRYPT_JKS_KEYSTORE,
+		JSON_ENCRYPT_JKS_KEYSTORE_HEADER_CUSTOM,
+		JSON_ENCRYPT_JKS_KEYSTORE_JCE,
+		JSON_ENCRYPT_JKS_KEYSTORE_JCE_HEADER_CUSTOM,
+		JSON_ENCRYPT_JWK_KEYS,
+		JSON_ENCRYPT_JWK_KEYS_HEADER_CUSTOM,
+		JSON_ENCRYPT_JWK_KEY,
+		JSON_ENCRYPT_JWK_KEY_HEADER_CUSTOM,
+		JSON_ENCRYPT_JWK_SYMMETRIC_KEYS,
+		JSON_ENCRYPT_JWK_SYMMETRIC_KEYS_HEADER_CUSTOM,
+		JSON_ENCRYPT_JWK_SYMMETRIC_KEY,
+		JSON_ENCRYPT_JWK_SYMMETRIC_KEY_HEADER_CUSTOM
 		
 	}
 

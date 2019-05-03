@@ -25,7 +25,6 @@ package org.openspcoop2.security.message.soapbox;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,6 +57,7 @@ import org.openspcoop2.security.message.utils.EncryptionBean;
 import org.openspcoop2.security.message.utils.KeystoreUtils;
 import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 
 

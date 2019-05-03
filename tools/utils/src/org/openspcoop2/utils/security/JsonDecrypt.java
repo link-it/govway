@@ -35,6 +35,7 @@ import java.util.Properties;
 import javax.crypto.SecretKey;
 
 import org.apache.cxf.rs.security.jose.common.JoseConstants;
+import org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm;
 import org.apache.cxf.rs.security.jose.jwe.JweCompactConsumer;
 import org.apache.cxf.rs.security.jose.jwe.JweDecryptionOutput;
 import org.apache.cxf.rs.security.jose.jwe.JweDecryptionProvider;
@@ -81,7 +82,7 @@ public class JsonDecrypt {
 				this.properties = props;
 			}
 			else {
-				this.provider = this.loadProviderFromProperties(props);
+				this.provider = this.loadProviderFromProperties(props, null); // nel caso di jceks deve essere definito l'algoritmo del contenuto se non e' dinamico
 			}
 			this.options=options;		
 		}catch(Throwable t) {
@@ -89,7 +90,7 @@ public class JsonDecrypt {
 		}
 	}
 	
-	private JweDecryptionProvider loadProviderFromProperties(Properties props) throws Exception {
+	private JweDecryptionProvider loadProviderFromProperties(Properties props, org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm contentAlgorithm) throws Exception {
 		File fTmp = null;
 		try {
 			fTmp = JsonUtils.normalizeProperties(props); // in caso di url http viene letta la risorsa remota e salvata in tmp
@@ -98,7 +99,28 @@ public class JsonDecrypt {
 				String key = (String) en.nextElement();
 				System.out.println("- ["+key+"] ["+props.getProperty(key)+"]");
 			}*/
-			return JweUtils.loadDecryptionProvider(props, JsonUtils.newMessage(), null); // lasciare null come secondo parametro senno non funziona il decrypt senza keyEncoding
+			
+			JweDecryptionProvider provider = null;
+			if(contentAlgorithm!=null) {
+				provider = JsonUtils.getJweDecryptionProvider(props, contentAlgorithm);
+			}
+			else {
+				provider = JsonUtils.getJweDecryptionProvider(props);
+			}
+			if(provider==null) {
+				KeyAlgorithm keyAlgorithm = JweUtils.getKeyEncryptionAlgorithm(props, null);
+				if (KeyAlgorithm.DIRECT.equals(keyAlgorithm)) {
+					provider = JsonUtils.getJweDecryptionProviderFromJWKSymmetric(props, null);
+				}
+				else {
+					provider = JweUtils.loadDecryptionProvider(props, JsonUtils.newMessage(), null); // lasciare null come secondo parametro senno non funziona il decrypt senza keyEncoding
+				}
+			}
+			if(provider==null) {
+				throw new Exception("JweDecryptionProvider provider not found");
+			}
+			return provider;
+			 
 		}finally {
 			try {
 				if(fTmp!=null) {
@@ -134,16 +156,27 @@ public class JsonDecrypt {
 	}
 	
 	
-	public JsonDecrypt(JsonWebKeys jsonWebKeys, String alias, String keyAlgorithm, String contentAlgorithm, JWTOptions options) throws UtilsException{
-		this(JsonUtils.readKey(jsonWebKeys, alias), keyAlgorithm, contentAlgorithm, options);
+	public JsonDecrypt(JsonWebKeys jsonWebKeys, boolean secretKey, String alias, String keyAlgorithm, String contentAlgorithm, JWTOptions options) throws UtilsException{
+		this(JsonUtils.readKey(jsonWebKeys, alias),secretKey, keyAlgorithm, contentAlgorithm, options);
 	}
-	public JsonDecrypt(JsonWebKey jsonWebKey, String keyAlgorithm, String contentAlgorithm, JWTOptions options) throws UtilsException{
+	public JsonDecrypt(JsonWebKey jsonWebKey, boolean secretKey, String keyAlgorithm, String contentAlgorithm, JWTOptions options) throws UtilsException{
 		try {
 			this.options=options;
 			
 			org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm keyAlgo  = org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm.getAlgorithm(keyAlgorithm);
 			org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm contentAlgo = org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm.getAlgorithm(contentAlgorithm);
-			this.provider = JweUtils.createJweDecryptionProvider( JwkUtils.toRSAPrivateKey(jsonWebKey), keyAlgo, contentAlgo);
+			
+			if(secretKey) {
+				if(jsonWebKey.getAlgorithm()==null) {
+					jsonWebKey.setAlgorithm(contentAlgorithm);
+				}
+				this.provider = JweUtils.getDirectKeyJweDecryption(JwkUtils.toSecretKey(jsonWebKey), contentAlgo);
+				if(this.provider==null) {
+					throw new Exception("(JsonWebKey) JwsDecryptionProvider init failed; check content algorithm ("+contentAlgorithm+")");
+				}
+			}else {
+				this.provider = JweUtils.createJweDecryptionProvider( JwkUtils.toRSAPrivateKey(jsonWebKey), keyAlgo, contentAlgo);
+			}
 
 		}catch(Throwable t) {
 			throw JsonUtils.convert(options.getSerialization(), JsonUtils.DECRYPT,JsonUtils.RECEIVER,t);
@@ -282,7 +315,7 @@ public class JsonDecrypt {
 			pNew.putAll(this.properties);
 			//System.out.println("ALIAS ["+alias+"]");
 			pNew.put(JoseConstants.RSSEC_KEY_STORE_ALIAS, alias);
-			provider = loadProviderFromProperties(pNew);
+			provider = loadProviderFromProperties(pNew, jweHeaders.getContentEncryptionAlgorithm());
 		}
 		
 		if(provider==null) {

@@ -77,9 +77,18 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 			
 			// ** Fix per SOAPFault (quando ci sono le encryptionParts o le signatureParts, la Sicurezza fallisce se c'e' un SOAPFault) **
 			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
-				if(message.castAsSoap().getSOAPBody().hasFault()){
+				if(message.isFault() || message.castAsSoap().getSOAPBody().hasFault()){
 					
 					if(MessageSecurityUtilities.processSOAPFault(this.messageSecurityContext.getIncomingProperties()) == false){
+						return true; // non devo applicare la sicurezza.
+					}
+					
+				}	
+			}
+			else if(ServiceBinding.REST.equals(message.getServiceBinding())){
+				if(message.isFault() || message.castAsRest().isProblemDetailsForHttpApis_RFC7807()){
+					
+					if(MessageSecurityUtilities.processProblemDetails(this.messageSecurityContext.getIncomingProperties()) == false){
 						return true; // non devo applicare la sicurezza.
 					}
 					

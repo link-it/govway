@@ -136,7 +136,7 @@ provider="org.openspcoop2.security.message.wss4j.SecurityProvider">
 				</values>
 				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="signaturePropRefId" />
 			</item>
-			<item type="text" name="keystoreFile" label="File" required="true">
+			<item type="textarea" name="keystoreFile" label="File" required="true">
 			      	<property name="org.apache.ws.security.crypto.merlin.file" properties="signaturePropRefId" />
 			</item>
 			<item type="text" name="keystorePassword" label="Password" required="true">

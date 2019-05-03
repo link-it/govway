@@ -26,6 +26,7 @@ import java.util.Hashtable;
 
 import javax.xml.namespace.QName;
 
+import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.apache.wss4j.common.ConfigurationConstants;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.dom.handler.WSHandlerConstants;
@@ -125,8 +126,7 @@ public class SecurityConstants {
     public static final String ATTACHMENT_INDEX_ALL =  "*";
     public static final String SOAP_NAMESPACE_TEMPLATE =  "SOAP_TEMPLATE_NS";
     
-    public static final String MODE_SELF_CONTAINED = "selfContained";
-    public static final String MODE_DETACHED = "detached";
+    public static final String MODE_JSON = "json";
     public static final String MODE_COMPACT = "compact";
     
     public static final String MULTI_USER_KEYWORD_PORTA_DOMINIO_FRUITORE = "#MultiPropUsePddFruitoreAsAlias#";
@@ -140,11 +140,16 @@ public class SecurityConstants {
     public static final String PASSWORD_CALLBACK_CLASS = ConfigurationConstants.PW_CALLBACK_CLASS;
     public static final String PASSWORD_CALLBACK_REF = ConfigurationConstants.PW_CALLBACK_REF;
     
+    public static final String SYMMETRIC_KEY = "symmetricKey";
+    public static final String SYMMETRIC_KEY_TRUE = "true";
+    public static final String SYMMETRIC_KEY_FALSE = "false";
+    
     public static final String ENCRYPT_ACTION = ConfigurationConstants.ENCRYPT;
     public static final String DECRYPT_ACTION = "Decrypt";
     public static final String ENCRYPTION_USER = ConfigurationConstants.ENCRYPTION_USER;
     public static final String ENCRYPTION_PASSWORD = "encryptionPassword";
     public static final String ENCRYPTION_SOAP_FAULT = "encryptionSOAPFault";
+    public static final String ENCRYPTION_PROBLEM_DETAILS = "encryptionProblemDetails";
     public static final String ENCRYPTION_PARTS = ConfigurationConstants.ENCRYPTION_PARTS;
     public static final String ENCRYPTION_PARTS_VERIFY = "encryptionPartsVerify";
     // ENCRYPTION_ATTACHMENTS_PARTS: {Content/Complete}{indice} 
@@ -155,6 +160,7 @@ public class SecurityConstants {
     public static final String ENCRYPTION_PART_CONTENT = PART_CONTENT;
     public static final String ENCRYPTION_PART_COMPLETE = PART_COMPLETE;
     public static final String ENCRYPTION_PART_ELEMENT = PART_ELEMENT;
+    public static final String ENCRYPTION_JWK_SET_FILE = "encryptionJWKSetFile";
     public static final String ENCRYPTION_PROPERTY_REF_ID = ConfigurationConstants.ENC_PROP_REF_ID;
     public static final String ENCRYPTION_PROPERTY_FILE = ConfigurationConstants.ENC_PROP_FILE;
     public static final String ENCRYPTION_TRUSTSTORE_PROPERTY_FILE = "encryptionTrustStorePropFile";
@@ -175,12 +181,12 @@ public class SecurityConstants {
     public static final String ENCRYPTION_ALGORITHM = "encryptionAlgorithm";
     public static final String ENCRYPTION_KEY_IDENTIFIER = ConfigurationConstants.ENC_KEY_ID;
     public static final String ENCRYPTION_MODE = "encryptionMode";
-    public static final String ENCRYPTION_MODE_SELF_CONTAINED = MODE_SELF_CONTAINED;
-    public static final String ENCRYPTION_MODE_DETACHED = MODE_DETACHED;
+    public static final String ENCRYPTION_MODE_JSON = MODE_JSON;
     public static final String ENCRYPTION_MODE_COMPACT = MODE_COMPACT;
     public static final String ENCRYPTION_DEFLATE = "deflate";
     public static final String ENCRYPTION_DEFLATE_TRUE = "true";
     public static final String ENCRYPTION_DEFLATE_FALSE = "false";
+    public static final String DECRYPTION_JWK_SET_FILE = "decryptionJWKSetFile";
     public static final String DECRYPTION_PROPERTY_FILE = ConfigurationConstants.DEC_PROP_FILE;
     public static final String DECRYPTION_PROPERTY_REF_ID = ConfigurationConstants.DEC_PROP_REF_ID;
     public static final String DECRYPTION_TRUSTSTORE_PROPERTY_FILE = "decryptionTrustStorePropFile";
@@ -195,8 +201,7 @@ public class SecurityConstants {
     public static final String DECRYPTION_SYMMETRIC_WRAPPED_TRUE = "true";
     public static final String DECRYPTION_SYMMETRIC_WRAPPED_FALSE = "false";
     public static final String DECRYPTION_MODE = "decryptionMode";
-    public static final String DECRYPTION_MODE_SELF_CONTAINED = MODE_SELF_CONTAINED;
-    public static final String DECRYPTION_MODE_DETACHED = MODE_DETACHED;
+    public static final String DECRYPTION_MODE_JSON = MODE_JSON;
     public static final String DECRYPTION_MODE_COMPACT = MODE_COMPACT;
     
 	
@@ -205,6 +210,7 @@ public class SecurityConstants {
     public static final String SIGNATURE_PASSWORD = "signaturePassword";
     public static final String USE_REQ_SIG_CERT = ConfigurationConstants.USE_REQ_SIG_CERT;
     public static final String SIGNATURE_SOAP_FAULT = "signatureSOAPFault";
+    public static final String SIGNATURE_PROBLEM_DETAILS = "signatureProblemDetails";
     public static final String SIGNATURE_PARTS = ConfigurationConstants.SIGNATURE_PARTS;
     public static final String SIGNATURE_PARTS_VERIFY = "signaturePartsVerify";
     // SIGNATURE_ATTACHMENTS_PARTS: {Content/Complete}{indice} 
@@ -215,6 +221,7 @@ public class SecurityConstants {
     public static final String SIGNATURE_PART_CONTENT = PART_CONTENT;
     public static final String SIGNATURE_PART_COMPLETE = PART_COMPLETE;
     public static final String SIGNATURE_PART_ELEMENT = PART_ELEMENT;
+    public static final String SIGNATURE_JWK_SET_FILE = "signatureJWKSetFile";
     public static final String SIGNATURE_PROPERTY_REF_ID = ConfigurationConstants.SIG_PROP_REF_ID;
     public static final String SIGNATURE_PROPERTY_FILE = ConfigurationConstants.SIG_PROP_FILE;
     public static final String SIGNATURE_TRUSTSTORE_PROPERTY_FILE = "signatureTrustStorePropFile";
@@ -228,7 +235,7 @@ public class SecurityConstants {
     public static final String SIGNATURE_VERIFICATION_PROPERTY_REF_ID = ConfigurationConstants.SIG_VER_PROP_REF_ID;
     public static final String SIGNATURE_VERIFICATION_PROPERTY_FILE = ConfigurationConstants.SIG_VER_PROP_FILE;
     public static final String SIGNATURE_MODE = "signatureMode";
-    public static final String SIGNATURE_MODE_SELF_CONTAINED = MODE_SELF_CONTAINED;
+    public static final String SIGNATURE_MODE_JSON = MODE_JSON;
     public static final String SIGNATURE_MODE_COMPACT = MODE_COMPACT;
     public static final String SIGNATURE_PAYLOAD_ENCODING = "signaturePayloadEncoding";
     public static final String SIGNATURE_PAYLOAD_ENCODING_TRUE = "true";
@@ -247,6 +254,50 @@ public class SecurityConstants {
     public static final String SIGNATURE_XML_KEY_INFO_X509 = "x509";
     public static final String SIGNATURE_XML_KEY_INFO_RSA = "RSA";
     
+    public static final String JOSE_KID = "joseKeyId";
+    public static final String JOSE_KID_TRUE = "true";
+    public static final String JOSE_KID_FALSE = "false";
+    public static final String JOSE_INCLUDE_CERT = "joseIncludeCert";
+    public static final String JOSE_INCLUDE_CERT_TRUE = "true";
+    public static final String JOSE_INCLUDE_CERT_FALSE = "false";
+    public static final String JOSE_INCLUDE_CERT_SHA = "joseIncludeCertSHA";
+    public static final String JOSE_INCLUDE_CERT_SHA_1 = "sha1";
+    public static final String JOSE_INCLUDE_CERT_SHA_256 = "sha256";
+    public static final String JOSE_CONTENT_TYPE = "joseContentType";
+    public static final String JOSE_CONTENT_TYPE_TRUE = "true";
+    public static final String JOSE_CONTENT_TYPE_FALSE = "false";
+    public static final String JOSE_TYPE = "joseType";
+    public static final String JOSE_X509_URL = "joseX509Url";
+    public static final String JOSE_JWK_SET_URL = "joseJWKSetUrl";
+    public static final String JOSE_CRITICAL_HEADERS = "joseCriticalHeaders";
+    public static final String JOSE_CRITICAL_HEADERS_SEPARATOR = ",";
+    public static final String JOSE_EXT_HEADER_PREFIX = "joseExtensionHeader.";
+    public static final String JOSE_EXT_HEADER_SUFFIX_NAME = ".name";
+    public static final String JOSE_EXT_HEADER_SUFFIX_VALUE = ".value";
+    
+    public static final String JOSE_USE_HEADERS = "joseUseHeaders";
+    public static final String JOSE_USE_HEADERS_X5C = "joseUseHeaders.x5c";
+    public static final String JOSE_USE_HEADERS_X5U = "joseUseHeaders.x5u";
+    public static final String JOSE_USE_HEADERS_JWK = "joseUseHeaders.jwk";
+    public static final String JOSE_USE_HEADERS_JKU = "joseUseHeaders.jku";
+    public static final String JOSE_USE_HEADERS_KID = "joseUseHeaders.kid";
+    public static final String JOSE_USE_HEADERS_TRUE = "true";
+    public static final String JOSE_USE_HEADERS_FALSE = "false";
+    
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_TYPE = "joseUseHeaders.truststore.type";
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_FILE = "joseUseHeaders.truststore.file";
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_PASSWORD = "joseUseHeaders.truststore.password";
+    
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_TYPE = JoseConstants.RSSEC_KEY_STORE_TYPE+".ssl";
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_FILE = JoseConstants.RSSEC_KEY_STORE_FILE+".ssl";
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_PASSWORD = JoseConstants.RSSEC_KEY_STORE_PSWD+".ssl";
+    
+    public static final String JOSE_USE_HEADERS_KEYSTORE_TYPE = "joseUseHeaders.keystore.type";
+    public static final String JOSE_USE_HEADERS_KEYSTORE_FILE = "joseUseHeaders.keystore.file";
+    public static final String JOSE_USE_HEADERS_KEYSTORE_PASSWORD = "joseUseHeaders.keystore.password";
+    public static final String JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PASSWORD = "joseUseHeaders.key.";
+    public static final String JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PASSWORD_SUFFIX_ALIAS = ".alias";
+    public static final String JOSE_USE_HEADERS_KEYSTORE_MAP_ALIAS_PASSWORD_SUFFIX_PASSWORD = ".password";
     
     public static final String TIMESTAMP_ACTION = ConfigurationConstants.TIMESTAMP;
     public static final String TIMESTAMP_TTL = ConfigurationConstants.TTL_TIMESTAMP;

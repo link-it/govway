@@ -74,7 +74,17 @@ public class JsonEncrypt {
 				this.options.setDeflate(true); // overwrite options
 			}
 			
-			this.provider = JweUtils.loadEncryptionProvider(props, JsonUtils.newMessage(), this.headers);
+			this.provider = JsonUtils.getJweEncryptionProvider(props);
+			if(this.provider==null) {
+				
+				KeyAlgorithm keyAlgorithm = JweUtils.getKeyEncryptionAlgorithm(props, null);
+				if (KeyAlgorithm.DIRECT.equals(keyAlgorithm)) {
+					this.provider = JsonUtils.getJweEncryptionProviderFromJWKSymmetric(props, this.headers);
+				}
+				else {
+					this.provider = JweUtils.loadEncryptionProvider(props, JsonUtils.newMessage(), this.headers);
+				}
+			}
 			
 			this.contentAlgorithm = JweUtils.getContentEncryptionAlgorithm(props, ContentAlgorithm.A256GCM);
 			this.keyAlgorithm = JweUtils.getKeyEncryptionAlgorithm(props, null);
@@ -161,23 +171,23 @@ public class JsonEncrypt {
 		}
 	}
 
-	public JsonEncrypt(JsonWebKeys jsonWebKeys, String alias, String keyAlgorithm, String contentAlgorithm, 
+	public JsonEncrypt(JsonWebKeys jsonWebKeys, boolean secretKey, String alias, String keyAlgorithm, String contentAlgorithm, 
 			JWEOptions options) throws UtilsException{
-		initJsonWebKey(JsonUtils.readKey(jsonWebKeys, alias), keyAlgorithm, contentAlgorithm, null, options);	
+		initJsonWebKey(JsonUtils.readKey(jsonWebKeys, alias),secretKey, keyAlgorithm, contentAlgorithm, null, options);	
 	}
-	public JsonEncrypt(JsonWebKeys jsonWebKeys, String alias, String keyAlgorithm, String contentAlgorithm, 
+	public JsonEncrypt(JsonWebKeys jsonWebKeys, boolean secretKey, String alias, String keyAlgorithm, String contentAlgorithm, 
 			JwtHeaders jwtHeaders, JWEOptions options) throws UtilsException{
-		initJsonWebKey(JsonUtils.readKey(jsonWebKeys, alias), keyAlgorithm, contentAlgorithm, jwtHeaders, options);	
+		initJsonWebKey(JsonUtils.readKey(jsonWebKeys, alias),secretKey, keyAlgorithm, contentAlgorithm, jwtHeaders, options);	
 	}
-	public JsonEncrypt(JsonWebKey jsonWebKey, String keyAlgorithm, String contentAlgorithm, 
+	public JsonEncrypt(JsonWebKey jsonWebKey, boolean secretKey, String keyAlgorithm, String contentAlgorithm, 
 			JWEOptions options) throws UtilsException{
-		initJsonWebKey(jsonWebKey, keyAlgorithm, contentAlgorithm, null, options);	
+		initJsonWebKey(jsonWebKey,secretKey, keyAlgorithm, contentAlgorithm, null, options);	
 	}
-	public JsonEncrypt(JsonWebKey jsonWebKey, String keyAlgorithm, String contentAlgorithm, 
+	public JsonEncrypt(JsonWebKey jsonWebKey, boolean secretKey, String keyAlgorithm, String contentAlgorithm, 
 			JwtHeaders jwtHeaders, JWEOptions options) throws UtilsException{
-		initJsonWebKey(jsonWebKey, keyAlgorithm, contentAlgorithm, jwtHeaders, options);	
+		initJsonWebKey(jsonWebKey,secretKey, keyAlgorithm, contentAlgorithm, jwtHeaders, options);	
 	}
-	private void initJsonWebKey(JsonWebKey jsonWebKey, String keyAlgorithm, String contentAlgorithm, 
+	private void initJsonWebKey(JsonWebKey jsonWebKey, boolean secretKey, String keyAlgorithm, String contentAlgorithm, 
 			JwtHeaders jwtHeaders, JWEOptions options) throws UtilsException{
 		try {
 			this.options=options;
@@ -189,7 +199,17 @@ public class JsonEncrypt {
 				compression = JoseConstants.JWE_DEFLATE_ZIP_ALGORITHM;
 			}
 			
-			this.provider = JweUtils.createJweEncryptionProvider(JwkUtils.toRSAPublicKey(jsonWebKey), this.keyAlgorithm, this.contentAlgorithm, compression);
+			if(secretKey) {
+				if(jsonWebKey.getAlgorithm()==null) {
+					jsonWebKey.setAlgorithm(contentAlgorithm);
+				}
+				this.provider = JweUtils.getDirectKeyJweEncryption(JwkUtils.toSecretKey(jsonWebKey), this.contentAlgorithm);
+				if(this.provider==null) {
+					throw new Exception("(JsonWebKey) JwsEncryptionProvider init failed; check content algorithm ("+contentAlgorithm+")");
+				}
+			}else {
+				this.provider = JweUtils.createJweEncryptionProvider(JwkUtils.toRSAPublicKey(jsonWebKey), this.keyAlgorithm, this.contentAlgorithm, compression);
+			}
 			
 			this.jwtHeaders = jwtHeaders;
 		}catch(Throwable t) {

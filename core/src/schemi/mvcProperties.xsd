@@ -65,6 +65,7 @@
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="hidden"/>
 			<xsd:enumeration value="text"/>
+			<xsd:enumeration value="textarea"/>
 			<xsd:enumeration value="select"/>
 			<xsd:enumeration value="checkbox"/>
 			<xsd:enumeration value="number"/>
