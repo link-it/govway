@@ -1,6 +1,27 @@
 2019-05-09  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSDI] 
+	Aggiunta funzionalità #36
+	(https://github.com/link-it/govway/issues/36)
+	Nella fatturazione passiva è stata aggiunta la possibilità di consegnare all'applicativo, oltre alla fattura,
+	anche il file Metadati ricevuto dallo SDI. 
+	Il contenuto di tale file viene inserito, codificato in base64, nell'header HTTP 'GovWay-SDI-FileMetadati'.
+	La funzionalità di consegna del file Metadati, disabilitata per default, 
+	è attivabile abilitando la proprietà 'org.openspcoop2.protocol.sdi.fatturazionePassiva.consegnaFileMetadati'	
+	all'interno del file /etc/govway/sdi_local.properties
+
+2019-05-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug #37
+	(https://github.com/link-it/govway/issues/37)
+	Nel report iniziale (Distribuzione Esito messaggi nell’ultimo periodo), visualizzato dopo aver effettuato il login, 
+	la legenda riportava un'ora errata (+1 rispetto all'ora corrente) per il periodo 'Ultime 24 Ore'.
+
+2019-05-09  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSDI] 
+	Aggiunta funzionalità #27
 	(https://github.com/link-it/govway/issues/27)
 	Nella fatturazione passiva è stata aggiunta alla traccia delle notifiche ricevute l'informazione sul Codice Destinatario della Fattura.
 	Tale informazione permette di utilizzare ad esempio il seguente path dinamico, sul connettore File, per raggruppare le fatture e notifiche ricevute per Codice Destinatario:

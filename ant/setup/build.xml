@@ -463,8 +463,7 @@
 
 	<target name="setup_sdi" depends="_setup_sdi"/>
 	<target name="_setup_sdi">
-		<!-- per ora e' NOP -->
-		<!-- <copy file="${deploy_resources}/protocolli/sdi/sdi_local.properties" todir="${tmp_cfg}"/> -->
+		<copy file="${deploy_resources}/protocolli/sdi/sdi_local.properties" todir="${tmp_cfg}"/>
 	</target>
 
 	<target name="setup_pdd" depends="_setup_pdd"/>

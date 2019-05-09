@@ -25,18 +25,20 @@
 					<a4j:region id="summaryFormRegion" renderRegionOnly="true">
 						<a4j:form>
 							<h:inputHidden value="true" id="usaSVG"/> 
-							<link:prop label="Periodo" labelId="labelPeriodoCombo">
-								<rich:comboBox value="#{summaryBean.periodo}" defaultLabel="Seleziona Periodo"
-									enableManualInput="false">
-									<f:selectItem itemValue="--" />
-									<f:selectItem itemValue="Ultime 24 ore" />
-									<f:selectItem itemValue="Ultimi 7 giorni" />
-									<f:selectItem itemValue="Ultimi 30 giorni" />
-									<f:selectItem itemValue="Ultimo anno" />
-									<a4j:support event="onselect" data="#{summaryBean.data}" oncomplete="updateChart(data)" reRender="summaryCt"/>
-								</rich:comboBox>
-								<rich:toolTip for="labelPeriodoCombo" value="#{summaryBean.printPeriodo}"/>
-							</link:prop>
+							<a4j:outputPanel id="periodoPnl" ajaxRendered="false" layout="block">
+								<link:prop label="Periodo" labelId="labelPeriodoCombo">
+									<rich:comboBox value="#{summaryBean.periodo}" defaultLabel="Seleziona Periodo"
+										enableManualInput="false">
+										<f:selectItem itemValue="--" />
+										<f:selectItem itemValue="Ultime 24 ore" />
+										<f:selectItem itemValue="Ultimi 7 giorni" />
+										<f:selectItem itemValue="Ultimi 30 giorni" />
+										<f:selectItem itemValue="Ultimo anno" />
+										<a4j:support event="onselect" data="#{summaryBean.data}" oncomplete="updateChart(data)" reRender="summaryCt,periodoPnl" actionListener="#{summaryBean.periodoListener}"/>
+									</rich:comboBox>
+									<rich:toolTip for="labelPeriodoCombo" value="#{summaryBean.printPeriodo}"/>
+								</link:prop>
+							</a4j:outputPanel>
 							<link:prop label="#{applicationBean.labelProfilo}" rendered="#{summaryBean.showListaProtocolli}">
 								<rich:comboBox id="protocolloCombo" value="#{summaryBean.protocollo}" converter="selectItemConverter" 
 									defaultLabel="Seleziona #{applicationBean.labelProfilo}" directInputSuggestions="true" width="416" enableManualInput="false">

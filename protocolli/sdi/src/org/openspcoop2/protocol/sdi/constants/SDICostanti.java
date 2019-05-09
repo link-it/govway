@@ -155,6 +155,8 @@ public class SDICostanti {
     
     public final static String SDI_HEADER_ID_CORRELAZIONE = "GovWay-SDI-IdCorrelazione";
     
+    public final static String SDI_HEADER_FILE_METADATI = "GovWay-SDI-FileMetadati";
+    
 }
 
 

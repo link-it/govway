@@ -143,6 +143,7 @@ public class SDIProperties {
 			
 			this.isEnableValidazioneXsdNotificaDaInviare();
 			this.isEnableAccessoNotificaDaInviare();
+			this.isEnable_fatturazionePassiva_consegnaFileMetadati();
 			this.isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura();
 			
 			if(this.isTracciamentoRequiredFromConfiguration()) {
@@ -482,6 +483,38 @@ public class SDIProperties {
 		}
 
 		return SDIProperties.isEnableAccessoNotificaDaInviare;
+	}
+	
+	/**
+	 * Indicazione se serializzare il File MetaDati come header HTTP 'GovWay-SDI-FileMetadati' codificato in BASE64
+	 *   
+	 * @return Indicazione se serializzare il File MetaDati come header HTTP 'GovWay-SDI-FileMetadati' codificato in BASE64
+	 * 
+	 */
+	private static Boolean isEnable_fatturazionePassiva_consegnaFileMetadati = null;
+	public Boolean isEnable_fatturazionePassiva_consegnaFileMetadati() throws ProtocolException{
+		if(SDIProperties.isEnable_fatturazionePassiva_consegnaFileMetadati==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.fatturazionePassiva.consegnaFileMetadati";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isEnable_fatturazionePassiva_consegnaFileMetadati = Boolean.parseBoolean(value);
+				}else{
+					throw new Exception("Non definita");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.isEnable_fatturazionePassiva_consegnaFileMetadati;
 	}
 	
 	/**

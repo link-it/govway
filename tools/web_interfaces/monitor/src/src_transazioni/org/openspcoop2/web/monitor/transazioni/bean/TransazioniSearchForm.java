@@ -191,7 +191,11 @@ Context, Cloneable {
 	
 	@Override
 	protected String ripulisciValori(){
+		String oldModalita = this.getModalitaRicercaStorico();
 		this.initSearchListener(null);
+		if(oldModalita!=null && !"".equals(oldModalita)) {
+			this.setModalitaRicercaStorico(oldModalita);
+		}
 		return null;
 	}
 

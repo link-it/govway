@@ -383,6 +383,10 @@ public class SDIValidatoreServizioRicezioneFatture {
 				return;
 			}
 			
+			if(metadati!=null && this.sdiValidazioneSemantica.sdiProperties.isEnable_fatturazionePassiva_consegnaFileMetadati()) {
+				this.msg.forceTransportHeader(SDICostanti.SDI_HEADER_FILE_METADATI, Base64Utilities.encodeAsString(metadati));
+			}
+			
 			
 			/* **** FATTURA **** */
 			

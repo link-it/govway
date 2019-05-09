@@ -383,6 +383,10 @@ public class SummaryBean implements Serializable{
 		return AbstractDateSearchForm.printPeriodo(this.startDateForLabel, this.endDateForLabel);
 	}
 	
+	public void periodoListener(ActionEvent ae){
+		getPrintPeriodo();
+	}
+	
 	public String getXml(){
 		if(CostantiReport.PERIODO_NOT_SET.equals(this.periodo)){
 			return "<chart></chart>";
@@ -1008,17 +1012,13 @@ public class SummaryBean implements Serializable{
 			Calendar max = Calendar.getInstance();
 			this.maxDate=max.getTime();
 
-
-			max.add(Calendar.MONTH, -11);
-
 			Calendar min = (Calendar) max.clone();
+			max.add(Calendar.MONTH, -11);
 			min.set(Calendar.DAY_OF_MONTH, min.getActualMinimum(Calendar.DAY_OF_MONTH));
 			min.set(Calendar.HOUR_OF_DAY,min.getActualMinimum(Calendar.HOUR_OF_DAY));
 			min.set(Calendar.MINUTE,min.getActualMinimum(Calendar.MINUTE));
 			min.clear(Calendar.SECOND);
 			min.clear(Calendar.MILLISECOND);
-
-
 			this.minDate=min.getTime();
 
 			this.offset=12;
@@ -1027,24 +1027,30 @@ public class SummaryBean implements Serializable{
 			Calendar max = Calendar.getInstance();
 			this.maxDate=max.getTime();
 
-			max.add(Calendar.DATE, -30);
-			this.minDate=max.getTime();
+			Calendar min = (Calendar) max.clone();
+			min.add(Calendar.DATE, -30);
+			this.minDate=min.getTime();
+			
 			this.offset=5;
 		}
 		else if(CostantiReport.ULTIMI_7_GIORNI.equals(periodo)){
 			Calendar max = Calendar.getInstance();
 			this.maxDate=max.getTime();
 
-			max.add(Calendar.DATE, -6);
-			this.minDate=max.getTime();
+			Calendar min = (Calendar) max.clone();
+			min.add(Calendar.DATE, -6);
+			this.minDate=min.getTime();
+			
 			this.offset=7;
-		}else if(CostantiReport.ULTIME_24_ORE.equals(periodo)){
+		}
+		else if(CostantiReport.ULTIME_24_ORE.equals(periodo)){
 			Calendar max = Calendar.getInstance();
-			max.add(Calendar.HOUR_OF_DAY, 1);
 			this.maxDate=max.getTime();
 
-			max.add(Calendar.HOUR_OF_DAY, -24);
-			this.minDate=max.getTime();
+			Calendar min = (Calendar) max.clone();
+			min.add(Calendar.HOUR_OF_DAY, 1);
+			min.add(Calendar.HOUR_OF_DAY, -24);
+			this.minDate=min.getTime();
 			this.offset=24;
 		}
 
