@@ -885,11 +885,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 		this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, identificativoSdI);
 		this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE, nomeFile);
 		
-		
 	}
-	
-	
-	
 	
 	
 	private void _validazioneSemantica_FileSdiType_richiesta(TipiMessaggi tipoMessaggio) throws Exception{
@@ -963,6 +959,24 @@ public class SDIValidatoreServizioRicezioneFatture {
 			break;
 		}
 		
+		// Riporto nella notifica le informazioni della fattura precedentemente ricevuta
+		String identificativoSdI = this.busta.getProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI);
+		if(identificativoSdI!=null) {
+			if(this.sdiValidazioneSemantica.sdiProperties.isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura()) {
+				try{
+					this.sdiValidazioneSemantica.validazioneUtils.readInformazioniFatturaRiferita(this.busta, identificativoSdI, 
+							SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE, 
+							SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_RICEVI_FATTURE,
+							false);
+				}catch(Exception e){
+					this.sdiValidazioneSemantica.getLog().error("Traccia di una precedente fattura ricevuta, con identificativo SDI ["+identificativoSdI+"], non rilevata: "+e.getMessage(),e);
+					this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
+							validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+									"Traccia di una precedente fattura ricevuta, con identificativo SDI ["+identificativoSdI+"], non rilevata: "+e.getMessage(),e,
+									true)); // info: emetto solamente un errore di livello info
+				}
+			}
+		}
 			
 	}
 	

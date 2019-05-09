@@ -35,6 +35,7 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.mtom.MTOMUtilities;
 import org.openspcoop2.protocol.sdi.config.SDIProperties;
 import org.openspcoop2.protocol.sdi.constants.SDICostanti;
+import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRiceviFile;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioTrasmissioneFatture;
 import org.openspcoop2.protocol.sdi.utils.SDICompatibilitaNamespaceErrati;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -497,7 +498,24 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			break;
 		}
 		
-			
+		// Riporto nella notifica le informazioni della fattura precedentemente ricevuta
+		String identificativoSdI = this.busta.getProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI);
+		if(identificativoSdI!=null) {
+			if(this.sdiValidazioneSemantica.sdiProperties.isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura()) {
+				try{
+					this.sdiValidazioneSemantica.validazioneUtils.readInformazioniFatturaRiferita(this.busta, identificativoSdI, 
+							SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE, 
+							SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE,
+							true);
+				}catch(Exception e){
+					this.sdiValidazioneSemantica.getLog().error("Traccia di una precedente fattura inviata, con identificativo SDI ["+identificativoSdI+"], non rilevata: "+e.getMessage(),e);
+					this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
+							validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+									"Traccia di una precedente fattura inviata, con identificativo SDI ["+identificativoSdI+"], non rilevata: "+e.getMessage(),e,
+									true)); // info: emetto solamente un errore di livello info
+				}
+			}
+		}
 	}
 	
 	private void _validazioneRC(byte[] xmlDoc, SDIProperties sdiProperties, 

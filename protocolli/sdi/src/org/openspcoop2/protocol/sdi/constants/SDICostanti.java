@@ -86,6 +86,7 @@ public class SDICostanti {
     public final static String SDI_BUSTA_EXT_IDENTIFICATIVO_SDI = "IdentificativoSdI";
     public final static String SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA = "IdentificativoSdIFattura";
     public final static String SDI_BUSTA_EXT_NOME_FILE = "NomeFile";
+    public final static String SDI_BUSTA_EXT_NOME_FILE_FATTURA = "NomeFileFattura";
     public final static String SDI_BUSTA_EXT_NOME_FILE_METADATI = "NomeFileMetadati";
     public final static String SDI_BUSTA_EXT_NOME_FILE_IN_NOTIFICA = "NomeFileInternoNotifica";
     public final static String SDI_BUSTA_EXT_HASH_IN_NOTIFICA = "HashNotifica";
@@ -111,43 +112,49 @@ public class SDICostanti {
     public final static String SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_NOME_FILE = "RiferimentoArchivio-NomeFile";
     public final static String SDI_BUSTA_EXT_HashFileOriginale = "HashFileOriginale";
     
-    public final static String SDI_BUSTA_EXT_RIFERIMENTO_FATTURA_ANNO = "RiferimentoFattura-Anno";
-    public final static String SDI_BUSTA_EXT_RIFERIMENTO_FATTURA_NUMERO = "RiferimentoFattura-Numero";
-    public final static String SDI_BUSTA_EXT_RIFERIMENTO_FATTURA_POSIZIONE = "RiferimentoFattura-Posizione";
+    public final static String SDI_BUSTA_EXT_RIFERIMENTO_FATTURA_PREFIX_ = "RiferimentoFattura-";
+    public final static String SDI_BUSTA_EXT_RIFERIMENTO_FATTURA_ANNO = SDI_BUSTA_EXT_RIFERIMENTO_FATTURA_PREFIX_+"Anno";
+    public final static String SDI_BUSTA_EXT_RIFERIMENTO_FATTURA_NUMERO = SDI_BUSTA_EXT_RIFERIMENTO_FATTURA_PREFIX_+"Numero";
+    public final static String SDI_BUSTA_EXT_RIFERIMENTO_FATTURA_POSIZIONE = SDI_BUSTA_EXT_RIFERIMENTO_FATTURA_PREFIX_+"Posizione";
         
-    public final static String SDI_BUSTA_EXT_TRASMITTENTE_ID_PAESE = "DatiTrasmissione-IdTrasmittente-IdPaese";
-    public final static String SDI_BUSTA_EXT_TRASMITTENTE_ID_CODICE = "DatiTrasmissione-IdTrasmittente-IdCodice";
-    
-    public final static String SDI_BUSTA_EXT_TRASMISSIONE_PROGRESSIVO_INVIO = "DatiTrasmissione-ProgressivoInvio";
-    
-    public final static String SDI_BUSTA_EXT_TRASMISSIONE_PEC_DESTINATARIO = "DatiTrasmissione-PECDestinatario";
+    public final static String SDI_BUSTA_EXT_TRASMITTENTE_PREFIX_ = "DatiTrasmissione-";
+    public final static String SDI_BUSTA_EXT_TRASMITTENTE_ID_PAESE = SDI_BUSTA_EXT_TRASMITTENTE_PREFIX_+"IdTrasmittente-IdPaese";
+    public final static String SDI_BUSTA_EXT_TRASMITTENTE_ID_CODICE = SDI_BUSTA_EXT_TRASMITTENTE_PREFIX_+"IdTrasmittente-IdCodice";
+    public final static String SDI_BUSTA_EXT_TRASMISSIONE_PROGRESSIVO_INVIO = SDI_BUSTA_EXT_TRASMITTENTE_PREFIX_+"ProgressivoInvio";
+    public final static String SDI_BUSTA_EXT_TRASMISSIONE_PEC_DESTINATARIO = SDI_BUSTA_EXT_TRASMITTENTE_PREFIX_+"PECDestinatario";
     
     public final static String SDI_BUSTA_EXT_CODICE_DESTINATARIO = "CodiceDestinatario";
-    
+     
     public final static String SDI_BUSTA_EXT_SOGGETTO_EMITTENTE = "SoggettoEmittente";
     
-    public final static String SDI_BUSTA_EXT_CEDENTE_PRESTATORE_DENOMINAZIONE = "CedentePrestatore-Denominazione";
-    public final static String SDI_BUSTA_EXT_CEDENTE_PRESTATORE_NOME = "CedentePrestatore-Nome";
-    public final static String SDI_BUSTA_EXT_CEDENTE_PRESTATORE_COGNOME = "CedentePrestatore-Cognome";
-    public final static String SDI_BUSTA_EXT_CEDENTE_PRESTATORE_ID_PAESE = "CedentePrestatore-IdPaese";
-    public final static String SDI_BUSTA_EXT_CEDENTE_PRESTATORE_ID_CODICE = "CedentePrestatore-IdCodice";
-    public final static String SDI_BUSTA_EXT_CEDENTE_PRESTATORE_CODICE_FISCALE = "CedentePrestatore-CodiceFiscale";
+    public final static String SDI_BUSTA_EXT_CEDENTE_PRESTATORE_PREFIX_ = "CedentePrestatore-";
+    public final static String SDI_BUSTA_EXT_CEDENTE_PRESTATORE_DENOMINAZIONE = SDI_BUSTA_EXT_CEDENTE_PRESTATORE_PREFIX_+"Denominazione";
+    public final static String SDI_BUSTA_EXT_CEDENTE_PRESTATORE_NOME = SDI_BUSTA_EXT_CEDENTE_PRESTATORE_PREFIX_+"Nome";
+    public final static String SDI_BUSTA_EXT_CEDENTE_PRESTATORE_COGNOME = SDI_BUSTA_EXT_CEDENTE_PRESTATORE_PREFIX_+"Cognome";
+    public final static String SDI_BUSTA_EXT_CEDENTE_PRESTATORE_ID_PAESE = SDI_BUSTA_EXT_CEDENTE_PRESTATORE_PREFIX_+"IdPaese";
+    public final static String SDI_BUSTA_EXT_CEDENTE_PRESTATORE_ID_CODICE = SDI_BUSTA_EXT_CEDENTE_PRESTATORE_PREFIX_+"IdCodice";
+    public final static String SDI_BUSTA_EXT_CEDENTE_PRESTATORE_CODICE_FISCALE = SDI_BUSTA_EXT_CEDENTE_PRESTATORE_PREFIX_+"CodiceFiscale";
     
-    public final static String SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_DENOMINAZIONE = "CessionarioCommittente-Denominazione";
-    public final static String SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_NOME = "CessionarioCommittente-Nome";
-    public final static String SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_COGNOME = "CessionarioCommittente-Cognome";
-    public final static String SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_ID_PAESE = "CessionarioCommittente-IdPaese";
-    public final static String SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_ID_CODICE = "CessionarioCommittente-IdCodice";
-    public final static String SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_CODICE_FISCALE = "CessionarioCommittente-CodiceFiscale";
+    public final static String SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_PREFIX_ = "CessionarioCommittente-";
+    public final static String SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_DENOMINAZIONE = SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_PREFIX_+"Denominazione";
+    public final static String SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_NOME = SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_PREFIX_+"Nome";
+    public final static String SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_COGNOME = SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_PREFIX_+"Cognome";
+    public final static String SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_ID_PAESE = SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_PREFIX_+"IdPaese";
+    public final static String SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_ID_CODICE = SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_PREFIX_+"IdCodice";
+    public final static String SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_CODICE_FISCALE = SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_PREFIX_+"CodiceFiscale";
     
-    public final static String SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_DENOMINAZIONE = "TerzoIntermediarioOSoggettoEmittente-Denominazione";
-    public final static String SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_NOME = "TerzoIntermediarioOSoggettoEmittente-Nome";
-    public final static String SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_COGNOME = "TerzoIntermediarioOSoggettoEmittente-Cognome";
-    public final static String SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_ID_PAESE = "TerzoIntermediarioOSoggettoEmittente-IdPaese";
-    public final static String SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_ID_CODICE = "TerzoIntermediarioOSoggettoEmittente-IdCodice";
-    public final static String SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_CODICE_FISCALE = "TerzoIntermediarioOSoggettoEmittente-CodiceFiscale";
+    public final static String SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_PREFIX_ = "TerzoIntermediarioOSoggettoEmittente-";
+    public final static String SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_DENOMINAZIONE = SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_PREFIX_+"Denominazione";
+    public final static String SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_NOME = SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_PREFIX_+"Nome";
+    public final static String SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_COGNOME = SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_PREFIX_+"Cognome";
+    public final static String SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_ID_PAESE = SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_PREFIX_+"IdPaese";
+    public final static String SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_ID_CODICE = SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_PREFIX_+"IdCodice";
+    public final static String SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_CODICE_FISCALE = SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_PREFIX_+"CodiceFiscale";
+    
+    public final static String SDI_BUSTA_APPLICATIVO_MITTENTE_FATTURA = "ApplicativoMittenteFattura";
     
     public final static String SDI_HEADER_ID_CORRELAZIONE = "GovWay-SDI-IdCorrelazione";
+    
 }
 
 

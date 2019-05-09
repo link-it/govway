@@ -243,6 +243,16 @@ public class TracciaDriverUtilities {
 			if(TracciaDriverUtilities.isDefined(filtro.getInformazioniProtocollo().getProfiloCollaborazioneEngine())){
 				sqlQueryObject.addWhereCondition(CostantiDB.TRACCE+"."+CostantiDB.TRACCE_COLUMN_PROFILO_COLLABORAZIONE_SDK_CONSTANT+"=?");
 			}
+			if(filtro.getInformazioniProtocollo().sizeProprietaProtocollo()>0){
+				String [] nomi = filtro.getInformazioniProtocollo().getProprietaProtocolloNames();
+				for (int i = 0; i < nomi.length; i++) {
+					String aliasExtInfo = "tr_ext_"+i;
+					sqlQueryObject.addFromTable(CostantiDB.TRACCE_EXT_INFO,aliasExtInfo);
+					sqlQueryObject.addWhereCondition(CostantiDB.TRACCE+"."+CostantiDB.TRACCE_COLUMN_ID+"="+aliasExtInfo+"."+CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_ID_TRACCIA);
+					sqlQueryObject.addWhereCondition(aliasExtInfo+"."+CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_NAME+"=?");	
+					sqlQueryObject.addWhereCondition(aliasExtInfo+"."+CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_VALUE+"=?");	
+				}
+			}
 		}		
 		
 		if(TracciaDriverUtilities.isDefined(filtro.getServizioApplicativoFruitore())){
@@ -522,6 +532,19 @@ public class TracciaDriverUtilities {
 					pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getProfiloCollaborazioneEngine().getEngineValue());
 				if(query!=null)
 					query.replaceFirst("\\?", "'"+filtro.getInformazioniProtocollo().getProfiloCollaborazioneEngine().getEngineValue()+"'");
+			}
+			if(filtro.getInformazioniProtocollo().sizeProprietaProtocollo()>0){
+				String [] nomi = filtro.getInformazioniProtocollo().getProprietaProtocolloNames();
+				for (int i = 0; i < nomi.length; i++) {
+					if(pstmt!=null) {
+						pstmt.setString(startIndex++, nomi[i]);
+						pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getProprietaProtocollo(nomi[i]));
+					}
+					if(query!=null) {
+						query.replaceFirst("\\?", "'"+nomi[i]+"'");
+						query.replaceFirst("\\?", "'"+filtro.getInformazioniProtocollo().getProprietaProtocollo(nomi[i])+"'");
+					}
+				}
 			}
 		}	
 		

@@ -1,3 +1,16 @@
+2019-05-09  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSDI] 
+	(https://github.com/link-it/govway/issues/27)
+	Nella fatturazione passiva è stata aggiunta alla traccia delle notifiche ricevute l'informazione sul Codice Destinatario della Fattura.
+	Tale informazione permette di utilizzare ad esempio il seguente path dinamico, sul connettore File, per raggruppare le fatture e notifiche ricevute per Codice Destinatario:
+	- /tmp/${header:GovWay-SDI-CodiceDestinatario}/${header:GovWay-SDI-NomeFile}
+	Nella fatturazione attiva è stata aggiunta alla traccia delle notifiche ricevute l'informazione sull'IdTrasmittente (IdPaese + IdCodice) e
+	l'identificativo dell'Applicativo che ha inviato la fattura. 
+	Le informazioni aggiunte possono essere utilizzate ad esempio nel seguente path dinamico, sul connettore File, per raggruppare per ApplicativoMittente o IdTrasmittente:
+	- /tmp/${header:GovWay-SDI-ApplicativoMittenteFattura}/${header:GovWay-SDI-NomeFile}
+	- /tmp/${header:GovWay-SDI-DatiTrasmissione-IdTrasmittente-IdPaese}${header:GovWay-SDI-DatiTrasmissione-IdTrasmittente-IdCodice}/${header:GovWay-SDI-NomeFile}
+
 2019-05-09  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]

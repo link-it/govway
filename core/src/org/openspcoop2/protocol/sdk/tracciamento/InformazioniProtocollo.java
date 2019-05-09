@@ -26,6 +26,7 @@ package org.openspcoop2.protocol.sdk.tracciamento;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
+import java.util.Hashtable;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
@@ -53,7 +54,12 @@ public class InformazioniProtocollo implements Serializable{
     protected Integer versioneServizio;
 	protected String profiloCollaborazioneProtocollo;
 	protected ProfiloDiCollaborazione profiloCollaborazioneEngine;
+	
+	protected Hashtable<String, String> proprietaProtocollo;
     
+	public InformazioniProtocollo() {
+		this.proprietaProtocollo = new Hashtable<String, String>();
+	}
     
 
 	public String getProfiloCollaborazioneProtocollo() {
@@ -107,6 +113,33 @@ public class InformazioniProtocollo implements Serializable{
 		this.versioneServizio = versioneServizio;
 	}
 	
+	
+	public Hashtable<String, String> getProprietaProtocollo() {
+		return this.proprietaProtocollo;
+	}
+	public void addProprietaProtocollo(String key,String value){
+		this.proprietaProtocollo.put(key,value);
+	}
+	public int sizeProprietaProtocollo(){
+		return this.proprietaProtocollo.size();
+	}
+	public String getProprietaProtocollo(String key){
+		return this.proprietaProtocollo.get(key);
+	}
+	public String removeProprietaProtocollo(String key){
+		return this.proprietaProtocollo.remove(key);
+	}
+	public String[] getProprietaProtocolloValues() {
+		return this.proprietaProtocollo.values().toArray(new String[this.proprietaProtocollo.size()]);
+	}
+	public String[] getProprietaProtocolloNames() {
+		return this.proprietaProtocollo.keySet().toArray(new String[this.proprietaProtocollo.size()]);
+	}
+	public void setProprietaProtocollo(Hashtable<String, String> params) {
+		this.proprietaProtocollo = params;
+	}
+	
+	
 	@Override
 	public String toString() {
 		String pattern = "erogatore [{0}]" +
@@ -116,7 +149,8 @@ public class InformazioniProtocollo implements Serializable{
 				" versioneServizio [{4}]" +
 				" azione [{5}]" +
 				" profiloCollaborazioneProtocollo [{6}]" +
-				" profiloCollaborazioneEngine [{7}]";
+				" profiloCollaborazioneEngine [{7}]"+
+				" proprietaProtocollo [{8}]";
 		return MessageFormat.format(pattern, 
 				this.destinatario!=null ? this.destinatario.toString() : "not set",
 						this.mittente!=null ? this.mittente.toString() : "not set",
@@ -125,7 +159,8 @@ public class InformazioniProtocollo implements Serializable{
 						this.versioneServizio!=null ? this.versioneServizio : "not set",
 						this.azione!=null ? this.azione : "not set",
 						this.profiloCollaborazioneProtocollo!=null ? this.profiloCollaborazioneProtocollo : "not set",
-						this.profiloCollaborazioneEngine!=null ? this.profiloCollaborazioneEngine.getEngineValue() : "not set"	);
+						this.profiloCollaborazioneEngine!=null ? this.profiloCollaborazioneEngine.getEngineValue() : "not set",
+						this.proprietaProtocollo!=null && this.proprietaProtocollo.size()>0 ? this.proprietaProtocollo.size() : "not set");
 	}
 }
 

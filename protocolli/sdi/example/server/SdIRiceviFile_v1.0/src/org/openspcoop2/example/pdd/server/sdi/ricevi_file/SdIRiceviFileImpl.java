@@ -85,11 +85,6 @@ public class SdIRiceviFileImpl implements SdIRiceviFile {
     		System.out.println("File received serialized in : "+f.getAbsolutePath());
 //        	}
         	
-            org.openspcoop2.example.pdd.server.sdi.ricevi_file.RispostaSdIRiceviFileType _return = new RispostaSdIRiceviFileType();
-            
-            _return.setIdentificativoSdI(new BigInteger("123"));
-            _return.setDataOraRicezione(DatatypeFactory.newInstance().newXMLGregorianCalendar((GregorianCalendar)Calendar.getInstance()));
-            
         	java.util.Properties reader = new java.util.Properties();
     		try{  
     			reader.load(new FileInputStream("Server.properties")); 
@@ -98,7 +93,19 @@ public class SdIRiceviFileImpl implements SdIRiceviFile {
     			throw e;
     		}
     		
-    		
+            org.openspcoop2.example.pdd.server.sdi.ricevi_file.RispostaSdIRiceviFileType _return = new RispostaSdIRiceviFileType();
+            
+    		String identificativoSDI = reader.getProperty("identificativoSDI");
+    		if(identificativoSDI==null){
+    			throw new Exception("Property [identificativoSDI] not definded");
+    		}
+    		else{
+    			identificativoSDI = identificativoSDI.trim();
+    		}
+            
+            _return.setIdentificativoSdI(new BigInteger(identificativoSDI));
+            _return.setDataOraRicezione(DatatypeFactory.newInstance().newXMLGregorianCalendar((GregorianCalendar)Calendar.getInstance()));
+                		
     		String errore = reader.getProperty("errore");
     		if(errore!=null){
     			errore = errore.trim();

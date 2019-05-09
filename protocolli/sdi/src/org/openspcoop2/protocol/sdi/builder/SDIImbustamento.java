@@ -375,6 +375,16 @@ public class SDIImbustamento {
 						idCodice,
 						tipoInvioFattura));
 			}
+			if(idPaese!=null && !"".equals(idPaese)) {
+				if(!busta.existsProperty(SDICostanti.SDI_BUSTA_EXT_TRASMITTENTE_ID_PAESE)) {
+					busta.addProperty(SDICostanti.SDI_BUSTA_EXT_TRASMITTENTE_ID_PAESE, idPaese);
+				}
+			}
+			if(idCodice!=null && !"".equals(idCodice)) {
+				if(!busta.existsProperty(SDICostanti.SDI_BUSTA_EXT_TRASMITTENTE_ID_CODICE)) {
+					busta.addProperty(SDICostanti.SDI_BUSTA_EXT_TRASMITTENTE_ID_CODICE, idCodice);
+				}
+			}
 			
 			// detach body
 			soapBody.removeContents();

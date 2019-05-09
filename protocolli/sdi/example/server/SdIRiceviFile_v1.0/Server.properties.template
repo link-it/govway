@@ -7,6 +7,9 @@ mtom=true
 # Endpoint
 endpoint=http://localhost:8888/ricevi_file
 
+# Identificativo SDI
+identificativoSDI=111
+
 # [Opzionale] Errore
 # EI01 = FILE VUOTO
 # EI02 = SERVIZIO NON DISPONIBILE

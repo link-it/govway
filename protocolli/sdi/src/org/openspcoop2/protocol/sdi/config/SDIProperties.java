@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.slf4j.Logger;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.Loader;
+import org.slf4j.Logger;
 
 /**
  * Classe che gestisce il file di properties 'sdi.properties' del protocollo SdI
@@ -139,8 +139,19 @@ public class SDIProperties {
 			this.isEnableValidazioneNomeFile();
 			
 			this.isEnableValidazioneXsdFatturaDaInviare();
+			this.isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura();
+			
 			this.isEnableValidazioneXsdNotificaDaInviare();
 			this.isEnableAccessoNotificaDaInviare();
+			this.isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura();
+			
+			if(this.isTracciamentoRequiredFromConfiguration()) {
+				if(this.getTracciamentoDatasource()==null) {
+					throw new Exception("Datasource non definito per l'accesso al database delle tracce");
+				}
+				this.getTracciamentoDatasource_jndiContext();
+				this.getTracciamentoTipoDatabase();
+			}
 			
 			this.isEnableAccessoMetadati();
 			this.isEnableAccessoFattura();
@@ -384,6 +395,38 @@ public class SDIProperties {
 	}
 	
 	/**
+	 * Indicazione se accedere al database delle tracce per aggiungere alle notifiche informazioni prese dalla fattura inviata precedentemente (es. IdTrasmittente (IdPaese + IdCodice), Applicativo che ha inviato la fattura).
+	 *   
+	 * @return Indicazione se accedere al database delle tracce per aggiungere alle notifiche informazioni prese dalla fattura inviata precedentemente (es. IdTrasmittente (IdPaese + IdCodice), Applicativo che ha inviato la fattura).
+	 * 
+	 */
+	private static Boolean isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura = null;
+	public Boolean isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura() throws ProtocolException{
+		if(SDIProperties.isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.fatturazioneAttiva.notifiche.enrichInfoFromFattura";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura = Boolean.parseBoolean(value);
+				}else{
+					throw new Exception("Non definita");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura;
+	}
+	
+	/**
 	 * Indicazione se effettuare la validazione xsd della notifica da inviare
 	 *   
 	 * @return Indicazione se effettuare la validazione xsd della notifica da inviare
@@ -440,6 +483,105 @@ public class SDIProperties {
 
 		return SDIProperties.isEnableAccessoNotificaDaInviare;
 	}
+	
+	/**
+	 * Indicazione se accedere al database delle tracce per aggiungere alla notifica decorrenza termini informazioni prese dalla fattura ricevuta precedentemente (es. CodiceDestinatario).
+	 *   
+	 * @return Indicazione se accedere al database delle tracce per aggiungere alla notifica decorrenza termini informazioni prese dalla fattura ricevuta precedentemente (es. CodiceDestinatario).
+	 * 
+	 */
+	private static Boolean isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura = null;
+	public Boolean isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura() throws ProtocolException{
+		if(SDIProperties.isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.fatturazionePassiva.notifiche.enrichInfoFromFattura";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura = Boolean.parseBoolean(value);
+				}else{
+					throw new Exception("Non definita");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura;
+	}
+	
+	public boolean isTracciamentoRequiredFromConfiguration() throws ProtocolException {
+		return this.isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura() ||
+				this.isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura();
+	}
+	
+	private static Boolean tracciamentoDatasource_read;
+	private static String tracciamentoDatasource;
+	public String getTracciamentoDatasource() throws ProtocolException {
+		if(SDIProperties.tracciamentoDatasource_read==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.tracce.dataSource"); 
+				
+				if (value != null){
+					value = value.trim();
+					SDIProperties.tracciamentoDatasource = value;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.tracce.dataSource', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}finally {
+				tracciamentoDatasource_read = true;
+			}
+    	}
+		return SDIProperties.tracciamentoDatasource;
+	}
+	
+	private static Boolean tracciamentoTipoDatabase_read;
+	private static String tracciamentoTipoDatabase;
+	public String getTracciamentoTipoDatabase() throws ProtocolException {
+		if(SDIProperties.tracciamentoTipoDatabase_read==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.tracce.tipoDatabase"); 
+				
+				if (value != null){
+					value = value.trim();
+					SDIProperties.tracciamentoTipoDatabase = value;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.tracce.tipoDatabase', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}finally {
+				tracciamentoTipoDatabase_read = true;
+			}
+    	}
+		return SDIProperties.tracciamentoTipoDatabase;
+	}
+	
+	private static Properties tracciamentoDatasource_jndiContext = null;
+	public Properties getTracciamentoDatasource_jndiContext() throws ProtocolException {
+		if(SDIProperties.tracciamentoDatasource_jndiContext==null){
+	    	try{  
+	    		SDIProperties.tracciamentoDatasource_jndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.sdi.tracce.dataSource.property.");
+	    		if (SDIProperties.tracciamentoDatasource_jndiContext == null || SDIProperties.tracciamentoDatasource_jndiContext.size()<0){
+	    			SDIProperties.tracciamentoDatasource_jndiContext = new Properties(); // context jndi vuoto
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.tracce.dataSource.property.*', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return SDIProperties.tracciamentoDatasource_jndiContext;
+	}
+	
 	
 	/**
 	 * Indicazione se effettuare l'accesso ai metadati

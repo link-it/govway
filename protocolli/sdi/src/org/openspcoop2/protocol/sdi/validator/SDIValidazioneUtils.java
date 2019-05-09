@@ -21,13 +21,31 @@
  */
 package org.openspcoop2.protocol.sdi.validator;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Properties;
+
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.protocol.basic.ProtocolliRegistrati;
+import org.openspcoop2.protocol.basic.tracciamento.TracciaDriver;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdi.config.SDIProperties;
 import org.openspcoop2.protocol.sdi.constants.SDICostanti;
+import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
+import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoNotFoundException;
+import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracceConPaginazione;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
+import org.openspcoop2.protocol.sdk.tracciamento.InformazioniProtocollo;
+import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 
 /**
  * SDIValidazioneUtils
@@ -39,10 +57,45 @@ import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 public class SDIValidazioneUtils {
 
 	private IProtocolFactory<?> protocolFactory;
+	private SDIProperties sdiProperties;
+	private ITracciaDriver _tracciaDriver;
 	
-	public SDIValidazioneUtils(IProtocolFactory<?> protocolFactory){
+	public SDIValidazioneUtils(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		this.protocolFactory = protocolFactory;
+		this.sdiProperties = SDIProperties.getInstance(protocolFactory.getLogger());
 	}
+	private synchronized ITracciaDriver getDriverTracciamento() throws ProtocolException {
+		if(this._tracciaDriver==null) {
+			this._initDriverTracciamento();
+		}
+		return this._tracciaDriver;
+	}
+	private synchronized void _initDriverTracciamento() throws ProtocolException {
+		if(this._tracciaDriver==null) {
+			if(this.sdiProperties.isTracciamentoRequiredFromConfiguration()) {
+				try {
+					this._tracciaDriver = this.protocolFactory.createTracciaDriver();
+					if(this._tracciaDriver instanceof TracciaDriver) {
+						TracciaDriver tracciaDriverBasic = (TracciaDriver) this._tracciaDriver;
+						ProtocolliRegistrati pRegistrati = new ProtocolliRegistrati(ProtocolFactoryManager.getInstance().getProtocolFactories());
+						String datasource = this.sdiProperties.getTracciamentoDatasource();
+						Properties datasourceJndiContext = this.sdiProperties.getTracciamentoDatasource_jndiContext();
+						String tipoDatabase = this.sdiProperties.getTracciamentoTipoDatabase();
+						if(tipoDatabase==null) {
+							tipoDatabase = OpenSPCoop2Properties.getInstance().getDatabaseType();
+						}
+						tracciaDriverBasic.init(pRegistrati, datasource, tipoDatabase, datasourceJndiContext, this.protocolFactory.getLogger());
+					}
+					else {
+						throw new Exception("Unexpected traccciamento driver '"+this._tracciaDriver.getClass().getName()+"'");
+					}
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+			}
+		}
+	}
+	
 	
 	public Eccezione newEccezioneValidazione(CodiceErroreCooperazione codiceErrore) throws ProtocolException{
 		return Eccezione.getEccezioneValidazione(codiceErrore,null, this.protocolFactory);
@@ -111,6 +164,112 @@ public class SDIValidazioneUtils {
 		}
 		else {
 			msg.getTransportRequestContext().getParametersTrasporto().put(SDICostanti.SDI_HEADER_ID_CORRELAZIONE,idSdi);
+		}
+
+	}
+	
+	public void readInformazioniFatturaRiferita(Busta busta, String identificativoSdI,
+			String servizio, String azione,
+			boolean applicativoMittente) throws ProtocolException {
+		
+		ITracciaDriver tracciaDriver = this.getDriverTracciamento();
+		if(tracciaDriver==null) {
+			throw new ProtocolException("Accesso al database delle tracce non attivo");
+		}
+		
+		FiltroRicercaTracceConPaginazione filtro = new FiltroRicercaTracceConPaginazione();
+		filtro.setTipoTraccia(RuoloMessaggio.RICHIESTA);
+		filtro.setInformazioniProtocollo(new InformazioniProtocollo());
+		filtro.getInformazioniProtocollo().setServizio(servizio);
+		filtro.getInformazioniProtocollo().setAzione(azione);
+		filtro.getInformazioniProtocollo().addProprietaProtocollo(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, identificativoSdI);
+		filtro.setAsc(false);
+		List<Traccia> list = null;
+		try {
+			list = tracciaDriver.getTracce(filtro);
+		}catch(DriverTracciamentoNotFoundException notFound) {}
+		catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		if(list!=null && !list.isEmpty()) {
+			Traccia traccia = list.get(0); // solo nella fatturazione passiva ne potra' esistere piu' di una in seguito a piu' tentativi di consegna. Le informazioni (raccolte sottostante, escluse gli id messaggi) saranno comunque le stesse. 
+			
+			if(applicativoMittente) {
+				if(traccia.getBusta()!=null && traccia.getBusta().getServizioApplicativoFruitore()!=null &&
+						!"".equals(traccia.getBusta().getServizioApplicativoFruitore())) {
+					if(busta.getServizioApplicativoFruitore()==null) {
+						busta.addProperty(SDICostanti.SDI_BUSTA_APPLICATIVO_MITTENTE_FATTURA,traccia.getBusta().getServizioApplicativoFruitore());
+					}
+				}
+			}
+			
+			if(traccia.getBusta()!=null && traccia.getBusta().sizeProperties()>0) {
+				
+				String [] names = traccia.getBusta().getPropertiesNames();
+				
+				if(names!=null && names.length>0) {
+					List<String> nomiDaRiportare = new ArrayList<>();
+					nomiDaRiportare.add(SDICostanti.SDI_BUSTA_EXT_CODICE_DESTINATARIO);
+					nomiDaRiportare.add(SDICostanti.SDI_BUSTA_EXT_NOME_FILE_METADATI);
+					nomiDaRiportare.add(SDICostanti.SDI_BUSTA_EXT_SOGGETTO_EMITTENTE);
+					
+					Hashtable<String, String> nomiDaRiportareDiversamente = new Hashtable<>();
+					nomiDaRiportareDiversamente.put(SDICostanti.SDI_BUSTA_EXT_NOME_FILE, SDICostanti.SDI_BUSTA_EXT_NOME_FILE_FATTURA);
+					
+					List<String> prefissiDaRiportare = new ArrayList<>();
+					prefissiDaRiportare.add(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_FATTURA_PREFIX_);
+					prefissiDaRiportare.add(SDICostanti.SDI_BUSTA_EXT_TRASMITTENTE_PREFIX_);
+					prefissiDaRiportare.add(SDICostanti.SDI_BUSTA_EXT_CEDENTE_PRESTATORE_PREFIX_);
+					prefissiDaRiportare.add(SDICostanti.SDI_BUSTA_EXT_CESSIONARIO_COMMITTENTE_PREFIX_);
+					prefissiDaRiportare.add(SDICostanti.SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_PREFIX_);
+					
+					for (int i = 0; i < names.length; i++) {
+						
+						String checkNome = names[i];
+						if(checkNome==null || "".equals(checkNome)) {
+							continue;
+						}
+						String checkValue = traccia.getBusta().getProperty(checkNome);
+						if(checkValue==null || "".equals(checkValue)) {
+							continue;
+						}
+						
+						if(!nomiDaRiportare.isEmpty()) {
+							for (String nome : nomiDaRiportare) {
+								if(checkNome.equals(nome)) {
+									if(!busta.existsProperty(checkNome)) {
+										busta.addProperty(checkNome, checkValue);
+									}
+								}
+							}
+						}
+						
+						if(!nomiDaRiportareDiversamente.isEmpty()) {
+							Enumeration<String> keys = nomiDaRiportareDiversamente.keys();
+							while (keys.hasMoreElements()) {
+								String nome = (String) keys.nextElement();
+								if(checkNome.equals(nome)) {
+									if(!busta.existsProperty(checkNome)) {
+										busta.addProperty(nomiDaRiportareDiversamente.get(checkNome), checkValue);
+									}
+								}
+							}
+						}
+						
+						if(!prefissiDaRiportare.isEmpty()) {
+							for (String prefix : prefissiDaRiportare) {
+								if(checkNome.startsWith(prefix)) {
+									if(!busta.existsProperty(checkNome)) {
+										busta.addProperty(checkNome, checkValue);
+									}
+								}
+							}
+						}
+						
+					}
+				}
+				
+			}
 		}
 
 	}

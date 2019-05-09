@@ -1138,6 +1138,18 @@ public class Busta implements java.io.Serializable {
 		return 0;
 	}
 
+	public boolean existsProperty(String key){
+		if(this.busta.getProtocollo()!=null){
+			for (int i = 0; i < this.busta.getProtocollo().sizeProprietaList(); i++) {
+				Proprieta proprieta = this.busta.getProtocollo().getProprieta(i);
+				if(proprieta.getNome().equals(key)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	public String getProperty(String key){
 		if(this.busta.getProtocollo()!=null){
 			for (int i = 0; i < this.busta.getProtocollo().sizeProprietaList(); i++) {

@@ -55,7 +55,9 @@ public abstract class BaseSecurityBean {
 		this.keystore = keystore;
 	}
 	public void setKeystore(java.security.KeyStore keystore) {
-		this.keystore = new KeyStore(keystore);
+		if(keystore!=null) {
+			this.keystore = new KeyStore(keystore);
+		}
 	}
 	public KeyStore getTruststore() {
 		return this.truststore;
@@ -64,7 +66,9 @@ public abstract class BaseSecurityBean {
 		this.truststore = truststore;
 	}
 	public void setTruststore(java.security.KeyStore truststore) {
-		this.truststore = new KeyStore(truststore);
+		if(truststore!=null) {
+			this.truststore = new KeyStore(truststore);
+		}
 	}
 	public JWKSet getJwkSet() {
 		return this.jwkSet;
