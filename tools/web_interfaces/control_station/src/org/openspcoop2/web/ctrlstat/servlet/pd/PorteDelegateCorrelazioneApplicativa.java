@@ -112,6 +112,11 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 			if(idFruizione == null) 
 				idFruizione = "";
 			
+			String idTab = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+			if(!porteDelegateHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
+				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
+			}
+			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 

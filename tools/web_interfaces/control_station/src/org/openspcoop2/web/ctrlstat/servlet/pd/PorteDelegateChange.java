@@ -161,6 +161,11 @@ public final class PorteDelegateChange extends Action {
 			if(idFruizione == null)
 				idFruizione = "";
 			
+			String idTab = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+			if(!porteDelegateHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
+				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
+			}
+			
 			String serviceBindingS = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVICE_BINDING);
 			ServiceBinding serviceBinding = null;
 			if(StringUtils.isNotEmpty(serviceBindingS))
@@ -580,8 +585,6 @@ public final class PorteDelegateChange extends Action {
 					nomeBreadCrumb=null;
 				}
 				else if(datiAltro) {
-					lstParam.remove(lstParam.size()-1);
-					
 					String labelPerPorta = null;
 					if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
 						labelPerPorta = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
@@ -590,6 +593,7 @@ public final class PorteDelegateChange extends Action {
 								pde);
 					}
 					else {
+						lstParam.remove(lstParam.size()-1);
 						labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE_DI+pde.getNome();
 					}				
 					lstParam.add(new Parameter(labelPerPorta,  null));
@@ -1387,8 +1391,15 @@ public final class PorteDelegateChange extends Action {
 			}
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			
+			ForwardParams fwP = ForwardParams.CHANGE();
+			
+			if(datiAltro && !porteDelegateHelper.isModalitaCompleta()) {
+				fwP = PorteDelegateCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;
+			}
+			
 			// Forward control to the specified success URI
-			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE, ForwardParams.CHANGE());
+			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE, fwP);
 
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 

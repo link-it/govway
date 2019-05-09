@@ -86,6 +86,7 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
@@ -1269,6 +1270,18 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setSelected(tipoCredenzialiSSLTipoArchivio.name());
 						de.setSize(this.getSize());
 						de.setPostBack(true);
+						
+						if(ArchiveType.CER.equals(tipoCredenzialiSSLTipoArchivio) || ArchiveType.JKS.equals(tipoCredenzialiSSLTipoArchivio)) {
+							DataElementInfo dInfo = new DataElementInfo(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO);
+							if(ArchiveType.CER.equals(tipoCredenzialiSSLTipoArchivio)) {
+								dInfo.setHeaderBody(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO_INFO_CER);
+								dInfo.setListBody(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO_INFO_CER_VALUES);
+							}
+							else {
+								dInfo.setHeaderBody(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO_INFO_JKS);
+							}
+							de.setInfo(dInfo);
+						}
 						
 					} else {
 						de.setType(DataElementType.HIDDEN);

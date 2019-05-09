@@ -95,8 +95,8 @@ public class PorteApplicativeMTOMResponseChange extends Action {
 			// Prendo il nome della porta applicativa
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			
-			PortaApplicativa pde = porteApplicativeCore.getPortaApplicativa(idInt);
-			String idporta = pde.getNome();
+			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
+			String idporta = pa.getNome();
 
 			// String pdd = soggetto.getServer();
 			Parameter[] urlParms = { 
@@ -105,7 +105,7 @@ public class PorteApplicativeMTOMResponseChange extends Action {
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps) };
 
 			MtomProcessorFlowParameter flowParameterOld = null;
-			MtomProcessor mtomProcessor = pde.getMtomProcessor();
+			MtomProcessor mtomProcessor = pa.getMtomProcessor();
 			if(mtomProcessor.getResponseFlow()!=null){
 				List<MtomProcessorFlowParameter> wsrfpArray = mtomProcessor.getResponseFlow().getParameterList();
 				for (int i = 0; i < wsrfpArray.size(); i++) {
@@ -124,7 +124,7 @@ public class PorteApplicativeMTOMResponseChange extends Action {
 				labelPerPorta = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
 						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_CONFIG_DI,
 						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_CONFIG,
-						pde);
+						pa);
 			}
 			else {
 				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_CONFIG_DI+idporta;
@@ -177,7 +177,8 @@ public class PorteApplicativeMTOMResponseChange extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addMTOMParameterToDati(TipoOperazione.CHANGE, dati, false, nome, pattern, contentType, obbligatorio);
+				dati = porteApplicativeHelper.addMTOMParameterToDati(TipoOperazione.CHANGE, dati, false, nome, pattern, contentType, obbligatorio,
+						pa.getMtomProcessor().getResponseFlow().getMode());
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE,id, idsogg, null, idAsps, dati);
 
@@ -200,7 +201,8 @@ public class PorteApplicativeMTOMResponseChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addMTOMParameterToDati(TipoOperazione.CHANGE, dati, false, nome, pattern, contentType, obbligatorio);
+				dati = porteApplicativeHelper.addMTOMParameterToDati(TipoOperazione.CHANGE, dati, false, nome, pattern, contentType, obbligatorio,
+						pa.getMtomProcessor().getResponseFlow().getMode());
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE,id, idsogg, null,idAsps, dati);
 
@@ -215,7 +217,7 @@ public class PorteApplicativeMTOMResponseChange extends Action {
 
 			// Modifico i dati del message-security della porta delegata nel db
 			// Rimozione vecchio parametro
-			mtomProcessor = pde.getMtomProcessor();
+			mtomProcessor = pa.getMtomProcessor();
 			if(mtomProcessor.getResponseFlow()!=null){
 				List<MtomProcessorFlowParameter> wsrfpArray = mtomProcessor.getResponseFlow().getParameterList();
 				for (int i = 0; i < wsrfpArray.size(); i++) {
@@ -237,7 +239,7 @@ public class PorteApplicativeMTOMResponseChange extends Action {
 			} else 
 				nuovoParametro.setRequired(false);
 
-			mtomProcessor = pde.getMtomProcessor();
+			mtomProcessor = pa.getMtomProcessor();
 			if (mtomProcessor == null) {
 				mtomProcessor = new MtomProcessor();
 			}
@@ -245,13 +247,13 @@ public class PorteApplicativeMTOMResponseChange extends Action {
 				mtomProcessor.setResponseFlow(new MtomProcessorFlow());
 			}
 			mtomProcessor.getResponseFlow().addParameter(nuovoParametro);
-			pde.setMtomProcessor(mtomProcessor);
+			pa.setMtomProcessor(mtomProcessor);
 
 
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
-			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pde);
+			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

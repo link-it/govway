@@ -1181,6 +1181,15 @@ p.note.labelLong {
 	margin-right: 4px;
 }
 
+.spanNoEdit-msval {
+	margin-right: 12px;
+}
+
+.spanNoEdit-image-msval {
+	vertical-align: sub;
+	margin-right: 4px;
+}
+
 .divNoEdit {
 	padding-top: 6px;
 }

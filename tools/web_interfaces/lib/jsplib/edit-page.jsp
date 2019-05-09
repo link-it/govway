@@ -231,8 +231,8 @@ for (int i = 0; i < dati.size(); i++) {
 						      			String idDivIconInfo = "divIconInfo_"+i;
 						      			String idIconInfo = "iconInfo_"+i; 
 						      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
-						      			<input type="hidden" name="hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
-						      			<input type="hidden" name="hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+						      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+						      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 								      	<span class="spanIconInfoBox">
 											<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 										</span>
@@ -274,8 +274,8 @@ for (int i = 0; i < dati.size(); i++) {
 								      			String idDivIconInfo = "divIconInfo_"+i;
 								      			String idIconInfo = "iconInfo_"+i; 
 								      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
-								      			<input type="hidden" name="hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
-								      			<input type="hidden" name="hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+								      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+								      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 										      	<span class="spanIconInfoBox">
 													<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 												</span>
@@ -310,8 +310,8 @@ for (int i = 0; i < dati.size(); i++) {
 								      			String idDivIconInfo = "divIconInfo_"+i;
 								      			String idIconInfo = "iconInfo_"+i; 
 									      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
-									      			<input type="hidden" name="hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
-									      			<input type="hidden" name="hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+									      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+									      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 											      	<span class="spanIconInfoBox">
 														<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 													</span>
@@ -339,8 +339,8 @@ for (int i = 0; i < dati.size(); i++) {
 									      			String idDivIconInfo = "divIconInfo_"+i;
 									      			String idIconInfo = "iconInfo_"+i; 
 											      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
-											      			<input type="hidden" name="hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
-											      			<input type="hidden" name="hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+											      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+											      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 													      	<span class="spanIconInfoBox">
 																<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 															</span>
@@ -375,8 +375,8 @@ for (int i = 0; i < dati.size(); i++) {
 													      			String idDivIconInfo = "divIconInfo_"+i;
 													      			String idIconInfo = "iconInfo_"+i; 
 													      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
-													      			<input type="hidden" name="hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
-													      			<input type="hidden" name="hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+													      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+													      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 															      	<span class="spanIconInfoBox">
 																		<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																	</span>
@@ -422,8 +422,8 @@ for (int i = 0; i < dati.size(); i++) {
 													      			String idDivIconInfo = "divIconInfo_"+i;
 													      			String idIconInfo = "iconInfo_"+i; 
 													      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
-													      			<input type="hidden" name="hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
-													      			<input type="hidden" name="hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+													      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+													      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 															      	<span class="spanIconInfoBox">
 																		<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																	</span>
@@ -468,8 +468,8 @@ for (int i = 0; i < dati.size(); i++) {
 														      			String idDivIconInfo = "divIconInfo_"+i;
 												      					String idIconInfo = "iconInfo_"+i; 
 														      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
-														      			<input type="hidden" name="hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
-														      			<input type="hidden" name="hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+														      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+														      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 																      	<span class="spanIconInfoBox">
 																			<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																		</span>
@@ -515,8 +515,8 @@ for (int i = 0; i < dati.size(); i++) {
 															      			String idDivIconInfo = "divIconInfo_"+i;
 															      			String idIconInfo = "iconInfo_"+i; 
 															      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
-															      			<input type="hidden" name="hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
-															      			<input type="hidden" name="hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+															      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+															      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 																	      	<span class="spanIconInfoBox">
 																				<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																			</span>
@@ -629,8 +629,8 @@ for (int i = 0; i < dati.size(); i++) {
 																			      			String idDivIconInfo = "divIconInfo_"+i;
 																			      			String idIconInfo = "iconInfo_"+i; 
 																			      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
-																			      			<input type="hidden" name="hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
-																			      			<input type="hidden" name="hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+																			      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+																			      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 																					      	<span class="spanIconInfoBox">
 																								<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																							</span>

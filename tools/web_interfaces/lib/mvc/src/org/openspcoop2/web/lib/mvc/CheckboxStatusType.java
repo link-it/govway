@@ -31,9 +31,13 @@ package org.openspcoop2.web.lib.mvc;
  */
 public enum CheckboxStatusType {
 
-	ABILITATO("yes"),
-	DISABILITATO("no"),
-	WARNING_ONLY("warn"),;
+	ABILITATO(Costanti.CHECK_BOX_ENABLED),
+	DISABILITATO(Costanti.CHECK_BOX_DISABLED),
+	WARNING_ONLY(Costanti.CHECK_BOX_WARN),
+	CONFIG_ENABLE(Costanti.CHECK_BOX_CONFIG_ENABLE),
+	CONFIG_WARNING(Costanti.CHECK_BOX_CONFIG_WARNING),
+	CONFIG_ERROR(Costanti.CHECK_BOX_CONFIG_ERROR),
+	CONFIG_DISABLE(Costanti.CHECK_BOX_CONFIG_DISABLE);
 	
 	private String value;
 	CheckboxStatusType(String value){

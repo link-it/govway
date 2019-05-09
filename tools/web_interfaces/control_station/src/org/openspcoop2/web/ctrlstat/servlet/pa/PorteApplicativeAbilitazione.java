@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -46,16 +47,19 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 
 /**
@@ -98,6 +102,14 @@ public final class PorteApplicativeAbilitazione extends Action {
 			if(idAsps == null)
 				idAsps = "";
 			
+			String idTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+			if(!porteApplicativeHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
+				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
+			}
+			
+			String fromAPIPageInfo = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_API_PAGE_INFO);
+			boolean fromApi = Costanti.CHECK_BOX_ENABLED_TRUE.equalsIgnoreCase(fromAPIPageInfo);
+			
 			String actionConferma = porteApplicativeHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 			
 			// check su oldNomePD
@@ -121,7 +133,7 @@ public final class PorteApplicativeAbilitazione extends Action {
 			
 			// in progress segnalo l'azione che si sta effettuando
 			if(actionConferma == null) {
-				String messaggio = porteApplicativeHelper.getMessaggioConfermaModificaRegolaMappingErogazionePortaApplicativa(pa, serviceBinding, ServletUtils.isCheckBoxEnabled(changeAbilitato), true,true);
+				String messaggio = porteApplicativeHelper.getMessaggioConfermaModificaRegolaMappingErogazionePortaApplicativa(fromApi, pa, serviceBinding, ServletUtils.isCheckBoxEnabled(changeAbilitato), true,true);
 
 				pd.setMessage(messaggio, MessageType.CONFIRM);
 				
@@ -171,33 +183,42 @@ public final class PorteApplicativeAbilitazione extends Action {
 			switch (parentPA) {
 			case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE:
 				
-				boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE));
-				if(datiInvocazione) {
-					idLista = Liste.SERVIZI;
-					ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
-					boolean [] permessi = new boolean[2];
-					PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
-					permessi[0] = pu.isServizi();
-					permessi[1] = pu.isAccordiCooperazione();
-					List<AccordoServizioParteSpecifica> listaS = null;
-					String superUser   = ServletUtils.getUserLoginFromSession(session);
-					if(apsCore.isVisioneOggettiGlobale(superUser)){
-						listaS = apsCore.soggettiServizioList(null, ricerca,permessi,session);
-					}else{
-						listaS = apsCore.soggettiServizioList(superUser, ricerca,permessi,session);
+				if(fromApi) {
+					ErogazioniHelper apsHelper = new ErogazioniHelper(request, pd, session);
+					apsHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps, null);	
+				}
+				else {
+				
+					boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE));
+					if(datiInvocazione) {
+						idLista = Liste.SERVIZI;
+						ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
+						boolean [] permessi = new boolean[2];
+						PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+						permessi[0] = pu.isServizi();
+						permessi[1] = pu.isAccordiCooperazione();
+						List<AccordoServizioParteSpecifica> listaS = null;
+						String superUser   = ServletUtils.getUserLoginFromSession(session);
+						if(apsCore.isVisioneOggettiGlobale(superUser)){
+							listaS = apsCore.soggettiServizioList(null, ricerca,permessi,session);
+						}else{
+							listaS = apsCore.soggettiServizioList(superUser, ricerca,permessi,session);
+						}
+						AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+						apsHelper.prepareServiziList(ricerca, listaS);
 					}
-					AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-					apsHelper.prepareServiziList(ricerca, listaS);
+					else {			
+						idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
+						ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
+						IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
+						Long idSoggetto = asps.getIdSoggetto() != null ? asps.getIdSoggetto() : -1L;
+						List<MappingErogazionePortaApplicativa> lista2 = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(),ricerca);
+						AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+						apsHelper.prepareServiziConfigurazioneList(lista2, idAsps, idSoggetto+"", ricerca);
+					}
+					
 				}
-				else {			
-					idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
-					ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
-					IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
-					Long idSoggetto = asps.getIdSoggetto() != null ? asps.getIdSoggetto() : -1L;
-					List<MappingErogazionePortaApplicativa> lista2 = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(),ricerca);
-					AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-					apsHelper.prepareServiziConfigurazioneList(lista2, idAsps, idSoggetto+"", ricerca);
-				}
+					
 				break;
 			case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_SOGGETTO:
 				idLista = Liste.PORTE_APPLICATIVE_BY_SOGGETTO;
@@ -215,9 +236,10 @@ public final class PorteApplicativeAbilitazione extends Action {
 			}
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			
+			ForwardParams fwP = porteApplicativeHelper.isModalitaCompleta() ? ForwardParams.OTHER("") : PorteApplicativeCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;
 			// Forward control to the specified success URI
-			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_ABILITAZIONE, 
-					ForwardParams.OTHER(""));
+			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_ABILITAZIONE, fwP);
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
 					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_ABILITAZIONE,

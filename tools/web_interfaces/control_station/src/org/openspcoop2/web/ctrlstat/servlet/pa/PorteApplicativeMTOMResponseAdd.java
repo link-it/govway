@@ -135,7 +135,8 @@ public class PorteApplicativeMTOMResponseAdd  extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addMTOMParameterToDati(TipoOperazione.ADD, dati, true, nome, pattern, contentType, obbligatorio);
+				dati = porteApplicativeHelper.addMTOMParameterToDati(TipoOperazione.ADD, dati, true, nome, pattern, contentType, obbligatorio,
+						pa.getMtomProcessor().getResponseFlow().getMode());
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD,id, idsogg,null,idAsps,  dati);
 
@@ -158,7 +159,8 @@ public class PorteApplicativeMTOMResponseAdd  extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addMTOMParameterToDati(TipoOperazione.ADD, dati, true, nome, pattern, contentType, obbligatorio);
+				dati = porteApplicativeHelper.addMTOMParameterToDati(TipoOperazione.ADD, dati, true, nome, pattern, contentType, obbligatorio,
+						pa.getMtomProcessor().getResponseFlow().getMode());
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD,id, idsogg, null,idAsps, dati);
 

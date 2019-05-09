@@ -75,18 +75,13 @@ public class ApiCostanti extends AccordiServizioParteComuneCostanti {
 	public final static String APC_API_ICONA_DOWNLOAD_DOCUMENTO_INTERFACCIA_TOOLTIP = "Download";
 	public final static String APC_API_ICONA_DOWNLOAD_DOCUMENTO_INTERFACCIA_TOOLTIP_CON_PARAMETRO = "Download {0}";
 	
+	public final static String APC_API_ICONA_STATO_RISORSE_TUTTE_ABILITATE_TOOLTIP = "API correttamente configurata";
+	public final static String APC_API_ICONA_STATO_RISORSE_TUTTE_DISABILITATE_TOOLTIP = "Nessuna risorsa configurata sull'API";
 	
-	public final static String APC_API_ICONA_STATO_SERVIZI_TUTTI_ABILITATI = "check_green.png";
-	public final static String APC_API_ICONA_STATO_SERVIZI_PARZIALMENTE_ABILITATI = "check_yellow.png";
-	public final static String APC_API_ICONA_STATO_SERVIZI_TUTTI_DISABILITATI = "disabled_red.png";
-	
-	public final static String APC_API_ICONA_STATO_RISORSE_TUTTE_ABILITATE_TOOLTIP = "Abilitato";
-	public final static String APC_API_ICONA_STATO_RISORSE_TUTTE_DISABILITATE_TOOLTIP = "Nessuna risorsa configurata";
-	
-	public final static String APC_API_ICONA_STATO_SERVIZI_TUTTI_ABILITATI_TOOLTIP = "Abilitato";
-	public final static String APC_API_ICONA_STATO_SERVIZI_PARZIALMENTE_ABILITATI_TOOLTIP = "Alcuni servizi configurati senza azioni";
-	public final static String APC_API_ICONA_STATO_SERVIZI_TUTTI_DISABILITATI_TOOLTIP = "Nessun servizio configurato";
-	public final static String APC_API_ICONA_STATO_SERVIZIO_PARZIALMENTE_CONFIGURATO_DISABILITATI_TOOLTIP = "Nessun'azione configurata per il servizio";
+	public final static String APC_API_ICONA_STATO_SERVIZI_TUTTI_ABILITATI_TOOLTIP = "API correttamente configurata";
+	public final static String APC_API_ICONA_STATO_SERVIZI_PARZIALMENTE_ABILITATI_TOOLTIP = "Per alcuni servizi dell'API non sono state configurate azioni";
+	public final static String APC_API_ICONA_STATO_SERVIZI_TUTTI_DISABILITATI_TOOLTIP = "Nessun servizio configurato sull'API";
+	public final static String APC_API_ICONA_STATO_SERVIZIO_PARZIALMENTE_CONFIGURATO_DISABILITATI_TOOLTIP = "Nessun'azione configurata sul servizio dell'API";
 	
 	public final static String APC_API_LABEL_APS_INFO_GENERALI = "Informazioni Generali";
 	public final static String APC_API_LABEL_PARAMETRO_INTERFACCIA = "Interfaccia";

@@ -50,6 +50,9 @@ public class AccordiServizioParteSpecificaCostanti {
 	
 	public final static String OBJECT_NAME_APS_PORTE_APPLICATIVE = "accordiServizioParteSpecificaPorteApplicative";
 	
+	public final static ForwardParams TIPO_OPERAZIONE_CONFIGURAZIONE = ForwardParams.OTHER("Configurazione");
+	
+	
 	public final static String OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE = "accordiServizioParteSpecificaFruitoriPorteDelegate";
 	
 	/* SERVLET NAME */

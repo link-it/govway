@@ -308,6 +308,7 @@
         	scope="request" validate="true">
             <forward name="serviziApplicativiEndPointInvocazioneServizioForm" path="/jsplib/addElement.jsp"/>
             <forward name="serviziApplicativiEndPointInvocazioneServizioOk" path="/jsplib/listElement.jsp"/>
+	    <forward name="serviziApplicativiConfigurazioneOk" path="/jsplib/addElement.jsp"/>
             <forward name="serviziApplicativiEndPointInvocazioneServizioCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="serviziApplicativiError" path="/jsplib/info.jsp"/>
             <forward name="aspsErogazioniChangeOk" path="/jsplib/addElement.jsp"/>
@@ -784,6 +785,7 @@
         	scope="request" validate="true">
             <forward name="accordiServizioParteSpecificaFruitoriChangeForm" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteSpecificaFruitoriChangeOk" path="/jsplib/listElement.jsp"/>
+	    <forward name="accordiServizioParteSpecificaFruitoriConfigurazioneOk" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteSpecificaFruitoriChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteSpecificaFruitoriError" path="/jsplib/info.jsp"/>
             <forward name="aspsErogazioniChangeOk" path="/jsplib/addElement.jsp"/>
@@ -807,16 +809,19 @@
         	scope="request" validate="true">
             <forward name="accordiServizioParteSpecificaPorteApplicativeAddForm" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteSpecificaPorteApplicativeAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaPorteApplicativeConfigurazioneOk" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteSpecificaPorteApplicativeAddCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteSpecificaPorteApplicativeError" path="/jsplib/info.jsp"/>
         </action>
         <action path="/accordiServizioParteSpecificaPorteApplicativeList" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaPorteApplicativeList" 
         	scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaPorteApplicativeConfigurazione" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteSpecificaPorteApplicativeList" path="/jsplib/listElement.jsp"/>
             <forward name="accordiServizioParteSpecificaPorteApplicativeError" path="/jsplib/info.jsp"/>
         </action>
         <action path="/accordiServizioParteSpecificaPorteApplicativeDel" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaPorteApplicativeDel" 
         	scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaPorteApplicativeConfigurazione" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteSpecificaPorteApplicativeDel" path="/jsplib/listElement.jsp"/>
             <forward name="accordiServizioParteSpecificaPorteApplicativeError" path="/jsplib/info.jsp"/>
         </action>
@@ -827,16 +832,19 @@
         	scope="request" validate="true">
             <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateAddForm" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateConfigurazioneOk" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateAddCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateError" path="/jsplib/info.jsp"/>
         </action>
         <action path="/accordiServizioParteSpecificaFruitoriPorteDelegateList" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaFruitoriPorteDelegateList" 
         	scope="request" validate="true">
+       	    <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateConfigurazione" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateList" path="/jsplib/listElement.jsp"/>
             <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateError" path="/jsplib/info.jsp"/>
         </action>
         <action path="/accordiServizioParteSpecificaFruitoriPorteDelegateDel" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaFruitoriPorteDelegateDel" 
         	scope="request" validate="true">
+       	    <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateConfigurazione" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateDel" path="/jsplib/listElement.jsp"/>
             <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateError" path="/jsplib/info.jsp"/>
         </action>
@@ -1053,6 +1061,7 @@
         	scope="request" validate="true">
             <forward name="porteDelegateChangeForm" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateConfigurazioneOk" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateError" path="/jsplib/info.jsp"/>
             <forward name="aspsErogazioniChangeOk" path="/jsplib/addElement.jsp"/>
@@ -1387,6 +1396,7 @@
         <action path="/porteDelegateAbilitazione" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateAbilitazione"
             scope="request" validate="true">
             <forward name="porteDelegateAbilitazioneOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateAbilitazioneConfigurazioneOk" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateAbilitazioneError" path="/jsplib/info.jsp"/>
         </action>
         
@@ -1423,6 +1433,7 @@
             scope="request" validate="true">
             <forward name="porteDelegateConnettoreDefaultForm" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateConnettoreDefaultOk" path="/jsplib/listElement.jsp"/>
+	    <forward name="porteDelegateConnettoreDefaultConfigurazioneOk" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateConnettoreDefaultError" path="/jsplib/info.jsp"/>
             <forward name="porteDelegateConnettoreDefaultCheckError" path="/jsplib/addElement.jsp"/>
         </action>
@@ -1433,6 +1444,7 @@
             scope="request" validate="true">
             <forward name="porteDelegateConnettoreRidefinitoForm" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateConnettoreRidefinitoOk" path="/jsplib/listElement.jsp"/>
+	    <forward name="porteDelegateConnettoreRidefinitoConfigurazioneOk" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateConnettoreRidefinitoError" path="/jsplib/info.jsp"/>
             <forward name="porteDelegateConnettoreRidefinitoCheckError" path="/jsplib/addElement.jsp"/>
         </action>
@@ -1473,6 +1485,7 @@
             scope="request" validate="true">
             <forward name="porteDelegateConfigurazioneChangeForm" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateConfigurazioneChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateConfigurazioneChangeConfigurazioneOk" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateConfigurazioneChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateConfigurazioneChangeError" path="/jsplib/info.jsp"/>
         </action>
@@ -1710,6 +1723,7 @@
             scope="request" validate="true">
             <forward name="porteApplicativeChangeForm" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConfigurazioneOk" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeError" path="/jsplib/info.jsp"/>
             <forward name="aspsErogazioniChangeOk" path="/jsplib/addElement.jsp"/>
@@ -2112,6 +2126,7 @@
         <action path="/porteApplicativeAbilitazione" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeAbilitazione"
             scope="request" validate="true">
             <forward name="porteApplicativeAbilitazioneOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeAbilitazioneConfigurazioneOk" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeAbilitazioneError" path="/jsplib/info.jsp"/>
         </action>
         
@@ -2121,6 +2136,7 @@
             scope="request" validate="true">
             <forward name="porteApplicativeConnettoreDefaultForm" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeConnettoreDefaultOk" path="/jsplib/listElement.jsp"/>
+	    <forward name="porteApplicativeConnettoreDefaultConfigurazioneOk" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeConnettoreDefaultError" path="/jsplib/info.jsp"/>
             <forward name="porteApplicativeConnettoreDefaultCheckError" path="/jsplib/addElement.jsp"/>
         </action>
@@ -2131,6 +2147,7 @@
             scope="request" validate="true">
             <forward name="porteApplicativeConnettoreRidefinitoForm" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeConnettoreRidefinitoOk" path="/jsplib/listElement.jsp"/>
+	    <forward name="porteApplicativeConnettoreRidefinitoConfigurazioneOk" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeConnettoreRidefinitoError" path="/jsplib/info.jsp"/>
             <forward name="porteApplicativeConnettoreRidefinitoCheckError" path="/jsplib/addElement.jsp"/>
         </action>
@@ -2171,6 +2188,7 @@
             scope="request" validate="true">
             <forward name="porteApplicativeConfigurazioneChangeForm" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeConfigurazioneChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConfigurazioneChangeConfigurazioneOk" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeConfigurazioneChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeConfigurazioneChangeError" path="/jsplib/info.jsp"/>
         </action>

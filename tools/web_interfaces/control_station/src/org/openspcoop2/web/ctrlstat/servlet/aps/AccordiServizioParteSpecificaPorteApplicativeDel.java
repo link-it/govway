@@ -43,6 +43,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -134,11 +135,16 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 			
 			List<MappingErogazionePortaApplicativa> lista = apsCore.mappingServiziPorteAppList(idServizio,asps.getId(), ricerca);
 			apsHelper.prepareServiziConfigurazioneList(lista, id, null, ricerca);
+			
+			// reset posizione tab
+			if(!apsHelper.isModalitaCompleta())
+				ServletUtils.setObjectIntoSession(session, "0", CostantiControlStation.PARAMETRO_ID_TAB);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			
+			ForwardParams fwP = apsHelper.isModalitaCompleta() ? ForwardParams.DEL() : AccordiServizioParteSpecificaCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;
 			// Forward control to the specified success URI
-			return ServletUtils.getStrutsForward (mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE, 
-					ForwardParams.DEL());
+			return ServletUtils.getStrutsForward (mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE, fwP);
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
 					AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,

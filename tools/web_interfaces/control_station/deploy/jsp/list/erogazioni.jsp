@@ -68,13 +68,39 @@ for (int j = 0; j < riga.size(); j++) {
 %>
 <% if(vectorCheckBox.size() > 0){
 		DataElement de = (DataElement) vectorCheckBox.elementAt(0);
-		String image = de.getValue();
-		String tooltip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : ""; 
+		
+		String statusType = de.getStatusTypes() != null && de.getStatusTypes().length>0 ? de.getStatusTypes()[0] : "";	
+		String image = "status_red.png";
+	 	if("yes".equals(statusType)){
+	 		image = "status_green.png";
+		}
+		else if("warn".equals(statusType)){
+			image = "status_yellow.png";
+		}
+		else if("off".equals(statusType)){
+			image = "disconnected_grey.png";
+		}
+		else if("config_enable".equals(statusType)){
+			image = "verified_green.png";
+		}
+		else if("config_warning".equals(statusType)){
+			image = "verified_yellow.png";
+		}
+		else if("config_error".equals(statusType)){
+			image = "verified_red.png";
+		}
+	 	else if("config_disable".equals(statusType)){
+	 		image = "verified_grey.png";
+		}
+
+	 	String statusTooltip = de.getStatusToolTips() != null && de.getStatusToolTips().length>0 ? de.getStatusToolTips()[0] : "";		
+		String statusTooltipTitleAttribute = statusTooltip != null && !statusTooltip.equals("") ? " title=\"" + statusTooltip + "\"" : "";
+		 
 	%>
 	<td class="tdText" style="<%= de.getWidth() %>">
 		<div id="stato_<%=numeroEntryS %>">
  			<span class="statoErogazioneIcon" id="iconConfigurazione_<%=numeroEntryS %>">
-				<img src="images/tema_link/<%= image %>" <%= tooltip %>/>
+				<img src="images/tema_link/<%= image %>" <%= statusTooltipTitleAttribute %>/>
 			</span>
 		</div>
 	</td>

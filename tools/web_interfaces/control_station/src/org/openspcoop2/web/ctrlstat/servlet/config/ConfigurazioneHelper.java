@@ -6776,18 +6776,18 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						if(policy.isWarningOnly()){
 							de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_WARNING_ONLY);
 							de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_WARNING_ONLY);
-							de.setSelected(CheckboxStatusType.WARNING_ONLY);
+							de.setSelected(CheckboxStatusType.CONFIG_WARNING);
 						}
 						else{
 							de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
 							de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
-							de.setSelected(CheckboxStatusType.ABILITATO);
+							de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
 						}
 					}
 					else{
 						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
-						de.setSelected(CheckboxStatusType.DISABILITATO);
+						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
 					}
 					if(ruoloPorta!=null) {
 						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta);

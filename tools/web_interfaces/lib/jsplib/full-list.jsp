@@ -447,15 +447,27 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 										    	}
 									  		} else { 
 									  			 if (de.getType().equals("checkbox")) {
-												 	String image = "disabled_red.png";
+												 	String image = "status_red.png";
 												 	if("yes".equals(de.getSelected())){
-														image = "check_green.png";
+														image = "status_green.png";
 													}
 													else if("warn".equals(de.getSelected())){
-														image = "check_yellow.png";
+														image = "status_yellow.png";
 													}
 													else if("off".equals(de.getSelected())){
 														image = "disconnected_grey.png";
+													}
+													else if("config_enable".equals(de.getSelected())){
+														image = "verified_green.png";
+													}
+													else if("config_warning".equals(de.getSelected())){
+														image = "verified_yellow.png";
+													}
+													else if("config_error".equals(de.getSelected())){
+														image = "verified_red.png";
+													}
+												 	else if("config_disable".equals(de.getSelected())){
+												 		image = "verified_grey.png";
 													}
 									  				String tooltip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : ""; 
 									  				 

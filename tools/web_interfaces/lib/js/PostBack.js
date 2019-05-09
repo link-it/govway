@@ -26,7 +26,8 @@ function postBack(dataElementName) {
     
     for (var k=0; k<document.form.elements.length; k++) {
 		var nome = document.form.elements[k].name;
-		if (nome && nome.length > 0 && nome != "idhid" && nome != "edit-mode") {
+		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
+		if (nome && nome.length > 0 && nome != "idhid" && nome != "edit-mode" && hiddenInfo == -1) {
 		    var tipo = document.form.elements[k].type;
 		    var valore = "";
 		    if (tipo == "text" || tipo == "file" || tipo == "hidden" || tipo == "textarea"|| tipo == "number")

@@ -339,6 +339,11 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				}
 			}
 
+			String idTab = apsHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+			if(azioneConnettoreIdPorta!=null && !"".equals(azioneConnettoreIdPorta) && !apsHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
+				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
+			}
+			
 			// Prendo il servizio
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
@@ -1355,8 +1360,13 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				apsHelper.prepareServiziFruitoriList(lista, idServizio, ricerca);
 			}
 			
+			ForwardParams fwP = ForwardParams.CHANGE();
+			if(azioneConnettoreIdPorta!=null && !"".equals(azioneConnettoreIdPorta) && !apsHelper.isModalitaCompleta()) {
+				fwP = PorteDelegateCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;
+			}
+	
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-			return ServletUtils.getStrutsForwardEditModeFinished( mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,	ForwardParams.CHANGE());
+			return ServletUtils.getStrutsForwardEditModeFinished( mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,fwP);
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
 					AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,

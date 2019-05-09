@@ -23,6 +23,7 @@ package org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni;
 
 import java.util.Vector;
 
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
@@ -65,6 +66,7 @@ public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_ASPS_PORTE_APPLICATIVE_MODIFICA_DATI_INVOCAZIONE = PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE;
 	public final static String LABEL_ASPS_PORTE_APPLICATIVE_MODIFICA_CONNETTORE = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE;
 	public final static String LABEL_ASPS_GESTIONE_CONFIGURAZIONI = "Configurazione";
+	public final static String LABEL_ASPS_GESTIONE_CONFIGURAZIONI_CONFIGURA = "Configura";
 	public final static String LABEL_ASPS_GESTIONE_GRUPPI_CON_PARAMETRO = "Gruppi"; // il codice è già agganciato, riscommentare il seguente codice per avere risorse/azioni:  "Gruppi {0}";
 	
 	public final static String ASPS_EROGAZIONI_PARAMETRO_NUMERO_CONFIGURAZIONI_ATTIVE = "nConfAttive";
@@ -85,32 +87,31 @@ public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
 	public final static String ASPS_EROGAZIONI_NOME_VISTA_CUSTOM_FORM_FRUIZIONE = "fruizione";
 	public final static String ASPS_EROGAZIONI_NOME_VISTA_CUSTOM_FORM_EROGAZIONE = "erogazione";
 	
+	public final static String ASPS_EROGAZIONI_NOME_VISTA_CUSTOM_CONFIGURAZIONE = "configurazione";
+	
 	public final static String MESSAGE_METADATI_SERVIZIO_EROGAZIONI_EDIT = "{1} ({0})";
 	public final static String MESSAGE_METADATI_SERVIZIO_EROGAZIONI_LIST = "API {0}: {1}";
 	public final static String MESSAGE_METADATI_SERVIZIO_EROGAZIONI_CON_PROFILO = "API {0}: {1}, Profilo Interoperabilit&agrave;: {2}";
 	public final static String MESSAGE_METADATI_SERVIZIO_EROGAZIONI_PROFILO = "Profilo Interoperabilit&agrave;: {0}";
 	
+	public final static String ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE = CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE;
+	public final static String ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP = CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP;
+	public final static String ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO = CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO;
 	
-	public final static String ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE = "&#xE3C9;";
-	public final static String ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP = "Modifica";
-	public final static String ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO = "Modifica {0}";
+	public final static String ASPS_EROGAZIONI_ICONA_VISUALIZZA = CostantiControlStation.ICONA_VISUALIZZA;
+	public final static String ASPS_EROGAZIONI_ICONA_VISUALIZZA_TOOLTIP = CostantiControlStation.ICONA_VISUALIZZA_TOOLTIP;
+	public final static String ASPS_EROGAZIONI_ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO = CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO;
 	
-	public final static String ASPS_EROGAZIONI_ICONA_VISUALIZZA = "&#xE89E;";
-	public final static String ASPS_EROGAZIONI_ICONA_VISUALIZZA_TOOLTIP = "Visualizza";
-	public final static String ASPS_EROGAZIONI_ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO = "Visualizza {0}";
+	public final static String ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE = CostantiControlStation.ICONA_VERIFICA;
+	public final static String ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP = CostantiControlStation.ICONA_VERIFICA_TOOLTIP;
+	public final static String ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO = CostantiControlStation.ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO;
 	
-	public final static String ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE = "&#xe8be;";
-	public final static String ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO = "Verifica {0}";
-	
-	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE = "check_green.png";
-	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_PARZIALMENTE_ABILITATE = "check_yellow.png";
-	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_DISABILITATE = "disabled_red.png";
-	
-	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE_TOOLTIP = "Abilitato";
-	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_PARZIALMENTE_ABILITATE_TOOLTIP = "Alcuni gruppi sono disabilitati";
-	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_DISABILITATE_TOOLTIP = "Disabilitato";
-	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_CONTROLLO_ACCESSO_PUNTUALE_NO_FRUITORI = "Rilevato 'Controlo degli Accessi', con autorizzazione puntuale dei fruitori, senza alcun fruitore registrato";
-	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_CONTROLLO_ACCESSO_PUNTUALE_NO_RUOLI = "Rilevato 'Controlo degli Accessi', con autorizzazione sui ruoli, senza alcun ruolo registrato";
+	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE_TOOLTIP = "API attiva";
+	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_PARZIALMENTE_ABILITATE_TOOLTIP = "Alcuni gruppi dell'API sono disabilitati";
+	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_DISABILITATE_TOOLTIP = "API disabilitata";
+	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_CONTROLLO_ACCESSO_PUNTUALE_NO_FRUITORI = "Rilevato 'Controlo degli Accessi', con autorizzazione per richiedente, senza alcun fruitore registrato";
+	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_CONTROLLO_ACCESSO_PUNTUALE_NO_RUOLI = "Rilevato 'Controlo degli Accessi', con autorizzazione per ruoli, senza alcun ruolo registrato";
+	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_CONTROLLO_ACCESSO_PUNTUALE_NO_SCOPE = "Rilevato 'Controlo degli Accessi', con autorizzazione per scope, senza alcun scope registrato";
 	
 	public final static String ASPS_EROGAZIONI_ICONA_GESTIONE_CONFIGURAZIONI = "&#xE8B8;";
 	public final static String ASPS_EROGAZIONI_ICONA_GESTIONE_GRUPPI_CON_PARAMETRO = "&#xE02F;";

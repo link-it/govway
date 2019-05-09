@@ -393,6 +393,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_REGISTRO = "Registro";
 	public final static String LABEL_CONFIGURAZIONE_ELENCO_REGISTRI = "Elenco registri";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRI = "Registri";
+	public final static String LABEL_CONFIGURAZIONE_DIAGNOSTICI = "Diagnostici";
 	public final static String LABEL_CONFIGURAZIONE_MESSAGGI_DIAGNOSTICI = "Messaggi Diagnostici";
 	public final static String LABEL_CONFIGURAZIONE_TRACCIAMENTO = "Tracciamento";
 	public final static String LABEL_CONFIGURAZIONE_TRACCE = "Tracce";
@@ -466,6 +467,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD = "In uscita dal modulo InoltroBuste";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA = "In uscita dal modulo ConsegnaContenutiApplicativi";
 	
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONI = "Transazioni";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Transazioni Registrate";
 	public final static String LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Selezionare gli esiti che verranno registrati nello storico";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK = "Completate con successo";

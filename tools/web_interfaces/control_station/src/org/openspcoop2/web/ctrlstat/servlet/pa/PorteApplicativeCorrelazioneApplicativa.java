@@ -112,6 +112,11 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 			if(idAsps == null) 
 				idAsps = "";
 			
+			String idTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+			if(!porteApplicativeHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
+				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
+			}
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -409,7 +414,7 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 			
 			dati = porteApplicativeHelper.addCorrelazioneApplicativaToDati(dati, false, riusoID, scadcorr, urlRichiesta.getValue(), urlRisposta.getValue(), contaListe, numCorrelazioneReq, numCorrelazioneRes);
 
-			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,dati);
+			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);
 
 			pd.setDati(dati);
 			

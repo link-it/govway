@@ -83,6 +83,7 @@ public class PorteApplicativeCostanti {
 	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_ABILITAZIONE = "porteApplicativeAbilitazione";
 	public final static ForwardParams TIPO_OPERAZIONE_ABILITAZIONE = ForwardParams.OTHER("");
+	public final static ForwardParams TIPO_OPERAZIONE_CONFIGURAZIONE = ForwardParams.OTHER("Configurazione");
 	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT = "porteApplicativeConnettoreDefault";
 	public final static ForwardParams TIPO_OPERAZIONE_CONNETTORE_DEFAULT = ForwardParams.OTHER("");
@@ -479,7 +480,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE = "modeaz";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID = "azid";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_ABILITA = "abilita";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_ABILITA = CostantiControlStation.PARAMETRO_ABILITA;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE = ConnettoriCostanti.PARAMETRO_CONNETTORE_MODALITA;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_LIST_AZIONI_READ_ONLY = "listAzioniReadOnly";
 	
@@ -643,16 +644,16 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_CONFIG_DI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_CONFIG_DI;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO_VALIDAZIONE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE = "Integrazione";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_METADATI = "Metadati";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_STATELESS = "Stateless";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR = "Behaviour";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE = CostantiControlStation.LABEL_INTEGRAZIONE;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_METADATI = CostantiControlStation.LABEL_METADATI;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_STATELESS = CostantiControlStation.LABEL_STATELESS;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR = CostantiControlStation.LABEL_BEHAVIOUR;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOAP_WITH_ATTACHMENTS = "SOAP With Attachments";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_BODY = "Gestione Body";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MANIFEST = "Gestione Manifest";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MANIFEST = CostantiControlStation.LABEL_GESTIONE_MANIFEST;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_ASINCRONA = "Gestione Asincrona";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_SIMMETRICA = "Ricevuta Simmetrica";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_ASIMMETRICA = "Ricevuta Asimmetrica";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_SIMMETRICA = CostantiControlStation.LABEL_RICEVUTA_ASINCRONA_SIMMETRICA;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_ASIMMETRICA = CostantiControlStation.LABEL_RICEVUTA_ASINCRONA_ASIMMETRICA;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE = "Soggetto Virtuale";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_KEYWORD ="Keyword";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_BR_RICHIESTA = "Correlazione applicativa<BR/>Richiesta";

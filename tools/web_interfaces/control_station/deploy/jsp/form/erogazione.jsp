@@ -66,15 +66,12 @@
 	
 	Vector<DataElement> vectorRiepilogo = new Vector<DataElement>();
 	Vector<DataElement> vectorLink = new Vector<DataElement>();
-	Vector<DataElement> vectorCheckBox = new Vector<DataElement>();
-
+	
 	for (int j = 0; j < dati.size(); j++) {
 	    DataElement de = (DataElement) dati.elementAt(j);
 	    
 	    if (de.getType().equals("link")) {
 	    	vectorLink.add(de);
-	    } else if (de.getType().equals("checkbox")) {
-	    	vectorCheckBox.add(de);
 	    } else {
 	    	vectorRiepilogo.add(de);
 	    }
@@ -83,10 +80,7 @@
 	String classSpanNoEdit="spanNoEdit";
 	String classDivNoEdit="divNoEdit";
 	
-    DataElement deCheckBox = !vectorCheckBox.isEmpty() ? (DataElement) vectorCheckBox.elementAt(0) : null;
-    String imageCheckBox = deCheckBox != null ?  deCheckBox.getValue() : null ;
-	String tooltipCheckBox = deCheckBox != null ? (!deCheckBox.getToolTip().equals("") ? " title=\"" + deCheckBox.getToolTip() + "\"" : "") : "";
-	
+    boolean visualizzaIconeVectorLink = false;
 %>
 <tbody>
 	<% if(titoloSezione != null) { %>
@@ -167,6 +161,14 @@
 					        		} else { // else subtitle		
 					        			if (type.equals("text")){
 				            				String textValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
+				            				
+				            				String tooltipTextValNoEdit = "";
+											
+											if(textValNoEdit.length() > Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA) {
+												tooltipTextValNoEdit = " title=\"" + textValNoEdit + "\"";
+												textValNoEdit = textValNoEdit.substring(0,(Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA -3)) + "...";
+												
+											}				            				
 				            				%>
 				                			<tr class="">
 												<td class="tdTextRiepilogo labelRiepilogo">
@@ -174,12 +176,7 @@
 												</td>
 												<td class="tdTextRiepilogo <%= stile %>">
 													<div class="<%=classDivNoEdit %>"> 
-														<% if(firstText && deCheckBox != null){%>
-															<span class="<%=classSpanNoEdit %>-image" id="iconTitoloLeft">
-																<img src="images/tema_link/<%= imageCheckBox %>" <%= tooltipCheckBox %>/>
-															</span>
-														<% } %>
-						                				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>
+						                				<span class="<%=classSpanNoEdit %>" <%= tooltipTextValNoEdit %> ><%= textValNoEdit %></span>
 						                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
 					                				
 													<% 
@@ -212,6 +209,165 @@
 				                			<%
 				                				firstText = false;
 					                		} else { // else text
+					                			if (type.equals("checkbox")){
+					                				String statusValue = de.getStatusValues() != null && de.getStatusValues().length>0 ? de.getStatusValues()[0] : "";
+					                				String statusValueText = statusValue != null && !statusValue.equals("") ? statusValue : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
+																	
+					                				String statusTooltip = de.getStatusToolTips() != null && de.getStatusToolTips().length>0 ? de.getStatusToolTips()[0] : "";		
+					                				String statusTooltipTitleAttribute = statusTooltip != null && !statusTooltip.equals("") ? " title=\"" + statusTooltip + "\"" : "";
+					                				
+													String statusType = de.getStatusTypes() != null && de.getStatusTypes().length>0 ? de.getStatusTypes()[0] : "";			
+					                					
+													%>
+					                					<tr class="">
+															<td class="tdTextRiepilogo labelRiepilogo">
+																<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+															</td>
+															<td class="tdTextRiepilogo <%= stile %>">
+															<div class="<%=classDivNoEdit %>"> 
+																<%  
+																	String imageCheckBox = "status_red.png";
+																 	if("yes".equals(statusType)){
+																 		imageCheckBox = "status_green.png";
+																	}
+																	else if("warn".equals(statusType)){
+																		imageCheckBox = "status_yellow.png";
+																	}
+																	else if("off".equals(statusType)){
+																		imageCheckBox = "disconnected_grey.png";
+																	}
+																	else if("config_enable".equals(statusType)){
+																		imageCheckBox = "verified_green.png";
+																	}
+																	else if("config_warning".equals(statusType)){
+																		imageCheckBox = "verified_yellow.png";
+																	}
+																	else if("config_error".equals(statusType)){
+																		imageCheckBox = "verified_red.png";
+																	}
+																 	else if("config_disable".equals(statusType)){
+																		imageCheckBox = "verified_grey.png";
+																	}
+																	%>
+																	<span class="<%=classSpanNoEdit %>-image" <%= statusTooltipTitleAttribute %> id="iconTitoloLeft-<%=i%>">
+																		<img src="images/tema_link/<%= imageCheckBox %>"/>
+																	</span>
+									                				<span class="<%=classSpanNoEdit %>" <%= statusTooltipTitleAttribute %> ><%= statusValueText %></span>
+									                				<% if(firstText){%>
+										                				<input type="hidden" name="<%= deName %>" id="<%= deName %>"  value="<%= de.getValue() %>"/>
+								                					<% } %>
+																	 <% 
+																	if(!de.getListaImages().isEmpty()){
+																		for(int idxLink =0; idxLink < de.getListaImages().size() ; idxLink ++ ){
+																			DataElementImage image = de.getListaImages().get(idxLink);
+																			String classLink = "";
+																			String deIconName = image.getImage(); 
+								                					
+																			String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
+								                							
+								                							String deTarget = " ";
+																	  		if (!image.getTarget().equals("")) {
+																	  			deTarget = " target=\""+ image.getTarget() +"\"";
+																	  		}
+																  			
+									                					%>
+									                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
+									                						<span class="icon-box">
+																				<i class="material-icons md-18"><%= deIconName %></i>
+																			</span>
+									                					</a>
+									                				<%
+																		}// end for-edit-link
+																	} // end edit-link
+																%>
+																</div>
+															</td>
+														</tr>
+													<% 
+					                			} else { // else checkbox
+					                				if (type.equals("multi-select")){
+					                					%>
+					                					<tr class="">
+															<td class="tdTextRiepilogo labelRiepilogo">
+																<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+															</td>
+															<td class="tdTextRiepilogo <%= stile %>">
+																<div class="<%=classDivNoEdit %>"> 																	
+																	<%
+			                          									String [] values = de.getStatusValues();
+			                                        					if (values != null) {
+			                            									String [] labels = de.getLabels();
+			                            									for (int y = 0; y < values.length; y++) {
+			                            										String statusType = de.getStatusTypes()!=null && de.getStatusTypes().length>0 ? de.getStatusTypes()[y] : null; // valore icona
+			                            										
+			                            										String statusTooltip = de.getStatusToolTips()!=null && de.getStatusToolTips().length>0 ?  de.getStatusToolTips()[y] : null; // tooltip
+			                            										String statusTooltipTitleAttribute = statusTooltip != null && !statusTooltip.equals("") ? " title=\"" + statusTooltip + "\"" : "";
+												                				
+			                            										String lab = values[y]; // testo configurazione
+			                            										
+			                            										String imageCheckBox = "status_red.png";
+																			 	if("yes".equals(statusType)){
+																			 		imageCheckBox = "status_green.png";
+																				}
+																				else if("warn".equals(statusType)){
+																					imageCheckBox = "status_yellow.png";
+																				}
+																				else if("off".equals(statusType)){
+																					imageCheckBox = "disconnected_grey.png";
+																				}
+																				else if("config_enable".equals(statusType)){
+																					imageCheckBox = "verified_green.png";
+																				}
+																				else if("config_warning".equals(statusType)){
+																					imageCheckBox = "verified_yellow.png";
+																				}
+																				else if("config_error".equals(statusType)){
+																					imageCheckBox = "verified_red.png";
+																				}
+																			 	else if("config_disable".equals(statusType)){
+																					imageCheckBox = "verified_grey.png";
+																				}
+			                            											%>
+			                            												<span class="<%=classSpanNoEdit %>-image-msval" <%= statusTooltipTitleAttribute %> id="iconTitoloLeft-<%=i%>_<%=y%>">
+																							<img src="images/tema_link/<%= imageCheckBox %>"/>
+																						</span>
+																						<span class="<%=classSpanNoEdit %>-msval" <%= statusTooltipTitleAttribute %> ><%= lab %></span>
+																					<%
+			                            									} //end for values
+			                                        					}
+		                          									%>
+															
+																	<% 
+																		if(!de.getListaImages().isEmpty()){
+																			for(int idxLink =0; idxLink < de.getListaImages().size() ; idxLink ++ ){
+																				DataElementImage image = de.getListaImages().get(idxLink);
+																				String classLink = "";
+																				String deIconName = image.getImage(); 
+									                					
+																				String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
+									                							
+									                							String deTarget = " ";
+																		  		if (!image.getTarget().equals("")) {
+																		  			deTarget = " target=\""+ image.getTarget() +"\"";
+																		  		}
+										                					%>
+										                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
+										                						<span class="icon-box">
+																					<i class="material-icons md-18"><%= deIconName %></i>
+																				</span>
+										                					</a>
+											                				<%
+																			}// end for-edit-link
+																		} // end edit-link
+																	%>
+					                							</div>
+															</td>
+														</tr>
+														<% 
+														firstText = false;
+													} else { // else multi-select
+						                			} // end else multi-select
+						                		} // end else checkbox					                			
 					                		} // end else text
 											%>
 											
@@ -219,8 +375,31 @@
 					        			} // end else subtitle
 						    		} // end else hidden
 				        		} %>	
-								
 								<tr>
+								<% if(!visualizzaIconeVectorLink){ %>
+	                                <td colspan="2" class="buttonrow">
+	                                     <div class="buttonrowlista">
+	                                             <%
+                                                    for (int i = 0; i < vectorLink.size(); i++) {
+                                       	            	DataElement de = (DataElement) vectorLink.elementAt(i);
+	                                                       
+	                                                    String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
+	                                                    String type = de.getType();
+	                                                    String deTip =  de.getToolTip() != null && !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+	                                                    String classInput= de.getStyleClass();
+	                                                    String labelStyleClass= de.getLabelStyleClass();
+	                                                    String iconLink =  de.getIcon();
+	                                                             
+	                                                    if (type.equals("link")){
+	                                                    %>
+															<input type=button onClick="window.location.href='<%= de.getUrl() %>'" <%= deTip %> value="<%= de.getValue() %>"/>
+								                        <%
+                                           				} // if
+                                       				} // for
+                                 				%> 
+                         				</div>
+                 					</td>
+								<% } else { %>
 									<td colspan="2" class="tdTextRiepilogo" style="padding-left: 0px;">
 										<div class="riepilogo-links">
 											
@@ -249,6 +428,7 @@
 											%>
 										</div>
 									</td>
+									<% } %>
 								</tr>
 							</table>
 								

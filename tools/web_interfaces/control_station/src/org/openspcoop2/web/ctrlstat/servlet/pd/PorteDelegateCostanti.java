@@ -79,6 +79,7 @@ public class PorteDelegateCostanti {
 	
 	public final static String OBJECT_NAME_PORTE_DELEGATE_ABILITAZIONE = "porteDelegateAbilitazione";
 	public final static ForwardParams TIPO_OPERAZIONE_ABILITAZIONE = ForwardParams.OTHER("");
+	public final static ForwardParams TIPO_OPERAZIONE_CONFIGURAZIONE = ForwardParams.OTHER("Configurazione");
 	
 	public final static String OBJECT_NAME_PORTE_DELEGATE_CONNETTORE_DEFAULT = "porteDelegateConnettoreDefault";
 	public final static ForwardParams TIPO_OPERAZIONE_CONNETTORE_DEFAULT = ForwardParams.OTHER("");
@@ -456,7 +457,7 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM = CostantiControlStation.PARAMETRO_PORTE_APPLICA_MTOM;
 
 	public final static String PARAMETRO_PORTE_DELEGATE_APPLICA_MODIFICA = CostantiControlStation.PARAMETRO_APPLICA_MODIFICA;
-	public final static String PARAMETRO_PORTE_DELEGATE_ABILITA = "abilita";
+	public final static String PARAMETRO_PORTE_DELEGATE_ABILITA = CostantiControlStation.PARAMETRO_ABILITA;
 	
 	public final static String ATTRIBUTO_PORTE_DELEGATE_PARENT = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT;
 	public final static int ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_NONE;
@@ -581,18 +582,18 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI_CONFIG_DI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_CONFIG_DI;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO_VALIDAZIONE;
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE = "Integrazione";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_METADATI = "Metadati";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_STATELESS = "Stateless";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD = "Local Forward";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE = CostantiControlStation.LABEL_INTEGRAZIONE;
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_METADATI = CostantiControlStation.LABEL_METADATI;
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_STATELESS = CostantiControlStation.LABEL_STATELESS;
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD = CostantiControlStation.LABEL_LOCAL_FORWARD;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_STATO = "Stato";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_PA = "Porta Inbound";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_PA = CostantiControlStation.LABEL_LOCAL_FORWARD_PA;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SOAP_WITH_ATTACHMENTS = "SOAP With Attachments";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_BODY = "Gestione Body";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_MANIFEST = "Gestione Manifest";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_MANIFEST = CostantiControlStation.LABEL_GESTIONE_MANIFEST;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_ASINCRONA = "Gestione Asincrona";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA = "Ricevuta Simmetrica";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA = "Ricevuta Asimmetrica";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA = CostantiControlStation.LABEL_RICEVUTA_ASINCRONA_SIMMETRICA;
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA = CostantiControlStation.LABEL_RICEVUTA_ASINCRONA_ASIMMETRICA;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN = "Pattern";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO = "Servizio";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO = "Tipo";

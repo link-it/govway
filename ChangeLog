@@ -1,3 +1,10 @@
+2019-05-09  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità OP-832
+	Restyling grafico della configurazione di una API: migliorata la gestione delle informazioni relative alle funzionalità attive su una API 
+	(es. Controllo Accessi, Validazione …) e alla suddivisione delle risorse in gruppi differenti.
+
 2019-05-02  Andrea Poli <apoli@link.it>
 
 	* [ApiRsMonitoraggio, GovWayMonitor]

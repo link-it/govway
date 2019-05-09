@@ -91,6 +91,10 @@ public class Costanti {
 	public final static String CHECK_BOX_ENABLED_ABILITATO = "abilitato";
 	public final static String CHECK_BOX_DISABLED = "no";
 	public final static String CHECK_BOX_WARN = "warn";
+	public final static String CHECK_BOX_CONFIG_ENABLE = "config_enable";
+	public final static String CHECK_BOX_CONFIG_WARNING = "config_warning";
+	public final static String CHECK_BOX_CONFIG_ERROR = "config_error";
+	public final static String CHECK_BOX_CONFIG_DISABLE = "config_disable";
 	
 	
 	/** PAGE DATA TITLE */
@@ -224,4 +228,7 @@ public class Costanti {
 	
 	public final static String INFO_BUTTON_ICON = "&#xE88E;";
 	public final static String INFO_BUTTON_ICON_WHITE = "&#xE88F;";
+	
+	public static final int LUNGHEZZA_LABEL_TABS = 30;
+	public static final int LUNGHEZZA_RIGA_TESTO_TABELLA = 150;
 }

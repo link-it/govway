@@ -48,7 +48,7 @@ public class EsitoUtils {
 	public final static String ALL_OK_LABEL  = "Completate con successo";
 	public final static String ALL_FAULT_APPLICATIVO_LABEL  = "Fault Applicativo";
 	public final static String ALL_PERSONALIZZATO_LABEL  = "Personalizzato";
-	public final static String ALL_ERROR_FAULT_APPLICATIVO_LABEL  = "Fallite + Fault Applicativo";
+	public final static String ALL_ERROR_FAULT_APPLICATIVO_LABEL  = "Fallite - Fault Applicativo";
 	
 	public final static String ALL_VALUE_AS_STRING = "-";
 	

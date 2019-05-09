@@ -158,6 +158,11 @@ public final class PorteApplicativeChange extends Action {
 			if(idAsps == null)
 				idAsps = "";
 			
+			String idTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+			if(!porteApplicativeHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
+				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
+			}
+			
 			String serviceBindingS = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SERVICE_BINDING);
 			ServiceBinding serviceBinding = null;
 			if(StringUtils.isNotEmpty(serviceBindingS))
@@ -559,7 +564,7 @@ public final class PorteApplicativeChange extends Action {
 			List<Parameter> lstParm = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
-
+			boolean datiAltro = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO));
 			
 			String nomeBreadCrumb = oldNomePA;
 			if(parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE) {
@@ -579,7 +584,6 @@ public final class PorteApplicativeChange extends Action {
 //				}
 				
 				boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE));
-				boolean datiAltro = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO));
 				if(datiInvocazione) {
 					lstParm.remove(lstParm.size()-1);
 					if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
@@ -590,8 +594,6 @@ public final class PorteApplicativeChange extends Action {
 					nomeBreadCrumb=null;
 				}
 				else if(datiAltro) {
-					lstParm.remove(lstParm.size()-1);
-					
 					String labelPerPorta = null;
 					if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
 						labelPerPorta = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
@@ -600,6 +602,7 @@ public final class PorteApplicativeChange extends Action {
 								pa);
 					}
 					else {
+						lstParm.remove(lstParm.size()-1);
 						labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE_DI+pa.getNome();
 					}
 					
@@ -1353,9 +1356,15 @@ public final class PorteApplicativeChange extends Action {
 			}
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			
+			ForwardParams fwP = ForwardParams.CHANGE();
+			
+			if(datiAltro && !porteApplicativeHelper.isModalitaCompleta()) {
+				fwP = PorteApplicativeCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;
+			}
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE, 
-					ForwardParams.CHANGE());
+					fwP);
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
 					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE,

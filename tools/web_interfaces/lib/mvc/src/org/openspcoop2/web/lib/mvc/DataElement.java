@@ -110,6 +110,8 @@ public class DataElement {
 	
 	private String customJsFunction = null;
 
+	private List<String> statusValues = null, statusToolTips = null, statusTypes = null;
+	
 	public String getIdToRemove() {
 		return this.idToRemove;
 	}
@@ -308,17 +310,7 @@ public class DataElement {
 			this.selected = Costanti.CHECK_BOX_DISABLED;
 	}
 	public void setSelected(CheckboxStatusType status) {
-		switch (status) {
-		case ABILITATO:
-			this.selected = Costanti.CHECK_BOX_ENABLED;
-			break;
-		case DISABILITATO:
-			this.selected = Costanti.CHECK_BOX_DISABLED;
-			break;
-		case WARNING_ONLY:
-			this.selected = Costanti.CHECK_BOX_WARN;
-			break;
-		}
+		this.selected = status.toString();
 	}
 	public String getSelected() {
 		return DataElement.checkNull(this.selected);
@@ -729,5 +721,98 @@ public class DataElement {
 	
 	public DataElementInfo getInfo() {
 		return this.info;
+	}
+	
+	
+	private void addStatusValue(String v) {
+		if(this.statusValues==null) {
+			this.statusValues = new ArrayList<>();
+		}
+		this.statusValues.add(v);
+	}
+	public void setStatusValue(String v) {
+		// con il set viene usato un solo valore
+		this.statusValues = new ArrayList<>();
+		this.statusValues.add(v);
+	}
+	public String[] getStatusValues() {
+		if(this.statusValues==null || this.statusValues.size()<=0){
+			return null;
+		}
+		return this.statusValues.toArray(new String[1]);
+	}
+	public List<String> getStatusValuesAsList() {
+		return this.statusValues;
+	}
+	
+	
+	private void addStatusToolTip(String v) {
+		if(this.statusToolTips==null) {
+			this.statusToolTips = new ArrayList<>();
+		}
+		this.statusToolTips.add(v);
+	}
+	public void setStatusToolTip(String v) {
+		// con il set viene usato un solo valore
+		this.statusToolTips = new ArrayList<>();
+		this.statusToolTips.add(v);
+	}
+	public String[] getStatusToolTips() {
+		if(this.statusToolTips==null || this.statusToolTips.size()<=0){
+			return null;
+		}
+		return this.statusToolTips.toArray(new String[1]);
+	}
+	public List<String> getStatusToolTipsAsList() {
+		return this.statusToolTips;
+	}
+	
+
+	private void addStatusType(String v) {
+		if(this.statusTypes==null) {
+			this.statusTypes = new ArrayList<>();
+		}
+		this.statusTypes.add(v);
+	}
+	private void addStatusType(CheckboxStatusType v) {
+		if(v!=null) {
+			this.addStatusType(v.toString());
+		}
+	}
+	public void setStatusType(String v) {
+		// con il set viene usato un solo valore
+		this.statusTypes = new ArrayList<>();
+		this.statusTypes.add(v);
+	}
+	public void setStatusType(CheckboxStatusType v) {
+		if(v!=null) {
+			this.setStatusType(v.toString());
+		}
+	}
+	public String[] getStatusTypes() {
+		if(this.statusTypes==null || this.statusTypes.size()<=0){
+			return null;
+		}
+		return this.statusTypes.toArray(new String[1]);
+	}
+	public List<String> getStatusTypesAsList() {
+		return this.statusTypes;
+	}
+
+	public void addStatus(String value, CheckboxStatusType type) {
+		this.addStatus(null, value, type);
+	}
+	public void addStatus(String tooltip, String value, CheckboxStatusType type) {
+		this.addStatusToolTip(tooltip);
+		this.addStatusValue(value);
+		this.addStatusType(type);
+	}
+	public void addStatus(String value, String type) {
+		this.addStatus(null, value, type);
+	}
+	public void addStatus(String tooltip, String value, String type) {
+		this.addStatusToolTip(tooltip);
+		this.addStatusValue(value);
+		this.addStatusType(type);
 	}
 }

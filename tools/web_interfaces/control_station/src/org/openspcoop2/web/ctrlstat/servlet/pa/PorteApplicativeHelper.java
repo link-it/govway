@@ -62,10 +62,8 @@ import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
-import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
-import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
@@ -85,7 +83,6 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
-import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -100,7 +97,6 @@ import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolProperti
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
-import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
@@ -1060,17 +1056,19 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		
 		// *************** Nome/Descrizione *********************
 		
-		DataElement de = new DataElement();
-		if(datiInvocazione) {
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE);
+		if(datiInvocazione || !datiAltro) {
+			DataElement de = new DataElement();
+			if(datiInvocazione) {
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE);
+			}
+			else {
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_GENERALI);
+			}
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
 		}
-		else {
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_GENERALI);
-		}
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
 				
-		de = new DataElement();
+		DataElement de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 		de.setValue(nomePorta);
 		if(isConfigurazione) {
@@ -1133,7 +1131,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			statoPorta = CostantiConfigurazione.ABILITATO.toString();
 		}
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_STATO_PORTA);
-		if(!isConfigurazione || datiAltro) {
+		if(!isConfigurazione) {
 			List<String> statoValues = new ArrayList<>();
 			statoValues.add(CostantiConfigurazione.ABILITATO.toString());
 			statoValues.add(CostantiConfigurazione.DISABILITATO.toString());
@@ -1967,25 +1965,6 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		return dati;
 	}
 	
-	
-	public boolean isFunzionalitaProtocolloSupportataDalProtocollo(String protocollo, ServiceBinding serviceBinding,FunzionalitaProtocollo funzionalitaProtocollo)
-			throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneException {
-		if(serviceBinding == null) {
-			List<ServiceBinding> serviceBindingListProtocollo = this.core.getServiceBindingListProtocollo(protocollo);
-			
-			boolean supportato = true;
-			if(serviceBindingListProtocollo != null && serviceBindingListProtocollo.size() > 0) {
-				for (ServiceBinding serviceBinding2 : serviceBindingListProtocollo) {
-					boolean supportatoTmp = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding2, funzionalitaProtocollo);
-					supportato = supportato || supportatoTmp;
-				}
-			}
-			return supportato;
-		} else {
-			return this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, funzionalitaProtocollo);
-		}
-	}
-	
 
 	public List<PortaApplicativaAzioneIdentificazione> getModalitaIdentificazionePorta(String protocollo, ServiceBinding serviceBinding)
 			throws ProtocolException, DriverConfigurazioneException { 
@@ -2229,38 +2208,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					de = new DataElement();
 					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps);
-					
-					String gestioneToken = null;
-					if(pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null &&
-							!"".equals(pa.getGestioneToken().getPolicy()) &&
-							!"-".equals(pa.getGestioneToken().getPolicy())) {
-						gestioneToken = StatoFunzionalita.ABILITATO.getValue();
-					}
-					
-					String autenticazione = pa.getAutenticazione();
-					String autenticazioneCustom = null;
-					if (autenticazione != null && !TipoAutenticazione.getValues().contains(autenticazione)) {
-						autenticazioneCustom = autenticazione;
-						autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
-					}
-					String autenticazioneOpzionale = "";
-					if(pa.getAutenticazioneOpzionale()!=null){
-						if (pa.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
-							autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
-						}
-					}
-					String autorizzazioneContenuti = pa.getAutorizzazioneContenuto();
-					
-					String autorizzazione= null, autorizzazioneCustom = null;
-					if (pa.getAutorizzazione() != null &&
-							!TipoAutorizzazione.getAllValues().contains(pa.getAutorizzazione())) {
-						autorizzazioneCustom = pa.getAutorizzazione();
-						autorizzazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
-					}
-					else{
-						autorizzazione = AutorizzazioneUtilities.convertToStato(pa.getAutorizzazione());
-					}
-					String statoControlloAccessi = this.getLabelStatoControlloAccessi(gestioneToken,autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom); 
+					String statoControlloAccessi = this.getStatoControlloAccessiPortaApplicativa(pa);
 					de.setValue(statoControlloAccessi);
 					e.addElement(de);
 					
@@ -4195,10 +4143,10 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		return "";
 	}
 	
-	public String getMessaggioConfermaModificaRegolaMappingErogazionePortaApplicativa(PortaApplicativa pa, ServiceBinding serviceBinding,boolean abilitazione, boolean multiline,boolean listElement) throws DriverConfigurazioneException {
+	public String getMessaggioConfermaModificaRegolaMappingErogazionePortaApplicativa(boolean fromAPI, PortaApplicativa pa, ServiceBinding serviceBinding,boolean abilitazione, boolean multiline,boolean listElement) throws DriverConfigurazioneException {
 		MappingErogazionePortaApplicativa mapping = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
 		List<String> listaAzioni = pa.getAzione()!= null ?  pa.getAzione().getAzioneDelegataList() : new ArrayList<String>();
-		return this.getMessaggioConfermaModificaRegolaMapping(mapping.isDefault(), listaAzioni, serviceBinding, abilitazione, multiline, listElement);
+		return this.getMessaggioConfermaModificaRegolaMapping(fromAPI, mapping.isDefault(), listaAzioni, serviceBinding, mapping.getDescrizione(), abilitazione, multiline, listElement);
 	}
 	
 	
@@ -4489,7 +4437,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					// Posizione
 					if(lista.size() > 1) {
 						DataElement de = new DataElement();
-						de.setWidthPx(46);
+						de.setWidthPx(48);
 						de.setType(DataElementType.IMAGE);
 						DataElementImage imageUp = new DataElementImage();
 						Parameter pDirezioneSu = new Parameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE, 
@@ -4768,7 +4716,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					// Posizione
 					if(lista.size() > 1) {
 						DataElement de = new DataElement();
-						de.setWidthPx(46);
+						de.setWidthPx(48);
 						de.setType(DataElementType.IMAGE);
 						DataElementImage imageUp = new DataElementImage();
 						Parameter pDirezioneSu = new Parameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE, 

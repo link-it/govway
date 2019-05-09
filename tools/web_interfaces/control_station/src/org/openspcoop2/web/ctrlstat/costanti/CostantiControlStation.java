@@ -34,6 +34,7 @@ import org.openspcoop2.core.config.constants.TrasformazioneRegolaParametroTipoAz
 import org.openspcoop2.core.config.constants.VersioneSOAP;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.web.lib.mvc.Costanti;
 
 /**
@@ -168,8 +169,9 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO = "Accesso API";
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE = "Autenticazione";
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE_TRASPORTO = "Trasporto";
-	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE_TOKEN = "Token";
+	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE_TOKEN = "Required Claims"; //"Token";
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE = "Autorizzazione";
+	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_PERSONALIZZATA = "Personalizzata";
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI = "Autorizzazione Contenuti";
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN = "Gestione Token";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE = "Stato";
@@ -180,19 +182,26 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORWARD_HEADER = "Forward Header";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORWARD_FORM = "Forward Parametro Url";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE = "Opzionale";
+	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PERSONALIZZATA = "Personalizzata";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_ISSUER = "Issuer";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_CLIENT_ID = "ClientId";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_SUBJECT = "Subject";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME = "Username";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL = "eMail";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE = "Stato";
-	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI = "Autorizzazione Puntuale";//"Applicativi Autenticati";
-	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI = "Autorizzazione Puntuale";//"Soggetti Autenticati";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI_SUFFIX = "Richiedente";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI = "Autorizzazione per Richiedente";//"Applicativi Autenticati";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI = "Autorizzazione per Richiedente";//"Soggetti Autenticati";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI_SUFFIX = "Ruoli";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI = "Autorizzazione per Ruoli";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE_SUFFIX = "Scope";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE = "Autorizzazione per Scope";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_SUBTITLE_SUFFIX = "Token Claims";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_SUBTITLE = "Autorizzazione per Token Claims";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN = "Claims";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_NOTE = "Indicare per riga i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_XACML_SUFFIX = "XACML Policy";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_XACML = "Autorizzazione XACML";
 	public final static String LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI = "Tipo";
 	public final static String LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA = "Correlazione Applicativa";
 	public final static String LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RICHIESTA = "Regole";
@@ -241,6 +250,8 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTA_QUALSIASI_RISORSA = "Tutte le risorse del servizio";
 	public final static String LABEL_PARAMETRO_PORTA_ABILITATO_TOOLTIP = "Configurazione abilitata (Clicca per disabilitare)";
 	public final static String LABEL_PARAMETRO_PORTA_DISABILITATO_TOOLTIP = "Configurazione disabilitata (Clicca per abilitare)";
+	public final static String LABEL_PARAMETRO_PORTA_ABILITATO_TOOLTIP_NO_ACTION = "Configurazione abilitata";
+	public final static String LABEL_PARAMETRO_PORTA_DISABILITATO_TOOLTIP_NO_ACTION = "Configurazione disabilitata";
 	public final static String LABEL_PARAMETRO_PORTA_CONFERMA_ABILITAZIONE_CONFIG_DI = "Conferma abilitazione di ";
 	public final static String LABEL_PARAMETRO_PORTA_CONFERMA_DISABILITAZIONE_CONFIG_DI = "Conferma disabilitazione di ";
 	public final static String LABEL_PARAMETRO_DEFAULT_ALL_AZIONI_RIDEFINITE_TOOLTIP = "Tutte le azioni sono state riassegnate";
@@ -251,6 +262,20 @@ public class CostantiControlStation {
 	public final static String LABEL_TUTTE_RISORSE_DEFAULT = "Tutte le risorse dell'API";
 	public final static String LABEL_PARAMETRO_SOGGETTO = "Soggetto";
 	public final static String LABEL_PARAMETRO_SOGGETTI = "Soggetti";
+	public final static String LABEL_SOGGETTI = "Soggetti";
+	public final static String LABEL_APPLICATIVI = "Applicativi";
+	public final static String LABEL_INTEGRAZIONE = "Integrazione";
+	public final static String LABEL_METADATI = "Metadati";
+	public final static String LABEL_METADATI_INTEGRAZIONE = "Metadati Integrazione";
+	public final static String LABEL_STATELESS = "Stateless";
+	public final static String LABEL_GESTIONE_STATELESS = "Gestione Stateless";
+	public final static String LABEL_GESTIONE_STATEFUL = "Gestione Stateful";
+	public final static String LABEL_LOCAL_FORWARD = "Local Forward";
+	public final static String LABEL_LOCAL_FORWARD_PA = "Porta Inbound";
+	public final static String LABEL_BEHAVIOUR = "Behaviour";
+	public final static String LABEL_GESTIONE_MANIFEST = "Gestione Manifest";
+	public final static String LABEL_RICEVUTA_ASINCRONA_SIMMETRICA = "Ricevuta Simmetrica";
+	public final static String LABEL_RICEVUTA_ASINCRONA_ASIMMETRICA = "Ricevuta Asimmetrica";
 	public final static String LABEL_PARAMETRO_PORTE_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_PORTE_ACCETTA_MTOM = "Accetta MTOM";
 	public final static String LABEL_PARAMETRO_PORTE_TIPO = "Tipo";
@@ -270,6 +295,7 @@ public class CostantiControlStation {
 	public final static String LABEL_CONFIGURAZIONE_PROPERTIES_COMPLETA = "Completa la configurazione";
 	public final static String LABEL_CONFIGURAZIONE_PROPERTIES = "Configurazione";
 	public final static String LABEL_CONFIGURAZIONE_PROPERTIES_CONFIGURAZIONE_MANUALE = "Configurazione Manuale";
+	public final static String LABEL_CONFIGURAZIONE_MTOM_INCOMPLETA = "Configurazione incompleta";
 	public final static String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN = "Stato";
 	public final static String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY = "Policy";
 	public final static String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE = "Token Opzionale";
@@ -354,10 +380,14 @@ public class CostantiControlStation {
 	public final static String LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE = "Regole di Caching Risposta";
 	public final static String LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE_DI = "Regole di Caching Risposta di";
 	
+	public final static String LABEL_CONFIGURAZIONE_DEFAULT = "Configurazione di default del Gateway";
+	public final static String LABEL_CONFIGURAZIONE_RIDEFINITA = "Configurazione ridefinita per l'API";
+	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO = "Tipo";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO_GESTITO_GATEWAY ="Gestito dal Gateway";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO_GESTITO_APPLICATIVO = "Gestito dall'Applicativo";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO_GESTITO_APPLICATIVO_DEMANDATO = "Gestione demandata all'implementazione dell'API";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS = "All Allow Origins";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS = "Allow Origins";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS = "Allow Request Headers";
@@ -560,6 +590,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_AUTORIZZAZIONE_CONTENUTI = "autorizzazioneContenuti";
 	public final static String PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA = "scadcorr";
 	public final static String PARAMETRO_APPLICA_MODIFICA = "applicaMod";
+	public final static String PARAMETRO_ABILITA = "abilita";
 	public final static String PARAMETRO_SOGGETTO = "soggt";
 	public final static String PARAMETRO_SERVIZIO_APPLICATIVO_AUTORIZZATO = "saAuthz";
 	public final static String PARAMETRO_PORTE_TIPO_VALIDAZIONE = "tipo_validazione";
@@ -634,6 +665,11 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI = "connettoreAccessoDaGruppi";
 	public final static String PARAMETRO_VERIFICA_CONNETTORE_REGISTRO = "connettoreRegistro";
 	public final static String PARAMETRO_VERIFICA_CONNETTORE_NODO = "connettoreNodo";
+	
+	public final static String PARAMETRO_ID_TAB = "idTab";
+	public final static String PARAMETRO_RESET_ID_TAB = "rIdTab";
+	
+	public final static String PARAMETRO_API_PAGE_INFO = "fromApiPageInfo";
 	
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_STATO = "resCacheStato";
@@ -732,6 +768,8 @@ public class CostantiControlStation {
 	public static final String PARAMETER_MESSAGE_BREADCRUMB = Costanti.PARAMETER_MESSAGE_BREADCRUMB;
 	
 	/** VALUES **/
+	
+	public final static int MAX_LENGTH_VALORE_STATO_RATE_LIMITING = 80;
 	
 	public final static String DEFAULT_VALUE_ABILITATO = "abilitato";
 	public final static String DEFAULT_VALUE_DISABILITATO = "disabilitato";
@@ -984,7 +1022,13 @@ public class CostantiControlStation {
 		LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_PATTERN_VALORI_REST.add(LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_PATTERN_XPATH);
 		LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_PATTERN_VALORI_REST.add(LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_PATTERN_JSONPATH);
 	}
-	
+
+	public final static String LABEL_CONFIGURAZIONE_MTOM_INFO_NOME_SOAP_PACKAGE = "Identificativo della regola di processamento";
+	public final static String LABEL_CONFIGURAZIONE_MTOM_INFO_PATTERN_SOAP_PACKAGE = "Espressione XPath che identifica sul messaggio un elemento da convertire in MTOM-XOP attachment";
+	public final static String LABEL_CONFIGURAZIONE_MTOM_INFO_PATTERN_SOAP_VERIFY = "Espressione XPath che identifica sul messaggio un elemento; il gateway verifica che l'elemento individuato sia un MTOM-XOP attachment";
+	public final static String LABEL_CONFIGURAZIONE_MTOM_INFO_CONTENT_TYPE_SOAP_PACKAGE = "L'elemento convertito in MTOM-XOP attachment possiederà il Content-Type indicato.<BR/>Nel caso non ne sia definito uno verrà utilizzato il Content-Type '"+HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM+"'";
+	public final static String LABEL_CONFIGURAZIONE_MTOM_INFO_CONTENT_TYPE_SOAP_VERIFY = "Indica il Content-Type associato all'attachment MTOM-XOP per l'elemento identificato; il gateway verifica la corrispondenza.<BR/>Nel caso non ne sia definito uno verrà utilizzato il Content-Type '"+HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM+"'";
+		
 	public final static String LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE = "Lista di Content-Type per i quali la regola di trasformazione verrà utilizzata; di seguito i formati utilizzabili:";
 	public final static String LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORE_EMPTY = "<b>empty</b>: valore speciale che rappresenta una richiesta senza Content-Type"; 
 	public final static String LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORE_1 = "<b>type/subtype</b>: indicazione puntuale di un Content-Type"; 
@@ -1182,13 +1226,14 @@ public class CostantiControlStation {
 	
 	/** MESSAGGI */
 	public static final String MESSAGGIO_CONFERMA_REGOLA_TRASFORMAZIONE_SPOSTATA_CORRETTAMENTE = "Posizione della regola modificata correttamente.";
-	public static final String MESSAGGIO_CONFERMA_REGOLA_TRASFORMAZIONE_RISPOSTA_SPOSTATA_CORRETTAMENTE ="Posizione della reogla di risposta modificata correttamente.";
-	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA_AZIONI ="Si sta abilitando la configurazione relativa alle azioni:{0}Procedere?"; 
-	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA_RISORSE ="Si sta abilitando la configurazione relativa alle risorse:{0}Procedere?"; 
-	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA_DEFAULT ="Si sta abilitando la configurazione di default, procedere?"; 
-	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_AZIONI ="Si sta disabilitando la configurazione relativa alle azioni:{0}Procedere?";
-	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_RISORSE ="Si sta disabilitando la configurazione relativa alle risorse:{0}Procedere?";
-	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_DEFAULT ="Si sta disabilitando la configurazione di default, procedere?";
+	public static final String MESSAGGIO_CONFERMA_REGOLA_TRASFORMAZIONE_RISPOSTA_SPOSTATA_CORRETTAMENTE ="Posizione della regola di risposta modificata correttamente.";
+	 
+	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_GRUPPO ="Procedere con l''abilitazione del gruppo ''{0}''?"; 
+	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_FROM_API ="Procedere con l'abilitazione dell'API ?"; 
+	
+	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_GRUPPO ="Procedere con la disabilitazione del gruppo ''{0}''?"; 
+	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_FROM_API ="Procedere con la disabilitazione dell'API ?"; 
+	
 	public static final String MESSAGGIO_CONFERMA_REGISTRAZIONE_MESSAGGI_DOPPIO_SPAZIO = "L''attuale configurazione, prevedendo di registrare i dati del messaggio di {0} sia in Ingresso che in Uscita, raddoppia l''ammontare di spazio occupato. Procedere con la configurazione effettuata?";
 	
 	/** MESSAGGI ERRORE */
@@ -1254,4 +1299,20 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE = "Azione {0} non assegnabile poich&egrave; utilizzata come filtro della policy di rate limiting ''{1}''";
 	public static final String MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_GRUPPO = "Azione {0} non assegnabile poich&egrave; utilizzata come filtro della policy di rate limiting ''{1}'' (gruppo: {2})";
 
+	
+	/** ICONE E TOOLTIP */
+	public final static String ICONA_MODIFICA_CONFIGURAZIONE = "&#xE3C9;";
+	public final static String ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP = "Modifica";
+	public final static String ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO = "Modifica {0}";
+	
+	public final static String ICONA_VISUALIZZA = "&#xE89E;";
+	public final static String ICONA_VISUALIZZA_TOOLTIP = "Visualizza";
+	public final static String ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO = "Visualizza {0}";
+	
+	public final static String ICONA_VERIFICA = "&#xE8BE;";
+	public final static String ICONA_VERIFICA_TOOLTIP = "Verifica";
+	public final static String ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO = "Verifica {0}";
+	
+	public final static String ICONA_MODIFICA_TOGGLE_ON = "toggle_on";
+	public final static String ICONA_MODIFICA_TOGGLE_OFF = "toggle_off";
 }

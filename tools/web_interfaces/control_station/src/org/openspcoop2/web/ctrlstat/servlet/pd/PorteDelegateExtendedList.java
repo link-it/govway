@@ -28,14 +28,17 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.UrlParameters;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.AbstractServletListExtendedList;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
  * porteDelegateCorrAppList
@@ -53,7 +56,14 @@ public final class PorteDelegateExtendedList extends AbstractServletListExtended
 	@Override
 	protected ConsoleHelper getConsoleHelper(HttpServletRequest request,
 			PageData pd, HttpSession session) throws Exception {
-		return new PorteDelegateHelper(request, pd, session);
+		PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
+		
+		String idTab = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+		if(!porteDelegateHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
+			ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
+		}
+		
+		return porteDelegateHelper;
 	}
 
 	@Override

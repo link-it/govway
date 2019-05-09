@@ -21,12 +21,16 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.connettori;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TransferLengthModes;
 
 
@@ -285,13 +289,20 @@ public class ConnettoriCostanti {
 	public final static String LABEL_PARAMETRO_CONNETTORE_CUSTOM_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_CONNETTORE_CUSTOM_VALORE = "Valore";
 	
-	public final static String LABEL_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO = "ridefinito";
-	public final static String LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT = "default";
+	public final static String LABEL_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO = "Connettore ridefinito per il gruppo";
+	public final static String LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT = "Utilizza connettore del gruppo '"+Costanti.MAPPING_DESCRIZIONE_DEFAULT+"'";
 	public final static String LABEL_PARAMETRO_CONNETTORE_MODALITA = "Modalit&agrave;";
 	
 	public final static String LABEL_CONFIGURAZIONE_SSL_TITLE_CONFIGURAZIONE = "Configurazione";
 	public final static String LABEL_CONFIGURAZIONE_SSL_TITLE_INFORMAZIONI_CERTIFICATO = "Certificato";
-	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO = "Tipo";//"Tipo Archivio";
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO = "Formato";//"Tipo Archivio";
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO_INFO_JKS = "Se il keystore contiene pi&ugrave; certificati verr&agrave; richiesto di sceglierne uno attraverso la selezione del corrispettivo 'alias'";
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO_INFO_CER = "&Egrave; possibile caricare un certificato in uno dei seguenti formati:";
+	public final static List<String> LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO_INFO_CER_VALUES = new ArrayList<>();
+	static {
+		LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO_INFO_CER_VALUES.add("<b>PEM</b>: "+StringEscapeUtils.escapeHtml("file ASCII con codifica Base64 che contiene \"-----BEGIN CERTIFICATE-----\" all'inizio e \"-----END CERTIFICATE-----\" alla fine"));
+		LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO_INFO_CER_VALUES.add("<b>DER</b>: versione binaria del formato PEM");
+	}
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO = "Certificato";
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_ARCHIVIO = "Archivio";
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_DOWNLOAD = "Download";//"Download Certificato";
