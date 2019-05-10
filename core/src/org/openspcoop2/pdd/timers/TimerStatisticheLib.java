@@ -76,6 +76,7 @@ public class TimerStatisticheLib {
 	private boolean debug = false;	
 	
 	/** Tipologie di statistiche */
+	private TipoIntervalloStatistico tipoStatistica;
 	private boolean statisticheOrarie = false;
 	private boolean statisticheGiornaliere = false;
 	private boolean statisticheSettimanali = false;
@@ -113,7 +114,7 @@ public class TimerStatisticheLib {
 	
 	
 	/** Costruttore */
-	public TimerStatisticheLib(MsgDiagnostico msgDiag,Logger logTimer,OpenSPCoop2Properties p) throws Exception{
+	public TimerStatisticheLib(TipoIntervalloStatistico tipoStatistica, MsgDiagnostico msgDiag,Logger logTimer,OpenSPCoop2Properties p) throws Exception{
 	
 		this.msgDiag = msgDiag;
 		this.op2Properties = p;
@@ -127,15 +128,29 @@ public class TimerStatisticheLib {
 		this.generazioneStatisticheCustom = this.op2Properties.isStatisticheGenerazioneCustomEnabled();
 		this.analisiTransazioniCustom = this.op2Properties.isStatisticheGenerazioneCustomSdkEnabled();
 		
-		this.statisticheOrarie = this.op2Properties.isStatisticheGenerazioneBaseOrariaEnabled();
-		this.statisticheGiornaliere = this.op2Properties.isStatisticheGenerazioneBaseGiornalieraEnabled();
-		this.statisticheSettimanali = this.op2Properties.isStatisticheGenerazioneBaseSettimanaleEnabled();
-		this.statisticheMensili = this.op2Properties.isStatisticheGenerazioneBaseMensileEnabled();
+		this.tipoStatistica = tipoStatistica;
 		
-		this.statisticheOrarie_gestioneUltimoIntervallo = this.op2Properties.isStatisticheGenerazioneBaseOrariaEnabledUltimaOra();
-		this.statisticheGiornaliere_gestioneUltimoIntervallo = this.op2Properties.isStatisticheGenerazioneBaseGiornalieraEnabledUltimoGiorno();
-		this.statisticheSettimanali_gestioneUltimoIntervallo = this.op2Properties.isStatisticheGenerazioneBaseSettimanaleEnabledUltimaSettimana();
-		this.statisticheMensili_gestioneUltimoIntervallo = this.op2Properties.isStatisticheGenerazioneBaseMensileEnabledUltimoMese();
+		switch (this.tipoStatistica) {
+		case STATISTICHE_ORARIE:
+			this.statisticheOrarie = this.op2Properties.isStatisticheGenerazioneBaseOrariaEnabled();
+			this.statisticheOrarie_gestioneUltimoIntervallo = this.op2Properties.isStatisticheGenerazioneBaseOrariaEnabledUltimaOra();
+			break;
+		case STATISTICHE_GIORNALIERE:
+			this.statisticheGiornaliere = this.op2Properties.isStatisticheGenerazioneBaseGiornalieraEnabled();
+			this.statisticheGiornaliere_gestioneUltimoIntervallo = this.op2Properties.isStatisticheGenerazioneBaseGiornalieraEnabledUltimoGiorno();
+			break;
+		case STATISTICHE_SETTIMANALI:
+			this.statisticheSettimanali = this.op2Properties.isStatisticheGenerazioneBaseSettimanaleEnabled();
+			this.statisticheSettimanali_gestioneUltimoIntervallo = this.op2Properties.isStatisticheGenerazioneBaseSettimanaleEnabledUltimaSettimana();
+			break;
+		case STATISTICHE_MENSILI:
+			this.statisticheMensili = this.op2Properties.isStatisticheGenerazioneBaseMensileEnabled();
+			this.statisticheMensili_gestioneUltimoIntervallo = this.op2Properties.isStatisticheGenerazioneBaseMensileEnabledUltimoMese();
+			break;
+		default:
+			break;
+		}
+		
 				
 		try{
 			
@@ -223,7 +238,22 @@ public class TimerStatisticheLib {
 			throw new Exception("Errore durante la generazione delle statistiche (InitConfigurazione): "+e.getMessage(),e);
 		}
 		
-		this.timerLock = new TimerLock(TipoLock.GENERAZIONE_STATISTICHE); 
+		switch (this.tipoStatistica) {
+		case STATISTICHE_ORARIE:
+			this.timerLock = new TimerLock(TipoLock.GENERAZIONE_STATISTICHE_ORARIE); 
+			break;
+		case STATISTICHE_GIORNALIERE:
+			this.timerLock = new TimerLock(TipoLock.GENERAZIONE_STATISTICHE_GIORNALIERE); 
+			break;
+		case STATISTICHE_SETTIMANALI:
+			this.timerLock = new TimerLock(TipoLock.GENERAZIONE_STATISTICHE_SETTIMANALI); 
+			break;
+		case STATISTICHE_MENSILI:
+			this.timerLock = new TimerLock(TipoLock.GENERAZIONE_STATISTICHE_MENSILI); 
+			break;
+		default:
+			break;
+		}
 		
 		if(this.op2Properties.isTimerLockByDatabase()) {
 			this.semaphore_statistics = new InfoStatistics();
@@ -336,33 +366,30 @@ public class TimerStatisticheLib {
 						pluginsStatisticheSM, pluginsBaseSM, utilsSM, pluginsTransazioniSM);
 				
 				
-				// ORARIE
-				
-				if(generaStatistica("orario", con, sLibrary, TipoIntervalloStatistico.STATISTICHE_ORARIE) == false) {
-					return; // problemi con il lock
+				switch (this.tipoStatistica) {
+				case STATISTICHE_ORARIE:
+					if(generaStatistica("orario", con, sLibrary, TipoIntervalloStatistico.STATISTICHE_ORARIE) == false) {
+						return; // problemi con il lock
+					}
+					break;
+				case STATISTICHE_GIORNALIERE:
+					if(generaStatistica("giornaliero", con, sLibrary, TipoIntervalloStatistico.STATISTICHE_GIORNALIERE) == false) {
+						return; // problemi con il lock
+					}
+					break;
+				case STATISTICHE_SETTIMANALI:
+					if(generaStatistica("settimanale", con, sLibrary, TipoIntervalloStatistico.STATISTICHE_SETTIMANALI) == false) {
+						return; // problemi con il lock
+					}
+					break;
+				case STATISTICHE_MENSILI:
+					if(generaStatistica("mensile", con, sLibrary, TipoIntervalloStatistico.STATISTICHE_MENSILI) == false) {
+						return; // problemi con il lock
+					}
+					break;
+				default:
+					break;
 				}
-					
-				
-				// GIORNALIERE
-				
-				if(generaStatistica("giornaliero", con, sLibrary, TipoIntervalloStatistico.STATISTICHE_GIORNALIERE) == false) {
-					return; // problemi con il lock
-				}
-				
-				
-				// SETTIMANALE
-				
-				if(generaStatistica("settimanale", con, sLibrary, TipoIntervalloStatistico.STATISTICHE_SETTIMANALI) == false) {
-					return; // problemi con il lock
-				}
-							
-				
-				// MENSILE
-				
-				if(generaStatistica("mensile", con, sLibrary, TipoIntervalloStatistico.STATISTICHE_MENSILI) == false) {
-					return; // problemi con il lock
-				}
-				
 				
 			}finally{
 				try{
@@ -377,7 +404,7 @@ public class TimerStatisticheLib {
 			// end
 			long endControlloTimer = DateManager.getTimeMillis();
 			long diff = (endControlloTimer-startControlloTimer);
-			this.logTimer.info("Generazione Statistiche terminato in "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
+			this.logTimer.info("Generazione '"+this.tipoStatistica.getValue()+"' terminato in "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
 			
 			
 		}
@@ -387,7 +414,7 @@ public class TimerStatisticheLib {
 		}
 		catch (Exception e) {
 			this.msgDiag.logErroreGenerico(e,"GenerazioneStatistiche");
-			this.logTimer.error("Riscontrato errore durante la generazione delle statistiche: "+ e.getMessage(),e);
+			this.logTimer.error("Riscontrato errore durante la generazione delle statistiche ("+this.tipoStatistica.getValue()+"): "+ e.getMessage(),e);
 		}finally{
 			try{
 				if(r!=null)

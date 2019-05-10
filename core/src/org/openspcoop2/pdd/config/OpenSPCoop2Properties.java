@@ -1733,7 +1733,10 @@ public class OpenSPCoop2Properties {
 				if(this.isStatisticheGenerazioneBaseMensileEnabled()) {
 					this.isStatisticheGenerazioneBaseMensileEnabledUltimoMese();
 				}
-				this.getStatisticheGenerazioneTimerIntervalSeconds();
+				this.getStatisticheOrarieGenerazioneTimerIntervalSeconds();
+				this.getStatisticheGiornaliereGenerazioneTimerIntervalSeconds();
+				this.getStatisticheSettimanaliGenerazioneTimerIntervalSeconds();
+				this.getStatisticheMensiliGenerazioneTimerIntervalSeconds();
 				this.getStatisticheGenerazioneTimer_lockMaxLife();
 				this.getStatisticheGenerazioneTimer_lockIdleTime();
 				this.getStatisticheGenerazioneExternalForceIndexRepository();
@@ -18073,25 +18076,86 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isStatisticheGenerazioneDebug;
 	}
 	
-	private static Integer getStatisticheGenerazioneTimerIntervalSeconds = null;
-	public int getStatisticheGenerazioneTimerIntervalSeconds() throws Exception {	
-		if(OpenSPCoop2Properties.getStatisticheGenerazioneTimerIntervalSeconds==null){
+	private static Integer getStatisticheOrarieGenerazioneTimerIntervalSeconds = null;
+	public int getStatisticheOrarieGenerazioneTimerIntervalSeconds() throws Exception {	
+		if(OpenSPCoop2Properties.getStatisticheOrarieGenerazioneTimerIntervalSeconds==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.timer.intervalloSecondi");
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseOraria.timer.intervalloSecondi");
 				if(name==null){
 					throw new Exception("Proprieta' non impostata");
 				}
 				name = name.trim();
-				OpenSPCoop2Properties.getStatisticheGenerazioneTimerIntervalSeconds = Integer.valueOf(name);
+				OpenSPCoop2Properties.getStatisticheOrarieGenerazioneTimerIntervalSeconds = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.timer.intervalloSecondi': "+e.getMessage(),e);
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseOraria.timer.intervalloSecondi': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
 
-		return OpenSPCoop2Properties.getStatisticheGenerazioneTimerIntervalSeconds;
+		return OpenSPCoop2Properties.getStatisticheOrarieGenerazioneTimerIntervalSeconds;
 	}
+	
+	private static Integer getStatisticheGiornaliereGenerazioneTimerIntervalSeconds = null;
+	public int getStatisticheGiornaliereGenerazioneTimerIntervalSeconds() throws Exception {	
+		if(OpenSPCoop2Properties.getStatisticheGiornaliereGenerazioneTimerIntervalSeconds==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.timer.intervalloSecondi");
+				if(name==null){
+					throw new Exception("Proprieta' non impostata");
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.getStatisticheGiornaliereGenerazioneTimerIntervalSeconds = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.timer.intervalloSecondi': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getStatisticheGiornaliereGenerazioneTimerIntervalSeconds;
+	}
+	
+	private static Integer getStatisticheSettimanaliGenerazioneTimerIntervalSeconds = null;
+	public int getStatisticheSettimanaliGenerazioneTimerIntervalSeconds() throws Exception {	
+		if(OpenSPCoop2Properties.getStatisticheSettimanaliGenerazioneTimerIntervalSeconds==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.timer.intervalloSecondi");
+				if(name==null){
+					throw new Exception("Proprieta' non impostata");
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.getStatisticheSettimanaliGenerazioneTimerIntervalSeconds = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.timer.intervalloSecondi': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getStatisticheSettimanaliGenerazioneTimerIntervalSeconds;
+	}
+	
+	private static Integer getStatisticheMensiliGenerazioneTimerIntervalSeconds = null;
+	public int getStatisticheMensiliGenerazioneTimerIntervalSeconds() throws Exception {	
+		if(OpenSPCoop2Properties.getStatisticheMensiliGenerazioneTimerIntervalSeconds==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseMensile.timer.intervalloSecondi");
+				if(name==null){
+					throw new Exception("Proprieta' non impostata");
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.getStatisticheMensiliGenerazioneTimerIntervalSeconds = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseMensile.timer.intervalloSecondi': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getStatisticheMensiliGenerazioneTimerIntervalSeconds;
+	}
+	
 	private static Integer getStatisticheGenerazioneTimer_lockMaxLife = null;
 	public int getStatisticheGenerazioneTimer_lockMaxLife() {	
 		if(OpenSPCoop2Properties.getStatisticheGenerazioneTimer_lockMaxLife==null){

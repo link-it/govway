@@ -25,6 +25,8 @@ package org.openspcoop2.pdd.timers;
 
 import java.io.Serializable;
 
+import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
+
 /**
  * Contiene i tipi di messaggio
  *
@@ -44,10 +46,17 @@ public enum TipoLock implements Serializable {
 	
 	GESTIONE_PULIZIA_MESSAGGI_ANOMALI ("PuliziaMessaggiAnomali"),
 	
-	GENERAZIONE_STATISTICHE ("GenerazioneStatistiche"), 
+	GENERAZIONE_STATISTICHE_ORARIE (getLockStatistico(TipoIntervalloStatistico.STATISTICHE_ORARIE)), 
+	GENERAZIONE_STATISTICHE_GIORNALIERE (getLockStatistico(TipoIntervalloStatistico.STATISTICHE_GIORNALIERE)), 
+	GENERAZIONE_STATISTICHE_SETTIMANALI (getLockStatistico(TipoIntervalloStatistico.STATISTICHE_SETTIMANALI)), 
+	GENERAZIONE_STATISTICHE_MENSILI (getLockStatistico(TipoIntervalloStatistico.STATISTICHE_MENSILI)), 
 	
 	CUSTOM ("Custom");
 	
+	
+	private final static String getLockStatistico(TipoIntervalloStatistico tipo) {
+		return "Generazione"+tipo.getValue();
+	}
 	
 	private final String tipo;
 

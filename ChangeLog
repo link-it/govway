@@ -1,5 +1,16 @@
 2019-05-10  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Aggiunta funzionalità OP-837
+	Aggiunta possibilità di definire un intervallo temporale di generazione delle Statistiche differente per tipologia.
+	Per default vengono utilizzati i seguenti criteri:
+	- statistica oraria aggiornata ogni 5 minuti
+	- statistica giornaliera aggiornata ogni 30 minuti
+	- statistica settimanale aggiornata il lunedi
+	- statistica mensile aggiornata al primo del mese
+
+2019-05-10  Andrea Poli <apoli@link.it>
+
 	* [ProtocolloTrasparente]
 	Aggiunta funzionalità #19
 	(https://github.com/link-it/govway/issues/19)

@@ -184,6 +184,7 @@ import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.regexp.RegExpException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
@@ -433,6 +434,11 @@ public class ConsoleHelper {
 		this.passwordManager = new Password();
 		this.log = ControlStationLogger.getPddConsoleCoreLogger();
 		try {
+			
+			if (this.request.getCharacterEncoding() == null) { 
+		        this.request.setCharacterEncoding(Charset.UTF_8.getValue());
+			}
+			
 			User user = ServletUtils.getUserFromSession(this.session);
 			if(user != null) {
 				this.tipoInterfaccia = user.getInterfaceType();

@@ -417,3 +417,9 @@ CREATE INDEX idx_pa_trasf_hdr_resp_1 ON pa_transform_risp_hdr (id_transform_risp
 -- Inizializzo per avere nuove visualizzazioni
 delete from users_stati ;
 
+
+-- Nuovi lock per i semafori riguardanti le statistiche
+INSERT INTO OP2_SEMAPHORE (applicative_id) VALUES ('GenerazioneStatisticheOrarie');
+INSERT INTO OP2_SEMAPHORE (applicative_id) VALUES ('GenerazioneStatisticheGiornaliere');
+INSERT INTO OP2_SEMAPHORE (applicative_id) VALUES ('GenerazioneStatisticheSettimanali');
+INSERT INTO OP2_SEMAPHORE (applicative_id) VALUES ('GenerazioneStatisticheMensili');

@@ -526,3 +526,9 @@ INSERT INTO pa_transform_risp_hdr_init_seq VALUES (NEXT VALUE FOR seq_pa_transfo
 -- Inizializzo per avere nuove visualizzazioni
 delete from users_stati ;
 
+
+-- Nuovi lock per i semafori riguardanti le statistiche
+INSERT INTO OP2_SEMAPHORE (applicative_id) VALUES ('GenerazioneStatisticheOrarie');
+INSERT INTO OP2_SEMAPHORE (applicative_id) VALUES ('GenerazioneStatisticheGiornaliere');
+INSERT INTO OP2_SEMAPHORE (applicative_id) VALUES ('GenerazioneStatisticheSettimanali');
+INSERT INTO OP2_SEMAPHORE (applicative_id) VALUES ('GenerazioneStatisticheMensili');

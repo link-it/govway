@@ -1441,6 +1441,9 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 				<antcall target="api_config_default_log4j_properties_settings">
 				    <param name="file" value="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/classes/log4j2.properties"/>
 				</antcall>
+				<antcall target="api_config_console_audit_log4j_properties_settings">
+				    <param name="file" value="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/classes/console.audit.log4j2.properties"/>
+				</antcall>
 				<antcall target="dos2unix">
 					<param name="dir" value="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/classes"/>
 				    <param name="file" value="*.properties"/>

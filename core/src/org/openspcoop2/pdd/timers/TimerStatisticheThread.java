@@ -23,6 +23,7 @@
 package org.openspcoop2.pdd.timers;
 
 
+import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -49,6 +50,9 @@ public class TimerStatisticheThread extends Thread{
 	 */
 	private long timeout = 10; // ogni 10 secondi avvio il Thread
 	
+	/** Tipo di Intervallo Statistico */
+	private TipoIntervalloStatistico tipoStatistica;
+	
 	/** Logger utilizzato per debug. */
 	private Logger logTimer = null;
 	private MsgDiagnostico msgDiag = null;
@@ -71,7 +75,7 @@ public class TimerStatisticheThread extends Thread{
 	
 	
 	/** Costruttore */
-	public TimerStatisticheThread() throws Exception{
+	public TimerStatisticheThread(long timeout, TipoIntervalloStatistico tipo) throws Exception{
 	
 		// Aspetto inizializzazione di OpenSPCoop (aspetto mezzo minuto e poi segnalo errore)
 		int attesa = 90;
@@ -89,7 +93,7 @@ public class TimerStatisticheThread extends Thread{
 		try {
 			this.msgDiag = MsgDiagnostico.newInstance(ID_MODULO);
 			this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_STATISTICHE);
-			this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER, ID_MODULO);
+			this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER, "Timer"+tipo.getValue());
 		} catch (Exception e) {
 			String msgErrore = "Riscontrato Errore durante l'inizializzazione del MsgDiagnostico";
 			this.logTimer.error(msgErrore,e);
@@ -108,7 +112,9 @@ public class TimerStatisticheThread extends Thread{
 			throw new TimerException(msgErrore,e);
 		}
 
-		this.timeout = this.op2Properties.getStatisticheGenerazioneTimerIntervalSeconds();
+		this.tipoStatistica = tipo;
+		
+		this.timeout = timeout;
 		String sec = "secondi";
 		if(this.timeout == 1)
 			sec = "secondo";
@@ -130,7 +136,7 @@ public class TimerStatisticheThread extends Thread{
 			try{
 				// Prendo la gestione
 				TimerStatisticheLib timerStatistiche = 
-					new TimerStatisticheLib(this.msgDiag,this.logTimer,this.op2Properties);
+					new TimerStatisticheLib(this.tipoStatistica,this.msgDiag,this.logTimer,this.op2Properties);
 				
 				timerStatistiche.check();
 				

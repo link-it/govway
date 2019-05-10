@@ -21,6 +21,8 @@
 			<param name="token" value="org.openspcoop2.pdd.confDirectory"/>
 			<param name="value" value="${work_dir}"/>
 		</antcall>
+
+		<!-- STATISTICHE -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="org.openspcoop2.pdd.statistiche.generazione.forceIndex.repository"/>
@@ -160,6 +162,33 @@
 				</antcall>
 			</else>
 		</if>
+
+		<!-- Check Risorse -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.risorse.check.db"/>
+			<param name="value" value="abilitato"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.risorse.check.tracciamento"/>
+			<param name="value" value="abilitato"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.risorse.check.msgdiagnostici"/>
+			<param name="value" value="abilitato"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.risorse.check.configurazione"/>
+			<param name="value" value="abilitato"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.risorse.check.registri"/>
+			<param name="value" value="abilitato"/>
+		</antcall>
 
 		<!-- DEBUG -->
 		<antcall target="set_property">

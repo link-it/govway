@@ -65,6 +65,7 @@ import org.openspcoop2.core.eventi.utils.SeveritaConverter;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
 import org.openspcoop2.message.AttachmentsProcessingMode;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -227,7 +228,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	private TimerRepositoryStatefulThread threadRepositoryStateful = null;
 	
 	/** Timer per la generazione delle statistiche */
-	private TimerStatisticheThread threadGenerazioneStatistiche;
+	private TimerStatisticheThread threadGenerazioneStatisticheOrarie;
+	private TimerStatisticheThread threadGenerazioneStatisticheGiornaliere;
+	private TimerStatisticheThread threadGenerazioneStatisticheSettimanali;
+	private TimerStatisticheThread threadGenerazioneStatisticheMensili;
 	
 	/** indicazione se è un server j2ee */
 	private boolean serverJ2EE = false;
@@ -2268,19 +2272,82 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			/* ------------ Avvia il thread per la generazione delle statistiche  ------------ */
 			if(propertiesReader.isStatisticheGenerazioneEnabled()){
-				try{
-					OpenSPCoop2Startup.this.threadGenerazioneStatistiche = new TimerStatisticheThread();
-					OpenSPCoop2Startup.this.threadGenerazioneStatistiche.start();
-				}catch(Exception e){
-					msgDiag.logStartupError(e,"Avvio timer (thread) '"+TimerStatisticheThread.ID_MODULO+"'");
+				
+				// stat orarie
+				String idTimerStatOrarie = "Timer"+TipoIntervalloStatistico.STATISTICHE_ORARIE.getValue();
+				if(propertiesReader.isStatisticheGenerazioneBaseOrariaEnabled()) {
+					try{
+						OpenSPCoop2Startup.this.threadGenerazioneStatisticheOrarie = 
+								new TimerStatisticheThread(propertiesReader.getStatisticheOrarieGenerazioneTimerIntervalSeconds(), TipoIntervalloStatistico.STATISTICHE_ORARIE);
+						OpenSPCoop2Startup.this.threadGenerazioneStatisticheOrarie.start();
+					}catch(Exception e){
+						msgDiag.logStartupError(e,"Avvio timer (thread) '"+idTimerStatOrarie+"'");
+					}
+				}else{
+					msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_STATISTICHE);
+					msgDiag.addKeyword(CostantiPdD.KEY_TIMER, idTimerStatOrarie);
+					msgDiag.logPersonalizzato("disabilitato");
+					msgDiag.setPrefixMsgPersonalizzati(null);
 				}
-			}else{
+				
+				// stat giornaliere
+				String idTimerStatGiornaliere = "Timer"+TipoIntervalloStatistico.STATISTICHE_GIORNALIERE.getValue();
+				if(propertiesReader.isStatisticheGenerazioneBaseGiornalieraEnabled()) {
+					try{
+						OpenSPCoop2Startup.this.threadGenerazioneStatisticheGiornaliere = 
+								new TimerStatisticheThread(propertiesReader.getStatisticheGiornaliereGenerazioneTimerIntervalSeconds(), TipoIntervalloStatistico.STATISTICHE_GIORNALIERE);
+						OpenSPCoop2Startup.this.threadGenerazioneStatisticheGiornaliere.start();
+					}catch(Exception e){
+						msgDiag.logStartupError(e,"Avvio timer (thread) '"+idTimerStatGiornaliere+"'");
+					}
+				}else{
+					msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_STATISTICHE);
+					msgDiag.addKeyword(CostantiPdD.KEY_TIMER, idTimerStatGiornaliere);
+					msgDiag.logPersonalizzato("disabilitato");
+					msgDiag.setPrefixMsgPersonalizzati(null);
+				}
+				
+				// stat settimanali
+				String idTimerStatSettimanali = "Timer"+TipoIntervalloStatistico.STATISTICHE_SETTIMANALI.getValue();
+				if(propertiesReader.isStatisticheGenerazioneBaseSettimanaleEnabled()) {
+					try{
+						OpenSPCoop2Startup.this.threadGenerazioneStatisticheSettimanali = 
+								new TimerStatisticheThread(propertiesReader.getStatisticheSettimanaliGenerazioneTimerIntervalSeconds(), TipoIntervalloStatistico.STATISTICHE_SETTIMANALI);
+						OpenSPCoop2Startup.this.threadGenerazioneStatisticheSettimanali.start();
+					}catch(Exception e){
+						msgDiag.logStartupError(e,"Avvio timer (thread) '"+idTimerStatSettimanali+"'");
+					}
+				}else{
+					msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_STATISTICHE);
+					msgDiag.addKeyword(CostantiPdD.KEY_TIMER, idTimerStatSettimanali);
+					msgDiag.logPersonalizzato("disabilitato");
+					msgDiag.setPrefixMsgPersonalizzati(null);
+				}
+				
+				// stat mensili
+				String idTimerStatMensili = "Timer"+TipoIntervalloStatistico.STATISTICHE_MENSILI.getValue();
+				if(propertiesReader.isStatisticheGenerazioneBaseMensileEnabled()) {
+					try{
+						OpenSPCoop2Startup.this.threadGenerazioneStatisticheMensili = 
+								new TimerStatisticheThread(propertiesReader.getStatisticheMensiliGenerazioneTimerIntervalSeconds(), TipoIntervalloStatistico.STATISTICHE_MENSILI);
+						OpenSPCoop2Startup.this.threadGenerazioneStatisticheMensili.start();
+					}catch(Exception e){
+						msgDiag.logStartupError(e,"Avvio timer (thread) '"+idTimerStatMensili+"'");
+					}
+				}else{
+					msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_STATISTICHE);
+					msgDiag.addKeyword(CostantiPdD.KEY_TIMER, idTimerStatMensili);
+					msgDiag.logPersonalizzato("disabilitato");
+					msgDiag.setPrefixMsgPersonalizzati(null);
+				}
+			}
+			else{
+				// Tutti i timers sono disabilitati
 				msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_STATISTICHE);
 				msgDiag.addKeyword(CostantiPdD.KEY_TIMER, TimerStatisticheThread.ID_MODULO);
 				msgDiag.logPersonalizzato("disabilitato");
 				msgDiag.setPrefixMsgPersonalizzati(null);
 			}
-			
 			
 			
 			
@@ -2544,15 +2611,55 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			if(properties.isStatisticheGenerazioneEnabled()){
 				boolean debugStatistiche = properties.isStatisticheGenerazioneDebug();
 				Logger logStatistiche = OpenSPCoop2Logger.getLoggerOpenSPCoopStatistiche(debugStatistiche);
+				
 				if(debugStatistiche)
-					logStatistiche.debug("Recupero thread per la generazione delle statistiche ...");
-				if(OpenSPCoop2Startup.this.threadGenerazioneStatistiche!=null){
-					OpenSPCoop2Startup.this.threadGenerazioneStatistiche.setStop(true);
+					logStatistiche.debug("Recupero thread per la generazione delle statistiche orarie ...");
+				if(OpenSPCoop2Startup.this.threadGenerazioneStatisticheOrarie!=null){
+					OpenSPCoop2Startup.this.threadGenerazioneStatisticheOrarie.setStop(true);
 					if(debugStatistiche)
-						logStatistiche.debug("Richiesto stop al thread per la generazione delle statistiche");
+						logStatistiche.debug("Richiesto stop al thread per la generazione delle statistiche orarie");
 				}else{
-					throw new Exception("Thread per la generazione delle statistiche non trovato");
+					if(properties.isStatisticheGenerazioneBaseOrariaEnabled()) {
+						throw new Exception("Thread per la generazione delle statistiche orarie non trovato");
+					}
 				}	
+				
+				if(debugStatistiche)
+					logStatistiche.debug("Recupero thread per la generazione delle statistiche giornaliere ...");
+				if(OpenSPCoop2Startup.this.threadGenerazioneStatisticheGiornaliere!=null){
+					OpenSPCoop2Startup.this.threadGenerazioneStatisticheGiornaliere.setStop(true);
+					if(debugStatistiche)
+						logStatistiche.debug("Richiesto stop al thread per la generazione delle statistiche giornaliere");
+				}else{
+					if(properties.isStatisticheGenerazioneBaseGiornalieraEnabled()) {
+						throw new Exception("Thread per la generazione delle statistiche giornaliere non trovato");
+					}
+				}
+				
+				if(debugStatistiche)
+					logStatistiche.debug("Recupero thread per la generazione delle statistiche settimanali ...");
+				if(OpenSPCoop2Startup.this.threadGenerazioneStatisticheSettimanali!=null){
+					OpenSPCoop2Startup.this.threadGenerazioneStatisticheSettimanali.setStop(true);
+					if(debugStatistiche)
+						logStatistiche.debug("Richiesto stop al thread per la generazione delle statistiche settimanali");
+				}else{
+					if(properties.isStatisticheGenerazioneBaseSettimanaleEnabled()) {
+						throw new Exception("Thread per la generazione delle statistiche settimanali non trovato");
+					}
+				}
+				
+				if(debugStatistiche)
+					logStatistiche.debug("Recupero thread per la generazione delle statistiche mensili ...");
+				if(OpenSPCoop2Startup.this.threadGenerazioneStatisticheMensili!=null){
+					OpenSPCoop2Startup.this.threadGenerazioneStatisticheMensili.setStop(true);
+					if(debugStatistiche)
+						logStatistiche.debug("Richiesto stop al thread per la generazione delle statistiche mensili");
+				}else{
+					if(properties.isStatisticheGenerazioneBaseMensileEnabled()) {
+						throw new Exception("Thread per la generazione delle statistiche mensili non trovato");
+					}
+				}	
+				
 			}
 		}catch (Throwable e) {}
 		

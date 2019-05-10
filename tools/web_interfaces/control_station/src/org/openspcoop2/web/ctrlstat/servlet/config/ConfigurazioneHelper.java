@@ -8145,7 +8145,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setValue(policy.getRisorsa());
 		if(editMode) {
 			de.setType(DataElementType.SELECT);
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 		}
 		else {
 			de.setType(DataElementType.TEXT);
@@ -8193,7 +8193,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		de.setSelected(policy.isSimultanee());
 		de.setValue(policy.isSimultanee()+"");
-		de.setPostBack(true);
+		de.setPostBack_viaPOST(true);
 		dati.addElement(de);
 		
 		if(TipoRisorsa.NUMERO_RICHIESTE.getValue().equals(policy.getRisorsa()) && !editMode){
@@ -8234,7 +8234,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(policy.getModalitaControllo().getValue());
 				}
 			}
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 			if(!editMode) {
 				de.setType(DataElementType.HIDDEN);
 			}
@@ -8303,7 +8303,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(policy.getTipoIntervalloOsservazioneStatistico().getValue());
 				}
 			}
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 			dati.addElement(de);
 			
 			if(!editMode) {
@@ -8401,7 +8401,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(!editMode) {
 				de.setRequired(false);
 			}
-			de.setPostBack(true);			
+			de.setPostBack_viaPOST(true);			
 			dati.addElement(de);
 			
 			if(editMode==false) {
@@ -8501,7 +8501,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setSelected(policy.getValoreTipoBanda().getValue());
 				de.setValue(policy.getValoreTipoBanda().getValue());
 			}
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 			dati.addElement(de);
 			
 			if(!editMode) {
@@ -8550,7 +8550,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setSelected(policy.getValoreTipoLatenza().getValue());
 				de.setValue(policy.getValoreTipoLatenza().getValue());
 			}
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 			dati.addElement(de);
 			
 			if(!editMode) {
@@ -8676,7 +8676,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		de.setSelected(condizionata);
 		de.setValue(condizionata+"");
-		de.setPostBack(true);
+		de.setPostBack_viaPOST(true);
 		dati.addElement(de);
 		
 		if(!editMode){
@@ -8708,7 +8708,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			else {
 				de.setType(DataElementType.HIDDEN);
 			}
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 		}
 		else{
 			de.setType(DataElementType.HIDDEN);
@@ -8751,7 +8751,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			else {
 				de.setType(DataElementType.HIDDEN);
 			}
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 		}
 		else{
 			de.setType(DataElementType.HIDDEN);
@@ -8793,7 +8793,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			else {
 				de.setType(DataElementType.HIDDEN);
 			}
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 		}
 		else{
 			de.setType(DataElementType.HIDDEN);
@@ -8903,7 +8903,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				policy.setDegradoAvgTimeModalitaControllo(ConfigurazioneCostanti.TIPO_CONTROLLO_PERIODO_DEFAULT);
 			}
 			de.setSelected(policy.getDegradoAvgTimeModalitaControllo().getValue());
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 		}
 		else{
 			de.setType(DataElementType.HIDDEN);
@@ -8952,7 +8952,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				policy.setDegradoAvgTimeTipoLatenza(ConfigurazioneCostanti.TIPO_LATENZA_DEFAULT);
 			}
 			de.setSelected(policy.getDegradoAvgTimeTipoLatenza().getValue());
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 		}
 		else{
 			de.setType(DataElementType.HIDDEN);
@@ -9023,7 +9023,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				de.setSelected(policy.getDegradoAvgTimeTipoIntervalloOsservazioneStatistico().getValue());
 			}
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 		}
 		else{
 			de.setType(DataElementType.HIDDEN);
@@ -9160,7 +9160,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 		}
 		else{
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 		}
 		dati.addElement(de);
 		
@@ -10113,7 +10113,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setSelected("-");
 			de.setType(DataElementType.SELECT);
 			de.setRequired(true);
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 		}
 		else{
 			de.setType(DataElementType.HIDDEN);
@@ -10203,7 +10203,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.HIDDEN);
 				de.setValue("false");
 			}
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 			dati.addElement(de);
 			
 			
@@ -11071,7 +11071,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setSelected(policy.getFiltro().getRuoloPorta().getValue());
 				}
 				de.setType(DataElementType.SELECT);
-				de.setPostBack(true);
+				de.setPostBack_viaPOST(true);
 			}
 			dati.addElement(de);
 			
@@ -11098,7 +11098,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setLabels(protocolliLabel);
 				de.setSelected(protocolloSelezionatoValue);
 				de.setType(DataElementType.SELECT);
-				de.setPostBack(true);
+				de.setPostBack_viaPOST(true);
 			}
 			else{
 				de.setType(DataElementType.HIDDEN);
@@ -11141,7 +11141,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValues(ruoliErogatoreValue);
 					de.setSelected(ruoloErogatoreSelezionatoValue);
 					de.setType(DataElementType.SELECT);
-					de.setPostBack(true);
+					de.setPostBack_viaPOST(true);
 				}
 			}
 			dati.addElement(de);
@@ -11172,7 +11172,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValues(erogatoriValue);
 					de.setSelected(datiIdentificativiErogatoreSelezionatoValue);
 					de.setType(DataElementType.SELECT);
-					de.setPostBack(true);
+					de.setPostBack_viaPOST(true);
 				}
 			}
 			dati.addElement(de);
@@ -11199,7 +11199,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValues(serviziValue);
 				de.setSelected(datiIdentificativiServizioSelezionatoValue);
 				de.setType(DataElementType.SELECT);
-				de.setPostBack(true);
+				de.setPostBack_viaPOST(true);
 			}
 			dati.addElement(de);
 			
@@ -11223,7 +11223,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValues(azioniValue);
 				de.setSelected(azioneSelezionataValue);
 				de.setType(DataElementType.SELECT);
-				de.setPostBack(true);
+				de.setPostBack_viaPOST(true);
 			}
 			dati.addElement(de);
 			
@@ -11250,7 +11250,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValues(serviziApplicativiErogatoreValue);
 					de.setSelected(servizioApplicativoErogatoreSelezionatoValue);
 					de.setType(DataElementType.SELECT);
-					de.setPostBack(true);
+					de.setPostBack_viaPOST(true);
 				}
 				dati.addElement(de);
 			}
@@ -11281,7 +11281,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValues(ruoliFruitoreValue);
 					de.setSelected(ruoloFruitoreSelezionatoValue);
 					de.setType(DataElementType.SELECT);
-					de.setPostBack(true);
+					de.setPostBack_viaPOST(true);
 				}
 			}
 			dati.addElement(de);
@@ -11312,7 +11312,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValues(fruitoriValue);
 					de.setSelected(datiIdentificativiFruitoreSelezionatoValue);
 					de.setType(DataElementType.SELECT);
-					de.setPostBack(true);
+					de.setPostBack_viaPOST(true);
 				}
 			}
 			dati.addElement(de);
@@ -11340,7 +11340,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValues(serviziApplicativiFruitoreValue);
 					de.setSelected(servizioApplicativoFruitoreSelezionatoValue);
 					de.setType(DataElementType.SELECT);
-					de.setPostBack(true);
+					de.setPostBack_viaPOST(true);
 				}
 				dati.addElement(de);
 			}
@@ -11388,7 +11388,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				else {
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(policy.getFiltro().isInformazioneApplicativaEnabled());
-					de.setPostBack(true);
+					de.setPostBack_viaPOST(true);
 				}
 				dati.addElement(de);
 				
@@ -11420,7 +11420,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValues(TipoFiltroApplicativo.toStringArray());
 						de.setSelected(policy.getFiltro().getInformazioneApplicativaTipo());
 						de.setType(DataElementType.SELECT);
-						de.setPostBack(true);
+						de.setPostBack_viaPOST(true);
 					}
 					dati.addElement(de);
 					
@@ -11470,6 +11470,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				
 			}
+			
 		}
 	}
 	
@@ -11527,7 +11528,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setSelected(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_COLLEZIONAMENTO_DISABILITATO);
 			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_COLLEZIONAMENTO_DISABILITATO);
 		}
-		de.setPostBack(true);
+		de.setPostBack_viaPOST(true);
 		dati.addElement(de);
 		
 		if(policy.getGroupBy().isEnabled()){
@@ -11705,7 +11706,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(policy.getGroupBy().isInformazioneApplicativaEnabled());
 				de.setValue(policy.getGroupBy().isInformazioneApplicativaEnabled()+"");
-				de.setPostBack(true);
+				de.setPostBack_viaPOST(true);
 				dati.addElement(de);
 				
 				if(policy.getGroupBy().isInformazioneApplicativaEnabled()){
@@ -11725,7 +11726,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setSelected(policy.getGroupBy().getInformazioneApplicativaTipo());
 					de.setValue(policy.getGroupBy().getInformazioneApplicativaTipo());
 					de.setType(DataElementType.SELECT);
-					de.setPostBack(true);
+					de.setPostBack_viaPOST(true);
 					dati.addElement(de);
 					
 					de = new DataElement();

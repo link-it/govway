@@ -192,5 +192,28 @@
 		</if>
 		
 	</target>
+
+	<!-- console.audit.log4j2.properties -->
+	<target name="api_config_console_audit_log4j_properties_settings">
+		
+		<available file="${file}" property="file.present"/>
+		
+		<if>
+			<istrue value="${file.present}"/>
+			<then>
+				<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+				</concat>
+				<!-- WORKING DIR -->
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="/var/govway/log"/>
+					<param name="value" value="${log_dir}"/>
+				</antcall>
+			</then>
+		</if>
+		
+	</target>
 		
 </project>
