@@ -160,6 +160,9 @@
 					        		} else { // else subtitle		
 					        			if (type.equals("text")){
 				            				String textValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
+				            				
+				            				String tooltipTitleAttribute = de.getToolTip() != null && !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+			                				
 				            				%>
 				                			<tr class="">
 												<td class="tdTextRiepilogo labelRiepilogo">
@@ -167,7 +170,7 @@
 												</td>
 												<td class="tdTextRiepilogo <%= stile %>">
 													<div class="<%=classDivNoEdit %>"> 
-						                				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>
+						                				<span class="<%=classSpanNoEdit %>" <%= tooltipTitleAttribute %> ><%= textValNoEdit %></span>
 						                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
 					                				
 													<% 

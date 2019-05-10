@@ -59,7 +59,13 @@ if (hidden!=null) {
 Vector<GeneralLink> titlelist = pd.getTitleList();
 String titoloSezione = Costanti.LABEL_TITOLO_SEZIONE_DEFAULT;
 if (titlelist != null && titlelist.size() > 0) {
-	GeneralLink l = titlelist.elementAt(titlelist.size() -1);
+	
+	int indexLabel = titlelist.size() -1;
+	if(titlelist.size()==2 && Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA.equals(titlelist.get(1).getLabel())){
+		indexLabel = 0;
+	}
+	
+	GeneralLink l = titlelist.elementAt(indexLabel);
 	titoloSezione = l.getLabel();
 } 
 %>

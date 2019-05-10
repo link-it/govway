@@ -31,6 +31,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
@@ -3240,9 +3241,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE);
-		de.setValue(descr);
+		de.setValue(StringEscapeUtils.escapeHtml(descr));
 		if( tipoOperazione.equals(TipoOperazione.ADD) || (gestioneDescrizione && modificheAbilitate)){
-			de.setType(DataElementType.TEXT_EDIT);
+			de.setType(DataElementType.TEXT_AREA);
 		}else{
 			if(gestioneDescrizione) {
 				de.setType(DataElementType.TEXT);
@@ -4922,7 +4923,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			Boolean gestioneInfoProtocollo = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO);
 			Boolean showAccordiAzioni = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);
 			Boolean showAccordiCooperazione = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
-			Boolean showColonnaAccordiCooperazione = tipoAccordo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO);
+			Boolean showColonnaAccordiCooperazione = tipoAccordo!=null && tipoAccordo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO);
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {

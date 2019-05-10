@@ -864,8 +864,8 @@ public class ErogazioniApiHelper {
         	throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile specificare l'autenticazione per un servizio spcoop");
         }
         
-        final APIImplAutorizzazioneConfigNew configAuthz = new APIImplAutorizzazioneConfigNew();
-        final APIImplAutorizzazioneXACMLConfig configAuthXaml = new APIImplAutorizzazioneXACMLConfig();        
+        APIImplAutorizzazioneConfigNew configAuthz = new APIImplAutorizzazioneConfigNew();
+        APIImplAutorizzazioneXACMLConfig configAuthXaml = new APIImplAutorizzazioneXACMLConfig();        
         FonteEnum ruoliFonte = FonteEnum.QUALSIASI;
         String erogazioneRuolo = null;
         boolean isPuntuale = false;
@@ -882,7 +882,12 @@ public class ErogazioniApiHelper {
         if ( generaPortaApplicativa && as.getServiceBinding() == ServiceBinding.SOAP && authz != null && authz.getTipo() != null ) {
 	        switch ( authz.getTipo() ) {
 	        case ABILITATO:
-	        	BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthz );
+	        	if(authz.getConfigurazione()!=null && authz.getConfigurazione() instanceof APIImplAutorizzazioneConfigNew) {
+	        		configAuthz = (APIImplAutorizzazioneConfigNew) authz.getConfigurazione();
+	        	}
+	        	else {
+	        		BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthz );
+	        	}
 	         	ruoliFonte = configAuthz.getRuoliFonte();
 	         	erogazioneRuolo = configAuthz.getRuolo();
 	         	isPuntuale = configAuthz.isPuntuale();
@@ -890,7 +895,12 @@ public class ErogazioniApiHelper {
 	         	statoAutorizzazione = AutorizzazioneUtilities.STATO_ABILITATO;
 	        	break;
 	        case XACML_POLICY:
-	        	BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthXaml );
+	        	if(authz.getConfigurazione()!=null && authz.getConfigurazione() instanceof APIImplAutorizzazioneXACMLConfig) {
+	        		configAuthXaml = (APIImplAutorizzazioneXACMLConfig) authz.getConfigurazione();
+	        	}
+	        	else {
+	        		BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthXaml );
+	        	}
 	        	ruoliFonte = configAuthXaml.getRuoliFonte();
 	        	statoAutorizzazione = AutorizzazioneUtilities.STATO_XACML_POLICY;
 	        	
@@ -901,6 +911,8 @@ public class ErogazioniApiHelper {
 	        default: break;
 	        }
         }
+        
+		final APIImplAutorizzazioneConfigNew configAuthz_final = configAuthz;
         
         
         if (isPuntuale) {
@@ -915,7 +927,7 @@ public class ErogazioniApiHelper {
         		Optional<String> soggettoCompatibile = getSoggettiCompatibiliAutorizzazione(credTipo, env.idSoggetto, env)
         	        	.stream()
         	        	.map( Soggetto::getNome )
-        	        	.filter( s -> s.equals( configAuthz.getSoggetto() ) )
+        	        	.filter( s -> s.equals( configAuthz_final.getSoggetto() ) )
         	        	.findAny();
         	
         		//Se ho scelto un soggetto, questo deve esistere ed essere compatibile con il profilo di autenticazione
@@ -1061,7 +1073,7 @@ public class ErogazioniApiHelper {
         		ServletUtils.boolToCheckBoxStatus( isPuntuale ), 			// erogazioneAutorizzazioneAutenticati, 
         		ServletUtils.boolToCheckBoxStatus( isRuoli ),				// erogazioneAutorizzazioneRuoli, 
                 Enums.ruoloTipologiaFromRest.get(ruoliFonte).toString(),				// erogazioneAutorizzazioneRuoliTipologia,
-                evalnull( () -> configAuthz.getRuoliRichiesti().toString() ),  	// erogazioneAutorizzazioneRuoliMatch,  AllAnyEnum == RuoloTipoMatch
+                evalnull( () -> configAuthz_final.getRuoliRichiesti().toString() ),  	// erogazioneAutorizzazioneRuoliMatch,  AllAnyEnum == RuoloTipoMatch
         		env.isSupportatoAutenticazioneSoggetti,	
         		generaPortaApplicativa,													// generaPACheckSoggetto (Un'erogazione genera una porta applicativa)
         		listExtendedConnettore,
@@ -1075,7 +1087,7 @@ public class ErogazioniApiHelper {
         		ServletUtils.boolToCheckBoxStatus( isPuntuale ), 				// fruizioneAutorizzazioneAutenticati, 
         		ServletUtils.boolToCheckBoxStatus( isRuoli ), 					// fruizioneAutorizzazioneRuoli,
                 Enums.ruoloTipologiaFromRest.get(ruoliFonte).toString(), 					// fruizioneAutorizzazioneRuoliTipologia,
-                evalnull( () -> configAuthz.getRuoliRichiesti().toString() ), 		// fruizioneAutorizzazioneRuoliMatch,
+                evalnull( () -> configAuthz_final.getRuoliRichiesti().toString() ), 		// fruizioneAutorizzazioneRuoliMatch,
         		env.tipo_protocollo, 
         		xamlPolicy, 																//allegatoXacmlPolicy,
         		"",
@@ -1411,8 +1423,8 @@ public class ErogazioniApiHelper {
 		final APIImplAutorizzazioneNew authz = ero.getAutorizzazione();
         final APIImplAutenticazioneNew authn = ero.getAutenticazione();
         
-        final APIImplAutorizzazioneConfigNew configAuthz = new APIImplAutorizzazioneConfigNew();
-        final APIImplAutorizzazioneXACMLConfig configAuthzXacml = new APIImplAutorizzazioneXACMLConfig();
+        APIImplAutorizzazioneConfigNew configAuthz = new APIImplAutorizzazioneConfigNew();
+        APIImplAutorizzazioneXACMLConfig configAuthzXacml = new APIImplAutorizzazioneXACMLConfig();
 		final AccordoServizioParteComuneSintetico as = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 
         FonteEnum ruoliFonte = FonteEnum.QUALSIASI;
@@ -1432,7 +1444,12 @@ public class ErogazioniApiHelper {
         if ( evalnull( () -> authz.getTipo() ) != null) {
 		    switch (authz.getTipo()) {
 		    case ABILITATO:	
-		    	BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthz );
+		    	if(authz.getConfigurazione()!=null && authz.getConfigurazione() instanceof APIImplAutorizzazioneConfigNew) {
+	        		configAuthz = (APIImplAutorizzazioneConfigNew) authz.getConfigurazione();
+	        	}
+	        	else {
+	        		BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthz );
+	        	}
 		     	ruoliFonte = configAuthz.getRuoliFonte();
 	         	isPuntuale = configAuthz.isPuntuale();
 	         	isRuoli = configAuthz.isRuoli();
@@ -1442,7 +1459,12 @@ public class ErogazioniApiHelper {
 	         	
 		    	break;
 		    case XACML_POLICY:
-		    	BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthzXacml );
+		    	if(authz.getConfigurazione()!=null && authz.getConfigurazione() instanceof APIImplAutorizzazioneXACMLConfig) {
+	        		configAuthzXacml = (APIImplAutorizzazioneXACMLConfig) authz.getConfigurazione();
+	        	}
+	        	else {
+	        		BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthzXacml );
+	        	}
 		    	ruoliFonte = configAuthzXacml.getRuoliFonte();
 		    	statoAutorizzazione = AutorizzazioneUtilities.STATO_XACML_POLICY;
 		    	break;
@@ -1451,6 +1473,8 @@ public class ErogazioniApiHelper {
 		    	break;
 		    }
         }
+        
+        final APIImplAutorizzazioneConfigNew configAuthz_final = configAuthz;
         
     	final IDServizio idServizio = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(), new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), asps.getVersione()); 
 	               
@@ -1477,9 +1501,9 @@ public class ErogazioniApiHelper {
 				ServletUtils.boolToCheckBoxStatus( isPuntuale ),			// 	autorizzazioneAutenticati,
 				ServletUtils.boolToCheckBoxStatus( isRuoli ),				//	autorizzazioneRuoli,
 		    	Enums.ruoloTipologiaFromRest.get(ruoliFonte).toString(),				//	erogazioneAutorizzazioneRuoliTipologia
-		    	evalnull( () -> configAuthz.getRuoliRichiesti().toString() ),			// 	autorizzazioneRuoliMatch
+		    	evalnull( () -> configAuthz_final.getRuoliRichiesti().toString() ),			// 	autorizzazioneRuoliMatch
 				null,	// servizioApplicativo Come da Debug, 
-		    	evalnull( () -> configAuthz.getRuolo() ),	// ruolo: E' il ruolo scelto nella label "Ruolo" 
+		    	evalnull( () -> configAuthz_final.getRuolo() ),	// ruolo: E' il ruolo scelto nella label "Ruolo" 
 		    	soggettoAutenticato,	// soggettoAutenticato TODO BISOGNA AGGIUNGERE IL CONTROLLO CHE IL SOGGETTO AUTENTICATO SIA NEL REGISTRO 
 				null,	// autorizzazione_tokenOptions, 
 				null,	// autorizzazioneScope, 

@@ -1,5 +1,13 @@
 2019-05-10  Andrea Poli <apoli@link.it>
 
+	* [ProtocolloTrasparente]
+	Aggiunta funzionalità #19
+	(https://github.com/link-it/govway/issues/19)
+	Adeguata govlet che configura il servizio SIOPE+ con le nuove operazioni, descritte nelle regole di colloquio,
+	relative alla Disponibilità Liquide di un Ente.
+
+2019-05-10  Andrea Poli <apoli@link.it>
+
 	* [ProtocolloSDI]
 	Aggiunta funzionalità #31
 	(https://github.com/link-it/govway/issues/31)

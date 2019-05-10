@@ -220,6 +220,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 		String apiGestioneParziale = apcHelper.getParameter(ApiCostanti.PARAMETRO_APC_API_GESTIONE_PARZIALE);
 		Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, false);
 		
+		boolean chiediConferma = true;
+		
 		@SuppressWarnings("unused")
 		boolean gestioneInformazioniGenerali = false;
 		boolean gestioneSoggettoReferente = false;
@@ -235,6 +237,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 			}
 			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_DESCRIZIONE.equals(apiGestioneParziale)) {
 				gestioneDescrizione = true;
+				chiediConferma = false;
 			}
 			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_GESTIONE_SPECIFICA_INTERFACCE.equals(apiGestioneParziale)) {
 				gestioneSpecificaInterfacce = true;
@@ -692,8 +695,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.CHANGE());
 		}
 
-		// I dati dell'utente sono validi, lo informo che l'accordo e' utilizzato da asps 
-		if( this.actionConfirm == null){
+		// I dati dell'utente sono validi, lo informo che l'accordo e' utilizzato da asps a meno che non sto modificando solamente la descrizione
+		if(chiediConferma && this.actionConfirm == null){
 			if(used || this.backToStato != null){
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, listaParams);

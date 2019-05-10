@@ -58,7 +58,7 @@ Vector<GeneralLink> titlelist = pd.getTitleList();
 			<td colspan="2">
 				<div id="breadcrumb-ct">
 					<%
-						if (titlelist != null && titlelist.size() > 1) {
+						if (titlelist != null && titlelist.size() > 1 && !(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA.equals(titlelist.get(1).getLabel()))) {
 						%>
 					<div id="crumbs">
 						<ul>

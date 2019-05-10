@@ -547,11 +547,26 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		de = new DataElement();
 		de.setType(DataElementType.TEXT);
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE);
-		de.setValue(as.getDescrizione());
+		int length = 150;
+		String descrizione = null;
+		if(as.getDescrizione()!=null && as.getDescrizione().length()>length) {
+			descrizione = as.getDescrizione().substring(0, (length-4)) + " ...";
+		}
+		else {
+			descrizione =  as.getDescrizione() ;
+		}
+		de.setValue(descrizione);
+		de.setToolTip(as.getDescrizione());
 		listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_DESCRIZIONE);
-		de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
-		de.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE));
 		de.setIcon(ApiCostanti.APC_API_ICONA_MODIFICA_API);
+		
+		image = new DataElementImage();
+		listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_DESCRIZIONE);
+		image.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
+		image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE));
+		image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
+		de.setImage(image);
+		
 		dati.addElement(de);
 		
 		
