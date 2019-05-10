@@ -1,3 +1,17 @@
+2019-05-10  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSDI]
+	Aggiunta funzionalità #31
+	(https://github.com/link-it/govway/issues/31)
+	Nella nuova versione è possibile disabilitare la generazione, da parte di GovWay, dei nomi SDI da associare alle fatture da inviare (fatturazione attiva) 
+	o alle notifiche esito (fatturazione passiva) agendo sulle proprietà 'org.openspcoop2.protocol.sdi.fatturazione[Attiva/Passiva].nomeFile.gestione' 
+	nel file '/etc/govway/sdi_local.properties'.
+	Se viene disabilitata la gestione (attiva per default), la gestione dei nomi dei file (correttezza sintattica, univocità, ...) è demandata all'Applicativo Client 
+	che deve obbligatoriamente fornire il nome del file attraverso uno dei seguenti modi:
+	- query parameter 'NomeFile'
+	- header http 'SDI-NomeFile'
+	- header http 'GovWay-SDI-NomeFile'
+
 2019-05-09  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSDI] 

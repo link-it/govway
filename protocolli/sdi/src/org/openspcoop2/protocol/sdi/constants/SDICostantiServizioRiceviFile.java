@@ -67,6 +67,10 @@ public class SDICostantiServizioRiceviFile {
 	public final static String RICEVI_FILE_INTEGRAZIONE_URLBASED_ID_CODICE  = "IdCodice";
 	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_CODICE_1  = "SDI-IdCodice";
 	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_CODICE_2  = "GovWay-SDI-IdCodice";
+	
+	public final static String RICEVI_FILE_INTEGRAZIONE_URLBASED_NOME_FILE  = "NomeFile";
+	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_NOME_FILE_1  = "SDI-NomeFile";
+	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_NOME_FILE_2  = "GovWay-SDI-NomeFile";
 
 	
 }

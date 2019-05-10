@@ -140,11 +140,13 @@ public class SDIProperties {
 			
 			this.isEnableValidazioneXsdFatturaDaInviare();
 			this.isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura();
+			this.isEnable_fatturazioneAttiva_generazioneNomeFileFattura();
 			
 			this.isEnableValidazioneXsdNotificaDaInviare();
 			this.isEnableAccessoNotificaDaInviare();
 			this.isEnable_fatturazionePassiva_consegnaFileMetadati();
 			this.isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura();
+			this.isEnable_fatturazionePassiva_generazioneNomeFileEsito();
 			
 			if(this.isTracciamentoRequiredFromConfiguration()) {
 				if(this.getTracciamentoDatasource()==null) {
@@ -428,6 +430,38 @@ public class SDIProperties {
 	}
 	
 	/**
+	 * Indicazione se il nome file associato alla fattura viene generato da GovWay o viene fornito dall'Applicativo mittente.
+	 *   
+	 * @return Indicazione se il nome file associato alla fattura viene generato da GovWay o viene fornito dall'Applicativo mittente.
+	 * 
+	 */
+	private static Boolean isEnable_fatturazioneAttiva_generazioneNomeFileFattura = null;
+	public Boolean isEnable_fatturazioneAttiva_generazioneNomeFileFattura() throws ProtocolException{
+		if(SDIProperties.isEnable_fatturazioneAttiva_generazioneNomeFileFattura==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.fatturazioneAttiva.nomeFile.gestione";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isEnable_fatturazioneAttiva_generazioneNomeFileFattura = Boolean.parseBoolean(value);
+				}else{
+					throw new Exception("Non definita");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.isEnable_fatturazioneAttiva_generazioneNomeFileFattura;
+	}
+	
+	/**
 	 * Indicazione se effettuare la validazione xsd della notifica da inviare
 	 *   
 	 * @return Indicazione se effettuare la validazione xsd della notifica da inviare
@@ -547,6 +581,38 @@ public class SDIProperties {
 		}
 
 		return SDIProperties.isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura;
+	}
+	
+	/**
+	 * Indicazione se il nome file associato alla fattura viene generato da GovWay o viene fornito dall'Applicativo mittente.
+	 *   
+	 * @return Indicazione se il nome file associato alla fattura viene generato da GovWay o viene fornito dall'Applicativo mittente.
+	 * 
+	 */
+	private static Boolean isEnable_fatturazionePassiva_generazioneNomeFileEsito = null;
+	public Boolean isEnable_fatturazionePassiva_generazioneNomeFileEsito() throws ProtocolException{
+		if(SDIProperties.isEnable_fatturazionePassiva_generazioneNomeFileEsito==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.fatturazionePassiva.nomeFile.gestione";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isEnable_fatturazionePassiva_generazioneNomeFileEsito = Boolean.parseBoolean(value);
+				}else{
+					throw new Exception("Non definita");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.isEnable_fatturazionePassiva_generazioneNomeFileEsito;
 	}
 	
 	public boolean isTracciamentoRequiredFromConfiguration() throws ProtocolException {

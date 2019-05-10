@@ -270,6 +270,24 @@ public class SDIImbustamento {
 				
 			}
 			
+			// NomeFileFattura da spedire
+			String nomeFileFatturaDaSpedire = null;
+			if(!this.sdiProperties.isEnable_fatturazioneAttiva_generazioneNomeFileFattura()) {
+				if(msg.getTransportRequestContext()!=null){
+					nomeFileFatturaDaSpedire =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_NOME_FILE);
+					if(nomeFileFatturaDaSpedire==null){
+						nomeFileFatturaDaSpedire =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_NOME_FILE_1);
+					}
+					if(nomeFileFatturaDaSpedire==null){
+						nomeFileFatturaDaSpedire =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_NOME_FILE_2);
+					}
+				}
+				if(nomeFileFatturaDaSpedire==null){
+					throw new Exception("Nome file fattura non fornito");
+				}
+			}
+			
+			
 			// Add Property in Busta
 			busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA, tipoInvioFattura);
 			busta.addProperty(SDICostanti.SDI_BUSTA_EXT_VERSIONE_FATTURA_PA, versioneFattura);
@@ -364,16 +382,21 @@ public class SDIImbustamento {
 			it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.ObjectFactory of = new it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.ObjectFactory();
 			it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.FileSdIBaseType fileSdi = new it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.FileSdIBaseType();
 			fileSdi.setFile(fatturaBytes);
-			if(SDICostanti.SDI_TIPO_FATTURA_XML.equals(tipoInvioFattura)){
-				fileSdi.setNomeFile(SDIUtils.getNomeFileFattura(protocolFactory, state, 
-						idPaese!=null ? idPaese : busta.getProperty(SDICostanti.SDI_BUSTA_EXT_TRASMITTENTE_ID_PAESE),
-						idCodice!=null ? idCodice : busta.getProperty(SDICostanti.SDI_BUSTA_EXT_TRASMITTENTE_ID_CODICE),
-						tipoInvioFattura));
-			}else{
-				fileSdi.setNomeFile(SDIUtils.getNomeFileFattura(protocolFactory, state, 
-						idPaese,
-						idCodice,
-						tipoInvioFattura));
+			if(this.sdiProperties.isEnable_fatturazioneAttiva_generazioneNomeFileFattura()) {
+				if(SDICostanti.SDI_TIPO_FATTURA_XML.equals(tipoInvioFattura)){
+					fileSdi.setNomeFile(SDIUtils.getNomeFileFattura(protocolFactory, state, 
+							idPaese!=null ? idPaese : busta.getProperty(SDICostanti.SDI_BUSTA_EXT_TRASMITTENTE_ID_PAESE),
+							idCodice!=null ? idCodice : busta.getProperty(SDICostanti.SDI_BUSTA_EXT_TRASMITTENTE_ID_CODICE),
+							tipoInvioFattura));
+				}else{
+					fileSdi.setNomeFile(SDIUtils.getNomeFileFattura(protocolFactory, state, 
+							idPaese,
+							idCodice,
+							tipoInvioFattura));
+				}
+			}
+			else {
+				fileSdi.setNomeFile(nomeFileFatturaDaSpedire);
 			}
 			if(idPaese!=null && !"".equals(idPaese)) {
 				if(!busta.existsProperty(SDICostanti.SDI_BUSTA_EXT_TRASMITTENTE_ID_PAESE)) {
@@ -485,7 +508,12 @@ public class SDIImbustamento {
 				}
 			}
 			if(nomeFileFattura==null){
-				throw new Exception("NomeFileFattura non fornito");
+				if(this.sdiProperties.isEnable_fatturazionePassiva_generazioneNomeFileEsito()) {
+					throw new Exception("Nome File Fattura non fornito");
+				}
+				else {
+					throw new Exception("Nome File Esito non fornito");
+				}
 			}
 			
 			// identificativoSdi
@@ -624,7 +652,12 @@ public class SDIImbustamento {
 			}
 			fileSdi.setFile(fileSent);
 			fileSdi.setIdentificativoSdI(identificativoSdi);
-			fileSdi.setNomeFile(SDIUtils.getNomeFileMessaggi(protocolFactory, state, nomeFileFattura, TipiMessaggi.EC));
+			if(this.sdiProperties.isEnable_fatturazionePassiva_generazioneNomeFileEsito()) {
+				fileSdi.setNomeFile(SDIUtils.getNomeFileMessaggi(protocolFactory, state, nomeFileFattura, TipiMessaggi.EC));
+			}
+			else {
+				fileSdi.setNomeFile(nomeFileFattura);
+			}
 			
 			// detach body
 			soapBody.removeContents();
