@@ -467,13 +467,14 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 ./get erogazioni/PetStore/2/configurazioni/rate-limiting/ gruppo=GruppoJson
 
 	+ GET RATE LIMITING POLICY	 ( Per recuperare il nome di una policy valida utilizzare la LIST )
-./get erogazioni/PetStore/2/configurazioni/rate-limiting/NumeroRichieste-ControlloRealtimeOrario:7 gruppo=GruppoJson
+./get erogazioni/PetStore/2/configurazioni/rate-limiting/policyTest gruppo=GruppoJson
 
 	+ UPDATE RATE LIMITING POLICY
-./update erogazioni/PetStore/2/configurazioni/rate-limiting/NumeroRichieste-ControlloRealtimeOrario:7 bodies/RateLimitingPolicyErogazione.json gruppo=GruppoJson
+./update erogazioni/PetStore/2/configurazioni/rate-limiting/policyTest bodies/RateLimitingPolicyErogazione.json gruppo=GruppoJson
 
 
 	+ DELETE RATE LIMITING POLICY
+./rem erogazioni/PetStore/2/configurazioni/rate-limiting/policyTest
 
 
 	+ ADD TRACCIAMENTO CORRELAZIONE APPLICATIVA RICHIESTA\RISPOSTA
@@ -735,10 +736,10 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 ./get fruizioni/ComuneDiPisa/PetStore/2/configurazioni/rate-limiting gruppo=GruppoJson
 
 	+ UPDATE RATE LIMITING POLICY
-./update fruizioni/ComuneDiPisa/PetStore/2/configurazioni/rate-limiting/NumeroRichieste-ControlloRealtimeOrario:4 bodies/RateLimitingPolicyFruizione.json gruppo=GruppoJson
+./update fruizioni/ComuneDiPisa/PetStore/2/configurazioni/rate-limiting/policyTest bodies/RateLimitingPolicyFruizione.json gruppo=GruppoJson
 
 	+ DELETE RATE LIMITING POLICY
-
+./rem fruizioni/ComuneDiPisa/PetStore/2/configurazioni/rate-limiting/policyTest
 
 	+ ADD TRACCIAMENTO CORRELAZIONE APPLICATIVA RICHIESTA\RISPOSTA
 ./add fruizioni/ComuneDiPisa/PetStore/2/configurazioni/tracciamento/correlazione-applicativa/richiesta bodies/CorrelazioneApplicativaRichiesta.json gruppo=GruppoJson

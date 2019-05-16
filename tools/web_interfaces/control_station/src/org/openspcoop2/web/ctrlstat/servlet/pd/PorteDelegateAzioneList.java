@@ -36,6 +36,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
@@ -45,6 +46,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
@@ -145,6 +147,11 @@ public final class PorteDelegateAzioneList extends Action {
 				listaAzioni = portaDelegata.getAzione().getAzioneDelegataList(); 
 			}
 			
+			// Preparo la lista
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			int idLista = Liste.PORTE_DELEGATE_AZIONI;
+			ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
+			
 			List<Parameter> listaParametriSessione = new ArrayList<>();
 			listaParametriSessione.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, idPorta));
 			listaParametriSessione.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg));
@@ -153,7 +160,8 @@ public final class PorteDelegateAzioneList extends Action {
 			
 			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
 			
-			porteDelegateHelper.preparePorteAzioneList(listaAzioni, idPorta, parentPD, lstParam, nomePorta, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AZIONE, 
+			porteDelegateHelper.preparePorteAzioneList(ricerca,
+					listaAzioni, idPorta, parentPD, lstParam, nomePorta, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AZIONE, 
 					listaParametriSessione, labelPerPorta, serviceBinding, aspc);
 	
 			if(mappingFruizione!=null && mappingFruizione.isDefault()) {

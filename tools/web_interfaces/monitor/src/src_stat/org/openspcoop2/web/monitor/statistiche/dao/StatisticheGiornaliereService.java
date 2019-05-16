@@ -6646,7 +6646,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// sb.append("AND t.servizioApplicativo = :servizio_applicativo ");
 					filter.and().equals(model.SERVIZIO_APPLICATIVO,	searchForm.getServizioApplicativo());
 				}
-			} else {
+			}
+			else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO)) {
+				// gia aggiunto in precedenza
+				// nop;
+			}
+			else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO) ||
+					searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
 				List<org.openspcoop2.core.transazioni.CredenzialeMittente> listaCredenzialiMittente = getIdCredenzialiFromFilter(searchForm, this.credenzialiMittenteDAO, isCount);
 				
 				// se non ho trovato credenziali che corrispondono a quelle inserite allora restituisco un elenco di transazioni vuoto forzando l'id transazione
@@ -6683,10 +6689,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
 				filter.notEquals(model.SERVIZIO_APPLICATIVO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				filter.addGroupBy(model.SERVIZIO_APPLICATIVO);
+			} else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO)) {
+				// Caso non previsto nella distribuzione del servizio applicativo dove viene usato questo metodo
+				return;
 			} else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
 				filter.notEquals(model.TRASPORTO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				filter.addGroupBy(model.TRASPORTO_MITTENTE);
-			} else { // token
+			} else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
 				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(searchForm.getTokenClaim());
 				
 				switch (tcm) {
@@ -6725,9 +6734,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		if(StringUtils.isNotEmpty(searchForm.getRiconoscimento())) {
 			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
 				return model.SERVIZIO_APPLICATIVO;
-			} else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+			}
+			else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO)) {
+				// Caso non previsto nella distribuzione del servizio applicativo dove viene usato questo metodo
+				return null;
+			}  
+			else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
 				return model.TRASPORTO_MITTENTE;
-			} else { // token
+			} 
+			else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
 				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(searchForm.getTokenClaim());
 				
 				switch (tcm) {
@@ -6760,12 +6775,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(StringUtils.isNotEmpty(searchForm.getRiconoscimento())) {
 				if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
 					return risultato;
-				} else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+				} 
+				else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO)) {
+					// Caso non previsto nella distribuzione del servizio applicativo dove viene usato questo metodo
+					return risultato;
+				}  
+				else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
 					if(StringUtils.isNotEmpty(risultato)) {
 						CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
 						return credenzialeMittente.getCredenziale();
 					}
-				} else { // token
+				} 
+				else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
 					org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(searchForm.getTokenClaim());
 					CredenzialeMittente credenzialeMittente  = null;
 					if(StringUtils.isNotEmpty(risultato)) {

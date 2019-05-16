@@ -220,17 +220,23 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyChange extends A
 			
 			policy.setDescrizione(descrizionePolicy);
 			
-			long count = confCore.countInUseAttivazioni(oldIdPolicyS, false);
-			if(count>0){
-				countPolicyAttiveConQualsiasiStato = count;
+			if(policy.isBuiltIn()) {
 				editMode = false;
-				
-				long countAttivazioniNonDisabilite = confCore.countInUseAttivazioni(oldIdPolicyS, true);
-				if(countAttivazioniNonDisabilite==0){
-					editOnlyValueMode = true;
-				}
-				else {
-					editOnlyValueMode = updateValueInSeguitoModificaSogliaPolicy;
+				editOnlyValueMode = true;
+			}
+			else {
+				long count = confCore.countInUseAttivazioni(oldIdPolicyS, false);
+				if(count>0){
+					countPolicyAttiveConQualsiasiStato = count;
+					editMode = false;
+					
+					long countAttivazioniNonDisabilite = confCore.countInUseAttivazioni(oldIdPolicyS, true);
+					if(countAttivazioniNonDisabilite==0){
+						editOnlyValueMode = true;
+					}
+					else {
+						editOnlyValueMode = updateValueInSeguitoModificaSogliaPolicy;
+					}
 				}
 			}
 			

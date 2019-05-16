@@ -88,8 +88,8 @@ import org.openspcoop2.core.config.rs.server.model.GestioneCors;
 import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRichiesta;
 import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.rs.server.model.ListaRateLimitingPolicy;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBaseFruizione;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneNew;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizione;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneUpdate;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneView;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyItem;
 import org.openspcoop2.core.config.rs.server.model.RegistrazioneMessaggi;
@@ -101,6 +101,7 @@ import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -145,13 +146,13 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 	}
 
     /**
-     * Aggiunta di applicativi all'elenco degli applicativi autorizzati puntualmente
+     * Aggiunta di applicativi all'elenco degli applicativi autorizzati
      *
-     * Questa operazione consente di aggiungere applicativi all'elenco degli applicativi autorizzati puntualmente
+     * Questa operazione consente di aggiungere applicativi all'elenco degli applicativi autorizzati
      *
      */
 	@Override
-    public void addFruizioneControlloAccessiAutorizzazionePuntualeApplicativi(ControlloAccessiAutorizzazioneApplicativo body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public void addFruizioneControlloAccessiAutorizzazioneApplicativi(ControlloAccessiAutorizzazioneApplicativo body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -373,7 +374,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      *
      */
 	@Override
-    public void addFruizioneRateLimitingPolicy(RateLimitingPolicyFruizioneNew body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio, String q, Integer limit, Integer offset) {
+    public void addFruizioneRateLimitingPolicy(RateLimitingPolicyFruizione body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -393,8 +394,17 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			policy.setFiltro(new AttivazionePolicyFiltro());
 			policy.setGroupBy(new AttivazionePolicyRaggruppamento());
 			
-			final String idPolicy = ErogazioniApiHelper.getIdInfoPolicy(body.getPolicy());
+			String modalita = ErogazioniApiHelper.getDataElementModalita(body.getIdentificazione());
 			
+			String idPolicy = ErogazioniApiHelper.getIdPolicy(body, env.confCore, env.confHelper);
+			if(idPolicy==null) {
+				switch (body.getIdentificazione()) {
+				case POLICY:
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Policy Utente non trovata");
+				case CRITERI:
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Policy Built-In non trovata che rispettano i criteri forniti");
+				}
+			}
 			policy.setIdPolicy(idPolicy);
 			
 			// Questo lo prendo paro paro dal codice della console.
@@ -427,12 +437,13 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 					ruoloPorta, 
 					nomePorta, 
 					existsMessage, 
-					org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE
+					org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE,
+					modalita
 				)) {
 				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
 			}
 			// Qui viene sollevata eccezione se il check non viene superato
-			FruizioniConfigurazioneHelper.attivazionePolicyCheckData(TipoOperazione.ADD, pd, policy,infoPolicy, env);
+			FruizioniConfigurazioneHelper.attivazionePolicyCheckData(TipoOperazione.ADD, pd, policy,infoPolicy, env, modalita);
 			
 			env.confCore.performCreateOperation(env.userLogin, false, policy);
 			context.getLogger().info("Invocazione completata con successo");
@@ -454,7 +465,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      *
      */
 	@Override
-    public void addFruizioneTracciamentoCorrelazioneApplicativaRichiesta(CorrelazioneApplicativaRichiesta body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio, String q, Integer limit, Integer offset) {
+    public void addFruizioneTracciamentoCorrelazioneApplicativaRichiesta(CorrelazioneApplicativaRichiesta body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -511,7 +522,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      *
      */
 	@Override
-    public void addFruizioneTracciamentoCorrelazioneApplicativaRisposta(CorrelazioneApplicativaRisposta body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio, String q, Integer limit, Integer offset) {
+    public void addFruizioneTracciamentoCorrelazioneApplicativaRisposta(CorrelazioneApplicativaRisposta body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -559,13 +570,13 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
     }
     
     /**
-     * Elimina applicativi dall'elenco degli applicativi autorizzati puntualmente
+     * Elimina applicativi dall'elenco degli applicativi autorizzati
      *
-     * Questa operazione consente di eliminare applicativi dall'elenco degli applicativi autorizzati puntualmente
+     * Questa operazione consente di eliminare applicativi dall'elenco degli applicativi autorizzati
      *
      */
 	@Override
-    public void deleteFruizioneControlloAccessiAutorizzazionePuntualeApplicativi(String erogatore, String nome, Integer versione, String applicativoAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public void deleteFruizioneControlloAccessiAutorizzazioneApplicativi(String erogatore, String nome, Integer versione, String applicativoAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -702,7 +713,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			
 			List<AttivazionePolicy> policies = env.confCore.attivazionePolicyList(null, RuoloPolicy.DELEGATA, pd.getNome());
-			AttivazionePolicy policy = BaseHelper.findFirst( policies, p -> p.getIdActivePolicy().equals(idPolicy) ).orElse(null);
+			AttivazionePolicy policy = BaseHelper.findFirst( policies, p -> (PolicyUtilities.getNomeActivePolicy(p.getAlias(),p.getIdActivePolicy())).equals(idPolicy) ).orElse(null);
 			
 			if ( policy != null ) {
 				StringBuffer inUsoMessage = new StringBuffer();
@@ -905,8 +916,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			policies.forEach( p -> {
 				RateLimitingPolicyItem item = new RateLimitingPolicyItem();
-				item.setIdentificativo(p.getIdActivePolicy());
-				item.setNome(p.getAlias());
+				item.setNome(PolicyUtilities.getNomeActivePolicy(p.getAlias(), p.getIdActivePolicy()));
 				ret.addItemsItem(item);
 			});
 			
@@ -1212,13 +1222,13 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
     }
     
     /**
-     * Restituisce l'elenco degli applicativi autorizzati puntualmente
+     * Restituisce l'elenco degli applicativi autorizzati
      *
-     * Questa operazione consente di ottenere l'elenco degli applicativi autorizzati puntualmente
+     * Questa operazione consente di ottenere l'elenco degli applicativi autorizzati
      *
      */
 	@Override
-    public ControlloAccessiAutorizzazioneApplicativi getFruizioneControlloAccessiAutorizzazionePuntualeApplicativi(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public ControlloAccessiAutorizzazioneApplicativi getFruizioneControlloAccessiAutorizzazioneApplicativi(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1427,12 +1437,12 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			
-			
-			List<AttivazionePolicy> policies = env.confCore.attivazionePolicyList(null, RuoloPolicy.DELEGATA, pd.getNome());
-			AttivazionePolicy policy = BaseHelper.findFirst( policies, p -> p.getIdActivePolicy().equals(idPolicy) ).orElse(null);
-			
+			AttivazionePolicy policy = BaseHelper.supplyOrNotFound( 
+					() -> env.confCore.getAttivazionePolicy(idPolicy, RuoloPolicy.DELEGATA, pd.getNome()),
+					"Rate Limiting Policy con nome " + idPolicy
+				);
 			if ( policy == null ) 
-				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting con id " + idPolicy );
+				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting con nome " + idPolicy );
 			
 			InfoPolicy infoPolicy = env.confCore.getInfoPolicy(policy.getIdPolicy());
 			RateLimitingPolicyFruizioneView ret = ErogazioniApiHelper.convert( policy, infoPolicy, new RateLimitingPolicyFruizioneView() );
@@ -1869,7 +1879,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      *
      */
 	@Override
-    public void updateFruizioneRateLimitingPolicy(RateLimitingPolicyBaseFruizione body, String erogatore, String nome, Integer versione, String idPolicy, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public void updateFruizioneRateLimitingPolicy(RateLimitingPolicyFruizioneUpdate body, String erogatore, String nome, Integer versione, String idPolicy, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1882,9 +1892,12 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			
 			AttivazionePolicy policy = BaseHelper.supplyOrNotFound( 
-					() -> env.confCore.getAttivazionePolicy(idPolicy),
-					"Rate Limiting Policy con id " + idPolicy
+					() -> env.confCore.getAttivazionePolicy(idPolicy, RuoloPolicy.DELEGATA, pd.getNome()),
+					"Rate Limiting Policy con nome " + idPolicy
 				);
+			if ( policy == null ) 
+				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting con nome " + idPolicy );
+			
 			InfoPolicy infoPolicy = env.confCore.getInfoPolicy(policy.getIdPolicy());
 			ErogazioniApiHelper.override(body, env.idSoggetto.toIDSoggetto(), env.requestWrapper);
 
@@ -1892,11 +1905,12 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			if ( !StringUtils.isEmpty(errorAttivazione) ) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(errorAttivazione));
 			}
-			// Qui viene solevata eccezione se il check non viene superato.
-			FruizioniConfigurazioneHelper.attivazionePolicyCheckData(TipoOperazione.CHANGE, pd, policy,infoPolicy, env);
 			
-			env.confCore.performUpdateOperation(env.userLogin, false, policy
-					);
+			String modalita = ErogazioniApiHelper.getDataElementModalita(infoPolicy.isBuiltIn());
+			FruizioniConfigurazioneHelper.attivazionePolicyCheckData(TipoOperazione.CHANGE, pd, policy,infoPolicy, env, modalita);
+			
+			env.confCore.performUpdateOperation(env.userLogin, false, policy);
+			
 			context.getLogger().info("Invocazione completata con successo");
 		}
 		catch(javax.ws.rs.WebApplicationException e) {

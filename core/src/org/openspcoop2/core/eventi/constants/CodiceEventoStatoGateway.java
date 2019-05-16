@@ -41,7 +41,11 @@ public enum CodiceEventoStatoGateway implements IEnumeration , Serializable , Cl
 	@javax.xml.bind.annotation.XmlEnumValue("Start")
 	START ("Start"),
 	@javax.xml.bind.annotation.XmlEnumValue("Stop")
-	STOP ("Stop");
+	STOP ("Stop"),
+	@javax.xml.bind.annotation.XmlEnumValue("RisorseSistemaNonDisponibili")
+	RISORSE_SISTEMA_NON_DISPONIBILI ("RisorseSistemaNonDisponibili"),
+	@javax.xml.bind.annotation.XmlEnumValue("RisorseSistemaDisponibili")
+	RISORSE_SISTEMA_DISPONIBILI ("RisorseSistemaDisponibili");
 	
 	
 	/** Value */

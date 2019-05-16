@@ -406,13 +406,16 @@ public class PolicyUtilities {
 	}
 	
 	
-	public static String buildIdConfigurazioneEventoPerPolicy(ActivePolicy activePolicy, IDUnivocoGroupByPolicy datiGroupBy) {
+	public static String buildIdConfigurazioneEventoPerPolicy(ActivePolicy activePolicy, IDUnivocoGroupByPolicy datiGroupBy, String API) {
 		// L'obiettivo è di generare un evento differente per ogni raggruppamento violato di una stessa policy
 		// All'interno di una stessa policy ci possono essere gruppi che non sono violati ed altri che lo sono
 		// Ad esempio se si raggruppa per soggetto fruitore, ci potranno essere soggetti che la violano, altri no.
 		// Si vuole un evento per ogni soggetto che viola la policy
 		boolean printDati = true;
-		String idPolicyConGruppo = activePolicy.getInstanceConfiguration().getIdActivePolicy();
+		String idPolicyConGruppo = PolicyUtilities.getNomeActivePolicy(activePolicy.getInstanceConfiguration().getAlias(), activePolicy.getInstanceConfiguration().getIdActivePolicy()); 
+		if(API!=null && !"".equals(API)) {
+			idPolicyConGruppo = idPolicyConGruppo + " - API: "+API;
+		}
 		if(activePolicy.getInstanceConfiguration().getGroupBy().isEnabled()){
 			String toStringRaggruppamentoConDatiIstanza = PolicyUtilities.toStringGroupBy(activePolicy.getInstanceConfiguration().getGroupBy(), datiGroupBy, printDati);
 			idPolicyConGruppo = idPolicyConGruppo +
@@ -444,4 +447,12 @@ public class PolicyUtilities {
 		return toIDUnivocoGroupByPolicy(extractIDUnivocoGroupByPolicyFromIdConfigurazioneEventoAsString(idConfigurazioneEvento));
 	}
 	
+	public static String getNomeActivePolicy(String alias, String id) {
+		if(alias==null || "".equals(alias)) {
+			return id.replace(":", "_");
+		}
+		else {
+			return alias;
+		}
+	}
 }

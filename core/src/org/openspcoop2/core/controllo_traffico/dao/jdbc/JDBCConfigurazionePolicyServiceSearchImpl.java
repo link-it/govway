@@ -469,6 +469,7 @@ public class JDBCConfigurazionePolicyServiceSearchImpl implements IJDBCServiceSe
 		sqlQueryObjectGet.addFromTable(this.getConfigurazionePolicyFieldConverter().toTable(ConfigurazionePolicy.model()));
 		sqlQueryObjectGet.addSelectField("id");
 		sqlQueryObjectGet.addSelectField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().ID_POLICY,true));
+		sqlQueryObjectGet.addSelectField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().BUILT_IN,true));
 		sqlQueryObjectGet.addSelectField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().DESCRIZIONE,true));
 		sqlQueryObjectGet.addSelectField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().RISORSA,true));
 		sqlQueryObjectGet.addSelectField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().SIMULTANEE,true));

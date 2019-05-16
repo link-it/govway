@@ -115,7 +115,7 @@ else
         echo -e "$MESSAGE_INFOS: $1"
 fi
 
-tput sgr0
+echo -en "$normaltext"
 unset MESSAGE_INFOS
 }
 

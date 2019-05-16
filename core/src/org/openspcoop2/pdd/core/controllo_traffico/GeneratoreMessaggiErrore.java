@@ -50,6 +50,7 @@ public class GeneratoreMessaggiErrore {
 	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO = "controlloTraffico.policy.violata.risorsaNumeroRichiesteCompletateConSuccesso";
 	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_FALLITE = "controlloTraffico.policy.violata.risorsaNumeroRichiesteFallite";
 	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_FAULT_APPLICATIVI = "controlloTraffico.policy.violata.risorsaNumeroFaultApplicativi";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI= "controlloTraffico.policy.violata.risorsaNumeroRichiesteFalliteOFaultApplicativi";
 	
 	// identificativi diagnostici parziali per applicabilità policy
 	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_PDD_NON_CONGESTIONATA = "controlloTraffico.policy.applicabilita.nonCongestionato";
@@ -93,6 +94,8 @@ public class GeneratoreMessaggiErrore {
 	// ** KEYWORDS UTILIZZATE SOLAMENTE IN CONDIZIONI DI ERRORE O DEBUG
 	// sono i diagnostici emessi dai moduli ricezione contenuti o buste
 	public final static String TEMPLATE_POLICY_ACTIVE_ID = "@CT_POLICY_ACTIVE_ID@"; // identificativo della policy attivata
+	public final static String TEMPLATE_POLICY_ACTIVE_TIPO = "@CT_POLICY_ACTIVE_TIPO@"; // tipo della policy attivata (Globale/API)
+	public final static String TEMPLATE_POLICY_ACTIVE_ALIAS = "@CT_POLICY_ACTIVE_ALIAS@"; // alias della policy attivata
 	public final static String TEMPLATE_POLICY_VIOLATA_MOTIVO = "@CT_POLICY_ERROR_MSG@"; // errore di violazione riscontrato sulla policy
 	public final static String TEMPLATE_POLICY_FILTRATA_MOTIVO = "@CT_POLICY_FILTERED_REASON@"; // motivo di filtro della policy
 	public final static String TEMPLATE_POLICY_NON_APPLICABILE_MOTIVO = "@CT_POLICY_NOT_APPLICABLED_REASON@"; // motivo della mancata applicabilità
@@ -126,6 +129,7 @@ public class GeneratoreMessaggiErrore {
 	private final static String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_CODE = "CP06";
 	private final static String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_FALLITE_CODE = "CP07";
 	private final static String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_FAULT_APPLICATIVI_CODE = "CP08";
+	private final static String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI_CODE = "CP09";
 	private final static String APPLICABILITA_CONGESTIONE_CODE = "-CC";
 	private final static String APPLICABILITA_DEGRADO_CODE = "-DP";
 	private final static String APPLICABILITA_STATO_ALLARME_CODE = "-SA";
@@ -293,6 +297,9 @@ public class GeneratoreMessaggiErrore {
 				break;
 			case NUMERO_FAULT_APPLICATIVI:
 				bf.append(CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_FAULT_APPLICATIVI_CODE);
+				break;
+			case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+				bf.append(CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI_CODE);
 				break;
 			}
 			

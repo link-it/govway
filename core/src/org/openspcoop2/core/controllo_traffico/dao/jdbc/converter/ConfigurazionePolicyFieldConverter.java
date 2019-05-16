@@ -75,6 +75,13 @@ public class ConfigurazionePolicyFieldConverter extends AbstractSQLFieldConverte
 				return "policy_id";
 			}
 		}
+		if(field.equals(ConfigurazionePolicy.model().BUILT_IN)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".policy_built_in";
+			}else{
+				return "policy_built_in";
+			}
+		}
 		if(field.equals(ConfigurazionePolicy.model().DESCRIZIONE)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".rt_descrizione";
@@ -257,6 +264,9 @@ public class ConfigurazionePolicyFieldConverter extends AbstractSQLFieldConverte
 		// the full definition of the table containing the alias
 		
 		if(field.equals(ConfigurazionePolicy.model().ID_POLICY)){
+			return this.toTable(ConfigurazionePolicy.model(), returnAlias);
+		}
+		if(field.equals(ConfigurazionePolicy.model().BUILT_IN)){
 			return this.toTable(ConfigurazionePolicy.model(), returnAlias);
 		}
 		if(field.equals(ConfigurazionePolicy.model().DESCRIZIONE)){

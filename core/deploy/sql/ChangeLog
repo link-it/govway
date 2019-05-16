@@ -1,3 +1,8 @@
+2019-05-13  Andrea Poli <apoli@link.it>
+
+	Classificate policy in built-in e utente:
+	ALTER TABLE ct_config_policy ADD COLUMN policy_built_in BOOLEAN NOT NULL DEFAULT false;
+
 2019-02-12  Andrea Poli <apoli@link.it>
 
 	Aggiunta possibilità di associare delle proprietà generica ai meccanismi di autenticazione.

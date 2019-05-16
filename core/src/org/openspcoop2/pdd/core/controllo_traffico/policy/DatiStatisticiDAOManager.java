@@ -546,6 +546,9 @@ public class DatiStatisticiDAOManager  {
 		case NUMERO_FAULT_APPLICATIVI:
 			expr.in(model.ESITO, EsitiProperties.getInstance(this.daoFactoryLogger,protocollo).getEsitiCodeFaultApplicativo());
 			break;
+		case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+			expr.in(model.ESITO, EsitiProperties.getInstance(this.daoFactoryLogger,protocollo).getEsitiCodeKo());
+			break;
 		}
 		
 		

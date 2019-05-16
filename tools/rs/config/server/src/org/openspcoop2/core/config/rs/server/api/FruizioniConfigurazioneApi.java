@@ -42,8 +42,8 @@ import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaR
 import org.openspcoop2.core.config.rs.server.model.ListaRateLimitingPolicy;
 import org.openspcoop2.core.config.rs.server.model.Problem;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBaseFruizione;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneNew;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizione;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneUpdate;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneView;
 import org.openspcoop2.core.config.rs.server.model.RegistrazioneMessaggi;
 import org.openspcoop2.core.config.rs.server.model.Validazione;
@@ -67,16 +67,16 @@ import javax.validation.Valid;
 public interface FruizioniConfigurazioneApi  {
 
     /**
-     * Aggiunta di applicativi all'elenco degli applicativi autorizzati puntualmente
+     * Aggiunta di applicativi all'elenco degli applicativi autorizzati
      *
-     * Questa operazione consente di aggiungere applicativi all'elenco degli applicativi autorizzati puntualmente
+     * Questa operazione consente di aggiungere applicativi all'elenco degli applicativi autorizzati
      *
      */
     @POST
     @Path("/fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/applicativi")
     @Consumes({ "application/json" })
     @Produces({ "application/problem+json" })
-    @Operation(summary = "Aggiunta di applicativi all'elenco degli applicativi autorizzati puntualmente", tags={ "fruizioni-configurazione" })
+    @Operation(summary = "Aggiunta di applicativi all'elenco degli applicativi autorizzati", tags={ "fruizioni-configurazione" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "201", description = "Applicativi aggiunti con con successo"),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -86,7 +86,7 @@ public interface FruizioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void addFruizioneControlloAccessiAutorizzazionePuntualeApplicativi(@Valid ControlloAccessiAutorizzazioneApplicativo body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
+    public void addFruizioneControlloAccessiAutorizzazioneApplicativi(@Valid ControlloAccessiAutorizzazioneApplicativo body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
      * Aggiunta di ruoli all'elenco dei ruoli autorizzati
@@ -152,7 +152,7 @@ public interface FruizioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void addFruizioneRateLimitingPolicy(@Valid RateLimitingPolicyFruizioneNew body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset);
+    public void addFruizioneRateLimitingPolicy(@Valid RateLimitingPolicyFruizione body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
      * Aggiunta di una regola di correlazione applicativa
@@ -174,7 +174,7 @@ public interface FruizioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void addFruizioneTracciamentoCorrelazioneApplicativaRichiesta(@Valid CorrelazioneApplicativaRichiesta body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset);
+    public void addFruizioneTracciamentoCorrelazioneApplicativaRichiesta(@Valid CorrelazioneApplicativaRichiesta body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
      * Aggiunta di una regola di correlazione applicativa
@@ -196,18 +196,18 @@ public interface FruizioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void addFruizioneTracciamentoCorrelazioneApplicativaRisposta(@Valid CorrelazioneApplicativaRisposta body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset);
+    public void addFruizioneTracciamentoCorrelazioneApplicativaRisposta(@Valid CorrelazioneApplicativaRisposta body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
-     * Elimina applicativi dall'elenco degli applicativi autorizzati puntualmente
+     * Elimina applicativi dall'elenco degli applicativi autorizzati
      *
-     * Questa operazione consente di eliminare applicativi dall'elenco degli applicativi autorizzati puntualmente
+     * Questa operazione consente di eliminare applicativi dall'elenco degli applicativi autorizzati
      *
      */
     @DELETE
     @Path("/fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/applicativi/{applicativo_autorizzato}")
     @Produces({ "application/problem+json" })
-    @Operation(summary = "Elimina applicativi dall'elenco degli applicativi autorizzati puntualmente", tags={ "fruizioni-configurazione" })
+    @Operation(summary = "Elimina applicativi dall'elenco degli applicativi autorizzati", tags={ "fruizioni-configurazione" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "204", description = "Applicativi eliminati con successo"),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -217,7 +217,7 @@ public interface FruizioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void deleteFruizioneControlloAccessiAutorizzazionePuntualeApplicativi(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @PathParam("applicativo_autorizzato") String applicativoAutorizzato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
+    public void deleteFruizioneControlloAccessiAutorizzazioneApplicativi(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @PathParam("applicativo_autorizzato") String applicativoAutorizzato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
      * Elimina ruoli dall'elenco dei ruoli autorizzati
@@ -280,7 +280,7 @@ public interface FruizioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void deleteFruizioneRateLimitingPolicy(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @PathParam("id_policy") @Size(max=255) String idPolicy, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
+    public void deleteFruizioneRateLimitingPolicy(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @PathParam("id_policy") String idPolicy, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
      * Elimina la regola di correlazione applicativa dall'elenco di quelle attivate per la richiesta
@@ -472,15 +472,15 @@ public interface FruizioniConfigurazioneApi  {
     public ControlloAccessiAutorizzazioneView getFruizioneControlloAccessiAutorizzazione(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
-     * Restituisce l'elenco degli applicativi autorizzati puntualmente
+     * Restituisce l'elenco degli applicativi autorizzati
      *
-     * Questa operazione consente di ottenere l'elenco degli applicativi autorizzati puntualmente
+     * Questa operazione consente di ottenere l'elenco degli applicativi autorizzati
      *
      */
     @GET
     @Path("/fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/applicativi")
     @Produces({ "application/json", "application/problem+json" })
-    @Operation(summary = "Restituisce l'elenco degli applicativi autorizzati puntualmente", tags={ "fruizioni-configurazione" })
+    @Operation(summary = "Restituisce l'elenco degli applicativi autorizzati", tags={ "fruizioni-configurazione" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Elenco applicativi autorizzati restituito con successo", content = @Content(schema = @Schema(implementation = ControlloAccessiAutorizzazioneApplicativi.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -490,7 +490,7 @@ public interface FruizioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ControlloAccessiAutorizzazioneApplicativi getFruizioneControlloAccessiAutorizzazionePuntualeApplicativi(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
+    public ControlloAccessiAutorizzazioneApplicativi getFruizioneControlloAccessiAutorizzazioneApplicativi(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
      * Restituisce l'elenco dei ruoli autorizzati
@@ -595,7 +595,7 @@ public interface FruizioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public RateLimitingPolicyFruizioneView getFruizioneRateLimitingPolicy(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @PathParam("id_policy") @Size(max=255) String idPolicy, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
+    public RateLimitingPolicyFruizioneView getFruizioneRateLimitingPolicy(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @PathParam("id_policy") String idPolicy, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
      * Restituisce la configurazione relativa alla registrazione dei messaggi
@@ -832,7 +832,7 @@ public interface FruizioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateFruizioneRateLimitingPolicy(@Valid RateLimitingPolicyBaseFruizione body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @PathParam("id_policy") @Size(max=255) String idPolicy, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
+    public void updateFruizioneRateLimitingPolicy(@Valid RateLimitingPolicyFruizioneUpdate body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @PathParam("id_policy") String idPolicy, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
      * Consente di modificare la configurazione relativa alla registrazione dei messaggi

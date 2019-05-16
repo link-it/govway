@@ -302,7 +302,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if (! env.apcHelper.accordiPorttypeOperationCheckData(
 					TipoOperazione.ADD,
 					as.getId().toString(),
-					newOp.getProfiloCollaborazione().toString(),
+					nomeServizio,
 					newOp.getNome(),
 					newOp.getProfAzione(),
 					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(newOp.getFiltroDuplicati()),
@@ -1674,7 +1674,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if (! env.apcHelper.accordiPorttypeOperationCheckData(
 					TipoOperazione.CHANGE,
 					as.getId().toString(),
-					newOp.getProfiloCollaborazione().toString(),
+					nomeServizio,
 					newOp.getNome(),
 					newOp.getProfAzione(),
 					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(newOp.getFiltroDuplicati()),

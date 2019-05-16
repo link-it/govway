@@ -1,9 +1,17 @@
 {
-    "policy": "numero-richieste-orarie",
+    "nome": "PolicyProvaKarate",
     "stato": "abilitato",
+    "identificazione": "criteri",
+
+    "configurazione": {
+        "risorsa": "occupazione-banda",
+        "intervallo": "orario",
+	"congestione": false, 
+	"degrado": false
+    },
+
     "soglia_ridefinita": true,
     "soglia_valore": 10,
-    "nome": "PolicyProvaKarate",
 
     "filtro": {
         "chiave_tipo": "content-based",

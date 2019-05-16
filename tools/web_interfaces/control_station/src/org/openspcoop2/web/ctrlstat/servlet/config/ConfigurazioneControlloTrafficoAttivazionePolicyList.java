@@ -35,6 +35,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -77,6 +78,11 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyList extends Action
 				ruoloPorta = RuoloPolicy.toEnumConstant(ruoloPortaParam);
 			}
 			String nomePorta = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA);
+			ServiceBinding serviceBinding = null;
+			String serviceBindingParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_SERVICE_BINDING);
+			if(serviceBindingParam!=null && !"".equals(serviceBindingParam)) {
+				serviceBinding = ServiceBinding.valueOf(serviceBindingParam);
+			}
 			
 			String idTab = confHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!confHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
@@ -97,7 +103,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyList extends Action
 
 			List<AttivazionePolicy> lista = confCore.attivazionePolicyList(ricerca, ruoloPorta, nomePorta);
 			
-			confHelper.prepareAttivazionePolicyList(ricerca, lista, idLista, ruoloPorta, nomePorta); 
+			confHelper.prepareAttivazionePolicyList(ricerca, lista, idLista, ruoloPorta, nomePorta, serviceBinding); 
 			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

@@ -22,34 +22,34 @@
 package org.openspcoop2.core.config.rs.server.model;
 
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBase;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFiltroFruizione;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyGroupByFruizione;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFiltroErogazione;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyGroupByErogazione;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class RateLimitingPolicyBaseFruizione extends RateLimitingPolicyBase {
+public class RateLimitingPolicyErogazioneUpdate extends RateLimitingPolicyBase {
   
   @Schema(description = "")
-  private RateLimitingPolicyFiltroFruizione filtro = null;
+  private RateLimitingPolicyFiltroErogazione filtro = null;
   
   @Schema(description = "")
-  private RateLimitingPolicyGroupByFruizione criterioCollezionamentoDati = null;
+  private RateLimitingPolicyGroupByErogazione criterioCollezionamentoDati = null;
  /**
    * Get filtro
    * @return filtro
   **/
   @JsonProperty("filtro")
   @Valid
-  public RateLimitingPolicyFiltroFruizione getFiltro() {
+  public RateLimitingPolicyFiltroErogazione getFiltro() {
     return this.filtro;
   }
 
-  public void setFiltro(RateLimitingPolicyFiltroFruizione filtro) {
+  public void setFiltro(RateLimitingPolicyFiltroErogazione filtro) {
     this.filtro = filtro;
   }
 
-  public RateLimitingPolicyBaseFruizione filtro(RateLimitingPolicyFiltroFruizione filtro) {
+  public RateLimitingPolicyErogazioneUpdate filtro(RateLimitingPolicyFiltroErogazione filtro) {
     this.filtro = filtro;
     return this;
   }
@@ -60,15 +60,15 @@ public class RateLimitingPolicyBaseFruizione extends RateLimitingPolicyBase {
   **/
   @JsonProperty("criterio_collezionamento_dati")
   @Valid
-  public RateLimitingPolicyGroupByFruizione getCriterioCollezionamentoDati() {
+  public RateLimitingPolicyGroupByErogazione getCriterioCollezionamentoDati() {
     return this.criterioCollezionamentoDati;
   }
 
-  public void setCriterioCollezionamentoDati(RateLimitingPolicyGroupByFruizione criterioCollezionamentoDati) {
+  public void setCriterioCollezionamentoDati(RateLimitingPolicyGroupByErogazione criterioCollezionamentoDati) {
     this.criterioCollezionamentoDati = criterioCollezionamentoDati;
   }
 
-  public RateLimitingPolicyBaseFruizione criterioCollezionamentoDati(RateLimitingPolicyGroupByFruizione criterioCollezionamentoDati) {
+  public RateLimitingPolicyErogazioneUpdate criterioCollezionamentoDati(RateLimitingPolicyGroupByErogazione criterioCollezionamentoDati) {
     this.criterioCollezionamentoDati = criterioCollezionamentoDati;
     return this;
   }
@@ -77,10 +77,10 @@ public class RateLimitingPolicyBaseFruizione extends RateLimitingPolicyBase {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class RateLimitingPolicyBaseFruizione {\n");
-    sb.append("    ").append(RateLimitingPolicyBaseFruizione.toIndentedString(super.toString())).append("\n");
-    sb.append("    filtro: ").append(RateLimitingPolicyBaseFruizione.toIndentedString(this.filtro)).append("\n");
-    sb.append("    criterioCollezionamentoDati: ").append(RateLimitingPolicyBaseFruizione.toIndentedString(this.criterioCollezionamentoDati)).append("\n");
+    sb.append("class RateLimitingPolicyErogazioneUpdate {\n");
+    sb.append("    ").append(RateLimitingPolicyErogazioneUpdate.toIndentedString(super.toString())).append("\n");
+    sb.append("    filtro: ").append(RateLimitingPolicyErogazioneUpdate.toIndentedString(this.filtro)).append("\n");
+    sb.append("    criterioCollezionamentoDati: ").append(RateLimitingPolicyErogazioneUpdate.toIndentedString(this.criterioCollezionamentoDati)).append("\n");
     sb.append("}");
     return sb.toString();
   }

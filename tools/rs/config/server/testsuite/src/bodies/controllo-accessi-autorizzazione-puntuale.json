@@ -3,7 +3,7 @@
         "tipo": "abilitato",
 
         "configurazione": {
-            "puntuale": true,
+            "richiedente": true,
             "ruoli": false,
             "scope": false
             

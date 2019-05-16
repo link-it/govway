@@ -21,6 +21,8 @@
  */
 package org.openspcoop2.core.controllo_traffico.beans;
 
+import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoRealtime;
+import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoStatistico;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 
 
@@ -34,14 +36,20 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 public class InfoPolicy {
 
 	private String idPolicy;
+	private boolean builtIn;
 	private TipoRisorsa tipoRisorsa;
 	private Long valore;
 	private String descrizione;
 	private boolean intervalloUtilizzaRisorseStatistiche;
 	private boolean intervalloUtilizzaRisorseRealtime;
+	private TipoPeriodoStatistico intervalloUtilizzaRisorseStatisticheTipoPeriodo;
+	private TipoPeriodoRealtime intervalloUtilizzaRisorseRealtimeTipoPeriodo;
+	private boolean controlloCongestione;
+	private boolean degradoPrestazione;
 	private boolean degradoPrestazionaleUtilizzaRisorseStatistiche;
 	private boolean degradoPrestazionaleUtilizzaRisorseRealtime;
 	private boolean checkRichiesteSimultanee;
+	private boolean errorRate;
 	
 	
 	public boolean isIntervalloUtilizzaRisorseStatistiche() {
@@ -98,5 +106,42 @@ public class InfoPolicy {
 	public void setValore(Long valore) {
 		this.valore = valore;
 	}
-	
+	public boolean isControlloCongestione() {
+		return this.controlloCongestione;
+	}
+	public void setControlloCongestione(boolean controlloCongestione) {
+		this.controlloCongestione = controlloCongestione;
+	}
+	public boolean isDegradoPrestazione() {
+		return this.degradoPrestazione;
+	}
+	public void setDegradoPrestazione(boolean degradoPrestazione) {
+		this.degradoPrestazione = degradoPrestazione;
+	}
+	public boolean isErrorRate() {
+		return this.errorRate;
+	}
+	public void setErrorRate(boolean errorRate) {
+		this.errorRate = errorRate;
+	}
+	public TipoPeriodoStatistico getIntervalloUtilizzaRisorseStatisticheTipoPeriodo() {
+		return this.intervalloUtilizzaRisorseStatisticheTipoPeriodo;
+	}
+	public void setIntervalloUtilizzaRisorseStatisticheTipoPeriodo(
+			TipoPeriodoStatistico intervalloUtilizzaRisorseStatisticheTipoPeriodo) {
+		this.intervalloUtilizzaRisorseStatisticheTipoPeriodo = intervalloUtilizzaRisorseStatisticheTipoPeriodo;
+	}
+	public TipoPeriodoRealtime getIntervalloUtilizzaRisorseRealtimeTipoPeriodo() {
+		return this.intervalloUtilizzaRisorseRealtimeTipoPeriodo;
+	}
+	public void setIntervalloUtilizzaRisorseRealtimeTipoPeriodo(
+			TipoPeriodoRealtime intervalloUtilizzaRisorseRealtimeTipoPeriodo) {
+		this.intervalloUtilizzaRisorseRealtimeTipoPeriodo = intervalloUtilizzaRisorseRealtimeTipoPeriodo;
+	}
+	public boolean isBuiltIn() {
+		return this.builtIn;
+	}
+	public void setBuiltIn(boolean builtIn) {
+		this.builtIn = builtIn;
+	}	
 }

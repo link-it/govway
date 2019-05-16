@@ -24,12 +24,15 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy;
 import java.util.Date;
 import java.util.List;
 
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.RisultatoStatistico;
 import org.openspcoop2.core.controllo_traffico.beans.RisultatoStato;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoApplicabilita;
 import org.openspcoop2.core.controllo_traffico.constants.TipoControlloPeriodo;
 import org.openspcoop2.core.controllo_traffico.constants.TipoFinestra;
@@ -38,6 +41,14 @@ import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.core.eventi.constants.CodiceEventoControlloTraffico;
 import org.openspcoop2.core.eventi.constants.TipoEvento;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.controllo_traffico.CategoriaEventoControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
@@ -48,6 +59,8 @@ import org.openspcoop2.pdd.core.controllo_traffico.RisultatoVerificaPolicy;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
 
@@ -62,6 +75,7 @@ public class PolicyVerifier {
 
 	
 	public static RisultatoVerificaPolicy verifica(
+			ConfigurazionePdDManager configPdDManager, IProtocolFactory<?> protocolFactory,
 			IGestorePolicyAttive gestorePolicyAttive, Logger logCC,
 			ActivePolicy activePolicy,
 			IDUnivocoGroupByPolicy datiGroupBy, PdDContext pddContext,
@@ -73,6 +87,11 @@ public class PolicyVerifier {
 		// Tutti i restanti controlli sono effettuati usando il valore di datiCollezionatiReaded, che e' gia' stato modificato
 		// Inoltre e' stato re-inserito nella map come oggetto nuovo, quindi il valore dentro il metodo non subira' trasformazioni (essendo stato fatto il clone)
 		// E' possibile procedere con l'analisi rispetto al valore che possiedono il counter dentro questo scope.
+		
+		boolean policyAPI = activePolicy.getInstanceConfiguration().getFiltro()!=null && 
+				activePolicy.getInstanceConfiguration().getFiltro().getNomePorta()!=null &&
+				!"".equals(activePolicy.getInstanceConfiguration().getFiltro().getNomePorta());
+		boolean policyGlobale = !policyAPI;
 		
 		// Registro Threads (NOTA: non i contatori, quelli vegono aggiornati )
 		DatiCollezionati datiCollezionatiReaded = gestorePolicyAttive.getActiveThreadsPolicy(activePolicy).
@@ -301,6 +320,7 @@ public class PolicyVerifier {
 			case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
 			case NUMERO_RICHIESTE_FALLITE:
 			case NUMERO_FAULT_APPLICATIVI:
+			case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 				
 				if(activePolicy.getConfigurazionePolicy().isSimultanee()){
 					
@@ -402,6 +422,9 @@ public class PolicyVerifier {
 								break;
 							case NUMERO_FAULT_APPLICATIVI:
 								codeDiagnostico = GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_FAULT_APPLICATIVI;
+								break;
+							case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+								codeDiagnostico = GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI;
 								break;
 							default:
 								// non può succedere
@@ -646,21 +669,30 @@ public class PolicyVerifier {
 			}
 			
 			if(rilevataViolazione){
+				TipoEvento tipoEvento = null;
+				if(policyGlobale) {
+					tipoEvento = TipoEvento.RATE_LIMITING_POLICY_GLOBALE;
+				}
+				else {
+					tipoEvento = TipoEvento.RATE_LIMITING_POLICY_API;
+				}
 				if(risultatoVerificaPolicy.isWarningOnly()){
 					violazionePolicy_warningOnly = true;
-					tr.addEventoGestione(TipoEvento.RATE_LIMITING_POLICY.getValue()
+					tr.addEventoGestione(tipoEvento.getValue()
 							+"_"+
 							CodiceEventoControlloTraffico.VIOLAZIONE_WARNING_ONLY.getValue()
 							+"_"+
-							activePolicy.getInstanceConfiguration().getIdActivePolicy());
+							PolicyUtilities.getNomeActivePolicy(activePolicy.getInstanceConfiguration().getAlias(), activePolicy.getInstanceConfiguration().getIdActivePolicy())
+						);
 				}
 				else{
 					violazionePolicy = true;
-					tr.addEventoGestione(TipoEvento.RATE_LIMITING_POLICY.getValue()
+					tr.addEventoGestione(tipoEvento.getValue()
 							+"_"+
 							CodiceEventoControlloTraffico.VIOLAZIONE.getValue()
 							+"_"+
-							activePolicy.getInstanceConfiguration().getIdActivePolicy());
+							PolicyUtilities.getNomeActivePolicy(activePolicy.getInstanceConfiguration().getAlias(), activePolicy.getInstanceConfiguration().getIdActivePolicy())
+						);
 				}
 				dataEventoPolicyViolated = DateManager.getDate();
 				
@@ -691,15 +723,96 @@ public class PolicyVerifier {
 			// All'interno di una stessa policy ci possono essere gruppi che non sono violati ed altri che lo sono
 			// Ad esempio se si raggruppa per soggetto fruitore, ci potranno essere soggetti che la violano, altri no.
 			// Si vuole un evento per ogni soggetto che viola la policy
-			String idPolicyConGruppo = PolicyUtilities.buildIdConfigurazioneEventoPerPolicy(activePolicy, datiGroupBy);
+			String idPolicyConGruppo = null;
+			if(violazionePolicy || violazionePolicy_warningOnly) {
+				
+				String API = null;
+				if(policyAPI) {
+					
+					PorteNamingUtils namingUtils = new PorteNamingUtils(protocolFactory);
+					
+					String nomePorta = activePolicy.getInstanceConfiguration().getFiltro().getNomePorta();
+					if(RuoloPolicy.DELEGATA.equals(activePolicy.getInstanceConfiguration().getFiltro().getRuoloPorta())) {
+						IDPortaDelegata idPD = new IDPortaDelegata();
+						idPD.setNome(nomePorta);
+						PortaDelegata pd = configPdDManager.getPortaDelegata_SafeMethod(idPD);
+						if(pd!=null) {
+							IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
+									pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
+									pd.getServizio().getVersione());
+							IDSoggetto idFruitore = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
+							List<MappingFruizionePortaDelegata> list = configPdDManager.getMappingFruizionePortaDelegataList(idFruitore, idServizio);
+							if(list.size()<=1) {
+								API = namingUtils.normalizePD(nomePorta);
+							}
+							else {
+								String gruppo = null;
+								for (MappingFruizionePortaDelegata mapping : list) {
+									if(mapping.isDefault()) {
+										API = namingUtils.normalizePD(mapping.getIdPortaDelegata().getNome());
+									}
+									if(nomePorta.equals(mapping.getIdPortaDelegata().getNome())) {
+										gruppo = mapping.getDescrizione();
+									}
+								}
+								API = API + " (gruppo '"+gruppo+"'"+") ";
+							}
+						}
+					}
+					else if(RuoloPolicy.APPLICATIVA.equals(activePolicy.getInstanceConfiguration().getFiltro().getRuoloPorta())) {
+						IDPortaApplicativa idPA = new IDPortaApplicativa();
+						idPA.setNome(nomePorta);
+						PortaApplicativa pa = configPdDManager.getPortaApplicativa_SafeMethod(idPA);
+						if(pa!=null) {
+							IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
+									pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(),
+									pa.getServizio().getVersione());
+							List<MappingErogazionePortaApplicativa> list = configPdDManager.getMappingErogazionePortaApplicativaList(idServizio);
+							if(list.size()<=1) {
+								API = namingUtils.normalizePA(nomePorta);
+							}
+							else {
+								String gruppo = null;
+								for (MappingErogazionePortaApplicativa mapping : list) {
+									if(mapping.isDefault()) {
+										API = namingUtils.normalizePA(mapping.getIdPortaApplicativa().getNome());
+									}
+									if(nomePorta.equals(mapping.getIdPortaApplicativa().getNome())) {
+										gruppo = mapping.getDescrizione();
+									}
+								}
+								API = API + " (gruppo '"+gruppo+"'"+") ";
+							}
+						}
+					}
+				}
+				
+				idPolicyConGruppo = PolicyUtilities.buildIdConfigurazioneEventoPerPolicy(activePolicy, datiGroupBy, API);
+			
+				
+			}
 			
 			if(violazionePolicy){
-				NotificatoreEventi.getInstance().log(CategoriaEventoControlloTraffico.POLICY, 
+				CategoriaEventoControlloTraffico tipoEvento = null;
+				if(policyGlobale) {
+					tipoEvento = CategoriaEventoControlloTraffico.POLICY_GLOBALE;
+				}
+				else {
+					tipoEvento = CategoriaEventoControlloTraffico.POLICY_API;
+				}
+				NotificatoreEventi.getInstance().log(tipoEvento, 
 						idPolicyConGruppo,
 						dataEventoPolicyViolated, descriptionPolicyViolated); 
 			}
 			if(violazionePolicy_warningOnly){
-				NotificatoreEventi.getInstance().log(CategoriaEventoControlloTraffico.POLICY_WARNING_ONLY, 
+				CategoriaEventoControlloTraffico tipoEvento = null;
+				if(policyGlobale) {
+					tipoEvento = CategoriaEventoControlloTraffico.POLICY_GLOBALE_WARNING_ONLY;
+				}
+				else {
+					tipoEvento = CategoriaEventoControlloTraffico.POLICY_API_WARNING_ONLY;
+				}
+				NotificatoreEventi.getInstance().log(tipoEvento, 
 						idPolicyConGruppo,
 						dataEventoPolicyViolated, descriptionPolicyViolated); 
 			}

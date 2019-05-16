@@ -201,7 +201,8 @@
 			<xsd:enumeration value="StatoGateway"/>
 			<xsd:enumeration value="ControlloTraffico_NumeroMassimoRichiesteSimultanee"/>
 			<xsd:enumeration value="ControlloTraffico_SogliaCongestione"/>
-			<xsd:enumeration value="RateLimiting_Policy"/>
+			<xsd:enumeration value="RateLimiting_PolicyGlobale"/>
+			<xsd:enumeration value="RateLimiting_PolicyAPI"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	
@@ -209,6 +210,8 @@
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="Start"/>
 			<xsd:enumeration value="Stop"/>
+			<xsd:enumeration value="RisorseSistemaNonDisponibili"/>
+			<xsd:enumeration value="RisorseSistemaDisponibili"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	

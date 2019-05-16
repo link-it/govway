@@ -379,5 +379,5 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String MESSAGGIO_ERRORE_NON_E_POSSIBILE_CREARE_L_ACCORDO_PARTE_SPECIFICA_SENZA_SELEZIONARE_UN_SERVIZIO_APPLICATIVO_EROGATORE = "Non &egrave; possibile creare l'accordo parte specifica senza selezionare un servizio applicativo erogatore";
 	public static final String MESSAGGIO_ERRORE_IMPOSSIBILE_ELIMINARE_LA_CONFIGURAZIONE_DI_DEFAULT_EROGAZIONE = "Non è possibile eliminare il gruppo '"+Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT+"'";
 	public static final String MESSAGGIO_ERRORE_IMPOSSIBILE_ELIMINARE_LA_CONFIGURAZIONE_DI_DEFAULT_FRUIZIONE = "Non è possibile eliminare il gruppo '"+Costanti.MAPPING_FRUIZIONE_PD_DESCRIZIONE_DEFAULT+"'";
-	public static final String MESSAGGIO_ERRORE_ABILITARE_AUTENTICAZIONE_PER_AUTORIZZAZIONE_PUNTUALE = "Per poter abilitare l'autorizzazione puntuale, devi abilitare l'autenticazione";
+	public static final String MESSAGGIO_ERRORE_ABILITARE_AUTENTICAZIONE_PER_AUTORIZZAZIONE_PUNTUALE = "Per poter abilitare l'autorizzazione per richiedente, devi abilitare l'autenticazione";
 }

@@ -56,6 +56,8 @@ public class ConfigurazionePolicyFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
 				setParameter(object, "setIdPolicy", ConfigurazionePolicy.model().ID_POLICY.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "policy_id", ConfigurazionePolicy.model().ID_POLICY.getFieldType()));
+				setParameter(object, "setBuiltIn", ConfigurazionePolicy.model().BUILT_IN.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "policy_built_in", ConfigurazionePolicy.model().BUILT_IN.getFieldType()));
 				setParameter(object, "setDescrizione", ConfigurazionePolicy.model().DESCRIZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "rt_descrizione", ConfigurazionePolicy.model().DESCRIZIONE.getFieldType()));
 				setParameter(object, "setRisorsa", ConfigurazionePolicy.model().RISORSA.getFieldType(),
@@ -128,6 +130,8 @@ public class ConfigurazionePolicyFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"id"));
 				setParameter(object, "setIdPolicy", ConfigurazionePolicy.model().ID_POLICY.getFieldType(),
 					this.getObjectFromMap(map,"id-policy"));
+				setParameter(object, "setBuiltIn", ConfigurazionePolicy.model().BUILT_IN.getFieldType(),
+					this.getObjectFromMap(map,"built-in"));
 				setParameter(object, "setDescrizione", ConfigurazionePolicy.model().DESCRIZIONE.getFieldType(),
 					this.getObjectFromMap(map,"descrizione"));
 				setParameter(object, "setRisorsa", ConfigurazionePolicy.model().RISORSA.getFieldType(),

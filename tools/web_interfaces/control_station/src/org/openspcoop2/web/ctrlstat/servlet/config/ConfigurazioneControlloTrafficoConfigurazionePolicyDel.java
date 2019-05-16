@@ -37,6 +37,7 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -84,26 +85,46 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyDel extends Acti
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			StringBuilder delMsg = new StringBuilder();
 			List<ConfigurazionePolicy> elemToRemove = new ArrayList<ConfigurazionePolicy>();
+			boolean delBuiltIn = false;
+			boolean delUtente = false;
 			for (int i = 0; i < idsToRemove.size(); i++) {
 				boolean delete = true;
 				long idPolicy = Long.parseLong(idsToRemove.get(i));
 				ConfigurazionePolicy policy = confCore.getConfigurazionePolicy(idPolicy);
-					
-				long configurazioneUtilizzata = confCore.countInUseAttivazioni(policy.getIdPolicy());
 				
-				if(configurazioneUtilizzata >0){
+				if(policy.isBuiltIn()) {
+					
 					if(delMsg.length()>0){
-						delMsg.append("<br/>- ");
+						delMsg.append("<br/>");
 					}
+					delMsg.append("- ");
 					delMsg.append(policy.getIdPolicy());
-					delMsg.append(" viene utilizzata in ");
-					delMsg.append(configurazioneUtilizzata);
-					if(configurazioneUtilizzata >1)
-						delMsg.append(" istanze di ");
-					else
-						delMsg.append(" istanza di ");
-					delMsg.append(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
+					delMsg.append(" non eliminabile");
+					
 					delete = false;
+					
+					delBuiltIn = true;
+				}
+				else {
+					long configurazioneUtilizzata = confCore.countInUseAttivazioni(policy.getIdPolicy());
+					
+					if(configurazioneUtilizzata >0){
+						if(delMsg.length()>0){
+							delMsg.append("<br/>");
+						}
+						delMsg.append("- ");
+						delMsg.append(policy.getIdPolicy());
+						delMsg.append(" viene utilizzata in ");
+						delMsg.append(configurazioneUtilizzata);
+						if(configurazioneUtilizzata >1)
+							delMsg.append(" istanze di ");
+						else
+							delMsg.append(" istanza di ");
+						delMsg.append(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
+						delete = false;
+						
+						delUtente = true;
+					}
 				}
 
 				if(delete) {
@@ -113,7 +134,16 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyDel extends Acti
 			}
 			
 			if(delMsg.length() > 0){
-				delMsg.append("<br/>Per poter eliminare una policy dal registro è necessario prima eliminare tutte le sue istanze esistenti in "+ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
+				delMsg.append("<br/>");
+				if(delBuiltIn) {
+					delMsg.append("<br/>Le policy '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_BUILT_IN+"' non possono essere eliminate.");
+				}
+				if(delUtente) {
+					if(delBuiltIn) {
+						delMsg.append("<br/>");
+					}
+					delMsg.append("<br/>Per poter eliminare una policy '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_UTENTE+"' dal registro è necessario prima eliminare tutte le sue istanze esistenti in "+ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
+				}
 			}
 			
 			

@@ -6024,6 +6024,11 @@ public class ConsoleHelper {
 				}
 				ConfigurazionePolicy policy = this.confCore.getConfigurazionePolicy(attivazionePolicy.getIdPolicy());
 				String risorsa = policy.getRisorsa();
+				boolean richiesteSimultanee = policy.isSimultanee();
+				if(richiesteSimultanee) {
+					risorsa = risorsa + "Simultanee";
+				}
+				
 				Integer count = null;
 				if(attivazionePolicy.isWarningOnly()) {
 					if(mapWarningOnly.containsKey(risorsa)){
@@ -7210,7 +7215,8 @@ public class ConsoleHelper {
 	}
 	
 	// Prepara la lista di azioni delle porte
-	public void preparePorteAzioneList(List<String> listaAzioniParam, String idPorta, Integer parentConfigurazione, List<Parameter> lstParametriBreadcrumbs, 
+	public void preparePorteAzioneList(ISearch ricerca,
+			List<String> listaAzioniParamDaPaginare, String idPorta, Integer parentConfigurazione, List<Parameter> lstParametriBreadcrumbs, 
 			String nomePorta, String objectName, List<Parameter> listaParametriSessione,
 			String labelPerPorta, ServiceBinding serviceBinding, AccordoServizioParteComuneSintetico aspc) throws Exception {
 		try {
@@ -7219,15 +7225,57 @@ public class ConsoleHelper {
 			// setto la barra del titolo
 
 			String label = this.getLabelAzione(serviceBinding);
+						
+			int idLista = -1;
+			if(PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AZIONE.equals(objectName)) {
+				idLista = Liste.PORTE_DELEGATE_AZIONI;
+			}
+			else {
+				idLista = Liste.PORTE_APPLICATIVE_AZIONI;
+			}
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+
+			List<String> listaAzioniPaginata = new ArrayList<>();
+			if(listaAzioniParamDaPaginare!=null && !listaAzioniParamDaPaginare.isEmpty()) {
+				List<String> listaAzioniDopoSearch = new ArrayList<>();
+				if(search!=null && !"".equals(search)) {
+					for (int i = 0; i < listaAzioniParamDaPaginare.size(); i++) {
+						if(listaAzioniParamDaPaginare.get(i).toLowerCase().contains(search.toLowerCase())) {
+							listaAzioniDopoSearch.add(listaAzioniParamDaPaginare.get(i));
+						}
+					}
+				}
+				else {
+					listaAzioniDopoSearch.addAll(listaAzioniParamDaPaginare);
+				}
+				ricerca.setNumEntries(idLista, listaAzioniDopoSearch.size());
+				
+				if(listaAzioniDopoSearch!=null && !listaAzioniDopoSearch.isEmpty()) {
+					for (int i = 0; i < listaAzioniDopoSearch.size(); i++) {
+						if(i>=offset && i<(offset+limit)) {
+							listaAzioniPaginata.add(listaAzioniDopoSearch.get(i));
+						}
+					}
+				}
+			}
+			else {
+				ricerca.setNumEntries(idLista, listaAzioniParamDaPaginare.size());
+			}
 			
-			ServletUtils.disabledPageDataSearch(this.pd);
-			//this.pd.setSearchLabel(label);
-			//this.pd.setSearchDescription("");
-			this.pd.setPageSize(1000);
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			
+			this.pd.setSearchLabel(this.getLabelAzione(serviceBinding));
+			if (!search.equals("")) {
+				ServletUtils.enabledPageDataSearch(this.pd, label, search);
+			}
 			
 			List<String> listaAzioni = new ArrayList<>();
 			HashMap<String, ResourceSintetica> mapToResource = new HashMap<>();
-			for (String azione : listaAzioniParam) {
+			for (String azione : listaAzioniPaginata) {
 				if(ServiceBinding.SOAP.equals(serviceBinding)) {
 					listaAzioni.add(azione);
 				}
@@ -7307,7 +7355,6 @@ public class ConsoleHelper {
 
 					dati.addElement(e);
 				}
-				this.pd.setNumEntries(listaAzioni.size());
 			}
 
 			
@@ -7632,6 +7679,23 @@ public class ConsoleHelper {
 			}
 			
 			this.pd.addFilter(Filtri.FILTRO_RUOLO, RuoliCostanti.LABEL_RUOLO, ruolo, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+		
+	public void addFilterTipoPolicy(String tipoPolicy, boolean postBack) throws Exception{
+		try {
+
+			String selectedValue = tipoPolicy != null ? tipoPolicy : CostantiControlStation.DEFAULT_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO;
+
+			this.pd.addFilter(Filtri.FILTRO_TIPO_POLICY, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO, 
+					selectedValue, 
+					CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_VALORI, 
+					CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_LABELS, 
+					postBack, this.getSize());
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);

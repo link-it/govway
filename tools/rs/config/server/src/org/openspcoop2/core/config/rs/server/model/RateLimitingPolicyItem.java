@@ -30,37 +30,15 @@ import javax.validation.Valid;
 public class RateLimitingPolicyItem  {
   
   @Schema(required = true, description = "")
-  private String identificativo = null;
-  
-  @Schema(description = "")
   private String nome = null;
- /**
-   * Get identificativo
-   * @return identificativo
-  **/
-  @JsonProperty("identificativo")
-  @NotNull
-  @Valid
- @Size(max=255)  public String getIdentificativo() {
-    return this.identificativo;
-  }
-
-  public void setIdentificativo(String identificativo) {
-    this.identificativo = identificativo;
-  }
-
-  public RateLimitingPolicyItem identificativo(String identificativo) {
-    this.identificativo = identificativo;
-    return this;
-  }
-
  /**
    * Get nome
    * @return nome
   **/
   @JsonProperty("nome")
+  @NotNull
   @Valid
- @Size(max=255)  public String getNome() {
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getNome() {
     return this.nome;
   }
 
@@ -79,7 +57,6 @@ public class RateLimitingPolicyItem  {
     StringBuilder sb = new StringBuilder();
     sb.append("class RateLimitingPolicyItem {\n");
     
-    sb.append("    identificativo: ").append(RateLimitingPolicyItem.toIndentedString(this.identificativo)).append("\n");
     sb.append("    nome: ").append(RateLimitingPolicyItem.toIndentedString(this.nome)).append("\n");
     sb.append("}");
     return sb.toString();

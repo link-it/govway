@@ -25,19 +25,18 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Gets or Sets RateLimitingPolicyEnum
+ * Gets or Sets RateLimitingCriteriRisorsaEnum
  */
-public enum RateLimitingPolicyEnum {
-NUMERO_RICHIESTE_GIORNALIERE("numero-richieste-giornaliere"),
-  NUMERO_RICHIESTE_ORARIE("numero-richieste-orarie"),
-  NUMERO_RICHIESTE_MINUTO("numero-richieste-minuto"),
+public enum RateLimitingCriteriRisorsaEnum {
+NUMERO_RICHIESTE("numero-richieste"),
   NUMERO_RICHIESTE_SIMULTANEE("numero-richieste-simultanee"),
-  OCCUPAZIONE_BANDA_ORARIA("occupazione-banda-oraria"),
-  TEMPO_MEDIO_ORARIO("tempo-medio-orario");
+  OCCUPAZIONE_BANDA("occupazione-banda"),
+  TEMPO_MEDIO_RISPOSTA("tempo-medio-risposta"),
+  TEMPO_COMPLESSIVO_RISPOSTA("tempo-complessivo-risposta");
 
   private String value;
 
-  RateLimitingPolicyEnum(String value) {
+  RateLimitingCriteriRisorsaEnum(String value) {
     this.value = value;
   }
 
@@ -48,8 +47,8 @@ NUMERO_RICHIESTE_GIORNALIERE("numero-richieste-giornaliere"),
   }
 
   @JsonCreator
-  public static RateLimitingPolicyEnum fromValue(String text) {
-    for (RateLimitingPolicyEnum b : RateLimitingPolicyEnum.values()) {
+  public static RateLimitingCriteriRisorsaEnum fromValue(String text) {
+    for (RateLimitingCriteriRisorsaEnum b : RateLimitingCriteriRisorsaEnum.values()) {
       if (String.valueOf(b.value).equals(text)) {
         return b;
       }

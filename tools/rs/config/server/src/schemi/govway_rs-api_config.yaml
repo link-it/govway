@@ -2272,9 +2272,9 @@ paths:
     get:
       tags:
         - erogazioni-configurazione
-      summary: Restituisce l'elenco dei soggetti autorizzati puntualmente
-      operationId: getErogazioneControlloAccessiAutorizzazionePuntualeSoggetti
-      description: Questa operazione consente di ottenere l'elenco dei soggetti autorizzati puntualmente
+      summary: Restituisce l'elenco dei soggetti autorizzati
+      operationId: getErogazioneControlloAccessiAutorizzazioneSoggetti
+      description: Questa operazione consente di ottenere l'elenco dei soggetti autorizzati 
       responses:
         "200":
           description: Elenco soggetti autorizzati restituito con successo
@@ -2299,9 +2299,9 @@ paths:
     post:
       tags:
         - erogazioni-configurazione
-      summary: Aggiunta di soggetti all'elenco dei soggetti autorizzati puntualmente
-      operationId: addErogazioneControlloAccessiAutorizzazionePuntualeSoggetti
-      description: Questa operazione consente di aggiungere soggetti all'elenco dei soggetti autorizzati puntualmente
+      summary: Aggiunta di soggetti all'elenco dei soggetti autorizzati
+      operationId: addErogazioneControlloAccessiAutorizzazioneSoggetti
+      description: Questa operazione consente di aggiungere soggetti all'elenco dei soggetti autorizzati
       requestBody:
         description: Soggetti che si vuole aggiungere
         required: true
@@ -2338,9 +2338,9 @@ paths:
     delete:
       tags:
         - erogazioni-configurazione
-      summary: Elimina soggetti all'elenco dei soggetti autorizzati puntualmente
-      operationId: deleteErogazioneControlloAccessiAutorizzazionePuntualeSoggetti
-      description: Questa operazione consente di eliminare soggetti all'elenco dei soggetti autorizzati puntualmente
+      summary: Elimina soggetti all'elenco dei soggetti autorizzati
+      operationId: deleteErogazioneControlloAccessiAutorizzazioneSoggetti
+      description: Questa operazione consente di eliminare soggetti all'elenco dei soggetti autorizzati
       responses: 
         '204':
           description: Soggetti eliminati con successo
@@ -2370,9 +2370,9 @@ paths:
     get:
       tags:
         - erogazioni-configurazione
-      summary: Restituisce l'elenco degli applicativi autorizzati puntualmente
-      operationId: getErogazioneControlloAccessiAutorizzazionePuntualeApplicativi
-      description: Questa operazione consente di ottenere l'elenco degli applicativi autorizzati puntualmente
+      summary: Restituisce l'elenco degli applicativi autorizzati
+      operationId: getErogazioneControlloAccessiAutorizzazioneApplicativi
+      description: Questa operazione consente di ottenere l'elenco degli applicativi autorizzati
       responses:
         "200":
           description: Elenco applicativi autorizzati restituito con successo
@@ -2397,9 +2397,9 @@ paths:
     post:
       tags:
         - erogazioni-configurazione
-      summary: Aggiunta di applicativi all'elenco degli applicativi autorizzati puntualmente
-      operationId: addErogazioneControlloAccessiAutorizzazionePuntualeApplicativi
-      description: Questa operazione consente di aggiungere applicativi all'elenco degli applicativi autorizzati puntualmente
+      summary: Aggiunta di applicativi all'elenco degli applicativi autorizzati
+      operationId: addErogazioneControlloAccessiAutorizzazioneApplicativi
+      description: Questa operazione consente di aggiungere applicativi all'elenco degli applicativi autorizzati
       requestBody:
         description: Applicativi che si vuole aggiungere
         required: true
@@ -2436,9 +2436,9 @@ paths:
     delete:
       tags:
         - erogazioni-configurazione
-      summary: Elimina applicativi dall'elenco degli applicativi autorizzati puntualmente
-      operationId: deleteErogazioneControlloAccessiAutorizzazionePuntualeApplicativi
-      description: Questa operazione consente di eliminare applicativi dall'elenco degli applicativi autorizzati puntualmente
+      summary: Elimina applicativi dall'elenco degli applicativi autorizzati
+      operationId: deleteErogazioneControlloAccessiAutorizzazioneApplicativi
+      description: Questa operazione consente di eliminare applicativi dall'elenco degli applicativi autorizzati
       responses: 
         '204':
           description: Applicativi eliminati con successo
@@ -2661,12 +2661,13 @@ paths:
       - $ref: "govway_core.yaml#/components/parameters/id_versione"  
       - $ref: "govway_core.yaml#/components/parameters/gruppo"
       - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
-      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
-      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
-      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
     get:
       tags:
         - erogazioni-configurazione
+      parameters:
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
       summary: Restituisce l'elenco delle policy di rate limiting configurate
       operationId: findAllErogazioneRateLimitingPolicies
       description: Questa operazione consente di ottenere l'elenco delle policy di rate limiting configurate
@@ -2703,7 +2704,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RateLimitingPolicyErogazioneNew'
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RateLimitingPolicyErogazione'
       responses:
         '201':
           description: Policy aggiunta con con successo
@@ -2769,7 +2770,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RateLimitingPolicyBaseErogazione'
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RateLimitingPolicyErogazioneUpdate'
       responses: 
         '204':
           description: La policy è stata aggiornata correttamente
@@ -2951,12 +2952,13 @@ paths:
       - $ref: "govway_core.yaml#/components/parameters/id_versione"  
       - $ref: "govway_core.yaml#/components/parameters/gruppo"
       - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
-      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
-      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
-      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
     get:
       tags:
         - erogazioni-configurazione
+      parameters:
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
       summary: Restituisce l'elenco delle regole di correlazione applicativa per la richiesta
       operationId: findAllErogazioneTracciamentoCorrelazioneApplicativaRichiesta
       description: Questa operazione consente di ottenere l'elenco delle regole di correlazione applicativa per la richiesta
@@ -3109,12 +3111,13 @@ paths:
       - $ref: "govway_core.yaml#/components/parameters/id_versione"  
       - $ref: "govway_core.yaml#/components/parameters/gruppo"
       - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
-      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
-      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
-      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
     get:
       tags:
         - erogazioni-configurazione
+      parameters:
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
       summary: Restituisce l'elenco delle regole di correlazione applicativa per la risposta
       operationId: findAllErogazioneTracciamentoCorrelazioneApplicativaRisposta
       description: Questa operazione consente di ottenere l'elenco delle regole di correlazione applicativa per la risposta
@@ -4533,9 +4536,9 @@ paths:
     get:
       tags:
         - fruizioni-configurazione
-      summary: Restituisce l'elenco degli applicativi autorizzati puntualmente
-      operationId: getFruizioneControlloAccessiAutorizzazionePuntualeApplicativi
-      description: Questa operazione consente di ottenere l'elenco degli applicativi autorizzati puntualmente
+      summary: Restituisce l'elenco degli applicativi autorizzati
+      operationId: getFruizioneControlloAccessiAutorizzazioneApplicativi
+      description: Questa operazione consente di ottenere l'elenco degli applicativi autorizzati
       responses:
         "200":
           description: Elenco applicativi autorizzati restituito con successo
@@ -4560,9 +4563,9 @@ paths:
     post:
       tags:
         - fruizioni-configurazione
-      summary: Aggiunta di applicativi all'elenco degli applicativi autorizzati puntualmente
-      operationId: addFruizioneControlloAccessiAutorizzazionePuntualeApplicativi
-      description: Questa operazione consente di aggiungere applicativi all'elenco degli applicativi autorizzati puntualmente
+      summary: Aggiunta di applicativi all'elenco degli applicativi autorizzati
+      operationId: addFruizioneControlloAccessiAutorizzazioneApplicativi
+      description: Questa operazione consente di aggiungere applicativi all'elenco degli applicativi autorizzati
       requestBody:
         description: Applicativi che si vuole aggiungere
         required: true
@@ -4600,9 +4603,9 @@ paths:
     delete:
       tags:
         - fruizioni-configurazione
-      summary: Elimina applicativi dall'elenco degli applicativi autorizzati puntualmente
-      operationId: deleteFruizioneControlloAccessiAutorizzazionePuntualeApplicativi
-      description: Questa operazione consente di eliminare applicativi dall'elenco degli applicativi autorizzati puntualmente
+      summary: Elimina applicativi dall'elenco degli applicativi autorizzati
+      operationId: deleteFruizioneControlloAccessiAutorizzazioneApplicativi
+      description: Questa operazione consente di eliminare applicativi dall'elenco degli applicativi autorizzati
       responses: 
         '204':
           description: Applicativi eliminati con successo
@@ -4830,12 +4833,13 @@ paths:
       - $ref: "govway_core.yaml#/components/parameters/id_versione" 
       - $ref: "govway_core.yaml#/components/parameters/gruppo"
       - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
-      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
-      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
-      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
     get:
       tags:
         - fruizioni-configurazione
+      parameters:
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
       summary: Restituisce l'elenco delle policy di rate limiting configurate
       operationId: findAllFruizioneRateLimitingPolicies
       description: Questa operazione consente di ottenere l'elenco delle policy di rate limiting configurate
@@ -4872,7 +4876,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RateLimitingPolicyFruizioneNew'
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RateLimitingPolicyFruizione'
       responses:
         '201':
           description: Policy aggiunta con con successo
@@ -4939,7 +4943,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RateLimitingPolicyBaseFruizione'
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RateLimitingPolicyFruizioneUpdate'
       responses: 
         '204':
           description: La policy è stata aggiornata correttamente
@@ -5124,12 +5128,13 @@ paths:
       - $ref: "govway_core.yaml#/components/parameters/id_versione"  
       - $ref: "govway_core.yaml#/components/parameters/gruppo"
       - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
-      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
-      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
-      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
     get:
       tags:
         - fruizioni-configurazione
+      parameters:
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
       summary: Restituisce l'elenco delle regole di correlazione applicativa per la richiesta
       operationId: findAllFruizioneTracciamentoCorrelazioneApplicativaRichiesta
       description: Questa operazione consente di ottenere l'elenco delle regole di correlazione applicativa per la richiesta
@@ -5284,12 +5289,13 @@ paths:
       - $ref: "govway_core.yaml#/components/parameters/id_versione"  
       - $ref: "govway_core.yaml#/components/parameters/gruppo"
       - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
-      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
-      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
-      - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
     get:
       tags:
         - fruizioni-configurazione
+      parameters:
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
       summary: Restituisce l'elenco delle regole di correlazione applicativa per la risposta
       operationId: findAllFruizioneTracciamentoCorrelazioneApplicativaRisposta
       description: Questa operazione consente di ottenere l'elenco delle regole di correlazione applicativa per la risposta

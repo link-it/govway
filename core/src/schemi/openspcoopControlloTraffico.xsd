@@ -137,6 +137,7 @@
 		<xsd:sequence>
 			
 			<xsd:element name="id-policy" type="xsd:string" />
+			<xsd:element name="built-in" type="xsd:boolean" default="false" />
 			<xsd:element name="descrizione" type="xsd:string" />
 			<xsd:element name="risorsa" type="xsd:string" /> <!--  Lascio libero in modo da aggiungere facilmente nuove policy senza intervenire sul db type="tipo-risorsa"  -->	
 			<xsd:element name="simultanee" type="xsd:boolean" default="false" />
@@ -302,6 +303,7 @@
 			<xsd:enumeration value="NumeroRichiesteFallite"/>
 			<xsd:enumeration value="NumeroRichiesteCompletateConSuccesso"/>
 			<xsd:enumeration value="NumeroFaultApplicativi"/>
+			<xsd:enumeration value="NumeroRichiesteFalliteOFaultApplicativi"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	

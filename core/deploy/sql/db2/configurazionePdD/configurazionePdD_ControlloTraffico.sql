@@ -43,6 +43,7 @@ CREATE TABLE ct_config_policy
 (
 	-- Dati Generali
 	policy_id VARCHAR(255) NOT NULL,
+	policy_built_in SMALLINT NOT NULL DEFAULT 0,
 	rt_descrizione CLOB NOT NULL,
 	rt_risorsa VARCHAR(255) NOT NULL,
 	-- Valori di Soglia

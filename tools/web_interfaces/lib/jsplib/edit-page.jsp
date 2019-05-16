@@ -538,8 +538,8 @@ for (int i = 0; i < dati.size(); i++) {
 								    									String chkEvtOnClick = !de.getOnClick().equals("") ? (" onClick=\"" + de.getOnClick() + "\" ") :" ";
 								    									String chkVal = de.getSelected().equals("yes") ? " checked='true' " : " ";
 								    									String disVal = pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton") ? "disabled=\"disabled\"" : "";
-								    									
-								    									%>	<table class="controlset">
+								    									String controlSetClass = deInfo != null ? "controlset-cb-info" : "controlset";
+								    									%>	<table class="<%=controlSetClass %>">
 						    													<tr> 
 						    														<td>
 								   														<input type="checkbox" name="<%= deName  %>" value="yes" <%=chkVal %> <%=chkEvtOnClick %> <%=disVal %> >
@@ -549,6 +549,21 @@ for (int i = 0; i < dati.size(); i++) {
 								   														<span class="controlset"><%=de.getLabelRight() %></span>
 								   													</td>
 								   													<% } %>
+								   													<%
+																			      		if(deInfo != null){
+																			      			String idDivIconInfo = "divIconInfo_"+i;
+																			      			String idIconInfo = "iconInfo_"+i; 
+																			      	%> <td>	
+																			      			<div class="iconInfoBox-cb-info" id="<%=idDivIconInfo %>">
+																				      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+																				      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+																						      	<span class="spanIconInfoBox-cb-info">
+																									<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+																								</span>
+																							</div>
+																						</td>
+																			      	<% } 
+																			      	%>
 							   													</tr>
 							   												</table>
 								  										<% if(!deNote.equals("")){ %>

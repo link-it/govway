@@ -51,7 +51,9 @@ public enum TipoRisorsa implements IEnumeration , Serializable , Cloneable {
 	@javax.xml.bind.annotation.XmlEnumValue("NumeroRichiesteCompletateConSuccesso")
 	NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO ("NumeroRichiesteCompletateConSuccesso"),
 	@javax.xml.bind.annotation.XmlEnumValue("NumeroFaultApplicativi")
-	NUMERO_FAULT_APPLICATIVI ("NumeroFaultApplicativi");
+	NUMERO_FAULT_APPLICATIVI ("NumeroFaultApplicativi"),
+	@javax.xml.bind.annotation.XmlEnumValue("NumeroRichiesteFalliteOFaultApplicativi")
+	NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI ("NumeroRichiesteFalliteOFaultApplicativi");
 	
 	
 	/** Value */

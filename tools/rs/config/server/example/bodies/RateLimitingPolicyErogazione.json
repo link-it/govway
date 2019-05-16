@@ -1,12 +1,12 @@
 {
-    
+    "nome": "policyTestNomeModificato",
     "stato": "disabilitato",
+
     "soglia_ridefinita": false,
     "soglia_valore": 302,
 
     "filtro": {
         "soggetto_fruitore": "SoggettoJson",
-        "azione": "Qualsiasi",
         "chiave_tipo": "content-based",
         "chiave_nome": "chiave1",
         "filtro_chiave_valore": "chiave_valore1"

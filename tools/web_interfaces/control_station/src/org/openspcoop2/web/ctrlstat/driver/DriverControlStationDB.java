@@ -39,8 +39,10 @@ import javax.sql.DataSource;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.commons.search.utils.RegistroCore;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -55,6 +57,8 @@ import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoApplicabilita;
 import org.openspcoop2.core.controllo_traffico.constants.TipoControlloPeriodo;
+import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoRealtime;
+import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoStatistico;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 import org.openspcoop2.core.controllo_traffico.dao.IDBAttivazionePolicyServiceSearch;
 import org.openspcoop2.core.controllo_traffico.dao.IDBConfigurazionePolicyServiceSearch;
@@ -91,6 +95,7 @@ import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.lib.audit.DriverAudit;
@@ -2443,9 +2448,14 @@ public class DriverControlStationDB  {
 		Connection con = null;
 		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY;
 		String search = null;
-
+		String filterTipoPolicy = null;
 		if(ricerca != null) {
 			search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+	
+			filterTipoPolicy = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_TIPO_POLICY);
+			
+			this.log.debug("search : " + search);
+			this.log.debug("filterTipoPolicy : " + filterTipoPolicy);
 		}
 
 		if (this.atomica) {
@@ -2471,6 +2481,13 @@ public class DriverControlStationDB  {
 			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			IExpression expr = serviceManager.getConfigurazionePolicyServiceSearch().newExpression();
+			
+			if(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_BUILT_IN.equals(filterTipoPolicy)) {
+				expr.equals(ConfigurazionePolicy.model().BUILT_IN, true);
+			}
+			else if(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_UTENTE.equals(filterTipoPolicy)) {
+				expr.equals(ConfigurazionePolicy.model().BUILT_IN, false);
+			}
 			
 			if(search != null  && !"".equals(search)){
 				expr.ilike(ConfigurazionePolicy.model().ID_POLICY, search, LikeMode.ANYWHERE);
@@ -2583,6 +2600,12 @@ public class DriverControlStationDB  {
 		if (limit == 0) // con limit
 			limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
 		
+		String filterTipoPolicy = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_TIPO_POLICY);
+		
+		this.log.debug("search : " + search);
+		this.log.debug("filterTipoPolicy : " + filterTipoPolicy);
+		
+		
 		if (this.atomica) {
 			try {
 				con = this.datasource.getConnection();
@@ -2599,6 +2622,7 @@ public class DriverControlStationDB  {
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		List<ConfigurazionePolicy> listaPolicy = new ArrayList<ConfigurazionePolicy>();
 		
+		long count = 0;
 		try {
 			
 			ServiceManagerProperties properties = new ServiceManagerProperties();
@@ -2608,16 +2632,32 @@ public class DriverControlStationDB  {
 			
 			IExpression expr = serviceManager.getConfigurazionePolicyServiceSearch().newExpression();
 			
+			if(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_BUILT_IN.equals(filterTipoPolicy)) {
+				expr.equals(ConfigurazionePolicy.model().BUILT_IN, true);
+			}
+			else if(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_UTENTE.equals(filterTipoPolicy)) {
+				expr.equals(ConfigurazionePolicy.model().BUILT_IN, false);
+			}
+			
 			if(search != null  && !"".equals(search)){
 				expr.ilike(ConfigurazionePolicy.model().ID_POLICY, search, LikeMode.ANYWHERE);
+			}
+			
+			if(ricerca!=null) {
+				NonNegativeNumber nn = serviceManager.getConfigurazionePolicyServiceSearch().count(expr);
+				if(nn!=null) {
+					count = nn.longValue();
+				}
 			}
 			
 			IPaginatedExpression pagExpr = serviceManager.getConfigurazionePolicyServiceSearch().toPaginatedExpression(expr);
 			pagExpr.offset(offset).limit(limit);
 			pagExpr.sortOrder(SortOrder.ASC);
+			pagExpr.addOrder(ConfigurazionePolicy.model().BUILT_IN);
 			pagExpr.addOrder(ConfigurazionePolicy.model().ID_POLICY);
 			
 			listaPolicy = serviceManager.getConfigurazionePolicyServiceSearch().findAll(pagExpr);
+						
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
@@ -2632,7 +2672,7 @@ public class DriverControlStationDB  {
 		}
 		
 		if(ricerca!=null && listaPolicy!=null) {
-			ricerca.setNumEntries(idLista,listaPolicy.size());
+			ricerca.setNumEntries(idLista,(int)count);
 		}
 		
 		return listaPolicy;
@@ -2671,6 +2711,7 @@ public class DriverControlStationDB  {
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		List<AttivazionePolicy> listaPolicy = new ArrayList<AttivazionePolicy>();
 		
+		long count = 0;
 		try {
 			
 			ServiceManagerProperties properties = new ServiceManagerProperties();
@@ -2692,6 +2733,13 @@ public class DriverControlStationDB  {
 				expr.ilike(AttivazionePolicy.model().ID_POLICY, search, LikeMode.ANYWHERE);
 			}
 		
+			if(ricerca!=null) {
+				NonNegativeNumber nn = serviceManager.getAttivazionePolicyServiceSearch().count(expr);
+				if(nn!=null) {
+					count = nn.longValue();
+				}
+			}
+			
 			IPaginatedExpression pagExpr = serviceManager.getAttivazionePolicyServiceSearch().toPaginatedExpression(expr);
 			pagExpr.offset(offset).limit(limit);
 			pagExpr.sortOrder(SortOrder.ASC);
@@ -2699,6 +2747,7 @@ public class DriverControlStationDB  {
 			pagExpr.addOrder(AttivazionePolicy.model().ID_POLICY);
 			
 			listaPolicy = serviceManager.getAttivazionePolicyServiceSearch().findAll(pagExpr);
+						
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
@@ -2713,13 +2762,71 @@ public class DriverControlStationDB  {
 		}
 		
 		if(ricerca!=null && listaPolicy!=null) {
-			ricerca.setNumEntries(idLista,listaPolicy.size());
+			ricerca.setNumEntries(idLista,(int) count);
 		}
 		
 		return listaPolicy;
 	}
 	
-	public List<InfoPolicy> getInfoPolicyList(String idPolicyParam) throws DriverControlStationException{
+	public AttivazionePolicy getAttivazionePolicy(String alias, RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationException, NotFoundException{
+		String nomeMetodo = "configurazioneControlloTrafficoAttivazionePolicyList";
+		// ritorna la configurazione controllo del traffico della PdD
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		AttivazionePolicy policy = null;
+		
+		try {
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			
+			IExpression expr = serviceManager.getAttivazionePolicyServiceSearch().newExpression();
+			
+			expr.equals(AttivazionePolicy.model().FILTRO.RUOLO_PORTA, ruoloPorta);
+			expr.equals(AttivazionePolicy.model().FILTRO.NOME_PORTA, nomePorta);
+			expr.equals(AttivazionePolicy.model().ALIAS, alias);
+						
+			policy = serviceManager.getAttivazionePolicyServiceSearch().find(expr);
+			if(policy==null) {
+				throw new NotFoundException("Not Found");
+			}
+		} catch(NotFoundException notFound) {
+			throw notFound;
+		} 
+		catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return policy;
+	}
+	
+	
+	public List<InfoPolicy> getInfoPolicyList(Boolean builtIn, String idPolicyParam) throws DriverControlStationException{
 		String nomeMetodo = "getInfoPolicyList";
 		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
@@ -2754,6 +2861,9 @@ public class DriverControlStationDB  {
 			if(idPolicyParam != null  && !"".equals(idPolicyParam)){
 				expr.equals(ConfigurazionePolicy.model().ID_POLICY, idPolicyParam);
 			}
+			if(builtIn!=null) {
+				expr.equals(ConfigurazionePolicy.model().BUILT_IN, builtIn);
+			}
 			
 			IPaginatedExpression pagExpr = serviceManager.getConfigurazionePolicyServiceSearch().toPaginatedExpression(expr);
 			pagExpr.offset(offset).limit(limit);
@@ -2765,11 +2875,15 @@ public class DriverControlStationDB  {
 				mapList = serviceManager.getConfigurazionePolicyServiceSearch().select(pagExpr, 
 						ConfigurazionePolicy.model().ID_POLICY,
 						ConfigurazionePolicy.model().RISORSA,
+						ConfigurazionePolicy.model().BUILT_IN,
 						ConfigurazionePolicy.model().DESCRIZIONE,
 						ConfigurazionePolicy.model().VALORE,
 						ConfigurazionePolicy.model().SIMULTANEE,
 						ConfigurazionePolicy.model().MODALITA_CONTROLLO,
+						ConfigurazionePolicy.model().TIPO_INTERVALLO_OSSERVAZIONE_REALTIME,
+						ConfigurazionePolicy.model().TIPO_INTERVALLO_OSSERVAZIONE_STATISTICO,
 						ConfigurazionePolicy.model().TIPO_APPLICABILITA,
+						ConfigurazionePolicy.model().APPLICABILITA_CON_CONGESTIONE,
 						ConfigurazionePolicy.model().APPLICABILITA_DEGRADO_PRESTAZIONALE,
 						ConfigurazionePolicy.model().DEGRADO_AVG_TIME_MODALITA_CONTROLLO
 						);
@@ -2787,6 +2901,11 @@ public class DriverControlStationDB  {
 					InfoPolicy info = new InfoPolicy();
 					info.setIdPolicy(idPolicy);
 					info.setTipoRisorsa(TipoRisorsa.toEnumConstant(resource, true));
+					
+					Object builtInValue =  map.get(ConfigurazionePolicy.model().BUILT_IN.getFieldName());
+					if(builtInValue!=null && builtInValue instanceof Boolean){
+						info.setBuiltIn((Boolean)builtInValue);
+					}
 					
 					Object descr =  map.get(ConfigurazionePolicy.model().DESCRIZIONE.getFieldName());
 					if(descr!=null && descr instanceof String){
@@ -2808,6 +2927,18 @@ public class DriverControlStationDB  {
                         		TipoControlloPeriodo tipo = TipoControlloPeriodo.toEnumConstant((String)controllo, true);
                         		info.setIntervalloUtilizzaRisorseStatistiche(TipoControlloPeriodo.STATISTIC.equals(tipo));
                         		info.setIntervalloUtilizzaRisorseRealtime(TipoControlloPeriodo.REALTIME.equals(tipo));
+                        		if(info.isIntervalloUtilizzaRisorseStatistiche()) {
+                        			Object tipoPeriodo =  map.get(ConfigurazionePolicy.model().TIPO_INTERVALLO_OSSERVAZIONE_STATISTICO.getFieldName());
+                        			if(tipoPeriodo!=null) {
+                        				info.setIntervalloUtilizzaRisorseStatisticheTipoPeriodo(TipoPeriodoStatistico.toEnumConstant((String)tipoPeriodo,true));
+                        			}
+                        		}
+                        		if(info.isIntervalloUtilizzaRisorseRealtime()) {
+                        			Object tipoPeriodo =  map.get(ConfigurazionePolicy.model().TIPO_INTERVALLO_OSSERVAZIONE_REALTIME.getFieldName());
+                        			if(tipoPeriodo!=null) {
+                        				info.setIntervalloUtilizzaRisorseRealtimeTipoPeriodo(TipoPeriodoRealtime.toEnumConstant((String)tipoPeriodo,true));
+                        			}
+                        		}
                         	}
 						}
 					}
@@ -2818,6 +2949,16 @@ public class DriverControlStationDB  {
                     if(app!=null && app instanceof String){
                         TipoApplicabilita tipoApplicabilita = TipoApplicabilita.toEnumConstant((String)app, true);
                         if(TipoApplicabilita.CONDIZIONALE.equals(tipoApplicabilita)){
+                        	
+                        	Object enabledCongestione =  map.get(ConfigurazionePolicy.model().APPLICABILITA_CON_CONGESTIONE.getFieldName());
+                            boolean congestione = false;   
+                            if(enabledCongestione!=null && (enabledCongestione instanceof Boolean)){
+                            	congestione = (Boolean)enabledCongestione;
+                            }
+                            if(congestione){
+                            	info.setControlloCongestione(true);
+                            }
+                        	
                         	Object enabled =  map.get(ConfigurazionePolicy.model().APPLICABILITA_DEGRADO_PRESTAZIONALE.getFieldName());
                             boolean degrado = false;   
                             if(enabled!=null && (enabled instanceof Boolean)){
@@ -2829,6 +2970,7 @@ public class DriverControlStationDB  {
                             		TipoControlloPeriodo tipo = TipoControlloPeriodo.toEnumConstant((String)controllo, true);
                             		info.setDegradoPrestazionaleUtilizzaRisorseStatistiche(TipoControlloPeriodo.STATISTIC.equals(tipo));
                             		info.setDegradoPrestazionaleUtilizzaRisorseRealtime(TipoControlloPeriodo.REALTIME.equals(tipo));
+                            		info.setDegradoPrestazione(true);
                             	}
                             }
                         }
@@ -3453,21 +3595,31 @@ public class DriverControlStationDB  {
 			pagExpr.and();
 			pagExpr.equals(AttivazionePolicy.model().ID_POLICY, policyId);
 			
-			pagExpr.addOrder(AttivazionePolicy.model().ID_ACTIVE_POLICY, SortOrder.DESC);
-			pagExpr.limit(1);
+			// non funziona perchè :10 viene ordinato prima di :9
+			//pagExpr.addOrder(AttivazionePolicy.model().ID_ACTIVE_POLICY, SortOrder.DESC);
+			//pagExpr.limit(1);
+			// devo scorrerle tutte
 			
 			try{
 				List<Object> list = serviceManager.getAttivazionePolicyServiceSearch().select(pagExpr, AttivazionePolicy.model().ID_ACTIVE_POLICY);
 				if(list!=null && list.size()>0){
-					Object r = list.get(0); // limit 1
-					if(r instanceof String){
-						String s = (String)r;
-						if(s.contains(":")){
-							int last = s.lastIndexOf(":");
-							if(last<(s.length()-1)){
-								return Integer.parseInt(s.substring(s.lastIndexOf(":")+1,s.length())) + 1;
+					int found = -1;
+					for (Object r : list) {
+						if(r instanceof String){
+							String s = (String)r;
+							if(s.contains(":")){
+								int last = s.lastIndexOf(":");
+								if(last<(s.length()-1)){
+									int value = Integer.parseInt(s.substring(s.lastIndexOf(":")+1,s.length()));
+									if(value > found) {
+										found = value;
+									}
+								}
 							}
-						}
+						}	
+					}
+					if(found>0) {
+						return found+1;
 					}
 				}
 			}catch(NotFoundException notF){
@@ -3489,7 +3641,8 @@ public class DriverControlStationDB  {
 		}
 	}
 	
-	public AttivazionePolicy getGlobalPolicy(String policyId, AttivazionePolicyFiltro filtro, AttivazionePolicyRaggruppamento groupBy) throws DriverControlStationException,DriverControlStationNotFound{
+	public AttivazionePolicy getGlobalPolicy(String policyId, AttivazionePolicyFiltro filtroParam, AttivazionePolicyRaggruppamento groupBy,
+			RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationException,DriverControlStationNotFound{
 		String nomeMetodo = "getFreeCounterForGlobalPolicy"; 
 		Connection con = null;
 		if (this.atomica) {
@@ -3515,6 +3668,16 @@ public class DriverControlStationDB  {
 			
 			expression.and();
 			expression.equals(AttivazionePolicy.model().ID_POLICY, policyId);
+			
+			AttivazionePolicyFiltro filtro = filtroParam;
+			if(ruoloPorta!=null && nomePorta!=null) {
+				filtro.setEnabled(true);
+				filtro.setRuoloPorta(ruoloPorta);
+				filtro.setNomePorta(nomePorta);
+			}
+			else {
+				expression.isNull(AttivazionePolicy.model().FILTRO.NOME_PORTA);
+			}
 			
 			expression.equals(AttivazionePolicy.model().FILTRO.ENABLED, filtro.isEnabled());
 			if(filtro.isEnabled()){
@@ -3655,7 +3818,8 @@ public class DriverControlStationDB  {
 		}
 	}
 	
-	public AttivazionePolicy getGlobalPolicyByAlias(String alias) throws DriverControlStationException,DriverControlStationNotFound{
+	public AttivazionePolicy getGlobalPolicyByAlias(String alias,
+			RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationException,DriverControlStationNotFound{
 		String nomeMetodo = "getFreeCounterForGlobalPolicy"; 
 		Connection con = null;
 		if (this.atomica) {
@@ -3680,7 +3844,16 @@ public class DriverControlStationDB  {
 			IExpression expression = serviceManager.getAttivazionePolicyServiceSearch().newExpression();
 			
 			expression.and();
-			expression.equals(AttivazionePolicy.model().ALIAS, alias);
+			expression.ilike(AttivazionePolicy.model().ALIAS, alias, LikeMode.EXACT);
+			
+			if(ruoloPorta!=null && nomePorta!=null) {
+				expression.equals(AttivazionePolicy.model().FILTRO.ENABLED, true);
+				expression.equals(AttivazionePolicy.model().FILTRO.RUOLO_PORTA, ruoloPorta);
+				expression.equals(AttivazionePolicy.model().FILTRO.NOME_PORTA, nomePorta);
+			}
+			else {
+				expression.isNull(AttivazionePolicy.model().FILTRO.NOME_PORTA);
+			}
 		
 			return serviceManager.getAttivazionePolicyServiceSearch().find(expression);
 		}catch (NotFoundException e) {

@@ -37,6 +37,7 @@ import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
+import org.openspcoop2.core.controllo_traffico.constants.Costanti;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoErrore;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
@@ -123,7 +124,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 			if(registerThread){				
 											
 				// Prelevo la configurazione del Controllo del Traffico per quanto concerne le policy attive
-				configPdDManager = ConfigurazionePdDManager.getInstance();
+				configPdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
 				ElencoIdPolicyAttive idActivePolicy = null;
 				try {
 					idActivePolicy = configPdDManager.getElencoIdPolicyAttive(ConfigurazioneControlloTraffico.isPolicyReadedWithDynamicCache());
@@ -240,6 +241,16 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 										throw new Exception("Istanza di Policy con id ["+idActive.getNome()+"] non esistente?");
 									}
 									
+									msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_ALIAS,
+											PolicyUtilities.getNomeActivePolicy(attivazionePolicy.getAlias(), attivazionePolicy.getIdActivePolicy()));
+									if(attivazionePolicy.getFiltro()!=null && attivazionePolicy.getFiltro().getNomePorta()!=null && !"".equals(attivazionePolicy.getFiltro().getNomePorta())) {
+										msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_TIPO, Costanti.POLICY_API);
+									}
+									else {
+										msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_TIPO, Costanti.POLICY_GLOBALE);
+									}
+									
+									
 									// Verifico se un eventuale filtro configurato per la policy matcha con i dati della transazione
 									boolean matchFiltro = InterceptorPolicyUtilities.filter(attivazionePolicy.getFiltro(), datiTransazione);
 									if(matchFiltro){
@@ -306,6 +317,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 																						
 											// Verifico rispetto ai dati collezionati
 											RisultatoVerificaPolicy risultatoVerifica = PolicyVerifier.verifica(
+													configPdDManager, context.getProtocolFactory(),
 													gestorePolicy, log,
 													activePolicy,
 													idUnivocoGroupBy, context.getPddContext(), 
@@ -683,6 +695,9 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 						case NUMERO_FAULT_APPLICATIVI:
 							headers = op2Properties.getControlloTrafficoNumeroFaultApplicativiHeaderLimit();
 							break;
+						case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+							headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit();
+							break;
 						}
 						
 						if(headers!=null && headers.length>0) {
@@ -723,6 +738,9 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 								break;
 							case NUMERO_FAULT_APPLICATIVI:
 								headers = op2Properties.getControlloTrafficoNumeroFaultApplicativiHeaderRemaining();
+								break;
+							case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+								headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining();
 								break;
 							}
 							if(headers!=null && headers.length>0) {
@@ -768,6 +786,9 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 								break;
 							case NUMERO_FAULT_APPLICATIVI:
 								headers = op2Properties.getControlloTrafficoNumeroFaultApplicativiHeaderReset();
+								break;
+							case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+								headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset();
 								break;
 							}
 							

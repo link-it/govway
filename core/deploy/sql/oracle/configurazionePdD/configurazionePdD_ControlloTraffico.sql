@@ -68,6 +68,7 @@ CREATE TABLE ct_config_policy
 (
 	-- Dati Generali
 	policy_id VARCHAR2(255) NOT NULL,
+	policy_built_in NUMBER NOT NULL,
 	rt_descrizione CLOB NOT NULL,
 	rt_risorsa VARCHAR2(255) NOT NULL,
 	-- Valori di Soglia
@@ -119,6 +120,7 @@ CREATE TABLE ct_config_policy
 );
 
 
+ALTER TABLE ct_config_policy MODIFY policy_built_in DEFAULT 0;
 ALTER TABLE ct_config_policy MODIFY rt_simultanee DEFAULT 0;
 ALTER TABLE ct_config_policy MODIFY rt_applicabilita DEFAULT 'sempre';
 ALTER TABLE ct_config_policy MODIFY rt_applicabilita_con_cc DEFAULT 0;

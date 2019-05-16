@@ -37,8 +37,7 @@ components:
       description: Identificativo della policy di Rate Limiting
       required: true
       schema:
-        type: string
-        maxLength: 255
+        $ref: 'govway_core.yaml#/components/schemas/NCName'
     elemento_correlazione_applicativa:
       name: elemento
       in: path
@@ -632,7 +631,7 @@ components:
     APIImplAutorizzazioneBaseConfig:
       type: object
       properties:
-        puntuale:
+        richiedente:
           type: boolean
           default: true
           example: false
@@ -1171,14 +1170,10 @@ components:
     RateLimitingPolicyItem:
        type: object
        required:
-        - identificativo
+        - nome
        properties:
-         identificativo:
-           type: string
-           maxLength: 255
          nome:
-           type: string
-           maxLength: 255
+           $ref: 'govway_core.yaml#/components/schemas/NCName'
     ListaRateLimitingPolicy:
       type: object
       allOf:
@@ -1191,12 +1186,40 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/RateLimitingPolicyItem'
+                  
+    RateLimitingPolicyCriteri:
+       type: object
+       required:
+       - risorsa
+       properties:
+         risorsa:
+            $ref: '#/components/schemas/RateLimitingCriteriRisorsaEnum'
+         esiti:
+            $ref: '#/components/schemas/RateLimitingCriteriRisorsaEsitiEnum'
+         intervallo:
+            $ref: '#/components/schemas/RateLimitingCriteriIntervalloEnum'
+         congestione:
+            type: boolean
+            default: false
+            example: false
+         degrado:
+            type: boolean
+            default: false
+            example: false
+    RateLimitingPolicyIdentificativo:
+       type: object
+       required:
+       - policy
+       properties:
+         policy:
+            $ref: 'govway_core.yaml#/components/schemas/NCName'
     RateLimitingPolicyBase:
        type: object
        allOf:
           - $ref: '#/components/schemas/ApiImplConfigurazioneStato'
           - type: object
             required:
+            - nome
             - stato
             properties:
               nome:
@@ -1210,7 +1233,48 @@ components:
               soglia_valore:
                  type: integer
                  format: int32
-    RateLimitingPolicyBaseErogazione:
+    RateLimitingPolicyBaseConIdentificazione:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/RateLimitingPolicyBase'
+          - type: object
+            required:
+            - identificazione
+            properties:
+              identificazione:
+                $ref: '#/components/schemas/RateLimitingIdentificazionePolicyEnum'
+              configurazione:
+                  type: object
+                  oneOf:
+                    - $ref: '#/components/schemas/RateLimitingPolicyCriteri'
+                    - $ref: '#/components/schemas/RateLimitingPolicyIdentificativo'
+                  discriminator:
+                    propertyName: modalita
+                    mapping:
+                      'criteri': '#/components/schemas/RateLimitingPolicyCriteri'
+                      'policy': '#/components/schemas/RateLimitingPolicyIdentificativo'
+    RateLimitingPolicyErogazione:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/RateLimitingPolicyBaseConIdentificazione'
+          - type: object
+            properties:
+              filtro:
+                 $ref: '#/components/schemas/RateLimitingPolicyFiltroErogazione'
+              criterio_collezionamento_dati:
+                 $ref: '#/components/schemas/RateLimitingPolicyGroupByErogazione'
+    RateLimitingPolicyFruizione:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/RateLimitingPolicyBaseConIdentificazione'
+          - type: object
+            properties:
+              filtro:
+                 $ref: '#/components/schemas/RateLimitingPolicyFiltroFruizione'
+              criterio_collezionamento_dati:
+                 $ref: '#/components/schemas/RateLimitingPolicyGroupByFruizione'
+                 
+    RateLimitingPolicyErogazioneUpdate:
        type: object
        allOf:
           - $ref: '#/components/schemas/RateLimitingPolicyBase'
@@ -1220,7 +1284,7 @@ components:
                  $ref: '#/components/schemas/RateLimitingPolicyFiltroErogazione'
               criterio_collezionamento_dati:
                  $ref: '#/components/schemas/RateLimitingPolicyGroupByErogazione'
-    RateLimitingPolicyBaseFruizione:
+    RateLimitingPolicyFruizioneUpdate:
        type: object
        allOf:
           - $ref: '#/components/schemas/RateLimitingPolicyBase'
@@ -1230,7 +1294,7 @@ components:
                  $ref: '#/components/schemas/RateLimitingPolicyFiltroFruizione'
               criterio_collezionamento_dati:
                  $ref: '#/components/schemas/RateLimitingPolicyGroupByFruizione'
-                
+                                 
     RateLimitingPolicyFiltro:
       type: object
       properties:
@@ -1303,54 +1367,25 @@ components:
        type: object
        allOf:
           - $ref: '#/components/schemas/RateLimitingPolicyGroupBy'
-
-    RateLimitingPolicyErogazioneNew:
-       type: object
-       allOf:
-          - $ref: '#/components/schemas/RateLimitingPolicyBaseErogazione'
-          - type: object
-            required:
-            - policy
-            properties:
-              policy:
-                $ref: '#/components/schemas/RateLimitingPolicyEnum'
-    RateLimitingPolicyFruizioneNew:
-       type: object
-       allOf:
-          - $ref: '#/components/schemas/RateLimitingPolicyBaseFruizione'
-          - type: object
-            required:
-            - policy
-            properties:
-              policy:
-                $ref: '#/components/schemas/RateLimitingPolicyEnum'
                     
     RateLimitingPolicyErogazioneView:
        type: object
        allOf:
-          - $ref: '#/components/schemas/RateLimitingPolicyBaseErogazione'
+          - $ref: '#/components/schemas/RateLimitingPolicyErogazione'
           - type: object
             required:
-            - identificativo
             - descrizione
             properties:
-              identificativo:
-                type: string
-                maxLength: 255
               descrizione:
                 type: string
     RateLimitingPolicyFruizioneView:
        type: object
        allOf:
-          - $ref: '#/components/schemas/RateLimitingPolicyBaseFruizione'
+          - $ref: '#/components/schemas/RateLimitingPolicyFruizione'
           - type: object
             required:
-            - identificativo
             - descrizione
             properties:
-              identificativo:
-                type: string
-                maxLength: 255
               descrizione:
                 type: string
 
@@ -1693,10 +1728,22 @@ components:
       type: string
       enum: ['default', 'ridefinito']
       example: 'ridefinito'
-    RateLimitingPolicyEnum:
+    RateLimitingIdentificazionePolicyEnum:
       type: string
-      enum: ['numero-richieste-giornaliere', 'numero-richieste-orarie', 'numero-richieste-minuto', 'numero-richieste-simultanee', 'occupazione-banda-oraria', 'tempo-medio-orario']
-      example: 'numero-richieste-giornaliere'
+      enum: ['criteri', 'policy']
+      example: 'criteri'
+    RateLimitingCriteriRisorsaEnum:
+      type: string
+      enum: ['numero-richieste', 'numero-richieste-simultanee', 'occupazione-banda', 'tempo-medio-risposta', 'tempo-complessivo-risposta']
+      example: 'numero-richieste'
+    RateLimitingCriteriRisorsaEsitiEnum:
+      type: string
+      enum: ['ok', 'error', 'fault', 'error_or_fault' ]
+      example: 'ok'
+    RateLimitingCriteriIntervalloEnum:
+      type: string
+      enum: ['minuti', 'orario', 'giornaliero']
+      example: 'ok'
     RateLimitingChiaveEnum:
       type: string
       enum: ['content-based', 'header-based', 'soap-action-based', 'url-based', 'form-based', 'plugin-based']

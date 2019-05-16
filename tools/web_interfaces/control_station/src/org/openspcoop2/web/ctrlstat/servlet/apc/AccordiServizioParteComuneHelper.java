@@ -936,9 +936,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			AccordoServizioParteComuneSintetico as = this.apcCore.getAccordoServizioSintetico(Long.valueOf(id));
 			PortTypeSintetico pt = null;
 			for (int i = 0; i < as.getPortType().size(); i++) {
-				pt =as.getPortType().get(i);
-				if (nomept.equals(pt.getNome()))
+				PortTypeSintetico ptCheck =as.getPortType().get(i);
+				if (nomept.equals(ptCheck.getNome())) {
+					pt = ptCheck;
 					break;
+				}
+			}
+			if(pt==null) {
+				throw new Exception("Il port type '"+nomept+"' non esiste");
 			}
 
 			// Se tipoOp = add, controllo che l'operation non sia gia' stato

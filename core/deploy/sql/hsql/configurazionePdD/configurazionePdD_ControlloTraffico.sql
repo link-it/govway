@@ -59,6 +59,7 @@ CREATE TABLE ct_config_policy
 (
 	-- Dati Generali
 	policy_id VARCHAR(255) NOT NULL,
+	policy_built_in BOOLEAN NOT NULL,
 	rt_descrizione VARCHAR(65535) NOT NULL,
 	rt_risorsa VARCHAR(255) NOT NULL,
 	-- Valori di Soglia
@@ -112,6 +113,7 @@ CREATE TABLE ct_config_policy
 -- index
 CREATE UNIQUE INDEX idx_cong_gen_policy_1 ON ct_config_policy (policy_id);
 
+ALTER TABLE ct_config_policy ALTER COLUMN policy_built_in SET DEFAULT false;
 ALTER TABLE ct_config_policy ALTER COLUMN rt_simultanee SET DEFAULT false;
 ALTER TABLE ct_config_policy ALTER COLUMN rt_applicabilita SET DEFAULT 'sempre';
 ALTER TABLE ct_config_policy ALTER COLUMN rt_applicabilita_con_cc SET DEFAULT false;

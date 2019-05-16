@@ -21,40 +21,17 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBaseFruizione;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizione;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class RateLimitingPolicyFruizioneView extends RateLimitingPolicyBaseFruizione {
-  
-  @Schema(required = true, description = "")
-  private String identificativo = null;
+public class RateLimitingPolicyFruizioneView extends RateLimitingPolicyFruizione {
   
   @Schema(required = true, description = "")
   private String descrizione = null;
- /**
-   * Get identificativo
-   * @return identificativo
-  **/
-  @JsonProperty("identificativo")
-  @NotNull
-  @Valid
- @Size(max=255)  public String getIdentificativo() {
-    return this.identificativo;
-  }
-
-  public void setIdentificativo(String identificativo) {
-    this.identificativo = identificativo;
-  }
-
-  public RateLimitingPolicyFruizioneView identificativo(String identificativo) {
-    this.identificativo = identificativo;
-    return this;
-  }
-
  /**
    * Get descrizione
    * @return descrizione
@@ -81,7 +58,6 @@ public class RateLimitingPolicyFruizioneView extends RateLimitingPolicyBaseFruiz
     StringBuilder sb = new StringBuilder();
     sb.append("class RateLimitingPolicyFruizioneView {\n");
     sb.append("    ").append(RateLimitingPolicyFruizioneView.toIndentedString(super.toString())).append("\n");
-    sb.append("    identificativo: ").append(RateLimitingPolicyFruizioneView.toIndentedString(this.identificativo)).append("\n");
     sb.append("    descrizione: ").append(RateLimitingPolicyFruizioneView.toIndentedString(this.descrizione)).append("\n");
     sb.append("}");
     return sb.toString();

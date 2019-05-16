@@ -449,6 +449,7 @@ public class OpenSPCoop2Properties {
 				}
 				// Warning
 				this.isControlloRisorseRegistriRaggiungibilitaTotale();
+				this.isControlloRisorseRegistrazioneEvento();
 			}
 
 
@@ -1675,6 +1676,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimit();
 				this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimit();
 				this.getControlloTrafficoNumeroFaultApplicativiHeaderLimit();
+				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit();
 				
 				// header remaining
 				this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderRemaining();
@@ -1684,6 +1686,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderRemaining();
 				this.getControlloTrafficoNumeroRichiesteFalliteHeaderRemaining();
 				this.getControlloTrafficoNumeroFaultApplicativiHeaderRemaining();
+				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining();
 				
 				// header reset
 				this.getControlloTrafficoNumeroRichiesteHeaderReset();
@@ -1693,6 +1696,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderReset();
 				this.getControlloTrafficoNumeroRichiesteFalliteHeaderReset();
 				this.getControlloTrafficoNumeroFaultApplicativiHeaderReset();
+				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset();
 				
 				this.getControlloTrafficoRetryAfterHeader();
 				this.getControlloTrafficoRetryAfterHeader_randomBackoff();
@@ -5617,7 +5621,26 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.controlloRisorseCheckInterval;
 	}
 
+	private static Boolean isControlloRisorseRegistrazioneEvento = null;
+	public boolean isControlloRisorseRegistrazioneEvento() {	
+		if(OpenSPCoop2Properties.isControlloRisorseRegistrazioneEvento==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.risorse.registraEvento");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.registraEvento' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isControlloRisorseRegistrazioneEvento = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.registraEvento', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isControlloRisorseRegistrazioneEvento = true;
+			}    
+		}
 
+		return OpenSPCoop2Properties.isControlloRisorseRegistrazioneEvento;
+	}
 
 
 
@@ -17293,6 +17316,31 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getControlloTrafficoNumeroFaultApplicativiHeaderLimit;
 	}
 	
+	private static String [] getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit = null;
+	private static Boolean getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit_read = null;
+	public String [] getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit() throws Exception {	
+		if(OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.limit");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit = name.split(",");
+					for (int i = 0; i < OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit.length; i++) {
+						OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit[i]=OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit[i].trim();
+					}
+				}
+				
+				OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit_read = true;
+				
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.limit': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit;
+	}	
 	
 
 	
@@ -17316,7 +17364,7 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteSimultaneeHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteSimultanee.header.limit': "+e.getMessage(),e);
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteSimultanee.header.remaining': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -17342,7 +17390,7 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit': "+e.getMessage(),e);
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.remaining': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -17368,7 +17416,7 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getControlloTrafficoOccupazioneBandaHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.limit': "+e.getMessage(),e);
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.remaining': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -17394,7 +17442,7 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getControlloTrafficoTempoComplessivoRispostaHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.limit': "+e.getMessage(),e);
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.remaining': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -17420,7 +17468,7 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.limit': "+e.getMessage(),e);
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.remaining': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -17446,7 +17494,7 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.limit': "+e.getMessage(),e);
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.remaining': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -17472,12 +17520,38 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getControlloTrafficoNumeroFaultApplicativiHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.limit': "+e.getMessage(),e);
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.remaining': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
 
 		return OpenSPCoop2Properties.getControlloTrafficoNumeroFaultApplicativiHeaderRemaining;
+	}
+	
+	private static String [] getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining = null;
+	private static Boolean getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining_read = null;
+	public String [] getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining() throws Exception {	
+		if(OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.remaining");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining = name.split(",");
+					for (int i = 0; i < OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining.length; i++) {
+						OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining[i]=OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining[i].trim();
+					}
+				}
+				
+				OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining_read = true;
+				
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteNonCompletateConSuccesso.header.remaining': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining;
 	}
 	
 
@@ -17504,7 +17578,7 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit': "+e.getMessage(),e);
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.reset': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -17530,7 +17604,7 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getControlloTrafficoOccupazioneBandaHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.limit': "+e.getMessage(),e);
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.reset': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -17556,7 +17630,7 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getControlloTrafficoTempoComplessivoRispostaHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.limit': "+e.getMessage(),e);
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.reset': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -17582,7 +17656,7 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getControlloTrafficoTempoMedioRispostaHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.limit': "+e.getMessage(),e);
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.reset': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -17608,7 +17682,7 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.limit': "+e.getMessage(),e);
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.reset': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -17634,7 +17708,7 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.limit': "+e.getMessage(),e);
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.reset': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -17660,7 +17734,7 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getControlloTrafficoNumeroFaultApplicativiHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.limit': "+e.getMessage(),e);
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.reset': "+e.getMessage(),e);
 				throw e;
 			}    
 		}
@@ -17668,6 +17742,31 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getControlloTrafficoNumeroFaultApplicativiHeaderReset;
 	}
 	
+	private static String [] getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset = null;
+	private static Boolean getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset_read = null;
+	public String [] getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset() throws Exception {	
+		if(OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.reset");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset = name.split(",");
+					for (int i = 0; i < OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset.length; i++) {
+						OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset[i]=OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset[i].trim();
+					}
+				}
+				
+				OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset_read = true;
+				
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.reset': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset;
+	}	
 	
 	
 	

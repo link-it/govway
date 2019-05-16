@@ -29,13 +29,16 @@ Background:
 
 * def policy_update = read('classpath:bodies/rate-limiting-policy-fruizione-update.json')
 
-* def policy_types = [ 'numero-richieste-giornaliere', 'numero-richieste-orarie', 'numero-richieste-minuto', 'numero-richieste-simultanee', 'occupazione-banda-oraria', 'tempo-medio-orario']
+* def policy_types = [ 'numero-richieste', 'occupazione-banda', 'tempo-medio-risposta', 'tempo-complessivo-risposta' ]
+* def policy_intervalli = [ 'minuti', 'orario', 'giornaliero' ]
 * def build_data = 
     """
     function(policy_types, policy_body, policy_body_update, servizio_path) {
         var ret = [];
         for (var idx=0; idx < policy_types.length; idx++) {
-            ret.push({servizio_path: servizio_path, policy: policy_body, policy_update: policy_body_update, policy_type: policy_types[idx] } )
+           for (var idy=0; idy < policy_intervalli.length; idy++) {
+              ret.push({servizio_path: servizio_path, policy: policy_body, policy_update: policy_body_update, policy_type: policy_types[idx], policy_intervallo: policy_intervalli[idy] } )
+	   }
         }
 
         return ret;

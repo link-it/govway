@@ -45,6 +45,7 @@ import java.io.Serializable;
  * &lt;complexType name="configurazione-policy">
  * 		&lt;sequence>
  * 			&lt;element name="id-policy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="built-in" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
  * 			&lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="risorsa" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="simultanee" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
@@ -83,6 +84,7 @@ import java.io.Serializable;
 @XmlType(name = "configurazione-policy", 
   propOrder = {
   	"idPolicy",
+  	"builtIn",
   	"descrizione",
   	"risorsa",
   	"simultanee",
@@ -144,6 +146,18 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBean i
 
   public void setIdPolicy(java.lang.String idPolicy) {
     this.idPolicy = idPolicy;
+  }
+
+  public boolean isBuiltIn() {
+    return this.builtIn;
+  }
+
+  public boolean getBuiltIn() {
+    return this.builtIn;
+  }
+
+  public void setBuiltIn(boolean builtIn) {
+    this.builtIn = builtIn;
   }
 
   public java.lang.String getDescrizione() {
@@ -527,6 +541,10 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBean i
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-policy",required=true,nillable=false)
   protected java.lang.String idPolicy;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlElement(name="built-in",required=true,nillable=false,defaultValue="false")
+  protected boolean builtIn = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="descrizione",required=true,nillable=false)

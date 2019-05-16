@@ -235,7 +235,7 @@ public class DBLoginDAO implements ILoginDAO {
 	@Override
 	public UserDetailsBean loadUserByUsername(String username)
 			throws NotFoundException, ServiceException, UserInvalidException {
-		return this.loadUserByUsername(username, false);
+		return this.loadUserByUsername(username, true);
 	}
 	public UserDetailsBean loadUserByUsername(String username, boolean check)
 			throws NotFoundException, ServiceException, UserInvalidException {

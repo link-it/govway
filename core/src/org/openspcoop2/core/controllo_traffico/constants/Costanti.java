@@ -36,4 +36,7 @@ public class Costanti {
 	public static String controlloTrafficoImage = "image.bin";
 	public static String controlloTrafficoEventiImage = "imageEventi.bin";
 	
+	public final static String POLICY_GLOBALE = "Globale";
+	public final static String POLICY_API = "API";
+	
 }

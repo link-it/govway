@@ -41,7 +41,7 @@
         "tipo": "abilitato",
 
         "configurazione": {
-            "puntuale": true,
+            "richiedente": true,
             "soggetto": "SoggettoJson",
             
             "ruoli": true,

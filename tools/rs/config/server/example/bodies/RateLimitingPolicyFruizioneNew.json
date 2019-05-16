@@ -1,11 +1,17 @@
 {
-    "policy": "numero-richieste-orarie",
+    "nome": "policyTest",
     "stato": "abilitato",
+
+    "identificazione": "criteri",
+
+    "configurazione": {
+	"risorsa": "numero-richieste-simultanee"
+    },
+
     "soglia_ridefinita": true,
-    "soglia_valore": 303,
+    "soglia_valore": 3,
 
     "filtro": {
-        "azione": "Qualsiasi",
         "chiave_tipo": "content-based",
         "chiave_nome": "chiave1",
         "filtro_chiave_valore": "chiave_valore1"

@@ -31,7 +31,7 @@ import javax.validation.Valid;
 
 public class RateLimitingPolicyBase extends ApiImplConfigurazioneStato {
   
-  @Schema(description = "")
+  @Schema(required = true, description = "")
   private String nome = null;
   
   @Schema(required = true, description = "")
@@ -47,6 +47,7 @@ public class RateLimitingPolicyBase extends ApiImplConfigurazioneStato {
    * @return nome
   **/
   @JsonProperty("nome")
+  @NotNull
   @Valid
  @Size(max=255)  public String getNome() {
     return this.nome;

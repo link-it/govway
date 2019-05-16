@@ -31,10 +31,13 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -81,6 +84,11 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyList extends Act
 			
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
+			String filterTipoPolicy = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_POLICY);
+			if(filterTipoPolicy==null || "".equals(filterTipoPolicy)) {
+				ricerca.addFilter(idLista, Filtri.FILTRO_TIPO_POLICY, CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_UTENTE);
+			}
+			
 			List<ConfigurazionePolicy> lista = confCore.configurazionePolicyList(ricerca);
 			
 			confHelper.prepareConfigurazionePolicyList(ricerca, lista, idLista);

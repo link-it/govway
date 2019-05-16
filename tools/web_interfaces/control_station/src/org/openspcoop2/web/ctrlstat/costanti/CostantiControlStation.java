@@ -305,6 +305,10 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD = "Token Forward";
 	public final static String LABEL_PARAMETRO_PORTE_ELEMENTO_XML = "Elemento";
 	
+	public final static String LABEL_STATO_ABILITATO = "Abilitato";
+	public final static String LABEL_STATO_DISABILITATO = "Disabilitato";
+	public final static String LABEL_STATO_WARNING_ONLY = "WarningOnly";
+	
 	public final static String LABEL_QUALSIASI = "Qualsiasi";
 	public final static String LABEL_DEFAULT = "Default";
 	public final static String LABEL_NESSUNO = "Nessuno";
@@ -534,6 +538,27 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE = "Valore";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO = "Operazione";
+	
+	// POLICY TIPO
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO = "Tipo";
+	
+	public final static String DEFAULT_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO = "qualsiasi";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+	public final static String PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_BUILT_IN = "built-in";
+	public final static String PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_UTENTE = "utente";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_BUILT_IN = "Built-in";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_UTENTE = "Utente";
+	public final static String[] LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_VALORI = {
+			DEFAULT_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO,
+			PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_BUILT_IN,
+			PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_UTENTE
+	};
+	public final static String[] LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_LABELS = {
+			LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_QUALSIASI,
+			LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_BUILT_IN,
+			LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_UTENTE
+	};
+	
 	
 	/** PARAMETERS **/
 	
@@ -1222,6 +1247,16 @@ public class CostantiControlStation {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE.remove(5); // elimino xpath su xml per la risposta
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE.remove(5); // elimino json path
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE.remove(5); // elimino json path per la risposta
+	}
+	
+	public final static String LABEL_CONFIGURAZIONE_POLICY_STATO_ABILITATO = "<b>"+CostantiControlStation.LABEL_STATO_ABILITATO+"</b>: la policy viene applicata alle richieste che soddisfano i criteri di applicabilità";
+	public final static String LABEL_CONFIGURAZIONE_POLICY_STATO_WARNING_ONLY = "<b>"+CostantiControlStation.LABEL_STATO_WARNING_ONLY+"</b>: la policy viene applicata in modalità warning only, limitandosi a segnalare nella diagnostica le violazioni senza bloccare le richieste";
+	public final static String LABEL_CONFIGURAZIONE_POLICY_STATO_DISABILITATO = "<b>"+CostantiControlStation.LABEL_STATO_DISABILITATO+"</b>: la policy è disabilitata e non verrà applicata a nessun richiesta";
+	public final static List<String> LABEL_CONFIGURAZIONE_POLICY_STATO_VALORI = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_POLICY_STATO_VALORI.add(LABEL_CONFIGURAZIONE_POLICY_STATO_ABILITATO);
+		LABEL_CONFIGURAZIONE_POLICY_STATO_VALORI.add(LABEL_CONFIGURAZIONE_POLICY_STATO_WARNING_ONLY);
+		LABEL_CONFIGURAZIONE_POLICY_STATO_VALORI.add(LABEL_CONFIGURAZIONE_POLICY_STATO_DISABILITATO);
 	}
 	
 	/** MESSAGGI */

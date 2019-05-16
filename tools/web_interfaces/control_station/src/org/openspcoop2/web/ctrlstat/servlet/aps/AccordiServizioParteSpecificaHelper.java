@@ -2814,7 +2814,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST+"?"+
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_RUOLO_PORTA+"="+RuoloPolicy.APPLICATIVA.getValue()+"&"+
-							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA+"="+paAssociata.getNome()
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA+"="+paAssociata.getNome()+"&"+
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_SERVICE_BINDING+"="+serviceBindingMessage.name()
 							);
 					List<AttivazionePolicy> listaPolicy = null;
 					if(contaListe || visualizzazioneTabs) {
@@ -2838,7 +2839,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						
 						image.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST, 
 								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_RUOLO_PORTA,RuoloPolicy.APPLICATIVA.getValue()),
-								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA,paAssociata.getNome()),pIdTAb
+								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA,paAssociata.getNome()),
+								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_SERVICE_BINDING,serviceBindingMessage.name()),
+								pIdTAb
 								);
 						image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING));
 						image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
@@ -4360,7 +4363,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST+"?"+
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_RUOLO_PORTA+"="+RuoloPolicy.DELEGATA.getValue()+"&"+
-							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA+"="+pdAssociata.getNome()
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA+"="+pdAssociata.getNome()+"&"+
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_SERVICE_BINDING+"="+serviceBindingMessage.name()
 							);
 					List<AttivazionePolicy> listaPolicy = null;
 					if(contaListe || visualizzazioneTabs) {
@@ -4383,7 +4387,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						DataElementImage image = new DataElementImage();
 						image.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST, 
 								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_RUOLO_PORTA,RuoloPolicy.DELEGATA.getValue()),
-								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA,pdAssociata.getNome()),pIdTAb
+								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA,pdAssociata.getNome()),
+								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_SERVICE_BINDING,serviceBindingMessage.name()),
+								pIdTAb
 								);
 						image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING));
 						image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);

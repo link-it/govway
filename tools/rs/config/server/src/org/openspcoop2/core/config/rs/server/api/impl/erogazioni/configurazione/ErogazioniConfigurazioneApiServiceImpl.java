@@ -94,8 +94,8 @@ import org.openspcoop2.core.config.rs.server.model.GestioneCors;
 import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRichiesta;
 import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.rs.server.model.ListaRateLimitingPolicy;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBaseErogazione;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneNew;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazione;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneUpdate;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneView;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyItem;
 import org.openspcoop2.core.config.rs.server.model.RegistrazioneMessaggi;
@@ -107,6 +107,7 @@ import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -152,13 +153,13 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 	}
 
     /**
-     * Aggiunta di applicativi all'elenco degli applicativi autorizzati puntualmente
+     * Aggiunta di applicativi all'elenco degli applicativi autorizzati
      *
-     * Questa operazione consente di aggiungere applicativi all'elenco degli applicativi autorizzati puntualmente
+     * Questa operazione consente di aggiungere applicativi all'elenco degli applicativi autorizzati
      *
      */
 	@Override
-    public void addErogazioneControlloAccessiAutorizzazionePuntualeApplicativi(ControlloAccessiAutorizzazioneApplicativo body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public void addErogazioneControlloAccessiAutorizzazioneApplicativi(ControlloAccessiAutorizzazioneApplicativo body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -232,13 +233,13 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
     }
     
     /**
-     * Aggiunta di soggetti all'elenco dei soggetti autorizzati puntualmente
+     * Aggiunta di soggetti all'elenco dei soggetti autorizzati
      *
-     * Questa operazione consente di aggiungere soggetti all'elenco dei soggetti autorizzati puntualmente
+     * Questa operazione consente di aggiungere soggetti all'elenco dei soggetti autorizzati
      *
      */
 	@Override
-    public void addErogazioneControlloAccessiAutorizzazionePuntualeSoggetti(ControlloAccessiAutorizzazioneSoggetto body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public void addErogazioneControlloAccessiAutorizzazioneSoggetti(ControlloAccessiAutorizzazioneSoggetto body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			
@@ -465,7 +466,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void addErogazioneRateLimitingPolicy(RateLimitingPolicyErogazioneNew body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio, String q, Integer limit, Integer offset) {
+    public void addErogazioneRateLimitingPolicy(RateLimitingPolicyErogazione body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -483,8 +484,18 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			final RuoloPolicy ruoloPorta = RuoloPolicy.APPLICATIVA;
 			final String nomePorta = pa.getNome();
-			final String idPolicy = ErogazioniApiHelper.getIdInfoPolicy(body.getPolicy());
 			
+			String modalita = ErogazioniApiHelper.getDataElementModalita(body.getIdentificazione());
+			
+			String idPolicy = ErogazioniApiHelper.getIdPolicy(body, env.confCore, env.confHelper);
+			if(idPolicy==null) {
+				switch (body.getIdentificazione()) {
+				case POLICY:
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Policy Utente non trovata");
+				case CRITERI:
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Policy Built-In non trovata che rispettano i criteri forniti");
+				}
+			}
 			policy.setIdPolicy(idPolicy);
 			
 			// Questo lo prendo paro paro dal codice della console.
@@ -514,12 +525,13 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 					ruoloPorta, 
 					nomePorta, 
 					existsMessage, 
-					org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE
+					org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE,
+					modalita
 				)) {
 				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
 			}
 			
-			ErogazioniApiHelper.attivazionePolicyCheckData(TipoOperazione.ADD, pa, policy, infoPolicy, env);
+			ErogazioniApiHelper.attivazionePolicyCheckData(TipoOperazione.ADD, pa, policy, infoPolicy, env, modalita);
 			
 			env.confCore.performCreateOperation(env.userLogin, false, policy);
 
@@ -544,7 +556,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void addErogazioneTracciamentoCorrelazioneApplicativaRichiesta(CorrelazioneApplicativaRichiesta body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio, String q, Integer limit, Integer offset) {
+    public void addErogazioneTracciamentoCorrelazioneApplicativaRichiesta(CorrelazioneApplicativaRichiesta body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -600,7 +612,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void addErogazioneTracciamentoCorrelazioneApplicativaRisposta(CorrelazioneApplicativaRisposta body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio, String q, Integer limit, Integer offset) {
+    public void addErogazioneTracciamentoCorrelazioneApplicativaRisposta(CorrelazioneApplicativaRisposta body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -648,13 +660,13 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
     }
     
     /**
-     * Elimina applicativi dall'elenco degli applicativi autorizzati puntualmente
+     * Elimina applicativi dall'elenco degli applicativi autorizzati
      *
-     * Questa operazione consente di eliminare applicativi dall'elenco degli applicativi autorizzati puntualmente
+     * Questa operazione consente di eliminare applicativi dall'elenco degli applicativi autorizzati
      *
      */
 	@Override
-    public void deleteErogazioneControlloAccessiAutorizzazionePuntualeApplicativi(String nome, Integer versione, String applicativoAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public void deleteErogazioneControlloAccessiAutorizzazioneApplicativi(String nome, Integer versione, String applicativoAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -689,13 +701,13 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
     }
     
     /**
-     * Elimina soggetti all'elenco dei soggetti autorizzati puntualmente
+     * Elimina soggetti all'elenco dei soggetti autorizzati
      *
-     * Questa operazione consente di eliminare soggetti all'elenco dei soggetti autorizzati puntualmente
+     * Questa operazione consente di eliminare soggetti all'elenco dei soggetti autorizzati
      *
      */
 	@Override
-    public void deleteErogazioneControlloAccessiAutorizzazionePuntualeSoggetti(String nome, Integer versione, String soggettoAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public void deleteErogazioneControlloAccessiAutorizzazioneSoggetti(String nome, Integer versione, String soggettoAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -836,7 +848,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			List<AttivazionePolicy> policies = env.confCore.attivazionePolicyList(null, RuoloPolicy.APPLICATIVA, pa.getNome());
-			AttivazionePolicy policy = BaseHelper.findFirst( policies, p -> p.getIdActivePolicy().equals(idPolicy) ).orElse(null);
+			AttivazionePolicy policy = BaseHelper.findFirst( policies, p -> (PolicyUtilities.getNomeActivePolicy(p.getAlias(),p.getIdActivePolicy())).equals(idPolicy) ).orElse(null);
 			
 			if ( policy != null ) {
 				StringBuffer inUsoMessage = new StringBuffer();
@@ -1038,8 +1050,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			policies.forEach( p -> {
 				RateLimitingPolicyItem item = new RateLimitingPolicyItem();
-				item.setIdentificativo(p.getIdActivePolicy());
-				item.setNome(p.getAlias());
+				item.setNome(PolicyUtilities.getNomeActivePolicy(p.getAlias(), p.getIdActivePolicy()));
 				ret.addItemsItem(item);
 			});
                               
@@ -1344,13 +1355,13 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
     }
 
 	/**
-     * Restituisce l'elenco degli applicativi autorizzati puntualmente
+     * Restituisce l'elenco degli applicativi autorizzati
      *
-     * Questa operazione consente di ottenere l'elenco degli applicativi autorizzati puntualmente
+     * Questa operazione consente di ottenere l'elenco degli applicativi autorizzati
      *
      */
 	@Override
-    public ControlloAccessiAutorizzazioneApplicativi getErogazioneControlloAccessiAutorizzazionePuntualeApplicativi(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public ControlloAccessiAutorizzazioneApplicativi getErogazioneControlloAccessiAutorizzazioneApplicativi(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1383,13 +1394,13 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
     }
     
     /**
-     * Restituisce l'elenco dei soggetti autorizzati puntualmente
+     * Restituisce l'elenco dei soggetti autorizzati
      *
-     * Questa operazione consente di ottenere l'elenco dei soggetti autorizzati puntualmente
+     * Questa operazione consente di ottenere l'elenco dei soggetti autorizzati
      *
      */
 	@Override
-    public ControlloAccessiAutorizzazioneSoggetti getErogazioneControlloAccessiAutorizzazionePuntualeSoggetti(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public ControlloAccessiAutorizzazioneSoggetti getErogazioneControlloAccessiAutorizzazioneSoggetti(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1591,11 +1602,12 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
-			List<AttivazionePolicy> policies = env.confCore.attivazionePolicyList(null, RuoloPolicy.APPLICATIVA, pa.getNome());
-			AttivazionePolicy policy = BaseHelper.findFirst( policies, p -> p.getIdActivePolicy().equals(idPolicy) ).orElse(null);
-			
+			AttivazionePolicy policy = BaseHelper.supplyOrNotFound( 
+					() -> env.confCore.getAttivazionePolicy(idPolicy, RuoloPolicy.APPLICATIVA, pa.getNome()),
+					"Rate Limiting Policy con nome " + idPolicy
+				);
 			if ( policy == null ) 
-				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting con id " + idPolicy );
+				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting con nome " + idPolicy );
 			
 			InfoPolicy infoPolicy = env.confCore.getInfoPolicy(policy.getIdPolicy());
 						
@@ -2044,7 +2056,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void updateErogazioneRateLimitingPolicy(RateLimitingPolicyBaseErogazione body, String nome, Integer versione, String idPolicy, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public void updateErogazioneRateLimitingPolicy(RateLimitingPolicyErogazioneUpdate body, String nome, Integer versione, String idPolicy, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -2058,9 +2070,11 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);		
 			
 			AttivazionePolicy policy = BaseHelper.supplyOrNotFound( 
-					() -> env.confCore.getAttivazionePolicy(idPolicy),
-					"Rate Limiting Policy con id " + idPolicy
+					() -> env.confCore.getAttivazionePolicy(idPolicy, RuoloPolicy.APPLICATIVA, pa.getNome()),
+					"Rate Limiting Policy con nome " + idPolicy
 				);
+			if ( policy == null ) 
+				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting con nome " + idPolicy );
 			InfoPolicy infoPolicy = env.confCore.getInfoPolicy(policy.getIdPolicy());
 		
 			ErogazioniApiHelper.override(body, env.idSoggetto.toIDSoggetto(), env.requestWrapper);	
@@ -2069,7 +2083,9 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(errorAttivazione));
 			}
 			
-			ErogazioniApiHelper.attivazionePolicyCheckData(TipoOperazione.CHANGE, pa, policy, infoPolicy, env);
+			String modalita = ErogazioniApiHelper.getDataElementModalita(infoPolicy.isBuiltIn());
+			ErogazioniApiHelper.attivazionePolicyCheckData(TipoOperazione.CHANGE, pa, policy, infoPolicy, env, modalita);
+			
 			env.confCore.performUpdateOperation(env.userLogin, false, policy);
 
 			context.getLogger().info("Invocazione completata con successo");

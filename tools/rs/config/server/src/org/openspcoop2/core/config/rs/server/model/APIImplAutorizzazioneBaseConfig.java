@@ -30,7 +30,7 @@ import javax.validation.Valid;
 public class APIImplAutorizzazioneBaseConfig  {
   
   @Schema(description = "")
-  private Boolean puntuale = true;
+  private Boolean richiedente = true;
   
   @Schema(description = "")
   private Boolean ruoli = false;
@@ -41,21 +41,21 @@ public class APIImplAutorizzazioneBaseConfig  {
   @Schema(description = "")
   private AllAnyEnum ruoliRichiesti = null;
  /**
-   * Get puntuale
-   * @return puntuale
+   * Get richiedente
+   * @return richiedente
   **/
-  @JsonProperty("puntuale")
+  @JsonProperty("richiedente")
   @Valid
-  public Boolean isPuntuale() {
-    return this.puntuale;
+  public Boolean isRichiedente() {
+    return this.richiedente;
   }
 
-  public void setPuntuale(Boolean puntuale) {
-    this.puntuale = puntuale;
+  public void setRichiedente(Boolean richiedente) {
+    this.richiedente = richiedente;
   }
 
-  public APIImplAutorizzazioneBaseConfig puntuale(Boolean puntuale) {
-    this.puntuale = puntuale;
+  public APIImplAutorizzazioneBaseConfig richiedente(Boolean richiedente) {
+    this.richiedente = richiedente;
     return this;
   }
 
@@ -122,7 +122,7 @@ public class APIImplAutorizzazioneBaseConfig  {
     StringBuilder sb = new StringBuilder();
     sb.append("class APIImplAutorizzazioneBaseConfig {\n");
     
-    sb.append("    puntuale: ").append(APIImplAutorizzazioneBaseConfig.toIndentedString(this.puntuale)).append("\n");
+    sb.append("    richiedente: ").append(APIImplAutorizzazioneBaseConfig.toIndentedString(this.richiedente)).append("\n");
     sb.append("    ruoli: ").append(APIImplAutorizzazioneBaseConfig.toIndentedString(this.ruoli)).append("\n");
     sb.append("    ruoliFonte: ").append(APIImplAutorizzazioneBaseConfig.toIndentedString(this.ruoliFonte)).append("\n");
     sb.append("    ruoliRichiesti: ").append(APIImplAutorizzazioneBaseConfig.toIndentedString(this.ruoliRichiesti)).append("\n");

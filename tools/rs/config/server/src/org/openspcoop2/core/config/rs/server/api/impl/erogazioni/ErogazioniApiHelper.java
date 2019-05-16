@@ -139,20 +139,26 @@ import org.openspcoop2.core.config.rs.server.model.HttpMethodEnum;
 import org.openspcoop2.core.config.rs.server.model.KeystoreEnum;
 import org.openspcoop2.core.config.rs.server.model.ListaApiImplAllegati;
 import org.openspcoop2.core.config.rs.server.model.ModalitaConfigurazioneGruppoEnum;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingCriteriIntervalloEnum;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingCriteriRisorsaEnum;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingCriteriRisorsaEsitiEnum;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingIdentificazionePolicyEnum;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBase;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBaseErogazione;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBaseFruizione;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyEnum;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneNew;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBaseConIdentificazione;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazione;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneUpdate;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizione;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneUpdate;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyCriteri;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneView;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFiltro;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFiltroErogazione;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFiltroFruizione;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneNew;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneView;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyGroupBy;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyGroupByErogazione;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyGroupByFruizione;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyIdentificativo;
 import org.openspcoop2.core.config.rs.server.model.RegistrazioneMessaggi;
 import org.openspcoop2.core.config.rs.server.model.RegistrazioneMessaggiConfigurazione;
 import org.openspcoop2.core.config.rs.server.model.RegistrazioneMessaggiConfigurazioneRegola;
@@ -179,6 +185,8 @@ import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
+import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoRealtime;
+import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -230,6 +238,7 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaUti
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeHelper;
@@ -868,7 +877,7 @@ public class ErogazioniApiHelper {
         APIImplAutorizzazioneXACMLConfig configAuthXaml = new APIImplAutorizzazioneXACMLConfig();        
         FonteEnum ruoliFonte = FonteEnum.QUALSIASI;
         String erogazioneRuolo = null;
-        boolean isPuntuale = false;
+        boolean isRichiedente = false;
         boolean isRuoli = false;
         String statoAutorizzazione = null;
         TipoAutenticazionePrincipal autenticazionePrincipal = null;
@@ -890,7 +899,7 @@ public class ErogazioniApiHelper {
 	        	}
 	         	ruoliFonte = configAuthz.getRuoliFonte();
 	         	erogazioneRuolo = configAuthz.getRuolo();
-	         	isPuntuale = configAuthz.isPuntuale();
+	         	isRichiedente = configAuthz.isRichiedente();
 	         	isRuoli = configAuthz.isRuoli();
 	         	statoAutorizzazione = AutorizzazioneUtilities.STATO_ABILITATO;
 	        	break;
@@ -915,7 +924,7 @@ public class ErogazioniApiHelper {
 		final APIImplAutorizzazioneConfigNew configAuthz_final = configAuthz;
         
         
-        if (isPuntuale) {
+        if (isRichiedente) {
         	
             // Se ho abilitata l'autorizzazione puntuale, devo aver anche abilitata l'autenticazione
         	if ( env.isSupportatoAutenticazioneSoggetti && (authn == null || authn.getTipo() == TipoAutenticazioneNewEnum.DISABILITATO) )
@@ -1070,7 +1079,7 @@ public class ErogazioniApiHelper {
         		autenticazionePrincipal, // erogazioneAutenticazionePrincipal
         		autenticazioneParametroList, // erogazioneAutenticazioneParametroList
         		statoAutorizzazione,					   	// erogazioneAutorizzazione QUESTO E' lo STATO dell'autorizzazione
-        		ServletUtils.boolToCheckBoxStatus( isPuntuale ), 			// erogazioneAutorizzazioneAutenticati, 
+        		ServletUtils.boolToCheckBoxStatus( isRichiedente ), 			// erogazioneAutorizzazioneAutenticati, 
         		ServletUtils.boolToCheckBoxStatus( isRuoli ),				// erogazioneAutorizzazioneRuoli, 
                 Enums.ruoloTipologiaFromRest.get(ruoliFonte).toString(),				// erogazioneAutorizzazioneRuoliTipologia,
                 evalnull( () -> configAuthz_final.getRuoliRichiesti().toString() ),  	// erogazioneAutorizzazioneRuoliMatch,  AllAnyEnum == RuoloTipoMatch
@@ -1084,7 +1093,7 @@ public class ErogazioniApiHelper {
         		autenticazionePrincipal, // fruizioneAutenticazionePrincipal
         		autenticazioneParametroList, // fruizioneAutenticazioneParametroList
         		statoAutorizzazione,											// fruizioneAutorizzazione 	
-        		ServletUtils.boolToCheckBoxStatus( isPuntuale ), 				// fruizioneAutorizzazioneAutenticati, 
+        		ServletUtils.boolToCheckBoxStatus( isRichiedente ), 				// fruizioneAutorizzazioneAutenticati, 
         		ServletUtils.boolToCheckBoxStatus( isRuoli ), 					// fruizioneAutorizzazioneRuoli,
                 Enums.ruoloTipologiaFromRest.get(ruoliFonte).toString(), 					// fruizioneAutorizzazioneRuoliTipologia,
                 evalnull( () -> configAuthz_final.getRuoliRichiesti().toString() ), 		// fruizioneAutorizzazioneRuoliMatch,
@@ -1429,7 +1438,7 @@ public class ErogazioniApiHelper {
 
         FonteEnum ruoliFonte = FonteEnum.QUALSIASI;
         
-        boolean isPuntuale = false;
+        boolean isRichiedente = false;
         boolean isRuoli = false;
         String statoAutorizzazione = AutorizzazioneUtilities.STATO_DISABILITATO;
         String soggettoAutenticato = null;
@@ -1451,7 +1460,7 @@ public class ErogazioniApiHelper {
 	        		BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthz );
 	        	}
 		     	ruoliFonte = configAuthz.getRuoliFonte();
-	         	isPuntuale = configAuthz.isPuntuale();
+	         	isRichiedente = configAuthz.isRichiedente();
 	         	isRuoli = configAuthz.isRuoli();
 	         	statoAutorizzazione = AutorizzazioneUtilities.STATO_ABILITATO;
 	         	if ( configAuthz.getSoggetto() != null )
@@ -1498,7 +1507,7 @@ public class ErogazioniApiHelper {
         		autenticazionePrincipal, // erogazioneAutenticazionePrincipal
         		autenticazioneParametroList, // erogazioneAutenticazioneParametroList
         		statoAutorizzazione,	// autorizzazione, è lo STATO 	
-				ServletUtils.boolToCheckBoxStatus( isPuntuale ),			// 	autorizzazioneAutenticati,
+				ServletUtils.boolToCheckBoxStatus( isRichiedente ),			// 	autorizzazioneAutenticati,
 				ServletUtils.boolToCheckBoxStatus( isRuoli ),				//	autorizzazioneRuoli,
 		    	Enums.ruoloTipologiaFromRest.get(ruoliFonte).toString(),				//	erogazioneAutorizzazioneRuoliTipologia
 		    	evalnull( () -> configAuthz_final.getRuoliRichiesti().toString() ),			// 	autorizzazioneRuoliMatch
@@ -3081,7 +3090,7 @@ public class ErogazioniApiHelper {
 			}
 			
 			final String autorizzazione = AutorizzazioneUtilities.STATO_ABILITATO;
-			final String autorizzazioneAutenticati = ServletUtils.boolToCheckBoxStatus(config.isPuntuale());
+			final String autorizzazioneAutenticati = ServletUtils.boolToCheckBoxStatus(config.isRichiedente());
 			final String autorizzazioneRuoli = ServletUtils.boolToCheckBoxStatus(config.isRuoli());
 			final String autorizzazioneScope = ServletUtils.boolToCheckBoxStatus(config.isScope());
 			final String autorizzazione_tokenOptions = config.getTokenClaims();
@@ -3190,7 +3199,7 @@ public class ErogazioniApiHelper {
 			}
 			
 			final String statoAutorizzazione = AutorizzazioneUtilities.STATO_ABILITATO;
-			final String autorizzazioneAutenticati = ServletUtils.boolToCheckBoxStatus(config.isPuntuale());
+			final String autorizzazioneAutenticati = ServletUtils.boolToCheckBoxStatus(config.isRichiedente());
 			final String autorizzazioneRuoli = ServletUtils.boolToCheckBoxStatus(config.isRuoli());
 			final String autorizzazioneScope = ServletUtils.boolToCheckBoxStatus(config.isScope());
 			final String autorizzazione_tokenOptions = config.getTokenClaims();
@@ -3309,7 +3318,7 @@ public class ErogazioniApiHelper {
 		case ABILITATO: {
 			APIImplAutorizzazioneConfig config = new APIImplAutorizzazioneConfig();
 			
-			config.setPuntuale(TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione()));
+			config.setRichiedente(TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione()));
 			
 			config.setRuoli( TipoAutorizzazione.isRolesRequired(pa.getAutorizzazione()) );
 			if (config.isRuoli()) {
@@ -3366,7 +3375,7 @@ public class ErogazioniApiHelper {
 		case ABILITATO: {
 			APIImplAutorizzazioneConfig config = new APIImplAutorizzazioneConfig();
 			
-			config.setPuntuale( TipoAutorizzazione.isAuthenticationRequired(pd.getAutorizzazione()));
+			config.setRichiedente( TipoAutorizzazione.isAuthenticationRequired(pd.getAutorizzazione()));
 			
 			
 			config.setRuoli( TipoAutorizzazione.isRolesRequired(pd.getAutorizzazione()) );
@@ -3622,7 +3631,7 @@ public class ErogazioniApiHelper {
 		convert( src, infoPolicy, (RateLimitingPolicyBase) dest );
 
 		dest.setDescrizione(infoPolicy.getDescrizione());
-		dest.setIdentificativo(src.getIdActivePolicy());
+		dest.setNome( PolicyUtilities.getNomeActivePolicy(src.getAlias(), src.getIdActivePolicy()));
 				
 		dest.setCriterioCollezionamentoDati(
 				convert( src.getGroupBy(), new RateLimitingPolicyGroupByFruizione() )
@@ -3643,7 +3652,7 @@ public class ErogazioniApiHelper {
 		convert( src, infoPolicy, (RateLimitingPolicyBase) dest );
 
 		dest.setDescrizione(infoPolicy.getDescrizione());
-		dest.setIdentificativo(src.getIdActivePolicy());
+		dest.setNome( PolicyUtilities.getNomeActivePolicy(src.getAlias(), src.getIdActivePolicy()));
 		
 		dest.setCriterioCollezionamentoDati(
 				convert( src.getGroupBy(), new RateLimitingPolicyGroupByErogazione() )
@@ -3678,6 +3687,75 @@ public class ErogazioniApiHelper {
 		else
 			dest.setStato(StatoFunzionalitaConWarningEnum.DISABILITATO );
 		
+		if(dest instanceof RateLimitingPolicyBaseConIdentificazione) {
+			RateLimitingPolicyBaseConIdentificazione destIdentificazione = (RateLimitingPolicyBaseConIdentificazione) dest;
+			
+			if(infoPolicy.isBuiltIn()) {
+				destIdentificazione.setIdentificazione(RateLimitingIdentificazionePolicyEnum.CRITERI);
+				RateLimitingPolicyCriteri criteri = new RateLimitingPolicyCriteri();
+				boolean intervallo = true;
+				switch (infoPolicy.getTipoRisorsa()) {
+				case NUMERO_RICHIESTE:
+					if(infoPolicy.isCheckRichiesteSimultanee()) {
+						criteri.setRisorsa(RateLimitingCriteriRisorsaEnum.NUMERO_RICHIESTE_SIMULTANEE);
+						intervallo = false;
+					}
+					else {
+						criteri.setRisorsa(RateLimitingCriteriRisorsaEnum.NUMERO_RICHIESTE);
+					}
+					break;
+				case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
+					criteri.setRisorsa(RateLimitingCriteriRisorsaEnum.NUMERO_RICHIESTE);
+					criteri.setEsiti(RateLimitingCriteriRisorsaEsitiEnum.OK);
+					break;
+				case NUMERO_RICHIESTE_FALLITE:
+					criteri.setRisorsa(RateLimitingCriteriRisorsaEnum.NUMERO_RICHIESTE);
+					criteri.setEsiti(RateLimitingCriteriRisorsaEsitiEnum.ERROR);
+					break;
+				case NUMERO_FAULT_APPLICATIVI:
+					criteri.setRisorsa(RateLimitingCriteriRisorsaEnum.NUMERO_RICHIESTE);
+					criteri.setEsiti(RateLimitingCriteriRisorsaEsitiEnum.FAULT);
+					break;
+				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+					criteri.setRisorsa(RateLimitingCriteriRisorsaEnum.NUMERO_RICHIESTE);
+					criteri.setEsiti(RateLimitingCriteriRisorsaEsitiEnum.ERROR_OR_FAULT);
+					break;
+				case OCCUPAZIONE_BANDA:
+					criteri.setRisorsa(RateLimitingCriteriRisorsaEnum.OCCUPAZIONE_BANDA);
+					break;
+				case TEMPO_MEDIO_RISPOSTA:
+					criteri.setRisorsa(RateLimitingCriteriRisorsaEnum.TEMPO_MEDIO_RISPOSTA);
+					break;
+				case TEMPO_COMPLESSIVO_RISPOSTA:
+					criteri.setRisorsa(RateLimitingCriteriRisorsaEnum.TEMPO_COMPLESSIVO_RISPOSTA);
+					break;
+				}
+				if(intervallo) {
+					switch (infoPolicy.getIntervalloUtilizzaRisorseRealtimeTipoPeriodo()) {
+					case MINUTI:
+						criteri.setIntervallo(RateLimitingCriteriIntervalloEnum.MINUTI);
+						break;
+					case ORARIO:
+						criteri.setIntervallo(RateLimitingCriteriIntervalloEnum.ORARIO);
+						break;
+					case GIORNALIERO:
+						criteri.setIntervallo(RateLimitingCriteriIntervalloEnum.GIORNALIERO);
+						break;
+					default:
+						break;
+					}
+				}
+				criteri.setCongestione(infoPolicy.isControlloCongestione());
+				criteri.setDegrado(infoPolicy.isDegradoPrestazione());
+				destIdentificazione.setConfigurazione(criteri);
+			}
+			else {
+				destIdentificazione.setIdentificazione(RateLimitingIdentificazionePolicyEnum.POLICY);
+				RateLimitingPolicyIdentificativo id = new RateLimitingPolicyIdentificativo();
+				id.setPolicy(infoPolicy.getIdPolicy());
+				destIdentificazione.setConfigurazione(id);
+			}
+		}
 		
 		return dest;
 			
@@ -3700,43 +3778,147 @@ public class ErogazioniApiHelper {
 	}
 
 
-
-	public static final String getIdInfoPolicy(RateLimitingPolicyEnum policy) {
-		
-		switch(policy) {
-		case NUMERO_RICHIESTE_GIORNALIERE: return "NumeroRichieste-ControlloRealtimeGiornaliero";
-		case NUMERO_RICHIESTE_MINUTO: return "NumeroRichieste-ControlloRealtimeMinuti";
-		case NUMERO_RICHIESTE_ORARIE: return "NumeroRichieste-ControlloRealtimeOrario";
-		case NUMERO_RICHIESTE_SIMULTANEE: return "NumeroRichieste-RichiesteSimultanee";
-		case OCCUPAZIONE_BANDA_ORARIA: return "OccupazioneBanda-ControlloRealtimeOrario";
-		case TEMPO_MEDIO_ORARIO: return "TempoMedioRisposta-ControlloRealtimeOrario";
+	public static final String getDataElementModalita(RateLimitingIdentificazionePolicyEnum identificazione) {
+		switch (identificazione) {
+		case POLICY:
+			return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CUSTOM;
+		case CRITERI:
+			return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_BUILT_IN;
 		}
-
 		return null;
+	}
+	public static final String getDataElementModalita(boolean builtIt) {
+		return builtIt ? getDataElementModalita(RateLimitingIdentificazionePolicyEnum.CRITERI) : getDataElementModalita(RateLimitingIdentificazionePolicyEnum.POLICY);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static final String getIdPolicy(RateLimitingPolicyBaseConIdentificazione body, ConfigurazioneCore confCore, ConfigurazioneHelper confHelper) throws Exception {
+		
+		String idPolicy = null;
+		switch (body.getIdentificazione()) {
+		case POLICY:
+			RateLimitingPolicyIdentificativo identificativo = new RateLimitingPolicyIdentificativo();
+        	if(body.getConfigurazione()!=null && body.getConfigurazione() instanceof RateLimitingPolicyIdentificativo) {
+        		identificativo = (RateLimitingPolicyIdentificativo) body.getConfigurazione();
+        	}
+        	else {
+        		BaseHelper.fillFromMap( (Map<String,Object>) body.getConfigurazione(), identificativo );
+        	}
+        	idPolicy = identificativo.getPolicy();
+			break;
+		case CRITERI:
+			RateLimitingPolicyCriteri criteri = new RateLimitingPolicyCriteri();
+        	if(body.getConfigurazione()!=null && body.getConfigurazione() instanceof RateLimitingPolicyCriteri) {
+        		criteri = (RateLimitingPolicyCriteri) body.getConfigurazione();
+        	}
+        	else {
+        		BaseHelper.fillFromMap( (Map<String,Object>) body.getConfigurazione(), criteri );
+        	}
+        	
+        	String modalitaRisorsa = getDataElementModalitaRisorsa(criteri.getRisorsa());
+        	boolean modalitaSimultaneeEnabled = confHelper.isTipoRisorsaNumeroRichiesteSimultanee(modalitaRisorsa);
+        	String modalitaEsiti = null;
+        	if(criteri.getEsiti()!=null) {
+        		modalitaEsiti = getDataElementModalitaRisorsaEsiti(criteri.getEsiti());
+        	}
+        	String modalitaIntervallo = null;
+        	if(criteri.getIntervallo()!=null) {
+        		modalitaIntervallo = getDataElementModalitaIntervallo(criteri.getIntervallo());
+        	}
+        	boolean modalitaCongestioneEnabled = criteri.isCongestione()!=null ? criteri.isCongestione() : false;
+        	boolean modalitaDegradoEnabled = criteri.isDegrado()!=null ? criteri.isDegrado() : false;
+        	boolean modalitaErrorRateEnabled = false;
+        	
+        	List<InfoPolicy> infoPolicies = confCore.infoPolicyList(true);
+        	List<InfoPolicy> idPoliciesSoddisfanoCriteri = new ArrayList<>();
+        	confHelper.findPolicyBuiltIn(infoPolicies, idPoliciesSoddisfanoCriteri, 
+        			modalitaRisorsa, modalitaEsiti, modalitaSimultaneeEnabled, modalitaIntervallo, 
+        			modalitaCongestioneEnabled, modalitaDegradoEnabled, modalitaErrorRateEnabled);
+        	if(idPoliciesSoddisfanoCriteri.size()>0) {
+        		idPolicy = idPoliciesSoddisfanoCriteri.get(0).getIdPolicy();
+        	}
+			break;
+		}
+		
+		return idPolicy;
+	}
+	
+	private static String getDataElementModalitaRisorsa(RateLimitingCriteriRisorsaEnum risorsa) {
+    	String modalitaRisorsa = null;
+		switch (risorsa) {
+		case NUMERO_RICHIESTE:
+			modalitaRisorsa = ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_NUMERO_RICHIESTE;
+			break;
+		case NUMERO_RICHIESTE_SIMULTANEE:
+			modalitaRisorsa = ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_NUMERO_RICHIESTE_SIMULTANEE;
+			break;
+		case OCCUPAZIONE_BANDA:
+			modalitaRisorsa = ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_OCCUPAZIONE_BANDA;
+			break;
+		case TEMPO_MEDIO_RISPOSTA:
+			modalitaRisorsa = ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_TEMPO_MEDIO_RISPOSTA;
+			break;
+		case TEMPO_COMPLESSIVO_RISPOSTA:
+			modalitaRisorsa = ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_TEMPO_COMPLESSIVO_RISPOSTA;
+			break;
+		}
+		return modalitaRisorsa;
+	}
+	private static String getDataElementModalitaRisorsaEsiti(RateLimitingCriteriRisorsaEsitiEnum risorsa) {
+    	String modalitaRisorsaEsiti = null;
+		switch (risorsa) {
+		case OK:
+			modalitaRisorsaEsiti = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK;
+			break;
+		case ERROR:
+			modalitaRisorsaEsiti = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE;
+			break;
+		case FAULT:
+			modalitaRisorsaEsiti = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT;
+			break;
+		case ERROR_OR_FAULT:
+			modalitaRisorsaEsiti = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE_FAULT;
+			break;
+		}
+		return modalitaRisorsaEsiti;
+	}
+	private static String getDataElementModalitaIntervallo(RateLimitingCriteriIntervalloEnum intervallo) {
+    	String modalitaRisorsaEsiti = null;
+		switch (intervallo) {
+		case MINUTI:
+			modalitaRisorsaEsiti = TipoPeriodoRealtime.MINUTI.getValue();
+			break;
+		case ORARIO:
+			modalitaRisorsaEsiti = TipoPeriodoRealtime.ORARIO.getValue();
+			break;
+		case GIORNALIERO:
+			modalitaRisorsaEsiti = TipoPeriodoRealtime.GIORNALIERO.getValue();
+			break;
+		}
+		return modalitaRisorsaEsiti;
 	}
 	
 	
-	
-	public static final void override( RateLimitingPolicyErogazioneNew body, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
+	public static final void override( String idPolicy, RateLimitingPolicyErogazione body, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
 		if (body == null) return;
 
-		override ( (RateLimitingPolicyBaseErogazione) body, idPropietarioSa, wrap );
+		override ( (RateLimitingPolicyErogazione) body, idPropietarioSa, wrap );
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID, 
-				getIdInfoPolicy(body.getPolicy())	// Questo è l'id intero della policy in caso di update, può essere null
+				idPolicy	
 			);		
 	}
 	
 
-	public static final void override( RateLimitingPolicyFruizioneNew body, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
+	public static final void override( String idPolicy, RateLimitingPolicyFruizione body, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
 		if (body == null) return;
 
-		override ( (RateLimitingPolicyBaseFruizione) body, idPropietarioSa, wrap );
+		override ( (RateLimitingPolicyFruizione) body, idPropietarioSa, wrap );
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID, 
-				getIdInfoPolicy(body.getPolicy())
+				idPolicy
 			);
 	}
 	
@@ -3810,8 +3992,38 @@ public class ErogazioniApiHelper {
 			); 
 	}
 	
-	
-	public static final void override( RateLimitingPolicyBaseErogazione body, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
+	public static final void override( RateLimitingPolicyErogazioneUpdate body, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
+		if (body == null) return;
+
+		override( (RateLimitingPolicyBase) body, idPropietarioSa, wrap );
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD,
+				RuoloPolicy.APPLICATIVA.toString() 
+		);
+		
+		// Campi in più rispetto al padre:
+		RateLimitingPolicyFiltroErogazione filtro = body.getFiltro();
+		override( filtro, idPropietarioSa, wrap );
+		
+		final String filtroFruitore = evalnull(() -> filtro.getSoggettoFruitore()) != null   
+				? new IDSoggetto(idPropietarioSa.getTipo(), filtro.getSoggettoFruitore()).toString()
+				: null;
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_FRUITORE,
+				filtroFruitore 
+			);
+		
+		RateLimitingPolicyGroupByErogazione groupCriteria = body.getCriterioCollezionamentoDati();
+		override( groupCriteria, idPropietarioSa, wrap );
+
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_FRUITORE,
+				evalnull(  () -> evalnull(  () -> ServletUtils.boolToCheckBoxStatus( groupCriteria.isSoggettoFruitore() ) ) ) 
+			);
+	}
+	public static final void override( RateLimitingPolicyErogazione body, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
 		if (body == null) return;
 
 		override( (RateLimitingPolicyBase) body, idPropietarioSa, wrap );
@@ -3845,8 +4057,19 @@ public class ErogazioniApiHelper {
 	
 	
 	
-	
-	public static final void override ( RateLimitingPolicyBaseFruizione body,  IDSoggetto idPropietarioSa,  HttpRequestWrapper wrap ) {	// Questa è in comune alla update.
+	public static final void override ( RateLimitingPolicyFruizioneUpdate body,  IDSoggetto idPropietarioSa,  HttpRequestWrapper wrap ) {	// Questa è in comune alla update.
+		if (body == null) return;
+
+		override ( (RateLimitingPolicyBase) body, idPropietarioSa, wrap );
+		override ( body.getFiltro(), idPropietarioSa, wrap );
+		override ( body.getCriterioCollezionamentoDati() , idPropietarioSa, wrap );
+		
+		wrap.overrideParameter(
+			ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD,
+			RuoloPolicy.DELEGATA.toString() 
+		);
+	}
+	public static final void override ( RateLimitingPolicyFruizione body,  IDSoggetto idPropietarioSa,  HttpRequestWrapper wrap ) {	// Questa è in comune alla update.
 		if (body == null) return;
 
 		override ( (RateLimitingPolicyBase) body, idPropietarioSa, wrap );
@@ -3858,12 +4081,6 @@ public class ErogazioniApiHelper {
 			RuoloPolicy.DELEGATA.toString() 
 		);
 		
-		
-		// Campi in più rispetto al padre:
-		/*	RateLimitingPolicyFiltroFruizione filtro = body.getFiltro();
-			RateLimitingPolicyGroupByFruizione groupCriteria = body.getCriterioCollezionamentoDati();
-			Che però Non definiscono nessun campo in più rispetto al padre, sono a posto.
-		*/
 	}
 		
 	public static final void override ( RateLimitingPolicyBase body,  IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {	// Questa è in comune alla update.		
@@ -4111,7 +4328,8 @@ public class ErogazioniApiHelper {
 			PortaApplicativa pa,
 			AttivazionePolicy policy,
 			InfoPolicy infoPolicy,  
-			ErogazioniConfEnv env ) throws Exception  {
+			ErogazioniConfEnv env,
+			String modalita) throws Exception  {
 
 		final RuoloPolicy ruoloPorta = RuoloPolicy.APPLICATIVA;
 		final String nomePorta = pa.getNome();
@@ -4142,7 +4360,7 @@ public class ErogazioniApiHelper {
 		}
 		
 		org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = env.confCore.getConfigurazioneControlloTraffico();
-		if (! env.confHelper.attivazionePolicyCheckData(tipoOperazione, configurazioneControlloTraffico, policy,infoPolicy, ruoloPorta, nomePorta) ) {
+		if (! env.confHelper.attivazionePolicyCheckData(tipoOperazione, configurazioneControlloTraffico, policy,infoPolicy, ruoloPorta, nomePorta, modalita) ) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 		}
 		

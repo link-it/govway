@@ -134,6 +134,19 @@ function CheckDati() {
         			}
     			});
         	}
+        	
+        	if($(".iconInfoBox-cb-info").length>0){
+        		$(".iconInfoBox-cb-info").click(function(){
+        			var iconInfoBoxId = $(this).attr('id');
+        			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
+        			console.log(idx);
+        			if(idx) {
+						var label = $("#hidden_title_iconInfo_"+ idx).val();
+						var body = $("#hidden_body_iconInfo_"+ idx).val();
+						mostraDataElementInfoModal(label,body);
+        			}
+    			});
+        	}
                 //date time tracciamento
                 //date time diagnostica
                 $(":input[name='datainizio']").datepicker({dateFormat: 'yy-mm-dd'});

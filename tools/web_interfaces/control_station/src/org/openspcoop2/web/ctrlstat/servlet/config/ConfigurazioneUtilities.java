@@ -32,7 +32,6 @@ import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
-import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
@@ -50,20 +49,35 @@ public class ConfigurazioneUtilities {
 
 	public static boolean alreadyExists(TipoOperazione tipoOperazione, ConfigurazioneCore confCore, ConfigurazioneHelper confHelper, 
 			AttivazionePolicy policy, InfoPolicy infoPolicy, RuoloPolicy ruoloPorta, String nomePorta,
-			StringBuffer existsMessage, String newLine) throws DriverControlStationException, NotFoundException {
+			StringBuffer existsMessage, String newLine, String modalita) throws Exception {
 		if(infoPolicy!=null){
+			
+			String perApi = "globale";
+			if(ruoloPorta!=null && nomePorta!=null && !"".equals(nomePorta)) {
+				perApi = "per l'API";
+			}
+			
 			AttivazionePolicy p = null;
 			try {
-				p = confCore.getGlobalPolicy(policy.getIdPolicy(),policy.getFiltro(), policy.getGroupBy());
+				p = confCore.getGlobalPolicy(policy.getIdPolicy(),policy.getFiltro(), policy.getGroupBy(),
+						ruoloPorta, nomePorta);
 			}catch(DriverControlStationNotFound e) {
 				//ignore
 			}
 			if(p!=null){
 				if(TipoOperazione.ADD.equals(tipoOperazione) ||	(p.getId()!=null &&	policy.getId()!=null &&	p.getId().longValue()!=policy.getId().longValue())){
-					String messaggio = "Esiste già una attivazione per la policy con nome '"+
-							policy.getIdPolicy()+"' "+newLine+"e"+newLine+"Collezionamento dei Dati: "+ 
-							confHelper.toStringCompactGroupBy(policy.getGroupBy(),ruoloPorta,nomePorta)+newLine+"e"+newLine+	
-							confHelper.toStringFilter(policy.getFiltro(),ruoloPorta,nomePorta);
+					
+					String prefisso = "Esiste già una attivazione "+perApi+" della policy '"+
+							policy.getIdPolicy()+"' ";
+					if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_BUILT_IN.equals(modalita)) {
+						prefisso = "Esiste già una policy "+perApi+" con i criteri indicati ";
+					}
+					
+					String messaggio = prefisso+newLine+
+							"e"+newLine+
+							"Raggruppamento: "+ confHelper.toStringCompactGroupBy(policy.getGroupBy(),ruoloPorta,nomePorta)+newLine+
+							"e"+newLine+	
+							"Filtro: "+ confHelper.toStringCompactFilter(policy.getFiltro(),ruoloPorta,nomePorta);
 					existsMessage.append(messaggio);
 					return true; 
 				}
@@ -72,13 +86,14 @@ public class ConfigurazioneUtilities {
 			AttivazionePolicy pAlias = null;
 			if(policy.getAlias()!=null && !"".equals(policy.getAlias())) {
 				try {
-					pAlias = confCore.getGlobalPolicyByAlias(policy.getAlias());
+					pAlias = confCore.getGlobalPolicyByAlias(policy.getAlias(),
+							ruoloPorta, nomePorta);
 				}catch(DriverControlStationNotFound e) {
 					//ignore
 				}
 				if(pAlias!=null){
 					if(TipoOperazione.ADD.equals(tipoOperazione) || (pAlias.getId()!=null && policy.getId()!=null && pAlias.getId().longValue()!=policy.getId().longValue())){
-						String messaggio = "Esiste già una attivazione per la policy con "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ALIAS+" '"+policy.getAlias()+"'";
+						String messaggio = "Esiste già una policy "+perApi+" con "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ALIAS+" '"+policy.getAlias()+"'";
 						existsMessage.append(messaggio);
 						return true; 
 					}

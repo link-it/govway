@@ -106,6 +106,8 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.RuoliSoggetto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -5074,5 +5076,15 @@ public class ConfigurazionePdDReader {
 	public ConfigurazionePolicy getConfigurazionePolicy(Connection connectionPdD, boolean useCache, String id) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdD.getConfigurazionePolicy(connectionPdD, useCache, id);
 	}
+	
+	
+	/* ******** MAPPING ******** */
+	
+	public List<MappingErogazionePortaApplicativa> getMappingErogazionePortaApplicativaList(IDServizio idServizio,Connection connectionPdD) throws DriverConfigurazioneException{
+		return this.configurazionePdD.getMappingErogazionePortaApplicativaList(idServizio, connectionPdD);
+	} 
+	public List<MappingFruizionePortaDelegata> getMappingFruizionePortaDelegataList(IDSoggetto idFruitore, IDServizio idServizio,Connection connectionPdD) throws DriverConfigurazioneException{
+		return this.configurazionePdD.getMappingFruizionePortaDelegataList(idFruitore, idServizio, connectionPdD);
+	} 
 	
 }

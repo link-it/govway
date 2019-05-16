@@ -37,7 +37,7 @@
         "tipo": "abilitato",
 
         "configurazione": {
-            "puntuale": true,
+            "richiedente": true,
             "soggetto": "SoggettoJson1",
             
             "ruoli": true,

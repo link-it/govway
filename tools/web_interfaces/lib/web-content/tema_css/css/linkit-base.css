@@ -1641,3 +1641,32 @@ td.riepilogo-spacer {
 	vertical-align: middle;
 }
 
+.iconInfoBox-cb-info {
+	padding-left: 8px;
+	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.spanIconInfoBox-cb-info {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+div.prop table.controlset-cb-info label{
+	float: right;
+	padding-left: 2px;
+	text-align: left;
+	width: auto;
+}
+
+div.prop table.controlset-cb-info {
+	margin-top: 4px;
+	margin-bottom: 0px;
+}
+
+span.controlset-cb-info {
+	margin-left: 10px;
+} 

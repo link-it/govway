@@ -45,7 +45,7 @@ public interface INotify {
 	
 	public void updateStatoRilevamentoCongestione(Logger logCore, boolean debug, TipoEvento tipoEvento, CodiceEventoControlloTraffico codiceEvento, String descrizione);
 	
-	public void updateStatoRilevamentoViolazionePolicy(Logger logCore, boolean debug, CodiceEventoControlloTraffico codiceEvento, String idConfigurazionePolicy);
+	public void updateStatoRilevamentoViolazionePolicy(Logger logCore, boolean debug, TipoEvento tipoEvento, CodiceEventoControlloTraffico codiceEvento, String idConfigurazionePolicy);
 	
 
 }

@@ -2316,10 +2316,9 @@ paths:
     get:
       tags:
       - "erogazioni-configurazione"
-      summary: "Restituisce l'elenco dei soggetti autorizzati puntualmente"
-      description: "Questa operazione consente di ottenere l'elenco dei soggetti autorizzati\
-        \ puntualmente"
-      operationId: "getErogazioneControlloAccessiAutorizzazionePuntualeSoggetti"
+      summary: "Restituisce l'elenco dei soggetti autorizzati"
+      description: "Questa operazione consente di ottenere l'elenco dei soggetti autorizzati"
+      operationId: "getErogazioneControlloAccessiAutorizzazioneSoggetti"
       responses:
         200:
           description: "Elenco soggetti autorizzati restituito con successo"
@@ -2344,10 +2343,10 @@ paths:
     post:
       tags:
       - "erogazioni-configurazione"
-      summary: "Aggiunta di soggetti all'elenco dei soggetti autorizzati puntualmente"
+      summary: "Aggiunta di soggetti all'elenco dei soggetti autorizzati"
       description: "Questa operazione consente di aggiungere soggetti all'elenco dei\
-        \ soggetti autorizzati puntualmente"
-      operationId: "addErogazioneControlloAccessiAutorizzazionePuntualeSoggetti"
+        \ soggetti autorizzati"
+      operationId: "addErogazioneControlloAccessiAutorizzazioneSoggetti"
       requestBody:
         description: "Soggetti che si vuole aggiungere"
         content:
@@ -2383,10 +2382,10 @@ paths:
     delete:
       tags:
       - "erogazioni-configurazione"
-      summary: "Elimina soggetti all'elenco dei soggetti autorizzati puntualmente"
+      summary: "Elimina soggetti all'elenco dei soggetti autorizzati"
       description: "Questa operazione consente di eliminare soggetti all'elenco dei\
-        \ soggetti autorizzati puntualmente"
-      operationId: "deleteErogazioneControlloAccessiAutorizzazionePuntualeSoggetti"
+        \ soggetti autorizzati"
+      operationId: "deleteErogazioneControlloAccessiAutorizzazioneSoggetti"
       responses:
         204:
           description: "Soggetti eliminati con successo"
@@ -2416,10 +2415,10 @@ paths:
     get:
       tags:
       - "erogazioni-configurazione"
-      summary: "Restituisce l'elenco degli applicativi autorizzati puntualmente"
+      summary: "Restituisce l'elenco degli applicativi autorizzati"
       description: "Questa operazione consente di ottenere l'elenco degli applicativi\
-        \ autorizzati puntualmente"
-      operationId: "getErogazioneControlloAccessiAutorizzazionePuntualeApplicativi"
+        \ autorizzati"
+      operationId: "getErogazioneControlloAccessiAutorizzazioneApplicativi"
       responses:
         200:
           description: "Elenco applicativi autorizzati restituito con successo"
@@ -2444,10 +2443,10 @@ paths:
     post:
       tags:
       - "erogazioni-configurazione"
-      summary: "Aggiunta di applicativi all'elenco degli applicativi autorizzati puntualmente"
+      summary: "Aggiunta di applicativi all'elenco degli applicativi autorizzati"
       description: "Questa operazione consente di aggiungere applicativi all'elenco\
-        \ degli applicativi autorizzati puntualmente"
-      operationId: "addErogazioneControlloAccessiAutorizzazionePuntualeApplicativi"
+        \ degli applicativi autorizzati"
+      operationId: "addErogazioneControlloAccessiAutorizzazioneApplicativi"
       requestBody:
         description: "Applicativi che si vuole aggiungere"
         content:
@@ -2483,10 +2482,10 @@ paths:
     delete:
       tags:
       - "erogazioni-configurazione"
-      summary: "Elimina applicativi dall'elenco degli applicativi autorizzati puntualmente"
+      summary: "Elimina applicativi dall'elenco degli applicativi autorizzati"
       description: "Questa operazione consente di eliminare applicativi dall'elenco\
-        \ degli applicativi autorizzati puntualmente"
-      operationId: "deleteErogazioneControlloAccessiAutorizzazionePuntualeApplicativi"
+        \ degli applicativi autorizzati"
+      operationId: "deleteErogazioneControlloAccessiAutorizzazioneApplicativi"
       responses:
         204:
           description: "Applicativi eliminati con successo"
@@ -2718,6 +2717,10 @@ paths:
       description: "Questa operazione consente di ottenere l'elenco delle policy di\
         \ rate limiting configurate"
       operationId: "findAllErogazioneRateLimitingPolicies"
+      parameters:
+      - $ref: "#/components/parameters/q"
+      - $ref: "#/components/parameters/limit"
+      - $ref: "#/components/parameters/offset"
       responses:
         200:
           description: "Elenco policy di rate limiting restituito con successo"
@@ -2750,7 +2753,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RateLimitingPolicyErogazioneNew"
+              $ref: "#/components/schemas/RateLimitingPolicyErogazione"
         required: true
       responses:
         201:
@@ -2776,9 +2779,6 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
     - $ref: "#/components/parameters/tipo_servizio"
-    - $ref: "#/components/parameters/q"
-    - $ref: "#/components/parameters/limit"
-    - $ref: "#/components/parameters/offset"
   /erogazioni/{nome}/{versione}/configurazioni/rate-limiting/{id_policy}:
     get:
       tags:
@@ -2820,7 +2820,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RateLimitingPolicyBaseErogazione"
+              $ref: "#/components/schemas/RateLimitingPolicyErogazioneUpdate"
         required: true
       responses:
         204:
@@ -3017,6 +3017,10 @@ paths:
       description: "Questa operazione consente di ottenere l'elenco delle regole di\
         \ correlazione applicativa per la richiesta"
       operationId: "findAllErogazioneTracciamentoCorrelazioneApplicativaRichiesta"
+      parameters:
+      - $ref: "#/components/parameters/q"
+      - $ref: "#/components/parameters/limit"
+      - $ref: "#/components/parameters/offset"
       responses:
         200:
           description: "Elenco regole di correlazione applicativa restituito con successo"
@@ -3076,9 +3080,6 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
     - $ref: "#/components/parameters/tipo_servizio"
-    - $ref: "#/components/parameters/q"
-    - $ref: "#/components/parameters/limit"
-    - $ref: "#/components/parameters/offset"
   /erogazioni/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/richiesta/{elemento}:
     get:
       tags:
@@ -3182,6 +3183,10 @@ paths:
       description: "Questa operazione consente di ottenere l'elenco delle regole di\
         \ correlazione applicativa per la risposta"
       operationId: "findAllErogazioneTracciamentoCorrelazioneApplicativaRisposta"
+      parameters:
+      - $ref: "#/components/parameters/q"
+      - $ref: "#/components/parameters/limit"
+      - $ref: "#/components/parameters/offset"
       responses:
         200:
           description: "Elenco regole di correlazione applicativa restituito con successo"
@@ -3241,9 +3246,6 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
     - $ref: "#/components/parameters/tipo_servizio"
-    - $ref: "#/components/parameters/q"
-    - $ref: "#/components/parameters/limit"
-    - $ref: "#/components/parameters/offset"
   /erogazioni/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/risposta/{elemento}:
     get:
       tags:
@@ -4637,10 +4639,10 @@ paths:
     get:
       tags:
       - "fruizioni-configurazione"
-      summary: "Restituisce l'elenco degli applicativi autorizzati puntualmente"
+      summary: "Restituisce l'elenco degli applicativi autorizzati"
       description: "Questa operazione consente di ottenere l'elenco degli applicativi\
-        \ autorizzati puntualmente"
-      operationId: "getFruizioneControlloAccessiAutorizzazionePuntualeApplicativi"
+        \ autorizzati"
+      operationId: "getFruizioneControlloAccessiAutorizzazioneApplicativi"
       responses:
         200:
           description: "Elenco applicativi autorizzati restituito con successo"
@@ -4665,10 +4667,10 @@ paths:
     post:
       tags:
       - "fruizioni-configurazione"
-      summary: "Aggiunta di applicativi all'elenco degli applicativi autorizzati puntualmente"
+      summary: "Aggiunta di applicativi all'elenco degli applicativi autorizzati"
       description: "Questa operazione consente di aggiungere applicativi all'elenco\
-        \ degli applicativi autorizzati puntualmente"
-      operationId: "addFruizioneControlloAccessiAutorizzazionePuntualeApplicativi"
+        \ degli applicativi autorizzati"
+      operationId: "addFruizioneControlloAccessiAutorizzazioneApplicativi"
       requestBody:
         description: "Applicativi che si vuole aggiungere"
         content:
@@ -4705,10 +4707,10 @@ paths:
     delete:
       tags:
       - "fruizioni-configurazione"
-      summary: "Elimina applicativi dall'elenco degli applicativi autorizzati puntualmente"
+      summary: "Elimina applicativi dall'elenco degli applicativi autorizzati"
       description: "Questa operazione consente di eliminare applicativi dall'elenco\
-        \ degli applicativi autorizzati puntualmente"
-      operationId: "deleteFruizioneControlloAccessiAutorizzazionePuntualeApplicativi"
+        \ degli applicativi autorizzati"
+      operationId: "deleteFruizioneControlloAccessiAutorizzazioneApplicativi"
       responses:
         204:
           description: "Applicativi eliminati con successo"
@@ -4945,6 +4947,10 @@ paths:
       description: "Questa operazione consente di ottenere l'elenco delle policy di\
         \ rate limiting configurate"
       operationId: "findAllFruizioneRateLimitingPolicies"
+      parameters:
+      - $ref: "#/components/parameters/q"
+      - $ref: "#/components/parameters/limit"
+      - $ref: "#/components/parameters/offset"
       responses:
         200:
           description: "Elenco policy di rate limiting restituito con successo"
@@ -4977,7 +4983,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RateLimitingPolicyFruizioneNew"
+              $ref: "#/components/schemas/RateLimitingPolicyFruizione"
         required: true
       responses:
         201:
@@ -5004,9 +5010,6 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
     - $ref: "#/components/parameters/tipo_servizio"
-    - $ref: "#/components/parameters/q"
-    - $ref: "#/components/parameters/limit"
-    - $ref: "#/components/parameters/offset"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/rate-limiting/{id_policy}:
     get:
       tags:
@@ -5048,7 +5051,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RateLimitingPolicyBaseFruizione"
+              $ref: "#/components/schemas/RateLimitingPolicyFruizioneUpdate"
         required: true
       responses:
         204:
@@ -5248,6 +5251,10 @@ paths:
       description: "Questa operazione consente di ottenere l'elenco delle regole di\
         \ correlazione applicativa per la richiesta"
       operationId: "findAllFruizioneTracciamentoCorrelazioneApplicativaRichiesta"
+      parameters:
+      - $ref: "#/components/parameters/q"
+      - $ref: "#/components/parameters/limit"
+      - $ref: "#/components/parameters/offset"
       responses:
         200:
           description: "Elenco regole di correlazione applicativa restituito con successo"
@@ -5308,9 +5315,6 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
     - $ref: "#/components/parameters/tipo_servizio"
-    - $ref: "#/components/parameters/q"
-    - $ref: "#/components/parameters/limit"
-    - $ref: "#/components/parameters/offset"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/richiesta/{elemento}:
     get:
       tags:
@@ -5415,6 +5419,10 @@ paths:
       description: "Questa operazione consente di ottenere l'elenco delle regole di\
         \ correlazione applicativa per la risposta"
       operationId: "findAllFruizioneTracciamentoCorrelazioneApplicativaRisposta"
+      parameters:
+      - $ref: "#/components/parameters/q"
+      - $ref: "#/components/parameters/limit"
+      - $ref: "#/components/parameters/offset"
       responses:
         200:
           description: "Elenco regole di correlazione applicativa restituito con successo"
@@ -5475,9 +5483,6 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
     - $ref: "#/components/parameters/tipo_servizio"
-    - $ref: "#/components/parameters/q"
-    - $ref: "#/components/parameters/limit"
-    - $ref: "#/components/parameters/offset"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/tracciamento/correlazione-applicativa/risposta/{elemento}:
     get:
       tags:
@@ -6856,12 +6861,12 @@ components:
           example: "abc123"
     ProfiloEnum:
       type: "string"
+      default: "APIGateway"
       enum:
       - "APIGateway"
       - "SPCoop"
       - "FatturaPA"
       - "eDelivery"
-      default: "APIGateway"
     ProfiloCollaborazioneEnum:
       type: "string"
       example: "sincrono"
@@ -7389,7 +7394,7 @@ components:
     APIImplAutorizzazioneBaseConfig:
       type: "object"
       properties:
-        puntuale:
+        richiedente:
           type: "boolean"
           default: true
         ruoli:
@@ -7935,15 +7940,11 @@ components:
           $ref: "#/components/schemas/NCName"
     RateLimitingPolicyItem:
       required:
-      - "identificativo"
+      - "nome"
       type: "object"
       properties:
-        identificativo:
-          maxLength: 255
-          type: "string"
         nome:
-          maxLength: 255
-          type: "string"
+          $ref: "#/components/schemas/NCName"
     ListaRateLimitingPolicy:
       type: "object"
       allOf:
@@ -7956,11 +7957,36 @@ components:
             type: "array"
             items:
               $ref: "#/components/schemas/RateLimitingPolicyItem"
+    RateLimitingPolicyCriteri:
+      required:
+      - "risorsa"
+      type: "object"
+      properties:
+        risorsa:
+          $ref: "#/components/schemas/RateLimitingCriteriRisorsaEnum"
+        esiti:
+          $ref: "#/components/schemas/RateLimitingCriteriRisorsaEsitiEnum"
+        intervallo:
+          $ref: "#/components/schemas/RateLimitingCriteriIntervalloEnum"
+        congestione:
+          type: "boolean"
+          default: false
+        degrado:
+          type: "boolean"
+          default: false
+    RateLimitingPolicyIdentificativo:
+      required:
+      - "policy"
+      type: "object"
+      properties:
+        policy:
+          $ref: "#/components/schemas/NCName"
     RateLimitingPolicyBase:
       type: "object"
       allOf:
       - $ref: "#/components/schemas/ApiImplConfigurazioneStato"
       - required:
+        - "nome"
         - "stato"
         type: "object"
         properties:
@@ -7975,7 +8001,47 @@ components:
           soglia_valore:
             type: "integer"
             format: "int32"
-    RateLimitingPolicyBaseErogazione:
+    RateLimitingPolicyBaseConIdentificazione:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RateLimitingPolicyBase"
+      - required:
+        - "identificazione"
+        type: "object"
+        properties:
+          identificazione:
+            $ref: "#/components/schemas/RateLimitingIdentificazionePolicyEnum"
+          configurazione:
+            type: "object"
+            discriminator:
+              propertyName: "modalita"
+              mapping:
+                criteri: "#/components/schemas/RateLimitingPolicyCriteri"
+                policy: "#/components/schemas/RateLimitingPolicyIdentificativo"
+            oneOf:
+            - $ref: "#/components/schemas/RateLimitingPolicyCriteri"
+            - $ref: "#/components/schemas/RateLimitingPolicyIdentificativo"
+    RateLimitingPolicyErogazione:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RateLimitingPolicyBaseConIdentificazione"
+      - type: "object"
+        properties:
+          filtro:
+            $ref: "#/components/schemas/RateLimitingPolicyFiltroErogazione"
+          criterio_collezionamento_dati:
+            $ref: "#/components/schemas/RateLimitingPolicyGroupByErogazione"
+    RateLimitingPolicyFruizione:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RateLimitingPolicyBaseConIdentificazione"
+      - type: "object"
+        properties:
+          filtro:
+            $ref: "#/components/schemas/RateLimitingPolicyFiltroFruizione"
+          criterio_collezionamento_dati:
+            $ref: "#/components/schemas/RateLimitingPolicyGroupByFruizione"
+    RateLimitingPolicyErogazioneUpdate:
       type: "object"
       allOf:
       - $ref: "#/components/schemas/RateLimitingPolicyBase"
@@ -7985,7 +8051,7 @@ components:
             $ref: "#/components/schemas/RateLimitingPolicyFiltroErogazione"
           criterio_collezionamento_dati:
             $ref: "#/components/schemas/RateLimitingPolicyGroupByErogazione"
-    RateLimitingPolicyBaseFruizione:
+    RateLimitingPolicyFruizioneUpdate:
       type: "object"
       allOf:
       - $ref: "#/components/schemas/RateLimitingPolicyBase"
@@ -8062,52 +8128,24 @@ components:
       type: "object"
       allOf:
       - $ref: "#/components/schemas/RateLimitingPolicyGroupBy"
-    RateLimitingPolicyErogazioneNew:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/RateLimitingPolicyBaseErogazione"
-      - required:
-        - "policy"
-        type: "object"
-        properties:
-          policy:
-            $ref: "#/components/schemas/RateLimitingPolicyEnum"
-    RateLimitingPolicyFruizioneNew:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/RateLimitingPolicyBaseFruizione"
-      - required:
-        - "policy"
-        type: "object"
-        properties:
-          policy:
-            $ref: "#/components/schemas/RateLimitingPolicyEnum"
     RateLimitingPolicyErogazioneView:
       type: "object"
       allOf:
-      - $ref: "#/components/schemas/RateLimitingPolicyBaseErogazione"
+      - $ref: "#/components/schemas/RateLimitingPolicyErogazione"
       - required:
         - "descrizione"
-        - "identificativo"
         type: "object"
         properties:
-          identificativo:
-            maxLength: 255
-            type: "string"
           descrizione:
             type: "string"
     RateLimitingPolicyFruizioneView:
       type: "object"
       allOf:
-      - $ref: "#/components/schemas/RateLimitingPolicyBaseFruizione"
+      - $ref: "#/components/schemas/RateLimitingPolicyFruizione"
       - required:
         - "descrizione"
-        - "identificativo"
         type: "object"
         properties:
-          identificativo:
-            maxLength: 255
-            type: "string"
           descrizione:
             type: "string"
     Validazione:
@@ -8318,16 +8356,16 @@ components:
           type: "boolean"
     FormatoSoapEnum:
       type: "string"
+      default: "Wsdl1.1"
       enum:
       - "Wsdl1.1"
-      default: "Wsdl1.1"
     FormatoRestEnum:
       type: "string"
+      default: "OpenApi3.0"
       enum:
       - "Wadl"
       - "Swagger2.0"
       - "OpenApi3.0"
-      default: "OpenApi3.0"
     TipoApiEnum:
       type: "string"
       example: "rest"
@@ -8356,35 +8394,35 @@ components:
     ContestoEnum:
       type: "string"
       example: "qualsiasi"
+      default: "qualsiasi"
       enum:
       - "qualsiasi"
       - "erogazione"
       - "fruizione"
-      default: "qualsiasi"
     FonteEnum:
       type: "string"
       example: "qualsiasi"
+      default: "qualsiasi"
       enum:
       - "qualsiasi"
       - "registro"
       - "esterna"
-      default: "qualsiasi"
     RuoloAllegatoAPI:
       type: "string"
       example: "specificaSemiFormale"
+      default: "allegato"
       enum:
       - "allegato"
       - "specificaSemiFormale"
-      default: "allegato"
     RuoloAllegatoAPIImpl:
       type: "string"
       example: "specificaSemiFormale"
+      default: "allegato"
       enum:
       - "allegato"
       - "specificaSemiFormale"
       - "specificaSicurezza"
       - "specificaLivelloServizio"
-      default: "allegato"
     TipoSpecificaSemiformaleEnum:
       type: "string"
       example: "XML"
@@ -8412,13 +8450,13 @@ components:
     SslTipologiaEnum:
       type: "string"
       example: "TLSv1.2"
+      default: "TLSv1.2"
       enum:
       - "SSLv2Hello"
       - "SSLv3"
       - "TLSv1"
       - "TLSv1.1"
       - "TLSv1.2"
-      default: "TLSv1.2"
     KeystoreEnum:
       type: "string"
       example: "jks"
@@ -8486,10 +8524,10 @@ components:
     AllAnyEnum:
       type: "string"
       example: "all"
+      default: "all"
       enum:
       - "all"
       - "any"
-      default: "all"
     ModalitaIdentificazioneAzioneEnum:
       type: "string"
       example: "interface-based"
@@ -8533,16 +8571,36 @@ components:
       enum:
       - "default"
       - "ridefinito"
-    RateLimitingPolicyEnum:
+    RateLimitingIdentificazionePolicyEnum:
       type: "string"
-      example: "numero-richieste-giornaliere"
+      example: "criteri"
       enum:
-      - "numero-richieste-giornaliere"
-      - "numero-richieste-orarie"
-      - "numero-richieste-minuto"
+      - "criteri"
+      - "policy"
+    RateLimitingCriteriRisorsaEnum:
+      type: "string"
+      example: "numero-richieste"
+      enum:
+      - "numero-richieste"
       - "numero-richieste-simultanee"
-      - "occupazione-banda-oraria"
-      - "tempo-medio-orario"
+      - "occupazione-banda"
+      - "tempo-medio-risposta"
+      - "tempo-complessivo-risposta"
+    RateLimitingCriteriRisorsaEsitiEnum:
+      type: "string"
+      example: "ok"
+      enum:
+      - "ok"
+      - "error"
+      - "fault"
+      - "error_or_fault"
+    RateLimitingCriteriIntervalloEnum:
+      type: "string"
+      example: "ok"
+      enum:
+      - "minuti"
+      - "orario"
+      - "giornaliero"
     RateLimitingChiaveEnum:
       type: "string"
       example: "content-based"
@@ -8892,8 +8950,7 @@ components:
       description: "Identificativo della policy di Rate Limiting"
       required: true
       schema:
-        maxLength: 255
-        type: "string"
+        $ref: "#/components/schemas/NCName"
     elemento_correlazione_applicativa:
       name: "elemento"
       in: "path"

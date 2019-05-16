@@ -21,14 +21,14 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBase;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBaseConIdentificazione;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFiltroErogazione;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyGroupByErogazione;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class RateLimitingPolicyBaseErogazione extends RateLimitingPolicyBase {
+public class RateLimitingPolicyErogazione extends RateLimitingPolicyBaseConIdentificazione {
   
   @Schema(description = "")
   private RateLimitingPolicyFiltroErogazione filtro = null;
@@ -49,7 +49,7 @@ public class RateLimitingPolicyBaseErogazione extends RateLimitingPolicyBase {
     this.filtro = filtro;
   }
 
-  public RateLimitingPolicyBaseErogazione filtro(RateLimitingPolicyFiltroErogazione filtro) {
+  public RateLimitingPolicyErogazione filtro(RateLimitingPolicyFiltroErogazione filtro) {
     this.filtro = filtro;
     return this;
   }
@@ -68,7 +68,7 @@ public class RateLimitingPolicyBaseErogazione extends RateLimitingPolicyBase {
     this.criterioCollezionamentoDati = criterioCollezionamentoDati;
   }
 
-  public RateLimitingPolicyBaseErogazione criterioCollezionamentoDati(RateLimitingPolicyGroupByErogazione criterioCollezionamentoDati) {
+  public RateLimitingPolicyErogazione criterioCollezionamentoDati(RateLimitingPolicyGroupByErogazione criterioCollezionamentoDati) {
     this.criterioCollezionamentoDati = criterioCollezionamentoDati;
     return this;
   }
@@ -77,10 +77,10 @@ public class RateLimitingPolicyBaseErogazione extends RateLimitingPolicyBase {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class RateLimitingPolicyBaseErogazione {\n");
-    sb.append("    ").append(RateLimitingPolicyBaseErogazione.toIndentedString(super.toString())).append("\n");
-    sb.append("    filtro: ").append(RateLimitingPolicyBaseErogazione.toIndentedString(this.filtro)).append("\n");
-    sb.append("    criterioCollezionamentoDati: ").append(RateLimitingPolicyBaseErogazione.toIndentedString(this.criterioCollezionamentoDati)).append("\n");
+    sb.append("class RateLimitingPolicyErogazione {\n");
+    sb.append("    ").append(RateLimitingPolicyErogazione.toIndentedString(super.toString())).append("\n");
+    sb.append("    filtro: ").append(RateLimitingPolicyErogazione.toIndentedString(this.filtro)).append("\n");
+    sb.append("    criterioCollezionamentoDati: ").append(RateLimitingPolicyErogazione.toIndentedString(this.criterioCollezionamentoDati)).append("\n");
     sb.append("}");
     return sb.toString();
   }

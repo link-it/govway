@@ -44,8 +44,8 @@ import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaR
 import org.openspcoop2.core.config.rs.server.model.ListaRateLimitingPolicy;
 import org.openspcoop2.core.config.rs.server.model.Problem;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBaseErogazione;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneNew;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazione;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneUpdate;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneView;
 import org.openspcoop2.core.config.rs.server.model.RegistrazioneMessaggi;
 import org.openspcoop2.core.config.rs.server.model.Validazione;
@@ -69,16 +69,16 @@ import javax.validation.Valid;
 public interface ErogazioniConfigurazioneApi  {
 
     /**
-     * Aggiunta di applicativi all'elenco degli applicativi autorizzati puntualmente
+     * Aggiunta di applicativi all'elenco degli applicativi autorizzati
      *
-     * Questa operazione consente di aggiungere applicativi all'elenco degli applicativi autorizzati puntualmente
+     * Questa operazione consente di aggiungere applicativi all'elenco degli applicativi autorizzati
      *
      */
     @POST
     @Path("/erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/applicativi")
     @Consumes({ "application/json" })
     @Produces({ "application/problem+json" })
-    @Operation(summary = "Aggiunta di applicativi all'elenco degli applicativi autorizzati puntualmente", tags={ "erogazioni-configurazione" })
+    @Operation(summary = "Aggiunta di applicativi all'elenco degli applicativi autorizzati", tags={ "erogazioni-configurazione" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "201", description = "Applicativi aggiunti con con successo"),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -88,29 +88,7 @@ public interface ErogazioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void addErogazioneControlloAccessiAutorizzazionePuntualeApplicativi(@Valid ControlloAccessiAutorizzazioneApplicativo body, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
-
-    /**
-     * Aggiunta di soggetti all'elenco dei soggetti autorizzati puntualmente
-     *
-     * Questa operazione consente di aggiungere soggetti all'elenco dei soggetti autorizzati puntualmente
-     *
-     */
-    @POST
-    @Path("/erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/soggetti")
-    @Consumes({ "application/json" })
-    @Produces({ "application/problem+json" })
-    @Operation(summary = "Aggiunta di soggetti all'elenco dei soggetti autorizzati puntualmente", tags={ "erogazioni-configurazione" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "201", description = "Soggetti aggiunti con con successo"),
-        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "409", description = "Conflict (L'entità che si vuole creare risulta già esistente)", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void addErogazioneControlloAccessiAutorizzazionePuntualeSoggetti(@Valid ControlloAccessiAutorizzazioneSoggetto body, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
+    public void addErogazioneControlloAccessiAutorizzazioneApplicativi(@Valid ControlloAccessiAutorizzazioneApplicativo body, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
      * Aggiunta di ruoli all'elenco dei ruoli autorizzati
@@ -157,6 +135,28 @@ public interface ErogazioniConfigurazioneApi  {
     public void addErogazioneControlloAccessiAutorizzazioneScope(@Valid ControlloAccessiAutorizzazioneScope body, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
+     * Aggiunta di soggetti all'elenco dei soggetti autorizzati
+     *
+     * Questa operazione consente di aggiungere soggetti all'elenco dei soggetti autorizzati
+     *
+     */
+    @POST
+    @Path("/erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/soggetti")
+    @Consumes({ "application/json" })
+    @Produces({ "application/problem+json" })
+    @Operation(summary = "Aggiunta di soggetti all'elenco dei soggetti autorizzati", tags={ "erogazioni-configurazione" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "201", description = "Soggetti aggiunti con con successo"),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "409", description = "Conflict (L'entità che si vuole creare risulta già esistente)", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public void addErogazioneControlloAccessiAutorizzazioneSoggetti(@Valid ControlloAccessiAutorizzazioneSoggetto body, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
+
+    /**
      * Aggiunta di una policy di rate limiting
      *
      * Questa operazione consente di aggiungere una policy di rate limiting
@@ -176,7 +176,7 @@ public interface ErogazioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void addErogazioneRateLimitingPolicy(@Valid RateLimitingPolicyErogazioneNew body, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset);
+    public void addErogazioneRateLimitingPolicy(@Valid RateLimitingPolicyErogazione body, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
      * Aggiunta di una regola di correlazione applicativa
@@ -198,7 +198,7 @@ public interface ErogazioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void addErogazioneTracciamentoCorrelazioneApplicativaRichiesta(@Valid CorrelazioneApplicativaRichiesta body, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset);
+    public void addErogazioneTracciamentoCorrelazioneApplicativaRichiesta(@Valid CorrelazioneApplicativaRichiesta body, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
      * Aggiunta di una regola di correlazione applicativa
@@ -220,18 +220,18 @@ public interface ErogazioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void addErogazioneTracciamentoCorrelazioneApplicativaRisposta(@Valid CorrelazioneApplicativaRisposta body, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset);
+    public void addErogazioneTracciamentoCorrelazioneApplicativaRisposta(@Valid CorrelazioneApplicativaRisposta body, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
-     * Elimina applicativi dall'elenco degli applicativi autorizzati puntualmente
+     * Elimina applicativi dall'elenco degli applicativi autorizzati
      *
-     * Questa operazione consente di eliminare applicativi dall'elenco degli applicativi autorizzati puntualmente
+     * Questa operazione consente di eliminare applicativi dall'elenco degli applicativi autorizzati
      *
      */
     @DELETE
     @Path("/erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/applicativi/{applicativo_autorizzato}")
     @Produces({ "application/problem+json" })
-    @Operation(summary = "Elimina applicativi dall'elenco degli applicativi autorizzati puntualmente", tags={ "erogazioni-configurazione" })
+    @Operation(summary = "Elimina applicativi dall'elenco degli applicativi autorizzati", tags={ "erogazioni-configurazione" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "204", description = "Applicativi eliminati con successo"),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -241,28 +241,7 @@ public interface ErogazioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void deleteErogazioneControlloAccessiAutorizzazionePuntualeApplicativi(@PathParam("nome") String nome, @PathParam("versione") Integer versione, @PathParam("applicativo_autorizzato") String applicativoAutorizzato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
-
-    /**
-     * Elimina soggetti all'elenco dei soggetti autorizzati puntualmente
-     *
-     * Questa operazione consente di eliminare soggetti all'elenco dei soggetti autorizzati puntualmente
-     *
-     */
-    @DELETE
-    @Path("/erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/soggetti/{soggetto_autorizzato}")
-    @Produces({ "application/problem+json" })
-    @Operation(summary = "Elimina soggetti all'elenco dei soggetti autorizzati puntualmente", tags={ "erogazioni-configurazione" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "204", description = "Soggetti eliminati con successo"),
-        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void deleteErogazioneControlloAccessiAutorizzazionePuntualeSoggetti(@PathParam("nome") String nome, @PathParam("versione") Integer versione, @PathParam("soggetto_autorizzato") String soggettoAutorizzato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
+    public void deleteErogazioneControlloAccessiAutorizzazioneApplicativi(@PathParam("nome") String nome, @PathParam("versione") Integer versione, @PathParam("applicativo_autorizzato") String applicativoAutorizzato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
      * Elimina ruoli dall'elenco dei ruoli autorizzati
@@ -307,6 +286,27 @@ public interface ErogazioniConfigurazioneApi  {
     public void deleteErogazioneControlloAccessiAutorizzazioneScope(@PathParam("nome") String nome, @PathParam("versione") Integer versione, @PathParam("scope_autorizzato") String scopeAutorizzato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
+     * Elimina soggetti all'elenco dei soggetti autorizzati
+     *
+     * Questa operazione consente di eliminare soggetti all'elenco dei soggetti autorizzati
+     *
+     */
+    @DELETE
+    @Path("/erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/soggetti/{soggetto_autorizzato}")
+    @Produces({ "application/problem+json" })
+    @Operation(summary = "Elimina soggetti all'elenco dei soggetti autorizzati", tags={ "erogazioni-configurazione" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "204", description = "Soggetti eliminati con successo"),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public void deleteErogazioneControlloAccessiAutorizzazioneSoggetti(@PathParam("nome") String nome, @PathParam("versione") Integer versione, @PathParam("soggetto_autorizzato") String soggettoAutorizzato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
+
+    /**
      * Elimina la policy dall'elenco delle policies attive
      *
      * Questa operazione consente di eliminare la policy dall'elenco delle policies attive
@@ -325,7 +325,7 @@ public interface ErogazioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void deleteErogazioneRateLimitingPolicy(@PathParam("nome") String nome, @PathParam("versione") Integer versione, @PathParam("id_policy") @Size(max=255) String idPolicy, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
+    public void deleteErogazioneRateLimitingPolicy(@PathParam("nome") String nome, @PathParam("versione") Integer versione, @PathParam("id_policy") String idPolicy, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
      * Elimina la regola di correlazione applicativa dall'elenco di quelle attivate per la richiesta
@@ -517,15 +517,15 @@ public interface ErogazioniConfigurazioneApi  {
     public ControlloAccessiAutorizzazioneView getErogazioneControlloAccessiAutorizzazione(@PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
-     * Restituisce l'elenco degli applicativi autorizzati puntualmente
+     * Restituisce l'elenco degli applicativi autorizzati
      *
-     * Questa operazione consente di ottenere l'elenco degli applicativi autorizzati puntualmente
+     * Questa operazione consente di ottenere l'elenco degli applicativi autorizzati
      *
      */
     @GET
     @Path("/erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/applicativi")
     @Produces({ "application/json", "application/problem+json" })
-    @Operation(summary = "Restituisce l'elenco degli applicativi autorizzati puntualmente", tags={ "erogazioni-configurazione" })
+    @Operation(summary = "Restituisce l'elenco degli applicativi autorizzati", tags={ "erogazioni-configurazione" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Elenco applicativi autorizzati restituito con successo", content = @Content(schema = @Schema(implementation = ControlloAccessiAutorizzazioneApplicativi.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -535,28 +535,7 @@ public interface ErogazioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ControlloAccessiAutorizzazioneApplicativi getErogazioneControlloAccessiAutorizzazionePuntualeApplicativi(@PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
-
-    /**
-     * Restituisce l'elenco dei soggetti autorizzati puntualmente
-     *
-     * Questa operazione consente di ottenere l'elenco dei soggetti autorizzati puntualmente
-     *
-     */
-    @GET
-    @Path("/erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/soggetti")
-    @Produces({ "application/json", "application/problem+json" })
-    @Operation(summary = "Restituisce l'elenco dei soggetti autorizzati puntualmente", tags={ "erogazioni-configurazione" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Elenco soggetti autorizzati restituito con successo", content = @Content(schema = @Schema(implementation = ControlloAccessiAutorizzazioneSoggetti.class))),
-        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ControlloAccessiAutorizzazioneSoggetti getErogazioneControlloAccessiAutorizzazionePuntualeSoggetti(@PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
+    public ControlloAccessiAutorizzazioneApplicativi getErogazioneControlloAccessiAutorizzazioneApplicativi(@PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
      * Restituisce l'elenco dei ruoli autorizzati
@@ -599,6 +578,27 @@ public interface ErogazioniConfigurazioneApi  {
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public ControlloAccessiAutorizzazioneScopes getErogazioneControlloAccessiAutorizzazioneScope(@PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
+
+    /**
+     * Restituisce l'elenco dei soggetti autorizzati
+     *
+     * Questa operazione consente di ottenere l'elenco dei soggetti autorizzati
+     *
+     */
+    @GET
+    @Path("/erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/soggetti")
+    @Produces({ "application/json", "application/problem+json" })
+    @Operation(summary = "Restituisce l'elenco dei soggetti autorizzati", tags={ "erogazioni-configurazione" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Elenco soggetti autorizzati restituito con successo", content = @Content(schema = @Schema(implementation = ControlloAccessiAutorizzazioneSoggetti.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public ControlloAccessiAutorizzazioneSoggetti getErogazioneControlloAccessiAutorizzazioneSoggetti(@PathParam("nome") String nome, @PathParam("versione") Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
      * Restituisce la configurazione relativa alla gestione dei token per quanto concerne il controllo degli accessi
@@ -661,7 +661,7 @@ public interface ErogazioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public RateLimitingPolicyErogazioneView getErogazioneRateLimitingPolicy(@PathParam("nome") String nome, @PathParam("versione") Integer versione, @PathParam("id_policy") @Size(max=255) String idPolicy, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
+    public RateLimitingPolicyErogazioneView getErogazioneRateLimitingPolicy(@PathParam("nome") String nome, @PathParam("versione") Integer versione, @PathParam("id_policy") String idPolicy, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
      * Restituisce la configurazione relativa alla registrazione dei messaggi
@@ -898,7 +898,7 @@ public interface ErogazioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateErogazioneRateLimitingPolicy(@Valid RateLimitingPolicyBaseErogazione body, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @PathParam("id_policy") @Size(max=255) String idPolicy, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
+    public void updateErogazioneRateLimitingPolicy(@Valid RateLimitingPolicyErogazioneUpdate body, @PathParam("nome") String nome, @PathParam("versione") Integer versione, @PathParam("id_policy") String idPolicy, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") String tipoServizio);
 
     /**
      * Consente di modificare la configurazione relativa alla registrazione dei messaggi

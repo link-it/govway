@@ -483,6 +483,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
 				case NUMERO_RICHIESTE_FALLITE:
 				case NUMERO_FAULT_APPLICATIVI:
+				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 					bf.append(this.policyCounter);
 					break;
 				case OCCUPAZIONE_BANDA:
@@ -517,6 +518,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
 				case NUMERO_RICHIESTE_FALLITE:
 				case NUMERO_FAULT_APPLICATIVI:
+				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 					bf.append(avg.longValue());	
 					break;
 				case OCCUPAZIONE_BANDA:
@@ -573,6 +575,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
 				case NUMERO_RICHIESTE_FALLITE:
 				case NUMERO_FAULT_APPLICATIVI:
+				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 					bf.append(this.oldPolicyCounter);
 					break;
 				case OCCUPAZIONE_BANDA:
@@ -608,6 +611,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
 				case NUMERO_RICHIESTE_FALLITE:
 				case NUMERO_FAULT_APPLICATIVI:
+				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 					bf.append(oldAvg.longValue());	
 					break;
 				case OCCUPAZIONE_BANDA:
@@ -782,6 +786,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
 		case NUMERO_RICHIESTE_FALLITE:
 		case NUMERO_FAULT_APPLICATIVI:
+		case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 			return true;
 		case OCCUPAZIONE_BANDA:
 		case TEMPO_COMPLESSIVO_RISPOSTA:
@@ -795,6 +800,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
 		case NUMERO_RICHIESTE_FALLITE:
 		case NUMERO_FAULT_APPLICATIVI:
+		case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 			return true;
 		case NUMERO_RICHIESTE:
 		case OCCUPAZIONE_BANDA:
@@ -1164,6 +1170,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 			case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
 			case NUMERO_RICHIESTE_FALLITE:
 			case NUMERO_FAULT_APPLICATIVI:
+			case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 				
 				List<Integer> esitiAppartenentiGruppo = null;
 				try {
@@ -1175,9 +1182,14 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 						//esitiAppartenentiGruppo = EsitiProperties.getInstance(log).getEsitiCodeKo_senzaFaultApplicativo();
 						esitiAppartenentiGruppo = esitiCodeKo_senzaFaultApplicativo;
 					}
-					else {
+					else if(TipoRisorsa.NUMERO_FAULT_APPLICATIVI.equals(activePolicy.getTipoRisorsaPolicy())) {
 						//esitiAppartenentiGruppo = EsitiProperties.getInstance(log).getEsitiCodeFaultApplicativo();
 						esitiAppartenentiGruppo = esitiCodeFaultApplicativo;
+					}
+					else {
+						// NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI
+						esitiAppartenentiGruppo = esitiCodeKo_senzaFaultApplicativo;
+						esitiAppartenentiGruppo.addAll(esitiCodeFaultApplicativo);
 					}
 				}catch(Exception e) {
 					throw new PolicyException(e.getMessage(),e);

@@ -437,7 +437,18 @@
 						</linkit:generator>
 					</xsd:appinfo>
 				</xsd:annotation>
-			</xsd:element>		
+			</xsd:element>
+			<xsd:element name="built-in" type="xsd:boolean" default="false">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="policy_built_in"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Indicazione se la policy è una policy built-in del gateway]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 			<xsd:element name="descrizione" type="xsd:string">
 				<xsd:annotation>
 					<xsd:appinfo>
@@ -1351,6 +1362,7 @@
 			<xsd:enumeration value="NumeroRichiesteFallite"/>
 			<xsd:enumeration value="NumeroRichiesteCompletateConSuccesso"/>
 			<xsd:enumeration value="NumeroFaultApplicativi"/>
+			<xsd:enumeration value="NumeroRichiesteFalliteOFaultApplicativi"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	

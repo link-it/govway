@@ -1,10 +1,11 @@
 {
+    "nome": "policyTestNomeModificato",
     "stato": "abilitato",
+
     "soglia_ridefinita": true,
-    "soglia_valore": 313,
+    "soglia_valore": 5,
 
     "filtro": {
-        "azione": "Qualsiasi",
         "chiave_tipo": "content-based",
         "chiave_nome": "chiave2",
         "filtro_chiave_valore": "chiave_valore2"

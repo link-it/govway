@@ -24,9 +24,15 @@
 
 package org.openspcoop2.pdd.timers;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.eventi.Evento;
+import org.openspcoop2.core.eventi.constants.CodiceEventoStatoGateway;
+import org.openspcoop2.core.eventi.constants.TipoEvento;
+import org.openspcoop2.core.eventi.constants.TipoSeverita;
+import org.openspcoop2.core.eventi.utils.SeveritaConverter;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.DBManager;
@@ -34,6 +40,8 @@ import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.QueueManager;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.FileSystemSerializer;
+import org.openspcoop2.pdd.core.eventi.GestoreEventi;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -45,6 +53,8 @@ import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.slf4j.Logger;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.beans.WriteToSerializerType;
+import org.openspcoop2.utils.date.DateManager;
 
 /**
  * Thread per la gestione del monitoraggio delle risorse
@@ -105,8 +115,11 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 	private List<IDiagnosticProducer> msgDiagnosticiPersonalizzati=null;
 	private List<String> tipiMsgDiagnosticiPersonalizzati=null;
 	
-	/** Costruttore */
-	public TimerMonitoraggioRisorseThread() {
+	private GestoreEventi gestoreEventi;
+	
+	/** Costruttore 
+	 * @throws Exception */
+	public TimerMonitoraggioRisorseThread() throws Exception {
 		this.propertiesReader = OpenSPCoop2Properties.getInstance();
 		
 		this.msgDiag = MsgDiagnostico.newInstance(TimerMonitoraggioRisorseThread.ID_MODULO);
@@ -137,6 +150,9 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 			this.msgDiagnosticiPersonalizzati = OpenSPCoop2Logger.getLoggerMsgDiagnosticoOpenSPCoopAppender();
 			this.tipiMsgDiagnosticiPersonalizzati = OpenSPCoop2Logger.getTipoMsgDiagnosticoOpenSPCoopAppender();
 		}
+		if(this.propertiesReader.isControlloRisorseRegistrazioneEvento()) {
+			this.gestoreEventi = GestoreEventi.getInstance();
+		}		
 	}
 	
 	/**
@@ -155,12 +171,14 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 		String risorsaNonDisponibile = null;
 		while(this.stop == false){
 			boolean checkRisorseDisponibili = true;
-				
+			
 			// Controllo che il sistema non sia andando in shutdown
 			if(OpenSPCoop2Startup.contextDestroyed){
 				this.logger.error("["+TimerMonitoraggioRisorseThread.ID_MODULO+"] Rilevato sistema in shutdown");
 				return;
 			}
+			
+			String descrizione = null;
 			
 			// Messaggi diagnostici personalizzati
 			// Controllo per prima per sapere se posso usare poi i msg diagnostici per segnalare problemi
@@ -176,6 +194,7 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 					risorsaNonDisponibile = "[MessaggioDiagnosticoAppender "+tipoMsgDiagnostico+"]";
 					TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 					this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
+					descrizione = risorsaNonDisponibile+" "+e.getMessage();
 					checkRisorseDisponibili = false;
 				}
 			}
@@ -188,6 +207,7 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 					risorsaNonDisponibile = "[Database]";
 					TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 					this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
+					descrizione = risorsaNonDisponibile+" "+e.getMessage();
 					checkRisorseDisponibili = false;
 				}
 			}
@@ -201,6 +221,7 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 						risorsaNonDisponibile = "[Broker JMS]";
 						TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 						this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
+						descrizione = risorsaNonDisponibile+" "+e.getMessage();
 						checkRisorseDisponibili = false;
 					}
 				}
@@ -214,6 +235,7 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 					risorsaNonDisponibile = "[Configurazione]";
 					TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 					this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
+					descrizione = risorsaNonDisponibile+" "+e.getMessage();
 					checkRisorseDisponibili = false;
 				}
 			}
@@ -238,6 +260,7 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 					risorsaNonDisponibile = "[Validazione semantica della Configurazione]";
 					TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 					this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
+					descrizione = risorsaNonDisponibile+" "+e.getMessage();
 					checkRisorseDisponibili = false;
 				}
 			}
@@ -250,6 +273,7 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 					risorsaNonDisponibile = "[Registri dei Servizi]";
 					TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 					this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
+					descrizione = risorsaNonDisponibile+" "+e.getMessage();
 					checkRisorseDisponibili = false;
 				}
 			}
@@ -271,6 +295,7 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 					risorsaNonDisponibile = "[Validazione semantica del Registri dei Servizi]";
 					TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 					this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
+					descrizione = risorsaNonDisponibile+" "+e.getMessage();
 					checkRisorseDisponibili = false;
 				}
 			}
@@ -287,6 +312,7 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 					risorsaNonDisponibile = "[TracciamentoAppender "+tipoTracciamento+"]";
 					TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 					this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
+					descrizione = risorsaNonDisponibile+" "+e.getMessage();
 					checkRisorseDisponibili = false;
 				}
 				
@@ -299,6 +325,7 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 						risorsaNonDisponibile = "[DatabaseTransazioni]";
 						TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 						this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
+						descrizione = risorsaNonDisponibile+" "+e.getMessage();
 						checkRisorseDisponibili = false;
 					}
 				}
@@ -318,9 +345,14 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 				}
 				else
 					this.logger.warn("Il Monitoraggio delle risorse ha rilevato che la risorsa "+risorsaNonDisponibile+" non e' raggiungibile, tutti i servizi/moduli della porta di dominio sono momentanemanete sospesi.");
+				
+				registraEvento(false, descrizione);
+				
 			}else if(checkRisorseDisponibili==true && this.lastCheck==false){
 				this.msgDiag.logPersonalizzato("risorsaRitornataDisponibile");
 				risorsaNonDisponibile = null;
+				
+				registraEvento(true, this.msgDiag.getMessaggio_replaceKeywords("risorsaRitornataDisponibile"));
 			}
 			this.lastCheck = checkRisorseDisponibili;
 			TimerMonitoraggioRisorseThread.risorseDisponibili = checkRisorseDisponibili;
@@ -337,5 +369,41 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 				}
 			}
 		} 
+	}
+	
+	private void registraEvento(boolean risorseDisponibili, String descrizione) {
+		String clusterID = this.propertiesReader.getClusterId(false);
+		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopResources();
+		Evento evento = null;
+		try{
+			if(this.gestoreEventi!=null){
+				if(this.propertiesReader.isControlloRisorseRegistrazioneEvento()){
+					evento = new Evento();
+					evento.setTipo(TipoEvento.STATO_GATEWAY.getValue());
+					evento.setCodice(risorseDisponibili ? CodiceEventoStatoGateway.RISORSE_SISTEMA_DISPONIBILI.getValue() : CodiceEventoStatoGateway.RISORSE_SISTEMA_NON_DISPONIBILI.getValue());
+					evento.setSeverita(risorseDisponibili ? SeveritaConverter.toIntValue(TipoSeverita.INFO) : SeveritaConverter.toIntValue(TipoSeverita.ERROR));
+					evento.setClusterId(clusterID);
+					evento.setDescrizione(descrizione);
+					this.gestoreEventi.log(evento,true);
+				}
+			}
+		}catch(Exception e){
+			// L'errore puo' avvenire poiche' lo shutdown puo' anche disattivare il datasource
+			log.debug("Errore durante la registrazione dell'evento (risorse disponibili:"+descrizione+" '"+descrizione+"'): "+e.getMessage(),e);
+			if(evento!=null){
+				try{
+			    	if(evento.getOraRegistrazione()==null){
+			    		evento.setOraRegistrazione(DateManager.getDate());
+			    	}
+			    	ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			    	evento.writeTo(bout, WriteToSerializerType.XML_JAXB);
+			    	bout.flush();
+			    	bout.close();
+					FileSystemSerializer.getInstance().registraEvento(bout.toByteArray(), evento.getOraRegistrazione());
+				}catch(Exception eSerializer){
+					log.error("Errore durante la registrazione su file system dell'evento: "+eSerializer.getMessage(),eSerializer);
+				}
+			}
+		}
 	}
 }

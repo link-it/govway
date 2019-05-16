@@ -34,12 +34,14 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
@@ -141,11 +143,18 @@ public final class PorteApplicativeAzioneDel extends Action {
 			String nomePorta = pa.getNome();
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			List<String> listaAzioni = pa.getAzione().getAzioneDelegataList();
+			
+			// Preparo la lista
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			int idLista = Liste.PORTE_APPLICATIVE_AZIONI;
+			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
+			
 			List<Parameter> listaParametriSessione = new ArrayList<>();
 			listaParametriSessione.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
 			listaParametriSessione.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
 			listaParametriSessione.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
-			porteApplicativeHelper.preparePorteAzioneList(listaAzioni, idPorta, parentPA, lstParam, nomePorta, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE, 
+			porteApplicativeHelper.preparePorteAzioneList(ricerca,
+					listaAzioni, idPorta, parentPA, lstParam, nomePorta, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE, 
 					listaParametriSessione, labelPerPorta, serviceBinding, aspc);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

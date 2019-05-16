@@ -26,6 +26,7 @@ package org.openspcoop2.pdd.config;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,9 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.DBMappingUtils;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -3384,6 +3388,260 @@ public class ConfigurazionePdD  {
 			return policy;
 		else
 			throw new DriverConfigurazioneNotFound("[getConfigurazionePolicy] Policy non trovata");
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	/* ******** MAPPING ******** */
+	
+	public static String _getKey_MappingErogazionePortaApplicativaList(IDServizio idServizio){ 
+		return "MappingErogazionePA_"+idServizio.toString();
+	}
+	@SuppressWarnings("unchecked")
+	public List<MappingErogazionePortaApplicativa> getMappingErogazionePortaApplicativaList(IDServizio idServizio,Connection connectionPdD) throws DriverConfigurazioneException{
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = _getKey_MappingErogazionePortaApplicativaList(idServizio);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((List<MappingErogazionePortaApplicativa>) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		List<MappingErogazionePortaApplicativa> list = null;
+		if(this.cache!=null){
+			list = this.getMappingErogazionePortaApplicativaListCache(key, connectionPdD, idServizio);
+		}else{
+			list = _getMappingErogazionePortaApplicativaList(idServizio, connectionPdD);
+		}
+
+		return list;
+	} 
+	@SuppressWarnings("unchecked")
+	public synchronized List<MappingErogazionePortaApplicativa> getMappingErogazionePortaApplicativaListCache(String keyCache,
+			Connection connectionPdD,
+			IDServizio idServizio) throws DriverConfigurazioneException{
+
+
+		List<MappingErogazionePortaApplicativa> obj = null;
+		try{
+
+			//			System.out.println("@"+keyCache+"@ INFO CACHE: "+this.cache.toString());
+			//			System.out.println("@"+keyCache+"@ KEYS: \n\t"+this.cache.printKeys("\n\t"));
+
+			String methodName = "getMappingErogazionePortaApplicativaList";
+			
+			// Raccolta dati
+			if(keyCache == null)
+				throw new DriverConfigurazioneException("["+methodName+"]: KeyCache non definita");	
+
+			// se e' attiva una cache provo ad utilizzarla
+			if(this.cache!=null){
+				org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(keyCache);
+				if(response != null){
+					if(response.getObject()!=null){
+						this.log.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (methodo:"+methodName+") in cache.");
+						return (List<MappingErogazionePortaApplicativa>) response.getObject();
+					}else if(response.getException()!=null){
+						this.log.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (methodo:"+methodName+") in cache.");
+						throw (Exception) response.getException();
+					}else{
+						this.log.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+					}
+				}
+			}
+
+			// Effettuo le query nella mia gerarchia di registri.
+			this.log.debug("oggetto con chiave ["+keyCache+"] (methodo:"+methodName+") ricerco nella configurazione...");
+			obj = _getMappingErogazionePortaApplicativaList(idServizio, connectionPdD);
+
+			// Aggiungo la risposta in cache (se esiste una cache)	
+			// Se ho una eccezione aggiungo in cache solo una not found
+			if( this.cache!=null ){ 	
+				if(obj!=null){
+					this.log.info("Aggiungo oggetto ["+keyCache+"] in cache");
+				}else{
+					throw new Exception("Metodo ("+methodName+") ha ritornato un valore null");
+				}
+				try{	
+					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+					responseCache.setObject((java.io.Serializable)obj);
+					this.cache.put(keyCache,responseCache);
+				}catch(UtilsException e){
+					this.log.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+				}
+			}
+
+		}catch(DriverConfigurazioneException e){
+			throw e;
+		}catch(Exception e){
+			throw new DriverConfigurazioneException("Configurazione, Algoritmo di Cache fallito: "+e.getMessage(),e);
+		}
+
+		return obj;
+	}
+	
+	public synchronized List<MappingErogazionePortaApplicativa> _getMappingErogazionePortaApplicativaList(IDServizio idServizio,Connection connectionPdD) throws DriverConfigurazioneException{
+		
+		if(!(this.driverConfigurazionePdD instanceof DriverConfigurazioneDB)) {
+			return new ArrayList<>();
+		}
+		
+		Connection con = connectionPdD;
+		boolean release = false;
+		DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazionePdD;
+		try {
+			if(con==null) {
+				con = driver.getConnection("getMappingErogazionePortaApplicativaList");
+				release = true;
+			}
+			return DBMappingUtils.mappingErogazionePortaApplicativaList(con, this.tipoDatabase, idServizio);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		finally {
+			if(release) {
+				driver.releaseConnection(con);
+			}
+		}
+	}
+	
+	
+	
+	public static String _getKey_MappingFruizionePortaDelegataList(IDSoggetto idFruitore, IDServizio idServizio){ 
+		return "MappingFruizionePD_"+idFruitore.toString()+"_"+idServizio.toString();
+	}
+	@SuppressWarnings("unchecked")
+	public List<MappingFruizionePortaDelegata> getMappingFruizionePortaDelegataList(IDSoggetto idFruitore, IDServizio idServizio,Connection connectionPdD) throws DriverConfigurazioneException{
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = _getKey_MappingFruizionePortaDelegataList(idFruitore, idServizio);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((List<MappingFruizionePortaDelegata>) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		List<MappingFruizionePortaDelegata> list = null;
+		if(this.cache!=null){
+			list = this.getMappingFruizionePortaDelegataListCache(key, connectionPdD, idFruitore, idServizio);
+		}else{
+			list = _getMappingFruizionePortaDelegataList(idFruitore, idServizio, connectionPdD);
+		}
+
+		return list;
+		
+	} 
+	@SuppressWarnings("unchecked")
+	public synchronized List<MappingFruizionePortaDelegata> getMappingFruizionePortaDelegataListCache(String keyCache,
+			Connection connectionPdD,
+			IDSoggetto idFruitore, IDServizio idServizio) throws DriverConfigurazioneException{
+
+
+		List<MappingFruizionePortaDelegata> obj = null;
+		try{
+
+			//			System.out.println("@"+keyCache+"@ INFO CACHE: "+this.cache.toString());
+			//			System.out.println("@"+keyCache+"@ KEYS: \n\t"+this.cache.printKeys("\n\t"));
+
+			String methodName = "getMappingFruizionePortaDelegataList";
+			
+			// Raccolta dati
+			if(keyCache == null)
+				throw new DriverConfigurazioneException("["+methodName+"]: KeyCache non definita");	
+
+			// se e' attiva una cache provo ad utilizzarla
+			if(this.cache!=null){
+				org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(keyCache);
+				if(response != null){
+					if(response.getObject()!=null){
+						this.log.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (methodo:"+methodName+") in cache.");
+						return (List<MappingFruizionePortaDelegata>) response.getObject();
+					}else if(response.getException()!=null){
+						this.log.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (methodo:"+methodName+") in cache.");
+						throw (Exception) response.getException();
+					}else{
+						this.log.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+					}
+				}
+			}
+
+			// Effettuo le query nella mia gerarchia di registri.
+			this.log.debug("oggetto con chiave ["+keyCache+"] (methodo:"+methodName+") ricerco nella configurazione...");
+			obj = _getMappingFruizionePortaDelegataList(idFruitore, idServizio, connectionPdD);
+
+			// Aggiungo la risposta in cache (se esiste una cache)	
+			// Se ho una eccezione aggiungo in cache solo una not found
+			if( this.cache!=null ){ 	
+				if(obj!=null){
+					this.log.info("Aggiungo oggetto ["+keyCache+"] in cache");
+				}else{
+					throw new Exception("Metodo ("+methodName+") ha ritornato un valore null");
+				}
+				try{	
+					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+					responseCache.setObject((java.io.Serializable)obj);
+					this.cache.put(keyCache,responseCache);
+				}catch(UtilsException e){
+					this.log.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+				}
+			}
+
+		}catch(DriverConfigurazioneException e){
+			throw e;
+		}catch(Exception e){
+			throw new DriverConfigurazioneException("Configurazione, Algoritmo di Cache fallito: "+e.getMessage(),e);
+		}
+
+		return obj;
+	}
+	
+	public synchronized List<MappingFruizionePortaDelegata> _getMappingFruizionePortaDelegataList(IDSoggetto idFruitore, IDServizio idServizio,Connection connectionPdD) throws DriverConfigurazioneException{
+		
+		if(!(this.driverConfigurazionePdD instanceof DriverConfigurazioneDB)) {
+			return new ArrayList<>();
+		}
+		
+		Connection con = connectionPdD;
+		boolean release = false;
+		DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazionePdD;
+		try {
+			if(con==null) {
+				con = driver.getConnection("getMappingFruizionePortaDelegataList");
+				release = true;
+			}
+			return DBMappingUtils.mappingFruizionePortaDelegataList(con, this.tipoDatabase, idFruitore, idServizio);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		finally {
+			if(release) {
+				driver.releaseConnection(con);
+			}
+		}
 	}
 	
 }

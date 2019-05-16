@@ -21,18 +21,16 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBaseErogazione;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class RateLimitingPolicyErogazioneNew extends RateLimitingPolicyBaseErogazione {
+public class RateLimitingPolicyIdentificativo  {
   
   @Schema(required = true, description = "")
-  private RateLimitingPolicyEnum policy = null;
+  private String policy = null;
  /**
    * Get policy
    * @return policy
@@ -40,15 +38,15 @@ public class RateLimitingPolicyErogazioneNew extends RateLimitingPolicyBaseEroga
   @JsonProperty("policy")
   @NotNull
   @Valid
-  public RateLimitingPolicyEnum getPolicy() {
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getPolicy() {
     return this.policy;
   }
 
-  public void setPolicy(RateLimitingPolicyEnum policy) {
+  public void setPolicy(String policy) {
     this.policy = policy;
   }
 
-  public RateLimitingPolicyErogazioneNew policy(RateLimitingPolicyEnum policy) {
+  public RateLimitingPolicyIdentificativo policy(String policy) {
     this.policy = policy;
     return this;
   }
@@ -57,9 +55,9 @@ public class RateLimitingPolicyErogazioneNew extends RateLimitingPolicyBaseEroga
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class RateLimitingPolicyErogazioneNew {\n");
-    sb.append("    ").append(RateLimitingPolicyErogazioneNew.toIndentedString(super.toString())).append("\n");
-    sb.append("    policy: ").append(RateLimitingPolicyErogazioneNew.toIndentedString(this.policy)).append("\n");
+    sb.append("class RateLimitingPolicyIdentificativo {\n");
+    
+    sb.append("    policy: ").append(RateLimitingPolicyIdentificativo.toIndentedString(this.policy)).append("\n");
     sb.append("}");
     return sb.toString();
   }

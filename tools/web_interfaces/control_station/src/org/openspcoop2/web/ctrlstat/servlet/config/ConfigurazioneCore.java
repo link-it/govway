@@ -57,6 +57,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -533,6 +534,28 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
+	public AttivazionePolicy getAttivazionePolicy(String alias, RuoloPolicy ruoloPorta, String nomePorta)  throws DriverControlStationException, DriverControlStationNotFound{
+		String nomeMetodo = "getAttivazionePolicy";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);	
+			
+			return driver.getAttivazionePolicy(alias, ruoloPorta, nomePorta);
+		} catch(NotFoundException notFound) {
+			throw new DriverControlStationNotFound(notFound.getMessage(),notFound);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public boolean checkConfigurazioneControlloTrafficoAttivazionePolicyListUsedAction(RuoloPolicy ruoloPorta, String nomePorta, String azione)  throws DriverControlStationNotFound, DriverControlStationException{
 		String nomeMetodo = "checkConfigurazioneControlloTrafficoAttivazionePolicyListUsedAction";
 		Connection con = null;
@@ -553,7 +576,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public List<InfoPolicy> infoPolicyList()  throws DriverControlStationNotFound, DriverControlStationException{
+	public List<InfoPolicy> infoPolicyList(Boolean builtIn)  throws DriverControlStationNotFound, DriverControlStationException{
 		String nomeMetodo = "infoPolicyList";
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -564,7 +587,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			
-			return driver.getInfoPolicyList(null);
+			return driver.getInfoPolicyList(builtIn, null);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -584,7 +607,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			
-			List<InfoPolicy> lst = driver.getInfoPolicyList(idPolicyParam); 
+			List<InfoPolicy> lst = driver.getInfoPolicyList(null, idPolicyParam); 
 			return (lst != null && lst.size() > 0) ? lst.get(0) : null;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -755,7 +778,8 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public AttivazionePolicy getGlobalPolicy(String policyId, AttivazionePolicyFiltro filtro, AttivazionePolicyRaggruppamento groupBy) throws DriverControlStationNotFound, DriverControlStationException{
+	public AttivazionePolicy getGlobalPolicy(String policyId, AttivazionePolicyFiltro filtro, AttivazionePolicyRaggruppamento groupBy,
+			RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationNotFound, DriverControlStationException{
 		String nomeMetodo = "getGlobalPolicy";
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -766,7 +790,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			
-			return driver.getGlobalPolicy(policyId, filtro, groupBy); 
+			return driver.getGlobalPolicy(policyId, filtro, groupBy, ruoloPorta, nomePorta); 
 		} catch (DriverControlStationNotFound e) {
 			throw e;
 		} catch (Exception e) {
@@ -777,7 +801,8 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public AttivazionePolicy getGlobalPolicyByAlias(String alias) throws DriverControlStationNotFound, DriverControlStationException{
+	public AttivazionePolicy getGlobalPolicyByAlias(String alias,
+			RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationNotFound, DriverControlStationException{
 		String nomeMetodo = "getGlobalPolicyByAlias";
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -788,7 +813,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			
-			return driver.getGlobalPolicyByAlias(alias);
+			return driver.getGlobalPolicyByAlias(alias, ruoloPorta, nomePorta);
 		} catch (DriverControlStationNotFound e) {
 			throw e;
 		} catch (Exception e) {

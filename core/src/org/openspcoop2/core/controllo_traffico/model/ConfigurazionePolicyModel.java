@@ -43,6 +43,7 @@ public class ConfigurazionePolicyModel extends AbstractModel<ConfigurazionePolic
 		super();
 	
 		this.ID_POLICY = new Field("id-policy",java.lang.String.class,"configurazione-policy",ConfigurazionePolicy.class);
+		this.BUILT_IN = new Field("built-in",boolean.class,"configurazione-policy",ConfigurazionePolicy.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"configurazione-policy",ConfigurazionePolicy.class);
 		this.RISORSA = new Field("risorsa",java.lang.String.class,"configurazione-policy",ConfigurazionePolicy.class);
 		this.SIMULTANEE = new Field("simultanee",boolean.class,"configurazione-policy",ConfigurazionePolicy.class);
@@ -75,6 +76,7 @@ public class ConfigurazionePolicyModel extends AbstractModel<ConfigurazionePolic
 		super(father);
 	
 		this.ID_POLICY = new ComplexField(father,"id-policy",java.lang.String.class,"configurazione-policy",ConfigurazionePolicy.class);
+		this.BUILT_IN = new ComplexField(father,"built-in",boolean.class,"configurazione-policy",ConfigurazionePolicy.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"configurazione-policy",ConfigurazionePolicy.class);
 		this.RISORSA = new ComplexField(father,"risorsa",java.lang.String.class,"configurazione-policy",ConfigurazionePolicy.class);
 		this.SIMULTANEE = new ComplexField(father,"simultanee",boolean.class,"configurazione-policy",ConfigurazionePolicy.class);
@@ -105,6 +107,8 @@ public class ConfigurazionePolicyModel extends AbstractModel<ConfigurazionePolic
 	
 
 	public IField ID_POLICY = null;
+	 
+	public IField BUILT_IN = null;
 	 
 	public IField DESCRIZIONE = null;
 	 

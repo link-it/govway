@@ -69,6 +69,7 @@ public class JDBCConfigurazionePolicyServiceImpl extends JDBCConfigurazionePolic
 		// Object configurazionePolicy
 		sqlQueryObjectInsert.addInsertTable(this.getConfigurazionePolicyFieldConverter().toTable(ConfigurazionePolicy.model()));
 		sqlQueryObjectInsert.addInsertField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().ID_POLICY,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().BUILT_IN,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().DESCRIZIONE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().RISORSA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().SIMULTANEE,false),"?");
@@ -98,6 +99,7 @@ public class JDBCConfigurazionePolicyServiceImpl extends JDBCConfigurazionePolic
 		org.openspcoop2.utils.jdbc.IKeyGeneratorObject keyGenerator = this.getConfigurazionePolicyFetch().getKeyGeneratorObject(ConfigurazionePolicy.model());
 		long id = jdbcUtilities.insertAndReturnGeneratedKey(sqlQueryObjectInsert, keyGenerator, jdbcProperties.isShowSql(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(configurazionePolicy.getIdPolicy(),ConfigurazionePolicy.model().ID_POLICY.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(configurazionePolicy.getBuiltIn(),ConfigurazionePolicy.model().BUILT_IN.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(configurazionePolicy.getDescrizione(),ConfigurazionePolicy.model().DESCRIZIONE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(configurazionePolicy.getRisorsa(),ConfigurazionePolicy.model().RISORSA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(configurazionePolicy.getSimultanee(),ConfigurazionePolicy.model().SIMULTANEE.getFieldType()),
@@ -167,6 +169,8 @@ public class JDBCConfigurazionePolicyServiceImpl extends JDBCConfigurazionePolic
 		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<JDBCObject>();
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().ID_POLICY,false), "?");
 		lstObjects.add(new JDBCObject(configurazionePolicy.getIdPolicy(), ConfigurazionePolicy.model().ID_POLICY.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().BUILT_IN,false), "?");
+		lstObjects.add(new JDBCObject(configurazionePolicy.getBuiltIn(), ConfigurazionePolicy.model().BUILT_IN.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().DESCRIZIONE,false), "?");
 		lstObjects.add(new JDBCObject(configurazionePolicy.getDescrizione(), ConfigurazionePolicy.model().DESCRIZIONE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().RISORSA,false), "?");

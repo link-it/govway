@@ -18,7 +18,8 @@ public class FruizioniConfigurazioneHelper {
 			PortaDelegata pd,
 			AttivazionePolicy policy,
 			InfoPolicy infoPolicy,  
-			FruizioniConfEnv env ) throws Exception  {
+			FruizioniConfEnv env,
+			String modalita) throws Exception  {
 		
 		org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = env.confCore.getConfigurazioneControlloTraffico();
 		final RuoloPolicy ruoloPorta = RuoloPolicy.DELEGATA;
@@ -51,7 +52,7 @@ public class FruizioniConfigurazioneHelper {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il servizio applicativo fruitore " + policy.getFiltro().getServizioApplicativoFruitore() + " scelto non è assegnabile alla policy di rate limiting");
 		}
 		
-		if (! env.confHelper.attivazionePolicyCheckData(tipoOperazione, configurazioneControlloTraffico, policy,infoPolicy, ruoloPorta, nomePorta) ) {
+		if (! env.confHelper.attivazionePolicyCheckData(tipoOperazione, configurazioneControlloTraffico, policy,infoPolicy, ruoloPorta, nomePorta, modalita) ) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 		}
 	}
