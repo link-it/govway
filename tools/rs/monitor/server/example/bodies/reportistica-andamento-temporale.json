@@ -1,8 +1,8 @@
 {
     "unita_tempo": "orario",
     "intervallo_temporale": {
-      "data_inizio": "2012-04-29T06:51:05.860Z",
-      "data_fine": "2022-04-29T06:51:05.860Z"
+      "data_inizio": "2019-05-13T15:00:58.860+02:00",
+      "data_fine": "2019-05-13T15:1:05.860+02:00"
     },
     "tipo": "erogazione",
     "report": {
@@ -13,6 +13,6 @@
       }
     },
     "esito": {
-      "tipo": "ok"
+      "tipo": "error"
     }
   }

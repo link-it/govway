@@ -21,12 +21,12 @@
  */
 package org.openspcoop2.core.config.rs.server.api.impl.erogazioni;
 
+import static org.openspcoop2.utils.service.beans.utils.BaseHelper.deserializeDefault;
 import static org.openspcoop2.utils.service.beans.utils.BaseHelper.evalnull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -264,35 +264,27 @@ public class ErogazioniApiHelper {
 	
 	@SuppressWarnings("unchecked")
 	public static final <T> T deserializeModalitaConfGruppo(ModalitaConfigurazioneGruppoEnum discr, Object body) throws UtilsException, InstantiationException, IllegalAccessException {
-			
-		// TODO: Renderli statici.
-		Map<ModalitaConfigurazioneGruppoEnum, Class<?>> typeMap = new HashMap<ModalitaConfigurazioneGruppoEnum, Class<?>>();
-		typeMap.put(ModalitaConfigurazioneGruppoEnum.EREDITA, GruppoEreditaConfigurazione.class);
-		typeMap.put(ModalitaConfigurazioneGruppoEnum.NUOVA, GruppoNuovaConfigurazione.class);
 		
-		try {
-			return (T) BaseHelper.deserializeFromSwitch(typeMap, discr, body);
-		} catch( Exception e ) {
+		switch(discr) {
+		case EREDITA: {
+			GruppoEreditaConfigurazione conf = deserializeDefault(body, GruppoEreditaConfigurazione.class);
+			if (StringUtils.isEmpty(conf.getNome())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(GruppoEreditaConfigurazione.class.getName()+": Indicare il campo obbligatorio 'nome'");
+			}
+			return (T) conf;
+		}
+		case NUOVA: {
+			GruppoNuovaConfigurazione conf = deserializeDefault(body, GruppoNuovaConfigurazione.class);
+			if (conf.getAutenticazione() == null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(GruppoNuovaConfigurazione.class.getName()+": Indicare il campo obbligatorio 'autenticazione'");
+			}
+			
+			return (T) conf;
+		}
+		default: 
 			return null;
 		}
 	}
-	
-	
-	
-	@SuppressWarnings("unchecked")
-	public static final<T> T deserializeAutorizzazioneConfig(TipoAutorizzazioneEnum discr, Object body) throws InstantiationException, IllegalAccessException, UtilsException {
-		
-		if (discr == TipoAutorizzazioneEnum.DISABILITATO) return null;
-		
-		//	TODO: Renderli statici.
-		Map<TipoAutorizzazioneEnum, Class<?>> typeMap = new HashMap<TipoAutorizzazioneEnum, Class<?>>();
-		typeMap.put(TipoAutorizzazioneEnum.ABILITATO, APIImplAutorizzazioneConfig.class);
-		typeMap.put(TipoAutorizzazioneEnum.CUSTOM, APIImplAutorizzazioneCustom.class);
-		typeMap.put(TipoAutorizzazioneEnum.XACML_POLICY, APIImplAutorizzazioneXACMLConfig.class);
-		
-		return (T) BaseHelper.deserializeFromSwitch(typeMap, discr, body);		
-	}
-	
 
 	
 	public static final void fillAps(
@@ -691,9 +683,8 @@ public class ErogazioniApiHelper {
 				} catch (Exception e) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il parametro configurazione per l'autenticazione basic non è correttamente formato: " + e.getMessage() );
 				}
-        		if (authConfig == null)
+        		if (authConfig == null || authConfig.getTipo() == null)
         			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il parametro configurazione per l'autenticazione basic non è correttamente formato");
-        		
         		
         		TipoAutenticazionePrincipal autenticazionePrincipal = Enums.tipoAutenticazionePrincipalFromRest.get(authConfig.getTipo());
         		Proprieta propTipoAuthn = new Proprieta();
@@ -895,7 +886,11 @@ public class ErogazioniApiHelper {
 	        		configAuthz = (APIImplAutorizzazioneConfigNew) authz.getConfigurazione();
 	        	}
 	        	else {
-	        		BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthz );
+	        		try {
+		        		BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthz );
+	        		} catch (Exception e) {
+		        		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile deserializzare l'oggetto configurazione autorizzazione: " + e.getMessage());
+	        		}
 	        	}
 	         	ruoliFonte = configAuthz.getRuoliFonte();
 	         	erogazioneRuolo = configAuthz.getRuolo();
@@ -908,7 +903,14 @@ public class ErogazioniApiHelper {
 	        		configAuthXaml = (APIImplAutorizzazioneXACMLConfig) authz.getConfigurazione();
 	        	}
 	        	else {
-	        		BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthXaml );
+	        		try {
+		        		BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthXaml );
+	        		} catch (Exception e) {
+			        	throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile deserializzare l'oggetto configurazione autorizzazione: " + e.getMessage());
+			        }
+	        	}
+	        	if (configAuthXaml.getPolicy() == null) {
+	        		throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneXACMLConfig.class.getName() + ": Indicare il campo obbligatorio 'policy'");
 	        	}
 	        	ruoliFonte = configAuthXaml.getRuoliFonte();
 	        	statoAutorizzazione = AutorizzazioneUtilities.STATO_XACML_POLICY;
@@ -1429,6 +1431,13 @@ public class ErogazioniApiHelper {
 	{
 		final boolean generaPortaDelegata = !generaPortaApplicativa;
 		
+		// defaults
+		if (ero.getAutenticazione() == null) {
+			ero.setAutenticazione(new APIImplAutenticazioneNew());
+			ero.getAutenticazione().setTipo(TipoAutenticazioneNewEnum.HTTPS);
+			ero.getAutenticazione().setOpzionale(false);
+		}
+		
 		final APIImplAutorizzazioneNew authz = ero.getAutorizzazione();
         final APIImplAutenticazioneNew authn = ero.getAutenticazione();
         
@@ -1457,7 +1466,11 @@ public class ErogazioniApiHelper {
 	        		configAuthz = (APIImplAutorizzazioneConfigNew) authz.getConfigurazione();
 	        	}
 	        	else {
-	        		BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthz );
+			    	try {
+			    		BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthz );
+			    	} catch (Exception e) {
+		        		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile deserializzare l'oggetto configurazione autorizzazione: " + e.getMessage());
+		        	}
 	        	}
 		     	ruoliFonte = configAuthz.getRuoliFonte();
 	         	isRichiedente = configAuthz.isRichiedente();
@@ -1472,7 +1485,14 @@ public class ErogazioniApiHelper {
 	        		configAuthzXacml = (APIImplAutorizzazioneXACMLConfig) authz.getConfigurazione();
 	        	}
 	        	else {
-	        		BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthzXacml );
+	        		try {
+			    		BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthzXacml );
+			    	} catch (Exception e) {
+		        		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile deserializzare l'oggetto configurazione autorizzazione: " + e.getMessage());
+		        	}
+	        	}
+		    	if (configAuthzXacml.getPolicy() == null) {
+	        		throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneXACMLConfig.class.getName() + ": Indicare il campo obbligatorio 'policy'");
 	        	}
 		    	ruoliFonte = configAuthzXacml.getRuoliFonte();
 		    	statoAutorizzazione = AutorizzazioneUtilities.STATO_XACML_POLICY;
@@ -1601,6 +1621,24 @@ public class ErogazioniApiHelper {
 		
 		return ret;
 	}
+	
+	public static final AllegatoGenerico deserializeAllegatoGenerico(Object o) {
+		AllegatoGenerico ret = deserializeDefault(o, AllegatoGenerico.class);
+		if (StringUtils.isEmpty(ret.getNome()) || ret.getDocumento() == null) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(AllegatoGenerico.class.getName() + ": Indicare i campi obbligatori 'nome' e 'documento'");
+		}
+		return ret;
+	}
+	
+	public static final AllegatoSpecificaSemiformale deserializeAllegatoSpecificaSemiformale(Object o) {
+		AllegatoSpecificaSemiformale ret = deserializeDefault(o, AllegatoSpecificaSemiformale.class);
+		if (StringUtils.isEmpty(ret.getNome()) || ret.getDocumento() == null || ret.getTipo() == null) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(AllegatoSpecificaSemiformale.class.getName() + ": Indicare i campi obbligatori 'nome', 'documento' e 'tipo'");
+		}
+		return ret;
+	}
+	
+	
 		
 	public static final Documento implAllegatoToDocumento(ApiImplAllegato body, AccordoServizioParteSpecifica asps) throws InstantiationException, IllegalAccessException {
 		
@@ -1612,35 +1650,43 @@ public class ErogazioniApiHelper {
 				.toString()
 			);
 		
-		switch (body.getRuolo()) {
-		case ALLEGATO: {
-			@SuppressWarnings("unchecked") AllegatoGenerico all = BaseHelper.fromMap((Map<String,Object>) body.getAllegato(), AllegatoGenerico.class);
-			documento.setByteContenuto(all.getDocumento());
-			documento.setFile(all.getNome());
-			documento.setTipo(all.getNome().substring( all.getNome().lastIndexOf('.')+1, all.getNome().length()));
-			break;
-		}
-		case SPECIFICASEMIFORMALE: {
-			@SuppressWarnings("unchecked") AllegatoSpecificaSemiformale all = BaseHelper.fromMap( (Map<String,Object>) body.getAllegato(), AllegatoSpecificaSemiformale.class);
-			documento.setByteContenuto(all.getDocumento());
-			documento.setFile(all.getNome());	
-			documento.setTipo(all.getTipo().toString());
-			break;
-		}
-		case SPECIFICALIVELLOSERVIZIO: {
-			@SuppressWarnings("unchecked") AllegatoSpecificaLivelloServizio all = BaseHelper.fromMap( (Map<String,Object>) body.getAllegato(), AllegatoSpecificaLivelloServizio.class);
-			documento.setByteContenuto(all.getDocumento());
-			documento.setFile(all.getNome());	
-			documento.setTipo(all.getTipo().toString());
-			break;
-		}
-		case SPECIFICASICUREZZA: {
-			@SuppressWarnings("unchecked") AllegatoSpecificaSicurezza all = BaseHelper.fromMap( (Map<String,Object>) body.getAllegato(), AllegatoSpecificaSicurezza.class);
-			documento.setByteContenuto(all.getDocumento());
-			documento.setFile(all.getNome());	
-			documento.setTipo(all.getTipo().toString());
-			break;
-		}
+		if (body.getAllegato() != null) {
+			switch (body.getRuolo()) {
+			case ALLEGATO: {
+				AllegatoGenerico all = deserializeAllegatoGenerico(body.getAllegato());
+				documento.setByteContenuto(all.getDocumento());
+				documento.setFile(all.getNome());
+				documento.setTipo( evalnull( () -> all.getNome().substring( all.getNome().lastIndexOf('.')+1, all.getNome().length())) );
+				break;
+			}
+			case SPECIFICASEMIFORMALE: {
+				AllegatoSpecificaSemiformale all = deserializeAllegatoSpecificaSemiformale(body.getAllegato());
+				documento.setByteContenuto(all.getDocumento());
+				documento.setFile(all.getNome());	
+				documento.setTipo( evalnull( () -> all.getTipo().toString()) );
+				break;
+			}
+			case SPECIFICALIVELLOSERVIZIO: {
+				AllegatoSpecificaLivelloServizio all = deserializeDefault(body.getAllegato(), AllegatoSpecificaLivelloServizio.class);
+				if (StringUtils.isEmpty(all.getNome()) || all.getDocumento() == null || all.getTipo() == null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(AllegatoSpecificaLivelloServizio.class.getName() + ": Indicare i campi obbligatori 'nome', 'documento' e 'tipo'");
+				}
+				documento.setByteContenuto(all.getDocumento());
+				documento.setFile(all.getNome());	
+				documento.setTipo( evalnull( () -> all.getTipo().toString())) ;
+				break;
+			}
+			case SPECIFICASICUREZZA: {
+				AllegatoSpecificaSicurezza all = deserializeDefault(body.getAllegato(), AllegatoSpecificaSicurezza.class);
+				if (StringUtils.isEmpty(all.getNome()) || all.getDocumento() == null || all.getTipo() == null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(AllegatoSpecificaSicurezza.class.getName() + ": Indicare i campi obbligatori 'nome', 'documento' e 'tipo'");
+				}
+				documento.setByteContenuto(all.getDocumento());
+				documento.setFile(all.getNome());	
+				documento.setTipo(evalnull( () -> all.getTipo().toString()) );
+				break;
+			}
+			}
 		}
 
 		return documento;
@@ -3066,7 +3112,7 @@ public class ErogazioniApiHelper {
 		
 	}
 	
-	public static final void fillPortaDelegata(ControlloAccessiAutorizzazione body, final PortaDelegata newPd) throws InstantiationException, IllegalAccessException {
+	public static final void fillPortaDelegata(ControlloAccessiAutorizzazione body, final PortaDelegata newPd) {
 		final APIImplAutorizzazione authz = body.getAutorizzazione();
 		
 		newPd.setXacmlPolicy(null);
@@ -3081,9 +3127,8 @@ public class ErogazioniApiHelper {
 			break;
 		}
 		case ABILITATO: {
-			@SuppressWarnings("unchecked") APIImplAutorizzazioneConfig config = BaseHelper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneConfig.class);
+			APIImplAutorizzazioneConfig config = deserializeDefault(authz.getConfigurazione(), APIImplAutorizzazioneConfig.class);
 			
-
 			// defaults
 			if ( config.isRuoli() && config.getRuoliFonte() == null ) {
 				config.setRuoliFonte(FonteEnum.QUALSIASI);
@@ -3140,14 +3185,17 @@ public class ErogazioniApiHelper {
 			break;
 		}
 		case CUSTOM:
-			@SuppressWarnings("unchecked")
-			APIImplAutorizzazioneCustom customConfig = BaseHelper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneCustom.class);
+			APIImplAutorizzazioneCustom customConfig = deserializeDefault(authz.getConfigurazione(), APIImplAutorizzazioneCustom.class);
+			if (StringUtils.isEmpty(customConfig.getNome())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneCustom.class.getName()+": Indicare il campo obbligatorio 'nome' ");
+			}
 			newPd.setAutorizzazione(customConfig.getNome());
-	
 			break;
 		case XACML_POLICY: {
-			@SuppressWarnings("unchecked")
-			APIImplAutorizzazioneXACMLConfig xacmlConfig = BaseHelper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneXACMLConfig.class);
+			APIImplAutorizzazioneXACMLConfig xacmlConfig = deserializeDefault(authz.getConfigurazione(), APIImplAutorizzazioneXACMLConfig.class);
+			if (xacmlConfig.getPolicy() == null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneXACMLConfig.class.getName()+": Indicare il campo obbligatorio 'policy'");
+			}
 			
 			if (xacmlConfig.getRuoliFonte() == null)
 				xacmlConfig.setRuoliFonte(FonteEnum.QUALSIASI);
@@ -3166,14 +3214,12 @@ public class ErogazioniApiHelper {
 			newPd.setXacmlPolicy( evalnull( () -> new String(xacmlConfig.getPolicy())));				
 			break;
 		}
-		}
-		
+		}	
 	}
 
 
 
-	public static final void fillPortaApplicativa(ControlloAccessiAutorizzazione body, final PortaApplicativa newPa)
-			throws InstantiationException, IllegalAccessException {
+	public static final void fillPortaApplicativa(ControlloAccessiAutorizzazione body, final PortaApplicativa newPa) {
 		final APIImplAutorizzazione authz = body.getAutorizzazione();
 		
 		newPa.setXacmlPolicy(null);
@@ -3191,7 +3237,7 @@ public class ErogazioniApiHelper {
 		
 		
 		case ABILITATO: {
-			@SuppressWarnings("unchecked") APIImplAutorizzazioneConfig config = BaseHelper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneConfig.class);
+			APIImplAutorizzazioneConfig config = deserializeDefault(authz.getConfigurazione(), APIImplAutorizzazioneConfig.class);
 			
 			// defaults
 			if ( config.isRuoli() && config.getRuoliFonte() == null ) {
@@ -3248,14 +3294,17 @@ public class ErogazioniApiHelper {
 			break;
 		}
 		case CUSTOM:
-			@SuppressWarnings("unchecked")
-			APIImplAutorizzazioneCustom customConfig = BaseHelper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneCustom.class);
+			APIImplAutorizzazioneCustom customConfig = deserializeDefault(authz.getConfigurazione(), APIImplAutorizzazioneCustom.class);
+			if (StringUtils.isEmpty(customConfig.getNome())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneCustom.class.getName()+": Indicare il campo obbligatorio 'nome' ");
+			}
 			newPa.setAutorizzazione(customConfig.getNome());
-	
 			break;
 		case XACML_POLICY: {
-			@SuppressWarnings("unchecked")
-			APIImplAutorizzazioneXACMLConfig xacmlConfig = BaseHelper.fromMap( (Map<String,Object>) authz.getConfigurazione(), APIImplAutorizzazioneXACMLConfig.class);
+			APIImplAutorizzazioneXACMLConfig xacmlConfig = deserializeDefault(authz.getConfigurazione(), APIImplAutorizzazioneXACMLConfig.class);
+			if (xacmlConfig.getPolicy() == null) {
+        		throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneXACMLConfig.class.getName() + ": Indicare il campo obbligatorio 'policy'");
+        	}
 			
 			if (xacmlConfig.getRuoliFonte() == null)
 				xacmlConfig.setRuoliFonte(FonteEnum.QUALSIASI);
@@ -3438,8 +3487,7 @@ public class ErogazioniApiHelper {
 		
 		// Imposto l'autenticazione custom
 		if ( evalnull( () -> auth.getTipo() ) == TipoAutenticazioneEnum.CUSTOM) {
-			@SuppressWarnings("unchecked")
-			APIImplAutenticazioneConfigurazioneCustom customConfig = BaseHelper.fromMap( (Map<String,Object>) auth.getConfigurazione(), APIImplAutenticazioneConfigurazioneCustom.class);
+			APIImplAutenticazioneConfigurazioneCustom customConfig = deserializeDefault(auth.getConfigurazione(), APIImplAutenticazioneConfigurazioneCustom.class);
 			newPa.setAutenticazione(customConfig.getNome());
 		}
 		// Gestione Token
@@ -3466,7 +3514,7 @@ public class ErogazioniApiHelper {
 	}
 	
 	
-	public static final void fillPortaDelegata(final ErogazioniEnv env, ControlloAccessiAutenticazione body, final PortaDelegata newPd) throws InstantiationException, IllegalAccessException {
+	public static final void fillPortaDelegata(final ErogazioniEnv env, ControlloAccessiAutenticazione body, final PortaDelegata newPd) {
 		final APIImplAutenticazione auth = body.getAutenticazione();
 		
 		newPd.setAutenticazioneOpzionale( evalnull( () -> Helper.boolToStatoFunzionalitaConf(auth.isOpzionale())) );
@@ -3482,8 +3530,7 @@ public class ErogazioniApiHelper {
 		newPd.setProprietaAutenticazioneList(proprietaAutenticazione);
 		
 		if ( evalnull( () -> auth.getTipo() ) == TipoAutenticazioneEnum.CUSTOM) {
-			@SuppressWarnings("unchecked")
-			APIImplAutenticazioneConfigurazioneCustom customConfig = BaseHelper.fromMap( (Map<String,Object>) auth.getConfigurazione(), APIImplAutenticazioneConfigurazioneCustom.class);
+			APIImplAutenticazioneConfigurazioneCustom customConfig = deserializeDefault(auth.getConfigurazione(), APIImplAutenticazioneConfigurazioneCustom.class);
 			newPd.setAutenticazione(customConfig.getNome());
 		}
 		// Gestione Token
@@ -3802,7 +3849,11 @@ public class ErogazioniApiHelper {
         		identificativo = (RateLimitingPolicyIdentificativo) body.getConfigurazione();
         	}
         	else {
-        		BaseHelper.fillFromMap( (Map<String,Object>) body.getConfigurazione(), identificativo );
+        		try {
+        			BaseHelper.fillFromMap( (Map<String,Object>) body.getConfigurazione(), identificativo );
+        		} catch (Exception e) {
+	        		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile deserializzare l'oggetto configurazione autorizzazione: " + e.getMessage());
+	        	}
         	}
         	idPolicy = identificativo.getPolicy();
 			break;
@@ -3812,7 +3863,11 @@ public class ErogazioniApiHelper {
         		criteri = (RateLimitingPolicyCriteri) body.getConfigurazione();
         	}
         	else {
-        		BaseHelper.fillFromMap( (Map<String,Object>) body.getConfigurazione(), criteri );
+        		try {
+        			BaseHelper.fillFromMap( (Map<String,Object>) body.getConfigurazione(), criteri );
+        		} catch (Exception e) {
+	        		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile deserializzare l'oggetto configurazione autorizzazione: " + e.getMessage());
+	        	}
         	}
         	
         	String modalitaRisorsa = getDataElementModalitaRisorsa(criteri.getRisorsa());

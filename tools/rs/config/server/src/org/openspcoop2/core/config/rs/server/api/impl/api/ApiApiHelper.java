@@ -21,8 +21,10 @@
  */
 package org.openspcoop2.core.config.rs.server.api.impl.api;
 
+import static org.openspcoop2.utils.service.beans.utils.BaseHelper.deserializev3;
+import static org.openspcoop2.utils.service.beans.utils.BaseHelper.evalnull;
+
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
@@ -44,8 +46,6 @@ import org.openspcoop2.core.config.rs.server.model.ApiServizio;
 import org.openspcoop2.core.config.rs.server.model.FormatoRestEnum;
 import org.openspcoop2.core.config.rs.server.model.FormatoSoapEnum;
 import org.openspcoop2.core.config.rs.server.model.HttpMethodEnum;
-import org.openspcoop2.utils.service.beans.ProfiloEnum;
-import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.core.config.rs.server.model.StatoApiEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoSpecificaSemiformaleEnum;
@@ -73,6 +73,8 @@ import org.openspcoop2.protocol.basic.archive.APIUtils;
 import org.openspcoop2.protocol.information_missing.constants.StatoType;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
@@ -204,7 +206,7 @@ public class ApiApiHelper {
 	}
 	
 	
-	public static final Documento apiAllegatoToDocumento(ApiAllegato body, AccordoServizioParteComune as, ApiEnv env) throws InstantiationException, IllegalAccessException {
+	public static final Documento apiAllegatoToDocumento(ApiAllegato body, AccordoServizioParteComune as, ApiEnv env) {
 		
 		Documento documento = new Documento();
 		documento.setIdProprietarioDocumento(as.getId());
@@ -212,16 +214,16 @@ public class ApiApiHelper {
 		
 		switch (body.getRuolo()) {
 		case ALLEGATO:
-			@SuppressWarnings("unchecked") AllegatoGenerico ag = BaseHelper.fromMap((Map<String,Object>) body.getAllegato(), AllegatoGenerico.class);
+			AllegatoGenerico ag = deserializev3(body.getAllegato(), AllegatoGenerico.class).orElse(new AllegatoGenerico());
 			documento.setByteContenuto(ag.getDocumento());
 			documento.setFile(ag.getNome());
-			documento.setTipo(ag.getNome().substring( ag.getNome().lastIndexOf('.')+1, ag.getNome().length()));
+			documento.setTipo( evalnull( () -> ag.getNome().substring( ag.getNome().lastIndexOf('.')+1, ag.getNome().length())) );
 			break;
 		case SPECIFICASEMIFORMALE:
-			@SuppressWarnings("unchecked") AllegatoSpecificaSemiformale ass = BaseHelper.fromMap( (Map<String,Object>) body.getAllegato(), AllegatoSpecificaSemiformale.class);
+			AllegatoSpecificaSemiformale ass = deserializev3(body.getAllegato(), AllegatoSpecificaSemiformale.class).orElse(new AllegatoSpecificaSemiformale());
 			documento.setByteContenuto(ass.getDocumento());
 			documento.setFile(ass.getNome());	
-			documento.setTipo(Enums.tipoDocumentoSemiFormaleFromSpecifica.get(ass.getTipo()).toString());
+			documento.setTipo( evalnull( () -> Enums.tipoDocumentoSemiFormaleFromSpecifica.get(ass.getTipo()).toString()) );
 			break;
 		}
 

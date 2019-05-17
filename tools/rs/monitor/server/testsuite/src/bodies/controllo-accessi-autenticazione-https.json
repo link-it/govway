@@ -1,0 +1,6 @@
+{
+    "autenticazione": {
+        "tipo": "https",
+        "opzionale": false
+    }
+}

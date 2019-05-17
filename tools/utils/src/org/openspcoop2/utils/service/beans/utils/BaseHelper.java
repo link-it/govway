@@ -33,7 +33,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
@@ -59,6 +58,15 @@ public class BaseHelper {
 		void run() throws Exception;
 	}
 	
+	public static final<T> T dropnull(ThrowingSupplier<T> r) {
+		try {
+			return r.get();
+		} catch (NullPointerException e) {
+			return null;
+		} catch( Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
 	public static final <T> T evalnull(ThrowingSupplier<T> r) {
 		try {
@@ -146,13 +154,13 @@ public class BaseHelper {
 	}
 	
 	
-	@SuppressWarnings("unchecked")
+	/*@SuppressWarnings("unchecked")
 	public static <T extends Enum<T>> Object deserializeFromSwitch(Map<T,Class<?>> typeMap, T discr, Object body) throws UtilsException, InstantiationException, IllegalAccessException {
 		if (body == null) return null;
 
 		// TODO: Se tutto funziona, aggiungere eccezioni per discr non riconosciuto. 
 		return fromMap((Map<String,Object>) body, typeMap.get(discr));
-	}
+	}*/
 	
 	/**
 	 * Deserializza una Map json in un oggetto
@@ -163,11 +171,11 @@ public class BaseHelper {
 		if (mapObject == null) return null;
 		
 		T ret = toClass.newInstance();
-		try {
-			fillFromMap(mapObject, ret);
-		} catch (Exception e) {
+		//try {
+		fillFromMap(mapObject, ret);
+		/*} catch (Exception e) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile deserializzare l'oggetto " + toClass.getName() + ", formato non valido: " + e.getMessage());
-		}
+		}*/
 	
 		return ret;
 	}
@@ -241,6 +249,7 @@ public class BaseHelper {
 							if (String.valueOf(e.toString()).equals(vs.trim())) {
 								found = true;
 								BeanUtils.setProperty(toFill, k, e);
+								break;
 							}
 						}
 						if (!found)
@@ -249,6 +258,10 @@ public class BaseHelper {
 					else if ( dest == Integer.class ) {
 						BeanUtils.setProperty(toFill, k, Integer.valueOf(vs));
 					}
+					else if (dest == Object.class ) {
+						BeanUtils.setProperty(toFill, k, vs);
+					}
+					// TODO: Qui potrei sollevare un'eccezione se il campo non c'è nell'oggetto..
 				}
 				
 				else if ( source == LinkedHashMap.class && dest != Object.class) {	
@@ -269,5 +282,41 @@ public class BaseHelper {
 	public static final Map<ProfiloEnum,String> tipoProtocolloFromProfilo = ProfiloUtils.getMapProfiloToProtocollo();	
 	public static final Map<String,ProfiloEnum> profiloFromTipoProtocollo = ProfiloUtils.getMapProtocolloToProfilo();
 	
-
+	@SuppressWarnings("unchecked")
+	public static <T> T deserializev2(Object o, Class<T> dest) {
+		if (o == null) return null;
+		
+		try {
+			return fromMap((Map<String, Object>) o,dest);
+		} catch (Exception e) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile deserializzare l'oggetto " + dest.getName() + ", formato non valido: " + e.getMessage()); 
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> Optional<T> deserializev3(Object o, Class<T> dest) {
+		if (o == null) return Optional.empty();
+		
+		try {
+			return Optional.of(fromMap((Map<String, Object>) o,dest));
+		} catch (Exception e) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile deserializzare l'oggetto " + dest.getName() + ", formato non valido: " + e.getMessage()); 
+		}
+	}
+	
+	public static <T> T deserializeDefault(Object o, Class<T> dest) {
+		Optional<T> ret = deserializev3(o, dest);
+		if (!ret.isPresent() || (ret.isPresent() && ret.get() == null)) {
+			try {
+				return dest.newInstance();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			return ret.get();
+		}	
+		
+	}
+	
+	
 }

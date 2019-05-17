@@ -161,6 +161,18 @@ public class SearchFormUtilities {
 		return searchForm;
 	}
 	
+	public TransazioniSearchForm getIdApplicativoSearchForm(IContext context, ProfiloEnum profilo, String soggetto, TransazioneRuoloEnum ruolo,
+			DateTime dataInizio, DateTime dataFine) throws Exception {
+		TransazioniSearchForm searchForm = new TransazioniSearchForm();
+		initBaseInfo(searchForm, context, profilo, soggetto, ruolo);
+		searchForm.setModalitaRicercaStorico(ModalitaRicercaTransazioni.ID_APPLICATIVO.getValue());
+		if (dataInizio != null && dataFine != null) {
+			searchForm.setDataInizio(dataInizio.toDate());
+			searchForm.setDataFine(dataFine.toDate());
+		}
+		return searchForm;
+	}
+	
 	public ConfigurazioniGeneraliSearchForm getConfigurazioniGeneraliSearchForm(IContext context, ProfiloEnum profilo, String soggetto, TransazioneRuoloEnum ruolo) throws Exception {
 		ConfigurazioniGeneraliSearchForm searchForm = new ConfigurazioniGeneraliSearchForm();
 		initBaseInfo(searchForm, context, profilo, soggetto, ruolo);

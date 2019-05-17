@@ -676,11 +676,11 @@ public class ConfigurazioniCsvExporter {
 		// Autenticazione Token (username)
 		// Autenticazione Token (email)
 		if(gestioneTokenAutenticazione != null) {
-			oneLine.add(gestioneTokenAutenticazione.getIssuer().getValue());
-			oneLine.add(gestioneTokenAutenticazione.getClientId().getValue());
-			oneLine.add(gestioneTokenAutenticazione.getSubject().getValue());
-			oneLine.add(gestioneTokenAutenticazione.getUsername().getValue());
-			oneLine.add(gestioneTokenAutenticazione.getEmail().getValue());
+			oneLine.add(gestioneTokenAutenticazione.getIssuer()!=null ? gestioneTokenAutenticazione.getIssuer().getValue() : StatoFunzionalita.DISABILITATO.getValue() );
+			oneLine.add(gestioneTokenAutenticazione.getClientId()!=null ? gestioneTokenAutenticazione.getClientId().getValue() : StatoFunzionalita.DISABILITATO.getValue() );
+			oneLine.add(gestioneTokenAutenticazione.getSubject()!=null ? gestioneTokenAutenticazione.getSubject().getValue() : StatoFunzionalita.DISABILITATO.getValue() );
+			oneLine.add(gestioneTokenAutenticazione.getUsername()!=null ? gestioneTokenAutenticazione.getUsername().getValue() : StatoFunzionalita.DISABILITATO.getValue() );
+			oneLine.add(gestioneTokenAutenticazione.getEmail()!=null ? gestioneTokenAutenticazione.getEmail().getValue() : StatoFunzionalita.DISABILITATO.getValue() );
 		} else {
 			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
 			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
@@ -1210,11 +1210,11 @@ public class ConfigurazioniCsvExporter {
 		// Autenticazione Token (username)
 		// Autenticazione Token (email)
 		if(gestioneTokenAutenticazione != null) {
-			oneLine.add(gestioneTokenAutenticazione.getIssuer().getValue());
-			oneLine.add(gestioneTokenAutenticazione.getClientId().getValue());
-			oneLine.add(gestioneTokenAutenticazione.getSubject().getValue());
-			oneLine.add(gestioneTokenAutenticazione.getUsername().getValue());
-			oneLine.add(gestioneTokenAutenticazione.getEmail().getValue());
+			oneLine.add(gestioneTokenAutenticazione.getIssuer()!=null ? gestioneTokenAutenticazione.getIssuer().getValue() : StatoFunzionalita.DISABILITATO.getValue() );
+			oneLine.add(gestioneTokenAutenticazione.getClientId()!=null ? gestioneTokenAutenticazione.getClientId().getValue() : StatoFunzionalita.DISABILITATO.getValue() );
+			oneLine.add(gestioneTokenAutenticazione.getSubject()!=null ? gestioneTokenAutenticazione.getSubject().getValue() : StatoFunzionalita.DISABILITATO.getValue() );
+			oneLine.add(gestioneTokenAutenticazione.getUsername()!=null ? gestioneTokenAutenticazione.getUsername().getValue() : StatoFunzionalita.DISABILITATO.getValue() );
+			oneLine.add(gestioneTokenAutenticazione.getEmail()!=null ? gestioneTokenAutenticazione.getEmail().getValue() : StatoFunzionalita.DISABILITATO.getValue() );
 		} else {
 			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
 			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());

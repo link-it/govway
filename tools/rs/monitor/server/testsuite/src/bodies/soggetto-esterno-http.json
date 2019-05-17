@@ -1,0 +1,11 @@
+{
+ 	"nome": "SoggettoJson",
+   	"modalita_accesso": "http-basic",
+   	"credenziali": {
+       		"username": "username",
+       		"password": "password"     
+	},
+	"dominio": "esterno",
+	"descrizione": "Descrizione Soggetto Json",
+	"ruoli": [ ]
+}

@@ -41,6 +41,7 @@ import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.core.statistiche.constants.TipoStatistica;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
@@ -351,14 +352,8 @@ public class ReportExporter extends HttpServlet{
 			statSearchForm.setUseGraficiSVG(true);
 			statSearchForm.setAction(tipoDistribuzioneReport);
 			
-
-			ReportExporter.log.debug("Imposto parametri di ricerca nel search form ...");
 			String protocollo = setProtocolParametersInSearchForm(req, statSearchForm);
-			setParametersInSearchForm(req, statSearchForm, protocollo);
 
-					
-			// Istanzio bean
-			
 			ReportExporter.log.debug("Inizializzazione bean ["+tipoDistribuzioneReport+"] in corso ...");
 						
 			BaseStatsMBean<?, ?, ?> bean = null;
@@ -452,7 +447,10 @@ public class ReportExporter extends HttpServlet{
 			}
 			
 			ReportExporter.log.debug("Inizializzazione bean ["+tipoDistribuzioneReport+"] completata");
-		
+
+			ReportExporter.log.debug("Imposto parametri di ricerca nel search form ...");
+			protocollo = setProtocolParametersInSearchForm(req, statSearchForm);
+			setParametersInSearchForm(req, statSearchForm, protocollo);
 			
 			StringBuffer bf = new StringBuffer();
 			ReflectionToStringBuilder builder = new ReflectionToStringBuilder(statSearchForm, ToStringStyle.MULTI_LINE_STYLE, bf, null, false, false);
@@ -708,7 +706,27 @@ public class ReportExporter extends HttpServlet{
 							throw new ParameterUncorrectException("Parametro '"+CostantiExporter.RICERCA_MITTENTE_TIPO_CLAIM+"' fornito possiede un valore '"+tipoClaim
 									+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.CLAIMS);
 						}
-						statSearchForm.setTokenClaim(tipoClaim);
+						TipoCredenzialeMittente tokenClaim = null;
+						if(CostantiExporter.CLAIM_ISSUER.equals(tipoClaim)) {
+							tokenClaim  = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_issuer;
+						}
+						else if(CostantiExporter.CLAIM_SUBJECT.equals(tipoClaim)) {
+							tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_subject;
+						}
+						else if(CostantiExporter.CLAIM_USERNAME.equals(tipoClaim)) {
+							tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_username;
+						}
+						else if(CostantiExporter.CLAIM_CLIENT_ID.equals(tipoClaim)) {
+							tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_clientId;
+						}
+						else if(CostantiExporter.CLAIM_EMAIL.equals(tipoClaim)) {
+							tokenClaim = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_eMail;
+						} else {
+							throw new ParameterUncorrectException("Parametro '"+CostantiExporter.RICERCA_MITTENTE_TIPO_CLAIM+"' fornito possiede un valore '"+tipoClaim
+									+"' sconosciuto. I tipi supportati sono: "+ TipoCredenzialeMittente.values().toString());
+						}
+
+						statSearchForm.setTokenClaim(tokenClaim.name());
 					}
 					else {
 						throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_RICERCA_MITTENTE+"' valorizzato con '"+tipoRicercaMittente

@@ -22,7 +22,9 @@
 
 package org.openspcoop2.utils.jdbc;
 
+import java.io.InputStream;
 import java.sql.Connection;
+import java.util.Properties;
 
 import org.openspcoop2.utils.TipiDatabase;
 
@@ -35,6 +37,29 @@ import org.openspcoop2.utils.TipiDatabase;
  */
 public class KeyGeneratorFactory {
 
+	private static boolean useAutoIncrementPostgresql = false;
+	public static boolean isUseAutoIncrementPostgresql() {
+		return useAutoIncrementPostgresql;
+	}
+	public static void setUseAutoIncrementPostgresql(boolean useAutoIncrementPostgresql) {
+		KeyGeneratorFactory.useAutoIncrementPostgresql = useAutoIncrementPostgresql;
+	}
+
+	static {
+		try (InputStream is = KeyGeneratorFactory.class.getResourceAsStream("/org/openspcoop2/utils/jdbc/jdbc.properties")){
+			if(is!=null) {
+				Properties p = new Properties();
+				p.load(is);
+				String tmp = p.getProperty("postgresql.autoIncrement");
+				if(tmp!=null) {
+					if("true".equalsIgnoreCase(tmp.trim())) {
+						useAutoIncrementPostgresql = true;
+					}
+				}
+			}
+		}catch(Throwable t) {}
+	}
+	
 	public static IKeyGenerator createKeyGeneratorFactory(String tipoDatabase,Connection connection,IKeyGeneratorObject object) throws KeyGeneratorException {
 		return KeyGeneratorFactory.toKeyGenerator(tipoDatabase, connection, object);
 	}
@@ -42,7 +67,12 @@ public class KeyGeneratorFactory {
 	public static IKeyGenerator toKeyGenerator(String tipoDatabase,Connection connection,IKeyGeneratorObject object) throws KeyGeneratorException{
 		
 		if (TipiDatabase.POSTGRESQL.equals(tipoDatabase)) {
-			return new PostgreSQLKeyGenerator(connection, object);
+			if(useAutoIncrementPostgresql) {
+				return new PostgreSQLAutoKeyGenerator(connection, object);
+			}
+			else {
+				return new PostgreSQLKeyGenerator(connection, object);
+			}
 		} else if (TipiDatabase.MYSQL.equals(tipoDatabase)) {
 			return new MySQLKeyGenerator(connection, object);
 		} else if (TipiDatabase.ORACLE.equals(tipoDatabase)) {

@@ -1,0 +1,7 @@
+{
+    "nome": "TestSuiteApplicativo",
+      "modalita_accesso": "principal",
+      "credenziali": {
+              "userid": "username"
+   }
+}

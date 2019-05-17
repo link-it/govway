@@ -9,6 +9,5 @@
 		}
 	},
 	"dominio": "esterno",
-	"descrizione": "Descrizione Soggetto Json2",
-	"ruoli": [ "RuoloDemo" ]
+	"descrizione": "Descrizione Soggetto Json2"
 }

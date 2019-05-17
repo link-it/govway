@@ -32,6 +32,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.rs.server.api.FruizioniGruppiApi;
+import org.openspcoop2.core.config.rs.server.api.impl.Enums;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
@@ -180,22 +181,20 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			if ( body.getModalita() == ModalitaConfigurazioneGruppoEnum.NUOVA ) {
 				
 				final GruppoNuovaConfigurazione confNuova = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getModalita(), body.getConfigurazione());
-				fruizioneAutenticazione = confNuova.getAutenticazione().getTipo().toString();
-				fruizioneAutenticazioneOpzionale = ServletUtils.boolToCheckBoxStatus(confNuova.getAutenticazione().isOpzionale());
 				if(confNuova.getAutenticazione()!=null) {
+					fruizioneAutenticazione = Enums.toTipoAutenticazione(confNuova.getAutenticazione().getTipo()).toString();
+					fruizioneAutenticazioneOpzionale = ServletUtils.boolToCheckBoxStatus(confNuova.getAutenticazione().isOpzionale());
 					fruizioneAutenticazionePrincipal = ErogazioniApiHelper.getTipoAutenticazionePrincipal(confNuova.getAutenticazione().getTipo(), confNuova.getAutenticazione().getConfigurazione()); 
 					fruizioneAutenticazioneParametroList = ErogazioniApiHelper.getAutenticazioneParametroList(env, confNuova.getAutenticazione().getTipo(), confNuova.getAutenticazione().getConfigurazione());
 				}
 			}
 			
-			else if ( body.getModalita() == ModalitaConfigurazioneGruppoEnum.EREDITA ) {
-				
+			else if ( body.getModalita() == ModalitaConfigurazioneGruppoEnum.EREDITA ) {	
 				GruppoEreditaConfigurazione confEredita = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getModalita(), body.getConfigurazione());
 				List<MappingFruizionePortaDelegata> mappings = ErogazioniApiHelper.getMappingGruppiPD( confEredita.getNome(), env.idSoggetto.toIDSoggetto(), idAsps, env.apsCore);
 				if ( mappings.isEmpty() ) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il gruppo " + confEredita.getNome() + " da cui ereditare è inesistente");
 				}
-				
 				mappingPadre = mappings.get(0).getNome();			
 			}
 			

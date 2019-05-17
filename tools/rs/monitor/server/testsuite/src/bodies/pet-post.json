@@ -1,0 +1,8 @@
+{
+    "id": 3,
+    "category": { "id": 22, "name": "dog" },
+    "name": "doggie",
+    "photoUrls": [ "http://image/dog.jpg" ],
+    "tags": [ { "id": 23, "name": "white" } ],
+    "status": "available"
+}

@@ -1,0 +1,15 @@
+{
+        "intervallo_temporale": {
+		"data_inizio": "2012-07-21T17:32:28Z",
+		"data_fine": "2022-07-21T17:32:28Z"
+	},
+    "tipo": "erogazione",
+	
+	"api": {
+		"nome": "PetStorebd1445b7aaef414ec6b8fd8991",
+		"versione": "1"
+	},
+	"azione": "PUT_pet"
+	
+}
+

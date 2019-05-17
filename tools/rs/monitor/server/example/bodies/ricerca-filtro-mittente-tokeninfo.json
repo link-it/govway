@@ -9,8 +9,8 @@
 		"id": {
 			"ricerca_esatta": false,
 			"case_sensitive": false,
-			"id": "user=pippo",
-			"claim": "subject"
+			"id": "user",
+			"claim": "username"
 		}
 	}
 }

@@ -12,6 +12,9 @@
 		<!-- owasp config -->
 		<owasp.falsePositives.dir>mvn/dependencies/owasp/falsePositives</owasp.falsePositives.dir>
 		<owasp.output.dir>${project.parent.parent.basedir}/dependency-check-result</owasp.output.dir>
+
+		<!-- Versioni condivise dai moduli -->
+		<module.spring.version>5.1.6.RELEASE</module.spring.version>
 	</properties>
 
 	<modules>

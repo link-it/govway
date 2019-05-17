@@ -334,5 +334,18 @@ public class Enums {
 		credenzialeTipoFromTipoAutenticazioneNew.put(TipoAutenticazioneNewEnum.HTTPS,  CredenzialeTipo.SSL);
 		credenzialeTipoFromTipoAutenticazioneNew.put(TipoAutenticazioneNewEnum.PRINCIPAL, CredenzialeTipo.PRINCIPAL);
 	}
+
+	public static final TipoAutenticazione toTipoAutenticazione(TipoAutenticazioneNewEnum authn) {
+		if (authn == null) return null;
+		
+		switch(authn) {
+		case DISABILITATO: return TipoAutenticazione.DISABILITATO;
+		case HTTP_BASIC: return TipoAutenticazione.BASIC;
+		case HTTPS: return TipoAutenticazione.SSL;
+		case PRINCIPAL: return TipoAutenticazione.PRINCIPAL;
+		default: return null;
+		}
+		
+	}
 	
 }

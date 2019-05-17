@@ -32,6 +32,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.rs.server.api.ErogazioniGruppiApi;
+import org.openspcoop2.core.config.rs.server.api.impl.Enums;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
@@ -171,9 +172,10 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			if ( body.getModalita() == ModalitaConfigurazioneGruppoEnum.NUOVA ) {
 				
 				final GruppoNuovaConfigurazione confNuova = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getModalita(), body.getConfigurazione());
-				erogazioneAutenticazione = confNuova.getAutenticazione().getTipo().toString();
-				erogazioneAutenticazioneOpzionale = ServletUtils.boolToCheckBoxStatus(confNuova.getAutenticazione().isOpzionale());
+				
 				if(confNuova.getAutenticazione()!=null) {
+					erogazioneAutenticazione = Enums.toTipoAutenticazione(confNuova.getAutenticazione().getTipo()).toString();
+					erogazioneAutenticazioneOpzionale = ServletUtils.boolToCheckBoxStatus(confNuova.getAutenticazione().isOpzionale());
 					erogazioneAutenticazionePrincipal = ErogazioniApiHelper.getTipoAutenticazionePrincipal(confNuova.getAutenticazione().getTipo(), confNuova.getAutenticazione().getConfigurazione()); 
 					erogazioneAutenticazioneParametroList = ErogazioniApiHelper.getAutenticazioneParametroList(env, confNuova.getAutenticazione().getTipo(), confNuova.getAutenticazione().getConfigurazione());
 				}
@@ -182,15 +184,11 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			else if ( body.getModalita() == ModalitaConfigurazioneGruppoEnum.EREDITA ) {
 				
 				GruppoEreditaConfigurazione confEredita = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getModalita(), body.getConfigurazione());
-				
 				List<MappingErogazionePortaApplicativa> mappings = ErogazioniApiHelper.getMappingGruppiPA( confEredita.getNome(), idAsps, env.apsCore);
-				
 				if ( mappings.isEmpty() ) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il gruppo " + confEredita.getNome() + " da cui ereditare è inesistente");
 				}
-				
-				mappingPadre = mappings.get(0).getNome();
-						
+				mappingPadre = mappings.get(0).getNome();		
 			}
 						
 			final AccordiServizioParteSpecificaPorteApplicativeMappingInfo mappingInfo = AccordiServizioParteSpecificaUtilities.getMappingInfo(mappingPadre, asps, env.apsCore);
@@ -291,7 +289,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 	        		erogazioneAutenticazioneOpzionale,
 	        		erogazioneAutenticazionePrincipal,
 	        		erogazioneAutenticazioneParametroList,
-					"disabilitato",					// erogazioneAutorizzazione, Come da debug. 
+					"disabilitato",					// erogazioneAutorizzazione
 					null,							// erogazioneAutorizzazioneAutenticati, 
 					null,							// erogazioneAutorizzazioneRuoli, 
 					null,							// erogazioneAutorizzazioneRuoliTipologia, 
@@ -304,7 +302,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 					null,							// scope, 
 					null,							// autorizzazioneScopeMatch,
 					null,							// allegatoXacmlPolicy,
-					"disabilitato",					// gestioneToken, Come da debug. 
+					"disabilitato",					// gestioneToken
 					null,							// gestioneTokenPolicy,  
 					null,							// gestioneTokenOpzionale,  
 					null,							// gestioneTokenValidazioneInput, 

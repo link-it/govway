@@ -1,0 +1,21 @@
+{
+    "unita_tempo": "orario",
+    "intervallo_temporale": {
+      "data_inizio": "2012-07-21T17:32:28Z",
+      "data_fine": "2022-07-21T17:32:28Z"
+    },
+    "tipo": "erogazione",
+    "report": {
+      "formato": "csv",
+      "tipo": "table",
+      "tipo_informazione": {
+        "tipo": "numero_transazioni"
+      }
+    },
+    "mittente": {
+      "tipo": "soggetto",
+      "id": {
+        "soggetto": "SoggettoJson31be7005b74a49a7b038"
+      }
+    }
+  }

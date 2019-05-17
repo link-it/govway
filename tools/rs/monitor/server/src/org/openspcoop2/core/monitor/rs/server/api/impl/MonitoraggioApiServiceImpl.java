@@ -35,8 +35,8 @@ import org.joda.time.DateTime;
 import org.openspcoop2.core.monitor.rs.server.api.MonitoraggioApi;
 import org.openspcoop2.core.monitor.rs.server.api.impl.utils.Converter;
 import org.openspcoop2.core.monitor.rs.server.api.impl.utils.Enums;
-import org.openspcoop2.core.monitor.rs.server.api.impl.utils.SearchFormUtilities;
 import org.openspcoop2.core.monitor.rs.server.api.impl.utils.MonitoraggioEnv;
+import org.openspcoop2.core.monitor.rs.server.api.impl.utils.SearchFormUtilities;
 import org.openspcoop2.core.monitor.rs.server.api.impl.utils.TransazioniHelper;
 import org.openspcoop2.core.monitor.rs.server.config.DBManager;
 import org.openspcoop2.core.monitor.rs.server.config.LoggerProperties;
@@ -48,7 +48,6 @@ import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroErogazione;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroFruizione;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteIdApplicativo;
 import org.openspcoop2.core.monitor.rs.server.model.ListaEventi;
 import org.openspcoop2.core.monitor.rs.server.model.ListaTransazioni;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaIdApplicativo;
@@ -59,6 +58,7 @@ import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
 import org.openspcoop2.utils.service.beans.DiagnosticoSeveritaEnum;
+import org.openspcoop2.utils.service.beans.FiltroRicercaId;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.TransazioneExt;
 import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
@@ -221,11 +221,17 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			BaseHelper.throwIfNull(body);
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
-			TransazioniSearchForm search = searchFormUtilities.getAndamentoTemporaleSearchForm(context, profilo, soggetto, 
+			TransazioniSearchForm search = searchFormUtilities.getIdApplicativoSearchForm(context, profilo, soggetto, 
 					body.getTipo(), body.getIntervalloTemporale().getDataInizio(), body.getIntervalloTemporale().getDataFine());
 			
 			TransazioniHelper.overrideRicercaBaseTransazione(body, search, env);
-			TransazioniHelper.overrideFiltroRicercaId(body.getIdApplicativo(), search, env);
+			//TransazioniHelper.overrideFiltroRicercaId(body.getIdApplicativo(), search, env);
+			// Qui non è overrideFiltroRicercaId ma:
+
+			FiltroRicercaId filtro = body.getIdApplicativo();
+			search.setCorrelazioneApplicativaCaseSensitiveType((BooleanUtils.isTrue(filtro.isCaseSensitive()) ? CaseSensitiveMatch.SENSITIVE : CaseSensitiveMatch.INSENSITIVE).toString() );
+			search.setCorrelazioneApplicativaMatchingType((BooleanUtils.isTrue(filtro.isRicercaEsatta()) ? TipoMatch.EQUALS : TipoMatch.LIKE).toString());
+			search.setIdCorrelazioneApplicativa(filtro.getId());			
 			
 			ListaTransazioni ret = searchTransazioni(search, body.getOffset(), body.getLimit(), body.getSort(), env);
 			context.getLogger().info("Invocazione completata con successo");
@@ -256,7 +262,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
 			SearchFormUtilities searchFormUtilities = new SearchFormUtilities();	
-			TransazioniSearchForm search = searchFormUtilities.getAndamentoTemporaleSearchForm(context, profilo, soggetto, 
+			TransazioniSearchForm search = searchFormUtilities.getIdApplicativoSearchForm(context, profilo, soggetto, 
 					tipo, dataInizio, dataFine);
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			
@@ -276,17 +282,19 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 				overrideFiltroFruizione(filtro, azione, search, env);
 				break;
 			}
-			// FiltroEsito
-			FiltroEsito filtroEsito = new FiltroEsito();
-			filtroEsito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
-			overrideFiltroEsito(filtroEsito, search, env);
-			// Filtro Mittente
-			FiltroMittenteIdApplicativo filtroId = new FiltroMittenteIdApplicativo();
-			filtroId.setRicercaEsatta(ricercaEsatta);
-			filtroId.setCaseSensitive(caseSensitive);
-			filtroId.setId(idApplicativo);
-			TransazioniHelper.overrideFiltroRicercaId(filtroId, search, env);
 			
+			// FiltroEsito
+			if (esito != null) {
+				FiltroEsito filtroEsito = new FiltroEsito();
+				filtroEsito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				overrideFiltroEsito(filtroEsito, search, env);
+			}
+			
+			// Filtro Correlazione Applicativa
+			search.setCorrelazioneApplicativaCaseSensitiveType((BooleanUtils.isTrue(caseSensitive) ? CaseSensitiveMatch.SENSITIVE : CaseSensitiveMatch.INSENSITIVE).toString() );
+			search.setCorrelazioneApplicativaMatchingType((BooleanUtils.isTrue(ricercaEsatta) ? TipoMatch.EQUALS : TipoMatch.LIKE).toString());
+			search.setIdCorrelazioneApplicativa(idApplicativo);			
+						
 			search.setClusterId(idCluster);
 			
 			ListaTransazioni ret = searchTransazioni(search, offset, limit, sort, env);

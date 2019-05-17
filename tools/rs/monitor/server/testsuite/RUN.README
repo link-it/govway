@@ -1,0 +1,37 @@
+Prerequisito:
+Configurare l'ambiente di esecuzione dei test:
+	- Sostituire in ./src/karate-config.js il nome del soggettoDefault con quello scelto per mezzo dell'installer di GovWay.
+	
+	- Sempre in ./src/karate-config.js Configurare l'oggetto 'govwayDbConfig' con le informazioni per la connessione al database 
+	
+	- Copiare nella cartella "jdbc" il driver jdbc del database
+
+        - Aggiungere in govway_local.properties nella directory di configurazione esterna indicata in fase di setup (es. /etc/govway) la seguente proprietà
+                org.openspcoop2.pdd.statistiche.generazione.baseOraria.timer.intervalloSecondi=15
+	  NOTA: gli stessi secondi (aumentati di 1 secondo e moltiplicati per 1000) devono essere stati configurati dentro il file ./src/karate-config.js
+
+	  Alla fine dei test tale proprietà andrà rimosssa.
+
+	- Nel file /etc/govway/govway_local.properties abilitare la proprietà 'org.openspcoop2.pdd.cluster_id'
+		
+	  Alla fine dei test disabilitare tale proprietà
+
+	- Configurare l'application server in modo tale da supportare connessioni ssl sulla porta 8444 utilizzando le configurazioni presenti nella directory config_https:
+          a) un connettore HTTPS che esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8444)
+  	     Esempio in config_https/ConnettoreHTTPS_withClientAuth.xml
+             La configurazione del connettore assume che il keystore config_https/jks/erogatore.jks sia stato copiato in /etc/govway/keys
+	  b) Configurazione della JVM dell'A.S. in modo che utilizzi il truststore config_https/jks/erogatore.jks
+  	     Indicazioni descritte per JBoss in config_https/configurazioneTrustStoreJBOSS.txt
+
+	- Riavviare GovWay e procedere con i test
+
+Compilare i test con il comando 'ant clean build'
+
+Per eseguire tutti i test:
+  ant run_test
+
+Per eseguire una sola feature:
+  ant run_test -Dkarate.options=org/openspcoop2/core/monitor/rs/testsuite/transazioni/ricerca-transazioni.feature
+
+Per eseguire un solo scenario all'interno della feature:
+  ant run_test -Dkarate.options="org/openspcoop2/core/monitor/rs/testsuite/transazioni/ricerca-transazioni.feature --tags=FiltroApiErogazione"

@@ -19,6 +19,7 @@
 			<include name="junit-4.12.jar"/>
 			<include name="karate-*.jar"/>
 			<include name="picocli-3.9.5.jar"/>
+			<include name="logback-*.jar"/>
                 </fileset>
 		<fileset dir="${required_lib}/commons" >
                         <include name="*.jar"/>

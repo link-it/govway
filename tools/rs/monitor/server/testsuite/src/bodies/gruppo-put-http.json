@@ -1,0 +1,12 @@
+{
+    "nome": "GruppoJson",
+    "modalita": "nuova",
+    "azioni": ["PUT_pet"],
+    "configurazione": {
+        "autenticazione": {
+            "tipo": "http-basic",
+            "opzionale": false
+        }
+    }
+
+}

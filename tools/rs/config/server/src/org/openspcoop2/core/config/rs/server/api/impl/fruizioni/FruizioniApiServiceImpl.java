@@ -90,833 +90,867 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 
-	public FruizioniApiServiceImpl(){
+	public FruizioniApiServiceImpl() {
 		super(org.slf4j.LoggerFactory.getLogger(FruizioniApiServiceImpl.class));
 	}
 
-	private AuthorizationConfig getAuthorizationConfig() throws Exception{
+	private AuthorizationConfig getAuthorizationConfig() throws Exception {
 		return new AuthorizationConfig(ServerProperties.getInstance().getProperties());
 	}
 
-    /**
-     * Creazione di una fruizione di API
-     *
-     * Questa operazione consente di creare una fruizione di API
-     *
-     */
+	/**
+	 * Creazione di una fruizione di API
+	 *
+	 * Questa operazione consente di creare una fruizione di API
+	 *
+	 */
 	@Override
-    public void createFruizione(Fruizione body, ProfiloEnum profilo, String soggetto) {
+	public void createFruizione(Fruizione body, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
-			context.getLogger().info("Invocazione in corso ...");     
+			context.getLogger().info("Invocazione in corso ...");
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
-			
+
 			BaseHelper.throwIfNull(body);
-			         
-            final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-            
-            final IdSoggetto idero   = new IdSoggetto(new IDSoggetto(env.tipo_soggetto,body.getErogatore()));
-            final Soggetto erogatore = BaseHelper.supplyOrNotFound( () -> env.soggettiCore.getSoggettoRegistro(idero.toIDSoggetto()), "Soggetto Erogatore");
-            idero.setId(erogatore.getId());
-            final Soggetto fruitore  = env.soggettiCore.getSoggettoRegistro(env.idSoggetto.toIDSoggetto());
-            
-            IDSoggetto idReferente = ErogazioniApiHelper.getIdReferente(body, env);
-            final AccordoServizioParteComuneSintetico as = Helper.getAccordoSintetico(body.getApiNome(), body.getApiVersione(), idReferente,env.apcCore);
-            
-            if ( as == null ) {
-            	throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nessuna Api registrata con nome " + body.getApiNome() + " e versione " + body.getApiVersione());
-            }
-            
-            AccordoServizioParteSpecifica asps = ErogazioniApiHelper.apiImplToAps(body, erogatore, as, env);
-            final IDServizio idAps = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(), new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), asps.getVersione());
-            final boolean alreadyExists = env.apsCore.existsAccordoServizioParteSpecifica(idAps);
-            
-            if (alreadyExists)
-            	asps = env.apsCore.getServizio(idAps);
-            
-          
-            ServletUtils.setObjectIntoSession(context.getServletRequest().getSession(), AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);  
-            ErogazioniApiHelper.serviziCheckData(TipoOperazione.ADD, env, as, asps, Optional.of(env.idSoggetto), body);
-            
-   
-			org.openspcoop2.core.registry.Connettore regConnettore = ErogazioniApiHelper.buildConnettoreRegistro(env, body.getConnettore());
-			
+
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+
+			final IdSoggetto idero = new IdSoggetto(new IDSoggetto(env.tipo_soggetto, body.getErogatore()));
+			final Soggetto erogatore = BaseHelper
+					.supplyOrNotFound(() -> env.soggettiCore.getSoggettoRegistro(idero.toIDSoggetto()), "Soggetto Erogatore");
+			idero.setId(erogatore.getId());
+			final Soggetto fruitore = env.soggettiCore.getSoggettoRegistro(env.idSoggetto.toIDSoggetto());
+
+			IDSoggetto idReferente = ErogazioniApiHelper.getIdReferente(body, env);
+			final AccordoServizioParteComuneSintetico as = Helper.getAccordoSintetico(body.getApiNome(),
+					body.getApiVersione(), idReferente, env.apcCore);
+
+			if (as == null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(
+						"Nessuna Api registrata con nome " + body.getApiNome() + " e versione " + body.getApiVersione());
+			}
+
+			AccordoServizioParteSpecifica asps = ErogazioniApiHelper.apiImplToAps(body, erogatore, as, env);
+			final IDServizio idAps = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(),
+					new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), asps.getVersione());
+			final boolean alreadyExists = env.apsCore.existsAccordoServizioParteSpecifica(idAps);
+
+			if (alreadyExists)
+				asps = env.apsCore.getServizio(idAps);
+
+			ServletUtils.setObjectIntoSession(context.getServletRequest().getSession(),
+					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE,
+					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			ErogazioniApiHelper.serviziCheckData(TipoOperazione.ADD, env, as, asps, Optional.of(env.idSoggetto), body);
+
+			org.openspcoop2.core.registry.Connettore regConnettore = ErogazioniApiHelper.buildConnettoreRegistro(env,
+					body.getConnettore());
+
 			Fruitore f = new Fruitore();
 			f.setTipo(fruitore.getTipo());
 			f.setNome(fruitore.getNome());
 			f.setStatoPackage(StatoType.FINALE.getValue());
 			f.setConnettore(regConnettore);
 			asps.addFruitore(f);
-         
-            ErogazioniApiHelper.createAps(env, asps, regConnettore, body, alreadyExists, false);
-            	
-           context.getLogger().info("Invocazione completata con successo");     
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+
+			ErogazioniApiHelper.createAps(env, asps, regConnettore, body, alreadyExists, false);
+
+			context.getLogger().info("Invocazione completata con successo");
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
-    }
+	}
 
 	/**
-     * Creazione di un allegato nella fruizione di API
-     *
-     * Questa operazione consente di aggiungere un allegato alla fruizione di API identificata dall'erogatore, dal nome e dalla versione
-     *
-     */
+	 * Creazione di un allegato nella fruizione di API
+	 *
+	 * Questa operazione consente di aggiungere un allegato alla fruizione di API
+	 * identificata dall'erogatore, dal nome e dalla versione
+	 *
+	 */
 	@Override
-    public void createFruizioneAllegato(ApiImplAllegato body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+	public void createFruizioneAllegato(ApiImplAllegato body, String erogatore, String nome, Integer versione,
+			ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
-			context.getLogger().info("Invocazione in corso ...");     
+			context.getLogger().info("Invocazione in corso ...");
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
-			
+
 			BaseHelper.throwIfNull(body);
-            
-			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
+
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
 			final IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
 
-			
 			try {
 				env.pdCore.getIDPorteDelegateAssociate(idServizio, env.idSoggetto.toIDSoggetto());
 			} catch (Exception e) {
 				throw FaultCode.NOT_FOUND.toException(e.getMessage());
 			}
-			
+
 			ErogazioniApiHelper.createAllegatoAsps(body, env, asps);
-			        
+
 			context.getLogger().info("Invocazione completata con successo");
-     
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
-    }
-    
-    /**
-     * Elimina una fruizione di api
-     *
-     * Questa operazione consente di eliminare una fruizione di API identificata dall'erogatore, dal nome e dalla versione
-     *
-     */
+	}
+
+	/**
+	 * Elimina una fruizione di api
+	 *
+	 * Questa operazione consente di eliminare una fruizione di API identificata
+	 * dall'erogatore, dal nome e dalla versione
+	 *
+	 */
 	@Override
-    public void deleteFruizione(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+	public void deleteFruizione(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto,
+			String tipoServizio) {
 		IContext context = this.getContext();
 		try {
-			context.getLogger().info("Invocazione in corso ...");     
+			context.getLogger().info("Invocazione in corso ...");
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
-			
-			 
-			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
+
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = BaseHelper.evalnull( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env) );
-			
-			if ( asps != null ) {
+			final AccordoServizioParteSpecifica asps = BaseHelper.evalnull(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env));
+
+			if (asps != null) {
 				final IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
-				final StringBuffer inUsoMessage =  new StringBuffer();
-				
-			
-				AccordiServizioParteSpecificaUtilities.deleteAccordoServizioParteSpecifica(
-						asps, 
-						true, // gestioneFruitori, 
-						false, //gestioneErogatori, 
-						env.idSoggetto.toIDSoggetto(),
-						idServizio,
-						env.paCore.getExtendedServletPortaApplicativa(),
-						env.userLogin,
-						env.apsCore, 
-						env.apsHelper, 
-						inUsoMessage, 
-						"\n");
-	                        
+				final StringBuffer inUsoMessage = new StringBuffer();
+
+				AccordiServizioParteSpecificaUtilities.deleteAccordoServizioParteSpecifica(asps, true, // gestioneFruitori,
+						false, // gestioneErogatori,
+						env.idSoggetto.toIDSoggetto(), idServizio, env.paCore.getExtendedServletPortaApplicativa(), env.userLogin,
+						env.apsCore, env.apsHelper, inUsoMessage, "\n");
+
 				if (inUsoMessage.length() > 0) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(inUsoMessage.toString());
 				}
-			} else if ( env.delete_404 ) {
+			} else if (env.delete_404) {
 				throw FaultCode.NOT_FOUND.toException("Fruizione inesistente");
 			}
-	          
+
 			context.getLogger().info("Invocazione completata con successo");
-          
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
-    }
-    
-    /**
-     * Elimina un allegato dalla fruizione
-     *
-     * Questa operazione consente di eliminare un'allegato dalla fruizione di API identificata dall'erogatore, dal nome e dalla versione
-     *
-     */
-	@Override
-    public void deleteFruizioneAllegato(String erogatore, String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto, String tipoServizio) {
-		IContext context = this.getContext();
-		try {
-			context.getLogger().info("Invocazione in corso ...");     
-
-			AuthorizationManager.authorize(context, getAuthorizationConfig());
-			context.getLogger().debug("Autorizzazione completata con successo");
-			
-			 
-			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
-			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(),  env), "Fruizione");
-			
-			ErogazioniApiHelper.deleteAllegato(nomeAllegato, env, asps);
-                        
-        
-			context.getLogger().info("Invocazione completata con successo");
-        
-     
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
-			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
-			throw FaultCode.ERRORE_INTERNO.toException(e);
-		}
-    }
-    
-    /**
-     * Restituisce l'allegato di una fruizione
-     *
-     * Questa operazione consente di ottenere l'allegato di un'erogazione di API identificata dall'erogatore, dal nome e dalla versione
-     *
-     */
-	@Override
-    public byte[] downloadFruizioneAllegato(String erogatore, String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto, String tipoServizio) {
-		IContext context = this.getContext();
-		try {
-			context.getLogger().info("Invocazione in corso ...");     
-
-			AuthorizationManager.authorize(context, getAuthorizationConfig());
-			context.getLogger().debug("Autorizzazione completata con successo");
-			
-			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
-			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
-			
-			final Optional<Long> idDoc = ErogazioniApiHelper.getIdDocumento(nomeAllegato, asps);
-			
-			if (!idDoc.isPresent())
-				throw FaultCode.NOT_FOUND.toException("Allegato di nome " + nomeAllegato + " non presente.");
-			
-			final Documento allegato = env.archiviCore.getDocumento(idDoc.get(), true);
-		     
-			context.getLogger().info("Invocazione completata con successo");
-			
-			return allegato.getByteContenuto();
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
-			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
-			throw FaultCode.ERRORE_INTERNO.toException(e);
-		}
-    }
-    
-    /**
-     * Ricerca fruizioni di api
-     *
-     * Elenca le fruizioni di API
-     *
-     */
-	@Override
-    public ListaFruizioni findAllFruizioni(ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset, TipoApiEnum tipoApi) {
-		IContext context = this.getContext();
-		try {
-			context.getLogger().info("Invocazione in corso ...");     
-
-			AuthorizationManager.authorize(context, getAuthorizationConfig());
-			context.getLogger().debug("Autorizzazione completata con successo");     
-
-			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-			
-			final int idLista = Liste.SERVIZI;
-			final Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
-			
-			if (tipoApi != null)
-				ricerca.addFilter(idLista, Filtri.FILTRO_SERVICE_BINDING, tipoApi.toString());
-			
-			List<AccordoServizioParteSpecifica> lista = env.apsCore.soggettiServizioList(null, ricerca, null, true, false);
-			
-			if ( env.findall_404 && lista.isEmpty() ) {
-				throw FaultCode.NOT_FOUND.toException("Nessuna fruizione presente nel registro");
-			}
-			
-			final ListaFruizioni ret = ListaUtils.costruisciListaPaginata(
-					context.getServletRequest().getRequestURI(), 
-					offset, 
-					limit, 
-					ricerca.getNumEntries(idLista), 
-					ListaFruizioni.class
-				);
-
-			
-			// Prendo le fruizioni una ad una dagli asps
-			lista.forEach( asps -> {
-					asps.getFruitoreList().forEach( fruitore -> {
-						
-						try {
-							IdSoggetto idFruitore;
-							idFruitore = new IdSoggetto(env.soggettiCore.getIdSoggettoRegistro(fruitore.getIdSoggetto()));
-							idFruitore.setId(fruitore.getIdSoggetto());
-							ret.addItemsItem( ErogazioniApiHelper.fruizioneViewItemToFruizioneItem(ErogazioniApiHelper.aspsToFruizioneViewItem(env, asps,idFruitore)));
-							
-						} catch (DriverRegistroServiziNotFound | DriverRegistroServiziException e) {
-							// Cosa fare in questi casi? Errore interno perchè il fruitore deve essere necessariamente presente 
-							// dato che l'erogazione l'abbiamo appena presa dal db?
-							// Però altri utenti avrebbero potuto contemporaneamente modificare il db e l'assenza del fruitore potrebbe essere perchè esso è stato appena eliminato.
-							// Questa osservazione vale in generale.
-							throw new RuntimeException(e);	
-						}
-					});
-					
-				});
-			
-			context.getLogger().info("Invocazione completata con successo");
-			
-			return ret;
-     
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
-			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
-			throw FaultCode.ERRORE_INTERNO.toException(e);
-		}
-    }
-    
-    /**
-     * Elenco allegati di una fruizione di API
-     *
-     * Questa operazione consente di ottenere gli allegati di una fruizione di API identificata dall'erogatore, dal nome e dalla versione
-     *
-     */
-	@Override
-    public ListaApiImplAllegati findAllFruizioneAllegati(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio, String q, Integer limit, Integer offset) {
-		IContext context = this.getContext();
-		try {
-			context.getLogger().info("Invocazione in corso ...");     
-
-			AuthorizationManager.authorize(context, getAuthorizationConfig());
-			context.getLogger().debug("Autorizzazione completata con successo");     
-			
-			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
-			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(),  env), "Fruizione");
-			
-			ListaApiImplAllegati ret = ErogazioniApiHelper.findAllAllegati(q, limit, offset, context.getServletRequest().getRequestURI(), env, asps);
-			
-			context.getLogger().info("Invocazione completata con successo");
-			return ret;
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
-			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
-			throw FaultCode.ERRORE_INTERNO.toException(e);
-		}
-    }
-    
-    /**
-     * Restituisce i dettagli di una fruizione di API
-     *
-     * Questa operazione consente di ottenere i dettagli di una fruizione di API identificata dall'erogatore, dal nome e dalla versione
-     *
-     */
-	@Override
-    public FruizioneViewItem getFruizione(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
-		IContext context = this.getContext();
-		try {
-			context.getLogger().info("Invocazione in corso ...");     
-
-			AuthorizationManager.authorize(context, getAuthorizationConfig());
-			context.getLogger().debug("Autorizzazione completata con successo");     
-			
-			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
-			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(),  env), "Fruizione");
-            
-			FruizioneViewItem ret = ErogazioniApiHelper.aspsToFruizioneViewItem(env, asps, env.idSoggetto);
-			
-			context.getLogger().info("Invocazione completata con successo");
-			return ret;
-     
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
-			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
-			throw FaultCode.ERRORE_INTERNO.toException(e);
-		}
-    }
-    
-    /**
-     * Restituisce le informazioni sull'API implementata dalla fruizione
-     *
-     * Questa operazione consente di ottenere le informazioni sull'API implementata dall'erogazione identificata dall'erogatore, dal nome e dalla versione
-     *
-     */
-	@Override
-    public ApiImplVersioneApiView getFruizioneAPI(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
-		IContext context = this.getContext();
-		try {
-			context.getLogger().info("Invocazione in corso ...");     
-
-			AuthorizationManager.authorize(context, getAuthorizationConfig());
-			context.getLogger().debug("Autorizzazione completata con successo");
-			
-
-			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
-			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(),  env), "Fruizione");
-			
-			ApiImplVersioneApiView ret = ErogazioniApiHelper.aspsToApiImplVersioneApiView(env, asps);
-		
-			context.getLogger().info("Invocazione completata con successo");
-			return ret;
-     
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
-			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
-			throw FaultCode.ERRORE_INTERNO.toException(e);
-		}
-    }
-    
-    /**
-     * Restituisce il dettaglio di un allegato della fruizione
-     *
-     * Questa operazione consente di ottenere il dettaglio di un allegato della fruizione di API identificata dall'erogatore, dal nome e dalla versione
-     *
-     */
-	@Override
-    public ApiImplAllegato getFruizioneAllegato(String erogatore, String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto, String tipoServizio) {
-		IContext context = this.getContext();
-		try {
-			context.getLogger().info("Invocazione in corso ...");     
-
-			AuthorizationManager.authorize(context, getAuthorizationConfig());
-			context.getLogger().debug("Autorizzazione completata con successo");     
-			
-			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
-			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Accordo servizio parte specifica");
-			
-			final Optional<Long> idDoc = ErogazioniApiHelper.getIdDocumento(nomeAllegato, asps);
-			
-			if (!idDoc.isPresent())
-				throw FaultCode.NOT_FOUND.toException("Allegato di nome " + nomeAllegato + " non presente.");
-			
-			final Documento doc = env.archiviCore.getDocumento(idDoc.get(), true);                
-			
-			context.getLogger().info("Invocazione completata con successo");
-			return ErogazioniApiHelper.documentoToImplAllegato(doc);
-     
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
-			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
-			throw FaultCode.ERRORE_INTERNO.toException(e);
-		}
-    }
-    
-    /**
-     * Restituisce le informazioni su connettore associato alla fruizione
-     *
-     * Questa operazione consente di ottenere le informazioni sul connettore associato alla fruizione identificata dall'erogatore, dal nome e dalla versione
-     *
-     */
-	@Override
-    public Connettore getFruizioneConnettore(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
-		IContext context = this.getContext();
-		try {
-			context.getLogger().info("Invocazione in corso ...");     
-
-			AuthorizationManager.authorize(context, getAuthorizationConfig());
-			context.getLogger().debug("Autorizzazione completata con successo");
-			
-			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
-			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
-			
-			org.openspcoop2.core.registry.Connettore regConn = ErogazioniApiHelper.getConnettoreFruizione(asps, env.idSoggetto, env);
-			Map<String, String> props = regConn.getProperties();	// Qui c'è solo la proprietà location.
-			
-			Connettore c = ErogazioniApiHelper.buildConnettore(props);
-			
-			context.getLogger().info("Invocazione completata con successo");
-			return c;
-     
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
-			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
-			throw FaultCode.ERRORE_INTERNO.toException(e);
-		}
-    }
+	}
 
 	/**
-     * Restituisce le informazioni generali di una fruizione di API
-     *
-     * Questa operazione consente di ottenere le informazioni generali di una fruizione di API identificata dall'erogatore, dal nome e dalla versione
-     *
-     */
+	 * Elimina un allegato dalla fruizione
+	 *
+	 * Questa operazione consente di eliminare un'allegato dalla fruizione di API
+	 * identificata dall'erogatore, dal nome e dalla versione
+	 *
+	 */
 	@Override
-    public ApiImplInformazioniGeneraliView getFruizioneInformazioniGenerali(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+	public void deleteFruizioneAllegato(String erogatore, String nome, Integer versione, String nomeAllegato,
+			ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
-			context.getLogger().info("Invocazione in corso ...");     
-
-			AuthorizationManager.authorize(context, getAuthorizationConfig());
-			context.getLogger().debug("Autorizzazione completata con successo");     
-			
-			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
-			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
-                                
-			ApiImplInformazioniGeneraliView ret = ErogazioniApiHelper.fruizioneToApiImplInformazioniGeneraliView(env, asps, env.idSoggetto);
-                        
-			context.getLogger().info("Invocazione completata con successo");
-			return ret;
-     
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
-			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
-			throw FaultCode.ERRORE_INTERNO.toException(e);
-		}
-    }
-    
-    /**
-     * Restituisce le informazioni sull'url di invocazione necessaria ad invocare la fruizione
-     *
-     * Questa operazione consente di ottenere le informazioni sull'url di invocazione necessaria ad invocare la fruizione identificata dall'erogatore, dal nome e dalla versione
-     *
-     */
-	@Override
-    public ApiImplUrlInvocazioneView getFruizioneUrlInvocazione(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
-		IContext context = this.getContext();
-		try {
-			context.getLogger().info("Invocazione in corso ...");     
+			context.getLogger().info("Invocazione in corso ...");
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
-			
+
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-		    final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
+
+			ErogazioniApiHelper.deleteAllegato(nomeAllegato, env, asps);
+
+			context.getLogger().info("Invocazione completata con successo");
+
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			throw e;
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+	}
+
+	/**
+	 * Restituisce l'allegato di una fruizione
+	 *
+	 * Questa operazione consente di ottenere l'allegato di un'erogazione di API
+	 * identificata dall'erogatore, dal nome e dalla versione
+	 *
+	 */
+	@Override
+	public byte[] downloadFruizioneAllegato(String erogatore, String nome, Integer versione, String nomeAllegato,
+			ProfiloEnum profilo, String soggetto, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
+
+			final Optional<Long> idDoc = ErogazioniApiHelper.getIdDocumento(nomeAllegato, asps);
+
+			if (!idDoc.isPresent())
+				throw FaultCode.NOT_FOUND.toException("Allegato di nome " + nomeAllegato + " non presente.");
+
+			final Documento allegato = env.archiviCore.getDocumento(idDoc.get(), true);
+
+			context.getLogger().info("Invocazione completata con successo");
+
+			return allegato.getByteContenuto();
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			throw e;
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+	}
+
+	/**
+	 * Ricerca fruizioni di api
+	 *
+	 * Elenca le fruizioni di API
+	 *
+	 */
+	@Override
+	public ListaFruizioni findAllFruizioni(ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset,
+			TipoApiEnum tipoApi) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+
+			final int idLista = Liste.SERVIZI;
+			final Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(),
+					env.tipo_protocollo);
+
+			if (tipoApi != null)
+				ricerca.addFilter(idLista, Filtri.FILTRO_SERVICE_BINDING, tipoApi.toString());
+
+			List<AccordoServizioParteSpecifica> lista = env.apsCore.soggettiServizioList(null, ricerca, null, true, false);
+
+			if (env.findall_404 && lista.isEmpty()) {
+				throw FaultCode.NOT_FOUND.toException("Nessuna fruizione presente nel registro");
+			}
+
+			final ListaFruizioni ret = ListaUtils.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset,
+					limit, ricerca.getNumEntries(idLista), ListaFruizioni.class);
+
+			// Prendo le fruizioni una ad una dagli asps
+			lista.forEach(asps -> {
+				asps.getFruitoreList().forEach(fruitore -> {
+
+					try {
+						IdSoggetto idFruitore;
+						idFruitore = new IdSoggetto(env.soggettiCore.getIdSoggettoRegistro(fruitore.getIdSoggetto()));
+						idFruitore.setId(fruitore.getIdSoggetto());
+						ret.addItemsItem(ErogazioniApiHelper
+								.fruizioneViewItemToFruizioneItem(ErogazioniApiHelper.aspsToFruizioneViewItem(env, asps, idFruitore)));
+
+					} catch (DriverRegistroServiziNotFound | DriverRegistroServiziException e) {
+						// Cosa fare in questi casi? Errore interno perchè il fruitore deve essere
+						// necessariamente presente
+						// dato che l'erogazione l'abbiamo appena presa dal db?
+						// Però altri utenti avrebbero potuto contemporaneamente modificare il db e
+						// l'assenza del fruitore potrebbe essere perchè esso è stato appena eliminato.
+						// Questa osservazione vale in generale.
+						throw new RuntimeException(e);
+					}
+				});
+
+			});
+
+			context.getLogger().info("Invocazione completata con successo");
+
+			return ret;
+
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			throw e;
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+	}
+
+	/**
+	 * Elenco allegati di una fruizione di API
+	 *
+	 * Questa operazione consente di ottenere gli allegati di una fruizione di API
+	 * identificata dall'erogatore, dal nome e dalla versione
+	 *
+	 */
+	@Override
+	public ListaApiImplAllegati findAllFruizioneAllegati(String erogatore, String nome, Integer versione,
+			ProfiloEnum profilo, String soggetto, String tipoServizio, String q, Integer limit, Integer offset) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
+
+			ListaApiImplAllegati ret = ErogazioniApiHelper.findAllAllegati(q, limit, offset,
+					context.getServletRequest().getRequestURI(), env, asps);
+
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			throw e;
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+	}
+
+	/**
+	 * Restituisce i dettagli di una fruizione di API
+	 *
+	 * Questa operazione consente di ottenere i dettagli di una fruizione di API
+	 * identificata dall'erogatore, dal nome e dalla versione
+	 *
+	 */
+	@Override
+	public FruizioneViewItem getFruizione(String erogatore, String nome, Integer versione, ProfiloEnum profilo,
+			String soggetto, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
+
+			FruizioneViewItem ret = ErogazioniApiHelper.aspsToFruizioneViewItem(env, asps, env.idSoggetto);
+
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			throw e;
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+	}
+
+	/**
+	 * Restituisce le informazioni sull'API implementata dalla fruizione
+	 *
+	 * Questa operazione consente di ottenere le informazioni sull'API implementata
+	 * dall'erogazione identificata dall'erogatore, dal nome e dalla versione
+	 *
+	 */
+	@Override
+	public ApiImplVersioneApiView getFruizioneAPI(String erogatore, String nome, Integer versione, ProfiloEnum profilo,
+			String soggetto, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
+
+			ApiImplVersioneApiView ret = ErogazioniApiHelper.aspsToApiImplVersioneApiView(env, asps);
+
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			throw e;
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+	}
+
+	/**
+	 * Restituisce il dettaglio di un allegato della fruizione
+	 *
+	 * Questa operazione consente di ottenere il dettaglio di un allegato della
+	 * fruizione di API identificata dall'erogatore, dal nome e dalla versione
+	 *
+	 */
+	@Override
+	public ApiImplAllegato getFruizioneAllegato(String erogatore, String nome, Integer versione, String nomeAllegato,
+			ProfiloEnum profilo, String soggetto, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Accordo servizio parte specifica");
+
+			final Optional<Long> idDoc = ErogazioniApiHelper.getIdDocumento(nomeAllegato, asps);
+
+			if (!idDoc.isPresent())
+				throw FaultCode.NOT_FOUND.toException("Allegato di nome " + nomeAllegato + " non presente.");
+
+			final Documento doc = env.archiviCore.getDocumento(idDoc.get(), true);
+
+			context.getLogger().info("Invocazione completata con successo");
+			return ErogazioniApiHelper.documentoToImplAllegato(doc);
+
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			throw e;
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+	}
+
+	/**
+	 * Restituisce le informazioni su connettore associato alla fruizione
+	 *
+	 * Questa operazione consente di ottenere le informazioni sul connettore
+	 * associato alla fruizione identificata dall'erogatore, dal nome e dalla
+	 * versione
+	 *
+	 */
+	@Override
+	public Connettore getFruizioneConnettore(String erogatore, String nome, Integer versione, ProfiloEnum profilo,
+			String soggetto, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
+
+			org.openspcoop2.core.registry.Connettore regConn = ErogazioniApiHelper.getConnettoreFruizione(asps,
+					env.idSoggetto, env);
+			Map<String, String> props = regConn.getProperties(); // Qui c'è solo la proprietà location.
+
+			Connettore c = ErogazioniApiHelper.buildConnettore(props);
+
+			context.getLogger().info("Invocazione completata con successo");
+			return c;
+
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			throw e;
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+	}
+
+	/**
+	 * Restituisce le informazioni generali di una fruizione di API
+	 *
+	 * Questa operazione consente di ottenere le informazioni generali di una
+	 * fruizione di API identificata dall'erogatore, dal nome e dalla versione
+	 *
+	 */
+	@Override
+	public ApiImplInformazioniGeneraliView getFruizioneInformazioniGenerali(String erogatore, String nome,
+			Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
+
+			ApiImplInformazioniGeneraliView ret = ErogazioniApiHelper.fruizioneToApiImplInformazioniGeneraliView(env, asps,
+					env.idSoggetto);
+
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			throw e;
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+	}
+
+	/**
+	 * Restituisce le informazioni sull'url di invocazione necessaria ad invocare la
+	 * fruizione
+	 *
+	 * Questa operazione consente di ottenere le informazioni sull'url di
+	 * invocazione necessaria ad invocare la fruizione identificata dall'erogatore,
+	 * dal nome e dalla versione
+	 *
+	 */
+	@Override
+	public ApiImplUrlInvocazioneView getFruizioneUrlInvocazione(String erogatore, String nome, Integer versione,
+			ProfiloEnum profilo, String soggetto, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
 			final AccordoServizioParteComuneSintetico aspc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
-			final IDPortaDelegata idPorta = BaseHelper.supplyOrNotFound( () -> env.pdCore.getIDPortaDelegataAssociataDefault(env.idServizioFactory.getIDServizioFromAccordo(asps), env.idSoggetto.toIDSoggetto()), "Porta Delegata");
-			final PortaDelegata pd  = BaseHelper.supplyOrNotFound( () -> env.pdCore.getPortaDelegata(idPorta), "Porta Delegata");
-			final PortaDelegataAzione pdAzione =  pd.getAzione();
-			
+			final IDPortaDelegata idPorta = BaseHelper.supplyOrNotFound(() -> env.pdCore.getIDPortaDelegataAssociataDefault(
+					env.idServizioFactory.getIDServizioFromAccordo(asps), env.idSoggetto.toIDSoggetto()), "Porta Delegata");
+			final PortaDelegata pd = BaseHelper.supplyOrNotFound(() -> env.pdCore.getPortaDelegata(idPorta),
+					"Porta Delegata");
+			final PortaDelegataAzione pdAzione = pd.getAzione();
+
 			String urlInvocazione = ErogazioniApiHelper.getUrlInvocazioneFruizione(asps, env.idSoggetto.toIDSoggetto(), env);
 			ApiImplUrlInvocazioneView ret = new ApiImplUrlInvocazioneView();
-			
-			Map<String,String> azioni = env.paCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<String>()); 
-			ret.setAzioni(Arrays.asList(azioni.keySet().toArray(new String[azioni.size()])));		
+
+			Map<String, String> azioni = env.paCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<String>());
+			ret.setAzioni(Arrays.asList(azioni.keySet().toArray(new String[azioni.size()])));
 			ret.setForceInterface(Helper.statoFunzionalitaConfToBool(pdAzione.getForceInterfaceBased()));
 			ret.setModalita(Enum.valueOf(ModalitaIdentificazioneAzioneEnum.class, pdAzione.getIdentificazione().name()));
 			ret.setNome(nome);
 			ret.setPattern(pdAzione.getPattern());
 			ret.setUrlInvocazione(urlInvocazione);
-			
+
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
-    }
-    
-    /**
-     * Consente di modificare la versione dell'API implementata dalla fruizione
-     *
-     * Questa operazione consente di aggiornare la versione dell'API implementata dall'erogazione identificata dall'erogatore, dal nome e dalla versione
-     *
-     */
+	}
+
+	/**
+	 * Consente di modificare la versione dell'API implementata dalla fruizione
+	 *
+	 * Questa operazione consente di aggiornare la versione dell'API implementata
+	 * dall'erogazione identificata dall'erogatore, dal nome e dalla versione
+	 *
+	 */
 	@Override
-    public void updateFruizioneAPI(ApiImplVersioneApi body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+	public void updateFruizioneAPI(ApiImplVersioneApi body, String erogatore, String nome, Integer versione,
+			ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");
-			
+
 			BaseHelper.throwIfNull(body);
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
-			
+
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-            final IdSoggetto idErogatore   = new IdSoggetto(new IDSoggetto(env.tipo_soggetto,erogatore));
-            final Soggetto soggErogatore = BaseHelper.supplyOrNotFound( () -> env.soggettiCore.getSoggettoRegistro(idErogatore.toIDSoggetto()), "Soggetto Erogatore");
-            idErogatore.setId(soggErogatore.getId());
-            
-			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore.toIDSoggetto(), env.idSoggetto.toIDSoggetto(), env), "Fruizione");
+			final IdSoggetto idErogatore = new IdSoggetto(new IDSoggetto(env.tipo_soggetto, erogatore));
+			final Soggetto soggErogatore = BaseHelper.supplyOrNotFound(
+					() -> env.soggettiCore.getSoggettoRegistro(idErogatore.toIDSoggetto()), "Soggetto Erogatore");
+			idErogatore.setId(soggErogatore.getId());
+
+			final AccordoServizioParteSpecifica asps = BaseHelper
+					.supplyOrNotFound(() -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione,
+							idErogatore.toIDSoggetto(), env.idSoggetto.toIDSoggetto(), env), "Fruizione");
 			final AccordoServizioParteComuneSintetico as = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 
-	        List<AccordoServizioParteComune> asParteComuneCompatibili = env.apsCore.findAccordiParteComuneBySoggettoAndNome(
-	        		as.getNome(),
-	                new IDSoggetto(as.getSoggettoReferente().getTipo(), as.getSoggettoReferente().getNome())
-	        	);
-	        
-	        Optional<AccordoServizioParteComune> newApc = BaseHelper.findFirst( asParteComuneCompatibili, a -> a.getVersione() == body.getApiVersione());
-	        
-	        if ( !newApc.isPresent() ) {
-	        	throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nessuna api " + as.getNome() + " e versione " + body.getApiVersione() + " registrata");
-	        }
+			List<AccordoServizioParteComune> asParteComuneCompatibili = env.apsCore.findAccordiParteComuneBySoggettoAndNome(
+					as.getNome(), new IDSoggetto(as.getSoggettoReferente().getTipo(), as.getSoggettoReferente().getNome()));
+
+			Optional<AccordoServizioParteComune> newApc = BaseHelper.findFirst(asParteComuneCompatibili,
+					a -> a.getVersione() == body.getApiVersione());
+
+			if (!newApc.isPresent()) {
+				throw FaultCode.RICHIESTA_NON_VALIDA
+						.toException("Nessuna api " + as.getNome() + " e versione " + body.getApiVersione() + " registrata");
+			}
 
 			asps.setAccordoServizioParteComune(env.idAccordoFactory.getUriFromAccordo(newApc.get()));
 			asps.setIdAccordo(newApc.get().getId());
-			
+
 			asps.setOldIDServizioForUpdate(env.idServizioFactory.getIDServizioFromAccordo(asps));
-			
+
 			ErogazioniApiHelper.serviziUpdateCheckData(as, asps, false, env);
-			
-			List<Object> oggettiDaAggiornare = AccordiServizioParteSpecificaUtilities.getOggettiDaAggiornare(asps, env.apsCore);
-			
+
+			List<Object> oggettiDaAggiornare = AccordiServizioParteSpecificaUtilities.getOggettiDaAggiornare(asps,
+					env.apsCore);
+
 			env.apsCore.performUpdateOperation(env.userLogin, false, oggettiDaAggiornare.toArray());
 			context.getLogger().info("Invocazione completata con successo");
-        
-     
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
-    }
-    
-    /**
-     * Modifica i dati di un allegato della fruizione
-     *
-     * Questa operazione consente di aggiornare i dettagli di un allegato della fruizione di API identificata dall'erogatore, dal nome e dalla versione
-     *
-     */
+	}
+
+	/**
+	 * Modifica i dati di un allegato della fruizione
+	 *
+	 * Questa operazione consente di aggiornare i dettagli di un allegato della
+	 * fruizione di API identificata dall'erogatore, dal nome e dalla versione
+	 *
+	 */
 	@Override
-    public void updateFruizioneAllegato(ApiImplAllegato body, String erogatore, String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+	public void updateFruizioneAllegato(ApiImplAllegato body, String erogatore, String nome, Integer versione,
+			String nomeAllegato, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
-			context.getLogger().info("Invocazione in corso ...");     
+			context.getLogger().info("Invocazione in corso ...");
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
-			
-			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
+
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
-						
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
+
 			ErogazioniApiHelper.updateAllegatoAsps(body, nomeAllegato, env, asps);
-	    
+
 			context.getLogger().info("Invocazione completata con successo");
-        
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
-    }
-    
-    /**
-     * Consente di modificare la configurazione del connettore associato alla fruizione
-     *
-     * Questa operazione consente di aggiornare la configurazione del connettore associato alla fruizione identificata dall'erogatore, dal nome e dalla versione
-     *
-     */
+	}
+
+	/**
+	 * Consente di modificare la configurazione del connettore associato alla
+	 * fruizione
+	 *
+	 * Questa operazione consente di aggiornare la configurazione del connettore
+	 * associato alla fruizione identificata dall'erogatore, dal nome e dalla
+	 * versione
+	 *
+	 */
 	@Override
-    public void updateFruizioneConnettore(Connettore body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+	public void updateFruizioneConnettore(Connettore body, String erogatore, String nome, Integer versione,
+			ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
-			context.getLogger().info("Invocazione in corso ...");     
+			context.getLogger().info("Invocazione in corso ...");
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
-			
+
 			BaseHelper.throwIfNull(body);
-			
-			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);            
+
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			
-			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
-			
+
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
+
 			final List<Fruitore> fruitori = asps.getFruitoreList();
-					
-		    long idServizioFruitoreInt = env.apsCore.getServizioFruitore(IDServizioFactory.getInstance().getIDServizioFromAccordo(asps), env.idSoggetto.getId());
+
+			long idServizioFruitoreInt = env.apsCore
+					.getServizioFruitore(IDServizioFactory.getInstance().getIDServizioFromAccordo(asps), env.idSoggetto.getId());
 			final Fruitore servFru = env.apsCore.getServizioFruitore(idServizioFruitoreInt);
-			
-			if ( servFru == null)
-				throw FaultCode.NOT_FOUND.toException("Soggetto fruitore " + env.idSoggetto.toString() + "non registrato per la fruizione scelta" );
-			
+
+			if (servFru == null)
+				throw FaultCode.NOT_FOUND
+						.toException("Soggetto fruitore " + env.idSoggetto.toString() + "non registrato per la fruizione scelta");
+
 			// Prendo pero poi immagine del fruitore dall'asps
-			final Fruitore fruitore = BaseHelper.findAndRemoveFirst(fruitori, f -> f.getTipo().equals(servFru.getTipo()) && f.getNome().equals(servFru.getNome()));
-			
+			final Fruitore fruitore = BaseHelper.findAndRemoveFirst(fruitori,
+					f -> f.getTipo().equals(servFru.getTipo()) && f.getNome().equals(servFru.getNome()));
+
 			final org.openspcoop2.core.registry.Connettore connettore = fruitore.getConnettore();
-			
+
 			String oldConnT = connettore.getTipo();
-			if ((connettore.getCustom()!=null && connettore.getCustom()) && 
-					!connettore.getTipo().equals(TipiConnettore.HTTPS.toString()) && 
-					!connettore.getTipo().equals(TipiConnettore.FILE.toString())
-					) {
+			if ((connettore.getCustom() != null && connettore.getCustom())
+					&& !connettore.getTipo().equals(TipiConnettore.HTTPS.toString())
+					&& !connettore.getTipo().equals(TipiConnettore.FILE.toString())) {
 				oldConnT = TipiConnettore.CUSTOM.toString();
 			}
-			
-			ErogazioniApiHelper.fillConnettoreRegistro(connettore,env, body, oldConnT);
+
+			ErogazioniApiHelper.fillConnettoreRegistro(connettore, env, body, oldConnT);
 
 			if (!ErogazioniApiHelper.connettoreCheckData(body, env)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
-			}							
-			
-			
+			}
+
 			fruitore.setConnettore(ErogazioniApiHelper.buildConnettoreRegistro(env, body));
 			fruitori.add(fruitore);
 			asps.setFruitoreList(fruitori);
-                        
+
 			env.apsCore.performUpdateOperation(env.userLogin, false, asps);
-		
+
 			context.getLogger().info("Invocazione completata con successo");
-        
-     
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
-    }
-    
-    /**
-     * Consente di modificare le informazioni generali di una fruizione di API
-     *
-     * Questa operazione consente di aggiornare le informazioni generali di una fruizione di API identificata  dall'erogatore, dal nome e dalla versione
-     *
-     */
+	}
+
+	/**
+	 * Consente di modificare le informazioni generali di una fruizione di API
+	 *
+	 * Questa operazione consente di aggiornare le informazioni generali di una
+	 * fruizione di API identificata dall'erogatore, dal nome e dalla versione
+	 *
+	 */
 	@Override
-    public void updateFruizioneInformazioniGenerali(ApiImplInformazioniGenerali body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+	public void updateFruizioneInformazioniGenerali(ApiImplInformazioniGenerali body, String erogatore, String nome,
+			Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
-			context.getLogger().info("Invocazione in corso ...");     
-			
+			context.getLogger().info("Invocazione in corso ...");
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
-			
- 		    final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
- 		    final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
-			
-		    ErogazioniApiHelper.updateInformazioniGenerali(body, env, asps, false);
-        
-			context.getLogger().info("Invocazione completata con successo");        
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
+
+			ErogazioniApiHelper.updateInformazioniGenerali(body, env, asps, false);
+
+			context.getLogger().info("Invocazione completata con successo");
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
-    }
-    
-    /**
-     * Consente di modificare la configurazione utilizzata per identificare l'azione invocata dell'API implementata dalla fruizione
-     *
-     * Questa operazione consente di aggiornare la configurazione utilizzata dal Gateway per identificare l'azione invocata
-     *
-     */
+	}
+
+	/**
+	 * Consente di modificare la configurazione utilizzata per identificare l'azione
+	 * invocata dell'API implementata dalla fruizione
+	 *
+	 * Questa operazione consente di aggiornare la configurazione utilizzata dal
+	 * Gateway per identificare l'azione invocata
+	 *
+	 */
 	@Override
-    public void updateFruizioneUrlInvocazione(ApiImplUrlInvocazione body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+	public void updateFruizioneUrlInvocazione(ApiImplUrlInvocazione body, String erogatore, String nome, Integer versione,
+			ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
-			context.getLogger().info("Invocazione in corso ...");     
+			context.getLogger().info("Invocazione in corso ...");
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
-			context.getLogger().debug("Autorizzazione completata con successo");     
-  			
+			context.getLogger().debug("Autorizzazione completata con successo");
+
 			BaseHelper.throwIfNull(body);
-	
+
 			if (body.getModalita() == null) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare una modalità di identificazione azione valida");
 			}
-			
+
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-		    final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
-			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env), "Fruizione");
-			final IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);			
-			final IDPortaDelegata idPorta = BaseHelper.supplyOrNotFound( () -> env.pdCore.getIDPortaDelegataAssociataDefault(env.idServizioFactory.getIDServizioFromAccordo(asps), env.idSoggetto.toIDSoggetto()), "Porta Delegata");
-			final PortaDelegata pd  = BaseHelper.supplyOrNotFound( () -> env.pdCore.getPortaDelegata(idPorta), "Porta Delegata");
-			final PortaDelegataAzione pdAzione =  new PortaDelegataAzione(); //pd.getAzione() == null ? new PortaDelegataAzione() : pd.getAzione();
-			
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
+			final IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
+			final IDPortaDelegata idPorta = BaseHelper.supplyOrNotFound(() -> env.pdCore.getIDPortaDelegataAssociataDefault(
+					env.idServizioFactory.getIDServizioFromAccordo(asps), env.idSoggetto.toIDSoggetto()), "Porta Delegata");
+			final PortaDelegata pd = BaseHelper.supplyOrNotFound(() -> env.pdCore.getPortaDelegata(idPorta),
+					"Porta Delegata");
+			final PortaDelegataAzione pdAzione = new PortaDelegataAzione(); // pd.getAzione() == null ? new
+																																			// PortaDelegataAzione() : pd.getAzione();
+
 			final AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
-			
-			List<PortaDelegataAzioneIdentificazione> identModes = env.pdHelper.getModalitaIdentificazionePorta(env.tipo_protocollo, env.apcCore.toMessageServiceBinding(apc.getServiceBinding()));
-			
-			if ( !identModes.contains( PortaDelegataAzioneIdentificazione.valueOf(body.getModalita().name()) ))
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La modalità di identificazione azione deve essere una fra: " + identModes.toString() );
-				
+
+			List<PortaDelegataAzioneIdentificazione> identModes = env.pdHelper.getModalitaIdentificazionePorta(
+					env.tipo_protocollo, env.apcCore.toMessageServiceBinding(apc.getServiceBinding()));
+
+			if (!identModes.contains(PortaDelegataAzioneIdentificazione.valueOf(body.getModalita().name())))
+				throw FaultCode.RICHIESTA_NON_VALIDA
+						.toException("La modalità di identificazione azione deve essere una fra: " + identModes.toString());
+
 			switch (body.getModalita()) {
 			case CONTENT_BASED:
 				pdAzione.setPattern(body.getPattern());
@@ -941,35 +975,29 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			case PROTOCOL_BASED:
 				break;
 			}
-			
+
 			pdAzione.setNome(pdAzione.getPattern());
-			pdAzione.setIdentificazione( Enum.valueOf(PortaDelegataAzioneIdentificazione.class, body.getModalita().name()));
-			
+			pdAzione.setIdentificazione(Enum.valueOf(PortaDelegataAzioneIdentificazione.class, body.getModalita().name()));
+
 			ErogazioniApiHelper.overrideFruizioneUrlInvocazione(env.requestWrapper, idErogatore, idServizio, pd, pdAzione);
-			
-			if ( !env.pdHelper.porteDelegateCheckData(TipoOperazione.CHANGE, pd.getNome()) ) {
+
+			if (!env.pdHelper.porteDelegateCheckData(TipoOperazione.CHANGE, pd.getNome())) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
 			}
-						
+
 			pd.setAzione(pdAzione);
 			pd.setOldIDPortaDelegataForUpdate(idPorta);
 			env.pdCore.performUpdateOperation(env.userLogin, false, pd);
 
 			context.getLogger().info("Invocazione completata con successo");
-        
-     
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
-    }
+	}
 
-	
-    
 }
-

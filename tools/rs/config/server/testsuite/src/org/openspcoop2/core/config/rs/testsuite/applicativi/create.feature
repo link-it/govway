@@ -32,7 +32,7 @@ Scenario: Applicativi Creazione 409 Conflitto
 
     * call create_409 { resourcePath: 'applicativi', body: '#(applicativo)', key: '#(applicativo.nome)' }
 
-@Create40O
+@Create400
 Scenario: Applicativi Creazione con gruppo inesistente
  
     * eval applicativo.ruoli = ['RuoloInesistente' + random() ]

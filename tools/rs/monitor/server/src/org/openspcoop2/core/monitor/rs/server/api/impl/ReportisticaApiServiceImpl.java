@@ -21,6 +21,8 @@
  */
 package org.openspcoop2.core.monitor.rs.server.api.impl;
 
+import static org.openspcoop2.utils.service.beans.utils.BaseHelper.deserializev2;
+
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +43,7 @@ import org.openspcoop2.core.monitor.rs.server.config.LoggerProperties;
 import org.openspcoop2.core.monitor.rs.server.config.ServerProperties;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneSimpleSearchEnum;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroErogazione;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroFruizione;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroTemporale;
@@ -130,24 +132,12 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 				switch (body.getTipo()) {
 				case EROGAZIONE: {
-					FiltroApiBase filtro = BaseHelper.fromJson(body.getApi(), FiltroApiBase.class);
-					if (filtro.getTipo() == null)
-						filtro.setTipo(ReportisticaHelper.getTipoServizioDefault(env));
-					request.overrideParameter(CostantiExporter.SERVIZIO, ReportisticaHelper.buildNomeServizioForOverride(
-							filtro.getNome(), filtro.getTipo(), filtro.getVersione(), Optional.empty()));
+					ReportisticaHelper.overrideFiltroErogazione(deserializev2(body.getApi(), FiltroErogazione.class), request, env);
 					break;
 				}
 				case FRUIZIONE:
-					FiltroFruizione filtro = BaseHelper.fromJson(body.getApi(), FiltroFruizione.class);
-					// TODO: Forse fare l'override di destinatario intendendolo come l'erogatore non
-					// va bene, ricontrolla ovunque.
-					request.overrideParameter(CostantiExporter.DESTINATARIO,
-							new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()).toString());
-					Optional<IDSoggetto> erogatore = Optional.of(new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()));
-					if (filtro.getTipo() == null)
-						filtro.setTipo(ReportisticaHelper.getTipoServizioDefault(env));
-					request.overrideParameter(CostantiExporter.SERVIZIO, ReportisticaHelper
-							.buildNomeServizioForOverride(filtro.getNome(), filtro.getTipo(), filtro.getVersione(), erogatore));
+					ReportisticaHelper.overrideFiltroFruizione(deserializev2(body.getApi(), FiltroFruizione.class), request, env);
+
 					break;
 				}
 
@@ -776,9 +766,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 		try {
 			context.getLogger().info("Invocazione in corso ...");
 
-			// TODO: Devo avere abilitato il multitenant e creare un nuovo soggetto interno,
-			// quindi CHECK se multitenant abilitato o meno.
-			// inoltre l'environment è diverso.
+
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			BaseHelper.throwIfNull(body);

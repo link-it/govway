@@ -6,11 +6,6 @@ Prerequisito:
 Configurare l'ambiente di esecuzione dei test:
 	- Sostituire in ./src/karate-config.js il nome del soggettoDefault con quello scelto per mezzo dell'installer di GovWay.
 
-	- Aggiungere in govway_local.properties nella directory di configurazione esterna indicata in fase di setup la seguente proprietà
-			org.openspcoop2.pdd.statistiche.generazione.timer.intervalloSecondi=30
-
-	  Alla fine dei test tale proprietà andrà rimosssa.
-
 	- Riavviare GovWay e procedere con i test
 
 Compilare i test con il comando 'ant clean build'
