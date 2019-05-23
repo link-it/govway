@@ -61,6 +61,7 @@ import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
@@ -86,6 +87,7 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoLatenza;
 import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoRealtime;
 import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoStatistico;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -102,6 +104,7 @@ import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -132,6 +135,7 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.MessageType;
@@ -6727,7 +6731,52 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return lstParamPorta;
 	}
 	
-	public void prepareAttivazionePolicyList(Search ricerca, List<AttivazionePolicy> lista, int idLista,RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding) throws Exception{
+	public List<TipoRisorsaPolicyAttiva> gestisciCriteriFiltroRisorsaPolicy(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta) throws Exception {
+		
+		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
+		
+		// Gestione risorsa
+		List<TipoRisorsaPolicyAttiva> listaTipoRisorsa = this.confCore.attivazionePolicyTipoRisorsaList(ricerca, ruoloPorta, nomePorta);
+		String filterTipoRisorsaPolicy = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_RISORSA_POLICY);
+		if(filterTipoRisorsaPolicy!=null && !"".equals(filterTipoRisorsaPolicy)) {
+			TipoRisorsaPolicyAttiva filterTipoRisorsaPolicyAsObject = TipoRisorsaPolicyAttiva.toEnumConstant(filterTipoRisorsaPolicy, false);
+			if(filterTipoRisorsaPolicyAsObject==null) {
+				filterTipoRisorsaPolicy = null;
+			}
+			else {
+				if(!listaTipoRisorsa.contains(filterTipoRisorsaPolicyAsObject)) {
+					filterTipoRisorsaPolicy = null; // in seguito ad una eliminazione
+				}
+			}
+		}
+		// gestione default
+		if(filterTipoRisorsaPolicy==null || "".equals(filterTipoRisorsaPolicy)) {
+			
+			TipoRisorsaPolicyAttiva defaultValue = CostantiControlStation.DEFAULT_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA_TIPO_VALUE;
+			if(listaTipoRisorsa!=null && !listaTipoRisorsa.isEmpty() && !listaTipoRisorsa.contains(defaultValue)) {
+				// cerco le metriche più gettonate, altrimeni uso la prima che esiste
+				if(listaTipoRisorsa.contains(TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE)) {
+					defaultValue = TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE;
+				}
+				else if(listaTipoRisorsa.contains(TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_SIMULTANEE)) {
+					defaultValue = TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_SIMULTANEE;
+				}
+				else if(listaTipoRisorsa.contains(TipoRisorsaPolicyAttiva.OCCUPAZIONE_BANDA)) {
+					defaultValue = TipoRisorsaPolicyAttiva.OCCUPAZIONE_BANDA;
+				}
+				else {
+					defaultValue = listaTipoRisorsa.get(0);
+				}
+			}
+			
+			ricerca.addFilter(idLista, Filtri.FILTRO_TIPO_RISORSA_POLICY, defaultValue.getValue());
+		}
+		
+		return listaTipoRisorsa;
+	}
+	
+	public void prepareAttivazionePolicyList(Search ricerca, List<AttivazionePolicy> lista, List<TipoRisorsaPolicyAttiva> listaTipoRisorsa, 
+			int idLista,RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding) throws Exception{
 		try {
 			List<Parameter> lstParamSession = new ArrayList<Parameter>();
 
@@ -6762,9 +6811,25 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
+			String filterTipoRisorsaPolicy = null;
+			if(listaTipoRisorsa!=null && !listaTipoRisorsa.isEmpty()) {
+				filterTipoRisorsaPolicy = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_RISORSA_POLICY);
+				this.addFilterTipoRisorsaPolicy(listaTipoRisorsa,filterTipoRisorsaPolicy, false);
+			}
+			else {
+				this.removeFilterTipoRisorsaPolicy();
+			}
+			
 //			this.pd.setSearchDescription("");
 //			this.pd.setSearch("off");
 
+			// controllo eventuali risultati ricerca
+			if (!search.equals("") || (filterTipoRisorsaPolicy!=null && !"".equals(filterTipoRisorsaPolicy))) {
+				ServletUtils.enabledPageDataSearch(this.pd, "Policy", search);
+			}
+			
+			boolean showMetricaColumn = false;
+			
 			// setto la barra del titolo
 			List<Parameter> lstParam = null;
 			if(lstParamPorta!=null) {
@@ -6773,30 +6838,70 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			else {
 				lstParam = new ArrayList<Parameter>();
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO));
-				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK, null));
+				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK, null));
 			}
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam);
-			
-			// controllo eventuali risultati ricerca
-			if (!search.equals("")) {
-				ServletUtils.enabledPageDataSearch(this.pd, "Policy", search);
+				
+			String labelSogliaColonna = null;
+			if(filterTipoRisorsaPolicy!=null && !"".equals(filterTipoRisorsaPolicy)){
+				TipoRisorsaPolicyAttiva tipoRisorsa = TipoRisorsaPolicyAttiva.toEnumConstant(filterTipoRisorsaPolicy, true);
+				switch (tipoRisorsa) {
+				case NUMERO_RICHIESTE:
+				case NUMERO_RICHIESTE_SIMULTANEE:
+				case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
+				case NUMERO_RICHIESTE_FALLITE:
+				case NUMERO_FAULT_APPLICATIVI:
+				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+					//labelSogliaColonna =ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_ESTESA;
+					labelSogliaColonna =ConfigurazioneCostanti.LABEL_POLICY_INFORMAZIONI_SOGLIA_NUMERO;
+					break;
+				case OCCUPAZIONE_BANDA:
+					//labelSogliaColonna =ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_KB_LABEL;
+					labelSogliaColonna =ConfigurazioneCostanti.LABEL_POLICY_INFORMAZIONI_SOGLIA_BANDA;
+					break;
+				case TEMPO_MEDIO_RISPOSTA:
+					//labelSogliaColonna =ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_MS_LABEL;
+					labelSogliaColonna =ConfigurazioneCostanti.LABEL_POLICY_INFORMAZIONI_SOGLIA_TEMPI;
+					break;
+				case TEMPO_COMPLESSIVO_RISPOSTA:
+					//labelSogliaColonna =ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_MS_LABEL;
+					labelSogliaColonna =ConfigurazioneCostanti.LABEL_POLICY_INFORMAZIONI_SOGLIA_TEMPI;
+					break;
+				}
 			}
 			
+			
 			// setto le label delle colonne
-			String[] labels = { 
-					"",//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO,
-					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NOME,
-					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME,
-					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILTRO,
-					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RAGGRUPPAMENTO_COLUMN
-			};
-			this.pd.setLabels(labels);
+			List<String> lstLabels = new ArrayList<>();
+			if(lista != null && lista.size() > 1) {
+				lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POSIZIONE);
+			}
+			lstLabels.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO);
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NOME);
+			if(labelSogliaColonna!=null) {
+				lstLabels.add(labelSogliaColonna);
+			}
+			if(showMetricaColumn) {
+				if((filterTipoRisorsaPolicy==null || "".equals(filterTipoRisorsaPolicy))) {
+					lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_RISORSA);
+				}
+			}
+			lstLabels.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME);
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE);
+			//lstLabels.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILTRO);
+			//lstLabels.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RAGGRUPPAMENTO_COLUMN);
+			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 			
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
 
 			if (lista != null) {
+				
+				int numeroElementi = lista.size();
+				
+				Integer sizeColumn = null;
+				
 				for (int i = 0; i < lista.size(); i++) {
 					AttivazionePolicy policy = lista.get(i);
 					Vector<DataElement> e = new Vector<DataElement>();
@@ -6820,7 +6925,61 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 										
 					
 					Parameter pPolicyId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID, policy.getId() + ""); 
+					Parameter pPolicyRisorsa = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA, filterTipoRisorsaPolicy); 
 
+
+
+					// Posizione
+					if(lista.size() > 1) {
+						DataElement de = new DataElement();
+						de.setWidthPx(48);
+						de.setType(DataElementType.IMAGE);
+						DataElementImage imageUp = new DataElementImage();
+						Parameter pDirezioneSu = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POSIZIONE, 
+								CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SU);
+						Parameter pDirezioneGiu = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POSIZIONE, 
+								CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_GIU);
+								
+						if(i > 0) {
+							imageUp.setImage(CostantiControlStation.ICONA_FRECCIA_SU);
+							imageUp.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU);
+							List<Parameter> listP = new ArrayList<>();
+							listP.add(pPolicyId);
+							listP.add(pPolicyRisorsa);
+							if(ruoloPorta!=null) {
+								listP.add(parRuoloPorta);
+								listP.add(parNomePorta);
+								listP.add(parServiceBinding);
+							}
+							listP.add(pDirezioneSu);
+							imageUp.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST, listP.toArray(new Parameter[1])); 
+						}
+						else {
+							imageUp.setImage(CostantiControlStation.ICONA_PLACEHOLDER);
+						}
+						de.addImage(imageUp);
+						
+						if(i < numeroElementi -1) {
+							DataElementImage imageDown = new DataElementImage();
+							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
+							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU);
+							List<Parameter> listP = new ArrayList<>();
+							listP.add(pPolicyId);
+							listP.add(pPolicyRisorsa);
+							if(ruoloPorta!=null) {
+								listP.add(parRuoloPorta);
+								listP.add(parNomePorta);
+								listP.add(parServiceBinding);
+							}
+							listP.add(pDirezioneGiu);
+							imageDown.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST, listP.toArray(new Parameter[1])); 
+							de.addImage(imageDown);
+						}
+						de.setValue(policy.getPosizione()+"");
+						e.addElement(de);
+					}
+										
+					// Stato
 					DataElement de = new DataElement();
 					de.setWidthPx(10);
 					de.setType(DataElementType.CHECKBOX);
@@ -6849,6 +7008,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					e.addElement(de);
 					
+					
+					// nome
 					de = new DataElement();
 					if(ruoloPorta!=null) {
 						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta, parServiceBinding);
@@ -6865,7 +7026,65 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setIdToRemove(""+policy.getId());
 					de.setToolTip(nDescr); 
 					e.addElement(de);
+
+					
+					ConfigurazionePolicy configPolicy = null;
+					
+					
+					// Soglia
+					if(labelSogliaColonna!=null) {
+						de = new DataElement();
+						if(policy.isRidefinisci()) {
+							de.setValue(policy.getValore()+"");
+						}
+						else {
+							if(configPolicy==null) {
+								configPolicy = this.confCore.getConfigurazionePolicy(policy.getIdPolicy());
+							}
+							de.setValue(configPolicy.getValore()+"");
+						}
+						
+						if(sizeColumn==null) {
+							de.setWidthPx(70);
+							sizeColumn = 70;
+						}
+						
+						if(de.getValue().length()>12) {
+							if(sizeColumn<110) {
+								de.setWidthPx(110);
+								sizeColumn = 110;
+							}
+						}
+						else if(de.getValue().length()>9) {
+							if(sizeColumn<90) {
+								de.setWidthPx(90);
+								sizeColumn = 90;
+							}
+						}
+						
+						e.addElement(de);
+					}
+					
+					
+					// Tipo Risorsa
+									
+					if(showMetricaColumn) {
+						if((filterTipoRisorsaPolicy==null || "".equals(filterTipoRisorsaPolicy))) {
+						
+							if(configPolicy==null) {
+								configPolicy = this.confCore.getConfigurazionePolicy(policy.getIdPolicy());
+							}
+							TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = TipoRisorsaPolicyAttiva.getTipo(configPolicy.getRisorsa(),configPolicy.isSimultanee());
+							String labelRisorsaPolicyAttiva = this.getLabelTipoRisorsaPolicyAttiva(tipoRisorsaPolicyAttiva);							
+							de = new DataElement();
+							de.setValue(labelRisorsaPolicyAttiva);
+							e.addElement(de);
+							
+						}
+					}
+					
 										
+					
 					de = new DataElement();
 					if(policy.isEnabled()){
 						de.setValue("Visualizza");
@@ -6873,6 +7092,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					else{
 						de.setValue("-");
 					}
+					de.allineaTdAlCentro();
+					de.setWidthPx(60);
 
 					Parameter pJmx = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+"");
 					if(policy.isEnabled()){
@@ -6885,37 +7106,68 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					e.addElement(de);
 								
-					de = new DataElement();
-					String filtro = this.toStringCompactFilter(policy.getFiltro(),ruoloPorta,nomePorta);
-					if(filtro.length()>60){
-						de.setValue(filtro.substring(0,57)+"...");
-					}else{
-						de.setValue(filtro);
-					}
-					de.setToolTip(filtro);
-					if(ruoloPorta!=null) {
-						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta, parServiceBinding);
-					}
-					else {
-						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId);
-					}
-					e.addElement(de);
+					
+					
+					// Continue
 					
 					de = new DataElement();
-					String groupBy = this.toStringCompactGroupBy(policy.getGroupBy(),ruoloPorta,nomePorta);
-					if(groupBy.length()>60){
-						de.setValue(groupBy.substring(0,57)+"...");
-					}else{
-						de.setValue(groupBy);
-					}
-					de.setToolTip(groupBy);
-					if(ruoloPorta!=null) {
-						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta, parServiceBinding);
+					de.setWidthPx(24);
+					de.setType(DataElementType.IMAGE);
+					
+					DataElementImage imageUp = new DataElementImage();
+					if(policy.isContinuaValutazione()) {
+						imageUp.setImage(CostantiControlStation.ICONA_CONTINUE);
+						imageUp.setToolTip(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE_PROSEGUI_TOOLTIP);
 					}
 					else {
-						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId);
+						imageUp.setImage(CostantiControlStation.ICONA_BREAK);
+						imageUp.setToolTip(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE_INTERROMPI_TOOLTIP);
 					}
+					if(ruoloPorta!=null) {
+						imageUp.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta, parServiceBinding);
+					}
+					else {
+						imageUp.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId);
+					}
+					de.addImage(imageUp);
+					
+					de.allineaTdAlCentro();
+					
+					de.setValue(policy.getPosizione()+"");
 					e.addElement(de);
+					
+					
+//					de = new DataElement();
+//					String filtro = this.toStringCompactFilter(policy.getFiltro(),ruoloPorta,nomePorta);
+//					if(filtro.length()>60){
+//						de.setValue(filtro.substring(0,57)+"...");
+//					}else{
+//						de.setValue(filtro);
+//					}
+//					de.setToolTip(filtro);
+//					if(ruoloPorta!=null) {
+//						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta, parServiceBinding);
+//					}
+//					else {
+//						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId);
+//					}
+//					e.addElement(de);
+//					
+//					de = new DataElement();
+//					String groupBy = this.toStringCompactGroupBy(policy.getGroupBy(),ruoloPorta,nomePorta);
+//					if(groupBy.length()>60){
+//						de.setValue(groupBy.substring(0,57)+"...");
+//					}else{
+//						de.setValue(groupBy);
+//					}
+//					de.setToolTip(groupBy);
+//					if(ruoloPorta!=null) {
+//						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta, parServiceBinding);
+//					}
+//					else {
+//						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId);
+//					}
+//					e.addElement(de);
 					
 					dati.addElement(e);
 				}
@@ -6929,7 +7181,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 	
-	public String toStringCompactFilter(AttivazionePolicyFiltro filtro, RuoloPolicy ruoloPorta, String nomePorta) throws Exception {
+	public String toStringCompactFilter(AttivazionePolicyFiltro filtro, RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding) throws Exception {
 		
 		boolean delegata = false;
 		boolean applicativa = false;
@@ -6953,11 +7205,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						bf.append(", ");
 					}
 					if(RuoloPolicy.DELEGATA.equals(filtro.getRuoloPorta())){
-						bf.append("Tipologia: ");
+						bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD).append(": ");
 						bf.append(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUOLO_PORTA_DELEGATA);
 					}
 					else if(RuoloPolicy.APPLICATIVA.equals(filtro.getRuoloPorta())){
-						bf.append("Tipologia: ");
+						bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD).append(": ");
 						bf.append(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUOLO_PORTA_APPLICATIVA);
 					}
 				}
@@ -6978,7 +7230,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(bf.length()>0){
 						bf.append(", ");
 					}
-					bf.append("Porta: ");
+					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PORTA).append(": ");
 					bf.append(filtro.getNomePorta());
 				}
 			}
@@ -6988,7 +7240,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(bf.length()>0){
 						bf.append(", ");
 					}
-					bf.append("RuoloErogatore: ");
+					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_EROGATORE).append(": ");
 					bf.append(filtro.getRuoloErogatore());
 				}
 				else if( !( (filtro.getTipoErogatore()==null || "".equals(filtro.getTipoErogatore())) 
@@ -6997,7 +7249,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(bf.length()>0){
 						bf.append(", ");
 					}
-					bf.append("Erogatore: ");
+					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_EROGATORE_COMPACT).append(": ");
 					IDSoggetto idSoggetto = new IDSoggetto(filtro.getTipoErogatore(), filtro.getNomeErogatore());
 					bf.append(this.getLabelNomeSoggetto(idSoggetto));
 				}
@@ -7017,7 +7269,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(bf.length()>0){
 						bf.append(", ");
 					}
-					bf.append("Servizio: ");
+					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SERVIZIO).append(": ");
 					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(filtro.getTipoServizio(), filtro.getNomeServizio(), 
 							filtro.getTipoErogatore(), filtro.getNomeErogatore(), 
 							filtro.getVersioneServizio());
@@ -7029,7 +7281,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(bf.length()>0){
 					bf.append(", ");
 				}
-				bf.append("Azione: ");
+				bf.append(this.getLabelAzione(serviceBinding)).append(": ");
 				bf.append(filtro.getAzione());
 			}
 			
@@ -7038,7 +7290,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(bf.length()>0){
 						bf.append(", ");
 					}
-					bf.append("SAErogatore: ");
+					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_EROGATORE).append(": ");
 					bf.append(filtro.getServizioApplicativoErogatore());
 				}
 			}
@@ -7048,7 +7300,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(bf.length()>0){
 						bf.append(", ");
 					}
-					bf.append("RuoloFruitore: ");
+					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_FRUITORE).append(": ");
 					bf.append(filtro.getRuoloFruitore());
 				}
 				else if( !( (filtro.getTipoFruitore()==null || "".equals(filtro.getTipoFruitore())) 
@@ -7057,7 +7309,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(bf.length()>0){
 						bf.append(", ");
 					}
-					bf.append("Fruitore: ");
+					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_FRUITORE_COMPACT).append(": ");
 					IDSoggetto idSoggetto = new IDSoggetto(filtro.getTipoFruitore(), filtro.getNomeFruitore());
 					bf.append(this.getLabelNomeSoggetto(idSoggetto));
 				}
@@ -7068,7 +7320,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(bf.length()>0){
 						bf.append(", ");
 					}
-					bf.append("SAFruitore: ");
+					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE_COMPACT).append(": ");
 					bf.append(filtro.getServizioApplicativoFruitore());
 				}
 			}
@@ -7077,7 +7329,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(bf.length()>0){
 					bf.append(", ");
 				}
-				bf.append("Chiave: ");
+				bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED_COMPACT).append(": ");
 				bf.append(filtro.getInformazioneApplicativaTipo());
 			}
 
@@ -7093,7 +7345,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return bf.toString();
 	}
 	
-	public String toStringCompactGroupBy(AttivazionePolicyRaggruppamento groupBy, RuoloPolicy ruoloPorta, String nomePorta) {
+	public String toStringCompactGroupBy(AttivazionePolicyRaggruppamento groupBy, RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding) {
 		
 		boolean delegata = false;
 		boolean applicativa = false;
@@ -7116,7 +7368,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(bf.length()>0){
 						bf.append(", ");
 					}
-					bf.append("Tipologia");
+					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RUOLO_PDD_LABEL);
 				}
 			}
 			
@@ -7134,7 +7386,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(bf.length()>0){
 						bf.append(", ");
 					}
-					bf.append("Erogatore");
+					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_EROGATORE_COMPACT);
 				}
 			}
 			
@@ -7143,7 +7395,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(bf.length()>0){
 						bf.append(", ");
 					}
-					bf.append("Servizio");
+					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SERVIZIO);
 				}
 			}
 			
@@ -7151,7 +7403,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(bf.length()>0){
 					bf.append(", ");
 				}
-				bf.append("Azione");
+				bf.append(this.getLabelAzione(serviceBinding));
 			}
 			
 			if(configurazione) {
@@ -7159,25 +7411,46 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(bf.length()>0){
 						bf.append(", ");
 					}
-					bf.append("SAErogatore");
+					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_EROGATORE);
 				}
 			}
 			
-			if(configurazione || applicativa) {
+			if(configurazione) {
 				if(groupBy.isFruitore()){
 					if(bf.length()>0){
 						bf.append(", ");
 					}
-					bf.append("Fruitore");
+					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_FRUITORE_COMPACT);
 				}
 			}
 			
-			if(configurazione || delegata) {
+			if(configurazione) {
 				if(groupBy.isServizioApplicativoFruitore()){
 					if(bf.length()>0){
 						bf.append(", ");
 					}
-					bf.append("SAFruitore");
+					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_FRUITORE_COMPACT);
+				}
+			}
+			
+			if(!configurazione) {
+				if(groupBy.isServizioApplicativoFruitore() || groupBy.isFruitore() || groupBy.isIdentificativoAutenticato()){
+					if(bf.length()>0){
+						bf.append(", ");
+					}
+					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RICHIEDENTE);
+				}
+			}
+			
+			if(groupBy.getToken()!=null){
+				String [] tmp = groupBy.getToken().split(",");
+				if(tmp!=null && tmp.length>0) {
+					for (int i = 0; i < tmp.length; i++) {
+						if(bf.length()>0){
+							bf.append(", ");
+						}
+						bf.append(tmp[i]);	
+					}
 				}
 			}
 			
@@ -9709,6 +9982,18 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		}
 		
+		// continue
+		String continueS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE);
+		if(continueS!=null && !"".equals(continueS)){
+			policy.setContinuaValutazione(Boolean.valueOf(continueS));
+		}
+		else {
+			if(TipoOperazione.ADD.equals(tipoOperazione)){
+				policy.setContinuaValutazione(false); // default
+			}
+		}
+		
+		
 		// ridefinisci
 		String ridefinisci = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_RIDEFINISCI);
 		if(first==false){
@@ -9983,7 +10268,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// GroupBy - stato
 		String statoGroupBy = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_ENABLED);
 		if(statoGroupBy!=null && !"".equals(statoGroupBy)){
-			policy.getGroupBy().setEnabled(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_COLLEZIONAMENTO_ABILITATO.equals(statoGroupBy));
+			policy.getGroupBy().setEnabled(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_COLLEZIONAMENTO_ABILITATO.equals(statoGroupBy) ||
+					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(statoGroupBy));
 		}
 		
 		// GroupBy
@@ -10017,6 +10303,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String servizio = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SERVIZIO);
 			if(first==false){
 				policy.getGroupBy().setServizio(ServletUtils.isCheckBoxEnabled(servizio));
+				policy.getGroupBy().setErogatore(ServletUtils.isCheckBoxEnabled(servizio)); // imposto anche l'erogatore poiche' identifica API differenti
 			}
 			
 			// azione
@@ -10037,6 +10324,56 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				policy.getGroupBy().setServizioApplicativoFruitore(ServletUtils.isCheckBoxEnabled(servizioApplicativoFruitore));
 			}
 			
+			// richiedente
+			String richiedente = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RICHIEDENTE);
+			if(first==false){
+				policy.getGroupBy().setServizioApplicativoFruitore(ServletUtils.isCheckBoxEnabled(richiedente));
+				policy.getGroupBy().setFruitore(ServletUtils.isCheckBoxEnabled(richiedente));
+				policy.getGroupBy().setIdentificativoAutenticato(ServletUtils.isCheckBoxEnabled(richiedente));
+			}
+			
+			// token
+			String token = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN);
+			if(first==false){
+				if(ServletUtils.isCheckBoxEnabled(token)) {
+					String [] tokenSelezionati = this.getParameterValues(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN_CLAIMS);
+					if(tokenSelezionati!=null && tokenSelezionati.length>0) {
+						StringBuffer bf = new StringBuffer();
+						for (int i = 0; i < tokenSelezionati.length; i++) {
+							TipoCredenzialeMittente tipo = TipoCredenzialeMittente.valueOf(tokenSelezionati[i]);
+							if(TipoCredenzialeMittente.token_issuer.equals(tipo)) {
+								continue;
+							}
+							else if(TipoCredenzialeMittente.token_subject.equals(tipo)) {
+								if(!bf.toString().endsWith(",") && bf.length()>0) {
+									bf.append(",");
+								}
+								bf.append(TipoCredenzialeMittente.token_issuer.name());
+								if(i==0) {
+									bf.append(",");
+								}
+							}
+							if(i>0) {
+								bf.append(",");
+							}
+							bf.append(tokenSelezionati[i]);
+						}
+						if(bf.length()>0) {
+							policy.getGroupBy().setToken(bf.toString());
+						}
+						else {
+							policy.getGroupBy().setToken(null);
+						}
+					}
+					else {
+						policy.getGroupBy().setToken(null);
+					}
+				}
+				else {
+					policy.getGroupBy().setToken(null);
+				}
+			}
+
 			// per Chiave
 			String perChiave = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED);
 			if(first==false){
@@ -10078,6 +10415,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			policy.getGroupBy().setRuoloPorta(false);
 			policy.getGroupBy().setFruitore(false);
 			policy.getGroupBy().setServizioApplicativoFruitore(false);
+			policy.getGroupBy().setIdentificativoAutenticato(false);
+			policy.getGroupBy().setToken(null);
 			policy.getGroupBy().setErogatore(false);
 			policy.getGroupBy().setServizioApplicativoErogatore(false);
 			policy.getGroupBy().setServizio(false);
@@ -10094,88 +10433,142 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return null;
 	}
 
-	private void addDataElementRisorsa(Vector<DataElement> dati, 
+	private void addDataElementRisorsa( 
+			Vector<DataElement> dati, 
 			String parametroRisorsaNome, String valoreRisorsa,
 			String parametroEsitiNome, String valoreEsiti,
 			boolean editMode) {
 		
-		DataElement de = new DataElement();
-		de.setName(parametroRisorsaNome);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA);
-		if(editMode) {
-			de.setValues(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA);
-			de.setSelected(valoreRisorsa);
-			de.setType(DataElementType.SELECT);
-			de.setPostBack_viaPOST(true);
-		}
-		else {
-			de.setType(DataElementType.TEXT);
-		}
-		de.setValue(valoreRisorsa);
-		dati.addElement(de);
-		
-		if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_NUMERO_RICHIESTE.equals(valoreRisorsa)) {
+		if(CostantiControlStation.USE_SELECT_LIST_SEPARATE_METRICHE) {
 			
-			de = new DataElement();
-			de.setName(parametroEsitiNome);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ESITI);
+			DataElement de = new DataElement();
+			de.setName(parametroRisorsaNome);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA);
 			if(editMode) {
-				de.setValues(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_ESITI);
-				de.setSelected(valoreEsiti);
+				de.setValues(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA);
+				de.setSelected(valoreRisorsa);
 				de.setType(DataElementType.SELECT);
 				de.setPostBack_viaPOST(true);
 			}
 			else {
-				if(valoreEsiti==null || "".equals(valoreEsiti)) {
-					valoreEsiti = CostantiControlStation.LABEL_QUALSIASI;
-				}
 				de.setType(DataElementType.TEXT);
 			}
-			de.setValue(valoreEsiti);
+			de.setValue(valoreRisorsa);
 			dati.addElement(de);
 			
+			if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_NUMERO_RICHIESTE.equals(valoreRisorsa)) {
+				
+				de = new DataElement();
+				de.setName(parametroEsitiNome);
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ESITI);
+				if(editMode) {
+					de.setValues(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_ESITI);
+					de.setSelected(valoreEsiti);
+					de.setType(DataElementType.SELECT);
+					de.setPostBack_viaPOST(true);
+				}
+				else {
+					if(valoreEsiti==null || "".equals(valoreEsiti)) {
+						valoreEsiti = CostantiControlStation.LABEL_QUALSIASI;
+					}
+					de.setType(DataElementType.TEXT);
+				}
+				de.setValue(valoreEsiti);
+				dati.addElement(de);
+				
+			}
+		}
+		else {
+			DataElement de = new DataElement();
+			de.setName(parametroRisorsaNome);
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA_TIPO);
+			if(editMode) {
+				de.setValues(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_VALORI);
+				de.setLabels(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_LABELS);
+				de.setSelected(valoreRisorsa);
+				de.setType(DataElementType.SELECT);
+				de.setPostBack_viaPOST(true);
+				de.setValue(valoreRisorsa);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(valoreRisorsa);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setName(parametroRisorsaNome+"__LABEL");
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA_TIPO);
+				de.setType(DataElementType.TEXT);
+				String labelRisorsaPolicyAttiva = this.getLabelTipoRisorsaPolicyAttiva(valoreRisorsa);
+				de.setValue(labelRisorsaPolicyAttiva);
+			}
+			dati.addElement(de);
 		}
 		
 	}
 	
 	private TipoRisorsa getTipoRisorsa(String valoreRisorsa, String valoreEsiti) throws Exception {
-		TipoRisorsa tipoRisorsaSelezionata = null;
-		if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_NUMERO_RICHIESTE.equals(valoreRisorsa)) {
-			if(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK.equals(valoreEsiti)) {
-				tipoRisorsaSelezionata = TipoRisorsa.NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO;
+		
+		if(CostantiControlStation.USE_SELECT_LIST_SEPARATE_METRICHE) {
+		
+			TipoRisorsa tipoRisorsaSelezionata = null;
+			if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_NUMERO_RICHIESTE.equals(valoreRisorsa)) {
+				if(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK.equals(valoreEsiti)) {
+					tipoRisorsaSelezionata = TipoRisorsa.NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO;
+				}
+				else if(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE.equals(valoreEsiti)) {
+					tipoRisorsaSelezionata = TipoRisorsa.NUMERO_RICHIESTE_FALLITE;
+				}
+				else if(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT.equals(valoreEsiti)) {
+					tipoRisorsaSelezionata = TipoRisorsa.NUMERO_FAULT_APPLICATIVI;
+				}
+				else if(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE_FAULT.equals(valoreEsiti)) {
+					tipoRisorsaSelezionata = TipoRisorsa.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI;
+				}
+				else {
+					tipoRisorsaSelezionata = TipoRisorsa.NUMERO_RICHIESTE;
+				}
 			}
-			else if(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE.equals(valoreEsiti)) {
-				tipoRisorsaSelezionata = TipoRisorsa.NUMERO_RICHIESTE_FALLITE;
-			}
-			else if(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT.equals(valoreEsiti)) {
-				tipoRisorsaSelezionata = TipoRisorsa.NUMERO_FAULT_APPLICATIVI;
-			}
-			else if(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE_FAULT.equals(valoreEsiti)) {
-				tipoRisorsaSelezionata = TipoRisorsa.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI;
-			}
-			else {
+			else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_NUMERO_RICHIESTE_SIMULTANEE.equals(valoreRisorsa)) {
 				tipoRisorsaSelezionata = TipoRisorsa.NUMERO_RICHIESTE;
 			}
-		}
-		else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_NUMERO_RICHIESTE_SIMULTANEE.equals(valoreRisorsa)) {
-			tipoRisorsaSelezionata = TipoRisorsa.NUMERO_RICHIESTE;
-		}
-		else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_OCCUPAZIONE_BANDA.equals(valoreRisorsa)) {
-			tipoRisorsaSelezionata = TipoRisorsa.OCCUPAZIONE_BANDA;
-		}
-		else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_TEMPO_MEDIO_RISPOSTA.equals(valoreRisorsa)) {
-			tipoRisorsaSelezionata = TipoRisorsa.TEMPO_MEDIO_RISPOSTA;
-		}
-		else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_TEMPO_COMPLESSIVO_RISPOSTA.equals(valoreRisorsa)) {
-			tipoRisorsaSelezionata = TipoRisorsa.TEMPO_COMPLESSIVO_RISPOSTA;
+			else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_OCCUPAZIONE_BANDA.equals(valoreRisorsa)) {
+				tipoRisorsaSelezionata = TipoRisorsa.OCCUPAZIONE_BANDA;
+			}
+			else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_TEMPO_MEDIO_RISPOSTA.equals(valoreRisorsa)) {
+				tipoRisorsaSelezionata = TipoRisorsa.TEMPO_MEDIO_RISPOSTA;
+			}
+			else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_TEMPO_COMPLESSIVO_RISPOSTA.equals(valoreRisorsa)) {
+				tipoRisorsaSelezionata = TipoRisorsa.TEMPO_COMPLESSIVO_RISPOSTA;
+			}
+			else {
+				throw new Exception("Risorsa '"+valoreRisorsa+"' sconosciuta");
+			}
+			return tipoRisorsaSelezionata;
+			
 		}
 		else {
-			throw new Exception("Risorsa '"+valoreRisorsa+"' sconosciuta");
+			
+			TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = TipoRisorsaPolicyAttiva.toEnumConstant(valoreRisorsa, false);
+			if(tipoRisorsaPolicyAttiva==null) {
+				throw new Exception("Risorsa '"+valoreRisorsa+"' sconosciuta");
+			}
+			return tipoRisorsaPolicyAttiva.getTipoRisorsa(true);
+			
 		}
-		return tipoRisorsaSelezionata;
+		
 	}
 	public boolean isTipoRisorsaNumeroRichiesteSimultanee(String valoreRisorsa) throws Exception {
-		return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_NUMERO_RICHIESTE_SIMULTANEE.equals(valoreRisorsa);
+		if(CostantiControlStation.USE_SELECT_LIST_SEPARATE_METRICHE) {
+			return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_NUMERO_RICHIESTE_SIMULTANEE.equals(valoreRisorsa);
+		}
+		else {
+			TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = TipoRisorsaPolicyAttiva.toEnumConstant(valoreRisorsa, false);
+			if(tipoRisorsaPolicyAttiva==null) {
+				return false;
+			}
+			return tipoRisorsaPolicyAttiva.isRichiesteSimultanee();
+		}
 	}
 	
 	public String getDataElementValueRisorsa(String tipoRisorsa, boolean simultanee) throws Exception {
@@ -10186,28 +10579,34 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return this.getDataElementValueRisorsa(tipo, simultanee);
 	}
 	public String getDataElementValueRisorsa(TipoRisorsa tipoRisorsa, boolean simultanee) throws Exception {
-		switch (tipoRisorsa) {
-		case NUMERO_RICHIESTE:
-			if(simultanee) {
-				return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_NUMERO_RICHIESTE_SIMULTANEE;
-			}
-			else {
+		if(CostantiControlStation.USE_SELECT_LIST_SEPARATE_METRICHE) {
+			switch (tipoRisorsa) {
+			case NUMERO_RICHIESTE:
+				if(simultanee) {
+					return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_NUMERO_RICHIESTE_SIMULTANEE;
+				}
+				else {
+					return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_NUMERO_RICHIESTE;
+				}
+			case NUMERO_RICHIESTE_FALLITE:
+			case NUMERO_FAULT_APPLICATIVI:
+			case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+			case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
 				return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_NUMERO_RICHIESTE;
+			case OCCUPAZIONE_BANDA:
+				return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_OCCUPAZIONE_BANDA;
+			case TEMPO_MEDIO_RISPOSTA:
+				return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_TEMPO_MEDIO_RISPOSTA;
+			case TEMPO_COMPLESSIVO_RISPOSTA:
+				return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_TEMPO_COMPLESSIVO_RISPOSTA;
 			}
-		case NUMERO_RICHIESTE_FALLITE:
-		case NUMERO_FAULT_APPLICATIVI:
-		case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
-		case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
-			return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_NUMERO_RICHIESTE;
-		case OCCUPAZIONE_BANDA:
-			return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_OCCUPAZIONE_BANDA;
-		case TEMPO_MEDIO_RISPOSTA:
-			return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_TEMPO_MEDIO_RISPOSTA;
-		case TEMPO_COMPLESSIVO_RISPOSTA:
-			return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_TEMPO_COMPLESSIVO_RISPOSTA;
+			
+			throw new Exception("Tipo risorsa '"+tipoRisorsa+"' non gestita");
 		}
-		
-		throw new Exception("Tipo risorsa '"+tipoRisorsa+"' non gestita");
+		else {
+			TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = TipoRisorsaPolicyAttiva.getTipo(tipoRisorsa, simultanee);
+			return tipoRisorsaPolicyAttiva.getValue();
+		}
 	}
 	
 	public String getDataElementValueRisorsaEsiti(String tipoRisorsa) throws Exception {
@@ -10218,23 +10617,28 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return this.getDataElementValueRisorsaEsiti(tipo);
 	}
 	public String getDataElementValueRisorsaEsiti(TipoRisorsa tipoRisorsa) throws Exception {
-		switch (tipoRisorsa) {
-		case NUMERO_RICHIESTE_FALLITE:
-			return ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE;
-		case NUMERO_FAULT_APPLICATIVI:
-			return ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT;
-		case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
-			return ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE_FAULT;
-		case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
-			return ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK;
-		case NUMERO_RICHIESTE:
-		case OCCUPAZIONE_BANDA:
-		case TEMPO_MEDIO_RISPOSTA:
-		case TEMPO_COMPLESSIVO_RISPOSTA:
+		if(CostantiControlStation.USE_SELECT_LIST_SEPARATE_METRICHE) {
+			switch (tipoRisorsa) {
+			case NUMERO_RICHIESTE_FALLITE:
+				return ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE;
+			case NUMERO_FAULT_APPLICATIVI:
+				return ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT;
+			case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+				return ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE_FAULT;
+			case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
+				return ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK;
+			case NUMERO_RICHIESTE:
+			case OCCUPAZIONE_BANDA:
+			case TEMPO_MEDIO_RISPOSTA:
+			case TEMPO_COMPLESSIVO_RISPOSTA:
+				return null;
+			}
+			
+			throw new Exception("Tipo risorsa '"+tipoRisorsa+"' non gestita");
+		}
+		else {
 			return null;
 		}
-		
-		throw new Exception("Tipo risorsa '"+tipoRisorsa+"' non gestita");
 	}
 	
 	public void findPolicyBuiltIn(List<InfoPolicy> policies, 
@@ -10411,10 +10815,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			modalitaErrorRate = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_ERROR_RATE);
 		
 			if(modalitaRisorsa==null) {
-				modalitaRisorsa = ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_DEFAULT;
+				if(CostantiControlStation.USE_SELECT_LIST_SEPARATE_METRICHE) {
+					modalitaRisorsa = ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_DEFAULT;
+				}
+				else {
+					modalitaRisorsa = CostantiControlStation.DEFAULT_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA_TIPO_VALUE.getValue();
+				}
 			}
 			if(modalitaEsiti==null) {
-				modalitaEsiti = ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_ESITI_DEFAULT;
+				if(CostantiControlStation.USE_SELECT_LIST_SEPARATE_METRICHE) {
+					modalitaEsiti = ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_ESITI_DEFAULT;
+				}
 			}
 			if(modalitaIntervallo==null) {
 				modalitaIntervallo = ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_INTERVALLO_OSSERVAZIONE_DEFAULT;
@@ -10551,6 +10962,28 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				dati.get(dati.size()-1).setInfo(dInfoDescrizionePolicy);
 			}
 
+			
+			// continue
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE);
+			if(hidden) {
+				de.setType(DataElementType.HIDDEN);
+			}
+			else {
+				de.setType(DataElementType.SELECT);
+				de.setValues(ConfigurazioneCostanti.PARAMETRI_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE);
+				de.setLabels(ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE);
+				de.setPostBack(true);
+				de.setSelected(policy.isContinuaValutazione()+"");
+			}
+			de.setValue(policy.isContinuaValutazione()+"");
+			
+			DataElementInfo dInfoContinuePolicy = new DataElementInfo(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE);
+			dInfoContinuePolicy.setListBody(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE_ELEM);
+			de.setInfo(dInfoContinuePolicy);
+			
+			dati.addElement(de);
 		}
 		
 		if(!jmx){
@@ -10623,10 +11056,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(!jmx){
 			
 			if(TipoOperazione.CHANGE.equals(tipoOperazione)){
-				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME);
-				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);		
+				if(policy!=null && policy.isEnabled()){
+					de = new DataElement();
+					de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME);
+					de.setType(DataElementType.SUBTITLE);
+					dati.addElement(de);	
+				}
 			}
 			
 		}
@@ -10638,7 +11073,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_ID_UNICO);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_ID_UNICO);
 			if(!jmx){
-				de.setType(DataElementType.TEXT);
+				//de.setType(DataElementType.TEXT);
+				de.setType(DataElementType.HIDDEN);
 			}
 			else{
 				de.setType(DataElementType.HIDDEN);
@@ -10831,7 +11267,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			de.setPostBack_viaPOST(true);
 			dati.addElement(de);
-			
 			
 			// Valore Soglia
 			de = new DataElement();
@@ -12175,15 +12610,24 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 
 //
-//		DataElement de = new DataElement();
-//		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RAGGRUPPAMENTO);
-//		de.setType(DataElementType.SUBTITLE);
-//		dati.addElement(de);
+		DataElement de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RAGGRUPPAMENTO);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RAGGRUPPAMENTO_NOTE);
+		de.setType(DataElementType.NOTE);
+		dati.addElement(de);
 		
 		// stato
-//		addToDatiDataElementStato(dati, ConfigurazioneCostanti.PARAMETRO_CONTROLLO_CONGESTIONE_POLICY_ACTIVE_GROUPBY_ENABLED, 
-//				ConfigurazioneCostanti.LABEL_PARAMETRO_CONTROLLO_CONGESTIONE_POLICY_ACTIVE_GROUPBY_ENABLED, policy.getGroupBy().isEnabled(), true);
-		DataElement de = new DataElement();
+		addToDatiDataElementStato(dati, ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_ENABLED, 
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_ENABLED_STATO, policy.getGroupBy().isEnabled(), true, false, false, false);
+		dati.get(dati.size()-1).setPostBack(false);
+		dati.get(dati.size()-1).setPostBack_viaPOST(true);
+		
+		/*
+		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_ENABLED);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_ENABLED);
 		de.setType(DataElementType.SELECT);
@@ -12198,35 +12642,58 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		de.setPostBack_viaPOST(true);
 		dati.addElement(de);
+		*/
 		
 		if(policy.getGroupBy().isEnabled()){
 		
-			// Ruolo PdD
+			
+			// --- GENERALI ---
+			
 			if(configurazione) {
-				if( policy.getFiltro()==null || 
+				
+				boolean showRuoloPdD = policy.getFiltro()==null || 
 						policy.getFiltro().isEnabled()==false || 
 						policy.getFiltro().getRuoloPorta()==null ||
-						RuoloPolicy.ENTRAMBI.equals(policy.getFiltro().getRuoloPorta())
-					){
+						RuoloPolicy.ENTRAMBI.equals(policy.getFiltro().getRuoloPorta());
+				
+				boolean showProtocollo = protocolli.size()>1 && (policy.getFiltro()==null || 
+						policy.getFiltro().isEnabled()==false || 
+						policy.getFiltro().getProtocollo()==null);
+				
+				boolean showErogatore = policy.getFiltro()==null || 
+						policy.getFiltro().isEnabled()==false || 
+						policy.getFiltro().getTipoErogatore()==null ||
+						policy.getFiltro().getNomeErogatore()==null;
+				
+				boolean showFruitore = policy.getFiltro()==null || 
+						policy.getFiltro().isEnabled()==false || 
+						policy.getFiltro().getTipoFruitore()==null ||
+						policy.getFiltro().getNomeFruitore()==null;
+
+				if(showRuoloPdD || showProtocollo || showErogatore || showFruitore) {
+//					de = new DataElement();
+//					de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_DATI_GENERALI);
+//					de.setType(DataElementType.NOTE);
+//					dati.addElement(de);
+				}
+				
+				// Ruolo PdD
+				if( showRuoloPdD ){
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RUOLO_PDD);
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RUOLO_PDD_LABEL);
-					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RUOLO_PDD_NOTE);
+					//de.setLabelRight(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RUOLO_PDD_NOTE);
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(policy.getGroupBy().isRuoloPorta());
 					de.setValue(policy.getGroupBy().isRuoloPorta()+"");
 					dati.addElement(de);
 				}
-			}
-	
-			// Protocollo
-			if(configurazione) {
+			
+				// Protocollo
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PROTOCOLLO);
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PROTOCOLLO);
-				if(protocolli.size()>1 && (policy.getFiltro()==null || 
-						policy.getFiltro().isEnabled()==false || 
-						policy.getFiltro().getProtocollo()==null)){
+				if(showProtocollo){
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(policy.getGroupBy().isProtocollo());
 					de.setValue(policy.getGroupBy().isProtocollo()+"");
@@ -12238,15 +12705,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 				}
 				dati.addElement(de);
-			}
-			
-			// Erogatore
-			if(configurazione) {
-				if( policy.getFiltro()==null || 
-						policy.getFiltro().isEnabled()==false || 
-						policy.getFiltro().getTipoErogatore()==null ||
-						policy.getFiltro().getNomeErogatore()==null
-					){
+				
+				// Erogatore
+				if( showErogatore ){
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_EROGATORE);
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_EROGATORE);
@@ -12255,30 +12716,79 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(policy.getGroupBy().isErogatore()+"");
 					dati.addElement(de);
 				}
+				
+				// Fruitore
+				if( showFruitore ){
+					de = new DataElement();
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_FRUITORE);
+					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_FRUITORE);
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(policy.getGroupBy().isFruitore());
+					de.setValue(policy.getGroupBy().isFruitore()+"");
+					dati.addElement(de);
+				}
+				
 			}
-						
-			// Servizio
+
+			
+			// --- API ---
+			
+			boolean showServizio = false;
+			
+			boolean showAzione = policy.getFiltro()==null || 
+					policy.getFiltro().isEnabled()==false || 
+					policy.getFiltro().getAzione()==null;
+			
+			boolean showSAErogatore = false;
+			
 			if(configurazione) {
-				if( policy.getFiltro()==null || 
+			
+				if(this.core.isControlloTrafficoPolicyGlobaleGroupByApi()) {
+					showServizio = policy.getFiltro()==null || 
+							policy.getFiltro().isEnabled()==false || 
+							policy.getFiltro().getTipoServizio()==null ||
+							policy.getFiltro().getNomeServizio()==null;
+				}
+
+				if(showAzione) {
+					showAzione = showServizio && policy.getGroupBy().isServizio(); // l'azione la scelgo se ho prima selezionato una API
+				}
+				
+				showSAErogatore = policy.getFiltro()==null || 
 						policy.getFiltro().isEnabled()==false || 
-						policy.getFiltro().getTipoServizio()==null ||
-						policy.getFiltro().getNomeServizio()==null
-					){
+						policy.getFiltro().getRuoloPorta()==null ||
+						RuoloPolicy.ENTRAMBI.equals(policy.getFiltro().getRuoloPorta()) ||
+						RuoloPolicy.APPLICATIVA.equals(policy.getFiltro().getRuoloPorta());
+				if(showSAErogatore) {
+					showSAErogatore = policy.getFiltro()==null || 
+							policy.getFiltro().isEnabled()==false || 
+							policy.getFiltro().getServizioApplicativoErogatore()==null;
+				}
+				
+				if(showServizio || showAzione || showSAErogatore) {
+					if(configurazione) {
+//						de = new DataElement();
+//						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_API);
+//						de.setType(DataElementType.NOTE);
+//						dati.addElement(de);
+					}
+				}
+						
+				// Servizio
+				if( showServizio ){
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SERVIZIO);
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SERVIZIO);
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(policy.getGroupBy().isServizio());
 					de.setValue(policy.getGroupBy().isServizio()+"");
+					de.setPostBack_viaPOST(true);
 					dati.addElement(de);
 				}
 			}
-			
+				
 			// Azione
-			if( policy.getFiltro()==null || 
-					policy.getFiltro().isEnabled()==false || 
-					policy.getFiltro().getAzione()==null
-				){
+			if( showAzione ){
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_AZIONE);
 				if(serviceBinding!=null) {
@@ -12292,68 +12802,117 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(policy.getGroupBy().isAzione()+"");
 				dati.addElement(de);
 			}
-			
+				
 			// Servizio Applicativo Erogatore
 			if(configurazione) {
-				if( policy.getFiltro()==null || 
-						policy.getFiltro().isEnabled()==false || 
-						policy.getFiltro().getRuoloPorta()==null ||
-						RuoloPolicy.ENTRAMBI.equals(policy.getFiltro().getRuoloPorta()) ||
-						RuoloPolicy.APPLICATIVA.equals(policy.getFiltro().getRuoloPorta())
-					){
-					if( policy.getFiltro()==null || 
-							policy.getFiltro().isEnabled()==false || 
-							policy.getFiltro().getServizioApplicativoErogatore()==null
-						){
-						de = new DataElement();
-						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_EROGATORE);
-						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_EROGATORE);
-						de.setType(DataElementType.CHECKBOX);
-						de.setSelected(policy.getGroupBy().isServizioApplicativoErogatore());
-						de.setValue(policy.getGroupBy().isServizioApplicativoErogatore()+"");
-						dati.addElement(de);
-					}
-				}
-			}
-			
-			// Fruitore
-			if(configurazione || applicativa) {
-				if( policy.getFiltro()==null || 
-						policy.getFiltro().isEnabled()==false || 
-						policy.getFiltro().getTipoFruitore()==null ||
-						policy.getFiltro().getNomeFruitore()==null
-					){
+				if( showSAErogatore	){
 					de = new DataElement();
-					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_FRUITORE);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_FRUITORE);
-					de.setType(DataElementType.CHECKBOX);
-					de.setSelected(policy.getGroupBy().isFruitore());
-					de.setValue(policy.getGroupBy().isFruitore()+"");
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_EROGATORE);
+					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_EROGATORE);
+					//de.setType(DataElementType.CHECKBOX);
+					de.setType(DataElementType.HIDDEN);
+					de.setSelected(policy.getGroupBy().isServizioApplicativoErogatore());
+					de.setValue(policy.getGroupBy().isServizioApplicativoErogatore()+"");
 					dati.addElement(de);
 				}
 			}
+				
+
 			
-			// Servizio Applicativo Fruitore
-			if(configurazione || delegata) {
-				if( policy.getFiltro()==null || 
+			// --- RICHIEDENTI ---
+			
+			if(configurazione) {
+//				de = new DataElement();
+//				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_MITTENTE);
+//				de.setType(DataElementType.NOTE);
+//				dati.addElement(de);
+			}
+			
+			// Fruitore
+			
+			if(configurazione) {
+				
+				boolean showRichiedenteApplicativo = policy.getFiltro()==null || 
 						policy.getFiltro().isEnabled()==false || 
 						policy.getFiltro().getRuoloPorta()==null ||
-						RuoloPolicy.ENTRAMBI.equals(policy.getFiltro().getRuoloPorta()) ||
-						RuoloPolicy.DELEGATA.equals(policy.getFiltro().getRuoloPorta())
-					){
-					if( policy.getFiltro()==null || 
-							policy.getFiltro().isEnabled()==false || 
-							policy.getFiltro().getServizioApplicativoFruitore()==null
-						){
-						de = new DataElement();
-						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_FRUITORE);
-						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_FRUITORE);
-						de.setType(DataElementType.CHECKBOX);
-						de.setSelected(policy.getGroupBy().isServizioApplicativoFruitore());
-						de.setValue(policy.getGroupBy().isServizioApplicativoFruitore()+"");
-						dati.addElement(de);
+						policy.getFiltro().getServizioApplicativoFruitore()==null;
+				
+				// Applicativo Fruitore
+				if( showRichiedenteApplicativo ){
+					de = new DataElement();
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_FRUITORE);
+					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_FRUITORE);
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(policy.getGroupBy().isServizioApplicativoFruitore());
+					de.setValue(policy.getGroupBy().isServizioApplicativoFruitore()+"");
+					dati.addElement(de);
+				}
+				
+			}
+			else {
+			
+				// Richiedente API (Significa SoggettoMittente per le erogazioni, Applicativo e Identificativo Autenticato sia per le erogazioni che per le fruizioni)
+				de = new DataElement();
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RICHIEDENTE);
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RICHIEDENTE);
+				de.setType(DataElementType.CHECKBOX);
+				de.setSelected(policy.getGroupBy().isIdentificativoAutenticato()); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
+				de.setValue(policy.getGroupBy().isIdentificativoAutenticato()+"");
+				dati.addElement(de);
+			
+			}
+			
+
+			// Token
+			
+			boolean first = this.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME);
+			String token = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN);
+			
+			String [] tokenSelezionatiDB = null;
+			if(policy.getGroupBy().getToken()!=null && !"".equals(policy.getGroupBy().getToken())) {
+				tokenSelezionatiDB = policy.getGroupBy().getToken().split(",");
+			}
+			String [] tokenSelezionatiSenzaIssuer = null;
+			if(tokenSelezionatiDB!=null && tokenSelezionatiDB.length>0) {
+				List<String> l = new ArrayList<>();
+				for (int i = 0; i < tokenSelezionatiDB.length; i++) {
+					TipoCredenzialeMittente tipo = TipoCredenzialeMittente.valueOf(tokenSelezionatiDB[i]);
+					if(!TipoCredenzialeMittente.token_issuer.equals(tipo)) {
+						l.add(tokenSelezionatiDB[i]);
 					}
 				}
+				if(!l.isEmpty()) {
+					tokenSelezionatiSenzaIssuer = l.toArray(new String[1]);
+				}
+			}
+			boolean groupByToken = false;
+			if(first) {
+				groupByToken = (tokenSelezionatiDB!=null && tokenSelezionatiDB.length>0);
+			}
+			else {
+				groupByToken = ServletUtils.isCheckBoxEnabled(token);
+			}
+			
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN);
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(groupByToken); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
+			de.setValue(groupByToken+"");
+			de.setPostBack(true);
+			dati.addElement(de);
+			
+			if(groupByToken) {
+				de = new DataElement();
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN_CLAIMS);
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN_CLAIMS);
+				de.setValues(CostantiControlStation.TOKEN_VALUES_WITHOUT_ISSUER);
+				de.setLabels(CostantiControlStation.LABEL_TOKEN_VALUES_WITHOUT_ISSUER);
+				de.setSelezionati(tokenSelezionatiSenzaIssuer);
+				de.setType(DataElementType.MULTI_SELECT);
+				de.setRows(4); 
+				de.setRequired(true);
+				dati.addElement(de);
 			}
 			
 			if(groupByKey){
@@ -12362,8 +12921,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				if(policy.getGroupBy().isInformazioneApplicativaEnabled()){
 					de = new DataElement();
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_NOTE);
-					de.setType(DataElementType.SUBTITLE);
+					de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_NOTE);
+					de.setType(DataElementType.NOTE);
 					dati.addElement(de);
 				}
 				
@@ -12373,8 +12932,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO);
 				}
 				else{
+					//de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_LABEL);
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_LABEL);
-					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_NOTE);
+					//de.setLabelRight(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_NOTE);
 				}
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(policy.getGroupBy().isInformazioneApplicativaEnabled());
@@ -12479,7 +13039,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return null;
 	}
 
-	public boolean attivazionePolicyCheckData(TipoOperazione tipoOperazione, ConfigurazioneGenerale configurazioneControlloTraffico, AttivazionePolicy policy, InfoPolicy infoPolicy, RuoloPolicy ruoloPorta, String nomePorta, String modalita) throws Exception { 
+	public boolean attivazionePolicyCheckData(TipoOperazione tipoOperazione, ConfigurazioneGenerale configurazioneControlloTraffico, 
+			AttivazionePolicy policy, InfoPolicy infoPolicy, RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding, String modalita) throws Exception { 
 	
 		boolean check = this.checkAttivazionePolicy(configurazioneControlloTraffico,policy,infoPolicy);
 		if(!check) {
@@ -12488,7 +13049,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		StringBuffer existsMessage = new StringBuffer();
 		
-		boolean alreadyExists = ConfigurazioneUtilities.alreadyExists(tipoOperazione, this.confCore, this, policy, infoPolicy, ruoloPorta, nomePorta, existsMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, modalita);
+		boolean alreadyExists = ConfigurazioneUtilities.alreadyExists(tipoOperazione, this.confCore, this, 
+				policy, infoPolicy, ruoloPorta, nomePorta, serviceBinding, 
+				existsMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, modalita);
 		
 		if(alreadyExists) {
 			this.pd.setMessage(existsMessage.toString());
@@ -12634,10 +13197,23 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if(policy.getGroupBy().isEnabled()){
 			
+			// token
+			String token = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN);
+			if(ServletUtils.isCheckBoxEnabled(token)) {
+				String [] tokenSelezionati = this.getParameterValues(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN_CLAIMS);
+				if(tokenSelezionati==null || tokenSelezionati.length<=0) {
+					String messaggio = "Se si abilita il raggruppamento per token deve essere selezionato almeno un claim";
+					this.pd.setMessage(messaggio);
+					return false;
+				}
+			}
+			
 			if( !policy.getGroupBy().isRuoloPorta() && 
 					!policy.getGroupBy().getProtocollo() &&
 					!policy.getGroupBy().getFruitore() &&
 					!policy.getGroupBy().getServizioApplicativoFruitore() &&
+					!policy.getGroupBy().getIdentificativoAutenticato() &&
+					(policy.getGroupBy().getToken()==null || "".equals(policy.getGroupBy().getToken())) &&
 					!policy.getGroupBy().getErogatore() &&
 					!policy.getGroupBy().getServizioApplicativoErogatore() &&
 					!policy.getGroupBy().getServizio() &&
@@ -12647,7 +13223,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				this.pd.setMessage(messaggio);
 				return false;
 			}
-			
+						
 			if(policy.getGroupBy().isInformazioneApplicativaEnabled()){
 				
 				TipoFiltroApplicativo tipo = TipoFiltroApplicativo.toEnumConstant(ConfigurazioneCostanti.CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_TIPO_DEFAULT);
@@ -12843,7 +13419,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return bf.toString();
 	}
 	
-	public String eseguiResetJmx(TipoOperazione tipoOperazione) throws Exception{
+	public String eseguiResetJmx(TipoOperazione tipoOperazione, RuoloPolicy ruoloPorta, String nomePorta) throws Exception{
 		try{
 			List<String> aliases = this.core.getJmxPdD_aliases();
 			if(aliases==null || aliases.size()<=0){
@@ -12854,7 +13430,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				String resultReset = null;
 				String idAllPolicy = null;
 				try{
-					idAllPolicy = ConfigurazionePdD._getKey_ElencoIdPolicyAttive();
+					if(nomePorta!=null && !"".equals(nomePorta)) {
+						idAllPolicy = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI(RuoloPolicy.DELEGATA.equals(ruoloPorta)?TipoPdD.DELEGATA : TipoPdD.APPLICATIVA, nomePorta);
+					}
+					else {
+						idAllPolicy = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveGlobali();
+					}
 					resultReset = this.core.invokeJMXMethod(this.core.getGestoreRisorseJMX(alias),alias,JMXConstants.JMX_TYPE, CostantiPdD.JMX_CONFIGURAZIONE_PDD, JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT, idAllPolicy);
 					this.log.debug("reset["+idAllPolicy+"] "+resultReset);
 				}catch(Exception e){
@@ -12864,18 +13445,21 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					resultReset = errorMessage;
 				}
 				
-				resultReset = null;
-				String idPolicy = null;
-				String tmpIdPolicy = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID);
-				try{
-					idPolicy = ConfigurazionePdD._getKey_AttivazionePolicy(tmpIdPolicy);
-					resultReset = this.core.invokeJMXMethod(this.core.getGestoreRisorseJMX(alias),alias,JMXConstants.JMX_TYPE, CostantiPdD.JMX_CONFIGURAZIONE_PDD, JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT, idPolicy);
-					this.log.debug("reset["+idPolicy+"] "+resultReset);
-				}catch(Exception e){
-					String errorMessage = "Errore durante l'invocazione dell'operazione ["+JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT+"] sulla risorsa ["+
-							CostantiPdD.JMX_CONFIGURAZIONE_PDD+"] (param:"+idAllPolicy+"): "+e.getMessage();
-					this.log.error(errorMessage,e);
-					resultReset = errorMessage;
+				boolean resetSinglePolicy = false; // le policy attive contengono anche la data quindi non e' possibile resettarle singolarmente.
+				if(resetSinglePolicy) {
+					resultReset = null;
+					String idPolicy = null;
+					String tmpIdPolicy = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID);
+					try{
+						idPolicy = ConfigurazionePdD._getKey_AttivazionePolicy(tmpIdPolicy);
+						resultReset = this.core.invokeJMXMethod(this.core.getGestoreRisorseJMX(alias),alias,JMXConstants.JMX_TYPE, CostantiPdD.JMX_CONFIGURAZIONE_PDD, JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT, idPolicy);
+						this.log.debug("reset["+idPolicy+"] "+resultReset);
+					}catch(Exception e){
+						String errorMessage = "Errore durante l'invocazione dell'operazione ["+JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT+"] sulla risorsa ["+
+								CostantiPdD.JMX_CONFIGURAZIONE_PDD+"] (param:"+idAllPolicy+"): "+e.getMessage();
+						this.log.error(errorMessage,e);
+						resultReset = errorMessage;
+					}
 				}
 				
 			}

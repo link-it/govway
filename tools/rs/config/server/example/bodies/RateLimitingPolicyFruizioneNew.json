@@ -5,7 +5,7 @@
     "identificazione": "criteri",
 
     "configurazione": {
-	"risorsa": "numero-richieste-simultanee"
+	"metrica": "numero-richieste-simultanee"
     },
 
     "soglia_ridefinita": true,
@@ -17,7 +17,7 @@
         "filtro_chiave_valore": "chiave_valore1"
     },
 
-    "criterio_collezionamento_dati": {
+    "raggruppamento": {
         "azione": true,
         "chiave_tipo": "content-based",
         "chiave_nome": "chiave2"

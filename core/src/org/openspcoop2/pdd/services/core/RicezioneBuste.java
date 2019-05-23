@@ -2934,6 +2934,10 @@ public class RicezioneBuste {
 							}
 							credenzialeTrasporto = esito.getCredential();
 							
+							if(credenzialeTrasporto!=null) {
+								pddContext.addObject(org.openspcoop2.core.constants.Costanti.IDENTIFICATIVO_AUTENTICATO, credenzialeTrasporto);
+							}
+							
 							if(esito.isClientAuthenticated() == false) {
 								erroreCooperazione = esito.getErroreCooperazione();
 								erroreIntegrazione = esito.getErroreIntegrazione();

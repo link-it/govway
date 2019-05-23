@@ -104,7 +104,7 @@ do
 	echo -e '<configurazione-policy xmlns="http://www.openspcoop2.org/core/controllo_traffico">' >>  ${file}
 
 	# Policy
-	echo -e "\t<id-policy>${identificativoPolicy}</id-policy>" >> ${file}
+	echo -e "\t<id-policy>_built-in_${identificativoPolicy}</id-policy>" >> ${file}
 	echo -e "\t<built-in>true</built-in>" >> ${file}
 	echo -e "\t<descrizione>${descrizione}</descrizione>" >> ${file}
 	echo -e "\t<risorsa>${risorsa}</risorsa>" >> ${file}

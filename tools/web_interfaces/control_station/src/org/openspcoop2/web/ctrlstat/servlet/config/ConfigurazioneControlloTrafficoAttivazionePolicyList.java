@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.config;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,18 +33,22 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**     
  * ConfigurazioneControlloTrafficoAttivazionePolicyList
@@ -89,7 +94,69 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyList extends Action
 				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
 			
+			String cambiaPosizione = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POSIZIONE);
+			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
+			
+			int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
+			
+			String userLogin = ServletUtils.getUserLoginFromSession(session);
+			
+			if(StringUtils.isNotEmpty(cambiaPosizione)) {
+				
+				String idPolicyS = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID);
+				long idPolicyLong = Long.parseLong(idPolicyS);
+				String risorsaPolicy = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA);
+				
+				Search ricercaPerRisorsa = new Search(true);
+				ricercaPerRisorsa.addFilter(idLista, Filtri.FILTRO_TIPO_RISORSA_POLICY, risorsaPolicy);
+				List<AttivazionePolicy> lista = confCore.attivazionePolicyList(ricercaPerRisorsa, ruoloPorta, nomePorta);
+
+				if(lista != null && !lista.isEmpty()) {
+					AttivazionePolicy regolaToMove = null;
+					int index = 0;
+					for (int i = 0; i < lista.size(); i++) {
+						if(lista.get(i).getId().longValue() == idPolicyLong) {
+							regolaToMove = lista.get(i);
+							index = i;
+							break;
+						}
+					}
+					
+					AttivazionePolicy regolaToSwitch = null; // se arrivo qua dovrebbe esistere sempre, e' la grafica che me lo assicura
+					if(cambiaPosizione.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SU)) {
+						if(index>0) {
+							regolaToSwitch = lista.get((index-1));
+						}
+					}
+					else {
+						if(index<(lista.size()-1)) {
+							regolaToSwitch = lista.get((index+1));
+						}
+					}
+					
+					if(regolaToMove!=null && regolaToSwitch!=null) {
+						int posizioneAttuale = regolaToMove.getPosizione();
+						regolaToMove.setPosizione(regolaToSwitch.getPosizione());
+						regolaToSwitch.setPosizione(posizioneAttuale);
+						
+						List<Object> list = new ArrayList<>();
+						list.add(regolaToMove);
+						list.add(regolaToSwitch);
+						confCore.performUpdateOperation(userLogin, confHelper.smista(), list.toArray(new Object[1]));
+//						if(CostantiControlStation.VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_POLICY) {
+//							pd.setMessage(CostantiControlStation.MESSAGGIO_CONFERMA_REGOLA_POLICY_SPOSTATA_CORRETTAMENTE, MessageType.INFO);
+//						}
+						
+						String msgCompletato = confHelper.eseguiResetJmx(TipoOperazione.CHANGE, ruoloPorta, nomePorta);
+						if(msgCompletato!=null && !"".equals(msgCompletato)){
+							pd.setMessage(msgCompletato,Costanti.MESSAGE_TYPE_INFO);
+						}
+					}
+						
+				}
+			}
+			
 			
 			// Preparo il menu
 			confHelper.makeMenu();
@@ -97,13 +164,15 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyList extends Action
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
-			
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
-
+			
+			List<TipoRisorsaPolicyAttiva> listaTipoRisorsa = 
+					confHelper.gestisciCriteriFiltroRisorsaPolicy(ricerca, ruoloPorta, nomePorta);
+			
 			List<AttivazionePolicy> lista = confCore.attivazionePolicyList(ricerca, ruoloPorta, nomePorta);
 			
-			confHelper.prepareAttivazionePolicyList(ricerca, lista, idLista, ruoloPorta, nomePorta, serviceBinding); 
+			confHelper.prepareAttivazionePolicyList(ricerca, lista, listaTipoRisorsa, 
+					idLista, ruoloPorta, nomePorta, serviceBinding); 
 			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

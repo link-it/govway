@@ -8,6 +8,7 @@ import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHe
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
@@ -19,6 +20,7 @@ public class FruizioniConfigurazioneHelper {
 			AttivazionePolicy policy,
 			InfoPolicy infoPolicy,  
 			FruizioniConfEnv env,
+			ServiceBinding serviceBinding,
 			String modalita) throws Exception  {
 		
 		org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = env.confCore.getConfigurazioneControlloTraffico();
@@ -49,7 +51,8 @@ public class FruizioniConfigurazioneHelper {
 							+ " scelto non è assegnabile alla policy di rate limiting");
 		}
 		
-		if (! env.confHelper.attivazionePolicyCheckData(tipoOperazione, configurazioneControlloTraffico, policy,infoPolicy, ruoloPorta, nomePorta, modalita) ) {
+		if (! env.confHelper.attivazionePolicyCheckData(tipoOperazione, configurazioneControlloTraffico, 
+				policy,infoPolicy, ruoloPorta, nomePorta, serviceBinding, modalita) ) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 		}
 	}

@@ -25,18 +25,18 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Gets or Sets RateLimitingCriteriRisorsaEnum
+ * Gets or Sets TokenClaimEnum
  */
-public enum RateLimitingCriteriRisorsaEnum {
-NUMERO_RICHIESTE("numero-richieste"),
-  NUMERO_RICHIESTE_SIMULTANEE("numero-richieste-simultanee"),
-  OCCUPAZIONE_BANDA("occupazione-banda"),
-  TEMPO_MEDIO_RISPOSTA("tempo-medio-risposta"),
-  TEMPO_COMPLESSIVO_RISPOSTA("tempo-complessivo-risposta");
+public enum TokenClaimEnum {
+SUBJECT("subject"),
+  ISSUER("issuer"),
+  CLIENT_ID("client_id"),
+  USERNAME("username"),
+  EMAIL("email");
 
   private String value;
 
-  RateLimitingCriteriRisorsaEnum(String value) {
+  TokenClaimEnum(String value) {
     this.value = value;
   }
 
@@ -47,8 +47,8 @@ NUMERO_RICHIESTE("numero-richieste"),
   }
 
   @JsonCreator
-  public static RateLimitingCriteriRisorsaEnum fromValue(String text) {
-    for (RateLimitingCriteriRisorsaEnum b : RateLimitingCriteriRisorsaEnum.values()) {
+  public static TokenClaimEnum fromValue(String text) {
+    for (TokenClaimEnum b : TokenClaimEnum.values()) {
       if (String.valueOf(b.value).equals(text)) {
         return b;
       }

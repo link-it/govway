@@ -27,8 +27,10 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolContext;
+import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.slf4j.Logger;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
@@ -50,6 +52,8 @@ public class InterceptorPolicyUtilities {
 	public static IDUnivocoGroupByPolicy convertToID(Logger log,DatiTransazione datiTransazione, AttivazionePolicyRaggruppamento policyGroupBy,
 			InRequestProtocolContext context) throws Exception{
 		
+		final String nonDisponibile = "-";//"n.d.";
+		
 		IDUnivocoGroupByPolicy groupBy = new IDUnivocoGroupByPolicy();
 		
 		if(policyGroupBy.isRuoloPorta()){
@@ -61,15 +65,18 @@ public class InterceptorPolicyUtilities {
 		}
 		
 		if(policyGroupBy.isFruitore()){
-			groupBy.setFruitore(datiTransazione.getSoggettoFruitore().toString());
-		}
-		
-		if(TipoPdD.DELEGATA.equals(datiTransazione.getTipoPdD())){
-			if(policyGroupBy.isServizioApplicativoFruitore()){
-				groupBy.setServizioApplicativoFruitore(datiTransazione.getServizioApplicativoFruitore());
+			if(datiTransazione.getSoggettoFruitore()!=null) {
+				groupBy.setFruitore(datiTransazione.getSoggettoFruitore().toString());
+			}
+			else {
+				groupBy.setFruitore(nonDisponibile);
 			}
 		}
 		
+		if(policyGroupBy.isServizioApplicativoFruitore()){
+			groupBy.setServizioApplicativoFruitore(datiTransazione.getServizioApplicativoFruitore());
+		}
+				
 		if(policyGroupBy.isErogatore()){
 			groupBy.setErogatore(datiTransazione.getIdServizio().getSoggettoErogatore().toString());
 		}
@@ -87,17 +94,80 @@ public class InterceptorPolicyUtilities {
 		if(policyGroupBy.isAzione()){
 			groupBy.setAzione(datiTransazione.getIdServizio().getAzione());
 		}
-		
+				
 		if(policyGroupBy.isInformazioneApplicativaEnabled()){
 			String valorePresente = PolicyFiltroApplicativoUtilities.getValore(log, policyGroupBy.getInformazioneApplicativaTipo(), 
 					policyGroupBy.getInformazioneApplicativaNome(), 
 					context, datiTransazione, false);
 			if(valorePresente==null){
-				valorePresente = "n.d.";
+				valorePresente = nonDisponibile;
 			}
 			groupBy.setTipoKey(policyGroupBy.getInformazioneApplicativaTipo());
 			groupBy.setNomeKey(policyGroupBy.getInformazioneApplicativaNome());
 			groupBy.setValoreKey(valorePresente);
+		}
+		
+		if(policyGroupBy.isIdentificativoAutenticato()){
+			groupBy.setIdentificativoAutenticato(datiTransazione.getIdentificativoAutenticato()!=null ? datiTransazione.getIdentificativoAutenticato() : nonDisponibile);
+		}
+		
+		if(policyGroupBy.getToken()!=null){
+			String [] token = null;
+			if(policyGroupBy.getToken().contains(",")) {
+				token = policyGroupBy.getToken().split(",");
+			}
+			else {
+				token = new String[] {policyGroupBy.getToken()};
+			}
+			if(token!=null && token.length>0) {
+				for (int i = 0; i < token.length; i++) {
+					TipoCredenzialeMittente claim = TipoCredenzialeMittente.valueOf(token[i]);
+					switch (claim) {
+					case token_subject:
+						if(datiTransazione.getTokenSubject()!=null) {
+							groupBy.setTokenSubject(datiTransazione.getTokenSubject());
+						}
+						else {
+							groupBy.setTokenSubject(nonDisponibile);
+						}
+						break;
+					case token_issuer:
+						if(datiTransazione.getTokenIssuer()!=null) {
+							groupBy.setTokenIssuer(datiTransazione.getTokenIssuer());
+						}
+						else {
+							groupBy.setTokenIssuer(nonDisponibile);
+						}
+						break;
+					case token_clientId:
+						if(datiTransazione.getTokenClientId()!=null) {
+							groupBy.setTokenClientId(datiTransazione.getTokenClientId());
+						}
+						else {
+							groupBy.setTokenClientId(nonDisponibile);
+						}
+						break;
+					case token_username:
+						if(datiTransazione.getTokenUsername()!=null) {
+							groupBy.setTokenUsername(datiTransazione.getTokenUsername());
+						}
+						else {
+							groupBy.setTokenUsername(nonDisponibile);
+						}
+						break;
+					case token_eMail:
+						if(datiTransazione.getTokenEMail()!=null) {
+							groupBy.setTokenEMail(datiTransazione.getTokenEMail());
+						}
+						else {
+							groupBy.setTokenEMail(nonDisponibile);
+						}
+						break;
+					default:
+						break;
+					}
+				}
+			}
 		}
 		
 		return groupBy;
@@ -161,6 +231,28 @@ public class InterceptorPolicyUtilities {
 			if(context.getIntegrazione().sizeServiziApplicativiErogatori()>0){
 				for (int i = 0; i < context.getIntegrazione().sizeServiziApplicativiErogatori(); i++) {
 					datiTransazione.getListServiziApplicativiErogatori().add(context.getIntegrazione().getServizioApplicativoErogatore(i));
+				}
+			}
+			
+		}
+		
+		if(context.getPddContext()!=null) {
+			
+			if(context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.IDENTIFICATIVO_AUTENTICATO)) {
+				String id = (String) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.IDENTIFICATIVO_AUTENTICATO);
+				datiTransazione.setIdentificativoAutenticato(id);
+			}
+			
+			if(context.getPddContext().containsKey(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE)) {
+				InformazioniToken informazioniTokenNormalizzate = (InformazioniToken) context.getPddContext().getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+				if(informazioniTokenNormalizzate!=null) {
+					datiTransazione.setTokenSubject(informazioniTokenNormalizzate.getSub());
+					datiTransazione.setTokenIssuer(informazioniTokenNormalizzate.getIss());
+					datiTransazione.setTokenClientId(informazioniTokenNormalizzate.getClientId());
+					datiTransazione.setTokenUsername(informazioniTokenNormalizzate.getUsername());
+					if(informazioniTokenNormalizzate.getUserInfo()!=null) {
+						datiTransazione.setTokenEMail(informazioniTokenNormalizzate.getUserInfo().getEMail());
+					}
 				}
 			}
 			

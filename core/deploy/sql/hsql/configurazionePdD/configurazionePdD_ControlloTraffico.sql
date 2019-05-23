@@ -134,6 +134,8 @@ CREATE TABLE ct_active_policy
 	active_policy_id VARCHAR(255) NOT NULL,
 	policy_alias VARCHAR(255),
 	policy_update_time TIMESTAMP NOT NULL,
+	policy_posizione INT NOT NULL,
+	policy_continue BOOLEAN NOT NULL,
 	policy_id VARCHAR(255) NOT NULL,
 	policy_enabled BOOLEAN NOT NULL,
 	policy_warning BOOLEAN NOT NULL,
@@ -145,10 +147,10 @@ CREATE TABLE ct_active_policy
 	filtro_protocollo VARCHAR(255),
 	filtro_ruolo VARCHAR(255),
 	filtro_porta VARCHAR(2000),
-	filtro_tipo_fruitore VARCHAR(255),
-	filtro_nome_fruitore VARCHAR(255),
+	filtro_tipo_fruitore VARCHAR(65535),
+	filtro_nome_fruitore VARCHAR(65535),
 	filtro_ruolo_fruitore VARCHAR(255),
-	filtro_sa_fruitore VARCHAR(255),
+	filtro_sa_fruitore VARCHAR(65535),
 	filtro_tipo_erogatore VARCHAR(255),
 	filtro_nome_erogatore VARCHAR(255),
 	filtro_ruolo_erogatore VARCHAR(255),
@@ -156,7 +158,7 @@ CREATE TABLE ct_active_policy
 	filtro_tipo_servizio VARCHAR(255),
 	filtro_nome_servizio VARCHAR(255),
 	filtro_versione_servizio INT,
-	filtro_azione VARCHAR(255),
+	filtro_azione VARCHAR(65535),
 	-- Filtro per Chiave Applicativa
 	filtro_key_enabled BOOLEAN NOT NULL,
 	filtro_key_type VARCHAR(255),
@@ -168,6 +170,8 @@ CREATE TABLE ct_active_policy
 	group_protocollo BOOLEAN NOT NULL,
 	group_fruitore BOOLEAN NOT NULL,
 	group_sa_fruitore BOOLEAN NOT NULL,
+	group_id_autenticato BOOLEAN NOT NULL,
+	group_token VARCHAR(65535),
 	group_erogatore BOOLEAN NOT NULL,
 	group_sa_erogatore BOOLEAN NOT NULL,
 	group_servizio BOOLEAN NOT NULL,
@@ -190,6 +194,7 @@ CREATE TABLE ct_active_policy
 CREATE UNIQUE INDEX idx_cong_att_policy_1 ON ct_active_policy (active_policy_id);
 CREATE INDEX idx_cong_att_policy_2 ON ct_active_policy (filtro_ruolo,filtro_porta);
 
+ALTER TABLE ct_active_policy ALTER COLUMN policy_continue SET DEFAULT false;
 ALTER TABLE ct_active_policy ALTER COLUMN policy_warning SET DEFAULT false;
 ALTER TABLE ct_active_policy ALTER COLUMN filtro_enabled SET DEFAULT false;
 ALTER TABLE ct_active_policy ALTER COLUMN filtro_key_enabled SET DEFAULT false;
@@ -198,6 +203,7 @@ ALTER TABLE ct_active_policy ALTER COLUMN group_ruolo SET DEFAULT false;
 ALTER TABLE ct_active_policy ALTER COLUMN group_protocollo SET DEFAULT false;
 ALTER TABLE ct_active_policy ALTER COLUMN group_fruitore SET DEFAULT false;
 ALTER TABLE ct_active_policy ALTER COLUMN group_sa_fruitore SET DEFAULT false;
+ALTER TABLE ct_active_policy ALTER COLUMN group_id_autenticato SET DEFAULT false;
 ALTER TABLE ct_active_policy ALTER COLUMN group_erogatore SET DEFAULT false;
 ALTER TABLE ct_active_policy ALTER COLUMN group_sa_erogatore SET DEFAULT false;
 ALTER TABLE ct_active_policy ALTER COLUMN group_servizio SET DEFAULT false;

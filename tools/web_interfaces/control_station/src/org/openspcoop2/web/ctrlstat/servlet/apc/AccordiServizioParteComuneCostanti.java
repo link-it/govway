@@ -439,7 +439,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_APC_RESOURCES_PARAMETER_TIPO = "tipoResParam";
 	
 	/* LABEL PARAMETRI */
-
+	public final static String LABEL_APC_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_APC_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_APC_DESCRIZIONE = "Descrizione";
 	public final static String LABEL_PARAMETRO_APC_REFERENTE = "Soggetto Referente";

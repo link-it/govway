@@ -112,7 +112,7 @@ public class PorteApplicativeTrasformazioniRispostaList extends Action {
 					}
 					
 					int posizioneAttuale = rispostaToMove.getPosizione();
-					int posizioneNuova = cambiaPosizione.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SU) ? (posizioneAttuale - 1) : (posizioneAttuale + 1);
+					int posizioneNuova = cambiaPosizione.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SU) ? (posizioneAttuale - 1) : (posizioneAttuale + 1);
 					
 					TrasformazioneRegolaRisposta rispostaToSwitch = null;
 					for (int j = 0; j < oldRegola.sizeRispostaList(); j++) {

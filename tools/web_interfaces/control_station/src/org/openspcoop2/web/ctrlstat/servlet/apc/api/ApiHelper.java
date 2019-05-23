@@ -151,7 +151,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			}
 			
 			List<String> labelLst = new ArrayList<>();
-			labelLst.add(""); // colonna stato
+			labelLst.add("");//AccordiServizioParteComuneCostanti.LABEL_APC_STATO); // colonna stato
 			labelLst.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
 			
 			String [] labels = labelLst.toArray(new String[labelLst.size()]);

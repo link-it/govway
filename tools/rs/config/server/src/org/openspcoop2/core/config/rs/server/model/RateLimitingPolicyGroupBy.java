@@ -21,7 +21,9 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import java.util.List;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingChiaveEnum;
+import org.openspcoop2.core.config.rs.server.model.TokenClaimEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -34,7 +36,10 @@ public class RateLimitingPolicyGroupBy  {
   private Boolean azione = false;
   
   @Schema(description = "")
-  private Boolean applicativoFruitore = false;
+  private Boolean richiedente = false;
+  
+  @Schema(example = "[\"subject\",\"issuer\"]", description = "")
+  private List<TokenClaimEnum> token = null;
   
   @Schema(description = "")
   private RateLimitingChiaveEnum chiaveTipo = null;
@@ -64,21 +69,45 @@ public class RateLimitingPolicyGroupBy  {
   }
 
  /**
-   * Get applicativoFruitore
-   * @return applicativoFruitore
+   * Get richiedente
+   * @return richiedente
   **/
-  @JsonProperty("applicativo_fruitore")
+  @JsonProperty("richiedente")
   @Valid
-  public Boolean isApplicativoFruitore() {
-    return this.applicativoFruitore;
+  public Boolean isRichiedente() {
+    return this.richiedente;
   }
 
-  public void setApplicativoFruitore(Boolean applicativoFruitore) {
-    this.applicativoFruitore = applicativoFruitore;
+  public void setRichiedente(Boolean richiedente) {
+    this.richiedente = richiedente;
   }
 
-  public RateLimitingPolicyGroupBy applicativoFruitore(Boolean applicativoFruitore) {
-    this.applicativoFruitore = applicativoFruitore;
+  public RateLimitingPolicyGroupBy richiedente(Boolean richiedente) {
+    this.richiedente = richiedente;
+    return this;
+  }
+
+ /**
+   * Get token
+   * @return token
+  **/
+  @JsonProperty("token")
+  @Valid
+  public List<TokenClaimEnum> getToken() {
+    return this.token;
+  }
+
+  public void setToken(List<TokenClaimEnum> token) {
+    this.token = token;
+  }
+
+  public RateLimitingPolicyGroupBy token(List<TokenClaimEnum> token) {
+    this.token = token;
+    return this;
+  }
+
+  public RateLimitingPolicyGroupBy addTokenItem(TokenClaimEnum tokenItem) {
+    this.token.add(tokenItem);
     return this;
   }
 
@@ -127,7 +156,8 @@ public class RateLimitingPolicyGroupBy  {
     sb.append("class RateLimitingPolicyGroupBy {\n");
     
     sb.append("    azione: ").append(RateLimitingPolicyGroupBy.toIndentedString(this.azione)).append("\n");
-    sb.append("    applicativoFruitore: ").append(RateLimitingPolicyGroupBy.toIndentedString(this.applicativoFruitore)).append("\n");
+    sb.append("    richiedente: ").append(RateLimitingPolicyGroupBy.toIndentedString(this.richiedente)).append("\n");
+    sb.append("    token: ").append(RateLimitingPolicyGroupBy.toIndentedString(this.token)).append("\n");
     sb.append("    chiaveTipo: ").append(RateLimitingPolicyGroupBy.toIndentedString(this.chiaveTipo)).append("\n");
     sb.append("    chiaveNome: ").append(RateLimitingPolicyGroupBy.toIndentedString(this.chiaveNome)).append("\n");
     sb.append("}");

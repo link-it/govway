@@ -74,6 +74,8 @@ public class JDBCAttivazionePolicyServiceImpl extends JDBCAttivazionePolicyServi
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().ID_ACTIVE_POLICY,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().ALIAS,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().UPDATE_TIME,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().POSIZIONE,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().CONTINUA_VALUTAZIONE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().ID_POLICY,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().ENABLED,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().WARNING_ONLY,false),"?");
@@ -104,6 +106,8 @@ public class JDBCAttivazionePolicyServiceImpl extends JDBCAttivazionePolicyServi
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().GROUP_BY.PROTOCOLLO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().GROUP_BY.FRUITORE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().GROUP_BY.SERVIZIO_APPLICATIVO_FRUITORE,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().GROUP_BY.IDENTIFICATIVO_AUTENTICATO,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().GROUP_BY.TOKEN,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().GROUP_BY.EROGATORE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().GROUP_BY.SERVIZIO_APPLICATIVO_EROGATORE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().GROUP_BY.SERVIZIO,false),"?");
@@ -118,6 +122,8 @@ public class JDBCAttivazionePolicyServiceImpl extends JDBCAttivazionePolicyServi
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getIdActivePolicy(),AttivazionePolicy.model().ID_ACTIVE_POLICY.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getAlias(),AttivazionePolicy.model().ALIAS.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getUpdateTime(),AttivazionePolicy.model().UPDATE_TIME.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getPosizione(),AttivazionePolicy.model().POSIZIONE.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getContinuaValutazione(),AttivazionePolicy.model().CONTINUA_VALUTAZIONE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getIdPolicy(),AttivazionePolicy.model().ID_POLICY.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getEnabled(),AttivazionePolicy.model().ENABLED.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getWarningOnly(),AttivazionePolicy.model().WARNING_ONLY.getFieldType()),
@@ -148,6 +154,8 @@ public class JDBCAttivazionePolicyServiceImpl extends JDBCAttivazionePolicyServi
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getGroupBy().getProtocollo(),AttivazionePolicy.model().GROUP_BY.PROTOCOLLO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getGroupBy().getFruitore(),AttivazionePolicy.model().GROUP_BY.FRUITORE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getGroupBy().getServizioApplicativoFruitore(),AttivazionePolicy.model().GROUP_BY.SERVIZIO_APPLICATIVO_FRUITORE.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getGroupBy().getIdentificativoAutenticato(),AttivazionePolicy.model().GROUP_BY.IDENTIFICATIVO_AUTENTICATO.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getGroupBy().getToken(),AttivazionePolicy.model().GROUP_BY.TOKEN.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getGroupBy().getErogatore(),AttivazionePolicy.model().GROUP_BY.EROGATORE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getGroupBy().getServizioApplicativoErogatore(),AttivazionePolicy.model().GROUP_BY.SERVIZIO_APPLICATIVO_EROGATORE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getGroupBy().getServizio(),AttivazionePolicy.model().GROUP_BY.SERVIZIO.getFieldType()),
@@ -216,6 +224,10 @@ public class JDBCAttivazionePolicyServiceImpl extends JDBCAttivazionePolicyServi
 		lstObjects.add(new JDBCObject(attivazionePolicy.getAlias(), AttivazionePolicy.model().ALIAS.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().UPDATE_TIME,false), "?");
 		lstObjects.add(new JDBCObject(attivazionePolicy.getUpdateTime(), AttivazionePolicy.model().UPDATE_TIME.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().POSIZIONE,false), "?");
+		lstObjects.add(new JDBCObject(attivazionePolicy.getPosizione(), AttivazionePolicy.model().POSIZIONE.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().CONTINUA_VALUTAZIONE,false), "?");
+		lstObjects.add(new JDBCObject(attivazionePolicy.getContinuaValutazione(), AttivazionePolicy.model().CONTINUA_VALUTAZIONE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().ID_POLICY,false), "?");
 		lstObjects.add(new JDBCObject(attivazionePolicy.getIdPolicy(), AttivazionePolicy.model().ID_POLICY.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().ENABLED,false), "?");
@@ -278,6 +290,10 @@ public class JDBCAttivazionePolicyServiceImpl extends JDBCAttivazionePolicyServi
 		lstObjects.add(new JDBCObject(attivazionePolicy_groupBy.getFruitore(), AttivazionePolicy.model().GROUP_BY.FRUITORE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().GROUP_BY.SERVIZIO_APPLICATIVO_FRUITORE,false), "?");
 		lstObjects.add(new JDBCObject(attivazionePolicy_groupBy.getServizioApplicativoFruitore(), AttivazionePolicy.model().GROUP_BY.SERVIZIO_APPLICATIVO_FRUITORE.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().GROUP_BY.IDENTIFICATIVO_AUTENTICATO,false), "?");
+		lstObjects.add(new JDBCObject(attivazionePolicy_groupBy.getIdentificativoAutenticato(), AttivazionePolicy.model().GROUP_BY.IDENTIFICATIVO_AUTENTICATO.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().GROUP_BY.TOKEN,false), "?");
+		lstObjects.add(new JDBCObject(attivazionePolicy_groupBy.getToken(), AttivazionePolicy.model().GROUP_BY.TOKEN.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().GROUP_BY.EROGATORE,false), "?");
 		lstObjects.add(new JDBCObject(attivazionePolicy_groupBy.getErogatore(), AttivazionePolicy.model().GROUP_BY.EROGATORE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().GROUP_BY.SERVIZIO_APPLICATIVO_EROGATORE,false), "?");

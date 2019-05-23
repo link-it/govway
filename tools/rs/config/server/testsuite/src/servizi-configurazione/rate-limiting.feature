@@ -2,14 +2,11 @@ Feature: Configurazione Servizi Rate Limiting
 
 Background:
 
-    * eval policy.configurazione.risorsa = policy_type
+    * eval policy.configurazione.metrica = policy_type
     * eval policy.configurazione.intervallo = policy_intervallo
 
 @CRUDRatelimiting
 Scenario: CRUD RATE LIMITING
-
-#BUG2: Si può davvero settare nel rate-limiting delle erogazioni l'applicativo fruitore nel criterio collezionamento dati? Si, è un bug della console a non permetterlo.
-#           perchè dalla consol non si può.
 
     * eval randomize(policy, ["nome"])
 
@@ -50,7 +47,7 @@ Scenario: CRUD RATE LIMITING
         soglia_ridefinita: #(policy.soglia_ridefinita),
         soglia_valore: #(policy.soglia_valore),
         filtro: #(policy.filtro),
-        criterio_collezionamento_dati: #(policy.criterio_collezionamento_dati)
+        raggruppamento: #(policy.raggruppamento)
     }
     """
 
@@ -83,7 +80,7 @@ Scenario: CRUD RATE LIMITING
         configurazione: #(policy.configurazione),
         soglia_ridefinita: #(policy_update.soglia_ridefinita),
         filtro: #(policy_update.filtro),
-        criterio_collezionamento_dati: #(policy_update.criterio_collezionamento_dati)
+        raggruppamento: #(policy_update.raggruppamento)
     }
     """
 

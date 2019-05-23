@@ -37,6 +37,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -142,7 +143,8 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 			// setto la barra del titolo
 			List<Parameter> lstParamPorta = null;
 			if(ruoloPorta!=null) {
-				lstParamPorta = confHelper.getTitleListAttivazionePolicy(ruoloPorta, nomePorta, serviceBinding, policy.getIdPolicy());
+				lstParamPorta = confHelper.getTitleListAttivazionePolicy(ruoloPorta, nomePorta, serviceBinding, 
+						PolicyUtilities.getNomeActivePolicy(policy.getAlias(), policy.getIdPolicy())); 
 			}
 			
 			List<Parameter> lstParam = null;
@@ -153,7 +155,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 				lstParam = new ArrayList<Parameter>();
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST));
-				lstParam.add(new Parameter(policy.getIdPolicy(),null));
+				lstParam.add(new Parameter(PolicyUtilities.getNomeActivePolicy(policy.getAlias(), policy.getIdPolicy()),null));
 			}
 			
 			//List<InfoPolicy> infoPolicies = confCore.infoPolicyList();
@@ -187,7 +189,8 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 			// Controlli sui campi immessi
 			String _modalita = infoPolicy.isBuiltIn() ? ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_BUILT_IN :
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CUSTOM;
-			boolean isOk = confHelper.attivazionePolicyCheckData(tipoOperazione, configurazioneControlloTraffico, policy,infoPolicy, ruoloPorta, nomePorta, _modalita);
+			boolean isOk = confHelper.attivazionePolicyCheckData(tipoOperazione, configurazioneControlloTraffico, 
+					policy,infoPolicy, ruoloPorta, nomePorta, serviceBinding, _modalita);
 			if (!isOk) {
 				
 				ServletUtils.setPageDataTitle(pd, lstParam);
@@ -215,7 +218,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 			
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), policy);
 			
-			String msgCompletato = confHelper.eseguiResetJmx(TipoOperazione.CHANGE);
+			String msgCompletato = confHelper.eseguiResetJmx(TipoOperazione.CHANGE, ruoloPorta, nomePorta);
 			if(msgCompletato!=null && !"".equals(msgCompletato)){
 				pd.setMessage(msgCompletato,Costanti.MESSAGE_TYPE_INFO);
 			}
@@ -227,9 +230,13 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 			
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
+			List<TipoRisorsaPolicyAttiva> listaTipoRisorsa = 
+					confHelper.gestisciCriteriFiltroRisorsaPolicy(ricerca, ruoloPorta, nomePorta);
+			
 			List<AttivazionePolicy> lista = confCore.attivazionePolicyList(ricerca, ruoloPorta, nomePorta);
 			
-			confHelper.prepareAttivazionePolicyList(ricerca, lista, idLista, ruoloPorta, nomePorta, serviceBinding); 
+			confHelper.prepareAttivazionePolicyList(ricerca, lista, listaTipoRisorsa,
+					idLista, ruoloPorta, nomePorta, serviceBinding); 
 			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

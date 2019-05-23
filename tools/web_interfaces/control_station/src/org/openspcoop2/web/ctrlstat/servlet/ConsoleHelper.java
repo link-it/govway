@@ -107,6 +107,7 @@ import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -7703,6 +7704,62 @@ public class ConsoleHelper {
 		}
 	}
 	
+	public String getLabelTipoRisorsaPolicyAttiva(TipoRisorsaPolicyAttiva tipo) {
+		return this.getLabelTipoRisorsaPolicyAttiva(tipo.getValue());
+	}
+	public String getLabelTipoRisorsaPolicyAttiva(String tipo) {
+		String labelRisorsaPolicyAttiva = null;
+		for (int j = 0; j < CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_VALORI.length; j++) {
+			if(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_VALORI[j].equals(tipo)) {
+				labelRisorsaPolicyAttiva = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_LABELS[j];
+				break;
+			}
+		}
+		return labelRisorsaPolicyAttiva;
+	}
+	
+	public void addFilterTipoRisorsaPolicy(List<TipoRisorsaPolicyAttiva> listaTipoRisorsa, String tipoRisorsaPolicy, boolean postBack) throws Exception{
+		try {
+			if(listaTipoRisorsa!=null && listaTipoRisorsa.size()>1) {
+				String selectedValue = null;
+				if(tipoRisorsaPolicy != null) {
+					selectedValue = tipoRisorsaPolicy;
+				}
+				else {
+					selectedValue =  CostantiControlStation.DEFAULT_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA_TIPO_VALUE.getValue();
+				}
+	
+				List<String> values = new ArrayList<>();
+				List<String> labels = new ArrayList<>();
+				for (int j = 0; j < CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_VALORI.length; j++) {
+					TipoRisorsaPolicyAttiva check = TipoRisorsaPolicyAttiva.toEnumConstant(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_VALORI[j]);
+					if(listaTipoRisorsa.contains(check)) {
+						values.add(check.getValue());
+						labels.add(this.getLabelTipoRisorsaPolicyAttiva(check));
+					}
+				}
+				
+				this.pd.addFilter(Filtri.FILTRO_TIPO_RISORSA_POLICY, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA_TIPO, 
+						selectedValue, 
+						values.toArray(new String[1]), 
+						labels.toArray(new String[1]), 
+						postBack, this.getSize());
+			}
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	public void removeFilterTipoRisorsaPolicy() throws Exception{
+		try {
+			this.pd.removeFilter(Filtri.FILTRO_TIPO_RISORSA_POLICY);
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
 	public void setFilterRuoloServizioApplicativo(ISearch ricerca, int idLista) throws Exception{
 		if( (this.isModalitaCompleta()==false) && 
 				(Liste.SERVIZIO_APPLICATIVO==idLista || Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO==idLista)) {
@@ -8034,14 +8091,14 @@ public class ConsoleHelper {
 		try {
 			String [] values = new String[azioni.length + 1];
 			String [] labels = new String[azioni.length + 1];
-			labels[0] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_QUALSIASI;
-			values[0] = CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA;
+			labels[0] = CostantiControlStation.LABEL_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA;
 			for (int i =0; i < azioni.length ; i ++) {
 				labels[i+1] = azioniLabels[i];
 				values[i+1] = azioni[i];
 			}
 			
-			String selectedValue = StringUtils.isNotEmpty(azione) ? azione : CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA;
+			String selectedValue = StringUtils.isNotEmpty(azione) ? azione : CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA;
 			
 			this.pd.addFilter(Filtri.FILTRO_AZIONE, 
 					this.getLabelAzione(serviceBinding),

@@ -29,7 +29,7 @@ Background:
 
 * def policy_update = read('classpath:bodies/rate-limiting-policy-fruizione-update.json')
 
-* def policy_types = [ 'numero-richieste', 'occupazione-banda', 'tempo-medio-risposta', 'tempo-complessivo-risposta' ]
+* def policy_types = [ 'numero-richieste', 'occupazione-banda', 'tempo-medio-risposta', 'tempo-complessivo-risposta', 'numero-richieste-ok', 'numero-richieste-fallite', 'numero-fault-applicativi', 'numero-richieste-fallite-o-fault-applicativi' ]
 * def policy_intervalli = [ 'minuti', 'orario', 'giornaliero' ]
 * def build_data = 
     """
@@ -52,7 +52,7 @@ Scenario: Configurazione Rate Limiting Fruizioni
     * call create ({ resourcePath: 'soggetti', body: erogatore })
     * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
 
-    # Creo un applicativo da utilizzare nel criterio di collezionamento dati
+    # Creo un applicativo da utilizzare nel raggruppamento
     * def applicativo = read('classpath:bodies/applicativo_http.json') 
     * eval randomize(applicativo, ["nome", "credenziali.username"])
     * call create ({ resourcePath: 'applicativi', body: applicativo })

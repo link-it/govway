@@ -178,6 +178,7 @@ public class Costanti {
 	public final static String LABEL_MONITOR_BUTTON_ANNULLA = "Annulla";
 	public final static String LABEL_MONITOR_BUTTON_INVIA = "Salva";
 	public final static String LABEL_MONITOR_BUTTON_FILTRA = "Filtra";
+	public final static String LABEL_MONITOR_BUTTON_RIPULISCI = "Ripulisci";
 	
 	public final static String LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_PREFIX = "EseguiConferma(";
 	public final static String LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_SUFFIX = ")";

@@ -9,10 +9,10 @@
         "filtro_chiave_valore": "chiave_valore1"
     },
 
-    "criterio_collezionamento_dati": {
-        "applicativo_fruitore": false,
-        "soggetto_fruitore": false,
+    "raggruppamento": {
+        "richiedente": true,
         "azione": true,
+	"token": ["issuer","subject","username"],
         "chiave_tipo": "content-based",
         "chiave_nome": "chiave_nome1"
     }

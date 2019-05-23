@@ -47,6 +47,8 @@ public class AttivazionePolicyRaggruppamentoModel extends AbstractModel<Attivazi
 		this.PROTOCOLLO = new Field("protocollo",boolean.class,"attivazione-policy-raggruppamento",AttivazionePolicyRaggruppamento.class);
 		this.FRUITORE = new Field("fruitore",boolean.class,"attivazione-policy-raggruppamento",AttivazionePolicyRaggruppamento.class);
 		this.SERVIZIO_APPLICATIVO_FRUITORE = new Field("servizio-applicativo-fruitore",boolean.class,"attivazione-policy-raggruppamento",AttivazionePolicyRaggruppamento.class);
+		this.IDENTIFICATIVO_AUTENTICATO = new Field("identificativo-autenticato",boolean.class,"attivazione-policy-raggruppamento",AttivazionePolicyRaggruppamento.class);
+		this.TOKEN = new Field("token",java.lang.String.class,"attivazione-policy-raggruppamento",AttivazionePolicyRaggruppamento.class);
 		this.EROGATORE = new Field("erogatore",boolean.class,"attivazione-policy-raggruppamento",AttivazionePolicyRaggruppamento.class);
 		this.SERVIZIO_APPLICATIVO_EROGATORE = new Field("servizio-applicativo-erogatore",boolean.class,"attivazione-policy-raggruppamento",AttivazionePolicyRaggruppamento.class);
 		this.SERVIZIO = new Field("servizio",boolean.class,"attivazione-policy-raggruppamento",AttivazionePolicyRaggruppamento.class);
@@ -66,6 +68,8 @@ public class AttivazionePolicyRaggruppamentoModel extends AbstractModel<Attivazi
 		this.PROTOCOLLO = new ComplexField(father,"protocollo",boolean.class,"attivazione-policy-raggruppamento",AttivazionePolicyRaggruppamento.class);
 		this.FRUITORE = new ComplexField(father,"fruitore",boolean.class,"attivazione-policy-raggruppamento",AttivazionePolicyRaggruppamento.class);
 		this.SERVIZIO_APPLICATIVO_FRUITORE = new ComplexField(father,"servizio-applicativo-fruitore",boolean.class,"attivazione-policy-raggruppamento",AttivazionePolicyRaggruppamento.class);
+		this.IDENTIFICATIVO_AUTENTICATO = new ComplexField(father,"identificativo-autenticato",boolean.class,"attivazione-policy-raggruppamento",AttivazionePolicyRaggruppamento.class);
+		this.TOKEN = new ComplexField(father,"token",java.lang.String.class,"attivazione-policy-raggruppamento",AttivazionePolicyRaggruppamento.class);
 		this.EROGATORE = new ComplexField(father,"erogatore",boolean.class,"attivazione-policy-raggruppamento",AttivazionePolicyRaggruppamento.class);
 		this.SERVIZIO_APPLICATIVO_EROGATORE = new ComplexField(father,"servizio-applicativo-erogatore",boolean.class,"attivazione-policy-raggruppamento",AttivazionePolicyRaggruppamento.class);
 		this.SERVIZIO = new ComplexField(father,"servizio",boolean.class,"attivazione-policy-raggruppamento",AttivazionePolicyRaggruppamento.class);
@@ -87,6 +91,10 @@ public class AttivazionePolicyRaggruppamentoModel extends AbstractModel<Attivazi
 	public IField FRUITORE = null;
 	 
 	public IField SERVIZIO_APPLICATIVO_FRUITORE = null;
+	 
+	public IField IDENTIFICATIVO_AUTENTICATO = null;
+	 
+	public IField TOKEN = null;
 	 
 	public IField EROGATORE = null;
 	 

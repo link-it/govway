@@ -23,7 +23,7 @@ package org.openspcoop2.core.config.rs.server.model;
 
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBase;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFiltroFruizione;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyGroupByFruizione;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyGroupBy;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
@@ -34,7 +34,7 @@ public class RateLimitingPolicyFruizioneUpdate extends RateLimitingPolicyBase {
   private RateLimitingPolicyFiltroFruizione filtro = null;
   
   @Schema(description = "")
-  private RateLimitingPolicyGroupByFruizione criterioCollezionamentoDati = null;
+  private RateLimitingPolicyGroupBy raggruppamento = null;
  /**
    * Get filtro
    * @return filtro
@@ -55,21 +55,21 @@ public class RateLimitingPolicyFruizioneUpdate extends RateLimitingPolicyBase {
   }
 
  /**
-   * Get criterioCollezionamentoDati
-   * @return criterioCollezionamentoDati
+   * Get raggruppamento
+   * @return raggruppamento
   **/
-  @JsonProperty("criterio_collezionamento_dati")
+  @JsonProperty("raggruppamento")
   @Valid
-  public RateLimitingPolicyGroupByFruizione getCriterioCollezionamentoDati() {
-    return this.criterioCollezionamentoDati;
+  public RateLimitingPolicyGroupBy getRaggruppamento() {
+    return this.raggruppamento;
   }
 
-  public void setCriterioCollezionamentoDati(RateLimitingPolicyGroupByFruizione criterioCollezionamentoDati) {
-    this.criterioCollezionamentoDati = criterioCollezionamentoDati;
+  public void setRaggruppamento(RateLimitingPolicyGroupBy raggruppamento) {
+    this.raggruppamento = raggruppamento;
   }
 
-  public RateLimitingPolicyFruizioneUpdate criterioCollezionamentoDati(RateLimitingPolicyGroupByFruizione criterioCollezionamentoDati) {
-    this.criterioCollezionamentoDati = criterioCollezionamentoDati;
+  public RateLimitingPolicyFruizioneUpdate raggruppamento(RateLimitingPolicyGroupBy raggruppamento) {
+    this.raggruppamento = raggruppamento;
     return this;
   }
 
@@ -80,7 +80,7 @@ public class RateLimitingPolicyFruizioneUpdate extends RateLimitingPolicyBase {
     sb.append("class RateLimitingPolicyFruizioneUpdate {\n");
     sb.append("    ").append(RateLimitingPolicyFruizioneUpdate.toIndentedString(super.toString())).append("\n");
     sb.append("    filtro: ").append(RateLimitingPolicyFruizioneUpdate.toIndentedString(this.filtro)).append("\n");
-    sb.append("    criterioCollezionamentoDati: ").append(RateLimitingPolicyFruizioneUpdate.toIndentedString(this.criterioCollezionamentoDati)).append("\n");
+    sb.append("    raggruppamento: ").append(RateLimitingPolicyFruizioneUpdate.toIndentedString(this.raggruppamento)).append("\n");
     sb.append("}");
     return sb.toString();
   }

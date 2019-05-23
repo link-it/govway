@@ -1428,7 +1428,7 @@ components:
       name: claim
       description: Specifica il claim che deve essere presente nel jwt di una transazione
       schema:
-        $ref: "#/components/schemas/TokenClaimEnum"
+        $ref: "govway_core.yaml#/components/schemas/TokenClaimEnum"
       required: true
 
  
@@ -1985,7 +1985,7 @@ components:
           - claim
           properties:
             claim:
-              $ref: '#/components/schemas/TokenClaimEnum'
+              $ref: 'govway_core.yaml#/components/schemas/TokenClaimEnum'
             soggetto:
               discriminator:
                 propertyName: tipo
@@ -2183,7 +2183,7 @@ components:
       - claim
       properties:
         claim:
-          $ref: '#/components/schemas/TokenClaimEnum'
+          $ref: 'govway_core.yaml#/components/schemas/TokenClaimEnum'
       
 
 
@@ -2225,15 +2225,6 @@ components:
         - basic
         - ssl
         - principal
-        
-    TokenClaimEnum:
-      type: string
-      enum:
-        - subject
-        - issuer
-        - client_id
-        - username
-        - email
         
     TipoMessaggioEnum:
       type: string

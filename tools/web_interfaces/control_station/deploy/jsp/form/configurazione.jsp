@@ -508,8 +508,8 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 								<tr>
 									<td class="buttonrow">
 										<div class="buttonrowricerca">
-											<input type="button" onClick="Search(document.form)" value='Filtra' />
-											<input type="button" onClick="Reset(document.form);" value='Ripulisci' />
+											<input type="button" onClick="Search(document.form)" value='<%=pd.getLabelBottoneFiltra() %>' />
+											<input type="button" onClick="Reset(document.form);" value='<%=pd.getLabelBottoneRipulsci() %>' />
 										</div>								
 									
 									</td>

@@ -4,7 +4,7 @@
     "identificazione": "criteri",
 
     "configurazione": {
-        "risorsa": "occupazione-banda",
+        "metrica": "occupazione-banda",
         "intervallo": "orario",
 	"congestione": false, 
 	"degrado": false
@@ -19,9 +19,8 @@
         "filtro_chiave_valore": "chiave_valore1"
     },
 
-    "criterio_collezionamento_dati": {
-        "applicativo_fruitore": false,
-        "soggetto_fruitore": false,
+    "raggruppamento": {
+        "richiedente": false,
         "azione": true,
         "chiave_tipo": "content-based",
         "chiave_nome": "chiave_nome1"

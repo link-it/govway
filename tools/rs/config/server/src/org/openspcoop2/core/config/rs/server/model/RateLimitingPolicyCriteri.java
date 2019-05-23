@@ -22,8 +22,7 @@
 package org.openspcoop2.core.config.rs.server.model;
 
 import org.openspcoop2.core.config.rs.server.model.RateLimitingCriteriIntervalloEnum;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingCriteriRisorsaEnum;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingCriteriRisorsaEsitiEnum;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingCriteriMetricaEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,10 +32,7 @@ import javax.validation.Valid;
 public class RateLimitingPolicyCriteri  {
   
   @Schema(required = true, description = "")
-  private RateLimitingCriteriRisorsaEnum risorsa = null;
-  
-  @Schema(description = "")
-  private RateLimitingCriteriRisorsaEsitiEnum esiti = null;
+  private RateLimitingCriteriMetricaEnum metrica = null;
   
   @Schema(description = "")
   private RateLimitingCriteriIntervalloEnum intervallo = null;
@@ -47,41 +43,22 @@ public class RateLimitingPolicyCriteri  {
   @Schema(description = "")
   private Boolean degrado = false;
  /**
-   * Get risorsa
-   * @return risorsa
+   * Get metrica
+   * @return metrica
   **/
-  @JsonProperty("risorsa")
+  @JsonProperty("metrica")
   @NotNull
   @Valid
-  public RateLimitingCriteriRisorsaEnum getRisorsa() {
-    return this.risorsa;
+  public RateLimitingCriteriMetricaEnum getMetrica() {
+    return this.metrica;
   }
 
-  public void setRisorsa(RateLimitingCriteriRisorsaEnum risorsa) {
-    this.risorsa = risorsa;
+  public void setMetrica(RateLimitingCriteriMetricaEnum metrica) {
+    this.metrica = metrica;
   }
 
-  public RateLimitingPolicyCriteri risorsa(RateLimitingCriteriRisorsaEnum risorsa) {
-    this.risorsa = risorsa;
-    return this;
-  }
-
- /**
-   * Get esiti
-   * @return esiti
-  **/
-  @JsonProperty("esiti")
-  @Valid
-  public RateLimitingCriteriRisorsaEsitiEnum getEsiti() {
-    return this.esiti;
-  }
-
-  public void setEsiti(RateLimitingCriteriRisorsaEsitiEnum esiti) {
-    this.esiti = esiti;
-  }
-
-  public RateLimitingPolicyCriteri esiti(RateLimitingCriteriRisorsaEsitiEnum esiti) {
-    this.esiti = esiti;
+  public RateLimitingPolicyCriteri metrica(RateLimitingCriteriMetricaEnum metrica) {
+    this.metrica = metrica;
     return this;
   }
 
@@ -148,8 +125,7 @@ public class RateLimitingPolicyCriteri  {
     StringBuilder sb = new StringBuilder();
     sb.append("class RateLimitingPolicyCriteri {\n");
     
-    sb.append("    risorsa: ").append(RateLimitingPolicyCriteri.toIndentedString(this.risorsa)).append("\n");
-    sb.append("    esiti: ").append(RateLimitingPolicyCriteri.toIndentedString(this.esiti)).append("\n");
+    sb.append("    metrica: ").append(RateLimitingPolicyCriteri.toIndentedString(this.metrica)).append("\n");
     sb.append("    intervallo: ").append(RateLimitingPolicyCriteri.toIndentedString(this.intervallo)).append("\n");
     sb.append("    congestione: ").append(RateLimitingPolicyCriteri.toIndentedString(this.congestione)).append("\n");
     sb.append("    degrado: ").append(RateLimitingPolicyCriteri.toIndentedString(this.degrado)).append("\n");

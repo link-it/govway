@@ -23,7 +23,7 @@ package org.openspcoop2.core.config.rs.server.model;
 
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBaseConIdentificazione;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFiltroErogazione;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyGroupByErogazione;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyGroupBy;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
@@ -34,7 +34,7 @@ public class RateLimitingPolicyErogazione extends RateLimitingPolicyBaseConIdent
   private RateLimitingPolicyFiltroErogazione filtro = null;
   
   @Schema(description = "")
-  private RateLimitingPolicyGroupByErogazione criterioCollezionamentoDati = null;
+  private RateLimitingPolicyGroupBy raggruppamento = null;
  /**
    * Get filtro
    * @return filtro
@@ -55,21 +55,21 @@ public class RateLimitingPolicyErogazione extends RateLimitingPolicyBaseConIdent
   }
 
  /**
-   * Get criterioCollezionamentoDati
-   * @return criterioCollezionamentoDati
+   * Get raggruppamento
+   * @return raggruppamento
   **/
-  @JsonProperty("criterio_collezionamento_dati")
+  @JsonProperty("raggruppamento")
   @Valid
-  public RateLimitingPolicyGroupByErogazione getCriterioCollezionamentoDati() {
-    return this.criterioCollezionamentoDati;
+  public RateLimitingPolicyGroupBy getRaggruppamento() {
+    return this.raggruppamento;
   }
 
-  public void setCriterioCollezionamentoDati(RateLimitingPolicyGroupByErogazione criterioCollezionamentoDati) {
-    this.criterioCollezionamentoDati = criterioCollezionamentoDati;
+  public void setRaggruppamento(RateLimitingPolicyGroupBy raggruppamento) {
+    this.raggruppamento = raggruppamento;
   }
 
-  public RateLimitingPolicyErogazione criterioCollezionamentoDati(RateLimitingPolicyGroupByErogazione criterioCollezionamentoDati) {
-    this.criterioCollezionamentoDati = criterioCollezionamentoDati;
+  public RateLimitingPolicyErogazione raggruppamento(RateLimitingPolicyGroupBy raggruppamento) {
+    this.raggruppamento = raggruppamento;
     return this;
   }
 
@@ -80,7 +80,7 @@ public class RateLimitingPolicyErogazione extends RateLimitingPolicyBaseConIdent
     sb.append("class RateLimitingPolicyErogazione {\n");
     sb.append("    ").append(RateLimitingPolicyErogazione.toIndentedString(super.toString())).append("\n");
     sb.append("    filtro: ").append(RateLimitingPolicyErogazione.toIndentedString(this.filtro)).append("\n");
-    sb.append("    criterioCollezionamentoDati: ").append(RateLimitingPolicyErogazione.toIndentedString(this.criterioCollezionamentoDati)).append("\n");
+    sb.append("    raggruppamento: ").append(RateLimitingPolicyErogazione.toIndentedString(this.raggruppamento)).append("\n");
     sb.append("}");
     return sb.toString();
   }

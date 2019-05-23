@@ -456,7 +456,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
 			List<String> labelLst = new ArrayList<>();
-			labelLst.add(""); // colonna stato
+			labelLst.add("");//AccordiServizioParteSpecificaCostanti.LABEL_APS_STATO); // colonna stato
 			//labelLst.add(ErogazioniCostanti.LABEL_ASPS_LISTA_EROGAZIONI_COLONNA_SERVIZIO);
 			if(gestioneFruitori) {
 				labelLst.add(ErogazioniCostanti.LABEL_ASPS_FRUIZIONI);

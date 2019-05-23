@@ -89,6 +89,20 @@ public class AttivazionePolicyFieldConverter extends AbstractSQLFieldConverter {
 				return "policy_update_time";
 			}
 		}
+		if(field.equals(AttivazionePolicy.model().POSIZIONE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".policy_posizione";
+			}else{
+				return "policy_posizione";
+			}
+		}
+		if(field.equals(AttivazionePolicy.model().CONTINUA_VALUTAZIONE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".policy_continue";
+			}else{
+				return "policy_continue";
+			}
+		}
 		if(field.equals(AttivazionePolicy.model().ID_POLICY)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".policy_id";
@@ -299,6 +313,20 @@ public class AttivazionePolicyFieldConverter extends AbstractSQLFieldConverter {
 				return "group_sa_fruitore";
 			}
 		}
+		if(field.equals(AttivazionePolicy.model().GROUP_BY.IDENTIFICATIVO_AUTENTICATO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".group_id_autenticato";
+			}else{
+				return "group_id_autenticato";
+			}
+		}
+		if(field.equals(AttivazionePolicy.model().GROUP_BY.TOKEN)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".group_token";
+			}else{
+				return "group_token";
+			}
+		}
 		if(field.equals(AttivazionePolicy.model().GROUP_BY.EROGATORE)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".group_erogatore";
@@ -368,6 +396,12 @@ public class AttivazionePolicyFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(AttivazionePolicy.model(), returnAlias);
 		}
 		if(field.equals(AttivazionePolicy.model().UPDATE_TIME)){
+			return this.toTable(AttivazionePolicy.model(), returnAlias);
+		}
+		if(field.equals(AttivazionePolicy.model().POSIZIONE)){
+			return this.toTable(AttivazionePolicy.model(), returnAlias);
+		}
+		if(field.equals(AttivazionePolicy.model().CONTINUA_VALUTAZIONE)){
 			return this.toTable(AttivazionePolicy.model(), returnAlias);
 		}
 		if(field.equals(AttivazionePolicy.model().ID_POLICY)){
@@ -458,6 +492,12 @@ public class AttivazionePolicyFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(AttivazionePolicy.model().GROUP_BY, returnAlias);
 		}
 		if(field.equals(AttivazionePolicy.model().GROUP_BY.SERVIZIO_APPLICATIVO_FRUITORE)){
+			return this.toTable(AttivazionePolicy.model().GROUP_BY, returnAlias);
+		}
+		if(field.equals(AttivazionePolicy.model().GROUP_BY.IDENTIFICATIVO_AUTENTICATO)){
+			return this.toTable(AttivazionePolicy.model().GROUP_BY, returnAlias);
+		}
+		if(field.equals(AttivazionePolicy.model().GROUP_BY.TOKEN)){
 			return this.toTable(AttivazionePolicy.model().GROUP_BY, returnAlias);
 		}
 		if(field.equals(AttivazionePolicy.model().GROUP_BY.EROGATORE)){

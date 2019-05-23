@@ -42,6 +42,8 @@ import java.io.Serializable;
  * 			&lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
  * 			&lt;element name="fruitore" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
  * 			&lt;element name="servizio-applicativo-fruitore" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
+ * 			&lt;element name="identificativo-autenticato" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
+ * 			&lt;element name="token" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="erogatore" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
  * 			&lt;element name="servizio-applicativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
  * 			&lt;element name="servizio" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
@@ -67,6 +69,8 @@ import java.io.Serializable;
   	"protocollo",
   	"fruitore",
   	"servizioApplicativoFruitore",
+  	"identificativoAutenticato",
+  	"token",
   	"erogatore",
   	"servizioApplicativoErogatore",
   	"servizio",
@@ -155,6 +159,26 @@ public class AttivazionePolicyRaggruppamento extends org.openspcoop2.utils.beans
 
   public void setServizioApplicativoFruitore(boolean servizioApplicativoFruitore) {
     this.servizioApplicativoFruitore = servizioApplicativoFruitore;
+  }
+
+  public boolean isIdentificativoAutenticato() {
+    return this.identificativoAutenticato;
+  }
+
+  public boolean getIdentificativoAutenticato() {
+    return this.identificativoAutenticato;
+  }
+
+  public void setIdentificativoAutenticato(boolean identificativoAutenticato) {
+    this.identificativoAutenticato = identificativoAutenticato;
+  }
+
+  public java.lang.String getToken() {
+    return this.token;
+  }
+
+  public void setToken(java.lang.String token) {
+    this.token = token;
   }
 
   public boolean isErogatore() {
@@ -259,6 +283,14 @@ public class AttivazionePolicyRaggruppamento extends org.openspcoop2.utils.beans
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="servizio-applicativo-fruitore",required=true,nillable=false,defaultValue="false")
   protected boolean servizioApplicativoFruitore = false;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlElement(name="identificativo-autenticato",required=true,nillable=false,defaultValue="false")
+  protected boolean identificativoAutenticato = false;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="token",required=false,nillable=false)
+  protected java.lang.String token;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="erogatore",required=true,nillable=false,defaultValue="false")

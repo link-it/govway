@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.AutorizzazioneScope;
@@ -94,6 +95,7 @@ import org.openspcoop2.core.config.rs.server.model.GestioneCors;
 import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRichiesta;
 import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.rs.server.model.ListaRateLimitingPolicy;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingCriteriMetricaEnum;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazione;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneUpdate;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneView;
@@ -112,6 +114,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
@@ -188,8 +191,10 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			final org.openspcoop2.core.config.constants.CredenzialeTipo tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(pa.getAutenticazione());	
 			List<ServizioApplicativo> saCompatibili = env.saCore.soggettiServizioApplicativoList(env.idSoggetto.toIDSoggetto(),env.userLogin,tipoAutenticazione);
-			if (!BaseHelper.findFirst(saCompatibili, s -> s.getId().equals(sa.getId())).isPresent()) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La modalità di autenticazione del servizio Applicativo scelto non è compatibile con il gruppo che si vuole configurare");
+			if(env.protocolFactory.createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni()) {
+				if (!BaseHelper.findFirst(saCompatibili, s -> s.getId().equals(sa.getId())).isPresent()) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il tipo di credenziali dell'Applicativo non sono compatibili con l'autenticazione impostata nell'erogazione selezionata");
+				}
 			}
 			
 			if (pa.getServiziApplicativiAutorizzati() == null)
@@ -269,11 +274,12 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			// L'ultimo parametro è da configurare quando utilizzeremo il multitenant 
 			final List<org.openspcoop2.core.registry.Soggetto> soggettiCompatibili = env.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, null);
-			
-			if (!BaseHelper.findFirst(soggettiCompatibili, s -> { 
-					return s.getId().equals(daAutenticare.getId()); 
-				}).isPresent()) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto scelto non supporta l'autenticazione per il gruppo");
+			if(env.protocolFactory.createProtocolConfiguration().isSupportoAutenticazioneSoggetti()) {
+				if (!BaseHelper.findFirst(soggettiCompatibili, s -> { 
+						return s.getId().equals(daAutenticare.getId()); 
+					}).isPresent()) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il tipo di credenziali del Soggetto non sono compatibili con l'autenticazione impostata nell'erogazione selezionata");
+				}
 			}
 			
 			if (pa.getSoggetti() == null) pa.setSoggetti(new PortaApplicativaAutorizzazioneSoggetti());
@@ -478,6 +484,11 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env),
+					"Accordo Servizio Parte Specifica");
+			final AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
+			
 			AttivazionePolicy policy = new AttivazionePolicy();
 			policy.setFiltro(new AttivazionePolicyFiltro());
 			policy.setGroupBy(new AttivazionePolicyRaggruppamento());
@@ -524,6 +535,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 					infoPolicy,
 					ruoloPorta, 
 					nomePorta, 
+					env.apcCore.toMessageServiceBinding(apc.getServiceBinding()),
 					existsMessage, 
 					org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE,
 					modalita
@@ -531,7 +543,10 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
 			}
 			
-			ErogazioniApiHelper.attivazionePolicyCheckData(TipoOperazione.ADD, pa, policy, infoPolicy, env, modalita);
+			ErogazioniApiHelper.attivazionePolicyCheckData(TipoOperazione.ADD, pa, policy, infoPolicy, env, env.apcCore.toMessageServiceBinding(apc.getServiceBinding()), modalita);
+			
+			// aggiorno prossima posizione nella policy
+			ConfigurazioneUtilities.updatePosizioneAttivazionePolicy(env.confCore, infoPolicy, policy, ruoloPorta, nomePorta);
 			
 			env.confCore.performCreateOperation(env.userLogin, false, policy);
 
@@ -1027,7 +1042,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public ListaRateLimitingPolicy findAllErogazioneRateLimitingPolicies(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio, String q, Integer limit, Integer offset) {
+    public ListaRateLimitingPolicy findAllErogazioneRateLimitingPolicies(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio, String q, Integer limit, Integer offset, RateLimitingCriteriMetricaEnum metrica) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1040,6 +1055,10 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			final int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
 			final Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
+			if(metrica!=null) {
+				String risorsa = ErogazioniApiHelper.getDataElementModalitaRisorsa(metrica);
+				ricerca.addFilter(idLista, Filtri.FILTRO_TIPO_RISORSA_POLICY, risorsa);
+			}
 			List<AttivazionePolicy> policies = env.confCore.attivazionePolicyList(ricerca, RuoloPolicy.APPLICATIVA, pa.getNome());
 
 			if ( env.findall_404 && policies.isEmpty() ) {
@@ -2068,6 +2087,10 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);		
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env),
+					"Accordo Servizio Parte Specifica");
+			final AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 			
 			AttivazionePolicy policy = BaseHelper.supplyOrNotFound( 
 					() -> env.confCore.getAttivazionePolicy(idPolicy, RuoloPolicy.APPLICATIVA, pa.getNome()),
@@ -2084,7 +2107,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			}
 			
 			String modalita = ErogazioniApiHelper.getDataElementModalita(infoPolicy.isBuiltIn());
-			ErogazioniApiHelper.attivazionePolicyCheckData(TipoOperazione.CHANGE, pa, policy, infoPolicy, env, modalita);
+			ErogazioniApiHelper.attivazionePolicyCheckData(TipoOperazione.CHANGE, pa, policy, infoPolicy, env, env.apcCore.toMessageServiceBinding(apc.getServiceBinding()), modalita);
 			
 			env.confCore.performUpdateOperation(env.userLogin, false, policy);
 

@@ -2721,6 +2721,7 @@ paths:
       - $ref: "#/components/parameters/q"
       - $ref: "#/components/parameters/limit"
       - $ref: "#/components/parameters/offset"
+      - $ref: "#/components/parameters/metrica"
       responses:
         200:
           description: "Elenco policy di rate limiting restituito con successo"
@@ -4951,6 +4952,7 @@ paths:
       - $ref: "#/components/parameters/q"
       - $ref: "#/components/parameters/limit"
       - $ref: "#/components/parameters/offset"
+      - $ref: "#/components/parameters/metrica"
       responses:
         200:
           description: "Elenco policy di rate limiting restituito con successo"
@@ -6861,12 +6863,12 @@ components:
           example: "abc123"
     ProfiloEnum:
       type: "string"
-      default: "APIGateway"
       enum:
       - "APIGateway"
       - "SPCoop"
       - "FatturaPA"
       - "eDelivery"
+      default: "APIGateway"
     ProfiloCollaborazioneEnum:
       type: "string"
       example: "sincrono"
@@ -6890,6 +6892,14 @@ components:
       - "PATCH"
       - "LINK"
       - "UNLINK"
+    TokenClaimEnum:
+      type: "string"
+      enum:
+      - "subject"
+      - "issuer"
+      - "client_id"
+      - "username"
+      - "email"
     StatoApiDescrizione:
       type: "string"
       example: "Nessuna risorsa definita nella API"
@@ -7959,13 +7969,11 @@ components:
               $ref: "#/components/schemas/RateLimitingPolicyItem"
     RateLimitingPolicyCriteri:
       required:
-      - "risorsa"
+      - "metrica"
       type: "object"
       properties:
-        risorsa:
-          $ref: "#/components/schemas/RateLimitingCriteriRisorsaEnum"
-        esiti:
-          $ref: "#/components/schemas/RateLimitingCriteriRisorsaEsitiEnum"
+        metrica:
+          $ref: "#/components/schemas/RateLimitingCriteriMetricaEnum"
         intervallo:
           $ref: "#/components/schemas/RateLimitingCriteriIntervalloEnum"
         congestione:
@@ -8029,8 +8037,8 @@ components:
         properties:
           filtro:
             $ref: "#/components/schemas/RateLimitingPolicyFiltroErogazione"
-          criterio_collezionamento_dati:
-            $ref: "#/components/schemas/RateLimitingPolicyGroupByErogazione"
+          raggruppamento:
+            $ref: "#/components/schemas/RateLimitingPolicyGroupBy"
     RateLimitingPolicyFruizione:
       type: "object"
       allOf:
@@ -8039,8 +8047,8 @@ components:
         properties:
           filtro:
             $ref: "#/components/schemas/RateLimitingPolicyFiltroFruizione"
-          criterio_collezionamento_dati:
-            $ref: "#/components/schemas/RateLimitingPolicyGroupByFruizione"
+          raggruppamento:
+            $ref: "#/components/schemas/RateLimitingPolicyGroupBy"
     RateLimitingPolicyErogazioneUpdate:
       type: "object"
       allOf:
@@ -8049,8 +8057,8 @@ components:
         properties:
           filtro:
             $ref: "#/components/schemas/RateLimitingPolicyFiltroErogazione"
-          criterio_collezionamento_dati:
-            $ref: "#/components/schemas/RateLimitingPolicyGroupByErogazione"
+          raggruppamento:
+            $ref: "#/components/schemas/RateLimitingPolicyGroupBy"
     RateLimitingPolicyFruizioneUpdate:
       type: "object"
       allOf:
@@ -8059,8 +8067,8 @@ components:
         properties:
           filtro:
             $ref: "#/components/schemas/RateLimitingPolicyFiltroFruizione"
-          criterio_collezionamento_dati:
-            $ref: "#/components/schemas/RateLimitingPolicyGroupByFruizione"
+          raggruppamento:
+            $ref: "#/components/schemas/RateLimitingPolicyGroupBy"
     RateLimitingPolicyFiltro:
       type: "object"
       properties:
@@ -8101,9 +8109,16 @@ components:
         azione:
           type: "boolean"
           default: false
-        applicativo_fruitore:
+        richiedente:
           type: "boolean"
           default: false
+        token:
+          type: "array"
+          example:
+          - "subject"
+          - "issuer"
+          items:
+            $ref: "#/components/schemas/TokenClaimEnum"
         chiave_tipo:
           $ref: "#/components/schemas/RateLimitingChiaveEnum"
         chiave_nome:
@@ -8115,19 +8130,6 @@ components:
             \ * soap-action-based: in questa modalità questo parametro non viene utilizzato\n\
             \  * content-based: xpath o json path da applicare sul contenuto\n  *\
             \ plugin-based: tipo del plugin"
-    RateLimitingPolicyGroupByErogazione:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/RateLimitingPolicyGroupBy"
-      - type: "object"
-        properties:
-          soggetto_fruitore:
-            type: "boolean"
-            default: false
-    RateLimitingPolicyGroupByFruizione:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/RateLimitingPolicyGroupBy"
     RateLimitingPolicyErogazioneView:
       type: "object"
       allOf:
@@ -8356,16 +8358,16 @@ components:
           type: "boolean"
     FormatoSoapEnum:
       type: "string"
-      default: "Wsdl1.1"
       enum:
       - "Wsdl1.1"
+      default: "Wsdl1.1"
     FormatoRestEnum:
       type: "string"
-      default: "OpenApi3.0"
       enum:
       - "Wadl"
       - "Swagger2.0"
       - "OpenApi3.0"
+      default: "OpenApi3.0"
     TipoApiEnum:
       type: "string"
       example: "rest"
@@ -8394,35 +8396,35 @@ components:
     ContestoEnum:
       type: "string"
       example: "qualsiasi"
-      default: "qualsiasi"
       enum:
       - "qualsiasi"
       - "erogazione"
       - "fruizione"
+      default: "qualsiasi"
     FonteEnum:
       type: "string"
       example: "qualsiasi"
-      default: "qualsiasi"
       enum:
       - "qualsiasi"
       - "registro"
       - "esterna"
+      default: "qualsiasi"
     RuoloAllegatoAPI:
       type: "string"
       example: "specificaSemiFormale"
-      default: "allegato"
       enum:
       - "allegato"
       - "specificaSemiFormale"
+      default: "allegato"
     RuoloAllegatoAPIImpl:
       type: "string"
       example: "specificaSemiFormale"
-      default: "allegato"
       enum:
       - "allegato"
       - "specificaSemiFormale"
       - "specificaSicurezza"
       - "specificaLivelloServizio"
+      default: "allegato"
     TipoSpecificaSemiformaleEnum:
       type: "string"
       example: "XML"
@@ -8450,13 +8452,13 @@ components:
     SslTipologiaEnum:
       type: "string"
       example: "TLSv1.2"
-      default: "TLSv1.2"
       enum:
       - "SSLv2Hello"
       - "SSLv3"
       - "TLSv1"
       - "TLSv1.1"
       - "TLSv1.2"
+      default: "TLSv1.2"
     KeystoreEnum:
       type: "string"
       example: "jks"
@@ -8524,10 +8526,10 @@ components:
     AllAnyEnum:
       type: "string"
       example: "all"
-      default: "all"
       enum:
       - "all"
       - "any"
+      default: "all"
     ModalitaIdentificazioneAzioneEnum:
       type: "string"
       example: "interface-based"
@@ -8577,7 +8579,7 @@ components:
       enum:
       - "criteri"
       - "policy"
-    RateLimitingCriteriRisorsaEnum:
+    RateLimitingCriteriMetricaEnum:
       type: "string"
       example: "numero-richieste"
       enum:
@@ -8586,14 +8588,10 @@ components:
       - "occupazione-banda"
       - "tempo-medio-risposta"
       - "tempo-complessivo-risposta"
-    RateLimitingCriteriRisorsaEsitiEnum:
-      type: "string"
-      example: "ok"
-      enum:
-      - "ok"
-      - "error"
-      - "fault"
-      - "error_or_fault"
+      - "numero-richieste-ok"
+      - "numero-richieste-fallite"
+      - "numero-fault-applicativi"
+      - "numero-richieste-fallite-o-fault-applicativi"
     RateLimitingCriteriIntervalloEnum:
       type: "string"
       example: "ok"
@@ -9007,6 +9005,14 @@ components:
       schema:
         $ref: "#/components/schemas/HttpMethodEnum"
       example: "PUT"
+    metrica:
+      name: "metrica"
+      in: "query"
+      description: "Identifica una metrica di Rate Limiting"
+      required: false
+      schema:
+        $ref: "#/components/schemas/RateLimitingCriteriMetricaEnum"
+      example: "numero-richieste"
     Etag:
       name: "Etag"
       in: "header"

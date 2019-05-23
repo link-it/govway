@@ -2226,7 +2226,33 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.pd.setSearch("");
 			
 			List<MappingErogazionePortaApplicativa> listaSenzaFiltro = this.impostaFiltroAzioneMappingErogazione(null, listaParam,ricerca, idLista);
-			List<MappingErogazionePortaApplicativa> lista = this.impostaFiltroAzioneMappingErogazione(filtroAzione, listaParam,ricerca, idLista);
+			List<MappingErogazionePortaApplicativa> lista = null;
+			boolean chooseTabWithFilter = !this.isModalitaCompleta();
+			if(chooseTabWithFilter) {
+				lista = listaSenzaFiltro;
+				if(lista.size()>1) {
+					MappingErogazionePortaApplicativa mappingContenenteAzione = getFiltroAzioneMappingErogazione(filtroAzione, listaParam);
+					if(mappingContenenteAzione!=null) {
+						int tab = -1;
+						for (int i = 0; i < lista.size(); i++) {
+							if(lista.get(i).getNome().equals(mappingContenenteAzione.getNome())) {
+								tab = i;
+								break;
+							}
+						}
+						if(tab>=0) {
+							ServletUtils.setObjectIntoSession(this.session, tab+"", CostantiControlStation.PARAMETRO_ID_TAB);
+						}
+					}
+					
+					this.pd.setLabelBottoneFiltra(CostantiControlStation.LABEL_BOTTONE_INDIVIDUA_GRUPPO);
+					//this.pd.setLabelBottoneRipulsci("Ripulisci Selezione");
+				}
+			}
+			else {
+				lista = this.impostaFiltroAzioneMappingErogazione(filtroAzione, listaParam,ricerca, idLista);
+			}
+			
 			boolean allActionRedefined = false;
 			List<String> actionNonRidefinite = null;
 			if(listaSenzaFiltro.size()>1) {
@@ -3172,11 +3198,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 
 	
-	
-	
-	private List<MappingErogazionePortaApplicativa> impostaFiltroAzioneMappingErogazione(String filtroAzione, List<MappingErogazionePortaApplicativa> lista, 
-			ISearch ricerca, int idLista) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
-		if(StringUtils.isNotEmpty(filtroAzione) && !filtroAzione.equals(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA)) {
+	private MappingErogazionePortaApplicativa getFiltroAzioneMappingErogazione(String filtroAzione, List<MappingErogazionePortaApplicativa> lista) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		if(StringUtils.isNotEmpty(filtroAzione) && !filtroAzione.equals(CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA)) {
 			MappingErogazionePortaApplicativa mappingTmp = null; 
 			
 			for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : lista) {
@@ -3194,11 +3217,24 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					}
 				}
 			}
+			return mappingTmp;
+		}
+		else {
+			return null;
+		}
+	}
+	
+	private List<MappingErogazionePortaApplicativa> impostaFiltroAzioneMappingErogazione(String filtroAzione, List<MappingErogazionePortaApplicativa> lista, 
+			ISearch ricerca, int idLista) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		
+		MappingErogazionePortaApplicativa mapping = getFiltroAzioneMappingErogazione(filtroAzione, lista);
+		if(mapping!=null) {
 			List<MappingErogazionePortaApplicativa> newList = new ArrayList<>();
-			newList.add(mappingTmp);
+			newList.add(mapping);
 			this.pd.setNumEntries(1);
 			return newList;
-		} else {
+		}
+		else {
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 			return lista;
 		}
@@ -3273,9 +3309,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		return all;
 	}
 	
-	private List<MappingFruizionePortaDelegata> impostaFiltroAzioneMappingFruizione(String filtroAzione, List<MappingFruizionePortaDelegata> lista, 
-			ISearch ricerca, int idLista) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
-		if(StringUtils.isNotEmpty(filtroAzione) && !filtroAzione.equals(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA)) {
+	private MappingFruizionePortaDelegata getFiltroAzioneMappingFruizione(String filtroAzione, List<MappingFruizionePortaDelegata> lista) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		if(StringUtils.isNotEmpty(filtroAzione) && !filtroAzione.equals(CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA)) {
 			MappingFruizionePortaDelegata mappingTmp = null; 
 			
 			for (MappingFruizionePortaDelegata mappingFruizionePortaDelegata : lista) {
@@ -3293,6 +3328,16 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					}
 				}
 			}
+			return mappingTmp;
+		}
+		else {
+			return null;
+		}
+	}
+	private List<MappingFruizionePortaDelegata> impostaFiltroAzioneMappingFruizione(String filtroAzione, List<MappingFruizionePortaDelegata> lista, 
+			ISearch ricerca, int idLista) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		MappingFruizionePortaDelegata mappingTmp = this.getFiltroAzioneMappingFruizione(filtroAzione, lista);	
+		if(mappingTmp!=null) {
 			List<MappingFruizionePortaDelegata> newList = new ArrayList<>();
 			newList.add(mappingTmp);
 			this.pd.setNumEntries(1);
@@ -3702,7 +3747,33 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			ServletUtils.setObjectIntoSession(this.session, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
 			
 			List<MappingFruizionePortaDelegata> listaSenzaFiltro = this.impostaFiltroAzioneMappingFruizione(null, listaParam,ricerca, idLista);
-			List<MappingFruizionePortaDelegata> lista = this.impostaFiltroAzioneMappingFruizione(filtroAzione, listaParam,ricerca, idLista);
+			List<MappingFruizionePortaDelegata> lista = null;
+			boolean chooseTabWithFilter = !this.isModalitaCompleta();
+			if(chooseTabWithFilter) {
+				lista = listaSenzaFiltro;
+				if(lista.size()>1) {
+					MappingFruizionePortaDelegata mappingContenenteAzione = getFiltroAzioneMappingFruizione(filtroAzione, listaParam);
+					if(mappingContenenteAzione!=null) {
+						int tab = -1;
+						for (int i = 0; i < lista.size(); i++) {
+							if(lista.get(i).getNome().equals(mappingContenenteAzione.getNome())) {
+								tab = i;
+								break;
+							}
+						}
+						if(tab>=0) {
+							ServletUtils.setObjectIntoSession(this.session, tab+"", CostantiControlStation.PARAMETRO_ID_TAB);
+						}
+					}
+					
+					this.pd.setLabelBottoneFiltra(CostantiControlStation.LABEL_BOTTONE_INDIVIDUA_GRUPPO);
+					//this.pd.setLabelBottoneRipulsci("Ripulisci Selezione");
+				}
+			}
+			else {
+				lista = this.impostaFiltroAzioneMappingFruizione(filtroAzione, listaParam,ricerca, idLista);
+			}
+			
 			boolean allActionRedefined = false;
 			List<String> actionNonRidefinite = null;
             if(listaSenzaFiltro.size()>1) {

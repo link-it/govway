@@ -58,6 +58,16 @@ public class DatiTransazione extends org.openspcoop2.utils.beans.BaseBean implem
 	private String servizioApplicativoFruitore;
 	private List<String> listServiziApplicativiErogatori = new ArrayList<String>();
 	
+	private String identificativoAutenticato;
+	
+	private String tokenSubject;
+	private String tokenIssuer;
+	private String tokenClientId;
+	private String tokenUsername;
+	private String tokenEMail; 
+	
+
+	
 	public String getServiziApplicativiErogatoreAsString(){
 		StringBuffer bf = new StringBuffer();
 		if(this.listServiziApplicativiErogatori==null || this.listServiziApplicativiErogatori.size()<=0){
@@ -131,11 +141,60 @@ public class DatiTransazione extends org.openspcoop2.utils.beans.BaseBean implem
 	public void setIdTransazione(String idTransazione) {
 		this.idTransazione = idTransazione;
 	}
+	
 	public String getNomePorta() {
 		return this.nomePorta;
 	}
 
 	public void setNomePorta(String nomePorta) {
 		this.nomePorta = nomePorta;
+	}
+	
+	public String getIdentificativoAutenticato() {
+		return this.identificativoAutenticato;
+	}
+
+	public void setIdentificativoAutenticato(String identificativoAutenticato) {
+		this.identificativoAutenticato = identificativoAutenticato;
+	}
+
+	public String getTokenSubject() {
+		return this.tokenSubject;
+	}
+
+	public void setTokenSubject(String tokenSubject) {
+		this.tokenSubject = tokenSubject;
+	}
+
+	public String getTokenIssuer() {
+		return this.tokenIssuer;
+	}
+
+	public void setTokenIssuer(String tokenIssuer) {
+		this.tokenIssuer = tokenIssuer;
+	}
+
+	public String getTokenClientId() {
+		return this.tokenClientId;
+	}
+
+	public void setTokenClientId(String tokenClientId) {
+		this.tokenClientId = tokenClientId;
+	}
+
+	public String getTokenUsername() {
+		return this.tokenUsername;
+	}
+
+	public void setTokenUsername(String tokenUsername) {
+		this.tokenUsername = tokenUsername;
+	}
+
+	public String getTokenEMail() {
+		return this.tokenEMail;
+	}
+
+	public void setTokenEMail(String tokenEMail) {
+		this.tokenEMail = tokenEMail;
 	}
 }

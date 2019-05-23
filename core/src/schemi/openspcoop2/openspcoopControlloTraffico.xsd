@@ -776,6 +776,28 @@
 					</xsd:appinfo>
 				</xsd:annotation>
 			</xsd:element>
+			<xsd:element name="posizione" type="xsd:int" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="policy_posizione"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Posizione di applicabilità della policy]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>				
+			</xsd:element> 
+			<xsd:element name="continua-valutazione" type="xsd:boolean" default="false">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="policy_continue"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Indicazione se l'attivazione specifica della policy opera in modo da continuare la valutazione di altre policy se questa non è violata]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 			<xsd:element name="id-policy" type="xsd:string">
 				<xsd:annotation>
 					<xsd:appinfo>
@@ -913,7 +935,7 @@
 					<xsd:appinfo>
 						<linkit:generator
 							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-column-mapping name="filtro_tipo_fruitore"/>
+							<linkit:sql-column-mapping name="filtro_tipo_fruitore" text="true"/>
 							<linkit:sql-ddl-column-comment><![CDATA[L'attivazione della policy riguarda solamente transazioni che possiedono il tipo di fruitore indicato]]></linkit:sql-ddl-column-comment>
 						</linkit:generator>
 					</xsd:appinfo>
@@ -924,7 +946,7 @@
 					<xsd:appinfo>
 						<linkit:generator
 							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-column-mapping name="filtro_nome_fruitore"/>
+							<linkit:sql-column-mapping name="filtro_nome_fruitore" text="true"/>
 							<linkit:sql-ddl-column-comment><![CDATA[L'attivazione della policy riguarda solamente transazioni che possiedono il nome del fruitore indicato]]></linkit:sql-ddl-column-comment>
 						</linkit:generator>
 					</xsd:appinfo>
@@ -946,7 +968,7 @@
 					<xsd:appinfo>
 						<linkit:generator
 							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-column-mapping name="filtro_sa_fruitore"/>
+							<linkit:sql-column-mapping name="filtro_sa_fruitore" text="true"/>
 							<linkit:sql-ddl-column-comment><![CDATA[L'attivazione della policy riguarda solamente transazioni che possiedono il servizio applicativo fruitore indicato]]></linkit:sql-ddl-column-comment>
 						</linkit:generator>
 					</xsd:appinfo>
@@ -1037,7 +1059,7 @@
 					<xsd:appinfo>
 						<linkit:generator
 							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-column-mapping name="filtro_azione"/>
+							<linkit:sql-column-mapping name="filtro_azione" text="true"/>
 							<linkit:sql-ddl-column-comment><![CDATA[L'attivazione della policy riguarda solamente transazioni che possiedono l'azione indicata]]></linkit:sql-ddl-column-comment>
 						</linkit:generator>
 					</xsd:appinfo>
@@ -1162,6 +1184,30 @@
 				</xsd:annotation>
 			</xsd:element>
 			
+			<xsd:element name="identificativo-autenticato" type="xsd:boolean" default="false">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="group_id_autenticato"/>
+							<linkit:sql-ddl-column-comment><![CDATA[I contatori della policy vengono raggruppati per identificativo autenticato]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<xsd:element name="token" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="group_token" text="true"/>
+							<linkit:sql-ddl-column-comment><![CDATA[I contatori della policy vengono raggruppati per token (viene indicato un claim)]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
 			<xsd:element name="erogatore" type="xsd:boolean" default="false">
 				<xsd:annotation>
 					<xsd:appinfo>
@@ -1269,6 +1315,26 @@
 				</xsd:annotation>
 			</xsd:element>
 			<!-- informazione aggiuntiva -->
+			<xsd:element name="posizione" type="xsd:int" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping generate="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>			
+			</xsd:element>
+			<xsd:element name="continua-valutazione" type="xsd:boolean" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping generate="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 			<xsd:element name="id-policy" type="xsd:string" minOccurs="0" >
 				<xsd:annotation>
 					<xsd:appinfo>
@@ -1443,6 +1509,16 @@
 			<xsd:enumeration value="http429"/>
 			<xsd:enumeration value="http503"/>
 			<xsd:enumeration value="http500"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="tipo-token">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="issuer"/>
+			<xsd:enumeration value="subject"/>
+			<xsd:enumeration value="client-id"/>
+			<xsd:enumeration value="username"/>
+			<xsd:enumeration value="email"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	

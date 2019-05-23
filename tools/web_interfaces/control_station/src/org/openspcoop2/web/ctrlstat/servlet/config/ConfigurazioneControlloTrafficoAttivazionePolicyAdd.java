@@ -41,6 +41,7 @@ import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -244,7 +245,8 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 			}
 			
 			// Controlli sui campi immessi
-			boolean isOk = confHelper.attivazionePolicyCheckData(tipoOperazione, configurazioneControlloTraffico, policy,infoPolicy, ruoloPorta, nomePorta, modalita);
+			boolean isOk = confHelper.attivazionePolicyCheckData(tipoOperazione, configurazioneControlloTraffico, 
+					policy,infoPolicy, ruoloPorta, nomePorta, serviceBinding, modalita);
 			if (!isOk) {
 				
 				ServletUtils.setPageDataTitle(pd, lstParam);
@@ -268,25 +270,32 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 						ForwardParams.ADD());
 			}
 
-			// insert sul db
 			
+			// aggiorno prossima posizione nella policy
+			ConfigurazioneUtilities.updatePosizioneAttivazionePolicy(confCore, infoPolicy, policy, ruoloPorta, nomePorta);
+			
+			// insert sul db
 			confCore.performCreateOperation(userLogin, confHelper.smista(), policy);
 			
-			String msgCompletato = confHelper.eseguiResetJmx(TipoOperazione.ADD);
+			String msgCompletato = confHelper.eseguiResetJmx(TipoOperazione.ADD, ruoloPorta, nomePorta);
 			if(msgCompletato!=null && !"".equals(msgCompletato)){
 				pd.setMessage(msgCompletato,Costanti.MESSAGE_TYPE_INFO);
 			}
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
-
 			int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
+			
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 			
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
+			List<TipoRisorsaPolicyAttiva> listaTipoRisorsa = 
+					confHelper.gestisciCriteriFiltroRisorsaPolicy(ricerca, ruoloPorta, nomePorta);
+			
 			List<AttivazionePolicy> lista = confCore.attivazionePolicyList(ricerca, ruoloPorta, nomePorta);
 			
-			confHelper.prepareAttivazionePolicyList(ricerca, lista, idLista, ruoloPorta, nomePorta, serviceBinding); 
+			confHelper.prepareAttivazionePolicyList(ricerca, lista, listaTipoRisorsa,
+					idLista, ruoloPorta, nomePorta, serviceBinding); 
 			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

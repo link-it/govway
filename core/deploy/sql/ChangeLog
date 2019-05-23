@@ -3,6 +3,20 @@
 	Classificate policy in built-in e utente:
 	ALTER TABLE ct_config_policy ADD COLUMN policy_built_in BOOLEAN NOT NULL DEFAULT false;
 
+	Aggiunti criteri di ordinamento e valutazione alle politiche:
+	ALTER TABLE ct_active_policy ADD COLUMN posizione INT NOT NULL;
+	ALTER TABLE ct_active_policy ADD COLUMN continua_valutazione BOOLEAN NOT NULL DEFAULT false;
+
+	Aggiunta possibilità di definire più di un criterio nel filtro per quanto riguarda l'azione, l'applicativo ed il soggetto.
+	ALTER TABLE ct_active_policy ALTER COLUMN filtro_nome_fruitore TYPE TEXT;
+	ALTER TABLE ct_active_policy ALTER COLUMN filtro_tipo_fruitore TYPE TEXT;
+	ALTER TABLE ct_active_policy ALTER COLUMN filtro_sa_fruitore TYPE TEXT;
+	ALTER TABLE ct_active_policy ALTER COLUMN filtro_azione TYPE TEXT;
+
+	Aggiunta possibilità di raggruppare per identificativo autenticato e per token claim
+	ALTER TABLE ct_active_policy ADD COLUMN group_id_autenticato BOOLEAN NOT NULL DEFAULT false;
+	ALTER TABLE ct_active_policy ADD COLUMN group_token TEXT;
+
 2019-02-12  Andrea Poli <apoli@link.it>
 
 	Aggiunta possibilità di associare delle proprietà generica ai meccanismi di autenticazione.

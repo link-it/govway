@@ -1868,14 +1868,6 @@ components:
       - "basic"
       - "ssl"
       - "principal"
-    TokenClaimEnum:
-      type: "string"
-      enum:
-      - "subject"
-      - "issuer"
-      - "client_id"
-      - "username"
-      - "email"
     TipoMessaggioEnum:
       type: "string"
       example: "richiesta"
@@ -2354,6 +2346,14 @@ components:
       - "PATCH"
       - "LINK"
       - "UNLINK"
+    TokenClaimEnum:
+      type: "string"
+      enum:
+      - "subject"
+      - "issuer"
+      - "client_id"
+      - "username"
+      - "email"
     Money:
       required:
       - "amount"

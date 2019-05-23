@@ -53,6 +53,7 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -514,6 +515,26 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
+	public List<TipoRisorsaPolicyAttiva> attivazionePolicyTipoRisorsaList(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta)  throws DriverControlStationException{
+		String nomeMetodo = "attivazionePolicyTipoRisorsaList";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);	
+			
+			return driver.configurazioneControlloTrafficoAttivazionePolicyTipoRisorsaList(ricerca, ruoloPorta, nomePorta);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public List<AttivazionePolicy> attivazionePolicyList(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta)  throws DriverControlStationException{
 		String nomeMetodo = "attivazionePolicyList";
 		Connection con = null;
@@ -778,7 +799,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public AttivazionePolicy getGlobalPolicy(String policyId, AttivazionePolicyFiltro filtro, AttivazionePolicyRaggruppamento groupBy,
+	public AttivazionePolicy getPolicy(String policyId, AttivazionePolicyFiltro filtro, AttivazionePolicyRaggruppamento groupBy,
 			RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationNotFound, DriverControlStationException{
 		String nomeMetodo = "getGlobalPolicy";
 		Connection con = null;
@@ -790,7 +811,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			
-			return driver.getGlobalPolicy(policyId, filtro, groupBy, ruoloPorta, nomePorta); 
+			return driver.getPolicy(policyId, filtro, groupBy, ruoloPorta, nomePorta); 
 		} catch (DriverControlStationNotFound e) {
 			throw e;
 		} catch (Exception e) {
@@ -801,7 +822,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public AttivazionePolicy getGlobalPolicyByAlias(String alias,
+	public AttivazionePolicy getPolicyByAlias(String alias,
 			RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationNotFound, DriverControlStationException{
 		String nomeMetodo = "getGlobalPolicyByAlias";
 		Connection con = null;
@@ -813,7 +834,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			
-			return driver.getGlobalPolicyByAlias(alias, ruoloPorta, nomePorta);
+			return driver.getPolicyByAlias(alias, ruoloPorta, nomePorta);
 		} catch (DriverControlStationNotFound e) {
 			throw e;
 		} catch (Exception e) {

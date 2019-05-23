@@ -278,7 +278,7 @@ public class ControlStationCore {
 	public String getProductVersion(){
 		String pVersion = null;
 		if(this.consoleNomeEstesoSuffix!=null){
-			if(this.consoleNomeEstesoSuffix.trim().startsWith(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA)){
+			if(this.consoleNomeEstesoSuffix.trim().startsWith(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)){
 				pVersion = "GovWay "+ this.consoleNomeEstesoSuffix.trim().substring(1).trim();
 			}
 			else{
@@ -505,6 +505,12 @@ public class ControlStationCore {
 	private PropertiesSourceConfiguration policyGestioneTokenPropertiesSourceConfiguration = null;
 	public PropertiesSourceConfiguration getPolicyGestioneTokenPropertiesSourceConfiguration() {
 		return this.policyGestioneTokenPropertiesSourceConfiguration;
+	}
+	
+	/** ControlloTraffico */
+	private boolean isControlloTrafficoPolicyGlobaleGroupByApi;
+	public boolean isControlloTrafficoPolicyGlobaleGroupByApi() {
+		return this.isControlloTrafficoPolicyGlobaleGroupByApi;
 	}
 	
 	/** Auditing */
@@ -1570,6 +1576,9 @@ public class ControlStationCore {
 		/** PolicyGestioneToken PropertiesSourceConfiguration */
 		this.policyGestioneTokenPropertiesSourceConfiguration = core.policyGestioneTokenPropertiesSourceConfiguration;
 		
+		/** ControlloTraffico */
+		this.isControlloTrafficoPolicyGlobaleGroupByApi = core.isControlloTrafficoPolicyGlobaleGroupByApi;
+		
 		/** Auditing */
 		this.isAuditingRegistrazioneElementiBinari = core.isAuditingRegistrazioneElementiBinari;
 		
@@ -1841,6 +1850,7 @@ public class ControlStationCore {
 			this.passwordVerifierConfiguration = consoleProperties.getConsolePasswordVerifier();
 			this.messageSecurityPropertiesSourceConfiguration = consoleProperties.getMessageSecurityPropertiesSourceConfiguration();
 			this.policyGestioneTokenPropertiesSourceConfiguration = consoleProperties.getPolicyGestioneTokenPropertiesSourceConfiguration();
+			this.isControlloTrafficoPolicyGlobaleGroupByApi = consoleProperties.isControlloTrafficoPolicyGlobaleGroupByApi();
 			this.isAuditingRegistrazioneElementiBinari = consoleProperties.isAuditingRegistrazioneElementiBinari();
 			this.isIntegrationManagerEnabled = consoleProperties.isIntegrationManagerEnabled();
 			this.isAccordiCooperazioneEnabled = consoleProperties.isAccordiCooperazioneEnabled();
@@ -2118,7 +2128,7 @@ public class ControlStationCore {
 	private synchronized void initDriverTracciamento(String nomeDs, boolean forceChange) throws Exception {
 		if (this.driverTracciamento == null || forceChange) {
 			try {
-				if (nomeDs == null || nomeDs.equals("") || nomeDs.equals(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA)) {
+				if (nomeDs == null || nomeDs.equals("") || nomeDs.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
 					if(this.tracce_sameDBWebUI){
 						this.driverTracciamento = new DriverTracciamento(ControlStationCore.dbM.getDataSourceName(),this.tipoDB,ControlStationCore.dbM.getDataSourceContext(),ControlStationCore.log);
 					}
@@ -2170,7 +2180,7 @@ public class ControlStationCore {
 	private synchronized void initDriverMSGDiagnostici(String nomeDs, boolean forceChange) throws Exception {
 		if (this.driverMSGDiagnostici == null || forceChange) {
 			try {
-				if (nomeDs == null || nomeDs.equals("") || nomeDs.equals(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA)) {
+				if (nomeDs == null || nomeDs.equals("") || nomeDs.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
 					if(this.msgDiagnostici_sameDBWebUI){
 						this.driverMSGDiagnostici = new DriverMsgDiagnostici(ControlStationCore.dbM.getDataSourceName(),this.tipoDB,ControlStationCore.dbM.getDataSourceContext(),ControlStationCore.log); 
 					}
@@ -5815,7 +5825,7 @@ public class ControlStationCore {
 				
 				azioniListReturn = new ArrayList<String>();
 				if(addTrattinoSelezioneNonEffettuata) {
-					azioniListReturn.add(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA);
+					azioniListReturn.add(CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA);
 				}
 				azioniListReturn.addAll(azioniList);
 			}
@@ -5929,7 +5939,7 @@ public class ControlStationCore {
 				Collections.sort(sortList);
 				
 				if(addTrattinoSelezioneNonEffettuata) {
-					mapAzioniReturn.put(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA,CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA);
+					mapAzioniReturn.put(CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA,CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA);
 				}
 				
 				if(sortMap!=null) {

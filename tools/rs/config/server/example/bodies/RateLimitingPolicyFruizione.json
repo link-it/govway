@@ -11,8 +11,10 @@
         "filtro_chiave_valore": "chiave_valore2"
     },
 
-    "criterio_collezionamento_dati": {
+    "raggruppamento": {
         "azione": true,
+	"richiedente": true,
+	"token": ["subject","issuer","username"],
         "chiave_tipo": "content-based",
         "chiave_nome": "chiave_nome2"
     }

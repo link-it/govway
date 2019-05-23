@@ -62,6 +62,10 @@ public class AttivazionePolicyFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "policy_alias", AttivazionePolicy.model().ALIAS.getFieldType()));
 				setParameter(object, "setUpdateTime", AttivazionePolicy.model().UPDATE_TIME.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "policy_update_time", AttivazionePolicy.model().UPDATE_TIME.getFieldType()));
+				setParameter(object, "setPosizione", AttivazionePolicy.model().POSIZIONE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "policy_posizione", AttivazionePolicy.model().POSIZIONE.getFieldType()));
+				setParameter(object, "setContinuaValutazione", AttivazionePolicy.model().CONTINUA_VALUTAZIONE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "policy_continue", AttivazionePolicy.model().CONTINUA_VALUTAZIONE.getFieldType()));
 				setParameter(object, "setIdPolicy", AttivazionePolicy.model().ID_POLICY.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "policy_id", AttivazionePolicy.model().ID_POLICY.getFieldType()));
 				setParameter(object, "setEnabled", AttivazionePolicy.model().ENABLED.getFieldType(),
@@ -124,6 +128,10 @@ public class AttivazionePolicyFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "group_fruitore", AttivazionePolicy.model().GROUP_BY.FRUITORE.getFieldType()));
 				setParameter(object.getGroupBy(), "setServizioApplicativoFruitore", AttivazionePolicy.model().GROUP_BY.SERVIZIO_APPLICATIVO_FRUITORE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "group_sa_fruitore", AttivazionePolicy.model().GROUP_BY.SERVIZIO_APPLICATIVO_FRUITORE.getFieldType()));
+				setParameter(object.getGroupBy(), "setIdentificativoAutenticato", AttivazionePolicy.model().GROUP_BY.IDENTIFICATIVO_AUTENTICATO.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "group_id_autenticato", AttivazionePolicy.model().GROUP_BY.IDENTIFICATIVO_AUTENTICATO.getFieldType()));
+				setParameter(object.getGroupBy(), "setToken", AttivazionePolicy.model().GROUP_BY.TOKEN.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "group_token", AttivazionePolicy.model().GROUP_BY.TOKEN.getFieldType()));
 				setParameter(object.getGroupBy(), "setErogatore", AttivazionePolicy.model().GROUP_BY.EROGATORE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "group_erogatore", AttivazionePolicy.model().GROUP_BY.EROGATORE.getFieldType()));
 				setParameter(object.getGroupBy(), "setServizioApplicativoErogatore", AttivazionePolicy.model().GROUP_BY.SERVIZIO_APPLICATIVO_EROGATORE.getFieldType(),
@@ -166,6 +174,10 @@ public class AttivazionePolicyFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"alias"));
 				setParameter(object, "setUpdateTime", AttivazionePolicy.model().UPDATE_TIME.getFieldType(),
 					this.getObjectFromMap(map,"update-time"));
+				setParameter(object, "setPosizione", AttivazionePolicy.model().POSIZIONE.getFieldType(),
+					this.getObjectFromMap(map,"posizione"));
+				setParameter(object, "setContinuaValutazione", AttivazionePolicy.model().CONTINUA_VALUTAZIONE.getFieldType(),
+					this.getObjectFromMap(map,"continua-valutazione"));
 				setParameter(object, "setIdPolicy", AttivazionePolicy.model().ID_POLICY.getFieldType(),
 					this.getObjectFromMap(map,"id-policy"));
 				setParameter(object, "setEnabled", AttivazionePolicy.model().ENABLED.getFieldType(),
@@ -228,6 +240,10 @@ public class AttivazionePolicyFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"group-by.fruitore"));
 				setParameter(object.getGroupBy(), "setServizioApplicativoFruitore", AttivazionePolicy.model().GROUP_BY.SERVIZIO_APPLICATIVO_FRUITORE.getFieldType(),
 					this.getObjectFromMap(map,"group-by.servizio-applicativo-fruitore"));
+				setParameter(object.getGroupBy(), "setIdentificativoAutenticato", AttivazionePolicy.model().GROUP_BY.IDENTIFICATIVO_AUTENTICATO.getFieldType(),
+					this.getObjectFromMap(map,"group-by.identificativo-autenticato"));
+				setParameter(object.getGroupBy(), "setToken", AttivazionePolicy.model().GROUP_BY.TOKEN.getFieldType(),
+					this.getObjectFromMap(map,"group-by.token"));
 				setParameter(object.getGroupBy(), "setErogatore", AttivazionePolicy.model().GROUP_BY.EROGATORE.getFieldType(),
 					this.getObjectFromMap(map,"group-by.erogatore"));
 				setParameter(object.getGroupBy(), "setServizioApplicativoErogatore", AttivazionePolicy.model().GROUP_BY.SERVIZIO_APPLICATIVO_EROGATORE.getFieldType(),

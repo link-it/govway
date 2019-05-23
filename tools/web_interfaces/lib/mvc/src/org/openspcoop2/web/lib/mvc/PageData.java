@@ -71,6 +71,8 @@ public class PageData {
 	boolean mostraLinkHome = false;
 	String customListViewName = null;
 	String labelBottoneInvia = null;
+	String labelBottoneFiltra = null;
+	String labelBottoneRipulsci = null;
 
 	public PageData() {
 		this.pageDescription = "";
@@ -101,6 +103,8 @@ public class PageData {
 		this.mostraLinkHome = false;
 		this.customListViewName = null;
 		this.labelBottoneInvia = Costanti.LABEL_MONITOR_BUTTON_INVIA;
+		this.labelBottoneFiltra = Costanti.LABEL_MONITOR_BUTTON_FILTRA;
+		this.labelBottoneRipulsci = Costanti.LABEL_MONITOR_BUTTON_RIPULISCI;
 	}
 
 	public void setPageDescription(String s) {
@@ -355,6 +359,7 @@ public class PageData {
 		}
 		deValue.setLabel(label);
 		deValue.setSelected(valueSelected);
+		deValue.setValue(valueSelected);
 		if(values==null || values.length<=0) {
 			throw new Exception("Values not found");
 		}
@@ -364,6 +369,17 @@ public class PageData {
 		deValue.setPostBack(postBack);
 		this.filter_values.add(deValue);
 		
+	}
+	public void removeFilter(String name) {
+		if(this.filter_names != null) {
+			for (int i = 0; i < this.filter_names.size(); i++) {
+				if(name.equals(this.filter_names.get(i).getValue())) {
+					this.filter_names.remove(i);
+					this.filter_values.remove(i);
+					break;
+				}
+			}
+		}
 	}
 	public List<DataElement> getFilterNames() {
 		return this.filter_names;
@@ -461,5 +477,21 @@ public class PageData {
 
 	public void setLabelBottoneInvia(String labelBottoneInvia) {
 		this.labelBottoneInvia = labelBottoneInvia;
+	}
+	
+	public String getLabelBottoneFiltra() {
+		return this.labelBottoneFiltra;
+	}
+
+	public void setLabelBottoneFiltra(String labelBottoneFiltra) {
+		this.labelBottoneFiltra = labelBottoneFiltra;
+	}
+
+	public String getLabelBottoneRipulsci() {
+		return this.labelBottoneRipulsci;
+	}
+
+	public void setLabelBottoneRipulsci(String labelBottoneRipulsci) {
+		this.labelBottoneRipulsci = labelBottoneRipulsci;
 	}
 }

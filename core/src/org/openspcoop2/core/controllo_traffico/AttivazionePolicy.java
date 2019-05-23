@@ -40,6 +40,8 @@ import java.io.Serializable;
  * 			&lt;element name="id-active-policy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="alias" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="update-time" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="posizione" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="continua-valutazione" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
  * 			&lt;element name="id-policy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="warning-only" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
@@ -63,6 +65,8 @@ import java.io.Serializable;
   	"idActivePolicy",
   	"alias",
   	"updateTime",
+  	"posizione",
+  	"continuaValutazione",
   	"idPolicy",
   	"enabled",
   	"warningOnly",
@@ -123,6 +127,26 @@ public class AttivazionePolicy extends org.openspcoop2.utils.beans.BaseBean impl
 
   public void setUpdateTime(java.util.Date updateTime) {
     this.updateTime = updateTime;
+  }
+
+  public int getPosizione() {
+    return this.posizione;
+  }
+
+  public void setPosizione(int posizione) {
+    this.posizione = posizione;
+  }
+
+  public boolean isContinuaValutazione() {
+    return this.continuaValutazione;
+  }
+
+  public boolean getContinuaValutazione() {
+    return this.continuaValutazione;
+  }
+
+  public void setContinuaValutazione(boolean continuaValutazione) {
+    this.continuaValutazione = continuaValutazione;
   }
 
   public java.lang.String getIdPolicy() {
@@ -227,6 +251,14 @@ public class AttivazionePolicy extends org.openspcoop2.utils.beans.BaseBean impl
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="update-time",required=true,nillable=false,type=java.lang.String.class)
   protected java.util.Date updateTime;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @XmlElement(name="posizione",required=true,nillable=false)
+  protected int posizione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlElement(name="continua-valutazione",required=true,nillable=false,defaultValue="false")
+  protected boolean continuaValutazione = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-policy",required=true,nillable=false)

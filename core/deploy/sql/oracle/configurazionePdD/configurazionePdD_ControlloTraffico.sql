@@ -150,6 +150,8 @@ CREATE TABLE ct_active_policy
 	active_policy_id VARCHAR2(255) NOT NULL,
 	policy_alias VARCHAR2(255),
 	policy_update_time TIMESTAMP NOT NULL,
+	policy_posizione NUMBER NOT NULL,
+	policy_continue NUMBER NOT NULL,
 	policy_id VARCHAR2(255) NOT NULL,
 	policy_enabled NUMBER NOT NULL,
 	policy_warning NUMBER NOT NULL,
@@ -161,10 +163,10 @@ CREATE TABLE ct_active_policy
 	filtro_protocollo VARCHAR2(255),
 	filtro_ruolo VARCHAR2(255),
 	filtro_porta VARCHAR2(2000),
-	filtro_tipo_fruitore VARCHAR2(255),
-	filtro_nome_fruitore VARCHAR2(255),
+	filtro_tipo_fruitore CLOB,
+	filtro_nome_fruitore CLOB,
 	filtro_ruolo_fruitore VARCHAR2(255),
-	filtro_sa_fruitore VARCHAR2(255),
+	filtro_sa_fruitore CLOB,
 	filtro_tipo_erogatore VARCHAR2(255),
 	filtro_nome_erogatore VARCHAR2(255),
 	filtro_ruolo_erogatore VARCHAR2(255),
@@ -172,7 +174,7 @@ CREATE TABLE ct_active_policy
 	filtro_tipo_servizio VARCHAR2(255),
 	filtro_nome_servizio VARCHAR2(255),
 	filtro_versione_servizio NUMBER,
-	filtro_azione VARCHAR2(255),
+	filtro_azione CLOB,
 	-- Filtro per Chiave Applicativa
 	filtro_key_enabled NUMBER NOT NULL,
 	filtro_key_type VARCHAR2(255),
@@ -184,6 +186,8 @@ CREATE TABLE ct_active_policy
 	group_protocollo NUMBER NOT NULL,
 	group_fruitore NUMBER NOT NULL,
 	group_sa_fruitore NUMBER NOT NULL,
+	group_id_autenticato NUMBER NOT NULL,
+	group_token CLOB,
 	group_erogatore NUMBER NOT NULL,
 	group_sa_erogatore NUMBER NOT NULL,
 	group_servizio NUMBER NOT NULL,
@@ -205,6 +209,7 @@ CREATE TABLE ct_active_policy
 -- index
 CREATE INDEX idx_cong_att_policy_1 ON ct_active_policy (filtro_ruolo,filtro_porta);
 
+ALTER TABLE ct_active_policy MODIFY policy_continue DEFAULT 0;
 ALTER TABLE ct_active_policy MODIFY policy_warning DEFAULT 0;
 ALTER TABLE ct_active_policy MODIFY filtro_enabled DEFAULT 0;
 ALTER TABLE ct_active_policy MODIFY filtro_key_enabled DEFAULT 0;
@@ -213,6 +218,7 @@ ALTER TABLE ct_active_policy MODIFY group_ruolo DEFAULT 0;
 ALTER TABLE ct_active_policy MODIFY group_protocollo DEFAULT 0;
 ALTER TABLE ct_active_policy MODIFY group_fruitore DEFAULT 0;
 ALTER TABLE ct_active_policy MODIFY group_sa_fruitore DEFAULT 0;
+ALTER TABLE ct_active_policy MODIFY group_id_autenticato DEFAULT 0;
 ALTER TABLE ct_active_policy MODIFY group_erogatore DEFAULT 0;
 ALTER TABLE ct_active_policy MODIFY group_sa_erogatore DEFAULT 0;
 ALTER TABLE ct_active_policy MODIFY group_servizio DEFAULT 0;

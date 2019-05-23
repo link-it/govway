@@ -6,9 +6,9 @@
         "filtro_chiave_valore": "chiave_valore1"
     },
 
-    "criterio_collezionamento_dati": {
-        "soggetto_fruitore": false,
+    "raggruppamento": {
+        "richiedente": false,
         "chiave_nome": "chiave2",
-		"chiave_tipo": "content-based"
+	"chiave_tipo": "content-based"
     }
 }

@@ -178,6 +178,8 @@
 			<xsd:element name="id-active-policy" type="xsd:string" />
 			<xsd:element name="alias" type="xsd:string" minOccurs="0" />
 			<xsd:element name="update-time" type="xsd:dateTime" />
+			<xsd:element name="posizione" type="xsd:int" />
+			<xsd:element name="continua-valutazione" type="xsd:boolean" default="false" />
 			<xsd:element name="id-policy" type="xsd:string" />
 			<xsd:element name="enabled" type="xsd:boolean" />
 			<xsd:element name="warning-only" type="xsd:boolean" default="false" />
@@ -239,6 +241,8 @@
 						
 			<xsd:element name="fruitore" type="xsd:boolean" default="false"/>
 			<xsd:element name="servizio-applicativo-fruitore" type="xsd:boolean" default="false"/>
+			<xsd:element name="identificativo-autenticato" type="xsd:boolean" default="false"/>
+			<xsd:element name="token" type="xsd:string" minOccurs="0"/>
 			
 			<xsd:element name="erogatore" type="xsd:boolean" default="false"/>
 			<xsd:element name="servizio-applicativo-erogatore" type="xsd:boolean" default="false"/>
@@ -264,6 +268,8 @@
 		<xsd:sequence>
 			<xsd:element name="nome" type="xsd:string" />
 			<!-- informazione aggiuntiva -->
+			<xsd:element name="posizione" type="xsd:int" minOccurs="0" />
+			<xsd:element name="continua-valutazione" type="xsd:boolean" minOccurs="0" />
 			<xsd:element name="id-policy" type="xsd:string" minOccurs="0" />
 			<xsd:element name="enabled" type="xsd:boolean" minOccurs="0" />
 			<xsd:element name="update-time" type="xsd:dateTime" minOccurs="0" />
@@ -306,7 +312,7 @@
 			<xsd:enumeration value="NumeroRichiesteFalliteOFaultApplicativi"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	
+
 	<xsd:simpleType name="ruolo-policy">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="delegata"/>
@@ -384,6 +390,16 @@
 			<xsd:enumeration value="http429"/>
 			<xsd:enumeration value="http503"/>
 			<xsd:enumeration value="http500"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="tipo-token">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="issuer"/>
+			<xsd:enumeration value="subject"/>
+			<xsd:enumeration value="client-id"/>
+			<xsd:enumeration value="username"/>
+			<xsd:enumeration value="email"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	

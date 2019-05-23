@@ -104,7 +104,7 @@ public class PorteDelegateTrasformazioniList extends Action {
 					}
 					
 					int posizioneAttuale = regolaToMove.getPosizione();
-					int posizioneNuova = cambiaPosizione.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SU) ? (posizioneAttuale - 1) : (posizioneAttuale + 1);
+					int posizioneNuova = cambiaPosizione.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SU) ? (posizioneAttuale - 1) : (posizioneAttuale + 1);
 					
 					TrasformazioneRegola regolaToSwitch = null;
 					for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {

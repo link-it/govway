@@ -2668,6 +2668,7 @@ paths:
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
+        - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/metrica"
       summary: Restituisce l'elenco delle policy di rate limiting configurate
       operationId: findAllErogazioneRateLimitingPolicies
       description: Questa operazione consente di ottenere l'elenco delle policy di rate limiting configurate
@@ -4840,6 +4841,7 @@ paths:
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
+        - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/metrica"
       summary: Restituisce l'elenco delle policy di rate limiting configurate
       operationId: findAllFruizioneRateLimitingPolicies
       description: Questa operazione consente di ottenere l'elenco delle policy di rate limiting configurate

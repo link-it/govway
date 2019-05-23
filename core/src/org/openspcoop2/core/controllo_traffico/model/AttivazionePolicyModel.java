@@ -45,6 +45,8 @@ public class AttivazionePolicyModel extends AbstractModel<AttivazionePolicy> {
 		this.ID_ACTIVE_POLICY = new Field("id-active-policy",java.lang.String.class,"attivazione-policy",AttivazionePolicy.class);
 		this.ALIAS = new Field("alias",java.lang.String.class,"attivazione-policy",AttivazionePolicy.class);
 		this.UPDATE_TIME = new Field("update-time",java.util.Date.class,"attivazione-policy",AttivazionePolicy.class);
+		this.POSIZIONE = new Field("posizione",int.class,"attivazione-policy",AttivazionePolicy.class);
+		this.CONTINUA_VALUTAZIONE = new Field("continua-valutazione",boolean.class,"attivazione-policy",AttivazionePolicy.class);
 		this.ID_POLICY = new Field("id-policy",java.lang.String.class,"attivazione-policy",AttivazionePolicy.class);
 		this.ENABLED = new Field("enabled",boolean.class,"attivazione-policy",AttivazionePolicy.class);
 		this.WARNING_ONLY = new Field("warning-only",boolean.class,"attivazione-policy",AttivazionePolicy.class);
@@ -62,6 +64,8 @@ public class AttivazionePolicyModel extends AbstractModel<AttivazionePolicy> {
 		this.ID_ACTIVE_POLICY = new ComplexField(father,"id-active-policy",java.lang.String.class,"attivazione-policy",AttivazionePolicy.class);
 		this.ALIAS = new ComplexField(father,"alias",java.lang.String.class,"attivazione-policy",AttivazionePolicy.class);
 		this.UPDATE_TIME = new ComplexField(father,"update-time",java.util.Date.class,"attivazione-policy",AttivazionePolicy.class);
+		this.POSIZIONE = new ComplexField(father,"posizione",int.class,"attivazione-policy",AttivazionePolicy.class);
+		this.CONTINUA_VALUTAZIONE = new ComplexField(father,"continua-valutazione",boolean.class,"attivazione-policy",AttivazionePolicy.class);
 		this.ID_POLICY = new ComplexField(father,"id-policy",java.lang.String.class,"attivazione-policy",AttivazionePolicy.class);
 		this.ENABLED = new ComplexField(father,"enabled",boolean.class,"attivazione-policy",AttivazionePolicy.class);
 		this.WARNING_ONLY = new ComplexField(father,"warning-only",boolean.class,"attivazione-policy",AttivazionePolicy.class);
@@ -79,6 +83,10 @@ public class AttivazionePolicyModel extends AbstractModel<AttivazionePolicy> {
 	public IField ALIAS = null;
 	 
 	public IField UPDATE_TIME = null;
+	 
+	public IField POSIZIONE = null;
+	 
+	public IField CONTINUA_VALUTAZIONE = null;
 	 
 	public IField ID_POLICY = null;
 	 

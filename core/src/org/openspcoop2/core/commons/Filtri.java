@@ -74,6 +74,8 @@ public final class Filtri
 	
 	public final static String FILTRO_TIPO_POLICY = "filtroTipoPolicy";
 	
+	public final static String FILTRO_TIPO_RISORSA_POLICY = "filtroTipoRisorsaPolicy";
+	
 	public static List<String> convertToTipiSoggetti(String filterProtocollo, String filterProtocolli) throws CoreException {
 		List<String> tipoSoggettiProtocollo = null;
 		if(filterProtocollo!=null && !"".equals(filterProtocollo)) {

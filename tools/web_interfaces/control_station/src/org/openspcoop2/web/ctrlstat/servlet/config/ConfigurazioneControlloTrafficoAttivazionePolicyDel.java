@@ -35,6 +35,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -112,7 +113,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyDel extends Action 
 			List<AttivazionePolicy> policyRimosse = new ArrayList<AttivazionePolicy>();
 			ConfigurazioneUtilities.deleteAttivazionePolicy(policyDaEliminare, confHelper, confCore, userLogin, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, policyRimosse);
 			
-			String msgCompletato = confHelper.eseguiResetJmx(TipoOperazione.DEL);
+			String msgCompletato = confHelper.eseguiResetJmx(TipoOperazione.DEL, ruoloPorta, nomePorta);
 			
 			if(msgCompletato!=null && !"".equals(msgCompletato)){
 				if(inUsoMessage.length()>0){
@@ -142,9 +143,13 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyDel extends Action 
 
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
+			List<TipoRisorsaPolicyAttiva> listaTipoRisorsa = 
+					confHelper.gestisciCriteriFiltroRisorsaPolicy(ricerca, ruoloPorta, nomePorta);
+			
 			List<AttivazionePolicy> lista = confCore.attivazionePolicyList(ricerca, ruoloPorta, nomePorta);
 
-			confHelper.prepareAttivazionePolicyList(ricerca, lista, idLista, ruoloPorta, nomePorta, serviceBinding);
+			confHelper.prepareAttivazionePolicyList(ricerca, lista, listaTipoRisorsa,
+					idLista, ruoloPorta, nomePorta, serviceBinding);
 
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

@@ -322,5 +322,14 @@ components:
       type: string
       enum: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'TRACE', 'PATCH', 'LINK', 'UNLINK']
       example: 'POST'
+      
+    TokenClaimEnum:
+      type: string
+      enum:
+        - subject
+        - issuer
+        - client_id
+        - username
+        - email
 
 

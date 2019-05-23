@@ -23,12 +23,15 @@
 package org.openspcoop2.pdd.config;
 
 import java.sql.Connection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
@@ -37,10 +40,13 @@ import org.openspcoop2.core.controllo_traffico.ElencoIdPolicyAttive;
 import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
 import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.controllo_traffico.dao.IAttivazionePolicyServiceSearch;
 import org.openspcoop2.core.controllo_traffico.dao.IConfigurazionePolicyServiceSearch;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
+import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.slf4j.Logger;
@@ -136,8 +142,23 @@ public class ConfigurazionePdD_controlloTraffico {
 	
 	
 	
-	public ElencoIdPolicyAttive getElencoIdPolicyAttive(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-				
+	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveAPI(Connection connectionPdD, TipoPdD tipoPdD, String nomePorta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this._getElencoIdPolicyApiAttive(connectionPdD, tipoPdD, nomePorta, true);
+	}
+	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveGlobali(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this._getElencoIdPolicyApiAttive(connectionPdD, null, null, false);
+	}
+	private Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> _getElencoIdPolicyApiAttive(Connection connectionPdD, TipoPdD tipoPdD, String nomePorta, boolean api) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		
+		if(api) {
+			if(tipoPdD==null) {
+				throw new DriverConfigurazioneException("Tipo PdD non fornito; richiesto per una policy API");
+			}
+			if(nomePorta==null) {
+				throw new DriverConfigurazioneException("Nome Porta non fornito; richiesto per una policy API");
+			}
+		}
+		
 		ConnectionResource cr = null;
 		try{
 			cr = this.getConnection(connectionPdD, "ControlloTraffico.getElencoIdPolicyAttive");
@@ -146,15 +167,64 @@ public class ConfigurazionePdD_controlloTraffico {
 					getServiceManager(org.openspcoop2.core.controllo_traffico.utils.ProjectInfo.getInstance(),
 							cr.connectionDB,this.smp,this.log);
 			
-			ElencoIdPolicyAttive elencoIdPolicy = new ElencoIdPolicyAttive();
 			IAttivazionePolicyServiceSearch search =  sm.getAttivazionePolicyServiceSearch();
 			IPaginatedExpression expression = search.newPaginatedExpression();
+			
+			if(api) {
+				if(TipoPdD.DELEGATA.equals(tipoPdD)) {
+					expression.equals(AttivazionePolicy.model().FILTRO.RUOLO_PORTA, RuoloPolicy.DELEGATA.getValue());
+				}
+				else {
+					expression.equals(AttivazionePolicy.model().FILTRO.RUOLO_PORTA, RuoloPolicy.APPLICATIVA.getValue());
+				}
+				expression.equals(AttivazionePolicy.model().FILTRO.NOME_PORTA,nomePorta);
+			}
+			else {
+				expression.isNull(AttivazionePolicy.model().FILTRO.NOME_PORTA);
+			}
+			
 			expression.limit(100000); // non dovrebbero esistere tante regole
+			expression.addOrder(AttivazionePolicy.model().POSIZIONE, SortOrder.ASC);
 			List<IdActivePolicy> list = search.findAllIds(expression);
 			if(list!=null && list.size()>0){
-				elencoIdPolicy.setIdActivePolicyList(list);
+				
+				// Devo raggrupparle per risorse.
+				// Ordinate lo sono gia' poiche' ho fatto l'ordine precedentemente
+				Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> map = new HashMap<>();
+				for (IdActivePolicy idActivePolicy : list) {
+					
+					ConfigurazionePolicy confPolicy = null;
+					try {
+						confPolicy = this.getConfigurazionePolicy(connectionPdD, idActivePolicy.getIdPolicy());
+					}
+					catch(DriverConfigurazioneNotFound e) {
+						this.log.error("Configurazione Policy '' non esistente ? ",e);
+					}
+					
+					ElencoIdPolicyAttive elencoIdPolicy = null;
+					
+					TipoRisorsaPolicyAttiva tipoPolicyAttiva = TipoRisorsaPolicyAttiva.getTipo(confPolicy.getRisorsa(), confPolicy.isSimultanee());
+					if(map.containsKey(tipoPolicyAttiva)) {
+						elencoIdPolicy = map.get(tipoPolicyAttiva);
+					}
+					else {
+						elencoIdPolicy = new ElencoIdPolicyAttive();
+						map.put(tipoPolicyAttiva, elencoIdPolicy);
+					}
+					
+					elencoIdPolicy.addIdActivePolicy(idActivePolicy);
+				}
+				
+				return map;
 			}
-			return elencoIdPolicy;
+			else {
+				if(api) {
+					throw new NotFoundException("policy API non esistenti per la porta '"+nomePorta+"' (ruolo: "+tipoPdD.getTipo()+")");
+				}
+				else {
+					throw new NotFoundException("policy globali non esistenti");	
+				}
+			}
 		}
 		catch(NotFoundException e) {
 			String errorMsg = "ElencoIdPolicyAttive del Controllo del Traffico non trovata: "+e.getMessage();

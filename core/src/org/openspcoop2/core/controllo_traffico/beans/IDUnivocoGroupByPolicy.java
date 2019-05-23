@@ -55,6 +55,12 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 	private String tipoKey = QUALSIASI;
 	private String nomeKey = QUALSIASI;
 	private String valoreKey = QUALSIASI;
+	private String identificativoAutenticato = QUALSIASI;
+	private String tokenSubject = QUALSIASI;
+	private String tokenIssuer = QUALSIASI;
+	private String tokenUsername = QUALSIASI;
+	private String tokenClientId = QUALSIASI;
+	private String tokenEMail = QUALSIASI;
 	
 
 	
@@ -83,6 +89,18 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 				this.nomeKey.equals(filtro.getNomeKey())
 				&&
 				this.valoreKey.equals(filtro.getValoreKey())
+				&&
+				this.identificativoAutenticato.equals(filtro.getIdentificativoAutenticato())
+				&&
+				this.tokenSubject.equals(filtro.getTokenSubject())
+				&&
+				this.tokenIssuer.equals(filtro.getTokenIssuer())
+				&&
+				this.tokenClientId.equals(filtro.getTokenClientId())
+				&&
+				this.tokenUsername.equals(filtro.getTokenUsername())
+				&&
+				this.tokenEMail.equals(filtro.getTokenEMail())
 				;
 		
 	}
@@ -168,12 +186,12 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 			else{
 				bf.append(" ");
 			}
-			bf.append("SAFruitore:");
+			bf.append("Applicativo:");
 			if(filterGroupByNotSet){
 				bf.append(" ");
 			}
 			bf.append(this.servizioApplicativoFruitore);
-		}
+		}	
 		
 		if(!QUALSIASI.equals(this.erogatore) || !filterGroupByNotSet){
 			if(filterGroupByNotSet){
@@ -202,7 +220,7 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 			else{
 				bf.append(" ");
 			}
-			bf.append("SAErogatore:");
+			bf.append("ApplicativoErogatore:");
 			if(filterGroupByNotSet){
 				bf.append(" ");
 			}
@@ -219,7 +237,7 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 			else{
 				bf.append(" ");
 			}
-			bf.append("Servizio:");
+			bf.append("API:");
 			if(filterGroupByNotSet){
 				bf.append(" ");
 			}
@@ -292,6 +310,108 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 				bf.append(" ");
 			}
 			bf.append(this.valoreKey);
+		}
+		
+		if(!QUALSIASI.equals(this.identificativoAutenticato) || !filterGroupByNotSet){
+			if(filterGroupByNotSet){
+				if(bf.length()>0){
+					bf.append("\n");
+				}
+				bf.append("\t");
+			}
+			else{
+				bf.append(" ");
+			}
+			bf.append("Credenziali:");
+			if(filterGroupByNotSet){
+				bf.append(" ");
+			}
+			bf.append(this.identificativoAutenticato);
+		}
+		
+		if(!QUALSIASI.equals(this.tokenSubject) || !filterGroupByNotSet){
+			if(filterGroupByNotSet){
+				if(bf.length()>0){
+					bf.append("\n");
+				}
+				bf.append("\t");
+			}
+			else{
+				bf.append(" ");
+			}
+			bf.append("TokenSubject:");
+			if(filterGroupByNotSet){
+				bf.append(" ");
+			}
+			bf.append(this.tokenSubject);
+		}
+		
+		if(!QUALSIASI.equals(this.tokenIssuer) || !filterGroupByNotSet){
+			if(filterGroupByNotSet){
+				if(bf.length()>0){
+					bf.append("\n");
+				}
+				bf.append("\t");
+			}
+			else{
+				bf.append(" ");
+			}
+			bf.append("TokenIssuer:");
+			if(filterGroupByNotSet){
+				bf.append(" ");
+			}
+			bf.append(this.tokenIssuer);
+		}
+		
+		if(!QUALSIASI.equals(this.tokenClientId) || !filterGroupByNotSet){
+			if(filterGroupByNotSet){
+				if(bf.length()>0){
+					bf.append("\n");
+				}
+				bf.append("\t");
+			}
+			else{
+				bf.append(" ");
+			}
+			bf.append("TokenClientId:");
+			if(filterGroupByNotSet){
+				bf.append(" ");
+			}
+			bf.append(this.tokenClientId);
+		}
+		
+		if(!QUALSIASI.equals(this.tokenUsername) || !filterGroupByNotSet){
+			if(filterGroupByNotSet){
+				if(bf.length()>0){
+					bf.append("\n");
+				}
+				bf.append("\t");
+			}
+			else{
+				bf.append(" ");
+			}
+			bf.append("TokenUsername:");
+			if(filterGroupByNotSet){
+				bf.append(" ");
+			}
+			bf.append(this.tokenUsername);
+		}
+		
+		if(!QUALSIASI.equals(this.tokenEMail) || !filterGroupByNotSet){
+			if(filterGroupByNotSet){
+				if(bf.length()>0){
+					bf.append("\n");
+				}
+				bf.append("\t");
+			}
+			else{
+				bf.append(" ");
+			}
+			bf.append("TokenEMail:");
+			if(filterGroupByNotSet){
+				bf.append(" ");
+			}
+			bf.append(this.tokenEMail);
 		}
 		
 		if(bf.length()<=0){
@@ -374,7 +494,7 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 		if(servizioApplicativoFruitore!=null)
 			this.servizioApplicativoFruitore = servizioApplicativoFruitore;
 	}
-
+	
 	public String getErogatore() {
 		return this.erogatore;
 	}
@@ -482,6 +602,107 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 			this.valoreKey = valoreKey;
 	}
 	
+	public String getIdentificativoAutenticato() {
+		return this.identificativoAutenticato;
+	}
+	
+	public String getIdentificativoAutenticatoIfDefined() {
+		if(this.identificativoAutenticato!=null && !this.identificativoAutenticato.equals(QUALSIASI) ){
+			return this.identificativoAutenticato;
+		}
+		return null;
+	}
+
+	public void setIdentificativoAutenticato(String identificativoAutenticato) {
+		if(identificativoAutenticato!=null)
+			this.identificativoAutenticato = identificativoAutenticato;
+	}
+	
+	
+	public String getTokenSubject() {
+		return this.tokenSubject;
+	}
+	
+	public String getTokenSubjectIfDefined() {
+		if(this.tokenSubject!=null && !this.tokenSubject.equals(QUALSIASI) ){
+			return this.tokenSubject;
+		}
+		return null;
+	}
+
+	public void setTokenSubject(String tokenSubject) {
+		if(tokenSubject!=null)
+			this.tokenSubject = tokenSubject;
+	}
+	
+	
+	public String getTokenIssuer() {
+		return this.tokenIssuer;
+	}
+	
+	public String getTokenIssuerIfDefined() {
+		if(this.tokenIssuer!=null && !this.tokenIssuer.equals(QUALSIASI) ){
+			return this.tokenIssuer;
+		}
+		return null;
+	}
+
+	public void setTokenIssuer(String tokenIssuer) {
+		if(tokenIssuer!=null)
+			this.tokenIssuer = tokenIssuer;
+	}
+	
+	
+	public String getTokenClientId() {
+		return this.tokenClientId;
+	}
+	
+	public String getTokenClientIdIfDefined() {
+		if(this.tokenClientId!=null && !this.tokenClientId.equals(QUALSIASI) ){
+			return this.tokenClientId;
+		}
+		return null;
+	}
+
+	public void setTokenClientId(String tokenClientId) {
+		if(tokenClientId!=null)
+			this.tokenClientId = tokenClientId;
+	}
+	
+	
+	public String getTokenUsername() {
+		return this.tokenUsername;
+	}
+	
+	public String getTokenUsernameIfDefined() {
+		if(this.tokenUsername!=null && !this.tokenUsername.equals(QUALSIASI) ){
+			return this.tokenUsername;
+		}
+		return null;
+	}
+
+	public void setTokenUsername(String tokenUsername) {
+		if(tokenUsername!=null)
+			this.tokenUsername = tokenUsername;
+	}
+	
+	
+	public String getTokenEMail() {
+		return this.tokenEMail;
+	}
+	
+	public String getTokenEMailIfDefined() {
+		if(this.tokenEMail!=null && !this.tokenEMail.equals(QUALSIASI) ){
+			return this.tokenEMail;
+		}
+		return null;
+	}
+
+	public void setTokenEMail(String tokenEMail) {
+		if(tokenEMail!=null)
+			this.tokenEMail = tokenEMail;
+	}
+	
 	
 	
 	// **** UTILITIES ****
@@ -518,6 +739,24 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 		bf.append(id.nomeKey);
 		bf.append("\n");
 		bf.append(id.valoreKey);
+		bf.append("\n");
+		
+		bf.append(id.identificativoAutenticato);
+		bf.append("\n");
+		
+		bf.append(id.tokenSubject);
+		bf.append("\n");
+		
+		bf.append(id.tokenIssuer);
+		bf.append("\n");
+		
+		bf.append(id.tokenClientId);
+		bf.append("\n");
+		
+		bf.append(id.tokenUsername);
+		bf.append("\n");
+		
+		bf.append(id.tokenEMail);
 
 		
 		return bf.toString();
@@ -529,7 +768,9 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 		if(tmp==null){
 			throw new Exception("Wrong Format");
 		}
-		if(tmp.length!=11){
+		int oldLength = 11;
+		int newLength = oldLength+1+5; // nella 3.1.0 aggiunto idAutenticato e 5 token claims
+		if(tmp.length!=oldLength && tmp.length!=newLength){
 			throw new Exception("Wrong Format (size: "+tmp.length+")");
 		}
 		for (int i = 0; i < tmp.length; i++) {
@@ -565,6 +806,24 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 			}
 			else if(i==10){
 				id.valoreKey = tmp[i].trim();
+			}
+			else if(i==11){
+				id.identificativoAutenticato = tmp[i].trim();
+			}
+			else if(i==12){
+				id.tokenSubject = tmp[i].trim();
+			}
+			else if(i==13){
+				id.tokenIssuer = tmp[i].trim();
+			}
+			else if(i==14){
+				id.tokenClientId = tmp[i].trim();
+			}
+			else if(i==15){
+				id.tokenUsername = tmp[i].trim();
+			}
+			else if(i==16){
+				id.tokenEMail = tmp[i].trim();
 			}
 		}
 		return id;

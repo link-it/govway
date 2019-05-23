@@ -410,7 +410,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		Date rightPrecedente = null;
 		
 		if(this.policyDateWindowInterval!=null){
-			bf.append("\nDati collezionati per la risorsa '"+nomeRisorsa+"'");
+			bf.append("\nDati collezionati per la metrica '"+nomeRisorsa+"'");
 			
 			if(this.policyRealtime!=null){
 				bf.append("\n");

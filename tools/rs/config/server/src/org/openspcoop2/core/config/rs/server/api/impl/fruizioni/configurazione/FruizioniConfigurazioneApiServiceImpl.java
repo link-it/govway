@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.AutorizzazioneScope;
@@ -88,6 +89,7 @@ import org.openspcoop2.core.config.rs.server.model.GestioneCors;
 import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRichiesta;
 import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.rs.server.model.ListaRateLimitingPolicy;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingCriteriMetricaEnum;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizione;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneUpdate;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneView;
@@ -106,6 +108,7 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
@@ -183,7 +186,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			List<ServizioApplicativo> saCompatibili = env.saCore.soggettiServizioApplicativoList(env.idSoggetto.toIDSoggetto(),env.userLogin,tipoAutenticazione);
 			if (!BaseHelper.findFirst(saCompatibili, s -> s.getId().equals(sa.getId())).isPresent()) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La modalità di autenticazione del servizio Applicativo scelto non è compatibile con il gruppo che si vuole configurare");
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il tipo di credenziali dell'Applicativo non sono compatibili con l'autenticazione impostata nella fruizione selezionata");
 			}
 
 			if ( BaseHelper.findFirst(
@@ -387,6 +390,12 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
+			final AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
+			
 			final RuoloPolicy ruoloPorta = RuoloPolicy.DELEGATA;
 			final String nomePorta = pd.getNome();
 						
@@ -436,6 +445,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 					infoPolicy,
 					ruoloPorta, 
 					nomePorta, 
+					env.apcCore.toMessageServiceBinding(apc.getServiceBinding()),
 					existsMessage, 
 					org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE,
 					modalita
@@ -443,9 +453,13 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
 			}
 			// Qui viene sollevata eccezione se il check non viene superato
-			FruizioniConfigurazioneHelper.attivazionePolicyCheckData(TipoOperazione.ADD, pd, policy,infoPolicy, env, modalita);
+			FruizioniConfigurazioneHelper.attivazionePolicyCheckData(TipoOperazione.ADD, pd, policy,infoPolicy, env, env.apcCore.toMessageServiceBinding(apc.getServiceBinding()), modalita);
+			
+			// aggiorno prossima posizione nella policy
+			ConfigurazioneUtilities.updatePosizioneAttivazionePolicy(env.confCore, infoPolicy, policy, ruoloPorta, nomePorta);
 			
 			env.confCore.performCreateOperation(env.userLogin, false, policy);
+			
 			context.getLogger().info("Invocazione completata con successo");
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
@@ -893,7 +907,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      *
      */
 	@Override
-    public ListaRateLimitingPolicy findAllFruizioneRateLimitingPolicies(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio, String q, Integer limit, Integer offset) {
+    public ListaRateLimitingPolicy findAllFruizioneRateLimitingPolicies(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio, String q, Integer limit, Integer offset, RateLimitingCriteriMetricaEnum metrica) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -906,6 +920,10 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			final int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
 			final Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
+			if(metrica!=null) {
+				String risorsa = ErogazioniApiHelper.getDataElementModalitaRisorsa(metrica);
+				ricerca.addFilter(idLista, Filtri.FILTRO_TIPO_RISORSA_POLICY, risorsa);
+			}
 			List<AttivazionePolicy> policies = env.confCore.attivazionePolicyList(ricerca, RuoloPolicy.DELEGATA, pd.getNome());
 
 			if ( env.findall_404 && policies.isEmpty() ) {
@@ -1891,6 +1909,12 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
+			final AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
+			
 			AttivazionePolicy policy = BaseHelper.supplyOrNotFound( 
 					() -> env.confCore.getAttivazionePolicy(idPolicy, RuoloPolicy.DELEGATA, pd.getNome()),
 					"Rate Limiting Policy con nome " + idPolicy
@@ -1907,7 +1931,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			}
 			
 			String modalita = ErogazioniApiHelper.getDataElementModalita(infoPolicy.isBuiltIn());
-			FruizioniConfigurazioneHelper.attivazionePolicyCheckData(TipoOperazione.CHANGE, pd, policy,infoPolicy, env, modalita);
+			FruizioniConfigurazioneHelper.attivazionePolicyCheckData(TipoOperazione.CHANGE, pd, policy,infoPolicy, env, env.apcCore.toMessageServiceBinding(apc.getServiceBinding()), modalita);
 			
 			env.confCore.performUpdateOperation(env.userLogin, false, policy);
 			

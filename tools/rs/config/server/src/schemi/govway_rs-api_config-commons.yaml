@@ -104,6 +104,14 @@ components:
       example: 'Azione1'
       schema:
         $ref: 'govway_core.yaml#/components/schemas/NCName'
+    metrica:
+      name: metrica
+      in: query
+      description: Identifica una metrica di Rate Limiting
+      required: false
+      example: 'numero-richieste'
+      schema:
+        $ref: '#/components/schemas/RateLimitingCriteriMetricaEnum'
         
   schemas:
  
@@ -1190,12 +1198,10 @@ components:
     RateLimitingPolicyCriteri:
        type: object
        required:
-       - risorsa
+       - metrica
        properties:
-         risorsa:
-            $ref: '#/components/schemas/RateLimitingCriteriRisorsaEnum'
-         esiti:
-            $ref: '#/components/schemas/RateLimitingCriteriRisorsaEsitiEnum'
+         metrica:
+            $ref: '#/components/schemas/RateLimitingCriteriMetricaEnum'
          intervallo:
             $ref: '#/components/schemas/RateLimitingCriteriIntervalloEnum'
          congestione:
@@ -1261,8 +1267,8 @@ components:
             properties:
               filtro:
                  $ref: '#/components/schemas/RateLimitingPolicyFiltroErogazione'
-              criterio_collezionamento_dati:
-                 $ref: '#/components/schemas/RateLimitingPolicyGroupByErogazione'
+              raggruppamento:
+                 $ref: '#/components/schemas/RateLimitingPolicyGroupBy'
     RateLimitingPolicyFruizione:
        type: object
        allOf:
@@ -1271,8 +1277,8 @@ components:
             properties:
               filtro:
                  $ref: '#/components/schemas/RateLimitingPolicyFiltroFruizione'
-              criterio_collezionamento_dati:
-                 $ref: '#/components/schemas/RateLimitingPolicyGroupByFruizione'
+              raggruppamento:
+                 $ref: '#/components/schemas/RateLimitingPolicyGroupBy'
                  
     RateLimitingPolicyErogazioneUpdate:
        type: object
@@ -1282,8 +1288,8 @@ components:
             properties:
               filtro:
                  $ref: '#/components/schemas/RateLimitingPolicyFiltroErogazione'
-              criterio_collezionamento_dati:
-                 $ref: '#/components/schemas/RateLimitingPolicyGroupByErogazione'
+              raggruppamento:
+                 $ref: '#/components/schemas/RateLimitingPolicyGroupBy'
     RateLimitingPolicyFruizioneUpdate:
        type: object
        allOf:
@@ -1292,8 +1298,8 @@ components:
             properties:
               filtro:
                  $ref: '#/components/schemas/RateLimitingPolicyFiltroFruizione'
-              criterio_collezionamento_dati:
-                 $ref: '#/components/schemas/RateLimitingPolicyGroupByFruizione'
+              raggruppamento:
+                 $ref: '#/components/schemas/RateLimitingPolicyGroupBy'
                                  
     RateLimitingPolicyFiltro:
       type: object
@@ -1338,9 +1344,14 @@ components:
         azione:
           type: boolean
           default: false
-        applicativo_fruitore:
+        richiedente:
           type: boolean
           default: false
+        token:
+          type: array
+          items:
+            $ref: 'govway_core.yaml#/components/schemas/TokenClaimEnum'
+          example: [subject, issuer] 
         chiave_tipo:
           $ref: '#/components/schemas/RateLimitingChiaveEnum'
         chiave_nome:
@@ -1354,19 +1365,6 @@ components:
               * content-based: xpath o json path da applicare sul contenuto
               * plugin-based: tipo del plugin
           maxLength: 255
-    RateLimitingPolicyGroupByErogazione:
-       type: object
-       allOf:
-          - $ref: '#/components/schemas/RateLimitingPolicyGroupBy'
-          - type: object
-            properties:
-              soggetto_fruitore:
-                type: boolean
-                default: false
-    RateLimitingPolicyGroupByFruizione:
-       type: object
-       allOf:
-          - $ref: '#/components/schemas/RateLimitingPolicyGroupBy'
                     
     RateLimitingPolicyErogazioneView:
        type: object
@@ -1732,14 +1730,19 @@ components:
       type: string
       enum: ['criteri', 'policy']
       example: 'criteri'
-    RateLimitingCriteriRisorsaEnum:
+    RateLimitingCriteriMetricaEnum:
       type: string
-      enum: ['numero-richieste', 'numero-richieste-simultanee', 'occupazione-banda', 'tempo-medio-risposta', 'tempo-complessivo-risposta']
+      enum: 
+        - 'numero-richieste'
+        - 'numero-richieste-simultanee'
+        - 'occupazione-banda'
+        - 'tempo-medio-risposta'
+        - 'tempo-complessivo-risposta'
+        - 'numero-richieste-ok'
+        - 'numero-richieste-fallite'
+        - 'numero-fault-applicativi'
+        - 'numero-richieste-fallite-o-fault-applicativi'
       example: 'numero-richieste'
-    RateLimitingCriteriRisorsaEsitiEnum:
-      type: string
-      enum: ['ok', 'error', 'fault', 'error_or_fault' ]
-      example: 'ok'
     RateLimitingCriteriIntervalloEnum:
       type: string
       enum: ['minuti', 'orario', 'giornaliero']

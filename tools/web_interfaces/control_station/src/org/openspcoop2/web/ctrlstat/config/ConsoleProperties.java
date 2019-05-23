@@ -294,6 +294,10 @@ public class ConsoleProperties {
 				"policyGestioneToken.builtIn", "policyGestioneToken.builtIn.refresh");
 	}
 	
+	public boolean isControlloTrafficoPolicyGlobaleGroupByApi() throws UtilsException{
+		return this.readBooleanProperty(true, "controlloTraffico.policyGlobale.groupBy.api");
+	}
+	
 	public boolean isAuditingRegistrazioneElementiBinari() throws UtilsException{
 		return this.readBooleanProperty(true, "auditing.registrazioneElementiBinari");
 	}

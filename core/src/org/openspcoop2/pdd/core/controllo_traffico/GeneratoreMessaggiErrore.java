@@ -96,9 +96,15 @@ public class GeneratoreMessaggiErrore {
 	public final static String TEMPLATE_POLICY_ACTIVE_ID = "@CT_POLICY_ACTIVE_ID@"; // identificativo della policy attivata
 	public final static String TEMPLATE_POLICY_ACTIVE_TIPO = "@CT_POLICY_ACTIVE_TIPO@"; // tipo della policy attivata (Globale/API)
 	public final static String TEMPLATE_POLICY_ACTIVE_ALIAS = "@CT_POLICY_ACTIVE_ALIAS@"; // alias della policy attivata
+	public final static String TEMPLATE_POLICY_ACTIVE_RISORSA = "@CT_POLICY_ACTIVE_RISORSA@"; // risorsa in fase di valutazione (es. NumeroRichieste, OccupazioneBanda...)
+	public final static String TEMPLATE_POLICY_ACTIVE_CONTINUE = "@CT_POLICY_ACTIVE_CONTINUE@"; //  true/false; indica se la valutazione delle policy per la stessa risorsa deve continuare o meno
 	public final static String TEMPLATE_POLICY_VIOLATA_MOTIVO = "@CT_POLICY_ERROR_MSG@"; // errore di violazione riscontrato sulla policy
 	public final static String TEMPLATE_POLICY_FILTRATA_MOTIVO = "@CT_POLICY_FILTERED_REASON@"; // motivo di filtro della policy
 	public final static String TEMPLATE_POLICY_NON_APPLICABILE_MOTIVO = "@CT_POLICY_NOT_APPLICABLED_REASON@"; // motivo della mancata applicabilità
+	
+	public final static String TEMPLATE_POLICY_FILTRATA_MOTIVO_FILTRO = "i dati della transazione non rispettano i criteri di filtro impostati: ";
+	public final static String TEMPLATE_POLICY_FILTRATA_MOTIVO_BREAK = "rilevata precedente policy soddisfatta";
+	public final static String TEMPLATE_POLICY_FILTRATA_MOTIVO_BREAK_VIOLATA = "rilevata precedente policy violata";
 	
 	// sono i diagnostici di "appoggio" registrati nel modulo 'all' utilizzati per generare l'errore
 	public final static String TEMPLATE_POLICY_VALORE_SOGLIA = "@CT_SOGLIA@"; // valore della soglia di una policy

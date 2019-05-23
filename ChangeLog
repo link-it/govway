@@ -1,3 +1,23 @@
+2019-05-XX  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-839
+	- Nel registro, le politiche di rate limiting sono state suddivise tra built-in e utente.
+	- L'attivazione delle politiche sono state suddivise tra policy globali e policy delle API, 
+	  anche a livello di eventi monitorabili tramite la consolegovwayMonitor.
+	- Una attivazione di una politica può essere effettuata tramite due modalità:
+	  a) Scelta dei criteri: è possibile indicare i criteri che si desiderano per la politica necessaria (metrica, intervallo temporale).
+				 I criteri serviranno ad identificare una politica built-in esistente sul Gateway.
+	  b) Selezione di una policy utente: è possibile selezionare puntualmente una politica utente definita nel registro.
+	- Migliorato il criterio di utilizzo delle politiche di rate limiting attivate sia a livello globale che per singola api.
+	  Le politiche vengono valutate raggruppate per metrica (numero richieste, simultanee, occupazione banda, tempi medi, numero fallite, ....).
+	  e nell'ordine definito, prima utilizzando le politiche definite a livello API e poi quelle a livello globale.
+	  Ogni politica viene valutata solamente se soddisfa il filtro e i criteri di applicabilità; 
+	  se la regola è violata la transazione fallisce altrimenti la valutazione di una prossima politica, nell'ordine relativo alla medesima metrica,
+	  viene attuata solamente se la politica soddisfatta contiene come istruzione di elaborazione 'prosegui'. 
+	- Migliorate maschere per la gestione dei valori di soglia (con o senza criteri di raggruppamento).
+          Sono stati aggiunti inoltre criteri di raggruppamento dei dati per token, dove è possibile selezionare i principali claim (subject, clientId ...).
+
 2019-05-10  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

@@ -23,8 +23,11 @@ package org.openspcoop2.pdd.core.handlers.transazioni;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 
@@ -38,9 +41,9 @@ import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
 import org.openspcoop2.core.controllo_traffico.constants.Costanti;
-import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoErrore;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.core.eventi.constants.CodiceEventoControlloTraffico;
@@ -84,7 +87,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 	
 	public void process(InRequestProtocolContext context, Transaction tr) throws HandlerException{
 		
-		ElencoIdPolicyAttive idActivePolicyFiltratoPerPorta = null;
+		Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> mapPolicyAttive = null;
 	
 		DatiTransazione datiTransazione = null;
 		
@@ -122,14 +125,54 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 			}
 			
 			if(registerThread){				
-											
-				// Prelevo la configurazione del Controllo del Traffico per quanto concerne le policy attive
+				
 				configPdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
-				ElencoIdPolicyAttive idActivePolicy = null;
+								
+				// Prelevo la configurazione del Controllo del Traffico per quanto concerne le policy attive
+				
+				mapPolicyAttive = new HashMap<>();
+				
+				Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> mapPolicyAttiveAPI = null;
 				try {
-					idActivePolicy = configPdDManager.getElencoIdPolicyAttive(ConfigurazioneControlloTraffico.isPolicyReadedWithDynamicCache());
+					mapPolicyAttiveAPI = configPdDManager.getElencoIdPolicyAttiveAPI(ConfigurazioneControlloTraffico.isPolicyReadedWithDynamicCache(),
+							context.getTipoPorta(), datiTransazione.getNomePorta());
 				}catch(DriverConfigurazioneNotFound notFound) {}
+				if(mapPolicyAttiveAPI!=null && !mapPolicyAttiveAPI.isEmpty()) {
+					Iterator<TipoRisorsaPolicyAttiva> it = mapPolicyAttiveAPI.keySet().iterator();
+					while (it.hasNext()) {
+						TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = (TipoRisorsaPolicyAttiva) it.next();
+						ElencoIdPolicyAttive elencoPolicyAttiveAPI = mapPolicyAttiveAPI.get(tipoRisorsaPolicyAttiva);
+						if(elencoPolicyAttiveAPI!=null) {
+							ElencoIdPolicyAttive cloned = (ElencoIdPolicyAttive) elencoPolicyAttiveAPI.clone(); // altrimenti dopo aggiungendo quelle globali si modifica l'oggetto in cache
+							mapPolicyAttive.put(tipoRisorsaPolicyAttiva, cloned);
+						}
+					}
+				}
 
+				Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> mapPolicyAttiveGlobali = null;
+				try {
+					mapPolicyAttiveGlobali = configPdDManager.getElencoIdPolicyAttiveGlobali(ConfigurazioneControlloTraffico.isPolicyReadedWithDynamicCache());
+				}catch(DriverConfigurazioneNotFound notFound) {}
+				if(mapPolicyAttiveGlobali!=null && !mapPolicyAttiveGlobali.isEmpty()) {
+					Iterator<TipoRisorsaPolicyAttiva> it = mapPolicyAttiveGlobali.keySet().iterator();
+					while (it.hasNext()) {
+						TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = (TipoRisorsaPolicyAttiva) it.next();
+						ElencoIdPolicyAttive elencoPolicyAttiveGlobali = mapPolicyAttiveGlobali.get(tipoRisorsaPolicyAttiva);
+						
+						if(mapPolicyAttive.containsKey(tipoRisorsaPolicyAttiva)) {
+							ElencoIdPolicyAttive elencoPolicyAttiveCloned = mapPolicyAttive.get(tipoRisorsaPolicyAttiva); // gia' clonato per l'api sopra
+							for (IdActivePolicy idActivePolicyGlobale : elencoPolicyAttiveGlobali.getIdActivePolicyList()) {
+								elencoPolicyAttiveCloned.addIdActivePolicy(idActivePolicyGlobale);
+							}
+						}
+						else {
+							ElencoIdPolicyAttive cloned = (ElencoIdPolicyAttive) elencoPolicyAttiveGlobali.clone(); // per non modificare l'oggetto in cache
+							mapPolicyAttive.put(tipoRisorsaPolicyAttiva, cloned);
+						}
+					}
+				}
+				
+				
 				// Gestore delle Policy
 				gestorePolicy = GestorePolicyAttive.getInstance();
 				
@@ -146,26 +189,6 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 						}
 					}
 					includiDescrizioneErrore = configurazioneGenerale.getRateLimiting().isTipoErroreIncludiDescrizione();
-				}
-				
-				// Conservo tutte le policy attive che non riguardano alcuna porta specifica e solamente quelle attive per questa porta
-				// Le altre non ha senso vederle poichè sono di poco interesse per la porta invocata, essendo sempre filtrate
-				idActivePolicyFiltratoPerPorta = new ElencoIdPolicyAttive();
-				if(idActivePolicy!=null && idActivePolicy.sizeIdActivePolicyList()>0){
-					for (IdActivePolicy idActive : idActivePolicy.getIdActivePolicyList()) {
-						if(idActive.getFiltroNomePorta()==null) {
-							idActivePolicyFiltratoPerPorta.addIdActivePolicy(idActive);
-						}
-						else {
-							if(datiTransazione.getNomePorta().equals(idActive.getFiltroNomePorta())) {
-								// verifico che sia anche stessa tipologia fruizione o erogazione
-								if(idActive.getFiltroRuoloPorta()==null || RuoloPolicy.ENTRAMBI.equals(idActive.getFiltroRuoloPorta()) ||
-										idActive.getFiltroRuoloPorta().getValue().equals(context.getTipoPorta().getTipo())	) {
-									idActivePolicyFiltratoPerPorta.addIdActivePolicy(idActive);
-								}
-							}
-						}
-					}
 				}
 				
 			}
@@ -190,13 +213,12 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 				
 				
 				// Effettuo controllo di rate limiting
-				if(idActivePolicyFiltratoPerPorta!=null && idActivePolicyFiltratoPerPorta.sizeIdActivePolicyList()>0){
+				if(mapPolicyAttive!=null && !mapPolicyAttive.isEmpty()){
 									
 					// Emetto Diagnostico  Controllo di RateLimiting
-					msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_NUMERO_POLICY, idActivePolicyFiltratoPerPorta.sizeIdActivePolicyList()+"");
-					context.getPddContext().addObject(GeneratoreMessaggiErrore.TEMPLATE_NUMERO_POLICY, idActivePolicyFiltratoPerPorta.sizeIdActivePolicyList());
 					msgDiag.logPersonalizzato(GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_CONTROLLO_IN_CORSO);
 					
+					int policyTotali = 0;
 					int policyDisabilitate = 0;
 					int policyFiltrate = 0;
 					int policyNonApplicabili = 0;
@@ -213,6 +235,8 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 					
 					DatiTempiRisposta datiTempiRisposta = null;
 					
+					// NOTA: Questo blocco che gestisce la raccolta delle policy soddisfatte e violate per generare gli opportuni header potrebbe essere riscritto utilizzando TipoRisorsaPolicyAttiva
+					// Per adesso non viene modificato.
 					List<RisultatoVerificaPolicy> risultatiVerificaPolicyViolate = new ArrayList<>();
 					Hashtable<TipoRisorsa,List<RisultatoVerificaPolicy>> risultatiVerificaPolicyRispettate = new Hashtable<>();
 					for (TipoRisorsa tipoRisorsa : TipoRisorsa.values()) {
@@ -220,231 +244,264 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 					}
 					
 					try{
-											
-						for (IdActivePolicy idActive : idActivePolicyFiltratoPerPorta.getIdActivePolicyList()) {
+						
+						Iterator<TipoRisorsaPolicyAttiva> it = mapPolicyAttive.keySet().iterator();
+						while (it.hasNext()) {
+							TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = (TipoRisorsaPolicyAttiva) it.next();
+							ElencoIdPolicyAttive elencoPolicyAttivePerRisorsa = mapPolicyAttive.get(tipoRisorsaPolicyAttiva);
+						
+							msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_RISORSA, tipoRisorsaPolicyAttiva.getValue());
 							
-							msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_ID, idActive.getNome());
-													
-							try{
+							boolean policyRispettataCheRichiedeBreak = false;
+							boolean policyViolataBreak = false;
 							
-								if(idActive.isEnabled()){
+							for (IdActivePolicy idActive : elencoPolicyAttivePerRisorsa.getIdActivePolicyList()) {
 								
-									// Prelevo la configurazione del Controllo del Traffico per quanto concerne le policy attive
-									AttivazionePolicy attivazionePolicy = null;
-									try {
-										attivazionePolicy = configPdDManager.getAttivazionePolicy(ConfigurazioneControlloTraffico.isPolicyReadedWithDynamicCache(), 
-											UniqueIdentifierUtilities.getUniqueId(idActive));
-									}catch(DriverConfigurazioneNotFound notFound) {
-										throw new Exception("Istanza di Policy con id ["+idActive.getNome()+"] non esistente: "+notFound.getMessage(),notFound);
-									}
-									if(attivazionePolicy==null){
-										throw new Exception("Istanza di Policy con id ["+idActive.getNome()+"] non esistente?");
-									}
+								policyTotali++;
+								
+								msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_ID, idActive.getNome());
+														
+								try{
+								
+									if(idActive.isEnabled()){
 									
-									msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_ALIAS,
-											PolicyUtilities.getNomeActivePolicy(attivazionePolicy.getAlias(), attivazionePolicy.getIdActivePolicy()));
-									if(attivazionePolicy.getFiltro()!=null && attivazionePolicy.getFiltro().getNomePorta()!=null && !"".equals(attivazionePolicy.getFiltro().getNomePorta())) {
-										msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_TIPO, Costanti.POLICY_API);
-									}
-									else {
-										msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_TIPO, Costanti.POLICY_GLOBALE);
-									}
-									
-									
-									// Verifico se un eventuale filtro configurato per la policy matcha con i dati della transazione
-									boolean matchFiltro = InterceptorPolicyUtilities.filter(attivazionePolicy.getFiltro(), datiTransazione);
-									if(matchFiltro){
-										
-										if(attivazionePolicy.getFiltro().isEnabled() && attivazionePolicy.getFiltro().isInformazioneApplicativaEnabled()){
-										
-											// Verifico Filtro Applicativo
-											String valorePresente = PolicyFiltroApplicativoUtilities.getValore(log,
-													attivazionePolicy.getFiltro().getInformazioneApplicativaTipo(), 
-													attivazionePolicy.getFiltro().getInformazioneApplicativaNome(), 
-													context, datiTransazione, true);
-											if(valorePresente==null || valorePresente.equals(attivazionePolicy.getFiltro().getInformazioneApplicativaValore())==false){
-												
-												policyFiltrate++;
-												
-												// Emetto Diagnostico Policy Filtrata
-												if(valorePresente==null){
-													valorePresente = "n.d.";
-												}
-												msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_FILTRATA_MOTIVO, "Filtro Applicativo atteso ["+
-														attivazionePolicy.getFiltro().getInformazioneApplicativaValore()+"] differente da quello estratto dalla transazione ["+
-														valorePresente+"]");
-												GeneratoreMessaggiDiagnostici.emitDiagnostic(msgDiag, 
-														GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_FILTRATA, log);
-												
-												matchFiltro = false;
-												
-											}
-											
+										// Prelevo la configurazione del Controllo del Traffico per quanto concerne le policy attive
+										AttivazionePolicy attivazionePolicy = null;
+										try {
+											attivazionePolicy = configPdDManager.getAttivazionePolicy(ConfigurazioneControlloTraffico.isPolicyReadedWithDynamicCache(), 
+												UniqueIdentifierUtilities.getUniqueId(idActive));
+										}catch(DriverConfigurazioneNotFound notFound) {
+											throw new Exception("Istanza di Policy con id ["+idActive.getNome()+"] non esistente: "+notFound.getMessage(),notFound);
+										}
+										if(attivazionePolicy==null){
+											throw new Exception("Istanza di Policy con id ["+idActive.getNome()+"] non esistente?");
 										}
 										
+										msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_ALIAS,
+												PolicyUtilities.getNomeActivePolicy(attivazionePolicy.getAlias(), attivazionePolicy.getIdActivePolicy()));
+										if(attivazionePolicy.getFiltro()!=null && attivazionePolicy.getFiltro().getNomePorta()!=null && !"".equals(attivazionePolicy.getFiltro().getNomePorta())) {
+											msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_TIPO, Costanti.POLICY_API);
+										}
+										else {
+											msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_TIPO, Costanti.POLICY_GLOBALE);
+										}
+										
+										
+										// Verifico se un eventuale filtro configurato per la policy matcha con i dati della transazione
+										boolean matchFiltro = !policyRispettataCheRichiedeBreak && !policyViolataBreak && InterceptorPolicyUtilities.filter(attivazionePolicy.getFiltro(), datiTransazione);
 										if(matchFiltro){
-												
-											// Prelevo la configurazione del Controllo del Traffico per quanto concerne le policy istanziata
-											ConfigurazionePolicy configurazionePolicy = null;
-											try {
-												configurazionePolicy = configPdDManager.getConfigurazionePolicy(ConfigurazioneControlloTraffico.isPolicyReadedWithDynamicCache(), idActive.getIdPolicy());
-											}catch(DriverConfigurazioneNotFound notFound) {
-												throw new Exception("Policy con id ["+idActive.getIdPolicy()+"] non esistente: "+notFound.getMessage(),notFound);
-											}
-											if(configurazionePolicy==null){
-												throw new Exception("Policy con id ["+idActive.getIdPolicy()+"] non esistente?");
-											}
 											
-											org.openspcoop2.core.controllo_traffico.beans.ActivePolicy activePolicy = 
-													new org.openspcoop2.core.controllo_traffico.beans.ActivePolicy();
-											activePolicy.setInstanceConfiguration(attivazionePolicy);
-											activePolicy.setConfigurazionePolicy(configurazionePolicy);
-											activePolicy.setTipoRisorsaPolicy(TipoRisorsa.toEnumConstant(configurazionePolicy.getRisorsa(), true));
-											activePolicy.setConfigurazioneControlloTraffico(ConfigurazioneControlloTraffico);
+											if(attivazionePolicy.getFiltro().isEnabled() && attivazionePolicy.getFiltro().isInformazioneApplicativaEnabled()){
 											
-											
-											// Creo Gruppo
-											IDUnivocoGroupByPolicy idUnivocoGroupBy = InterceptorPolicyUtilities.convertToID(log,
-													datiTransazione, attivazionePolicy.getGroupBy(), context);
-											pddContext_idUnivociGroupBy.add(idUnivocoGroupBy);
-											pddContext_uniqueIdsPolicy.add(UniqueIdentifierUtilities.getUniqueId(attivazionePolicy));
-											
-											// Se la Policy richiede una condizione di applicabilità per degrado prestazionale
-											// e non ho ancora recuperato l'informazione sui tempi lo faccio adesso
-											if(datiTempiRisposta==null){
-												datiTempiRisposta = ConnettoreUtilities.getDatiTempiRisposta(context, datiTransazione);
-											}
-																						
-											// Verifico rispetto ai dati collezionati
-											RisultatoVerificaPolicy risultatoVerifica = PolicyVerifier.verifica(
-													configPdDManager, context.getProtocolFactory(),
-													gestorePolicy, log,
-													activePolicy,
-													idUnivocoGroupBy, context.getPddContext(), 
-													msgDiag, tr, datiTransazione, pddCongestionata, datiTempiRisposta,
-													pddContext_policyApplicabile);
-											
-											// Gestisco Risultato Verifica
-											if(risultatoVerifica.isErroreGenerico()){
-												
-												policyInErrore++;
-												
-												// Emetto Diagnostico Policy in Errore
-												log.error("Errore durante il controllo della policy con id["+idActive.getNome()+"]: "+risultatoVerifica.getDescrizione());
-												msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_VIOLATA_MOTIVO, risultatoVerifica.getDescrizione());
-												GeneratoreMessaggiDiagnostici.emitDiagnostic(msgDiag, 
-														GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_IN_ERRORE, log);
-												
-												// Aggiungo tra le policy bloccanti
-												policyBloccanti.add(risultatoVerifica);
-												
-											}
-											else if(risultatoVerifica.isNonApplicabile()){
-												
-												policyNonApplicabili++;
-												
-												// Emetto Diagnostico Policy  Non Applicabile
-												msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_NON_APPLICABILE_MOTIVO, risultatoVerifica.getDescrizione());
-												GeneratoreMessaggiDiagnostici.emitDiagnostic(msgDiag, 
-														GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_NON_APPLICABILE, log);
-												
-											}
-											else if(risultatoVerifica.isViolata()){
-											
-												risultatiVerificaPolicyViolate.add(risultatoVerifica);
-												
-												if(risultatoVerifica.isWarningOnly()){
-	
-													policyViolateWarningOnly++;
+												// Verifico Filtro Applicativo
+												String valorePresente = PolicyFiltroApplicativoUtilities.getValore(log,
+														attivazionePolicy.getFiltro().getInformazioneApplicativaTipo(), 
+														attivazionePolicy.getFiltro().getInformazioneApplicativaNome(), 
+														context, datiTransazione, true);
+												if(valorePresente==null || valorePresente.equals(attivazionePolicy.getFiltro().getInformazioneApplicativaValore())==false){
 													
-													// Emetto Diagnostico Policy Violata in Warning Only
-													msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_VIOLATA_MOTIVO, risultatoVerifica.getDescrizione());
+													policyFiltrate++;
+													
+													// Emetto Diagnostico Policy Filtrata
+													if(valorePresente==null){
+														valorePresente = "n.d.";
+													}
+													msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_FILTRATA_MOTIVO, "Filtro Applicativo atteso ["+
+															attivazionePolicy.getFiltro().getInformazioneApplicativaValore()+"] differente da quello estratto dalla transazione ["+
+															valorePresente+"]");
 													GeneratoreMessaggiDiagnostici.emitDiagnostic(msgDiag, 
-															GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_VIOLATA_WARNING_ONLY, log);
+															GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_FILTRATA, log);
+													
+													matchFiltro = false;
 													
 												}
-												else{
 												
-													policyViolate++;
+											}
+											
+											if(matchFiltro){
 													
-													// Emetto Diagnostico Policy Violata
+												// Prelevo la configurazione del Controllo del Traffico per quanto concerne le policy istanziata
+												ConfigurazionePolicy configurazionePolicy = null;
+												try {
+													configurazionePolicy = configPdDManager.getConfigurazionePolicy(ConfigurazioneControlloTraffico.isPolicyReadedWithDynamicCache(), idActive.getIdPolicy());
+												}catch(DriverConfigurazioneNotFound notFound) {
+													throw new Exception("Policy con id ["+idActive.getIdPolicy()+"] non esistente: "+notFound.getMessage(),notFound);
+												}
+												if(configurazionePolicy==null){
+													throw new Exception("Policy con id ["+idActive.getIdPolicy()+"] non esistente?");
+												}
+												
+												org.openspcoop2.core.controllo_traffico.beans.ActivePolicy activePolicy = 
+														new org.openspcoop2.core.controllo_traffico.beans.ActivePolicy();
+												activePolicy.setInstanceConfiguration(attivazionePolicy);
+												activePolicy.setConfigurazionePolicy(configurazionePolicy);
+												activePolicy.setTipoRisorsaPolicy(TipoRisorsa.toEnumConstant(configurazionePolicy.getRisorsa(), true));
+												activePolicy.setConfigurazioneControlloTraffico(ConfigurazioneControlloTraffico);
+												
+												
+												// Creo Gruppo
+												IDUnivocoGroupByPolicy idUnivocoGroupBy = InterceptorPolicyUtilities.convertToID(log,
+														datiTransazione, attivazionePolicy.getGroupBy(), context);
+												pddContext_idUnivociGroupBy.add(idUnivocoGroupBy);
+												pddContext_uniqueIdsPolicy.add(UniqueIdentifierUtilities.getUniqueId(attivazionePolicy));
+												
+												// Se la Policy richiede una condizione di applicabilità per degrado prestazionale
+												// e non ho ancora recuperato l'informazione sui tempi lo faccio adesso
+												if(datiTempiRisposta==null){
+													datiTempiRisposta = ConnettoreUtilities.getDatiTempiRisposta(context, datiTransazione);
+												}
+																							
+												// Verifico rispetto ai dati collezionati
+												RisultatoVerificaPolicy risultatoVerifica = PolicyVerifier.verifica(
+														configPdDManager, context.getProtocolFactory(),
+														gestorePolicy, log,
+														activePolicy,
+														idUnivocoGroupBy, context.getPddContext(), 
+														msgDiag, tr, datiTransazione, pddCongestionata, datiTempiRisposta,
+														pddContext_policyApplicabile);
+												
+												// Gestisco Risultato Verifica
+												if(risultatoVerifica.isErroreGenerico()){
+													
+													policyInErrore++;
+													
+													// Emetto Diagnostico Policy in Errore
+													log.error("Errore durante il controllo della policy con id["+idActive.getNome()+"]: "+risultatoVerifica.getDescrizione());
 													msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_VIOLATA_MOTIVO, risultatoVerifica.getDescrizione());
 													GeneratoreMessaggiDiagnostici.emitDiagnostic(msgDiag, 
-															GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_VIOLATA, log);
+															GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_IN_ERRORE, log);
 													
 													// Aggiungo tra le policy bloccanti
 													policyBloccanti.add(risultatoVerifica);
 													
 												}
+												else if(risultatoVerifica.isNonApplicabile()){
+													
+													policyNonApplicabili++;
+													
+													// Emetto Diagnostico Policy  Non Applicabile
+													msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_NON_APPLICABILE_MOTIVO, risultatoVerifica.getDescrizione());
+													GeneratoreMessaggiDiagnostici.emitDiagnostic(msgDiag, 
+															GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_NON_APPLICABILE, log);
+													
+												}
+												else if(risultatoVerifica.isViolata()){
+												
+													risultatiVerificaPolicyViolate.add(risultatoVerifica);
+													
+													if(risultatoVerifica.isWarningOnly()){
+		
+														policyViolateWarningOnly++;
+														
+														// Emetto Diagnostico Policy Violata in Warning Only
+														msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_VIOLATA_MOTIVO, risultatoVerifica.getDescrizione());
+														GeneratoreMessaggiDiagnostici.emitDiagnostic(msgDiag, 
+																GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_VIOLATA_WARNING_ONLY, log);
+														
+													}
+													else{
+													
+														policyViolate++;
+														
+														// Emetto Diagnostico Policy Violata
+														msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_VIOLATA_MOTIVO, risultatoVerifica.getDescrizione());
+														GeneratoreMessaggiDiagnostici.emitDiagnostic(msgDiag, 
+																GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_VIOLATA, log);
+														
+														// Aggiungo tra le policy bloccanti
+														policyBloccanti.add(risultatoVerifica);
+														
+													}
+													
+													policyViolataBreak = true;
+												}
+												else{
+													
+													msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_CONTINUE, attivazionePolicy.isContinuaValutazione()+"");
+																										
+													risultatiVerificaPolicyRispettate.get(risultatoVerifica.getRisorsa()).add(risultatoVerifica);
+													
+													// Emetto Diagnostico Policy Rispettata
+													GeneratoreMessaggiDiagnostici.emitDiagnostic(msgDiag, 
+															GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_RISPETTATA, log);
+													
+													policyRispettate++;
+													
+													if(!attivazionePolicy.isContinuaValutazione()) {
+														policyRispettataCheRichiedeBreak = true;
+													}
+													
+												}
+												
 											}
-											else{
-												
-												risultatiVerificaPolicyRispettate.get(risultatoVerifica.getRisorsa()).add(risultatoVerifica);
-												
-												// Emetto Diagnostico Policy Rispettata
-												GeneratoreMessaggiDiagnostici.emitDiagnostic(msgDiag, 
-														GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_RISPETTATA, log);
-												
-												policyRispettate++;
-												
+											
+										}
+										else{
+											
+											policyFiltrate++;
+											
+											// Emetto Diagnostico Policy Filtrata
+											if(policyRispettataCheRichiedeBreak) {
+												msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_FILTRATA_MOTIVO, 
+														GeneratoreMessaggiErrore.TEMPLATE_POLICY_FILTRATA_MOTIVO_BREAK);
 											}
+											else if(policyViolataBreak) {
+												msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_FILTRATA_MOTIVO, 
+														GeneratoreMessaggiErrore.TEMPLATE_POLICY_FILTRATA_MOTIVO_BREAK_VIOLATA);
+											}
+											else {
+												msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_FILTRATA_MOTIVO, 
+														GeneratoreMessaggiErrore.TEMPLATE_POLICY_FILTRATA_MOTIVO_FILTRO+ PolicyUtilities.toStringFilter(attivazionePolicy.getFiltro()));
+											}
+											GeneratoreMessaggiDiagnostici.emitDiagnostic(msgDiag, 
+													GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_FILTRATA, log);
 											
 										}
 										
 									}
 									else{
 										
-										policyFiltrate++;
+										policyDisabilitate++;
 										
-										// Emetto Diagnostico Policy Filtrata
-										msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_FILTRATA_MOTIVO, PolicyUtilities.toStringFilter(attivazionePolicy.getFiltro()));
+										// Emetto Diagnostico Policy Disabilitata
 										GeneratoreMessaggiDiagnostici.emitDiagnostic(msgDiag, 
-												GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_FILTRATA, log);
+												GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_DISABILITATA, log);
 										
 									}
 									
 								}
-								else{
+								catch(Throwable e){
 									
-									policyDisabilitate++;
+									policyInErrore++;
 									
-									// Emetto Diagnostico Policy Disabilitata
+									// Messaggio di Errore
+									Throwable tConMessaggio = Utilities.getInnerNotEmptyMessageException(e);
+									String eMessaggio = tConMessaggio.getMessage();
+									if(eMessaggio==null || "".equals(eMessaggio) || "null".equalsIgnoreCase(eMessaggio)){
+										eMessaggio = "Internal Error"; // molto probabilmente si tratta di un null Pointer. Lo si vedra' nel logger
+									}
+									
+									// Emetto Diagnostico Policy in Errore
+									log.error("Errore durante il controllo della policy con id["+idActive.getNome()+"]: "+eMessaggio,e);
+									msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_VIOLATA_MOTIVO, eMessaggio);
 									GeneratoreMessaggiDiagnostici.emitDiagnostic(msgDiag, 
-											GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_DISABILITATA, log);
+											GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_IN_ERRORE, log);
+									
+									// Aggiungo tra le policy bloccanti
+									RisultatoVerificaPolicy policyError = new RisultatoVerificaPolicy();
+									policyError.setErroreGenerico(true);
+									policyError.setDescrizione(eMessaggio);
+									policyBloccanti.add(policyError);
 									
 								}
 								
-							}
-							catch(Throwable e){
+								// Effettuo clean dei dati dinamici della policy
+								GeneratoreMessaggiDiagnostici.cleanPolicyValues(msgDiag);
 								
-								policyInErrore++;
 								
-								// Messaggio di Errore
-								Throwable tConMessaggio = Utilities.getInnerNotEmptyMessageException(e);
-								String eMessaggio = tConMessaggio.getMessage();
-								if(eMessaggio==null || "".equals(eMessaggio) || "null".equalsIgnoreCase(eMessaggio)){
-									eMessaggio = "Internal Error"; // molto probabilmente si tratta di un null Pointer. Lo si vedra' nel logger
-								}
-								
-								// Emetto Diagnostico Policy in Errore
-								log.error("Errore durante il controllo della policy con id["+idActive.getNome()+"]: "+eMessaggio,e);
-								msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_VIOLATA_MOTIVO, eMessaggio);
-								GeneratoreMessaggiDiagnostici.emitDiagnostic(msgDiag, 
-										GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_IN_ERRORE, log);
-								
-								// Aggiungo tra le policy bloccanti
-								RisultatoVerificaPolicy policyError = new RisultatoVerificaPolicy();
-								policyError.setErroreGenerico(true);
-								policyError.setDescrizione(eMessaggio);
-								policyBloccanti.add(policyError);
-								
-							}
+							} // -- fine for delle policy di una risorsa
 							
-							// Effettuo clean dei dati dinamici della policy
-							GeneratoreMessaggiDiagnostici.cleanPolicyValues(msgDiag);
-							
-							
-						} // -- fine for delle policy
+						} // -- fine iterazione per tipo di risorsa
 						
 					}finally{
 						if(pddContext_idUnivociGroupBy.size()>0){
@@ -511,6 +568,9 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 					
 					// Emetto Diagnostico Terminazione Controllo Rate limiting
 					
+					msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_NUMERO_POLICY, policyTotali+"");
+					context.getPddContext().addObject(GeneratoreMessaggiErrore.TEMPLATE_NUMERO_POLICY, policyTotali);
+										
 					msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_NUMERO_POLICY_DISABILITATE, policyDisabilitate+"");
 					context.getPddContext().addObject(GeneratoreMessaggiErrore.TEMPLATE_NUMERO_POLICY_DISABILITATE, policyDisabilitate);
 					

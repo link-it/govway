@@ -25,14 +25,19 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.commons.Filtri;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
@@ -48,7 +53,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 public class ConfigurazioneUtilities {
 
 	public static boolean alreadyExists(TipoOperazione tipoOperazione, ConfigurazioneCore confCore, ConfigurazioneHelper confHelper, 
-			AttivazionePolicy policy, InfoPolicy infoPolicy, RuoloPolicy ruoloPorta, String nomePorta,
+			AttivazionePolicy policy, InfoPolicy infoPolicy, RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding,
 			StringBuffer existsMessage, String newLine, String modalita) throws Exception {
 		if(infoPolicy!=null){
 			
@@ -59,7 +64,7 @@ public class ConfigurazioneUtilities {
 			
 			AttivazionePolicy p = null;
 			try {
-				p = confCore.getGlobalPolicy(policy.getIdPolicy(),policy.getFiltro(), policy.getGroupBy(),
+				p = confCore.getPolicy(policy.getIdPolicy(),policy.getFiltro(), policy.getGroupBy(),
 						ruoloPorta, nomePorta);
 			}catch(DriverControlStationNotFound e) {
 				//ignore
@@ -75,9 +80,9 @@ public class ConfigurazioneUtilities {
 					
 					String messaggio = prefisso+newLine+
 							"e"+newLine+
-							"Raggruppamento: "+ confHelper.toStringCompactGroupBy(policy.getGroupBy(),ruoloPorta,nomePorta)+newLine+
+							"Raggruppamento: "+ confHelper.toStringCompactGroupBy(policy.getGroupBy(),ruoloPorta,nomePorta,serviceBinding)+newLine+
 							"e"+newLine+	
-							"Filtro: "+ confHelper.toStringCompactFilter(policy.getFiltro(),ruoloPorta,nomePorta);
+							"Filtro: "+ confHelper.toStringCompactFilter(policy.getFiltro(),ruoloPorta,nomePorta,serviceBinding);
 					existsMessage.append(messaggio);
 					return true; 
 				}
@@ -86,7 +91,7 @@ public class ConfigurazioneUtilities {
 			AttivazionePolicy pAlias = null;
 			if(policy.getAlias()!=null && !"".equals(policy.getAlias())) {
 				try {
-					pAlias = confCore.getGlobalPolicyByAlias(policy.getAlias(),
+					pAlias = confCore.getPolicyByAlias(policy.getAlias(),
 							ruoloPorta, nomePorta);
 				}catch(DriverControlStationNotFound e) {
 					//ignore
@@ -165,5 +170,25 @@ public class ConfigurazioneUtilities {
 			confCore.performDeleteOperation(userLogin, confHelper.smista(), (Object[]) policiesRimosse.toArray(new AttivazionePolicy[1])); 
 		}
 			
+	}
+	
+	public static void updatePosizioneAttivazionePolicy(ConfigurazioneCore confCore, InfoPolicy infoPolicy, AttivazionePolicy policy,
+			RuoloPolicy ruoloPorta, String nomePorta) throws Exception {
+		// calcolo prossima posizione
+		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
+		
+		Search ricercaRipoRisorsa = new Search(true);
+		TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = TipoRisorsaPolicyAttiva.getTipo(infoPolicy.getTipoRisorsa(),infoPolicy.isCheckRichiesteSimultanee());
+		ricercaRipoRisorsa.addFilter(idLista, Filtri.FILTRO_TIPO_RISORSA_POLICY, tipoRisorsaPolicyAttiva.getValue());
+		List<AttivazionePolicy> listaPolicyConTipoRisorsa = confCore.attivazionePolicyList(ricercaRipoRisorsa, ruoloPorta, nomePorta);
+		int posizione = 1;
+		if(listaPolicyConTipoRisorsa!=null && !listaPolicyConTipoRisorsa.isEmpty()) {
+			for (AttivazionePolicy check : listaPolicyConTipoRisorsa) {
+				if(check.getPosizione()>=posizione) {
+					posizione = check.getPosizione()+1;
+				}
+			}
+		}
+		policy.setPosizione(posizione);
 	}
 }

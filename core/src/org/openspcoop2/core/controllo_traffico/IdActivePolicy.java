@@ -39,6 +39,8 @@ import java.io.Serializable;
  * &lt;complexType name="id-active-policy">
  * 		&lt;sequence>
  * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="posizione" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="continua-valutazione" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="id-policy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="update-time" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
@@ -58,6 +60,8 @@ import java.io.Serializable;
 @XmlType(name = "id-active-policy", 
   propOrder = {
   	"nome",
+  	"posizione",
+  	"continuaValutazione",
   	"idPolicy",
   	"enabled",
   	"updateTime",
@@ -92,6 +96,26 @@ public class IdActivePolicy extends org.openspcoop2.utils.beans.BaseBean impleme
 
   public void setNome(java.lang.String nome) {
     this.nome = nome;
+  }
+
+  public int getPosizione() {
+    return this.posizione;
+  }
+
+  public void setPosizione(int posizione) {
+    this.posizione = posizione;
+  }
+
+  public boolean isContinuaValutazione() {
+    return this.continuaValutazione;
+  }
+
+  public boolean getContinuaValutazione() {
+    return this.continuaValutazione;
+  }
+
+  public void setContinuaValutazione(boolean continuaValutazione) {
+    this.continuaValutazione = continuaValutazione;
   }
 
   public java.lang.String getIdPolicy() {
@@ -160,6 +184,14 @@ public class IdActivePolicy extends org.openspcoop2.utils.beans.BaseBean impleme
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome",required=true,nillable=false)
   protected java.lang.String nome;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @XmlElement(name="posizione",required=false,nillable=false)
+  protected int posizione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlElement(name="continua-valutazione",required=false,nillable=false)
+  protected boolean continuaValutazione;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-policy",required=false,nillable=false)

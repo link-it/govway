@@ -32,8 +32,10 @@ import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TrasformazioneRegolaParametroTipoAzione;
 import org.openspcoop2.core.config.constants.VersioneSOAP;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
+import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.web.lib.mvc.Costanti;
 
@@ -124,6 +126,8 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PROTOCOLLI_COMPACT = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLI_COMPACT;
 	
 	public final static String LABEL_EMPTY = "&nbsp;";
+	
+	public final static String LABEL_BOTTONE_INDIVIDUA_GRUPPO = "Individua Gruppo";
 	
 	public final static String LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE_COLUMN = "Non standard";
 	public final static String LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE = "Configurazione non visualizzabile";
@@ -464,9 +468,7 @@ public class CostantiControlStation {
 	
 	
 	public final static String LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE = "Id";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE = "";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SPOSTA_SU = "Sposta su";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SPOSTA_GIU = "Sposta gi&ugrave;";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE = "Ordine";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_RISORSE = "Risorse";
@@ -539,6 +541,20 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO = "Operazione";
 	
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK = "Completate con successo";
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT = "Fault Applicativo";
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE = "Fallite";
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE_FAULT = "Fallite - Fault Applicativo";
+	
+	public final static String LABEL_CONFIGURAZIONE_RISORSA_NUMERO_RICHIESTE = "Numero Richieste";
+	public final static String LABEL_CONFIGURAZIONE_RISORSA_NUMERO_RICHIESTE_SIMULTANEE = "Numero Richieste Simultanee";
+	public final static String LABEL_CONFIGURAZIONE_RISORSA_OCCUPAZIONE_BANDA = "Occupazione Banda";
+	public final static String LABEL_CONFIGURAZIONE_RISORSA_TEMPO_MEDIO_RISPOSTA = "Tempo Medio Risposta";
+	public final static String LABEL_CONFIGURAZIONE_RISORSA_COMPLESSIVO_RISPOSTA = "Tempo Complessivo Risposta";
+	
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU = "Sposta su";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU = "Sposta gi&ugrave;";
+		
 	// POLICY TIPO
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO = "Tipo";
 	
@@ -559,6 +575,37 @@ public class CostantiControlStation {
 			LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_UTENTE
 	};
 	
+	// POLICY RISORSA TIPO
+	
+	public final static boolean USE_SELECT_LIST_SEPARATE_METRICHE = false;
+	
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA_TIPO = "Metrica";
+	
+	public final static TipoRisorsaPolicyAttiva DEFAULT_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA_TIPO_VALUE = TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE;
+	
+	public final static String[] LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_VALORI = {
+			TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE.getValue(),
+			TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_SIMULTANEE.getValue(),
+			TipoRisorsaPolicyAttiva.OCCUPAZIONE_BANDA.getValue(),
+			TipoRisorsaPolicyAttiva.TEMPO_MEDIO_RISPOSTA.getValue(),
+			TipoRisorsaPolicyAttiva.TEMPO_COMPLESSIVO_RISPOSTA.getValue(),
+			TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO.getValue(),
+			TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE.getValue(),
+			TipoRisorsaPolicyAttiva.NUMERO_FAULT_APPLICATIVI.getValue(),
+			TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI.getValue()
+	};
+	public final static String[] LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_LABELS = {
+			LABEL_CONFIGURAZIONE_RISORSA_NUMERO_RICHIESTE,
+			LABEL_CONFIGURAZIONE_RISORSA_NUMERO_RICHIESTE_SIMULTANEE,
+			LABEL_CONFIGURAZIONE_RISORSA_OCCUPAZIONE_BANDA,
+			LABEL_CONFIGURAZIONE_RISORSA_TEMPO_MEDIO_RISPOSTA,
+			LABEL_CONFIGURAZIONE_RISORSA_COMPLESSIVO_RISPOSTA,
+			LABEL_CONFIGURAZIONE_RISORSA_NUMERO_RICHIESTE+ " "+LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK,	
+			LABEL_CONFIGURAZIONE_RISORSA_NUMERO_RICHIESTE+ " "+LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE,	
+			"Numero Fault Applicativi",	
+			LABEL_CONFIGURAZIONE_RISORSA_NUMERO_RICHIESTE+ " "+LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE+" o Fault Applicativi",	
+	};
+
 	
 	/** PARAMETERS **/
 	
@@ -875,9 +922,9 @@ public class CostantiControlStation {
 	public final static String VALUE_PARAMETRO_DUMP_SEZIONE_RISPOSTA = "risposta";
 	
 	public final static String LABEL_LIST_VALORE_NON_PRESENTE = "--";
-	public static final String DEFAULT_VALUE_AZIONE_NON_SELEZIONATA = "-";
 	public static final String DEFAULT_VALUE_NON_SELEZIONATO = "-";
-	
+	public static final String DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA = ""; // lasciare vuota, se si usa il trattino rimane aperto l'area di ricerca con filtro Qualsiasi
+		
 	public final static String VALUE_PARAMETRO_PROPERTIES_MODE_DEFAULT = "default";
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN = org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA;
@@ -931,8 +978,8 @@ public class CostantiControlStation {
 			 VALUE_PARAMETRO_CONFIGURAZIONE_RETURN_CODE_INTERVALLO
 	};
 	
-	public final static String VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_SU = "su";
-	public final static String VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_POSIZIONE_GIU = "giu";
+	public final static String VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SU = "su";
+	public final static String VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_GIU = "giu";
 	
 	public final static String VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_ADD = TrasformazioneRegolaParametroTipoAzione.ADD.getValue();
 	public final static String VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE = TrasformazioneRegolaParametroTipoAzione.DELETE.getValue();
@@ -992,8 +1039,10 @@ public class CostantiControlStation {
 	/** ICONE */
 	public final static String ICONA_FRECCIA_SU = "&#xE316;";
 	public final static String ICONA_FRECCIA_GIU = "&#xE313;";
-	public final static String ICONA_PLACEHOLDER = "&#160;&#160;&#160;&#160;";
+	public final static String ICONA_PLACEHOLDER = "&#160;&#160;&#160;&#160;&#160;";
 	
+	public final static String ICONA_CONTINUE = "&#xe5db;";
+	public final static String ICONA_BREAK = "&#xe5cd;";
 	
 	/** COSTANTI FILE TEMPORANEI */
 	public final static String TEMP_FILE_PREFIX = "__pddconsole__";
@@ -1002,6 +1051,7 @@ public class CostantiControlStation {
 	/** COSTANTI VISUALIZZAZIONE MESSAGGI MODIFICA POSIZIONE TRASFORMAZIONI */
 	public static final boolean VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_REGOLA_TRASFORMAZIONE = false;
 	public static final boolean VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_RISPOSTA_REGOLA_TRASFORMAZIONE = false;
+	public static final boolean VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_POLICY = false;
 	
 	/** COSTANTE DIMENSIONE TEXT_AREAD */
 	public final static int LABEL_PARAMETRO_TEXT_AREA_SIZE = 3;
@@ -1259,7 +1309,43 @@ public class CostantiControlStation {
 		LABEL_CONFIGURAZIONE_POLICY_STATO_VALORI.add(LABEL_CONFIGURAZIONE_POLICY_STATO_DISABILITATO);
 	}
 	
+	
+	public final static List<String> LABEL_TOKEN_VALUES = new ArrayList<>();
+	static {
+		LABEL_TOKEN_VALUES.add(LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_SUBJECT);
+		LABEL_TOKEN_VALUES.add(LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_ISSUER);
+		LABEL_TOKEN_VALUES.add(LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_CLIENT_ID);
+		LABEL_TOKEN_VALUES.add(LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME);
+		LABEL_TOKEN_VALUES.add(LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL);
+	}
+	
+	public final static List<String> LABEL_TOKEN_VALUES_WITHOUT_ISSUER = new ArrayList<>();
+	static {
+		LABEL_TOKEN_VALUES_WITHOUT_ISSUER.add(LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_SUBJECT);
+		LABEL_TOKEN_VALUES_WITHOUT_ISSUER.add(LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_CLIENT_ID);
+		LABEL_TOKEN_VALUES_WITHOUT_ISSUER.add(LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME);
+		LABEL_TOKEN_VALUES_WITHOUT_ISSUER.add(LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL);
+	}
+	
+	public final static List<String> TOKEN_VALUES = new ArrayList<>();
+	static {
+		TOKEN_VALUES.add(TipoCredenzialeMittente.token_subject.name());
+		TOKEN_VALUES.add(TipoCredenzialeMittente.token_issuer.name());
+		TOKEN_VALUES.add(TipoCredenzialeMittente.token_clientId.name());
+		TOKEN_VALUES.add(TipoCredenzialeMittente.token_username.name());
+		TOKEN_VALUES.add(TipoCredenzialeMittente.token_eMail.name());
+	}
+	
+	public final static List<String> TOKEN_VALUES_WITHOUT_ISSUER = new ArrayList<>();
+	static {
+		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_subject.name());
+		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_clientId.name());
+		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_username.name());
+		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_eMail.name());
+	}
+	
 	/** MESSAGGI */
+	public static final String MESSAGGIO_CONFERMA_REGOLA_POLICY_SPOSTATA_CORRETTAMENTE = "Posizione della policy modificata correttamente.";
 	public static final String MESSAGGIO_CONFERMA_REGOLA_TRASFORMAZIONE_SPOSTATA_CORRETTAMENTE = "Posizione della regola modificata correttamente.";
 	public static final String MESSAGGIO_CONFERMA_REGOLA_TRASFORMAZIONE_RISPOSTA_SPOSTATA_CORRETTAMENTE ="Posizione della regola di risposta modificata correttamente.";
 	 
