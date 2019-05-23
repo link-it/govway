@@ -20,22 +20,7 @@ ALTER TABLE ct_active_policy ALTER COLUMN policy_posizione INT NOT NULL;
 ALTER TABLE ct_active_policy ADD policy_continue BIT NOT NULL DEFAULT 'false';
 
 
--- Criterio nel filtro permette molteplici azione, applicativi e soggetti.
-
-ALTER TABLE ct_active_policy ADD temp VARCHAR(max); 
-UPDATE ct_active_policy SET temp=filtro_nome_fruitore; 
-ALTER TABLE ct_active_policy DROP COLUMN filtro_nome_fruitore ;
-EXEC sp_rename  'ct_active_policy.temp' , 'filtro_nome_fruitore' , 'COLUMN'
-
-ALTER TABLE ct_active_policy ADD temp VARCHAR(max); 
-UPDATE ct_active_policy SET temp=filtro_tipo_fruitore; 
-ALTER TABLE ct_active_policy DROP COLUMN filtro_tipo_fruitore ;
-EXEC sp_rename  'ct_active_policy.temp' , 'filtro_tipo_fruitore' , 'COLUMN'
-
-ALTER TABLE ct_active_policy ADD temp VARCHAR(max); 
-UPDATE ct_active_policy SET temp=filtro_sa_fruitore; 
-ALTER TABLE ct_active_policy DROP COLUMN filtro_sa_fruitore ;
-EXEC sp_rename  'ct_active_policy.temp' , 'filtro_sa_fruitore' , 'COLUMN'
+-- Criterio nel filtro permette molteplici azione
 
 ALTER TABLE ct_active_policy ADD temp VARCHAR(max); 
 UPDATE ct_active_policy SET temp=filtro_azione; 

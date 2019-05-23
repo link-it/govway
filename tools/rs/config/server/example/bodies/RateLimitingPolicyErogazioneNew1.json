@@ -4,7 +4,7 @@
 
     "filtro": {
         "soggetto_fruitore": "SoggettoJson",
-        "azione": "Qualsiasi",
+        "azione": ["GET_pets","POST_pets"],
         "chiave_tipo": "content-based",
         "chiave_nome": "chiave1",
         "filtro_chiave_valore": "chiave_valore1"

@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import java.util.List;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingChiaveEnum;
 import javax.validation.constraints.*;
 
@@ -31,7 +32,10 @@ import javax.validation.Valid;
 public class RateLimitingPolicyFiltro  {
   
   @Schema(description = "")
-  private String azione = null;
+  private List<String> azione = null;
+  
+  @Schema(description = "")
+  private String ruoloRichiedente = null;
   
   @Schema(description = "")
   private String applicativoFruitore = null;
@@ -56,16 +60,40 @@ public class RateLimitingPolicyFiltro  {
   **/
   @JsonProperty("azione")
   @Valid
- @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getAzione() {
+  public List<String> getAzione() {
     return this.azione;
   }
 
-  public void setAzione(String azione) {
+  public void setAzione(List<String> azione) {
     this.azione = azione;
   }
 
-  public RateLimitingPolicyFiltro azione(String azione) {
+  public RateLimitingPolicyFiltro azione(List<String> azione) {
     this.azione = azione;
+    return this;
+  }
+
+  public RateLimitingPolicyFiltro addAzioneItem(String azioneItem) {
+    this.azione.add(azioneItem);
+    return this;
+  }
+
+ /**
+   * Get ruoloRichiedente
+   * @return ruoloRichiedente
+  **/
+  @JsonProperty("ruolo_richiedente")
+  @Valid
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getRuoloRichiedente() {
+    return this.ruoloRichiedente;
+  }
+
+  public void setRuoloRichiedente(String ruoloRichiedente) {
+    this.ruoloRichiedente = ruoloRichiedente;
+  }
+
+  public RateLimitingPolicyFiltro ruoloRichiedente(String ruoloRichiedente) {
+    this.ruoloRichiedente = ruoloRichiedente;
     return this;
   }
 
@@ -152,6 +180,7 @@ public class RateLimitingPolicyFiltro  {
     sb.append("class RateLimitingPolicyFiltro {\n");
     
     sb.append("    azione: ").append(RateLimitingPolicyFiltro.toIndentedString(this.azione)).append("\n");
+    sb.append("    ruoloRichiedente: ").append(RateLimitingPolicyFiltro.toIndentedString(this.ruoloRichiedente)).append("\n");
     sb.append("    applicativoFruitore: ").append(RateLimitingPolicyFiltro.toIndentedString(this.applicativoFruitore)).append("\n");
     sb.append("    chiaveTipo: ").append(RateLimitingPolicyFiltro.toIndentedString(this.chiaveTipo)).append("\n");
     sb.append("    chiaveNome: ").append(RateLimitingPolicyFiltro.toIndentedString(this.chiaveNome)).append("\n");

@@ -935,7 +935,7 @@
 					<xsd:appinfo>
 						<linkit:generator
 							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-column-mapping name="filtro_tipo_fruitore" text="true"/>
+							<linkit:sql-column-mapping name="filtro_tipo_fruitore"/>
 							<linkit:sql-ddl-column-comment><![CDATA[L'attivazione della policy riguarda solamente transazioni che possiedono il tipo di fruitore indicato]]></linkit:sql-ddl-column-comment>
 						</linkit:generator>
 					</xsd:appinfo>
@@ -946,7 +946,7 @@
 					<xsd:appinfo>
 						<linkit:generator
 							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-column-mapping name="filtro_nome_fruitore" text="true"/>
+							<linkit:sql-column-mapping name="filtro_nome_fruitore"/>
 							<linkit:sql-ddl-column-comment><![CDATA[L'attivazione della policy riguarda solamente transazioni che possiedono il nome del fruitore indicato]]></linkit:sql-ddl-column-comment>
 						</linkit:generator>
 					</xsd:appinfo>
@@ -968,7 +968,7 @@
 					<xsd:appinfo>
 						<linkit:generator
 							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-column-mapping name="filtro_sa_fruitore" text="true"/>
+							<linkit:sql-column-mapping name="filtro_sa_fruitore"/>
 							<linkit:sql-ddl-column-comment><![CDATA[L'attivazione della policy riguarda solamente transazioni che possiedono il servizio applicativo fruitore indicato]]></linkit:sql-ddl-column-comment>
 						</linkit:generator>
 					</xsd:appinfo>

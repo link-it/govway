@@ -22,22 +22,7 @@ ALTER TABLE ct_active_policy ADD policy_continue NUMBER NOT NULL;
 ALTER TABLE ct_active_policy MODIFY policy_continue DEFAULT 0;
 
 
--- Criterio nel filtro permette molteplici azione, applicativi e soggetti.
-
-ALTER TABLE ct_active_policy ADD temp CLOB; 
-UPDATE ct_active_policy SET temp=filtro_nome_fruitore; 
-ALTER TABLE ct_active_policy DROP COLUMN filtro_nome_fruitore ;
-ALTER TABLE ct_active_policy RENAME COLUMN temp TO filtro_nome_fruitore; 
-
-ALTER TABLE ct_active_policy ADD temp CLOB; 
-UPDATE ct_active_policy SET temp=filtro_tipo_fruitore; 
-ALTER TABLE ct_active_policy DROP COLUMN filtro_tipo_fruitore ;
-ALTER TABLE ct_active_policy RENAME COLUMN temp TO filtro_tipo_fruitore;
-
-ALTER TABLE ct_active_policy ADD temp CLOB; 
-UPDATE ct_active_policy SET temp=filtro_sa_fruitore; 
-ALTER TABLE ct_active_policy DROP COLUMN filtro_sa_fruitore ;
-ALTER TABLE ct_active_policy RENAME COLUMN temp TO filtro_sa_fruitore;
+-- Criterio nel filtro permette molteplici azione
 
 ALTER TABLE ct_active_policy ADD temp CLOB; 
 UPDATE ct_active_policy SET temp=filtro_azione; 

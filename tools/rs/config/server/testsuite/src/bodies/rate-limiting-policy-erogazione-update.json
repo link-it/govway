@@ -4,6 +4,7 @@
     "soglia_ridefinita": false,
 
     "filtro": {
+	"azione": ["GET_pet.findByStatus","GET_pet.findByTags"],
         "chiave_tipo": "content-based",
         "chiave_nome": "chiave1",
         "filtro_chiave_valore": "chiave_valore1"

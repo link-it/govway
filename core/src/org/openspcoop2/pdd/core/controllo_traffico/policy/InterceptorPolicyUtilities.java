@@ -21,17 +21,23 @@
  */
 package org.openspcoop2.pdd.core.controllo_traffico.policy;
 
+import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolContext;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.slf4j.Logger;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
@@ -234,6 +240,10 @@ public class InterceptorPolicyUtilities {
 				}
 			}
 			
+			if(context.getIntegrazione().getServizioApplicativoFruitore()!=null){
+				datiTransazione.setServizioApplicativoFruitore(context.getIntegrazione().getServizioApplicativoFruitore());
+			}
+			
 		}
 		
 		if(context.getPddContext()!=null) {
@@ -306,7 +316,7 @@ public class InterceptorPolicyUtilities {
 		return registerThread;
 	}
 	
-	public static boolean filter(AttivazionePolicyFiltro filtro, DatiTransazione datiTransazione) throws Exception{
+	public static boolean filter(AttivazionePolicyFiltro filtro, DatiTransazione datiTransazione, IState state) throws Exception{
 		
 		if(filtro.isEnabled()){
 						
@@ -332,7 +342,9 @@ public class InterceptorPolicyUtilities {
 				
 			}
 			
+			boolean policyGlobale = true;
 			if(filtro.getNomePorta()!=null && !"".equals(filtro.getNomePorta())){
+				policyGlobale = false;
 				if(datiTransazione.getNomePorta()==null){
 					return false;
 				}
@@ -342,26 +354,68 @@ public class InterceptorPolicyUtilities {
 			}
 			
 			if(filtro.getRuoloFruitore()!=null && !"".equals(filtro.getRuoloFruitore())){
-				if(datiTransazione.getSoggettoFruitore()==null || 
-						datiTransazione.getSoggettoFruitore().getTipo()==null || 
-						datiTransazione.getSoggettoFruitore().getNome()==null){
-					return false;
-				}
-				IDSoggetto idFruitore = new IDSoggetto(datiTransazione.getSoggettoFruitore().getTipo(), datiTransazione.getSoggettoFruitore().getNome());
-				RegistroServiziManager registroManager = RegistroServiziManager.getInstance();
-				Soggetto soggetto = registroManager.getSoggetto(idFruitore, null);
-				boolean foundRuolo = false;
-				if(soggetto.getRuoli()!=null) {
-					for (int i = 0; i < soggetto.getRuoli().sizeRuoloList(); i++) {
-						if(soggetto.getRuoli().getRuolo(i).getNome().equals(filtro.getRuoloFruitore())) {
-							foundRuolo = true;
-							break;
+					
+				/*
+				 * Se policyGlobale:
+				 *    si controlla sia il fruitore che l'applicativo. Basta che uno sia soddisfatto.
+				 * else
+				 * 	  nel caso di delegata si controlla solo l'applicativo.
+				 *    nel caso di applicativa entrambi, e basta che uno sia soddisfatto.
+				 **/
+				
+				// diventa policy richiedente
+				
+				boolean ruoloSoggetto = false;
+				boolean ruoloApplicativo = false;
+				
+				if(datiTransazione.getSoggettoFruitore()!=null && 
+						datiTransazione.getSoggettoFruitore().getTipo()!=null && 
+						datiTransazione.getSoggettoFruitore().getNome()!=null){
+					
+					IDSoggetto idFruitore = new IDSoggetto(datiTransazione.getSoggettoFruitore().getTipo(), datiTransazione.getSoggettoFruitore().getNome());
+				
+					if(policyGlobale || TipoPdD.APPLICATIVA.equals(datiTransazione.getTipoPdD())){
+						RegistroServiziManager registroManager = RegistroServiziManager.getInstance(state);
+						Soggetto soggetto = null;
+						try {
+							soggetto = registroManager.getSoggetto(idFruitore, null);
+						}catch(DriverRegistroServiziNotFound notFound) {}
+						if(soggetto!=null && soggetto.getRuoli()!=null) {
+							for (int i = 0; i < soggetto.getRuoli().sizeRuoloList(); i++) {
+								if(soggetto.getRuoli().getRuolo(i).getNome().equals(filtro.getRuoloFruitore())) {
+									ruoloSoggetto = true;
+									break;
+								}
+							}
+						}
+					}
+					
+					if(datiTransazione.getServizioApplicativoFruitore()!=null && !CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(datiTransazione.getServizioApplicativoFruitore())) {
+						
+						IDServizioApplicativo idSA = new IDServizioApplicativo();
+						idSA.setIdSoggettoProprietario(idFruitore);
+						idSA.setNome(datiTransazione.getServizioApplicativoFruitore());
+					
+						ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(state);
+						ServizioApplicativo sa = null;
+						try {
+							sa = configPdDManager.getServizioApplicativo(idSA);
+						}catch(DriverConfigurazioneNotFound nofFound) {}
+						if(sa!=null && sa.getInvocazionePorta()!=null && sa.getInvocazionePorta().getRuoli()!=null) {
+							for (int i = 0; i < sa.getInvocazionePorta().getRuoli().sizeRuoloList(); i++) {
+								if(sa.getInvocazionePorta().getRuoli().getRuolo(i).getNome().equals(filtro.getRuoloFruitore())) {
+									ruoloApplicativo = true;
+									break;
+								}
+							}
 						}
 					}
 				}
-				if(!foundRuolo) {
+				
+				if(!ruoloSoggetto && !ruoloApplicativo) {
 					return false;
 				}
+					
 			}
 			
 			if(filtro.getTipoFruitore()!=null && !"".equals(filtro.getTipoFruitore())){
@@ -395,7 +449,7 @@ public class InterceptorPolicyUtilities {
 					return false;
 				}
 				IDSoggetto idErogatore = new IDSoggetto(datiTransazione.getIdServizio().getSoggettoErogatore().getTipo(), datiTransazione.getIdServizio().getSoggettoErogatore().getNome());
-				RegistroServiziManager registroManager = RegistroServiziManager.getInstance();
+				RegistroServiziManager registroManager = RegistroServiziManager.getInstance(state);
 				Soggetto soggetto = registroManager.getSoggetto(idErogatore, null);
 				boolean foundRuolo = false;
 				if(soggetto.getRuoli()!=null) {
@@ -472,8 +526,21 @@ public class InterceptorPolicyUtilities {
 				if(datiTransazione.getIdServizio()==null){
 					return false;
 				}
-				if(filtro.getAzione().equals(datiTransazione.getIdServizio().getAzione())==false){
+				if(datiTransazione.getIdServizio().getAzione()==null){
 					return false;
+				}
+				String [] tmp = filtro.getAzione().split(",");
+				if(tmp!=null && tmp.length>0) {
+					boolean found = false;
+					for (String az : tmp) {
+						if(az.equals(datiTransazione.getIdServizio().getAzione())){
+							found=true;
+							break;
+						}			
+					}
+					if(!found) {
+						return false;
+					}
 				}
 			}
 						

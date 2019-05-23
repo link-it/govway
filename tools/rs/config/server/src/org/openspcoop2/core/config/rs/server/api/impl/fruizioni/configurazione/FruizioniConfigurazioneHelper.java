@@ -1,5 +1,6 @@
 package org.openspcoop2.core.config.rs.server.api.impl.fruizioni.configurazione;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -8,6 +9,9 @@ import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHe
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
@@ -34,10 +38,34 @@ public class FruizioniConfigurazioneHelper {
 						false, true, ErogazioniApiHelper.getAzioniOccupateFruizione(env.idAsps,
 								env.idSoggetto.toIDSoggetto(), env.apsCore, env.pdCore));
 
-		if (policy.getFiltro().getAzione() != null && !azioniSupportate.contains(policy.getFiltro().getAzione())) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'azione " + policy.getFiltro().getAzione()
-					+ " non è assegnabile a una policy di rate limiting per il gruppo scelto, le azioni supportate sono: "
-					+ azioniSupportate.toString());
+		if(policy.getFiltro().getAzione() != null && !policy.getFiltro().getAzione().isEmpty()) {
+			String [] tmp = policy.getFiltro().getAzione().split(",");
+			if(tmp!=null && tmp.length>0) {
+				for (String azCheck : tmp) {
+					if ( !azioniSupportate.contains(azCheck)) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'azione " + azCheck
+								+ " non è assegnabile a una policy di rate limiting per il gruppo scelto, le azioni supportate sono: "
+								+ azioniSupportate.toString());
+					}
+				}
+			}
+		}
+		
+		if(policy.getFiltro().getRuoloFruitore()!=null) {
+			
+			FiltroRicercaRuoli filtroRicercaRuoli = new FiltroRicercaRuoli();
+			filtroRicercaRuoli.setTipologia(RuoloTipologia.INTERNO);
+			List<IDRuolo> listIdRuoli = env.ruoliCore.getAllIdRuoli(filtroRicercaRuoli);
+			List<String> ruoli = new ArrayList<>();
+			if(listIdRuoli!=null && !listIdRuoli.isEmpty()) {
+				for (IDRuolo idRuolo : listIdRuoli) {
+					ruoli.add(idRuolo.getNome());
+				}
+			}
+			
+			if ( !ruoli.contains(policy.getFiltro().getRuoloFruitore())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il ruolo " + policy.getFiltro().getRuoloFruitore() + " non esiste.");
+			}
 		}
 
 		// Controllo che l'applicativo fruitore scelto per il filtro sia supportato.

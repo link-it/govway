@@ -22,22 +22,7 @@ ALTER TABLE ct_active_policy ADD COLUMN policy_continue BOOLEAN NOT NULL;
 ALTER TABLE ct_active_policy ALTER COLUMN policy_continue SET DEFAULT false;
 
 
--- Criterio nel filtro permette molteplici azione, applicativi e soggetti.
-
-ALTER TABLE ct_active_policy ADD COLUMN temp VARCHAR(65535); 
-UPDATE ct_active_policy SET temp=filtro_nome_fruitore; 
-ALTER TABLE ct_active_policy DROP COLUMN filtro_nome_fruitore; 
-ALTER TABLE ct_active_policy ALTER COLUMN temp RENAME TO filtro_nome_fruitore;
-
-ALTER TABLE ct_active_policy ADD COLUMN temp VARCHAR(65535); 
-UPDATE ct_active_policy SET temp=filtro_tipo_fruitore; 
-ALTER TABLE ct_active_policy DROP COLUMN filtro_tipo_fruitore; 
-ALTER TABLE ct_active_policy ALTER COLUMN temp RENAME TO filtro_tipo_fruitore;
-
-ALTER TABLE ct_active_policy ADD COLUMN temp VARCHAR(65535); 
-UPDATE ct_active_policy SET temp=filtro_sa_fruitore; 
-ALTER TABLE ct_active_policy DROP COLUMN filtro_sa_fruitore; 
-ALTER TABLE ct_active_policy ALTER COLUMN temp RENAME TO filtro_sa_fruitore;
+-- Criterio nel filtro permette molteplici azione
 
 ALTER TABLE ct_active_policy ADD COLUMN temp VARCHAR(65535); 
 UPDATE ct_active_policy SET temp=filtro_azione; 

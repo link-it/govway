@@ -284,7 +284,11 @@ public class BaseHelper {
 	
 	@SuppressWarnings("unchecked")
 	public static <T> T deserializev2(Object o, Class<T> dest) {
-		if (o == null) return null;
+		if (o == null) 
+			return null;
+		
+		if(dest.isInstance(o))
+			return dest.cast(o);
 		
 		try {
 			return fromMap((Map<String, Object>) o,dest);
@@ -295,7 +299,11 @@ public class BaseHelper {
 	
 	@SuppressWarnings("unchecked")
 	public static <T> Optional<T> deserializev3(Object o, Class<T> dest) {
-		if (o == null) return Optional.empty();
+		if (o == null) 
+			return Optional.empty();
+		
+		if(dest.isInstance(o))
+			return Optional.of(dest.cast(o));
 		
 		try {
 			return Optional.of(fromMap((Map<String, Object>) o,dest));
@@ -304,7 +312,7 @@ public class BaseHelper {
 		}
 	}
 	
-	public static <T> T deserializeDefault(Object o, Class<T> dest) {
+	public static <T> T deserializeDefault(Object o, Class<T> dest) {		
 		Optional<T> ret = deserializev3(o, dest);
 		if (!ret.isPresent() || (ret.isPresent() && ret.get() == null)) {
 			try {

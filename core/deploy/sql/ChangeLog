@@ -7,10 +7,7 @@
 	ALTER TABLE ct_active_policy ADD COLUMN posizione INT NOT NULL;
 	ALTER TABLE ct_active_policy ADD COLUMN continua_valutazione BOOLEAN NOT NULL DEFAULT false;
 
-	Aggiunta possibilità di definire più di un criterio nel filtro per quanto riguarda l'azione, l'applicativo ed il soggetto.
-	ALTER TABLE ct_active_policy ALTER COLUMN filtro_nome_fruitore TYPE TEXT;
-	ALTER TABLE ct_active_policy ALTER COLUMN filtro_tipo_fruitore TYPE TEXT;
-	ALTER TABLE ct_active_policy ALTER COLUMN filtro_sa_fruitore TYPE TEXT;
+	Aggiunta possibilità di definire più di un criterio nel filtro per quanto riguarda l'azione
 	ALTER TABLE ct_active_policy ALTER COLUMN filtro_azione TYPE TEXT;
 
 	Aggiunta possibilità di raggruppare per identificativo autenticato e per token claim

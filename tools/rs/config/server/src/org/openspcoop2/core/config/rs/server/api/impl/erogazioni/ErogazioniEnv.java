@@ -39,6 +39,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateHelper;
+import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
 
@@ -58,6 +59,7 @@ public class ErogazioniEnv extends Environment {
 	public final PorteApplicativeCore paCore;
 	public final PorteDelegateCore pdCore;
 	public final ServiziApplicativiCore saCore;
+	public final RuoliCore ruoliCore;
 
 	public final AccordiServizioParteSpecificaHelper apsHelper;
 	public final ServiziApplicativiHelper saHelper;
@@ -81,6 +83,7 @@ public class ErogazioniEnv extends Environment {
 		this.paCore  = new PorteApplicativeCore(this.stationCore);
 		this.pdCore = new  PorteDelegateCore(this.stationCore);
 		this.saCore = new ServiziApplicativiCore(this.stationCore);
+		this.ruoliCore = new RuoliCore(this.stationCore);
 		
 		this.apsHelper = new AccordiServizioParteSpecificaHelper(this.stationCore, this.requestWrapper, this.pd, req.getSession());
 		this.saHelper = new ServiziApplicativiHelper(this.stationCore, this.requestWrapper, this.pd, req.getSession());

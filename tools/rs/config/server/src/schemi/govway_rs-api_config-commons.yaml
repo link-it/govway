@@ -1305,6 +1305,10 @@ components:
       type: object
       properties:
         azione:
+          type: array
+          items:
+            $ref: 'govway_core.yaml#/components/schemas/NCName'
+        ruolo_richiedente:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
         applicativo_fruitore:
           $ref: 'govway_core.yaml#/components/schemas/NCName'

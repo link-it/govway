@@ -125,6 +125,10 @@ function postVersion_postBack(dataElementName) {
 	    }
     }
     
+    if(navigationAnchor!=null){
+    	 document.form.action=navigationAnchor;
+    }
+	
     // form submit
     document.form.submit();
 }

@@ -509,8 +509,16 @@ public class ControlStationCore {
 	
 	/** ControlloTraffico */
 	private boolean isControlloTrafficoPolicyGlobaleGroupByApi;
+	private boolean isControlloTrafficoPolicyGlobaleFiltroApi;
+	private boolean isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore;
 	public boolean isControlloTrafficoPolicyGlobaleGroupByApi() {
 		return this.isControlloTrafficoPolicyGlobaleGroupByApi;
+	}
+	public boolean isControlloTrafficoPolicyGlobaleFiltroApi() {
+		return this.isControlloTrafficoPolicyGlobaleFiltroApi;
+	}
+	public boolean isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore() {
+		return this.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore;
 	}
 	
 	/** Auditing */
@@ -1578,6 +1586,8 @@ public class ControlStationCore {
 		
 		/** ControlloTraffico */
 		this.isControlloTrafficoPolicyGlobaleGroupByApi = core.isControlloTrafficoPolicyGlobaleGroupByApi;
+		this.isControlloTrafficoPolicyGlobaleFiltroApi = core.isControlloTrafficoPolicyGlobaleFiltroApi;
+		this.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore = core.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore;
 		
 		/** Auditing */
 		this.isAuditingRegistrazioneElementiBinari = core.isAuditingRegistrazioneElementiBinari;
@@ -1851,6 +1861,8 @@ public class ControlStationCore {
 			this.messageSecurityPropertiesSourceConfiguration = consoleProperties.getMessageSecurityPropertiesSourceConfiguration();
 			this.policyGestioneTokenPropertiesSourceConfiguration = consoleProperties.getPolicyGestioneTokenPropertiesSourceConfiguration();
 			this.isControlloTrafficoPolicyGlobaleGroupByApi = consoleProperties.isControlloTrafficoPolicyGlobaleGroupByApi();
+			this.isControlloTrafficoPolicyGlobaleFiltroApi = consoleProperties.isControlloTrafficoPolicyGlobaleFiltroApi();
+			this.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore = consoleProperties.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore();
 			this.isAuditingRegistrazioneElementiBinari = consoleProperties.isAuditingRegistrazioneElementiBinari();
 			this.isIntegrationManagerEnabled = consoleProperties.isIntegrationManagerEnabled();
 			this.isAccordiCooperazioneEnabled = consoleProperties.isAccordiCooperazioneEnabled();

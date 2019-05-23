@@ -188,6 +188,7 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
@@ -209,6 +210,7 @@ import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
@@ -3671,7 +3673,20 @@ public class ErogazioniApiHelper {
 	public static final RateLimitingPolicyFiltro  convert ( AttivazionePolicyFiltro src, RateLimitingPolicyFiltro dest ) {
 		
 		dest.setApplicativoFruitore( src.getServizioApplicativoFruitore() ); 
-		dest.setAzione( src.getAzione() );
+		
+		if(src.getAzione()!=null && !"".equals(src.getAzione())) {
+			String [] tmp = src.getAzione().split(",");
+			if(tmp!=null && tmp.length>0) {
+				List<String> azione = new ArrayList<>();
+				for (int i = 0; i < tmp.length; i++) {
+					azione.add(tmp[i]);
+				}
+				dest.setAzione(azione);
+			}
+		}
+		
+		dest.setRuoloRichiedente(src.getRuoloFruitore());
+		
 		dest.setChiaveNome(src.getInformazioneApplicativaNome());
 		dest.setChiaveTipo(
 				Enums.rateLimitingChiaveEnum.get( TipoFiltroApplicativo.toEnumConstant(src.getInformazioneApplicativaTipo()) )
@@ -3967,10 +3982,10 @@ public class ErogazioniApiHelper {
 	}
 	
 	
-	public static final void override( String idPolicy, RateLimitingPolicyErogazione body, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
+	public static final void override( String idPolicy, RateLimitingPolicyErogazione body, String protocollo, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
 		if (body == null) return;
 
-		override ( (RateLimitingPolicyErogazione) body, idPropietarioSa, wrap );
+		override ( (RateLimitingPolicyErogazione) body, protocollo, idPropietarioSa, wrap );
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID, 
@@ -3979,10 +3994,10 @@ public class ErogazioniApiHelper {
 	}
 	
 
-	public static final void override( String idPolicy, RateLimitingPolicyFruizione body, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
+	public static final void override( String idPolicy, RateLimitingPolicyFruizione body, String protocollo, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
 		if (body == null) return;
 
-		override ( (RateLimitingPolicyFruizione) body, idPropietarioSa, wrap );
+		override ( (RateLimitingPolicyFruizione) body, protocollo, idPropietarioSa, wrap );
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID, 
@@ -3993,12 +4008,21 @@ public class ErogazioniApiHelper {
 	public static final void override( RateLimitingPolicyFiltro body, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
 		if (body == null) return;
 		
-		wrap.overrideParameter(
-				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_AZIONE,
-				body.getAzione()
-			);
+		if(body.getAzione()!=null && !body.getAzione().isEmpty()) {
+		
+			wrap.overrideParameterValues(
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_AZIONE,
+					body.getAzione().toArray(new String[1])
+				);
+		
+		}
 		
 		wrap.overrideParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE, body.getApplicativoFruitore());
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_FRUITORE,
+				evalnull( () -> body.getRuoloRichiedente() )  
+			);
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED,
@@ -4047,7 +4071,7 @@ public class ErogazioniApiHelper {
 			
 			wrap.overrideParameter(
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN,
-					evalnull(  () -> ServletUtils.boolToCheckBoxStatus( body.isRichiedente() ) )
+					evalnull(  () -> ServletUtils.boolToCheckBoxStatus( true ) )
 				);
 			
 			List<String> values = new ArrayList<>();
@@ -4096,10 +4120,10 @@ public class ErogazioniApiHelper {
 			); 
 	}
 	
-	public static final void override( RateLimitingPolicyErogazioneUpdate body, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
+	public static final void override( RateLimitingPolicyErogazioneUpdate body, String protocollo, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
 		if (body == null) return;
 
-		override( (RateLimitingPolicyBase) body, idPropietarioSa, wrap );
+		override( (RateLimitingPolicyBase) body, protocollo, idPropietarioSa, wrap );
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD,
@@ -4123,10 +4147,10 @@ public class ErogazioniApiHelper {
 		override( groupCriteria, idPropietarioSa, wrap );
 
 	}
-	public static final void override( RateLimitingPolicyErogazione body, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
+	public static final void override( RateLimitingPolicyErogazione body, String protocollo, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
 		if (body == null) return;
 
-		override( (RateLimitingPolicyBase) body, idPropietarioSa, wrap );
+		override( (RateLimitingPolicyBase) body, protocollo, idPropietarioSa, wrap );
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD,
@@ -4153,10 +4177,10 @@ public class ErogazioniApiHelper {
 	
 	
 	
-	public static final void override ( RateLimitingPolicyFruizioneUpdate body,  IDSoggetto idPropietarioSa,  HttpRequestWrapper wrap ) {	// Questa è in comune alla update.
+	public static final void override ( RateLimitingPolicyFruizioneUpdate body,  String protocollo, IDSoggetto idPropietarioSa,  HttpRequestWrapper wrap ) {	// Questa è in comune alla update.
 		if (body == null) return;
 
-		override ( (RateLimitingPolicyBase) body, idPropietarioSa, wrap );
+		override ( (RateLimitingPolicyBase) body, protocollo, idPropietarioSa, wrap );
 		override ( body.getFiltro(), idPropietarioSa, wrap );
 		override ( body.getRaggruppamento() , idPropietarioSa, wrap );
 		
@@ -4165,10 +4189,10 @@ public class ErogazioniApiHelper {
 			RuoloPolicy.DELEGATA.toString() 
 		);
 	}
-	public static final void override ( RateLimitingPolicyFruizione body,  IDSoggetto idPropietarioSa,  HttpRequestWrapper wrap ) {	// Questa è in comune alla update.
+	public static final void override ( RateLimitingPolicyFruizione body,  String protocollo, IDSoggetto idPropietarioSa,  HttpRequestWrapper wrap ) {	// Questa è in comune alla update.
 		if (body == null) return;
 
-		override ( (RateLimitingPolicyBase) body, idPropietarioSa, wrap );
+		override ( (RateLimitingPolicyBase) body, protocollo, idPropietarioSa, wrap );
 		override ( body.getFiltro(), idPropietarioSa, wrap );
 		override ( body.getRaggruppamento() , idPropietarioSa, wrap );
 		
@@ -4179,7 +4203,7 @@ public class ErogazioniApiHelper {
 		
 	}
 		
-	public static final void override ( RateLimitingPolicyBase body,  IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {	// Questa è in comune alla update.		
+	public static final void override ( RateLimitingPolicyBase body, String protocollo, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {	// Questa è in comune alla update.		
 		if (body == null) return;
 
 		wrap.overrideParameter(
@@ -4206,6 +4230,11 @@ public class ErogazioniApiHelper {
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_ENABLED,
 				StatoFunzionalita.ABILITATO.toString() 
+			);
+		
+		wrap.overrideParameter(
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO,
+				protocollo 
 			);
 	}
 
@@ -4442,8 +4471,32 @@ public class ErogazioniApiHelper {
 						ErogazioniApiHelper.getAzioniOccupateErogazione(env.idAsps, env.apsCore, env.paCore)
 					);
 		
-		if ( policy.getFiltro().getAzione() != null && !azioniSupportate.contains(policy.getFiltro().getAzione()) ) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'azione " + policy.getFiltro().getAzione() + " non è assegnabile a una policy di rate limiting per il gruppo scelto. le azioni supportare sono: " + azioniSupportate.toString());
+		if(policy.getFiltro().getAzione() != null && !policy.getFiltro().getAzione().isEmpty()) {
+			String [] tmp = policy.getFiltro().getAzione().split(",");
+			if(tmp!=null && tmp.length>0) {
+				for (String azCheck : tmp) {
+					if ( !azioniSupportate.contains(azCheck)) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'azione " + azCheck + " non è assegnabile a una policy di rate limiting per il gruppo scelto. le azioni supportare sono: " + azioniSupportate.toString());
+					}
+				}
+			}
+		}
+		
+		if(policy.getFiltro().getRuoloFruitore()!=null) {
+			
+			FiltroRicercaRuoli filtroRicercaRuoli = new FiltroRicercaRuoli();
+			filtroRicercaRuoli.setTipologia(RuoloTipologia.INTERNO);
+			List<IDRuolo> listIdRuoli = env.ruoliCore.getAllIdRuoli(filtroRicercaRuoli);
+			List<String> ruoli = new ArrayList<>();
+			if(listIdRuoli!=null && !listIdRuoli.isEmpty()) {
+				for (IDRuolo idRuolo : listIdRuoli) {
+					ruoli.add(idRuolo.getNome());
+				}
+			}
+			
+			if ( !ruoli.contains(policy.getFiltro().getRuoloFruitore())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il ruolo " + policy.getFiltro().getRuoloFruitore() + " non esiste.");
+			}
 		}
 		
 		// Controllo che l'applicativo fruitore scelto per il filtro sia supportato.

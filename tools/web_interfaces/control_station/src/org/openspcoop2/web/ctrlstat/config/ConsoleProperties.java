@@ -298,6 +298,14 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "controlloTraffico.policyGlobale.groupBy.api");
 	}
 	
+	public boolean isControlloTrafficoPolicyGlobaleFiltroApi() throws UtilsException{
+		return this.readBooleanProperty(true, "controlloTraffico.policyGlobale.filtro.api");
+	}
+	
+	public boolean isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore() throws UtilsException{
+		return this.readBooleanProperty(true, "controlloTraffico.policyGlobale.filtro.api.soggettoErogatore");
+	}
+	
 	public boolean isAuditingRegistrazioneElementiBinari() throws UtilsException{
 		return this.readBooleanProperty(true, "auditing.registrazioneElementiBinari");
 	}

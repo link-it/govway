@@ -2699,7 +2699,9 @@ public class DriverControlStationDB  {
 		int limit =0 ;
 
 		if(ricerca != null) {
-			search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+			if(!tipoRisorsa) {
+				search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+			}
 			limit = ricerca.getPageSize(idLista);
 			offset = ricerca.getIndexIniziale(idLista);
 		}

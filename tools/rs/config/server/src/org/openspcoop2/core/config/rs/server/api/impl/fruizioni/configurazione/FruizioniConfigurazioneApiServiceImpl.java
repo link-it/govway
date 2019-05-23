@@ -421,7 +421,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			int counter = env.confCore.getFreeCounterForGlobalPolicy(infoPolicy.getIdPolicy());
 			policy.setIdActivePolicy(infoPolicy.getIdPolicy()+":"+counter);
 	
-			ErogazioniApiHelper.override(body, env.idSoggetto.toIDSoggetto(), env.requestWrapper);
+			ErogazioniApiHelper.override(body, env.protocolFactory.getProtocol(),  env.idSoggetto.toIDSoggetto(), env.requestWrapper);
 			// Dati Attivazione
 			String errorAttivazione = env.confHelper.readDatiAttivazionePolicyFromHttpParameters(policy, false, TipoOperazione.ADD, infoPolicy);
 			if ( !StringUtils.isEmpty(errorAttivazione) ) {
@@ -1923,7 +1923,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting con nome " + idPolicy );
 			
 			InfoPolicy infoPolicy = env.confCore.getInfoPolicy(policy.getIdPolicy());
-			ErogazioniApiHelper.override(body, env.idSoggetto.toIDSoggetto(), env.requestWrapper);
+			ErogazioniApiHelper.override(body, env.protocolFactory.getProtocol(),  env.idSoggetto.toIDSoggetto(), env.requestWrapper);
 
 			String errorAttivazione = env.confHelper.readDatiAttivazionePolicyFromHttpParameters(policy, false, TipoOperazione.CHANGE, infoPolicy);
 			if ( !StringUtils.isEmpty(errorAttivazione) ) {

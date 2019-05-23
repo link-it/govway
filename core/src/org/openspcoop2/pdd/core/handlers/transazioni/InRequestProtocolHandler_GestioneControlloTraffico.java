@@ -288,7 +288,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 										
 										
 										// Verifico se un eventuale filtro configurato per la policy matcha con i dati della transazione
-										boolean matchFiltro = !policyRispettataCheRichiedeBreak && !policyViolataBreak && InterceptorPolicyUtilities.filter(attivazionePolicy.getFiltro(), datiTransazione);
+										boolean matchFiltro = !policyRispettataCheRichiedeBreak && !policyViolataBreak && InterceptorPolicyUtilities.filter(attivazionePolicy.getFiltro(), datiTransazione, context.getStato());
 										if(matchFiltro){
 											
 											if(attivazionePolicy.getFiltro().isEnabled() && attivazionePolicy.getFiltro().isInformazioneApplicativaEnabled()){
