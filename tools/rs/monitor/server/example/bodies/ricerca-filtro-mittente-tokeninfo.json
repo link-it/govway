@@ -3,13 +3,13 @@
 		"data_inizio": "2012-07-21T17:32:28Z",
 		"data_fine": "2022-07-21T17:32:28Z"
 	},
-	"tipo": "erogazione",
+	"tipo": "fruizione",
 	"mittente": {
 		"tipo": "token_info",
 		"id": {
-			"ricerca_esatta": false,
-			"case_sensitive": false,
-			"id": "user",
+			"ricerca_esatta": true,
+			"case_sensitive": true,
+			"id": "username9f867c142bf444209bd4ba08",
 			"claim": "username"
 		}
 	}

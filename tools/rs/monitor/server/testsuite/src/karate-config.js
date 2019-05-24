@@ -19,11 +19,14 @@ function fn() {
 
       monitorCred: { username: 'operatore', password: '123456' },
       monitorUrl: govwayUrl + '/govwayAPIMonitor',
-      govwayDbConfig: { username: 'govway', password: 'govway', url: 'jdbc:postgresql://localhost:5432/govway', driverClassName: 'org.postgresql.Driver'},
-
+      govwayDbConfig: { 
+        username: 'govway',
+        password: 'govway',
+        url: 'jdbc:postgresql://localhost:5432/govway',
+        driverClassName: 'org.postgresql.Driver'
+      },
       configCred:  { username: 'amministratore', password: '123456'},
       configUrl: govwayUrl + '/govwayAPIConfig',
-      
       soggettoDefault: 'ENTE',
 
       statsInterval: 16000

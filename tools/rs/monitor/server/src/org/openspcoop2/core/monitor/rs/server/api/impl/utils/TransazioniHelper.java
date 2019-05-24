@@ -1,3 +1,25 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package org.openspcoop2.core.monitor.rs.server.api.impl.utils;
 
 
@@ -43,10 +65,16 @@ import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm;
 import org.openspcoop2.web.monitor.transazioni.dao.TransazioniService;
 
+/**
+ * TransazioniHelper
+ * 
+ * @author $Author$
+ * @version $Rev$, $Date$
+ * 
+ */
 public class TransazioniHelper {
 
-	public static final void overrideFiltroApiBase(FiltroApiBase filtro_api, String azione,
-			TransazioniSearchForm search, MonitoraggioEnv env) {
+	public static final void overrideFiltroApiBase(FiltroApiBase filtro_api, String azione, IDSoggetto erogatore, TransazioniSearchForm search, MonitoraggioEnv env) {
 		if (filtro_api == null)
 			return;
 
@@ -64,8 +92,7 @@ public class TransazioniHelper {
 
 		}
 
-		String uri = ReportisticaHelper.buildNomeServizioForOverride(filtro_api.getNome(), filtro_api.getTipo(),
-				filtro_api.getVersione(), Optional.of(env.soggetto));
+		String uri = ReportisticaHelper.buildNomeServizioForOverride(filtro_api.getNome(), filtro_api.getTipo(), filtro_api.getVersione(), Optional.of(erogatore));
 		search.setNomeServizio(uri);
 		search.setNomeAzione(azione);
 	}
@@ -75,7 +102,7 @@ public class TransazioniHelper {
 		if (filtro == null)
 			return;
 
-		overrideFiltroApiBase(filtro, azione, search, env);
+		overrideFiltroApiBase(filtro, azione, new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()), search, env);
 		if (filtro.getErogatore() != null)
 			search.setTipoNomeDestinatario(new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()).toString());
 	}
@@ -148,7 +175,7 @@ public class TransazioniHelper {
 
 		switch (body.getTipo()) {
 		case EROGAZIONE:
-			overrideFiltroApiBase(deserializev2(body.getApi(), FiltroApiBase.class),body.getAzione(), search, env);
+			overrideFiltroApiBase(deserializev2(body.getApi(), FiltroApiBase.class), body.getAzione(), env.soggetto, search, env);
 			break;
 		case FRUIZIONE:
 			overrideFiltroFruizione(deserializev2(body.getApi(), FiltroFruizione.class),body.getAzione(), search, env);

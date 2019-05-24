@@ -29,9 +29,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-/**
+/**     
+ * DbUtils
  *
- * @author pthomas3
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class DbUtils {
 
@@ -49,20 +51,20 @@ public class DbUtils {
         dataSource.setUrl(url);
         dataSource.setUsername(username);
         dataSource.setPassword(password);
-        jdbc = new JdbcTemplate(dataSource);
+        this.jdbc = new JdbcTemplate(dataSource);
         logger.info("init jdbc template: {}", url);
     }
 
     public Object readValue(String query) {
-        return jdbc.queryForObject(query, Object.class);
+        return this.jdbc.queryForObject(query, Object.class);
     }
 
     public Map<String, Object> readRow(String query) {
-        return jdbc.queryForMap(query);
+        return this.jdbc.queryForMap(query);
     }
 
     public List<Map<String, Object>> readRows(String query) {
-        return jdbc.queryForList(query);
+        return this.jdbc.queryForList(query);
     }
 
 }

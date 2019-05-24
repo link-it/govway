@@ -161,12 +161,16 @@ public class JavaDocCheck {
 			jumpCheck = true;
 		else if( f.getAbsolutePath().indexOf("tools/rs/config/server/src/org/openspcoop2/core/config/rs/server/api")!= -1 && !f.getAbsolutePath().contains("/impl/"))
 			jumpCheck = true;
+		else if( f.getAbsolutePath().indexOf("tools/rs/monitor/server/src/org/openspcoop2/core/monitor/rs/server/model")!= -1 )
+			jumpCheck = true;
+		else if( f.getAbsolutePath().indexOf("tools/rs/monitor/server/src/org/openspcoop2/core/monitor/rs/server/api")!= -1 && !f.getAbsolutePath().contains("/impl/"))
+			jumpCheck = true;
 
-		String TODO = "tools/rs/monitor/server/src/org/openspcoop2/core/monitor/rs/server";
-		if(!printTODO){		
-			System.out.println("TODO: Eliminare controllo per RS Monitor Server");
-			printTODO = true;		
-		}
+		String TODO = "METTERE QUA EVENTUALE NUOVO PATH";
+		//if(!printTODO){		
+		//	System.out.println("TODO: Eliminare controllo per RS Monitor Server");
+		//	printTODO = true;		
+		//}
 		if(!jumpCheck && f.getAbsolutePath().indexOf(TODO)!=-1){
 			jumpCheck = true;
 		}
@@ -203,6 +207,7 @@ public class JavaDocCheck {
 		//	fileNonValidi.add(f.getAbsolutePath());
                  //       dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.AUTORE_CHECK+" presente con un valore non risolto dal commit svn: ["+JavaDocCheck.AUTORE_VALORE+"]");
 		   // }
+/*
 		    if(byteInputBuffer.toString().indexOf(JavaDocCheck.AUTORE_VALORE2)>=0){
                         fileNonValidi.add(f.getAbsolutePath());
                         dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.AUTORE_CHECK+" presente con un valore non risolto dal commit svn: ["+JavaDocCheck.AUTORE_VALORE2+"]");
@@ -211,6 +216,7 @@ public class JavaDocCheck {
                         fileNonValidi.add(f.getAbsolutePath());
                         dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.AUTORE_CHECK+" presente con un valore non risolto dal commit svn: ["+JavaDocCheck.AUTORE_VALORE3+"]");
                     }
+*/
 
 
 		    // ***** versione ****
@@ -224,6 +230,7 @@ public class JavaDocCheck {
                         dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.VERSIONE_CHECK2+" non presente (manca l'informazione sulla versione svn)");
                     }
                     // check valore versione
+/*
 		    if(byteInputBuffer.toString().indexOf(JavaDocCheck.VERSIONE_VALORE)>=0){
 			fileNonValidi.add(f.getAbsolutePath());
                         dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.VERSIONE_CHECK+" presente con un valore non risolto dal commit svn: ["+JavaDocCheck.VERSIONE_VALORE+"]");
@@ -236,6 +243,7 @@ public class JavaDocCheck {
                         fileNonValidi.add(f.getAbsolutePath());
                         dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.VERSIONE_CHECK+" presente con un valore non risolto dal commit svn: ["+JavaDocCheck.VERSIONE_VALORE3+"]");
                     }
+*/
 
 
 
@@ -245,6 +253,7 @@ public class JavaDocCheck {
                         dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.DATA_CHECK+" non presente");
                     }
                     // check valore data
+/*
                     if(byteInputBuffer.toString().indexOf(JavaDocCheck.DATA_VALORE)>=0){
                         fileNonValidi.add(f.getAbsolutePath());
                         dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.DATA_CHECK+" presente con un valore non risolto dal commit svn: ["+JavaDocCheck.DATA_VALORE+"]");
@@ -257,6 +266,7 @@ public class JavaDocCheck {
                         fileNonValidi.add(f.getAbsolutePath());
                         dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.DATA_CHECK+" presente con un valore non risolto dal commit svn: ["+JavaDocCheck.DATA_VALORE3+"]");
                     }
+*/
 
 
 		    // ***** valore corrotto *****
@@ -293,6 +303,7 @@ public class JavaDocCheck {
                         dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.VERSIONE_CHECK_HTML+" non presente");
                     }
                     // check valore versione
+			/*
                     if(!(packageFile.indexOf(JavaDocCheck.VERSIONE_VALORE)==-1)){
                         fileNonValidi.add(f.getAbsolutePath());
                         dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.VERSIONE_CHECK_HTML+" presente con un valore non risolto dal commit svn: ["+JavaDocCheck.VERSIONE_VALORE+"]");
@@ -305,6 +316,7 @@ public class JavaDocCheck {
                         fileNonValidi.add(f.getAbsolutePath());
                         dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.VERSIONE_CHECK_HTML+" presente con un valore non risolto dal commit svn: ["+JavaDocCheck.VERSIONE_VALORE3+"]");
                     }
+			*/
 
 
                     // ***** data *****
@@ -313,6 +325,7 @@ public class JavaDocCheck {
                         dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.DATA_CHECK+" non presente");
                     }
                     // check valore data
+			/*
                     if(packageFile.indexOf(JavaDocCheck.DATA_VALORE)>=0){
                         fileNonValidi.add(f.getAbsolutePath());
                         dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.DATA_CHECK+" presente con un valore non risolto dal commit svn: ["+JavaDocCheck.DATA_VALORE+"]");
@@ -325,6 +338,7 @@ public class JavaDocCheck {
                         fileNonValidi.add(f.getAbsolutePath());
                         dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.DATA_CHECK+" presente con un valore non risolto dal commit svn: ["+JavaDocCheck.DATA_VALORE3+"]");
                     }
+*/
 		}	    
 	    }else{
 		//System.out.println("DIR");

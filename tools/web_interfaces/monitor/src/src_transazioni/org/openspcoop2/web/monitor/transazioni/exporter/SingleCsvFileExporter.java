@@ -105,8 +105,12 @@ public class SingleCsvFileExporter implements IExporter{
 
 	private String fileName=null;
 	private OutputStream outStream = null;
-	private SimpleDateFormat sdfDataTransazioni = new SimpleDateFormat(CostantiExport.PATTERN_DATA_TRANSAZIONI);
-
+	private SimpleDateFormat _sdfDataTransazioni = new SimpleDateFormat(CostantiExport.PATTERN_DATA_TRANSAZIONI);
+	private String formatDate(Date date) {
+		String s = this._sdfDataTransazioni.format(date);
+		return s.replace(" ", "T");
+	}
+	
 	private SingleCsvFileExporter(ExporterCsvProperties properties, ITransazioniService transazioniService, ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService, ITransazioniExportService transazioniExport) throws Exception{
 		this.enableHeaderInfo = properties.isEnableHeaderInfo();
 
@@ -363,49 +367,49 @@ public class SingleCsvFileExporter implements IExporter{
 					}
 				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_ID_MSG_RICHIESTA)){
 					if(t.getDataIdMsgRichiesta()!= null){
-						oneLine.add(this.sdfDataTransazioni.format(t.getDataIdMsgRichiesta())); 
+						oneLine.add(this.formatDate(t.getDataIdMsgRichiesta())); 
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}
 				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_ID_MSG_RISPOSTA)){
 					if(t.getDataIdMsgRisposta() != null){
-						oneLine.add(this.sdfDataTransazioni.format(t.getDataIdMsgRisposta())); 
+						oneLine.add(this.formatDate(t.getDataIdMsgRisposta())); 
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}
 				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_ACCETTAZIONE_RICHIESTA)){
 					if(t.getDataAccettazioneRichiesta() != null){
-						oneLine.add(this.sdfDataTransazioni.format(t.getDataAccettazioneRichiesta())); 
+						oneLine.add(this.formatDate(t.getDataAccettazioneRichiesta())); 
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}
 				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_INGRESSO_RICHIESTA)){
 					if(t.getDataIngressoRichiesta() != null){
-						oneLine.add(this.sdfDataTransazioni.format(t.getDataIngressoRichiesta())); 
+						oneLine.add(this.formatDate(t.getDataIngressoRichiesta())); 
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}
 				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_ACCETTAZIONE_RISPOSTA)){
 					if(t.getDataAccettazioneRisposta() != null){
-						oneLine.add(this.sdfDataTransazioni.format(t.getDataAccettazioneRisposta())); 
+						oneLine.add(this.formatDate(t.getDataAccettazioneRisposta())); 
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}
 				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_INGRESSO_RISPOSTA)){
 					if(t.getDataIngressoRisposta() != null){
-						oneLine.add(this.sdfDataTransazioni.format(t.getDataIngressoRisposta())); 
+						oneLine.add(this.formatDate(t.getDataIngressoRisposta())); 
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}
 				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_USCITA_RICHIESTA)){
 					if(t.getDataUscitaRichiesta() != null){
-						oneLine.add(this.sdfDataTransazioni.format(t.getDataUscitaRichiesta())); 
+						oneLine.add(this.formatDate(t.getDataUscitaRichiesta())); 
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}
 				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_USCITA_RISPOSTA)){
 					if(t.getDataUscitaRisposta() != null){
-						oneLine.add(this.sdfDataTransazioni.format(t.getDataUscitaRisposta())); 
+						oneLine.add(this.formatDate(t.getDataUscitaRisposta())); 
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}

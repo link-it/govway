@@ -31,7 +31,7 @@
 				
 					<h:outputLabel value="Ora Registrazione" id="dataLabel" styleClass="outputFieldLabel" rendered="#{not empty eventiBean.evento.oraRegistrazione}"/>
 					<h:outputText id="outData" value="#{eventiBean.evento.oraRegistrazione}" rendered="#{not empty eventiBean.evento.oraRegistrazione}">
-						<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
+						<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
 					</h:outputText>
 				
 					<h:outputLabel styleClass="outputFieldLabel" id="outLabelTipo" value="Tipo" rendered="#{not empty eventiBean.evento.tipo}" />

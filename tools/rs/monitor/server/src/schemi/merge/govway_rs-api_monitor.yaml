@@ -485,6 +485,7 @@ paths:
       - $ref: "#/components/parameters/data_inizio"
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
+      - $ref: "#/components/parameters/soggetto_erogatore"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
       - $ref: "#/components/parameters/versione_servizio"
@@ -2756,6 +2757,13 @@ components:
       in: "query"
       description: "Il soggetto remoto coinvolto nella transazione, ovvero il fruitore\
         \ in caso di erogazione, o l'erogatore in caso di fruizione"
+      required: false
+      schema:
+        $ref: "#/components/schemas/SimpleName"
+    soggetto_erogatore:
+      name: "soggetto_erogatore"
+      in: "query"
+      description: "Il soggetto erogatore di una API"
       required: false
       schema:
         $ref: "#/components/schemas/SimpleName"

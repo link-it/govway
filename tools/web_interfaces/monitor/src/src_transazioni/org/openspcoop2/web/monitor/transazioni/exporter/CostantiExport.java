@@ -32,7 +32,7 @@ package org.openspcoop2.web.monitor.transazioni.exporter;
 public class CostantiExport {
 	
 	
-	public static final String PATTERN_DATA_TRANSAZIONI = "yyyy-MM-dd HH:mm:ss.SSS";
+	public static final String PATTERN_DATA_TRANSAZIONI = "yyyy-MM-dd HH:mm:ss.SSSXXX";
 	public static final String SEPARATORE_TIPO_NOME = "/";
 	public static final String WHITE_SPACE = " ";
 	public static final String INTEGRATION_MANAGER_LABEL_CON_PARANTISI = "[IM]";

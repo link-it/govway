@@ -46,4 +46,37 @@ Scenario: Ricerca per identificativo applicativo (Correlazione Applicativa)
     Then status 200
     And assert response.items.length == risposta1.items.length
 
+    # Caso Fruizioni
+
+    * set filtro.api.erogatore = setup.erogatore.nome
+    * set filtro.tipo = 'fruizione'
+
+    Given url ricercaUrl
+    And header Authorization = govwayMonitorCred
+    And request filtro
+    When method post
+    Then status 200
+    And assert response.items.length == 1
+
+    * def query =
+    """ ({ 
+        data_inizio: filtro.intervallo_temporale.data_inizio, 
+        data_fine: filtro.intervallo_temporale.data_fine,
+        tipo: filtro.tipo,
+        nome_servizio: filtro.api.nome,
+        soggetto_remoto: filtro.api.erogatore,
+        versione_servizio: filtro.api.versione,
+        id_applicativo: filtro.id_applicativo.id,
+        case_sensitive: filtro.id_applicativo.case_sensitive,
+        ricerca_esatta: filtro.id_applicativo.ricerca_esatta 
+    })
+    """
+
+    Given url ricercaUrl
+    And header Authorization = govwayMonitorCred
+    And params query
+    When method get
+    Then status 200
+
+
     

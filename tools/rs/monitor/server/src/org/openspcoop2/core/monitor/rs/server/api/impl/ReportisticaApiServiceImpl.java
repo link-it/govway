@@ -85,11 +85,10 @@ import org.openspcoop2.web.monitor.statistiche.constants.CostantiExporter;
 import org.openspcoop2.web.monitor.statistiche.dao.ConfigurazioniGeneraliService;
 
 /**
- * GovWay Monitor API
+ * ReportisticaApiServiceImpl
  *
- * <p>
- * Servizi per il monitoraggio di GovWay
- *
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class ReportisticaApiServiceImpl extends BaseImpl implements ReportisticaApi {
 
@@ -887,7 +886,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	@Override
 	public byte[] getReportDistribuzioneSoggettoRemotoBySimpleSearch(DateTime dataInizio, DateTime dataFine,
 			TransazioneRuoloEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto,
-			String nomeServizio, String tipoServizio, Integer versioneServizio, String azione,
+			String soggettoErogatore, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione,
 			EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport,
 			TipoInformazioneReportEnum tipoInformazioneReport) {
 		IContext context = this.getContext();
@@ -900,7 +899,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			RicercaStatisticaDistribuzioneSoggettoRemoto ricerca = new RicercaStatisticaDistribuzioneSoggettoRemoto();
 			ricerca.setTipo(tipo);
-			ricerca.setApi(ReportisticaHelper.buildFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, null));
+			ricerca.setApi(ReportisticaHelper.buildFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoErogatore));
 			ricerca.setAzione(azione);
 
 			FiltroTemporale intervallo = new FiltroTemporale();

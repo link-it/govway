@@ -101,11 +101,11 @@ public class GPLCheck {
 					}
 					fis.close();
 
-					String TODO = "tools/rs/monitor/server/src/org/openspcoop2/core/monitor/rs/server";
-					if(!printTODO){		
-						System.out.println("TODO: Eliminare controllo per RS Monitor Server");
-						printTODO = true;		
-					}
+					String TODO = "METTERE QUA EVENTUALE NUOVO PATH";
+					//if(!printTODO){		
+					//	System.out.println("TODO: Eliminare controllo per NUOVO PATH");
+					//	printTODO = true;		
+					//}
 
 					// check 
 					// gestione eccezioni.

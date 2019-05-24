@@ -248,6 +248,7 @@
 	<archive path="/op2_3.1.dev/lib/testsuite/karate-netty-0.9.1.jar"/>
 	<archive path="/op2_3.1.dev/lib/testsuite/hamcrest-core-1.3.jar"/>
 	<archive path="/op2_3.1.dev/lib/testsuite/picocli-3.9.5.jar"/>
+	<archive path="/op2_3.1.dev/lib/testsuite/spring-jdbc-5.1.6.RELEASE.jar"/>
 	<!-- wadl -->
 	<archive path="/op2_3.1.dev/lib/wadl/wadl-core-1.1.6.jar"/>
 	<archive path="/op2_3.1.dev/lib/wadl/wadl-xslt-1.1.6.jar"/>

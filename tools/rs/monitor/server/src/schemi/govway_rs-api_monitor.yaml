@@ -536,6 +536,7 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_inizio"
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
@@ -1334,6 +1335,15 @@ components:
       description: >-
         Il soggetto remoto coinvolto nella transazione, ovvero il fruitore in
         caso di erogazione, o l'erogatore in caso di fruizione
+      required: false
+      schema:
+        $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+       
+    soggetto_erogatore:
+      in: query
+      name: soggetto_erogatore
+      description: >-
+        Il soggetto erogatore di una API
       required: false
       schema:
         $ref: 'govway_core.yaml#/components/schemas/SimpleName'

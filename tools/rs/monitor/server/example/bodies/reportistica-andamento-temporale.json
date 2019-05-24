@@ -1,18 +1,23 @@
 {
     "unita_tempo": "orario",
     "intervallo_temporale": {
-      "data_inizio": "2019-05-13T15:00:58.860+02:00",
-      "data_fine": "2019-05-13T15:1:05.860+02:00"
+        "data_inizio": "2019-05-23T15:00+02:00",
+        "data_fine": "2019-05-23T15:17+02:00"
     },
-    "tipo": "erogazione",
+    "tipo": "fruizione",
     "report": {
-      "formato": "csv",
-      "tipo": "table",
-      "tipo_informazione": {
-        "tipo": "numero_transazioni"
-      }
+        "formato": "csv",
+        "tipo": "table",
+        "tipo_informazione": {
+            "tipo": "numero_transazioni"
+        }
     },
     "esito": {
-      "tipo": "error"
+        "tipo": "error"
+    },
+    "api": {
+        "nome": "PetStored461e439c5394e76b4fd9b0e",
+        "versione": 1,
+        "erogatore": "SoggettoJsonaa5533e155a547d68ad5"
     }
-  }
+}

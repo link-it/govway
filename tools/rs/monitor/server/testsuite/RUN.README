@@ -34,4 +34,4 @@ Per eseguire una sola feature:
   ant run_test -Dkarate.options=org/openspcoop2/core/monitor/rs/testsuite/transazioni/ricerca-transazioni.feature
 
 Per eseguire un solo scenario all'interno della feature:
-  ant run_test -Dkarate.options="org/openspcoop2/core/monitor/rs/testsuite/transazioni/ricerca-transazioni.feature --tags=FiltroApiErogazione"
+  ant run_test -Dkarate.options="org/openspcoop2/core/monitor/rs/testsuite/transazioni/ricerca-transazioni.feature --tags=FiltroApi"

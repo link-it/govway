@@ -1,3 +1,25 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package org.openspcoop2.core.monitor.rs.server.api.impl.utils;
 
 import static org.openspcoop2.utils.service.beans.utils.BaseHelper.deserializeDefault;
@@ -55,6 +77,14 @@ import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiExporter;
 import org.openspcoop2.web.monitor.statistiche.dao.StatisticheGiornaliereService;
 
+
+/**
+ * ReportisticaHelper
+ * 
+ * @author $Author$
+ * @version $Rev$, $Date$
+ * 
+ */
 public class ReportisticaHelper {
 
 	@SuppressWarnings("unchecked")
@@ -206,7 +236,7 @@ public class ReportisticaHelper {
 	public static final FiltroMittenteFruizioneTokenClaim deserializeFiltroMittenteFruizioneTokenClaim(Object o) {
 		FiltroMittenteFruizioneTokenClaim fClaim = deserializeDefault(o,FiltroMittenteFruizioneTokenClaim.class);
 		if (fClaim.getClaim() == null || StringUtils.isEmpty(fClaim.getId()) ) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(FiltroMittenteFruizioneTokenClaim.class.getName() + ": Indicare il campo obbligatorio 'applicativo'");
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(FiltroMittenteFruizioneTokenClaim.class.getName() + ": Indicare i campi obbligatori 'claim' e 'id'");
 		}
 		
 		return fClaim;
@@ -242,7 +272,7 @@ public class ReportisticaHelper {
 		case TOKEN_INFO: {
 			FiltroMittenteFruizioneTokenClaim fClaim = deserializeFiltroMittenteFruizioneTokenClaim(filtro.getId());			
 			wrap.overrideParameter(CostantiExporter.RICERCA_MITTENTE_TIPO_CLAIM, Enums.toTokenClaim.get(fClaim.getClaim()));
-			wrap.overrideParameter(CostantiExporter.IDENTIFICATIVO_RICERCA_MITTENTE, filtro.getId());
+			wrap.overrideParameter(CostantiExporter.IDENTIFICATIVO_RICERCA_MITTENTE, fClaim.getId());
 			wrap.overrideParameter(CostantiExporter.TIPO_RICERCA_MITTENTE_ESATTA, fClaim.isRicercaEsatta() + "");
 			wrap.overrideParameter(CostantiExporter.TIPO_RICERCA_MITTENTE_CASE_SENSITIVE,fClaim.isCaseSensitive() + "");
 			break;
@@ -353,24 +383,24 @@ public class ReportisticaHelper {
 
 	public static final void overrideFiltroFruizione(FiltroFruizione body, HttpRequestWrapper wrap,
 			MonitoraggioEnv env) {
-		if (body == null)
-			return;
-		overrideFiltroApiBase(body, wrap, env);
+		if (body == null) return;
+		
+		IDSoggetto erogatore = new IDSoggetto(env.soggetto.getTipo(), body.getErogatore());
+		
+		overrideFiltroApiBase(body, erogatore, wrap, env);
 		// TODO: Forse fare l'override di destinatario intendendolo come l'erogatore non
 		// va bene, ricontrolla ovunque.
 		if (body.getErogatore() != null)
-			wrap.overrideParameter(CostantiExporter.DESTINATARIO,
-					new IDSoggetto(env.soggetto.getTipo(), body.getErogatore()).toString());
+			wrap.overrideParameter(CostantiExporter.DESTINATARIO, erogatore.toString() );
 	}
 
-	public static final void overrideFiltroErogazione(FiltroErogazione body, HttpRequestWrapper wrap,
-			MonitoraggioEnv env) {
+	public static final void overrideFiltroErogazione(FiltroErogazione body, HttpRequestWrapper wrap, MonitoraggioEnv env) {
 		if (body == null)
 			return;
-		overrideFiltroApiBase(body, wrap, env);
+		overrideFiltroApiBase(body, env.soggetto, wrap, env);
 	}
 
-	public static final void overrideFiltroApiBase(FiltroApiBase body, HttpRequestWrapper wrap, MonitoraggioEnv env) {
+	public static final void overrideFiltroApiBase(FiltroApiBase body, IDSoggetto erogatore, HttpRequestWrapper wrap, MonitoraggioEnv env) {
 		if (body == null)
 			return;
 
@@ -393,7 +423,7 @@ public class ReportisticaHelper {
 		}
 
 		wrap.overrideParameter(CostantiExporter.SERVIZIO,
-				buildNomeServizioForOverride(body.getNome(), body.getTipo(), body.getVersione(), Optional.of(env.soggetto)));
+				buildNomeServizioForOverride(body.getNome(), body.getTipo(), body.getVersione(), Optional.of(erogatore)));
 	}
 
 	public static final void overrideRicercaStatisticaDistribuzioneApplicativo(

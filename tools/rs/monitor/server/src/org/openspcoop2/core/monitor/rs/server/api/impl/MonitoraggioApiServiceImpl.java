@@ -74,11 +74,12 @@ import org.openspcoop2.web.monitor.eventi.dao.EventiService;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm;
 import org.openspcoop2.web.monitor.transazioni.dao.TransazioniService;
+
 /**
- * GovWay Monitor API
+ * MonitoraggioApiServiceImpl
  *
- * <p>Servizi per il monitoraggio di GovWay
- *
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class MonitoraggioApiServiceImpl extends BaseImpl implements MonitoraggioApi {
 
@@ -273,7 +274,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			filtroApi.setVersione(versioneServizio);
 			switch (tipo) {
 			case EROGAZIONE: {
-				overrideFiltroApiBase(filtroApi, azione, search, env);
+				overrideFiltroApiBase(filtroApi, azione, env.soggetto, search, env);
 				break;
 			}
 			case FRUIZIONE:
@@ -374,7 +375,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			filtroApi.setVersione(versioneServizio);	
 			switch (tipo) {
 			case EROGAZIONE: {
-				overrideFiltroApiBase(filtroApi, azione, search, env);
+				overrideFiltroApiBase(filtroApi, azione, env.soggetto, search, env);
 				break;
 			}
 			case FRUIZIONE:

@@ -2,7 +2,6 @@
     "connettore": {
         "endpoint": "http://petstore.swagger.io/v2"
     },
-
     "api_nome": "PetStore",
     "api_versione": 2,
     "autenticazione": {

@@ -1,33 +1,43 @@
 Feature: Ricerca Temporale Transazioni e Ricerca Eventi
 
 Background: 
+#* configure afterFeature = function(){ karate.call('classpath:cleanup_tests.feature'); }
 
-    * def ricercaUrl = monitorUrl + '/monitoraggio/transazioni'
-    
-    * call read('classpath:crud_commons.feature')
-    * def setup = callonce read('classpath:prepare_tests.feature')
-    * def intervallo_temporale = ({ data_inizio: setup.dataInizio, data_fine: setup.dataFine })
-    
-    * configure afterFeature = function(){ karate.call('classpath:cleanup_tests.feature'); }
+* def ricercaUrl = monitorUrl + '/monitoraggio/transazioni'
+* call read('classpath:crud_commons.feature')
+
+* def setup = callonce read('classpath:prepare_tests.feature')
+* def intervallo_temporale = ({ data_inizio: setup.dataInizio, data_fine: setup.dataFine })
+
+* url ricercaUrl
+* configure headers = ({ "Authorization": govwayMonitorCred }) 
+
+@FiltroMittenteTokenInfo
+Scenario: Ricerca con le possibili combinazioni del filtro mittente
+    * call read('classpath:ricerca-transazioni-filtro-mittente-token-info.feature')
 
 @FiltroTemporale
 Scenario: Ricerca per FiltroTemporale
     * def filtro = read('classpath:bodies/ricerca-filtro-temporale.json')
-    * eval filtro.intervallo_temporale = intervallo_temporale
+    * set filtro.intervallo_temporale = intervallo_temporale
     
-    Given url ricercaUrl
-    And header Authorization = govwayMonitorCred
-    And request filtro
+    Given request filtro
     When method post
     Then status 200
     And assert response.items.length >= 3
 
-@FiltroApiErogazione
-Scenario: Ricerca per FiltroApiErogazione
+    * set filtro.tipo = 'fruizione'
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length >= 3
+
+@FiltroApi
+Scenario: Ricerca per FiltroApi
     * def filtro = read('classpath:bodies/ricerca-filtro-api-erogazione.json')
-    * eval filtro.intervallo_temporale = intervallo_temporale
-    * eval filtro.api.nome = setup.erogazione_petstore.api_nome
-    * eval filtro.api.versione = setup.erogazione_petstore.api_versione
+    * set filtro.intervallo_temporale = intervallo_temporale
+    * set filtro.api.nome = setup.erogazione_petstore.api_nome
+    * set filtro.api.versione = setup.erogazione_petstore.api_versione
 
     * def expected_api = 
     """
@@ -41,50 +51,20 @@ Scenario: Ricerca per FiltroApiErogazione
         profilo_collaborazione: "##notnull"
     }
     """
-
-    Given url ricercaUrl
-    And header Authorization = govwayMonitorCred
-    And request filtro
+    Given request filtro
     When method post
     Then status 200
     And match each response.items contains { api: '#(^expected_api)' }
 
-@TestNotFound
-    Scenario: Test Not Found
-    * def filtro = read('classpath:bodies/ricerca-filtro-api-erogazione.json')
-    * eval filtro.intervallo_temporale = intervallo_temporale
-    * eval filtro.api.nome = "$$FiltroInesistente$$"
+    * set filtro.api.erogatore = setup.erogatore.nome
+    * set filtro.tipo = 'fruizione'
+    * set expected_api.erogatore = filtro.api.erogatore
     
-    Given url ricercaUrl
-    And header Authorization = govwayMonitorCred
-    And request filtro
-    When method post
-    Then assert ( responseStatus == 200 && response.items.length == 0) || responseStatus == 404
-
-
-@FiltroEsitoError
-Scenario: Ricerca per Esito Erroneo
-    * def filtro = read('classpath:bodies/ricerca-filtro-esito-error.json')
-    * eval filtro.intervallo_temporale = intervallo_temporale
-
-    Given url ricercaUrl
-    And header Authorization = govwayMonitorCred
-    And request filtro
+    Given request filtro
     When method post
     Then status 200
-    And assert response.items.length == 1
+    And match each response.items contains { api: '#(^expected_api)' }
 
-@FiltroEsitoPersonalizzato
-Scenario: Ricerca per Filtro Esito Personalizzato
-    * def filtro = read('classpath:bodies/ricerca-filtro-esito-personalizzato.json')
-    * eval filtro.intervallo_temporale = intervallo_temporale
-
-    Given url ricercaUrl
-    And header Authorization = govwayMonitorCred
-    And request filtro
-    When method post
-    Then status 200
-    And assert response.items.length >= 1
 
 @FiltroMittenteApplicativo
 Scenario: Ricerca per Filtro Mittente Applicativo
@@ -95,9 +75,15 @@ Scenario: Ricerca per Filtro Mittente Applicativo
 
     * def expected_mittente = ({ applicativo: filtro.mittente.id.applicativo })
 
-    Given url ricercaUrl
-    And header Authorization = govwayMonitorCred
-    And request filtro
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length >= 1
+    And match each response.items contains { mittente: '#(^expected_mittente)' }
+
+    * set filtro.tipo = "fruizione"
+    * set filtro.mittente.id.soggetto = null
+    Given request filtro
     When method post
     Then status 200
     And assert response.items.length >= 1
@@ -108,33 +94,40 @@ Scenario: Ricerca per Filtro Mittente con autenticazione http
     * def filtro = read('classpath:bodies/ricerca-filtro-mittente-idautenticato.json')
     * eval filtro.mittente.id.id = setup.applicativo.credenziali.username
     * eval filtro.intervallo_temporale = intervallo_temporale
-
     * def expected_mittente = ({ applicativo: setup.applicativo.nome })
 
-    Given url ricercaUrl
-    And header Authorization = govwayMonitorCred
-    And request filtro
+    Given request filtro
     When method post
     Then status 200
     And assert response.items.length >= 1
     And match each response.items contains { mittente: '#(^expected_mittente)' }
 
+    * set filtro.tipo = "fruizione"
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length >= 1
+    And match each response.items contains { mittente: '#(^expected_mittente)' }
 
 @FiltroMittenteIdAutenticatoHttps
 Scenario: Ricerca per Filtro Mittente con autenticazione https
     * def filtro = read('classpath:bodies/ricerca-filtro-mittente-idautenticato.json')
     * set filtro.mittente.id = ({ ricerca_esatta: false, case_sensitive: false, autenticazione: 'ssl', id: "cn=client"})
     * set filtro.intervallo_temporale = intervallo_temporale
-
+    
     * def expected_mittente = ({ fruitore: setup.soggetto_certificato.nome })
 
-    Given url ricercaUrl
-    And header Authorization = govwayMonitorCred
-    And request filtro
+    Given request filtro
     When method post
     Then status 200
     And assert response.items.length >= 1
     And match each response.items contains { mittente: '#(^expected_mittente)' }
+    
+    * set filtro.tipo = "fruizione"
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length >= 1
 
 
 @FiltroMittenteIdAutenticatoPrincipal
@@ -144,12 +137,20 @@ Scenario: Ricerca per Filtro Mittente con autenticazione principal
     * eval filtro.intervallo_temporale = intervallo_temporale
     * eval filtro.mittente.id.autenticazione = 'principal'
 
-    Given url ricercaUrl
-    And header Authorization = govwayMonitorCred
-    And request filtro
+    * def expected_mittente = ({ applicativo: setup.applicativo_principal.nome })
+
+    Given request filtro
     When method post
     Then status 200
-    And assert response.items.length == 1
+    And assert response.items.length >= 1
+    And match each response.items contains { mittente: '#(^expected_mittente)' }
+
+    * set filtro.tipo = "fruizione"
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length >= 1
+    And match each response.items contains { mittente: '#(^expected_mittente)' }
     
 @FiltroMittenteSoggetto
 Scenario: Ricerca per Filtro Mittente Soggetto
@@ -159,13 +160,61 @@ Scenario: Ricerca per Filtro Mittente Soggetto
 
     * def expected_mittente = ({ fruitore: filtro.mittente.id.soggetto })
 
-    Given url ricercaUrl
-    And header Authorization = govwayMonitorCred
-    And request filtro
+    Given request filtro
     When method post
     Then status 200
     And assert response.items.length >= 1
     And match each response.items contains { mittente: '#(^expected_mittente)'}
+
+
+
+@TestNotFound
+    Scenario: Test Not Found
+    * def filtro = read('classpath:bodies/ricerca-filtro-api-erogazione.json')
+    * eval filtro.intervallo_temporale = intervallo_temporale
+    * eval filtro.api.nome = "$$FiltroInesistente$$"
+
+    Given request filtro
+    When method post
+    Then assert ( responseStatus == 200 && response.items.length == 0) || responseStatus == 404
+
+
+@FiltroEsitoError
+Scenario: Ricerca per Esito Erroneo
+    * def filtro = read('classpath:bodies/ricerca-filtro-esito-error.json')
+    * eval filtro.intervallo_temporale = intervallo_temporale
+
+    * def expected_risposta = { esito_consegna: '401' }
+
+    # Controllo che le richieste con esito error siano proprio quelle non autorizzate fatte nei test
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length > 0
+    And match each response.items contains { risposta: '#(^expected_risposta)' }
+
+    * set filtro.tipo = 'fruizione'
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length > 0
+    And match each response.items contains { risposta: '#(^expected_risposta)' }
+
+@FiltroEsitoPersonalizzato
+Scenario: Ricerca per Filtro Esito Personalizzato
+    * def filtro = read('classpath:bodies/ricerca-filtro-esito-personalizzato.json')
+    * eval filtro.intervallo_temporale = intervallo_temporale
+
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length >= 1
+
+    * set filtro.tipo = 'fruizione'
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length >= 1
 
 @RicercaSempliceTransazioni
 Scenario: RicercaSempliceTransazioni tramite richiesta GET
@@ -186,10 +235,14 @@ Scenario: RicercaSempliceTransazioni tramite richiesta GET
         esito: 'ok'
     })
     """
+    Given params query
+    When method get
+    Then status 200
+    And assert response.items.length > 0 && response.items.length <= 3
 
-    Given url ricercaUrl
-    And header Authorization = govwayMonitorCred
-    And params query
+    * set query.soggetto_remoto = setup.erogatore.nome
+    * set query.tipo = 'fruizione'
+    Given params query
     When method get
     Then status 200
     And assert response.items.length > 0 && response.items.length <= 3
@@ -205,9 +258,7 @@ Scenario: Ricerca singola transazione per Id Messaggio (Risposta)
 
 
     # Viene fatta prima una ricerca lasca per recuperare delle transazioni qualsiasi
-    Given url ricercaUrl
-    And header Authorization = govwayMonitorCred
-    And request filtro
+    Given request filtro
     When method post
     Then status 200
     And assert response.items.length > 0
@@ -215,9 +266,7 @@ Scenario: Ricerca singola transazione per Id Messaggio (Risposta)
     * def transazione = response.items[0]
     * def id_messaggio = transazione.risposta.id
 
-    Given url ricercaUrl
-    And path 'id_messaggio'
-    And header Authorization = govwayMonitorCred
+    Given path 'id_messaggio'
     And params ({ tipo_messaggio: 'risposta', id: id_messaggio })
     When method get
     Then status 200
@@ -235,18 +284,14 @@ Scenario: Ricerca per Id Transazione.
     * eval filtro.intervallo_temporale =  ({ data_inizio: setup.dataInizio, data_fine: setup.dataFine })
 
      # Viene fatta prima una ricerca lasca per recuperare una transazione qualsiasi
-    Given url ricercaUrl
-    And header Authorization = govwayMonitorCred
-    And request filtro
+    Given request filtro
     When method post
     Then status 200
     And assert response.items.length > 0
 
     * def id_transazione = response.items[0].id_traccia
 
-    Given url ricercaUrl
-    And path id_transazione
-    And header Authorization = govwayMonitorCred
+    Given path id_transazione
     When method get
     Then status 200
 
@@ -268,7 +313,6 @@ Scenario: Ricerca Lista Eventi ed evento singolo
     # Faccio prima una ricerca lasca per poi recuperare un evento particolare
     Given url monitorUrl
     And path 'monitoraggio', 'eventi'
-    And header Authorization = govwayMonitorCred
     And params query
     When method get
     Then status 200
@@ -277,58 +321,8 @@ Scenario: Ricerca Lista Eventi ed evento singolo
     
     Given url monitorUrl
     And path 'monitoraggio', 'eventi', evento.id
-    And header Authorization = govwayMonitorCred
     And params query
     When method get
     Then status 200
     And match response == evento
 
-@FiltroMittenteTokenInfo
-Scenario: Ricerca di transazioni filtrate per token info
-    * def filtro = read('classpath:bodies/ricerca-filtro-mittente-tokeninfo.json')
-    * eval filtro.mittente.id.id = setup.claims.username
-    * eval filtro.mittente.id.claim = 'username'
-
-    # TODO: Portare in una feature esterna, ottenere la transazione e matchare che le token info coincidano
-    Given url ricercaUrl
-    And header Authorization = govwayMonitorCred
-    And request filtro
-    When method post
-    Then status 200
-    And assert response.items.length == 1
-
-    * eval filtro.mittente.id.id = setup.claims.issuer
-    * eval filtro.mittente.id.claim = 'issuer'
-    Given url ricercaUrl
-    And header Authorization = govwayMonitorCred
-    And request filtro
-    When method post
-    Then status 200
-    And assert response.items.length == 1
-
-    * eval filtro.mittente.id.id = setup.claims.client_id
-    * eval filtro.mittente.id.claim = 'client_id'
-    Given url ricercaUrl
-    And header Authorization = govwayMonitorCred
-    And request filtro
-    When method post
-    Then status 200
-    And assert response.items.length == 1
-
-    * eval filtro.mittente.id.id = setup.claims.subject
-    * eval filtro.mittente.id.claim = 'subject'
-    Given url ricercaUrl
-    And header Authorization = govwayMonitorCred
-    And request filtro
-    When method post
-    Then status 200
-    And assert response.items.length == 1
-
-    * eval filtro.mittente.id.id = setup.claims.email
-    * eval filtro.mittente.id.claim = 'email'
-    Given url ricercaUrl
-    And header Authorization = govwayMonitorCred
-    And request filtro
-    When method post
-    Then status 200
-    And assert response.items.length == 1

@@ -27,7 +27,7 @@ import com.intuit.karate.junit4.Karate;
 import org.junit.runner.RunWith;
 
 /**
- * ApplicativiTest
+ * ApiMonitorTestSuite
  *
  * @author $Author$
  * @version $Rev$, $Date$
