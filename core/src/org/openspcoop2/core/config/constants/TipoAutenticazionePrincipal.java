@@ -41,9 +41,10 @@ public enum TipoAutenticazionePrincipal implements IEnumeration , Serializable ,
 	HEADER (CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL_HEADER,CostantiConfigurazione.LABEL_AUTENTICAZIONE_PRINCIPAL_HEADER),
 	FORM (CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL_FORM,CostantiConfigurazione.LABEL_AUTENTICAZIONE_PRINCIPAL_FORM),
 	URL (CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL_URL,CostantiConfigurazione.LABEL_AUTENTICAZIONE_PRINCIPAL_URL),
-	INDIRIZZO_IP (CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL_INDIRIZZO_IP,CostantiConfigurazione.LABEL_AUTENTICAZIONE_PRINCIPAL_INDIRIZZO_IP);
+	INDIRIZZO_IP (CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL_INDIRIZZO_IP,CostantiConfigurazione.LABEL_AUTENTICAZIONE_PRINCIPAL_INDIRIZZO_IP),
 	// Ho levato il contenuto, poichè senno devo fare il digest per poterlo poi cachare
-	// CONTENT (CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL_CONTENT,CostantiConfigurazione.LABEL_AUTENTICAZIONE_PRINCIPAL_CONTENT);
+	// CONTENT (CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL_CONTENT,CostantiConfigurazione.LABEL_AUTENTICAZIONE_PRINCIPAL_CONTENT),
+	TOKEN (CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL_TOKEN,CostantiConfigurazione.LABEL_AUTENTICAZIONE_PRINCIPAL_TOKEN);
 	
 	/** Value */
 	private String value;
@@ -110,15 +111,31 @@ public enum TipoAutenticazionePrincipal implements IEnumeration , Serializable ,
 	/** Utilities */
 	
 	public static List<String> getValues(){
+		return getValues(true);
+	}
+	public static List<String> getValues(boolean token){
 		List<String> l = new ArrayList<>();
 		for (TipoAutenticazionePrincipal tmp : values()) {
+			if(!token) {
+				if(TipoAutenticazionePrincipal.TOKEN.equals(tmp)) {
+					continue;
+				}
+			}
 			l.add(tmp.getValue());
 		}
 		return l;
 	}
 	public static List<String> getLabels(){
+		return getLabels(true);
+	}
+	public static List<String> getLabels(boolean token){
 		List<String> l = new ArrayList<>();
 		for (TipoAutenticazionePrincipal tmp : values()) {
+			if(!token) {
+				if(TipoAutenticazionePrincipal.TOKEN.equals(tmp)) {
+					continue;
+				}
+			}
 			l.add(tmp.getLabel());
 		}
 		return l;

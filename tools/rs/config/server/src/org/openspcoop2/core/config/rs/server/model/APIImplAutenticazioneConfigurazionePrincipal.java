@@ -22,6 +22,7 @@
 package org.openspcoop2.core.config.rs.server.model;
 
 import org.openspcoop2.core.config.rs.server.model.TipoAutenticazionePrincipal;
+import org.openspcoop2.core.config.rs.server.model.TipoAutenticazionePrincipalToken;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,7 +34,13 @@ public class APIImplAutenticazioneConfigurazionePrincipal  {
   @Schema(required = true, description = "")
   private TipoAutenticazionePrincipal tipo = null;
   
-  @Schema(example = "indica il nome dell'header http in caso di autenticazione 'header-based' o il nome del parametro della query nel caso di autenticazione 'form-based'", description = "")
+  @Schema(description = "")
+  private TipoAutenticazionePrincipalToken token = null;
+  
+  @Schema(description = "indica il nome dell'header http in caso di autenticazione principal 'header-based',  il nome del parametro della query nel caso di autenticazione principal 'form-based' o il nome del claim in caso di autenticazione principal 'token' con tipo di claim 'custom' ")
+ /**
+   * indica il nome dell'header http in caso di autenticazione principal 'header-based',  il nome del parametro della query nel caso di autenticazione principal 'form-based' o il nome del claim in caso di autenticazione principal 'token' con tipo di claim 'custom'   
+  **/
   private String nome = null;
   
   @Schema(example = "indica l'espressione regolare da utilizzare in caso di autenticazione 'url-based'", description = "")
@@ -62,7 +69,26 @@ public class APIImplAutenticazioneConfigurazionePrincipal  {
   }
 
  /**
-   * Get nome
+   * Get token
+   * @return token
+  **/
+  @JsonProperty("token")
+  @Valid
+  public TipoAutenticazionePrincipalToken getToken() {
+    return this.token;
+  }
+
+  public void setToken(TipoAutenticazionePrincipalToken token) {
+    this.token = token;
+  }
+
+  public APIImplAutenticazioneConfigurazionePrincipal token(TipoAutenticazionePrincipalToken token) {
+    this.token = token;
+    return this;
+  }
+
+ /**
+   * indica il nome dell'header http in caso di autenticazione principal 'header-based',  il nome del parametro della query nel caso di autenticazione principal 'form-based' o il nome del claim in caso di autenticazione principal 'token' con tipo di claim 'custom' 
    * @return nome
   **/
   @JsonProperty("nome")
@@ -125,6 +151,7 @@ public class APIImplAutenticazioneConfigurazionePrincipal  {
     sb.append("class APIImplAutenticazioneConfigurazionePrincipal {\n");
     
     sb.append("    tipo: ").append(APIImplAutenticazioneConfigurazionePrincipal.toIndentedString(this.tipo)).append("\n");
+    sb.append("    token: ").append(APIImplAutenticazioneConfigurazionePrincipal.toIndentedString(this.token)).append("\n");
     sb.append("    nome: ").append(APIImplAutenticazioneConfigurazionePrincipal.toIndentedString(this.nome)).append("\n");
     sb.append("    pattern: ").append(APIImplAutenticazioneConfigurazionePrincipal.toIndentedString(this.pattern)).append("\n");
     sb.append("    forward: ").append(APIImplAutenticazioneConfigurazionePrincipal.toIndentedString(this.forward)).append("\n");

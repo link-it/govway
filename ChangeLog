@@ -1,4 +1,4 @@
-2019-05-XX  Andrea Poli <apoli@link.it>
+2019-05-24  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor]
 	Aggiunta funzionalità OP-839
@@ -20,6 +20,8 @@
 	- Migliorate maschere per la gestione dei criteri di filtro per l'applicabilità di una politica di rate limiting.
 	  In una politica a livello API è adesso inoltre possibile definire nel filtro più azioni/risorse e il ruolo del richiedente.
           La definizione di un ruolo del richiedente è alternativo alla definizione puntuale di un applicativo o soggetto fruitore.
+	- Nel controllo degli accessi di una erogazione o fruizione è adesso possibile configurare una autenticazione 'principal' 
+	  nella quale l'identita del client è ottenibile dal valore di un claim presente nel token.
 
 2019-05-10  Andrea Poli <apoli@link.it>
 

@@ -539,9 +539,14 @@ components:
       properties:
         tipo:
           $ref: '#/components/schemas/TipoAutenticazionePrincipal'
+        token:
+          $ref: '#/components/schemas/TipoAutenticazionePrincipalToken'
         nome:
           type: string
-          example: indica il nome dell'header http in caso di autenticazione 'header-based' o il nome del parametro della query nel caso di autenticazione 'form-based'
+          description: |
+            indica il nome dell'header http in caso di autenticazione principal 'header-based', 
+            il nome del parametro della query nel caso di autenticazione principal 'form-based' o
+            il nome del claim in caso di autenticazione principal 'token' con tipo di claim 'custom'
           maxLength: 255
         pattern:
           type: string
@@ -1687,7 +1692,11 @@ components:
       example: 'certificato'
     TipoAutenticazionePrincipal:
       type: string
-      enum: ['container', 'header-based', 'form-based', 'url-based', 'ip-address']
+      enum: ['container', 'header-based', 'form-based', 'url-based', 'ip-address', 'token']
+      example: 'container'  
+    TipoAutenticazionePrincipalToken:
+      type: string
+      enum: ['subject', 'clientId', 'username', 'eMail', 'custom']
       example: 'container'  
     TipoKeystore:
       type: string

@@ -24,8 +24,10 @@ package org.openspcoop2.pdd.core.autenticazione;
 
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
+import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 
 /**
@@ -37,7 +39,7 @@ import org.openspcoop2.utils.regexp.RegularExpressionEngine;
  */
 public class PrincipalUtilities {
 
-	public static String getPrincipal(TipoAutenticazionePrincipal tipoAutenticazionePrincipal, String nome, String pattern,
+	public static String getPrincipal(TipoAutenticazionePrincipal tipoAutenticazionePrincipal, String nome, String pattern, TipoCredenzialeMittente token,
 			InfoConnettoreIngresso infoConnettore, PdDContext pddContext, boolean throwException) throws AutenticazioneException {
 		
 		String principal = null;
@@ -111,6 +113,62 @@ public class PrincipalUtilities {
 			return principal;
 		// Ho levato il contenuto, poichè senno devo fare il digest per poterlo poi cachare
 //			case CONTENT:
+		case TOKEN:
+			InformazioniToken informazioniTokenNormalizzate = null;
+			if(pddContext!=null && pddContext.containsKey(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE)) {
+				Object oInformazioniTokenNormalizzate = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+	    		if(oInformazioniTokenNormalizzate!=null) {
+	    			informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
+	    		}
+			}
+			String nomeClaim = null;
+			switch (token) {
+			case token_issuer:
+				nomeClaim = "issuer";
+				if(informazioniTokenNormalizzate!=null) {
+					principal = informazioniTokenNormalizzate.getIss();
+				}
+				break;
+			case token_subject:
+				nomeClaim = "subject";
+				if(informazioniTokenNormalizzate!=null) {
+					principal = informazioniTokenNormalizzate.getSub();
+				}
+				break;
+			case token_clientId:
+				nomeClaim = "clientId";
+				if(informazioniTokenNormalizzate!=null) {
+					principal = informazioniTokenNormalizzate.getClientId();
+				}
+				break;
+			case token_username:
+				nomeClaim = "username";
+				if(informazioniTokenNormalizzate!=null) {
+					principal = informazioniTokenNormalizzate.getUsername();
+				}
+				break;
+			case token_eMail:
+				nomeClaim = "eMail";
+				if(informazioniTokenNormalizzate!=null && informazioniTokenNormalizzate.getUserInfo()!=null) {
+					principal = informazioniTokenNormalizzate.getUserInfo().getEMail();
+				}
+				break;
+			case trasporto:
+				nomeClaim = nome;
+				if(informazioniTokenNormalizzate!=null && informazioniTokenNormalizzate.getClaims()!=null) {
+					Object oValueClaim = informazioniTokenNormalizzate.getClaims().get(nomeClaim);
+					if(oValueClaim!=null && oValueClaim instanceof String) {
+						principal = (String) oValueClaim;
+					}
+				}
+				break;
+			}
+			if(principal==null || "".equals(principal)) {
+				if(throwException) {
+					throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Token claim '"+nomeClaim+"' non disponibile");
+				}
+			}
+			return principal;
 		}
 		return null;
 	}

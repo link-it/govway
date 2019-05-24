@@ -6,6 +6,13 @@
 	<packaging>pom</packaging>
 	<name>dependencies</name>
 
+	<parent>
+		<groupId>org.openspcoop2</groupId>
+		<artifactId>org.openspcoop2</artifactId>
+		<version>${revision}</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+
 	<properties>		
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -51,15 +58,28 @@
 		<module>testsuite</module>
 	</modules>
 
-	<parent>
-		<groupId>org.openspcoop2</groupId>
-		<artifactId>org.openspcoop2</artifactId>
-		<version>${revision}</version>
-		<relativePath>../../pom.xml</relativePath>
-	</parent>
-
 	<build>
 		<plugins>
+			<plugin>
+				<!-- per evitare 429: richiesta verso ossindex -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>${maven-antrun-plugin}</version>
+				<configuration>
+					<target>
+						<sleep seconds="${owasp.ossindex.prevents429.sleep}" />
+					</target>
+				</configuration>
+				<executions>
+					<execution>
+						<id>sleep-for-a-while</id>
+						<phase>${owasp}</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.owasp</groupId>
 				<artifactId>dependency-check-maven</artifactId>
@@ -111,6 +131,7 @@
 					</execution>
 				</executions>
 			</plugin>
+
 		</plugins>
 	</build>
 

@@ -166,6 +166,7 @@ import org.openspcoop2.core.config.rs.server.model.StatoFunzionalitaConWarningEn
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneNewEnum;
+import org.openspcoop2.core.config.rs.server.model.TipoAutenticazionePrincipalToken;
 import org.openspcoop2.core.config.rs.server.model.TipoAutorizzazioneEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoGestioneCorsEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoSpecificaLivelloServizioEnum;
@@ -725,6 +726,44 @@ public class ErogazioniApiHelper {
 					propertyAutenticazione.setNome(ParametriAutenticazionePrincipal.PATTERN);
 					propertyAutenticazione.setValore(authConfig.getPattern());
 					listConfig.add(propertyAutenticazione);
+					break;
+				case TOKEN:
+					if(authConfig.getToken()==null) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è stato indicato il token claim, da cui estrarre il principal, per l'autenticazione '"+authConfig.getTipo()+"' indicata");
+					}
+					if(TipoAutenticazionePrincipalToken.CUSTOM.equals(authConfig.getToken())) {
+						if(authConfig.getNome()==null) {
+							throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è stato indicato il nome del token claim, da cui estrarre il principal, per l'autenticazione '"+authConfig.getTipo()+"' indicata");
+						}
+					}
+					propertyAutenticazione = new Proprieta();
+					propertyAutenticazione.setNome(ParametriAutenticazionePrincipal.TOKEN_CLAIM);
+					switch (authConfig.getToken()) {
+					case SUBJECT:
+						propertyAutenticazione.setValore(ParametriAutenticazionePrincipal.TOKEN_CLAIM_SUBJECT);	
+						break;
+					case CLIENTID:
+						propertyAutenticazione.setValore(ParametriAutenticazionePrincipal.TOKEN_CLAIM_CLIENT_ID);	
+						break;
+					case USERNAME:
+						propertyAutenticazione.setValore(ParametriAutenticazionePrincipal.TOKEN_CLAIM_USERNAME);	
+						break;
+					case EMAIL:
+						propertyAutenticazione.setValore(ParametriAutenticazionePrincipal.TOKEN_CLAIM_EMAIL);	
+						break;
+					case CUSTOM:
+						propertyAutenticazione.setValore(ParametriAutenticazionePrincipal.TOKEN_CLAIM_CUSTOM);	
+						break;
+					}
+					listConfig.add(propertyAutenticazione);
+					
+					if(TipoAutenticazionePrincipalToken.CUSTOM.equals(authConfig.getToken())) {
+						propertyAutenticazione = new Proprieta();
+						propertyAutenticazione.setNome(ParametriAutenticazionePrincipal.NOME);
+						propertyAutenticazione.setValore(authConfig.getNome());
+						listConfig.add(propertyAutenticazione);
+					}
+					
 					break;
 				}
         		

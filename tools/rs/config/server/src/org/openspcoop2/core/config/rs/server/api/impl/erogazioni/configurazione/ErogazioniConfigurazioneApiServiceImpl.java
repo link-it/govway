@@ -103,6 +103,7 @@ import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyItem;
 import org.openspcoop2.core.config.rs.server.model.RegistrazioneMessaggi;
 import org.openspcoop2.core.config.rs.server.model.StatoFunzionalitaConWarningEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneEnum;
+import org.openspcoop2.core.config.rs.server.model.TipoAutenticazionePrincipalToken;
 import org.openspcoop2.core.config.rs.server.model.Validazione;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
@@ -1303,6 +1304,30 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				case URL_BASED: {
 					Optional<Proprieta> prop = pa.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.PATTERN.equals(p.getNome())).findAny();
 					if (prop.isPresent()) config.setPattern(prop.get().getValore());
+					break;
+				}
+				case TOKEN: {
+					Optional<Proprieta> prop = pa.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.TOKEN_CLAIM.equals(p.getNome())).findAny();
+					if (prop.isPresent()) {
+						if(ParametriAutenticazionePrincipal.TOKEN_CLAIM_SUBJECT.equals(prop.get().getValore())) {
+							config.setToken(TipoAutenticazionePrincipalToken.SUBJECT);
+						}
+						else if(ParametriAutenticazionePrincipal.TOKEN_CLAIM_CLIENT_ID.equals(prop.get().getValore())) {
+							config.setToken(TipoAutenticazionePrincipalToken.CLIENTID);
+						}
+						else if(ParametriAutenticazionePrincipal.TOKEN_CLAIM_USERNAME.equals(prop.get().getValore())) {
+							config.setToken(TipoAutenticazionePrincipalToken.USERNAME);
+						}
+						else if(ParametriAutenticazionePrincipal.TOKEN_CLAIM_EMAIL.equals(prop.get().getValore())) {
+							config.setToken(TipoAutenticazionePrincipalToken.EMAIL);
+						}
+						else if(ParametriAutenticazionePrincipal.TOKEN_CLAIM_CUSTOM.equals(prop.get().getValore())) {
+							config.setToken(TipoAutenticazionePrincipalToken.CUSTOM);
+							
+							Optional<Proprieta> propName = pa.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.NOME.equals(p.getNome())).findAny();
+							if (propName.isPresent()) config.setNome(propName.get().getValore());
+						}
+					}
 					break;
 				}
 				}	// switch config.getTipo

@@ -148,6 +148,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione;
 import org.openspcoop2.pdd.logger.LogLevels;
@@ -3596,6 +3597,25 @@ public class ConsoleHelper {
 					l.add(v);
 				}
 				break;
+			case TOKEN:
+				
+				// posizione 0: tipoToken
+				v = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
+				if(v!=null && !"".equals(v)) {
+					l = new ArrayList<>();
+					l.add(v);
+				}
+				
+				// posizione 1: nome claim proprietario
+				if(l==null) {
+					break;
+				}
+				v = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+1);
+				if(v!=null && !"".equals(v)) {
+					l.add(v);
+				}
+
+				break;
 			}
 		}
 		
@@ -3814,8 +3834,8 @@ public class ConsoleHelper {
 				}
 				else if(TipoAutenticazione.PRINCIPAL.equals(autenticazione)) {
 										
-					List<String> autenticazionePrincipalValues = TipoAutenticazionePrincipal.getValues();
-					List<String> autenticazionePrincipalLabels = TipoAutenticazionePrincipal.getLabels();
+					List<String> autenticazionePrincipalValues = TipoAutenticazionePrincipal.getValues(tokenAbilitato);
+					List<String> autenticazionePrincipalLabels = TipoAutenticazionePrincipal.getLabels(tokenAbilitato);
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO);
@@ -3886,6 +3906,7 @@ public class ConsoleHelper {
 						dati.addElement(de);
 						
 						break;
+						
 					case URL:
 						
 						// posizione 0: pattern
@@ -3905,6 +3926,68 @@ public class ConsoleHelper {
 							de.setRequired(true);
 						}
 						dati.addElement(de);
+						
+						break;
+						
+					case TOKEN:
+						
+						// posizione 0: tipoToken
+						autenticazioneParametro = null;
+						if(autenticazioneParametroList!=null && !autenticazioneParametroList.isEmpty()) {
+							autenticazioneParametro = autenticazioneParametroList.get(0);
+						}
+						de = new DataElement();
+						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM);
+						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
+						de.setValue(autenticazioneParametro);
+						if(allHidden) {
+							de.setType(DataElementType.HIDDEN);
+						}
+						else {
+							de.setType(DataElementType.SELECT);
+							
+							List<String> values = new ArrayList<>();
+							//values.add(ParametriAutenticazionePrincipal.TOKEN_CLAIM_ISSUER);
+							values.add(ParametriAutenticazionePrincipal.TOKEN_CLAIM_SUBJECT);
+							values.add(ParametriAutenticazionePrincipal.TOKEN_CLAIM_CLIENT_ID);
+							values.add(ParametriAutenticazionePrincipal.TOKEN_CLAIM_EMAIL);
+							values.add(ParametriAutenticazionePrincipal.TOKEN_CLAIM_USERNAME);
+							List<String> labels = new ArrayList<>();
+							labels.addAll(values);
+							values.add(ParametriAutenticazionePrincipal.TOKEN_CLAIM_CUSTOM);
+							labels.add(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM_PERSONALIZZATO);
+							
+							de.setValues(values);
+							de.setLabels(labels);
+							de.setSelected(autenticazioneParametro);
+							de.setRequired(true);
+							de.setPostBack(true);
+						}
+						dati.addElement(de);
+						
+						// posizione 1: nome claim proprietario
+						boolean claimProprietario = ParametriAutenticazionePrincipal.TOKEN_CLAIM_CUSTOM.equals(autenticazioneParametro);
+						if(claimProprietario) {
+							if(autenticazioneParametroList!=null && !autenticazioneParametroList.isEmpty() &&
+									autenticazioneParametroList.size()>1) {
+								autenticazioneParametro = autenticazioneParametroList.get(1);
+							}
+							else {
+								autenticazioneParametro = null;
+							}
+							de = new DataElement();
+							de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+1);
+							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_NOME);
+							de.setValue(autenticazioneParametro);
+							if(allHidden) {
+								de.setType(DataElementType.HIDDEN);
+							}
+							else {
+								de.setType(DataElementType.TEXT_EDIT);
+								de.setRequired(true);
+							}
+							dati.addElement(de);
+						}
 						
 						break;
 					}
@@ -4667,6 +4750,20 @@ public class ConsoleHelper {
 					if(autenticazioneParametroList==null || autenticazioneParametroList.isEmpty() || StringUtils.isEmpty(autenticazioneParametroList.get(0))){
 						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_ESPRESSIONE));
 						return false;
+					}
+					break;
+				case TOKEN:
+					if(autenticazioneParametroList==null || autenticazioneParametroList.isEmpty() || StringUtils.isEmpty(autenticazioneParametroList.get(0))){
+						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM));
+						return false;
+					}
+					String tipo = autenticazioneParametroList.get(0);
+					if(ParametriAutenticazionePrincipal.TOKEN_CLAIM_CUSTOM.equals(tipo)) {
+						if(autenticazioneParametroList.size()<=1 || StringUtils.isEmpty(autenticazioneParametroList.get(1))){
+							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	
+									CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM_PERSONALIZZATO_ESTESO));
+							return false;
+						}
 					}
 					break;
 				}

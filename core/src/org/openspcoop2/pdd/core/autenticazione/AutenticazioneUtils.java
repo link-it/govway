@@ -62,6 +62,7 @@ public class AutenticazioneUtils {
 			case CONTAINER:
 			case INDIRIZZO_IP:
 			case URL:
+			case TOKEN:
 				break;
 			case HEADER:
 				if(nome!=null && message.getTransportRequestContext()!=null) {

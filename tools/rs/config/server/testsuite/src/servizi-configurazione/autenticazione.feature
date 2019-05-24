@@ -163,6 +163,116 @@ Scenario: Imposta l'autenticazione in modalità principal\ip-based
     And match response.autenticazione.tipo == 'principal'
     And match response.autenticazione.configurazione contains configurazione
 
+@UpdateTokenSubject
+Scenario: Imposta l'autenticazione in modalità principal\token\subject
+    * def configurazione = { tipo: 'token', token: 'subject' }
+    * eval authn_principal.autenticazione.configurazione = configurazione
+
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
+    And header Authorization = govwayConfAuth
+    And request authn_principal
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200    
+    And match response.autenticazione.tipo == 'principal'
+    And match response.autenticazione.configurazione contains configurazione
+
+@UpdateTokenClientId
+Scenario: Imposta l'autenticazione in modalità principal\token\clientId
+    * def configurazione = { tipo: 'token', token: 'clientId' }
+    * eval authn_principal.autenticazione.configurazione = configurazione
+
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
+    And header Authorization = govwayConfAuth
+    And request authn_principal
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200    
+    And match response.autenticazione.tipo == 'principal'
+    And match response.autenticazione.configurazione contains configurazione
+
+@UpdateTokenUsername
+Scenario: Imposta l'autenticazione in modalità principal\token\username
+    * def configurazione = { tipo: 'token', token: 'username' }
+    * eval authn_principal.autenticazione.configurazione = configurazione
+
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
+    And header Authorization = govwayConfAuth
+    And request authn_principal
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200    
+    And match response.autenticazione.tipo == 'principal'
+    And match response.autenticazione.configurazione contains configurazione
+
+@UpdateTokenEMail
+Scenario: Imposta l'autenticazione in modalità principal\token\eMail
+    * def configurazione = { tipo: 'token', token: 'eMail' }
+    * eval authn_principal.autenticazione.configurazione = configurazione
+
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
+    And header Authorization = govwayConfAuth
+    And request authn_principal
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200    
+    And match response.autenticazione.tipo == 'principal'
+    And match response.autenticazione.configurazione contains configurazione
+
+@UpdateTokenCustom
+Scenario: Imposta l'autenticazione in modalità principal\token\custom
+    * def configurazione = { tipo: 'token', token: 'custom' , nome: 'aud' }
+    * eval authn_principal.autenticazione.configurazione = configurazione
+
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
+    And header Authorization = govwayConfAuth
+    And request authn_principal
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200    
+    And match response.autenticazione.tipo == 'principal'
+    And match response.autenticazione.configurazione contains configurazione
+
 
 @UpdateAutenticazioneCustom
 Scenario: Imposta l'autenticazione in modalità custom

@@ -23,8 +23,9 @@
 		
 		<!-- owasp config -->
 		<owasp>verify</owasp> <!-- owasp phase, use 'none' for disable -->
-		<owasp.plugin.version>5.0.0-M2</owasp.plugin.version>
+		<owasp.plugin.version>5.0.0-M3</owasp.plugin.version>
 		<owasp.plugin.failBuildOnAnyVulnerability>true</owasp.plugin.failBuildOnAnyVulnerability>
+		<owasp.ossindex.prevents429.sleep>5</owasp.ossindex.prevents429.sleep> <!-- https://github.com/sonatype/ossindex-maven/issues/17 -->
 
 		<!-- package config -->
 		<package>package</package> <!-- package phase, use 'none' for disable -->

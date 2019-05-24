@@ -5410,7 +5410,7 @@ public class ControlStationCore {
 				return null;
 			}
 			
-			// posizione 0: nome o pattern
+			// posizione 0: nome o pattern o tipoClaim
 			switch (tipo) {
 			case CONTAINER:
 			case INDIRIZZO_IP:
@@ -5453,6 +5453,26 @@ public class ControlStationCore {
 					}
 				}
 				break;
+			case TOKEN:
+				// posizione 0: tipoToken
+				for (Proprieta proprieta : list) {
+					if(ParametriAutenticazionePrincipal.TOKEN_CLAIM.equals(proprieta.getNome())) {
+						parametroAutenticazioneList = new ArrayList<>();
+						parametroAutenticazioneList.add(proprieta.getValore());
+						break;
+					}
+				}
+				
+				// posizione 1: nome claim proprietario
+				if(parametroAutenticazioneList==null) {
+					break;
+				}
+				for (Proprieta proprieta : list) {
+					if(ParametriAutenticazionePrincipal.NOME.equals(proprieta.getNome())) {
+						parametroAutenticazioneList.add(proprieta.getValore());
+						break;
+					}
+				}
 			}
 		}
 			
@@ -5536,6 +5556,29 @@ public class ControlStationCore {
 							// posizione 0: pattern
 							if(i==0) {
 								proprietaPar.setNome(ParametriAutenticazionePrincipal.PATTERN);
+								proprietaPar.setValore(autenticazioneParametro);
+							}
+							list.add(proprietaPar);
+						}
+					}
+				}
+				break;
+			case TOKEN:
+				if(autenticazioneParametroList!=null && !autenticazioneParametroList.isEmpty()) {
+					for (int i = 0; i < autenticazioneParametroList.size(); i++) {
+						String autenticazioneParametro = autenticazioneParametroList.get(i);
+						if(autenticazioneParametro!=null && !"".equals(autenticazioneParametro)) {
+							Proprieta proprietaPar = new Proprieta();
+							
+							// posizione 0: tipoToken
+							if(i==0) {
+								proprietaPar.setNome(ParametriAutenticazionePrincipal.TOKEN_CLAIM);
+								proprietaPar.setValore(autenticazioneParametro);
+							}
+							
+							// posizione 1: nome claim proprietario
+							else if(i==1) {
+								proprietaPar.setNome(ParametriAutenticazionePrincipal.NOME);
 								proprietaPar.setValore(autenticazioneParametro);
 							}
 							list.add(proprietaPar);

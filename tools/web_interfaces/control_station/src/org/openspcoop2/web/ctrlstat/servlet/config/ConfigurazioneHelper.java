@@ -11347,13 +11347,97 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 			
 			if(infoPolicy!=null){
+								
+				boolean delegata = false;
+				boolean applicativa = false;
+				@SuppressWarnings("unused")
+				boolean configurazione = false;
+				if(ruoloPorta!=null) {
+					if(RuoloPolicy.DELEGATA.equals(ruoloPorta)) {
+						delegata = (nomePorta!=null);
+					}
+					else if(RuoloPolicy.APPLICATIVA.equals(ruoloPorta)) {
+						applicativa = (nomePorta!=null);
+					}
+				}
+				configurazione = !delegata && !applicativa;
+				
+				boolean multitenant = this.confCore.isMultitenant();
+				
+				boolean tokenAbilitato = true;
+				
+				PddTipologia pddTipologiaSoggettoAutenticati = null;
+				boolean gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore = false;
+				PortaDelegata portaDelegata = null;
+				PortaApplicativa portaApplicativa = null;
+				CredenzialeTipo tipoAutenticazione = null;
+				IDSoggetto idSoggettoProprietario = null;
+				if(ruoloPorta!=null) {
+					if(applicativa) {
+						
+						if(multitenant && this.confCore.getMultitenantSoggettiErogazioni()!=null) {
+							switch (this.confCore.getMultitenantSoggettiErogazioni()) {
+							case SOLO_SOGGETTI_ESTERNI:
+								pddTipologiaSoggettoAutenticati = PddTipologia.ESTERNO;
+								break;
+							case ESCLUDI_SOGGETTO_EROGATORE:
+								gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore = true;
+								break;
+							case TUTTI:
+								break;
+							}
+						}
+						
+						IDPortaApplicativa idPA = new IDPortaApplicativa();
+						idPA.setNome(nomePorta);
+						portaApplicativa = this.porteApplicativeCore.getPortaApplicativa(idPA);
+						tipoAutenticazione = CredenzialeTipo.toEnumConstant(portaApplicativa.getAutenticazione());
+						idSoggettoProprietario = new IDSoggetto(portaApplicativa.getTipoSoggettoProprietario(), portaApplicativa.getNomeSoggettoProprietario());
+						
+						if(portaApplicativa.getGestioneToken()!=null) {
+							String gestioneTokenPolicy = portaApplicativa.getGestioneToken().getPolicy();
+							if(	gestioneTokenPolicy == null ||
+									gestioneTokenPolicy.equals("") ||
+									gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
+								tokenAbilitato = false;
+							}						
+						}
+						else {
+							tokenAbilitato = false;
+						}
+	
+					}
+					if(delegata) {
+						IDPortaDelegata idPD = new IDPortaDelegata();
+						idPD.setNome(nomePorta);
+						portaDelegata = this.porteDelegateCore.getPortaDelegata(idPD);
+						tipoAutenticazione = CredenzialeTipo.toEnumConstant(portaDelegata.getAutenticazione());
+						idSoggettoProprietario = new IDSoggetto(portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario());
+						
+						if(portaDelegata.getGestioneToken()!=null) {
+							String gestioneTokenPolicy = portaDelegata.getGestioneToken().getPolicy();
+							if(	gestioneTokenPolicy == null ||
+									gestioneTokenPolicy.equals("") ||
+									gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
+								tokenAbilitato = false;
+							}						
+						}
+						else {
+							tokenAbilitato = false;
+						}
+					}
+				}
 				
 				// GroupBy 
 				addToDatiAttivazioneGroupBy(dati, tipoOperazione, policy, nomeSezione, infoPolicy, 
-						ruoloPorta, nomePorta, serviceBinding);
+						ruoloPorta, nomePorta, serviceBinding,
+						tokenAbilitato
+						);
 				
 				// Filtro 
-				addToDatiAttivazioneFiltro(dati, tipoOperazione, policy, nomeSezione, infoPolicy, ruoloPorta, nomePorta, serviceBinding);
+				addToDatiAttivazioneFiltro(dati, tipoOperazione, policy, nomeSezione, infoPolicy, ruoloPorta, nomePorta, serviceBinding,
+						idSoggettoProprietario, tokenAbilitato, tipoAutenticazione, pddTipologiaSoggettoAutenticati, gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore
+						);
 				
 			}
 			
@@ -11604,7 +11688,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 	
 	private void addToDatiAttivazioneFiltro(Vector<DataElement> dati, TipoOperazione tipoOperazione,AttivazionePolicy policy, String nomeSezione, InfoPolicy infoPolicy, 
-			RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding) throws Exception {
+			RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding,
+			IDSoggetto idSoggettoProprietario, boolean tokenAbilitato, CredenzialeTipo tipoAutenticazione, PddTipologia pddTipologiaSoggettoAutenticati, boolean gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore) throws Exception {
 	
 		boolean delegata = false;
 		boolean applicativa = false;
@@ -11619,47 +11704,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		configurazione = !delegata && !applicativa;
 		
-		boolean multitenant = this.confCore.isMultitenant();
-		
-		PddTipologia pddTipologiaSoggettoAutenticati = null;
-		boolean gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore = false;
-		PortaDelegata portaDelegata = null;
-		PortaApplicativa portaApplicativa = null;
-		CredenzialeTipo tipoAutenticazione = null;
 		org.openspcoop2.core.config.constants.CredenzialeTipo tipoAutenticazioneConfig = null;
-		IDSoggetto idSoggettoProprietario = null;
-		if(ruoloPorta!=null) {
-			if(applicativa) {
-				
-				if(multitenant && this.confCore.getMultitenantSoggettiErogazioni()!=null) {
-					switch (this.confCore.getMultitenantSoggettiErogazioni()) {
-					case SOLO_SOGGETTI_ESTERNI:
-						pddTipologiaSoggettoAutenticati = PddTipologia.ESTERNO;
-						break;
-					case ESCLUDI_SOGGETTO_EROGATORE:
-						gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore = true;
-						break;
-					case TUTTI:
-						break;
-					}
-				}
-				
-				IDPortaApplicativa idPA = new IDPortaApplicativa();
-				idPA.setNome(nomePorta);
-				portaApplicativa = this.porteApplicativeCore.getPortaApplicativa(idPA);
-				tipoAutenticazione = CredenzialeTipo.toEnumConstant(portaApplicativa.getAutenticazione());
-				tipoAutenticazioneConfig = org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(portaApplicativa.getAutenticazione());
-				idSoggettoProprietario = new IDSoggetto(portaApplicativa.getTipoSoggettoProprietario(), portaApplicativa.getNomeSoggettoProprietario());
-			}
-			if(delegata) {
-				IDPortaDelegata idPD = new IDPortaDelegata();
-				idPD.setNome(nomePorta);
-				portaDelegata = this.porteDelegateCore.getPortaDelegata(idPD);
-				tipoAutenticazione = CredenzialeTipo.toEnumConstant(portaDelegata.getAutenticazione());
-				tipoAutenticazioneConfig = org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(portaDelegata.getAutenticazione());
-				idSoggettoProprietario = new IDSoggetto(portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario());
-			}
+		if(tipoAutenticazione!=null) {
+			tipoAutenticazioneConfig = org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(tipoAutenticazione.getValue(), true);
 		}
+		
+		boolean multitenant = this.confCore.isMultitenant();
 		
 		
 		// Elaboro valori con dipendenze
@@ -12276,7 +12326,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			else {
 				
 				IDSoggetto soggettoProprietarioServiziApplicativi = null;
-				if(datiIdentificativiFruitoreSelezionatoValue!=null || delegata) {
+				if(datiIdentificativiFruitoreSelezionatoValue!=null || !configurazione) {
 					String tipoFruitore = null;
 					String nomeFruitore = null;
 					if(datiIdentificativiFruitoreSelezionatoValue!=null) {
@@ -12284,8 +12334,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						nomeFruitore = policy.getFiltro().getNomeFruitore();
 					}
 					else {
-						tipoFruitore = portaDelegata.getTipoSoggettoProprietario();
-						nomeFruitore = portaDelegata.getNomeSoggettoProprietario();
+						tipoFruitore = idSoggettoProprietario.getTipo();
+						nomeFruitore = idSoggettoProprietario.getNome();
 					}
 					soggettoProprietarioServiziApplicativi = new IDSoggetto(tipoFruitore, nomeFruitore);
 				}
@@ -12979,7 +13029,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 	
 	private void addToDatiAttivazioneGroupBy(Vector<DataElement> dati, TipoOperazione tipoOperazione,AttivazionePolicy policy, String nomeSezione,	
-			InfoPolicy infoPolicy, RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding) throws Exception {
+			InfoPolicy infoPolicy, RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding,
+			boolean tokenAbilitato) throws Exception {
 	
 		boolean delegata = false;
 		boolean applicativa = false;
@@ -13266,54 +13317,58 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			// Token
 			
-			boolean first = this.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME);
-			String token = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN);
+			if(tokenAbilitato) {
 			
-			String [] tokenSelezionatiDB = null;
-			if(policy.getGroupBy().getToken()!=null && !"".equals(policy.getGroupBy().getToken())) {
-				tokenSelezionatiDB = policy.getGroupBy().getToken().split(",");
-			}
-			String [] tokenSelezionatiSenzaIssuer = null;
-			if(tokenSelezionatiDB!=null && tokenSelezionatiDB.length>0) {
-				List<String> l = new ArrayList<>();
-				for (int i = 0; i < tokenSelezionatiDB.length; i++) {
-					TipoCredenzialeMittente tipo = TipoCredenzialeMittente.valueOf(tokenSelezionatiDB[i]);
-					if(!TipoCredenzialeMittente.token_issuer.equals(tipo)) {
-						l.add(tokenSelezionatiDB[i]);
+				boolean first = this.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME);
+				String token = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN);
+				
+				String [] tokenSelezionatiDB = null;
+				if(policy.getGroupBy().getToken()!=null && !"".equals(policy.getGroupBy().getToken())) {
+					tokenSelezionatiDB = policy.getGroupBy().getToken().split(",");
+				}
+				String [] tokenSelezionatiSenzaIssuer = null;
+				if(tokenSelezionatiDB!=null && tokenSelezionatiDB.length>0) {
+					List<String> l = new ArrayList<>();
+					for (int i = 0; i < tokenSelezionatiDB.length; i++) {
+						TipoCredenzialeMittente tipo = TipoCredenzialeMittente.valueOf(tokenSelezionatiDB[i]);
+						if(!TipoCredenzialeMittente.token_issuer.equals(tipo)) {
+							l.add(tokenSelezionatiDB[i]);
+						}
+					}
+					if(!l.isEmpty()) {
+						tokenSelezionatiSenzaIssuer = l.toArray(new String[1]);
 					}
 				}
-				if(!l.isEmpty()) {
-					tokenSelezionatiSenzaIssuer = l.toArray(new String[1]);
+				boolean groupByToken = false;
+				if(first) {
+					groupByToken = (tokenSelezionatiDB!=null && tokenSelezionatiDB.length>0);
 				}
-			}
-			boolean groupByToken = false;
-			if(first) {
-				groupByToken = (tokenSelezionatiDB!=null && tokenSelezionatiDB.length>0);
-			}
-			else {
-				groupByToken = ServletUtils.isCheckBoxEnabled(token);
-			}
-			
-			de = new DataElement();
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN);
-			de.setType(DataElementType.CHECKBOX);
-			de.setSelected(groupByToken); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
-			de.setValue(groupByToken+"");
-			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
-			
-			if(groupByToken) {
+				else {
+					groupByToken = ServletUtils.isCheckBoxEnabled(token);
+				}
+				
 				de = new DataElement();
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN_CLAIMS);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN_CLAIMS);
-				de.setValues(CostantiControlStation.TOKEN_VALUES_WITHOUT_ISSUER);
-				de.setLabels(CostantiControlStation.LABEL_TOKEN_VALUES_WITHOUT_ISSUER);
-				de.setSelezionati(tokenSelezionatiSenzaIssuer);
-				de.setType(DataElementType.MULTI_SELECT);
-				de.setRows(4); 
-				de.setRequired(true);
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN);
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN);
+				de.setType(DataElementType.CHECKBOX);
+				de.setSelected(groupByToken); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
+				de.setValue(groupByToken+"");
+				de.setPostBack_viaPOST(true);
 				dati.addElement(de);
+				
+				if(groupByToken) {
+					de = new DataElement();
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN_CLAIMS);
+					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN_CLAIMS);
+					de.setValues(CostantiControlStation.TOKEN_VALUES_WITHOUT_ISSUER);
+					de.setLabels(CostantiControlStation.LABEL_TOKEN_VALUES_WITHOUT_ISSUER);
+					de.setSelezionati(tokenSelezionatiSenzaIssuer);
+					de.setType(DataElementType.MULTI_SELECT);
+					de.setRows(4); 
+					de.setRequired(true);
+					dati.addElement(de);
+				}
+				
 			}
 			
 			if(groupByKey){

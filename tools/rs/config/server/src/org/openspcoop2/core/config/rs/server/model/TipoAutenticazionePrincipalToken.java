@@ -25,19 +25,18 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Gets or Sets TipoAutenticazionePrincipal
+ * Gets or Sets TipoAutenticazionePrincipalToken
  */
-public enum TipoAutenticazionePrincipal {
-CONTAINER("container"),
-  HEADER_BASED("header-based"),
-  FORM_BASED("form-based"),
-  URL_BASED("url-based"),
-  IP_ADDRESS("ip-address"),
-  TOKEN("token");
+public enum TipoAutenticazionePrincipalToken {
+SUBJECT("subject"),
+  CLIENTID("clientId"),
+  USERNAME("username"),
+  EMAIL("eMail"),
+  CUSTOM("custom");
 
   private String value;
 
-  TipoAutenticazionePrincipal(String value) {
+  TipoAutenticazionePrincipalToken(String value) {
     this.value = value;
   }
 
@@ -48,8 +47,8 @@ CONTAINER("container"),
   }
 
   @JsonCreator
-  public static TipoAutenticazionePrincipal fromValue(String text) {
-    for (TipoAutenticazionePrincipal b : TipoAutenticazionePrincipal.values()) {
+  public static TipoAutenticazionePrincipalToken fromValue(String text) {
+    for (TipoAutenticazionePrincipalToken b : TipoAutenticazionePrincipalToken.values()) {
       if (String.valueOf(b.value).equals(text)) {
         return b;
       }

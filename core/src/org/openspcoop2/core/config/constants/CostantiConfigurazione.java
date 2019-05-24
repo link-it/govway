@@ -116,6 +116,7 @@ public class CostantiConfigurazione {
     public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_URL = "UrlBased";
     public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_CONTENT = "ContentBased";
     public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_INDIRIZZO_IP = "Indirizzo IP";
+    public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_TOKEN = "Token";
     
     /** tipo di porta autenticazione */
     public final static String AUTENTICAZIONE_NONE = "none";
@@ -133,6 +134,7 @@ public class CostantiConfigurazione {
     public final static String AUTENTICAZIONE_PRINCIPAL_URL = "url-based";
     public final static String AUTENTICAZIONE_PRINCIPAL_CONTENT = "content-based";
     public final static String AUTENTICAZIONE_PRINCIPAL_INDIRIZZO_IP = "indirizzo-ip";
+    public final static String AUTENTICAZIONE_PRINCIPAL_TOKEN = "token";
     
     /** tipo di porta autorizzazione */
     public final static String AUTORIZZAZIONE_NONE = "none";

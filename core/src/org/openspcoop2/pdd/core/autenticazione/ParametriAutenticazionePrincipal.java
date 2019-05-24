@@ -25,6 +25,7 @@
 package org.openspcoop2.pdd.core.autenticazione;
 
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
+import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 
 /**
  * ParametriAutenticazionePrincipal
@@ -48,6 +49,14 @@ public class ParametriAutenticazionePrincipal extends ParametriAutenticazione im
 	public static final String CLEAN_PRINCIPAL = "cleanPrincipal";
 	public static final String CLEAN_PRINCIPAL_TRUE = "true";
 	public static final String CLEAN_PRINCIPAL_FALSE = "false";
+	
+	public static final String TOKEN_CLAIM = "claim";
+	public static final String TOKEN_CLAIM_ISSUER = "issuer";
+	public static final String TOKEN_CLAIM_SUBJECT = "subject";
+	public static final String TOKEN_CLAIM_CLIENT_ID = "clientId";
+	public static final String TOKEN_CLAIM_USERNAME = "username";
+	public static final String TOKEN_CLAIM_EMAIL = "eMail";
+	public static final String TOKEN_CLAIM_CUSTOM = "custom";
 	
 	public ParametriAutenticazionePrincipal(ParametriAutenticazione parametri) {
 		super(parametri);
@@ -87,6 +96,32 @@ public class ParametriAutenticazionePrincipal extends ParametriAutenticazione im
 		}
 		else if(CLEAN_PRINCIPAL_TRUE.equalsIgnoreCase(valore)) {
 			return true;
+		}
+		return null;
+	}
+	
+	public TipoCredenzialeMittente getTokenClaim() {
+		String valore = this.get(TOKEN_CLAIM);
+		if(valore==null || "".equals(valore)) {
+			return null;
+		}
+		if(TOKEN_CLAIM_ISSUER.equalsIgnoreCase(valore)) {
+			return TipoCredenzialeMittente.token_issuer;
+		}
+		else if(TOKEN_CLAIM_SUBJECT.equalsIgnoreCase(valore)) {
+			return TipoCredenzialeMittente.token_subject;
+		}
+		else if(TOKEN_CLAIM_CLIENT_ID.equalsIgnoreCase(valore)) {
+			return TipoCredenzialeMittente.token_clientId;
+		}
+		else if(TOKEN_CLAIM_USERNAME.equalsIgnoreCase(valore)) {
+			return TipoCredenzialeMittente.token_username;
+		}
+		else if(TOKEN_CLAIM_EMAIL.equalsIgnoreCase(valore)) {
+			return TipoCredenzialeMittente.token_eMail;
+		}
+		else if(TOKEN_CLAIM_CUSTOM.equalsIgnoreCase(valore)) {
+			return TipoCredenzialeMittente.trasporto; // uso trasporto come custom
 		}
 		return null;
 	}

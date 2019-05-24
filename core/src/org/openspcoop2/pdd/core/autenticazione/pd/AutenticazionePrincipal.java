@@ -27,6 +27,7 @@ package org.openspcoop2.pdd.core.autenticazione.pd;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneException;
@@ -51,6 +52,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 	private TipoAutenticazionePrincipal tipoAutenticazionePrincipal = TipoAutenticazionePrincipal.CONTAINER;
 	private String nome = null;
 	private String pattern = null;
+	private TipoCredenzialeMittente tipoTokenClaim = null; // uso trasporto come custom
 	private boolean cleanPrincipal = true;
 	
 	@Override
@@ -90,6 +92,18 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 //						throw new AutenticazioneException("Pattern, da utilizzare per estrarre dal contenuto il principal, non indicato");
 //					}
 //					break;
+			case TOKEN:
+				this.tipoTokenClaim = authPrincipal.getTokenClaim();
+				if(this.tipoTokenClaim==null) {
+					throw new AutenticazioneException("Token Claim, da cui estrarre il principal, non indicato");
+				}
+				if(TipoCredenzialeMittente.trasporto.equals(this.tipoTokenClaim)) {
+					this.nome = authPrincipal.getNome();
+					if(this.nome==null) {
+						throw new AutenticazioneException("Nome del token claim, da cui estrarre il principal, non indicato");
+					}
+				}
+				break;
 			}
 			
 			if(authPrincipal.getCleanPrincipal()!=null) {
@@ -108,11 +122,12 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 		case FORM:
 		case URL:
 		case INDIRIZZO_IP:
+		case TOKEN:
 			if(datiInvocazione==null) {
 				return null;
 			}
 			try {
-				return PrincipalUtilities.getPrincipal(this.tipoAutenticazionePrincipal, this.nome, this.pattern, 
+				return PrincipalUtilities.getPrincipal(this.tipoAutenticazionePrincipal, this.nome, this.pattern, this.tipoTokenClaim, 
 						datiInvocazione.getInfoConnettoreIngresso(), this.getPddContext(), false);
 			}catch(Exception e) {
 				return null;
@@ -136,7 +151,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
     	// Controllo credenziali fornite
     	String principal = null;
     	try {
-    		principal = PrincipalUtilities.getPrincipal(this.tipoAutenticazionePrincipal, this.nome, this.pattern, 
+    		principal = PrincipalUtilities.getPrincipal(this.tipoAutenticazionePrincipal, this.nome, this.pattern, this.tipoTokenClaim,  
     				datiInvocazione!=null ? datiInvocazione.getInfoConnettoreIngresso() : null, this.getPddContext(), true);
     	}catch(Exception e) {
     		OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazionePrincipal non riuscita",e);
