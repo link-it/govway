@@ -115,6 +115,8 @@ CREATE TABLE porte_delegate
 	response_cache_seconds INT,
 	response_cache_max_msg_size BIGINT,
 	response_cache_hash_url VARCHAR(255),
+	response_cache_hash_query VARCHAR(255),
+	response_cache_hash_query_list TEXT,
 	response_cache_hash_headers VARCHAR(255),
 	response_cache_hash_hdr_list TEXT,
 	response_cache_hash_payload VARCHAR(255),

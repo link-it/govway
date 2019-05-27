@@ -61,6 +61,7 @@ import org.openspcoop2.core.config.constants.RicercaTipologiaFruizione;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
@@ -3492,6 +3493,107 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		
 		return lista;
 	}
+	
+	public boolean azioneUsataInTrasformazioniPortaDelegata(String azione) throws DriverConfigurazioneException {
+		return this.azioneUsataInTrasformazioni(azione, true);
+	}
+	public boolean azioneUsataInTrasformazioniPortaApplicativa(String azione) throws DriverConfigurazioneException {
+		return this.azioneUsataInTrasformazioni(azione, false);
+	}
+	private boolean azioneUsataInTrasformazioni(String azione, boolean portaDelegata) throws DriverConfigurazioneException {
+
+		String nomeMetodo = "azioneUsataInTrasformazioni";
+		
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+
+		
+		String nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(nomeTabella);
+			sqlQueryObject.addSelectField("applicabilita_azioni");
+			sqlQueryObject.addWhereLikeCondition("applicabilita_azioni", azione, false, true, false);
+			sqlQueryObject.setANDLogicOperator(true);
+			stmt = con.prepareStatement(sqlQueryObject.createSQLQuery());
+			rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				
+				String checkAz = rs.getString("applicabilita_azioni");
+				if(checkAz!=null) {
+					if(azione.equals(checkAz)) {
+						return true;
+					}
+					if(checkAz.contains(",")) {
+						String [] tmp = checkAz.split(",");
+						if(tmp!=null && tmp.length>0) {
+							for (int i = 0; i < tmp.length; i++) {
+								if(azione.equals(tmp[i])) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+
+			}
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try {
+				if(rs!=null)
+					rs.close();
+			}catch(Exception eClose) {}
+			try {
+				if(stmt!=null)
+					stmt.close();
+			}catch(Exception eClose) {}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return false;
+	}
+	
 	
 	public TrasformazioneRegola getPortaApplicativaTrasformazione(long idPorta, String azioni, String pattern, String contentType,
 			List<TrasformazioneRegolaApplicabilitaSoggetto> soggetti,
@@ -10629,6 +10731,18 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				configurazione.getHashGenerator().setRequestUri(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(responseCacheHashUrl));
 			}
 			
+			String responseCacheHashQuery = rs.getString("response_cache_hash_query");
+			if(responseCacheHashQuery!=null && !"".equals(responseCacheHashQuery)) {
+				configurazione.getHashGenerator().setQueryParameters(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaCacheDigestQueryParameter(responseCacheHashQuery));
+			}
+			
+			if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(configurazione.getHashGenerator().getQueryParameters())) {
+				List<String> l = convertToList(rs.getString("response_cache_hash_query_list"));
+				for (String v : l) {
+					configurazione.getHashGenerator().addQueryParameter(v);
+				}
+			}
+			
 			String responseCacheHashHeaders = rs.getString("response_cache_hash_headers");
 			if(responseCacheHashHeaders!=null && !"".equals(responseCacheHashHeaders)) {
 				configurazione.getHashGenerator().setHeaders(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(responseCacheHashHeaders));
@@ -16957,6 +17071,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("response_cache_seconds");
 			sqlQueryObject.addSelectField("response_cache_max_msg_size");
 			sqlQueryObject.addSelectField("response_cache_hash_url");
+			sqlQueryObject.addSelectField("response_cache_hash_query");
+			sqlQueryObject.addSelectField("response_cache_hash_query_list");
 			sqlQueryObject.addSelectField("response_cache_hash_headers");
 			sqlQueryObject.addSelectField("response_cache_hash_hdr_list");
 			sqlQueryObject.addSelectField("response_cache_hash_payload");
@@ -17898,6 +18014,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("response_cache_seconds");
 			sqlQueryObject.addSelectField("response_cache_max_msg_size");
 			sqlQueryObject.addSelectField("response_cache_hash_url");
+			sqlQueryObject.addSelectField("response_cache_hash_query");
+			sqlQueryObject.addSelectField("response_cache_hash_query_list");
 			sqlQueryObject.addSelectField("response_cache_hash_headers");
 			sqlQueryObject.addSelectField("response_cache_hash_hdr_list");
 			sqlQueryObject.addSelectField("response_cache_hash_payload");

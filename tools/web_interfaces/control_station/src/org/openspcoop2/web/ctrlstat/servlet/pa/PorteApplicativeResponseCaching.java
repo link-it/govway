@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -133,8 +134,14 @@ public class PorteApplicativeResponseCaching extends Action {
 			boolean responseCachingDigestHeaders = ServletUtils.isCheckBoxEnabled(responseCachingDigestHeadersTmp);
 			String responseCachingDigestPayloadTmp = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_PAYLOAD);
 			boolean responseCachingDigestPayload = ServletUtils.isCheckBoxEnabled(responseCachingDigestPayloadTmp);
-			
 			String responseCachingDigestHeadersNomiHeaders = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS_NOMI_HEADERS);
+			StatoFunzionalitaCacheDigestQueryParameter responseCachingDigestQueryParameter = null;
+			String responseCachingDigestQueryParameterTmp = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS);
+			if(responseCachingDigestQueryParameterTmp!=null && !"".equals(responseCachingDigestQueryParameterTmp)) {
+				responseCachingDigestQueryParameter = StatoFunzionalitaCacheDigestQueryParameter.toEnumConstant(responseCachingDigestQueryParameterTmp, true);
+			}
+			String responseCachingDigestNomiParametriQuery = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS_NOMI);
+						
 			String responseCachingCacheControlNoCacheTmp = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_NO_CACHE);
 			boolean responseCachingCacheControlNoCache = ServletUtils.isCheckBoxEnabled(responseCachingCacheControlNoCacheTmp);
 			String responseCachingCacheControlMaxAgeTmp = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_MAX_AGE);
@@ -181,10 +188,18 @@ public class PorteApplicativeResponseCaching extends Action {
 						}
 						
 						responseCachingDigestUrlInvocazione = true;
+						responseCachingDigestQueryParameter = StatoFunzionalitaCacheDigestQueryParameter.ABILITATO;
 						responseCachingDigestHeaders = false;
 						responseCachingDigestPayload = true;
 						configurazioneTmp.setHashGenerator(new ResponseCachingConfigurazioneHashGenerator());
 						if(configurazioneTmp.getHashGenerator() != null) {
+							
+							if(configurazioneTmp.getHashGenerator().getQueryParameters() != null)
+								responseCachingDigestQueryParameter = configurazioneTmp.getHashGenerator().getQueryParameters();
+							
+							if(configurazioneTmp.getHashGenerator().getQueryParameterList() != null)  
+								responseCachingDigestNomiParametriQuery = StringUtils.join(configurazioneTmp.getHashGenerator().getQueryParameterList(), ",");
+							
 							if(configurazioneTmp.getHashGenerator().getHeaders() != null && configurazioneTmp.getHashGenerator().getHeaders().equals(StatoFunzionalita.ABILITATO)) 
 								responseCachingDigestHeaders = true;
 							
@@ -246,10 +261,18 @@ public class PorteApplicativeResponseCaching extends Action {
 							}
 							
 							responseCachingDigestUrlInvocazione = true;
+							responseCachingDigestQueryParameter = StatoFunzionalitaCacheDigestQueryParameter.ABILITATO;
 							responseCachingDigestHeaders = false;
 							responseCachingDigestPayload = true;
 							responseCachingDigestHeadersNomiHeaders = "";
 							if(oldConfigurazione.getHashGenerator() != null) {
+								
+								if(oldConfigurazione.getHashGenerator().getQueryParameters() != null)
+									responseCachingDigestQueryParameter = oldConfigurazione.getHashGenerator().getQueryParameters();
+								
+								if(oldConfigurazione.getHashGenerator().getQueryParameterList() != null)  
+									responseCachingDigestNomiParametriQuery = StringUtils.join(oldConfigurazione.getHashGenerator().getQueryParameterList(), ",");
+								
 								if(oldConfigurazione.getHashGenerator().getHeaders() != null)  
 									responseCachingDigestHeaders = oldConfigurazione.getHashGenerator().getHeaders().equals(StatoFunzionalita.ABILITATO);
 								
@@ -300,9 +323,17 @@ public class PorteApplicativeResponseCaching extends Action {
 								}
 								
 								responseCachingDigestUrlInvocazione = true;
+								responseCachingDigestQueryParameter = StatoFunzionalitaCacheDigestQueryParameter.ABILITATO;
 								responseCachingDigestHeaders = false;
 								responseCachingDigestPayload = true;
 								if(oldConfigurazione.getHashGenerator() != null) {
+									
+									if(oldConfigurazione.getHashGenerator().getQueryParameters() != null)
+										responseCachingDigestQueryParameter = oldConfigurazione.getHashGenerator().getQueryParameters();
+									
+									if(oldConfigurazione.getHashGenerator().getQueryParameterList() != null)  
+										responseCachingDigestNomiParametriQuery = StringUtils.join(oldConfigurazione.getHashGenerator().getQueryParameterList(), ",");
+									
 									if(oldConfigurazione.getHashGenerator().getHeaders() != null)  
 										responseCachingDigestHeaders = oldConfigurazione.getHashGenerator().getHeaders().equals(StatoFunzionalita.ABILITATO);
 									
@@ -342,10 +373,18 @@ public class PorteApplicativeResponseCaching extends Action {
 								}
 								
 								responseCachingDigestUrlInvocazione = true;
+								responseCachingDigestQueryParameter = StatoFunzionalitaCacheDigestQueryParameter.ABILITATO;
 								responseCachingDigestHeaders = false;
 								responseCachingDigestPayload = true;
 								configurazioneTmp.setHashGenerator(new ResponseCachingConfigurazioneHashGenerator());
 								if(configurazioneTmp.getHashGenerator() != null) {
+									
+									if(configurazioneTmp.getHashGenerator().getQueryParameters() != null)
+										responseCachingDigestQueryParameter = configurazioneTmp.getHashGenerator().getQueryParameters();
+									
+									if(configurazioneTmp.getHashGenerator().getQueryParameterList() != null)  
+										responseCachingDigestNomiParametriQuery = StringUtils.join(configurazioneTmp.getHashGenerator().getQueryParameterList(), ",");
+									
 									if(configurazioneTmp.getHashGenerator().getHeaders() != null)  
 										responseCachingDigestHeaders = configurazioneTmp.getHashGenerator().getHeaders().equals(StatoFunzionalita.ABILITATO);
 									
@@ -383,7 +422,7 @@ public class PorteApplicativeResponseCaching extends Action {
 
 				porteApplicativeHelper.addConfigurazioneResponseCachingPorteToDati(tipoOperazione, dati, showStato, statoResponseCachingPorta,
 						responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes,
-						responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders,
+						responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders, responseCachingDigestQueryParameter, responseCachingDigestNomiParametriQuery,
 						responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore, visualizzaLinkConfigurazioneRegola,
 						servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola );
 
@@ -408,7 +447,7 @@ public class PorteApplicativeResponseCaching extends Action {
 
 				porteApplicativeHelper.addConfigurazioneResponseCachingPorteToDati(tipoOperazione, dati, showStato, statoResponseCachingPorta,
 						responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes,
-						responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders,
+						responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders, responseCachingDigestQueryParameter, responseCachingDigestNomiParametriQuery,
 						responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore, visualizzaLinkConfigurazioneRegola,
 						servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola );
 
@@ -425,7 +464,7 @@ public class PorteApplicativeResponseCaching extends Action {
 			if(statoResponseCachingPorta.equals(CostantiControlStation.VALUE_PARAMETRO_RESPONSE_CACHING_STATO_RIDEFINITO)) {
 				newConfigurazione = porteApplicativeHelper.getResponseCaching(responseCachingEnabled, responseCachingSeconds,
 						responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes, responseCachingDigestUrlInvocazione, 
-						responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders,
+						responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders, responseCachingDigestQueryParameter, responseCachingDigestNomiParametriQuery,
 						responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore,listaRegoleCachingConfigurazione);
 			}
 			
@@ -465,9 +504,17 @@ public class PorteApplicativeResponseCaching extends Action {
 						}
 						
 						responseCachingDigestUrlInvocazione = true;
+						responseCachingDigestQueryParameter = StatoFunzionalitaCacheDigestQueryParameter.ABILITATO;
 						responseCachingDigestHeaders = false;
 						responseCachingDigestPayload = true;
 						if(configurazioneAggiornata.getHashGenerator() != null) {
+							
+							if(configurazioneAggiornata.getHashGenerator().getQueryParameters() != null)
+								responseCachingDigestQueryParameter = configurazioneAggiornata.getHashGenerator().getQueryParameters();
+							
+							if(configurazioneAggiornata.getHashGenerator().getQueryParameterList() != null)  
+								responseCachingDigestNomiParametriQuery = StringUtils.join(configurazioneAggiornata.getHashGenerator().getQueryParameterList(), ",");
+							
 							if(configurazioneAggiornata.getHashGenerator().getHeaders() != null)  
 								responseCachingDigestHeaders = configurazioneAggiornata.getHashGenerator().getHeaders().equals(StatoFunzionalita.ABILITATO);
 							
@@ -498,7 +545,7 @@ public class PorteApplicativeResponseCaching extends Action {
 
 			porteApplicativeHelper.addConfigurazioneResponseCachingPorteToDati(tipoOperazione, dati, showStato, statoResponseCachingPorta,
 					responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes, 
-					responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders,
+					responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders, responseCachingDigestQueryParameter, responseCachingDigestNomiParametriQuery,
 					responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore, visualizzaLinkConfigurazioneRegola,
 					servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola );
 

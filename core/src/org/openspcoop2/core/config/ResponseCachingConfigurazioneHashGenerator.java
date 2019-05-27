@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +43,10 @@ import java.util.List;
  * &lt;complexType name="response-caching-configurazione-hash-generator">
  * 		&lt;sequence>
  * 			&lt;element name="header" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="query-parameter" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="request-uri" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
+ * 		&lt;attribute name="query-parameters" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaCacheDigestQueryParameter" use="optional" default="abilitato"/>
  * 		&lt;attribute name="headers" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="payload" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
  * &lt;/complexType>
@@ -58,7 +61,8 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "response-caching-configurazione-hash-generator", 
   propOrder = {
-  	"header"
+  	"header",
+  	"queryParameter"
   }
 )
 
@@ -106,6 +110,30 @@ public class ResponseCachingConfigurazioneHashGenerator extends org.openspcoop2.
     return this.header.size();
   }
 
+  public void addQueryParameter(java.lang.String queryParameter) {
+    this.queryParameter.add(queryParameter);
+  }
+
+  public java.lang.String getQueryParameter(int index) {
+    return this.queryParameter.get( index );
+  }
+
+  public java.lang.String removeQueryParameter(int index) {
+    return this.queryParameter.remove( index );
+  }
+
+  public List<java.lang.String> getQueryParameterList() {
+    return this.queryParameter;
+  }
+
+  public void setQueryParameterList(List<java.lang.String> queryParameter) {
+    this.queryParameter=queryParameter;
+  }
+
+  public int sizeQueryParameterList() {
+    return this.queryParameter.size();
+  }
+
   public void set_value_requestUri(String value) {
     this.requestUri = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
@@ -124,6 +152,26 @@ public class ResponseCachingConfigurazioneHashGenerator extends org.openspcoop2.
 
   public void setRequestUri(org.openspcoop2.core.config.constants.StatoFunzionalita requestUri) {
     this.requestUri = requestUri;
+  }
+
+  public void set_value_queryParameters(String value) {
+    this.queryParameters = (StatoFunzionalitaCacheDigestQueryParameter) StatoFunzionalitaCacheDigestQueryParameter.toEnumConstantFromString(value);
+  }
+
+  public String get_value_queryParameters() {
+    if(this.queryParameters == null){
+    	return null;
+    }else{
+    	return this.queryParameters.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter getQueryParameters() {
+    return this.queryParameters;
+  }
+
+  public void setQueryParameters(org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter queryParameters) {
+    this.queryParameters = queryParameters;
   }
 
   public void set_value_headers(String value) {
@@ -204,11 +252,48 @@ public class ResponseCachingConfigurazioneHashGenerator extends org.openspcoop2.
   	return this.header.size();
   }
 
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="query-parameter",required=true,nillable=false)
+  protected List<java.lang.String> queryParameter = new ArrayList<java.lang.String>();
+
+  /**
+   * @deprecated Use method getQueryParameterList
+   * @return List<java.lang.String>
+  */
+  @Deprecated
+  public List<java.lang.String> getQueryParameter() {
+  	return this.queryParameter;
+  }
+
+  /**
+   * @deprecated Use method setQueryParameterList
+   * @param queryParameter List<java.lang.String>
+  */
+  @Deprecated
+  public void setQueryParameter(List<java.lang.String> queryParameter) {
+  	this.queryParameter=queryParameter;
+  }
+
+  /**
+   * @deprecated Use method sizeQueryParameterList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeQueryParameter() {
+  	return this.queryParameter.size();
+  }
+
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_requestUri;
 
   @XmlAttribute(name="request-uri",required=false)
   protected StatoFunzionalita requestUri = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_queryParameters;
+
+  @XmlAttribute(name="query-parameters",required=false)
+  protected StatoFunzionalitaCacheDigestQueryParameter queryParameters = (StatoFunzionalitaCacheDigestQueryParameter) StatoFunzionalitaCacheDigestQueryParameter.toEnumConstantFromString("abilitato");
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_headers;

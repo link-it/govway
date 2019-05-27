@@ -57,6 +57,7 @@ import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.lib.mvc.Parameter;
@@ -110,6 +111,7 @@ public class AccordiServizioParteComuneUtilities {
 		
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
 		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apcCore);
+		ConfigurazioneCore confCore = new ConfigurazioneCore(apcCore);
 		
 		boolean modificaAS_effettuata = false;
 		for (int i = 0; i < risorse.size(); i++) {
@@ -149,6 +151,31 @@ public class AccordiServizioParteComuneUtilities {
 				for(int j=0;j<lPD.size();j++){
 					inUsoMessage.append("- "+lPD.get(j).getIdServizio()+" (fruitore: "+lPD.get(j).getIdFruitore()+") (gruppo: '"+lPD.get(j).getDescrizione()+"')"+newLine);
 				}
+				continue;
+			}
+			
+			// Controllo se assegnata in filtri di rate limiting
+			if(confCore.usedInConfigurazioneControlloTrafficoAttivazionePolicy(null,null, nomeRisorsa)) {
+				if(inUsoMessage.length()>0) {
+					inUsoMessage.append(newLine);
+				}
+				inUsoMessage.append("Risorsa '"+methodPath+"' non rimuovibile poichè in uso in politiche di Rate Limiting"+newLine);
+				continue;
+			}
+			
+			// Controllo se assegnata in criteri di applicabilita delle trasformazioni
+			if(porteApplicativeCore.azioneUsataInTrasformazioniPortaApplicativa(nomeRisorsa)) {
+				if(inUsoMessage.length()>0) {
+					inUsoMessage.append(newLine);
+				}
+				inUsoMessage.append("Risorsa '"+methodPath+"' non rimuovibile poichè in uso in erogazioni per la configurazione di trasformazioni"+newLine);
+				continue;
+			}
+			if(porteDelegateCore.azioneUsataInTrasformazioniPortaDelegata(nomeRisorsa)) {
+				if(inUsoMessage.length()>0) {
+					inUsoMessage.append(newLine);
+				}
+				inUsoMessage.append("Risorsa '"+methodPath+"' non rimuovibile poichè in uso in fruizioni per la configurazione di trasformazioni"+newLine);
 				continue;
 			}
 			
@@ -304,6 +331,7 @@ public class AccordiServizioParteComuneUtilities {
 	
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
 		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apcCore);
+		ConfigurazioneCore confCore = new ConfigurazioneCore(apcCore);
 		
 		String nomept = pt.getNome();
 		
@@ -340,6 +368,31 @@ public class AccordiServizioParteComuneUtilities {
 				for(int p=0; p<tmp.size();p++){
 					inUsoMessage.append("- "+tmp.get(p)+newLine);
 				}
+				continue;
+			}
+			
+			// Controllo se assegnata in filtri di rate limiting
+			if(confCore.usedInConfigurazioneControlloTrafficoAttivazionePolicy(null,null, nomeop)) {
+				if(inUsoMessage.length()>0) {
+					inUsoMessage.append(newLine);
+				}
+				inUsoMessage.append("Azione '"+nomeop+"' non rimuovibile poichè in uso in politiche di Rate Limiting"+newLine);
+				continue;
+			}
+			
+			// Controllo se assegnata in criteri di applicabilita delle trasformazioni
+			if(porteApplicativeCore.azioneUsataInTrasformazioniPortaApplicativa(nomeop)) {
+				if(inUsoMessage.length()>0) {
+					inUsoMessage.append(newLine);
+				}
+				inUsoMessage.append("Azione '"+nomeop+"' non rimuovibile poichè in uso in erogazioni per la configurazione di trasformazioni"+newLine);
+				continue;
+			}
+			if(porteDelegateCore.azioneUsataInTrasformazioniPortaDelegata(nomeop)) {
+				if(inUsoMessage.length()>0) {
+					inUsoMessage.append(newLine);
+				}
+				inUsoMessage.append("Azione '"+nomeop+"' non rimuovibile poichè in uso in fruizioni per la configurazione di trasformazioni"+newLine);
 				continue;
 			}
 			

@@ -446,6 +446,27 @@ public class PorteDelegateCore extends ControlStationCore {
 		}
 	}
 	
+	public boolean azioneUsataInTrasformazioniPortaDelegata(String nome) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "azioneUsataInTrasformazioniPortaDelegata";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().azioneUsataInTrasformazioniPortaDelegata(nome);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public List<MappingFruizionePortaDelegata> getMappingConGruppiPerAzione(String nomeAzione, List<IDServizio> list) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getMappingConGruppiPerAzione";

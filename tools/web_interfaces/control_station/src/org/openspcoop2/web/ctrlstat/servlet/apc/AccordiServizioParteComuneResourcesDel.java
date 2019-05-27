@@ -134,8 +134,10 @@ public final class AccordiServizioParteComuneResourcesDel extends Action {
 			// manca l'id dei port-type
 			as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
 
-			// Verifico stato
-			apcHelper.setMessageWarningStatoConsistenzaAccordo(false, as);
+			// Verifico stato (se non c'è un errore precedente)
+			if (inUsoMessage.length()<=0) {
+				apcHelper.setMessageWarningStatoConsistenzaAccordo(false, as);
+			}
 			
 			apcHelper.prepareAccordiResourcesList(id,as, lista, ricerca, tipoAccordo);
 

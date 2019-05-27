@@ -5,6 +5,8 @@
     "max_response_size": true,
     "max_response_size_kb": 1024,
     "hash_request_uri": true,
+    "hash_all_query_parameters": false,
+    "hash_query_paramaters": ["p1","p2"],
     "hash_headers": ["PROVA", "PROVA2"],
     "hash_payload": true,
     "regole": [ { "return-code-min": 200, "return-code-max": 200, "fault": true, "cache_timeout_seconds": 12 },

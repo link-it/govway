@@ -96,6 +96,7 @@ import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
@@ -10269,7 +10270,7 @@ public class ConsoleHelper {
 	public void addConfigurazioneResponseCachingPorteToDati(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean showStato, String statoResponseCachingPorta, boolean responseCachingEnabled, int responseCachingSeconds,
 			boolean responseCachingMaxResponseSize, long responseCachingMaxResponseSizeBytes,
 			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders,
-			boolean responseCachingDigestPayload, String responseCachingDigestHeadersNomiHeaders, 
+			boolean responseCachingDigestPayload, String responseCachingDigestHeadersNomiHeaders, StatoFunzionalitaCacheDigestQueryParameter responseCachingDigestQueryParameter, String responseCachingDigestNomiParametriQuery, 
 			boolean responseCachingCacheControlNoCache, boolean responseCachingCacheControlMaxAge, boolean responseCachingCacheControlNoStore, boolean visualizzaLinkConfigurazioneRegola, 
 			String servletResponseCachingConfigurazioneRegolaList, List<Parameter> paramsResponseCachingConfigurazioneRegolaList, int numeroResponseCachingConfigurazioneRegola) throws Exception {
 		
@@ -10301,7 +10302,7 @@ public class ConsoleHelper {
 		
 		if(!showStato || statoResponseCachingPorta.equals(CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_RIDEFINITO)) {
 			this.addResponseCachingToDati(dati, responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, 
-					responseCachingMaxResponseSizeBytes, responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, false, responseCachingDigestHeadersNomiHeaders,
+					responseCachingMaxResponseSizeBytes, responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, false, responseCachingDigestHeadersNomiHeaders, responseCachingDigestQueryParameter, responseCachingDigestNomiParametriQuery,
 					responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore, visualizzaLinkConfigurazioneRegola,
 					servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola );
 		}
@@ -10310,7 +10311,7 @@ public class ConsoleHelper {
 	public void addResponseCachingToDati(Vector<DataElement> dati, boolean responseCachingEnabled, int responseCachingSeconds,
 			boolean responseCachingMaxResponseSize, long responseCachingMaxResponseSizeBytes,
 			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders,
-			boolean responseCachingDigestPayload, boolean addTitle, String responseCachingDigestHeadersNomiHeaders, 
+			boolean responseCachingDigestPayload, boolean addTitle, String responseCachingDigestHeadersNomiHeaders, StatoFunzionalitaCacheDigestQueryParameter responseCachingDigestQueryParameter, String responseCachingDigestNomiParametriQuery,  
 			boolean responseCachingCacheControlNoCache, boolean responseCachingCacheControlMaxAge, boolean responseCachingCacheControlNoStore, boolean visualizzaLinkConfigurazioneRegola,
 			String servletResponseCachingConfigurazioneRegolaList, List<Parameter> paramsResponseCachingConfigurazioneRegolaList, int numeroResponseCachingConfigurazioneRegola) {
 		DataElement de;
@@ -10376,6 +10377,30 @@ public class ConsoleHelper {
 			de.setSelected(responseCachingDigestUrlInvocazione ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
 			de.setValue(responseCachingDigestUrlInvocazione ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
 			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS);
+			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS);
+			de.setType(DataElementType.SELECT);
+			de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_RESPONSE_CACHING_DIGEST_QUERY_PARAMETERS);
+			if(responseCachingDigestQueryParameter!=null) {
+				de.setSelected(responseCachingDigestQueryParameter.getValue());
+				de.setValue(responseCachingDigestQueryParameter.getValue());
+			}
+			de.setPostBack(true);
+			dati.addElement(de);
+			
+			if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(responseCachingDigestQueryParameter)) {
+				de = new DataElement();
+//				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS_NOMI);
+				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS_NOMI);
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setValue(responseCachingDigestNomiParametriQuery);
+				de.enableTags();
+				de.setNote(CostantiControlStation.NOTE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS_NOMI);
+//				de.setRequired(true);
+				dati.addElement(de);
+			}
 			
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_PAYLOAD);
@@ -10460,7 +10485,7 @@ public class ConsoleHelper {
 	}
 	
 	public ResponseCachingConfigurazione getResponseCaching(boolean responseCachingEnabled, int responseCachingSeconds, boolean responseCachingMaxResponseSize, long responseCachingMaxResponseSizeBytes,
-			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders,	boolean responseCachingDigestPayload, String responseCachingDigestHeadersNomiHeaders, 
+			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders,	boolean responseCachingDigestPayload, String responseCachingDigestHeadersNomiHeaders, StatoFunzionalitaCacheDigestQueryParameter responseCachingDigestQueryParameter, String responseCachingDigestNomiParametriQuery, 
 			boolean responseCachingCacheControlNoCache, boolean responseCachingCacheControlMaxAge, boolean responseCachingCacheControlNoStore,List<ResponseCachingConfigurazioneRegola> listaRegoleCachingConfigurazione) {
 		
 		ResponseCachingConfigurazione responseCaching  = new ResponseCachingConfigurazione();
@@ -10478,6 +10503,10 @@ public class ConsoleHelper {
 				
 				hashGenerator.setPayload(responseCachingDigestPayload ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
 				hashGenerator.setRequestUri(responseCachingDigestUrlInvocazione ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+				hashGenerator.setQueryParameters(responseCachingDigestQueryParameter);
+				if(StringUtils.isNotEmpty(responseCachingDigestNomiParametriQuery)) {
+					hashGenerator.setQueryParameterList(Arrays.asList(responseCachingDigestNomiParametriQuery.split(",")));
+				}
 				hashGenerator.setHeaders(responseCachingDigestHeaders ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
 				if(StringUtils.isNotEmpty(responseCachingDigestHeadersNomiHeaders)) {
 					hashGenerator.setHeaderList(Arrays.asList(responseCachingDigestHeadersNomiHeaders.split(",")));
@@ -10558,6 +10587,29 @@ public class ConsoleHelper {
 	}
 	
 	public boolean checkDataResponseCaching() throws Exception {
+		
+		String responseCachingDigestQueryTmp = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS);
+		StatoFunzionalitaCacheDigestQueryParameter stato = null; 
+		if(responseCachingDigestQueryTmp!=null) {
+			stato = StatoFunzionalitaCacheDigestQueryParameter.toEnumConstant(responseCachingDigestQueryTmp, true);
+		}
+		if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(stato)) {
+			// se e' abilitato il salvataggio dei parametri della query bisogna indicare quali si vuole salvare
+			String responseCachingDigestNomiQueryParameters =  this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS_NOMI);
+			if(StringUtils.isNotEmpty(responseCachingDigestNomiQueryParameters)) {
+				List<String> asList = Arrays.asList(responseCachingDigestNomiQueryParameters.split(","));
+				for (String string : asList) {
+					if(string.contains(" ")) {
+						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS_NOMI));   
+						return false;
+					}
+				}
+			} else {
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS_NOMI));   
+				return false;
+			}
+		}
+		
 		String responseCachingDigestHeadersTmp = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS);
 		boolean responseCachingDigestHeaders = ServletUtils.isCheckBoxEnabled(responseCachingDigestHeadersTmp);
 		if(responseCachingDigestHeaders) {

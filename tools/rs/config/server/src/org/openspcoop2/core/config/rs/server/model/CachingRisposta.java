@@ -52,6 +52,12 @@ public class CachingRisposta extends ApiImplConfigurazioneStato {
   private Boolean hashRequestUri = true;
   
   @Schema(description = "")
+  private Boolean hashAllQueryParameters = true;
+  
+  @Schema(description = "")
+  private List<String> hashQueryParamaters = null;
+  
+  @Schema(description = "")
   private List<String> hashHeaders = null;
   
   @Schema(description = "")
@@ -180,6 +186,49 @@ public class CachingRisposta extends ApiImplConfigurazioneStato {
 
   public CachingRisposta hashRequestUri(Boolean hashRequestUri) {
     this.hashRequestUri = hashRequestUri;
+    return this;
+  }
+
+ /**
+   * Get hashAllQueryParameters
+   * @return hashAllQueryParameters
+  **/
+  @JsonProperty("hash_all_query_parameters")
+  @Valid
+  public Boolean isHashAllQueryParameters() {
+    return this.hashAllQueryParameters;
+  }
+
+  public void setHashAllQueryParameters(Boolean hashAllQueryParameters) {
+    this.hashAllQueryParameters = hashAllQueryParameters;
+  }
+
+  public CachingRisposta hashAllQueryParameters(Boolean hashAllQueryParameters) {
+    this.hashAllQueryParameters = hashAllQueryParameters;
+    return this;
+  }
+
+ /**
+   * Get hashQueryParamaters
+   * @return hashQueryParamaters
+  **/
+  @JsonProperty("hash_query_paramaters")
+  @Valid
+  public List<String> getHashQueryParamaters() {
+    return this.hashQueryParamaters;
+  }
+
+  public void setHashQueryParamaters(List<String> hashQueryParamaters) {
+    this.hashQueryParamaters = hashQueryParamaters;
+  }
+
+  public CachingRisposta hashQueryParamaters(List<String> hashQueryParamaters) {
+    this.hashQueryParamaters = hashQueryParamaters;
+    return this;
+  }
+
+  public CachingRisposta addHashQueryParamatersItem(String hashQueryParamatersItem) {
+    this.hashQueryParamaters.add(hashQueryParamatersItem);
     return this;
   }
 
@@ -319,6 +368,8 @@ public class CachingRisposta extends ApiImplConfigurazioneStato {
     sb.append("    maxResponseSize: ").append(CachingRisposta.toIndentedString(this.maxResponseSize)).append("\n");
     sb.append("    maxResponseSizeKb: ").append(CachingRisposta.toIndentedString(this.maxResponseSizeKb)).append("\n");
     sb.append("    hashRequestUri: ").append(CachingRisposta.toIndentedString(this.hashRequestUri)).append("\n");
+    sb.append("    hashAllQueryParameters: ").append(CachingRisposta.toIndentedString(this.hashAllQueryParameters)).append("\n");
+    sb.append("    hashQueryParamaters: ").append(CachingRisposta.toIndentedString(this.hashQueryParamaters)).append("\n");
     sb.append("    hashHeaders: ").append(CachingRisposta.toIndentedString(this.hashHeaders)).append("\n");
     sb.append("    hashPayload: ").append(CachingRisposta.toIndentedString(this.hashPayload)).append("\n");
     sb.append("    controlNoCache: ").append(CachingRisposta.toIndentedString(this.controlNoCache)).append("\n");

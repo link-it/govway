@@ -138,8 +138,10 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 				pd.setMessage(inUsoMessage.toString());
 			}
 
-			// Verifico stato
-			apcHelper.setMessageWarningStatoConsistenzaAccordo(false, as);
+			// Verifico stato (se non c'è un errore precedente)
+			if (inUsoMessage.length()<=0) {
+				apcHelper.setMessageWarningStatoConsistenzaAccordo(false, as);
+			}
 			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

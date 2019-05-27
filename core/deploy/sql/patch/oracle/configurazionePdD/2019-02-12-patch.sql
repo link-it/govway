@@ -163,17 +163,22 @@ end;
 /
 
 
-
+ALTER TABLE configurazione ADD response_cache_hash_query VARCHAR2(255); 
+ALTER TABLE configurazione ADD response_cache_hash_query_list CLOB;
 ALTER TABLE configurazione ADD response_cache_hash_hdr_list CLOB; 
 ALTER TABLE configurazione ADD response_cache_control_nocache NUMBER;
 ALTER TABLE configurazione ADD response_cache_control_maxage NUMBER;
 ALTER TABLE configurazione ADD response_cache_control_nostore NUMBER;
 
+ALTER TABLE porte_applicative ADD response_cache_hash_query VARCHAR2(255); 
+ALTER TABLE porte_applicative ADD response_cache_hash_query_list CLOB;
 ALTER TABLE porte_applicative ADD response_cache_hash_hdr_list CLOB; 
 ALTER TABLE porte_applicative ADD response_cache_control_nocache NUMBER;
 ALTER TABLE porte_applicative ADD response_cache_control_maxage NUMBER;
 ALTER TABLE porte_applicative ADD response_cache_control_nostore NUMBER;
 
+ALTER TABLE porte_delegate ADD response_cache_hash_query VARCHAR2(255); 
+ALTER TABLE porte_delegate ADD response_cache_hash_query_list CLOB;
 ALTER TABLE porte_delegate ADD response_cache_hash_hdr_list CLOB; 
 ALTER TABLE porte_delegate ADD response_cache_control_nocache NUMBER;
 ALTER TABLE porte_delegate ADD response_cache_control_maxage NUMBER;

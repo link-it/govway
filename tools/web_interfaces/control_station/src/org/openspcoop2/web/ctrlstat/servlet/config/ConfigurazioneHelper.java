@@ -60,6 +60,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -3161,7 +3162,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String corsAllowHeaders, String corsAllowOrigins, String corsAllowMethods, 
 			boolean corsAllowCredential, String corsExposeHeaders, boolean corsMaxAge, int corsMaxAgeSeconds,
 			boolean responseCachingEnabled,	int responseCachingSeconds, boolean responseCachingMaxResponseSize,	long responseCachingMaxResponseSizeBytes, 
-			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders, boolean responseCachingDigestPayload, String responseCachingDigestHeadersNomiHeaders, 
+			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders, boolean responseCachingDigestPayload, String responseCachingDigestHeadersNomiHeaders, StatoFunzionalitaCacheDigestQueryParameter responseCachingDigestQueryParameter, String responseCachingDigestNomiParametriQuery, 
 			boolean responseCachingCacheControlNoCache, boolean responseCachingCacheControlMaxAge, boolean responseCachingCacheControlNoStore, boolean visualizzaLinkConfigurazioneRegola, 
 			String servletResponseCachingConfigurazioneRegolaList, List<Parameter> paramsResponseCachingConfigurazioneRegolaList, int numeroResponseCachingConfigurazioneRegola
 			) throws Exception {
@@ -3707,8 +3708,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		this.addConfigurazioneCorsToDati(dati, corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds, true);
 		
 		// Configurazione Response Caching
-		this.addResponseCachingToDati(dati, responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize,		responseCachingMaxResponseSizeBytes, responseCachingDigestUrlInvocazione, responseCachingDigestHeaders,
-				responseCachingDigestPayload, true, responseCachingDigestHeadersNomiHeaders, responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore,
+		this.addResponseCachingToDati(dati, responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize,		responseCachingMaxResponseSizeBytes, responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, 
+				responseCachingDigestPayload, true, responseCachingDigestHeadersNomiHeaders, responseCachingDigestQueryParameter, responseCachingDigestNomiParametriQuery,  
+				responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore,
 				visualizzaLinkConfigurazioneRegola, servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola);
 		
 		if (!this.isModalitaStandard()) {

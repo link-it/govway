@@ -946,6 +946,28 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="response_cache_hash_query" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="response_cache_hash_query"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se nel calcolo del digest per la response caching vengono considerati gli header (abilitato/selezionePuntuale/disabilitato)</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="response_cache_hash_query_list" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="response_cache_hash_query_list"  text="true"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sui query parameter abilitati, nel calcolo del digest. I parametri sono separati dalla ','</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="response_cache_hash_headers" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>

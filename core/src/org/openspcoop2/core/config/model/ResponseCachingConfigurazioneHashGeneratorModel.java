@@ -43,7 +43,9 @@ public class ResponseCachingConfigurazioneHashGeneratorModel extends AbstractMod
 		super();
 	
 		this.HEADER = new Field("header",java.lang.String.class,"response-caching-configurazione-hash-generator",ResponseCachingConfigurazioneHashGenerator.class);
+		this.QUERY_PARAMETER = new Field("query-parameter",java.lang.String.class,"response-caching-configurazione-hash-generator",ResponseCachingConfigurazioneHashGenerator.class);
 		this.REQUEST_URI = new Field("request-uri",java.lang.String.class,"response-caching-configurazione-hash-generator",ResponseCachingConfigurazioneHashGenerator.class);
+		this.QUERY_PARAMETERS = new Field("query-parameters",java.lang.String.class,"response-caching-configurazione-hash-generator",ResponseCachingConfigurazioneHashGenerator.class);
 		this.HEADERS = new Field("headers",java.lang.String.class,"response-caching-configurazione-hash-generator",ResponseCachingConfigurazioneHashGenerator.class);
 		this.PAYLOAD = new Field("payload",java.lang.String.class,"response-caching-configurazione-hash-generator",ResponseCachingConfigurazioneHashGenerator.class);
 	
@@ -54,7 +56,9 @@ public class ResponseCachingConfigurazioneHashGeneratorModel extends AbstractMod
 		super(father);
 	
 		this.HEADER = new ComplexField(father,"header",java.lang.String.class,"response-caching-configurazione-hash-generator",ResponseCachingConfigurazioneHashGenerator.class);
+		this.QUERY_PARAMETER = new ComplexField(father,"query-parameter",java.lang.String.class,"response-caching-configurazione-hash-generator",ResponseCachingConfigurazioneHashGenerator.class);
 		this.REQUEST_URI = new ComplexField(father,"request-uri",java.lang.String.class,"response-caching-configurazione-hash-generator",ResponseCachingConfigurazioneHashGenerator.class);
+		this.QUERY_PARAMETERS = new ComplexField(father,"query-parameters",java.lang.String.class,"response-caching-configurazione-hash-generator",ResponseCachingConfigurazioneHashGenerator.class);
 		this.HEADERS = new ComplexField(father,"headers",java.lang.String.class,"response-caching-configurazione-hash-generator",ResponseCachingConfigurazioneHashGenerator.class);
 		this.PAYLOAD = new ComplexField(father,"payload",java.lang.String.class,"response-caching-configurazione-hash-generator",ResponseCachingConfigurazioneHashGenerator.class);
 	
@@ -64,7 +68,11 @@ public class ResponseCachingConfigurazioneHashGeneratorModel extends AbstractMod
 
 	public IField HEADER = null;
 	 
+	public IField QUERY_PARAMETER = null;
+	 
 	public IField REQUEST_URI = null;
+	 
+	public IField QUERY_PARAMETERS = null;
 	 
 	public IField HEADERS = null;
 	 

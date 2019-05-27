@@ -72,6 +72,7 @@ import org.openspcoop2.core.config.constants.PortaApplicativaSoggettiFruitori;
 import org.openspcoop2.core.config.constants.PortaDelegataSoggettiErogatori;
 import org.openspcoop2.core.config.constants.Severita;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoConnessioneRisposte;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
@@ -237,8 +238,14 @@ public final class ConfigurazioneGenerale extends Action {
 			boolean responseCachingDigestHeaders = ServletUtils.isCheckBoxEnabled(responseCachingDigestHeadersTmp);
 			String responseCachingDigestPayloadTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_PAYLOAD);
 			boolean responseCachingDigestPayload = ServletUtils.isCheckBoxEnabled(responseCachingDigestPayloadTmp);
-			
 			String responseCachingDigestHeadersNomiHeaders = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS_NOMI_HEADERS);
+			StatoFunzionalitaCacheDigestQueryParameter responseCachingDigestQueryParameter = null;
+			String responseCachingDigestQueryParameterTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS);
+			if(responseCachingDigestQueryParameterTmp!=null && !"".equals(responseCachingDigestQueryParameterTmp)) {
+				responseCachingDigestQueryParameter = StatoFunzionalitaCacheDigestQueryParameter.toEnumConstant(responseCachingDigestQueryParameterTmp, true);
+			}
+			String responseCachingDigestNomiParametriQuery = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS_NOMI);
+			
 			String responseCachingCacheControlNoCacheTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_NO_CACHE);
 			boolean responseCachingCacheControlNoCache = ServletUtils.isCheckBoxEnabled(responseCachingCacheControlNoCacheTmp);
 			String responseCachingCacheControlMaxAgeTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_MAX_AGE);
@@ -328,7 +335,7 @@ public final class ConfigurazioneGenerale extends Action {
 							true,
 							corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds,
 							responseCachingEnabled,	responseCachingSeconds, responseCachingMaxResponseSize,	responseCachingMaxResponseSizeBytes, 
-							responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders,
+							responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders, responseCachingDigestQueryParameter, responseCachingDigestNomiParametriQuery,
 							responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore, visualizzaLinkConfigurazioneRegola,
 							servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola );
 
@@ -648,7 +655,7 @@ public final class ConfigurazioneGenerale extends Action {
 				
 				// Response Caching
 				ResponseCachingConfigurazione responseCaching = confHelper.getResponseCaching(responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes, 
-						responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders,
+						responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders, responseCachingDigestQueryParameter, responseCachingDigestNomiParametriQuery,
 						responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore,listaRegoleCachingConfigurazione);
 				if(newConfigurazione.getResponseCaching()==null) {
 					newConfigurazione.setResponseCaching(new ResponseCachingConfigurazioneGenerale());
@@ -683,7 +690,7 @@ public final class ConfigurazioneGenerale extends Action {
 						false,
 						corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds,
 						responseCachingEnabled,	responseCachingSeconds, responseCachingMaxResponseSize,	responseCachingMaxResponseSizeBytes, 
-						responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders,
+						responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders, responseCachingDigestQueryParameter, responseCachingDigestNomiParametriQuery,
 						responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore, visualizzaLinkConfigurazioneRegola,
 						servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola );
 
@@ -774,10 +781,17 @@ public final class ConfigurazioneGenerale extends Action {
 						}
 						
 						responseCachingDigestUrlInvocazione = true;
+						responseCachingDigestQueryParameter = StatoFunzionalitaCacheDigestQueryParameter.ABILITATO;
 						responseCachingDigestHeaders = false;
 						responseCachingDigestPayload = true;
 						configurazioneTmp.setHashGenerator(new ResponseCachingConfigurazioneHashGenerator());
 						if(configurazioneTmp.getHashGenerator() != null) {
+							if(configurazioneTmp.getHashGenerator().getQueryParameters() != null)
+								responseCachingDigestQueryParameter = configurazioneTmp.getHashGenerator().getQueryParameters();
+							
+							if(configurazioneTmp.getHashGenerator().getQueryParameterList() != null)  
+								responseCachingDigestNomiParametriQuery = StringUtils.join(configurazioneTmp.getHashGenerator().getQueryParameterList(), ",");
+							
 							if(configurazioneTmp.getHashGenerator().getHeaders() != null)  
 								responseCachingDigestHeaders = configurazioneTmp.getHashGenerator().getHeaders().equals(StatoFunzionalita.ABILITATO);
 							
@@ -1052,10 +1066,18 @@ public final class ConfigurazioneGenerale extends Action {
 						}
 						
 						responseCachingDigestUrlInvocazione = true;
+						responseCachingDigestQueryParameter = StatoFunzionalitaCacheDigestQueryParameter.ABILITATO;
 						responseCachingDigestHeaders = false;
 						responseCachingDigestPayload = true;
 						responseCachingDigestHeadersNomiHeaders = "";
 						if(responseCaching.getHashGenerator() != null) {
+							
+							if(responseCaching.getHashGenerator().getQueryParameters() != null)
+								responseCachingDigestQueryParameter = responseCaching.getHashGenerator().getQueryParameters();
+							
+							if(responseCaching.getHashGenerator().getQueryParameterList() != null)  
+								responseCachingDigestNomiParametriQuery = StringUtils.join(responseCaching.getHashGenerator().getQueryParameterList(), ",");
+							
 							if(responseCaching.getHashGenerator().getHeaders() != null)  
 								responseCachingDigestHeaders = responseCaching.getHashGenerator().getHeaders().equals(StatoFunzionalita.ABILITATO);
 							
@@ -1096,7 +1118,7 @@ public final class ConfigurazioneGenerale extends Action {
 					multitenantEnabled, multitenantSoggettiFruizioni, multitenantSoggettiErogazioni, true, 
 					corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds,
 					responseCachingEnabled,	responseCachingSeconds, responseCachingMaxResponseSize,	responseCachingMaxResponseSizeBytes, 
-					responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders,
+					responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders, responseCachingDigestQueryParameter, responseCachingDigestNomiParametriQuery,
 					responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore, visualizzaLinkConfigurazioneRegola,
 					servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola );
 

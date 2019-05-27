@@ -1437,6 +1437,14 @@ components:
               hash_request_uri:
                 type: boolean
                 default: true
+              hash_all_query_parameters:
+                type: boolean
+                default: true
+              hash_query_paramaters:
+                type: array
+                items:
+                  type: string
+                  maxLength: 255
               hash_headers:
                 type: array
                 items:

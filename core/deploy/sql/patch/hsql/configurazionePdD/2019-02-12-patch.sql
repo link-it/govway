@@ -112,16 +112,22 @@ CREATE TABLE pa_cache_regole_init_seq (id BIGINT);
 INSERT INTO pa_cache_regole_init_seq VALUES (NEXT VALUE FOR seq_pa_cache_regole);
 
 
+ALTER TABLE configurazione ADD COLUMN response_cache_hash_query VARCHAR(255); 
+ALTER TABLE configurazione ADD COLUMN response_cache_hash_query_list VARCHAR(65535); 
 ALTER TABLE configurazione ADD COLUMN response_cache_hash_hdr_list VARCHAR(65535); 
 ALTER TABLE configurazione ADD COLUMN response_cache_control_nocache INT;
 ALTER TABLE configurazione ADD COLUMN response_cache_control_maxage INT;
 ALTER TABLE configurazione ADD COLUMN response_cache_control_nostore INT;
 
+ALTER TABLE porte_applicative ADD COLUMN response_cache_hash_query VARCHAR(255); 
+ALTER TABLE porte_applicative ADD COLUMN response_cache_hash_query_list VARCHAR(65535); 
 ALTER TABLE porte_applicative ADD COLUMN response_cache_hash_hdr_list VARCHAR(65535); 
 ALTER TABLE porte_applicative ADD COLUMN response_cache_control_nocache INT;
 ALTER TABLE porte_applicative ADD COLUMN response_cache_control_maxage INT;
 ALTER TABLE porte_applicative ADD COLUMN response_cache_control_nostore INT;
 
+ALTER TABLE porte_delegate ADD COLUMN response_cache_hash_query VARCHAR(255); 
+ALTER TABLE porte_delegate ADD COLUMN response_cache_hash_query_list VARCHAR(65535); 
 ALTER TABLE porte_delegate ADD COLUMN response_cache_hash_hdr_list VARCHAR(65535); 
 ALTER TABLE porte_delegate ADD COLUMN response_cache_control_nocache INT;
 ALTER TABLE porte_delegate ADD COLUMN response_cache_control_maxage INT;

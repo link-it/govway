@@ -937,8 +937,10 @@
 	<xsd:complexType name="response-caching-configurazione-hash-generator">
 		<xsd:sequence>
 			<xsd:element name="header" type="xsd:string" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="query-parameter" type="xsd:string" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="request-uri" type="StatoFunzionalita" default="abilitato"/>
+		<xsd:attribute name="query-parameters" type="StatoFunzionalitaCacheDigestQueryParameter" default="abilitato"/>
 		<xsd:attribute name="headers" type="StatoFunzionalita" default="disabilitato"/>
 		<xsd:attribute name="payload" type="StatoFunzionalita" default="abilitato"/>
 	</xsd:complexType>
@@ -961,6 +963,13 @@
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="gateway"/>
 			<xsd:enumeration value="trasparente"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="StatoFunzionalitaCacheDigestQueryParameter">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="abilitato"/>
+			<xsd:enumeration value="selezionePuntuale"/>
+			<xsd:enumeration value="disabilitato"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="StatoFunzionalita">

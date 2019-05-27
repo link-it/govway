@@ -4008,8 +4008,8 @@ public class DriverControlStationDB  {
 		}
 	}
 	
-	public boolean checkConfigurazioneControlloTrafficoAttivazionePolicyListUsedAction(RuoloPolicy ruoloPorta, String nomePorta, String azione) throws DriverControlStationException{
-		String nomeMetodo = "configurazioneControlloTrafficoAttivazionePolicyListUsedAction";
+	public boolean usedInConfigurazioneControlloTrafficoAttivazionePolicy(RuoloPolicy ruoloPorta, String nomePorta, String azione) throws DriverControlStationException{
+		String nomeMetodo = "usedInConfigurazioneControlloTrafficoAttivazionePolicy";
 		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 		
@@ -4042,10 +4042,12 @@ public class DriverControlStationDB  {
 				expr.equals(AttivazionePolicy.model().FILTRO.NOME_PORTA, nomePorta);
 			}
 			else {
-				throw new Exception("Metodo non invocabile senza il parametro nomePorta e ruoloPorta");
+				//throw new Exception("Metodo non invocabile senza il parametro nomePorta e ruoloPorta");
+				// si viene usato per il check delle azioni rimosse a livello API
 			}
 			
-			expr.equals(AttivazionePolicy.model().FILTRO.AZIONE, azione);
+			//expr.equals(AttivazionePolicy.model().FILTRO.AZIONE, azione); // e' diventata una lista
+			expr.like(AttivazionePolicy.model().FILTRO.AZIONE, azione, LikeMode.ANYWHERE);
 			
 			IPaginatedExpression pagExpr = serviceManager.getAttivazionePolicyServiceSearch().toPaginatedExpression(expr);
 			pagExpr.offset(0).limit(1000); // per un controllo di presenza per l'azione è sufficente
@@ -4053,7 +4055,32 @@ public class DriverControlStationDB  {
 			pagExpr.addOrder(AttivazionePolicy.model().ALIAS);
 			pagExpr.addOrder(AttivazionePolicy.model().ID_POLICY);
 			
-			return serviceManager.getAttivazionePolicyServiceSearch().findAll(pagExpr).size()>0;
+			List<AttivazionePolicy> list = serviceManager.getAttivazionePolicyServiceSearch().findAll(pagExpr);
+			if(list==null || list.isEmpty()) {
+				return false;
+			}
+			else {
+				for (AttivazionePolicy attivazionePolicy : list) {
+					if(attivazionePolicy.getFiltro()!=null && attivazionePolicy.getFiltro().getAzione()!=null) {
+						String checkAz = attivazionePolicy.getFiltro().getAzione();
+						if(azione.equals(checkAz)) {
+							return true;
+						}
+						if(checkAz.contains(",")) {
+							String [] tmp = checkAz.split(",");
+							if(tmp!=null && tmp.length>0) {
+								for (int i = 0; i < tmp.length; i++) {
+									if(azione.equals(tmp[i])) {
+										return true;
+									}
+								}
+							}
+						}
+					}
+				}
+				return false;
+			}
+			
 		} catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {

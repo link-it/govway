@@ -25,6 +25,7 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 import java.util.List;
 
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 
@@ -43,18 +44,37 @@ public class PorteApplicativeUtilities {
 			StringBuffer inUsoMessage, List<String> azioni, String userLogin) throws Exception {
 	
 		ConfigurazioneCore confCore = new ConfigurazioneCore(porteApplicativeCore);
+		StringBuffer bfTrasformazioni = new StringBuffer();
 		StringBuffer bfCT = new StringBuffer();
 		
 		for (int i = 0; i < azioni.size(); i++) {
 
 			String azione = azioni.get(i);
 			
-			if(confCore.checkConfigurazioneControlloTrafficoAttivazionePolicyListUsedAction(RuoloPolicy.APPLICATIVA, pa.getNome(), azione)) {
+			boolean usedInTrasformazioni = false;
+			if(pa.getTrasformazioni()!=null && pa.getTrasformazioni().sizeRegolaList()>0) {
+				for (TrasformazioneRegola trasformazioneRegola : pa.getTrasformazioni().getRegolaList()) {
+					if(trasformazioneRegola.getApplicabilita()!=null && trasformazioneRegola.getApplicabilita().getAzioneList()!=null &&
+							trasformazioneRegola.getApplicabilita().getAzioneList().contains(azione)) {
+						usedInTrasformazioni = true;
+						break;
+					}
+				}
+			}
+			
+			if(confCore.usedInConfigurazioneControlloTrafficoAttivazionePolicy(RuoloPolicy.APPLICATIVA, pa.getNome(), azione)) {
 				if(bfCT.length()>0) {
 					bfCT.append(",");
 				}
 				bfCT.append(azione);
-			}else {
+			}
+			else if(usedInTrasformazioni) {
+				if(bfTrasformazioni.length()>0) {
+					bfTrasformazioni.append(",");
+				}
+				bfTrasformazioni.append(azione);
+			}
+			else {
 				for (int j = 0; j < pa.getAzione().sizeAzioneDelegataList(); j++) {
 					String azioneDelegata = pa.getAzione().getAzioneDelegata(j);
 					if (azione.equals(azioneDelegata)) {
@@ -70,7 +90,10 @@ public class PorteApplicativeUtilities {
 			inUsoMessage.append(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_E_POSSIBILE_ELIMINARE_TUTTE_LE_AZIONI_ASSOCIATE_ALLA_CONFIGURAZIONE); 
 		}
 		else if(bfCT.length()>0) {
-			inUsoMessage.append("Non è stato possibile procedere con l'eliminazione poichè le seguenti azioni risultano utilizzate in configurazione di Rate Limiting: "+bfCT.toString()); 
+			inUsoMessage.append("Non è stato possibile procedere con l'eliminazione poichè risultano utilizzate in configurazione di Rate Limiting: "+bfCT.toString()); 
+		}
+		else if(bfTrasformazioni.length()>0) {
+			inUsoMessage.append("Non è stato possibile procedere con l'eliminazione poichè utilizzate in criteri di applicabilità di una Trasformazione: "+bfTrasformazioni.toString()); 
 		}
 		else {
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);

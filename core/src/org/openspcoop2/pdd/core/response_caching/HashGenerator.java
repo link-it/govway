@@ -32,6 +32,7 @@ import java.util.Properties;
 
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.RequestInfo;
@@ -81,8 +82,36 @@ public class HashGenerator {
 				sb = new StringBuilder();
 				sb.append("requestType").append("=").append(requestInfo.getProtocolContext().getRequestType());
 				sb.append("\nrequestURI").append("=").append(requestInfo.getProtocolContext().getRequestURI());
-				sb.append("\nParametriURL");
-				this.addList(requestInfo.getProtocolContext().getParametersFormBased(), false, sb);
+				digest.update(sb.toString().getBytes());
+				//System.out.println("TESTb: "+sb.toString());
+				
+			}
+			
+			if(StatoFunzionalitaCacheDigestQueryParameter.ABILITATO.equals(responseCachingConfig.getHashGenerator().getQueryParameters()) ||
+					StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(responseCachingConfig.getHashGenerator().getQueryParameters())) {
+				
+				// I parametri vengono riordinati proprio per far si differenze nell'ordine non impattano nel digest
+				
+				sb = new StringBuilder();
+				sb.append("ParametriURL");
+				if(StatoFunzionalitaCacheDigestQueryParameter.ABILITATO.equals(responseCachingConfig.getHashGenerator().getQueryParameters())) {
+					this.addList(requestInfo.getProtocolContext().getParametersFormBased(), false, sb);
+				}
+				else {
+					Properties pUrlForDigest = new Properties();
+					if(requestInfo.getProtocolContext().getParametersFormBased()!=null && responseCachingConfig.getHashGenerator().sizeQueryParameterList()>0) {
+						for (String queryParameter : responseCachingConfig.getHashGenerator().getQueryParameterList()) {
+							String v = requestInfo.getProtocolContext().getParameterFormBased(queryParameter);
+							if(v!=null) {
+								pUrlForDigest.put(queryParameter, v);
+							}
+						}
+					}
+					
+					if(!pUrlForDigest.isEmpty()) {
+						this.addList(pUrlForDigest, false, sb);
+					}
+				}
 				digest.update(sb.toString().getBytes());
 				//System.out.println("TESTb: "+sb.toString());
 				

@@ -106,6 +106,8 @@ CREATE TABLE porte_applicative
 	response_cache_seconds NUMBER,
 	response_cache_max_msg_size NUMBER,
 	response_cache_hash_url VARCHAR2(255),
+	response_cache_hash_query VARCHAR2(255),
+	response_cache_hash_query_list CLOB,
 	response_cache_hash_headers VARCHAR2(255),
 	response_cache_hash_hdr_list CLOB,
 	response_cache_hash_payload VARCHAR2(255),

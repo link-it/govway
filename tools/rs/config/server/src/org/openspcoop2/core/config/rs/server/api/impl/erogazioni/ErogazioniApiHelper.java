@@ -66,6 +66,7 @@ import org.openspcoop2.core.config.constants.PortaDelegataSoggettiErogatori;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
@@ -2955,6 +2956,8 @@ public class ErogazioniApiHelper {
 					(readHeadersResponseCaching(body.getHashHeaders())!=null), // responseCachingDigestHeaders
 					body.isHashPayload(), // responseCachingDigestPayload
 					readHeadersResponseCaching(body.getHashHeaders()), // responseCachingDigestHeadersNomiHeaders
+					convertToStatoFunzionalitaCacheDigestQueryParameter(body),//responseCachingDigestQueryParameter
+					readHeadersResponseCaching(body.getHashQueryParamaters()), // responseCachingDigestNomiParametriQuery
 					body.isControlNoCache(), // responseCachingCacheControlNoCache
 					body.isControlMaxAge(), // responseCachingCacheControlMaxAge
 					body.isControlNoStore(), // responseCachingCacheControlNoStore
@@ -2962,6 +2965,26 @@ public class ErogazioniApiHelper {
 				);
 		}
 		return newConfigurazione;
+	}
+	
+	private static final StatoFunzionalitaCacheDigestQueryParameter convertToStatoFunzionalitaCacheDigestQueryParameter(CachingRisposta body) {
+		if(body!=null && body.isHashAllQueryParameters()!=null) {
+			if(body.isHashAllQueryParameters()) {
+				return StatoFunzionalitaCacheDigestQueryParameter.ABILITATO;
+			}
+			else {
+				if(body.getHashQueryParamaters()!=null && !body.getHashQueryParamaters().isEmpty()) {
+					return StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE;
+				}
+				else {
+					return StatoFunzionalitaCacheDigestQueryParameter.DISABILITATO;
+				}
+			}
+		}
+		else {
+			// default
+			return StatoFunzionalitaCacheDigestQueryParameter.ABILITATO;
+		}
 	}
 	
 	public static final CachingRisposta buildCachingRisposta(ResponseCachingConfigurazione conf) {
@@ -2973,7 +2996,7 @@ public class ErogazioniApiHelper {
 			ret.setHashHeaders(null);
 			ret.setHashPayload(null);
 			ret.setHashRequestUri(null);
-			
+			ret.setHashAllQueryParameters(null);
 			return ret;
 		}
 		
@@ -2990,6 +3013,22 @@ public class ErogazioniApiHelper {
 			ret.setMaxResponseSizeKb( conf.getMaxMessageSize() );
 			
 			ResponseCachingConfigurazioneHashGenerator hashInfo = conf.getHashGenerator();
+			if(hashInfo.getQueryParameters()!=null) {
+				switch (hashInfo.getQueryParameters()) {
+				case ABILITATO:
+					ret.setHashAllQueryParameters(true);
+					break;
+				case DISABILITATO:
+					ret.setHashAllQueryParameters(false);
+					break;
+				case SELEZIONE_PUNTUALE:
+					ret.setHashAllQueryParameters(false);
+					if(hashInfo.sizeQueryParameterList()>0) {
+						ret.setHashQueryParamaters(hashInfo.getQueryParameterList());
+					}
+					break;
+				}
+			}
 			if(StatoFunzionalita.ABILITATO.equals(hashInfo.getHeaders())) {
 				if(hashInfo.sizeHeaderList()>0) {
 					ret.setHashHeaders(hashInfo.getHeaderList());

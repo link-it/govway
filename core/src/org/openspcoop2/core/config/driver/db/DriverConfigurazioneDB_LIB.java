@@ -152,6 +152,7 @@ import org.openspcoop2.core.config.constants.PortaDelegataSoggettiErogatori;
 import org.openspcoop2.core.config.constants.ProprietaProtocolloValore;
 import org.openspcoop2.core.config.constants.Severita;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoConnessioneRisposte;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
@@ -391,6 +392,14 @@ public class DriverConfigurazioneDB_LIB {
 			return valore.getValue();
 		}
 	}
+	public static String getValue(StatoFunzionalitaCacheDigestQueryParameter valore){
+		if(valore==null){
+			return null;
+		}
+		else{
+			return valore.getValue();
+		}
+	}
 	
 	
 	public static StatoFunzionalita getEnumStatoFunzionalita(String value){
@@ -561,6 +570,16 @@ public class DriverConfigurazioneDB_LIB {
 			return TrasformazioneRegolaParametroTipoAzione.toEnumConstant(value);
 		}
 	}
+	public static StatoFunzionalitaCacheDigestQueryParameter getEnumStatoFunzionalitaCacheDigestQueryParameter(String value){
+		if(value==null){
+			return null;
+		}
+		else{
+			return StatoFunzionalitaCacheDigestQueryParameter.toEnumConstant(value);
+		}
+	}
+	
+	
 	
 	
 	public static String formatSQLString(String sql, Object... params) {
@@ -1540,6 +1559,8 @@ public class DriverConfigurazioneDB_LIB {
 		Integer response_cache_seconds = null;
 		Long response_cache_max_msg_size = null;
 		String response_cache_hash_url = null;
+		String response_cache_hash_query = null;
+		String response_cache_hash_query_list = null;
 		String response_cache_hash_headers = null;
 		String response_cache_hash_headers_list = null;
 		String response_cache_hash_payload = null;
@@ -1558,6 +1579,21 @@ public class DriverConfigurazioneDB_LIB {
 			}
 			if(responseCachingConfigurazone.getHashGenerator()!=null) {
 				response_cache_hash_url = getValue(responseCachingConfigurazone.getHashGenerator().getRequestUri());
+				
+				response_cache_hash_query = getValue(responseCachingConfigurazone.getHashGenerator().getQueryParameters());
+				if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(responseCachingConfigurazone.getHashGenerator().getQueryParameters())) {
+					if(responseCachingConfigurazone.getHashGenerator().getQueryParameterList()!=null && responseCachingConfigurazone.getHashGenerator().sizeQueryParameterList()>0) {
+						StringBuffer bf = new StringBuffer();
+						for (int i = 0; i < responseCachingConfigurazone.getHashGenerator().sizeQueryParameterList(); i++) {
+							if(i>0) {
+								bf.append(",");
+							}
+							bf.append(responseCachingConfigurazone.getHashGenerator().getQueryParameter(i));
+						}
+						response_cache_hash_query_list = bf.toString();
+					}
+				}
+				
 				response_cache_hash_headers = getValue(responseCachingConfigurazone.getHashGenerator().getHeaders());
 				if(StatoFunzionalita.ABILITATO.equals(responseCachingConfigurazone.getHashGenerator().getHeaders())) {
 					if(responseCachingConfigurazone.getHashGenerator().getHeaderList()!=null && responseCachingConfigurazone.getHashGenerator().sizeHeaderList()>0) {
@@ -1571,6 +1607,7 @@ public class DriverConfigurazioneDB_LIB {
 						response_cache_hash_headers_list = bf.toString();
 					}
 				}
+				
 				response_cache_hash_payload = getValue(responseCachingConfigurazone.getHashGenerator().getPayload());
 			}
 			response_cache_regole = responseCachingConfigurazone.getRegolaList();
@@ -1719,6 +1756,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("response_cache_control_maxage", "?");
 				sqlQueryObject.addInsertField("response_cache_control_nostore", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_url", "?");
+				sqlQueryObject.addInsertField("response_cache_hash_query", "?");
+				sqlQueryObject.addInsertField("response_cache_hash_query_list", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_headers", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_hdr_list", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_payload", "?");
@@ -1863,6 +1902,8 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setInt(index++, response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
 				stm.setInt(index++, response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE);
 				stm.setString(index++, response_cache_hash_url);
+				stm.setString(index++, response_cache_hash_query);
+				stm.setString(index++, response_cache_hash_query_list);
 				stm.setString(index++, response_cache_hash_headers);
 				stm.setString(index++, response_cache_hash_headers_list);
 				stm.setString(index++, response_cache_hash_payload);
@@ -1914,7 +1955,7 @@ public class DriverConfigurazioneDB_LIB {
 								(response_cache_noCache ? CostantiDB.TRUE : CostantiDB.FALSE),
 								(response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE),
 								(response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE),
-								response_cache_hash_url, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
+								response_cache_hash_url, response_cache_hash_query, response_cache_hash_query_list, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
 								aPD.getIdAccordo(),aPD.getIdPortType()));
 				n = stm.executeUpdate();
 				stm.close();
@@ -2482,6 +2523,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("response_cache_control_maxage", "?");
 				sqlQueryObject.addUpdateField("response_cache_control_nostore", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_url", "?");
+				sqlQueryObject.addUpdateField("response_cache_hash_query", "?");
+				sqlQueryObject.addUpdateField("response_cache_hash_query_list", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_headers", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_hdr_list", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_payload", "?");
@@ -2618,6 +2661,8 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setInt(index++, response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
 				stm.setInt(index++, response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE);
 				stm.setString(index++, response_cache_hash_url);
+				stm.setString(index++, response_cache_hash_query);
+				stm.setString(index++, response_cache_hash_query_list);
 				stm.setString(index++, response_cache_hash_headers);
 				stm.setString(index++, response_cache_hash_headers_list);
 				stm.setString(index++, response_cache_hash_payload);
@@ -4320,6 +4365,8 @@ public class DriverConfigurazioneDB_LIB {
 		Integer response_cache_seconds = null;
 		Long response_cache_max_msg_size = null;
 		String response_cache_hash_url = null;
+		String response_cache_hash_query = null;
+		String response_cache_hash_query_list = null;
 		String response_cache_hash_headers = null;
 		String response_cache_hash_headers_list = null;
 		String response_cache_hash_payload = null;
@@ -4338,6 +4385,21 @@ public class DriverConfigurazioneDB_LIB {
 			}
 			if(responseCachingConfigurazone.getHashGenerator()!=null) {
 				response_cache_hash_url = getValue(responseCachingConfigurazone.getHashGenerator().getRequestUri());
+				
+				response_cache_hash_query = getValue(responseCachingConfigurazone.getHashGenerator().getQueryParameters());
+				if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(responseCachingConfigurazone.getHashGenerator().getQueryParameters())) {
+					if(responseCachingConfigurazone.getHashGenerator().getQueryParameterList()!=null && responseCachingConfigurazone.getHashGenerator().sizeQueryParameterList()>0) {
+						StringBuffer bf = new StringBuffer();
+						for (int i = 0; i < responseCachingConfigurazone.getHashGenerator().sizeQueryParameterList(); i++) {
+							if(i>0) {
+								bf.append(",");
+							}
+							bf.append(responseCachingConfigurazone.getHashGenerator().getQueryParameter(i));
+						}
+						response_cache_hash_query_list = bf.toString();
+					}
+				}
+				
 				response_cache_hash_headers = getValue(responseCachingConfigurazone.getHashGenerator().getHeaders());
 				if(StatoFunzionalita.ABILITATO.equals(responseCachingConfigurazone.getHashGenerator().getHeaders())) {
 					if(responseCachingConfigurazone.getHashGenerator().getHeaderList()!=null && responseCachingConfigurazone.getHashGenerator().sizeHeaderList()>0) {
@@ -4351,6 +4413,7 @@ public class DriverConfigurazioneDB_LIB {
 						response_cache_hash_headers_list = bf.toString();
 					}
 				}
+				
 				response_cache_hash_payload = getValue(responseCachingConfigurazone.getHashGenerator().getPayload());
 			}
 			response_cache_regole = responseCachingConfigurazone.getRegolaList();
@@ -4497,6 +4560,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("response_cache_control_maxage", "?");
 				sqlQueryObject.addInsertField("response_cache_control_nostore", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_url", "?");
+				sqlQueryObject.addInsertField("response_cache_hash_query", "?");
+				sqlQueryObject.addInsertField("response_cache_hash_query_list", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_headers", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_hdr_list", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_payload", "?");
@@ -4639,6 +4704,8 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setInt(index++, response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
 				stm.setInt(index++, response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE);
 				stm.setString(index++, response_cache_hash_url);
+				stm.setString(index++, response_cache_hash_query);
+				stm.setString(index++, response_cache_hash_query_list);
 				stm.setString(index++, response_cache_hash_headers);
 				stm.setString(index++, response_cache_hash_headers_list);
 				stm.setString(index++, response_cache_hash_payload);
@@ -5254,6 +5321,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("response_cache_control_maxage", "?");
 				sqlQueryObject.addUpdateField("response_cache_control_nostore", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_url", "?");
+				sqlQueryObject.addUpdateField("response_cache_hash_query", "?");
+				sqlQueryObject.addUpdateField("response_cache_hash_query_list", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_headers", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_hdr_list", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_payload", "?");
@@ -5397,6 +5466,8 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setInt(index++, response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
 				stm.setInt(index++, response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE);
 				stm.setString(index++, response_cache_hash_url);
+				stm.setString(index++, response_cache_hash_query);
+				stm.setString(index++, response_cache_hash_query_list);
 				stm.setString(index++, response_cache_hash_headers);
 				stm.setString(index++, response_cache_hash_headers_list);
 				stm.setString(index++, response_cache_hash_payload);
@@ -7778,6 +7849,8 @@ public class DriverConfigurazioneDB_LIB {
 		Integer response_cache_seconds = null;
 		Long response_cache_max_msg_size = null;
 		String response_cache_hash_url = null;
+		String response_cache_hash_query = null;
+		String response_cache_hash_query_list = null;
 		String response_cache_hash_headers = null;
 		String response_cache_hash_headers_list = null;
 		String response_cache_hash_payload = null;
@@ -7796,6 +7869,21 @@ public class DriverConfigurazioneDB_LIB {
 			}
 			if(responseCachingConfigurazone.getConfigurazione().getHashGenerator()!=null) {
 				response_cache_hash_url = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getRequestUri());
+				
+				response_cache_hash_query = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getQueryParameters());
+				if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getQueryParameters())) {
+					if(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getQueryParameterList()!=null && responseCachingConfigurazone.getConfigurazione().getHashGenerator().sizeQueryParameterList()>0) {
+						StringBuffer bf = new StringBuffer();
+						for (int i = 0; i < responseCachingConfigurazone.getConfigurazione().getHashGenerator().sizeQueryParameterList(); i++) {
+							if(i>0) {
+								bf.append(",");
+							}
+							bf.append(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getQueryParameter(i));
+						}
+						response_cache_hash_query_list = bf.toString();
+					}
+				}
+				
 				response_cache_hash_headers = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getHeaders());
 				if(StatoFunzionalita.ABILITATO.equals(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getHeaders())) {
 					if(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getHeaderList()!=null && responseCachingConfigurazone.getConfigurazione().getHashGenerator().sizeHeaderList()>0) {
@@ -7809,6 +7897,7 @@ public class DriverConfigurazioneDB_LIB {
 						response_cache_hash_headers_list = bf.toString();
 					}
 				}
+				
 				response_cache_hash_payload = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getPayload());
 			}
 			response_cache_regole = responseCachingConfigurazone.getConfigurazione().getRegolaList();
@@ -8089,6 +8178,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("response_cache_control_maxage", "?");
 				sqlQueryObject.addInsertField("response_cache_control_nostore", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_url", "?");
+				sqlQueryObject.addInsertField("response_cache_hash_query", "?");
+				sqlQueryObject.addInsertField("response_cache_hash_query_list", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_headers", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_hdr_list", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_payload", "?");
@@ -8194,6 +8285,8 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setInt(index++, response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
 				updateStmt.setInt(index++, response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE);
 				updateStmt.setString(index++, response_cache_hash_url);
+				updateStmt.setString(index++, response_cache_hash_query);
+				updateStmt.setString(index++, response_cache_hash_query_list);
 				updateStmt.setString(index++, response_cache_hash_headers);
 				updateStmt.setString(index++, response_cache_hash_headers_list);
 				updateStmt.setString(index++, response_cache_hash_payload);
@@ -8229,7 +8322,7 @@ public class DriverConfigurazioneDB_LIB {
 								(response_cache_noCache ? CostantiDB.TRUE : CostantiDB.FALSE),
 								(response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE),
 								(response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE),
-								response_cache_hash_url, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
+								response_cache_hash_url, response_cache_hash_query, response_cache_hash_query_list, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
 								responseCaching_statoCache, responseCaching_dimensioneCache, responseCaching_algoritmoCache, responseCaching_idleCache, responseCaching_lifeCache
 								));
 
@@ -8657,6 +8750,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("response_cache_control_maxage", "?");
 				sqlQueryObject.addUpdateField("response_cache_control_nostore", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_url", "?");
+				sqlQueryObject.addUpdateField("response_cache_hash_query", "?");
+				sqlQueryObject.addUpdateField("response_cache_hash_query_list", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_headers", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_hdr_list", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_payload", "?");
@@ -8762,6 +8857,8 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setInt(index++, response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
 				updateStmt.setInt(index++, response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE);
 				updateStmt.setString(index++, response_cache_hash_url);
+				updateStmt.setString(index++, response_cache_hash_query);
+				updateStmt.setString(index++, response_cache_hash_query_list);
 				updateStmt.setString(index++, response_cache_hash_headers);
 				updateStmt.setString(index++, response_cache_hash_headers_list);
 				updateStmt.setString(index++, response_cache_hash_payload);
@@ -8795,7 +8892,7 @@ public class DriverConfigurazioneDB_LIB {
 								cors_stato, cors_tipo, cors_all_allow_origins, cors_allow_credentials, cors_allow_max_age, cors_allow_max_age_seconds,
 								cors_allow_origins, cors_allow_headers, cors_allow_methods, cors_allow_expose_headers,
 								response_cache_stato, response_cache_seconds, response_cache_max_msg_size, 
-								response_cache_hash_url, response_cache_hash_headers, response_cache_hash_payload,
+								response_cache_hash_url, response_cache_hash_query, response_cache_hash_query_list, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
 								responseCaching_statoCache, responseCaching_dimensioneCache, responseCaching_algoritmoCache, responseCaching_idleCache, responseCaching_lifeCache
 								));
 

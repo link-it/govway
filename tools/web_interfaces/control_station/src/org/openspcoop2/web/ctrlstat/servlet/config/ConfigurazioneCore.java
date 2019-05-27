@@ -577,8 +577,8 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public boolean checkConfigurazioneControlloTrafficoAttivazionePolicyListUsedAction(RuoloPolicy ruoloPorta, String nomePorta, String azione)  throws DriverControlStationNotFound, DriverControlStationException{
-		String nomeMetodo = "checkConfigurazioneControlloTrafficoAttivazionePolicyListUsedAction";
+	public boolean usedInConfigurazioneControlloTrafficoAttivazionePolicy(RuoloPolicy ruoloPorta, String nomePorta, String azione)  throws DriverControlStationNotFound, DriverControlStationException{
+		String nomeMetodo = "usedInConfigurazioneControlloTrafficoAttivazionePolicy";
 		Connection con = null;
 		DriverControlStationDB driver = null;
 		try {
@@ -588,7 +588,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);	
 			
-			return driver.checkConfigurazioneControlloTrafficoAttivazionePolicyListUsedAction(ruoloPorta, nomePorta, azione);
+			return driver.usedInConfigurazioneControlloTrafficoAttivazionePolicy(ruoloPorta, nomePorta, azione);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
