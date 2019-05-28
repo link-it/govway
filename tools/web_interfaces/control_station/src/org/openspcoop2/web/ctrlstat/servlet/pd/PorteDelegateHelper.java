@@ -4451,7 +4451,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_HEADER, 
 					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione,pIdTrasformazioneRisposta);
 
-			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE;
+			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER;
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 

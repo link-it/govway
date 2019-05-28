@@ -4865,7 +4865,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps),
 					pIdTrasformazione, pIdTrasformazioneRisposta);
 
-			int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE;
+			int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_HEADER;
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 

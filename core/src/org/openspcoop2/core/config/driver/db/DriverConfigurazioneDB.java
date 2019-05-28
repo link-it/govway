@@ -3204,7 +3204,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
-			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addSelectCountField(nomeTabella+".id", "cont");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.setSelectDistinct(true);
 			sqlQueryObject.setANDLogicOperator(true);
@@ -3224,7 +3224,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
-			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addSelectField("id_porta");
+			sqlQueryObject.addSelectField("nome");
+			sqlQueryObject.addSelectField("posizione");
+			sqlQueryObject.addSelectField("id");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.setSelectDistinct(true);
 			sqlQueryObject.setANDLogicOperator(true);
@@ -3239,206 +3242,236 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			rs = stmt.executeQuery();
 
+			List<Long> idTrasformazione = new ArrayList<>();			
 			while (rs.next()) {
 				
-				TrasformazioneRegola regola = new TrasformazioneRegola();
+				idTrasformazione.add(rs.getLong("id"));
 				
-				String nome = rs.getString("nome");
-				regola.setNome(nome);
-
-				int posizione = rs.getInt("posizione");
-				regola.setPosizione(posizione);
-				
-				String applicabilita_azioni = rs.getString("applicabilita_azioni");
-				String applicabilita_ct = rs.getString("applicabilita_ct");
-				String applicabilita_pattern = rs.getString("applicabilita_pattern");
-				if( (applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ||
-						(applicabilita_ct!=null && !"".equals(applicabilita_ct)) ||
-						(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)) 
-						) {
-					TrasformazioneRegolaApplicabilitaRichiesta applicabilita = new TrasformazioneRegolaApplicabilitaRichiesta();
-					
-					if( (applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ) {
-						if(applicabilita_azioni.contains(",")) {
-							String [] tmp = applicabilita_azioni.split(",");
-							for (int i = 0; i < tmp.length; i++) {
-								applicabilita.addAzione(tmp[i].trim());
-							}
-						}
-						else {
-							applicabilita.addAzione(applicabilita_azioni);
-						}
-					}
-					
-					if( (applicabilita_ct!=null && !"".equals(applicabilita_ct)) ) {
-						if(applicabilita_ct.contains(",")) {
-							String [] tmp = applicabilita_ct.split(",");
-							for (int i = 0; i < tmp.length; i++) {
-								applicabilita.addContentType(tmp[i].trim());
-							}
-						}
-						else {
-							applicabilita.addContentType(applicabilita_ct);
-						}
-					}
-					
-					if(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)){
-						applicabilita.setPattern(applicabilita_pattern);
-					}
-					
-					regola.setApplicabilita(applicabilita);
-				}
-				
-				TrasformazioneRegolaRichiesta richiesta = new TrasformazioneRegolaRichiesta();
-				
-				int req_conversione_enabled = rs.getInt("req_conversione_enabled");
-				if(CostantiDB.TRUE == req_conversione_enabled) {
-					richiesta.setConversione(true);
-				}
-				else {
-					richiesta.setConversione(false);
-				}
-				richiesta.setConversioneTipo(rs.getString("req_conversione_tipo"));
-				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
-				richiesta.setConversioneTemplate(jdbcAdapter.getBinaryData(rs, "req_conversione_template"));
-				richiesta.setContentType(rs.getString("req_content_type"));
-				
-				int trasformazione_rest = rs.getInt("rest_transformation");
-				if(CostantiDB.TRUE == trasformazione_rest) {
-					TrasformazioneRest trasformazioneRest = new TrasformazioneRest();
-					trasformazioneRest.setMetodo(rs.getString("rest_method"));
-					trasformazioneRest.setPath(rs.getString("rest_path"));
-					richiesta.setTrasformazioneRest(trasformazioneRest);
-				}
-					
-				int trasformazione_soap = rs.getInt("soap_transformation");
-				if(CostantiDB.TRUE == trasformazione_soap) {
-					TrasformazioneSoap trasformazioneSoap = new TrasformazioneSoap();
-					
-					trasformazioneSoap.setVersione(DriverConfigurazioneDB_LIB.getEnumVersioneSOAP(rs.getString("soap_version")));
-					trasformazioneSoap.setSoapAction(rs.getString("soap_action"));
-					
-					int envelope = rs.getInt("soap_envelope");
-					if(CostantiDB.TRUE == envelope) {
-						trasformazioneSoap.setEnvelope(true);
-					}
-					else {
-						trasformazioneSoap.setEnvelope(false);
-					}
-					
-					int envelope_as_attach = rs.getInt("soap_envelope_as_attach");
-					if(CostantiDB.TRUE == envelope_as_attach) {
-						trasformazioneSoap.setEnvelopeAsAttachment(true);
-						
-						trasformazioneSoap.setEnvelopeBodyConversioneTipo(rs.getString("soap_envelope_tipo"));
-						trasformazioneSoap.setEnvelopeBodyConversioneTemplate(jdbcAdapter.getBinaryData(rs, "soap_envelope_template"));
-					}
-					else {
-						trasformazioneSoap.setEnvelopeAsAttachment(false);
-					}
-					
-					richiesta.setTrasformazioneSoap(trasformazioneSoap);
-				}
-				
-				
-				regola.setId(rs.getLong("id"));
-				
-				regola.setRichiesta(richiesta);
-				
-				
-				// ** SOGGETTI **
-				
-				if(!portaDelegata) {
-					
-					nomeTabella = CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTI;
-					
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-					sqlQueryObject.addFromTable(nomeTabella);
-					sqlQueryObject.addSelectField("*");
-					sqlQueryObject.addWhereCondition("id_trasformazione=?");
-					String sqlQuery = sqlQueryObject.createSQLQuery();
-					stm0 = con.prepareStatement(sqlQuery);
-					stm0.setLong(1, regola.getId());
-					rs0 = stm0.executeQuery();
-	
-					while (rs0.next()) {
-						
-						if(regola.getApplicabilita()==null) {
-							regola.setApplicabilita(new TrasformazioneRegolaApplicabilitaRichiesta());
-						}
-						
-						TrasformazioneRegolaApplicabilitaSoggetto soggetto = new TrasformazioneRegolaApplicabilitaSoggetto();
-						soggetto.setTipo(rs0.getString("tipo_soggetto"));
-						soggetto.setNome(rs0.getString("nome_soggetto"));
-						
-						regola.getApplicabilita().addSoggetto(soggetto);
-					
-					}
-					rs0.close();
-					stm0.close();
-				}
-				
-				
-				// ** APPLICATIVI **
-				
-				nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_SA : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SA;
+			}
+			rs.close();
+			stmt.close();
+			
+			if(idTrasformazione!=null && !idTrasformazione.isEmpty()) {
+			
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(nomeTabella);
 				sqlQueryObject.addSelectField("*");
-				sqlQueryObject.addWhereCondition("id_trasformazione=?");
-				String sqlQuery = sqlQueryObject.createSQLQuery();
-				stm0 = con.prepareStatement(sqlQuery);
-				stm0.setLong(1, regola.getId());
-				rs0 = stm0.executeQuery();
-
-				// per ogni entry 
-				// prendo l'id del servizio associato, recupero il nome e
-				// aggiungo
-				// il servizio applicativo alla PortaDelegata da ritornare
-				while (rs0.next()) {
-					long idSA = rs0.getLong("id_servizio_applicativo");
-
-					if (idSA != 0) {
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-						sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
-						sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-						sqlQueryObject.addSelectField("nome");
-						sqlQueryObject.addSelectField("tipo_soggetto");
-						sqlQueryObject.addSelectField("nome_soggetto");
-						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id=?");
-						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
-						sqlQueryObject.setANDLogicOperator(true);
-						sqlQuery = sqlQueryObject.createSQLQuery();
-						stm1 = con.prepareStatement(sqlQuery);
-						stm1.setLong(1, idSA);
-
-						this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idSA));
-
-						rs1 = stm1.executeQuery();
-
-						TrasformazioneRegolaApplicabilitaServizioApplicativo servizioApplicativo = null;
-						if (rs1.next()) {
-							// setto solo il nome come da specifica
-							servizioApplicativo = new TrasformazioneRegolaApplicabilitaServizioApplicativo();
-							servizioApplicativo.setId(idSA);
-							servizioApplicativo.setNome(rs1.getString("nome"));
-							servizioApplicativo.setTipoSoggettoProprietario(rs1.getString("tipo_soggetto"));
-							servizioApplicativo.setNomeSoggettoProprietario(rs1.getString("nome_soggetto"));
-							if(regola.getApplicabilita()==null) {
-								regola.setApplicabilita(new TrasformazioneRegolaApplicabilitaRichiesta());
-							}
-							regola.getApplicabilita().addServizioApplicativo(servizioApplicativo);
-						}
-						rs1.close();
-						stm1.close();
-					}
-				}
-				rs0.close();
-				stm0.close();
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addWhereCondition("id = ?");
+				queryString = sqlQueryObject.createSQLQuery();
 				
-								
-				lista.add(regola);
+				for (Long idLongTrasformazione : idTrasformazione) {
+					
+					stmt = con.prepareStatement(queryString);
+					stmt.setLong(1, idLongTrasformazione);
 
+					rs = stmt.executeQuery();
+					
+					if (rs.next()) {
+									
+						TrasformazioneRegola regola = new TrasformazioneRegola();
+						
+						String nome = rs.getString("nome");
+						regola.setNome(nome);
+		
+						int posizione = rs.getInt("posizione");
+						regola.setPosizione(posizione);
+						
+						String applicabilita_azioni = rs.getString("applicabilita_azioni");
+						String applicabilita_ct = rs.getString("applicabilita_ct");
+						String applicabilita_pattern = rs.getString("applicabilita_pattern");
+						if( (applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ||
+								(applicabilita_ct!=null && !"".equals(applicabilita_ct)) ||
+								(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)) 
+								) {
+							TrasformazioneRegolaApplicabilitaRichiesta applicabilita = new TrasformazioneRegolaApplicabilitaRichiesta();
+							
+							if( (applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ) {
+								if(applicabilita_azioni.contains(",")) {
+									String [] tmp = applicabilita_azioni.split(",");
+									for (int i = 0; i < tmp.length; i++) {
+										applicabilita.addAzione(tmp[i].trim());
+									}
+								}
+								else {
+									applicabilita.addAzione(applicabilita_azioni);
+								}
+							}
+							
+							if( (applicabilita_ct!=null && !"".equals(applicabilita_ct)) ) {
+								if(applicabilita_ct.contains(",")) {
+									String [] tmp = applicabilita_ct.split(",");
+									for (int i = 0; i < tmp.length; i++) {
+										applicabilita.addContentType(tmp[i].trim());
+									}
+								}
+								else {
+									applicabilita.addContentType(applicabilita_ct);
+								}
+							}
+							
+							if(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)){
+								applicabilita.setPattern(applicabilita_pattern);
+							}
+							
+							regola.setApplicabilita(applicabilita);
+						}
+						
+						TrasformazioneRegolaRichiesta richiesta = new TrasformazioneRegolaRichiesta();
+						
+						int req_conversione_enabled = rs.getInt("req_conversione_enabled");
+						if(CostantiDB.TRUE == req_conversione_enabled) {
+							richiesta.setConversione(true);
+						}
+						else {
+							richiesta.setConversione(false);
+						}
+						richiesta.setConversioneTipo(rs.getString("req_conversione_tipo"));
+						IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
+						richiesta.setConversioneTemplate(jdbcAdapter.getBinaryData(rs, "req_conversione_template"));
+						richiesta.setContentType(rs.getString("req_content_type"));
+						
+						int trasformazione_rest = rs.getInt("rest_transformation");
+						if(CostantiDB.TRUE == trasformazione_rest) {
+							TrasformazioneRest trasformazioneRest = new TrasformazioneRest();
+							trasformazioneRest.setMetodo(rs.getString("rest_method"));
+							trasformazioneRest.setPath(rs.getString("rest_path"));
+							richiesta.setTrasformazioneRest(trasformazioneRest);
+						}
+							
+						int trasformazione_soap = rs.getInt("soap_transformation");
+						if(CostantiDB.TRUE == trasformazione_soap) {
+							TrasformazioneSoap trasformazioneSoap = new TrasformazioneSoap();
+							
+							trasformazioneSoap.setVersione(DriverConfigurazioneDB_LIB.getEnumVersioneSOAP(rs.getString("soap_version")));
+							trasformazioneSoap.setSoapAction(rs.getString("soap_action"));
+							
+							int envelope = rs.getInt("soap_envelope");
+							if(CostantiDB.TRUE == envelope) {
+								trasformazioneSoap.setEnvelope(true);
+							}
+							else {
+								trasformazioneSoap.setEnvelope(false);
+							}
+							
+							int envelope_as_attach = rs.getInt("soap_envelope_as_attach");
+							if(CostantiDB.TRUE == envelope_as_attach) {
+								trasformazioneSoap.setEnvelopeAsAttachment(true);
+								
+								trasformazioneSoap.setEnvelopeBodyConversioneTipo(rs.getString("soap_envelope_tipo"));
+								trasformazioneSoap.setEnvelopeBodyConversioneTemplate(jdbcAdapter.getBinaryData(rs, "soap_envelope_template"));
+							}
+							else {
+								trasformazioneSoap.setEnvelopeAsAttachment(false);
+							}
+							
+							richiesta.setTrasformazioneSoap(trasformazioneSoap);
+						}
+						
+						
+						regola.setId(rs.getLong("id"));
+						
+						regola.setRichiesta(richiesta);
+						
+						
+						// ** SOGGETTI **
+						
+						if(!portaDelegata) {
+							
+							nomeTabella = CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTI;
+							
+							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+							sqlQueryObject.addFromTable(nomeTabella);
+							sqlQueryObject.addSelectField("*");
+							sqlQueryObject.addWhereCondition("id_trasformazione=?");
+							String sqlQuery = sqlQueryObject.createSQLQuery();
+							stm0 = con.prepareStatement(sqlQuery);
+							stm0.setLong(1, regola.getId());
+							rs0 = stm0.executeQuery();
+			
+							while (rs0.next()) {
+								
+								if(regola.getApplicabilita()==null) {
+									regola.setApplicabilita(new TrasformazioneRegolaApplicabilitaRichiesta());
+								}
+								
+								TrasformazioneRegolaApplicabilitaSoggetto soggetto = new TrasformazioneRegolaApplicabilitaSoggetto();
+								soggetto.setTipo(rs0.getString("tipo_soggetto"));
+								soggetto.setNome(rs0.getString("nome_soggetto"));
+								
+								regola.getApplicabilita().addSoggetto(soggetto);
+							
+							}
+							rs0.close();
+							stm0.close();
+						}
+						
+						
+						// ** APPLICATIVI **
+						
+						nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_SA : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SA;
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+						sqlQueryObject.addFromTable(nomeTabella);
+						sqlQueryObject.addSelectField("*");
+						sqlQueryObject.addWhereCondition("id_trasformazione=?");
+						String sqlQuery = sqlQueryObject.createSQLQuery();
+						stm0 = con.prepareStatement(sqlQuery);
+						stm0.setLong(1, regola.getId());
+						rs0 = stm0.executeQuery();
+		
+						// per ogni entry 
+						// prendo l'id del servizio associato, recupero il nome e
+						// aggiungo
+						// il servizio applicativo alla PortaDelegata da ritornare
+						while (rs0.next()) {
+							long idSA = rs0.getLong("id_servizio_applicativo");
+		
+							if (idSA != 0) {
+								sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+								sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+								sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+								sqlQueryObject.addSelectField("nome");
+								sqlQueryObject.addSelectField("tipo_soggetto");
+								sqlQueryObject.addSelectField("nome_soggetto");
+								sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id=?");
+								sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
+								sqlQueryObject.setANDLogicOperator(true);
+								sqlQuery = sqlQueryObject.createSQLQuery();
+								stm1 = con.prepareStatement(sqlQuery);
+								stm1.setLong(1, idSA);
+		
+								this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idSA));
+		
+								rs1 = stm1.executeQuery();
+		
+								TrasformazioneRegolaApplicabilitaServizioApplicativo servizioApplicativo = null;
+								if (rs1.next()) {
+									// setto solo il nome come da specifica
+									servizioApplicativo = new TrasformazioneRegolaApplicabilitaServizioApplicativo();
+									servizioApplicativo.setId(idSA);
+									servizioApplicativo.setNome(rs1.getString("nome"));
+									servizioApplicativo.setTipoSoggettoProprietario(rs1.getString("tipo_soggetto"));
+									servizioApplicativo.setNomeSoggettoProprietario(rs1.getString("nome_soggetto"));
+									if(regola.getApplicabilita()==null) {
+										regola.setApplicabilita(new TrasformazioneRegolaApplicabilitaRichiesta());
+									}
+									regola.getApplicabilita().addServizioApplicativo(servizioApplicativo);
+								}
+								rs1.close();
+								stm1.close();
+							}
+						}
+						rs0.close();
+						stm0.close();
+						
+										
+						lista.add(regola);
+
+					}
+					
+					rs.close();
+					stmt.close();
+				}
 			}
 
 		} catch (Exception qe) {
@@ -3650,19 +3683,22 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			
 			sqlQueryObject.addWhereCondition("id_porta = ?");
 			if(azioni != null) {
-				sqlQueryObject.addWhereCondition("applicabilita_azioni = ?");
+				//sqlQueryObject.addWhereCondition("applicabilita_azioni = ?");
+				sqlQueryObject.addWhereLikeCondition("applicabilita_azioni", azioni, false, false);
 			} else {
 				sqlQueryObject.addWhereIsNullCondition("applicabilita_azioni");
 			}
 			
 			if(pattern != null) {
-				sqlQueryObject.addWhereCondition("applicabilita_pattern = ?");
+				//sqlQueryObject.addWhereCondition("applicabilita_pattern = ?");
+				sqlQueryObject.addWhereLikeCondition("applicabilita_pattern", pattern, false, false);
 			} else {
 				sqlQueryObject.addWhereIsNullCondition("applicabilita_pattern");
 			}
 			
 			if(contentType != null) {
-				sqlQueryObject.addWhereCondition("applicabilita_ct = ?");
+				//sqlQueryObject.addWhereCondition("applicabilita_ct = ?");
+				sqlQueryObject.addWhereLikeCondition("applicabilita_ct", contentType, false, false);
 			} else {
 				sqlQueryObject.addWhereIsNullCondition("applicabilita_ct");
 			}
@@ -3723,12 +3759,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt = con.prepareStatement(queryString);
 			int parameterIndex = 1;
 			stmt.setLong(parameterIndex ++, idPorta);
-			if(azioni != null)
-				stmt.setString(parameterIndex ++, azioni);
-			if(pattern != null)
-				stmt.setString(parameterIndex ++, pattern);
-			if(contentType != null)
-				stmt.setString(parameterIndex ++, contentType);
+//			if(azioni != null)
+//				stmt.setString(parameterIndex ++, azioni);
+//			if(pattern != null)
+//				stmt.setString(parameterIndex ++, pattern);
+//			if(contentType != null)
+//				stmt.setString(parameterIndex ++, contentType);
 			
 			if(!portaDelegata) {
 				if(soggetti==null || soggetti.isEmpty()) {
@@ -4033,24 +4069,27 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			int count = 0;
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
-			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addSelectCountField(nomeTabella+".id", "cont");
 			sqlQueryObject.setANDLogicOperator(true);
 			
 			sqlQueryObject.addWhereCondition("id_porta = ?");
 			if(azioni != null) {
-				sqlQueryObject.addWhereCondition("applicabilita_azioni = ?");
+				//sqlQueryObject.addWhereCondition("applicabilita_azioni = ?");
+				sqlQueryObject.addWhereLikeCondition("applicabilita_azioni", azioni, false, false);
 			} else {
 				sqlQueryObject.addWhereIsNullCondition("applicabilita_azioni");
 			}
 			
 			if(pattern != null) {
-				sqlQueryObject.addWhereCondition("applicabilita_pattern = ?");
+				//sqlQueryObject.addWhereCondition("applicabilita_pattern = ?");
+				sqlQueryObject.addWhereLikeCondition("applicabilita_pattern", pattern, false, false);
 			} else {
 				sqlQueryObject.addWhereIsNullCondition("applicabilita_pattern");
 			}
 			
 			if(contentType != null) {
-				sqlQueryObject.addWhereCondition("applicabilita_ct = ?");
+				//sqlQueryObject.addWhereCondition("applicabilita_ct = ?");
+				sqlQueryObject.addWhereLikeCondition("applicabilita_ct", contentType, false, false);
 			} else {
 				sqlQueryObject.addWhereIsNullCondition("applicabilita_ct");
 			}
@@ -4059,12 +4098,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt = con.prepareStatement(queryString);
 			int parameterIndex = 1;
 			stmt.setLong(parameterIndex ++, idPorta);
-			if(azioni != null)
-				stmt.setString(parameterIndex ++, azioni);
-			if(pattern != null)
-				stmt.setString(parameterIndex ++, pattern);
-			if(contentType != null)
-				stmt.setString(parameterIndex ++, contentType);
+//			if(azioni != null)
+//				stmt.setString(parameterIndex ++, azioni);
+//			if(pattern != null)
+//				stmt.setString(parameterIndex ++, pattern);
+//			if(contentType != null)
+//				stmt.setString(parameterIndex ++, contentType);
 			
 			risultato = stmt.executeQuery();
 			if (risultato.next())
@@ -4146,7 +4185,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			int count = 0;
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
-			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addSelectCountField(nomeTabella+".id", "cont");
 			sqlQueryObject.setANDLogicOperator(true);
 			
 			sqlQueryObject.addWhereCondition("id_porta = ?");
@@ -4250,7 +4289,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addFromTable(nomeTabellaRisposta);
-			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addSelectCountField(nomeTabellaRisposta+".id", "cont");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".id_trasformazione=?");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRisposta+".id_trasformazione");
@@ -4274,24 +4313,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addFromTable(nomeTabellaRisposta);
-			sqlQueryObject.addSelectField(nomeTabellaRisposta+".nome");
+			sqlQueryObject.addSelectAliasField(nomeTabellaRisposta, "id", "idTrasRisposta");
 			sqlQueryObject.addSelectField(nomeTabellaRisposta+".posizione");
-			sqlQueryObject.addSelectField(nomeTabellaRisposta+".applicabilita_status_min");
-			sqlQueryObject.addSelectField(nomeTabellaRisposta+".applicabilita_status_max");
-			sqlQueryObject.addSelectField(nomeTabellaRisposta+".applicabilita_ct");
-			sqlQueryObject.addSelectField(nomeTabellaRisposta+".applicabilita_pattern");
-			sqlQueryObject.addSelectField(nomeTabellaRisposta+".conversione_enabled");
-			sqlQueryObject.addSelectField(nomeTabellaRisposta+".conversione_tipo");
-			sqlQueryObject.addSelectField(nomeTabellaRisposta+".conversione_template");
-			sqlQueryObject.addSelectField(nomeTabellaRisposta+".content_type");
-			sqlQueryObject.addSelectField(nomeTabellaRisposta+".return_code");
-			sqlQueryObject.addSelectField(nomeTabellaRisposta+".soap_envelope");
-			sqlQueryObject.addSelectField(nomeTabellaRisposta+".soap_envelope_as_attach");
-			sqlQueryObject.addSelectField(nomeTabellaRisposta+".soap_envelope_tipo");
-			sqlQueryObject.addSelectField(nomeTabellaRisposta+".soap_envelope_template");
-			sqlQueryObject.addSelectField(nomeTabellaRisposta+".id");
-			sqlQueryObject.addSelectField(nomeTabellaRisposta+".id_trasformazione");
-			sqlQueryObject.addSelectField(nomeTabella+".rest_transformation"); // serve per capire se nella risposta devo abilitare la soap trasformation
+			sqlQueryObject.addSelectField(nomeTabellaRisposta+".nome");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".id_trasformazione=?");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRisposta+".id_trasformazione");
@@ -4309,9 +4333,54 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			rs = stmt.executeQuery();
 
+			List<Long> idTrasformazioneRisposta = new ArrayList<>();
 			while (rs.next()) { 
-				TrasformazioneRegolaRisposta risposta = _readTrasformazioneRegolaRisposta(rs);
-				lista.add(risposta);
+				idTrasformazioneRisposta.add(rs.getLong("idTrasRisposta"));
+			}
+			rs.close();
+			stmt.close();
+			
+			if(idTrasformazioneRisposta!=null && !idTrasformazioneRisposta.isEmpty()) {
+				for (Long idLongTrasformazioneRisposta : idTrasformazioneRisposta) {
+						
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(nomeTabella);
+					sqlQueryObject.addFromTable(nomeTabellaRisposta);
+					sqlQueryObject.addSelectField(nomeTabellaRisposta+".nome");
+					sqlQueryObject.addSelectField(nomeTabellaRisposta+".posizione");
+					sqlQueryObject.addSelectField(nomeTabellaRisposta+".applicabilita_status_min");
+					sqlQueryObject.addSelectField(nomeTabellaRisposta+".applicabilita_status_max");
+					sqlQueryObject.addSelectField(nomeTabellaRisposta+".applicabilita_ct");
+					sqlQueryObject.addSelectField(nomeTabellaRisposta+".applicabilita_pattern");
+					sqlQueryObject.addSelectField(nomeTabellaRisposta+".conversione_enabled");
+					sqlQueryObject.addSelectField(nomeTabellaRisposta+".conversione_tipo");
+					sqlQueryObject.addSelectField(nomeTabellaRisposta+".conversione_template");
+					sqlQueryObject.addSelectField(nomeTabellaRisposta+".content_type");
+					sqlQueryObject.addSelectField(nomeTabellaRisposta+".return_code");
+					sqlQueryObject.addSelectField(nomeTabellaRisposta+".soap_envelope");
+					sqlQueryObject.addSelectField(nomeTabellaRisposta+".soap_envelope_as_attach");
+					sqlQueryObject.addSelectField(nomeTabellaRisposta+".soap_envelope_tipo");
+					sqlQueryObject.addSelectField(nomeTabellaRisposta+".soap_envelope_template");
+					sqlQueryObject.addSelectField(nomeTabellaRisposta+".id");
+					sqlQueryObject.addSelectField(nomeTabellaRisposta+".id_trasformazione");
+					sqlQueryObject.addSelectField(nomeTabella+".rest_transformation"); // serve per capire se nella risposta devo abilitare la soap trasformation
+					sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".id=?");
+					sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRisposta+".id_trasformazione");
+					sqlQueryObject.setANDLogicOperator(true);
+					queryString = sqlQueryObject.createSQLQuery();
+					stmt = con.prepareStatement(queryString);
+					stmt.setLong(1, idLongTrasformazioneRisposta);
+
+					rs = stmt.executeQuery();
+					
+					if (rs.next()) { 
+						TrasformazioneRegolaRisposta risposta = _readTrasformazioneRegolaRisposta(rs);
+						lista.add(risposta);
+					}
+					
+					rs.close();
+					stmt.close();
+				}
 			}
 
 		} catch (Exception qe) {
@@ -4749,7 +4818,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addFromTable(nomeTabellaRisposta);
-			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addSelectCountField(nomeTabellaRisposta+".id", "cont");
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".id_trasformazione=?");
@@ -4769,13 +4838,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 			
 			if(pattern != null) {
-				sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".applicabilita_pattern = ?");
+				//sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".applicabilita_pattern = ?");
+				sqlQueryObject.addWhereLikeCondition(nomeTabellaRisposta+".applicabilita_pattern", pattern, false, false);
 			} else {
 				sqlQueryObject.addWhereIsNullCondition(nomeTabellaRisposta+".applicabilita_pattern");
 			}
 			
 			if(contentType != null) {
-				sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".applicabilita_ct = ?");
+				//sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".applicabilita_ct = ?");
+				sqlQueryObject.addWhereLikeCondition(nomeTabellaRisposta+".applicabilita_ct", contentType, false, false);
 			} else {
 				sqlQueryObject.addWhereIsNullCondition(nomeTabellaRisposta+".applicabilita_ct");
 			}
@@ -4790,10 +4861,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stmt.setInt(parameterIndex ++, statusMin);
 			if(statusMax != null)
 				stmt.setInt(parameterIndex ++, statusMax);
-			if(pattern != null)
-				stmt.setString(parameterIndex ++, pattern);
-			if(contentType != null)
-				stmt.setString(parameterIndex ++, contentType);
+//			if(pattern != null)
+//				stmt.setString(parameterIndex ++, pattern);
+//			if(contentType != null)
+//				stmt.setString(parameterIndex ++, contentType);
 			
 			risultato = stmt.executeQuery();
 			if (risultato.next())
@@ -4877,7 +4948,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addFromTable(nomeTabellaRisposta);
-			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addSelectCountField(nomeTabellaRisposta+".id", "cont");
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".id_trasformazione=?");
@@ -4986,7 +5057,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addFromTable(nomeTabellaTrasformazioneSA);
-			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addSelectCountField(nomeTabellaTrasformazioneSA+".id", "cont");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.addWhereCondition(nomeTabellaTrasformazioneSA+".id_trasformazione=?");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaTrasformazioneSA+".id_trasformazione");
@@ -5012,12 +5083,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addFromTable(nomeTabellaTrasformazioneSA);
 			sqlQueryObject.addFromTable(nomeTabellaSA);
 			sqlQueryObject.addFromTable(nomeTabellaSoggetti);
+			sqlQueryObject.addSelectAliasField(nomeTabellaTrasformazioneSA, "id", "idTrasSA");
 			sqlQueryObject.addSelectField(nomeTabellaSA+".nome");
-			sqlQueryObject.addSelectField(nomeTabellaSoggetti+".tipo_soggetto");
-			sqlQueryObject.addSelectField(nomeTabellaSoggetti+".nome_soggetto");
-			sqlQueryObject.addSelectField(nomeTabellaTrasformazioneSA+".id");
-			sqlQueryObject.addSelectField(nomeTabellaTrasformazioneSA+".id_trasformazione");
-			sqlQueryObject.addSelectField(nomeTabellaTrasformazioneSA+".id_servizio_applicativo");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.addWhereCondition(nomeTabellaTrasformazioneSA+".id_trasformazione=?");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaTrasformazioneSA+".id_trasformazione");
@@ -5036,13 +5103,52 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			rs = stmt.executeQuery();
 
+			List<Long> idLong = new ArrayList<>();
 			while (rs.next()) { 
-				TrasformazioneRegolaApplicabilitaServizioApplicativo risposta = new TrasformazioneRegolaApplicabilitaServizioApplicativo();
-				risposta.setId(rs.getLong("id"));
-				risposta.setNome(rs.getString("nome"));
-				risposta.setTipoSoggettoProprietario(rs.getString("tipo_soggetto"));
-				risposta.setNomeSoggettoProprietario(rs.getString("nome_soggetto"));
-				lista.add(risposta);
+				idLong.add(rs.getLong("idTrasSA"));
+			}
+			rs.close();
+			stmt.close();
+			
+			if(!idLong.isEmpty()) {
+				
+				for (Long idLongTrasf : idLong) {
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(nomeTabella);
+					sqlQueryObject.addFromTable(nomeTabellaTrasformazioneSA);
+					sqlQueryObject.addFromTable(nomeTabellaSA);
+					sqlQueryObject.addFromTable(nomeTabellaSoggetti);
+					sqlQueryObject.addSelectField(nomeTabellaSA+".nome");
+					sqlQueryObject.addSelectField(nomeTabellaSoggetti+".tipo_soggetto");
+					sqlQueryObject.addSelectField(nomeTabellaSoggetti+".nome_soggetto");
+					sqlQueryObject.addSelectField(nomeTabellaTrasformazioneSA+".id");
+					sqlQueryObject.addSelectField(nomeTabellaTrasformazioneSA+".id_trasformazione");
+					sqlQueryObject.addSelectField(nomeTabellaTrasformazioneSA+".id_servizio_applicativo");
+					sqlQueryObject.addWhereCondition(nomeTabellaTrasformazioneSA+".id=?");
+					sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaTrasformazioneSA+".id_trasformazione");
+					sqlQueryObject.addWhereCondition(nomeTabellaSA+".id="+nomeTabellaTrasformazioneSA+".id_servizio_applicativo");
+					sqlQueryObject.addWhereCondition(nomeTabellaSA+".id_soggetto="+nomeTabellaSoggetti+".id");
+					sqlQueryObject.setANDLogicOperator(true);
+					queryString = sqlQueryObject.createSQLQuery();
+					stmt = con.prepareStatement(queryString);
+					stmt.setLong(1, idLongTrasf);
+					
+					rs = stmt.executeQuery();
+					if(rs.next()) {
+						TrasformazioneRegolaApplicabilitaServizioApplicativo risposta = new TrasformazioneRegolaApplicabilitaServizioApplicativo();
+						risposta.setId(rs.getLong("id"));
+						risposta.setNome(rs.getString("nome"));
+						risposta.setTipoSoggettoProprietario(rs.getString("tipo_soggetto"));
+						risposta.setNomeSoggettoProprietario(rs.getString("nome_soggetto"));
+						lista.add(risposta);		
+					}
+					
+					rs.close();
+					stmt.close();
+					
+				}
+				
 			}
 
 		} catch (Exception qe) {
@@ -5123,7 +5229,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addFromTable(nomeTabellaSoggetti);
-			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addSelectCountField(nomeTabellaSoggetti+".id", "cont");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.addWhereCondition(nomeTabellaSoggetti+".id_trasformazione=?");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaSoggetti+".id_trasformazione");
@@ -5147,6 +5253,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addFromTable(nomeTabellaSoggetti);
+			sqlQueryObject.addSelectAliasField(nomeTabellaSoggetti, "id", "idTrasSoggetto");
 			sqlQueryObject.addSelectField(nomeTabellaSoggetti+".tipo_soggetto");
 			sqlQueryObject.addSelectField(nomeTabellaSoggetti+".nome_soggetto");
 			sqlQueryObject.addSelectField(nomeTabellaSoggetti+".id");
@@ -5168,12 +5275,46 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			rs = stmt.executeQuery();
 
+			List<Long> idLong = new ArrayList<>();
 			while (rs.next()) { 
-				TrasformazioneRegolaApplicabilitaSoggetto risposta = new TrasformazioneRegolaApplicabilitaSoggetto();
-				risposta.setId(rs.getLong("id"));
-				risposta.setTipo(rs.getString("tipo_soggetto"));
-				risposta.setNome(rs.getString("nome_soggetto"));
-				lista.add(risposta);
+				idLong.add(rs.getLong("idTrasSoggetto"));
+			}
+			rs.close();
+			stmt.close();
+			
+			if(!idLong.isEmpty()) {
+				
+				for (Long idLongTrasf : idLong) {
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(nomeTabella);
+					sqlQueryObject.addFromTable(nomeTabellaSoggetti);
+					sqlQueryObject.addSelectField(nomeTabellaSoggetti+".tipo_soggetto");
+					sqlQueryObject.addSelectField(nomeTabellaSoggetti+".nome_soggetto");
+					sqlQueryObject.addSelectField(nomeTabellaSoggetti+".id");
+					sqlQueryObject.addSelectField(nomeTabellaSoggetti+".id_trasformazione");
+					sqlQueryObject.addWhereCondition(nomeTabellaSoggetti+".id=?");
+					sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaSoggetti+".id_trasformazione");
+					sqlQueryObject.setANDLogicOperator(true);
+					queryString = sqlQueryObject.createSQLQuery();
+					stmt = con.prepareStatement(queryString);
+					stmt.setLong(1, idLongTrasf);
+
+					rs = stmt.executeQuery();
+					
+					if(rs.next()) {
+						TrasformazioneRegolaApplicabilitaSoggetto risposta = new TrasformazioneRegolaApplicabilitaSoggetto();
+						risposta.setId(rs.getLong("id"));
+						risposta.setTipo(rs.getString("tipo_soggetto"));
+						risposta.setNome(rs.getString("nome_soggetto"));
+						lista.add(risposta);
+					}
+					
+					rs.close();
+					stmt.close();
+					
+				}
+				
 			}
 
 		} catch (Exception qe) {
@@ -5264,7 +5405,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addFromTable(nomeTabellaRisposta);
 			sqlQueryObject.addFromTable(nomeTabellaRispostaHeader);
-			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addSelectCountField(nomeTabellaRispostaHeader+".id", "cont");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".id_trasformazione=?");
 			sqlQueryObject.addWhereCondition(nomeTabellaRispostaHeader+".id_transform_risp=?");
@@ -5292,9 +5433,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addFromTable(nomeTabellaRisposta);
 			sqlQueryObject.addFromTable(nomeTabellaRispostaHeader);
+			sqlQueryObject.addSelectAliasField(nomeTabellaRispostaHeader, "id", "idTrasParametro");
 			sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".tipo");
 			sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".nome");
-			sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".valore");
 			sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".id");
 			sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".id_transform_risp");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
@@ -5316,13 +5457,52 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			rs = stmt.executeQuery();
 
+			List<Long> idLong = new ArrayList<>();
 			while (rs.next()) { 
-				TrasformazioneRegolaParametro parametro = new TrasformazioneRegolaParametro();
-				parametro.setConversioneTipo(DriverConfigurazioneDB_LIB.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
-				parametro.setNome(rs.getString("nome"));
-				parametro.setValore(rs.getString("valore"));
-				parametro.setId(rs.getLong("id"));
-				lista.add(parametro);
+				idLong.add(rs.getLong("idTrasParametro"));
+			}
+			rs.close();
+			stmt.close();
+			
+			if(!idLong.isEmpty()) {
+				
+				for (Long idLongTrasf : idLong) {
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(nomeTabella);
+					sqlQueryObject.addFromTable(nomeTabellaRisposta);
+					sqlQueryObject.addFromTable(nomeTabellaRispostaHeader);
+					sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".tipo");
+					sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".nome");
+					sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".valore");
+					sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".id");
+					sqlQueryObject.addSelectField(nomeTabellaRispostaHeader+".id_transform_risp");
+					sqlQueryObject.addWhereCondition(nomeTabellaRispostaHeader+".id=?");
+					sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRisposta+".id_trasformazione");
+					sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".id="+nomeTabellaRispostaHeader+".id_transform_risp");
+					sqlQueryObject.setANDLogicOperator(true);
+					queryString = sqlQueryObject.createSQLQuery();
+					stmt = con.prepareStatement(queryString);
+					stmt.setLong(1, idLongTrasf);
+
+					rs = stmt.executeQuery();
+
+					if(rs.next()) {
+						
+						TrasformazioneRegolaParametro parametro = new TrasformazioneRegolaParametro();
+						parametro.setConversioneTipo(DriverConfigurazioneDB_LIB.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
+						parametro.setNome(rs.getString("nome"));
+						parametro.setValore(rs.getString("valore"));
+						parametro.setId(rs.getLong("id"));
+						lista.add(parametro);
+						
+					}
+					
+					rs.close();
+					stmt.close();
+					
+				}
+				
 			}
 
 		} catch (Exception qe) {
@@ -5403,7 +5583,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addFromTable(nomeTabellaRisposta);
 			sqlQueryObject.addFromTable(nomeTabellaRispostaHeader);
-			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addSelectCountField(nomeTabellaRispostaHeader+".id", "cont");
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".id_trasformazione=?");
@@ -5630,7 +5810,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
-			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addSelectCountField(nomeTabella+".id", "cont");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.setSelectDistinct(true);
 			sqlQueryObject.setANDLogicOperator(true);
@@ -5650,7 +5830,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
-			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addSelectField("id");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.setSelectDistinct(true);
 			sqlQueryObject.setANDLogicOperator(true);
@@ -5664,35 +5844,63 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			risultato = stmt.executeQuery();
 
-			while (risultato.next()) {
+			List<Long> idLong = new ArrayList<>();
+			while (risultato.next()) { 
+				idLong.add(risultato.getLong("id"));
+			}
+			risultato.close();
+			stmt.close();
+			
+			if(!idLong.isEmpty()) {
 				
-				ResponseCachingConfigurazioneRegola regola = new ResponseCachingConfigurazioneRegola();
+				for (Long idLongRegola : idLong) {
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(nomeTabella);
+					sqlQueryObject.addSelectField("*");
+					sqlQueryObject.addWhereCondition(nomeTabella+".id=?");
+					sqlQueryObject.setANDLogicOperator(true);
+					queryString = sqlQueryObject.createSQLQuery();
+					stmt = con.prepareStatement(queryString);
+					stmt.setLong(1, idLongRegola);
+
+					risultato = stmt.executeQuery();
+					
+					if(risultato.next()) {
+					
+						ResponseCachingConfigurazioneRegola regola = new ResponseCachingConfigurazioneRegola();
+						
+						regola.setId(risultato.getLong("id"));
+						int status_min = risultato.getInt("status_min");
+						int status_max = risultato.getInt("status_max");
+						if(status_min>0) {
+							regola.setReturnCodeMin(status_min);
+						}
+						if(status_max>0) {
+							regola.setReturnCodeMax(status_max);
+						}
+
+						int fault = risultato.getInt("fault");
+						if(CostantiDB.TRUE == fault) {
+							regola.setFault(true);
+						}
+						else if(CostantiDB.FALSE == fault) {
+							regola.setFault(false);
+						}
+						
+						int cacheSeconds = risultato.getInt("cache_seconds");
+						if(cacheSeconds>0) {
+							regola.setCacheTimeoutSeconds(cacheSeconds);
+						}
+
+						lista.add(regola);
+						
+					}
+					
+					risultato.close();
+					stmt.close();
+				}
 				
-				regola.setId(risultato.getLong("id"));
-				int status_min = risultato.getInt("status_min");
-				int status_max = risultato.getInt("status_max");
-				if(status_min>0) {
-					regola.setReturnCodeMin(status_min);
-				}
-				if(status_max>0) {
-					regola.setReturnCodeMax(status_max);
-				}
-
-				int fault = risultato.getInt("fault");
-				if(CostantiDB.TRUE == fault) {
-					regola.setFault(true);
-				}
-				else if(CostantiDB.FALSE == fault) {
-					regola.setFault(false);
-				}
-				
-				int cacheSeconds = risultato.getInt("cache_seconds");
-				if(cacheSeconds>0) {
-					regola.setCacheTimeoutSeconds(cacheSeconds);
-				}
-
-				lista.add(regola);
-
 			}
 
 		} catch (Exception qe) {
@@ -5769,7 +5977,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			int count = 0;
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
-			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addSelectCountField(nomeTabella+".id", "cont");
 			sqlQueryObject.setANDLogicOperator(true);
 			
 			sqlQueryObject.addWhereCondition("id_porta = ?");
@@ -5896,7 +6104,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addFromTable(nomeTabellaRichiestaHeader);
-			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addSelectCountField(nomeTabellaRichiestaHeader+".id", "cont");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".id_trasformazione=?");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRichiestaHeader+".id_trasformazione");
@@ -5920,9 +6128,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addFromTable(nomeTabellaRichiestaHeader);
+			sqlQueryObject.addSelectAliasField(nomeTabellaRichiestaHeader, "id", "idTrasParametro");
 			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".tipo");
 			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".nome");
-			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".valore");
 			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".id");
 			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".id_trasformazione");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
@@ -5941,14 +6149,52 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			rs = stmt.executeQuery();
 
+			List<Long> idLong = new ArrayList<>();
 			while (rs.next()) { 
-				TrasformazioneRegolaParametro parametro = new TrasformazioneRegolaParametro();
-				parametro.setConversioneTipo(DriverConfigurazioneDB_LIB.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
-				parametro.setNome(rs.getString("nome"));
-				parametro.setValore(rs.getString("valore"));
-				parametro.setId(rs.getLong("id"));
-				lista.add(parametro);
+				idLong.add(rs.getLong("idTrasParametro"));
 			}
+			rs.close();
+			stmt.close();
+			
+			if(!idLong.isEmpty()) {
+				
+				for (Long idLongTrasf : idLong) {
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(nomeTabella);
+					sqlQueryObject.addFromTable(nomeTabellaRichiestaHeader);
+					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".tipo");
+					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".nome");
+					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".valore");
+					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".id");
+					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".id_trasformazione");
+					sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".id=?");
+					sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRichiestaHeader+".id_trasformazione");
+					sqlQueryObject.setANDLogicOperator(true);
+					queryString = sqlQueryObject.createSQLQuery();
+					stmt = con.prepareStatement(queryString);
+					stmt.setLong(1, idLongTrasf);
+
+					rs = stmt.executeQuery();
+					
+					if(rs.next()) {
+						
+						TrasformazioneRegolaParametro parametro = new TrasformazioneRegolaParametro();
+						parametro.setConversioneTipo(DriverConfigurazioneDB_LIB.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
+						parametro.setNome(rs.getString("nome"));
+						parametro.setValore(rs.getString("valore"));
+						parametro.setId(rs.getLong("id"));
+						lista.add(parametro);
+						
+					}
+					
+					rs.close();
+					stmt.close();
+					
+				}
+				
+			}
+			
 
 		} catch (Exception qe) {
 			error = true;
@@ -6026,7 +6272,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addFromTable(nomeTabellaRichiestaHeader);
-			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addSelectCountField(nomeTabellaRichiestaHeader+".id", "cont");
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".id_trasformazione=?");
@@ -6247,7 +6493,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addFromTable(nomeTabellaRichiestaHeader);
-			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addSelectCountField(nomeTabellaRichiestaHeader+".id", "cont");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".id_trasformazione=?");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRichiestaHeader+".id_trasformazione");
@@ -6271,9 +6517,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addFromTable(nomeTabellaRichiestaHeader);
-			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".tipo");
+			sqlQueryObject.addSelectAliasField(nomeTabellaRichiestaHeader, "id", "idTrasParametro");
 			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".nome");
-			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".valore");
 			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".id");
 			sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".id_trasformazione");
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
@@ -6292,13 +6537,47 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			rs = stmt.executeQuery();
 
+			List<Long> idLong = new ArrayList<>();
 			while (rs.next()) { 
-				TrasformazioneRegolaParametro parametro = new TrasformazioneRegolaParametro();
-				parametro.setConversioneTipo(DriverConfigurazioneDB_LIB.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
-				parametro.setNome(rs.getString("nome"));
-				parametro.setValore(rs.getString("valore"));
-				parametro.setId(rs.getLong("id"));
-				lista.add(parametro);
+				idLong.add(rs.getLong("idTrasParametro"));
+			}
+			rs.close();
+			stmt.close();
+			
+			if(!idLong.isEmpty()) {
+				
+				for (Long idLongTrasf : idLong) {
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(nomeTabella);
+					sqlQueryObject.addFromTable(nomeTabellaRichiestaHeader);
+					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".tipo");
+					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".nome");
+					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".valore");
+					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".id");
+					sqlQueryObject.addSelectField(nomeTabellaRichiestaHeader+".id_trasformazione");
+					sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".id=?");
+					sqlQueryObject.addWhereCondition(nomeTabella+".id="+nomeTabellaRichiestaHeader+".id_trasformazione");
+					sqlQueryObject.setANDLogicOperator(true);
+					queryString = sqlQueryObject.createSQLQuery();
+					stmt = con.prepareStatement(queryString);
+					stmt.setLong(1, idLongTrasf);
+					
+					rs = stmt.executeQuery();
+					
+					if(rs.next()) {
+						TrasformazioneRegolaParametro parametro = new TrasformazioneRegolaParametro();
+						parametro.setConversioneTipo(DriverConfigurazioneDB_LIB.getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
+						parametro.setNome(rs.getString("nome"));
+						parametro.setValore(rs.getString("valore"));
+						parametro.setId(rs.getLong("id"));
+						lista.add(parametro);
+					}
+					
+					rs.close();
+					stmt.close();
+					
+				}
 			}
 
 		} catch (Exception qe) {
@@ -6377,7 +6656,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(nomeTabella);
 			sqlQueryObject.addFromTable(nomeTabellaRichiestaHeader);
-			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addSelectCountField(nomeTabellaRichiestaHeader+".id", "cont");
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addWhereCondition(nomeTabella+".id_porta=?");
 			sqlQueryObject.addWhereCondition(nomeTabellaRichiestaHeader+".id_trasformazione=?");
@@ -15505,7 +15784,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE_CACHE_REGOLE);
-			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addSelectCountField("id", "cont");
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
 			risultato = stmt.executeQuery();
@@ -15521,10 +15800,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE_CACHE_REGOLE);
 			sqlQueryObject.addSelectField("id");
-			sqlQueryObject.addSelectField("status_min");
-			sqlQueryObject.addSelectField("status_max");
-			sqlQueryObject.addSelectField("fault");
-			sqlQueryObject.addSelectField("cache_seconds");
 			sqlQueryObject.addOrderBy("id");
 			sqlQueryObject.setSortType(true);
 			sqlQueryObject.setLimit(limit);
@@ -15533,36 +15808,65 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt = con.prepareStatement(queryString);
 			risultato = stmt.executeQuery();
 
-			while (risultato.next()) {
-
-				ResponseCachingConfigurazioneRegola regola = new ResponseCachingConfigurazioneRegola();
-				
-				regola.setId(risultato.getLong("id"));
-				int status_min = risultato.getInt("status_min");
-				int status_max = risultato.getInt("status_max");
-				if(status_min>0) {
-					regola.setReturnCodeMin(status_min);
-				}
-				if(status_max>0) {
-					regola.setReturnCodeMax(status_max);
-				}
-
-				int fault = risultato.getInt("fault");
-				if(CostantiDB.TRUE == fault) {
-					regola.setFault(true);
-				}
-				else if(CostantiDB.FALSE == fault) {
-					regola.setFault(false);
-				}
-				
-				int cacheSeconds = risultato.getInt("cache_seconds");
-				if(cacheSeconds>0) {
-					regola.setCacheTimeoutSeconds(cacheSeconds);
-				}
-
-				lista.add(regola);
+			List<Long> idLong = new ArrayList<>();
+			while (risultato.next()) { 
+				idLong.add(risultato.getLong("id"));
 			}
+			risultato.close();
+			stmt.close();
+			
+			if(!idLong.isEmpty()) {
+				
+				for (Long idLongRegola : idLong) {
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE_CACHE_REGOLE);
+					sqlQueryObject.addSelectField("id");
+					sqlQueryObject.addSelectField("status_min");
+					sqlQueryObject.addSelectField("status_max");
+					sqlQueryObject.addSelectField("fault");
+					sqlQueryObject.addSelectField("cache_seconds");
+					sqlQueryObject.addWhereCondition("id=?");
+					queryString = sqlQueryObject.createSQLQuery();
+					stmt = con.prepareStatement(queryString);
+					stmt.setLong(1, idLongRegola);
+					risultato = stmt.executeQuery();
+					
+					if(risultato.next()) {
+						ResponseCachingConfigurazioneRegola regola = new ResponseCachingConfigurazioneRegola();
+						
+						regola.setId(risultato.getLong("id"));
+						int status_min = risultato.getInt("status_min");
+						int status_max = risultato.getInt("status_max");
+						if(status_min>0) {
+							regola.setReturnCodeMin(status_min);
+						}
+						if(status_max>0) {
+							regola.setReturnCodeMax(status_max);
+						}
 
+						int fault = risultato.getInt("fault");
+						if(CostantiDB.TRUE == fault) {
+							regola.setFault(true);
+						}
+						else if(CostantiDB.FALSE == fault) {
+							regola.setFault(false);
+						}
+						
+						int cacheSeconds = risultato.getInt("cache_seconds");
+						if(cacheSeconds>0) {
+							regola.setCacheTimeoutSeconds(cacheSeconds);
+						}
+
+						lista.add(regola);
+					}
+					
+					risultato.close();
+					stmt.close();
+				}
+				
+			}
+			
 			return lista;
 
 		} catch (Exception qe) {

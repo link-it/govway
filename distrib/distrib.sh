@@ -12,7 +12,6 @@ TAG_PDD_VERSION_MAJOR="1"
 TAG_PDD_MAJOR_VERSION="${TAG_PDD_VERSION_PRODUCT}.${TAG_PDD_VERSION_MAJOR}"
 TAG_PDD_MINOR_VERSION=0
 TAG_PDD_PATCHLEVEL=rc1
-TAG_PDD_PATCHLEVEL=
 ramo=tags # tags / branches
 GIT_URL=https://github.com/link-it/govway.git
 SVN_SEDE="svn://svn.link.it/branches/products"
@@ -194,6 +193,7 @@ if [ ! "${SKIP_SRC_VERSION}" == "true" ]
 then
 	infoPrintln "Generazione distribuzione sorgente ..."
 	cd ${WORKING_COPY}
+	sed -i -e "s#<module>git</module>#<!-- <module>git</module> -->#g" ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/mvn/dependencies/pom.xml
 	mv ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar.rename
 	mv ${WORKING_COPY}/lib/git/org.eclipse.jgit-5.0.1.201806211838-r.jar ${WORKING_COPY}/lib/git/org.eclipse.jgit-5.0.1.201806211838-r.jar.rename
 	tar -h -c -z -f /tmp/${OPENSPCOOP_SRC_FILE}.tgz --xform="s@^@${OPENSPCOOP_SRC_FILE}/@" --exclude-vcs --exclude lib/svn * 
