@@ -28,44 +28,35 @@ Vediamo in dettaglio le opzioni di selezione per la modalità live:
 
 -  Modalità Ricerca
 
-   -  Profilo Interoperabilità: elemento presente solo quando il profilo
+   -  **Profilo Interoperabilità**: elemento presente solo quando il profilo
       di interoperabilità selezionato nella testata della console è
       "Tutti". In questo caso è richiesto che l'utente indichi il
       profilo su cui filtrare le transazioni.
 
-   -  Funzione Gateway: elemento presente solo se la configurazione del
-      prodotto prevede l'utilizzo del modulo Integration Manager.
-      Consente di distinguere le transazioni riferite alle interazioni
-      con l'integration manager da tutte le altre.
-
--  Filtro Dati API
+   -  **Soggetto Locale**: opzione, disponibile se attiva la modalità
+      multi-tenant, che consente di filtrare rispetto al soggetto del
+      dominio interno che partecipa nella transazione. L'elemento è visibile se in testata il soggetto selezionato è "Tutti".
 
    -  **Tipo**: Indica se le transazioni da visualizzare riguardano
       "erogazioni", "fruizioni".
 
-   -  **Soggetto Locale**: opzione, disponibile se attiva la modalità
-      multi-tenant, che consente di filtrare rispetto al soggetto del
-      dominio interno che partecipa nella transazione.
+-  Filtro Dati API
 
-   -  **Soggetto Fruitore/Erogatore**: rappresenta il soggetto
-      interlocutore del soggetto locale. Sarà il mittente se stiamo
-      cercando transazioni con tipologia "Erogazione", destinatario
-      nell'altro caso.
+   -  **Soggetto Erogatore**: in modalità Fruizione consente di filtrare rispetto al soggetto erogatore selezionandolo dall'elenco.
 
-   -  **API**: permette di filtrare su una specifica API, individuata
-      tramite il pattern 'API\_nome:API\_versione (Soggetto)'.
+   -  **API**: permette di filtrare su una specifica API.
 
    -  **Azione/Risorsa**: permette di selezionare una tra le
       azioni/risorse della API precedentemente selezionata.
 
 -  Filtro Dati Mittente
 
-   -  **Tipo**: consente di filtrare i dati sulla base di tra criteri
-      alternativi.
+   -  **Tipo Ricerca**: consente di filtrare i dati sulla base di quattro criteri
+      alternativi:
 
-      -  **Applicativo**: filtro rispetto all'applicativo mittente della
-         richiesta. Gli applicativi saranno visualizzati relativamente
-         al soggetto fruitore in ciascun caso specifico.
+        - **Soggetto**: modalità che consente di filtrare in base all'identità del soggetto mittente. Una volta selezionata l'opzione sarà possibile selezionare il soggetto da una lista a discesa.
+
+      -  **Applicativo**: modalità che consente di filtrare rispetto all'applicativo mittente da cui proviene la richiesta. L'applicativo viene selezionato dalla lista dove vengono visualizzati tutti quelli appartenenti al soggetto mittente indicato.
 
       -  **Identificativo Autenticato**: filtro rispetto all'identità
          del mittente ricavata dal processo di autenticazione livello
@@ -93,10 +84,9 @@ Vediamo in dettaglio le opzioni di selezione per la modalità live:
             l'uguaglianza tra stringhe oppure se si tratta di
             un'operazione di pattern matching.
 
--  Filtro Dati Transazione
 
-   -  **Esito**: permette di selezionare una categoria di esiti a cui le
-      transazioni appartengono a scelta
+-  Filtro Esito
+   -  **Esito**: permette di selezionare una categoria di esiti a cui le transazioni appartengono, a scelta tra:
 
       -  *Completate con successo*: sono tutte le transazioni per cui
          non si hanno avuto errori che hanno comportato un fallimento
@@ -116,7 +106,7 @@ Vediamo in dettaglio le opzioni di selezione per la modalità live:
          accordo al protocollo REST, nel formato standard RFC 7807
          "Problem Details for HTTP APIs - IETF Tools".
 
-      -  *Fallite + Fault Applicativo*: sono tutte le transazioni che
+      -  *Fallite - Fault Applicativo*: sono tutte le transazioni che
          rientrano nei due gruppi descritti in precedenza.
 
       -  *Personalizzato*: permette di selezionare puntualmente tutti
@@ -129,21 +119,15 @@ Vediamo in dettaglio le opzioni di selezione per la modalità live:
 
       Nel caso esito = "Completate con successo":
 
-      -  *OK:* le transazioni completate con successo
+      -  *OK:* le transazioni con esito regolare
 
-      -  *OK (Presenza Anomalie)*: le transazioni con esito OK dove però
+      -  *OK (Presenza Anomalie)*: le transazioni con esito regolare dove però
          vi è la presenza di messaggi diagnostici con severità error che
          non ha inciso sul buon fine dell'operazione.
 
       -  *Risposta HTTP 3XX*: le transazioni che, in assenza di errori,
          hanno riportato una risposta dal dominio esterno con un codice
          HTTP 3XX.
-
-      -  *Messaggi non presenti [IM]:* le transazioni di recupero
-         messaggi dall'integration manager che hanno ottenuto errore per
-         indisponibilità del messaggio nella Message Box (opzione
-         visibile solo se abilitato in configurazione il modulo
-         IntegrationManager).
 
       -  *Violazione Rate Limiting WarningOnly*: Esito delle transazioni
          che hanno violato policy del controllo traffico senza alcuna
@@ -190,9 +174,15 @@ Vediamo in dettaglio le opzioni di selezione per la modalità live:
       -  *Errore di Connessione*: transazioni che hanno ottenuto un
          errore legato a problemi di connessione al servizio remoto;
 
-      -  *Errore SPCoop/SDI/eDelivery*: transazioni che hanno generato
+      -  *Errore SPCoop/SDI/eDelivery*: Errore specifico per ciascun profilo di interoperabilità che indica le transazioni che hanno generato
          errori a livello del protocollo (es. SPCoop) specifico della
          comunicazione con il dominio esterno;
+
+      -  *API Sospesa*: Errore dovuto al fatto che l'API invocata risulta sospesa in configurazione;
+
+      -  *Trasformazione Richiesta Fallita*: La trasformazione da applicare al messaggio di richiesta ha prodotto un errore;
+
+      -  *Trasformazione Risposta Fallita*: La trasformazione da applicare al messaggio di risposta ha prodotto un errore;
 
       -  *Violazione Rate Limiting*: Esito delle transazioni che hanno
          violato policy del controllo traffico con applicazione di
@@ -262,22 +252,6 @@ Vediamo in dettaglio le opzioni di selezione per la modalità live:
 
       -  *Errore Generico:* transazioni che hanno riportato un qualunque
          tipo di errore che non rientri nella casistica precedente;
-
-      -  *Autenticazione Fallita [IM]:* In caso di invocazioni
-         dell'Integration Manager (Message Box) filtra le transazioni in
-         cui è stato restituito un errore di autenticazione;
-
-      -  *Autorizzazione Fallita [IM]:* In caso di invocazioni
-         dell'Integration Manager (Message Box) filtra le transazioni in
-         cui è stato restituito un errore di autorizzazione;
-
-      -  *Messaggi Non Presenti [IM]:* In caso di invocazioni
-         dell'Integration Manager (Message Box) filtra le transazioni
-         che hanno generato la segnalazione di "Messaggi non Presenti";
-
-      -  *Messaggio Non Trovato [IM]:* In caso di invocazioni
-         dell'Integration Manager (Message Box) filtra le transazioni in
-         cui è stato restituito l'errore di "Messaggio non Trovato".
 
    -  **ID Cluster**: Permette di filtrare le transazioni in base al
       nodo del cluster che le ha gestite.

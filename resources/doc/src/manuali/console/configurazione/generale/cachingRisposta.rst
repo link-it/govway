@@ -22,10 +22,21 @@ La configurazione permette di specificare i seguenti parametri:
    salvata in cache.
 
 -  *Generazione Hash*: ad ogni risposta salvata in cache viene associato
-   un valore hash calcolato rispetto ai dati della richiesta quali url
-   di invocazione, header di trasporto e payload (se disponibile). E'
-   possibile configurare quali parametri della richiesta utilizzare per
-   generare il valore hash; per default vengono utilizzati tutti.
+   un valore hash calcolato rispetto ai dati della richiesta che risultano abilitati tra le opzioni seguenti:
+
+   - *URL di Richiesta*: viene utilizzata la URL della richiesta per il calcolo dell'hash.
+
+   - *Payload*: viene utilizzato il payload della richiesta per il calcolo dell'hash.
+
+    - *Headers*: vengono utilizzati gli header della richiesta indicati per il calcolo dell'hash. L'abilitazione di questa opzione comporta l'aggiunta di un elemento per consentire di specificare gli headers da selezionare.
+
+-   *Cache Control*: opzioni aggiuntive per la gestione della cache basate sul header HTTP "Cache-Control":
+
+    - *No Cache*: consente di attivare l'utilizzo della direttiva "no-cache" al fine di effettuare una richiesta evitando di ottenere una risposta dalla cache.
+
+    - *Max Age*: consente di attivare l'utilizzo della direttiva "max-age" che consente di forzare il tempo di vita, al valore fornito, della risposta inserita in cache.
+
+    - *No Store*: consente di attivare l'utilizzo della direttiva "no-store" che consente di impedire l'inserimento in cache della risposta generata dalla richiesta corrente.
 
    .. figure:: ../../_figure_console/ConfigurazioneCachingRisposta.png
     :scale: 100%
@@ -33,3 +44,25 @@ La configurazione permette di specificare i seguenti parametri:
     :name: cachingRispostaFig
 
     Maschera di configurazione per il Caching della Risposta
+
+Dopo aver salvato la configurazione fornita per il caching della risposta, appare la sezione *Configurazione Avanzata* che comprende il link *Regole*. Seguendo tale link è possibile inserire ulteriori criteri avanzati per la gestione della cache.
+Come si vede in :numref:`regoleCachingRispostaFig` ciascuna regola è composta dai seguenti campi:
+
+-   *Codice Risposta*: codice HTTP ottenuto in risposta. Sono disponibili per la scelta le seguenti opzioni:
+
+    - *Qualsiasi*: indica qualunque valore del codice HTTP restituito
+
+    - *Singolo*: consente di specificare un singolo valore del codice HTTP restituito
+
+    - *Intervallo*: consente di fornire l'intervallo dei valori ammessi per il codice HTTP restituito
+
+-   *Cache Timeout (Secondi)*: indica in secondi il timeout applicato agli elementi in cache relativamente ai codici HTTP che soddisfano la regola.
+
+-   *Fault*: opzione per specificare se anche i messaggi di fault devono essere inseriti in cache.
+
+   .. figure:: ../../_figure_console/RegoleCachingRisposta.png
+    :scale: 100%
+    :align: center
+    :name: regoleCachingRispostaFig
+
+    Inserimento di una regola per il Caching della Risposta

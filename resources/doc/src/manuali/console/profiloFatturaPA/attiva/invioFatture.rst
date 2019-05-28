@@ -57,3 +57,14 @@ comando curl:
     -H "Content-Type: application/pkcs7-mime" \
     "http://127.0.0.1:8080/govway/sdi/out/xml2soap/Ente/CentroServiziFatturaPA/SdIRiceviFile/v1?Versione=SDI10&TipoFile=P7M&IdPaese=IT&IdCodice=01629370097"
 
+.. note::
+	La generazione di un nome di file univoco da associare alla fattura viene gestita da GovWay.
+	
+	È possibile disabilitare tale gestione disabilitando la proprietà 'org.openspcoop2.protocol.sdi.fatturazioneAttiva.nomeFile.gestione' 
+	nel file '/etc/govway/sdi_local.properties'.
+	Se viene disabilitata la funzionalità (attiva per default), la gestione dei nomi dei file (correttezza sintattica, univocità, ...) è demandata 		  
+	all'Applicativo Client che deve obbligatoriamente fornire il nome del file da associare alla fattura attraverso uno dei seguenti modi:
+
+	- query parameter 'NomeFile'
+	- header http 'SDI-NomeFile'
+	- header http 'GovWay-SDI-NomeFile'

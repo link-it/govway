@@ -20,8 +20,9 @@ traffico:
    Questa funzionalità è descritta nella sezione :ref:`trafficoPolicy`.
 
 .. toctree::
-        :maxdepth: 2
+    :maxdepth: 2
 
-        registro
-	policy
-	statistiche
+    registro
+    policy
+    statistiche
+    filtriRaggruppamentiPersonalizzati

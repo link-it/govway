@@ -23,9 +23,8 @@ sono i seguenti:
    ancora in uso per la quasi totalità dei servizi centrali erogati
    dalla Pubblica Amministrazione italiana.
 
--  *FatturaPA*: questo profilo supporta le modalità di scambio delle
-   fatture elettroniche veicolate tramite il Sistema di Interscambio
-   della Fatturazione Elettronica.
+-  *Fatturazione Elettronica*: questo profilo supporta le modalità di scambio delle
+   fatture elettroniche, nel formato FatturaPA, veicolate tramite il Sistema di Interscambio.
 
 In fase di installazione possono essere scelti i profili di proprio
 interesse (per default viene proposto il solo profilo di API Gateway).

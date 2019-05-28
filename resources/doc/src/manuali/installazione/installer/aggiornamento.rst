@@ -30,11 +30,13 @@ al caso di una nuova installazione:
    devono essere inclusi i servizi che permettono la configurazione ed il monitoraggio
    di GovWay tramite API REST.
 
-   .. _apiREST_fig:
+   .. _apiREST_fig_update:
    
    .. figure:: ../_figure_installazione/installer-scr3b.jpg
     :scale: 100%
     :align: center
+
+    Configurazione Servizi
 
 #. Nella maschera che permette la scelta dei profili di interoperabilità,
    vi è il vincolo di indicare almeno i medesimi profili utilizzati per l'installazione che si vuole aggiornare.

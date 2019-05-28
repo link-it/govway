@@ -9,5 +9,6 @@ Release Notes del prodotto GovWay
 	:hidden:
 	:caption: Release Notes
 
+	3.1.0/index
         3.0.1/index
         3.0.0/index

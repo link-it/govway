@@ -38,6 +38,9 @@ pdf-scenari-applicativi:
 	cd scenari; rm -rf pdf; ${SPHINXBUILD} -v -b latex -c .. -Dproject="Scenari Applicativi" . "$(BUILDDIR)/pdf"; cd "$(BUILDDIR)/pdf"; make clean all-pdf
 	@echo "Producing pdf Scenari Applicativi ok"
 
+post:
+	sh ./postprocess.sh
+
 # Put it first so that "make" without argument is like "make help".
 #help:
 #	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)

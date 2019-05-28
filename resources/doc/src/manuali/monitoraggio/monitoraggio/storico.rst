@@ -18,9 +18,16 @@ relativa sezione (:numref:`mon_indiceStorico_fig`).
 Vediamo nel dettaglio quali sono le funzionalità offerte da ogni
 modalità di ricerca:
 
--  **Intervallo Temporale**. Questa modalità consente di effettuare
-   ricerche di transazioni selezionando l'intervallo temporale di
-   interesse (:numref:`mon_filtroIntervalloTemporale_fig`). I campi utilizzati per filtrare le transazioni da visualizzare sono i medesimi descritti nella sezione :ref:`mon_live`.
+-  **Intervallo Temporale**. Questa modalità consente di effettuare ricerche di transazioni selezionando l'intervallo temporale di  interesse (:numref:`mon_filtroIntervalloTemporale_fig`). Caratteristica di questa modalità di ricerca è quella di fornire la sezione **Filtro Temporale** nel contesto del filtro di ricerca. Il filtro temporale comprende l'elemento *Periodo* nel quale può essere selezionata una tra le seguenti opzioni:
+    - *ultima ora*
+    - *ultime 24 ore*
+    - *ultima settimana*
+    - *ultimo mese*
+    - *personalizzato*
+
+Selezionando l'opzione *personalizzato* verranno aggiunti i due elementi *Data Inizio* e *Data Fine* per poter fornire un intervallo temporale di propria preferenza.
+
+I restanti campi utilizzati per filtrare le transazioni da visualizzare sono i medesimi descritti nella sezione :ref:`mon_live`.
 
 .. figure:: ../_figure_monitoraggio/FiltroIntervalloTemporale.png
     :scale: 100%
@@ -86,7 +93,7 @@ la ricerca si deve utilizzare il pulsante 'Filtra'. Se si vogliono
 riportare i criteri di ricerca ai valori iniziali è possibile utilizzare
 il pulsante 'Ripulisci'.
 
-Nelle modalità di ricerca 'Andamento Temporale' e 'Identificativo
+Nelle modalità di ricerca 'Intervallo Temporale' e 'Identificativo
 Applicativo', effettuata la prima ricerca (tramite il pulsante 'Filtra')
 saranno disponibili due nuovi pulsanti:
 

@@ -37,6 +37,12 @@ Descriviamo per punti i passi significativi di questo scenario:
    messaggio SdI vengono forniti, nel contesto della medesima richiesta,
    sotto forma di HTTP Headers (fare riferimento alla :numref:`headerRicezioneFatturaTab`).
 
+.. note::
+	Nella configurazione di default GovWay non consegna il file Metadati all'applicativo.
+	È possibile attivare la consegna abilitando la proprietà 'org.openspcoop2.protocol.sdi.fatturazionePassiva.consegnaFileMetadati'	
+	all'interno del file /etc/govway/sdi_local.properties.
+	Il file Metadati verrà consegnato, codificato in base64, nell'header HTTP 'GovWay-SDI-FileMetadati'.
+
 -  *Client Invio Notifica EC*. I sistemi dell'ente, dopo aver ricevuto
    le fatture, inviano le *Notifiche di Esito Committente*, previste dal
    protocollo SdI, utilizzando un apposito servizio di GovWay. La URL di

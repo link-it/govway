@@ -1,10 +1,10 @@
 .. _profiloFatturaPA:
 
-======================
-Profilo 'FatturaPA'
-======================
+==================================
+Profilo 'Fatturazione Elettronica'
+==================================
 
-Il profilo "FatturaPA" consente di utilizzare GovWay come nodo di
+Il profilo "Fatturazione Elettronica" consente di utilizzare GovWay come nodo di
 interconnessione al Sistema di Interscambio (SdI), responsabile della
 gestione dei flussi di fatturazione elettronica.
 
@@ -16,7 +16,7 @@ metadati) secondo la codifica dettata dalle specifiche tecniche (Per
 dettagli in merito si faccia riferimento alle Specifiche Tecniche
 SdI (http://www.fatturapa.gov.it/export/fatturazione/sdi/Specifiche_tecniche_SdI_v1.6.pdf).
 
-Il profilo FatturaPA di GovWay consente, ai sistemi di gestione delle
+Il profilo "Fatturazione Elettronica" consente, ai sistemi di gestione delle
 fatture di un ente, di non occuparsi della gestione del formato di
 scambio, previsto dal SdI, mantenendo un grado di interfacciamento
 notevolmente semplificato. Più in dettaglio:

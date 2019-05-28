@@ -66,7 +66,7 @@ impostare alcuni criteri per filtrare gli eventi da visualizzare:
    -  **Periodo**: Intervallo temporale in cui si sono verificati gli
       eventi da cercare.
 
--  Filtro Dati Evento
+-  **Filtro Dati Evento**
 
    -  **Severità**: Livello di severità.
 
@@ -118,13 +118,13 @@ La seguente tabella descrive gli eventi previsti.
     ControlloTraffico\_ SogliaCongestione                   Valori Possibili:
                                                             - Violazione
                                                             - ViolazioneRisolta
-                                                                                                                                                                                Questo evento segnala il raggiungimento della soglia di congestionamento\ :sup:`` (percentuale sul numero massimo di richieste simultanee). Il secondo codice segnala l'evento di risoluzione.
-    RateLimiting\_Policy                                    Valori Possibili:
+                                                                                                                                                                                Questo evento segnala il raggiungimento della soglia di congestionamento [1]_ (percentuale sul numero massimo di richieste simultanee). Il secondo codice segnala l'evento di risoluzione.
+    RateLimiting\_Policy \[API\/Globale\]                   Valori Possibili:
                                                             - Violazione
                                                             - ViolazioneRisolta
                                                             - Violazione\_WarningOnly
                                                             - ViolazioneRisolta\_WarningOnly
-                                                                                                    Questo evento segnala la violazione di una policy di rate limiting\ :sup:`` e la successiva risoluzione. Nel caso sia stata configurata, per la policy, la modalità "WarningOnly" l'evento conterrà i due codici appositi.
+                                                                                                    Questo evento segnala la violazione di una policy di rate limiting [1]_ e la successiva risoluzione. Nel caso sia stata configurata, per la policy, la modalità "WarningOnly" l'evento conterrà i due codici appositi.
    ======================================================= =====================================   =====================================
 
 .. [1]

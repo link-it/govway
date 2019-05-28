@@ -37,6 +37,6 @@ traffico. Gli elementi di configurazione presenti sono:
    Attivate in ambito globale, cioè operative sul traffico complessivo
    che transita sul gateway. A queste policy si aggiungono quelle
    eventualmente definite localmente nella configurazione specifica di
-   ciascuna erogazione/fruizione. 
-   Tra parentesi viene visualizzato il numero di policy attualmente attivate. 
+   ciascuna erogazione/fruizione.
+   Tra parentesi viene visualizzato il numero di policy attualmente attivate.
    Questa funzionalità è descritta nella sezione :ref:`trafficoPolicy`.

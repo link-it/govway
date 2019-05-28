@@ -51,10 +51,10 @@ I tipi di report che si possono generare sono:
    transitati e tempi medi di risposta, aggregando i dati in base alla
    API invocata
 
--  Distribuzione per Azione
+-  Distribuzione per Operazione
 
    Consente di visualizzare la distribuzione del numero di richieste, KB
-   transitati e tempi medi di risposta, aggregando i dati per azione
+   transitati e tempi medi di risposta, aggregando i dati per l'operazione relativa alla API invocata
 
 -  Distribuzione per Applicativo
 

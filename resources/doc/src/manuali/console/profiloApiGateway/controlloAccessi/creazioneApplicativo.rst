@@ -21,14 +21,16 @@ Per registrare l'applicativo posizionarsi nella sezione *Registro >
 Applicativi*, quindi premere il pulsante *Aggiungi*. Compilare il form
 come segue (:numref:`applicativoNew`):
 
+-  *Profilo Interoperabilità*: Opzione visibile solo nel caso in cui non sia stata effettuata la relativa scelta sul menu della testata.
+
 -  *Nome*: Assegnare un nome all'applicativo. È necessario che il nome
    indicato risulti univoco rispetto ai nomi già presenti per la
    modalità operativa selezionata (in questo caso API Gateway).
 
--  *Modalità di Accesso alla Porta*: Tramite il campo *Tipo* si
+-  *Modalità di Accesso*: Tramite il campo *Tipo* si
    seleziona il tipo di credenziali richieste per l'autenticazione
    dell'applicativo. In base alla scelta effettuata saranno mostrati i
-   campi per consentire l'inserimento delle credenziali richieste.
+   campi per consentire l'inserimento delle credenziali richieste. Per i dettagli sulla configurazione della modalità di accesso si faccia riferimento alla sezione :ref:`modalitaAccesso`.
 
 Dopo aver creato l'applicativo è opzionalmente possibile assegnargli dei
 ruoli, tra quelli che sono presenti nel registro e contrassegnati come

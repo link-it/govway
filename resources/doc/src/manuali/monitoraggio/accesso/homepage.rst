@@ -15,12 +15,23 @@ valori tramite gli elementi seguenti:
    quattro finestre temporali disponibili: 1 giorno, 1 settimana, 1 mese
    e 1 anno.
 
--  Soggetto Locale / API
+-   Tipo
+
+    Scelta tra Erogazioni, Fruizioni o Entrambi
+
+-   API
+
+    Filtro in base ad una specifica API
+
+-   Profilo Interoperabilità
+
+    Consente di filtrare le transazioni rappresentate nel grafico in base al profilo di interoperabilità. Opzione presente solo nel caso non sia stato selezionato un profilo di interoperabilità nella testata.
+
+-  Soggetto Locale
 
    Consente di filtrare i dati del grafico specificando il soggetto
    locale che partecipa, come fruitore o erogatore, alle comunicazioni
-   registrate. In alternativa è possibile anche indicare una specifica
-   API.
+   registrate. Opzione presente solo nel caso non sia stato selezionato un Soggetto nella testata.
 
 .. figure:: ../_figure_monitoraggio/Homepage.png
     :scale: 100%

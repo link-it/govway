@@ -10,7 +10,7 @@ Se nell'installer sono stati selezionati i servizi che espongono API REST per la
 
 Per poterli invocare deve prima essere completata la configurazione del Controllo degli Accessi accedendo alla console di gestione tramite browser all'indirizzo *http://<hostname-pdd>/govwayConsole* utilizzando le credenziali fornite durante l'esecuzione dell'installer.
 
-Accendendo alla lista delle Erogazioni si può notare come le API relative alla configurazione ed al monitoraggio riportano uno 'stato giallo' che evidenzia una configurazione incompleta.
+Accendendo alla lista delle Erogazioni si può notare come le API relative alla configurazione ed al monitoraggio riportano uno 'stato rosso' che evidenzia una configurazione incompleta.
 
    .. figure:: ../_figure_installazione/govwayConsole_erogazioni.png
     :scale: 100%

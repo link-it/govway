@@ -21,10 +21,11 @@ nell'intestazione della pagina.
 	cors
 	configSpecificaRisorsa
 	controlloAccessi/index
-	rateLimiting
+	rateLimiting/index
 	validazione
 	cacheRisposta
 	sicurezzaMessaggio
+	trasformazioni/index
 	tracciamento
 	correlazione
 	mtom

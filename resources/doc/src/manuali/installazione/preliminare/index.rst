@@ -24,7 +24,7 @@ mancanti.
    l'installazione su Apache Tomcat (http://tomcat.apache.org) (versione
    7.x, 8.x o 9.x).
 
-.. note::
+   .. note::
       GovWay supporta anche altri application server j2ee diversi da
       quelli citati, partendo dalla distribuzione sorgente.
 

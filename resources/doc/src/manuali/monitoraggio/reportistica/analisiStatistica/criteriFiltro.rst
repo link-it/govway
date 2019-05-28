@@ -16,11 +16,13 @@ variano in funzione del tipo di report selezionato.
 
 I dati da indicare per generare un report sono:
 
--  Profilo Interoperabilità: visibile solo quando il profilo di
-   interoperabilità, sulla testata dell'applicazione, è stato impostato
-   a "Tutti". Il campo permette di selezionare il profilo con cui
-   effettuare la ricerca delle transazioni. Questa scelta è
-   obbligatoria.
+-  Analisi Statistica
+
+    - **Profilo Interoperabilità**: visibile solo quando il profilo di interoperabilità, sulla testata dell'applicazione, è stato impostato a "Tutti". Il campo permette di selezionare il profilo con cui effettuare la ricerca delle transazioni. Questa scelta è obbligatoria.
+
+    - **Soggetto Locale**: visibile, in modalità multi-tenant, solo quando il soggetto locale non è stato selezionato sulla testata dell'applicazione. Consente di filtrare le transazioni in base al soggetto locale che vi partecipa.
+
+    - **Tipo**: opzione per selezionare le transazioni appartenenti a casi di erogazione o fruizione.
 
 -  Filtro Temporale
 
@@ -33,21 +35,9 @@ I dati da indicare per generare un report sono:
 
 -  Filtro Dati API
 
-   -  **Tipologia:**\ indica il "ruolo" che svolge il "Soggetto in
-      Gestione". Ad esempio selezionando "Erogazione" verranno
-      visualizzate solo le transazioni in cui il "Soggetto in Gestione"
-      è l'erogatore.
+   -  **Soggetto Erogatore**: Opzione, presente nel caso delle fruizioni, per selezionare il soggetto erogatore relativo alle transazioni interessate.
 
-   -  **Soggetto Locale**: nel caso in cui l'utente abbia in gestione
-      più soggetti sarà possibile inserire un filtro su di essi.
-
-   -  **Soggetto Remoto**: rappresenta il soggetto interlocutore del
-      soggetto in gestione. Questo si traduce nel fatto che sarà il
-      mittente se stiamo cercando transazioni con tipologia
-      "Erogazione", destinatario nell'altro caso.
-
-   -  **API**: permette di filtrare su una specifica API, individuata
-      tramite il pattern 'API\_nome:API\_versione (Soggetto)'.
+   -  **API**: permette di filtrare su una specifica API tra quelle erogate dal soggetto indicato.
 
    -  **Azione/Risorsa**: permette di selezionare una tra le
       azioni/risorse della API selezionata.
@@ -59,8 +49,10 @@ I dati da indicare per generare un report sono:
    -  **Tipo**: consente di scegliere su quale dato applicare il filtro
       tra:
 
+      -  Soggetto: si seleziona il soggetto mittente delle transazioni.
+
       -  Applicativo: si seleziona l'applicativo mittente delle
-         transazioni
+         transazioni.
 
       -  Identificativo Autenticato: si seleziona il metodo di
          autenticazione e si specifica il criterio di confronto con
@@ -70,7 +62,7 @@ I dati da indicare per generare un report sono:
          criterio per il confronto con il token ricavato durante il
          processo di autenticazione.
 
--  Filtro Dati Transazione
+-  Filtro Esito
 
    -  **Esito**: permette di selezionare una categoria di esiti a cui le
       transazioni appartengono. Valgono le medesime considerazioni
@@ -84,9 +76,8 @@ I dati da indicare per generare un report sono:
 
 -  Report
 
-   -  **Visualizza Per**: è possibile scegliere se si vuole visualizzare
-      le *Dimensioni*, in termini di KB gestiti, il *Numero* delle
-      Transazioni o il *Tempo Medio di Risposta*;
+   -  **Visualizza Per**: è possibile scegliere il dato che si vuole visualizzare nel report tra:
+      *Occupazione Banda*, in termini di KB gestiti, *Numero Transazioni* o *Tempo Medio Risposta*;
 
 Dopo aver selezionato i parametri di interesse si genera il report
 utilizzando il pulsante "Genera Report". L'area di visualizzazione del

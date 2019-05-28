@@ -23,14 +23,15 @@ Le tre sezioni seguenti descrivono le modalità per configurare i tre
 aspetti che compongono il controllo degli accessi.
 
 .. toctree::
-        :maxdepth: 2
+   :maxdepth: 2
 
-        gestioneToken
-	autenticazione
-	autorizzazione
-	creazioneSoggetto
-	creazioneApplicativo
-	creazioneRuolo
-	attribuzioneRuoli
-	xacmlPolicy
-	scope
+   gestioneToken
+   autenticazione
+   autorizzazione
+   creazioneSoggetto
+   creazioneApplicativo
+   modalitaAccesso
+   creazioneRuolo
+   attribuzioneRuoli
+   xacmlPolicy
+   scope

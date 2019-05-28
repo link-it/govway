@@ -49,7 +49,7 @@ combinazione di scelte attuate.
       un testo automatico di descrizione sulla base delle scelte operate
       sui rimanenti elementi del form.
 
-   -  *Risorsa*: Si seleziona la risorsa che la policy deve monitorare
+   -  *Metrica*: Si seleziona la metrica che la policy deve monitorare
       al fine di attuare le eventuali restrizioni. Sono disponibili le
       seguenti risorse:
 
@@ -57,8 +57,6 @@ combinazione di scelte attuate.
          di richieste gestite. Selezionando questa risorsa si
          attiveranno i seguenti elementi per la configurazione dei
          valori di soglia:
-
-         -  *Simultanee*
 
          -  *Modalità di Controllo*
 
@@ -70,8 +68,12 @@ combinazione di scelte attuate.
 
          -  *Finestra Osservazione*
 
-         -  Se si attiva l'opzione “Simultanee” l'unico campo visibile
-            sarà: *Numero Massimo di Richieste*
+      -  *NumeroRichiesteSimultanee*: La policy effettua il controllo sul numero
+         di richieste simultanee gestite. Selezionando questa metrica si
+         attiveranno i seguenti elementi per la configurazione dei
+         valori di soglia:
+
+         -  *Numero Massimo di Richieste*
 
       -  *OccupazioneBanda*: La policy effettua il controllo sulla banda
          occupata da e verso le comunicazioni con il gateway.
@@ -93,7 +95,7 @@ combinazione di scelte attuate.
       -  *TempoComplessivioRisposta*: La policy controlla la quantità di
          tempo complessivamente impiegata dal gateway per la ricezione
          delle risposte dai servizi invocati. Selezionando questa
-         risorsa si attiveranno i seguenti elementi per la
+         metrica si attiveranno i seguenti elementi per la
          configurazione dei valori di soglia:
 
          -  *Modalità di Controllo su Realtime (non modificabile)*
@@ -110,7 +112,7 @@ combinazione di scelte attuate.
 
       -  *TempoMedioRisposta*: La policy controlla il tempo medio
          impiegato dal gateway per la ricezione delle risposte dai
-         servizi invocati. Selezionando questa risorsa si attiveranno i
+         servizi invocati. Selezionando questa metrica si attiveranno i
          seguenti elementi per la configurazione dei valori di soglia:
 
          -  *Modalità di Controllo*
@@ -135,7 +137,7 @@ combinazione di scelte attuate.
          dal gateway e terminate con un esito che rientra nella
          casistica associata alla risorsa selezionata (completate con
          successo, fallite o fault applicativi). Selezionando questa
-         risorsa si attiveranno i seguenti elementi per la
+         metrica si attiveranno i seguenti elementi per la
          configurazione dei valori di soglia:
 
          -  *Modalità di Controllo*
@@ -195,13 +197,12 @@ combinazione di scelte attuate.
             valore per la “Finestra Osservazione”, che descriveremo poco
             più avanti.
 
-   -  *Numero Massimo di Richieste*: Campo visibile solo per la risorsa
-      monitorata “NumeroRichieste”. Consente di specificare la soglia
+   -  *Numero Massimo di Richieste*: Campo visibile solo per la metrica “NumeroRichieste”. Consente di specificare la soglia
       per la policy. Quando il numero delle richieste, conteggiate
       secondo la logica specificata nella policy, supera questo valore,
       la policy risulta violata.
 
-   -  *Tipo Banda*: Campo visibile solo per la risorsa monitorata
+   -  *Tipo Banda*: Campo visibile solo per la metrica
       “OccupazioneBanda”. Consente di specificare la modalità di calcolo
       della banda occupata per il confronto con la soglia impostata
       nella policy. Sono disponibili le seguenti opzioni:
@@ -219,12 +220,12 @@ combinazione di scelte attuate.
          uscita sul gateway.
 
    -  *Occupazione Massima di Banda (kb)*: Campo visibile solo per la
-      risorsa monitorata “OccupazioneBanda”. Consente di specificare la
+      metrica “OccupazioneBanda”. Consente di specificare la
       soglia per la policy. Quando la banda, calcolata secondo la logica
       specificata nella policy, supera questo valore, la policy risulta
       violata.
 
-   -  *Tipo Latenza*: Campo visibile solo per le risorse monitorate
+   -  *Tipo Latenza*: Campo visibile solo per le metriche
       “TempoComplessivoRisposta” e “TempoMedioRisposta”. Consente di
       specificare la logica di calcolo del tempo di risposta sulla base
       delle due seguenti opzioni:
@@ -239,13 +240,13 @@ combinazione di scelte attuate.
          richiesta fino all'uscita della risposta.
 
    -  *Occupazione Massima di Tempo (secondi)*: Campo visibile solo per
-      la risorsa monitorata “TempoComplessivoRisposta”. Consente di
+      la metrica “TempoComplessivoRisposta”. Consente di
       specificare la soglia per la policy. Quando la latenza
       complessiva, calcolata secondo la logica specificata nella policy,
       supera questo valore, la policy risulta violata.
 
-   -  *Tempo Medio Risposta (ms)*: Campo visibile solo per la risorsa
-      monitorata “TempoMedioRisposta”. Consente di specificare la soglia
+   -  *Tempo Medio Risposta (ms)*: Campo visibile solo per la metrica
+      “TempoMedioRisposta”. Consente di specificare la soglia
       per la policy. Quando la latenza media, calcolata secondo la
       logica specificata nella policy, supera questo valore, la policy
       risulta violata.
@@ -267,8 +268,8 @@ combinazione di scelte attuate.
       valore da specificare come Intervallo Osservazione è sempre un
       numero intero (ad esempio inserendo 8 si campioneranno i dati su
       finestre di 8 secondi, 8 minuti, ecc, in base all'unità di misura
-      indicata per la frequenza). Il valore selezionato come “Finestra
-      Osservazione” individua l'esatto intervallo utilizzato nella
+      indicata per la frequenza). Il valore selezionato come “Finestra"
+      individua l'esatto intervallo utilizzato nella
       catena temporale ogni volta che si valuta la policy per una
       specifica richiesta di servizio.
 
@@ -349,7 +350,7 @@ combinazione di scelte attuate.
       riportate nella sezione precedente “Valori di Soglia”.
 
    .. figure:: ../../_figure_console/ControlloTraffico-Applicabilita.png
-    :scale: 50%
+    :scale: 100%
     :align: center
     :name: opzioniRateLimitingFig
 

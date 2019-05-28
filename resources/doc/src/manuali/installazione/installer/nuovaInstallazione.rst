@@ -93,6 +93,8 @@ come si sviluppa il processo di installazione:
     :scale: 100%
     :align: center
 
+    Configurazione Servizi
+
 #. Al passo successivo si dovranno inserire i dati relativi ai profili
    di interoperabilità supportati dal gateway:
 
@@ -127,6 +129,8 @@ come si sviluppa il processo di installazione:
     :scale: 100%
     :align: center
 
+    Configurazione eDelivery
+
 #. Nel secondo passo, relativamente alla configurazione del profilo eDelivery, viene richiesto di
    immettere i relativi dati di configurazione. 
 
@@ -134,7 +138,7 @@ come si sviluppa il processo di installazione:
     :scale: 100%
     :align: center
 
-    Configurazione eDelivery
+    Configurazione eDelivery (HTTP/JMS)
 
    I dati di configurazione
    da immettere in questo step riguardano l'installazione di Domibus con

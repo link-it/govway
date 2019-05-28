@@ -16,8 +16,12 @@ azioni/risorse sono raggruppabili in:
 -  *Controllo Accessi*: per configurare i criteri di autenticazione,
    autorizzazione e gestione token delle richieste.
 
+-   *Rate Limiting*: per configurare i meccanismi di controllo del traffico a salvaguardia delle prestazioni.
+
 -  *Validazione*: per configurare i criteri di validazione dei messaggi
    in transito sul gateway.
+
+-   *Caching Risposta*: per configurare l'utilizzo della cache per i messaggi di risposta.
 
 -  *Sicurezza Messaggio*: per configurare le misure di sicurezza
    applicate a livello del messaggio.
@@ -25,6 +29,8 @@ azioni/risorse sono raggruppabili in:
 -  *Tracciamento*: per configurare specifiche modalità di estrazione
    dati, dalle comunicazioni in transito, per l'arricchimento della
    traccia prodotta.
+
+-   *Trasformazioni*: per configurare le operazioni di trasformazione attivabili sui flussi in entrata ed uscita.
 
 -  *MTOM*: per configurare l'utilizzo del protocollo ottimizzato per
    l'invio di attachment tra nodi SOAP.

@@ -62,6 +62,7 @@ La sezione nel filtro di un determinato soggetto comporta
 l'aggiornamento del prospetto riepilogativo del numero di configurazioni
 della sezione 'API' aggiornano i contatori relativamente alle API di
 competenza del soggetto selezionato (:numref:`mon_reportConfigurazioniSoggetto_fig`).
+Un'ulteriore tabella mostra l'elenco delle API erogate dal soggetto selezionato.
 
 .. figure:: ../_figure_monitoraggio/ReportConfigurazioniSoggetto.png
     :scale: 100%
@@ -74,7 +75,8 @@ La selezione di una API nel filtro comporta l'aggiornamento del
 prospetto riepilogativo del numero di configurazioni della sezione 'API'
 aggiornando i contatori relativamente alla API selezionata (:numref:`mon_reportConfigurazioniApi_fig`). Con la
 selezione della API, tra le informazioni riportate vi sono anche il
-numero di azioni/risorse presenti.
+numero di azioni/risorse presenti. Un'ulteriore tabella mostra l'elenco dei soggetti erogatori
+per la API selezionata.
 
 .. figure:: ../_figure_monitoraggio/ReportConfigurazioniAPI.png
     :scale: 100%

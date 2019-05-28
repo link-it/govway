@@ -40,9 +40,9 @@ La configurazione della funzionalità di controllo del traffico
 Le sezioni seguenti dettagliano questi elementi di configurazione.
 
 .. toctree::
-        :maxdepth: 2
+    :maxdepth: 2
 
-        limitazioneNumeroRichieste
-	controlloCongestione
-	rateLimiting
-	tempiRisposta
+    limitazioneNumeroRichieste
+    controlloCongestione
+    rateLimiting
+    tempiRisposta

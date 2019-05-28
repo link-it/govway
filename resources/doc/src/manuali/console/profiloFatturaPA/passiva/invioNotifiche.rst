@@ -48,3 +48,15 @@ comando curl:
     --data-binary @IT01234567890_11111_EC_001.xml \
     -H "Content-Type: application/xml" \
     "http://127.0.0.1:8080/govway/sdi/out/xml2soap/Ente/CentroServiziFatturaPA/SdIRiceviNotifica/v1?NomeFile=IT01234567890_11111.xml&IdentificativoSdI=345"
+
+.. note::
+	La generazione di un nome di file univoco da associare alla notifica di esito committente viene gestita da GovWay.
+	
+	È possibile disabilitare tale gestione disabilitando la proprietà 'org.openspcoop2.protocol.sdi.fatturazionePassiva.nomeFile.gestione' 
+	nel file '/etc/govway/sdi_local.properties'.
+	Se viene disabilitata la funzionalità (attiva per default), la gestione dei nomi dei file (correttezza sintattica, univocità, ...) è demandata 		  
+	all'Applicativo Client che deve obbligatoriamente fornire il nome da associare alla notifica di esito committente del file attraverso uno dei seguenti modi:
+
+	- query parameter 'NomeFile'
+	- header http 'SDI-NomeFile'
+	- header http 'GovWay-SDI-NomeFile'

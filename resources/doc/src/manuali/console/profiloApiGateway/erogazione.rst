@@ -33,28 +33,11 @@ Compilare il form (:numref:`erogazioneNewFig`) inserendo i seguenti dati:
    tipo Soap, sarà necessario selezionare anche il Servizio che si vuole
    erogare.
 
--  *Autenticazione:* In questa sezione è possibile configurare il
-   meccanismo di autenticazione richiesto per l'accesso al servizio da
-   parte dei fruitori. Il valore di default proposto prevede
-   l'autenticazione di tipo *https*.
+-  *Controllo degli Accessi:* In questa sezione è possibile stabilire l'eventuale controllo degli accessi all'erogazione:
+    - *Pubblico*: non sono richieste credenziali per l'accesso.
+    - *Autenticato*:  l'accesso è ammesso solo previa verifica dei criteri di autenticazione e autorizzazione previsti in configurazione.
 
-   Come mostrato in :numref:`erogazioneNewFig`, è possibile selezionare il tipo di autenticazione
-   a livello del trasporto, selezionando uno tra i valori disponibili:
-
-   -  *disabilitato*: nessuna autenticazione
-
-   -  *ssl*: autenticazione ssl
-
-   -  *basic*: autenticazione http-basic
-
-   -  *principal*: autenticazione sull'application server con
-      identificazione tramite principal
-
-   -  *custom*: metodo di autenticazione fornito tramite estensione di
-      GovWay
-
-   Il flag *Opzionale* consente di non rendere bloccante il superamento
-   dell'autenticazione per l'accesso al servizio.
+    Selezionando l'opzione *Autenticato*, dopo la creazione dell'erogazione, sarà necessario completare la configurazione del controllo degli accessi come descritto nella sezione :ref:`apiGwAutenticazione`.
 
 -  *Connettore:* In questa sezione devono essere specificati i
    riferimenti al servizio, al fine di rendere possibile il corretto
@@ -79,6 +62,9 @@ Compilare il form (:numref:`erogazioneNewFig`) inserendo i seguenti dati:
    -  *Ridefinisci Tempi Risposta:* permette di ridefinire i tempi di
       risposta che sono stati configurati a livello generale,
       nell'ambito del controllo del traffico (vedi sezione :ref:`console_tempiRisposta`)
+
+.. note::
+    Se l'API riferita dall'erogazione possiede un descrittore (WSDL, OpenAPI, ecc.) l'interfaccia propone come valore di default per il connettore l'endpoint del servizio.
 
 Completamento configurazione e indirizzamento del servizio
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -123,7 +109,9 @@ cliccando sulla voce *Erogazioni* nell'intestazione dell'elenco (:numref:`filtro
 
 Il dettaglio dell'erogazione mostra i dati principali e con le icone
 "matita" è possibile entrare sulle maschere di editing per effettuare
-delle modifiche. In corrispondenza della API riferita, è possibile
+delle modifiche.
+In corrispondenza del connettore è disponibile anche un pulsante che consente di verificare la raggiungibilità dell'indirizzo impostato.
+In corrispondenza della API riferita, è possibile
 accedere al relativo dettaglio aprendo un nuovo tab del browser (:numref:`dettaglioErogazione`).
 
 
@@ -135,44 +123,21 @@ accedere al relativo dettaglio aprendo un nuovo tab del browser (:numref:`dettag
     Dettaglio dell’erogazione
 
 
-La pagina di dettaglio dell'erogazione comprende inoltre i seguenti
-elementi:
+La pagina di dettaglio dell'erogazione visualizza i principali elementi di configurazione, che sono:
 
--  *Gestione Configurazione*: link per accedere alla configurazione
-   specifica per l'aggiunta di ulteriori funzionalità all'erogazione
-   (vedi sezione :ref:`configSpecifica`).
+    - **Nome**: nome dell'erogazione. Accanto al valore è presente l'icona a matita che consente di modificare tale valore. In assenza di configurazioni specifiche per risorsa/azione (sezione :ref:`configSpecificaRisorsa`) è presente anche un'icona che permette di disattivare/riattivare l'erogazione. Lo stato di attivazione dell'erogazione è segnalato tramite l'icona colorata presente accanto al nome.
+    - **API**: API cui fa riferimento l'erogazione. È presente un'icona che apre in una nuova finestra l'interfaccia per la gestione della configurazione della specifica API.
+    - **URL Invocazione**: URL che deve utilizzare il mittente per accedere al servizio erogato tramite il gateway. Questo dato rappresenta la *URL* del servizio nel caso Soap o la *Base URL* nel caso Rest. Per la selezione dell'operazione da invocare si distinguono i seguenti casi:
+        -  *REST*: Indipendentemente che l'API sia stata configurata fornendo il relativo descrittore, WADL o OpenAPI, l'identificazione dell'operation sarà sempre effettuata in automatico dal contesto di invocazione. Non è quindi necessario fornire ulteriori indicazioni.
+        -  *SOAP*
+           -  *API con WSDL*: l'operation viene automaticamente identificata dal contesto di invocazione grazie alle informazioni presenti nel descrittore.
+           -  *API senza WSDL*: l'operation viene identificata inserendo il relativo identificativo nella URL di invocazione, <URL\_Invocazione>/<Azione>
 
--  *Gestione Gruppi Risorse/Azioni*: link per differenziare la
-   configurazione specifica sulla base di diversi gruppi di
-   azioni/risorse, come meglio spiegato alla sezione :ref:`configSpecificaRisorsa`.
+          Sono disponibili ulteriori metodi per l'identificazione dell'operation nel caso SOAP, per i cui dettagli si rimanda alla sezione :ref:`identificazioneAzione`.
+    - **Connettore**: Endpoint del servizio acceduto dal gateway, cui verranno consegnate le richieste pervenute. È presente l'icona a matita per aggiornare il valore del connettore. È inoltre presente un'icona che consente di testare la raggiungibilità del servizio tramite il connettore fornito.
+    - **Gestione CORS**: stato abilitazione della funzione CORS. L'icona a matita consente di modificare l'impostazione corrente.
 
-Dal dettaglio dell'erogazione si ricava il valore *URL Invocazione* che
-rappresenta l'endpoint da comunicare ai fruitori per contattare il
-servizio. Questo dato rappresenta la *URL* del servizio nel caso Soap o
-la *Base URL* nel caso Rest.
-
-Per la selezione dell'operazione da invocare si distinguono i seguenti
-casi:
-
--  *REST*: Indipendentemente che l'API sia stata configurata fornendo il
-   relativo descrittore, WADL o OpenAPI, l'identificazione
-   dell'operation sarà sempre effettuata in automatico dal contesto di
-   invocazione. Non è quindi necessario fornire ulteriori indicazioni.
-
--  *SOAP*
-
-   -  *API con WSDL*: l'operation viene automaticamente identificata dal
-      contesto di invocazione grazie alle informazioni presenti nel
-      descrittore.
-
-   -  *API senza WSDL*: l'operation viene identificata inserendo il
-      relativo identificativo nella URL di invocazione:
-
-      -  <URL\_Invocazione>/<Azione>
-
-      Sono disponibili ulteriori metodi per l'identificazione
-      dell'operation nel caso SOAP, per i cui dettagli si rimanda alla
-      sezione :ref:`identificazioneAzione`.
+Ulteriori elementi possono essere indicati per specificare il funzionamento dell'erogazione. Si tratta degli elementi di configurazione specifica, per i cui dettagli si rimanda alla sezione :ref:`configSpecifica`.
 
 Condivisione dei dati di integrazione
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
