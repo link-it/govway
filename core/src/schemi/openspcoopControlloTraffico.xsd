@@ -296,6 +296,8 @@
 			<xsd:enumeration value="FormBased"/>
 			<xsd:enumeration value="SOAPActionBased"/>
 			<xsd:enumeration value="ContentBased"/>
+			<xsd:enumeration value="IndirizzoIP"/>
+			<xsd:enumeration value="IndirizzoIP_Forwarded"/>
 			<xsd:enumeration value="PluginBased"/>
 		</xsd:restriction>
 	</xsd:simpleType>

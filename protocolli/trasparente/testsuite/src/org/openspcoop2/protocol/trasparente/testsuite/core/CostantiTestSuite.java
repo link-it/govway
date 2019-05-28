@@ -225,6 +225,7 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_RESPONSE_CACHING = "ResponseCaching";
 	public static final String PORTA_DELEGATA_RESPONSE_CACHING_TIMEOUT_SECONDS = "ResponseCachingTimeoutSeconds";
 	public static final String PORTA_DELEGATA_RESPONSE_CACHING_DIGEST_CON_HEADERS = "ResponseCachingDigestConHeaders";
+	public static final String PORTA_DELEGATA_RESPONSE_CACHING_DIGEST_CON_QUERY_PARAMETERS = "ResponseCachingDigestConQueryParameters";
 	public static final String PORTA_DELEGATA_RESPONSE_CACHING_DIGEST_URI_BODY_DISABILITATO = "ResponseCachingDigestUriBodyDisabilitato";
 	public static final String PORTA_DELEGATA_RESPONSE_CACHING_NO_CACHE_DISABLED = "ResponseCachingNoCacheDisabled";
 	public static final String PORTA_DELEGATA_RESPONSE_CACHING_NO_STORE_DISABLED = "ResponseCachingNoStoreDisabled";
@@ -238,6 +239,9 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_RESPONSE_CACHING_INCLUDE_SOAP_FAULT_12 = "ResponseCachingRegolaIncludeSOAPFault12";
 	public static final String PORTA_DELEGATA_RESPONSE_CACHING_EXCLUDE_SOAP_FAULT_12 = "ResponseCachingRegolaExcludeSOAPFault12";
 	
+	
+	/** Porte Delegate per il test JOSE Signature */
+	public static final String PORTA_DELEGATA_JOSE_PREFIX = "JOSE/";
 
 	/** Porte Applicative per il test dei profili di collaborazione: OneWay */
 	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_NON_AUTENTICATO="NOAUTH_APIMinisteroErogatore/SOAPOnewayStateful";
@@ -374,6 +378,7 @@ public class CostantiTestSuite {
 	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING = "ResponseCaching";
 	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_TIMEOUT_SECONDS = "ResponseCachingTimeoutSeconds";
 	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_DIGEST_CON_HEADERS = "ResponseCachingDigestConHeaders";
+	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_DIGEST_CON_QUERY_PARAMETERS = "ResponseCachingDigestConQueryParameters";
 	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_DIGEST_URI_BODY_DISABILITATO = "ResponseCachingDigestUriBodyDisabilitato";
 	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_NO_CACHE_DISABLED = "ResponseCachingNoCacheDisabled";
 	public static final String PORTA_APPLICATIVA_RESPONSE_CACHING_NO_STORE_DISABLED = "ResponseCachingNoStoreDisabled";
@@ -635,8 +640,57 @@ public class CostantiTestSuite {
 	public static final String NOME_SERVIZIO_CORS_SOAP_TRASPARENTE="CORSviaSOAPtrasparente"; 
 	public static final String NOME_SERVIZIO_CORS_SOAP_AZIONE_INVOKER="invoke"; 
     
+	
+	
+	/** Nome Servizio JOSE */
+	
+	public static final String NOME_SERVIZIO_JOSE="JOSE";
+	
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_ASYMMETRIC = "jwsCompactAsymmetric";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_SYMMETRIC = "jwsCompactSymmetric";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_ASYMMETRIC_ONLY_SENDER_REQUEST = "jwsCompactAsymmetricOnlySenderRequest";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_ASYMMETRIC_ONLY_SENDER_RESPONSE = "jwsCompactAsymmetricOnlySenderResponse";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_SYMMETRIC_ONLY_SENDER_REQUEST = "jwsCompactSymmetricOnlySenderRequest";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_SYMMETRIC_ONLY_SENDER_RESPONSE = "jwsCompactSymmetricOnlySenderResponse";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_ASYMMETRIC_DETACH_SEC_INFO_DISABLED_REQUEST = "jwsCompactAsymmetricDetachRequestSecurityInfoDisabled";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_ASYMMETRIC_DETACH_SEC_INFO_DISABLED_RESPONSE = "jwsCompactAsymmetricDetachResponseSecurityInfoDisabled";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_SYMMETRIC_DETACH_SEC_INFO_DISABLED_REQUEST = "jwsCompactSymmetricDetachRequestSecurityInfoDisabled";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_SYMMETRIC_DETACH_SEC_INFO_DISABLED_RESPONSE = "jwsCompactSymmetricDetachResponseSecurityInfoDisabled";
     
-    
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_DETACH_HEADER_ASYMMETRIC = "jwsCompactDetachHeaderAsymmetric";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_DETACH_HEADER_SYMMETRIC = "jwsCompactDetachHeaderSymmetric";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_DETACH_HEADER_ASYMMETRIC_ONLY_SENDER_REQUEST = "jwsCompactDetachHeaderAsymmetricOnlySenderRequest";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_DETACH_HEADER_ASYMMETRIC_ONLY_SENDER_RESPONSE = "jwsCompactDetachHeaderAsymmetricOnlySenderResponse";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_DETACH_HEADER_SYMMETRIC_ONLY_SENDER_REQUEST = "jwsCompactDetachHeaderSymmetricOnlySenderRequest";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_DETACH_HEADER_SYMMETRIC_ONLY_SENDER_RESPONSE = "jwsCompactDetachHeaderSymmetricOnlySenderResponse";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_DETACH_HEADER_ASYMMETRIC_DETACH_SEC_INFO_DISABLED_REQUEST = "jwsCompactDetachHeaderAsymmetricDetachRequestSecurityInfoDisabled";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_DETACH_HEADER_ASYMMETRIC_DETACH_SEC_INFO_DISABLED_RESPONSE = "jwsCompactDetachHeaderAsymmetricDetachResponseSecurityInfoDisabled";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_DETACH_HEADER_SYMMETRIC_DETACH_SEC_INFO_DISABLED_REQUEST = "jwsCompactDetachHeaderSymmetricDetachRequestSecurityInfoDisabled";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_DETACH_HEADER_SYMMETRIC_DETACH_SEC_INFO_DISABLED_RESPONSE = "jwsCompactDetachHeaderSymmetricDetachResponseSecurityInfoDisabled";
+
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_DETACH_URL_ASYMMETRIC = "jwsCompactDetachUrlAsymmetric";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_DETACH_URL_SYMMETRIC = "jwsCompactDetachUrlSymmetric";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_DETACH_URL_ASYMMETRIC_ONLY_SENDER_REQUEST = "jwsCompactDetachUrlAsymmetricOnlySenderRequest";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_DETACH_URL_SYMMETRIC_ONLY_SENDER_REQUEST = "jwsCompactDetachUrlSymmetricOnlySenderRequest";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_DETACH_URL_ASYMMETRIC_DETACH_SEC_INFO_DISABLED_REQUEST = "jwsCompactDetachUrlAsymmetricDetachRequestSecurityInfoDisabled";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_DETACH_URL_SYMMETRIC_DETACH_SEC_INFO_DISABLED_REQUEST = "jwsCompactDetachUrlSymmetricDetachRequestSecurityInfoDisabled";
+	
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_ASYMMETRIC_BINARY_CERTIFICATE_IN_HEADERS = "jwsCompactAsymmetricBinaryCertificateInHeaders";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_ASYMMETRIC_URL_CERTIFICATE_IN_HEADERS = "jwsCompactAsymmetricUrlCertificateInHeaders";
+	
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_COMPACT_ASYMMETRIC_JWT_HEADERS_ONLY_SENDER_REQUEST = "jwsCompactAsymmetricJWTHeadersOnlySenderRequest";
+		
+	
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_JSON_PAYLOAD_ENCODING_ASYMMETRIC = "jwsJsonPayloadEncodingAsymmetric";
+	public static final String NOME_SERVIZIO_JOSE_AZIONE_JWS_JSON_PAYLOAD_ENCODING_SYMMETRIC = "jwsJsonPayloadEncodingSymmetric";
+	
+	
+	public static final String JOSE_DETACH_REQUEST_HEADER = "GovWay-TestSuite-Detach-Sign";
+	public static final String JOSE_DETACH_RESPONSE_HEADER = "GovWay-TestSuite-Detach-Sign-Response";
+	
+	public static final String JOSE_DETACH_REQUEST_URL = "govwayTestSuiteDetachSign";
+	
+	
     public static final String MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE = "Autenticazione fallita, credenziali non fornite";
     public static final String MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_CORRETTE = "Autenticazione fallita, credenziali fornite non corrette";
     
@@ -673,7 +727,14 @@ public class CostantiTestSuite {
     public static final String TEST_RESPONSE_CACHING_HEADER_1_VALUE = "v1";
     public static final String TEST_RESPONSE_CACHING_HEADER_2 = "X-DIGEST-TEST-2";
     public static final String TEST_RESPONSE_CACHING_HEADER_2_VALUE = "v2";
+    public static final String TEST_RESPONSE_CACHING_QUERY_PARAMETER_1 = "digestTest1";
+    public static final String TEST_RESPONSE_CACHING_QUERY_PARAMETER_1_VALUE = "v1";
+    public static final String TEST_RESPONSE_CACHING_QUERY_PARAMETER_2 = "digestTest2";
+    public static final String TEST_RESPONSE_CACHING_QUERY_PARAMETER_2_VALUE = "v2";
     public static final String TEST_RESPONSE_CACHING_URL_OPERATION_ID = "testId";
+    
+    
+    public static final String ID_GRUPPO_TEST_JOSE = "JOSE";
     
     
     public static final String TEST_HTTPS_ORIGIN = "https://www.govway.org";

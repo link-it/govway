@@ -321,6 +321,8 @@ public class Enums {
 		tipoFiltroApplicativo.put(RateLimitingChiaveEnum.HEADER_BASED, TipoFiltroApplicativo.HEADER_BASED);
 		tipoFiltroApplicativo.put(RateLimitingChiaveEnum.PLUGIN_BASED, TipoFiltroApplicativo.PLUGIN_BASED);
 		tipoFiltroApplicativo.put(RateLimitingChiaveEnum.SOAP_ACTION_BASED, TipoFiltroApplicativo.SOAPACTION_BASED);
+		tipoFiltroApplicativo.put(RateLimitingChiaveEnum.INDIRIZZO_IP, TipoFiltroApplicativo.INDIRIZZO_IP);
+		tipoFiltroApplicativo.put(RateLimitingChiaveEnum.INDIRIZZO_IP_FORWARDED, TipoFiltroApplicativo.INDIRIZZO_IP_FORWARDED);
 		tipoFiltroApplicativo.put(RateLimitingChiaveEnum.URL_BASED, TipoFiltroApplicativo.URLBASED);
 	}
 	

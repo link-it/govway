@@ -188,9 +188,9 @@ a. Aggiunta di connettori https specifici per i test nella configurazione web (i
   Esempio in ./protocolli/trasparente/testsuite/deploy/https_examples/ConnettoreHTTPS_withClientAuth.xml
   La configurazione del connettore assume che il keystore ./protocolli/spcoop/testsuite/deploy/https_examples/jks/erogatore.jks sia stato copiato in /etc/govway/keys
 b. Installazione dei keystore in /etc/govway/keys
-- ./protocolli/spcoop/testsuite/deploy/https_examples/jks/client1.jks
-- ./protocolli/spcoop/testsuite/deploy/https_examples/jks/client2.jks
-- ./protocolli/spcoop/testsuite/deploy/https_examples/jks/client3.jks
+- ./protocolli/trasparente/testsuite/deploy/https_examples/jks/client1.jks
+- ./protocolli/trasparente/testsuite/deploy/https_examples/jks/client2.jks
+- ./protocolli/trasparente/testsuite/deploy/https_examples/jks/client3.jks
 c. Configurazione della JVM dell'A.S. in modo che utilizzi il keystore ./protocolli/trasparente/testsuite/deploy/https_examples/jks/erogatore.jks
   Indicazioni descritte per JBoss in ./protocolli/trasparente/testsuite/deploy/https_examples/configurazioneTrustStoreJBOSS.txt
 d. Configurare nuove utenze nel container per poter gestire l'autenticazione tramite principal.
@@ -236,6 +236,24 @@ Batterie di test che verificano la gestione del CORS all'interno della PdD
 Batterie di test che verificano la gestione del response caching all'interno della PdD
 - 'ResponseCachingPortaApplicativa': vengono eseguiti tutti i test riguardanti la PortaApplicativa
 - 'ResponseCachingPortaDelegata': vengono eseguiti tutti i test riguardanti la PortaDelegata
+
+
+
+** JOSE **
+
+Prerequisito:
+
+a. Installazione dei keystore in /etc/govway/keys
+- ./protocolli/trasparente/testsuite/deploy/jose/jks/*
+
+b. Installazione delle properties in /etc/govway/properties
+- ./protocolli/trasparente/testsuite/deploy/jose/properties/*
+
+c. Installazione del certificato 'JOSE.cer' e del JWKSet 'jose_truststore_example.jwks' in modo che sia esposto dal server sul contesto di root.
+Ad esempio su wildfly:
+cp ./protocolli/trasparente/testsuite/deploy/jose/cer/JOSE.cer wildfly-14.0.1.Final.TEST/welcome-content/
+cp ./protocolli/trasparente/testsuite/deploy/jose/jks/jose_truststore_example.jwks wildfly-14.0.1.Final.TEST/welcome-content/
+
 
 
 

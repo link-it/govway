@@ -44,9 +44,9 @@ public class RateLimitingPolicyGroupBy  {
   @Schema(description = "")
   private RateLimitingChiaveEnum chiaveTipo = null;
   
-  @Schema(description = "La semantica cambia in funzione del tipo:   * header-based: nome dell'header   * url-based: espressione regolare da applicare alla url di invocazione   * form-based: nome del parametro della url   * soap-action-based: in questa modalità questo parametro non viene utilizzato   * content-based: xpath o json path da applicare sul contenuto   * plugin-based: tipo del plugin")
+  @Schema(description = "La semantica cambia in funzione del tipo:   * header-based: nome dell'header   * url-based: espressione regolare da applicare alla url di invocazione   * form-based: nome del parametro della url   * soap-action-based: in questa modalità questo parametro non viene utilizzato   * content-based: xpath o json path da applicare sul contenuto   * indirizzo-ip: indirizzo ip del socket   * indirizzo-ip-forwarded: indirizzo ip inoltrato via header http   * plugin-based: tipo del plugin")
  /**
-   * La semantica cambia in funzione del tipo:   * header-based: nome dell'header   * url-based: espressione regolare da applicare alla url di invocazione   * form-based: nome del parametro della url   * soap-action-based: in questa modalità questo parametro non viene utilizzato   * content-based: xpath o json path da applicare sul contenuto   * plugin-based: tipo del plugin  
+   * La semantica cambia in funzione del tipo:   * header-based: nome dell'header   * url-based: espressione regolare da applicare alla url di invocazione   * form-based: nome del parametro della url   * soap-action-based: in questa modalità questo parametro non viene utilizzato   * content-based: xpath o json path da applicare sul contenuto   * indirizzo-ip: indirizzo ip del socket   * indirizzo-ip-forwarded: indirizzo ip inoltrato via header http   * plugin-based: tipo del plugin  
   **/
   private String chiaveNome = null;
  /**
@@ -131,7 +131,7 @@ public class RateLimitingPolicyGroupBy  {
   }
 
  /**
-   * La semantica cambia in funzione del tipo:   * header-based: nome dell'header   * url-based: espressione regolare da applicare alla url di invocazione   * form-based: nome del parametro della url   * soap-action-based: in questa modalità questo parametro non viene utilizzato   * content-based: xpath o json path da applicare sul contenuto   * plugin-based: tipo del plugin
+   * La semantica cambia in funzione del tipo:   * header-based: nome dell'header   * url-based: espressione regolare da applicare alla url di invocazione   * form-based: nome del parametro della url   * soap-action-based: in questa modalità questo parametro non viene utilizzato   * content-based: xpath o json path da applicare sul contenuto   * indirizzo-ip: indirizzo ip del socket   * indirizzo-ip-forwarded: indirizzo ip inoltrato via header http   * plugin-based: tipo del plugin
    * @return chiaveNome
   **/
   @JsonProperty("chiave_nome")

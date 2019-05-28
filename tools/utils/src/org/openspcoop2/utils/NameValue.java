@@ -34,6 +34,12 @@ public class NameValue {
 	private String name;
 	private String value;
 	
+	public NameValue() {}
+	public NameValue(String name, String value) {
+		this.name = name;
+		this.value = value;
+	}
+	
 	public String getName() {
 		return this.name;
 	}

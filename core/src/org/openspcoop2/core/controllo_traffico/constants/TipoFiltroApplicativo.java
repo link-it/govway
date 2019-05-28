@@ -48,6 +48,10 @@ public enum TipoFiltroApplicativo implements IEnumeration , Serializable , Clone
 	SOAPACTION_BASED ("SOAPActionBased"),
 	@javax.xml.bind.annotation.XmlEnumValue("ContentBased")
 	CONTENT_BASED ("ContentBased"),
+	@javax.xml.bind.annotation.XmlEnumValue("IndirizzoIP")
+	INDIRIZZO_IP ("IndirizzoIP"),
+	@javax.xml.bind.annotation.XmlEnumValue("IndirizzoIP_Forwarded")
+	INDIRIZZO_IP_FORWARDED ("IndirizzoIP_Forwarded"),
 	@javax.xml.bind.annotation.XmlEnumValue("PluginBased")
 	PLUGIN_BASED ("PluginBased");
 	

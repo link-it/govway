@@ -33,6 +33,8 @@ CONTENT_BASED("content-based"),
   SOAP_ACTION_BASED("soap-action-based"),
   URL_BASED("url-based"),
   FORM_BASED("form-based"),
+  INDIRIZZO_IP("indirizzo-ip"),
+  INDIRIZZO_IP_FORWARDED("indirizzo-ip-forwarded"),
   PLUGIN_BASED("plugin-based");
 
   private String value;

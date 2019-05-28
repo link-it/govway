@@ -732,6 +732,64 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			
+			// opzione reply Info
+			
+			String replyHeaderString = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyHttpHeader");
+			if(replyHeaderString!=null && !"".equals(replyHeaderString)) {
+				String [] tmp = replyHeaderString.split(",");
+				if(tmp!=null && tmp.length>0) {
+					
+					String replyPrefix = "";
+					String replyPrefixHeaderString = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyPrefixHttpHeader");
+					if(replyPrefixHeaderString!=null && !"".equals(replyPrefixHeaderString)) {
+						replyPrefix = replyPrefixHeaderString;
+					}
+					
+					for (String hdrName : tmp) {
+						String reqHdr = req.getHeader(hdrName);
+						if(reqHdr==null) {
+							reqHdr = req.getHeader(hdrName.toLowerCase());
+						}
+						if(reqHdr==null) {
+							reqHdr = req.getHeader(hdrName.toUpperCase());
+						}
+						if(reqHdr!=null) {
+							headers.put(replyPrefix+hdrName, reqHdr);
+						}
+					}
+				}
+			}
+			
+			String replyQueryParameterAsHeaderString = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyQueryParameter");
+			if(replyQueryParameterAsHeaderString!=null && !"".equals(replyQueryParameterAsHeaderString)) {
+				String [] tmp = replyQueryParameterAsHeaderString.split(",");
+				if(tmp!=null && tmp.length>0) {
+					
+					String replyPrefix = "";
+					String replyPrefixHeaderString = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyPrefixQueryParameter");
+					if(replyPrefixHeaderString!=null && !"".equals(replyPrefixHeaderString)) {
+						replyPrefix = replyPrefixHeaderString;
+					}
+					
+					for (String queryParmName : tmp) {
+						String reqQueryPar = req.getParameter(queryParmName);
+						if(reqQueryPar==null) {
+							reqQueryPar = req.getParameter(queryParmName.toLowerCase());
+						}
+						if(reqQueryPar==null) {
+							reqQueryPar = req.getParameter(queryParmName.toUpperCase());
+						}
+						if(reqQueryPar!=null) {
+							headers.put(replyPrefix+queryParmName, reqQueryPar);
+						}
+					}
+				}
+			}
+			
+			
+			
+			
+			
 			
 			
 			// opzioni save msg

@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
 import org.openspcoop2.message.constants.MessageType;
@@ -127,6 +128,20 @@ public class PolicyFiltroApplicativoUtilities {
 		case SOAPACTION_BASED:
 			
 			return context.getConnettore().getSoapAction();
+			
+		case INDIRIZZO_IP:
+			
+			if(context.getPddContext()!=null && context.getPddContext().containsKey(Costanti.CLIENT_IP_REMOTE_ADDRESS)) {
+				return (String) context.getPddContext().getObject(Costanti.CLIENT_IP_REMOTE_ADDRESS);
+			}
+			return null;
+			
+		case INDIRIZZO_IP_FORWARDED:
+			
+			if(context.getPddContext()!=null && context.getPddContext().containsKey(Costanti.CLIENT_IP_TRANSPORT_ADDRESS)) {
+				return (String) context.getPddContext().getObject(Costanti.CLIENT_IP_TRANSPORT_ADDRESS);
+			}
+			return null;
 			
 		case PLUGIN_BASED:
 			

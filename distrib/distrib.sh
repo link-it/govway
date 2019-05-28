@@ -6,7 +6,7 @@ PropertyConfigurator
 #####################################
 # Costanti #########################
 #####################################
-TRUNK_VERSION=3.0
+TRUNK_VERSION=3.1
 TAG_PDD_VERSION_PRODUCT="3"
 TAG_PDD_VERSION_MAJOR="1"
 TAG_PDD_MAJOR_VERSION="${TAG_PDD_VERSION_PRODUCT}.${TAG_PDD_VERSION_MAJOR}"

@@ -669,6 +669,139 @@ public class ResponseCachingPortaApplicativa {
 	
 	
 	
+	
+	
+	/*
+	 * Verifica funzionamento response caching, algoritmo di generazione digest che include due query parameter
+	 * 
+	 */
+	@Test(groups={CostantiTestSuite.ID_GRUPPO_TEST_RESPONSE_CACHING, CostantiTestSuite.ID_GRUPPO_TEST_RESPONSE_CACHING_PORTA_APPLICATIVA, ResponseCachingPortaApplicativa.ID_GRUPPO,ResponseCachingPortaApplicativa.ID_GRUPPO+".digestQueryParameters"})
+	public void testResponseCachingDigestQueryParameters() throws TestSuiteException, Exception{
+
+		// serve per non incorrere in casi in cui già la prima chiamata e' in cache
+		String pId = "rc-"+DateManager.getTimeMillis()+"-"+org.openspcoop2.utils.id.IDUtilities.getUniqueSerialNumber();
+				
+		Repository repository=new Repository();
+		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_APPLICATIVA);
+		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_APPLICATIVA_RESPONSE_CACHING_DIGEST_CON_QUERY_PARAMETERS);
+		
+		HashMap<String, String> headersRichiesta = new HashMap<>();
+		
+		HashMap<String, String> queryParametersRichiesta = new HashMap<>();
+		queryParametersRichiesta.put(CostantiTestSuite.TEST_RESPONSE_CACHING_URL_OPERATION_ID, pId);
+		queryParametersRichiesta.put(CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_1, CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_1_VALUE);
+		queryParametersRichiesta.put(CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_2, CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_2_VALUE);
+		
+		// prima invocazione (non viene cachata la risposta)
+		HttpResponse httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta, queryParametersRichiesta);
+		restCore.postInvoke(repository);
+		restCore.postInvokeCheckNotExistsHeader(httpResponse, TestSuiteProperties.getInstance().getCacheKeyTrasporto());
+		
+		// seconda invocazione (viene ritornata la risposta cached)
+		httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta, queryParametersRichiesta);
+		boolean checkNotIsArrived = true; 
+		restCore.postInvoke(repository, checkNotIsArrived);
+		String cacheKeyId = restCore.postInvokeCheckExistsHeader(httpResponse, TestSuiteProperties.getInstance().getCacheKeyTrasporto());
+		Reporter.log("Trovato cache key ["+cacheKeyId+"]");
+		
+
+		// *** modificando gli header il cache id varia ***
+		
+		queryParametersRichiesta.remove(CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_1);
+		queryParametersRichiesta.remove(CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_2);
+		queryParametersRichiesta.put(CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_1, CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_1_VALUE+"DIVERSO");
+		queryParametersRichiesta.put(CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_2, CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_2_VALUE);
+		
+		// risposta not cached
+		httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta, queryParametersRichiesta);
+		restCore.postInvoke(repository);
+		restCore.postInvokeCheckNotExistsHeader(httpResponse, TestSuiteProperties.getInstance().getCacheKeyTrasporto());
+		
+		// seconda invocazione (viene ritornata la risposta cached)
+		httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta, queryParametersRichiesta);
+		restCore.postInvoke(repository, checkNotIsArrived);
+		String cacheKeyId_header = restCore.postInvokeCheckExistsHeader(httpResponse, TestSuiteProperties.getInstance().getCacheKeyTrasporto());
+		Reporter.log("Trovato cache key ["+cacheKeyId_header+"]");
+		
+		// cache id deve essere differente alla prima invocazione
+		Assert.assertNotEquals(cacheKeyId, cacheKeyId_header);
+		
+		
+		// *** ripristinando gli header ottengo lo stesso cache id precedente ***
+		
+		queryParametersRichiesta.remove(CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_1);
+		queryParametersRichiesta.remove(CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_2);
+		queryParametersRichiesta.put(CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_1, CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_1_VALUE);
+		queryParametersRichiesta.put(CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_2, CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_2_VALUE);
+		
+		// stesso cache id della prima invocazione
+		httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta, queryParametersRichiesta);
+		restCore.postInvoke(repository, checkNotIsArrived);
+		String cacheKeyId_ripristino_1 = restCore.postInvokeCheckExistsHeader(httpResponse, TestSuiteProperties.getInstance().getCacheKeyTrasporto());
+		Reporter.log("Trovato cache key ["+cacheKeyId_ripristino_1+"]");
+		
+		// cache id deve essere uguale alla prima invocazione
+		Assert.assertEquals(cacheKeyId, cacheKeyId_ripristino_1);
+		
+		
+		// *** modificando il secondo header il cache id varia ***
+		
+		queryParametersRichiesta.remove(CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_1);
+		queryParametersRichiesta.remove(CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_2);
+		queryParametersRichiesta.put(CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_1, CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_1_VALUE);
+		queryParametersRichiesta.put(CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_2, CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_2_VALUE+"DIVERSO");
+		
+		// risposta not cached
+		httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta, queryParametersRichiesta);
+		restCore.postInvoke(repository);
+		restCore.postInvokeCheckNotExistsHeader(httpResponse, TestSuiteProperties.getInstance().getCacheKeyTrasporto());
+		
+		// seconda invocazione (viene ritornata la risposta cached)
+		httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta, queryParametersRichiesta);
+		restCore.postInvoke(repository, checkNotIsArrived);
+		String cacheKeyId_header2 = restCore.postInvokeCheckExistsHeader(httpResponse, TestSuiteProperties.getInstance().getCacheKeyTrasporto());
+		Reporter.log("Trovato cache key ["+cacheKeyId_header2+"]");
+		
+		// cache id deve essere differente alla prima invocazione
+		Assert.assertNotEquals(cacheKeyId, cacheKeyId_header2);
+		Assert.assertNotEquals(cacheKeyId_header, cacheKeyId_header2);
+		
+		
+		// *** ripristinando gli header ottengo lo stesso cache id precedente ***
+		
+		queryParametersRichiesta.remove(CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_1);
+		queryParametersRichiesta.remove(CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_2);
+		queryParametersRichiesta.put(CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_1, CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_1_VALUE);
+		queryParametersRichiesta.put(CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_2, CostantiTestSuite.TEST_RESPONSE_CACHING_QUERY_PARAMETER_2_VALUE);
+		
+		// stesso cache id della prima invocazione
+		httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta, queryParametersRichiesta);
+		restCore.postInvoke(repository, checkNotIsArrived);
+		String cacheKeyId_ripristino_2 = restCore.postInvokeCheckExistsHeader(httpResponse, TestSuiteProperties.getInstance().getCacheKeyTrasporto());
+		Reporter.log("Trovato cache key ["+cacheKeyId_ripristino_2+"]");
+		
+		// cache id deve essere uguale alla prima invocazione
+		Assert.assertEquals(cacheKeyId, cacheKeyId_ripristino_2);
+		
+		
+		// *** aggiungere un terzo header non registrato per il digest non fa cambiare il cache id ***
+		
+		queryParametersRichiesta.put("X-ALTRO-HEADER", "VALORE");
+		
+		// stesso cache id della prima invocazione
+		httpResponse = restCore.invoke("json", 200, repository, true, true, HttpConstants.CONTENT_TYPE_JSON, headersRichiesta, queryParametersRichiesta);
+		restCore.postInvoke(repository, checkNotIsArrived);
+		String cacheKeyId_header_3 = restCore.postInvokeCheckExistsHeader(httpResponse, TestSuiteProperties.getInstance().getCacheKeyTrasporto());
+		Reporter.log("Trovato cache key ["+cacheKeyId_header_3+"]");
+		
+		// cache id deve essere uguale alla prima invocazione
+		Assert.assertEquals(cacheKeyId, cacheKeyId_header_3);
+		
+	}
+	
+	
+	
+	
 
 	/*
 	 * Verifica funzionamento response caching, algoritmo di generazione digest che non include ne header, ne body ne url

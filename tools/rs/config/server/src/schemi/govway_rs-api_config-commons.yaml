@@ -1328,6 +1328,8 @@ components:
               * form-based: nome del parametro della url
               * soap-action-based: in questa modalità questo parametro non viene utilizzato
               * content-based: xpath o json path da applicare sul contenuto
+              * indirizzo-ip: indirizzo ip del socket
+              * indirizzo-ip-forwarded: indirizzo ip inoltrato via header http
               * plugin-based: tipo del plugin
           maxLength: 255
         filtro_chiave_valore:
@@ -1372,6 +1374,8 @@ components:
               * form-based: nome del parametro della url
               * soap-action-based: in questa modalità questo parametro non viene utilizzato
               * content-based: xpath o json path da applicare sul contenuto
+              * indirizzo-ip: indirizzo ip del socket
+              * indirizzo-ip-forwarded: indirizzo ip inoltrato via header http
               * plugin-based: tipo del plugin
           maxLength: 255
                     
@@ -1770,7 +1774,7 @@ components:
       example: 'ok'
     RateLimitingChiaveEnum:
       type: string
-      enum: ['content-based', 'header-based', 'soap-action-based', 'url-based', 'form-based', 'plugin-based']
+      enum: ['content-based', 'header-based', 'soap-action-based', 'url-based', 'form-based', 'indirizzo-ip', 'indirizzo-ip-forwarded', 'plugin-based']
       example: 'content-based'   
     CorrelazioneApplicativaRichiestaEnum:
       type: string

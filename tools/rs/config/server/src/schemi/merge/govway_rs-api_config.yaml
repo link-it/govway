@@ -8094,7 +8094,8 @@ components:
             \ url di invocazione\n  * form-based: nome del parametro della url\n \
             \ * soap-action-based: in questa modalità questo parametro non viene utilizzato\n\
             \  * content-based: xpath o json path da applicare sul contenuto\n  *\
-            \ plugin-based: tipo del plugin"
+            \ indirizzo-ip: indirizzo ip del socket\n  * indirizzo-ip-forwarded: indirizzo\
+            \ ip inoltrato via header http\n  * plugin-based: tipo del plugin"
         filtro_chiave_valore:
           maxLength: 255
           type: "string"
@@ -8137,7 +8138,8 @@ components:
             \ url di invocazione\n  * form-based: nome del parametro della url\n \
             \ * soap-action-based: in questa modalità questo parametro non viene utilizzato\n\
             \  * content-based: xpath o json path da applicare sul contenuto\n  *\
-            \ plugin-based: tipo del plugin"
+            \ indirizzo-ip: indirizzo ip del socket\n  * indirizzo-ip-forwarded: indirizzo\
+            \ ip inoltrato via header http\n  * plugin-based: tipo del plugin"
     RateLimitingPolicyErogazioneView:
       type: "object"
       allOf:
@@ -8634,6 +8636,8 @@ components:
       - "soap-action-based"
       - "url-based"
       - "form-based"
+      - "indirizzo-ip"
+      - "indirizzo-ip-forwarded"
       - "plugin-based"
     CorrelazioneApplicativaRichiestaEnum:
       type: "string"

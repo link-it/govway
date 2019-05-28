@@ -12984,7 +12984,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME);
 					de.setLabel(this.getLabelTipoInformazioneApplicativaFiltro(policy.getFiltro().getInformazioneApplicativaTipo()));
 					de.setValue(policy.getFiltro().getInformazioneApplicativaNome());
-					if(tipoFiltro==null || TipoFiltroApplicativo.SOAPACTION_BASED.equals(tipoFiltro)){
+					if(tipoFiltro==null || 
+							TipoFiltroApplicativo.SOAPACTION_BASED.equals(tipoFiltro) || 
+							TipoFiltroApplicativo.INDIRIZZO_IP.equals(tipoFiltro) || 
+							TipoFiltroApplicativo.INDIRIZZO_IP_FORWARDED.equals(tipoFiltro)){
 						de.setType(DataElementType.HIDDEN);
 					}
 					else{
@@ -13424,7 +13427,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME);
 					de.setLabel(this.getLabelTipoInformazioneApplicativaGroupBy(policy.getGroupBy().getInformazioneApplicativaTipo()));
 					de.setValue(policy.getGroupBy().getInformazioneApplicativaNome());
-					if(tipoChiaveGroupBy==null || TipoFiltroApplicativo.SOAPACTION_BASED.equals(tipoChiaveGroupBy)){
+					if(tipoChiaveGroupBy==null || 
+							TipoFiltroApplicativo.SOAPACTION_BASED.equals(tipoChiaveGroupBy)  || 
+							TipoFiltroApplicativo.INDIRIZZO_IP.equals(tipoChiaveGroupBy) || 
+							TipoFiltroApplicativo.INDIRIZZO_IP_FORWARDED.equals(tipoChiaveGroupBy)){
 						de.setType(DataElementType.HIDDEN);
 					}
 					else{
@@ -13470,6 +13476,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_ESPRESSIONE_REGOLARE;
 		case SOAPACTION_BASED:
 			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_SOAP_ACTION;
+		case INDIRIZZO_IP:
+			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_INDIRIZZO_IP;
+		case INDIRIZZO_IP_FORWARDED:
+			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_INDIRIZZO_IP_FORWARDED;
 		case PLUGIN_BASED:
 			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_CUSTOM;
 		}
@@ -13491,6 +13501,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_ESPRESSIONE_REGOLARE;
 		case SOAPACTION_BASED:
 			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_SOAP_ACTION;
+		case INDIRIZZO_IP:
+			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY__PER_CHIAVE_NOME_INDIRIZZO_IP;
+		case INDIRIZZO_IP_FORWARDED:
+			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY__PER_CHIAVE_NOME_INDIRIZZO_IP_FORWARDED;
 		case PLUGIN_BASED:
 			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_CUSTOM;
 		}
@@ -13617,7 +13631,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					tipo = TipoFiltroApplicativo.toEnumConstant(policy.getFiltro().getInformazioneApplicativaTipo());
 				}
 				
-				if(!TipoFiltroApplicativo.SOAPACTION_BASED.equals(tipo)){
+				if(!TipoFiltroApplicativo.SOAPACTION_BASED.equals(tipo) &&
+						!TipoFiltroApplicativo.INDIRIZZO_IP.equals(tipo) &&
+						!TipoFiltroApplicativo.INDIRIZZO_IP_FORWARDED.equals(tipo)){
 					if(policy.getFiltro().getInformazioneApplicativaNome()==null){
 						String messaggio = "Deve essere indicato un valore in '"+
 								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED
@@ -13689,7 +13705,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					tipo = TipoFiltroApplicativo.toEnumConstant(policy.getGroupBy().getInformazioneApplicativaTipo());
 				}
 				
-				if(!TipoFiltroApplicativo.SOAPACTION_BASED.equals(tipo)){
+				if(!TipoFiltroApplicativo.SOAPACTION_BASED.equals(tipo) &&
+						!TipoFiltroApplicativo.INDIRIZZO_IP.equals(tipo) &&
+						!TipoFiltroApplicativo.INDIRIZZO_IP_FORWARDED.equals(tipo)){
 				
 					if(policy.getGroupBy().getInformazioneApplicativaNome()==null){
 						String messaggio = "Deve essere indicato un valore in '"+
@@ -13854,6 +13872,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					break;
 				case SOAPACTION_BASED:
 					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_SOAP_ACTION+": "+filtro.getInformazioneApplicativaNome());
+					break;
+				case INDIRIZZO_IP:
+					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_INDIRIZZO_IP+": "+filtro.getInformazioneApplicativaNome());
+					break;
+				case INDIRIZZO_IP_FORWARDED:
+					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_INDIRIZZO_IP_FORWARDED+": "+filtro.getInformazioneApplicativaNome());
 					break;
 				case PLUGIN_BASED:
 					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_CUSTOM+": "+filtro.getInformazioneApplicativaNome());

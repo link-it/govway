@@ -48,12 +48,24 @@
 				</hash-generator>
 			 </response-caching>
                 </porta-delegata>
+		<porta-delegata nome="ResponseCachingDigestConQueryParameters" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <response-caching stato="abilitato">
+				<hash-generator query-parameters="selezionePuntuale">
+					<query-parameter>testId</query-parameter>
+					<query-parameter>digestTest1</query-parameter>
+					<query-parameter>digestTest2</query-parameter>
+				</hash-generator>
+			 </response-caching>
+                </porta-delegata>
 		<porta-delegata nome="ResponseCachingDigestUriBodyDisabilitato" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
                          <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
                          <servizio tipo="gw" nome="API"/>
                          <azione identificazione="static" nome="invoke"/>
 			 <response-caching stato="abilitato">
-				<hash-generator request-uri="disabilitato" payload="disabilitato" headers="abilitato">
+				<hash-generator request-uri="disabilitato" query-parameters="disabilitato" payload="disabilitato" headers="abilitato">
 					<header>X-DIGEST-TEST-1</header>
 					<header>X-DIGEST-TEST-2</header>
 				</hash-generator>
@@ -510,7 +522,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -521,7 +533,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -541,7 +553,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -552,7 +564,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -577,7 +589,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -596,7 +608,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -637,7 +649,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -656,7 +668,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -680,7 +692,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -700,7 +712,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -723,24 +735,12 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
 				<parameter nome="signaturePropRefId" valore="/etc/govway/properties/jose-signature-JKS.sender.properties" />
 			</request-flow>
-			<response-flow>
-				<parameter nome="securityEngine" valore="jose" />
-				<parameter nome="action" valore="Signature" />
-				<parameter nome="joseUseHeaders" valore="false" />
-				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
-				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
-				<parameter nome="signatureDetachedBase64" valore="false" />
-				<parameter nome="signatureMode" valore="compact" />
-				<parameter nome="detachSecurityInfo" valore="true" />
-				<parameter nome="signaturePropRefId" valore="/etc/govway/properties/jose-signature-JWK.receiver.properties" />
-			</response-flow>
 		    </message-security>
 		</porta-delegata>
 		<porta-delegata nome="JOSE/jwsCompactDetachUrlSymmetric" autenticazione="none" autorizzazione="none" 
@@ -754,24 +754,12 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
 				<parameter nome="signaturePropRefId" valore="/etc/govway/properties/jose-signature-JCEKS.sender.properties" />
 			</request-flow>
-			<response-flow>
-				<parameter nome="securityEngine" valore="jose" />
-				<parameter nome="action" valore="Signature" />
-				<parameter nome="joseUseHeaders" valore="false" />
-				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
-				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
-				<parameter nome="signatureDetachedBase64" valore="false" />
-				<parameter nome="signatureMode" valore="compact" />
-				<parameter nome="detachSecurityInfo" valore="true" />
-				<parameter nome="signaturePropRefId" valore="/etc/govway/properties/jose-signature-JWKSymmetricKey.receiver.properties" />
-			</response-flow>
 		    </message-security>
 		</porta-delegata>
 
@@ -790,7 +778,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -809,7 +797,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -833,7 +821,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -852,7 +840,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -1372,7 +1360,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1383,7 +1371,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1403,7 +1391,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1414,7 +1402,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1439,7 +1427,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1458,7 +1446,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1499,7 +1487,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1518,7 +1506,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1542,7 +1530,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1562,7 +1550,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1585,7 +1573,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1596,7 +1584,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1616,7 +1604,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1627,7 +1615,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1652,7 +1640,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1671,7 +1659,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1695,7 +1683,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1714,7 +1702,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1736,7 +1724,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1747,7 +1735,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1767,7 +1755,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1778,7 +1766,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1803,7 +1791,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1822,7 +1810,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1863,7 +1851,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1882,7 +1870,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1906,7 +1894,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1926,7 +1914,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1949,7 +1937,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1960,7 +1948,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1980,7 +1968,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -1991,7 +1979,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -2016,7 +2004,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -2035,7 +2023,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -2059,7 +2047,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -2078,7 +2066,7 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -4513,12 +4501,24 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				</hash-generator>
 			 </response-caching>
                 </porta-applicativa>
+		<porta-applicativa nome="ResponseCachingDigestConQueryParameters" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <servizio tipo="gw" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+			 <servizio-applicativo nome="api"/>
+			 <response-caching stato="abilitato">
+				<hash-generator query-parameters="selezionePuntuale">
+					<query-parameter>testId</query-parameter>
+					<query-parameter>digestTest1</query-parameter>
+					<query-parameter>digestTest2</query-parameter>
+				</hash-generator>
+			 </response-caching>
+                </porta-applicativa>
 		<porta-applicativa nome="ResponseCachingDigestUriBodyDisabilitato" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
                          <servizio tipo="gw" nome="API"/>
                          <azione identificazione="static" nome="invoke"/>
 			 <servizio-applicativo nome="api"/>
 			 <response-caching stato="abilitato">
-				<hash-generator request-uri="disabilitato" payload="disabilitato" headers="abilitato">
+				<hash-generator request-uri="disabilitato" query-parameters="disabilitato" payload="disabilitato" headers="abilitato">
 					<header>X-DIGEST-TEST-1</header>
 					<header>X-DIGEST-TEST-2</header>
 				</hash-generator>
@@ -4958,7 +4958,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -4970,7 +4970,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -4989,7 +4989,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -5001,7 +5001,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -5034,7 +5034,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -5053,7 +5053,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -5073,7 +5073,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -5093,7 +5093,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -5114,7 +5114,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -5133,7 +5133,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -5155,24 +5155,13 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
 				<parameter nome="detachSecurityInfo" valore="true" />
 				<parameter nome="signaturePropRefId" valore="/etc/govway/properties/jose-signature-JKS.receiver.properties" />
 			</request-flow>
-			<response-flow>
-				<parameter nome="securityEngine" valore="jose" />
-				<parameter nome="action" valore="Signature" />
-				<parameter nome="joseUseHeaders" valore="false" />
-				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
-				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
-				<parameter nome="signatureDetachedBase64" valore="false" />
-				<parameter nome="signatureMode" valore="compact" />
-				<parameter nome="signaturePropRefId" valore="/etc/govway/properties/jose-signature-JWK.sender.properties" />
-			</response-flow>
 		    </message-security>
 		</porta-applicativa>
 		<porta-applicativa nome="JOSE/jwsCompactDetachUrlSymmetric" autenticazione="none" autorizzazione="none" 
@@ -5186,24 +5175,13 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
 				<parameter nome="detachSecurityInfo" valore="true" />
 				<parameter nome="signaturePropRefId" valore="/etc/govway/properties/jose-signature-JCEKS.receiver.properties" />
 			</request-flow>
-			<response-flow>
-				<parameter nome="securityEngine" valore="jose" />
-				<parameter nome="action" valore="Signature" />
-				<parameter nome="joseUseHeaders" valore="false" />
-				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
-				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
-				<parameter nome="signatureDetachedBase64" valore="false" />
-				<parameter nome="signatureMode" valore="compact" />
-				<parameter nome="signaturePropRefId" valore="/etc/govway/properties/jose-signature-JWKSymmetricKey.sender.properties" />
-			</response-flow>
 		    </message-security>
 		</porta-applicativa>
 
@@ -5231,7 +5209,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -5251,7 +5229,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="compact" />
@@ -5717,7 +5695,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -5729,7 +5707,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -5748,7 +5726,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -5760,7 +5738,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -5793,7 +5771,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -5812,7 +5790,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -5832,7 +5810,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -5852,7 +5830,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -5873,7 +5851,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -5892,7 +5870,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -5914,7 +5892,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -5926,7 +5904,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -5945,7 +5923,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -5957,7 +5935,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -5990,7 +5968,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -6010,7 +5988,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
@@ -6032,7 +6010,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -6044,7 +6022,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -6063,7 +6041,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -6075,7 +6053,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -6108,7 +6086,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -6127,7 +6105,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -6147,7 +6125,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -6167,7 +6145,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -6188,7 +6166,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -6207,7 +6185,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedHeader" valore="GOVWAY-DETACH-SIGN-RESPONSE" />
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
 				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -6229,7 +6207,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -6241,7 +6219,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -6260,7 +6238,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -6272,7 +6250,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -6305,7 +6283,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
@@ -6325,7 +6303,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayDetachSign" />
+				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
 				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />

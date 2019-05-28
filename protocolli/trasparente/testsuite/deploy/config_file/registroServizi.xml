@@ -560,7 +560,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdCakNDQk80Q0NRQ2d0TnorbTk
 			accordo-servizio-parte-comune="gw/MinisteroReferente:EsempioJOSE:2">
 		        <configurazione-servizio>
 		                <connettore tipo="http" nome="CNT_gw/MinisteroErogatore_REST/API">
-		                        <property nome="location" valore="http://localhost:8080/govway/MinisteroErogatore/JOSE/v2"/>
+		                        <property nome="location" valore="http://localhost:8080/govway/JOSE"/>
 		                </connettore>
 		        </configurazione-servizio>
                 </accordo-servizio-parte-specifica>
