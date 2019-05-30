@@ -1,5 +1,5 @@
 # GovWay
-[![Build Status](https://jenkins.link.it/buildStatus/icon?job=GovWay&style=plastic)](https://jenkins.link.it/job/GovWay/)
+[![Build Status](https://jenkins.link.it/govway/buildStatus/icon?job=GovWay&style=plastic)](https://jenkins.link.it/govway/job/GovWay/)
 [![Docker](https://github.com/link-it/govway/blob/master/resources/images/docker.svg)](https://hub.docker.com/r/linkitaly/govway)
 [![GitHub](https://github.com/link-it/govway/blob/master/resources/images/license.svg)](https://raw.githubusercontent.com/link-it/govway/master/LICENSE)
 

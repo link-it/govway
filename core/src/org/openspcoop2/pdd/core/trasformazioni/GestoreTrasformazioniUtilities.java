@@ -477,385 +477,400 @@ public class GestoreTrasformazioniUtilities {
 			boolean trasformazioneSoap_envelope, boolean trasformazioneSoap_envelopeAsAttachment,
 			String trasformazioneSoap_tipoConversione, byte[] trasformazioneSoap_templateConversione) throws Throwable {
 		
-		// TransportRequest
-		Integer forceResponseStatus = null;
-		TransportRequestContext transportRequestContext = null;
-		TransportResponseContext transportResponseContext = null;
-		if(MessageRole.REQUEST.equals(message.getMessageRole())) {
-			transportRequestContext = new TransportRequestContext();
-			transportRequestContext.setParametersTrasporto(trasporto);
-			transportRequestContext.setParametersFormBased(url);
-		}
-		else {
-			transportResponseContext = new TransportResponseContext();
-			transportResponseContext.setParametersTrasporto(trasporto);
-			if(returnCodeInput!=null) {
-				transportResponseContext.setCodiceTrasporto(returnCodeInput.intValue()+"");
-				forceResponseStatus = returnCodeInput;
-			}
-			else {
-				transportResponseContext.setCodiceTrasporto(status+"");
-				forceResponseStatus = status;
-			}
-		}
+		try {
 		
-		log.debug("trasformazione conversione messaggio ...");
-		boolean skipTransportInfo = true;
-				
-		if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
-			
-			if(trasformazioneRest) {
-			
-				String contentType = contentTypeInput;
-				if(risultato.isEmpty()) {
-					contentType = null;
-					// aggiorno contentType
-					if(transportRequestContext!=null) {
-						transportRequestContext.removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
-					}
-					else {
-						transportResponseContext.removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
-					}
-				}
-				else {
-					if(contentType==null) {
-						throw new Exception("Content-Type non indicato per la trasformazione REST");
-					}
-				}
-				
-				MessageType messageType = null;
-				if(transportRequestContext!=null) {
-					transportRequestContext.setRequestType(trasformazioneRest_method);
-					String trasformazioneRest_path_real = null;
-					if(trasformazioneRest_path!=null) {
-						trasformazioneRest_path_real = DynamicUtils.convertDynamicPropertyValue("trasformazioneRest_path", trasformazioneRest_path, dynamicMap, pddContext, true);
-					}
-					transportRequestContext.setFunctionParameters(trasformazioneRest_path_real);
-					messageType = requestInfo.getBindingConfig().getRequestMessageType(ServiceBinding.REST, transportRequestContext, contentType);
-				}
-				else {
-					messageType = requestInfo.getBindingConfig().getResponseMessageType(ServiceBinding.REST, new TransportRequestContext(), contentType, status);
-				}
-				
-				OpenSPCoop2Message newMsg = null;
-				OpenSPCoop2MessageParseResult pr = null;
-				if(risultato.isEmpty()) {
-					if(transportRequestContext!=null) {
-						newMsg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.REQUEST);
-						newMsg.setTransportRequestContext(transportRequestContext);
-					}
-					else {
-						newMsg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.RESPONSE);
-						newMsg.setTransportResponseContext(transportResponseContext);
-					}
-				}
-				else {
-					if(transportRequestContext!=null) {
-						pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, risultato.getContenuto());
-					}
-					else {
-						pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportResponseContext, risultato.getContenuto());
-					}
-					newMsg = pr.getMessage_throwParseThrowable();
-				}
-				
-				message.copyResourcesTo(newMsg, skipTransportInfo);
-				
-				addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, newMsg);
-				return newMsg;
-				
+			// TransportRequest
+			Integer forceResponseStatus = null;
+			TransportRequestContext transportRequestContext = null;
+			TransportResponseContext transportResponseContext = null;
+			if(MessageRole.REQUEST.equals(message.getMessageRole())) {
+				transportRequestContext = new TransportRequestContext();
+				transportRequestContext.setParametersTrasporto(trasporto);
+				transportRequestContext.setParametersFormBased(url);
 			}
 			else {
-				
-				OpenSPCoop2SoapMessage soapMessage = message.castAsSoap();
-				
-				if(risultato.isEmpty()) {
-					soapMessage.getSOAPPart().getEnvelope().getBody().removeContents();
+				transportResponseContext = new TransportResponseContext();
+				transportResponseContext.setParametersTrasporto(trasporto);
+				if(returnCodeInput!=null) {
+					transportResponseContext.setCodiceTrasporto(returnCodeInput.intValue()+"");
+					forceResponseStatus = returnCodeInput;
 				}
 				else {
-					SOAPElement newElement = soapMessage.createSOAPElement(risultato.getContenuto());
-					if(element.getLocalName().equals(newElement.getLocalName()) && element.getNamespaceURI().equals(newElement.getNamespaceURI())) {
-						// il nuovo elemento è una busta soap
-						soapMessage.getSOAPPart().getEnvelope().detachNode();
-						soapMessage.getSOAPPart().setContent(new DOMSource(newElement));
-					}
-					else {
-						soapMessage.getSOAPPart().getEnvelope().getBody().removeContents();
-						soapMessage.getSOAPPart().getEnvelope().getBody().addChildElement(newElement);
-					}
+					transportResponseContext.setCodiceTrasporto(status+"");
+					forceResponseStatus = status;
 				}
-				
-				addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
-				
-				if(contentTypeInput!=null) {
-					message.setContentType(contentTypeInput);
-				}
-				
-				return message;
-				
 			}
 			
-		}
-		else{
-			
-			if(trasformazioneSoap) {
+			log.debug("trasformazione conversione messaggio ...");
+			boolean skipTransportInfo = true;
+					
+			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
 				
-				MessageType messageType = null;
-				String contentTypeForEnvelope = null;
-				if(VersioneSOAP._1_1.equals(trasformazioneSoap_versione)){
-					messageType = MessageType.SOAP_11;
-					if(contentTypeForEnvelope == null) {
-						contentTypeForEnvelope = HttpConstants.CONTENT_TYPE_SOAP_1_1;
-					}
-				}
-				else if(VersioneSOAP._1_2.equals(trasformazioneSoap_versione)){
-					messageType = MessageType.SOAP_12;
-					if(contentTypeForEnvelope == null) {
-						contentTypeForEnvelope = HttpConstants.CONTENT_TYPE_SOAP_1_2;
-					}
-				}
-				else {
-					throw new Exception("Versione SOAP sconosciuta '"+trasformazioneSoap_versione+"'");
-				}
+				if(trasformazioneRest) {
 				
-				// aggiorno contentType
-				if(transportRequestContext!=null) {
-					transportRequestContext.removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
-					transportRequestContext.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
-				}
-				else {
-					transportResponseContext.removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
-					transportResponseContext.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
-				}
-				
-				String soapAction = null;
-				if(trasformazioneSoap_soapAction!=null) {
-					soapAction = DynamicUtils.convertDynamicPropertyValue("soapAction", trasformazioneSoap_soapAction, dynamicMap, pddContext, true);
-				}
-				
-				OpenSPCoop2Message messageSoap = null;
-				if(risultato.isEmpty()) {
-					if(transportRequestContext!=null) {
-						messageSoap = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.REQUEST);
-						messageSoap.setTransportRequestContext(transportRequestContext);
-					}
-					else {
-						messageSoap = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.RESPONSE);
-						messageSoap.setTransportResponseContext(transportResponseContext);
-					}
-				}
-				else {
-												
-					if(trasformazioneSoap_envelopeAsAttachment) {
-						
-						if(trasformazioneSoap_tipoConversione==null) {
-							throw new Exception("Tipo di conversione del body interno all'envelope non fornito (SOAPWithAttachments)");
-						}
-						RisultatoTrasformazioneContenuto risultatoEnvelopeBody = 
-								GestoreTrasformazioniUtilities.trasformazioneContenuto(log, 
-										trasformazioneSoap_tipoConversione, 
-										trasformazioneSoap_templateConversione, 
-										"envelope-body", dynamicMap, message, element, pddContext);
-						if(risultatoEnvelopeBody.isEmpty()) {
-							if(transportRequestContext!=null) {
-								messageSoap = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.REQUEST);
-								messageSoap.setTransportRequestContext(transportRequestContext);
-							}
-							else {
-								messageSoap = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.RESPONSE);
-								messageSoap.setTransportResponseContext(transportResponseContext);
-							}
+					String contentType = contentTypeInput;
+					if(risultato.isEmpty()) {
+						contentType = null;
+						// aggiorno contentType
+						if(transportRequestContext!=null) {
+							transportRequestContext.removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
 						}
 						else {
-							if(trasformazioneSoap_envelope) {
-								OpenSPCoop2MessageParseResult pr = null;
-								if(transportRequestContext!=null) {
-									pr = OpenSPCoop2MessageFactory.getMessageFactory().envelopingMessage(messageType, contentTypeForEnvelope, 
-											soapAction, transportRequestContext, risultatoEnvelopeBody.getContenuto(), null, true);
-								}
-								else {
-									pr = OpenSPCoop2MessageFactory.getMessageFactory().envelopingMessage(messageType, contentTypeForEnvelope, 
-											soapAction, transportResponseContext, risultatoEnvelopeBody.getContenuto(), null, true);
-								}
-								messageSoap = pr.getMessage_throwParseThrowable();
-							}
-							else {
-								OpenSPCoop2MessageParseResult pr = null;
-								if(transportRequestContext!=null) {
-									pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, 
-											risultatoEnvelopeBody.getContenuto());
-								}
-								else {
-									pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportResponseContext, 
-											risultatoEnvelopeBody.getContenuto());
-								}
-								messageSoap = pr.getMessage_throwParseThrowable();
-							}
+							transportResponseContext.removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
 						}
-														
-						// esiste un contenuto nel body
-						AttachmentPart ap = null;
-
-						String contentType = contentTypeInput;
+					}
+					else {
 						if(contentType==null) {
-							throw new Exception("Content-Type non indicato per l'attachment");
+							throw new Exception("Content-Type non indicato per la trasformazione REST");
 						}
-						String ctBase = ContentTypeUtilities.readBaseTypeFromContentType(contentType);
-						if(HttpConstants.CONTENT_TYPE_TEXT_XML.equals(ctBase)) {
-							
-							// solo text/xml può essere costruito con DOMSource
-							Source streamSource = null;
-							DataContentHandlerManager dchManager = new DataContentHandlerManager(log);
-							if(dchManager.readMimeTypesContentHandler().containsKey(ctBase)) {
-								// Se è non registrato un content handler per text/xml
-								// succede se dentro l'ear non c'e' il jar mailapi e l'application server non ha caricato il modulo mailapi (es. tramite versione standalone standard)
-								// e si usa il metodo seguente DOMSource si ottiene il seguente errore:
-								// javax.xml.soap.SOAPException: no object DCH for MIME type text/xml
-								//    at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.28.jar:?]
-								//System.out.println("XML (DOMSource)");
-								streamSource = new DOMSource(XMLUtils.getInstance().newElement(risultato.getContenuto()));
-							}
-							else {
-								// Se è registrato un content handler per text/xml
-								// e succede se dentro l'ear c'e' il jar mailapi oppure se l'application server ha caricato il modulo mailapi (es. tramite versione standalone full)
-								// e si usa il metodo seguente StreamSource, si ottiene il seguente errore:
-								//  Unable to run the JAXP transformer on a stream org.xml.sax.SAXParseException; Premature end of file. (sourceException: Error during saving a multipart message) 
-								//  	com.sun.xml.messaging.saaj.SOAPExceptionImpl: Error during saving a multipart message
-								//        at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.28.jar:?]
-								//        at org.openspcoop2.message.Message1_1_FIX_Impl.writeTo(Message1_1_FIX_Impl.java:172) ~[openspcoop2_message_BUILD-13516.jar:?]
-								//        at org.openspcoop2.message.OpenSPCoop2Message_11_impl.writeTo
-								//System.out.println("XML (StreamSource)");
-								streamSource = new javax.xml.transform.stream.StreamSource(new java.io.ByteArrayInputStream(risultato.getContenuto()));
-							}
-							ap = messageSoap.castAsSoap().createAttachmentPart();
-							ap.setContent(streamSource, contentType);
-						}
-						else {
-							InputStreamDataSource isSource = new InputStreamDataSource("attach", contentType, risultato.getContenuto());
-							ap = messageSoap.castAsSoap().createAttachmentPart(new DataHandler(isSource));
-						}
-						
-						String contentID = messageSoap.castAsSoap().createContentID(op2Properties.getHeaderSoapActorIntegrazione());
-						if(contentID.startsWith("<")){
-							contentID = contentID.substring(1);
-						}
-						if(contentID.endsWith(">")){
-							contentID = contentID.substring(0,contentID.length()-1);
-						}
-						
-						ap.setContentId(contentID);
-						messageSoap.castAsSoap().addAttachmentPart(ap);
-							
-					}
-					else {
-						
-						if(trasformazioneSoap_envelope) {
-							OpenSPCoop2MessageParseResult pr = null;
-							if(transportRequestContext!=null) {
-								pr = OpenSPCoop2MessageFactory.getMessageFactory().envelopingMessage(messageType, contentTypeForEnvelope, 
-										soapAction, transportRequestContext, risultato.getContenuto(), null, true);
-							}
-							else {
-								pr = OpenSPCoop2MessageFactory.getMessageFactory().envelopingMessage(messageType, contentTypeForEnvelope, 
-										soapAction, transportResponseContext, risultato.getContenuto(), null, true);
-							}
-							messageSoap = pr.getMessage_throwParseThrowable();
-						}
-						else {
-							OpenSPCoop2MessageParseResult pr = null;
-							if(transportRequestContext!=null) {
-								pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, risultato.getContenuto());
-							}
-							else {
-								pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportResponseContext, risultato.getContenuto());
-							}
-							messageSoap = pr.getMessage_throwParseThrowable();
-						}
-
-					}
-					
-				}
-				
-				message.copyResourcesTo(messageSoap, skipTransportInfo);
-				
-				addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, messageSoap);
-				
-				if(messageSoap!=null && soapAction!=null) {
-					messageSoap.castAsSoap().setSoapAction(soapAction);
-				}
-				
-				return messageSoap;
-				
-			}
-			else {
-				
-				if(risultato.isEmpty()) {
-					
-					message.castAsRest().updateContent(null);
-					message.castAsRest().setContentType(null);
-					
-					addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
-					
-					return message;
-					
-				}
-				else {
-					
-					String contentType = null;
-					if(contentTypeInput!=null) {
-						contentType = contentTypeInput;
-					}
-					else {
-						contentType = message.getContentType();
 					}
 					
 					MessageType messageType = null;
 					if(transportRequestContext!=null) {
+						transportRequestContext.setRequestType(trasformazioneRest_method);
+						String trasformazioneRest_path_real = null;
+						if(trasformazioneRest_path!=null) {
+							trasformazioneRest_path_real = DynamicUtils.convertDynamicPropertyValue("trasformazioneRest_path", trasformazioneRest_path, dynamicMap, pddContext, true);
+						}
+						transportRequestContext.setFunctionParameters(trasformazioneRest_path_real);
 						messageType = requestInfo.getBindingConfig().getRequestMessageType(ServiceBinding.REST, transportRequestContext, contentType);
 					}
 					else {
 						messageType = requestInfo.getBindingConfig().getResponseMessageType(ServiceBinding.REST, new TransportRequestContext(), contentType, status);
 					}
-					if(messageType.equals(message.getMessageType())) {
-						
-						if(MessageType.XML.equals(messageType)) {
-							
-							message.castAsRestXml().updateContent(XMLUtils.getInstance().newElement(risultato.getContenuto()));
-							
-							addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
-							
-							return message;
-							
-						}
-						else if(MessageType.JSON.equals(messageType)) {
-							
-							message.castAsRestJson().updateContent(risultato.getContenutoAsString());
-							
-							addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
-							
-							return message;
-							
-						}
-						
-					}
 					
-					// converto
+					OpenSPCoop2Message newMsg = null;
 					OpenSPCoop2MessageParseResult pr = null;
-					if(transportRequestContext!=null) {
-						pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, risultato.getContenuto());
+					if(risultato.isEmpty()) {
+						if(transportRequestContext!=null) {
+							newMsg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.REQUEST);
+							newMsg.setTransportRequestContext(transportRequestContext);
+						}
+						else {
+							newMsg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.RESPONSE);
+							newMsg.setTransportResponseContext(transportResponseContext);
+						}
 					}
 					else {
-						pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportResponseContext, risultato.getContenuto());
+						if(transportRequestContext!=null) {
+							pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, risultato.getContenuto());
+						}
+						else {
+							pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportResponseContext, risultato.getContenuto());
+						}
+						newMsg = pr.getMessage_throwParseThrowable();
 					}
-					OpenSPCoop2Message newMsg = pr.getMessage_throwParseThrowable();
-					message.copyResourcesTo(newMsg, !skipTransportInfo); // devo preservare gli header in questo caso
-					addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
+					
+					message.copyResourcesTo(newMsg, skipTransportInfo);
+					
+					addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, newMsg);
 					return newMsg;
+					
+				}
+				else {
+					
+					OpenSPCoop2SoapMessage soapMessage = message.castAsSoap();
+					
+					if(risultato.isEmpty()) {
+						soapMessage.getSOAPPart().getEnvelope().getBody().removeContents();
+					}
+					else {
+						SOAPElement newElement = soapMessage.createSOAPElement(risultato.getContenuto());
+						if(element.getLocalName().equals(newElement.getLocalName()) && element.getNamespaceURI().equals(newElement.getNamespaceURI())) {
+							// il nuovo elemento è una busta soap
+							soapMessage.getSOAPPart().getEnvelope().detachNode();
+							soapMessage.getSOAPPart().setContent(new DOMSource(newElement));
+						}
+						else {
+							soapMessage.getSOAPPart().getEnvelope().getBody().removeContents();
+							soapMessage.getSOAPPart().getEnvelope().getBody().addChildElement(newElement);
+						}
+					}
+					
+					addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
+					
+					if(contentTypeInput!=null) {
+						message.setContentType(contentTypeInput);
+					}
+					
+					return message;
 					
 				}
 				
 			}
-			
+			else{
+				
+				if(trasformazioneSoap) {
+					
+					MessageType messageType = null;
+					String contentTypeForEnvelope = null;
+					if(VersioneSOAP._1_1.equals(trasformazioneSoap_versione)){
+						messageType = MessageType.SOAP_11;
+						if(contentTypeForEnvelope == null) {
+							contentTypeForEnvelope = HttpConstants.CONTENT_TYPE_SOAP_1_1;
+						}
+					}
+					else if(VersioneSOAP._1_2.equals(trasformazioneSoap_versione)){
+						messageType = MessageType.SOAP_12;
+						if(contentTypeForEnvelope == null) {
+							contentTypeForEnvelope = HttpConstants.CONTENT_TYPE_SOAP_1_2;
+						}
+					}
+					else {
+						throw new Exception("Versione SOAP sconosciuta '"+trasformazioneSoap_versione+"'");
+					}
+					
+					// aggiorno contentType
+					if(transportRequestContext!=null) {
+						transportRequestContext.removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
+						transportRequestContext.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
+					}
+					else {
+						transportResponseContext.removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
+						transportResponseContext.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
+					}
+					
+					String soapAction = null;
+					if(trasformazioneSoap_soapAction!=null) {
+						soapAction = DynamicUtils.convertDynamicPropertyValue("soapAction", trasformazioneSoap_soapAction, dynamicMap, pddContext, true);
+					}
+					
+					OpenSPCoop2Message messageSoap = null;
+					if(risultato.isEmpty()) {
+						if(transportRequestContext!=null) {
+							messageSoap = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.REQUEST);
+							messageSoap.setTransportRequestContext(transportRequestContext);
+						}
+						else {
+							messageSoap = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.RESPONSE);
+							messageSoap.setTransportResponseContext(transportResponseContext);
+						}
+					}
+					else {
+													
+						if(trasformazioneSoap_envelopeAsAttachment) {
+							
+							if(trasformazioneSoap_tipoConversione==null) {
+								throw new Exception("Tipo di conversione del body interno all'envelope non fornito (SOAPWithAttachments)");
+							}
+							RisultatoTrasformazioneContenuto risultatoEnvelopeBody = 
+									GestoreTrasformazioniUtilities.trasformazioneContenuto(log, 
+											trasformazioneSoap_tipoConversione, 
+											trasformazioneSoap_templateConversione, 
+											"envelope-body", dynamicMap, message, element, pddContext);
+							try {
+								if(risultatoEnvelopeBody.isEmpty()) {
+									if(transportRequestContext!=null) {
+										messageSoap = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.REQUEST);
+										messageSoap.setTransportRequestContext(transportRequestContext);
+									}
+									else {
+										messageSoap = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.RESPONSE);
+										messageSoap.setTransportResponseContext(transportResponseContext);
+									}
+								}
+								else {
+									if(trasformazioneSoap_envelope) {
+										OpenSPCoop2MessageParseResult pr = null;
+										if(transportRequestContext!=null) {
+											pr = OpenSPCoop2MessageFactory.getMessageFactory().envelopingMessage(messageType, contentTypeForEnvelope, 
+													soapAction, transportRequestContext, risultatoEnvelopeBody.getContenuto(), null, true);
+										}
+										else {
+											pr = OpenSPCoop2MessageFactory.getMessageFactory().envelopingMessage(messageType, contentTypeForEnvelope, 
+													soapAction, transportResponseContext, risultatoEnvelopeBody.getContenuto(), null, true);
+										}
+										messageSoap = pr.getMessage_throwParseThrowable();
+									}
+									else {
+										OpenSPCoop2MessageParseResult pr = null;
+										if(transportRequestContext!=null) {
+											pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, 
+													risultatoEnvelopeBody.getContenuto());
+										}
+										else {
+											pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportResponseContext, 
+													risultatoEnvelopeBody.getContenuto());
+										}
+										messageSoap = pr.getMessage_throwParseThrowable();
+									}
+								}
+							}catch(Throwable t) {
+								if(risultatoEnvelopeBody.getContenutoAsString()!=null) {
+									log.error("Trasformazione non riuscita per il contenuto del body (SOAP With Attachments): ["+risultatoEnvelopeBody.getContenutoAsString()+"]",t);
+								}
+								throw t;
+							}
+															
+							// esiste un contenuto nel body
+							AttachmentPart ap = null;
+	
+							String contentType = contentTypeInput;
+							if(contentType==null) {
+								throw new Exception("Content-Type non indicato per l'attachment");
+							}
+							String ctBase = ContentTypeUtilities.readBaseTypeFromContentType(contentType);
+							if(HttpConstants.CONTENT_TYPE_TEXT_XML.equals(ctBase)) {
+								
+								// solo text/xml può essere costruito con DOMSource
+								Source streamSource = null;
+								DataContentHandlerManager dchManager = new DataContentHandlerManager(log);
+								if(dchManager.readMimeTypesContentHandler().containsKey(ctBase)) {
+									// Se è non registrato un content handler per text/xml
+									// succede se dentro l'ear non c'e' il jar mailapi e l'application server non ha caricato il modulo mailapi (es. tramite versione standalone standard)
+									// e si usa il metodo seguente DOMSource si ottiene il seguente errore:
+									// javax.xml.soap.SOAPException: no object DCH for MIME type text/xml
+									//    at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.28.jar:?]
+									//System.out.println("XML (DOMSource)");
+									streamSource = new DOMSource(XMLUtils.getInstance().newElement(risultato.getContenuto()));
+								}
+								else {
+									// Se è registrato un content handler per text/xml
+									// e succede se dentro l'ear c'e' il jar mailapi oppure se l'application server ha caricato il modulo mailapi (es. tramite versione standalone full)
+									// e si usa il metodo seguente StreamSource, si ottiene il seguente errore:
+									//  Unable to run the JAXP transformer on a stream org.xml.sax.SAXParseException; Premature end of file. (sourceException: Error during saving a multipart message) 
+									//  	com.sun.xml.messaging.saaj.SOAPExceptionImpl: Error during saving a multipart message
+									//        at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.28.jar:?]
+									//        at org.openspcoop2.message.Message1_1_FIX_Impl.writeTo(Message1_1_FIX_Impl.java:172) ~[openspcoop2_message_BUILD-13516.jar:?]
+									//        at org.openspcoop2.message.OpenSPCoop2Message_11_impl.writeTo
+									//System.out.println("XML (StreamSource)");
+									streamSource = new javax.xml.transform.stream.StreamSource(new java.io.ByteArrayInputStream(risultato.getContenuto()));
+								}
+								ap = messageSoap.castAsSoap().createAttachmentPart();
+								ap.setContent(streamSource, contentType);
+							}
+							else {
+								InputStreamDataSource isSource = new InputStreamDataSource("attach", contentType, risultato.getContenuto());
+								ap = messageSoap.castAsSoap().createAttachmentPart(new DataHandler(isSource));
+							}
+							
+							String contentID = messageSoap.castAsSoap().createContentID(op2Properties.getHeaderSoapActorIntegrazione());
+							if(contentID.startsWith("<")){
+								contentID = contentID.substring(1);
+							}
+							if(contentID.endsWith(">")){
+								contentID = contentID.substring(0,contentID.length()-1);
+							}
+							
+							ap.setContentId(contentID);
+							messageSoap.castAsSoap().addAttachmentPart(ap);
+								
+						}
+						else {
+							
+							if(trasformazioneSoap_envelope) {
+								OpenSPCoop2MessageParseResult pr = null;
+								if(transportRequestContext!=null) {
+									pr = OpenSPCoop2MessageFactory.getMessageFactory().envelopingMessage(messageType, contentTypeForEnvelope, 
+											soapAction, transportRequestContext, risultato.getContenuto(), null, true);
+								}
+								else {
+									pr = OpenSPCoop2MessageFactory.getMessageFactory().envelopingMessage(messageType, contentTypeForEnvelope, 
+											soapAction, transportResponseContext, risultato.getContenuto(), null, true);
+								}
+								messageSoap = pr.getMessage_throwParseThrowable();
+							}
+							else {
+								OpenSPCoop2MessageParseResult pr = null;
+								if(transportRequestContext!=null) {
+									pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, risultato.getContenuto());
+								}
+								else {
+									pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportResponseContext, risultato.getContenuto());
+								}
+								messageSoap = pr.getMessage_throwParseThrowable();
+							}
+	
+						}
+						
+					}
+					
+					message.copyResourcesTo(messageSoap, skipTransportInfo);
+					
+					addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, messageSoap);
+					
+					if(messageSoap!=null && soapAction!=null) {
+						messageSoap.castAsSoap().setSoapAction(soapAction);
+					}
+					
+					return messageSoap;
+					
+				}
+				else {
+					
+					if(risultato.isEmpty()) {
+						
+						message.castAsRest().updateContent(null);
+						message.castAsRest().setContentType(null);
+						
+						addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
+						
+						return message;
+						
+					}
+					else {
+						
+						String contentType = null;
+						if(contentTypeInput!=null) {
+							contentType = contentTypeInput;
+						}
+						else {
+							contentType = message.getContentType();
+						}
+						
+						MessageType messageType = null;
+						if(transportRequestContext!=null) {
+							messageType = requestInfo.getBindingConfig().getRequestMessageType(ServiceBinding.REST, transportRequestContext, contentType);
+						}
+						else {
+							messageType = requestInfo.getBindingConfig().getResponseMessageType(ServiceBinding.REST, new TransportRequestContext(), contentType, status);
+						}
+						if(messageType.equals(message.getMessageType())) {
+							
+							if(MessageType.XML.equals(messageType)) {
+								
+								message.castAsRestXml().updateContent(XMLUtils.getInstance().newElement(risultato.getContenuto()));
+								
+								addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
+								
+								return message;
+								
+							}
+							else if(MessageType.JSON.equals(messageType)) {
+								
+								message.castAsRestJson().updateContent(risultato.getContenutoAsString());
+								
+								addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
+								
+								return message;
+								
+							}
+							
+						}
+						
+						// converto
+						OpenSPCoop2MessageParseResult pr = null;
+						if(transportRequestContext!=null) {
+							pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, risultato.getContenuto());
+						}
+						else {
+							pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportResponseContext, risultato.getContenuto());
+						}
+						OpenSPCoop2Message newMsg = pr.getMessage_throwParseThrowable();
+						message.copyResourcesTo(newMsg, !skipTransportInfo); // devo preservare gli header in questo caso
+						addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
+						return newMsg;
+						
+					}
+					
+				}
+				
+			}
+		}catch(Throwable t) {
+			if(risultato.getContenutoAsString()!=null) {
+				log.error("Trasformazione non riuscita per il contenuto: ["+risultato.getContenutoAsString()+"]",t);
+			}
+			throw t;
 		}
 	}
 	

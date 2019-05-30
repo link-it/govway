@@ -44,7 +44,10 @@ import org.openspcoop2.utils.resources.VelocityTemplateUtils;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
+import freemarker.ext.beans.BeansWrapper;
+import freemarker.template.Configuration;
 import freemarker.template.Template;
+import freemarker.template.TemplateModel;
 
 /**
  * DynamicUtils
@@ -271,7 +274,7 @@ public class DynamicUtils {
 	
 	
 	public static void convertFreeMarkerTemplate(String name, byte[] template, Map<String,Object> dynamicMap, OutputStream out) throws DynamicException {
-		try {
+		try {			
 			OutputStreamWriter oow = new OutputStreamWriter(out);
 			_convertFreeMarkerTemplate(name, template, dynamicMap, oow);
 			oow.flush();
@@ -285,9 +288,22 @@ public class DynamicUtils {
 	}
 	private static void _convertFreeMarkerTemplate(String name, byte[] template, Map<String,Object> dynamicMap, Writer writer) throws DynamicException {
 		try {
+			// ** Aggiungo utility per usare metodi statici ed istanziare oggetti
+			
+			// statici
+			BeansWrapper wrapper = new BeansWrapper(Configuration.VERSION_2_3_23);
+			TemplateModel classModel = wrapper.getStaticModels();
+			dynamicMap.put(Costanti.MAP_CLASS_LOAD_STATIC, classModel);
+			
+			// newObject
+			dynamicMap.put(Costanti.MAP_CLASS_NEW_INSTANCE, new freemarker.template.utility.ObjectConstructor());
+			
+			
+			// ** costruisco template
 			Template templateFTL = TemplateUtils.buildTemplate(name, template);
 			templateFTL.process(dynamicMap, writer);
 			writer.flush();
+			
 		}catch(Exception e) {
 			throw new DynamicException(e.getMessage(),e);
 		}
@@ -309,9 +325,20 @@ public class DynamicUtils {
 	}
 	private static void _convertVelocityTemplate(String name, byte[] template, Map<String,Object> dynamicMap, Writer writer) throws DynamicException {
 		try {
+			// ** Aggiungo utility per usare metodi statici ed istanziare oggetti
+			
+			// statici
+			dynamicMap.put(Costanti.MAP_CLASS_LOAD_STATIC, "".getClass());
+			
+			// newObject
+			dynamicMap.put(Costanti.MAP_CLASS_NEW_INSTANCE, new ObjectConstructor());
+			
+			
+			// ** costruisco template
 			org.apache.velocity.Template templateVelocity = VelocityTemplateUtils.buildTemplate(name, template);
 			templateVelocity.merge(VelocityTemplateUtils.toVelocityContext(dynamicMap), writer);
 			writer.flush();
+			
 		}catch(Exception e) {
 			throw new DynamicException(e.getMessage(),e);
 		}

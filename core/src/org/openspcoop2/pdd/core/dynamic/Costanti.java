@@ -47,6 +47,9 @@ public class Costanti {
     public final static String MAP_ELEMENT_JSON_PATH = "jsonPath";
     public final static String MAP_ELEMENT_JSON_PATH_PREFIX = "{"+MAP_ELEMENT_JSON_PATH+":";
 	
+    public final static String MAP_CLASS_LOAD_STATIC = "class";
+    public final static String MAP_CLASS_NEW_INSTANCE = "new";
+    
     public final static String MAP_SUFFIX_RESPONSE = "Response";
     
 }

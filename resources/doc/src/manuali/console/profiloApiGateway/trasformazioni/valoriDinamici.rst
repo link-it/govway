@@ -28,7 +28,7 @@ La sintassi per accedere le proprietà dinamiche sopraelencate è differente in 
 - ${busta:FIELD}
 - ${property:NAME}
 
-Nei casi in cui il testo della trasformazione è interpretato da framework esterni (ad esempio Freemarker) le proprietà vengono rese disponibili da Govway inizializzando una mappa contenente i valori come oggetti. In questo caso le chiavi della mappa sono le seguenti (tra parentesi sono indicati i tipi di dato corrispondenti):
+Nei casi in cui il testo della trasformazione è interpretato da framework esterni (quali Freemarker o Velocity) le proprietà vengono rese disponibili da Govway inizializzando una mappa contenente i valori come oggetti. In questo caso le chiavi della mappa sono le seguenti (tra parentesi sono indicati i tipi di dato corrispondenti):
 
 - header (java.util.Properties)
 - query (java.util.Properties)
@@ -39,6 +39,19 @@ Nei casi in cui il testo della trasformazione è interpretato da framework ester
 - date (java.util.Date)
 - busta (org.openspcoop2.protocol.sdk.Busta)
 - property (java.util.Properties)
+
+Nel caso di utilizzo di template 'Freemarker' o 'Velocity' sono disponibili i seguenti ulteriori oggetti:
+
+- context (java.util.Map); permette di accedere al contesto della richiesta.
+- class; permette di definire classi. L'utilizzo varia a seconda del tipo di template engine:
+
+  - velocity: class.forName("my.package.name")
+  - freemarker: class["my.package.name"] 
+
+- new; permette di istanziare una classe. L'utilizzo varia a seconda del tipo di template engine:
+
+  - velocity: new.instance("my.package.name","Parametro1","ParametroN") 
+  - freemarker: new("my.package.name","Parametro1","ParametroN")
 
 
 

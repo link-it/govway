@@ -193,7 +193,7 @@ if [ ! "${SKIP_SRC_VERSION}" == "true" ]
 then
 	infoPrintln "Generazione distribuzione sorgente ..."
 	cd ${WORKING_COPY}
-	sed -i -e "s#<module>git</module>#<!-- <module>git</module> -->#g" ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/mvn/dependencies/pom.xml
+	sed -i -e "s#<module>git</module>#<!-- <module>git</module> -->#g" ${WORKING_COPY}/mvn/dependencies/pom.xml
 	mv ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar.rename
 	mv ${WORKING_COPY}/lib/git/org.eclipse.jgit-5.0.1.201806211838-r.jar ${WORKING_COPY}/lib/git/org.eclipse.jgit-5.0.1.201806211838-r.jar.rename
 	tar -h -c -z -f /tmp/${OPENSPCOOP_SRC_FILE}.tgz --xform="s@^@${OPENSPCOOP_SRC_FILE}/@" --exclude-vcs --exclude lib/svn * 

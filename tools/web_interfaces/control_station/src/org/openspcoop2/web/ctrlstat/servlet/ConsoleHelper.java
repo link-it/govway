@@ -12457,23 +12457,43 @@ public class ConsoleHelper {
 			de.setInfo(dInfoPatternContenuto);
 			break;
 		case FREEMARKER_TEMPLATE:
-		case VELOCITY_TEMPLATE:
-			 dInfoPatternContenuto = new DataElementInfo(label);
+			dInfoPatternContenuto = new DataElementInfo(label);
 			dInfoPatternContenuto.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE);
 			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
 				if(risposta) {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE);
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE_FREEMARKER);
 				}
 				else {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI);
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER);
 				}
 			}
 			else {
 				if(risposta) {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE);
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_FREEMARKER);
 				}
 				else {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI);
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER);
+				}
+			}
+			de.setInfo(dInfoPatternContenuto);
+			break;
+		case VELOCITY_TEMPLATE:
+			dInfoPatternContenuto = new DataElementInfo(label);
+			dInfoPatternContenuto.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE);
+			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+				if(risposta) {
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE_VELOCITY);
+				}
+				else {
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY);
+				}
+			}
+			else {
+				if(risposta) {
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_VELOCITY);
+				}
+				else {
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY);
 				}
 			}
 			de.setInfo(dInfoPatternContenuto);
