@@ -22,6 +22,7 @@
 
 package org.openspcoop2.utils.certificate;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +33,13 @@ import java.util.List;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Certificate {
+public class Certificate implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private List<CertificateInfo> certificateChain = new ArrayList<>();
 	private CertificateInfo certificate = null;
 

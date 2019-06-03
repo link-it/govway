@@ -17,7 +17,7 @@ UPDATE ct_active_policy set policy_id ='NumeroRichiesteSimultanee' where policy_
 
 ALTER TABLE ct_active_policy ADD COLUMN policy_posizione INT;
 UPDATE ct_active_policy SET policy_posizione=id;
-ALTER TABLE ct_active ALTER COLUMN policy_posizione SET NOT NULL;
+ALTER TABLE ct_active_policy ALTER COLUMN policy_posizione SET NOT NULL;
 
 ALTER TABLE ct_active_policy ADD COLUMN policy_continue BOOLEAN NOT NULL DEFAULT false;
 

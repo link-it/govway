@@ -32,6 +32,7 @@ import java.util.List;
 
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Documento;
+import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -106,7 +107,11 @@ public class AccordoServizioWrapperUtilities {
 		AccordoServizioParteComune as = this.accordoServizioWrapper.getAccordoServizio();
 		
 		IApiReader apiReader = null;
-		switch (as.getFormatoSpecifica()) {
+		FormatoSpecifica formato = as.getFormatoSpecifica();
+		if(formato==null) {
+			formato = FormatoSpecifica.OPEN_API_3;
+		}
+		switch (formato) {
 		case WADL:
 			try {
 				apiReader = ApiFactory.newApiReader(ApiFormats.WADL);

@@ -2,7 +2,8 @@
 #   interoperable API behavior by adopting developers.
 #
 # GitHub Project: https://github.com/teamdigitale/openapi
-# Source: https://raw.githubusercontent.com/teamdigitale/openapi/master/docs/definitions.yaml
+# Source: https://teamdigitale.github.io/openapi/<version>/definitions.yaml
+#         Un indice delle versioni e' disponibile in: https://teamdigitale.github.io/openapi/
 # nota: il sorgente e' stato adattato alle esigenze dei servizi rest di govway e del framework utilizzato
 #
 openapi: 3.0.0

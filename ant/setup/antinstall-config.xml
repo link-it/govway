@@ -58,6 +58,8 @@
         <large-select defaultValue="wildfly10" property="antinstaller_as" displayText="Application Server">
       
 		<!-- Viene usato un unico valore 'wildfly10', poiche' la compilazione e' identica -->
+		<option value="wildfly10" text="WildFly 16.x"/>
+		<option value="wildfly10" text="WildFly 15.x"/>
 		<option value="wildfly10" text="WildFly 14.x"/>
 		<option value="wildfly10" text="WildFly 13.x"/>
 		<option value="wildfly10" text="WildFly 12.x"/> 
@@ -124,6 +126,8 @@
         <large-select defaultValue="wildfly10" property="antinstaller_as" displayText="Application Server">
       
 		<!-- Viene usato un unico valore 'wildfly10', poiche' la compilazione e' identica -->
+		<option value="wildfly10" text="WildFly 16.x"/>
+		<option value="wildfly10" text="WildFly 15.x"/>
 		<option value="wildfly10" text="WildFly 14.x"/>
 		<option value="wildfly10" text="WildFly 13.x"/>
 		<option value="wildfly10" text="WildFly 12.x"/> 

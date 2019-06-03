@@ -269,7 +269,8 @@ public class AutorizzazionePortaApplicativa {
 		
 		AuthUtilities.testPortaApplicativa(CostantiTestSuite.PORTA_APPLICATIVA_AUTHZ_EXTERNAL_ROLES_ALL, fruitore,
 				credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso,
+				30000); // readTimeout);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();

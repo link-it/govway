@@ -197,6 +197,9 @@ public class SOAPWithAttachments {
 	@DataProvider (name="Sincrono")
 	public Object[][]testSincrono()throws Exception{
 		String id=this.repositorySincrono.getNext();
+
+		org.openspcoop2.utils.Utilities.sleep(3000);
+		
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1284,6 +1287,7 @@ public class SOAPWithAttachments {
 	@DataProvider (name="SincronoBodyConPiuChildElement")
 	public Object[][]testSincronoBodyConPiuChildElement()throws Exception{
 		String id=this.repositorySincronoBodyConPiuChildElement.getNext();
+		org.openspcoop2.utils.Utilities.sleep(3000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	

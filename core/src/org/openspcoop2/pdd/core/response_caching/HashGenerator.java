@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -73,9 +74,14 @@ public class HashGenerator {
 		digest.update(sb.toString().getBytes());
 		//System.out.println("TESTa: "+sb.toString());
 		
-		if(responseCachingConfig.getHashGenerator()!=null) {
+		ResponseCachingConfigurazioneHashGenerator configHash = responseCachingConfig.getHashGenerator();
+		if(configHash==null) {
+			configHash = new ResponseCachingConfigurazioneHashGenerator(); // utilizzo i valori di default
+		}
+		
+		if(configHash!=null) {
 			
-			if(StatoFunzionalita.ABILITATO.equals(responseCachingConfig.getHashGenerator().getRequestUri())) {
+			if(StatoFunzionalita.ABILITATO.equals(configHash.getRequestUri())) {
 				
 				// I parametri vengono riordinati proprio per far si differenze nell'ordine non impattano nel digest
 				
@@ -87,20 +93,20 @@ public class HashGenerator {
 				
 			}
 			
-			if(StatoFunzionalitaCacheDigestQueryParameter.ABILITATO.equals(responseCachingConfig.getHashGenerator().getQueryParameters()) ||
-					StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(responseCachingConfig.getHashGenerator().getQueryParameters())) {
+			if(StatoFunzionalitaCacheDigestQueryParameter.ABILITATO.equals(configHash.getQueryParameters()) ||
+					StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(configHash.getQueryParameters())) {
 				
 				// I parametri vengono riordinati proprio per far si differenze nell'ordine non impattano nel digest
 				
 				sb = new StringBuilder();
 				sb.append("ParametriURL");
-				if(StatoFunzionalitaCacheDigestQueryParameter.ABILITATO.equals(responseCachingConfig.getHashGenerator().getQueryParameters())) {
+				if(StatoFunzionalitaCacheDigestQueryParameter.ABILITATO.equals(configHash.getQueryParameters())) {
 					this.addList(requestInfo.getProtocolContext().getParametersFormBased(), false, sb);
 				}
 				else {
 					Properties pUrlForDigest = new Properties();
-					if(requestInfo.getProtocolContext().getParametersFormBased()!=null && responseCachingConfig.getHashGenerator().sizeQueryParameterList()>0) {
-						for (String queryParameter : responseCachingConfig.getHashGenerator().getQueryParameterList()) {
+					if(requestInfo.getProtocolContext().getParametersFormBased()!=null && configHash.sizeQueryParameterList()>0) {
+						for (String queryParameter : configHash.getQueryParameterList()) {
 							String v = requestInfo.getProtocolContext().getParameterFormBased(queryParameter);
 							if(v!=null) {
 								pUrlForDigest.put(queryParameter, v);
@@ -117,13 +123,13 @@ public class HashGenerator {
 				
 			}
 			
-			if(StatoFunzionalita.ABILITATO.equals(responseCachingConfig.getHashGenerator().getHeaders())) {
+			if(StatoFunzionalita.ABILITATO.equals(configHash.getHeaders())) {
 				
 				// Gli header vengono riordinati e le chiavi vengono prese lowerCase proprio per far si che tali differenze non impattano nel digest
 				
 				Properties pTrasportoForDigest = new Properties();
-				if(requestInfo.getProtocolContext().getParametersTrasporto()!=null && responseCachingConfig.getHashGenerator().sizeHeaderList()>0) {
-					for (String header : responseCachingConfig.getHashGenerator().getHeaderList()) {
+				if(requestInfo.getProtocolContext().getParametersTrasporto()!=null && configHash.sizeHeaderList()>0) {
+					for (String header : configHash.getHeaderList()) {
 						String v = requestInfo.getProtocolContext().getParameterTrasporto(header);
 						if(v!=null) {
 							pTrasportoForDigest.put(header, v);
@@ -140,7 +146,7 @@ public class HashGenerator {
 				
 			}
 			
-			if(StatoFunzionalita.ABILITATO.equals(responseCachingConfig.getHashGenerator().getPayload())) {
+			if(StatoFunzionalita.ABILITATO.equals(configHash.getPayload())) {
 
 				boolean doDigest = true;
 				message.saveChanges();

@@ -1476,7 +1476,11 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 								boolean subjectValid = CertificateUtils.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject, PrincipalType.subject, this.log);
 								boolean issuerValid = true;
 								if(aIssuer!=null) {
-									issuerValid = CertificateUtils.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getIssuer(), aIssuer, PrincipalType.issuer, this.log);
+									if(sa.getInvocazionePorta().getCredenziali(z).getIssuer()==null) {
+										issuerValid = false;
+									}else {
+										issuerValid = CertificateUtils.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getIssuer(), aIssuer, PrincipalType.issuer, this.log);
+									}
 								}
 								else {
 									issuerValid = (sa.getInvocazionePorta().getCredenziali(z).getIssuer() == null);
@@ -1499,7 +1503,11 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 								boolean subjectValid = CertificateUtils.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject, PrincipalType.subject, this.log);
 								boolean issuerValid = true;
 								if(aIssuer!=null) {
-									issuerValid = CertificateUtils.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getIssuer(), aIssuer, PrincipalType.issuer, this.log);
+									if(sa.getInvocazionePorta().getCredenziali(z).getIssuer()==null) {
+										issuerValid = false;
+									}else {
+										issuerValid = CertificateUtils.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getIssuer(), aIssuer, PrincipalType.issuer, this.log);
+									}
 								}
 								else {
 									issuerValid = (sa.getInvocazionePorta().getCredenziali(z).getIssuer() == null);

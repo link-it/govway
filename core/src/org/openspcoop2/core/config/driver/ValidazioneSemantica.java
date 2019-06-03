@@ -720,6 +720,7 @@ public class ValidazioneSemantica {
 					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_HEADER_BASED) && 
 					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_INPUT_BASED) && 
 					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_SOAP_ACTION_BASED) && 
+					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_WSDL_BASED) && 
 					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_DELEGATED_BY)){
 				this.errori.add("La modalita d'identificazione dell'azione della porta delegata "+idPortaDelegata+" deve assumere uno dei seguente valori: "+
 						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_STATIC+", "+
@@ -728,6 +729,7 @@ public class ValidazioneSemantica {
 						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_HEADER_BASED+" o "+
 						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_INPUT_BASED+" o "+
 						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_SOAP_ACTION_BASED+" o "+
+						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_WSDL_BASED+" o "+
 						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_DELEGATED_BY);
 			}
 			if(identificazione==null){
@@ -1064,6 +1066,7 @@ public class ValidazioneSemantica {
 					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_PROTOCOL_BASED) && 
 					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_INPUT_BASED) && 
 					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_SOAP_ACTION_BASED) &&
+					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_WSDL_BASED) &&
 					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_DELEGATED_BY)){
 				this.errori.add("La modalita d'identificazione dell'azione della porta applicativa "+idPortaApplicativa+" deve assumere uno dei seguente valori: "+
 						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_STATIC+", "+
@@ -1073,6 +1076,7 @@ public class ValidazioneSemantica {
 						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_PROTOCOL_BASED+" o "+
 						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_INPUT_BASED+" o "+
 						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_SOAP_ACTION_BASED+" o "+
+						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_WSDL_BASED+" o "+
 						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_DELEGATED_BY);
 			}
 			if(identificazione==null){
@@ -2960,13 +2964,26 @@ public class ValidazioneSemantica {
 
 		// Se il tipo e' ssl, subject e' OBBLIGATORIO
 		if (c.getTipo().equals(CostantiConfigurazione.CREDENZIALE_SSL)){
-			if ((c.getSubject() == null) || (c.getSubject().equals(""))){
-				this.errori.add("Le credenziali di tipo ssl del "+oggetto+" devono avere subject valorizzato");
+			if (
+					(c.getSubject() == null || c.getSubject().equals(""))
+					&&
+					c.getCertificate()==null
+			){
+				this.errori.add("Le credenziali di tipo ssl del "+oggetto+" devono avere subject o certificate valorizzato");
 			}else{
-				try{
-					CertificateUtils.validaPrincipal(c.getSubject(), PrincipalType.subject);
-				}catch(Exception e){
-					this.errori.add("Le credenziali di tipo ssl del "+oggetto+" possiedono un subject non valido: "+e.getMessage());
+				if(c.getSubject()!=null && !"".equals(c.getSubject())) {
+					try{
+						CertificateUtils.validaPrincipal(c.getSubject(), PrincipalType.subject);
+					}catch(Exception e){
+						this.errori.add("Le credenziali di tipo ssl del "+oggetto+" possiedono un subject non valido: "+e.getMessage());
+					}
+				}
+				if(c.getIssuer()!=null && !"".equals(c.getIssuer())) {
+					try{
+						CertificateUtils.validaPrincipal(c.getIssuer(), PrincipalType.issuer);
+					}catch(Exception e){
+						this.errori.add("Le credenziali di tipo ssl del "+oggetto+" possiedono un issuer non valido: "+e.getMessage());
+					}
 				}
 			}
 		}

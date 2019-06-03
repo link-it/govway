@@ -374,7 +374,8 @@ public class AutenticazionePortaApplicativa {
 		AuthUtilities.testPortaApplicativa(CostantiTestSuite.PORTA_APPLICATIVA_AUTH_OPTIONAL_PRINCIPAL, fruitore,
 				credenzialiInvocazione, addIDUnivoco, 
 				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta,  DateManager.getDate(),
-				stato);
+				stato,
+				30000); // readTimeout);
 	}
 	
 	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".PRINCIPAL_HEADER_CLEAN"},dataProvider="principalProvider")
@@ -450,7 +451,8 @@ public class AutenticazionePortaApplicativa {
 				credenzialiInvocazione, header, null, 
 				addIDUnivoco, 
 				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta,  DateManager.getDate(),
-				stato);
+				stato,
+				30000); // readTimeout
 	}
 	
 	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".PRINCIPAL_QUERY_CLEAN"},dataProvider="principalProvider")
@@ -576,7 +578,8 @@ public class AutenticazionePortaApplicativa {
 				credenzialiInvocazione, null, query, 
 				addIDUnivoco, 
 				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta,  DateManager.getDate(),
-				stato);
+				stato,
+				30000); // readTimeout);
 	}
 	
 	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".PRINCIPAL_IP"})
@@ -587,7 +590,8 @@ public class AutenticazionePortaApplicativa {
 				CredenzialiInvocazione.getAutenticazioneDisabilitata(), null, null, 
 				addIDUnivoco, 
 				null, null, true, dataInizioTest,
-				200);
+				200,
+				30000); // readTimeout);
 		
 	}
 	

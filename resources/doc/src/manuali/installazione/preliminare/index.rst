@@ -20,7 +20,7 @@ mancanti.
    -  -XX:MaxMetaspaceSize=516m -Xmx1024m
 
 #. *Application Server WildFly* (http://wildfly.org) (versione 10.x,
-   11.x, 12.x, 13.x o 14.x). In alternativa è possibile effettuare
+   11.x, 12.x, 13.x, 14.x, 15.x o 16.x). In alternativa è possibile effettuare
    l'installazione su Apache Tomcat (http://tomcat.apache.org) (versione
    7.x, 8.x o 9.x).
 
@@ -46,8 +46,8 @@ mancanti.
 La distribuzione GovWay è stata estesamente testata prima del rilascio
 sulla seguente piattaforma di riferimento:
 
--  *Sun JRE 8 (version: 1.8.0_111)*
+-  *Sun JRE 8 (version: 1.8.0_201)*
 
 -  *PostgreSQL 9 (version: 9.5.10)*
 
--  *WildFly 14 (version: 14.0.0.Final)*
+-  *WildFly 16 (version: 16.0.0.Final) e Tomcat 8 (version: 8.5.37)*

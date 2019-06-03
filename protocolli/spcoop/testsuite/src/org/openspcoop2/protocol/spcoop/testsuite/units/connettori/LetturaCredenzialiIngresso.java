@@ -244,6 +244,9 @@ public class LetturaCredenzialiIngresso {
 				e.printStackTrace();
 			}
 		}
+		else {
+			org.openspcoop2.utils.Utilities.sleep(2000);
+		}
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),null,id,true}	
@@ -371,6 +374,9 @@ public class LetturaCredenzialiIngresso {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		}
+		else {
+			org.openspcoop2.utils.Utilities.sleep(2000);
 		}
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),id,false},	
@@ -524,6 +530,9 @@ public class LetturaCredenzialiIngresso {
 				e.printStackTrace();
 			}
 		}
+		else {
+			org.openspcoop2.utils.Utilities.sleep(2000);
+		}
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),null,id,true}	
@@ -657,6 +666,9 @@ public class LetturaCredenzialiIngresso {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		}
+		else {
+			org.openspcoop2.utils.Utilities.sleep(2000);
 		}
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),id,false},	
@@ -822,6 +834,9 @@ public class LetturaCredenzialiIngresso {
 				e.printStackTrace();
 			}
 		}
+		else {
+			org.openspcoop2.utils.Utilities.sleep(2000);
+		}
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),null,id,true}	
@@ -967,6 +982,9 @@ public class LetturaCredenzialiIngresso {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		}
+		else {
+			org.openspcoop2.utils.Utilities.sleep(2000);
 		}
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),id,false},	
@@ -1311,6 +1329,9 @@ public class LetturaCredenzialiIngresso {
 				e.printStackTrace();
 			}
 		}
+		else {
+			org.openspcoop2.utils.Utilities.sleep(2000);
+		}
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id}
 		};
@@ -1433,6 +1454,9 @@ public class LetturaCredenzialiIngresso {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		}
+		else {
+			org.openspcoop2.utils.Utilities.sleep(2000);
 		}
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id}
@@ -1561,6 +1585,9 @@ public class LetturaCredenzialiIngresso {
 				e.printStackTrace();
 			}
 		}
+		else {
+			org.openspcoop2.utils.Utilities.sleep(2000);
+		}
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id}
 		};
@@ -1684,6 +1711,9 @@ public class LetturaCredenzialiIngresso {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		}
+		else {
+			org.openspcoop2.utils.Utilities.sleep(2000);
 		}
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id}
@@ -1821,6 +1851,9 @@ public class LetturaCredenzialiIngresso {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		}
+		else {
+			org.openspcoop2.utils.Utilities.sleep(2000);
 		}
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id}

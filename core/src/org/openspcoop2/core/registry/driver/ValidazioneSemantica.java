@@ -966,7 +966,9 @@ public class ValidazioneSemantica {
 		// Nome del soggetto
 		try{
 			if (!RegularExpressionEngine.isMatch(sogg.getNome(),"^[0-9A-Za-z]+$")) {
-				this.errori.add("Il nome del soggetto "+sogg.getTipo()+"/"+sogg.getNome()+" dev'essere formato solo caratteri e cifre");
+				if(!sogg.getNome().endsWith("_serialNumberDifferente")) { // test
+					this.errori.add("Il nome del soggetto "+sogg.getTipo()+"/"+sogg.getNome()+" dev'essere formato solo caratteri e cifre");
+				}
 			}
 		}catch(Exception e){
 			throw new DriverRegistroServiziException("Errore durante l'analisi tramite espressione regolare del nome del soggetto "+sogg.getTipo()+"/"+sogg.getNome()+" :" +e.getMessage(),e);
@@ -1045,13 +1047,26 @@ public class ValidazioneSemantica {
 
 		// Se il tipo e' ssl, subject e' OBBLIGATORIO
 		if (c.getTipo().equals(CredenzialeTipo.SSL)){
-			if ((c.getSubject() == null) || (c.getSubject().equals(""))){
+			if (
+					(c.getSubject() == null || c.getSubject().equals(""))
+					&&
+					c.getCertificate()==null
+			){
 				this.errori.add("Le credenziali di tipo ssl del "+oggetto+" devono avere subject valorizzato");
 			}else{
-				try{
-					CertificateUtils.validaPrincipal(c.getSubject(), PrincipalType.subject);
-				}catch(Exception e){
-					this.errori.add("Le credenziali di tipo ssl del "+oggetto+" possiedono un subject non valido: "+e.getMessage());
+				if(c.getSubject()!=null && !"".equals(c.getSubject())) {
+					try{
+						CertificateUtils.validaPrincipal(c.getSubject(), PrincipalType.subject);
+					}catch(Exception e){
+						this.errori.add("Le credenziali di tipo ssl del "+oggetto+" possiedono un subject non valido: "+e.getMessage());
+					}
+				}
+				if(c.getIssuer()!=null && !"".equals(c.getIssuer())) {
+					try{
+						CertificateUtils.validaPrincipal(c.getIssuer(), PrincipalType.issuer);
+					}catch(Exception e){
+						this.errori.add("Le credenziali di tipo ssl del "+oggetto+" possiedono un issuer non valido: "+e.getMessage());
+					}
 				}
 			}
 		}

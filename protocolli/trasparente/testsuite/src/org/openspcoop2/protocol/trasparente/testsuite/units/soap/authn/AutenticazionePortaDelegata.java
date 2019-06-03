@@ -187,7 +187,8 @@ public class AutenticazionePortaDelegata {
 		Date dataInizioTest = DateManager.getDate();
 		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTH_SSL, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso,
+				30000); // readTimeout);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -311,7 +312,8 @@ public class AutenticazionePortaDelegata {
 		ricercaEsatta = false; // il diagnostico e' arricchito dell'informazione che l'autenticazione e' opzionale
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTH_OPTIONAL_PRINCIPAL, credenzialiInvocazione, addIDUnivoco, 
 				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta,  DateManager.getDate(), 
-				stato);
+				stato,
+				30000); // readTimeout);
 	}
 	
 	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".PRINCIPAL_HEADER_CLEAN"},dataProvider="principalProvider")

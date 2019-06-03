@@ -22,6 +22,7 @@
 
 package org.openspcoop2.utils.certificate;
 
+import java.io.Serializable;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -48,7 +49,12 @@ import org.openspcoop2.utils.io.Base64Utilities;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class CertificateInfo {
+public class CertificateInfo implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private java.security.cert.X509Certificate certificate;
 

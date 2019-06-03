@@ -83,9 +83,9 @@
                 <pathelement location="." />
             </classpath>
 	    <jvmarg value="-Dcom.sun.xml.ws.transport.http.client.HttpTransportPipe.dump=true" />
-	    <!-- <jvmarg value="-Djavax.net.ssl.trustStore=/tmp/SDIExample.jks"/>
+	    <!-- <jvmarg value="-Djavax.net.ssl.trustStore=../ConfigurazioneSSL/SDIExample.jks"/>
 	    <jvmarg value="-Djavax.net.ssl.trustStorePassword=123456" />
-	    <jvmarg value="-Djavax.net.ssl.keyStore=/tmp/SDIExample.jks"/>
+	    <jvmarg value="-Djavax.net.ssl.keyStore=../ConfigurazioneSSL/SDIExample.jks"/>
             <jvmarg value="-Djavax.net.ssl.keyStorePassword=123456" /> -->
         </java>
 	</target>

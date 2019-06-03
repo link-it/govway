@@ -2494,6 +2494,8 @@ public class WSSecurity {
 		
 		String id=this.repositorySincronoWSS_SAML20.getNext();
 		
+		org.openspcoop2.utils.Utilities.sleep(2000);
+		
 		// Check Fruitore
 		DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
 		try{
@@ -2550,6 +2552,8 @@ public class WSSecurity {
 		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSS_SAML11,azione,addIDUnivoco);
 		
 		String id=this.repositorySincronoWSS_SAML11.getNext();
+		
+		org.openspcoop2.utils.Utilities.sleep(2000);
 		
 		// Check Fruitore
 		DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
@@ -2611,6 +2615,8 @@ public class WSSecurity {
 			this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSS_XACML_POLICY,azione,addIDUnivoco);
 			
 			String id=this.repositorySincronoWSS_XACML_POLICY.getNext();
+			
+			org.openspcoop2.utils.Utilities.sleep(2000);
 			
 			// Check Fruitore
 			DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
@@ -2715,6 +2721,8 @@ public class WSSecurity {
 		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSS_UsernameToken,azione,addIDUnivoco);
 		
 		String id=this.repositorySincronoWSS_UsernameToken.getNext();
+		
+		org.openspcoop2.utils.Utilities.sleep(2000);
 		
 		// Check Fruitore
 		DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();

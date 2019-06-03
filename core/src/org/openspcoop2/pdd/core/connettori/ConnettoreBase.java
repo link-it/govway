@@ -29,6 +29,7 @@ import java.util.Properties;
 
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneControl;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -298,7 +299,11 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 						if(responseCached!=null) {
 						
 							// esiste una risposta cachata, verifico eventuali direttive
-							if(this.responseCachingConfig.getControl()!=null) {
+							ResponseCachingConfigurazioneControl cacheControl = this.responseCachingConfig.getControl();
+							if(cacheControl==null) {
+								cacheControl = new ResponseCachingConfigurazioneControl(); // uso i valori di default
+							}
+							if(cacheControl!=null) {
 						
 								Properties trasportoRichiesta = null;
 								if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null && 
@@ -306,7 +311,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 									trasportoRichiesta = this.requestMsg.getTransportRequestContext().getParametersTrasporto();
 								}
 								
-								if(this.responseCachingConfig.getControl().isNoCache()) {
+								if(cacheControl.isNoCache()) {
 									if(HttpUtilities.isNoCache(trasportoRichiesta)) {
 										GestoreCacheResponseCaching.getInstance().removeByUUID(responseCached.getUuid());
 										responseCached = null;
@@ -314,7 +319,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 								}
 								
 								if(responseCached!=null) {
-									if(this.responseCachingConfig.getControl().isMaxAge()) {
+									if(cacheControl.isMaxAge()) {
 										Integer maxAge = HttpUtilities.getCacheMaxAge(trasportoRichiesta);
 										if(maxAge!=null && maxAge.intValue()>0) {
 											if(responseCached.getAgeInSeconds() > maxAge.intValue()) {
@@ -419,8 +424,12 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					trasportoRichiesta = this.requestMsg.getTransportRequestContext().getParametersTrasporto();
 				}
 				
-				if(this.responseCachingConfig.getControl()!=null) {
-					if(this.responseCachingConfig.getControl().isNoStore()) {
+				ResponseCachingConfigurazioneControl cacheControl = this.responseCachingConfig.getControl();
+				if(cacheControl==null) {
+					cacheControl = new ResponseCachingConfigurazioneControl(); // uso i valori di default
+				}
+				if(cacheControl!=null) {
+					if(cacheControl.isNoStore()) {
 						if(HttpUtilities.isNoStore(trasportoRichiesta)) {
 							saveInCache = false;
 						}
