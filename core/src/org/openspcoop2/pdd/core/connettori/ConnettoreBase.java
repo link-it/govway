@@ -22,6 +22,7 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Map;
@@ -51,6 +52,9 @@ import org.openspcoop2.pdd.core.handlers.PostOutRequestContext;
 import org.openspcoop2.pdd.core.handlers.PreInResponseContext;
 import org.openspcoop2.pdd.core.response_caching.GestoreCacheResponseCaching;
 import org.openspcoop2.pdd.core.response_caching.ResponseCached;
+import org.openspcoop2.pdd.core.token.EsitoNegoziazioneToken;
+import org.openspcoop2.pdd.core.token.GestoreToken;
+import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.Dump;
@@ -59,10 +63,12 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.dump.DumpException;
+import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
 
@@ -160,6 +166,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	private ResponseCachingConfigurazione responseCachingConfig = null;
 	private String responseCachingDigest = null;
 
+	/** Policy Token */
+	private PolicyNegoziazioneToken policyNegoziazioneToken;
+	
 	protected Date dataAccettazioneRisposta;
     @Override
 	public Date getDataAccettazioneRisposta(){
@@ -253,7 +262,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 
 		// Dump
 		if(this.openspcoopProperties.isDumpBinario_registrazioneDatabase()) {
-			IDSoggetto dominio = this.requestInfo!=null ? this.requestInfo.getIdentitaPdD() : this.openspcoopProperties.getIdentitaPortaDefault(this.outRequestContext.getProtocolFactory().getProtocol());
+			String protocol = this.getProtocolFactory()!=null ? this.getProtocolFactory().getProtocol() : null;
+			IDSoggetto dominio = this.requestInfo!=null ? this.requestInfo.getIdentitaPdD() : this.openspcoopProperties.getIdentitaPortaDefault(protocol);
 			String nomePorta = (this.requestInfo!=null && this.requestInfo.getProtocolContext()!=null) ? this.requestInfo.getProtocolContext().getInterfaceName() : null;
 			try{
 				if(this.outRequestContext!=null) {
@@ -381,7 +391,102 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			}
 		}
 
+		// Negoziazione Token
+		this.policyNegoziazioneToken = request.getPolicyNegoziazioneToken();
+		
 		return true;
+	}
+	
+	private static final String format = "yyyy-MM-dd HH:mm:ss.SSS";
+	protected NameValue getTokenHeader() throws ConnettoreException {
+		return this.getTokenParameter(true);
+	}
+	protected NameValue getTokenQueryParameter() throws ConnettoreException {
+		return this.getTokenParameter(false);
+	}
+	private NameValue getTokenParameter(boolean header) throws ConnettoreException {
+		if(this.policyNegoziazioneToken!=null) {
+			try {
+				GestoreToken.validazioneConfigurazione(this.policyNegoziazioneToken); // assicura che la configurazione sia corretta
+				
+				String forwardMode = this.policyNegoziazioneToken.getForwardTokenMode();
+				NameValue n = null;
+				if(org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE_RFC6750_HEADER.equals(forwardMode)) {
+					if(header) {
+						n = new NameValue();
+						n.setName(HttpConstants.AUTHORIZATION);
+						n.setValue(HttpConstants.AUTHORIZATION_PREFIX_BEARER);
+					}
+					else {
+						return null;
+					}
+				}
+				else if(org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_URL.equals(forwardMode)) {
+					if(!header) {
+						n = new NameValue();
+						n.setName(org.openspcoop2.pdd.core.token.Costanti.RFC6750_URI_QUERY_PARAMETER_ACCESS_TOKEN);
+					}
+					else {
+						return null;
+					}
+				}
+				else if(org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER.equals(forwardMode)) {
+					if(header) {
+						n = new NameValue();
+						n.setName(this.policyNegoziazioneToken.getForwardTokenModeCustomHeader());
+					}
+					else {
+						return null;
+					}
+				}
+				else if(org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL.equals(forwardMode)) {
+					if(!header) {
+						n = new NameValue();
+						n.setName(this.policyNegoziazioneToken.getForwardTokenModeCustomUrl());
+					}
+					else {
+						return null;
+					}
+				}
+				
+				if(this.debug) {
+					this.logger.debug("Negoziazione token '"+this.policyNegoziazioneToken.getName()+"' ...");
+				}
+				EsitoNegoziazioneToken esitoNegoziazione = GestoreToken.endpointToken(this.debug, this.logger.getLogger(), this.policyNegoziazioneToken, 
+						this.getPddContext(), this.getProtocolFactory());
+				if(this.debug) {
+					this.logger.debug("Negoziazione token '"+this.policyNegoziazioneToken.getName()+"' terminata");
+				}
+				
+				SimpleDateFormat sdf = new SimpleDateFormat(format);
+								
+				if(esitoNegoziazione==null) {
+					throw new Exception("Esito Negoziazione non ritornato ?");
+				}
+				if(!esitoNegoziazione.isValido()) {
+					throw new Exception(esitoNegoziazione.getDetails(),esitoNegoziazione.getEccezioneProcessamento());
+				}
+				if(esitoNegoziazione.isInCache()) {
+					this.logger.debug("Presente in cache access_token '"+esitoNegoziazione.getToken()+"'; expire in ("+sdf.format(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn())+")");
+				}
+				else {
+					this.logger.debug("Recuperato access_token '"+esitoNegoziazione.getToken()+"'; expire in ("+sdf.format(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn())+")");
+				}
+				
+				if(n.getValue()!=null) {
+					n.setValue(n.getValue()+esitoNegoziazione.getToken());
+				}
+				else {
+					n.setValue(esitoNegoziazione.getToken());
+				}
+				return n;
+
+			}catch(Exception e) {
+				throw new ConnettoreException(e.getMessage(),e);
+			}
+		}
+		
+		return null;
 	}
 	
 	private void saveResponseInCache() {

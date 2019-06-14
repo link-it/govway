@@ -300,6 +300,10 @@ public final class SoggettiAdd extends Action {
 					// cancello file temporanei
 					soggettiHelper.deleteProtocolPropertiesBinaryParameters();
 				}  
+				
+				if(postBackElementName.equalsIgnoreCase(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPOLOGIA)){
+					this.tipoauthSoggetto = null;
+				}  
 
 				// tipo autenticazione
 				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE)){

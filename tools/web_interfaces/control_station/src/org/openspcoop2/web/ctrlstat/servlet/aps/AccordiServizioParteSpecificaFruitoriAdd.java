@@ -146,6 +146,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 	private String fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch;
 	private Properties parametersPOST;
 
+	private boolean autenticazioneToken = false;
+	private String token_policy = null;
+	
 	private String proxy_enabled, proxy_hostname,proxy_port,proxy_username,proxy_password;
 	
 	private String tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta;
@@ -253,6 +256,11 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			this.autenticazioneHttp = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 
 			this.connettoreDebug = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+			
+			// token policy
+			String autenticazioneTokenS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
+			this.autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
+			this.token_policy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			
 			// proxy
 			this.proxy_enabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
@@ -752,6 +760,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 								this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+								this.autenticazioneToken,this.token_policy,
 								listExtendedConnettore, false);
 					}else{
 						//spostato dentro l'helper
@@ -790,7 +799,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 					this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutenticazionePrincipal, this.fruizioneAutenticazioneParametroList, this.fruizioneAutorizzazione,
 					this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
-					allegatoXacmlPolicy,listExtendedConnettore);
+					allegatoXacmlPolicy,
+					this.autenticazioneToken,this.token_policy,
+					listExtendedConnettore);
 
 			// Validazione base dei parametri custom 
 			if(isOk){
@@ -883,6 +894,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+							this.autenticazioneToken,this.token_policy,
 							listExtendedConnettore, false);
 				}else{
 					//spostato dentro l'helper
@@ -935,6 +947,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 						this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 						this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+						this.token_policy,
 						listExtendedConnettore);
 			}
 
@@ -1033,6 +1046,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 								this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+								this.autenticazioneToken,this.token_policy,
 								listExtendedConnettore, false);
 					}else{
 						//spostato dentro l'helper

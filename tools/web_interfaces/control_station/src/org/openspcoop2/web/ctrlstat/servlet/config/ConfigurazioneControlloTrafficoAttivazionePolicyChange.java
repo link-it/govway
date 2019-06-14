@@ -103,7 +103,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 				serviceBinding = ServiceBinding.valueOf(serviceBindingParam);
 			}
 			
-			String id = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID); 
+			String id = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID); 
 			long idPolicyL = Long.parseLong(id);
 			AttivazionePolicy policy = confCore.getAttivazionePolicy(idPolicyL);
 			
@@ -111,7 +111,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 			policy.setAlias(PolicyUtilities.getNomeActivePolicy(policy.getAlias(), policy.getIdActivePolicy()));
 			
 			// nome della Policy
-			String idPolicy = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID);
+			String idPolicy = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID);
 			if(idPolicy!=null && !"".equals(idPolicy) && !"-".equals(idPolicy)){
 				policy.setIdPolicy(idPolicy);
 			}

@@ -11,7 +11,7 @@ servizio.
 I meccanismi supportati, per specificare i criteri di autorizzazione,
 sono i seguenti:
 
--  *Autorizzazione Puntuale*: superato il processo di autenticazione,
+-  *Autorizzazione per Richiedente*: superato il processo di autenticazione,
    saranno accettate le sole richieste provenienti dai mittenti indicati
    singolarmente nella lista fornita con il criterio. Dopo aver
    abilitato questa opzione, ed aver confermato tramite il pulsante

@@ -583,6 +583,9 @@ public class ConsoleProperties {
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoCryptographyKeyLength");
 	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoCharset");
+	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoInternazionalizzazione");
 	}
@@ -870,6 +873,10 @@ public class ConsoleProperties {
 	
 	public String getTokenPolicyForceId() throws UtilsException{
 		return this.readProperty(false, "console.tokenPolicy.forceId");
+	}
+	
+	public Properties getTokenPolicyTipologia() throws UtilsException{
+		return this.reader.readProperties_convertEnvProperties("console.tokenPolicy.mapping.");
 	}
 	
 	public Boolean isEnableServiziVisualizzaModalitaElenco() throws UtilsException{

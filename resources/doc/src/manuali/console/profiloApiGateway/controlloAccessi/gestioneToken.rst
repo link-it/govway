@@ -1,13 +1,13 @@
 .. _apiGwGestioneToken:
 
-Gestione Token
-^^^^^^^^^^^^^^
+Autenticazione Token
+^^^^^^^^^^^^^^^^^^^^
 
 Questa sezione consente di configurare il controllo degli accessi basato
 su Bearer Token OAuth2. Facendo transitare lo stato su "abilitato"
 compare l'elemento *Policy* (obbligatorio) per la selezione della policy
-di gestione token che si vuole applicare. In questa lista a discesa
-saranno visualizzate tutte le *Token Policy* che sono state registrate
+di autenticazione token che si vuole applicare. In questa lista a discesa
+saranno visualizzate tutte le *Token Policy* di tipo *Validazione* che sono state registrate
 in precedenza. Per le istruzioni sulla registrazione delle Token Policy
 si faccia riferimento alla sezione :ref:`tokenPolicy`.
 
@@ -54,6 +54,15 @@ quanto configurato nella relativa Token Policy selezionata.
     È disponibile la Token Policy *Google* preconfigurata in modo da
     utilizzare i servizi di elaborazione token esposti pubblicamente da
     Google e quindi:
-    -  La Validazione JWT basata su *Google - ID Token*
-    -  Il servizio di token introspection basato su *Google - TokenInfo*
-    -  Il servizio di User Info basato su *Google - UserInfo*
+
+    -  La Validazione JWT basata su *Google - ID Token* (https://www.googleapis.com/oauth2/v3/certs)
+    -  Il servizio di token introspection basato su *Google - TokenInfo* (https://www.googleapis.com/oauth2/v3/tokeninfo)
+    -  Il servizio di User Info basato su *Google - UserInfo* (https://www.googleapis.com/oauth2/v3/userinfo)
+
+È possibile inoltre far verificare la presenza obbligatoria delle seguenti metainformazioni all'interno del token: 
+
+- Issuer
+- ClientId
+- Subject
+- Username
+- Email

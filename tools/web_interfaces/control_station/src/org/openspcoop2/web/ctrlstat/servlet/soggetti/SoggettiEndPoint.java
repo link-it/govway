@@ -103,6 +103,11 @@ public final class SoggettiEndPoint extends Action {
 			
 			String connettoreDebug = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
 			
+			// token policy
+			String autenticazioneTokenS = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
+			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
+			String token_policy = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			
 			// proxy
 			String proxy_enabled = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			String proxy_hostname = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
@@ -350,6 +355,14 @@ public final class SoggettiEndPoint extends Action {
 					}
 				}
 				
+				if(token_policy==null && props!=null){
+					String v = props.get(CostantiDB.CONNETTORE_TOKEN_POLICY);
+					if(v!=null && !"".equals(v)){
+						token_policy = v;
+						autenticazioneToken = true;
+					}
+				}
+				
 				opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(soggettiHelper,transfer_mode, redirect_mode);
 				
 				if (url == null) {
@@ -488,6 +501,7 @@ public final class SoggettiEndPoint extends Action {
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+						autenticazioneToken,token_policy,
 						listExtendedConnettore, false);
 
 				pd.setDati(dati);
@@ -533,6 +547,7 @@ public final class SoggettiEndPoint extends Action {
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+						autenticazioneToken,token_policy,
 						listExtendedConnettore, false);
 
 				pd.setDati(dati);
@@ -560,6 +575,7 @@ public final class SoggettiEndPoint extends Action {
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+					token_policy,
 					listExtendedConnettore);
 			ss.setConnettore(c);
 			SoggettoCtrlStat newCsc = new SoggettoCtrlStat(ss, ssconf);

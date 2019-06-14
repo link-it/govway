@@ -1015,6 +1015,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				if(Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI.equals(scenarioCooperazione)){
 					connettoreMsg.setCheckPresenzaHeaderPrimaSbustamento(true);
 				}
+				if(connettoreMsg!=null){
+					connettoreMsg.initPolicyGestioneToken(configurazionePdDManager);
+				}
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getTipoValidazioneContenutoApplicativo) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_RispostaAsincrona) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
@@ -1037,6 +1040,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			try{
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getConsegnaRispostaAsincrona) [AsincronoAsimmetricoPolling]...");
 				connettoreMsg = configurazionePdDManager.getConsegnaRispostaAsincrona(sa,richiestaApplicativa);
+				if(connettoreMsg!=null){
+					connettoreMsg.initPolicyGestioneToken(configurazionePdDManager);
+				}
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getTipoValidazioneContenutoApplicativo) [AsincronoAsimmetricoPolling]...");
 				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_RispostaAsincrona) [AsincronoAsimmetricoPolling]...");
@@ -1056,6 +1062,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			try{
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getInvocazioneServizio)...");
 				connettoreMsg = configurazionePdDManager.getInvocazioneServizio(sa,richiestaApplicativa);
+				if(connettoreMsg!=null){
+					connettoreMsg.initPolicyGestioneToken(configurazionePdDManager);
+				}
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getTipoValidazioneContenutoApplicativo)...");
 				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_InvocazioneServizio)...");

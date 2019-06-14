@@ -154,6 +154,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	private ServiceBinding serviceBinding = null;
 	private org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica = null;
 
+	private boolean autenticazioneToken = false;
+	private String token_policy = null;
+	
 	private String proxy_enabled, proxy_hostname,proxy_port,proxy_username,proxy_password;
 	
 	private String tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta;
@@ -264,7 +267,12 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			this.erogazioneAutorizzazioneRuoli = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLI);
 			this.erogazioneAutorizzazioneRuoliTipologia = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_TIPOLOGIA);
 			this.erogazioneAutorizzazioneRuoliMatch = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_MATCH);
-			this.erogazioneSoggettoAutenticato = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_SOGGETTO_AUTENTICATO);
+			this.erogazioneSoggettoAutenticato = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_SOGGETTO_AUTENTICATO);
+
+			// token policy
+			String autenticazioneTokenS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
+			this.autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
+			this.token_policy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			
 			// proxy
 			this.proxy_enabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
@@ -1454,6 +1462,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+							this.autenticazioneToken,this.token_policy,
 							listExtendedConnettore, forceEnableConnettore);
 					
 					// url suggerita
@@ -1523,7 +1532,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutenticazionePrincipal, this.fruizioneAutenticazioneParametroList, this.fruizioneAutorizzazione,
 					this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 					this.tipoProtocollo, allegatoXacmlPolicy, 
-					this.descrizione, this.tipoSoggettoFruitore, this.nomeSoggettoFruitore);
+					this.descrizione, this.tipoSoggettoFruitore, this.nomeSoggettoFruitore,
+					this.autenticazioneToken,this.token_policy);
 
 			if(isOk){
 				if(generaPortaApplicativa && apsHelper.isModalitaCompleta() && (this.nomeSA==null || "".equals(this.nomeSA) || "-".equals(this.nomeSA))){
@@ -1624,6 +1634,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+							this.autenticazioneToken,this.token_policy,
 							listExtendedConnettore, forceEnableConnettore);
 					
 					// url suggerita
@@ -1753,6 +1764,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 						this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 						this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+						this.token_policy,
 						listExtendedConnettore);
 			}
 
@@ -1860,6 +1872,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 								this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+								this.autenticazioneToken,this.token_policy,
 								listExtendedConnettore, forceEnableConnettore);
 						
 					}

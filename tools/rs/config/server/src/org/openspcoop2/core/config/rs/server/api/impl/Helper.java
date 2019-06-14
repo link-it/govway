@@ -225,56 +225,74 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 	public static Object translateCredenziali(Object creds, ModalitaAccessoEnum tipoAuth) {
 		Object ret = null;
 	
-		@SuppressWarnings("unchecked")
-		LinkedHashMap<String, Object> map_creds = (LinkedHashMap<String,Object>) creds;
-		
 		switch (tipoAuth) {
 		case HTTP_BASIC: {
-			AuthenticationHttpBasic c = new AuthenticationHttpBasic();
-			c.setPassword((String) map_creds.get("password"));
-			c.setUsername((String) map_creds.get("username"));
-			ret = c;					
+			if(creds!=null && creds instanceof AuthenticationHttpBasic) {
+				ret = (AuthenticationHttpBasic) creds;
+			}			
+			else {
+				@SuppressWarnings("unchecked")
+				LinkedHashMap<String, Object> map_creds = (LinkedHashMap<String,Object>) creds;
+				AuthenticationHttpBasic c = new AuthenticationHttpBasic();
+				c.setPassword((String) map_creds.get("password"));
+				c.setUsername((String) map_creds.get("username"));
+				ret = c;					
+			}
 			break;
 		}
 		case HTTPS: {
-			AuthenticationHttps c = new AuthenticationHttps();
-			c.setTipo(TipoAutenticazioneHttps.fromValue((String) map_creds.get("tipo")));
-			Object oCredenziali = map_creds.get("certificato");
-			@SuppressWarnings("unchecked")
-			LinkedHashMap<String, Object> map_creds_https = (LinkedHashMap<String,Object>) oCredenziali;
-			switch (c.getTipo()) {
-			case CERTIFICATO:
-				AuthenticationHttpsCertificato cre = new AuthenticationHttpsCertificato();
-				String base64archive = (String) map_creds_https.get("archivio");
-				cre.setArchivio(Base64Utilities.decode(base64archive));
-				cre.setTipo(TipoKeystore.fromValue( (String) map_creds_https.get("tipo")));
-				if(map_creds_https.containsKey("alias")) {
-					cre.setAlias((String)map_creds_https.get("alias"));
-				}
-				if(map_creds_https.containsKey("password")) {
-					cre.setPassword((String)map_creds_https.get("password"));
-				}
-				if(map_creds_https.containsKey("strict_verification")) {
-					cre.setStrictVerification((Boolean)map_creds_https.get("strict_verification"));
-				}
-				c.setCertificato(cre);
-				break;
-			case CONFIGURAZIONE_MANUALE:
-				AuthenticationHttpsConfigurazioneManuale creManuale = new AuthenticationHttpsConfigurazioneManuale();
-				creManuale.setSubject((String)map_creds_https.get("subject"));
-				if(map_creds_https.containsKey("issuer")) {
-					creManuale.setIssuer((String)map_creds_https.get("issuer"));
-				}
-				c.setCertificato(creManuale);
-				break;	
+			if(creds!=null && creds instanceof AuthenticationHttps) {
+				ret = (AuthenticationHttps) creds;
 			}
-			ret = c;
+			else {
+				@SuppressWarnings("unchecked")
+				LinkedHashMap<String, Object> map_creds = (LinkedHashMap<String,Object>) creds;
+				AuthenticationHttps c = new AuthenticationHttps();
+				c.setTipo(TipoAutenticazioneHttps.fromValue((String) map_creds.get("tipo")));
+				Object oCredenziali = map_creds.get("certificato");
+				@SuppressWarnings("unchecked")
+				LinkedHashMap<String, Object> map_creds_https = (LinkedHashMap<String,Object>) oCredenziali;
+				switch (c.getTipo()) {
+				case CERTIFICATO:
+					AuthenticationHttpsCertificato cre = new AuthenticationHttpsCertificato();
+					String base64archive = (String) map_creds_https.get("archivio");
+					cre.setArchivio(Base64Utilities.decode(base64archive));
+					cre.setTipo(TipoKeystore.fromValue( (String) map_creds_https.get("tipo")));
+					if(map_creds_https.containsKey("alias")) {
+						cre.setAlias((String)map_creds_https.get("alias"));
+					}
+					if(map_creds_https.containsKey("password")) {
+						cre.setPassword((String)map_creds_https.get("password"));
+					}
+					if(map_creds_https.containsKey("strict_verification")) {
+						cre.setStrictVerification((Boolean)map_creds_https.get("strict_verification"));
+					}
+					c.setCertificato(cre);
+					break;
+				case CONFIGURAZIONE_MANUALE:
+					AuthenticationHttpsConfigurazioneManuale creManuale = new AuthenticationHttpsConfigurazioneManuale();
+					creManuale.setSubject((String)map_creds_https.get("subject"));
+					if(map_creds_https.containsKey("issuer")) {
+						creManuale.setIssuer((String)map_creds_https.get("issuer"));
+					}
+					c.setCertificato(creManuale);
+					break;	
+				}
+				ret = c;
+			}
 			break;
 		}
 		case PRINCIPAL: {
-			AuthenticationPrincipal c = new AuthenticationPrincipal();
-			c.setUserid((String) map_creds.get("userid"));
-			ret = c;
+			if(creds!=null && creds instanceof AuthenticationPrincipal) {
+				ret = (AuthenticationPrincipal) creds;
+			}
+			else {
+				@SuppressWarnings("unchecked")
+				LinkedHashMap<String, Object> map_creds = (LinkedHashMap<String,Object>) creds;
+				AuthenticationPrincipal c = new AuthenticationPrincipal();
+				c.setUserid((String) map_creds.get("userid"));
+				ret = c;
+			}
 			break;
 		}
 		default:

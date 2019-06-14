@@ -392,6 +392,8 @@ public class ErogazioniApiHelper {
       	final ConnettoreConfigurazioneHttpsServer httpsServer = evalnull( () -> httpsConf.getServer() );
       	final ConnettoreConfigurazioneProxy 	  proxy   	  = connRest.getProxy();
       	final ConnettoreConfigurazioneTimeout	  timeoutConf = connRest.getTempiRisposta();
+      	final String tokenPolicy = connRest.getTokenPolicy(); 
+      	final boolean autenticazioneToken = tokenPolicy!=null;
       	
         
  		final boolean httpsstato = httpsClient != null;
@@ -589,7 +591,9 @@ public class ErogazioniApiHelper {
         		xamlPolicy, 																//allegatoXacmlPolicy,
         		"",
         		null,		// tipoFruitore 
-        		null	// nomeFruitore
+        		null,	// nomeFruitore
+        		autenticazioneToken, 
+        		tokenPolicy
         	)) {
         	throw FaultCode.RICHIESTA_NON_VALIDA.toException( StringEscapeUtils.unescapeHtml( env.pd.getMessage()) );
         }
@@ -881,6 +885,8 @@ public class ErogazioniApiHelper {
       	final ConnettoreConfigurazioneHttpsServer httpsServer = evalnull( () -> httpsConf.getServer() );
       	final ConnettoreConfigurazioneProxy 	  proxy   	  = conn.getProxy();
       	final ConnettoreConfigurazioneTimeout	  timeoutConf = conn.getTempiRisposta();
+    	final String tokenPolicy = conn.getTokenPolicy(); 
+      	final boolean autenticazioneToken = tokenPolicy!=null;
 
         
 		final boolean httpsstato = httpsClient != null;
@@ -1149,7 +1155,9 @@ public class ErogazioniApiHelper {
         		xamlPolicy, 																//allegatoXacmlPolicy,
         		"",
         		evalnull( () -> fruitore.get().getTipo() ),		// tipoFruitore 
-        		evalnull( () -> fruitore.get().getNome() )			// nomeFruitore
+        		evalnull( () -> fruitore.get().getNome() ),			// nomeFruitore
+        		autenticazioneToken,
+        		tokenPolicy
         	)) {
         	throw FaultCode.RICHIESTA_NON_VALIDA.toException( StringEscapeUtils.unescapeHtml( env.pd.getMessage()) );
         }
@@ -1183,6 +1191,8 @@ public class ErogazioniApiHelper {
 	  	final ConnettoreConfigurazioneHttpsServer httpsServer = evalnull( () -> httpsConf.getServer() );
 	  	final ConnettoreConfigurazioneProxy 	  proxy   	  = conn.getProxy();
 	  	final ConnettoreConfigurazioneTimeout	  timeoutConf = conn.getTempiRisposta();
+	  	final String tokenPolicy = conn.getTokenPolicy(); 
+      	final boolean autenticazioneToken = tokenPolicy!=null;
 	  	
 		final boolean httpsstato = httpsClient != null;	// Questo è per l'autenticazione client.
 	  	 
@@ -1247,6 +1257,8 @@ public class ErogazioniApiHelper {
 				null,	// this.responseInputFileNameHeaders, 
 				null,	// this.responseInputDeleteAfterRead, 
 				null,	// this.responseInputWaitTime,
+				autenticazioneToken,
+				tokenPolicy,
 				listExtendedConnettore
 			);
 	}
@@ -1284,6 +1296,7 @@ public class ErogazioniApiHelper {
 	  	final ConnettoreConfigurazioneHttpsServer httpsServer = evalnull( () -> httpsConf.getServer() );
 	  	final ConnettoreConfigurazioneProxy 	  proxy   	  = conn.getProxy();
 	  	final ConnettoreConfigurazioneTimeout	  timeoutConf = conn.getTempiRisposta();
+	  	final String tokenPolicy = conn.getTokenPolicy(); 
 	  	
 		final boolean httpsstato = httpsClient != null;	// Questo è per l'autenticazione client.
 	  	 
@@ -1353,6 +1366,7 @@ public class ErogazioniApiHelper {
 				null,	// this.responseInputFileNameHeaders, 
 				null,	// this.responseInputDeleteAfterRead, 
 				null,	// this.responseInputWaitTime,
+				tokenPolicy,
 				listExtendedConnettore);			
 	}
 	
@@ -1391,6 +1405,7 @@ public class ErogazioniApiHelper {
 	  	final ConnettoreConfigurazioneHttpsServer httpsServer = evalnull( () -> httpsConf.getServer() );
 	  	final ConnettoreConfigurazioneProxy 	  proxy   	  = conn.getProxy();
 	  	final ConnettoreConfigurazioneTimeout	  timeoutConf = conn.getTempiRisposta();
+	  	final String tokenPolicy = conn.getTokenPolicy(); 
 	  	
 		final boolean httpsstato = httpsClient != null;	// Questo è per l'autenticazione client.
 	  	 
@@ -1460,6 +1475,7 @@ public class ErogazioniApiHelper {
 				null,	// this.responseInputFileNameHeaders, 
 				null,	// this.responseInputDeleteAfterRead, 
 				null,	// this.responseInputWaitTime,
+				tokenPolicy,
 				listExtendedConnettore);			
 	}
 	
@@ -2754,6 +2770,10 @@ public class ErogazioniApiHelper {
 		if ( tempiRisposta.getConnectionReadTimeout() != null || tempiRisposta.getConnectionTimeout() != null || tempiRisposta.getTempoMedioRisposta() != null) {
 			c.setTempiRisposta(tempiRisposta);
 		}
+		
+		c.setTokenPolicy(
+				evalnull( () -> props.get(CostantiDB.CONNETTORE_TOKEN_POLICY).trim())
+			);
 		
 		return c;
 	}

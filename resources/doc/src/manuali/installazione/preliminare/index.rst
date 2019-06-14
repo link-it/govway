@@ -19,6 +19,10 @@ mancanti.
 
    -  -XX:MaxMetaspaceSize=516m -Xmx1024m
 
+   Verificare inoltre che il charset utilizzato dalla JVM sia UTF-8:
+
+   - -Dfile.encoding=UTF-8
+
 #. *Application Server WildFly* (http://wildfly.org) (versione 10.x,
    11.x, 12.x, 13.x, 14.x, 15.x o 16.x). In alternativa è possibile effettuare
    l'installazione su Apache Tomcat (http://tomcat.apache.org) (versione

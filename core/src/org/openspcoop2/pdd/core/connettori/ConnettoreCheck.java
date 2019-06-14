@@ -28,7 +28,10 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -41,7 +44,10 @@ import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
+import org.openspcoop2.pdd.core.token.Costanti;
+import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.io.Base64Utilities;
@@ -156,6 +162,12 @@ public class ConnettoreCheck {
 			throw new ConnettoreException("Tipo '"+connettore.getTipo()+"' non supportato");
 		}
 		
+		try {
+			_checkTokenPolicy(connettore);
+		}catch(Throwable e) {
+			throw new ConnettoreException(e.getMessage(),e);
+		}
+		
 		TipiConnettore tipo = TipiConnettore.valueOf(connettore.getTipo().toUpperCase());
 		switch (tipo) {
 		case HTTP:
@@ -171,6 +183,93 @@ public class ConnettoreCheck {
 			break;
 		}
 		
+	}
+	
+	private static void _checkTokenPolicy(Connettore connettore) throws Exception {
+		
+		Map<String,String> properties = connettore.getProperties();
+		
+		PolicyNegoziazioneToken policyNegoziazioneToken = null;
+		if(properties!=null && !properties.isEmpty()) {
+			Iterator<String> it = properties.keySet().iterator();
+			while (it.hasNext()) {
+				String propertyName = (String) it.next();
+				if(CostantiConnettori.CONNETTORE_TOKEN_POLICY.equals(propertyName)) {
+					String tokenPolicy = properties.get(propertyName);
+					if(tokenPolicy!=null && !"".equals(tokenPolicy)) {
+						boolean forceNoCache = true;
+						policyNegoziazioneToken = ConfigurazionePdDManager.getInstance().getPolicyNegoziazioneToken(forceNoCache, tokenPolicy);
+					}
+				}
+			}
+		}
+		
+		if(policyNegoziazioneToken!=null) {
+			
+			String endpoint = policyNegoziazioneToken.getEndpoint();
+			
+			// Nell'endpoint config ci finisce i timeout e la configurazione proxy
+			Properties endpointConfig = policyNegoziazioneToken.getProperties().get(Costanti.POLICY_ENDPOINT_CONFIG);
+			
+			boolean https = policyNegoziazioneToken.isEndpointHttps();
+			boolean httpsClient = false;
+			Properties sslConfig = null;
+			Properties sslClientConfig = null;
+			if(https) {
+				sslConfig = policyNegoziazioneToken.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CONFIG);
+				httpsClient = policyNegoziazioneToken.isHttpsAuthentication();
+				if(httpsClient) {
+					sslClientConfig = policyNegoziazioneToken.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
+				}
+			}
+			boolean basic = policyNegoziazioneToken.isBasicAuthentication();
+			String username = null;
+			String password = null;
+			if(basic) {
+				username = policyNegoziazioneToken.getBasicAuthentication_username();
+				password = policyNegoziazioneToken.getBasicAuthentication_password();
+			}
+			
+			Connettore connettoreTestPolicy = new Connettore();
+			Map<String, String> mapProperties = new HashMap<>();
+			mapProperties.put(CostantiConnettori.CONNETTORE_LOCATION, endpoint);
+			putAll(endpointConfig, mapProperties);
+			if(https) {
+				putAll(sslConfig, mapProperties);
+				if(httpsClient) {
+					putAll(sslClientConfig, mapProperties);
+				}
+			}
+			if(basic) {
+				mapProperties.put(CostantiConnettori.CONNETTORE_USERNAME, username);
+				mapProperties.put(CostantiConnettori.CONNETTORE_PASSWORD, password);
+			}
+			connettoreTestPolicy.setProperties(mapProperties);
+
+			try {
+				_checkHTTP(https ? TipiConnettore.HTTPS : TipiConnettore.HTTP, connettoreTestPolicy);
+			}catch(Exception e) {
+				String prefixConnettore = "[EndpointNegoziazioneToken: "+endpoint+"] ";
+				if(endpointConfig.containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME)) {
+					String hostProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME);
+					String portProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT);
+					prefixConnettore = prefixConnettore+" [via Proxy: "+hostProxy+":"+portProxy+"] ";
+				}
+				throw new Exception(prefixConnettore+e.getMessage(),e);
+			}
+		}
+	}
+	private static void putAll(Properties config, Map<String, String> mapProperties) {
+		if(config!=null && !config.isEmpty()) {
+			Iterator<?> it = config.keySet().iterator();
+			while (it.hasNext()) {
+				Object object = (Object) it.next();
+				if(object instanceof String) {
+					String key = (String) object;
+					mapProperties.put(key, config.getProperty(key));			
+				}
+			}
+		}
 	}
 	
 	private static void _checkHTTP(TipiConnettore tipoConnettore, Connettore connettore) throws Exception {

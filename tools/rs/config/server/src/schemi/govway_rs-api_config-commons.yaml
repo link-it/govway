@@ -469,6 +469,8 @@ components:
           $ref: '#/components/schemas/ConnettoreConfigurazioneProxy'
         tempi_risposta:
           $ref: '#/components/schemas/ConnettoreConfigurazioneTimeout'
+        token_policy:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
           
     # Base: Erogazione/Fruizione
 

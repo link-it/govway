@@ -923,6 +923,7 @@ public class InoltroRisposte extends GenericLib{
 			connettoreMsg.setProtocolFactory(protocolFactory);
 			connettoreMsg.setMsgDiagnostico(msgDiag);
 			connettoreMsg.setState(openspcoopstate.getStatoRichiesta());
+			connettoreMsg.initPolicyGestioneToken(configurazionePdDManager);
 			
 			// Risposte del connettore
 			int codiceRitornato = -1;

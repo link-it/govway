@@ -416,7 +416,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			 *  se vengono utilizzati keystore P12.
 			 *  Il codice  
 			 *  	<resource-root path="WEB-INF/lib/bcprov-ext-jdk15on-1.60.jar" use-physical-code-source="true"/>
-			 *  all'interno del file jboss-deployment-structure.xml non è più sufficente da quanto è stato necessario
+			 *  all'interno del file jboss-deployment-structure.xml non è più sufficiente da quanto è stato necessario
 			 *  introdurre il codice sottostante 'org.apache.wss4j.dom.engine.WSSConfig.init' 
 			 *  e di conseguenza tutta la configurazione del modulo 'deployment.custom.javaee.api'
 			 *  per risolvere il problema java.lang.NoSuchMethodError: org.apache.xml.security.utils.I18n.init 
@@ -1880,6 +1880,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						infoConfigSistema.getInformazioniDatabase(),
 						infoConfigSistema.getInformazioniSSL(true,true),
 						infoConfigSistema.getInformazioniCryptographyKeyLength(),
+						infoConfigSistema.getInformazioniCharset(),
 						infoConfigSistema.getInformazioniInternazionalizzazione(true),
 						infoConfigSistema.getInformazioniTimeZone(true),
 						infoConfigSistema.getInformazioniProprietaJava(true, true, false),

@@ -24,10 +24,17 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
+import java.util.Enumeration;
+
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.Property;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.core.handlers.OutRequestContext;
+import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -90,6 +97,8 @@ public class ConnettoreMsg  {
 	/** Indicazione se il messaggio in consegna riguarda una richiesta o una risposta
 	 * Il set di questo field, potrà essere usato per la risposta di una invocazione sincrona con consegna su I.M. */
 	private RuoloMessaggio ruoloMessaggio = RuoloMessaggio.RICHIESTA;
+	/** Policy Token */
+	private PolicyNegoziazioneToken policyNegoziazioneToken;
 	
 	/** OutRequestContext */
 	private OutRequestContext outRequestContext;
@@ -194,9 +203,10 @@ public class ConnettoreMsg  {
 
 
 
+	
 
 	/* ********  S E T T E R   ******** */
-
+	
 	/**
 	 * Imposta il tipo di connettore.
 	 *
@@ -439,5 +449,27 @@ public class ConnettoreMsg  {
 	}
 	public boolean isGenerateErrorWithConnectorPrefix() {
 		return this.generateErrorWithConnectorPrefix;
+	}
+
+	public PolicyNegoziazioneToken getPolicyNegoziazioneToken() {
+		return this.policyNegoziazioneToken;
+	}
+	public void setPolicyNegoziazioneToken(PolicyNegoziazioneToken policyNegoziazioneToken) {
+		this.policyNegoziazioneToken = policyNegoziazioneToken;
+	}
+	public void initPolicyGestioneToken(ConfigurazionePdDManager configPdDManager) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		if(this.properties!=null && !this.properties.isEmpty()) {
+			Enumeration<String> en = this.properties.keys();
+			while (en.hasMoreElements()) {
+				String propertyName = (String) en.nextElement();
+				if(CostantiConnettori.CONNETTORE_TOKEN_POLICY.equals(propertyName)) {
+					String tokenPolicy = this.properties.get(propertyName);
+					if(tokenPolicy!=null && !"".equals(tokenPolicy)) {
+						boolean forceNoCache = true;
+						this.policyNegoziazioneToken = configPdDManager.getPolicyNegoziazioneToken(!forceNoCache, tokenPolicy);
+					}
+				}
+			}
+		}
 	}
 }

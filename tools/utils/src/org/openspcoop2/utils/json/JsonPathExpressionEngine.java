@@ -681,8 +681,13 @@ public class JsonPathExpressionEngine {
 			List<String> l = engine.getStringMatchPattern(elementJson, pattern);
 			if(l!=null && l.size()>0) {
 				if(returnAsList) {
-					for (String s : l) {
-						lReturn.add(s);
+					for (Object s : l) {
+						if(s instanceof String) {
+							lReturn.add((String)s);
+						}
+						else {
+							lReturn.add(s.toString());
+						}
 					}
 				}
 				else {

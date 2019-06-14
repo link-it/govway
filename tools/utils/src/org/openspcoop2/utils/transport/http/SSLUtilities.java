@@ -53,6 +53,27 @@ import org.openspcoop2.utils.resources.Loader;
  */
 public class SSLUtilities {
 	
+	
+	private static String jvmHttpsClientCertificateConfigurated = null;
+	private static synchronized void initJvmHttpsClientCertificateConfigurated() {
+		if(jvmHttpsClientCertificateConfigurated==null) {
+			jvmHttpsClientCertificateConfigurated = System.getProperty("javax.net.ssl.keyStore");
+		}
+	}
+	public static boolean isJvmHttpsClientCertificateConfigurated() {
+		if(jvmHttpsClientCertificateConfigurated==null) {
+			initJvmHttpsClientCertificateConfigurated();
+		}
+		return jvmHttpsClientCertificateConfigurated!=null;
+	}
+	public static String getJvmHttpsClientCertificateConfigurated() {
+		if(jvmHttpsClientCertificateConfigurated==null) {
+			initJvmHttpsClientCertificateConfigurated();
+		}
+		return jvmHttpsClientCertificateConfigurated;
+	}
+	
+	
 	public static List<String> getSSLEnabledProtocols(String sslType) throws UtilsException{
 		try{
 			List<String> p = new ArrayList<String>();

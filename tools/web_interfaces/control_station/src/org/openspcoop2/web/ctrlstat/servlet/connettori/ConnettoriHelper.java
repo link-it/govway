@@ -36,6 +36,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.Connettore;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -43,6 +44,8 @@ import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
@@ -77,6 +80,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostan
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateHelper;
@@ -539,6 +543,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
+			boolean autenticazioneToken, String tokenPolicy,
 			List<ExtendedConnettore> listExtendedConnettore, boolean forceEnabled) throws Exception {
 		return addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, prefix, url, nome, tipo, user,
 				password, initcont, urlpgk, provurl, connfact, sendas,
@@ -554,6 +559,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 				requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 				responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+				autenticazioneToken, tokenPolicy,
 				listExtendedConnettore, forceEnabled);
 	}
 
@@ -962,6 +968,55 @@ public class ConnettoriHelper extends ConsoleHelper {
 		dati.addElement(de);
 		
 		return dati;
+	}
+	
+	public Vector<DataElement> addTokenPolicy(Vector<DataElement> dati, String tokenPolicy) throws DriverConfigurazioneException{
+	
+		List<GenericProperties> gestorePolicyTokenList = this.confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN, null);
+		String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
+		String [] policyValues = new String[gestorePolicyTokenList.size() + 1];
+		
+		policyLabels[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+		policyValues[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+		
+		for (int i = 0; i < gestorePolicyTokenList.size(); i++) {
+			GenericProperties genericProperties = gestorePolicyTokenList.get(i);
+			policyLabels[(i+1)] = genericProperties.getNome();
+			policyValues[(i+1)] = genericProperties.getNome();
+		}
+		
+		DataElement de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY);
+		de.setType(DataElementType.SELECT);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+		de.setValues(policyValues);
+		de.setValues(policyLabels);
+		de.setSelected(tokenPolicy);
+		de.setRequired(true);
+		de.setPostBack(true);
+		dati.addElement(de);
+		
+		return dati;
+	}
+	
+	public boolean isTokenPolicyMode_useAuthorizationHeader(String tokenPolicy) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		if(tokenPolicy==null || "".equals(tokenPolicy) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
+			return false;
+		}
+		GenericProperties gestorePolicyToken = this.confCore.getGenericProperties(tokenPolicy,  ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN);
+		for (org.openspcoop2.core.config.Property p : gestorePolicyToken.getPropertyList()) {
+			if(org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE.equals(p.getNome())) {
+				if(org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE_RFC6750_HEADER.equals(p.getValore())) {
+					return true;
+				}
+			}
+		}	
+		return false;
 	}
 	
 	public Vector<DataElement> addTempiRispostaToDati(Vector<DataElement> dati,
@@ -1607,6 +1662,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
+			boolean autenticazioneToken, String tokenPolicy,
 			List<ExtendedConnettore> listExtendedConnettore, boolean forceEnabled) throws Exception {
 
 
@@ -1765,19 +1821,38 @@ public class ConnettoriHelper extends ConsoleHelper {
 //			}
 			
 			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-								
+				
+				boolean showAutenticazioneHttpBasic = true;
+				if(autenticazioneToken) {
+					showAutenticazioneHttpBasic = !isTokenPolicyMode_useAuthorizationHeader(tokenPolicy);
+				}
+				
 //				if(!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT.equals(servletChiamante) &&
 //						!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA.equals(servletChiamante) ){
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_HTTP);
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
-				de.setType(DataElementType.CHECKBOX);
-				if ( ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
-					de.setSelected(true);
+				if(showAutenticazioneHttpBasic) {
+					de.setType(DataElementType.CHECKBOX);
+					if ( ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
+						de.setSelected(true);
+					}
+					de.setPostBack(true);
 				}
-				de.setPostBack(true);
+				else {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
 				dati.addElement(de);		
 				//}
+				
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
+				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
+				de.setType(DataElementType.CHECKBOX);
+				de.setSelected(autenticazioneToken);
+				de.setPostBack(true);
+				dati.addElement(de);	
 				
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_HTTPS);
@@ -1844,6 +1919,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 				this.addCredenzialiToDati(dati, CostantiConfigurazione.CREDENZIALE_BASIC.getValue(), user, password, password, null,
 						servletChiamante,true,endpointtype,true,false, prefix, true);
 			}
+			
+			// Token Autenticazione
+			if (autenticazioneToken) {
+				this.addTokenPolicy(dati, tokenPolicy);
+			}
+			
 			
 			// Https
 			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
@@ -1994,17 +2075,36 @@ public class ConnettoriHelper extends ConsoleHelper {
 			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
 //				if(!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT.equals(servletChiamante) &&
 //						!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA.equals(servletChiamante) ){
-								
+							
+				boolean showAutenticazioneHttpBasic = true;
+				if(autenticazioneToken) {
+					showAutenticazioneHttpBasic = !isTokenPolicyMode_useAuthorizationHeader(tokenPolicy);
+				}
+				
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_HTTP);
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
-				de.setType(DataElementType.CHECKBOX);
-				if ( ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
-					de.setSelected(true);
+				if(showAutenticazioneHttpBasic) {
+					de.setType(DataElementType.CHECKBOX);
+					if ( ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
+						de.setSelected(true);
+					}
+					de.setPostBack(true);
 				}
-				de.setPostBack(true);
+				else {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
 				dati.addElement(de);		
 				//}
+				
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
+				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
+				de.setType(DataElementType.CHECKBOX);
+				de.setSelected(autenticazioneToken);
+				de.setPostBack(true);
+				dati.addElement(de);
 				
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_PROXY);
@@ -2056,6 +2156,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 			if (ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
 				this.addCredenzialiToDati(dati, CostantiConfigurazione.CREDENZIALE_BASIC.getValue(), user, password, password, null,
 						servletChiamante,true,endpointtype,true,false, prefix, true);
+			}
+			
+			// Token Autenticazione
+			if (autenticazioneToken) {
+				this.addTokenPolicy(dati, tokenPolicy);
 			}
 			
 			// Custom
@@ -2482,6 +2587,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String tipoconn = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
 			String autenticazioneHttp = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 			
+			String autenticazioneTokenS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
+			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
+			String token_policy = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			
 			// proxy
 			String proxy_enabled = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			String proxy_hostname = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
@@ -2564,6 +2673,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+					autenticazioneToken, token_policy,
 					listExtendedConnettore);
 			
 		} catch (Exception e) {
@@ -2588,6 +2698,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
+			boolean autenticazioneToken, String tokenPolicy,
 			List<ExtendedConnettore> listExtendedConnettore)
 					throws Exception {
 		try{
@@ -2859,6 +2970,25 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 			}
 
+			if(autenticazioneToken) {
+				if (tokenPolicy == null || "".equals(tokenPolicy) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
+					this.pd.setMessage("Policy obbligatoria per l'autenticazione basata su token");
+					return false;
+				}
+				
+				List<GenericProperties> gestorePolicyTokenList = this.confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN, null);
+				List<String> policyValues = new ArrayList<>();
+				for (int i = 0; i < gestorePolicyTokenList.size(); i++) {
+					GenericProperties genericProperties = gestorePolicyTokenList.get(i);
+					policyValues.add(genericProperties.getNome());
+				}
+				
+				if(!policyValues.contains(tokenPolicy)) {
+					this.pd.setMessage("Policy indicata per l'autenticazione basata su token, non esiste");
+					return false;
+				}
+			}
+			
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
 			if (!Connettori.contains(endpointtype) && !endpointtype.equals(TipiConnettore.CUSTOM.toString())) {
 				this.pd.setMessage("Tipo Connettore dev'essere uno tra : " + Connettori.getList());
@@ -3223,6 +3353,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
+			String tokenPolicy,
 			List<ExtendedConnettore> listExtendedConnettore)
 					throws Exception {
 		try {
@@ -3424,6 +3555,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 					connettore.addProperty(prop);
 				}
 			}
+			
+			if(tokenPolicy!=null && !"".equals(tokenPolicy) && !CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
+				prop = new org.openspcoop2.core.registry.Property();
+				prop.setNome(CostantiDB.CONNETTORE_TOKEN_POLICY);
+				prop.setValore(tokenPolicy);
+				connettore.addProperty(prop);
+			}
 				
 			
 			// Extended
@@ -3454,6 +3592,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
+			String tokenPolicy,
 			List<ExtendedConnettore> listExtendedConnettore)
 					throws Exception {
 		try {
@@ -3639,6 +3778,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 					prop.setValore(redirect_max_hop);
 					connettore.addProperty(prop);
 				}
+			}
+			
+			if(tokenPolicy!=null && !"".equals(tokenPolicy) && !CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
+				prop = new org.openspcoop2.core.config.Property();
+				prop.setNome(CostantiDB.CONNETTORE_TOKEN_POLICY);
+				prop.setValore(tokenPolicy);
+				connettore.addProperty(prop);
 			}
 				
 			

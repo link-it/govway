@@ -451,6 +451,8 @@ public final class CostantiDB {
     public static final String CONNETTORE_READ_CONNECTION_TIMEOUT = CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT;
     public static final String CONNETTORE_TEMPO_MEDIO_RISPOSTA = CostantiConnettori.CONNETTORE_TEMPO_MEDIO_RISPOSTA;
     
+    public static final String CONNETTORE_TOKEN_POLICY = CostantiConnettori.CONNETTORE_TOKEN_POLICY;
+    
     public static final String CONNETTORE_HTTP_LOCATION = CostantiConnettori.CONNETTORE_LOCATION;
     
     public static final String CONNETTORE_HTTP_DATA_TRANSFER_MODE = CostantiConnettori.CONNETTORE_HTTP_DATA_TRANSFER_MODE;
@@ -458,7 +460,7 @@ public final class CostantiDB {
     
     public static final String CONNETTORE_HTTP_REDIRECT_FOLLOW = CostantiConnettori.CONNETTORE_HTTP_REDIRECT_FOLLOW;
     public static final String CONNETTORE_HTTP_REDIRECT_MAX_HOP = CostantiConnettori.CONNETTORE_HTTP_REDIRECT_MAX_HOP;
-    
+        
     public static final String CONNETTORE_JMS_NOME = CostantiConnettori.CONNETTORE_LOCATION; //il nome del connettore sarebbe la proprieta location
     public static final String CONNETTORE_JMS_TIPO = CostantiConnettori.CONNETTORE_JMS_TIPO;
     public static final String CONNETTORE_USER = CostantiConnettori.CONNETTORE_USERNAME;

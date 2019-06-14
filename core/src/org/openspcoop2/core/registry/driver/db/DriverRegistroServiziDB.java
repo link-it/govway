@@ -11257,6 +11257,17 @@ IDriverWS ,IMonitoraggioRisorsa{
 						}
 					}
 					
+					// token policy
+					String tokenPolicy = rs.getString("token_policy");
+					if(tokenPolicy!=null && !"".equals(tokenPolicy)){
+						
+						prop = new Property();
+						prop.setNome(CostantiDB.CONNETTORE_TOKEN_POLICY);
+						prop.setValore(tokenPolicy.trim());
+						connettore.addProperty(prop);
+						
+					}
+					
 					if (endpoint.equals(CostantiDB.CONNETTORE_TIPO_HTTP)) {
 
 						// url

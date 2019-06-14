@@ -841,6 +841,8 @@ public class DriverConfigurazioneDB_LIB {
 		String redirect_mode = null; // in caso di tipo http e https
 		Integer redirect_max_hop = null; // in caso di tipo http e https
 		
+		String token_policy = null;
+		
 		boolean isAbilitato = false;
 
 		Hashtable<String, String> extendedProperties = new Hashtable<String, String>();
@@ -927,6 +929,12 @@ public class DriverConfigurazioneDB_LIB {
 				redirect_max_hop = Integer.parseInt(valoreProperty);
 			}
 			
+			// TokenPolicy
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_TOKEN_POLICY)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				token_policy = valoreProperty;
+			}
+			
 
 			if(TipiConnettore.HTTP.getNome().equals(endpointtype)){
 				if (nomeProperty.equals(CostantiDB.CONNETTORE_HTTP_LOCATION))
@@ -1001,6 +1009,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("read_timeout", "?");		
 				sqlQueryObject.addInsertField("avg_response_time", "?");		
 				sqlQueryObject.addInsertField("custom", "?");
+				sqlQueryObject.addInsertField("token_policy", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = connection.prepareStatement(sqlQuery);
 
@@ -1069,13 +1078,15 @@ public class DriverConfigurazioneDB_LIB {
 				}else{
 					stm.setInt(index++, 0);
 				}
+				stm.setString(index++, token_policy);
 
 				DriverConfigurazioneDB_LIB.log.debug("CRUDConnettore CREATE : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, url, 
 						transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 						nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore,debug,
 						proxy, proxy_type, proxy_hostname, proxy_port, proxy_username, proxy_password,
 						tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_avgResponseTime,
-						(connettore.getCustom()!=null && connettore.getCustom())));
+						(connettore.getCustom()!=null && connettore.getCustom())),
+						token_policy);
 
 				n = stm.executeUpdate();
 				stm.close();
@@ -1204,6 +1215,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("read_timeout", "?");		
 				sqlQueryObject.addUpdateField("avg_response_time", "?");
 				sqlQueryObject.addUpdateField("custom", "?");
+				sqlQueryObject.addUpdateField("token_policy", "?");
 				sqlQueryObject.addWhereCondition("id=?");
 				sqlQuery = sqlQueryObject.createSQLUpdate();
 				stm = connection.prepareStatement(sqlQuery);
@@ -1273,6 +1285,7 @@ public class DriverConfigurazioneDB_LIB {
 				}else{
 					stm.setInt(index++, 0);
 				}
+				stm.setString(index++, token_policy);
 				stm.setLong(index++, idConnettore);
 
 				stm.executeUpdate();
@@ -1282,7 +1295,9 @@ public class DriverConfigurazioneDB_LIB {
 						nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas,nomeConnettore, debug,
 						proxy, proxy_type, proxy_hostname, proxy_port, proxy_username, proxy_password,
 						tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_avgResponseTime,
-						(connettore.getCustom()!=null && connettore.getCustom()),idConnettore));
+						(connettore.getCustom()!=null && connettore.getCustom()),
+						token_policy,
+						idConnettore));
 
 				// Custom properties
 				// Delete eventuali vecchie properties
@@ -10800,6 +10815,17 @@ public class DriverConfigurazioneDB_LIB {
 							prop.setValore(redirectMode.trim());
 							connettore.addProperty(prop);
 						}
+					}
+					
+					// token policy
+					String tokenPolicy = rs.getString("token_policy");
+					if(tokenPolicy!=null && !"".equals(tokenPolicy)){
+						
+						prop = new Property();
+						prop.setNome(CostantiDB.CONNETTORE_TOKEN_POLICY);
+						prop.setValore(tokenPolicy.trim());
+						connettore.addProperty(prop);
+						
 					}
 
 

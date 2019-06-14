@@ -3856,7 +3856,7 @@ public class DriverControlStationDB  {
 				}
 				
 				if(filtro.getAzione()!=null){
-					expression.equals(AttivazionePolicy.model().FILTRO.AZIONE, filtro.getAzione());
+					expression.like(AttivazionePolicy.model().FILTRO.AZIONE, filtro.getAzione(), LikeMode.EXACT); // Colonna CLOB
 				}
 				else{
 					expression.isNull(AttivazionePolicy.model().FILTRO.AZIONE);
@@ -3896,7 +3896,7 @@ public class DriverControlStationDB  {
 						filtro.getInformazioneApplicativaValore()!=null){
 					expression.equals(AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_TIPO, filtro.getInformazioneApplicativaTipo());
 					expression.like(AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_NOME, filtro.getInformazioneApplicativaNome(), LikeMode.EXACT); // Colonna CLOB
-					expression.equals(AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_VALORE, filtro.getInformazioneApplicativaValore());
+					expression.like(AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_VALORE, filtro.getInformazioneApplicativaValore(), LikeMode.EXACT);  // Colonna CLOB
 				}
 			}
 			
@@ -3925,7 +3925,7 @@ public class DriverControlStationDB  {
 					expression.isNull(AttivazionePolicy.model().GROUP_BY.TOKEN);	
 				}
 				else {
-					expression.equals(AttivazionePolicy.model().GROUP_BY.TOKEN, groupBy.getToken());
+					expression.like(AttivazionePolicy.model().GROUP_BY.TOKEN, groupBy.getToken(), LikeMode.EXACT); // Colonna CLOB
 				}
 
 				expression.equals(AttivazionePolicy.model().GROUP_BY.INFORMAZIONE_APPLICATIVA_ENABLED, groupBy.isInformazioneApplicativaEnabled());
@@ -4050,7 +4050,7 @@ public class DriverControlStationDB  {
 			expr.like(AttivazionePolicy.model().FILTRO.AZIONE, azione, LikeMode.ANYWHERE);
 			
 			IPaginatedExpression pagExpr = serviceManager.getAttivazionePolicyServiceSearch().toPaginatedExpression(expr);
-			pagExpr.offset(0).limit(1000); // per un controllo di presenza per l'azione è sufficente
+			pagExpr.offset(0).limit(1000); // per un controllo di presenza per l'azione è sufficiente
 			pagExpr.sortOrder(SortOrder.ASC);
 			pagExpr.addOrder(AttivazionePolicy.model().ALIAS);
 			pagExpr.addOrder(AttivazionePolicy.model().ID_POLICY);

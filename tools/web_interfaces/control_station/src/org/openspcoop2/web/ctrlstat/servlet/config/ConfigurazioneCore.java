@@ -22,6 +22,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -1032,8 +1033,12 @@ public class ConfigurazioneCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}	
 	}
-	
 	public List<GenericProperties> gestorePolicyTokenList(Integer idLista, String tipologia, ISearch ricerca) throws DriverConfigurazioneException {
+		List<String> tipologiaList = new ArrayList<>();
+		tipologiaList.add(tipologia);
+		return gestorePolicyTokenList(idLista, tipologiaList, ricerca);
+	}
+	public List<GenericProperties> gestorePolicyTokenList(Integer idLista, List<String> tipologia, ISearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "gestorePolicyTokenList";
 		DriverControlStationDB driver = null;
@@ -1123,6 +1128,24 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			return driver.getDriverConfigurazioneDB().getPorteDelegateByPolicyGestioneToken(nome);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	public boolean isPolicyNegoziazioneTokenUsedInConnettore(String nome) throws DriverConfigurazioneException{
+		Connection con = null;
+		String nomeMetodo = "listaPorteDelegateUtilizzateDaPolicyGestioneToken";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().isPolicyNegoziazioneTokenUsedInConnettore(nome);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

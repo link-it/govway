@@ -156,7 +156,7 @@ Per effettuare il test acquisire un token utilizzando l'applicazione
            "type":"https://httpstatuses.com/401",
            "title":"Unauthorized",
            "status":401,
-           "detail":"La richiesta presenta un token non sufficente per fruire del servizio richiesto",
+           "detail":"La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
            "govway_status":"protocol:GOVWAY-1368"
        }
 

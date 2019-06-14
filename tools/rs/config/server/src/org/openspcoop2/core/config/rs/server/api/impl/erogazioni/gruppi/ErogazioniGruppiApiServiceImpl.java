@@ -284,6 +284,8 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 					null,							// responseInputFileNameHeaders, 
 					null,							// responseInputDeleteAfterRead, 
 					null,							// responseInputWaitTime,
+					false, 							// autenticazioneToken,
+					null, 							// tokenPolicy,
 					null,							// listExtendedConnettore
 	        		erogazioneAutenticazione,
 	        		erogazioneAutenticazioneOpzionale,

@@ -1,7 +1,7 @@
 .. _apiGwAutenticazione:
 
-Autenticazione
-^^^^^^^^^^^^^^
+Autenticazione Trasporto
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 In questa sezione è possibile configurare il meccanismo di
 autenticazione richiesto per l'accesso al servizio. Come mostrato in :numref:`autenticazione`,
@@ -9,13 +9,17 @@ si possono specificare:
 
 -  Il tipo di autenticazione, distinto in base al protocollo di trasporto, selezionando uno tra i valori disponibili:
 
-   -  *disabilitato*: nessuna autenticazione
+   -  *disabilitato*
+	nessuna autenticazione
 
-   -  *ssl*: autenticazione ssl
+   -  *https* 
+	La richiesta deve possedere un certificato client X509. La presenza del certificato client nella richiesta è obbligatoria a meno che non sia abilitato il flag *Opzionale*. Se è presente un certificato client, il gateway cercherà inoltre di identificare un applicativo o un soggetto a cui è stato associato il certificato come credenziale di accesso (per ulteriori dettagli si rimanda alle sezioni :ref:`soggetto` e :ref:`applicativo`); l'identificazione non è obbligatoria ma nel caso avvenga con successo l'applicativo o il soggetto verrà registrato nei log e potrà essere utilizzato anche ai fini di autorizzazione puntuale e per ruoli (:ref:`apiGwAutorizzazione`).
 
-   -  *basic*: autenticazione http-basic. Scegliendo questa opzione sarà anche possibile selezionare l'ulteriore opzione *Forward Authorization* per far sì che il gateway propaghi al destinatario l'header http "Authorization".
+   -  *http-basic*
+	La richiesta deve possedere un header http "Authorization" che veicola credenziali Basic (username e password) come indicato in 'https://tools.ietf.org/html/rfc2617#section-2'. Le credenziali devono corrispondere ad un applicativo o un soggetto registrato nel gateway. Abilitando l'ulteriore opzione *Forward Authorization* è possibile propagare all'endpoint di destinazione l'header http "Authorization" che altrimenti verrà consumata.
 
-   -  *principal*: autenticazione di tipo principal. Selezionando questa modalità è necessario scegliere ulteriormente il tipo preciso di autenticazione tra le seguenti opzioni:
+   -  *principal*
+	La richiesta deve possedere il "principal" che identifica il chiamante. La modalità con cui il gateway può ottenere il principale deve essere scelta tra le seguenti opzioni:
 
         - *Container*: il principal viene fornito direttamente dal container sul quale è in esecuzione il gateway.
 
@@ -27,24 +31,13 @@ si possono specificare:
 
         - *Indirizzo IP*: il principal utilizzato è l'indirizzo IP di provenienza.
 
-	- *Token*: opzione presente solamente se è stata attivata, al passo precedente, la gestione del token. Il principal viene letto da uno dei claim presenti nel token.
+	- *Token*: opzione presente solamente se è stata attivata, al passo precedente, l'autenticazione del token. Il principal viene letto da uno dei claim presenti nel token.
 
-   -  *custom*: metodo di autenticazione fornito tramite estensione di
-      GovWay
+	Il flag *Opzionale* consente di non rendere bloccante il superamento dell'autenticazione nel caso la richiesta non possiede il principal atteso.
 
-   Il flag *Opzionale* consente di non rendere bloccante il superamento
-   dell'autenticazione per l'accesso al servizio.per il quale si procede come già descritto
-   per l'attività di creazione dell'erogazione nella sezione :ref:`erogazione`.
+   -  *custom*: 
+	metodo di autenticazione fornito tramite personalizzazioni di GovWay
 
--  Se è stata attivata, al passo precedente, la gestione del token sarà
-   possibile aggiungere ulteriori criteri di autenticazione basati sul
-   contenuto del token ricevuto. In tal caso è possibile autenticare la
-   richiesta sulla base delle seguenti metainformazioni presenti nel
-   token: Issuer, ClientId, Subject, Username, Email.
-
-i criteri di autenticazione possono essere attuati sia a livello del
-trasporto che del token (se abilitata la gestione del token al passo
-precedente).
 
    .. figure:: ../../_figure_console/Autenticazione.png
     :scale: 100%

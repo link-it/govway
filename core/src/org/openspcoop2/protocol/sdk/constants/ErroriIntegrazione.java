@@ -230,7 +230,7 @@ public enum ErroriIntegrazione {
 	ERRORE_444_TOKEN_NON_VALIDO("Token non valido",
 			CodiceErroreIntegrazione.CODICE_444_TOKEN_NON_VALIDO),
 	
-	ERRORE_445_TOKEN_AUTORIZZAZIONE_FALLITA("La richiesta presenta un token non sufficente per fruire del servizio richiesto",
+	ERRORE_445_TOKEN_AUTORIZZAZIONE_FALLITA("La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
 			CodiceErroreIntegrazione.CODICE_445_TOKEN_AUTORIZZAZIONE_FALLITA),
 
 	ERRORE_446_PORTA_SOSPESA("Porta disabilitata",

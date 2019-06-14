@@ -87,6 +87,7 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
+import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
@@ -953,6 +954,10 @@ public class ConfigurazionePdDManager {
 	
 	public void updateStatoServiziPdD(StatoServiziPdd servizi) throws DriverConfigurazioneException{
 		this.configurazionePdDReader.updateStatoServiziPdD(servizi);
+	}
+	
+	public PolicyNegoziazioneToken getPolicyNegoziazioneToken(boolean forceNoCache, String policyName) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getPolicyNegoziazioneToken(this.getConnection(), forceNoCache, policyName);
 	}
 	
 	public GenericProperties getGenericProperties(String tipologia, String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{

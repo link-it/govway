@@ -69,6 +69,7 @@ import org.openspcoop2.protocol.manifest.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.VersionUtilities;
+import org.openspcoop2.utils.resources.CharsetUtilities;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.transport.http.SSLConstants;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
@@ -93,6 +94,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	public final static String INFORMAZIONI_SSL = "getInformazioniSSL";
 	public final static String INFORMAZIONI_COMPLETE_SSL = "getInformazioniCompleteSSL";
 	public final static String INFORMAZIONI_CRYPTOGRAPHY_KEY_LENGTH = "getInformazioniCryptographyKeyLength";
+	public final static String INFORMAZIONI_CHARSET = "getInformazioniCharset";
 	public final static String INFORMAZIONI_INTERNAZIONALIZZAZIONE = "getInformazioniInternazionalizzazione";
 	public final static String INFORMAZIONI_COMPLETE_INTERNAZIONALIZZAZIONE = "getInformazioniCompleteInternazionalizzazione";
 	public final static String INFORMAZIONI_TIMEZONE= "getInformazioniTimeZone";
@@ -218,6 +220,10 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			return this.getInformazioniCryptographyKeyLength();
 		}
 		
+		else if(actionName.equals(INFORMAZIONI_CHARSET)){
+			return this.getInformazioniCharset();
+		}
+		
 		else if(actionName.equals(INFORMAZIONI_INTERNAZIONALIZZAZIONE)){
 			return this.getInformazioniInternazionalizzazione(false);
 		}
@@ -337,6 +343,13 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
+		// INFORMAZIONI_CHARSET
+		MBeanOperationInfo informazioniCHARSETOp = new MBeanOperationInfo(INFORMAZIONI_CHARSET,"Visualizza le informazioni sul Charset",
+						null,
+						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
+						String.class.getName(),
+						MBeanOperationInfo.ACTION);
+		
 		// INFORMAZIONI_INTERNAZIONALIZZAZIONE
 		MBeanOperationInfo informazioniINTERNAZIONALIZZAZIONEOp = new MBeanOperationInfo(INFORMAZIONI_INTERNAZIONALIZZAZIONE,"Visualizza le informazioni sull'internazionalizzazione",
 						null,
@@ -427,7 +440,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		// Lista operazioni
 		MBeanOperationInfo[] operations = new MBeanOperationInfo[]{versionePddOp,versioneBaseDatiOp,vendorJavaOp,versioneJavaOp,
 				versioneTipoDatabaseOp,informazioniDatabaseOp,informazioniSSLOp,informazioniCompleteSSLOp,informazioniCRYPTOOp,
-				informazioniINTERNAZIONALIZZAZIONEOp,informazioniCompleteINTERNAZIONALIZZAZIONEOp,
+				informazioniCHARSETOp, informazioniINTERNAZIONALIZZAZIONEOp,informazioniCompleteINTERNAZIONALIZZAZIONEOp,
 				informazioniTIMEZONEOp, informazioniCompleteTIMEZONEOp,
 				informazioniProprietaJavaNetworkingOp, informazioniCompleteProprietaJavaNetworkingOp, 
 				informazioniProprietaJavaAltroOp, informazioniProprietaSistemaOp,
@@ -849,6 +862,25 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			}
 			if(bf.length()<=0){
 				throw new Exception("Non sono disponibili informazioni sulla lunghezza delle chiavi di cifratura");
+			}else{
+				return bf.toString();
+			}
+		}catch(Throwable e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String getInformazioniCharset(){
+		try{
+			StringBuffer bf = new StringBuffer();
+			
+			bf.append("Property 'file.encoding': ").append(CharsetUtilities.getDefaultCharsetByProperties()).append("\n");
+			bf.append("java.io.Reader: ").append(CharsetUtilities.getDefaultCharsetByCode()).append("\n");
+			bf.append("java.nio.charset.Charset: ").append(CharsetUtilities.getDefaultCharsetByCharset()).append("\n");
+			
+			if(bf.length()<=0){
+				throw new Exception("Non sono disponibili informazioni sul charset");
 			}else{
 				return bf.toString();
 			}

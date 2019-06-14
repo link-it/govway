@@ -35,6 +35,7 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 public class Costanti {
 
 	public final static String TIPOLOGIA = "gestionePolicyToken";
+	public final static String TIPOLOGIA_RETRIEVE = "retrievePolicyToken";
 	
 	
 	// Context
@@ -176,6 +177,33 @@ public class Costanti {
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_SIGNATURE_PROP_REF_ID = SecurityConstants.SIGNATURE_PROPERTY_REF_ID;
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_ENCRYP_PROP_REF_ID = SecurityConstants.ENCRYPTION_PROPERTY_REF_ID;
 	
+	public final static String POLICY_RETRIEVE_TOKEN_PARSER_TYPE = "policy.retrieveToken.claimsParser";
+	public final static String POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME = "policy.retrieveToken.claimsParser.className";
+	public final static String POLICY_RETRIEVE_TOKEN_MODE = "policy.retrieveToken.mode";
+	public final static String POLICY_RETRIEVE_TOKEN_URL = "policy.retrieveToken.endpoint.url";
+	public final static String POLICY_RETRIEVE_TOKEN_RESPONSE_TYPE = "policy.retrieveToken.responseType";
+	public final static String POLICY_RETRIEVE_TOKEN_AUTH_BASIC_STATO = "policy.retrieveToken.endpoint.basic.stato";
+	public final static String POLICY_RETRIEVE_TOKEN_AUTH_BASIC_USERNAME = "policy.retrieveToken.endpoint.basic.username";
+	public final static String POLICY_RETRIEVE_TOKEN_AUTH_BASIC_PASSWORD = "policy.retrieveToken.endpoint.basic.password";
+	public final static String POLICY_RETRIEVE_TOKEN_AUTH_BASIC_AS_AUTHORIZATION_HEADER = "policy.retrieveToken.endpoint.basic.asAuthorizationHeader";
+	public final static String POLICY_RETRIEVE_TOKEN_AUTH_BEARER_STATO = "policy.retrieveToken.endpoint.bearer.stato";
+	public final static String POLICY_RETRIEVE_TOKEN_AUTH_BEARER_TOKEN = "policy.retrieveToken.endpoint.bearer.token";
+	public final static String POLICY_RETRIEVE_TOKEN_AUTH_SSL_STATO = "policy.retrieveToken.endpoint.https.stato";
+	public final static String POLICY_RETRIEVE_TOKEN_USERNAME = "policy.retrieveToken.username";
+	public final static String POLICY_RETRIEVE_TOKEN_PASSWORD = "policy.retrieveToken.password";
+	public final static String POLICY_RETRIEVE_TOKEN_SCOPES = "policy.retrieveToken.scope";
+	public final static String POLICY_RETRIEVE_TOKEN_AUDIENCE = "policy.retrieveToken.audience";
+	public final static String POLICY_RETRIEVE_TOKEN_SAVE_ERROR_IN_CACHE = "policy.retrieveToken.saveErrorInCache";
+	
+	public final static String POLICY_RETRIEVE_TOKEN_FORWARD_MODE = "policy.tokenForward.mode";
+	public final static String POLICY_RETRIEVE_TOKEN_FORWARD_MODE_RFC6750_HEADER = "RFC6750_header";
+	public final static String POLICY_RETRIEVE_TOKEN_FORWARD_MODE_RFC6750_URL = "RFC6750_url";
+	public final static String POLICY_RETRIEVE_TOKEN_FORWARD_MODE_CUSTOM_HEADER = "CUSTOM_header";
+	public final static String POLICY_RETRIEVE_TOKEN_FORWARD_MODE_CUSTOM_URL = "CUSTOM_url";
+	public final static String POLICY_RETRIEVE_TOKEN_FORWARD_MODE_CUSTOM_HEADER_NAME = "policy.tokenForward.mode.header";
+	public final static String POLICY_RETRIEVE_TOKEN_FORWARD_MODE_CUSTOM_URL_PARAMETER_NAME = "policy.tokenForward.mode.queryParameter";
+
+	
 	
 	
 	// STANDARD
@@ -184,6 +212,12 @@ public class Costanti {
 	public final static String RFC6750_FORM_PARAMETER_ACCESS_TOKEN = "access_token";
 	
 	// ELEMENTI SELECT
+	
+	public final static String ID_RETRIEVE_TOKEN_METHOD = "retrieveTokenMethod";
+	public final static String ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL = "clientCredentials";
+	public final static String ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD = "usernamePassword";
+	public final static String ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL_LABEL = "Client Credentials";
+	public final static String ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD_LABEL = "Resource Owner Password Credentials";
 	
 	public final static String ID_INTROSPECTION_HTTP_METHOD = "introspectionHttpMethod";
 	

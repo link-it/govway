@@ -43,6 +43,7 @@ import java.util.Properties;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -55,6 +56,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
+import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Charset;
@@ -64,6 +66,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 import org.openspcoop2.utils.transport.http.RFC2047Utilities;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
+import org.openspcoop2.utils.transport.http.WrappedLogSSLSocketFactory;
 
 
 
@@ -84,7 +87,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 	// Caused by: java.net.ProtocolException: HTTP method PATCH doesn't support output
 	//    at sun.net.www.protocol.http.HttpURLConnection.getOutputStream(HttpURLConnection.java:1081)
 
-	
+
 	
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
@@ -392,7 +395,14 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			// Imposta Contesto SSL se attivo
 			if(this.sslContextProperties!=null){
 				HttpsURLConnection httpsConn = (HttpsURLConnection) this.httpConn;
-				httpsConn.setSSLSocketFactory(sslContext.getSocketFactory());
+				SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+				if(this.debug) {
+					String clientCertificateConfigurated = this.sslContextProperties.getKeyStoreLocation();
+					sslSocketFactory = new WrappedLogSSLSocketFactory(sslSocketFactory, 
+							this.logger.getLogger(), this.logger.buildMsg(""),
+							clientCertificateConfigurated);
+				}		
+				httpsConn.setSSLSocketFactory(sslSocketFactory);
 				
 				StringBuffer bfLog = new StringBuffer();
 				HostnameVerifier hostnameVerifier = SSLUtilities.generateHostnameVerifier(this.sslContextProperties, bfLog, 
@@ -401,6 +411,19 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 					this.logger.debug(bfLog.toString());
 				if(hostnameVerifier!=null){
 					httpsConn.setHostnameVerifier(hostnameVerifier);
+				}
+			}
+			else {
+				if(this.debug && (this.httpConn instanceof HttpsURLConnection)) {
+					HttpsURLConnection httpsConn = (HttpsURLConnection) this.httpConn;
+					if(httpsConn.getSSLSocketFactory()!=null) {
+						SSLSocketFactory sslSocketFactory = httpsConn.getSSLSocketFactory();
+						String clientCertificateConfigurated = SSLUtilities.getJvmHttpsClientCertificateConfigurated();
+						sslSocketFactory = new WrappedLogSSLSocketFactory(sslSocketFactory, 
+								this.logger.getLogger(), this.logger.buildMsg(""),
+								clientCertificateConfigurated);
+						httpsConn.setSSLSocketFactory(sslSocketFactory);
+					}
 				}
 			}
 
@@ -558,6 +581,14 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 					this.logger.info("Impostazione autenticazione (username:"+user+" password:"+password+") ["+authentication+"]",false);
 			}
 
+			
+			// Authentication Token
+			NameValue nv = this.getTokenHeader();
+	    	if(nv!=null) {
+	    		this.httpConn.setRequestProperty(nv.getName(),nv.getValue());
+	    		if(this.debug)
+					this.logger.info("Impostazione autenticazione token (header-name '"+nv.getName()+"' value '"+nv.getValue()+"')",false);
+	    	}
 			
 			// Impostazione Proprieta del trasporto
 			if(this.debug)
@@ -934,7 +965,14 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
     	return null;
     }
     private void buildLocation() throws ConnettoreException {
-    	this.location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);			
+    	this.location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);	
+    	NameValue nv = this.getTokenQueryParameter();
+    	if(nv!=null) {
+    		if(this.propertiesUrlBased==null) {
+    			this.propertiesUrlBased = new Properties();
+    		}
+    		this.propertiesUrlBased.put(nv.getName(), nv.getValue());
+    	}
 		this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, 
 				this.connettoreHttps ? TipiConnettore.HTTPS.toString() : TipiConnettore.HTTP.toString(), 
 				this.propertiesUrlBased, this.location,

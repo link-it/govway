@@ -68,6 +68,7 @@ public class ConnettoriCostanti {
 	public final static String LABEL_CONNETTORE_ABILITATO = "Abilitato";
 	public final static String LABEL_CONNETTORE_PROXY = "Proxy";
 	public final static String LABEL_CONNETTORE_HTTP = "Autenticazione Http";
+	public final static String LABEL_CONNETTORE_BEARER = "Autenticazione Token";
 	public final static String LABEL_CONNETTORE_HTTPS = "Autenticazione Https";
 	public final static String LABEL_CONNETTORE_TEMPI_RISPOSTA = "Tempi Risposta";
 	public final static String LABEL_CONNETTORE_OPZIONI_AVANZATE = "Opzioni Avanzate";
@@ -123,6 +124,9 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP = "confSSLCredWizStep";
 	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_DOWNLOAD= "confSSLCredFileCertLink";
 	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_MODIFICA = "confSSLCredFileModificaCertLink";
+	
+	public final static String PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO = "connettore_token_policy_stat";
+	public final static String PARAMETRO_CONNETTORE_TOKEN_POLICY = "connettore_token_policy";
 	
 	public final static String PARAMETRO_CONNETTORE_PROXY_ENABLED = "connettore_proxy_enabled";
 	public final static String PARAMETRO_CONNETTORE_PROXY_HOSTNAME = "connettore_proxy_host";
@@ -243,6 +247,8 @@ public class ConnettoriCostanti {
 	public final static String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE = "Gestione Redirect";
 	public final static String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP = "Max Numero di Redirect";
 	
+	public final static String LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY = "Policy";
+	
 	public final static String LABEL_PARAMETRO_CONNETTORE_JMS_NOME_CODA = "Nome";
 	public final static String LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_CODA = "Tipo";
 	public final static String LABEL_PARAMETRO_CONNETTORE_JMS_USERNAME = "Utente";
@@ -334,6 +340,8 @@ public class ConnettoriCostanti {
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP = "Autenticazione Http";
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_USERNAME = LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME;
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_PASSWORD = LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD;
+	
+	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN = "Autenticazione Token";
 	
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS = "Autenticazione Https";
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_SSL_TYPE = LABEL_PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE;

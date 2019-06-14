@@ -177,7 +177,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 
 			if ( !TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione()) ) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autenticazione puntuale non è abilitata");
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione per richiedente non è abilitata");
 			}
 			
 			final IDServizioApplicativo idSA = new IDServizioApplicativo();
@@ -261,7 +261,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
 			if ( !TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione())) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autenticazione puntuale per soggetti non è abilitata");
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione per richiedente per soggetti non è abilitata");
 			}
 			
 			final IDSoggetto daAutenticareID = new IDSoggetto(env.tipo_soggetto, body.getSoggetto());
@@ -927,7 +927,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 									
 			CorrelazioneApplicativaElemento to_del = BaseHelper.evalnull( () -> BaseHelper.findAndRemoveFirst( 
 					correlazioneApplicativa.getElementoList(), 
-					e -> e.getNome().equals(searchElemento)
+					e -> (e.getNome()==null ? "" : e.getNome()).equals(searchElemento)
 				));
 			
 			if ( to_del != null ) {
@@ -977,7 +977,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 									
 			CorrelazioneApplicativaRispostaElemento to_del = BaseHelper.evalnull( () -> BaseHelper.findAndRemoveFirst( 
 					correlazioneApplicativa.getElementoList(), 
-					e -> e.getNome().equals(searchElemento)
+					e -> (e.getNome()==null ? "" : e.getNome()).equals(searchElemento)
 				));
 			
 			if ( to_del != null ) {
@@ -1763,7 +1763,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 					: elemento;			
 			List<CorrelazioneApplicativaElemento> lista = BaseHelper.evalnull( () -> pa.getCorrelazioneApplicativa().getElementoList() );
             
-			Optional<CorrelazioneApplicativaElemento> el = BaseHelper.findFirst( lista, c -> c.getNome().equals(searchElemento) );
+			Optional<CorrelazioneApplicativaElemento> el = BaseHelper.findFirst( lista, c -> (c.getNome()==null ? "" : c.getNome()).equals(searchElemento) );
 			
 			if ( !el.isPresent() )
 				throw FaultCode.NOT_FOUND.toException("CorrelazioneApplicativaRichiesta per l'elemento " + elemento + " non presente");
@@ -1808,7 +1808,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			List<CorrelazioneApplicativaRispostaElemento> lista = BaseHelper.evalnull( () -> pa.getCorrelazioneApplicativaRisposta().getElementoList() );
             
-			Optional<CorrelazioneApplicativaRispostaElemento> el = BaseHelper.findFirst( lista, c -> c.getNome().equals(searchElemento) );
+			Optional<CorrelazioneApplicativaRispostaElemento> el = BaseHelper.findFirst( lista, c -> (c.getNome()==null ? "" : c.getNome()).equals(searchElemento) );
 			
 			if ( !el.isPresent() )
 				throw FaultCode.NOT_FOUND.toException("CorrelazioneApplicativaRisposta per l'elemento " + elemento + " non presente");
@@ -2260,7 +2260,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				pa.setCorrelazioneApplicativa(new org.openspcoop2.core.config.CorrelazioneApplicativa());
 			
 			final List<CorrelazioneApplicativaElemento> correlazioni = pa.getCorrelazioneApplicativa().getElementoList();
-			final CorrelazioneApplicativaElemento oldElem = BaseHelper.findAndRemoveFirst(correlazioni, c -> c.getNome().equals(searchElemento));
+			final CorrelazioneApplicativaElemento oldElem = BaseHelper.findAndRemoveFirst(correlazioni, c -> (c.getNome()==null ? "" : c.getNome()).equals(searchElemento));
 			
 			if ( oldElem == null ) 
 				throw FaultCode.NOT_FOUND.toException("Correlazione Applicativa Richiesta per l'elemento " + elemento + " non trovata ");
@@ -2320,7 +2320,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				pa.setCorrelazioneApplicativaRisposta(new org.openspcoop2.core.config.CorrelazioneApplicativaRisposta());
 			
 			final List<CorrelazioneApplicativaRispostaElemento> correlazioni = pa.getCorrelazioneApplicativaRisposta().getElementoList();
-			final CorrelazioneApplicativaRispostaElemento oldElem = BaseHelper.findAndRemoveFirst(correlazioni, c -> c.getNome().equals(searchElemento));
+			final CorrelazioneApplicativaRispostaElemento oldElem = BaseHelper.findAndRemoveFirst(correlazioni, c -> (c.getNome()==null ? "" : c.getNome()).equals(searchElemento));
 			
 			if ( oldElem == null ) 
 				throw FaultCode.NOT_FOUND.toException("Correlazione Applicativa Risposta per l'elemento " + elemento + " non trovata ");

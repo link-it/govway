@@ -89,7 +89,7 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyAdd extends Acti
 			policy.setTipoIntervalloOsservazioneStatistico(ConfigurazioneCostanti.TIPO_PERIODO_STATISTICO_DEFAULT);
 			policy.setTipoApplicabilita(ConfigurazioneCostanti.TIPO_APPLICABILITA_DEFAULT);
 			
-			String id = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID); 
+			String id = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID); 
 			boolean editMode = true;
 			boolean editOnlyValueMode = false;
 			long countPolicyAttiveConQualsiasiStato = 0;
@@ -135,9 +135,9 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyAdd extends Acti
 					}
 				}
 			}else{
-				nomePolicy = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NOME);
+				nomePolicy = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NOME);
 				
-				oldNomeSuggeritoPolicy = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_OLD_NOME_SUGGERITO);
+				oldNomeSuggeritoPolicy = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_OLD_NOME_SUGGERITO);
 //				if(oldNomeSuggeritoPolicy!=null && !"".equals(oldNomeSuggeritoPolicy)){
 //					if(cc.getOldNomeSuggeritoPolicy()==null){
 //						cc.setOldNomeSuggeritoPolicy(oldNomeSuggeritoPolicy);
@@ -154,7 +154,7 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyAdd extends Acti
 
 			// Nome è l'id
 			
-			String oldIdPolicyS = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_OLD_ID);
+			String oldIdPolicyS = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_OLD_ID);
 			if(oldIdPolicyS!=null && !"".equals(oldIdPolicyS)){
 				if(policy.getOldIdPolicy() ==null){
 					IdPolicy oldIdPolicy = new IdPolicy();
@@ -208,8 +208,8 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyAdd extends Acti
 					}
 				}
 			}else{
-				descrizionePolicy = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_DESCRIZIONE);
-				oldDescrizioneSuggeritaPolicy = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_OLD_DESCRIZIONE_SUGGERITA);
+				descrizionePolicy = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_DESCRIZIONE);
+				oldDescrizioneSuggeritaPolicy = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_OLD_DESCRIZIONE_SUGGERITA);
 //				if(oldDescrizioneSuggeritaPolicy!=null && !"".equals(oldDescrizioneSuggeritaPolicy)){
 //					if(cc.getOldDescrizioneSuggeritaPolicy()==null){
 //						cc.setOldDescrizioneSuggeritaPolicy(oldDescrizioneSuggeritaPolicy);

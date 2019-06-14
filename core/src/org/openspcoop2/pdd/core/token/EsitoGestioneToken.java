@@ -31,7 +31,7 @@ package org.openspcoop2.pdd.core.token;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public abstract class EsitoGestioneToken extends EsitoToken implements java.io.Serializable {
+public abstract class EsitoGestioneToken extends AbstractEsitoValidazioneToken implements java.io.Serializable {
 
 	
 	/**
@@ -39,19 +39,9 @@ public abstract class EsitoGestioneToken extends EsitoToken implements java.io.S
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private boolean valido;
-	
-	private boolean inCache;
-
 	/** Informazioni sul token */
 	private InformazioniToken informazioniToken;
 		
-	public boolean isValido() {
-		return this.valido;
-	}
-	public void setValido(boolean valido) {
-		this.valido = valido;
-	}
 	
 	public InformazioniToken getInformazioniToken() {
 		return this.informazioniToken;
@@ -60,22 +50,9 @@ public abstract class EsitoGestioneToken extends EsitoToken implements java.io.S
 		this.informazioniToken = informazioniToken;
 	}
 	
-	public boolean isInCache() {
-		return this.inCache;
-	}
-	public void setInCache(boolean inCache) {
-		this.inCache = inCache;
-	}
-	
 	@Override
 	public String toString(){
 		StringBuffer bf = new StringBuffer();
-		
-		bf.append("token valido: ");
-		bf.append(this.valido);
-		
-		bf.append(" info in cache: ");
-		bf.append(this.inCache);
 		
 		bf.append(super.toString());
 		

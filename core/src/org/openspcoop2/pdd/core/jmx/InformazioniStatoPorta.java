@@ -42,7 +42,7 @@ public class InformazioniStatoPorta {
 			boolean tracciamento, boolean dumpPD, boolean dumpPA,
 			boolean log4j_tracciamento, boolean log4j_dump,
 			String infoDatabase, String infoSSL, String infoCryptographyKeyLength, 
-			String infoInternazionalizzazione, String infoTimeZone,  
+			String infoCharset, String infoInternazionalizzazione, String infoTimeZone,  
 			String infoProprietaJavaNetworking, String infoProprietaJavaAltro, String infoProprietaSistema,
 			String infoProtocolli,
 			InformazioniStatoPortaCache ... cache){
@@ -55,7 +55,7 @@ public class InformazioniStatoPorta {
 				tracciamento, dumpPD, dumpPA,
 				log4j_tracciamento, log4j_dump,
 				infoDatabase, infoSSL, infoCryptographyKeyLength, 
-				infoInternazionalizzazione, infoTimeZone,
+				infoCharset, infoInternazionalizzazione, infoTimeZone,
 				infoProprietaJavaNetworking, infoProprietaJavaAltro, infoProprietaSistema,
 				infoProtocolli,
 				null,null,
@@ -75,7 +75,7 @@ public class InformazioniStatoPorta {
 			boolean tracciamento, boolean dumpPD, boolean dumpPA, 
 			boolean log4j_tracciamento, boolean log4j_dump,
 			String infoDatabase, String infoSSL, String infoCryptographyKeyLength, 
-			String infoInternazionalizzazione, String infoTimeZone, 
+			String infoCharset, String infoInternazionalizzazione, String infoTimeZone, 
 			String infoProprietaJavaNetworking, String infoProprietaJavaAltro, String infoProprietaSistema,
 			String infoProtocolli,
 			String statoConnessioniDB, String statoConnessioniJMS,
@@ -166,6 +166,13 @@ public class InformazioniStatoPorta {
 		bf.append("============================\n");
 		bf.append("\n");
 		bf.append(infoCryptographyKeyLength);
+		bf.append("\n");
+		
+		bf.append("====================\n");
+		bf.append("Informazioni Charset\n");
+		bf.append("====================\n");
+		bf.append("\n");
+		bf.append(infoCharset);
 		bf.append("\n");
 		
 		bf.append("===================================\n");

@@ -1,3 +1,15 @@
+2019-06-14  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.1.0
+
+2019-06-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-851
+	Aggiunta la possiblità di definire Token Policy funzionali alla negoziazione di un access token, 
+	tramite i flussi oauth Client Credentials e Resource Owner Password Credentials.
+	La policy, una volta definita, può essere associata ad un connettore in modo da inoltrare il token acquisito verso l'endpoint del connettore.
+
 2019-06-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

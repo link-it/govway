@@ -9838,12 +9838,20 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	 */
 	@Override
 	public List<GenericProperties> getGenericProperties(String tipologia) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return getGenericProperties(tipologia, null, null,true, null);
+		List<String> listTipologia = new ArrayList<>();
+		if(tipologia!=null) {
+			listTipologia.add(tipologia);
+		}
+		return getGenericProperties(listTipologia, null, null,true, null);
 	}
 	
 	@Override
 	public GenericProperties getGenericProperties(String tipologia, String name) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		List<GenericProperties> l = getGenericProperties(tipologia, null, null,true, name);
+		List<String> listTipologia = new ArrayList<>();
+		if(tipologia!=null) {
+			listTipologia.add(tipologia);
+		}
+		List<GenericProperties> l = getGenericProperties(listTipologia, null, null,true, name);
 		if(l==null || l.size()<=0) {
 			throw new DriverConfigurazioneNotFound("[getGenericProperties] Configurazione Generic Properties non presenti con tipologia '"+tipologia+"' e nome '"+name+"'");
 		}
@@ -9859,10 +9867,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	 * @return proprieta' generiche
 	 * 
 	 */
-	public List<GenericProperties> getGenericProperties(String tipologia, Integer idLista, ISearch ricerca, boolean throwNotFoundException) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public List<GenericProperties> getGenericProperties(List<String> tipologia, Integer idLista, ISearch ricerca, boolean throwNotFoundException) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return getGenericProperties(tipologia, idLista, ricerca, throwNotFoundException, null);
 	}
-	private List<GenericProperties> getGenericProperties(String tipologia, Integer idLista, ISearch ricerca, boolean throwNotFoundException, String nomeEsatto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	private List<GenericProperties> getGenericProperties(List<String> tipologia, Integer idLista, ISearch ricerca, boolean throwNotFoundException, String nomeEsatto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -9871,10 +9879,16 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		Integer offset = null;
 		Integer limit =null;
 		String search = "";
+		String filterTipoTokenPolicy = null;
 		if(idLista != null && ricerca != null) {
 			limit = ricerca.getPageSize(idLista);
 			offset = ricerca.getIndexIniziale(idLista);
 			search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+			
+			filterTipoTokenPolicy = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_TIPO_TOKEN_POLICY);
+			
+			this.log.debug("search : " + search);
+			this.log.debug("filterTipoTokenPolicy : " + filterTipoTokenPolicy);
 		}
 		
 		
@@ -9899,8 +9913,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.CONFIG_GENERIC_PROPERTIES);
 			sqlQueryObject.addSelectCountField("*", "cont");
-			if(tipologia!=null) {
-				sqlQueryObject.addWhereCondition("tipologia=?");
+			if(tipologia!=null && !tipologia.isEmpty()) {
+				sqlQueryObject.addWhereINCondition("tipologia", true, tipologia.toArray(new String[1]));
+			}
+			if(filterTipoTokenPolicy!=null && !"".equals(filterTipoTokenPolicy)) {
+				sqlQueryObject.addWhereCondition("tipo=?");
 			}
 			if(nomeEsatto!=null) {
 				sqlQueryObject.addWhereCondition("nome=?");
@@ -9914,8 +9931,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			 
 			stm = con.prepareStatement(sqlQuery);
 			int index = 1;
-			if(tipologia!=null) {
-				stm.setString(index++, tipologia);
+			if(filterTipoTokenPolicy!=null && !"".equals(filterTipoTokenPolicy)) {
+				stm.setString(index++, filterTipoTokenPolicy);
 			}
 			if(nomeEsatto!=null) {
 				stm.setString(index++, nomeEsatto);
@@ -9934,8 +9951,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addFromTable(CostantiDB.CONFIG_GENERIC_PROPERTIES);
 			sqlQueryObject.addSelectField("id");
 			sqlQueryObject.addSelectField("nome");
-			if(tipologia!=null) {
-				sqlQueryObject.addWhereCondition("tipologia=?");
+			if(tipologia!=null && !tipologia.isEmpty()) {
+				sqlQueryObject.addWhereINCondition("tipologia", true, tipologia.toArray(new String[1]));
+			}
+			if(filterTipoTokenPolicy!=null && !"".equals(filterTipoTokenPolicy)) {
+				sqlQueryObject.addWhereCondition("tipo=?");
 			}
 			if(nomeEsatto!=null) {
 				sqlQueryObject.addWhereCondition("nome=?");
@@ -9955,8 +9975,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 			index = 1;
-			if(tipologia!=null) {
-				stm.setString(index++, tipologia);
+			if(filterTipoTokenPolicy!=null && !"".equals(filterTipoTokenPolicy)) {
+				stm.setString(index++, filterTipoTokenPolicy);
 			}
 			if(nomeEsatto!=null) {
 				stm.setString(index++, nomeEsatto);
@@ -24809,7 +24829,77 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 		}
 	}
-	
+	public boolean isPolicyNegoziazioneTokenUsedInConnettore(String nome) throws DriverConfigurazioneException{
+		String nomeMetodo = "isPolicyNegoziazioneTokenUsedInConnettore";
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONNETTORI);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("token_policy=?");
+			String queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setString(1, nome);
+			risultato = stmt.executeQuery();
+
+			if (risultato.next()) {
+
+				return true;
+
+			}
+
+			return false;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
 	
 	
 	public Connettore getConnettore(long idConnettore) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {

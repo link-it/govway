@@ -386,6 +386,16 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			infoCryptographyKeyLength = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
+		String infoCharset = null;
+		try{
+			infoCharset = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura delle informazioni sul charset (jmxResourcePdD): "+e.getMessage(),e);
+			infoCharset = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
 		String infoInternazionalizzazione = null;
 		try{
 			infoInternazionalizzazione = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -555,7 +565,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				"true".equals(tracciamento), "true".equals(dumpPD), "true".equals(dumpPA),
 				"true".equals(log4j_tracciamento), "true".equals(log4j_dump), 
 				infoDatabase, infoSSL, infoCryptographyKeyLength, 
-				infoInternazionalizzazione, infoTimeZone, 
+				infoCharset, infoInternazionalizzazione, infoTimeZone, 
 				infoProprietaJavaNetworking, infoProprietaJavaAltro, infoProprietaSistema,
 				infoProtocolli,
 				statoConnessioniDB, statoConnessioniJMS,

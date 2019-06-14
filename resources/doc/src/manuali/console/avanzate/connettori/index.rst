@@ -18,6 +18,8 @@ della comunicazione http:
 -  *Autenticazione http*: tale funzionalità permette di impostare delle
    credenziali http basic (username e password).
 
+-  *Autenticazione token*: tale funzionalità permette di inoltrate un Bearer Token.
+
 -  *Autenticazione https*: se l'utente lo desidera può personalizzare
    tutti gli aspetti che riguardano una comunicazione sicura su https.
 
@@ -66,6 +68,7 @@ connettore built-in JMS.
         :maxdepth: 2
         
         http
+	tokenPolicy
         https
         proxy
 	httpOpzioniAvanzate

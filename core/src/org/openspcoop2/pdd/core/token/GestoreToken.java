@@ -57,6 +57,8 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPS;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.token.pa.EsitoGestioneTokenPortaApplicativa;
 import org.openspcoop2.pdd.core.token.pa.EsitoPresenzaTokenPortaApplicativa;
+import org.openspcoop2.pdd.core.token.parser.ClaimsNegoziazione;
+import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
 import org.openspcoop2.pdd.core.token.pd.EsitoGestioneTokenPortaDelegata;
 import org.openspcoop2.pdd.core.token.pd.EsitoPresenzaTokenPortaDelegata;
@@ -79,6 +81,7 @@ import org.openspcoop2.utils.security.JsonEncrypt;
 import org.openspcoop2.utils.security.JsonSignature;
 import org.openspcoop2.utils.security.JsonVerifySignature;
 import org.openspcoop2.utils.transport.TransportRequestContext;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -319,7 +322,7 @@ public class GestoreToken {
 	
 	
 	
-	// ********* VALIDAZIONE CONFIGURAZIONE ****************** */
+	// ********* [VALIDAZIONE-TOKEN] VALIDAZIONE CONFIGURAZIONE ****************** */
 	
 	public static void validazioneConfigurazione(AbstractDatiInvocazione datiInvocazione) throws ProviderException, ProviderValidationException {
 		TokenProvider p = new TokenProvider();
@@ -329,7 +332,7 @@ public class GestoreToken {
 	
 	
 	
-	// ********* VERIFICA POSIZIONE TOKEN ****************** */
+	// ********* [VALIDAZIONE-TOKEN] VERIFICA POSIZIONE TOKEN ****************** */
 	
 	public static EsitoPresenzaToken verificaPosizioneToken(Logger log, AbstractDatiInvocazione datiInvocazione, boolean portaDelegata) {
 		
@@ -549,7 +552,7 @@ public class GestoreToken {
 	
 	
 	
-	// ********* VALIDAZIONE JWT TOKEN ****************** */
+	// ********* [VALIDAZIONE-TOKEN] VALIDAZIONE JWT TOKEN ****************** */
 	
 	public static EsitoGestioneToken validazioneJWTToken(Logger log, AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) throws Exception {
 		
@@ -713,7 +716,7 @@ public class GestoreToken {
 	
 	
 	
-	// ********* INTROSPECTION TOKEN ****************** */
+	// ********* [VALIDAZIONE-TOKEN] INTROSPECTION TOKEN ****************** */
 	
 	public static EsitoGestioneToken introspectionToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
@@ -872,7 +875,7 @@ public class GestoreToken {
 	
 	
 	
-	// ********* USER INFO TOKEN ****************** */
+	// ********* [VALIDAZIONE-TOKEN] USER INFO TOKEN ****************** */
 	
 	public static EsitoGestioneToken userInfoToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
@@ -1031,7 +1034,7 @@ public class GestoreToken {
 	
 	
 	
-	// ********* FORWARD TOKEN ****************** */
+	// ********* [VALIDAZIONE-TOKEN] FORWARD TOKEN ****************** */
 	
 	public static void forwardToken(Logger log, String idTransazione, AbstractDatiInvocazione datiInvocazione, EsitoPresenzaToken esitoPresenzaToken, 
 			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo, 
@@ -1780,6 +1783,23 @@ public class GestoreToken {
 		return list;
 	}
 	
+	public static List<InformazioniToken> getInformazioniTokenNonValide(EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo){
+		
+		// A differenza del metodo sopra on si controlla che il token sia valido.
+		
+		List<InformazioniToken> list = new ArrayList<>();
+		if(esitoValidazioneJWT!=null && esitoValidazioneJWT.getInformazioniToken()!=null) {
+			list.add(esitoValidazioneJWT.getInformazioniToken());
+		}
+		if(esitoIntrospection!=null && esitoIntrospection.getInformazioniToken()!=null) {
+			list.add(esitoIntrospection.getInformazioniToken());
+		}
+		if(esitoUserInfo!=null && esitoUserInfo.getInformazioniToken()!=null) {
+			list.add(esitoUserInfo.getInformazioniToken());
+		}
+		return list;
+	}
+	
 	public static InformazioniToken normalizeInformazioniToken(List<InformazioniToken> list) throws Exception {
 		if(list.size()==1) {
 			return list.get(0);
@@ -1791,7 +1811,9 @@ public class GestoreToken {
 	
 	
 	
-	// ********* UTILITIES INTERNE ****************** */
+	
+	
+	// ********* [VALIDAZIONE-TOKEN] UTILITIES INTERNE ****************** */
 	
 	private static final String format = "yyyy-MM-dd HH:mm:ss.SSS";
 	
@@ -1809,6 +1831,7 @@ public class GestoreToken {
 				 **/
 				if(!now.before(esitoGestioneToken.getInformazioniToken().getExp())){
 					esitoGestioneToken.setValido(false);
+					esitoGestioneToken.setDateValide(false);
 					esitoGestioneToken.setDetails("Token expired");
 					if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
 						esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
@@ -1835,6 +1858,7 @@ public class GestoreToken {
 				 **/
 				if(!esitoGestioneToken.getInformazioniToken().getNbf().before(now)){
 					esitoGestioneToken.setValido(false);
+					esitoGestioneToken.setDateValide(false);
 					SimpleDateFormat sdf = new SimpleDateFormat(format);
 					esitoGestioneToken.setDetails("Token not usable before "+sdf.format(esitoGestioneToken.getInformazioniToken().getNbf()));
 					if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
@@ -1864,6 +1888,7 @@ public class GestoreToken {
 					Date oldMax = new Date((DateManager.getTimeMillis() - old.intValue()));
 					if(esitoGestioneToken.getInformazioniToken().getIat().before(oldMax)) {
 						esitoGestioneToken.setValido(false);
+						esitoGestioneToken.setDateValide(false);
 						SimpleDateFormat sdf = new SimpleDateFormat(format);
 						esitoGestioneToken.setDetails("Token expired; iat time '"+sdf.format(esitoGestioneToken.getInformazioniToken().getIat())+"' too old");
 						if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
@@ -1914,10 +1939,13 @@ public class GestoreToken {
 		// *** Raccola Parametri ***
 		
 		String endpoint = null;
+		String prefixConnettore = null;
 		if(introspection) {
 			endpoint = policyGestioneToken.getIntrospection_endpoint();
+			prefixConnettore = "[EndpointIntrospection: "+endpoint+"] ";
 		}else {
 			endpoint = policyGestioneToken.getUserInfo_endpoint();
+			prefixConnettore = "[EndpointUserInfo: "+endpoint+"] ";
 		}
 		
 		TipoTokenRequest tipoTokenRequest = null;
@@ -1970,6 +1998,11 @@ public class GestoreToken {
 		
 		// Nell'endpoint config ci finisce i timeout e la configurazione proxy
 		Properties endpointConfig = policyGestioneToken.getProperties().get(Costanti.POLICY_ENDPOINT_CONFIG);
+		if(endpointConfig.containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME)) {
+			String hostProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME);
+			String portProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT);
+			prefixConnettore = prefixConnettore+" [via Proxy: "+hostProxy+":"+portProxy+"] ";
+		}
 		
 		boolean https = policyGestioneToken.isEndpointHttps();
 		boolean httpsClient = false;
@@ -2098,10 +2131,10 @@ public class GestoreToken {
 		boolean send = connettore.send(responseCachingConfigurazione, connettoreMsg);
 		if(send==false) {
 			if(connettore.getEccezioneProcessamento()!=null) {
-				throw new Exception(connettore.getErrore(), connettore.getEccezioneProcessamento());
+				throw new Exception(prefixConnettore+connettore.getErrore(), connettore.getEccezioneProcessamento());
 			}
 			else {
-				throw new Exception(connettore.getErrore());
+				throw new Exception(prefixConnettore+connettore.getErrore());
 			}
 		}
 		
@@ -2120,7 +2153,7 @@ public class GestoreToken {
 		httpResponse.setResultHTTPOperation(connettore.getCodiceTrasporto());
 		
 		if(connettore.getCodiceTrasporto() >= 200 &&  connettore.getCodiceTrasporto() < 299) {
-			String msgSuccess = "Connessione completata con successo (codice trasporto: "+connettore.getCodiceTrasporto()+")";
+			String msgSuccess = prefixConnettore+"Connessione completata con successo (codice trasporto: "+connettore.getCodiceTrasporto()+")";
 			if(bout!=null && bout.size()>0) {
 				log.debug(msgSuccess);
 				httpResponse.setContent(bout.toByteArray());
@@ -2131,7 +2164,7 @@ public class GestoreToken {
 			}
 		}
 		else {
-			String msgError = "Connessione terminata con errore (codice trasporto: "+connettore.getCodiceTrasporto()+")";
+			String msgError = prefixConnettore+"Connessione terminata con errore (codice trasporto: "+connettore.getCodiceTrasporto()+")";
 			if(bout!=null && bout.size()>0) {
 				log.debug(msgError+": "+bout.toString());
 				httpResponse.setContent(bout.toByteArray());
@@ -2159,5 +2192,422 @@ public class GestoreToken {
 			}
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// ********* [NEGOZIAZIONE-TOKEN] VALIDAZIONE CONFIGURAZIONE ****************** */
+	
+	public static void validazioneConfigurazione(PolicyNegoziazioneToken policyNegoziazioneToken) throws ProviderException, ProviderValidationException {
+		NegoziazioneTokenProvider p = new NegoziazioneTokenProvider();
+		p.validate(policyNegoziazioneToken.getProperties());
+	}
+	
+	
+	// ********* [NEGOZIAZIONE-TOKEN] ENDPOINT TOKEN ****************** */
+	
+	public static EsitoNegoziazioneToken endpointToken(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken, 
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws Exception {
+		EsitoNegoziazioneToken esitoNegoziazioneToken = null;
+		boolean riavviaNegoziazione = false;
+		
+		if(GestoreToken.cacheToken==null){
+			esitoNegoziazioneToken = _endpointToken(debug, log, policyNegoziazioneToken, 
+					pddContext, protocolFactory);
+			
+			if(esitoNegoziazioneToken!=null && esitoNegoziazioneToken.isValido()) {
+				// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
+				_validazioneInformazioniNegoziazioneToken(esitoNegoziazioneToken, policyNegoziazioneToken, 
+						policyNegoziazioneToken.isSaveErrorInCache());
+			}
+			
+		}
+    	else{
+    		String funzione = "Negoziazione";
+    		String keyCache = buildCacheKeyNegoziazione(funzione, policyNegoziazioneToken.getName());
+
+			synchronized (GestoreToken.cacheToken) {
+
+				org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+				if(response != null){
+					if(response.getObject()!=null){
+						GestoreToken.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+						esitoNegoziazioneToken = (EsitoNegoziazioneToken) response.getObject();
+						esitoNegoziazioneToken.setInCache(true);
+					}else if(response.getException()!=null){
+						GestoreToken.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+						throw (Exception) response.getException();
+					}else{
+						GestoreToken.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+					}
+				}
+
+				if(esitoNegoziazioneToken==null) {
+					// Effettuo la query
+					GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
+					esitoNegoziazioneToken = _endpointToken(debug, log, policyNegoziazioneToken, 
+							pddContext, protocolFactory);
+						
+					// Aggiungo la risposta in cache (se esiste una cache)	
+					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+					// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+					// - impostare il noCache a true
+					if(esitoNegoziazioneToken!=null){ // altrimenti lo mettero' in cache al giro dopo.
+						esitoNegoziazioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
+						if(!esitoNegoziazioneToken.isNoCache()){
+							GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
+							try{	
+								org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+								responseCache.setObject(esitoNegoziazioneToken);
+								GestoreToken.cacheToken.put(keyCache,responseCache);
+							}catch(UtilsException e){
+								GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+							}
+						}
+					}else{
+						throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
+					}
+					
+					if(esitoNegoziazioneToken.isValido()) {
+						// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
+						_validazioneInformazioniNegoziazioneToken(esitoNegoziazioneToken, policyNegoziazioneToken, 
+								policyNegoziazioneToken.isSaveErrorInCache());
+					}
+				}
+				else {
+				
+					// l'ho preso in cache
+					
+					if(esitoNegoziazioneToken.isValido()) {
+						// controllo la data qua
+						_validazioneInformazioniNegoziazioneToken(esitoNegoziazioneToken, policyNegoziazioneToken, 
+								policyNegoziazioneToken.isSaveErrorInCache());
+						if(!esitoNegoziazioneToken.isValido() && !esitoNegoziazioneToken.isDateValide()) {
+							// DEVO riavviare la negoziazione poichè è scaduto
+							GestoreToken.cacheToken.remove(keyCache);
+							riavviaNegoziazione = true;
+						}
+					}
+					
+				}
+				
+			} // fine synchronized
+    	}
+		
+		if(riavviaNegoziazione) {
+			return endpointToken(debug, log, policyNegoziazioneToken, pddContext, protocolFactory);
+		}
+		return esitoNegoziazioneToken;
+	}
+	
+	private static EsitoNegoziazioneToken _endpointToken(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory) {
+		EsitoNegoziazioneToken esitoNegoziazioneToken = new EsitoNegoziazioneToken();
+		
+		esitoNegoziazioneToken.setValido(false);
+		
+		try{
+			String detailsError = null;
+			InformazioniNegoziazioneToken informazioniToken = null;
+			Exception eProcess = null;
+			
+			INegoziazioneTokenParser tokenParser = policyNegoziazioneToken.getNegoziazioneTokenParser();
+			
+			HttpResponse httpResponse = null;
+			Integer httpResponseCode = null;
+			byte[] risposta = null;
+			try {
+				httpResponse = http(debug, log, policyNegoziazioneToken,
+						pddContext, protocolFactory);
+				risposta = httpResponse.getContent();
+				httpResponseCode = httpResponse.getResultHTTPOperation();
+			}catch(Exception e) {
+				detailsError = "(Errore di Connessione) "+ e.getMessage();
+				eProcess = e;
+			}
+			
+			if(detailsError==null) {
+				try {
+					informazioniToken = new InformazioniNegoziazioneToken(httpResponseCode, new String(risposta),tokenParser);
+				}catch(Exception e) {
+					detailsError = "Risposta del servizio di negoziazione token non valida: "+e.getMessage();
+					eProcess = e;
+				}
+			}
+    		  		
+    		if(informazioniToken!=null && informazioniToken.isValid()) {
+    			esitoNegoziazioneToken.setValido(true);
+    			esitoNegoziazioneToken.setInformazioniNegoziazioneToken(informazioniToken);
+    			esitoNegoziazioneToken.setToken(informazioniToken.getAccessToken());
+    			esitoNegoziazioneToken.setNoCache(false);
+			}
+    		else {
+    			if(policyNegoziazioneToken.isSaveErrorInCache()) {
+    				esitoNegoziazioneToken.setNoCache(false);
+    			}
+    			else {
+    				esitoNegoziazioneToken.setNoCache(true);
+    			}
+    			esitoNegoziazioneToken.setEccezioneProcessamento(eProcess);
+    			if(detailsError!=null) {
+    				esitoNegoziazioneToken.setDetails(detailsError);	
+				}
+				else {
+					esitoNegoziazioneToken.setDetails("AccessToken non recuperabile");	
+				} 	
+    		}
+    		
+		}catch(Exception e){
+			esitoNegoziazioneToken.setDetails(e.getMessage());
+			esitoNegoziazioneToken.setEccezioneProcessamento(e);
+    	}
+		
+		return esitoNegoziazioneToken;
+	}
+	
+	
+	
+	
+	
+	// ********* [NEGOZIAZIONE-TOKEN]  UTILITIES INTERNE ****************** */
+	
+	private static String buildCacheKeyNegoziazione(String funzione, String nomePolicy) {
+    	StringBuffer bf = new StringBuffer(funzione);
+    	bf.append("_");
+    	bf.append(nomePolicy);
+    	return bf.toString();
+    }
+	
+	private static void _validazioneInformazioniNegoziazioneToken(EsitoNegoziazioneToken esitoNegoziazioneToken, PolicyNegoziazioneToken policyNegoziazioneToken, boolean saveErrorInCache) throws Exception {
+		
+		Date now = DateManager.getDate();
+		
+		if(esitoNegoziazioneToken.isValido()) {			
+			if(esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getExpiresIn()!=null) {				
+				/*
+				 *  The lifetime in seconds of the access token.  For example, the value "3600" denotes that the access token will
+				 * expire in one hour from the time the response was generated.
+				 * If omitted, the authorization server SHOULD provide the expiration time via other means or document the default value. 
+				 **/
+				if(!now.before(esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getExpiresIn())){
+					esitoNegoziazioneToken.setValido(false);
+					esitoNegoziazioneToken.setDateValide(false);
+					esitoNegoziazioneToken.setDetails("AccessToken expired");	
+				}
+			}
+			
+		}
+			
+		if(esitoNegoziazioneToken.isValido()==false) {
+			if(saveErrorInCache) {
+				esitoNegoziazioneToken.setNoCache(false);
+			}
+			else {
+				esitoNegoziazioneToken.setNoCache(true);
+			}
+		}
+	}
+	
+	public static HttpResponse http(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws Exception {
+		
+		// *** Raccola Parametri ***
+		
+		String endpoint = policyNegoziazioneToken.getEndpoint();
+				
+		HttpRequestMethod httpMethod = HttpRequestMethod.POST;	
+		
+		// Nell'endpoint config ci finisce i timeout e la configurazione proxy
+		Properties endpointConfig = policyNegoziazioneToken.getProperties().get(Costanti.POLICY_ENDPOINT_CONFIG);
+		
+		boolean https = policyNegoziazioneToken.isEndpointHttps();
+		boolean httpsClient = false;
+		Properties sslConfig = null;
+		Properties sslClientConfig = null;
+		if(https) {
+			sslConfig = policyNegoziazioneToken.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CONFIG);
+			httpsClient = policyNegoziazioneToken.isHttpsAuthentication();
+			if(httpsClient) {
+				sslClientConfig = policyNegoziazioneToken.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
+			}
+		}
+		
+		boolean basic = policyNegoziazioneToken.isBasicAuthentication();
+		boolean basicAsAuthorizationHeader = policyNegoziazioneToken.isBasicAuthenticationAsAuthorizationHeader();
+		String username = null;
+		String password = null;
+		if(basic) {
+			username = policyNegoziazioneToken.getBasicAuthentication_username();
+			password = policyNegoziazioneToken.getBasicAuthentication_password();
+		}
+		
+		boolean bearer = policyNegoziazioneToken.isBearerAuthentication();
+		String bearerToken = null;
+		if(bearer) {
+			bearerToken = policyNegoziazioneToken.getBeareAuthentication_token();
+		}
+		
+		
+		
+		// *** Definizione Connettore ***
+		
+		ConnettoreMsg connettoreMsg = new ConnettoreMsg();
+		ConnettoreBaseHTTP connettore = null;
+		if(https) {
+			connettoreMsg.setTipoConnettore(TipiConnettore.HTTPS.getNome());
+			connettore = new ConnettoreHTTPS();
+		}
+		else {
+			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
+			connettore = new ConnettoreHTTP();
+		}
+		connettore.init(pddContext, protocolFactory);
+		
+		if(basic && basicAsAuthorizationHeader){
+			InvocazioneCredenziali credenziali = new InvocazioneCredenziali();
+			credenziali.setUser(username);
+			credenziali.setPassword(password);
+			connettoreMsg.setCredenziali(credenziali);
+		}
+		
+		connettoreMsg.setConnectorProperties(new java.util.Hashtable<String,String>());
+		connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION, endpoint);
+		if(debug) {
+			connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_DEBUG, true+"");
+		}
+		addProperties(connettoreMsg, endpointConfig);
+		if(https) {
+			addProperties(connettoreMsg, sslConfig);
+			if(httpsClient) {
+				addProperties(connettoreMsg, sslClientConfig);
+			}
+		}
+		
+		byte[] content = null;
+		
+		TransportRequestContext transportRequestContext = new TransportRequestContext();
+		transportRequestContext.setRequestType(httpMethod.name());
+		transportRequestContext.setParametersTrasporto(new Properties());
+		if(bearer) {
+			String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+bearerToken;
+			transportRequestContext.getParametersTrasporto().put(HttpConstants.AUTHORIZATION, authorizationHeader);
+		}
+		transportRequestContext.removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
+		transportRequestContext.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED);
+		
+		Properties pContent = new Properties();
+		if(policyNegoziazioneToken.isClientCredentialsGrant()) {
+			pContent.setProperty(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE, ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_CLIENT_CREDENTIALS_GRANT);
+		}
+		else if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
+			pContent.setProperty(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE, ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_RESOURCE_OWNER_PASSWORD_CREDENTIALS_GRANT);
+		}
+		else {
+			throw new Exception("Nessuna modalità definita");
+		}
+		if(basic && !basicAsAuthorizationHeader){
+			pContent.setProperty(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ID, username);
+			pContent.setProperty(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_SECRET, password);
+		}
+		if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
+			pContent.setProperty(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_USERNAME, policyNegoziazioneToken.getUsernamePasswordGrant_username());
+			pContent.setProperty(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_PASSWORD, policyNegoziazioneToken.getUsernamePasswordGrant_password());
+		}
+		List<String> scopes = policyNegoziazioneToken.getScopes();
+		if(scopes!=null && !scopes.isEmpty()) {
+			StringBuffer bf = new StringBuffer();
+			for (String scope : scopes) {
+				if(bf.length()>0) {
+					bf.append(" ");
+				}
+				bf.append(scope);
+			}
+			if(bf.length()>0) {
+				pContent.setProperty(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_SCOPE, bf.toString());
+			}
+		}
+		String aud = policyNegoziazioneToken.getAudience();
+		if(aud!=null && !"".equals(aud)) {
+			pContent.setProperty(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_AUDIENCE, aud);
+		}
+		String prefixUrl = "PREFIX?";
+		String contentString = TransportUtils.buildLocationWithURLBasedParameter(pContent, prefixUrl , log);
+		contentString = contentString.substring(prefixUrl.length());
+		content = contentString.getBytes();
+			
+		OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.BINARY, transportRequestContext, content);
+		OpenSPCoop2Message msg = pr.getMessage_throwParseException();
+		connettoreMsg.setRequestMessage(msg);
+		connettoreMsg.setGenerateErrorWithConnectorPrefix(false);
+		connettore.setHttpMethod(msg);
+		
+		ResponseCachingConfigurazione responseCachingConfigurazione = new ResponseCachingConfigurazione();
+		responseCachingConfigurazione.setStato(StatoFunzionalita.DISABILITATO);
+		String prefixConnettore = "[EndpointNegoziazioneToken: "+endpoint+"] ";
+		if(endpointConfig.containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME)) {
+			String hostProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME);
+			String portProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT);
+			prefixConnettore = prefixConnettore+" [via Proxy: "+hostProxy+":"+portProxy+"] ";
+		}
+		boolean send = connettore.send(responseCachingConfigurazione, connettoreMsg);
+		if(send==false) {
+			if(connettore.getEccezioneProcessamento()!=null) {
+				throw new Exception(prefixConnettore+connettore.getErrore(), connettore.getEccezioneProcessamento());
+			}
+			else {
+				throw new Exception(prefixConnettore+connettore.getErrore());
+			}
+		}
+		
+		OpenSPCoop2Message msgResponse = connettore.getResponse();
+		ByteArrayOutputStream bout = null;
+		if(msgResponse!=null) {
+			bout = new ByteArrayOutputStream();
+			if(msgResponse!=null) {
+				msgResponse.writeTo(bout, true);
+			}
+			bout.flush();
+			bout.close();
+		}
+		
+		HttpResponse httpResponse = new HttpResponse();
+		httpResponse.setResultHTTPOperation(connettore.getCodiceTrasporto());
+		
+		if(connettore.getCodiceTrasporto() >= 200 &&  connettore.getCodiceTrasporto() < 299) {
+			String msgSuccess = prefixConnettore+"Connessione completata con successo (codice trasporto: "+connettore.getCodiceTrasporto()+")";
+			if(bout!=null && bout.size()>0) {
+				log.debug(msgSuccess);
+				httpResponse.setContent(bout.toByteArray());
+				return httpResponse;
+			}
+			else {
+				throw new Exception(msgSuccess+"; non è pervenuta alcuna risposta");
+			}
+		}
+		else {
+			String msgError = prefixConnettore+"Connessione terminata con errore (codice trasporto: "+connettore.getCodiceTrasporto()+")";
+			if(bout!=null && bout.size()>0) {
+				log.debug(msgError+": "+bout.toString());
+				httpResponse.setContent(bout.toByteArray());
+				return httpResponse;
+			}
+			else {
+				log.error(msgError);
+				throw new Exception(msgError);
+			}
+		}
+		
+		
+	}
+	
 }
 

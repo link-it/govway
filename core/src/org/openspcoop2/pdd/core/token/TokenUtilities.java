@@ -237,4 +237,22 @@ public class TokenUtilities {
 		}
 		return claimValue;
 	}
+	
+	
+	public static PolicyNegoziazioneToken convertTo(GenericProperties gp) throws Exception { 
+		
+		PolicyNegoziazioneToken policy = new PolicyNegoziazioneToken();
+		policy.setName(gp.getNome());
+		policy.setDescrizione(gp.getDescrizione());
+		
+		HashMap<String, String> properties = new HashMap<>();
+		for (Property pConfig : gp.getPropertyList()) {
+			properties.put(pConfig.getNome(), pConfig.getValore());
+		}
+		Map<String, Properties> multiProperties = DBPropertiesUtils.toMultiMap(properties);
+		policy.setProperties(multiProperties);
+		
+		return policy;
+
+	}
 }

@@ -193,6 +193,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				idSoggettoFruitore = new IDSoggetto(tipoSoggettoFruitore, nomeSoggettoFruitore);
 			}
 			
+			// token policy
+			String autenticazioneTokenS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
+			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
+			String token_policy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			
 			// proxy
 			String proxy_enabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			String proxy_hostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
@@ -900,6 +905,14 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						}
 					}
 					
+					if(token_policy==null && props!=null){
+						String v = props.get(CostantiDB.CONNETTORE_TOKEN_POLICY);
+						if(v!=null && !"".equals(v)){
+							token_policy = v;
+							autenticazioneToken = true;
+						}
+					}
+					
 					opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transfer_mode, redirect_mode);
 					
 					if (url == null) {
@@ -1079,6 +1092,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+								autenticazioneToken, token_policy,
 								listExtendedConnettore, forceEnableConnettore);
 						
 					}
@@ -1165,7 +1179,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					null,null,null,null,null,null,null,
 					null, null, null, null,
 					tipoProtocollo,null, 
-					descrizione, tipoSoggettoFruitore, nomeSoggettoFruitore);
+					descrizione, tipoSoggettoFruitore, nomeSoggettoFruitore,
+					autenticazioneToken, token_policy);
 			
 			// Validazione base dei parametri custom 
 			if(isOk){
@@ -1252,6 +1267,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+							autenticazioneToken, token_policy,
 							listExtendedConnettore, forceEnableConnettore);
 					
 				}
@@ -1357,6 +1373,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+								autenticazioneToken, token_policy,
 								listExtendedConnettore, forceEnableConnettore);
 						
 					}
@@ -1576,6 +1593,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+					token_policy,
 					listExtendedConnettore);
 
 			asps.getConfigurazioneServizio().setConnettore(newConnettore);
@@ -1682,6 +1700,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+								autenticazioneToken, token_policy,
 								listExtendedConnettore, forceEnableConnettore);
 						
 					}

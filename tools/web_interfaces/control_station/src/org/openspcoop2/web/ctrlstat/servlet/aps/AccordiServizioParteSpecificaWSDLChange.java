@@ -427,6 +427,8 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String httpspwdkey = "";
 			String httpspwdprivatekey = "";
 			String httpsalgoritmokey = "";
+			boolean autenticazioneToken = false;
+			String token_policy = null;
 			String proxy_enabled = null, proxy_hostname  = null,proxy_port  = null,proxy_username  = null,proxy_password = null;
 			String tempiRisposta_enabled = null, tempiRisposta_connectionTimeout = null, tempiRisposta_readTimeout = null, tempiRisposta_tempoMedioRisposta = null;
 			String transfer_mode = null, transfer_mode_chunk_size = null, redirect_mode = null, redirect_max_hop = null, opzioniAvanzate = null;
@@ -596,6 +598,14 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 							}
 						}
 						
+					}
+				}
+				
+				if(token_policy==null && props!=null){
+					String v = props.get(CostantiDB.CONNETTORE_TOKEN_POLICY);
+					if(v!=null && !"".equals(v)){
+						token_policy = v;
+						autenticazioneToken = true;
 					}
 				}
 				
@@ -780,6 +790,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+					autenticazioneToken, token_policy,
 					listExtendedConnettore, false);
 
 			pd.setDati(dati);

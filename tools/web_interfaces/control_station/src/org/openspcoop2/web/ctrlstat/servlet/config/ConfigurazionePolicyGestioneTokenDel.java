@@ -71,8 +71,6 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 
 		String userLogin = ServletUtils.getUserLoginFromSession(session);	
 		
-		String tipologia = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN;
-
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 
@@ -96,47 +94,81 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 				boolean delete = true;
 				boolean addMsg = false;
 				
-				// controllo che la policy non sia utilizzata in alcuna PD o PA
+				// controllo che la policy non sia utilizzata in alcuna PD o PA o connettori
 				List<PortaApplicativa> listaPA= confCore.listaPorteApplicativeUtilizzateDaPolicyGestioneToken(policy.getNome());
 				List<PortaDelegata> listaPD = confCore.listaPorteDelegateUtilizzateDaPolicyGestioneToken(policy.getNome());
+				boolean usedInConnettore = confCore.isPolicyNegoziazioneTokenUsedInConnettore(policy.getNome());
+				boolean usedInPA = listaPA != null && listaPA.size() > 0;
+				boolean usedInPD = listaPD != null && listaPD.size() > 0;
 				
 				StringBuffer bf = new StringBuffer();
-				bf.append("La policy '"+policy.getNome()+"' risulta utilizzata da:");
-				if(listaPA != null && listaPA.size() > 0) {
-					bf.append("<br/>").append(listaPA.size());
-					if(listaPA.size()<2){
-						bf.append(" Porta Applicativa: ");
-					}else{
-						bf.append(" Porte Applicative: ");
-					}
-					for (int j = 0; j < listaPA.size(); j++) {
-						if(j>0){
-							bf.append(", ");
-						}
-						bf.append(listaPA.get(j).getNome());
-					}
+				if(usedInPA || usedInPD || usedInConnettore) {
 					
 					delete = false;
 					addMsg = true;
+					
+					// NOTA: se utilizzato nel connettore, non e' usata in fruizioni o erogazioni, sono policy differenti
+					
+					bf.append("La policy '"+policy.getNome()+"' risulta utilizzata");
+					
+					if(usedInPA) {
+						bf.append(" in ");
+						bf.append(listaPA.size());
+						if(listaPA.size()==1){
+							bf.append(" Erogazione");
+						}else{
+							bf.append(" Erogazioni");
+						}
+						if(usedInPD) {
+							bf.append(" e");
+						}
+					}
+					if(usedInPD) {
+						bf.append(" in ");
+						bf.append(listaPD.size());
+						if(listaPD.size()==1){
+							bf.append(" Fruizione");
+						}else{
+							bf.append(" Fruizioni");
+						}
+					}
 				}
 				
-				if(listaPD != null && listaPD.size() > 0) {
-					bf.append("<br/>").append(listaPD.size());
-					if(listaPD.size()<2){
-						bf.append(" Porta Delegata: ");
-					}else{
-						bf.append(" Porte Delegate: ");
-					}
-					for (int j = 0; j < listaPD.size(); j++) {
-						if(j>0){
-							bf.append(", ");
-						}
-						bf.append(listaPD.get(j).getNome());
-					}
-					
-					delete = false;
-					addMsg = true;
-				}
+//				if(listaPA != null && listaPA.size() > 0) {
+//					bf.append("<br/>").append(listaPA.size());
+//					if(listaPA.size()<2){
+//						bf.append(" Erogazione ");
+//					}else{
+//						bf.append(" Porte Applicative: ");
+//					}
+//					for (int j = 0; j < listaPA.size(); j++) {
+//						if(j>0){
+//							bf.append(", ");
+//						}
+//						bf.append(listaPA.get(j).getNome());
+//					}
+//					
+//					delete = false;
+//					addMsg = true;
+//				}
+//				
+//				if(listaPD != null && listaPD.size() > 0) {
+//					bf.append("<br/>").append(listaPD.size());
+//					if(listaPD.size()<2){
+//						bf.append(" Porta Delegata: ");
+//					}else{
+//						bf.append(" Porte Delegate: ");
+//					}
+//					for (int j = 0; j < listaPD.size(); j++) {
+//						if(j>0){
+//							bf.append(", ");
+//						}
+//						bf.append(listaPD.get(j).getNome());
+//					}
+//					
+//					delete = false;
+//					addMsg = true;
+//				}
 				
 				if(addMsg) {
 					if(delMsg.length()>0){
@@ -190,7 +222,11 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
-			List<GenericProperties> lista = confCore.gestorePolicyTokenList(idLista, tipologia, ricerca);
+			List<String> tipologie = new ArrayList<>();
+			tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
+			tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN);
+			
+			List<GenericProperties> lista = confCore.gestorePolicyTokenList(idLista, tipologie, ricerca);
 			
 			confHelper.prepareGestorePolicyTokenList(ricerca, lista, idLista); 
 

@@ -85,4 +85,45 @@ public class URLRegExpExtractor {
 		}
 		return valore;
 	}
+	
+	
+	
+	public boolean found(String pattern) throws DynamicException {
+		String v = find(pattern);
+		return v!=null && !"".equals(v);
+	}
+	
+	public String find(String pattern) throws DynamicException {
+		String valore = null;
+		try {
+			valore = RegularExpressionEngine.getStringFindPattern(this.url, pattern);
+		}
+		catch(RegExpNotFoundException e){
+			this.log.debug("Estrazione '"+pattern+"' non ha trovato risultati: "+e.getMessage(),e);
+		}
+		catch(RegExpException e){
+			throw new DynamicException(e.getMessage(),e);
+		}
+		catch(Exception e){
+			throw new DynamicException("Estrazione '"+pattern+"' fallita: "+e.getMessage(),e);
+		}
+		return valore;
+	}
+	
+	public List<String> findAll(String pattern) throws DynamicException {
+		List<String> valore = null;
+		try {
+			valore = RegularExpressionEngine.getAllStringFindPattern(this.url, pattern);
+		}
+		catch(RegExpNotFoundException e){
+			this.log.debug("Estrazione '"+pattern+"' non ha trovato risultati: "+e.getMessage(),e);
+		}
+		catch(RegExpException e){
+			throw new DynamicException(e.getMessage(),e);
+		}
+		catch(Exception e){
+			throw new DynamicException("Estrazione '"+pattern+"' fallita: "+e.getMessage(),e);
+		}
+		return valore;
+	}
 }

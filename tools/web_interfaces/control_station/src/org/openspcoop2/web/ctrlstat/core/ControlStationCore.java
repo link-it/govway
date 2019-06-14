@@ -586,6 +586,7 @@ public class ControlStationCore {
 	private boolean showConfigurazioneTracciamentoDiagnostica = true;
 	private String tokenPolicyForceId = null;
 	private boolean tokenPolicyForceIdEnabled = false;
+	private Properties tokenPolicyTipologia = null;
 	private boolean showServiziVisualizzaModalitaElenco = false;
 	private Integer selectListSoggettiOperativi_numeroMassimoSoggetti = null;
 	private Integer selectListSoggettiOperativi_dimensioneMassimaLabel = null;
@@ -667,6 +668,9 @@ public class ControlStationCore {
 	}
 	public boolean isTokenPolicyForceIdEnabled() {
 		return this.tokenPolicyForceIdEnabled;
+	}
+	public Properties getTokenPolicyTipologia() {
+		return this.tokenPolicyTipologia;
 	}
 	public boolean isShowServiziVisualizzaModalitaElenco() {
 		return this.showServiziVisualizzaModalitaElenco;
@@ -884,6 +888,7 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL = new Hashtable<String, String>();
 	private boolean jmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength = false;
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone = new Hashtable<String, String>();
@@ -1031,6 +1036,9 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset.get(alias);
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione.get(alias);
@@ -1631,6 +1639,7 @@ public class ControlStationCore {
 		this.showConfigurazioneTracciamentoDiagnostica = core.showConfigurazioneTracciamentoDiagnostica;
 		this.tokenPolicyForceId = core.tokenPolicyForceId;
 		this.tokenPolicyForceIdEnabled = core.tokenPolicyForceIdEnabled;
+		this.tokenPolicyTipologia = core.tokenPolicyTipologia;
 		this.showServiziVisualizzaModalitaElenco = core.showServiziVisualizzaModalitaElenco;
 		this.selectListSoggettiOperativi_numeroMassimoSoggetti = core.selectListSoggettiOperativi_numeroMassimoSoggetti;
 		this.selectListSoggettiOperativi_dimensioneMassimaLabel = core.selectListSoggettiOperativi_dimensioneMassimaLabel;
@@ -1701,6 +1710,7 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL;
 		this.jmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength = core.jmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone;
@@ -1913,6 +1923,7 @@ public class ControlStationCore {
 			this.showConfigurazioneTracciamentoDiagnostica = consoleProperties.isMenuConfigurazioneVisualizzazioneDiagnosticaTracciatura();
 			this.tokenPolicyForceId = consoleProperties.getTokenPolicyForceId();
 			this.tokenPolicyForceIdEnabled = StringUtils.isNotEmpty(this.tokenPolicyForceId);
+			this.tokenPolicyTipologia = consoleProperties.getTokenPolicyTipologia();
 			this.showServiziVisualizzaModalitaElenco = consoleProperties.isEnableServiziVisualizzaModalitaElenco();
 			this.selectListSoggettiOperativi_numeroMassimoSoggetti = consoleProperties.getNumeroMassimoSoggettiOperativiMenuUtente();
 			this.selectListSoggettiOperativi_dimensioneMassimaLabel = consoleProperties.getLunghezzaMassimaLabelSoggettiOperativiMenuUtente();
@@ -2068,6 +2079,7 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone(alias));

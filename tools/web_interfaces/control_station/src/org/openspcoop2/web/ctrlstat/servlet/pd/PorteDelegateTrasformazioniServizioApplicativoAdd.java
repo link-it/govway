@@ -104,7 +104,7 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 			String idTrasformazioneS = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE);
 			long idTrasformazione = Long.parseLong(idTrasformazioneS);
 			
-			String listaTmp = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_LIST);
+			String listaTmp = porteDelegateHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_LIST);
 			boolean fromList = false;
 			if(listaTmp != null && !"".equals(listaTmp))
 				fromList = true;

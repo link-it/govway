@@ -47,6 +47,9 @@ public class Connettore  {
   
   @Schema(description = "")
   private ConnettoreConfigurazioneTimeout tempiRisposta = null;
+  
+  @Schema(description = "")
+  private String tokenPolicy = null;
  /**
    * Get endpoint
    * @return endpoint
@@ -143,6 +146,25 @@ public class Connettore  {
     return this;
   }
 
+ /**
+   * Get tokenPolicy
+   * @return tokenPolicy
+  **/
+  @JsonProperty("token_policy")
+  @Valid
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getTokenPolicy() {
+    return this.tokenPolicy;
+  }
+
+  public void setTokenPolicy(String tokenPolicy) {
+    this.tokenPolicy = tokenPolicy;
+  }
+
+  public Connettore tokenPolicy(String tokenPolicy) {
+    this.tokenPolicy = tokenPolicy;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -154,6 +176,7 @@ public class Connettore  {
     sb.append("    autenticazioneHttps: ").append(Connettore.toIndentedString(this.autenticazioneHttps)).append("\n");
     sb.append("    proxy: ").append(Connettore.toIndentedString(this.proxy)).append("\n");
     sb.append("    tempiRisposta: ").append(Connettore.toIndentedString(this.tempiRisposta)).append("\n");
+    sb.append("    tokenPolicy: ").append(Connettore.toIndentedString(this.tokenPolicy)).append("\n");
     sb.append("}");
     return sb.toString();
   }

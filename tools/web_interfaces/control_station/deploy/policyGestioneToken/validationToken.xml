@@ -1,4 +1,6 @@
-<config id="openspcoop" label="Configurazione Manuale" xmlns="http://www.openspcoop2.org/core/mvc/properties" 
+<config id="validationToken" 
+	label="Validazione" 
+	xmlns="http://www.openspcoop2.org/core/mvc/properties" 
 	provider="org.openspcoop2.pdd.core.token.TokenProvider">
 
 	<properties>
@@ -927,6 +929,9 @@
 			</condition>
 		</conditions>
 	
+		<item type="hidden" name="endpointProxyType" value="http">
+			<property name="proxyType" properties="endpointConfig" />
+		</item>
 		<item type="text" name="endpointProxyHostname" label="Hostname" required="true">
 			<property name="proxyHostname" properties="endpointConfig" />
 		</item>

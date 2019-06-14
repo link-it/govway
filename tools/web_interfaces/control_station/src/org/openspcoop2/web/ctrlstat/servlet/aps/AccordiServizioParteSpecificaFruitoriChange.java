@@ -197,6 +197,11 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 			String connettoreDebug = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
 
+			// token policy
+			String autenticazioneTokenS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
+			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
+			String token_policy = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			
 			// proxy
 			String proxy_enabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			String proxy_hostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
@@ -717,6 +722,14 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					}
 				}
 
+				if(token_policy==null && props!=null){
+					String v = props.get(CostantiDB.CONNETTORE_TOKEN_POLICY);
+					if(v!=null && !"".equals(v)){
+						token_policy = v;
+						autenticazioneToken = true;
+					}
+				}
+				
 				opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transfer_mode, redirect_mode);
 
 				if (url == null) {
@@ -883,6 +896,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+							autenticazioneToken, token_policy,
 							listExtendedConnettore, forceEnableConnettore);
 
 					// aggiunta campi custom
@@ -920,6 +934,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					null,null,null,null,null,null,null,
 					null, null, null,null,null,
+					autenticazioneToken, token_policy,
 					listExtendedConnettore);
 
 			// Validazione base dei parametri custom 
@@ -996,6 +1011,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+						autenticazioneToken, token_policy,
 						listExtendedConnettore, forceEnableConnettore);
 
 				// aggiunta campi custom
@@ -1062,6 +1078,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+							autenticazioneToken, token_policy,
 							listExtendedConnettore, forceEnableConnettore);
 
 					dati = apsHelper.addServiziFruitoriToDatiAsHidden(dati, idSoggettoFruitore, "", "", soggettiList, soggettiListLabel, idServizio,
@@ -1170,6 +1187,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+					token_policy,
 					listExtendedConnettore);
 //			}
 //			else{
@@ -1275,6 +1293,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+							autenticazioneToken, token_policy,
 							listExtendedConnettore, forceEnableConnettore);
 //					}else{
 //						//spostato nell'helper

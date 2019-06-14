@@ -98,6 +98,8 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.mvc.properties.utils.ConfigManager;
+import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
@@ -4822,6 +4824,74 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			}
 		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_CHARSET);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		String [] infoCharset = null;
+		try{
+			String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset(alias));
+			if(this.isErroreHttp(tmp, "informazioni Charset")){
+				// e' un errore
+				tmp = null;
+			}
+			infoCharset = tmp.split("\n");
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sull'internazionalizzazione (jmxResourcePdD): "+e.getMessage(),e);
+		}
+		if(infoCharset==null || infoCharset.length<=0){
+			addInformazioneNonDisponibile(dati, "");
+		}
+		else{
+			for (int i = 0; i < infoCharset.length; i++) {
+				
+				try{
+					String label = infoCharset[i];
+					String value = "";
+					if(infoCharset[i].contains(":")){
+						label = infoCharset[i].split(":")[0];
+						value = infoCharset[i].substring(infoCharset[i].indexOf(":")+1);
+					}
+					
+					de = newDataElementStyleRuntime();
+					if(value==null || "".equals(value)){
+						value = label;
+						label = "Name";
+					}
+					de.setLabel(label);
+					if(value!=null){
+						value = StringEscapeUtils.escapeHtml(value);
+					}
+					de.setValue(value);
+					de.setType(DataElementType.TEXT);
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_CHARSET+i);
+					de.setSize(this.getSize());
+					dati.addElement(de);
+				}catch(Exception e){
+					this.log.error("Errore durante la lettura delle informazioni sul charset (jmxResourcePdD): "+e.getMessage(),e);
+				}
+			}
+		}
+		
+		
+		
+		
+		
+		
 		
 		
 		
@@ -13960,6 +14030,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 			
+			PropertiesSourceConfiguration propertiesSourceConfiguration = this.confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
+			ConfigManager configManager = ConfigManager.getinstance(ControlStationCore.getLog());
+			configManager.leggiConfigurazioni(propertiesSourceConfiguration, true);
+			List<String> nomiConfigurazioniPolicyGestioneToken = configManager.getNomiConfigurazioni(propertiesSourceConfiguration);
+			List<String> labelConfigurazioniPolicyGestioneToken = configManager.convertToLabel(propertiesSourceConfiguration, nomiConfigurazioniPolicyGestioneToken);
+			
+			String filterTipoTokenPolicy = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_TOKEN_POLICY);
+			addFilterTipoTokenPolicy(filterTipoTokenPolicy, false, nomiConfigurazioniPolicyGestioneToken, labelConfigurazioniPolicyGestioneToken);
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
@@ -14016,7 +14095,23 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					
 					if(!this.core.isTokenPolicyForceIdEnabled()) {
 						de = new DataElement();
-						de.setValue(policy.getTipo());
+						if(nomiConfigurazioniPolicyGestioneToken!=null && nomiConfigurazioniPolicyGestioneToken.contains(policy.getTipo())) {
+							boolean found = false;
+							for (int j = 0; j < nomiConfigurazioniPolicyGestioneToken.size(); j++) {
+								String nome = nomiConfigurazioniPolicyGestioneToken.get(j);
+								if(nome.equals(policy.getTipo())) {
+									de.setValue(labelConfigurazioniPolicyGestioneToken.get(j));
+									found = true;
+									break;
+								}
+							}
+							if(!found) {
+								de.setValue(policy.getTipo());
+							}
+						}
+						else {
+							de.setValue(policy.getTipo());
+						}
 						e.addElement(de);
 					}
 					
@@ -14046,6 +14141,52 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(id);
 		dati.addElement(de);
+
+		// tipo
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
+		if(!this.core.isTokenPolicyForceIdEnabled()) {
+			if(tipoOperazione.equals(TipoOperazione.ADD)) {
+				de.setType(DataElementType.SELECT);
+				de.setPostBack(true);
+				de.setValues(propConfigPolicyGestioneTokenList);
+				de.setLabels(propConfigPolicyGestioneTokenLabelList);
+				de.setSelected(tipo); 
+				de.setRequired(true);
+			}else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(tipo);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO+"__LABEL");
+				de.setType(DataElementType.TEXT);
+				if(propConfigPolicyGestioneTokenList!=null && propConfigPolicyGestioneTokenList.length>0) {
+					boolean found = false;
+					for (int j = 0; j < propConfigPolicyGestioneTokenList.length; j++) {
+						String nomeP = propConfigPolicyGestioneTokenList[j];
+						if(nomeP.equals(tipo)) {
+							de.setValue(propConfigPolicyGestioneTokenLabelList[j]);
+							found = true;
+							break;
+						}
+					}
+					if(!found) {
+						de.setValue(tipo);
+					}
+				}
+				else {
+					de.setValue(tipo);
+				}
+			}
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(tipo);
+		}
+		dati.addElement(de);
 		
 		// nome
 		de = new DataElement();
@@ -14067,30 +14208,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setValue(descrizione);
 		dati.addElement(de);
-		
-		
-		// tipo
-		
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
-		if(!this.core.isTokenPolicyForceIdEnabled()) {
-		if(tipoOperazione.equals(TipoOperazione.ADD)) {
-				de.setType(DataElementType.SELECT);
-				de.setPostBack(true);
-				de.setValues(propConfigPolicyGestioneTokenList);
-				de.setLabels(propConfigPolicyGestioneTokenLabelList);
-				de.setSelected(tipo); 
-				de.setRequired(true);
-			}else {
-				de.setType(DataElementType.TEXT);
-				de.setValue(tipo);
-			}
-		} else {
-			de.setType(DataElementType.HIDDEN);
-			de.setValue(tipo);
-		}
-		dati.addElement(de);
+
 		
 		return dati;
 	}
@@ -14124,7 +14242,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			try {
 				// check duplicati per tipologia
 				this.confCore.getGenericProperties(nome, tipologia);
-				String messaggio = "&Egrave; gi&agrave; presente un Policy Gestione Token con nome " + nome ;
+				String messaggio = "&Egrave; gi&agrave; presente un Policy, del tipo indicato, con nome " + nome ;
 				this.pd.setMessage(messaggio);
 				return false;
 			} catch(DriverConfigurazioneNotFound e) {

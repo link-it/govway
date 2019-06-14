@@ -3071,10 +3071,13 @@ public class ConfigurazionePdD  {
 		return key;
 	}
 	public GenericProperties getGenericProperties(Connection connectionPdD,String tipologia, String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return  getGenericProperties(connectionPdD, false, tipologia, nome);
+	}
+	public GenericProperties getGenericProperties(Connection connectionPdD,boolean forceNoCache, String tipologia, String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
-		if(this.cache!=null){
+		if(!forceNoCache && this.cache!=null){
 			key = this._getKey_getGenericProperties(tipologia, nome);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
@@ -3092,7 +3095,7 @@ public class ConfigurazionePdD  {
 
 		// Algoritmo CACHE
 		GenericProperties gp = null;
-		if(this.cache!=null){
+		if(!forceNoCache && this.cache!=null){
 			try{
 				gp = (GenericProperties) this.getObjectCache(key,"getGenericProperties",connectionPdD,CONFIGURAZIONE_PORTA, tipologia, nome);
 			}catch(DriverConfigurazioneException e){

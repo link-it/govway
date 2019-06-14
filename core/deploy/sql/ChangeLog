@@ -1,3 +1,11 @@
+2019-06-07  Andrea Poli <apoli@link.it>
+	
+	Aggiunto nuovo tipo di token policy, e rinominato quello che gestisce i token:	
+	update generic_properties set tipo='validationToken' WHERE tipo='openspcoop';
+
+	Aggiunta colonna per il tipo di policy di rinegoziazione sul connettore
+	ALTER TABLE connettori ADD COLUMN token_policy VARCHAR(255); 
+
 2019-05-13  Andrea Poli <apoli@link.it>
 
 	Classificate policy in built-in e utente:

@@ -24,8 +24,6 @@
 package org.openspcoop2.pdd.core.token;
 
 import java.io.Serializable;
-import java.util.Map;
-import java.util.Properties;
 
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
@@ -42,17 +40,12 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class PolicyGestioneToken implements Serializable {
+public class PolicyGestioneToken extends AbstractPolicyToken implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	private String name;
-	private String descrizione;
-	private Map<String, Properties> properties;
-	private Properties defaultProperties;
 	
 	private boolean tokenOpzionale;
 	
@@ -67,25 +60,7 @@ public class PolicyGestioneToken implements Serializable {
 	
 	private boolean forwardToken;
 	
-	public String getName() {
-		return this.name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getDescrizione() {
-		return this.descrizione;
-	}
-	public void setDescrizione(String descrizione) {
-		this.descrizione = descrizione;
-	}
-	public Map<String, Properties> getProperties() {
-		return this.properties;
-	}
-	public void setProperties(Map<String, Properties> properties) throws ProviderException, ProviderValidationException {
-		this.properties = properties;
-		this.defaultProperties = this.getDefaultProperties();
-	}
+	
 	public boolean isTokenOpzionale() {
 		return this.tokenOpzionale;
 	}
@@ -133,10 +108,6 @@ public class PolicyGestioneToken implements Serializable {
 	}
 	public void setForwardToken(boolean forwardToken) {
 		this.forwardToken = forwardToken;
-	}
-	
-	public Properties getDefaultProperties() throws ProviderException, ProviderValidationException {
-		return TokenUtilities.getDefaultProperties(this.properties);
 	}
 	
 	public String getRealm() throws ProviderException, ProviderValidationException {

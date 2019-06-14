@@ -243,7 +243,7 @@ Per effettuare il test utilizzare il token, contenente gli scope API
            "type":"https://httpstatuses.com/403",
            "title":"Forbidden",
            "status":403,
-           "detail":"La richiesta presenta un token non sufficente per fruire del servizio richiesto",
+           "detail":"La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
            "govway_status":"protocol:GOVWAY-1368"
        }
 

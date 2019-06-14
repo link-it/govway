@@ -83,8 +83,6 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 		
 		TipoOperazione tipoOperazione = TipoOperazione.ADD;
 		
-		String tipologia = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN;
-
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			// Preparo il menu
@@ -126,6 +124,10 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 					tipo = confCore.getTokenPolicyForceId();
 			}
 			
+			String tipologia = null;
+			if(confCore.isTokenPolicyForceIdEnabled()) {
+				tipologia = confCore.getTokenPolicyTipologia().getProperty(confCore.getTokenPolicyForceId());
+			}
 			if(tipo != null && !tipo.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
 				configurazione = configManager.getConfigurazione(propertiesSourceConfiguration, tipo);
 			
@@ -140,6 +142,13 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 				
 				configurazioneBean.updateConfigurazione(configurazione);
 				ServletUtils.saveConfigurazioneBeanIntoSession(session, configurazioneBean, configurazioneBean.getId());
+			
+				if(!confCore.isTokenPolicyForceIdEnabled()) {
+					tipologia = confCore.getTokenPolicyTipologia().getProperty(tipo);
+					if(tipologia==null) {
+						throw new Exception("Mapping tipologia token per tipo '"+tipo+"' inesistente");
+					}
+				}
 			}
 			
 			// setto la barra del titolo
@@ -234,7 +243,11 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
-			List<GenericProperties> lista = confCore.gestorePolicyTokenList(idLista, tipologia, ricerca);
+			List<String> tipologie = new ArrayList<>();
+			tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
+			tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN);		
+			
+			List<GenericProperties> lista = confCore.gestorePolicyTokenList(idLista, tipologie, ricerca);
 			
 			confHelper.prepareGestorePolicyTokenList(ricerca, lista, idLista); 
 			

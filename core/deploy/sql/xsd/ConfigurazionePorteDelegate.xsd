@@ -746,7 +746,7 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                                 <linkit:sql-column-mapping name="ruoli_match"/>
                                 <linkit:sql-ddl-column-comment><![CDATA[Indica quali ruoli sono richiesti alla fruizione, se nella porta è stata impostata una autorizzazione basata sui ruoli (vedi colonna 'autorizzazione'):
 - 'all': tutti i ruoli associati alla porta delegata (tramite tabella pd_ruoli) devono essere posseduti dal chiamante
-- 'any': per essere autorizzati ad invocare il servizio è sufficente per il chiamante possedere uno dei ruoli definiti sulla porta delegata]]></linkit:sql-ddl-column-comment>
+- 'any': per essere autorizzati ad invocare il servizio è sufficiente per il chiamante possedere uno dei ruoli definiti sulla porta delegata]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[all/any]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -771,7 +771,7 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                                 <linkit:sql-column-mapping name="scope_match"/>
                                 <linkit:sql-ddl-column-comment><![CDATA[Indica quali scope sono richiesti alla fruizione, se nella porta è stata impostata una autorizzazione basata sugli scope (vedi colonna 'scope_stato'):
 - 'all': tutti gli scope associati alla porta delegata (tramite tabella pd_scope) devono essere posseduti dal chiamante
-- 'any': per essere autorizzati ad invocare il servizio è sufficente per il chiamante possedere uno degli scope definiti sulla porta delegata]]></linkit:sql-ddl-column-comment>
+- 'any': per essere autorizzati ad invocare il servizio è sufficiente per il chiamante possedere uno degli scope definiti sulla porta delegata]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[all/any]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>

@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.config;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -64,8 +65,7 @@ public class ConfigurazionePolicyGestioneTokenList extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		//	String userLogin = ServletUtils.getUserLoginFromSession(session);	
-		String tipologia = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN;
-
+		
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 
@@ -81,7 +81,11 @@ public class ConfigurazionePolicyGestioneTokenList extends Action {
 			
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
-			List<GenericProperties> lista = confCore.gestorePolicyTokenList(idLista, tipologia, ricerca);
+			List<String> tipologie = new ArrayList<>();
+			tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
+			tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN);
+			
+			List<GenericProperties> lista = confCore.gestorePolicyTokenList(idLista, tipologie, ricerca);
 			
 			confHelper.prepareGestorePolicyTokenList(ricerca, lista, idLista); 
 			

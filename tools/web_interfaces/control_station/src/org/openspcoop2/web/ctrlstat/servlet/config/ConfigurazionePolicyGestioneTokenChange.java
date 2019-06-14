@@ -81,8 +81,6 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 		
 		TipoOperazione tipoOperazione = TipoOperazione.CHANGE;
 		
-		String tipologia = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN;
-
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 			// Preparo il menu
@@ -101,8 +99,11 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			ConfigManager configManager = ConfigManager.getinstance(ControlStationCore.getLog());
 			configManager.leggiConfigurazioni(propertiesSourceConfiguration, true);
 
-			String[] propConfigPolicyGestioneTokenLabelList = null; 
-			String[] propConfigPolicyGestioneTokenList= null;
+			List<String> nomiConfigurazioniPolicyGestioneToken = configManager.getNomiConfigurazioni(propertiesSourceConfiguration);
+			List<String> labelConfigurazioniPolicyGestioneToken = configManager.convertToLabel(propertiesSourceConfiguration, nomiConfigurazioniPolicyGestioneToken);
+			
+			String[] propConfigPolicyGestioneTokenLabelList = labelConfigurazioniPolicyGestioneToken.toArray(new String[labelConfigurazioniPolicyGestioneToken.size()]);
+			String[] propConfigPolicyGestioneTokenList= nomiConfigurazioniPolicyGestioneToken.toArray(new String[nomiConfigurazioniPolicyGestioneToken.size()]);
 			
 			Config configurazione = configManager.getConfigurazione(propertiesSourceConfiguration, genericProperties.getTipo()); 
 			
@@ -153,6 +154,7 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			}
 			
 			// Controlli sui campi immessi
+			String tipologia = confCore.getTokenPolicyTipologia().getProperty(tipo);
 			boolean isOk = confHelper.policyGestioneTokenCheckData(tipoOperazione, nome,descrizione,tipo,tipologia);
 			
 			if (isOk) {
@@ -205,7 +207,11 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
-			List<GenericProperties> lista = confCore.gestorePolicyTokenList(idLista, tipologia, ricerca);
+			List<String> tipologie = new ArrayList<>();
+			tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
+			tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN);		
+			
+			List<GenericProperties> lista = confCore.gestorePolicyTokenList(idLista, tipologie, ricerca);
 			
 			confHelper.prepareGestorePolicyTokenList(ricerca, lista, idLista); 
 			

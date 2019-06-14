@@ -290,6 +290,8 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 					null,							// responseInputFileNameHeaders, 
 					null,							// responseInputDeleteAfterRead, 
 					null,							// responseInputWaitTime,
+					false, 							// autenticazioneToken,
+					null, 							// tokenPolicy,
 					null,							// listExtendedConnettore, 
 	        		fruizioneAutenticazione,
 	        		fruizioneAutenticazioneOpzionale,

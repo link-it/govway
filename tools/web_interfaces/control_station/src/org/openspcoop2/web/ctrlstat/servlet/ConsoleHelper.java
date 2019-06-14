@@ -7216,7 +7216,7 @@ public class ConsoleHelper {
 	}
 	
 	public boolean porteAppAzioneCheckData(TipoOperazione add, List<String> azioniOccupate, List<MappingErogazionePortaApplicativa> list) throws Exception {
-		String[] azionis = this.request.getParameterValues(CostantiControlStation.PARAMETRO_AZIONI);
+		String[] azionis = this.getParameterValues(CostantiControlStation.PARAMETRO_AZIONI);
 		
 		if(azionis == null || azionis.length == 0) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA);
@@ -7238,7 +7238,7 @@ public class ConsoleHelper {
 	}
 	
 	public boolean porteDelAzioneCheckData(TipoOperazione add, List<String> azioniOccupate, List<MappingFruizionePortaDelegata> list) throws Exception {
-		String[] azionis = this.request.getParameterValues(CostantiControlStation.PARAMETRO_AZIONI);
+		String[] azionis = this.getParameterValues(CostantiControlStation.PARAMETRO_AZIONI);
 		
 		if(azionis == null || azionis.length == 0) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA);
@@ -7857,6 +7857,31 @@ public class ConsoleHelper {
 			throw new Exception(e);
 		}
 	}
+	
+	public void addFilterTipoTokenPolicy(String tipo, boolean postBack,
+			List<String> nomiConfigurazioniPolicyGestioneToken, List<String> labelConfigurazioniPolicyGestioneToken) throws Exception{
+		try {
+			int length = nomiConfigurazioniPolicyGestioneToken.size() +1;
+			String [] values = new String[length];
+			String [] labels = new String[length];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_TIPO_TOKEN_POLICY_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_TIPO_TOKEN_POLICY_QUALSIASI;
+			if(nomiConfigurazioniPolicyGestioneToken!=null && nomiConfigurazioniPolicyGestioneToken.size()>0) {
+				for (int i =0; i < nomiConfigurazioniPolicyGestioneToken.size() ; i ++) {
+					labels[i+1] = labelConfigurazioniPolicyGestioneToken.get(i);
+					values[i+1] = nomiConfigurazioniPolicyGestioneToken.get(i);
+				}
+			}
+			
+			this.pd.addFilter(Filtri.FILTRO_TIPO_TOKEN_POLICY, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO, tipo, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	
 	
 	public void setFilterRuoloServizioApplicativo(ISearch ricerca, int idLista) throws Exception{
 		if( (this.isModalitaCompleta()==false) && 
@@ -10105,6 +10130,22 @@ public class ConsoleHelper {
 			
 		}
 		
+		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+			
+			de = new DataElement();
+			de.setType(DataElementType.SUBTITLE);
+			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN);
+			de.setValue(labelConnettore);
+			dati.add(de);
+		
+			de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY));
+			dati.add(de);
+			
+		}
+		
 		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION)) {
 		
 			de = new DataElement();
@@ -10913,11 +10954,11 @@ public class ConsoleHelper {
 //		de.setRequired(true);
 		DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA+" - "+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
 		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
-			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_REST);
+			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_REST_RISPOSTA);
 			dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_VALORI_REST);
 		}
 		else {
-			dInfoPattern.setBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_SOAP);
+			dInfoPattern.setBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_SOAP_RISPOSTA);
 		}
 		de.setInfo(dInfoPattern);
 		dati.addElement(de);
@@ -11654,11 +11695,11 @@ public class ConsoleHelper {
 //		de.setRequired(true);
 		DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA+" - "+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
 		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
-			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_REST);
+			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_REST_RICHIESTA);
 			dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_VALORI_REST);
 		}
 		else {
-			dInfoPattern.setBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_SOAP);
+			dInfoPattern.setBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_SOAP_RICHIESTA);
 		}
 		de.setInfo(dInfoPattern);
 		dati.addElement(de);

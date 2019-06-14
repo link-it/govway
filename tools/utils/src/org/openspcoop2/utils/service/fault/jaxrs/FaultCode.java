@@ -45,6 +45,8 @@ public class FaultCode {
 	public static final FaultCode AUTORIZZAZIONE = new FaultCode(403, "AUTORIZZAZIONE", "Richiesta non permessa");
 	public static final FaultCode NOT_FOUND = new FaultCode(404, "NOT_FOUND", "Risorsa non trovata");
 	public static final FaultCode CONFLITTO = new FaultCode(409,"CONFLITTO","L'entità che si vuole creare risulta già esistente");
+	public static final FaultCode RICHIESTA_NON_VALIDA_SEMANTICAMENTE = new FaultCode(422,"RICHIESTA NON VALIDA SEMANTICAMENTE",
+			"Richiesta non processabile");
 	public static final FaultCode ERRORE_INTERNO = new FaultCode(500,"ERRORE INTERNO","Errore interno");
 	
 

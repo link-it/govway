@@ -50,6 +50,8 @@ CREATE TABLE connettori
 	avg_response_time INT,
 	-- 1/0 (true/false) indica se il connettore e' gestito tramite le proprieta' custom
 	custom INT DEFAULT 0,
+	-- Gestione Token
+	token_policy VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_connettori') NOT NULL,
 	-- unique constraints

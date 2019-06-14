@@ -790,7 +790,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 									
 			CorrelazioneApplicativaElemento to_del = BaseHelper.evalnull( () -> BaseHelper.findAndRemoveFirst( 
 					correlazioneApplicativa.getElementoList(), 
-					e -> e.getNome().equals(searchElemento)
+					e -> (e.getNome()==null ? "" : e.getNome()).equals(searchElemento)
 				));
 			
 			if ( to_del != null ) {
@@ -842,7 +842,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 									
 			CorrelazioneApplicativaRispostaElemento to_del = BaseHelper.evalnull( () -> BaseHelper.findAndRemoveFirst( 
 					correlazioneApplicativa.getElementoList(), 
-					e -> e.getNome().equals(searchElemento)
+					e -> (e.getNome()==null ? "" : e.getNome()).equals(searchElemento)
 				));
 			
 			if ( to_del != null ) {
@@ -1594,7 +1594,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 					: elemento;			
 			List<CorrelazioneApplicativaElemento> lista = BaseHelper.evalnull( () -> pd.getCorrelazioneApplicativa().getElementoList() );
             
-			Optional<CorrelazioneApplicativaElemento> el = BaseHelper.findFirst( lista, c -> c.getNome().equals(searchElemento) );
+			Optional<CorrelazioneApplicativaElemento> el = BaseHelper.findFirst( lista, c -> (c.getNome()==null ? "" : c.getNome()).equals(searchElemento) );
 			
 			if ( !el.isPresent() )
 				throw FaultCode.NOT_FOUND.toException("CorrelazioneApplicativaRichiesta per l'elemento " + elemento + " non presente");
@@ -1639,7 +1639,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			List<CorrelazioneApplicativaRispostaElemento> lista = BaseHelper.evalnull( () -> pd.getCorrelazioneApplicativaRisposta().getElementoList() );
       
-			Optional<CorrelazioneApplicativaRispostaElemento> el = BaseHelper.findFirst( lista, c -> c.getNome().equals(searchElemento) );
+			Optional<CorrelazioneApplicativaRispostaElemento> el = BaseHelper.findFirst( lista, c -> (c.getNome()==null ? "" : c.getNome()).equals(searchElemento) );
 			
 			if ( !el.isPresent() )
 				throw FaultCode.NOT_FOUND.toException("CorrelazioneApplicativaRisposta per l'elemento " + elemento + " non presente");
@@ -2085,7 +2085,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				pd.setCorrelazioneApplicativa(new org.openspcoop2.core.config.CorrelazioneApplicativa());
 			
 			final List<CorrelazioneApplicativaElemento> correlazioni = pd.getCorrelazioneApplicativa().getElementoList();
-			final CorrelazioneApplicativaElemento oldElem = BaseHelper.findAndRemoveFirst(correlazioni, c -> c.getNome().equals(searchElemento));
+			final CorrelazioneApplicativaElemento oldElem = BaseHelper.findAndRemoveFirst(correlazioni, c -> (c.getNome()==null ? "" : c.getNome()).equals(searchElemento));
 			
 			if ( oldElem == null ) 
 				throw FaultCode.NOT_FOUND.toException("Correlazione Applicativa Richiesta per l'elemento " + elemento + " non trovata ");
@@ -2147,7 +2147,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				pd.setCorrelazioneApplicativaRisposta(new org.openspcoop2.core.config.CorrelazioneApplicativaRisposta());
 			
 			final List<CorrelazioneApplicativaRispostaElemento> correlazioni = pd.getCorrelazioneApplicativaRisposta().getElementoList();
-			final CorrelazioneApplicativaRispostaElemento oldElem = BaseHelper.findAndRemoveFirst(correlazioni, c -> c.getNome().equals(searchElemento));
+			final CorrelazioneApplicativaRispostaElemento oldElem = BaseHelper.findAndRemoveFirst(correlazioni, c -> (c.getNome()==null ? "" : c.getNome()).equals(searchElemento));
 			
 			if ( oldElem == null ) 
 				throw FaultCode.NOT_FOUND.toException("Correlazione Applicativa Risposta per l'elemento " + elemento + " non trovata ");

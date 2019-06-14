@@ -50,6 +50,8 @@ CREATE TABLE connettori
 	avg_response_time NUMBER,
 	-- 1/0 (true/false) indica se il connettore e' gestito tramite le proprieta' custom
 	custom NUMBER,
+	-- Gestione Token
+	token_policy VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

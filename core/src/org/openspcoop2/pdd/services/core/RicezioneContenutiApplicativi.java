@@ -1945,6 +1945,18 @@ public class RicezioneContenutiApplicativi {
 					if(fineGestione) {
 						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_TOKEN, "true");
 						msgDiag.logPersonalizzato("gestioneTokenFallita");
+						
+						List<InformazioniToken> listaEsiti = GestoreToken.getInformazioniTokenNonValide(esitoValidazioneToken, esitoIntrospectionToken, esitoUserInfoToken);
+						InformazioniToken informazioniTokenNormalizzate = null;
+						if(listaEsiti!=null && listaEsiti.size()>0) {
+							informazioniTokenNormalizzate = GestoreToken.normalizeInformazioniToken(listaEsiti);
+							informazioniTokenNormalizzate.setValid(true);
+						}
+						if(informazioniTokenNormalizzate!=null) {
+							pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE, informazioniTokenNormalizzate);
+							
+							transaction.setInformazioniToken(informazioniTokenNormalizzate);
+						}
 					}
 					else {
 						if(esitoPresenzaToken.isPresente()) {
