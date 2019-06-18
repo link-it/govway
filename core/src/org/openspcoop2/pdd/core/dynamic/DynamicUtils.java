@@ -298,9 +298,12 @@ public class DynamicUtils {
 			// newObject
 			dynamicMap.put(Costanti.MAP_CLASS_NEW_INSTANCE, new freemarker.template.utility.ObjectConstructor());
 			
+			// Configurazione
+			freemarker.template.Configuration config = TemplateUtils.newTemplateEngine();
+			config.setAPIBuiltinEnabled(true); // serve per modificare le mappe in freemarker
 			
 			// ** costruisco template
-			Template templateFTL = TemplateUtils.buildTemplate(name, template);
+			Template templateFTL = TemplateUtils.buildTemplate(config, name, template);
 			templateFTL.process(dynamicMap, writer);
 			writer.flush();
 			

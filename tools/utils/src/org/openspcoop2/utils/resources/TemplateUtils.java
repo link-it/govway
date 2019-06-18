@@ -109,6 +109,9 @@ public class TemplateUtils {
 	public static Template buildTemplate(String name,byte[] bytes) throws IOException{
 		return new Template(name, new CharSequenceReader(new String(bytes)),newTemplateEngine());
 	}
+	public static Template buildTemplate(Configuration cfg,String name,byte[] bytes) throws IOException{
+		return new Template(name, new CharSequenceReader(new String(bytes)),cfg);
+	}
 	
 	
 	
