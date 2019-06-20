@@ -1,3 +1,13 @@
+2019-06-20  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug  #43
+	(https://github.com/link-it/govway/issues/43)
+	Risolto problema presente nel Summary 'Ultimo anno' della console di monitoraggio,
+	dove veniva visualizzato un intervallo temporale errato. 
+	Il mese corrente invece di essere utilizzaato come ultimo mese nell'intervallo, 
+	era proposto come primo e venivano poi forniti mesi 'futuri'.
+
 2019-06-14  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.1.0

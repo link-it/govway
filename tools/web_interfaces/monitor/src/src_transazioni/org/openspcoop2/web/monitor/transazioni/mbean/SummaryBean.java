@@ -1013,7 +1013,7 @@ public class SummaryBean implements Serializable{
 			this.maxDate=max.getTime();
 
 			Calendar min = (Calendar) max.clone();
-			max.add(Calendar.MONTH, -11);
+			min.add(Calendar.MONTH, -11);
 			min.set(Calendar.DAY_OF_MONTH, min.getActualMinimum(Calendar.DAY_OF_MONTH));
 			min.set(Calendar.HOUR_OF_DAY,min.getActualMinimum(Calendar.HOUR_OF_DAY));
 			min.set(Calendar.MINUTE,min.getActualMinimum(Calendar.MINUTE));
