@@ -61,9 +61,14 @@ public class MappedXml2Json extends AbstractXml2Json {
 		this.configuration = new Configuration(this.jsonNamespaceMap);
 		this.init();
 	}
+	@SuppressWarnings("unchecked")
 	public MappedXml2Json(Configuration configuration) {
 		super();
 		this.configuration = configuration;
+		this.jsonNamespaceMap = configuration.getXmlToJsonNamespaces();
+		if(this.jsonNamespaceMap!=null && this.jsonNamespaceMap.isEmpty()) {
+			this.jsonNamespaceMap = null;
+		}
 		this.init();
 	}
 	private void init() {
@@ -106,7 +111,7 @@ public class MappedXml2Json extends AbstractXml2Json {
 		while(prefixes.hasMoreElements()){
 			Object nextElement = prefixes.nextElement();
 			if(!nextElement.equals("xmlns"))
-				this.jsonNamespaceMap.put((String) nextElement, f.getNamespaceURI((String)nextElement));
+				this.jsonNamespaceMap.put(f.getNamespaceURI((String)nextElement),(String) nextElement);
 		}
 		this.mappedXMLOutputFactory = new MappedXMLOutputFactory(this.jsonNamespaceMap);
 		
