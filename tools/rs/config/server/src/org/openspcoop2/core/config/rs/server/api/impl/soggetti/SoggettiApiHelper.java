@@ -127,7 +127,7 @@ public class SoggettiApiHelper {
 		convert(body, ret, env);
 		
 		final String protocollo = env.tipo_protocollo;
-		final IDSoggetto idSoggetto = new IDSoggetto(protocollo,body.getNome());
+		final IDSoggetto idSoggetto = new IDSoggetto(env.tipo_soggetto,body.getNome());
 
 		ret.setVersioneProtocollo(env.soggettiCore.getVersioneDefaultProtocollo(protocollo));
 		ret.setIdentificativoPorta(env.soggettiCore.getIdentificativoPortaDefault(protocollo, idSoggetto));
