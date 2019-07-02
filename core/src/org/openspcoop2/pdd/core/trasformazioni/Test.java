@@ -22,16 +22,22 @@
 
 package org.openspcoop2.pdd.core.trasformazioni;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.dynamic.Costanti;
+import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
+import org.openspcoop2.utils.io.Entry;
+import org.openspcoop2.utils.io.ZipUtilities;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
@@ -46,6 +52,8 @@ public class Test {
 	
 	private static final String DATA = "DATA";
 	private static final String DATA_RISPOSTA = "DATA_RISPOSTA";
+	private static final String DATA_INCLUDE_1 = "DATA_INCLUDE_1";
+	private static final String DATA_INCLUDE_2 = "DATA_INCLUDE_2";
 	
 	private static final String HEADER1 = "Header1";
 	private static final String HEADER1_VALORE = "ValoreHeader1";
@@ -225,6 +233,28 @@ public class Test {
 					JSON_TEMPLATE_FREEMARKER_BODY+
 					JSON_TEMPLATE_FREEMARKER_BODY_RESPONSE+
 			"\n}";
+	private static final String JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_1_PATH = "lib/json/TestInclude_1.ftl"; 
+	private static final String JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_2_PATH = "lib/json/TestInclude_2.ftl";
+	private static final String JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_1 = "<#include \""+JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_1_PATH+"\">\n"; 
+	private static final String JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_2 = "<#include \""+JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_2_PATH+"\">\n";
+	private static final String JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_CONTENT_1 = 	   
+			"\""+DATA_INCLUDE_1+"\": \"${date?string('dd.MM.yyyy HH:mm:ss')}\"\n";
+	private static final String JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_CONTENT_2 = 	   
+			"\""+DATA_INCLUDE_2+"\": \"${date?string('dd.MM.yyyy HH:mm:ss')}\"\n";
+	private static final String JSON_TEMPLATE_FREEMARKER_REQUEST_INCLUDE= 
+			"{\n"+	   
+					JSON_TEMPLATE_FREEMARKER_BODY+
+					JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_1+
+					JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_2+
+			"\n}";
+	private static final String JSON_TEMPLATE_FREEMARKER_RESPONSE_INCLUDE= 
+			"{\n"+	   
+					JSON_TEMPLATE_FREEMARKER_BODY+
+					JSON_TEMPLATE_FREEMARKER_BODY_RESPONSE+
+					JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_1+
+					JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_2+
+			"\n}";
+	
 	
 	private static final String XML_TEMPLATE_FREEMARKER_BODY =
 			"<"+DATA+">"+"${date?string('dd.MM.yyyy HH:mm:ss')}"+"</"+DATA+">\n"+
@@ -260,6 +290,27 @@ public class Test {
 			XML_TEMPLATE_FREEMARKER_BODY + 
 			XML_TEMPLATE_FREEMARKER_BODY_RESPONSE + 
 			XML_END;
+	private static final String XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_1_PATH = "lib/xml/TestInclude_1.ftl"; 
+	private static final String XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_2_PATH = "lib/xml/TestInclude_2.ftl";
+	private static final String XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_1 = "<#include \""+XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_1_PATH+"\">\n"; 
+	private static final String XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_2 = "<#include \""+XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_2_PATH+"\">\n";
+	private static final String XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_CONTENT_1 = 	   
+			"<"+DATA_INCLUDE_1+">"+"${date?string('dd.MM.yyyy HH:mm:ss')}"+"</"+DATA+">\n";
+	private static final String XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_CONTENT_2 = 	   
+			"<"+DATA_INCLUDE_2+">"+"${date?string('dd.MM.yyyy HH:mm:ss')}"+"</"+DATA+">\n";
+	private static final String XML_TEMPLATE_FREEMARKER_REQUEST_INCLUDE= 
+			"{\n"+	   
+					XML_TEMPLATE_FREEMARKER_BODY+
+					XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_1+
+					XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_2+
+			"\n}";
+	private static final String XML_TEMPLATE_FREEMARKER_RESPONSE_INCLUDE= 
+			"{\n"+	   
+					XML_TEMPLATE_FREEMARKER_BODY+
+					XML_TEMPLATE_FREEMARKER_BODY_RESPONSE+
+					XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_1+
+					XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_2+
+			"\n}";
 	
 	
 	// **** Template Velocity *****
@@ -302,6 +353,27 @@ public class Test {
 					JSON_TEMPLATE_VELOCITY_BODY+
 					JSON_TEMPLATE_VELOCITY_BODY_RESPONSE+
 			"\n}";
+	private static final String JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_1_PATH = "lib/json/TestInclude_1.vm"; 
+	private static final String JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_2_PATH = "lib/json/TestInclude_2.vm";
+	private static final String JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_1 = "<#include \""+JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_1_PATH+"\">\n"; 
+	private static final String JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_2 = "<#include \""+JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_2_PATH+"\">\n";
+	private static final String JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_1 = 	   
+			"\""+DATA_INCLUDE_1+"\": \"$date\"\n";
+	private static final String JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_2 = 	   
+			"\""+DATA_INCLUDE_2+"\": \"$date\"\n";
+	private static final String JSON_TEMPLATE_VELOCITY_REQUEST_INCLUDE= 
+			"{\n"+	   
+					JSON_TEMPLATE_VELOCITY_BODY+
+					JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_1+
+					JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_2+
+			"\n}";
+	private static final String JSON_TEMPLATE_VELOCITY_RESPONSE_INCLUDE= 
+			"{\n"+	   
+					JSON_TEMPLATE_VELOCITY_BODY+
+					JSON_TEMPLATE_VELOCITY_BODY_RESPONSE+
+					JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_1+
+					JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_2+
+			"\n}";
 	
 	private static final String XML_TEMPLATE_VELOCITY_BODY =
 			"<"+DATA+">"+"${date}"+"</"+DATA+">\n"+
@@ -337,6 +409,27 @@ public class Test {
 			XML_TEMPLATE_VELOCITY_BODY + 
 			XML_TEMPLATE_VELOCITY_BODY_RESPONSE + 
 			XML_END;
+	private static final String XML_TEMPLATE_VELOCITY_BODY_INCLUDE_1_PATH = "lib/xml/TestInclude_1.vm"; 
+	private static final String XML_TEMPLATE_VELOCITY_BODY_INCLUDE_2_PATH = "lib/xml/TestInclude_2.vm";
+	private static final String XML_TEMPLATE_VELOCITY_BODY_INCLUDE_1 = "<#include \""+XML_TEMPLATE_VELOCITY_BODY_INCLUDE_1_PATH+"\">\n"; 
+	private static final String XML_TEMPLATE_VELOCITY_BODY_INCLUDE_2 = "<#include \""+XML_TEMPLATE_VELOCITY_BODY_INCLUDE_2_PATH+"\">\n";
+	private static final String XML_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_1 = 	   
+			"<"+DATA_INCLUDE_1+">"+"$date"+"</"+DATA+">\n";
+	private static final String XML_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_2 = 	   
+			"<"+DATA_INCLUDE_2+">"+"$date"+"</"+DATA+">\n";
+	private static final String XML_TEMPLATE_VELOCITY_REQUEST_INCLUDE= 
+			"{\n"+	   
+					XML_TEMPLATE_VELOCITY_BODY+
+					XML_TEMPLATE_VELOCITY_BODY_INCLUDE_1+
+					XML_TEMPLATE_VELOCITY_BODY_INCLUDE_2+
+			"\n}";
+	private static final String XML_TEMPLATE_VELOCITY_RESPONSE_INCLUDE= 
+			"{\n"+	   
+					XML_TEMPLATE_VELOCITY_BODY+
+					XML_TEMPLATE_VELOCITY_BODY_RESPONSE+
+					XML_TEMPLATE_VELOCITY_BODY_INCLUDE_1+
+					XML_TEMPLATE_VELOCITY_BODY_INCLUDE_2+
+			"\n}";
 	
 	
 	// **** Template XSLT *****
@@ -451,24 +544,32 @@ public class Test {
 		Element elementResponse = XMLUtils.getInstance().newElement(XML_RESPONSE.getBytes());
 		
 		Map<String, Object> dynamicMapXmlRequest = new Hashtable<String, Object>();
+		ErrorHandler errorHandlerXmlRequest = new ErrorHandler();
 		GestoreTrasformazioniUtilities.fillDynamicMapRequest(log, dynamicMapXmlRequest, pddContext, urlInvocazione,
 				elementRequest, null, 
-				busta, parametriTrasporto, parametriUrl);
+				busta, parametriTrasporto, parametriUrl,
+				errorHandlerXmlRequest);
 		
 		Map<String, Object> dynamicMapXmlResponse = new Hashtable<String, Object>();
+		ErrorHandler errorHandlerXmlResponse = new ErrorHandler();
 		GestoreTrasformazioniUtilities.fillDynamicMapResponse(log, dynamicMapXmlResponse, dynamicMapXmlRequest, pddContext, 
 				elementResponse, null, 
-				busta, parametriTrasportoRisposta);
+				busta, parametriTrasportoRisposta,
+				errorHandlerXmlResponse);
 		
 		Map<String, Object> dynamicMapJsonRequest = new Hashtable<String, Object>();
+		ErrorHandler errorHandlerJsonRequest = new ErrorHandler();
 		GestoreTrasformazioniUtilities.fillDynamicMapRequest(log, dynamicMapJsonRequest, pddContext, urlInvocazione,
 				null, JSON_REQUEST, 
-				busta, parametriTrasporto, parametriUrl);
+				busta, parametriTrasporto, parametriUrl,
+				errorHandlerJsonRequest);
 		
 		Map<String, Object> dynamicMapJsonResponse = new Hashtable<String, Object>();
+		ErrorHandler errorHandlerJsonResponse = new ErrorHandler();
 		GestoreTrasformazioniUtilities.fillDynamicMapResponse(log, dynamicMapJsonResponse, dynamicMapJsonRequest, pddContext, 
 				null, JSON_RESPONSE,  
-				busta, parametriTrasportoRisposta);
+				busta, parametriTrasportoRisposta,
+				errorHandlerJsonResponse);
 		
 		if(tipoTest==null || TipoTrasformazione.TEMPLATE.equals(tipoTest)) {
 		
@@ -494,6 +595,38 @@ public class Test {
 			
 		}
 		
+		if(tipoTest==null || TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(tipoTest)) {
+			
+			List<Entry> zipEntriesFreeMarkerJsonRequest = new ArrayList<>();
+			zipEntriesFreeMarkerJsonRequest.add(new Entry(Costanti.ZIP_INDEX_ENTRY_FREEMARKER, JSON_TEMPLATE_FREEMARKER_REQUEST_INCLUDE.getBytes()));
+			zipEntriesFreeMarkerJsonRequest.add(new Entry(JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_1_PATH, JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_CONTENT_1.getBytes()));
+			zipEntriesFreeMarkerJsonRequest.add(new Entry(JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_2_PATH, JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_CONTENT_2.getBytes()));
+			byte [] zipJsonRequest = ZipUtilities.zip(zipEntriesFreeMarkerJsonRequest);		
+			List<Entry> zipEntriesFreeMarkerJsonResponse = new ArrayList<>();
+			zipEntriesFreeMarkerJsonResponse.add(new Entry(Costanti.ZIP_INDEX_ENTRY_FREEMARKER, JSON_TEMPLATE_FREEMARKER_RESPONSE_INCLUDE.getBytes()));
+			zipEntriesFreeMarkerJsonResponse.add(new Entry(JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_1_PATH, JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_CONTENT_1.getBytes()));
+			zipEntriesFreeMarkerJsonResponse.add(new Entry(JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_2_PATH, JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_CONTENT_2.getBytes()));
+			byte [] zipJsonResponse = ZipUtilities.zip(zipEntriesFreeMarkerJsonResponse);		
+			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP) , "xml", pddContext, 
+					dynamicMapXmlRequest, null,  zipJsonRequest, 
+					dynamicMapXmlResponse, null,  zipJsonResponse);
+			
+			List<Entry> zipEntriesFreeMarkerXmlRequest = new ArrayList<>();
+			zipEntriesFreeMarkerXmlRequest.add(new Entry(Costanti.ZIP_INDEX_ENTRY_FREEMARKER, XML_TEMPLATE_FREEMARKER_REQUEST_INCLUDE.getBytes()));
+			zipEntriesFreeMarkerXmlRequest.add(new Entry(XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_1_PATH, XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_CONTENT_1.getBytes()));
+			zipEntriesFreeMarkerXmlRequest.add(new Entry(XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_2_PATH, XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_CONTENT_2.getBytes()));
+			byte [] zipXmlRequest = ZipUtilities.zip(zipEntriesFreeMarkerXmlRequest);		
+			List<Entry> zipEntriesFreeMarkerXmlResponse = new ArrayList<>();
+			zipEntriesFreeMarkerXmlResponse.add(new Entry(Costanti.ZIP_INDEX_ENTRY_FREEMARKER, XML_TEMPLATE_FREEMARKER_RESPONSE_INCLUDE.getBytes()));
+			zipEntriesFreeMarkerXmlResponse.add(new Entry(XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_1_PATH, XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_CONTENT_1.getBytes()));
+			zipEntriesFreeMarkerXmlResponse.add(new Entry(XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_2_PATH, XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_CONTENT_2.getBytes()));
+			byte [] zipXmlResponse = ZipUtilities.zip(zipEntriesFreeMarkerXmlResponse);		
+			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP) , "json", pddContext, 
+					dynamicMapJsonRequest, null,  zipXmlRequest, 
+					dynamicMapJsonResponse, null, zipXmlResponse);
+			
+		}
+		
 		if(tipoTest==null || TipoTrasformazione.VELOCITY_TEMPLATE.equals(tipoTest)) {
 			
 			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.VELOCITY_TEMPLATE) , "xml", pddContext, 
@@ -503,6 +636,38 @@ public class Test {
 			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.VELOCITY_TEMPLATE) , "json", pddContext, 
 					dynamicMapJsonRequest, null,  XML_TEMPLATE_VELOCITY_REQUEST.getBytes(), 
 					dynamicMapJsonResponse, null,  XML_TEMPLATE_VELOCITY_RESPONSE.getBytes());
+			
+		}
+		
+		if(tipoTest==null || TipoTrasformazione.VELOCITY_TEMPLATE_ZIP.equals(tipoTest)) {
+			
+			List<Entry> zipEntriesVelocityJsonRequest = new ArrayList<>();
+			zipEntriesVelocityJsonRequest.add(new Entry(Costanti.ZIP_INDEX_ENTRY_VELOCITY, JSON_TEMPLATE_VELOCITY_REQUEST_INCLUDE.getBytes()));
+			zipEntriesVelocityJsonRequest.add(new Entry(JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_1_PATH, JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_1.getBytes()));
+			zipEntriesVelocityJsonRequest.add(new Entry(JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_2_PATH, JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_2.getBytes()));
+			byte [] zipJsonRequest = ZipUtilities.zip(zipEntriesVelocityJsonRequest);		
+			List<Entry> zipEntriesVelocityJsonResponse = new ArrayList<>();
+			zipEntriesVelocityJsonResponse.add(new Entry(Costanti.ZIP_INDEX_ENTRY_VELOCITY, JSON_TEMPLATE_VELOCITY_RESPONSE_INCLUDE.getBytes()));
+			zipEntriesVelocityJsonResponse.add(new Entry(JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_1_PATH, JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_1.getBytes()));
+			zipEntriesVelocityJsonResponse.add(new Entry(JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_2_PATH, JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_2.getBytes()));
+			byte [] zipJsonResponse = ZipUtilities.zip(zipEntriesVelocityJsonResponse);		
+			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.VELOCITY_TEMPLATE_ZIP) , "xml", pddContext, 
+					dynamicMapXmlRequest, null,  zipJsonRequest, 
+					dynamicMapXmlResponse, null,  zipJsonResponse);
+			
+			List<Entry> zipEntriesVelocityXmlRequest = new ArrayList<>();
+			zipEntriesVelocityXmlRequest.add(new Entry(Costanti.ZIP_INDEX_ENTRY_VELOCITY, XML_TEMPLATE_VELOCITY_REQUEST_INCLUDE.getBytes()));
+			zipEntriesVelocityXmlRequest.add(new Entry(XML_TEMPLATE_VELOCITY_BODY_INCLUDE_1_PATH, XML_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_1.getBytes()));
+			zipEntriesVelocityXmlRequest.add(new Entry(XML_TEMPLATE_VELOCITY_BODY_INCLUDE_2_PATH, XML_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_2.getBytes()));
+			byte [] zipXmlRequest = ZipUtilities.zip(zipEntriesVelocityXmlRequest);		
+			List<Entry> zipEntriesVelocityXmlResponse = new ArrayList<>();
+			zipEntriesVelocityXmlResponse.add(new Entry(Costanti.ZIP_INDEX_ENTRY_VELOCITY, XML_TEMPLATE_VELOCITY_RESPONSE_INCLUDE.getBytes()));
+			zipEntriesVelocityXmlResponse.add(new Entry(XML_TEMPLATE_VELOCITY_BODY_INCLUDE_1_PATH, XML_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_1.getBytes()));
+			zipEntriesVelocityXmlResponse.add(new Entry(XML_TEMPLATE_VELOCITY_BODY_INCLUDE_2_PATH, XML_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_2.getBytes()));
+			byte [] zipXmlResponse = ZipUtilities.zip(zipEntriesVelocityXmlResponse);		
+			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.VELOCITY_TEMPLATE_ZIP) , "json", pddContext, 
+					dynamicMapJsonRequest, null,  zipXmlRequest, 
+					dynamicMapJsonResponse, null,  zipXmlResponse);
 			
 		}
 		
@@ -539,9 +704,14 @@ public class Test {
 		String contenuto = risultato.getContenutoAsString();
 		if(TipoTrasformazione.TEMPLATE.equals(tipoTest) ||
 				TipoTrasformazione.FREEMARKER_TEMPLATE.equals(tipoTest)  ||
+				TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(tipoTest) ||
 				TipoTrasformazione.VELOCITY_TEMPLATE.equals(tipoTest) ) {
 			try {
 				checkRequest(contenuto, pddContext);
+				if(TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(tipoTest) ||
+						TipoTrasformazione.VELOCITY_TEMPLATE_ZIP.equals(tipoTest)) {
+					checkInclude(contenuto, pddContext);
+				}
 			}catch(Throwable e) {
 				System.out.println("\tTemplate:\n "+new String(templateRequest));
 				System.out.println("\tOttenuto:\n "+contenuto);
@@ -574,10 +744,15 @@ public class Test {
 		contenuto = risultato.getContenutoAsString();
 		if(TipoTrasformazione.TEMPLATE.equals(tipoTest) ||
 				TipoTrasformazione.FREEMARKER_TEMPLATE.equals(tipoTest)  ||
+				TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(tipoTest) ||
 				TipoTrasformazione.VELOCITY_TEMPLATE.equals(tipoTest)) {
 			try{
 				checkRequest(contenuto, pddContext);
 				checkResponse(contenuto);
+				if(TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(tipoTest) ||
+						TipoTrasformazione.VELOCITY_TEMPLATE_ZIP.equals(tipoTest)) {
+					checkInclude(contenuto, pddContext);
+				}
 			}catch(Throwable e) {
 				System.out.println("\tTemplate:\n "+new String(templateResponse));
 				System.out.println("\tOttenuto:\n "+contenuto);
@@ -710,6 +885,16 @@ public class Test {
 		}
 		if(!contenuto.contains(PATH2_VALORE_RISPOSTA)) {
 			throw new Exception("Valore '"+PATH2_VALORE_RISPOSTA+"' per field '"+PATH2_RISPOSTA+"' non trovato");
+		}
+	}
+	
+	private static void checkInclude(String contenuto, PdDContext pddContext) throws Exception {
+		// verifiche
+		if(!contenuto.contains(DATA_INCLUDE_1)) {
+			throw new Exception("Nome '"+DATA_INCLUDE_1+"' non trovato");
+		}
+		if(!contenuto.contains(DATA_INCLUDE_2)) {
+			throw new Exception("Nome '"+DATA_INCLUDE_2+"' non trovato");
 		}
 	}
 }

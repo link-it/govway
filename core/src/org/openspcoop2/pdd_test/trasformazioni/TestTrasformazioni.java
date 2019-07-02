@@ -44,7 +44,9 @@ public class TestTrasformazioni {
 		return new Object[][]{
 				{TipoTrasformazione.TEMPLATE},
 				{TipoTrasformazione.FREEMARKER_TEMPLATE},
+				{TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP},
 				{TipoTrasformazione.VELOCITY_TEMPLATE},
+				{TipoTrasformazione.VELOCITY_TEMPLATE_ZIP},
 				{TipoTrasformazione.XSLT}
 		};
 	}

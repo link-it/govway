@@ -41,8 +41,7 @@ Nei casi in cui il testo della trasformazione è interpretato da framework ester
 - property (java.util.Properties)
 
 Nel caso di utilizzo di template 'Freemarker' o 'Velocity' sono disponibili i seguenti ulteriori oggetti:
-
-- context (java.util.Map); permette di accedere al contesto della richiesta.
+ 
 - class; permette di definire classi. L'utilizzo varia a seconda del tipo di template engine:
 
   - velocity: class.forName("my.package.name")
@@ -52,6 +51,10 @@ Nel caso di utilizzo di template 'Freemarker' o 'Velocity' sono disponibili i se
 
   - velocity: new.instance("my.package.name","Parametro1","ParametroN") 
   - freemarker: new("my.package.name","Parametro1","ParametroN")
+
+- transportContext (org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext); permette di accedere ai dati della richiesta http (servlet request, principal ...)
+- context (java.util.Map<String, Object>); permette di accedere al contesto della richiesta.
+- errorHandler (org.openspcoop2.pdd.core.dynamic.ErrorHandler); permette di generare risposte personalizzate che segnalano l'impossibilità di proseguire la trasformazione.
 
 
 

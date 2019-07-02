@@ -1438,12 +1438,17 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					
 					String msgErrore = e.getMessage();					
 					if(existsModuloInAttesaRispostaApplicativa) {
-						
-						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
-								erroreIntegrazione,
-								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-								(responseMessage!=null ? responseMessage.getParseException() : null));
-						
+						if(e.getOpenSPCoop2ErrorMessage()!=null) {
+							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
+									e.getOpenSPCoop2ErrorMessage(), msgErrore,
+									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore);
+						}
+						else {
+							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
+									erroreIntegrazione,
+									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+									(responseMessage!=null ? responseMessage.getParseException() : null));
+						}
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErrore);
 					}else{
@@ -2042,10 +2047,17 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					String msgErrore = e.getMessage();					
 					if(existsModuloInAttesaRispostaApplicativa) {
 						
-						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
+						if(e instanceof GestoreTrasformazioniException && (((GestoreTrasformazioniException)e).getOpenSPCoop2ErrorMessage()!=null)) {
+							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
+									((GestoreTrasformazioniException)e).getOpenSPCoop2ErrorMessage(), msgErrore,
+									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore);
+						}
+						else {
+							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 								erroreIntegrazione,
 								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
 								(connectorSender!=null && connectorSender.getResponse()!=null ? connectorSender.getResponse().getParseException() : null));
+						}
 						
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErrore);
@@ -3374,6 +3386,18 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		}else{
 			ejbUtils.sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,bustaRichiesta,
 					errore,	idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,e,parseException);
+		}
+	}
+	
+	private void sendErroreProcessamento(boolean localForward,LocalForwardEngine localForwardEngine, EJBUtils ejbUtils, OpenSPCoop2Message errorMessage, String errorDetail,
+			String idModuloInAttesa,Busta bustaRichiesta,String idCorrelazioneApplicativa, String idCorrelazioneApplicativaRisposta,
+			String servizioApplicativoFruitore) throws LocalForwardException, EJBUtilsException, ProtocolException{
+		if(localForward){
+			localForwardEngine.sendErrore(errorMessage);
+		}else{
+			ejbUtils.sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,bustaRichiesta,
+					idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,
+					errorMessage, errorDetail);
 		}
 	}
 

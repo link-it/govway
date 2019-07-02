@@ -37,6 +37,9 @@ import org.openspcoop2.utils.service.beans.ListaSenzaTotale;
  */
 public class ListaUtils {
 
+	public static final Lista costruisciListaPaginata(String requestURI, Integer offset, Integer limit, long total) throws InstantiationException, IllegalAccessException {
+		return costruisciListaPaginata(requestURI, offset, limit, total, Lista.class);
+	}
 	public static final <T extends Lista> T costruisciListaPaginata(String requestURI, Integer offset, Integer limit, long total, Class<T> lclass) throws InstantiationException, IllegalAccessException {
 		T l = lclass.newInstance();
 		
@@ -54,6 +57,9 @@ public class ListaUtils {
 		return l;
 	}
 	
+	public static final ListaSenzaTotale costruisciLista(String requestURI, Integer offset, Integer limit, long total) throws InstantiationException, IllegalAccessException {
+		return costruisciLista(requestURI, offset, limit, total, ListaSenzaTotale.class);
+	}
 	public static final <T extends ListaSenzaTotale> T costruisciLista(String requestURI, Integer offset, Integer limit, long total, Class<T> lclass) throws InstantiationException, IllegalAccessException {
 		T l = lclass.newInstance();
 		

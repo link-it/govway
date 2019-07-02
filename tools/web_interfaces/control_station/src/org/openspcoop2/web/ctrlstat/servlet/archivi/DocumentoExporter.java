@@ -388,16 +388,12 @@ public class DocumentoExporter extends HttpServlet {
 
 						switch(tipo) {
 						case FREEMARKER_TEMPLATE:
-							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_FREEMARKER;
-							break;
+						case FREEMARKER_TEMPLATE_ZIP:
 						case VELOCITY_TEMPLATE:
-							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_VELOCITY;
-							break;
+						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
-							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_GOVWAY;
-							break;
 						case XSLT:
-							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_XSLT;
+							fileName += tipo.getExt();
 							break;
 						case EMPTY:
 							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] '"+tipo+"' non disponibile per il tipo archivio ["+tipoDocumento+"]: tipo non supportato");
@@ -450,13 +446,14 @@ public class DocumentoExporter extends HttpServlet {
 
 						switch(tipo) {
 						case FREEMARKER_TEMPLATE:
-							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_FREEMARKER;
-							break;
+						case FREEMARKER_TEMPLATE_ZIP:
+						case VELOCITY_TEMPLATE:
+						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
-							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_GOVWAY;
+						case XSLT:
+							fileName += tipo.getExt();
 							break;
 						case EMPTY:
-						default:
 							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
 						}
 
@@ -507,13 +504,14 @@ public class DocumentoExporter extends HttpServlet {
 
 						switch(tipo) {
 						case FREEMARKER_TEMPLATE:
-							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_FREEMARKER;
-							break;
+						case FREEMARKER_TEMPLATE_ZIP:
+						case VELOCITY_TEMPLATE:
+						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
-							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_GOVWAY;
+						case XSLT:
+							fileName += tipo.getExt();
 							break;
 						case EMPTY:
-						default:
 							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
 						}
 								
@@ -570,13 +568,14 @@ public class DocumentoExporter extends HttpServlet {
 
 						switch(tipo) {
 						case FREEMARKER_TEMPLATE:
-							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_FREEMARKER;
-							break;
+						case FREEMARKER_TEMPLATE_ZIP:
+						case VELOCITY_TEMPLATE:
+						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
-							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_GOVWAY;
+						case XSLT:
+							fileName += tipo.getExt();
 							break;
 						case EMPTY:
-						default:
 							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
 						}
 
@@ -634,13 +633,14 @@ public class DocumentoExporter extends HttpServlet {
 
 						switch(tipo) {
 						case FREEMARKER_TEMPLATE:
-							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_FREEMARKER;
-							break;
+						case FREEMARKER_TEMPLATE_ZIP:
+						case VELOCITY_TEMPLATE:
+						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
-							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_GOVWAY;
+						case XSLT:
+							fileName += tipo.getExt();
 							break;
 						case EMPTY:
-						default:
 							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
 						}
 								
@@ -687,13 +687,14 @@ public class DocumentoExporter extends HttpServlet {
 
 						switch(tipo) {
 						case FREEMARKER_TEMPLATE:
-							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_FREEMARKER;
-							break;
+						case FREEMARKER_TEMPLATE_ZIP:
+						case VELOCITY_TEMPLATE:
+						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
-							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_GOVWAY;
+						case XSLT:
+							fileName += tipo.getExt();
 							break;
 						case EMPTY:
-						default:
 							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
 						}
 
@@ -744,13 +745,14 @@ public class DocumentoExporter extends HttpServlet {
 
 						switch(tipo) {
 						case FREEMARKER_TEMPLATE:
-							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_FREEMARKER;
-							break;
+						case FREEMARKER_TEMPLATE_ZIP:
+						case VELOCITY_TEMPLATE:
+						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
-							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_GOVWAY;
+						case XSLT:
+							fileName += tipo.getExt();
 							break;
 						case EMPTY:
-						default:
 							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
 						}
 								
@@ -807,13 +809,14 @@ public class DocumentoExporter extends HttpServlet {
 
 						switch(tipo) {
 						case FREEMARKER_TEMPLATE:
-							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_FREEMARKER;
-							break;
+						case FREEMARKER_TEMPLATE_ZIP:
+						case VELOCITY_TEMPLATE:
+						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
-							fileName += ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_ESTENSIONE_TEMPLATE_GOVWAY;
+						case XSLT:
+							fileName += tipo.getExt();
 							break;
 						case EMPTY:
-						default:
 							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
 						}
 

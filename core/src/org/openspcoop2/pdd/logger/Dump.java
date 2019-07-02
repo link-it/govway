@@ -281,7 +281,7 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRichiestaUscita();
 		}
 		try {
-			dump(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO,null,msg,infoConnettore.getLocation(),infoConnettore.getPropertiesTrasporto());
+			dump(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO,null,msg,(infoConnettore!=null ? infoConnettore.getLocation() : null),infoConnettore.getPropertiesTrasporto());
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -294,7 +294,7 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpRichiestaUscita();
 		}
 		try {
-			dump(TipoMessaggio.RICHIESTA_USCITA,msg,null,infoConnettore.getLocation(),infoConnettore.getPropertiesTrasporto());
+			dump(TipoMessaggio.RICHIESTA_USCITA,msg,null,(infoConnettore!=null ? infoConnettore.getLocation() : null),infoConnettore.getPropertiesTrasporto());
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -309,7 +309,7 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRispostaIngresso();
 		}
 		try {
-			dump(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO,null,msg,infoConnettore.getLocation(),transportHeaderRisposta);
+			dump(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO,null,msg,(infoConnettore!=null ? infoConnettore.getLocation() : null),transportHeaderRisposta);
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -323,7 +323,7 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpRispostaIngresso();
 		}
 		try {
-			dump(TipoMessaggio.RISPOSTA_INGRESSO,msg,null,infoConnettore.getLocation(),transportHeaderRisposta);
+			dump(TipoMessaggio.RISPOSTA_INGRESSO,msg,null,(infoConnettore!=null ? infoConnettore.getLocation() : null),transportHeaderRisposta);
 		}
 		finally {
 			if(this.transactionNullable!=null) {

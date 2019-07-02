@@ -2118,7 +2118,7 @@ public class EJBUtils {
 				false,this.idModulo,this.protocolFactory);
 		List<Eccezione> errs = new ArrayList<Eccezione>();
 		errs.add(ecc);
-		this._sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,errore,idCorrelazioneApplicativa,null,servizioApplicativoFruitore,eProcessamento,parseException);
+		this._sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,errore,idCorrelazioneApplicativa,null,servizioApplicativoFruitore,eProcessamento,parseException,null);
 	}
 	public void sendAsRispostaBustaErroreProcessamento(String idModuloInAttesa,Busta busta,
 			ErroreIntegrazione errore,
@@ -2128,20 +2128,49 @@ public class EJBUtils {
 		Eccezione ecc = new Eccezione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento(errore.getDescrizione(this.protocolFactory)),false,this.idModulo,this.protocolFactory);
 		List<Eccezione> errs = new ArrayList<Eccezione>();
 		errs.add(ecc);
-		this._sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,errore,idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,eProcessamento,parseException);
+		this._sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,errore,idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,eProcessamento,parseException,null);
 	}
 	public void sendAsRispostaBustaErroreProcessamento(String idModuloInAttesa,Busta busta,
 			List<Eccezione> errs,String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,
 			String servizioApplicativoFruitore,
 			Throwable eProcessamento, ParseException parseException)throws EJBUtilsException,ProtocolException{ 
 		this._sendAsRispostaBustaErroreProcessamento(idModuloInAttesa, busta, errs, null, 
-				idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, eProcessamento, parseException);
+				idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, eProcessamento, parseException, null);
 	}
+	
+	public void sendAsRispostaBustaErroreProcessamento(String idModuloInAttesa,Busta busta,
+			String idCorrelazioneApplicativa,
+			String servizioApplicativoFruitore,
+			OpenSPCoop2Message errorMessageParam, String errorDetail)throws EJBUtilsException,ProtocolException{ 
+		Eccezione ecc = new Eccezione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento(errorDetail),
+				false,this.idModulo,this.protocolFactory);
+		List<Eccezione> errs = new ArrayList<Eccezione>();
+		errs.add(ecc);
+		this._sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,null,idCorrelazioneApplicativa,null,servizioApplicativoFruitore,null,null,errorMessageParam);
+	}
+	public void sendAsRispostaBustaErroreProcessamento(String idModuloInAttesa,Busta busta,
+			String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,
+			String servizioApplicativoFruitore,
+			OpenSPCoop2Message errorMessageParam, String errorDetail)throws EJBUtilsException,ProtocolException{ 
+		Eccezione ecc = new Eccezione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento(errorDetail),false,this.idModulo,this.protocolFactory);
+		List<Eccezione> errs = new ArrayList<Eccezione>();
+		errs.add(ecc);
+		this._sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,null,idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,null,null,errorMessageParam);
+	}
+	public void sendAsRispostaBustaErroreProcessamento(String idModuloInAttesa,Busta busta,
+			List<Eccezione> errs,String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,
+			String servizioApplicativoFruitore,
+			OpenSPCoop2Message errorMessageParam)throws EJBUtilsException,ProtocolException{ 
+		this._sendAsRispostaBustaErroreProcessamento(idModuloInAttesa, busta, errs, null, 
+				idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, null,null,errorMessageParam);
+	}
+	
 	private void _sendAsRispostaBustaErroreProcessamento(String idModuloInAttesa,Busta busta,
 			List<Eccezione> errs, ErroreIntegrazione errore, 
 			String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,
 			String servizioApplicativoFruitore,
-			Throwable eProcessamento, ParseException parseException)throws EJBUtilsException,ProtocolException{ 
+			Throwable eProcessamento, ParseException parseException,
+			OpenSPCoop2Message errorMessageParam)throws EJBUtilsException,ProtocolException{ 
 
 		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 
@@ -2172,16 +2201,21 @@ public class EJBUtils {
 
 		//ErroreProcessamentoProtocollo: error Msg
 		OpenSPCoop2Message errorMsg = null;
-		if(errore==null) {
-			DettaglioEccezione dettaglioEccezione = this.dettaglioBuilder.buildDettaglioEccezioneFromBusta(this.identitaPdD,this.tipoPdD,this.idModulo, 
-					this.servizioApplicativoErogatore, busta, eProcessamento);
-			errorMsg = this.generatoreErrorePortaApplicativa.buildErroreProcessamento(this.integrationErrorPortaApplicativa, dettaglioEccezione);
+		if(errorMessageParam!=null) {
+			errorMsg = errorMessageParam;
 		}
 		else {
-			errorMsg = this.generatoreErrorePortaApplicativa.buildErroreProcessamento(this.integrationErrorPortaApplicativa, errore, eProcessamento);
-		}			
-		if(errorMsg == null){
-			throw new EJBUtilsException("EJBUtils.sendRispostaErroreProcessamentoProtocollo error: Costruzione Msg Errore Protocollo fallita.");
+			if(errore==null) {
+				DettaglioEccezione dettaglioEccezione = this.dettaglioBuilder.buildDettaglioEccezioneFromBusta(this.identitaPdD,this.tipoPdD,this.idModulo, 
+						this.servizioApplicativoErogatore, busta, eProcessamento);
+				errorMsg = this.generatoreErrorePortaApplicativa.buildErroreProcessamento(this.integrationErrorPortaApplicativa, dettaglioEccezione);
+			}
+			else {
+				errorMsg = this.generatoreErrorePortaApplicativa.buildErroreProcessamento(this.integrationErrorPortaApplicativa, errore, eProcessamento);
+			}			
+			if(errorMsg == null){
+				throw new EJBUtilsException("EJBUtils.sendRispostaErroreProcessamentoProtocollo error: Costruzione Msg Errore Protocollo fallita.");
+			}
 		}
 		if(this.integrationErrorPortaApplicativa!=null && IntegrationError.SERVICE_UNAVAILABLE.equals(this.integrationErrorPortaApplicativa)) {
 			// Retry-After
@@ -2197,7 +2231,7 @@ public class EJBUtils {
 				errorMsg.forceTransportHeader(HttpConstants.RETRY_AFTER, seconds+"");
 			}
 		}
-		if(eProcessamento instanceof HandlerException){
+		if(eProcessamento!=null && eProcessamento instanceof HandlerException){
 			HandlerException he = (HandlerException) eProcessamento;
 			he.customized(errorMsg);
 		}

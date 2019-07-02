@@ -1150,22 +1150,22 @@ public class CostantiControlStation {
 	
 	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO = "Il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway.<br/>Le espressioni utilizzabili sono:";
 	
-	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_ID_TRANSAZIONE = "<b>${transaction:id}</b>: identificativo UUID della transazione";
-	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_DATA = "<b>${date:FORMAT}</b>: data di elaborazione del messaggio; il formato fornito deve essere conforme a quanto richiesto dalla classe java 'java.text.SimpleDateFormat' (es. ${date:yyyyMMdd_HHmmssSSS})";
-	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_HEADER = "<b>${header:NAME}</b>: valore presente nell'header http che possiede il nome 'NAME'";
-	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_QUERY = "<b>${query:NAME}</b>: valore associato al parametro della url con nome 'NAME'";
-	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_BUSTA = "<b>${busta:FIELD}</b>: permette di utilizzare informazioni generiche del profilo; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.protocol.sdk.Busta' (es. per il mittente usare ${busta:mittente})";
-	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_PROPERTY_BUSTA = "<b>${property:NAME}</b>: permette di riferire informazioni specifiche del profilo presenti nella traccia (es. identificativo SDI). Il valore 'NAME' indica il nome della proprietà da utilizzare";
-	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_XPATH_SOAP = "<b>${xPath:EXPR}</b>: espressione XPath"; 
-	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_XPATH = "<b>${xPath:EXPR}</b>: espressione XPath applicata su un messaggio XML"; 
-	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_JSONPATH = "<b>${jsonPath:EXPR}</b>: espressione JSONPath applicata su un messaggio JSON"; 
-	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_URL = "<b>${urlRegExp:EXPR}</b>: espressione regolare applicata sulla url"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_ID_TRANSAZIONE = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_TRANSACTION_ID_VALUE+"}</b>: identificativo UUID della transazione";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_DATA = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_DATE_OBJECT+":FORMAT}</b>: data di elaborazione del messaggio; il formato fornito deve essere conforme a quanto richiesto dalla classe java 'java.text.SimpleDateFormat' (es. ${date:yyyyMMdd_HHmmssSSS})";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_HEADER = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_HEADER+":NAME}</b>: valore presente nell'header http che possiede il nome 'NAME'";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_QUERY = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_QUERY_PARAMETER+":NAME}</b>: valore associato al parametro della url con nome 'NAME'";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_BUSTA = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_BUSTA_OBJECT+":FIELD}</b>: permette di utilizzare informazioni generiche del profilo; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.protocol.sdk.Busta' (es. per il mittente usare ${busta:mittente})";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_PROPERTY_BUSTA = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_BUSTA_PROPERTY+":NAME}</b>: permette di riferire informazioni specifiche del profilo presenti nella traccia (es. identificativo SDI). Il valore 'NAME' indica il nome della proprietà da utilizzare";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_XPATH_SOAP = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_XML_XPATH+":EXPR}</b>: espressione XPath"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_XPATH = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_XML_XPATH+":EXPR}</b>: espressione XPath applicata su un messaggio XML"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_JSONPATH = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_JSON_PATH+":EXPR}</b>: espressione JSONPath applicata su un messaggio JSON"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_URL = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_URL_REGEXP+":EXPR}</b>: espressione regolare applicata sulla url"; 
 	
-	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_DATA = "<b>${dateResponse:FORMAT}</b>: data di elaborazione del messaggio di risposta; il formato fornito deve essere conforme a quanto richiesto dalla classe java 'java.text.SimpleDateFormat' (es. ${date:yyyyMMdd_HHmmssSSS})";
-	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_HEADER = "<b>${headerResponse:NAME}</b>: valore presente nell'header http della risposta che possiede il nome 'NAME'";
-	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_XPATH_SOAP = "<b>${xPathResponse:EXPR}</b>: espressione XPath applicata sulla risposta"; 
-	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_XPATH = "<b>${xPathResponse:EXPR}</b>: espressione XPath applicata su una risposta XML"; 
-	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_JSONPATH = "<b>${jsonPathResponse:EXPR}</b>: espressione JSONPath applicata su una risposta JSON"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_DATA = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_DATE_OBJECT+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+":FORMAT}</b>: data di elaborazione del messaggio di risposta; il formato fornito deve essere conforme a quanto richiesto dalla classe java 'java.text.SimpleDateFormat' (es. ${date:yyyyMMdd_HHmmssSSS})";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_HEADER = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_HEADER+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+":NAME}</b>: valore presente nell'header http della risposta che possiede il nome 'NAME'";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_XPATH_SOAP = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_XML_XPATH+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+":EXPR}</b>: espressione XPath applicata sulla risposta"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_XPATH = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_XML_XPATH+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+":EXPR}</b>: espressione XPath applicata su una risposta XML"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_JSONPATH = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_JSON_PATH+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+":EXPR}</b>: espressione JSONPath applicata su una risposta JSON"; 
 	
 	
 	public final static List<String> LABEL_CONFIGURAZIONE_INFO_ALL_VALORI = new ArrayList<>();
@@ -1238,29 +1238,44 @@ public class CostantiControlStation {
 	
 	public final static String LABEL_CONFIGURAZIONE_INFO_TEMPLATE = "Il template fornito può contenere parti dinamiche risolte a runtime dal Gateway.<br/>Le espressioni utilizzabili sono:";
 	
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE = "Il template fornito può accedere ai seguenti oggetti resi disponibili a runtime dal Gateway:";
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_OGGETTI_DISPONIBILI = "È possiile accedere ai seguenti oggetti resi disponibili a runtime dal Gateway:";
 	
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_ID_TRANSAZIONE = "<b>transactionId</b>: identificativo UUID della transazione (java.lang.String)";
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_DATA = "<b>date</b>: data di elaborazione del messaggio (java.util.Date)";
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_HEADER = "<b>header</b>: headers http (java.util.Properties)";
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_QUERY = "<b>query</b>: parametri della url (java.util.Properties)";
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_BUSTA = "<b>busta</b>: informazioni generiche del profilo (org.openspcoop2.protocol.sdk.Busta)";
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_PROPERTY_BUSTA = "<b>property</b>: permette di riferire informazioni specifiche del profilo presenti nella traccia (java.util.Properties).";
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_XPATH_SOAP = "<b>xPath</b>: fornisce metodi per verificare la presenza o estrarre informazioni dal messaggio tramite espressioni XPath. (org.openspcoop2.pdd.core.dynamic.PatternExtractor)"; 
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_XPATH= "<b>xPath</b>: fornisce metodi per verificare la presenza o estrarre informazioni da messaggi XML tramite espressioni XPath. (org.openspcoop2.pdd.core.dynamic.PatternExtractor)"; 
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_JSONPATH= "<b>jsonPath</b>: fornisce metodi per verificare la presenza o estrarre informazioni da messaggi JSON tramite espressioni JSONPath. (org.openspcoop2.pdd.core.dynamic.PatternExtractor)"; 
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_URL = "<b>urlRegExp</b>: fornisce metodi per verificare la presenza o estrarre informazioni dalla url tramite espressioni regolari. (org.openspcoop2.pdd.core.dynamic.URLRegExpExtractor)"; 
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_CONTEXT = "<b>context</b>: permette di accedere al contesto della richiesta. (java.util.Map<String, Object>)";
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_CLASS_FREEMARKER = StringEscapeUtils.escapeHtml("<b>class</b>: permette di definire classi (es. class[\"org.apache.commons.lang.StringUtils\"] ).");
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_NEW_INSTANCE_FREEMARKER = StringEscapeUtils.escapeHtml("<b>new</b>: permette di istanziare una classe (es. new(\"java.lang.StringBuffer\",\"Commento Iniziale\") ).");
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_CLASS_VELOCITY = StringEscapeUtils.escapeHtml("<b>class</b>: permette di definire classi (es. class.forName(\"org.apache.commons.lang.StringUtils\") ).");
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_NEW_INSTANCE_VELOCITY = StringEscapeUtils.escapeHtml("<b>new</b>: permette di istanziare una classe (es. new.instance(\"java.lang.StringBuffer\",\"Commento Iniziale\") ).");
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER = "Il file fornito deve rispettare la sintassi del template engine 'Freemarker'.<br/>"+
+			LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_OGGETTI_DISPONIBILI;
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER_ZIP = "Il file fornito deve essere un archivio zip contenenti dei files che rispettano la sintassi del template engine 'Freemarker'.<br/>"+
+			"GovWay richiede la presenza, all'interno dell'archivio zip, di un file indice che deve possedere il nome '"+org.openspcoop2.pdd.core.dynamic.Costanti.ZIP_INDEX_ENTRY_FREEMARKER+"'.<br/>"+
+			LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_OGGETTI_DISPONIBILI;
 	
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_DATA = "<b>dateResponse</b>: data di elaborazione del messaggio di risposta (java.util.Date)";
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_HEADER = "<b>headerResponse</b>: headers http della risposta (java.util.Properties)";
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_XPATH_SOAP = "<b>xPathResponse</b>: fornisce metodi per verificare la presenza o estrarre informazioni dal messaggio di risposta tramite espressioni XPath. (org.openspcoop2.pdd.core.dynamic.PatternExtractor)"; 
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_XPATH= "<b>xPathResponse</b>: fornisce metodi per verificare la presenza o estrarre informazioni dal messaggio XML di risposta tramite espressioni XPath. (org.openspcoop2.pdd.core.dynamic.PatternExtractor)"; 
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_JSONPATH= "<b>jsonPathResponse</b>: fornisce metodi per verificare la presenza o estrarre informazioni dal messaggio JSON di risposta tramite espressioni JSONPath. (org.openspcoop2.pdd.core.dynamic.PatternExtractor)"; 
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY = "Il file fornito deve rispettare la sintassi del template engine 'Velocity'.<br/>"+
+			LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_OGGETTI_DISPONIBILI;
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY_ZIP = "Il file fornito deve essere un archivio zip contenenti dei files che rispettano la sintassi del template engine 'Velocity'.<br/>"+
+			"GovWay richiede la presenza, all'interno dell'archivio zip, di un file indice che deve possedere il nome '"+org.openspcoop2.pdd.core.dynamic.Costanti.ZIP_INDEX_ENTRY_VELOCITY+"'.<br/>"+
+			LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_OGGETTI_DISPONIBILI;
+		
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_ID_TRANSAZIONE = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_TRANSACTION_ID_OBJECT+"</b>: identificativo UUID della transazione ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_TRANSACTION_ID+")");
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_DATA = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_DATE_OBJECT+"</b>: data di elaborazione del messaggio ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_DATE_OBJECT+")");
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_HEADER = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_HEADER+"</b>: headers http ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_HEADER+")");
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_QUERY = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_QUERY_PARAMETER+"</b>: parametri della url ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_QUERY_PARAMETER+")");
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_BUSTA = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_BUSTA_OBJECT+"</b>: informazioni generiche del profilo ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_BUSTA_OBJECT+")");
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_PROPERTY_BUSTA = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_BUSTA_PROPERTY+"</b>: permette di riferire informazioni specifiche del profilo presenti nella traccia ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_BUSTA_PROPERTY+")");
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_XPATH_SOAP = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_XML_XPATH+"</b>: fornisce metodi per verificare la presenza o estrarre informazioni dal messaggio tramite espressioni XPath ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ELEMENT_XML_XPATH+")"); 
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_XPATH= StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_XML_XPATH+"</b>: fornisce metodi per verificare la presenza o estrarre informazioni da messaggi XML tramite espressioni XPath ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ELEMENT_XML_XPATH+")"); 
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_JSONPATH= StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_JSON_PATH+"</b>: fornisce metodi per verificare la presenza o estrarre informazioni da messaggi JSON tramite espressioni JSONPath ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ELEMENT_JSON_PATH+")"); 
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_URL = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_URL_REGEXP+"</b>: fornisce metodi per verificare la presenza o estrarre informazioni dalla url tramite espressioni regolari ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ELEMENT_URL_REGEXP+")"); 
+	//public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_CONTEXT = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_CTX_OBJECT+"</b>: permette di accedere al contesto della richiesta ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_CTX_OBJECT_HTML_ESCAPED+")");
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_CONTEXT = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_CTX_OBJECT+"</b>: permette di accedere al contesto della richiesta ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_CTX_OBJECT_HTML_ESCAPED+")";
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_TRANSPORT_CONTEXT = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT+"</b>: permette di accedere ai dati della richiesta http ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_URL_PROTOCOL_CONTEXT_OBJECT+")");
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_ERROR_HANDLER = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ERROR_HANDLER_OBJECT+"</b>: permette di generare risposte personalizzate che segnalano l'impossibilità di proseguire la trasformazione ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ERROR_HANDLER_OBJECT+")");
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_CLASS_FREEMARKER = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_CLASS_LOAD_STATIC+"</b>: permette di definire classi (es. class[\"org.apache.commons.lang.StringUtils\"] ).");
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_NEW_INSTANCE_FREEMARKER = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_CLASS_NEW_INSTANCE+"</b>: permette di istanziare una classe (es. new(\"java.lang.StringBuffer\",\"Commento Iniziale\") ).");
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_CLASS_VELOCITY = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_CLASS_LOAD_STATIC+"</b>: permette di definire classi (es. class.forName(\"org.apache.commons.lang.StringUtils\") ).");
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_NEW_INSTANCE_VELOCITY = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_CLASS_NEW_INSTANCE+"</b>: permette di istanziare una classe (es. new.instance(\"java.lang.StringBuffer\",\"Commento Iniziale\") ).");
+	
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_DATA = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_DATE_OBJECT+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+"</b>: data di elaborazione del messaggio di risposta ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_DATE_OBJECT+")");
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_HEADER = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_HEADER+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+"</b>: headers http della risposta ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_HEADER+")");
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_XPATH_SOAP = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_XML_XPATH+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+"</b>: fornisce metodi per verificare la presenza o estrarre informazioni dal messaggio di risposta tramite espressioni XPath ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ELEMENT_XML_XPATH+")"); 
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_XPATH= StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_XML_XPATH+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+"</b>: fornisce metodi per verificare la presenza o estrarre informazioni dal messaggio XML di risposta tramite espressioni XPath ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ELEMENT_XML_XPATH+")"); 
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_JSONPATH= StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_JSON_PATH+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+"</b>: fornisce metodi per verificare la presenza o estrarre informazioni dal messaggio JSON di risposta tramite espressioni JSONPath ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ELEMENT_JSON_PATH+")"); 
 	
 	
 	private final static List<String> LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI = new ArrayList<>();
@@ -1277,6 +1292,8 @@ public class CostantiControlStation {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_BUSTA);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_PROPERTY_BUSTA);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_CONTEXT);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_TRANSPORT_CONTEXT);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_ERROR_HANDLER);
 	}
 	private final static List<String> LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI = new ArrayList<>();
 	static {
@@ -1333,6 +1350,8 @@ public class CostantiControlStation {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_BUSTA);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_PROPERTY_BUSTA);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_CONTEXT);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_TRANSPORT_CONTEXT);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_ERROR_HANDLER);
 	}
 	private final static List<String> LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE = new ArrayList<>();
 	static {

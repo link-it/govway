@@ -57,6 +57,7 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.dynamic.Costanti;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.dynamic.PatternExtractor;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -85,33 +86,45 @@ public class GestoreTrasformazioniUtilities {
 	public static void fillDynamicMapRequest(Logger log, Map<String, Object> dynamicMap, PdDContext pddContext, String urlInvocazione,
 			Element element,
 			String elementJson,
-			Busta busta, Properties trasporto, Properties url) {
+			Busta busta, Properties trasporto, Properties url,
+			ErrorHandler errorHandler) {
 		_fillDynamicMap(log, dynamicMap, pddContext, urlInvocazione, 
 				element, 
 				elementJson, 
-				busta, trasporto, url);	
+				busta, trasporto, url,
+				errorHandler);	
     }
 	public static void fillDynamicMapResponse(Logger log, Map<String, Object> dynamicMap, Map<String, Object> dynamicMapRequest, PdDContext pddContext,
 			Element element,
 			String elementJson,
-			Busta busta, Properties trasporto) {
+			Busta busta, Properties trasporto,
+			ErrorHandler errorHandler) {
 		Map<String, Object> dynamicMapResponse = new HashMap<>();
 		_fillDynamicMap(log, dynamicMapResponse, pddContext, null, 
 				element, 
 				elementJson, 
-				busta, trasporto, null);
+				busta, trasporto, null,
+				errorHandler);
 		if(dynamicMapResponse!=null && !dynamicMapResponse.isEmpty()) {
 			Iterator<String> it = dynamicMapResponse.keySet().iterator();
 			while (it.hasNext()) {
 				String key = (String) it.next();
 				Object o = dynamicMapResponse.get(key);
-				dynamicMap.put(key+Costanti.MAP_SUFFIX_RESPONSE, o);
+				if(Costanti.MAP_ERROR_HANDLER_OBJECT.toLowerCase().equals(key.toLowerCase())) {
+					dynamicMap.put(key, o);
+				}
+				else {
+					dynamicMap.put(key+Costanti.MAP_SUFFIX_RESPONSE, o);
+				}
 			}
 		}
 		if(dynamicMapRequest!=null && !dynamicMapRequest.isEmpty()) {
 			Iterator<String> it = dynamicMapRequest.keySet().iterator();
 			while (it.hasNext()) {
 				String key = (String) it.next();
+				if(Costanti.MAP_ERROR_HANDLER_OBJECT.toLowerCase().equals(key.toLowerCase())) {
+					continue; // error handler viene usato quello istanziato per la risposta
+				}
 				Object o = dynamicMapRequest.get(key);
 				if(o instanceof PatternExtractor) {
 					PatternExtractor pe = (PatternExtractor) o;
@@ -124,7 +137,8 @@ public class GestoreTrasformazioniUtilities {
 	public static void _fillDynamicMap(Logger log, Map<String, Object> dynamicMap, PdDContext pddContext, String urlInvocazione,
 			Element element,
 			String elementJson,
-			Busta busta, Properties trasporto, Properties url) {
+			Busta busta, Properties trasporto, Properties url,
+			ErrorHandler errorHandler) {
 		DynamicInfo dInfo = new DynamicInfo();
 		dInfo.setBusta(busta);
 		dInfo.setPddContext(pddContext);
@@ -147,6 +161,7 @@ public class GestoreTrasformazioniUtilities {
 		else if(elementJson!=null) {
 			dInfo.setJson(elementJson);
 		}
+		dInfo.setErrorHandler(errorHandler);
 		DynamicUtils.fillDynamicMap(log, dynamicMap, dInfo);		
     }
 	
@@ -387,13 +402,19 @@ public class GestoreTrasformazioniUtilities {
 			break;
 			
 		case FREEMARKER_TEMPLATE:
+		case FREEMARKER_TEMPLATE_ZIP:
 			if(contenuto==null) {
 				throw new Exception("Template "+oggetto+" non definito");
 			}
 						
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template ...");
 			bout = new ByteArrayOutputStream();
-			DynamicUtils.convertFreeMarkerTemplate("template", contenuto, dynamicMap, bout);
+			if(TipoTrasformazione.FREEMARKER_TEMPLATE.equals(tipoTrasformazione)) {
+				DynamicUtils.convertFreeMarkerTemplate("template.ftl", contenuto, dynamicMap, bout);
+			}
+			else {
+				DynamicUtils.convertZipFreeMarkerTemplate("template.ftl.zip", contenuto, dynamicMap, bout);
+			}
 			bout.flush();
 			bout.close();
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template completata");
@@ -407,13 +428,19 @@ public class GestoreTrasformazioniUtilities {
 			break;
 			
 		case VELOCITY_TEMPLATE:
+		case VELOCITY_TEMPLATE_ZIP:
 			if(contenuto==null) {
 				throw new Exception("Template "+oggetto+" non definito");
 			}
 						
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template ...");
 			bout = new ByteArrayOutputStream();
-			DynamicUtils.convertVelocityTemplate("template", contenuto, dynamicMap, bout);
+			if(TipoTrasformazione.VELOCITY_TEMPLATE.equals(tipoTrasformazione)) {
+				DynamicUtils.convertVelocityTemplate("template.vm", contenuto, dynamicMap, bout);
+			}
+			else {
+				DynamicUtils.convertZipVelocityTemplate("template.vm.zip", contenuto, dynamicMap, bout);	
+			}
 			bout.flush();
 			bout.close();
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template completata");

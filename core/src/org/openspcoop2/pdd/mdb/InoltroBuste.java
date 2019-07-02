@@ -1724,14 +1724,21 @@ public class InoltroBuste extends GenericLib{
 					}
 					
 					if(sendRispostaApplicativa){
+						
 						OpenSPCoop2Message responseMessageError = null;
-						responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
-								erroreIntegrazione,e,
-									(responseMessage!=null ? responseMessage.getParseException() : null));
+						if(e.getOpenSPCoop2ErrorMessage()!=null) {
+							responseMessageError = e.getOpenSPCoop2ErrorMessage();
+						}
+						else {
+							responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+									erroreIntegrazione,e,
+										(responseMessage!=null ? responseMessage.getParseException() : null));
+						}
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 						esito.setEsitoInvocazione(true);
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
 								"Trasformazione-Richiesta");
+							
 					}else{
 						// Se Non e' attivo una gestione dei riscontri, faccio il rollback sulla coda.
 						// Altrimenti verra attivato la gestione dei riscontri che riprovera' dopo un tot.
@@ -2350,9 +2357,14 @@ public class InoltroBuste extends GenericLib{
 					
 					if(sendRispostaApplicativa){
 						OpenSPCoop2Message responseMessageError = null;
-						responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
-								erroreIntegrazione,e,
-									(responseMessage!=null ? responseMessage.getParseException() : null));
+						if(e instanceof GestoreTrasformazioniException && (((GestoreTrasformazioniException)e).getOpenSPCoop2ErrorMessage()!=null)) {
+							responseMessageError = ((GestoreTrasformazioniException)e).getOpenSPCoop2ErrorMessage();
+						}
+						else {
+							responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+									erroreIntegrazione,e,
+										(responseMessage!=null ? responseMessage.getParseException() : null));
+						}
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 						esito.setEsitoInvocazione(true);
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,

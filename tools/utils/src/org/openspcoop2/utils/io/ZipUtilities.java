@@ -121,6 +121,29 @@ public class ZipUtilities {
 			throw new UtilsException("Errore durante la comprensione zip: "+e.getMessage(),e);
 		}
 	}
+	
+	public static byte[] zip(List<Entry> entries) throws UtilsException{
+		try {
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			ZipOutputStream zipOut = new ZipOutputStream(bout);
+			
+			for (Entry entry : entries) {
+				String name = entry.getName();
+				ZipEntry zipEntry = new ZipEntry(name);
+				zipOut.putNextEntry(zipEntry);
+				zipOut.write(entry.getContent());
+			}
+			
+			zipOut.flush();
+			zipOut.close();
+			bout.flush();
+			bout.close();
+			return bout.toByteArray();
+		}catch(Exception e){
+			throw new UtilsException("Errore durante la comprensione zip: "+e.getMessage(),e);
+		}
+	}
+	
 	public static byte[] unzip(byte[] zipContent) throws UtilsException{
 		try {
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -151,6 +174,48 @@ public class ZipUtilities {
 		}
 	}
 
+	public static List<Entry> read(byte[] zipContent) throws UtilsException{
+		try {
+			List<Entry> list = new ArrayList<>();
+			
+			ByteArrayInputStream in = new ByteArrayInputStream(zipContent);
+			ZipInputStream zipIn = new ZipInputStream(in);
+		    ZipEntry entry;
+		    while ((entry = zipIn.getNextEntry()) != null) {
+		        String name = entry.getName();
+		    	//System.out.println(name);
+		        
+		        if(name!=null && !( name.endsWith("/") || name.endsWith("\\") ) ){
+		        	Entry zentry = new Entry();
+	        		zentry.setName(name);
+	        		
+	        		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+	        		byte contents[] = new byte[4096];
+	        		int direct;
+	        		while ((direct = zipIn.read(contents, 0, contents.length)) >= 0) {
+	        			//System.out.println("Read " + direct + "bytes content.");
+	        			bout.write(contents, 0, direct);
+	        		}
+	        		bout.flush();
+	        		bout.close();
+	        		
+	        		zentry.setContent(bout.toByteArray());
+	        		list.add(zentry);
+		        }
+		        
+		        zipIn.closeEntry();
+		    }
+		    zipIn.close();
+		    in.close();
+
+	        return list;
+	        
+		}catch(Exception e){
+			throw new UtilsException("Errore durante la comprensione zip: "+e.getMessage(),e);
+		}
+	}
+
+	
 	public static String getRootDir(String entry) throws UtilsException{
 		try{
 			String rootDir = null;

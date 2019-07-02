@@ -139,6 +139,37 @@ public class Test {
 			System.out.println("Test conversione xml2json via freemarker: \n"+bout.toString());
 		}
 		
+		if(prefix.equals("$")) {
+			byte[]template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude.ftl")).toByteArray();
+			byte[]prova1 = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude_1.ftl")).toByteArray();
+			byte[]prova2 = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude_2.ftl")).toByteArray();
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			Map<String, byte[]> templateIncludes = new HashMap<>();
+			templateIncludes.put("TestJsonInclude_1.ftl", prova1);
+			templateIncludes.put("lib/TestJsonInclude_2.ftl", prova2);
+			DynamicUtils.convertFreeMarkerTemplate("xml2jsonFTL_INCLUDE_MANUALE", template, templateIncludes, dynamicMap, bout);
+			bout.flush();
+			bout.close();
+			System.out.println("Test conversione xml2json via freemarker (con include): \n"+bout.toString());
+		}
+		
+		if(prefix.equals("$")) {
+			byte[]zip = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude.ftl.zip")).toByteArray();
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			DynamicUtils.convertZipFreeMarkerTemplate("xml2jsonFTL_INCLUDE_ZIP", zip, dynamicMap, bout);
+			bout.flush();
+			bout.close();
+			System.out.println("Test conversione xml2json via freemarker (con include in archivio zip): \n"+bout.toString());
+		}
+		
+		if(prefix.equals("$")) {
+			byte[]zip = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude2.ftl.zip")).toByteArray();
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			DynamicUtils.convertZipFreeMarkerTemplate("xml2jsonFTL_INCLUDE_ZIP2", zip, dynamicMap, bout);
+			bout.flush();
+			bout.close();
+			System.out.println("Test conversione xml2json via freemarker (con include in archivio zip test2): \n"+bout.toString());
+		}
 		
 		dynamicMap = new HashMap<>();
 		dInfo = new DynamicInfo(connettoreMsg, pddContext);
@@ -166,7 +197,7 @@ public class Test {
 		if(prefix.equals("$")) {
 			byte[]template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestXml.ftl")).toByteArray();
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			DynamicUtils.convertFreeMarkerTemplate("json2xmlFTL", template, dynamicMap, bout);
+			DynamicUtils.convertFreeMarkerTemplate("json2xmlFTL", template,  dynamicMap, bout);
 			bout.flush();
 			bout.close();
 			System.out.println("Test conversione json2xml via freemarker: \n"+bout.toString());

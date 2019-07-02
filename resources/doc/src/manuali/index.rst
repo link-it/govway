@@ -9,22 +9,28 @@ Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle
         :maxdepth: 2
         :hidden:
 
-        console/index
+        Console di Gestione <console/index>
 
 .. toctree::
         :maxdepth: 2
         :hidden:
 
-        monitoraggio/index
+        Console di Monitoraggio <monitoraggio/index>
 
 .. toctree::
         :maxdepth: 2
         :hidden:
 
-        installazione/index
+        Guida di Installazione <installazione/index>
 
 .. toctree::
         :maxdepth: 2
         :hidden:
 
-        scenari/index
+        Scenari Applicativi <scenari/index>
+
+.. toctree::
+        :maxdepth: 2
+        :hidden:
+
+        Release Notes <releaseNotes/index>

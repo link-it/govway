@@ -24,6 +24,12 @@
 
 package org.openspcoop2.pdd.core.trasformazioni;
 
+import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.pdd.core.dynamic.ErrorMessage;
+
 /**	
  * Contiene la definizione di una eccezione lanciata dalla classe GestoreTrasformazioni
  *
@@ -40,6 +46,8 @@ public class GestoreTrasformazioniException extends Exception  {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private ErrorMessage errorMessage = null;
+	
 	public GestoreTrasformazioniException(String message, Throwable cause)
 	{
 		super(message, cause);
@@ -57,4 +65,24 @@ public class GestoreTrasformazioniException extends Exception  {
 	public GestoreTrasformazioniException(String msg) {
         super(msg);
     }
+	
+	public GestoreTrasformazioniException(String detail, ErrorMessage errorMessage) {
+        super(detail);
+        this.errorMessage = errorMessage;
+    }
+	
+	public ErrorMessage getErrorMessage() {
+		return this.errorMessage;
+	}
+	public OpenSPCoop2Message getOpenSPCoop2ErrorMessage() {
+		if(this.errorMessage==null) {
+			return null;
+		}
+		OpenSPCoop2Message op2ErrorMessage = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.BINARY, MessageRole.FAULT);
+		op2ErrorMessage.forceResponse(this.errorMessage);
+		return op2ErrorMessage;
+	}
+	public void setErrorMessage(ErrorMessage errorMessage) {
+		this.errorMessage = errorMessage;
+	}
 }

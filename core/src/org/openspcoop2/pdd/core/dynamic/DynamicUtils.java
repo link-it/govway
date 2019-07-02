@@ -26,6 +26,8 @@ import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -37,9 +39,14 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.utils.DynamicStringReplace;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.io.Entry;
+import org.openspcoop2.utils.io.ZipUtilities;
+import org.openspcoop2.utils.resources.FreemarkerTemplateLoader;
 import org.openspcoop2.utils.resources.TemplateUtils;
+import org.openspcoop2.utils.resources.VelocityTemplateLoader;
 import org.openspcoop2.utils.resources.VelocityTemplateUtils;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
@@ -71,6 +78,14 @@ public class DynamicUtils {
 				if(dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
 					String idTransazione = (String)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 					dynamicMap.put(Costanti.MAP_TRANSACTION_ID_OBJECT, idTransazione);
+				}
+			}
+			if(dynamicMap.containsKey(Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT)==false) {
+				if(dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+					RequestInfo requestInfo = (RequestInfo)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+					if(requestInfo.getProtocolContext()!=null) {
+						dynamicMap.put(Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT, requestInfo.getProtocolContext());
+					}
 				}
 			}
 		}
@@ -121,6 +136,10 @@ public class DynamicUtils {
 			PatternExtractor pe = new PatternExtractor(dynamicInfo.getJson(), log);
 			dynamicMap.put(Costanti.MAP_ELEMENT_JSON_PATH, pe);
 			dynamicMap.put(Costanti.MAP_ELEMENT_JSON_PATH.toLowerCase(), pe);
+		}
+		if(dynamicInfo!=null && dynamicInfo.getErrorHandler()!=null) {
+			dynamicMap.put(Costanti.MAP_ERROR_HANDLER_OBJECT, dynamicInfo.getErrorHandler());
+			dynamicMap.put(Costanti.MAP_ERROR_HANDLER_OBJECT.toLowerCase(), dynamicInfo.getErrorHandler());
 		}
 	}
 
@@ -273,20 +292,96 @@ public class DynamicUtils {
 	}
 	
 	
-	public static void convertFreeMarkerTemplate(String name, byte[] template, Map<String,Object> dynamicMap, OutputStream out) throws DynamicException {
+	// *** FREEMARKER ***
+	
+	public static void convertFreeMarkerTemplate(String name, 
+			byte[] template,
+			Map<String,Object> dynamicMap, OutputStream out) throws DynamicException {
+		convertFreeMarkerTemplate(name,
+				template, null,
+				dynamicMap,out);
+	}
+	public static void convertFreeMarkerTemplate(String name, 
+			byte[] template, Map<String, byte[]> templateIncludes, 
+			Map<String,Object> dynamicMap, OutputStream out) throws DynamicException {
 		try {			
 			OutputStreamWriter oow = new OutputStreamWriter(out);
-			_convertFreeMarkerTemplate(name, template, dynamicMap, oow);
+			_convertFreeMarkerTemplate(name, 
+					template, templateIncludes, 
+					dynamicMap, oow);
 			oow.flush();
 			oow.close();
 		}catch(Exception e) {
 			throw new DynamicException(e.getMessage(),e);
 		}
 	}
-	public static void convertFreeMarkerTemplate(String name, byte[] template, Map<String,Object> dynamicMap, Writer writer) throws DynamicException {
-		_convertFreeMarkerTemplate(name, template, dynamicMap, writer);
+	
+	public static void convertFreeMarkerTemplate(String name, 
+			byte[] template, 
+			Map<String,Object> dynamicMap, Writer writer) throws DynamicException {
+		convertFreeMarkerTemplate(name,
+				template, null,
+				dynamicMap,writer);
 	}
-	private static void _convertFreeMarkerTemplate(String name, byte[] template, Map<String,Object> dynamicMap, Writer writer) throws DynamicException {
+	public static void convertFreeMarkerTemplate(String name, 
+			byte[] template, Map<String, byte[]> templateIncludes, 
+			Map<String,Object> dynamicMap, Writer writer) throws DynamicException {
+		_convertFreeMarkerTemplate(name, 
+				template, templateIncludes, 
+				dynamicMap, writer);
+	}
+	
+	public static void convertZipFreeMarkerTemplate(String name, 
+			byte[] zip,
+			Map<String,Object> dynamicMap, OutputStream out) throws DynamicException {
+		try {			
+			OutputStreamWriter oow = new OutputStreamWriter(out);
+			convertZipFreeMarkerTemplate(name, 
+					zip,  
+					dynamicMap, oow);
+			oow.flush();
+			oow.close();
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	public static void convertZipFreeMarkerTemplate(String name, 
+			byte[] zip,
+			Map<String,Object> dynamicMap, Writer writer) throws DynamicException {
+		
+		List<Entry> entries = null;
+		try {
+			entries = ZipUtilities.read(zip);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+		if(entries.isEmpty()) {
+			throw new DynamicException("Entries not found");
+		}
+		byte[] template = null;
+		Map<String, byte[]> templateIncludes = new HashMap<>();
+		for (Entry entry : entries) {
+			if(Costanti.ZIP_INDEX_ENTRY_FREEMARKER.equals(entry.getName())) {
+				template = entry.getContent();
+			}
+			else if(!entry.getName().contains("/") && !entry.getName().contains("\\") && template==null) {
+				// prende il primo
+				template = entry.getContent();
+			}
+			else {
+				templateIncludes.put(entry.getName(), entry.getContent());
+			}
+		}
+		
+		_convertFreeMarkerTemplate(name, 
+				template, templateIncludes, 
+				dynamicMap, writer);
+	}
+	
+	private static void _convertFreeMarkerTemplate(String name, 
+			byte[] template,
+			Map<String, byte[]> templateIncludes, 
+			Map<String,Object> dynamicMap, Writer writer) throws DynamicException {
 		try {
 			// ** Aggiungo utility per usare metodi statici ed istanziare oggetti
 			
@@ -302,6 +397,11 @@ public class DynamicUtils {
 			freemarker.template.Configuration config = TemplateUtils.newTemplateEngine();
 			config.setAPIBuiltinEnabled(true); // serve per modificare le mappe in freemarker
 			
+			// template includes
+			if(templateIncludes!=null && !templateIncludes.isEmpty()) {
+				config.setTemplateLoader(new FreemarkerTemplateLoader(templateIncludes));
+			}
+			
 			// ** costruisco template
 			Template templateFTL = TemplateUtils.buildTemplate(config, name, template);
 			templateFTL.process(dynamicMap, writer);
@@ -313,20 +413,95 @@ public class DynamicUtils {
 	}
 	
 	
-	public static void convertVelocityTemplate(String name, byte[] template, Map<String,Object> dynamicMap, OutputStream out) throws DynamicException {
+	
+	// *** VELOCITY ***
+	
+	public static void convertVelocityTemplate(String name, 
+			byte[] template, 
+			Map<String,Object> dynamicMap, OutputStream out) throws DynamicException {
+		convertVelocityTemplate(name, 
+				template, null, 
+				dynamicMap, out);
+	}
+	public static void convertVelocityTemplate(String name, 
+			byte[] template, Map<String, byte[]> templateIncludes,
+			Map<String,Object> dynamicMap, OutputStream out) throws DynamicException {
 		try {
 			OutputStreamWriter oow = new OutputStreamWriter(out);
-			_convertVelocityTemplate(name, template, dynamicMap, oow);
+			_convertVelocityTemplate(name, 
+					template, templateIncludes, 
+					dynamicMap, oow);
 			oow.flush();
 			oow.close();
 		}catch(Exception e) {
 			throw new DynamicException(e.getMessage(),e);
 		}
 	}
+	
 	public static void convertVelocityTemplate(String name, byte[] template, Map<String,Object> dynamicMap, Writer writer) throws DynamicException {
-		_convertVelocityTemplate(name, template, dynamicMap, writer);
+		convertVelocityTemplate(name, 
+				template, null, 
+				dynamicMap, writer);
 	}
-	private static void _convertVelocityTemplate(String name, byte[] template, Map<String,Object> dynamicMap, Writer writer) throws DynamicException {
+	public static void convertVelocityTemplate(String name, 
+			byte[] template, Map<String, byte[]> templateIncludes,
+			Map<String,Object> dynamicMap, Writer writer) throws DynamicException {
+		_convertVelocityTemplate(name, 
+				template, templateIncludes,
+				dynamicMap, writer);
+	}
+	
+	public static void convertZipVelocityTemplate(String name, 
+			byte[] zip,
+			Map<String,Object> dynamicMap, OutputStream out) throws DynamicException {
+		try {			
+			OutputStreamWriter oow = new OutputStreamWriter(out);
+			convertZipVelocityTemplate(name, 
+					zip,  
+					dynamicMap, oow);
+			oow.flush();
+			oow.close();
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	public static void convertZipVelocityTemplate(String name, 
+			byte[] zip,
+			Map<String,Object> dynamicMap, Writer writer) throws DynamicException {
+		
+		List<Entry> entries = null;
+		try {
+			entries = ZipUtilities.read(zip);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+		if(entries.isEmpty()) {
+			throw new DynamicException("Entries not found");
+		}
+		byte[] template = null;
+		Map<String, byte[]> templateIncludes = new HashMap<>();
+		for (Entry entry : entries) {
+			if(Costanti.ZIP_INDEX_ENTRY_VELOCITY.equals(entry.getName())) {
+				template = entry.getContent();
+			}
+			else if(!entry.getName().contains("/") && !entry.getName().contains("\\") && template==null) {
+				// prende il primo
+				template = entry.getContent();
+			}
+			else {
+				templateIncludes.put(entry.getName(), entry.getContent());
+			}
+		}
+		
+		_convertVelocityTemplate(name, 
+				template, templateIncludes, 
+				dynamicMap, writer);
+	}
+	
+	private static void _convertVelocityTemplate(String name, 
+			byte[] template, 
+			Map<String, byte[]> templateIncludes, 
+			Map<String,Object> dynamicMap, Writer writer) throws DynamicException {
 		try {
 			// ** Aggiungo utility per usare metodi statici ed istanziare oggetti
 			
@@ -336,9 +511,15 @@ public class DynamicUtils {
 			// newObject
 			dynamicMap.put(Costanti.MAP_CLASS_NEW_INSTANCE, new ObjectConstructor());
 			
+			// Configurazione
+			org.apache.velocity.Template templateVelocity = VelocityTemplateUtils.buildTemplate(name, template);
+			
+			// template includes
+			if(templateIncludes!=null && !templateIncludes.isEmpty()) {
+				templateVelocity.setResourceLoader(new VelocityTemplateLoader(templateIncludes));
+			}
 			
 			// ** costruisco template
-			org.apache.velocity.Template templateVelocity = VelocityTemplateUtils.buildTemplate(name, template);
 			templateVelocity.merge(VelocityTemplateUtils.toVelocityContext(dynamicMap), writer);
 			writer.flush();
 			
@@ -348,6 +529,8 @@ public class DynamicUtils {
 	}
 		
 	
+	
+	// *** XSLT ***
 	
 	public static void convertXSLTTemplate(String name, byte[] template, Element element, OutputStream out) throws DynamicException {
 		try {

@@ -42,7 +42,9 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 	EMPTY ("empty-payload", "HTTP Payload vuoto", null),
 	TEMPLATE ("template", "Template", null),
 	FREEMARKER_TEMPLATE ("freemarker", "Freemarker Template", null),
+	FREEMARKER_TEMPLATE_ZIP ("freemarker-zip", "Freemarker Template (Archivio Zip)", null),
 	VELOCITY_TEMPLATE ("velocity", "Velocity Template", null),
+	VELOCITY_TEMPLATE_ZIP ("velocity-zip", "Velocity Template (Archivio Zip)", null),
 	XSLT ("xslt", "XSLT" , null);
 //	XML2JSON ("xml2json", ServiceBinding.REST),
 //	JSON2XML ("xml2json", ServiceBinding.REST);
@@ -78,13 +80,37 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 		this.serviceBinding = serviceBinding;
 	}
 
+	public String getExt() {
+		switch (this) {
+		case EMPTY:
+			return null;
+		case TEMPLATE:
+			return ".gwt";
+		case FREEMARKER_TEMPLATE:
+			return ".ftl";
+		case FREEMARKER_TEMPLATE_ZIP:
+			return ".ftl.zip";
+		case VELOCITY_TEMPLATE:
+			return ".vm"; //".vtl";
+		case VELOCITY_TEMPLATE_ZIP:
+			return ".vm.zip"; //".vtl.zip";
+		case XSLT:
+			return ".xslt";
+		}
+		
+		return null;
+	}
 
 	public boolean isTemplateRequired() {
 		return TipoTrasformazione.TEMPLATE.equals(this) 
 				|| 
 				TipoTrasformazione.FREEMARKER_TEMPLATE.equals(this)
 				|| 
+				TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(this)
+				|| 
 				TipoTrasformazione.VELOCITY_TEMPLATE.equals(this)
+				|| 
+				TipoTrasformazione.VELOCITY_TEMPLATE_ZIP.equals(this)
 				|| 
 				TipoTrasformazione.XSLT.equals(this);
 //				|| 

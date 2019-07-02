@@ -47,6 +47,7 @@ public class DynamicInfo {
 	private String url;
 	private Element xml;
 	private String json;
+	private ErrorHandler errorHandler;
 	
 	public DynamicInfo() {
 		
@@ -107,6 +108,12 @@ public class DynamicInfo {
 	}
 	public void setJson(String json) {
 		this.json = json;
+	}
+	public ErrorHandler getErrorHandler() {
+		return this.errorHandler;
+	}
+	public void setErrorHandler(ErrorHandler errorHandler) {
+		this.errorHandler = errorHandler;
 	}
 	
 }

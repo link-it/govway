@@ -45,6 +45,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.engine.RequestInfo;
@@ -214,7 +215,7 @@ public class GestoreTrasformazioni {
 				throw new Exception("Transport Request Context non disponibile");
 			}
 			
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(e, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
 			String msgErrore = "Lettura contenuto della richiesta non riuscita: "+e.getMessage();
@@ -383,9 +384,11 @@ public class GestoreTrasformazioni {
 		
 		this.log.debug("Costruzione dynamic map ...");
 		Map<String, Object> dynamicMap = new Hashtable<String, Object>();
+		ErrorHandler errorHandler = new ErrorHandler();
 		GestoreTrasformazioniUtilities.fillDynamicMapRequest(this.log, dynamicMap, this.pddContext, urlInvocazione,
 				element, elementJson, 
-				busta, parametriTrasporto, parametriUrl);
+				busta, parametriTrasporto, parametriUrl,
+				errorHandler);
 		this.dynamicMapRequest = dynamicMap;
 		this.log.debug("Costruzione dynamic map completata");
 		
@@ -394,11 +397,10 @@ public class GestoreTrasformazioni {
 		
 		// *** Trasformazione Richiesta ****
 		
+		boolean trasformazioneContenuto = richiesta.getConversione();
+		RisultatoTrasformazioneContenuto risultato = null;
 		try {
-						
-			boolean trasformazioneContenuto = richiesta.getConversione();
-			RisultatoTrasformazioneContenuto risultato = null;
-			
+									
 			if(!trasformazioneContenuto) {
 				this.log.debug("Trasformazione contenuto della richiesta disabilitato");
 			}
@@ -408,6 +410,21 @@ public class GestoreTrasformazioni {
 								richiesta.getConversioneTipo(), richiesta.getConversioneTemplate(), "richiesta", dynamicMap, message, element, this.pddContext);
 			}
 			
+		} catch(Throwable er) {
+			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					get5XX_ErroreProcessamento(er, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
+			String msgErrore = "Trasformazione richiesta fallita: "+er.getMessage();
+			this.log.error(msgErrore, er);
+			throw new GestoreTrasformazioniException(msgErrore,er);
+		}
+		
+		if(errorHandler.isError()) {
+			String msgErrore = "Trasformazione richiesta terminata con errore: "+errorHandler.getDetail();
+			this.log.error(msgErrore);
+			throw new GestoreTrasformazioniException(msgErrore,errorHandler.getMessage());
+		}
+		
+		try {	
 			// conversione header
 			Properties trasporto = parametriTrasporto;
 			Properties forceAddTrasporto = new Properties();
@@ -535,7 +552,7 @@ public class GestoreTrasformazioni {
 				throw new Exception("Transport Response Context non disponibile");
 			}
 			
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(e, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
 			String msgErrore = "Lettura contenuto della risposta non riuscita: "+e.getMessage();
@@ -684,7 +701,10 @@ public class GestoreTrasformazioni {
 		
 		this.log.debug("Costruzione dynamic map ...");
 		Map<String, Object> dynamicMap = new Hashtable<String, Object>();
-		GestoreTrasformazioniUtilities.fillDynamicMapResponse(this.log, dynamicMap, this.dynamicMapRequest, this.pddContext, element, elementJson, busta, parametriTrasporto);
+		ErrorHandler errorHandler = new ErrorHandler();
+		GestoreTrasformazioniUtilities.fillDynamicMapResponse(this.log, dynamicMap, this.dynamicMapRequest, this.pddContext, 
+				element, elementJson, busta, parametriTrasporto,
+				errorHandler);
 		this.log.debug("Costruzione dynamic map completata");
 		
 		
@@ -692,9 +712,9 @@ public class GestoreTrasformazioni {
 		
 		// *** Trasformazione Risposta ****
 		
+		boolean trasformazioneContenuto = trasformazioneRisposta.getConversione();
+		RisultatoTrasformazioneContenuto risultato = null;
 		try {
-			boolean trasformazioneContenuto = trasformazioneRisposta.getConversione();
-			RisultatoTrasformazioneContenuto risultato = null;
 			
 			if(!trasformazioneContenuto) {
 				this.log.debug("Trasformazione contenuto della richiesta disabilitato");
@@ -704,6 +724,22 @@ public class GestoreTrasformazioni {
 						GestoreTrasformazioniUtilities.trasformazioneContenuto(this.log, 
 								trasformazioneRisposta.getConversioneTipo(), trasformazioneRisposta.getConversioneTemplate(), "risposta", dynamicMap, message, element, this.pddContext);
 			}
+			
+		} catch(Throwable er) {
+			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					get5XX_ErroreProcessamento(er, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
+			String msgErrore = "Trasformazione risposta fallita: "+er.getMessage();
+			this.log.error(msgErrore, er);
+			throw new GestoreTrasformazioniException(msgErrore,er);
+		}
+		
+		if(errorHandler.isError()) {
+			String msgErrore = "Trasformazione risposta terminata con errore: "+errorHandler.getDetail();
+			this.log.error(msgErrore);
+			throw new GestoreTrasformazioniException(msgErrore,errorHandler.getMessage());
+		}
+		
+		try {
 			
 			// conversione header
 			Properties trasporto = parametriTrasporto;

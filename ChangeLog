@@ -1,3 +1,14 @@
+2019-07-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-853
+	La funzionalità di Trasformazione è stata estesa per supportare:
+	- La possibilità di caricare trasformazioni definite tramite più files nel formato dei template engine 'Freemarker' e 'Velocity'.
+	  I vari files devono essere raccolti in un archivio zip e deve essere inclusi da un file indice.
+	- 'ErrorHandler' che permette di generare risposte personalizzate che segnalano l’impossibilità di proseguire unaa trasformazione.
+	  La risposta generata è personalizzabile completamente sia nel codice http di risposta che nel contenuto e negli header http.
+	- Tra i valori accessibili tramite i template engine è stato aggiunto la possibilità di accedere al contesto http della richiesta.
+
 2019-06-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]

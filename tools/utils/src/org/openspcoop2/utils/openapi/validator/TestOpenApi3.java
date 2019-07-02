@@ -45,65 +45,72 @@ public class TestOpenApi3 {
 
 	public static void main(String[] args) throws Exception {
 
-		String tipo = null;
-		if(args!=null && args.length>0) {
-			tipo = args[0];
-		}
+		try {
 		
-		String baseUri = "http://petstore.swagger.io/api";
-		
-		if(tipo==null || "json".equalsIgnoreCase(tipo)) {
-		
-			URI jsonUri = TestOpenApi3.class.getResource("/org/openspcoop2/utils/openapi/testOpenAPI_3.0.json").toURI();
-			
-			ApiSchema apiSchemaJson = new ApiSchema("test_import.json", 
-					Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import.json")), ApiSchemaType.JSON);
-			ApiSchema apiSchemaJson2 = new ApiSchema("test_import2.json", 
-					Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import2.json")), ApiSchemaType.JSON);
-			
-			Test.testValidation(jsonUri, baseUri, "json", ApiFormats.OPEN_API_3, 
-					apiSchemaJson, apiSchemaJson2);
-			
-			System.out.println("\n\n\n==============================================================");
-			
-			System.out.println("IS JSON atteso:true trovato: "+JSONUtils.getInstance().isJson(apiSchemaJson.getContent()));
-			if(!JSONUtils.getInstance().isJson(apiSchemaJson.getContent())) {
-				throw new Exception("Atteso un json");
+			String tipo = null;
+			if(args!=null && args.length>0) {
+				tipo = args[0];
 			}
-			System.out.println("IS YAML atteso:false trovato: "+YAMLUtils.getInstance().isYaml(apiSchemaJson.getContent()));
-			if(YAMLUtils.getInstance().isYaml(apiSchemaJson.getContent())) {
-				throw new Exception("Atteso un json");
-			}
-		}
-		
-		if(tipo==null) {
-			System.out.println("\n\n\n==============================================================");
-		}
-		
-		if(tipo==null || "yaml".equalsIgnoreCase(tipo)) {
-		
-			URI yamlUri = TestOpenApi3.class.getResource("/org/openspcoop2/utils/openapi/testOpenAPI_3.0.yaml").toURI();
-		
-			ApiSchema apiSchemaYaml = new ApiSchema("test_import.yaml", 
-					Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import.yaml")), ApiSchemaType.YAML);
-			ApiSchema apiSchemaYaml2 = new ApiSchema("test_import2.yaml", 
-					Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import2.yaml")), ApiSchemaType.YAML);
-		
-			Test.testValidation(yamlUri, baseUri, "yaml", ApiFormats.OPEN_API_3, 
-					apiSchemaYaml, apiSchemaYaml2);
 			
-			System.out.println("\n\n\n==============================================================");
+			String baseUri = "http://petstore.swagger.io/api";
 			
-			System.out.println("IS JSON atteso:false trovato: "+JSONUtils.getInstance().isJson(apiSchemaYaml.getContent()));
-			if(JSONUtils.getInstance().isJson(apiSchemaYaml.getContent())) {
-				throw new Exception("Atteso un yaml");
+			if(tipo==null || "json".equalsIgnoreCase(tipo)) {
+			
+				URI jsonUri = TestOpenApi3.class.getResource("/org/openspcoop2/utils/openapi/testOpenAPI_3.0.json").toURI();
+				
+				ApiSchema apiSchemaJson = new ApiSchema("test_import.json", 
+						Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import.json")), ApiSchemaType.JSON);
+				ApiSchema apiSchemaJson2 = new ApiSchema("test_import2.json", 
+						Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import2.json")), ApiSchemaType.JSON);
+				
+				Test.testValidation(jsonUri, baseUri, "json", ApiFormats.OPEN_API_3, 
+						apiSchemaJson, apiSchemaJson2);
+				
+				System.out.println("\n\n\n==============================================================");
+				
+				System.out.println("IS JSON atteso:true trovato: "+JSONUtils.getInstance().isJson(apiSchemaJson.getContent()));
+				if(!JSONUtils.getInstance().isJson(apiSchemaJson.getContent())) {
+					throw new Exception("Atteso un json");
+				}
+				System.out.println("IS YAML atteso:false trovato: "+YAMLUtils.getInstance().isYaml(apiSchemaJson.getContent()));
+				if(YAMLUtils.getInstance().isYaml(apiSchemaJson.getContent())) {
+					throw new Exception("Atteso un json");
+				}
 			}
-			System.out.println("IS YAML atteso:true trovato: "+YAMLUtils.getInstance().isYaml(apiSchemaYaml.getContent()));
-			if(!YAMLUtils.getInstance().isYaml(apiSchemaYaml.getContent())) {
-				throw new Exception("Atteso un yaml");
+			
+			if(tipo==null) {
+				System.out.println("\n\n\n==============================================================");
 			}
-		}
+			
+			if(tipo==null || "yaml".equalsIgnoreCase(tipo)) {
+			
+				URI yamlUri = TestOpenApi3.class.getResource("/org/openspcoop2/utils/openapi/testOpenAPI_3.0.yaml").toURI();
+			
+				ApiSchema apiSchemaYaml = new ApiSchema("test_import.yaml", 
+						Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import.yaml")), ApiSchemaType.YAML);
+				ApiSchema apiSchemaYaml2 = new ApiSchema("test_import2.yaml", 
+						Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import2.yaml")), ApiSchemaType.YAML);
+			
+				Test.testValidation(yamlUri, baseUri, "yaml", ApiFormats.OPEN_API_3, 
+						apiSchemaYaml, apiSchemaYaml2);
+				
+				System.out.println("\n\n\n==============================================================");
+				
+				System.out.println("IS JSON atteso:false trovato: "+JSONUtils.getInstance().isJson(apiSchemaYaml.getContent()));
+				if(JSONUtils.getInstance().isJson(apiSchemaYaml.getContent())) {
+					throw new Exception("Atteso un yaml");
+				}
+				System.out.println("IS YAML atteso:true trovato: "+YAMLUtils.getInstance().isYaml(apiSchemaYaml.getContent()));
+				if(!YAMLUtils.getInstance().isYaml(apiSchemaYaml.getContent())) {
+					throw new Exception("Atteso un yaml");
+				}
+			}
 		
+		} catch(Exception e) {
+			System.err.println("Errore durante l'esecuzione dei test: " + e.getMessage());
+			e.printStackTrace(System.err);
+			throw e;
+		}
 	}
 
 }
