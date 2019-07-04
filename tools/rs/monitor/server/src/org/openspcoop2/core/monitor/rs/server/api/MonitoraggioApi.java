@@ -95,7 +95,7 @@ public interface MonitoraggioApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaTransazioni findAllTransazioniByFullSearch(@Valid RicercaIntervalloTemporale body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ListaTransazioni findAllTransazioniByFullSearch(@Valid RicercaIntervalloTemporale body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
 
     /**
      * Ricerca completa delle transazioni in base all'identificativo applicativo
@@ -117,7 +117,7 @@ public interface MonitoraggioApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaTransazioni findAllTransazioniByIdApplicativoFullSearch(@Valid RicercaIdApplicativo body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ListaTransazioni findAllTransazioniByIdApplicativoFullSearch(@Valid RicercaIdApplicativo body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
 
     /**
      * Ricerca semplificata delle transazioni in base all'identificativo applicativo
@@ -138,7 +138,7 @@ public interface MonitoraggioApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaTransazioni findAllTransazioniByIdApplicativoSimpleSearch(@QueryParam("data_inizio") @NotNull DateTime dataInizio, @QueryParam("data_fine") @NotNull DateTime dataFine, @QueryParam("tipo") @NotNull TransazioneRuoloEnum tipo, @QueryParam("id_applicativo") @NotNull String idApplicativo, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @QueryParam("sort") String sort, @QueryParam("id_cluster") String idCluster, @QueryParam("soggetto_remoto") String soggettoRemoto, @QueryParam("nome_servizio") String nomeServizio, @QueryParam("tipo_servizio") String tipoServizio, @QueryParam("versione_servizio") Integer versioneServizio, @QueryParam("azione") String azione, @QueryParam("esito") EsitoTransazioneSimpleSearchEnum esito, @QueryParam("ricerca_esatta") Boolean ricercaEsatta, @QueryParam("case_sensitive") Boolean caseSensitive);
+    public ListaTransazioni findAllTransazioniByIdApplicativoSimpleSearch(@QueryParam("data_inizio") @NotNull DateTime dataInizio, @QueryParam("data_fine") @NotNull DateTime dataFine, @QueryParam("tipo") @NotNull TransazioneRuoloEnum tipo, @QueryParam("id_applicativo") @NotNull String idApplicativo, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @QueryParam("sort") String sort, @QueryParam("id_cluster") String idCluster, @QueryParam("soggetto_remoto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoRemoto, @QueryParam("nome_servizio") @Pattern(regexp="^[_A-Za-z][\\\\-\\\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @QueryParam("tipo_servizio") @Size(max=20) String tipoServizio, @QueryParam("versione_servizio") @Min(1) Integer versioneServizio, @QueryParam("azione") @Pattern(regexp="^[_A-Za-z][\\\\-\\\\._A-Za-z0-9]*$") @Size(max=255) String azione, @QueryParam("esito") EsitoTransazioneSimpleSearchEnum esito, @QueryParam("ricerca_esatta") Boolean ricercaEsatta, @QueryParam("case_sensitive") Boolean caseSensitive);
 
     /**
      * Ricerca semplificata delle transazioni in base all'identificativo messaggio
@@ -159,7 +159,7 @@ public interface MonitoraggioApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaTransazioni findAllTransazioniByIdMessaggio(@QueryParam("tipo_messaggio") @NotNull TipoMessaggioEnum tipoMessaggio, @QueryParam("id") @NotNull String id, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @QueryParam("sort") String sort);
+    public ListaTransazioni findAllTransazioniByIdMessaggio(@QueryParam("tipo_messaggio") @NotNull TipoMessaggioEnum tipoMessaggio, @QueryParam("id") @NotNull String id, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @QueryParam("sort") String sort);
 
     /**
      * Ricerca semplificata delle transazioni in base ai parametri di uso più comune
@@ -180,7 +180,7 @@ public interface MonitoraggioApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaTransazioni findAllTransazioniBySimpleSearch(@QueryParam("data_inizio") @NotNull DateTime dataInizio, @QueryParam("data_fine") @NotNull DateTime dataFine, @QueryParam("tipo") @NotNull TransazioneRuoloEnum tipo, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @QueryParam("sort") String sort, @QueryParam("id_cluster") String idCluster, @QueryParam("soggetto_remoto") String soggettoRemoto, @QueryParam("nome_servizio") String nomeServizio, @QueryParam("tipo_servizio") String tipoServizio, @QueryParam("versione_servizio") Integer versioneServizio, @QueryParam("azione") String azione, @QueryParam("esito") EsitoTransazioneSimpleSearchEnum esito);
+    public ListaTransazioni findAllTransazioniBySimpleSearch(@QueryParam("data_inizio") @NotNull DateTime dataInizio, @QueryParam("data_fine") @NotNull DateTime dataFine, @QueryParam("tipo") @NotNull TransazioneRuoloEnum tipo, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @QueryParam("sort") String sort, @QueryParam("id_cluster") String idCluster, @QueryParam("soggetto_remoto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoRemoto, @QueryParam("nome_servizio") @Pattern(regexp="^[_A-Za-z][\\\\-\\\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @QueryParam("tipo_servizio") @Size(max=20) String tipoServizio, @QueryParam("versione_servizio") @Min(1) Integer versioneServizio, @QueryParam("azione") @Pattern(regexp="^[_A-Za-z][\\\\-\\\\._A-Za-z0-9]*$") @Size(max=255) String azione, @QueryParam("esito") EsitoTransazioneSimpleSearchEnum esito);
 
     /**
      * Dettaglio di un evento

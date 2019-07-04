@@ -45,7 +45,7 @@
 		<if>
 			<istrue value="${swaggerCodeGen.useGovwayTemplate}" />
 			<then>
-				<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.4-gov4j-2.jar"/>	
+				<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.4-gov4j-3.jar"/>	
 			</then>
 		</if>
 		<java jar="${required_lib}/swagger-codegen/${swaggerCodeGenCliJarName}" fork="true">
@@ -217,7 +217,7 @@ paths:
 		<if>
 			<istrue value="${swaggerCodeGen.useGovwayTemplate}" />
 			<then>
-				<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.4-gov4j-2.jar"/>	
+				<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.4-gov4j-3.jar"/>	
 			</then>
 		</if>
 		<java jar="${required_lib}/swagger-codegen/${swaggerCodeGenCliJarName}" fork="true">

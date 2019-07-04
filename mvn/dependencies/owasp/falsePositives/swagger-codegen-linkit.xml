@@ -1,7 +1,7 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.2.xsd">
    <suppress>
       <notes><![CDATA[
-      file name: swagger-codegen-cli-3.0.4-gov4j-2.jar e swagger-codegen-cli-3.0.4.jar vengono utilizzati solamente per generare codice da OpenAPI. Non vengono utilizzati dal Gateway a runtime.
+      file name: swagger-codegen-cli-3.0.4-gov4j-3.jar e swagger-codegen-cli-3.0.4.jar vengono utilizzati solamente per generare codice da OpenAPI. Non vengono utilizzati dal Gateway a runtime.
       ]]></notes>
       <filePath regex="true">.*swagger-codegen-cli-3\.0\.4.*\.jar/(Java/gradle-wrapper.jar|META-INF/maven/.*/.*/pom.xml|.*/.*/.*/js/.*\.js)</filePath>
       <cvssBelow>10</cvssBelow>

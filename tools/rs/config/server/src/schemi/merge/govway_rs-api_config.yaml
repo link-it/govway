@@ -6863,12 +6863,12 @@ components:
           example: "abc123"
     ProfiloEnum:
       type: "string"
-      default: "APIGateway"
       enum:
       - "APIGateway"
       - "SPCoop"
       - "FatturaPA"
       - "eDelivery"
+      default: "APIGateway"
     ProfiloCollaborazioneEnum:
       type: "string"
       example: "sincrono"
@@ -8378,16 +8378,16 @@ components:
           type: "boolean"
     FormatoSoapEnum:
       type: "string"
-      default: "Wsdl1.1"
       enum:
       - "Wsdl1.1"
+      default: "Wsdl1.1"
     FormatoRestEnum:
       type: "string"
-      default: "OpenApi3.0"
       enum:
       - "Wadl"
       - "Swagger2.0"
       - "OpenApi3.0"
+      default: "OpenApi3.0"
     TipoApiEnum:
       type: "string"
       example: "rest"
@@ -8416,35 +8416,35 @@ components:
     ContestoEnum:
       type: "string"
       example: "qualsiasi"
-      default: "qualsiasi"
       enum:
       - "qualsiasi"
       - "erogazione"
       - "fruizione"
+      default: "qualsiasi"
     FonteEnum:
       type: "string"
       example: "qualsiasi"
-      default: "qualsiasi"
       enum:
       - "qualsiasi"
       - "registro"
       - "esterna"
+      default: "qualsiasi"
     RuoloAllegatoAPI:
       type: "string"
       example: "specificaSemiFormale"
-      default: "allegato"
       enum:
       - "allegato"
       - "specificaSemiFormale"
+      default: "allegato"
     RuoloAllegatoAPIImpl:
       type: "string"
       example: "specificaSemiFormale"
-      default: "allegato"
       enum:
       - "allegato"
       - "specificaSemiFormale"
       - "specificaSicurezza"
       - "specificaLivelloServizio"
+      default: "allegato"
     TipoSpecificaSemiformaleEnum:
       type: "string"
       example: "XML"
@@ -8472,13 +8472,13 @@ components:
     SslTipologiaEnum:
       type: "string"
       example: "TLSv1.2"
-      default: "TLSv1.2"
       enum:
       - "SSLv2Hello"
       - "SSLv3"
       - "TLSv1"
       - "TLSv1.1"
       - "TLSv1.2"
+      default: "TLSv1.2"
     KeystoreEnum:
       type: "string"
       example: "jks"
@@ -8556,10 +8556,10 @@ components:
     AllAnyEnum:
       type: "string"
       example: "all"
-      default: "all"
       enum:
       - "all"
       - "any"
+      default: "all"
     ModalitaIdentificazioneAzioneEnum:
       type: "string"
       example: "interface-based"

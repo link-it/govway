@@ -33,6 +33,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import javax.validation.constraints.*;
 import javax.validation.Valid;
 
 /**
@@ -85,7 +86,7 @@ public interface SoggettiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void deleteSoggetto(@PathParam("nome") String nome, @QueryParam("profilo") ProfiloEnum profilo);
+    public void deleteSoggetto(@PathParam("nome") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String nome, @QueryParam("profilo") ProfiloEnum profilo);
 
     /**
      * Ricerca soggetti
@@ -106,7 +107,7 @@ public interface SoggettiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaSoggetti findAllSoggetti(@QueryParam("profilo") ProfiloEnum profilo, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset, @QueryParam("dominio") DominioEnum dominio, @QueryParam("ruolo") String ruolo);
+    public ListaSoggetti findAllSoggetti(@QueryParam("profilo") ProfiloEnum profilo, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset, @QueryParam("dominio") DominioEnum dominio, @QueryParam("ruolo") @Pattern(regexp="^[_A-Za-z][\\\\-\\\\._A-Za-z0-9]*$") @Size(max=255) String ruolo);
 
     /**
      * Restituisce il dettaglio di un soggetto
@@ -127,7 +128,7 @@ public interface SoggettiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public Soggetto getSoggetto(@PathParam("nome") String nome, @QueryParam("profilo") ProfiloEnum profilo);
+    public Soggetto getSoggetto(@PathParam("nome") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String nome, @QueryParam("profilo") ProfiloEnum profilo);
 
     /**
      * Modifica i dati di un soggetto
@@ -149,5 +150,5 @@ public interface SoggettiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateSoggetto(@Valid Soggetto body, @PathParam("nome") String nome, @QueryParam("profilo") ProfiloEnum profilo);
+    public void updateSoggetto(@Valid Soggetto body, @PathParam("nome") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String nome, @QueryParam("profilo") ProfiloEnum profilo);
 }

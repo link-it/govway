@@ -1878,12 +1878,12 @@ components:
     TipoReportEnum:
       type: "string"
       example: "Line"
-      default: "table"
       enum:
       - "line"
       - "pie"
       - "bar"
       - "table"
+      default: "table"
     FormatoReportEnum:
       type: "string"
       example: "csv"
@@ -1896,36 +1896,36 @@ components:
     UnitaTempoReportEnum:
       type: "string"
       example: "orario"
-      default: "giornaliero"
       enum:
       - "orario"
       - "giornaliero"
       - "settimanale"
       - "mensile"
+      default: "giornaliero"
     TipoInformazioneReportEnum:
       type: "string"
       example: "numero_transazioni"
-      default: "numero_transazioni"
       enum:
       - "numero_transazioni"
       - "occupazione_banda"
       - "tempo_medio_risposta"
+      default: "numero_transazioni"
     OccupazioneBandaEnum:
       type: "string"
       example: "banda_complessiva"
-      default: "banda_complessiva"
       enum:
       - "banda_complessiva"
       - "banda_interna"
       - "banda_esterna"
+      default: "banda_complessiva"
     TempoMedioRispostaEnum:
       type: "string"
       example: "latenza_totale"
-      default: "latenza_totale"
       enum:
       - "latenza_totale"
       - "latenza_servizio"
       - "latenza_gateway"
+      default: "latenza_totale"
     TransazioneExt:
       type: "object"
       allOf:
@@ -2319,12 +2319,12 @@ components:
           example: "abc123"
     ProfiloEnum:
       type: "string"
-      default: "APIGateway"
       enum:
       - "APIGateway"
       - "SPCoop"
       - "FatturaPA"
       - "eDelivery"
+      default: "APIGateway"
     ProfiloCollaborazioneEnum:
       type: "string"
       example: "sincrono"

@@ -33,6 +33,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import javax.validation.constraints.*;
 import javax.validation.Valid;
 
 /**
@@ -85,7 +86,7 @@ public interface RuoliApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void deleteRuolo(@PathParam("nome") String nome);
+    public void deleteRuolo(@PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\\\-\\\\._A-Za-z0-9]*$") @Size(max=255) String nome);
 
     /**
      * Ricerca ruoli
@@ -127,7 +128,7 @@ public interface RuoliApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public Ruolo getRuolo(@PathParam("nome") String nome);
+    public Ruolo getRuolo(@PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\\\-\\\\._A-Za-z0-9]*$") @Size(max=255) String nome);
 
     /**
      * Modifica i dati di un ruolo
@@ -149,5 +150,5 @@ public interface RuoliApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateRuolo(@Valid Ruolo body, @PathParam("nome") String nome);
+    public void updateRuolo(@Valid Ruolo body, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\\\-\\\\._A-Za-z0-9]*$") @Size(max=255) String nome);
 }
