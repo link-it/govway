@@ -122,7 +122,7 @@ public class ConfigurazionePdD_controlloTraffico {
 			}
 			catch(NotFoundException e) {
 				String errorMsg = "Configurazione del Controllo del Traffico non trovata: "+e.getMessage();
-				this.log.error(errorMsg,e);
+				this.log.debug(errorMsg,e);
 				throw new DriverConfigurazioneNotFound(errorMsg,e);
 			}
 			catch(Exception e){
@@ -228,7 +228,7 @@ public class ConfigurazionePdD_controlloTraffico {
 		}
 		catch(NotFoundException e) {
 			String errorMsg = "ElencoIdPolicyAttive del Controllo del Traffico non trovata: "+e.getMessage();
-			this.log.error(errorMsg,e);
+			this.log.debug(errorMsg,e);
 			throw new DriverConfigurazioneNotFound(errorMsg,e);
 		}
 		catch(Exception e){
@@ -263,7 +263,7 @@ public class ConfigurazionePdD_controlloTraffico {
 		}
 		catch(NotFoundException e) {
 			String errorMsg = "AttivazionePolicy del Controllo del Traffico non trovata: "+e.getMessage();
-			this.log.error(errorMsg,e);
+			this.log.debug(errorMsg,e);
 			throw new DriverConfigurazioneNotFound(errorMsg,e);
 		}
 		catch(Exception e){
@@ -302,7 +302,7 @@ public class ConfigurazionePdD_controlloTraffico {
 		}
 		catch(NotFoundException e) {
 			String errorMsg = "ElencoIdPolicy del Controllo del Traffico non trovata: "+e.getMessage();
-			this.log.error(errorMsg,e);
+			this.log.debug(errorMsg,e);
 			throw new DriverConfigurazioneNotFound(errorMsg,e);
 		}
 		catch(Exception e){
@@ -338,7 +338,7 @@ public class ConfigurazionePdD_controlloTraffico {
 		}
 		catch(NotFoundException e) {
 			String errorMsg = "ConfigurazionePolicy del Controllo del Traffico non trovata: "+e.getMessage();
-			this.log.error(errorMsg,e);
+			this.log.debug(errorMsg,e);
 			throw new DriverConfigurazioneNotFound(errorMsg,e);
 		}
 		catch(Exception e){

@@ -47,6 +47,7 @@ import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.Credential;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 
 /**
@@ -429,6 +430,9 @@ public class DumpRaw {
 			byte [] rawMessage = res.getResponseAsByte();
 			if(rawMessage!=null){
 				try {
+					if(res.getContentType()!=null) {
+						res.getTrasporto().put(HttpConstants.CONTENT_TYPE,res.getContentType());
+					}
 					this.dump.dumpBinarioRispostaUscita(rawMessage, this.urlProtocolContext, res.getTrasporto());
 				}catch(Throwable t){
 					this.log.error("Log DumpBinarioRichiestaIngresso error: "+t.getMessage(),t);

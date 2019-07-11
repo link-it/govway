@@ -360,6 +360,12 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 				this.logger.debug("Creazione URL ["+this.location+"]...");
 			URL url = new URL( this.location );	
 
+			
+			// Collezione header di trasporto per dump
+			Properties propertiesTrasportoDebug = null;
+			if(this.debug) {
+				propertiesTrasportoDebug = new Properties();
+			}
 
 			
 			// Creazione Connessione
@@ -463,7 +469,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 				if(this.proxyUsername!=null && this.proxyPassword!=null){
 					String authentication = this.proxyUsername + ":" + this.proxyPassword;
 					authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + Base64Utilities.encodeAsString(authentication.getBytes());
-					this.httpConn.setRequestProperty(HttpConstants.PROXY_AUTHORIZATION,authentication);
+					setRequestHeader(HttpConstants.PROXY_AUTHORIZATION,authentication, propertiesTrasportoDebug);
 					if(this.debug)
 						this.logger.info("Impostazione autenticazione per proxy (username["+this.proxyUsername+"] password["+this.proxyPassword+"]) ["+authentication+"]",false);
 				}
@@ -492,7 +498,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			if(this.debug)
 				this.logger.info("Impostazione http Content-Type ["+contentTypeRichiesta+"]",false);
 			if(contentTypeRichiesta!=null){
-				this.httpConn.setRequestProperty(HttpConstants.CONTENT_TYPE,contentTypeRichiesta);
+				setRequestHeader(HttpConstants.CONTENT_TYPE,contentTypeRichiesta, propertiesTrasportoDebug);
 			}
 			
 			
@@ -554,7 +560,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 				}
 				if(MessageType.SOAP_11.equals(this.requestMsg.getMessageType())){
 					// NOTA non quotare la soap action, per mantenere la trasparenza della PdD
-					this.httpConn.setRequestProperty(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION,this.soapAction);
+					setRequestHeader(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION,this.soapAction, propertiesTrasportoDebug);
 				}
 				if(this.debug)
 					this.logger.info("SOAP Action inviata ["+this.soapAction+"]",false);
@@ -576,7 +582,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			if(user!=null && password!=null){
 				String authentication = user + ":" + password;
 				authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + Base64Utilities.encodeAsString(authentication.getBytes());
-				this.httpConn.setRequestProperty(HttpConstants.AUTHORIZATION,authentication);
+				setRequestHeader(HttpConstants.AUTHORIZATION,authentication, propertiesTrasportoDebug);
 				if(this.debug)
 					this.logger.info("Impostazione autenticazione (username:"+user+" password:"+password+") ["+authentication+"]",false);
 			}
@@ -585,7 +591,10 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			// Authentication Token
 			NameValue nv = this.getTokenHeader();
 	    	if(nv!=null) {
-	    		this.httpConn.setRequestProperty(nv.getName(),nv.getValue());
+	    		if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
+	    			this.requestMsg.getTransportRequestContext().removeParameterTrasporto(nv.getName()); // Fix: senno sovrascriveva il vecchio token
+	    		}
+	    		setRequestHeader(nv.getName(),nv.getValue(), propertiesTrasportoDebug);
 	    		if(this.debug)
 					this.logger.info("Impostazione autenticazione token (header-name '"+nv.getName()+"' value '"+nv.getValue()+"')",false);
 	    	}
@@ -625,14 +634,14 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 							//System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");
 							if(this.debug)
 								this.logger.info("RFC2047 Encoded value in ["+encoded+"] (charset:"+charsetRFC2047+" encoding-algorithm:"+encodingAlgorithmRFC2047+")",false);
-							setRequestHeader(validazioneHeaderRFC2047, key, encoded, this.logger);
+							setRequestHeader(validazioneHeaderRFC2047, key, encoded, this.logger, propertiesTrasportoDebug);
 						}
 						else{
-							setRequestHeader(validazioneHeaderRFC2047, key, value, this.logger);
+							setRequestHeader(validazioneHeaderRFC2047, key, value, this.logger, propertiesTrasportoDebug);
 						}
 					}
 					else{
-						setRequestHeader(validazioneHeaderRFC2047, key, value, this.logger);
+						setRequestHeader(validazioneHeaderRFC2047, key, value, this.logger, propertiesTrasportoDebug);
 					}
 				}
 			}
@@ -671,7 +680,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 					this.logger.info("Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+bout.toString(),false);
 					bout.close();
 					
-					this.dumpBinarioRichiestaUscita(bout.toByteArray(), this.location, this.propertiesTrasporto);
+					this.dumpBinarioRichiestaUscita(bout.toByteArray(), this.location, propertiesTrasportoDebug);
 					
 				}else{
 					if(this.isSoap && this.sbustamentoSoap){
@@ -968,6 +977,9 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
     	this.location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);	
     	NameValue nv = this.getTokenQueryParameter();
     	if(nv!=null) {
+    		if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
+    			this.requestMsg.getTransportRequestContext().removeParameterFormBased(nv.getName()); // Fix: senno sovrascriveva il vecchio token
+    		}
     		if(this.propertiesUrlBased==null) {
     			this.propertiesUrlBased = new Properties();
     		}
@@ -980,20 +992,27 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
     }
     
 
-    private void setRequestHeader(boolean validazioneHeaderRFC2047, String key, String value, ConnettoreLogger logger) {
+    private void setRequestHeader(boolean validazioneHeaderRFC2047, String key, String value, ConnettoreLogger logger, Properties propertiesTrasportoDebug) {
     	
     	if(validazioneHeaderRFC2047){
     		try{
         		RFC2047Utilities.validHeader(key, value);
-        		this.httpConn.setRequestProperty(key,value);
+        		setRequestHeader(key,value, propertiesTrasportoDebug);
         	}catch(UtilsException e){
         		logger.error(e.getMessage(),e);
         	}
     	}
     	else{
-    		this.httpConn.setRequestProperty(key,value);
+    		setRequestHeader(key,value, propertiesTrasportoDebug);
     	}
     	
+    }
+    
+    private void setRequestHeader(String key,String value, Properties propertiesTrasportoDebug) {
+    	this.httpConn.setRequestProperty(key,value);
+    	if(propertiesTrasportoDebug!=null) {
+    		propertiesTrasportoDebug.put(key, value);
+    	}
     }
 }
 

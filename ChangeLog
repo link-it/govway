@@ -1,3 +1,14 @@
+2019-07-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayMonitor]
+	Risolto Bug OP-857
+	La negoziazione del token sul connettore non risultava funzionante in presenza di 'Authorization Header' sulla richiesta originale, 
+	se questa non veniva consumata dal modulo di autenticazione. L'header Authorization originale sovrascriveva il token ottenuto dalla negoziazione.
+	Inoltre il dump binario sul connettore non registrava tutti gli header inoltrati in uscita; 
+	non venivano registrati gli header aggiunti dal connettore (Authorization, Content-Type, SOAPAction...).
+	La console di monitoraggio, infine, non visualizzava correttamente il contenuto del dump binario se differente da xml.
+	Tutti i problemi sono stati risolti.
+
 2019-07-02  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]
@@ -12,7 +23,7 @@
 2019-06-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]
-	Risolto Bug  #43
+	Risolto Bug #43
 	(https://github.com/link-it/govway/issues/43)
 	Risolto problema presente nel Summary 'Ultimo anno' della console di monitoraggio,
 	dove veniva visualizzato un intervallo temporale errato. 

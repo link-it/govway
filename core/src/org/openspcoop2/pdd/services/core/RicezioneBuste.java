@@ -778,7 +778,21 @@ public class RicezioneBuste {
 					msgDiag.logErroreGenerico(e, posizioneErrore);
 				}
 			}else{
-				msgDiag.logErroreGenerico(e, posizioneErrore);
+				String descrizioneErrore = null;
+				if(erroreCooperazione != null){
+					try{
+						descrizioneErrore = erroreCooperazione.getDescrizione(this.generatoreErrore.getProtocolFactory());
+					}catch(Throwable t){}
+				}
+				if(descrizioneErrore==null && erroreIntegrazione!=null) {
+					try{
+						descrizioneErrore = erroreIntegrazione.getDescrizione(this.generatoreErrore.getProtocolFactory());
+					}catch(Throwable t){}
+				}
+				if(descrizioneErrore==null) {
+					descrizioneErrore = posizioneErrore;
+				}
+				msgDiag.logErroreGenerico(descrizioneErrore, posizioneErrore);
 			}
 		}
 		else if(logCore!=null){

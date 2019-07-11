@@ -144,106 +144,133 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			if(errore!= null)
 				return "";
 
-			MessageType messageType= MessageType.XML;
+			// sicuramente da qui si hanno messaggi con "testo visualizzabile" e non troppo lunghi
+			
+			MessageType messageType = null;
 			if(StringUtils.isNotEmpty(this.dumpMessaggio.getFormatoMessaggio())) {
 				messageType = MessageType.valueOf(this.dumpMessaggio.getFormatoMessaggio());
 			}
 
-			switch (messageType) {
-			case JSON:
+			if(messageType==null) {
+				// puo' succedere nei casi binari
+				toRet = this._getPrettyUnknownType();
+			}
+			else {
+				switch (messageType) {
+				case JSON:
+					JSONUtils jsonUtils = JSONUtils.getInstance(true);
+					try {
+						toRet = jsonUtils.toString(jsonUtils.getAsNode(this.dumpMessaggio.getBody()));
+					} catch (UtilsException e) {
+					}
+					break;
+				case SOAP_11:
+				case SOAP_12:
+				case XML:
+					toRet = Utils.prettifyXml(this.dumpMessaggio.getBody());
+					break;
+				case BINARY:
+				case MIME_MULTIPART:
+					toRet = this._getPrettyUnknownType();
+					break;
+				}
+			}
+		}
+
+		if(toRet == null || "".equals(toRet)) {
+			toRet = this.dumpMessaggio.getBody() != null ? new String(this.dumpMessaggio.getBody()) : "";
+		}
+
+		return toRet;
+	}
+	
+	private String _getPrettyUnknownType() {
+		String toRet = null;
+		try {
+			String contentType = this.dumpMessaggio.getContentType();
+			if(ContentTypeUtilities.isMultipart(contentType)){
+				contentType = ContentTypeUtilities.getInternalMultipartContentType(contentType);
+			}
+			String ext = MimeTypeUtils.fileExtensionForMIMEType(contentType);
+			if("json".equals(ext) || contentType.contains("json")) {
 				JSONUtils jsonUtils = JSONUtils.getInstance(true);
 				try {
 					toRet = jsonUtils.toString(jsonUtils.getAsNode(this.dumpMessaggio.getBody()));
 				} catch (UtilsException e) {
 				}
-				break;
-			case MIME_MULTIPART:
-				try {
-					String contentType = this.dumpMessaggio.getContentType();
-					if(ContentTypeUtilities.isMultipart(contentType)){
-						contentType = ContentTypeUtilities.getInternalMultipartContentType(contentType);
-					}
-					String ext = MimeTypeUtils.fileExtensionForMIMEType(contentType);
-					if("json".equals(ext) || contentType.contains("json")) {
-						jsonUtils = JSONUtils.getInstance(true);
-						try {
-							toRet = jsonUtils.toString(jsonUtils.getAsNode(this.dumpMessaggio.getBody()));
-						} catch (UtilsException e) {
-						}
-					}
-					else if("xml".equals(ext) || contentType.contains("xml")) {
-						toRet = Utils.prettifyXml(this.dumpMessaggio.getBody());
-					}
-					// else {
-					// 	nop
-					//}
-				}catch(Exception e) {
-					this.log.error(e.getMessage(),e);
-					toRet = "xml"; // default
-				}
-				break;
-			case BINARY:
-				// gia gestito nel return dell'errore sopra
-				break;
-			case SOAP_11:
-			case SOAP_12:
-			case XML:
-			default:
-				toRet = Utils.prettifyXml(this.dumpMessaggio.getBody());
-				break;
 			}
+			else if("xml".equals(ext) || contentType.contains("xml")) {
+				toRet = Utils.prettifyXml(this.dumpMessaggio.getBody());
+			}
+			// else {
+			// 	nop
+			//}
+		}catch(Exception e) {
+			this.log.error(e.getMessage(),e);
 		}
-
-		if(toRet == null)
-			toRet = this.dumpMessaggio.getBody() != null ? new String(this.dumpMessaggio.getBody()) : "";
-
-			return toRet;
+		return toRet;
 	}
 
 	public String getBrush() {
+		
+		// il brush verrà utilizzato solamente se il messaggio va visualizzato
+		// decisione presa dal metodo: isVisualizzaMessaggio()
+		
 		String toRet = null;
 		if(this.dumpMessaggio!=null && this.dumpMessaggio.getBody()!=null) {
-			MessageType messageType= MessageType.XML;
+			
+			MessageType messageType = null;
 			if(StringUtils.isNotEmpty(this.dumpMessaggio.getFormatoMessaggio())) {
 				messageType = MessageType.valueOf(this.dumpMessaggio.getFormatoMessaggio());
 			}
 
-			switch (messageType) {
-			case JSON:
-				toRet = "json";
-				break;
-			case MIME_MULTIPART:
-				try {
-					String contentType = this.dumpMessaggio.getContentType();
-					if(ContentTypeUtilities.isMultipart(contentType)){
-						contentType = ContentTypeUtilities.getInternalMultipartContentType(contentType);
-					}
-					String ext = MimeTypeUtils.fileExtensionForMIMEType(contentType);
-					if("json".equals(ext) || contentType.contains("json")) {
-						toRet = "json";
-					}
-					else {
-						toRet = "xml"; // default
-					}
-				}catch(Exception e) {
-					this.log.error(e.getMessage(),e);
-					toRet = "xml"; // default
+			if(messageType==null) {
+				// puo' succedere nei casi binari
+				toRet = this._getBrushUnknownType();
+			}
+			else {
+				switch (messageType) {
+				case JSON:
+					toRet = "json";
+					break;
+				case SOAP_11:
+				case SOAP_12:
+				case XML:
+				default:
+					toRet = "xml";
+					break;
+				case MIME_MULTIPART:
+				case BINARY:
+					toRet = this._getBrushUnknownType();
+					break;
 				}
-				break;
-			case BINARY:
-				// per ora restituisco il default
-			case SOAP_11:
-			case SOAP_12:
-			case XML:
-			default:
-				toRet = "xml";
-				break;
 			}
 		}
 
-		return toRet;
+		return toRet!=null ? toRet : "xml";
 	}
 
+	private String _getBrushUnknownType() {
+		String toRet = null;
+		try {
+			String contentType = this.dumpMessaggio.getContentType();
+			if(ContentTypeUtilities.isMultipart(contentType)){
+				contentType = ContentTypeUtilities.getInternalMultipartContentType(contentType);
+			}
+			String ext = MimeTypeUtils.fileExtensionForMIMEType(contentType);
+			if("json".equals(ext) || contentType.contains("json")) {
+				toRet = "json";
+			}
+			else {
+				toRet = "xml"; // default
+			}
+		}catch(Exception e) {
+			this.log.error(e.getMessage(),e);
+			toRet = "xml"; // default
+		}
+		return toRet;
+	}
+	
 	public String getErroreVisualizzaMessaggio(){
 		if(this.dumpMessaggio!=null && this.dumpMessaggio.getBody()!=null) {
 			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();

@@ -451,7 +451,7 @@ public class MsgDiagnostico {
 		this.addKeywordErroreProcessamento(t, null);
 	}
 	public void addKeywordErroreProcessamento(Throwable t,String prefix) {
-		String eccezione = Utilities.readFirstErrorValidMessageFromException(t);
+		String eccezione = t!=null ? Utilities.readFirstErrorValidMessageFromException(t) : "Internal Error";
 		if(prefix!=null) {
 			prefix = prefix.trim();
 			if(prefix.endsWith(":")==false) {
@@ -972,7 +972,7 @@ public class MsgDiagnostico {
 	
 	
 	public void logErroreGenerico(Throwable e, String posizioneErrore) {
-		String msg = Utilities.readFirstErrorValidMessageFromException(e);
+		String msg = e!=null ? Utilities.readFirstErrorValidMessageFromException(e) : "Internal Error";
 		this.logErroreGenerico(msg,posizioneErrore);
 		// inoltre registro l'errore nel logger_core di openspcoop
 		if(this.loggerOpenSPCoop2Core!=null)
@@ -986,7 +986,7 @@ public class MsgDiagnostico {
 	
 	
 	public void logFatalError(Throwable e, String posizioneErrore) {
-		String msg = Utilities.readFirstErrorValidMessageFromException(e);
+		String msg = e!=null ? Utilities.readFirstErrorValidMessageFromException(e) : "Internal Error";
 		this.logFatalError(msg,posizioneErrore);
 		// inoltre registro l'errore nel logger_core di openspcoop
 		if(this.loggerOpenSPCoop2Core!=null){
