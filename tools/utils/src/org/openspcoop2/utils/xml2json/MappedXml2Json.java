@@ -25,7 +25,6 @@
 package org.openspcoop2.utils.xml2json;
 
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -47,7 +46,7 @@ import org.w3c.dom.Node;
 public class MappedXml2Json extends AbstractXml2Json {
 
 	private AbstractXMLUtils xmlUtils;
-	private Map<String, String> jsonNamespaceMap;
+	// private Map<String, String> jsonNamespaceMap;
 	private MappedXMLOutputFactory mappedXMLOutputFactory;
 	private Configuration configuration;
 	public MappedXml2Json() {
@@ -57,18 +56,17 @@ public class MappedXml2Json extends AbstractXml2Json {
 	}
 	public MappedXml2Json(Map<String, String> jsonNamespaceMap) {
 		super();
-		this.jsonNamespaceMap = jsonNamespaceMap;
-		this.configuration = new Configuration(this.jsonNamespaceMap);
+		//this.jsonNamespaceMap = jsonNamespaceMap;
+		this.configuration = new Configuration(jsonNamespaceMap);
 		this.init();
 	}
-	@SuppressWarnings("unchecked")
 	public MappedXml2Json(Configuration configuration) {
 		super();
 		this.configuration = configuration;
-		this.jsonNamespaceMap = configuration.getXmlToJsonNamespaces();
-		if(this.jsonNamespaceMap!=null && this.jsonNamespaceMap.isEmpty()) {
+		//this.jsonNamespaceMap = configuration.getXmlToJsonNamespaces();
+		/*if(this.jsonNamespaceMap!=null && this.jsonNamespaceMap.isEmpty()) {
 			this.jsonNamespaceMap = null;
-		}
+		}*/
 		this.init();
 	}
 	private void init() {
@@ -87,7 +85,7 @@ public class MappedXml2Json extends AbstractXml2Json {
 
 	@Override
 	public String xml2json(Node node) throws UtilsException {
-		if(this.jsonNamespaceMap==null) {
+		if(this.configuration.getXmlToJsonNamespaces() == null || this.configuration.getXmlToJsonNamespaces().isEmpty()) {
 			DynamicNamespaceContext dnc = new DynamicNamespaceContext();
 			dnc.findPrefixNamespace(node);
 			this.refreshOutputFactory(dnc);
@@ -103,19 +101,18 @@ public class MappedXml2Json extends AbstractXml2Json {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void refreshOutputFactory(DynamicNamespaceContext f) {
-		if(this.jsonNamespaceMap == null) {
-			this.jsonNamespaceMap = new HashMap<>();
-		}
+	/*	if(this.configuration.getXmlToJsonNamespaces() == null) {
+			this.configuration.setXmlToJsonNamespaces(new java.util.HashMap<>());
+		}*/
 		Enumeration<?> prefixes = f.getPrefixes();
 		while(prefixes.hasMoreElements()){
 			Object nextElement = prefixes.nextElement();
 			if(!nextElement.equals("xmlns"))
-				this.jsonNamespaceMap.put(f.getNamespaceURI((String)nextElement),(String) nextElement);
+				this.configuration.getXmlToJsonNamespaces().put(f.getNamespaceURI((String)nextElement),(String) nextElement);
 		}
-		this.mappedXMLOutputFactory = new MappedXMLOutputFactory(this.jsonNamespaceMap);
-		
-		
+		this.mappedXMLOutputFactory = new MappedXMLOutputFactory(this.configuration);		
 	}
 	
 

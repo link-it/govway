@@ -39,7 +39,13 @@
 	</b:bean>
     
 	<!-- Validaton Feature -->
-	<b:bean id="commonValidationFeature" class="org.apache.cxf.validation.BeanValidationFeature"/>
+	<b:bean id="parameterNameProvider" class="org.apache.cxf.jaxrs.validation.JAXRSParameterNameProvider"/>
+	<b:bean id="beanValidationProvider" class="org.apache.cxf.validation.BeanValidationProvider">
+		<b:constructor-arg ref="parameterNameProvider"/>
+	</b:bean>
+	<b:bean id="commonValidationFeature" class="org.apache.cxf.validation.BeanValidationFeature">
+		<b:property name="provider" ref="beanValidationProvider"/>
+	</b:bean>
 
 	<!-- Parameter Converter -->
 	<b:bean id="parameterConverter" class="org.openspcoop2.utils.jaxrs.ParameterConverterProvider"/>
