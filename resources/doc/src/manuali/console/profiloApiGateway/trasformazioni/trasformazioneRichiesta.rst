@@ -53,6 +53,9 @@ Per la modifica del contenuto della richiesta devono essere forniti i seguenti d
     - Velocity Template: il contenuto della richiesta viene assegnato utilizzando il template "Velocity" (http://velocity.apache.org/) fornito in configurazione.
     - Velocity Template (Archivio Zip): il file fornito deve essere un archivio zip contenenti dei files che rispettano la sintassi del template engine 'Velocity'. Viene richiesta la presenza, all'interno dell'archivio zip, di un file indice che possieda il nome 'index.vm'.
     - XSLT: il contenuto della richiesta viene modificato applicando la trasformazione XSLT fornita in configurazione. Questo metodo è applicbile nel caso di messaggi XML o SOAP.
+    - ZIP: il contenuto della richiesta verrà trasformato in un archizio zip il cui contenuto viene definito dal file fornito che deve contenere proprietà indicate come nome=valore in ogni linea. Il nome della proprietà corrisponde all'entry name all'interno dell'archivio (es. dir/subDir/entryName1). Il valore della proprietà corrisponde al contenuto dell'entry. È possibile selezionare parti del messaggio, per associarle come contenuto dell'entry, utilizzando le espressioni dinamiche risolte a runtime dal Gateway (sezione :ref:`valoriDinamici`).
+    - TGZ: il contenuto della richiesta verrà trasformato in un archizio tgz il cui contenuto è definito tramite il file fornito che deve possedere la medesima struttura descritta per il tipo 'ZIP'.
+    - TAR: il contenuto della richiesta verrà trasformato in un archizio tar il cui contenuto è definito tramite il file fornito che deve possedere la medesima struttura descritta per il tipo 'ZIP'.
 
 - Template: nei casi che lo prevedono, con questo elemento si fornisce il template da utilizzare per ottenere il nuovo contenuto della richiesta.
 - Content-Type: opzionalmente, tramite questo elemento, è possibile assegnare un content-type alla richiesta modificata.

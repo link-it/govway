@@ -20,46 +20,40 @@
  *
  */
 
-package org.openspcoop2.pdd_test.trasformazioni;
+package org.openspcoop2.utils.test.io;
 
-import org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione;
-import org.openspcoop2.pdd_test.Costanti;
+import org.openspcoop2.utils.io.ArchiveType;
+import org.openspcoop2.utils.test.Costanti;
 import org.openspcoop2.utils.test.TestLogger;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * TestTrasformazioni
+ * TestArchive
  * 
  * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TestTrasformazioni {
+public class TestArchive {
 
-	private static final String ID_TEST = "Trasformazioni";
+	private static final String ID_TEST = "Archive";
 	
-	@DataProvider(name="trasformazioniProvider")
+	@DataProvider(name="archiveProvider")
 	public Object[][] provider(){
 		return new Object[][]{
-				{TipoTrasformazione.TEMPLATE},
-				{TipoTrasformazione.FREEMARKER_TEMPLATE},
-				{TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP},
-				{TipoTrasformazione.VELOCITY_TEMPLATE},
-				{TipoTrasformazione.VELOCITY_TEMPLATE_ZIP},
-				{TipoTrasformazione.XSLT},
-				{TipoTrasformazione.ZIP},
-				{TipoTrasformazione.TGZ},
-				{TipoTrasformazione.TAR}
+				{ArchiveType.ZIP},
+				{ArchiveType.TAR},
+				{ArchiveType.TGZ}
 		};
 	}
 	
-	@Test(groups={Costanti.GRUPPO_PDD,Costanti.GRUPPO_PDD+"."+ID_TEST},dataProvider="trasformazioniProvider")
-	public void testDynamicReplace(TipoTrasformazione tipo) throws Exception{
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST},dataProvider="archiveProvider")
+	public void testArchvie(ArchiveType tipo) throws Exception{
 		
-		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.pdd.core.trasformazioni.Test.main(new String[] {tipo.name()});
-		TestLogger.info("Run test '"+ID_TEST+"' ok");
+		TestLogger.info("Run test '"+ID_TEST+"' (tipo:"+tipo+") ...");
+		org.openspcoop2.utils.io.CompressorUtilities.testArchive(tipo);
+		TestLogger.info("Run test '"+ID_TEST+"' (tipo:"+tipo+") ok");
 		
 	}
 	

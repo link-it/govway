@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.message.constants.IntegrationError;
-import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorOutMessage;
@@ -64,12 +63,13 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPConnector {
 	public void doEngine(RequestInfo requestInfo, 
 			HttpServletRequest req, HttpServletResponse res, HttpRequestMethod method) throws ServletException, IOException {
 
-		if(!ServiceBinding.SOAP.equals(requestInfo.getIntegrationServiceBinding())){
-
-			ConnectorDispatcherUtils.doServiceBindingNotSupported(req, res, method, requestInfo.getIntegrationServiceBinding(), ID_SERVICE);
-			return;
-			
-		}
+		// Devo prima leggere l'API invocata per comprendere il service binding effettivo
+//		if(!org.openspcoop2.message.constants.ServiceBinding.SOAP.equals(requestInfo.getIntegrationServiceBinding())){
+//
+//			ConnectorDispatcherUtils.doServiceBindingNotSupported(req, res, method, requestInfo.getIntegrationServiceBinding(), ID_SERVICE);
+//			return;
+//			
+//		}
 		
 		if(!HttpRequestMethod.POST.equals(method)){
 

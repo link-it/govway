@@ -325,6 +325,9 @@ public class TunnelSoapUtils {
 	 * 
 	 */
 	public static byte[] sbustamentoSOAPEnvelope(SOAPEnvelope env) throws MessageException, MessageNotSupportedException{
+		return sbustamentoSOAPEnvelope(env, true);
+	}
+	public static byte[] sbustamentoSOAPEnvelope(SOAPEnvelope env, boolean consume) throws MessageException, MessageNotSupportedException{
 		ByteArrayOutputStream bout = null;
 		
 		try{
@@ -332,7 +335,7 @@ public class TunnelSoapUtils {
 			byte[] body = null;
 			if(bd.hasFault()){
 				SOAPFault fault = bd.getFault();
-				body = OpenSPCoop2MessageFactory.getAsByte(fault, true);
+				body = OpenSPCoop2MessageFactory.getAsByte(fault, consume);
 			}else{
 				bout = new ByteArrayOutputStream();
 				java.util.Iterator<?> it = bd.getChildElements();
@@ -342,7 +345,7 @@ public class TunnelSoapUtils {
 						continue;
 					}
 					SOAPElement bodyElement = (SOAPElement) bodyElementObj;
-					bout.write(OpenSPCoop2MessageFactory.getAsByte(bodyElement, true));
+					bout.write(OpenSPCoop2MessageFactory.getAsByte(bodyElement, consume));
 				}
 				bout.flush();
 				bout.close();

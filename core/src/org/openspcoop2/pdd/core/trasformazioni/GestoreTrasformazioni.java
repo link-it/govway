@@ -386,6 +386,7 @@ public class GestoreTrasformazioni {
 		Map<String, Object> dynamicMap = new Hashtable<String, Object>();
 		ErrorHandler errorHandler = new ErrorHandler();
 		GestoreTrasformazioniUtilities.fillDynamicMapRequest(this.log, dynamicMap, this.pddContext, urlInvocazione,
+				message,
 				element, elementJson, 
 				busta, parametriTrasporto, parametriUrl,
 				errorHandler);
@@ -703,6 +704,7 @@ public class GestoreTrasformazioni {
 		Map<String, Object> dynamicMap = new Hashtable<String, Object>();
 		ErrorHandler errorHandler = new ErrorHandler();
 		GestoreTrasformazioniUtilities.fillDynamicMapResponse(this.log, dynamicMap, this.dynamicMapRequest, this.pddContext, 
+				message,
 				element, elementJson, busta, parametriTrasporto,
 				errorHandler);
 		this.log.debug("Costruzione dynamic map completata");

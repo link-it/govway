@@ -22,6 +22,7 @@
 		<commons.cli.version>1.4</commons.cli.version>
 		<commons.codec.version>1.11</commons.codec.version>
 		<commons.collections.version>3.2.2</commons.collections.version>
+		<commons.compress.version>1.18</commons.compress.version>
 		<commons.csv.version>1.5</commons.csv.version>
 		<commons.dbcp2.version>2.5.0</commons.dbcp2.version>
 		<commons.digester.version>2.1</commons.digester.version>
@@ -92,6 +93,18 @@
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
 			<version>${commons.collections.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+			<version>${commons.compress.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -254,7 +267,7 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>	
+		</dependency>
 
 	</dependencies>
 

@@ -59,6 +59,11 @@ openspcoop2.printFileReceived = true
 # Messaggio SOAP senza header
 #file=fileToSend/requestSenzaHeader.xml
 
+# Messaggio SOAP con attachments
+#openspcoop2.contentType = multipart/related;   boundary="----=_Part_0_6330713.1171639717331";   type="text/xml"
+#file=fileToSend/requestSOAPMultipartRelatedMIME
+
+
 # --------- FUNZIONALITA' DI IMBUSTAMENTO SOAP -------------
 # Nota: da usare con http://localhost:8080/govway/out/xml2soap/
 
@@ -66,6 +71,7 @@ openspcoop2.printFileReceived = true
 #file=fileToSend/requestBody.xml
 
 # File MIME senza struttura SOAP
+#openspcoop2.contentType = multipart/related;   boundary="----=_Part_0_6330713.1171639717331";   type="text/xml"
 #file=fileToSend/requestMultipartRelatedMIME
 
 # Documenti da utilizzare per prove di Imbustamento

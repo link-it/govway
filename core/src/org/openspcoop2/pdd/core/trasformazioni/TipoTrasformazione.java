@@ -45,7 +45,10 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 	FREEMARKER_TEMPLATE_ZIP ("freemarker-zip", "Freemarker Template (Archivio Zip)", null),
 	VELOCITY_TEMPLATE ("velocity", "Velocity Template", null),
 	VELOCITY_TEMPLATE_ZIP ("velocity-zip", "Velocity Template (Archivio Zip)", null),
-	XSLT ("xslt", "XSLT" , null);
+	XSLT ("xslt", "XSLT" , null),
+	ZIP ("zip", "ZIP Compressor" , null),
+	TGZ ("tgz", "TGZ Compressor" , null),
+	TAR ("tar", "TAR Compressor" , null);
 //	XML2JSON ("xml2json", ServiceBinding.REST),
 //	JSON2XML ("xml2json", ServiceBinding.REST);
 	
@@ -96,6 +99,12 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 			return ".vm.zip"; //".vtl.zip";
 		case XSLT:
 			return ".xslt";
+		case ZIP:
+			return ".zip.gw";
+		case TGZ:
+			return ".tgz.gw";
+		case TAR:
+			return ".tar.gw";
 		}
 		
 		return null;
@@ -112,9 +121,13 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 				|| 
 				TipoTrasformazione.VELOCITY_TEMPLATE_ZIP.equals(this)
 				|| 
-				TipoTrasformazione.XSLT.equals(this);
-//				|| 
-//				TipoTrasformazione.XSLT.equals(this);
+				TipoTrasformazione.XSLT.equals(this)
+				|| 
+				TipoTrasformazione.ZIP.equals(this)
+				|| 
+				TipoTrasformazione.TGZ.equals(this)
+				|| 
+				TipoTrasformazione.TAR.equals(this);
 	}
 	
 	public boolean isContentTypeEnabled() {
@@ -124,6 +137,15 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 	public boolean isTrasformazioneProtocolloEnabled() {
 		//return !TipoTrasformazione.EMPTY.equals(this);
 		return true; // sempre
+	}
+	
+	public boolean isBinaryMessage() {
+		if(TipoTrasformazione.ZIP.equals(this) ||
+				TipoTrasformazione.TGZ.equals(this) ||
+				TipoTrasformazione.TAR.equals(this)) {
+			return true;
+		}
+		return false;
 	}
 	
 	@Override
@@ -193,23 +215,26 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 	}	
 	
 	
-	public static String[] toLabelArray(){
-		return toLabelArray(null);
+	public static String[] toLabelArray(boolean excludeBinaries){
+		return toLabelArray(null, excludeBinaries);
 	}
-	public static String[] toLabelArray(ServiceBinding serviceBinding){
-		List<String> l = toLabelList(serviceBinding);
+	public static String[] toLabelArray(ServiceBinding serviceBinding, boolean excludeBinaries){
+		List<String> l = toLabelList(serviceBinding, excludeBinaries);
 		if(l!=null && l.size()>0) {
 			return l.toArray(new String[1]);
 		}
 		return null;
 	}
-	public static List<String> toLabelList(){
-		return toLabelList(null);
+	public static List<String> toLabelList(boolean excludeBinaries){
+		return toLabelList(null, excludeBinaries);
 	}
-	public static List<String> toLabelList(ServiceBinding serviceBinding){		
+	public static List<String> toLabelList(ServiceBinding serviceBinding, boolean excludeBinaries){		
 		List<String> res = new ArrayList<>();
 		for (TipoTrasformazione tmp : values()) {
 			if(serviceBinding!=null && tmp.serviceBinding!=null && !serviceBinding.equals(tmp.serviceBinding)) {
+				continue;
+			}
+			if(excludeBinaries && tmp.isBinaryMessage()) {
 				continue;
 			}
 			res.add(tmp.getLabel(serviceBinding));
@@ -217,23 +242,26 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 		return res;
 	}
 	
-	public static String[] toStringArray(){
-		return toStringArray(null);
+	public static String[] toStringArray(boolean excludeBinaries){
+		return toStringArray(null, excludeBinaries);
 	}
-	public static String[] toStringArray(ServiceBinding serviceBinding){
-		List<String> l = toStringList(serviceBinding);
+	public static String[] toStringArray(ServiceBinding serviceBinding, boolean excludeBinaries){
+		List<String> l = toStringList(serviceBinding, excludeBinaries);
 		if(l!=null && l.size()>0) {
 			return l.toArray(new String[1]);
 		}
 		return null;
 	}
-	public static List<String> toStringList(){
-		return toStringList(null);
+	public static List<String> toStringList(boolean excludeBinaries){
+		return toStringList(null, excludeBinaries);
 	}
-	public static List<String> toStringList(ServiceBinding serviceBinding){		
+	public static List<String> toStringList(ServiceBinding serviceBinding, boolean excludeBinaries){		
 		List<String> res = new ArrayList<>();
 		for (TipoTrasformazione tmp : values()) {
 			if(serviceBinding!=null && tmp.serviceBinding!=null && !serviceBinding.equals(tmp.serviceBinding)) {
+				continue;
+			}
+			if(excludeBinaries && tmp.isBinaryMessage()) {
 				continue;
 			}
 			res.add(tmp.toString());

@@ -37,6 +37,7 @@ public class RisultatoTrasformazioneContenuto {
 	private boolean empty;
 	private byte[] contenuto;
 	private String contenutoAsString;
+	private TipoTrasformazione tipoTrasformazione;
 	
 	public boolean isEmpty() {
 		return this.empty;
@@ -53,6 +54,12 @@ public class RisultatoTrasformazioneContenuto {
 	public void setContenuto(byte[] contenuto, String contenutoAsString) {
 		this.contenuto = contenuto;
 		this.contenutoAsString = contenutoAsString;
+	}
+	public TipoTrasformazione getTipoTrasformazione() {
+		return this.tipoTrasformazione;
+	}
+	public void setTipoTrasformazione(TipoTrasformazione tipoTrasformazione) {
+		this.tipoTrasformazione = tipoTrasformazione;
 	}
 }
 

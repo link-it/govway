@@ -153,6 +153,7 @@
 				<include name="commons-validator-1.6.jar"/>
 				<include name="commons-beanutils-1.9.3.jar"/> <!--jmx mini console -->
 				<include name="commons-lang3-3.8.jar"/>
+				<include name="commons-compress-1.18.jar"/>
 			</lib>
 			<lib dir="${required_lib}/log">
 				<include name="slf4j-api-1.7.25-gov4j-1.jar"/>

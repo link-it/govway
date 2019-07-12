@@ -261,6 +261,16 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		}
 		req.updateRequestInfo(requestInfo);	
 
+		// Questo servizio è invocabile solo con API Soap
+		if(!ServiceBinding.SOAP.equals(requestInfo.getIntegrationServiceBinding())){
+			String msg = "Servizio utilizzabile solamente con API SOAP, riscontrata API REST";
+			logCore.error(msg);
+			ConnectorDispatcherErrorInfo cInfoError =  ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore,
+					ErroriIntegrazione.ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.getErroreIntegrazione(),
+					IntegrationError.BAD_REQUEST, null, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+			RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfoError);
+			return;
+		}
 		
 		
 		

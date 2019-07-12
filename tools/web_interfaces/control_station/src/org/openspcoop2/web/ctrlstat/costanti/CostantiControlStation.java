@@ -1262,6 +1262,7 @@ public class CostantiControlStation {
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_XPATH= StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_XML_XPATH+"</b>: fornisce metodi per verificare la presenza o estrarre informazioni da messaggi XML tramite espressioni XPath ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ELEMENT_XML_XPATH+")"); 
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_JSONPATH= StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_JSON_PATH+"</b>: fornisce metodi per verificare la presenza o estrarre informazioni da messaggi JSON tramite espressioni JSONPath ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ELEMENT_JSON_PATH+")"); 
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_URL = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_URL_REGEXP+"</b>: fornisce metodi per verificare la presenza o estrarre informazioni dalla url tramite espressioni regolari ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ELEMENT_URL_REGEXP+")"); 
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_REQUEST = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_REQUEST+"</b>: permette di accedere al contenuto della richiesta ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_MESSAGE+")";
 	//public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_CONTEXT = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_CTX_OBJECT+"</b>: permette di accedere al contesto della richiesta ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_CTX_OBJECT_HTML_ESCAPED+")");
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_CONTEXT = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_CTX_OBJECT+"</b>: permette di accedere al contesto della richiesta ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_CTX_OBJECT_HTML_ESCAPED+")";
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_TRANSPORT_CONTEXT = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT+"</b>: permette di accedere ai dati della richiesta http ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_URL_PROTOCOL_CONTEXT_OBJECT+")");
@@ -1276,6 +1277,7 @@ public class CostantiControlStation {
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_XPATH_SOAP = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_XML_XPATH+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+"</b>: fornisce metodi per verificare la presenza o estrarre informazioni dal messaggio di risposta tramite espressioni XPath ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ELEMENT_XML_XPATH+")"); 
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_XPATH= StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_XML_XPATH+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+"</b>: fornisce metodi per verificare la presenza o estrarre informazioni dal messaggio XML di risposta tramite espressioni XPath ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ELEMENT_XML_XPATH+")"); 
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE_JSONPATH= StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ELEMENT_JSON_PATH+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SUFFIX_RESPONSE+"</b>: fornisce metodi per verificare la presenza o estrarre informazioni dal messaggio JSON di risposta tramite espressioni JSONPath ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ELEMENT_JSON_PATH+")"); 
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_RESPONSE+"</b>: permette di accedere al contenuto della risposta ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_MESSAGE+")";
 	
 	
 	private final static List<String> LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI = new ArrayList<>();
@@ -1293,6 +1295,7 @@ public class CostantiControlStation {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_PROPERTY_BUSTA);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_CONTEXT);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_TRANSPORT_CONTEXT);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_REQUEST);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_ERROR_HANDLER);
 	}
 	private final static List<String> LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI = new ArrayList<>();
@@ -1351,6 +1354,7 @@ public class CostantiControlStation {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_PROPERTY_BUSTA);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_CONTEXT);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_TRANSPORT_CONTEXT);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_ERROR_HANDLER);
 	}
 	private final static List<String> LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE = new ArrayList<>();
@@ -1391,6 +1395,65 @@ public class CostantiControlStation {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_VELOCITY.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_CLASS_VELOCITY);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_VELOCITY.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_NEW_INSTANCE_VELOCITY);
 	}
+	
+	public final static String LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS = "Il file fornito deve contenere proprietà indicate come nome=valore in ogni linea.<BR/>"+
+		"Il nome della proprietà corrisponde all'entry name all'interno dell'archivio (es. dir/subDir/entryName1).<BR/>"+
+		"Il valore della proprietà corrisponde al contenuto dell'entry.<BR/>"+
+		"<BR/>"+
+		"È possibile selezionare parti del messaggio, per associarle come contenuto dell'entry, utilizzando le seguenti espressioni dinamiche risolte a runtime dal Gateway:";
+		
+	
+	public final static String LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_REQUEST_CONTENT = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.COMPRESS_CONTENT+"}</b>: payload della richiesta";
+	public final static String LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_RESPONSE_CONTENT = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.COMPRESS_CONTENT+"}</b>: payload della risposta";
+	public final static String LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_REQUEST_ATTACH = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.COMPRESS_ATTACH_PREFIX+"index"+org.openspcoop2.pdd.core.dynamic.Costanti.COMPRESS_SUFFIX+"}</b>: attachment presente in una richiesta multipart alla posizione indicata dall'intero 'index'";
+	public final static String LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_RESPONSE_ATTACH = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.COMPRESS_ATTACH_PREFIX+"index"+org.openspcoop2.pdd.core.dynamic.Costanti.COMPRESS_SUFFIX+"}</b>: attachment presente in una risposta multipart alla posizione indicata dall'intero 'index'";
+	public final static String LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_REQUEST_ATTACH_BY_ID = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.COMPRESS_ATTACH_BY_ID_PREFIX+"id"+org.openspcoop2.pdd.core.dynamic.Costanti.COMPRESS_SUFFIX+"}</b>: attachment presente in una richiesta multipart che possiede il "+HttpConstants.CONTENT_ID+" indicato";
+	public final static String LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_RESPONSE_ATTACH_BY_ID = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.COMPRESS_ATTACH_BY_ID_PREFIX+"id"+org.openspcoop2.pdd.core.dynamic.Costanti.COMPRESS_SUFFIX+"}</b>: attachment presente in una risposta multipart che possiede il "+HttpConstants.CONTENT_ID+" indicato";
+	
+	public final static String LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_REQUEST_SOAP_ENVELOPE = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.COMPRESS_ENVELOPE+"}</b>: soap envelope della richiesta";
+	public final static String LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_RESPONSE_SOAP_ENVELOPE = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.COMPRESS_ENVELOPE+"}</b>: soap envelope della risposta";
+	public final static String LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_REQUEST_SOAP_BODY = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.COMPRESS_BODY+"}</b>: contenuto del soap body della richiesta";
+	public final static String LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_RESPONSE_SOAP_BODY = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.COMPRESS_BODY+"}</b>: contenuto del soap body della risposta";
+	
+	public final static List<String> LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_REST_VALORI = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_REST_VALORI.add(LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_REQUEST_CONTENT);
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_REST_VALORI.add(LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_REQUEST_ATTACH);
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_REST_VALORI.add(LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_REQUEST_ATTACH_BY_ID);
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_REST_VALORI.addAll(LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
+	}
+	
+	public final static List<String> LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_REST_VALORI_CON_RISPOSTE = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_REST_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_RESPONSE_CONTENT);
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_REST_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_RESPONSE_ATTACH);
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_REST_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_RESPONSE_ATTACH_BY_ID);
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_REST_VALORI_CON_RISPOSTE.addAll(LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
+	}
+	
+	public final static List<String> LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI.add(LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_REQUEST_CONTENT);
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI.add(LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_REQUEST_SOAP_ENVELOPE);
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI.add(LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_REQUEST_SOAP_BODY);
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI.add(LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_REQUEST_ATTACH);
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI.add(LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_REQUEST_ATTACH_BY_ID);
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI.addAll(LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
+	}
+	
+	public final static List<String> LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI_CON_RISPOSTE = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_RESPONSE_CONTENT);
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_RESPONSE_SOAP_ENVELOPE);
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_RESPONSE_SOAP_BODY);
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_RESPONSE_ATTACH);
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_TEMPLATE_COMPRESS_RESPONSE_ATTACH_BY_ID);
+		LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI_CON_RISPOSTE.addAll(LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
+	}
+	
+	
+	
+	
 	
 	public final static String LABEL_CONFIGURAZIONE_POLICY_STATO_ABILITATO = "<b>"+CostantiControlStation.LABEL_STATO_ABILITATO+"</b>: la policy viene applicata alle richieste che soddisfano i criteri di applicabilità";
 	public final static String LABEL_CONFIGURAZIONE_POLICY_STATO_WARNING_ONLY = "<b>"+CostantiControlStation.LABEL_STATO_WARNING_ONLY+"</b>: la policy viene applicata in modalità warning only, limitandosi a segnalare nella diagnostica le violazioni senza bloccare le richieste";

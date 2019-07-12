@@ -393,6 +393,9 @@ public class DocumentoExporter extends HttpServlet {
 						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
 						case XSLT:
+						case ZIP:
+						case TGZ:
+						case TAR:
 							fileName += tipo.getExt();
 							break;
 						case EMPTY:
@@ -451,6 +454,9 @@ public class DocumentoExporter extends HttpServlet {
 						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
 						case XSLT:
+						case ZIP:
+						case TGZ:
+						case TAR:
 							fileName += tipo.getExt();
 							break;
 						case EMPTY:
@@ -509,6 +515,9 @@ public class DocumentoExporter extends HttpServlet {
 						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
 						case XSLT:
+						case ZIP:
+						case TGZ:
+						case TAR:
 							fileName += tipo.getExt();
 							break;
 						case EMPTY:
@@ -573,6 +582,9 @@ public class DocumentoExporter extends HttpServlet {
 						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
 						case XSLT:
+						case ZIP:
+						case TGZ:
+						case TAR:
 							fileName += tipo.getExt();
 							break;
 						case EMPTY:
@@ -638,6 +650,9 @@ public class DocumentoExporter extends HttpServlet {
 						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
 						case XSLT:
+						case ZIP:
+						case TGZ:
+						case TAR:
 							fileName += tipo.getExt();
 							break;
 						case EMPTY:
@@ -692,6 +707,9 @@ public class DocumentoExporter extends HttpServlet {
 						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
 						case XSLT:
+						case ZIP:
+						case TGZ:
+						case TAR:
 							fileName += tipo.getExt();
 							break;
 						case EMPTY:
@@ -750,6 +768,9 @@ public class DocumentoExporter extends HttpServlet {
 						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
 						case XSLT:
+						case ZIP:
+						case TGZ:
+						case TAR:
 							fileName += tipo.getExt();
 							break;
 						case EMPTY:
@@ -814,6 +835,9 @@ public class DocumentoExporter extends HttpServlet {
 						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
 						case XSLT:
+						case ZIP:
+						case TGZ:
+						case TAR:
 							fileName += tipo.getExt();
 							break;
 						case EMPTY:

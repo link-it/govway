@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core.dynamic;
 
 import java.util.Properties;
 
+import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -47,6 +48,7 @@ public class DynamicInfo {
 	private String url;
 	private Element xml;
 	private String json;
+	private OpenSPCoop2Message message;
 	private ErrorHandler errorHandler;
 	
 	public DynamicInfo() {
@@ -108,6 +110,12 @@ public class DynamicInfo {
 	}
 	public void setJson(String json) {
 		this.json = json;
+	}
+	public OpenSPCoop2Message getMessage() {
+		return this.message;
+	}
+	public void setMessage(OpenSPCoop2Message message) {
+		this.message = message;
 	}
 	public ErrorHandler getErrorHandler() {
 		return this.errorHandler;

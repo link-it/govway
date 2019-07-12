@@ -11025,8 +11025,8 @@ public class ConsoleHelper {
 				// tipo
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO);
-				de.setLabels(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toLabelList(serviceBindingMessage));
-				de.setValues(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toStringList(serviceBindingMessage));
+				de.setLabels(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toLabelList(serviceBindingMessage, false));
+				de.setValues(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toStringList(serviceBindingMessage, false));
 				de.setType(DataElementType.SELECT);
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO);
 				de.setPostBack(true);
@@ -11166,8 +11166,8 @@ public class ConsoleHelper {
 						// tipo envelope attachement
 						de = new DataElement();
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO);
-						de.setLabels(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toLabelList(ServiceBinding.SOAP));
-						de.setValues(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toStringList(ServiceBinding.SOAP));
+						de.setLabels(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toLabelList(ServiceBinding.SOAP, true));
+						de.setValues(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toStringList(ServiceBinding.SOAP, true));
 						de.setType(DataElementType.SELECT);
 						de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO);
 						de.setSelected(trasformazioneRispostaSoapEnvelopeTipo.getValue());
@@ -12153,7 +12153,7 @@ public class ConsoleHelper {
 			// tipo
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO);
-			List<String> labels = org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toLabelList(serviceBindingMessage);
+			List<String> labels = org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toLabelList(serviceBindingMessage, false);
 			if(trasformazioneRestAbilitato) {
 				List<String> newLabels = new ArrayList<>();
 				String payloadVuotoSoap = org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY.getLabel(ServiceBinding.SOAP);
@@ -12181,7 +12181,7 @@ public class ConsoleHelper {
 				labels = newLabels;
 			}
 			de.setLabels(labels);
-			de.setValues(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toStringList(serviceBindingMessage));
+			de.setValues(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toStringList(serviceBindingMessage, false));
 			de.setType(DataElementType.SELECT);
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO);
 			de.setPostBack(true);
@@ -12356,8 +12356,8 @@ public class ConsoleHelper {
 								// tipo envelope attachement
 								de = new DataElement();
 								de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO);
-								de.setLabels(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toLabelList(ServiceBinding.SOAP));
-								de.setValues(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toStringList(ServiceBinding.SOAP));
+								de.setLabels(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toLabelList(ServiceBinding.SOAP, true));
+								de.setValues(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toStringList(ServiceBinding.SOAP, true));
 								de.setType(DataElementType.SELECT);
 								de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO);
 								de.setSelected(trasformazioneSoapEnvelopeTipo.getValue());
@@ -12547,6 +12547,29 @@ public class ConsoleHelper {
 				}
 				else {
 					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY);
+				}
+			}
+			de.setInfo(dInfoPatternContenuto);
+			break;
+		case ZIP:
+		case TGZ:
+		case TAR:
+			dInfoPatternContenuto = new DataElementInfo(label);
+			dInfoPatternContenuto.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS);
+			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+				if(risposta) {
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_REST_VALORI_CON_RISPOSTE);
+				}
+				else {
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_REST_VALORI);
+				}
+			}
+			else {
+				if(risposta) {
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI_CON_RISPOSTE);
+				}
+				else {
+					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI);
 				}
 			}
 			de.setInfo(dInfoPatternContenuto);

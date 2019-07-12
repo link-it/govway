@@ -100,6 +100,27 @@ public class DumpMessaggio implements Serializable{
 		this.attachments = attachments;
 	}
 	
+	public DumpAttachment getAttachment(int index) {
+		if(this.attachments==null || this.attachments.isEmpty()) {
+			return null;
+		}
+		if(index>=this.attachments.size()) {
+			return null;
+		}
+		return this.attachments.get(index);
+	}
+	public DumpAttachment getAttachment(String id) {
+		if(this.attachments==null || this.attachments.isEmpty()) {
+			return null;
+		}
+		for (DumpAttachment dumpAttachment : this.attachments) {
+			if(id.equals(dumpAttachment.getContentId())) {
+				return dumpAttachment;
+			}
+		}
+		return null;
+	}
+	
 	public DumpMessaggioMultipartInfo getMultipartInfoBody() {
 		return this.multipartInfoBody;
 	}

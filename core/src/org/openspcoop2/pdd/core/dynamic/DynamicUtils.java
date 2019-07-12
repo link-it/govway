@@ -26,6 +26,8 @@ import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,11 +39,16 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.utils.DumpAttachment;
+import org.openspcoop2.message.utils.DumpMessaggio;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.utils.DynamicStringReplace;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.io.ArchiveType;
+import org.openspcoop2.utils.io.CompressorUtilities;
 import org.openspcoop2.utils.io.Entry;
 import org.openspcoop2.utils.io.ZipUtilities;
 import org.openspcoop2.utils.resources.FreemarkerTemplateLoader;
@@ -136,6 +143,15 @@ public class DynamicUtils {
 			PatternExtractor pe = new PatternExtractor(dynamicInfo.getJson(), log);
 			dynamicMap.put(Costanti.MAP_ELEMENT_JSON_PATH, pe);
 			dynamicMap.put(Costanti.MAP_ELEMENT_JSON_PATH.toLowerCase(), pe);
+		}
+		if(dynamicInfo!=null && dynamicInfo.getMessage()!=null) {
+			ContentExtractor content = new ContentExtractor(dynamicInfo.getMessage(), log);
+			if(MessageRole.REQUEST.equals(dynamicInfo.getMessage().getMessageRole())) {
+				dynamicMap.put(Costanti.MAP_REQUEST, content);
+			}
+			else {
+				dynamicMap.put(Costanti.MAP_RESPONSE, content);
+			}
 		}
 		if(dynamicInfo!=null && dynamicInfo.getErrorHandler()!=null) {
 			dynamicMap.put(Costanti.MAP_ERROR_HANDLER_OBJECT, dynamicInfo.getErrorHandler());
@@ -542,5 +558,157 @@ public class DynamicUtils {
 		}catch(Exception e) {
 			throw new DynamicException(e.getMessage(),e);
 		}
+	}
+	
+	
+	
+	// *** COMPRESS ***
+	
+	public static void convertCompressorTemplate(String name,byte[] template,Map<String,Object> dynamicMap,PdDContext pddContext, 
+			ArchiveType archiveType, OutputStream out) throws DynamicException{
+		try {
+			try(ByteArrayInputStream bin = new ByteArrayInputStream(template)){
+				Properties p = new Properties();
+				p.load(bin);
+				
+				ContentExtractor contentExtractor = null;
+				String ruolo = null;
+				if(dynamicMap.containsKey(Costanti.MAP_REQUEST)) {
+					contentExtractor = (ContentExtractor) dynamicMap.get(Costanti.MAP_REQUEST);
+					ruolo = "messaggio di richiesta";
+				}
+				else if(dynamicMap.containsKey(Costanti.MAP_RESPONSE)) {
+					contentExtractor = (ContentExtractor) dynamicMap.get(Costanti.MAP_RESPONSE);
+					ruolo = "messaggio di risposta";
+				}
+				
+				List<Entry> listEntries = new ArrayList<>();
+				
+				Enumeration<?> keys = p.keys();
+				while (keys.hasMoreElements()) {
+					String keyP = (String) keys.nextElement();
+					keyP = keyP.trim();
+					
+					String oggetto = "property-"+keyP;
+					String entryName = null;
+					try {
+						entryName = DynamicUtils.convertDynamicPropertyValue(oggetto, keyP, dynamicMap, pddContext, true);
+					}catch(Exception e) {
+						throw new Exception("["+oggetto+"] Conversione valore per entry name '"+keyP+"' non riuscita: "+e.getMessage(),e);
+					}
+					String prefixError = "["+keyP+"] ";
+					
+					String valoreP = p.getProperty(keyP);
+					if(valoreP==null) {
+						throw new Exception(prefixError+"Nessun valore fornito per la proprietà");
+					}
+					valoreP = valoreP.trim();
+					byte[] content = null;
+					if(Costanti.COMPRESS_CONTENT.equals(valoreP)) {
+						if(contentExtractor==null || !contentExtractor.hasContent()) {
+							throw new Exception(prefixError+"Il "+ruolo+" non possiede un payload");
+						}
+						content = contentExtractor.getContent();
+					}
+					else if(Costanti.COMPRESS_ENVELOPE.equals(valoreP) ||
+							Costanti.COMPRESS_BODY.equals(valoreP) ||
+							Costanti.COMPRESS_ENVELOPE.toLowerCase().equals(valoreP.toLowerCase()) ||
+							Costanti.COMPRESS_BODY.toLowerCase().equals(valoreP.toLowerCase())) {
+						if(contentExtractor==null || !contentExtractor.hasContent()) {
+							throw new Exception(prefixError+"Il "+ruolo+" non possiede un payload");
+						}
+						if(!contentExtractor.isSoap()) {
+							throw new Exception(prefixError+"Il "+ruolo+" non è un messaggio soap");
+						}
+						if(Costanti.COMPRESS_ENVELOPE.equals(valoreP) ||
+								Costanti.COMPRESS_ENVELOPE.toLowerCase().equals(valoreP.toLowerCase())) {
+							DumpMessaggio dump = contentExtractor.dumpMessage();
+							if(dump==null) {
+								throw new Exception(prefixError+"Dump del "+ruolo+" non disponibile");
+							}
+							content = dump.getBody();
+						}
+						else {
+							content = contentExtractor.getContentSoapBody();
+						}
+					}
+					else if(valoreP.startsWith(Costanti.COMPRESS_ATTACH_PREFIX) ||
+							valoreP.startsWith(Costanti.COMPRESS_ATTACH_BY_ID_PREFIX) &&
+							valoreP.endsWith(Costanti.COMPRESS_SUFFIX)) {
+						String valoreInterno = valoreP.substring(Costanti.COMPRESS_ATTACH_PREFIX.length(), valoreP.length()-1);
+						if(valoreInterno==null || "".equals(valoreInterno)) {
+							throw new Exception(prefixError+"Non è stato definito un indice per l'attachment");
+						}
+						DumpMessaggio dump = contentExtractor.dumpMessage();
+						if(dump==null) {
+							throw new Exception(prefixError+"Dump del "+ruolo+" non disponibile");
+						}
+						
+						DumpAttachment attach = null;
+						boolean attachAtteso = true;
+						if(valoreP.startsWith(Costanti.COMPRESS_ATTACH_PREFIX)) {
+							int index = -1;
+							try {
+								index = Integer.valueOf(valoreInterno);
+							}catch(Exception e) {
+								throw new Exception(prefixError+"L'indice definito per l'attachment non è un numero intero: "+e.getMessage(),e);
+							}
+							if(contentExtractor.isRest() && index==0) {
+								content = dump.getBody();
+								attachAtteso = false;
+							}
+							else {
+								if(contentExtractor.isRest()) {
+									attach = dump.getAttachment((index-1));
+								}
+								else {
+									attach = dump.getAttachment(index);
+								}
+							}
+						}
+						else {
+							if(contentExtractor.isRest() &&
+									dump.getMultipartInfoBody()!=null &&
+									valoreInterno.equals(dump.getMultipartInfoBody().getContentId())) {
+								content = dump.getBody();
+								attachAtteso = false;
+							}
+							else {
+								attach = dump.getAttachment(valoreInterno);
+							}
+						}
+						
+						if(attachAtteso) {
+							if(attach==null) {
+								throw new Exception(prefixError+"L'indice definito per l'attachment non ha identificato alcun attachment");
+							}
+							content = attach.getContent();
+						}
+					}
+					else {
+						String oggettoV = "valore-"+keyP;
+						try {
+							String v = DynamicUtils.convertDynamicPropertyValue(oggettoV, valoreP, dynamicMap, pddContext, true);
+							if(v!=null) {
+								content = v.getBytes();
+							}
+						}catch(Exception e) {
+							throw new Exception(prefixError+"["+oggettoV+"] Conversione valore non riuscita: "+e.getMessage(),e);
+						}
+					}
+					
+					if(content==null) {
+						throw new Exception(prefixError+"Nessun contenuto da associare alla entry trovato");
+					}
+					
+					listEntries.add(new Entry(entryName, content));
+				}
+				
+				out.write(CompressorUtilities.archive(listEntries, archiveType));
+			}
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+		
 	}
 }

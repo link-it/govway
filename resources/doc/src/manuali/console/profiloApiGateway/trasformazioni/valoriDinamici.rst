@@ -53,8 +53,17 @@ Nel caso di utilizzo di template 'Freemarker' o 'Velocity' sono disponibili i se
   - freemarker: new("my.package.name","Parametro1","ParametroN")
 
 - transportContext (org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext); permette di accedere ai dati della richiesta http (servlet request, principal ...)
+- request/response: permette di accedere al contenuto della richiesta/risposta (org.openspcoop2.pdd.core.dynamic.ContentExtractor)
 - context (java.util.Map<String, Object>); permette di accedere al contesto della richiesta.
 - errorHandler (org.openspcoop2.pdd.core.dynamic.ErrorHandler); permette di generare risposte personalizzate che segnalano l'impossibilità di proseguire la trasformazione.
+
+Nel caso di utilizzo di template 'ZIP', 'TGZ' o 'TAR' sono disponibili le seguenti le proprietà dinamiche, interpretate direttamente da GovWay, utilizzabili per accedere a parti della richiesta o della risposta:
+
+- ${content} : payload http del messaggio
+- ${soapEnvelope} : soap envelope del messaggio
+- ${soapBody} : contenuto del soap body
+- ${attachment[index]} : attachment presente in un messaggio multipart alla posizione indicata dall'intero 'index'
+- ${attachmentId[id]} : attachment presente in un messaggio multipart che possiede il Content-ID indicato
 
 
 

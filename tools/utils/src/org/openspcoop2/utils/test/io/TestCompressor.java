@@ -42,17 +42,17 @@ public class TestCompressor {
 	@DataProvider(name="compressorProvider")
 	public Object[][] provider(){
 		return new Object[][]{
-				{CompressorType.DEFLATER.name()},
-				{CompressorType.GZIP.name()},
-				{CompressorType.ZIP.name()}
+				{CompressorType.DEFLATER},
+				{CompressorType.GZIP},
+				{CompressorType.ZIP}
 		};
 	}
 	
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST},dataProvider="compressorProvider")
-	public void testCompressor(String tipo) throws Exception{
+	public void testCompressor(CompressorType tipo) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' (tipo:"+tipo+") ...");
-		org.openspcoop2.utils.io.CompressorUtilities.main(new String[] {tipo});
+		org.openspcoop2.utils.io.CompressorUtilities.testCompressor(tipo);
 		TestLogger.info("Run test '"+ID_TEST+"' (tipo:"+tipo+") ok");
 		
 	}

@@ -28,6 +28,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.xml.soap.AttachmentPart;
+
+import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.dynamic.Costanti;
@@ -36,8 +42,11 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
+import org.openspcoop2.utils.io.ArchiveType;
+import org.openspcoop2.utils.io.CompressorUtilities;
 import org.openspcoop2.utils.io.Entry;
 import org.openspcoop2.utils.io.ZipUtilities;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
@@ -96,7 +105,7 @@ public class Test {
 	private static final String XML_RESPONSE_CONTENT = "<"+PATH1_RISPOSTA+">"+PATH1_VALORE_RISPOSTA+"</"+PATH1_RISPOSTA+"><"+PATH2_RISPOSTA+">"+PATH2_VALORE_RISPOSTA+"</"+PATH2_RISPOSTA+">";
 	private static final String XML_PREFIX = 
 			"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" " +
-			"	xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><soapenv:Body>";
+			"xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><soapenv:Body>";
 	private static final String XML_END = 
 			"<prova>test</prova><prova2>test2</prova2><list>v1</list><list>v2</list><list>v3</list></soapenv:Body></soapenv:Envelope>";
 	private static final String XML_REQUEST = XML_PREFIX + XML_REQUEST_CONTENT + XML_END;
@@ -122,6 +131,8 @@ public class Test {
 			"}";
 	private static final String JSON_REQUEST = JSON_PREFIX + JSON_REQUEST_CONTENT + JSON_END;
 	private static final String JSON_RESPONSE = JSON_PREFIX + JSON_RESPONSE_CONTENT + JSON_END;
+	
+	private static final String HELLO_WORLD_PLAIN = "HELLO WORLD!";
 			
 	
 	
@@ -313,6 +324,7 @@ public class Test {
 			"\n}";
 	
 	
+	
 	// **** Template Velocity *****
 	
 	private static final String JSON_TEMPLATE_VELOCITY_BODY = 	   
@@ -499,6 +511,39 @@ public class Test {
 	
 	
 	
+	
+	// **** Template Compress *****
+	
+	private static final String COMPRESS_ENTRY_NAME1 = "entryName1";
+	private static final String COMPRESS_ENTRY_NAME2_PREFIX = "dir/subdir/entryName2_";
+	private static final String COMPRESS_ENTRY_NAME2_VALUE_PREFIX = "Valore dinamico ";
+	private static final String COMPRESS_ENTRY_NAME2_VALUE_SUFFIX = " terminato";
+	private static final String COMPRESS_ENTRY_NAME3 = "entryName3";
+	private static final String COMPRESS_ENTRY_NAME3_VALORE_STATICO = "valoreStatico";
+	private static final String COMPRESS_REST_TEMPLATE_REQUEST= 
+			COMPRESS_ENTRY_NAME1+"="+Costanti.COMPRESS_CONTENT+"\n"+
+			COMPRESS_ENTRY_NAME2_PREFIX+"${header\\:"+HEADER1+"}="+COMPRESS_ENTRY_NAME2_VALUE_PREFIX+"${header\\:"+HEADER2+"}"+COMPRESS_ENTRY_NAME2_VALUE_SUFFIX;
+	private static final String COMPRESS_REST_TEMPLATE_RESPONSE=
+			COMPRESS_REST_TEMPLATE_REQUEST+"\n"+
+			COMPRESS_ENTRY_NAME3+"="+COMPRESS_ENTRY_NAME3_VALORE_STATICO;
+	
+	private static final String COMPRESS_ENTRY_NAME_SOAPENVELOPE = "soapStructure/soapEnvelope";
+	private static final String COMPRESS_ENTRY_NAME_SOAPBODY = "soapStructure/soapBody";
+	private static final String COMPRESS_ENTRY_NAME_ATTACH1 = "soapStructure/attachments/attach1";
+	private static final String COMPRESS_ENTRY_NAME_ATTACH2 = "soapStructure/attachments/attach2";
+	private static final String COMPRESS_SOAP_TEMPLATE_REQUEST= 
+			COMPRESS_REST_TEMPLATE_REQUEST+"\n"+
+			COMPRESS_ENTRY_NAME_SOAPBODY+"="+Costanti.COMPRESS_BODY+"\n"+
+			COMPRESS_ENTRY_NAME_SOAPENVELOPE+"="+Costanti.COMPRESS_ENVELOPE+"\n"+
+			COMPRESS_ENTRY_NAME_ATTACH1+"="+Costanti.COMPRESS_ATTACH_PREFIX+0+Costanti.COMPRESS_SUFFIX+"\n"+
+			COMPRESS_ENTRY_NAME_ATTACH2+"="+Costanti.COMPRESS_ATTACH_PREFIX+1+Costanti.COMPRESS_SUFFIX;
+	private static final String COMPRESS_SOAP_TEMPLATE_RESPONSE=
+			COMPRESS_SOAP_TEMPLATE_REQUEST+"\n"+
+			COMPRESS_ENTRY_NAME3+"="+COMPRESS_ENTRY_NAME3_VALORE_STATICO;
+	
+	
+	
+	
 	public static void main(String [] args) throws Exception{
 		
 		TipoTrasformazione tipoTest = null;
@@ -543,9 +588,32 @@ public class Test {
 		Element elementRequest = XMLUtils.getInstance().newElement(XML_REQUEST.getBytes());
 		Element elementResponse = XMLUtils.getInstance().newElement(XML_RESPONSE.getBytes());
 		
+		OpenSPCoop2Message jsonMessageRequest = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.JSON, MessageRole.REQUEST, 
+				HttpConstants.CONTENT_TYPE_JSON, JSON_REQUEST.getBytes()).getMessage();
+		OpenSPCoop2Message jsonMessageResponse = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.JSON, MessageRole.RESPONSE, 
+				HttpConstants.CONTENT_TYPE_JSON, JSON_RESPONSE.getBytes()).getMessage();
+		
+		OpenSPCoop2Message xmlMessageRequest = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11, MessageRole.REQUEST, 
+				HttpConstants.CONTENT_TYPE_SOAP_1_1, XML_REQUEST.getBytes()).getMessage();
+		AttachmentPart ap1 = xmlMessageRequest.castAsSoap().createAttachmentPart();
+		ap1.setContent(JSON_REQUEST, HttpConstants.CONTENT_TYPE_JSON);
+		xmlMessageRequest.castAsSoap().addAttachmentPart(ap1);
+		AttachmentPart ap2 = xmlMessageRequest.castAsSoap().createAttachmentPart();
+		ap2.setContent(HELLO_WORLD_PLAIN, HttpConstants.CONTENT_TYPE_PLAIN);
+		xmlMessageRequest.castAsSoap().addAttachmentPart(ap2);
+		OpenSPCoop2Message xmlMessageResponse = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11, MessageRole.RESPONSE, 
+				HttpConstants.CONTENT_TYPE_SOAP_1_1, XML_RESPONSE.getBytes()).getMessage();
+		ap1 = xmlMessageResponse.castAsSoap().createAttachmentPart();
+		ap1.setContent(JSON_REQUEST, HttpConstants.CONTENT_TYPE_JSON);
+		xmlMessageResponse.castAsSoap().addAttachmentPart(ap1);
+		ap2 = xmlMessageResponse.castAsSoap().createAttachmentPart();
+		ap2.setContent(HELLO_WORLD_PLAIN, HttpConstants.CONTENT_TYPE_PLAIN);
+		xmlMessageResponse.castAsSoap().addAttachmentPart(ap2);
+		
 		Map<String, Object> dynamicMapXmlRequest = new Hashtable<String, Object>();
 		ErrorHandler errorHandlerXmlRequest = new ErrorHandler();
 		GestoreTrasformazioniUtilities.fillDynamicMapRequest(log, dynamicMapXmlRequest, pddContext, urlInvocazione,
+				xmlMessageRequest,
 				elementRequest, null, 
 				busta, parametriTrasporto, parametriUrl,
 				errorHandlerXmlRequest);
@@ -553,6 +621,7 @@ public class Test {
 		Map<String, Object> dynamicMapXmlResponse = new Hashtable<String, Object>();
 		ErrorHandler errorHandlerXmlResponse = new ErrorHandler();
 		GestoreTrasformazioniUtilities.fillDynamicMapResponse(log, dynamicMapXmlResponse, dynamicMapXmlRequest, pddContext, 
+				xmlMessageResponse,
 				elementResponse, null, 
 				busta, parametriTrasportoRisposta,
 				errorHandlerXmlResponse);
@@ -560,6 +629,7 @@ public class Test {
 		Map<String, Object> dynamicMapJsonRequest = new Hashtable<String, Object>();
 		ErrorHandler errorHandlerJsonRequest = new ErrorHandler();
 		GestoreTrasformazioniUtilities.fillDynamicMapRequest(log, dynamicMapJsonRequest, pddContext, urlInvocazione,
+				jsonMessageRequest,
 				null, JSON_REQUEST, 
 				busta, parametriTrasporto, parametriUrl,
 				errorHandlerJsonRequest);
@@ -567,6 +637,7 @@ public class Test {
 		Map<String, Object> dynamicMapJsonResponse = new Hashtable<String, Object>();
 		ErrorHandler errorHandlerJsonResponse = new ErrorHandler();
 		GestoreTrasformazioniUtilities.fillDynamicMapResponse(log, dynamicMapJsonResponse, dynamicMapJsonRequest, pddContext, 
+				jsonMessageResponse,
 				null, JSON_RESPONSE,  
 				busta, parametriTrasportoRisposta,
 				errorHandlerJsonResponse);
@@ -682,6 +753,42 @@ public class Test {
 			
 		}
 		
+		if(tipoTest==null || TipoTrasformazione.ZIP.equals(tipoTest)) {
+			
+			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.ZIP) , "soap", pddContext, 
+					dynamicMapXmlRequest, null,  COMPRESS_SOAP_TEMPLATE_REQUEST.getBytes(), 
+					dynamicMapXmlResponse, null,  COMPRESS_SOAP_TEMPLATE_RESPONSE.getBytes());
+			
+			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.ZIP) , "json", pddContext, 
+					dynamicMapJsonRequest, null,  COMPRESS_REST_TEMPLATE_REQUEST.getBytes(), 
+					dynamicMapJsonResponse, null,  COMPRESS_REST_TEMPLATE_RESPONSE.getBytes());
+			
+		}
+		
+		if(tipoTest==null || TipoTrasformazione.TGZ.equals(tipoTest)) {
+			
+			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.TGZ) , "soap", pddContext, 
+					dynamicMapXmlRequest, null,  COMPRESS_SOAP_TEMPLATE_REQUEST.getBytes(), 
+					dynamicMapXmlResponse, null,  COMPRESS_SOAP_TEMPLATE_RESPONSE.getBytes());
+			
+			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.TGZ) , "json", pddContext, 
+					dynamicMapJsonRequest, null,  COMPRESS_REST_TEMPLATE_REQUEST.getBytes(), 
+					dynamicMapJsonResponse, null,  COMPRESS_REST_TEMPLATE_RESPONSE.getBytes());
+			
+		}
+		
+		if(tipoTest==null || TipoTrasformazione.TAR.equals(tipoTest)) {
+			
+			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.TAR) , "soap", pddContext, 
+					dynamicMapXmlRequest, null,  COMPRESS_SOAP_TEMPLATE_REQUEST.getBytes(), 
+					dynamicMapXmlResponse, null,  COMPRESS_SOAP_TEMPLATE_RESPONSE.getBytes());
+			
+			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.TAR) , "json", pddContext, 
+					dynamicMapJsonRequest, null,  COMPRESS_REST_TEMPLATE_REQUEST.getBytes(), 
+					dynamicMapJsonResponse, null,  COMPRESS_REST_TEMPLATE_RESPONSE.getBytes());
+			
+		}
+		
 	}
 	
 	private static void test(Logger log, TipoTrasformazione tipoTest, String prefix,
@@ -715,6 +822,86 @@ public class Test {
 			}catch(Throwable e) {
 				System.out.println("\tTemplate:\n "+new String(templateRequest));
 				System.out.println("\tOttenuto:\n "+contenuto);
+				Utilities.sleep(1000);
+				throw e;
+			}
+		}
+		else if(TipoTrasformazione.ZIP.equals(tipoTest) ||
+				TipoTrasformazione.TGZ.equals(tipoTest)  ||
+				TipoTrasformazione.TAR.equals(tipoTest) ) {
+			try {
+				ArchiveType type = ArchiveType.valueOf(tipoTest.name());
+				List<Entry> list = CompressorUtilities.read(risultato.getContenuto(), type);
+				if("json".equals(prefix)) {
+					if(list.size()!=2) {
+						throw new Exception("Attesa lista di 2 elementi; trovati: "+list.size());
+					}
+				}
+				else {
+					if(list.size()!=6) {
+						throw new Exception("Attesa lista di 6 elementi; trovati: "+list.size());
+					}
+				}
+				for (Entry entry : list) {
+					
+					String contentEntry = new String(entry.getContent());
+					
+					String entryName1 = COMPRESS_ENTRY_NAME1;
+					String entryName2 = COMPRESS_ENTRY_NAME2_PREFIX+HEADER1_VALORE;
+					if(entryName1.equals(entry.getName())) {
+						if("soap".equals(prefix)) {
+							if(!contentEntry.contains("-----")) {
+								throw new Exception("Payload entry '"+entryName1+"' differente da quello atteso (Multipart not found): "+contentEntry);
+							}
+							if(!contentEntry.contains(XML_REQUEST)) {
+								throw new Exception("Payload entry '"+entryName1+"' differente da quello atteso: "+contentEntry);
+							}
+							if(!contentEntry.contains(JSON_REQUEST)) { // attach1
+								throw new Exception("Payload entry '"+entryName1+"' differente da quello atteso: "+contentEntry);
+							}
+							if(!contentEntry.contains(HELLO_WORLD_PLAIN)) { // attach2
+								throw new Exception("Payload entry '"+entryName1+"' differente da quello atteso: "+contentEntry);
+							}
+						}
+						else {
+							if(!contentEntry.equals(JSON_REQUEST)) {
+								throw new Exception("Payload entry '"+entryName1+"' differente da quello atteso: "+contentEntry);
+							}
+						}				
+					}
+					else if(entryName2.equals(entry.getName())) {
+						String contentEntry2 = COMPRESS_ENTRY_NAME2_VALUE_PREFIX+HEADER2_VALORE+COMPRESS_ENTRY_NAME2_VALUE_SUFFIX;
+						if(!contentEntry2.equals(contentEntry)) {
+							throw new Exception("Payload entry '"+entryName2+"' differente da quello atteso: "+contentEntry);
+						}
+					}
+					else if("soap".equals(prefix) && COMPRESS_ENTRY_NAME_SOAPENVELOPE.equals(entry.getName())) {
+						if(!contentEntry.equals(XML_REQUEST)) {
+							throw new Exception("Payload entry '"+COMPRESS_ENTRY_NAME_SOAPENVELOPE+"' differente da quello atteso: "+contentEntry+"; atteso: "+XML_REQUEST);
+						}
+					}
+					else if("soap".equals(prefix) && COMPRESS_ENTRY_NAME_SOAPBODY.equals(entry.getName())) {
+						if(contentEntry.contains("http://schemas.xmlsoap.org/soap/envelope/")) {
+							throw new Exception("Payload entry '"+COMPRESS_ENTRY_NAME_SOAPBODY+"' differente da quello atteso; non si attendeva la busta SOAP: "+contentEntry);
+						}
+					}
+					else if("soap".equals(prefix) && COMPRESS_ENTRY_NAME_ATTACH1.equals(entry.getName())) {
+						if(!contentEntry.equals(JSON_REQUEST)) {
+							throw new Exception("Payload entry '"+COMPRESS_ENTRY_NAME_ATTACH1+"' differente da quello atteso: "+contentEntry);
+						}
+					}
+					else if("soap".equals(prefix) && COMPRESS_ENTRY_NAME_ATTACH2.equals(entry.getName())) {
+						if(!contentEntry.equals(HELLO_WORLD_PLAIN)) {
+							throw new Exception("Payload entry '"+COMPRESS_ENTRY_NAME_ATTACH2+"' differente da quello atteso: "+contentEntry);
+						}
+					}
+					else {
+						throw new Exception("Trovato entry '"+entry.getName()+"' non atteso");
+					}
+					
+				}
+				
+			}catch(Exception e) {
 				Utilities.sleep(1000);
 				throw e;
 			}
@@ -756,6 +943,93 @@ public class Test {
 			}catch(Throwable e) {
 				System.out.println("\tTemplate:\n "+new String(templateResponse));
 				System.out.println("\tOttenuto:\n "+contenuto);
+				Utilities.sleep(1000);
+				throw e;
+			}
+		}
+		else if(TipoTrasformazione.ZIP.equals(tipoTest) ||
+				TipoTrasformazione.TGZ.equals(tipoTest)  ||
+				TipoTrasformazione.TAR.equals(tipoTest) ) {
+			try {
+				ArchiveType type = ArchiveType.valueOf(tipoTest.name());
+				List<Entry> list = CompressorUtilities.read(risultato.getContenuto(), type);
+				if("json".equals(prefix)) {
+					if(list.size()!=3) {
+						throw new Exception("Attesa lista di 3 elementi; trovati: "+list.size());
+					}
+				}
+				else {
+					if(list.size()!=7) {
+						throw new Exception("Attesa lista di 7 elementi; trovati: "+list.size());
+					}
+				}
+				for (Entry entry : list) {
+					
+					String contentEntry = new String(entry.getContent());
+					
+					String entryName1 = COMPRESS_ENTRY_NAME1;
+					String entryName2 = COMPRESS_ENTRY_NAME2_PREFIX+HEADER1_VALORE;
+					String entryName3 = COMPRESS_ENTRY_NAME3;
+					if(entryName1.equals(entry.getName())) {
+						if("soap".equals(prefix)) {
+							if(!contentEntry.contains("-----")) {
+								throw new Exception("Payload entry '"+entryName1+"' differente da quello atteso (Multipart not found): "+contentEntry);
+							}
+							if(!contentEntry.contains(XML_RESPONSE)) {
+								throw new Exception("Payload entry '"+entryName1+"' differente da quello atteso: "+contentEntry);
+							}
+							if(!contentEntry.contains(JSON_REQUEST)) { // attach1
+								throw new Exception("Payload entry '"+entryName1+"' differente da quello atteso: "+contentEntry);
+							}
+							if(!contentEntry.contains(HELLO_WORLD_PLAIN)) { // attach2
+								throw new Exception("Payload entry '"+entryName1+"' differente da quello atteso: "+contentEntry);
+							}
+						}
+						else {
+							if(!contentEntry.equals(JSON_RESPONSE)) {
+								throw new Exception("Payload entry '"+entryName1+"' differente da quello atteso: "+contentEntry);
+							}
+						}				
+					}
+					else if(entryName2.equals(entry.getName())) {
+						String contentEntry2 = COMPRESS_ENTRY_NAME2_VALUE_PREFIX+HEADER2_VALORE+COMPRESS_ENTRY_NAME2_VALUE_SUFFIX;
+						if(!contentEntry2.equals(contentEntry)) {
+							throw new Exception("Payload entry '"+entryName2+"' differente da quello atteso: "+contentEntry);
+						}
+					}
+					else if(entryName3.equals(entry.getName())) {
+						String contentEntry3 = COMPRESS_ENTRY_NAME3_VALORE_STATICO;
+						if(!contentEntry3.equals(contentEntry)) {
+							throw new Exception("Payload entry '"+entryName3+"' differente da quello atteso: "+contentEntry);
+						}
+					}
+					else if("soap".equals(prefix) && COMPRESS_ENTRY_NAME_SOAPENVELOPE.equals(entry.getName())) {
+						if(!contentEntry.equals(XML_RESPONSE)) {
+							throw new Exception("Payload entry '"+COMPRESS_ENTRY_NAME_SOAPENVELOPE+"' differente da quello atteso: "+contentEntry+"; atteso: "+XML_RESPONSE);
+						}
+					}
+					else if("soap".equals(prefix) && COMPRESS_ENTRY_NAME_SOAPBODY.equals(entry.getName())) {
+						if(contentEntry.contains("http://schemas.xmlsoap.org/soap/envelope/")) {
+							throw new Exception("Payload entry '"+COMPRESS_ENTRY_NAME_SOAPBODY+"' differente da quello atteso; non si attendeva la busta SOAP: "+contentEntry);
+						}
+					}
+					else if("soap".equals(prefix) && COMPRESS_ENTRY_NAME_ATTACH1.equals(entry.getName())) {
+						if(!contentEntry.equals(JSON_REQUEST)) {
+							throw new Exception("Payload entry '"+COMPRESS_ENTRY_NAME_ATTACH1+"' differente da quello atteso: "+contentEntry);
+						}
+					}
+					else if("soap".equals(prefix) && COMPRESS_ENTRY_NAME_ATTACH2.equals(entry.getName())) {
+						if(!contentEntry.equals(HELLO_WORLD_PLAIN)) {
+							throw new Exception("Payload entry '"+COMPRESS_ENTRY_NAME_ATTACH2+"' differente da quello atteso: "+contentEntry);
+						}
+					}
+					else {
+						throw new Exception("Trovato entry '"+entry.getName()+"' non atteso");
+					}
+					
+				}
+				
+			}catch(Exception e) {
 				Utilities.sleep(1000);
 				throw e;
 			}
@@ -897,4 +1171,5 @@ public class Test {
 			throw new Exception("Nome '"+DATA_INCLUDE_2+"' non trovato");
 		}
 	}
+	
 }

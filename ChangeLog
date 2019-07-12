@@ -1,3 +1,15 @@
+2019-07-12  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, Utils]
+	Aggiunta funzionalità OP-859
+	La funzionalità di Trasformazione è stata estesa per supportare la trasformazione delle richieste e/o risposte in archivi compressi.
+	I tipi di compressione supportati sono ZIP, TGZ o TAR.
+	Il contenuto degli archivi è definibile tramite un file che deve contenere proprietà indicate come nome=valore in ogni linea. 
+	Il nome della proprietà corrisponde all'entry name all'interno dell'archivio (es. dir/subDir/entryName1). 
+	Il valore della proprietà corrisponde al contenuto dell'entry. 
+	È possibile selezionare parti del messaggio, per associarle come contenuto dell'entry, utilizzando le espressioni dinamiche risolte a runtime dal Gateway.
+	Tra le parti selezionabili vi sono gli header http, i parametri delle url, il payload e gli attachments.
+
 2019-07-11  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayMonitor]

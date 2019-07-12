@@ -68,6 +68,10 @@ public class Costanti {
     public final static String MAP_ELEMENT_JSON_PATH_PREFIX = "{"+MAP_ELEMENT_JSON_PATH+":";
     public final static String TYPE_MAP_ELEMENT_JSON_PATH = org.openspcoop2.pdd.core.dynamic.PatternExtractor.class.getName();
     
+    public final static String MAP_REQUEST = "request";
+    public final static String MAP_RESPONSE = "response";
+    public final static String TYPE_MAP_MESSAGE = org.openspcoop2.pdd.core.dynamic.ContentExtractor.class.getName();
+        
     public final static String MAP_URL_PROTOCOL_CONTEXT_OBJECT = "transportContext";
     public final static String TYPE_MAP_URL_PROTOCOL_CONTEXT_OBJECT = org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext.class.getName();
     
@@ -82,4 +86,10 @@ public class Costanti {
     public final static String ZIP_INDEX_ENTRY_FREEMARKER = "index.ftl";
     public final static String ZIP_INDEX_ENTRY_VELOCITY = "index.vm";
     
+    public final static String COMPRESS_CONTENT = "content";
+    public final static String COMPRESS_ENVELOPE = "soapEnvelope"; // soap
+    public final static String COMPRESS_BODY = "soapBody"; // soap
+    public final static String COMPRESS_ATTACH_PREFIX = "attachment[";
+    public final static String COMPRESS_ATTACH_BY_ID_PREFIX = "attachmentId[";
+    public final static String COMPRESS_SUFFIX = "]";
 }
