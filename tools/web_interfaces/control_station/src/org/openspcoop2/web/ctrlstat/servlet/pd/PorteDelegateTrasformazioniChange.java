@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
 import org.openspcoop2.core.config.Trasformazioni;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_LIB;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
@@ -110,6 +111,7 @@ public class PorteDelegateTrasformazioniChange extends Action {
 			
 			String first = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_FIRST);
 			String nome = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_NOME);
+			String stato = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_STATO);
 			String azioniAllTmp = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_AZIONI_ALL);
 			boolean azioniAll = azioniAllTmp==null || "".equals(azioniAllTmp) || CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI_ALL_VALUE_TRUE.equals(azioniAllTmp);
 			String [] azioni = porteDelegateHelper.getParameterValues(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_AZIONI);
@@ -279,6 +281,8 @@ public class PorteDelegateTrasformazioniChange extends Action {
 					
 					nome = oldRegola.getNome();
 					
+					stato = DriverConfigurazioneDB_LIB.getValue(oldRegola.getStato());
+					
 					TrasformazioneRegolaApplicabilitaRichiesta applicabilita = oldRegola.getApplicabilita();
 					if(applicabilita != null) {
 						pattern = applicabilita.getPattern();
@@ -294,7 +298,8 @@ public class PorteDelegateTrasformazioniChange extends Action {
 					azioniAll = (azioni==null || azioni.length<=0);
 				}
 
-				dati = porteDelegateHelper.addTrasformazioneToDati(TipoOperazione.CHANGE, dati, portaDelegata, idTrasformazioneS, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
+				dati = porteDelegateHelper.addTrasformazioneToDati(TipoOperazione.CHANGE, dati, portaDelegata, idTrasformazioneS, nome, 
+						stato, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
 						apc.getServiceBinding(),
 						servletTrasformazioniRichiesta, parametriInvocazioneServletTrasformazioniRichiesta, servletTrasformazioniRispostaList, parametriInvocazioneServletTrasformazioniRisposta, numeroTrasformazioniRisposte,
 						true,
@@ -327,7 +332,8 @@ public class PorteDelegateTrasformazioniChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addTrasformazioneToDati(TipoOperazione.CHANGE, dati, portaDelegata, idTrasformazioneS, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
+				dati = porteDelegateHelper.addTrasformazioneToDati(TipoOperazione.CHANGE, dati, portaDelegata, idTrasformazioneS, nome, 
+						stato, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
 						apc.getServiceBinding(),
 						servletTrasformazioniRichiesta, parametriInvocazioneServletTrasformazioniRichiesta, servletTrasformazioniRispostaList, parametriInvocazioneServletTrasformazioniRisposta, numeroTrasformazioniRisposte,
 						true,
@@ -350,6 +356,8 @@ public class PorteDelegateTrasformazioniChange extends Action {
 				if(reg.getId().longValue() == idTrasformazione) {
 					
 					reg.setNome(nome);
+					
+					reg.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(stato));
 					
 					if(reg.getApplicabilita() == null)
 						reg.setApplicabilita(new TrasformazioneRegolaApplicabilitaRichiesta());

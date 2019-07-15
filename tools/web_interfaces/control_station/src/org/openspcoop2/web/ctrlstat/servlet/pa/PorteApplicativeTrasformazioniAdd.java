@@ -42,6 +42,8 @@ import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
 import org.openspcoop2.core.config.Trasformazioni;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_LIB;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -99,6 +101,10 @@ public class PorteApplicativeTrasformazioniAdd extends Action {
 			
 			
 			String nome = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_NOME);
+			String stato = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_STATO);
+			if(stato==null || "".equals(stato)) {
+				stato = StatoFunzionalita.DISABILITATO.getValue();
+			}
 			String azioniAllTmp = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_AZIONI_ALL);
 			boolean azioniAll = azioniAllTmp==null || "".equals(azioniAllTmp) || CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI_ALL_VALUE_TRUE.equals(azioniAllTmp);
 			String [] azioni = porteApplicativeHelper.getParameterValues(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_AZIONI);
@@ -122,10 +128,7 @@ public class PorteApplicativeTrasformazioniAdd extends Action {
 			
 			String[] azioniDisponibiliList = null;
 			String[] azioniDisponibiliLabelList = null;
-			
-			
-			
-			
+						
 			List<String> azioniAssociatePorta = new ArrayList<>();
 			if(pa.getAzione() != null && pa.getAzione().getAzioneDelegataList() != null)
 				azioniAssociatePorta.addAll(pa.getAzione().getAzioneDelegataList());
@@ -206,7 +209,8 @@ public class PorteApplicativeTrasformazioniAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneToDatiOpAdd(dati, pa, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
+				dati = porteApplicativeHelper.addTrasformazioneToDatiOpAdd(dati, pa, nome, 
+						stato, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
 						apc.getServiceBinding(),false);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
@@ -235,7 +239,8 @@ public class PorteApplicativeTrasformazioniAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneToDatiOpAdd(dati, pa, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
+				dati = porteApplicativeHelper.addTrasformazioneToDatiOpAdd(dati, pa, nome, 
+						stato, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
 						apc.getServiceBinding(),false);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
@@ -264,6 +269,7 @@ public class PorteApplicativeTrasformazioniAdd extends Action {
 			TrasformazioneRegola regola = new TrasformazioneRegola();
 			regola.setPosizione(posizione);
 			regola.setNome(nome);
+			regola.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(stato));
 			TrasformazioneRegolaApplicabilitaRichiesta applicabilita = new TrasformazioneRegolaApplicabilitaRichiesta();
 			
 			applicabilita.setPattern(pattern);

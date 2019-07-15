@@ -9686,6 +9686,7 @@ public class DriverConfigurazioneDB_LIB {
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("id_porta", idProprietario , InsertAndGeneratedKeyJDBCType.LONG) );
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", regola.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("posizione", regola.getPosizione() , InsertAndGeneratedKeyJDBCType.INT) );
+					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("stato", DriverConfigurazioneDB_LIB.getValue(regola.getStato()) , InsertAndGeneratedKeyJDBCType.STRING) );
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_azioni", applicabilita_azioni , InsertAndGeneratedKeyJDBCType.STRING) );
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_ct", applicabilita_ct , InsertAndGeneratedKeyJDBCType.STRING) );
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_pattern", (regola.getApplicabilita()!=null ? regola.getApplicabilita().getPattern() : null) , InsertAndGeneratedKeyJDBCType.STRING) );
@@ -10222,6 +10223,9 @@ public class DriverConfigurazioneDB_LIB {
 				
 				int posizione = rs.getInt("posizione");
 				regola.setPosizione(posizione);
+				
+				StatoFunzionalita stato = DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("stato"));
+				regola.setStato(stato);
 				
 				String applicabilita_azioni = rs.getString("applicabilita_azioni");
 				String applicabilita_ct = rs.getString("applicabilita_ct");

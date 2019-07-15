@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/sqlserver/configurazionePdD/2019-07-15-patch.sql

@@ -47,6 +47,7 @@ public class TrasformazioneRegolaModel extends AbstractModel<TrasformazioneRegol
 		this.RISPOSTA = new org.openspcoop2.core.config.model.TrasformazioneRegolaRispostaModel(new Field("risposta",org.openspcoop2.core.config.TrasformazioneRegolaRisposta.class,"trasformazione-regola",TrasformazioneRegola.class));
 		this.NOME = new Field("nome",java.lang.String.class,"trasformazione-regola",TrasformazioneRegola.class);
 		this.POSIZIONE = new Field("posizione",int.class,"trasformazione-regola",TrasformazioneRegola.class);
+		this.STATO = new Field("stato",java.lang.String.class,"trasformazione-regola",TrasformazioneRegola.class);
 	
 	}
 	
@@ -59,6 +60,7 @@ public class TrasformazioneRegolaModel extends AbstractModel<TrasformazioneRegol
 		this.RISPOSTA = new org.openspcoop2.core.config.model.TrasformazioneRegolaRispostaModel(new ComplexField(father,"risposta",org.openspcoop2.core.config.TrasformazioneRegolaRisposta.class,"trasformazione-regola",TrasformazioneRegola.class));
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"trasformazione-regola",TrasformazioneRegola.class);
 		this.POSIZIONE = new ComplexField(father,"posizione",int.class,"trasformazione-regola",TrasformazioneRegola.class);
+		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"trasformazione-regola",TrasformazioneRegola.class);
 	
 	}
 	
@@ -73,6 +75,8 @@ public class TrasformazioneRegolaModel extends AbstractModel<TrasformazioneRegol
 	public IField NOME = null;
 	 
 	public IField POSIZIONE = null;
+	 
+	public IField STATO = null;
 	 
 
 	@Override

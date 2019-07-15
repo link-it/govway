@@ -1,3 +1,10 @@
+2019-07-15  Andrea Poli <apoli@link.it>
+
+	Aggiunta possibilità di sospendere una regola di trasformazione.
+
+	ALTER TABLE pa_transform ADD COLUMN stato VARCHAR(255);
+	ALTER TABLE pd_transform ADD COLUMN stato VARCHAR(255);
+
 2019-06-07  Andrea Poli <apoli@link.it>
 	
 	Aggiunto nuovo tipo di token policy, e rinominato quello che gestisce i token:	

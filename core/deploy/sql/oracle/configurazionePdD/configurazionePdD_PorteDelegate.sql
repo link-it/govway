@@ -572,6 +572,7 @@ CREATE TABLE pd_transform
 	id_porta NUMBER NOT NULL,
 	nome VARCHAR2(255) NOT NULL,
 	posizione NUMBER NOT NULL,
+	stato VARCHAR2(255),
 	applicabilita_azioni CLOB,
 	applicabilita_ct CLOB,
 	applicabilita_pattern CLOB,

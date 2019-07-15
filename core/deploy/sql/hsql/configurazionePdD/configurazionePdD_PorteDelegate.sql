@@ -454,6 +454,7 @@ CREATE TABLE pd_transform
 	id_porta BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	posizione INT NOT NULL,
+	stato VARCHAR(255),
 	applicabilita_azioni VARCHAR(65535),
 	applicabilita_ct VARCHAR(65535),
 	applicabilita_pattern VARCHAR(65535),

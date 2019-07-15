@@ -9,4 +9,4 @@ Controllo degli Accessi
 
 	oauth/index
 	autenticazione/index
-        autorizzazione/index
+.. autorizzazione/index

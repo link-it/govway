@@ -293,8 +293,9 @@ Cliccando sul link *'Visualizza'* della voce *'Token Info'* è
    vengono descritte nella sezione :ref:`tokenForward`.
 
    Per vedere quali header vengono effettivamente prodotti possiamo
-   utilizzare la funzionalità *'Registrazione Messaggi'* descritta nel
-   dettaglio nella sezione :ref:`quick_registrazioneMessaggi`. Accedere alla sezione *'Erogazioni'* e
+   utilizzare la funzionalità *'Registrazione Messaggi'* .
+   .. descritta nel dettaglio nella sezione XXXX quick_registrazioneMessaggi 
+   Accedere alla sezione *'Erogazioni'* e
    selezionare l'API precedentemente registrata *'PetStore v2'*.
    Dopodichè accedere, dal dettaglio dell'erogazione, alla sezione
    *'Configurazione'* dove vengono visualizzate le funzionalità attive.

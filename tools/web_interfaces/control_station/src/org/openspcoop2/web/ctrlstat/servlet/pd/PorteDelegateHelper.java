@@ -57,6 +57,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -86,12 +87,14 @@ import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
+import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
@@ -4018,6 +4021,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			List<String> lstLabels = new ArrayList<>();
 			if(lista != null && lista.size() > 1)
 				lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_POSIZIONE);
+			lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_STATO);
 			lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_NOME);
 			lstLabels.add(nomeColonnaAzione);
 			lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_CT);
@@ -4071,8 +4075,31 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						de.setValue(regola.getPosizione()+"");
 						e.addElement(de);
 					}
-					// Nome
+					
+					
+					// Stato
 					DataElement de = new DataElement();
+					de.setWidthPx(10);
+					de.setType(DataElementType.CHECKBOX);
+					if(regola.getStato()==null // backward compatibility 
+							||
+							StatoFunzionalita.ABILITATO.equals(regola.getStato())){
+						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+						de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
+					}
+					else{
+						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
+					}
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
+							pId, pIdSoggetto, pIdAsps, pIdFruizione, pNomePorta, pIdTrasformazione
+							);
+					e.addElement(de);
+					
+					// Nome
+					de = new DataElement();
 					de.setIdToRemove(regola.getId() + "");
 					de.setValue(regola.getNome());
 					de.setToolTip(regola.getNome());

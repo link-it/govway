@@ -62,6 +62,7 @@ import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -97,6 +98,7 @@ import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolProperti
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
+import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
@@ -4409,6 +4411,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			List<String> lstLabels = new ArrayList<>();
 			if(lista != null && lista.size() > 1)
 				lstLabels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_POSIZIONE);
+			lstLabels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_STATO);
 			lstLabels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_NOME);
 			lstLabels.add(nomeColonnaAzione);
 			lstLabels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_CT);
@@ -4465,10 +4468,35 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 						de.setValue(regola.getPosizione()+"");
 						e.addElement(de);
 					}
-					// Nome
-					DataElement de = new DataElement();
-					de.setIdToRemove(regola.getId() + "");
 					
+					// Stato
+					DataElement de = new DataElement();
+					de.setWidthPx(10);
+					de.setType(DataElementType.CHECKBOX);
+					if(regola.getStato()==null // backward compatibility 
+							||
+							StatoFunzionalita.ABILITATO.equals(regola.getStato())){
+						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+						de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
+					}
+					else{
+						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
+					}
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_CHANGE, 
+							pIdPorta,
+							pIdSoggetto,
+							pIdAsps,
+							pIdTrasformazione
+							);
+					e.addElement(de);
+					
+					
+					// Nome
+					de = new DataElement();
+					de.setIdToRemove(regola.getId() + "");
 					de.setValue(regola.getNome());
 					de.setToolTip(regola.getNome());
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_CHANGE, 

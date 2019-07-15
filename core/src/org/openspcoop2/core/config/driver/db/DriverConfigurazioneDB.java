@@ -3277,6 +3277,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 						int posizione = rs.getInt("posizione");
 						regola.setPosizione(posizione);
 						
+						StatoFunzionalita stato = DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("stato"));
+						regola.setStato(stato);
+						
 						String applicabilita_azioni = rs.getString("applicabilita_azioni");
 						String applicabilita_ct = rs.getString("applicabilita_ct");
 						String applicabilita_pattern = rs.getString("applicabilita_pattern");
@@ -3931,6 +3934,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	private TrasformazioneRegola _getTrasformazione(ResultSet risultato) throws Exception {
 		TrasformazioneRegola regola  = new TrasformazioneRegola();
 				
+		StatoFunzionalita stato = DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(risultato.getString("stato"));
+		regola.setStato(stato);
+		
 		String applicabilita_azioni = risultato.getString("applicabilita_azioni");
 		String applicabilita_ct = risultato.getString("applicabilita_ct");
 		String applicabilita_pattern = risultato.getString("applicabilita_pattern");

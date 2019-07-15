@@ -7,7 +7,7 @@ Configurazioni differenti per gruppi di risorse di una API
 Nei precedenti esempi tutte le risorse delle API REST o le azioni dei
 servizi SOAP vengono gestite dal Gateway tramite un'unica configurazione
 di default. Le funzionalità che verranno descritte nelle successive
-sezioni della guida (es. sezione :ref:`quickControlloAccessi`, :ref:`quickRateLimiting`, :ref:`quickValidazioneMessaggi` ...) possono essere attivate tramite
+sezioni della guida possono essere attivate tramite
 un'unica configurazione su tutte le risorse/azioni dell'API o possono
 essere distinte a seconda delle caratteristiche applicative di ogni
 singola risorsa o azione.
@@ -130,7 +130,7 @@ Selezionare il pulsante *'Aggiungi'* e fornire i seguenti dati:
 #. Sempre dal dettaglio dell'erogazione, accedere alla sezione
    *'Configurazione'* dove vengono visualizzati i tre gruppi. In questa
    sezione sarà possibile configurare per ogni gruppo le funzionalità
-   descritte nelle successive sezioni della guida (es. sezione :ref:`quickControlloAccessi`, :ref:`quickRateLimiting`, :ref:`quickValidazioneMessaggi` ...). Si
+   descritte nelle successive sezioni della guida. Si
    può notare come i due gruppi creati per l'esempio possiedano un
    *Controllo Accessi* abilitato, mentre il gruppo *Predefinito* che
    contiene solo le risorse GET possiede tale funzionalità disabilitata.

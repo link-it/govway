@@ -19,17 +19,18 @@ modalità:
    tipo *BASIC* (vedi specifica `RFC
    7617 <https://tools.ietf.org/html/rfc7617>`__). L'username e la
    password fornita deve corrispondere ad un applicativo o ad un
-   soggetto registrato. Un esempio viene descritto nella sezione :ref:`authBasic`.
+   soggetto registrato. 
+   .. Un esempio viene descritto nella sezione XXX authBasic.
 
 -  *principal*: questa configurazione richiede che l'autenticazione sia
    delegata al container via jaas in modo da permettere a GovWay di
    accedere al principal tramite la api
-   *HttpServletRequest.getUserPrincipal()*. Un esempio viene descritto
-   nella sezione :ref:`authPrincipal`.
+   *HttpServletRequest.getUserPrincipal()*. 
+   .. Un esempio viene descritto nella sezione XXX authPrincipal .
 
 .. toctree::
         :maxdepth: 2
 
 	https/index
-	basic
-	principal
+.. basic TODO
+.. principal TODO

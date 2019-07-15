@@ -438,6 +438,7 @@ CREATE TABLE pa_transform
 	id_porta BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	posizione INT NOT NULL,
+	stato VARCHAR(255),
 	applicabilita_azioni TEXT,
 	applicabilita_ct TEXT,
 	applicabilita_pattern TEXT,

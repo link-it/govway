@@ -9,6 +9,7 @@
 	Il valore della proprietà corrisponde al contenuto dell'entry. 
 	È possibile selezionare parti del messaggio, per associarle come contenuto dell'entry, utilizzando le espressioni dinamiche risolte a runtime dal Gateway.
 	Tra le parti selezionabili vi sono gli header http, i parametri delle url, il payload e gli attachments.
+	Infine è stata aggiunta la possibilità di sospendere una regola di trasformazione.
 
 2019-07-11  Andrea Poli <apoli@link.it>
 

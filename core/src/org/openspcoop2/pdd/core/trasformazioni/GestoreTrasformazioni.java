@@ -32,6 +32,7 @@ import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.Trasformazioni;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.VersioneSOAP;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
@@ -241,7 +242,11 @@ public class GestoreTrasformazioni {
 				TrasformazioneRegola check = this.trasformazioni.getRegola(i);
 				
 				
-				// prendo la prima che ha un match nell'ordine
+				// prendo la prima che ha un match nell'ordine e non e' sospesa
+				if(check.getStato()!=null // per backward compatibility 
+						&& StatoFunzionalita.DISABILITATO.equals(check.getStato())) {
+					continue;
+				}
 				
 				if(check.getApplicabilita()!=null) {
 				

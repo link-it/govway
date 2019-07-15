@@ -23,7 +23,8 @@ beneficiare delle seguenti funzionalità:
 
 -  *Informazioni Statistiche*: sarà possibile ottenere distribuzioni
    temporali e reports statistici relativi ai soggetti o applicativi
-   registrati (per maggiori dettagli vedi sezione :ref:`analisiStatistica`).
+   registrati 
+   .. (per maggiori dettagli vedi sezione XXX analisiStatistica.
 
 Nella :numref:`quick_oauthHTTPSIdMittenti_fig` viene mostrato un esempio di registrazione sia di un
 soggetto, che rappresenta un client esterno al dominio di gestione, sia

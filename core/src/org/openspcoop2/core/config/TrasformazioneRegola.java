@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,7 @@ import java.util.List;
  * 		&lt;/sequence>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="posizione" type="{http://www.w3.org/2001/XMLSchema}int" use="required"/>
+ * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -140,6 +142,26 @@ public class TrasformazioneRegola extends org.openspcoop2.utils.beans.BaseBean i
     this.posizione = posizione;
   }
 
+  public void set_value_stato(String value) {
+    this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  }
+
+  public String get_value_stato() {
+    if(this.stato == null){
+    	return null;
+    }else{
+    	return this.stato.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getStato() {
+    return this.stato;
+  }
+
+  public void setStato(org.openspcoop2.core.config.constants.StatoFunzionalita stato) {
+    this.stato = stato;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -190,5 +212,11 @@ public class TrasformazioneRegola extends org.openspcoop2.utils.beans.BaseBean i
   @javax.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlAttribute(name="posizione",required=true)
   protected int posizione;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_stato;
+
+  @XmlAttribute(name="stato",required=false)
+  protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
 }

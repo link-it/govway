@@ -509,6 +509,7 @@
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="posizione" type="xsd:int" use="required"/>
+		<xsd:attribute default="abilitato" name="stato" type="StatoFunzionalita" use="optional"/>
 	</xsd:complexType>
 	<xsd:complexType name="trasformazione-regola-applicabilita-richiesta">
 		<xsd:sequence>

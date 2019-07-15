@@ -6510,8 +6510,21 @@ public class ConsoleHelper {
 			StringBuffer bfToolTip = new StringBuffer();
 			CheckboxStatusType type = null;
 			
+			int regoleAbilitate = 0;
+			int regoleDisabilitate = 0;
+			
 			for (TrasformazioneRegola trasformazioneRegola : listaTrasformazioni) {
 								
+				if(trasformazioneRegola.getStato()!=null // backward compatibility 
+						&&
+						StatoFunzionalita.DISABILITATO.equals(trasformazioneRegola.getStato())){
+					regoleDisabilitate++;
+					continue;
+				}
+				else {
+					regoleAbilitate++;
+				}
+				
 				boolean richiestaDefinita = false;
 				if(trasformazioneRegola.getRichiesta()!=null) {
 					richiestaDefinita = trasformazioneRegola.getRichiesta().isConversione() || 
@@ -6547,18 +6560,29 @@ public class ConsoleHelper {
 				
 			}
 			
-			if(type==null) {
-				type = CheckboxStatusType.CONFIG_ENABLE;
-			}
-			de.setStatusType(type);
-			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO));
-			if(bfToolTip.length()>0) {
-				de.setStatusToolTip(bfToolTip.toString());
+			if(regoleAbilitate==0) {
+				de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
+				de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));	
+				if(regoleDisabilitate>0) {
+					de.setStatusToolTip("Sono registrate, con stato disabilitato, "+regoleDisabilitate+" regole di trasformazione dei messaggi");
+				}
 			}
 			else {
-				if(listaTrasformazioni.size()>1) {
-					de.setStatusToolTip("Sono attive "+listaTrasformazioni.size()+" regole di trasformazione dei messaggi");
+			
+				if(type==null) {
+					type = CheckboxStatusType.CONFIG_ENABLE;
 				}
+				de.setStatusType(type);
+				de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO));
+				if(bfToolTip.length()>0) {
+					de.setStatusToolTip(bfToolTip.toString());
+				}
+				else {
+					if(listaTrasformazioni.size()>1) {
+						de.setStatusToolTip("Sono attive "+regoleAbilitate+" regole di trasformazione dei messaggi");
+					}
+				}
+				
 			}
 		}
 	}
@@ -11583,14 +11607,17 @@ public class ConsoleHelper {
 		}
 	}
 	
-	public Vector<DataElement> addTrasformazioneToDatiOpAdd(Vector<DataElement> dati, Object oggetto, String nome, boolean azioniAll, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String[] azioni, String pattern, String contentType,
+	public Vector<DataElement> addTrasformazioneToDatiOpAdd(Vector<DataElement> dati, Object oggetto, String nome, 
+			String stato, boolean azioniAll, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String[] azioni, String pattern, String contentType,
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding, boolean isPortaDelegata) throws Exception {
-		return addTrasformazioneToDati(TipoOperazione.ADD, dati, oggetto, null, nome, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType, 
+		return addTrasformazioneToDati(TipoOperazione.ADD, dati, oggetto, null, nome, 
+				stato, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType, 
 				serviceBinding,
 				null, null, null, null, 0, isPortaDelegata, null,null,0,null,null,0);
 	}
 	
-	public Vector<DataElement> addTrasformazioneToDati(TipoOperazione tipoOP, Vector<DataElement> dati, Object oggetto, String idTrasformazione, String nome, boolean azioniAll, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String[] azioni, String pattern, String contentType,
+	public Vector<DataElement> addTrasformazioneToDati(TipoOperazione tipoOP, Vector<DataElement> dati, Object oggetto, String idTrasformazione, String nome, 
+			String stato, boolean azioniAll, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String[] azioni, String pattern, String contentType,
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding,
 			String servletTrasformazioniRichiesta, List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta, String servletTrasformazioniRispostaList, List<Parameter> parametriInvocazioneServletTrasformazioniRisposta,
 			int numeroTrasformazioniRisposte, boolean isPortaDelegata, String servletTrasformazioniAutorizzazioneAutenticati,  List<Parameter> parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati , int numAutenticati,
@@ -11623,6 +11650,19 @@ public class ConsoleHelper {
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOME);
 		de.setRequired(true); 
+		dati.addElement(de);
+		
+		// Stato
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_STATO);
+		if(stato==null || "".equals(stato)) {
+			stato = StatoFunzionalita.ABILITATO.getValue();
+		}
+		de.setSelected(stato);
+		de.setType(DataElementType.SELECT);
+		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_STATO);
+		de.setValues(ConfigurazioneCostanti.STATI);
+		de.setLabels(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATI);
 		dati.addElement(de);
 		
 		de = new DataElement();
