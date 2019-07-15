@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-/**     
+/**
  * DbUtils
  *
  * @author $Author$
@@ -65,6 +65,10 @@ public class DbUtils {
 
     public List<Map<String, Object>> readRows(String query) {
         return this.jdbc.queryForList(query);
+    }
+
+    public int update(String query) {
+        return this.jdbc.update(query);
     }
 
 }
