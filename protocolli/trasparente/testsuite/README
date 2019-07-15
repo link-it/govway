@@ -254,6 +254,9 @@ Ad esempio su wildfly:
 cp ./protocolli/trasparente/testsuite/deploy/jose/cer/JOSE.cer wildfly-14.0.1.Final.TEST/welcome-content/
 cp ./protocolli/trasparente/testsuite/deploy/jose/jks/jose_truststore_example.jwks wildfly-14.0.1.Final.TEST/welcome-content/
 
+Batterie di test:
+- 'JOSESignature': vengono verificate le funzionalità JWS in modalità compact e json, con payload encoding abilitato/disabilitato e detached della firma.
+- 'JOSEEncrypt': vengono verificate le funzionalità JWE in modalità compact e json (con e senza deflate)
 
 
 

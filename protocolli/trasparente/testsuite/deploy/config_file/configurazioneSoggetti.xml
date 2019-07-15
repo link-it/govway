@@ -1584,8 +1584,8 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
-				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
+				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
 				<parameter nome="detachSecurityInfo" valore="true" />
@@ -1615,8 +1615,8 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
-				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
+				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
 				<parameter nome="detachSecurityInfo" valore="true" />
@@ -1948,8 +1948,8 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
-				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
+				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
 				<parameter nome="detachSecurityInfo" valore="true" />
@@ -1979,8 +1979,8 @@
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
-				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
+				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
 				<parameter nome="detachSecurityInfo" valore="true" />
@@ -2605,14 +2605,11 @@
 				<parameter nome="joseUseHeaders" valore="true" />
 				<parameter nome="decryptionMode" valore="compact" />
 				<parameter nome="detachSecurityInfo" valore="true" />
-				<parameter nome="joseUseHeaders.jwk" valore="false" />
+				<parameter nome="joseUseHeaders.jwk" valore="true" />
 				<parameter nome="joseUseHeaders.x5u" valore="false" />
-				<parameter nome="joseUseHeaders.jku" valore="true" />
+				<parameter nome="joseUseHeaders.jku" valore="false" />
 				<parameter nome="joseUseHeaders.x5c" valore="false" />
 				<parameter nome="joseUseHeaders.kid" valore="false" />
-				<parameter nome="rs.security.keystore.type.ssl" valore="jks" />
-				<parameter nome="rs.security.keystore.password.ssl" valore="openspcoop" />
-				<parameter nome="rs.security.keystore.file.ssl" valore="/etc/govway/keys/erogatore.jks" />
 				<parameter nome="joseUseHeaders.keystore.file" valore="/etc/govway/keys/jose_keystore_example.jwks" />
 				<parameter nome="joseUseHeaders.keystore.type" valore="jwk" />
 			</response-flow>
@@ -2631,10 +2628,9 @@
 		    <message-security>
 			<request-flow>
 				<parameter nome="securityEngine" valore="jose" />
-				<parameter nome="action" valore="Signature" />
+				<parameter nome="action" valore="Encrypt" />
 				<parameter nome="joseUseHeaders" valore="true" />
-				<parameter nome="signatureDetached" valore="false" />
-				<parameter nome="signatureMode" valore="compact" />
+				<parameter nome="encryptionMode" valore="compact" />
 				<parameter nome="joseCriticalHeaders" valore="prova1,prova2" />
 				<parameter nome="joseContentType" valore="true" />
 				<parameter nome="joseType" valore="JWT" />
@@ -3066,14 +3062,11 @@
 				<parameter nome="joseUseHeaders" valore="true" />
 				<parameter nome="decryptionMode" valore="json" />
 				<parameter nome="detachSecurityInfo" valore="true" />
-				<parameter nome="joseUseHeaders.jwk" valore="false" />
+				<parameter nome="joseUseHeaders.jwk" valore="true" />
 				<parameter nome="joseUseHeaders.x5u" valore="false" />
-				<parameter nome="joseUseHeaders.jku" valore="true" />
+				<parameter nome="joseUseHeaders.jku" valore="false" />
 				<parameter nome="joseUseHeaders.x5c" valore="false" />
 				<parameter nome="joseUseHeaders.kid" valore="false" />
-				<parameter nome="rs.security.keystore.type.ssl" valore="jks" />
-				<parameter nome="rs.security.keystore.password.ssl" valore="openspcoop" />
-				<parameter nome="rs.security.keystore.file.ssl" valore="/etc/govway/keys/erogatore.jks" />
 				<parameter nome="joseUseHeaders.keystore.file" valore="/etc/govway/keys/jose_keystore_example.jwks" />
 				<parameter nome="joseUseHeaders.keystore.type" valore="jwk" />
 			</response-flow>
@@ -5904,8 +5897,8 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
-				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
+				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
 				<parameter nome="signaturePropRefId" valore="/etc/govway/properties/jose-signature-JWK.sender.properties" />
@@ -5935,8 +5928,8 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
-				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
+				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="true" />
 				<parameter nome="signatureMode" valore="json" />
 				<parameter nome="signaturePropRefId" valore="/etc/govway/properties/jose-signature-JWKSymmetricKey.sender.properties" />
@@ -6219,8 +6212,8 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
-				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
+				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
 				<parameter nome="signaturePropRefId" valore="/etc/govway/properties/jose-signature-JWK.sender.properties" />
@@ -6250,8 +6243,8 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="action" valore="Signature" />
 				<parameter nome="joseUseHeaders" valore="false" />
 				<parameter nome="signatureDetached" valore="true" />
-				<parameter nome="signatureDetachedPropertyURL" valore="govwayTestSuiteDetachSign" />
-				<parameter nome="detached.type" valore="url" /> <!-- per la grafica -->
+				<parameter nome="signatureDetachedHeader" valore="GovWay-TestSuite-Detach-Sign-Response" />
+				<parameter nome="detached.type" valore="header" /> <!-- per la grafica -->
 				<parameter nome="signatureDetachedBase64" valore="false" />
 				<parameter nome="signatureMode" valore="json" />
 				<parameter nome="signaturePropRefId" valore="/etc/govway/properties/jose-signature-JWKSymmetricKey.sender.properties" />
@@ -6330,7 +6323,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="signatureMode" valore="json" />
 				<parameter nome="signaturePayloadEncoding" valore="true" />
 				<parameter nome="detachSecurityInfo" valore="true" />
-				<parameter nome="joseUseHeaders.truststore.file" valore="/etc/govway/properties/jose-signature-JKS.receiver.properties" />
+				<parameter nome="joseUseHeaders.truststore.file" valore="/etc/govway/keys/jose_truststore_example.jks" />
 				<parameter nome="joseUseHeaders.truststore.type" valore="jks" />
 				<parameter nome="joseUseHeaders.truststore.password" valore="123456" />
 				<parameter nome="joseUseHeaders.jwk" valore="false" />
@@ -6805,10 +6798,9 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="joseUseHeaders" valore="true" />
 				<parameter nome="joseContentType" valore="false" />
 				<parameter nome="includeExtendedHeader" valore="false" />
-				<parameter nome="includeCertMode" valore="jku" />
-				<parameter nome="joseJWKSetUrl" valore="https://127.0.0.1:8445/jose_truststore_example.jwks" />
-				<parameter nome="encryptionMode" valore="encryptionMode" />
-				<parameter nome="encryptionPropRefId" valore="/etc/govway/properties/jose-encryption-JWK.sender.properties" />
+				<parameter nome="includeCertMode" valore="jwk" />
+				<parameter nome="encryptionMode" valore="compact" />
+				<parameter nome="encryptionPropRefId" valore="/etc/govway/properties/jose-encryption-JWK.sender.includePublicKey.properties" />
 			</response-flow>
 		    </message-security>
 		</porta-applicativa>
@@ -7224,10 +7216,9 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdERENDQlBRQ0NRRHA4SDVBVnR
 				<parameter nome="joseUseHeaders" valore="true" />
 				<parameter nome="joseContentType" valore="false" />
 				<parameter nome="includeExtendedHeader" valore="false" />
-				<parameter nome="includeCertMode" valore="jku" />
-				<parameter nome="joseJWKSetUrl" valore="https://127.0.0.1:8445/jose_truststore_example.jwks" />
-				<parameter nome="encryptionMode" valore="encryptionMode" />
-				<parameter nome="encryptionPropRefId" valore="/etc/govway/properties/jose-encryption-JWK.sender.properties" />
+				<parameter nome="includeCertMode" valore="jwk" />
+				<parameter nome="encryptionMode" valore="json" />
+				<parameter nome="encryptionPropRefId" valore="/etc/govway/properties/jose-encryption-JWK.sender.includePublicKey.properties" />
 			</response-flow>
 		    </message-security>
 		</porta-applicativa>

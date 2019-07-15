@@ -39,6 +39,7 @@ import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -47,6 +48,10 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.testng.Assert;
 import org.testng.Reporter;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * JOSEUtils
@@ -58,12 +63,25 @@ import org.testng.Reporter;
 public class JOSEUtils {
 
 	
-	private static final String JSON_MESSAGE = "{\n"+
-	        "\t\"name\":\"value1\",\n"+
-	        "\t\"name2\":\"value2\",\n"+
-	        "\t\"nameINT\":3,\n"+
-	        "\t\"nameDOUBLE\":4.5\n"+
-			"}";
+//	private static final String JSON_MESSAGE = "{"+
+//	        "\"name\":\"value1\","+
+//	        "\"name2\":\"value2\","+
+//	        "\"nameINT\":3,"+
+//	        "\"nameDOUBLE\":4.5"+
+//			"}";
+	private static String JSON_MESSAGE = null;
+	static {
+		try {
+			ObjectNode node = JSONUtils.getInstance(true).newObjectNode();
+			node.put("name", "value1");
+			node.put("name2", "value2");
+			node.put("nameINT", 3);
+			node.put("nameDOUBLE", 4.6);
+			JSON_MESSAGE = JSONUtils.getInstance().toString(node);
+		}catch(Exception e) {
+			e.printStackTrace(System.err);
+		}
+	}
 
 	
 	public int returnCodeAtteso = 200;
@@ -71,13 +89,11 @@ public class JOSEUtils {
 	public Properties queryParameters = new Properties();
 	
 	public boolean signature = true;
-	public boolean payloadDetached = false;
 	public boolean payloadEncoding = true;
 	
 	public boolean jwt = false;
+	public boolean json = false;
 	public Properties jwtHeaders;
-	
-
 	
 	public HttpResponse invoke(Repository repository, String azione) throws UtilsException {
 	
@@ -150,24 +166,91 @@ public class JOSEUtils {
 					String contenutoRispostaEstratto = tmp[1];
 					contenutoRispostaEstratto = new String(Base64Utilities.decode(contenutoRispostaEstratto));
 					
-					Assert.assertEquals(contenutoRispostaEstratto,JSON_MESSAGE, "File di risposta ["+contenutoRispostaEstratto+"] diverso da quello atteso ["+contentRisposta+"]");
+					Assert.assertEquals(contenutoRispostaEstratto,JSON_MESSAGE, "File di risposta ["+contenutoRispostaEstratto+"] diverso da quello atteso ["+JSON_MESSAGE+"]");
 				}
 				else {
-					Assert.assertTrue(tmp.length==4);
+					Assert.assertTrue(tmp.length==5);
 					header = tmp[0];
 				}
 				
-				checkHeaderJwt(header);
+				checkHeader(header);
+			}
+			else if(this.json) {
+				Reporter.log("["+idMessaggio+"] JSON: "+contentRisposta);
+				JSONUtils jsonUtils = JSONUtils.getInstance();
+				JsonNode node = null;
+				if(this.payloadEncoding) {
+					node = jsonUtils.getAsNode(contentRisposta.getBytes());
+				}
+				else {
+					node = jsonUtils.getAsNode(contentRisposta.replace(JSON_MESSAGE, "{}").getBytes());
+				}
+				
+				if(this.signature) {
+					
+					JsonNode payLoadNode = node.get("payload");
+					Assert.assertNotNull(payLoadNode, "element 'payload' non presente nella struttura JSON ["+contentRisposta+"]");
+					String contenuto = payLoadNode.asText();
+					String contenutoRispostaEstratto = contenuto;
+					if(this.payloadEncoding) {
+						contenutoRispostaEstratto = new String(Base64Utilities.decode(contenuto));
+					}
+					else {
+						// replace precedente
+						Assert.assertEquals(contenutoRispostaEstratto,"{}","Effettuato replace precedente, atteso vuoto");
+						contenutoRispostaEstratto = JSON_MESSAGE;
+					}
+					
+					Assert.assertEquals(contenutoRispostaEstratto,JSON_MESSAGE, "File di risposta ["+contenutoRispostaEstratto+"] diverso da quello atteso ["+JSON_MESSAGE+"]");
+					
+					JsonNode signatureNode = node.get("signatures");
+					Assert.assertNotNull(signatureNode, "element 'signatures' non presente nella struttura JSON ["+contentRisposta+"]");
+					Assert.assertTrue((signatureNode instanceof ArrayNode), "element 'signatures' presente nella struttura JSON ["+contentRisposta+"] ma non è un array");
+					ArrayNode signatureNodeArray = (ArrayNode) signatureNode;
+					JsonNode signatureNodePositionOne = signatureNodeArray.get(0);
+					Assert.assertNotNull(signatureNodePositionOne, "element 'signatures[0]' non presente nella struttura JSON ["+contentRisposta+"]");
+					
+					JsonNode protectedNode = signatureNodePositionOne.get("protected");
+					Assert.assertNotNull(protectedNode, "element 'protected' non presente nella struttura JSON ["+contentRisposta+"]");
+					
+					String header = protectedNode.asText();
+					checkHeader(header);
+					
+				}
+				else {
+					
+					JsonNode recipientsNode = node.get("recipients");
+					Assert.assertNotNull(recipientsNode, "element 'recipients' non presente nella struttura JSON ["+contentRisposta+"]");
+					
+					
+					JsonNode unprotectedNode = node.get("unprotected");
+					Assert.assertNotNull(unprotectedNode, "element 'unprotected' non presente nella struttura JSON ["+contentRisposta+"]");
+					String unprotectedHeader = unprotectedNode.asText();
+					JsonNode alg = unprotectedNode.get("alg");
+					Assert.assertNotNull(alg, "claims 'alg' non presente tra gli header non protetti ["+unprotectedHeader+"] struttura JSON ["+contentRisposta+"]");
+					String algValue = alg.asText();
+					if(this.jwtHeaders!=null) {
+						String checkValue = this.jwtHeaders.getProperty("alg");
+						Assert.assertEquals(algValue, checkValue, "claims 'alg' presente tra gli header non protetti ["+unprotectedHeader+"] differente dal valore atteso '"+checkValue+"' struttura JSON ["+contentRisposta+"]");
+					}
+					
+					JsonNode protectedNode = node.get("protected");
+					Assert.assertNotNull(protectedNode, "element 'protected' non presente nella struttura JSON ["+contentRisposta+"]");
+					String header = protectedNode.asText();
+					checkHeader(header);
+
+				}
+				
 			}
 			else {
-				Assert.assertEquals(contentRisposta,JSON_MESSAGE, "File di risposta ["+new String(contentRisposta)+"] diverso da quello atteso ["+contentRisposta+"]");
+				Assert.assertEquals(contentRisposta,JSON_MESSAGE, "File di risposta ["+new String(contentRisposta)+"] diverso da quello atteso ["+JSON_MESSAGE+"]");
 			}
 		}
 		
 		return httpResponse;
 	}
 	
-	public void checkHeaderJwt(String header) {
+	public void checkHeader(String header) {
 		header = new String(Base64Utilities.decode(header));
 		Reporter.log("header: "+header);
 		Assert.assertTrue(header.startsWith("{"),"Header ["+header+"] non inizia con {");
@@ -204,6 +287,10 @@ public class JOSEUtils {
 			while (enCheck.hasMoreElements()) {
 				String keyCheck = (String) enCheck.nextElement();
 				String valueCheck = this.jwtHeaders.getProperty(keyCheck);
+				
+				if(!this.signature && "alg".equals(keyCheck)){
+					continue; // viene definito negli header unprotected
+				}
 				
 				keyCheck = "\"" + keyCheck + "\"";
 				valueCheck = "\"" + valueCheck + "\"";
