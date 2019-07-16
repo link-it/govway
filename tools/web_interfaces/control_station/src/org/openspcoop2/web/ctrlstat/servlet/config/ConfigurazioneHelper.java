@@ -124,8 +124,6 @@ import org.openspcoop2.protocol.sdk.InformazioniProtocollo;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.MapReader;
-import org.openspcoop2.utils.xml.XPathExpressionEngine;
-import org.openspcoop2.utils.xml.XPathNotValidException;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -13503,6 +13501,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							TipoFiltroApplicativo.INDIRIZZO_IP_FORWARDED.equals(tipoChiaveGroupBy)){
 						de.setType(DataElementType.HIDDEN);
 					}
+					else if(TipoFiltroApplicativo.URLBASED.equals(tipoChiaveGroupBy) ||
+							TipoFiltroApplicativo.CONTENT_BASED.equals(tipoChiaveGroupBy)) {
+						de.setRequired(true);
+						de.setType(DataElementType.TEXT_AREA);
+					}
 					else{
 						de.setRequired(true);
 						de.setType(DataElementType.TEXT_EDIT);
@@ -13712,20 +13715,21 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						return false;
 					}
 				}
-								
-				if(TipoFiltroApplicativo.CONTENT_BASED.equals(tipo)){
-					XPathExpressionEngine xPathEngine = new XPathExpressionEngine();
-					try{
-						xPathEngine.validate(policy.getFiltro().getInformazioneApplicativaNome());
-					}catch(XPathNotValidException notValidException){
-						String messaggio = "L'espressione fornita in '"+
-								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED
-								+" - "+getLabelTipoInformazioneApplicativaFiltro(policy.getFiltro().getInformazioneApplicativaTipo())+"' non è valida: "+
-								notValidException.getMessage();
-						this.pd.setMessage(messaggio);
-						return false;
-					}
-				}
+							
+				// Puo' essere anche una jsonPath
+//				if(TipoFiltroApplicativo.CONTENT_BASED.equals(tipo)){
+//					XPathExpressionEngine xPathEngine = new XPathExpressionEngine();
+//					try{
+//						xPathEngine.validate(policy.getFiltro().getInformazioneApplicativaNome());
+//					}catch(XPathNotValidException notValidException){
+//						String messaggio = "L'espressione fornita in '"+
+//								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED
+//								+" - "+getLabelTipoInformazioneApplicativaFiltro(policy.getFiltro().getInformazioneApplicativaTipo())+"' non è valida: "+
+//								notValidException.getMessage();
+//						this.pd.setMessage(messaggio);
+//						return false;
+//					}
+//				}
 				
 				if(policy.getFiltro().getInformazioneApplicativaValore()==null){
 					String messaggio = "Deve essere indicato un valore in '"+
@@ -13789,19 +13793,20 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					
 				}
 				
-				if(TipoFiltroApplicativo.CONTENT_BASED.equals(tipo)){
-					XPathExpressionEngine xPathEngine = new XPathExpressionEngine();
-					try{
-						xPathEngine.validate(policy.getGroupBy().getInformazioneApplicativaNome());
-					}catch(XPathNotValidException notValidException){
-						String messaggio = "L'espressione fornita in '"+
-								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_NOTE
-								+" - "+getLabelTipoInformazioneApplicativaGroupBy(policy.getGroupBy().getInformazioneApplicativaTipo())+"' non è valida: "+
-								notValidException.getMessage();
-						this.pd.setMessage(messaggio);
-						return false;
-					}
-				}
+				// Puo' essere anche una jsonPath
+//				if(TipoFiltroApplicativo.CONTENT_BASED.equals(tipo)){
+//					XPathExpressionEngine xPathEngine = new XPathExpressionEngine();
+//					try{
+//						xPathEngine.validate(policy.getGroupBy().getInformazioneApplicativaNome());
+//					}catch(XPathNotValidException notValidException){
+//						String messaggio = "L'espressione fornita in '"+
+//								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_NOTE
+//								+" - "+getLabelTipoInformazioneApplicativaGroupBy(policy.getGroupBy().getInformazioneApplicativaTipo())+"' non è valida: "+
+//								notValidException.getMessage();
+//						this.pd.setMessage(messaggio);
+//						return false;
+//					}
+//				}
 				
 			}
 			

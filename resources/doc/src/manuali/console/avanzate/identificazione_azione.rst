@@ -10,7 +10,7 @@ modalità di identificazione dell'azione. Dopo aver acceduto la sezione
 selezionare una tra le seguenti opzioni:
 
 -  *content-based* (Soap e Rest): il dato viene ricavato dal messaggio
-   di richiesta utilizzando come criterio l'espressione XPath indicata
+   di richiesta utilizzando come criterio l'espressione XPath o JsonPath indicata
    nel campo *Pattern* sottostante.
 
 -  *header-based* (Soap e Rest): il dato viene ricavato da un valore

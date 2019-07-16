@@ -1,3 +1,12 @@
+2019-07-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, Utils]
+	Aggiunta funzionalità OP-861
+	L'estrazione dei contenuti da messaggi JSON, utilizzato nelle funzionalità di Correlazione Applicativa, Identificazione dell'azione, 
+	Rate Limiting con chiave applicativa etc si basava unicamente su espressioni JSONPath.
+	Poichè allo stato attuale le espressioni jsonPath non hanno la stessa "potenza delle espressioni XPath",
+	è stata aggiunta la possibilità di utilizzare espressioni XPath su di una rappresentazione xml dell'oggetto json in transito.
+
 2019-07-12  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, Utils]

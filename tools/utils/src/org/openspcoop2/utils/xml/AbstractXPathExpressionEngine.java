@@ -881,20 +881,34 @@ public abstract class AbstractXPathExpressionEngine {
 	}
 	
 	
-	
+	public static String extractAndConvertResultAsString(String contentAsString,DynamicNamespaceContext dnc,AbstractXPathExpressionEngine xPathEngine, String pattern, Logger log) throws Exception {
+		return _extractAndConvertResultAsString(null, contentAsString,
+				dnc, xPathEngine, pattern, log);
+	}
 	public static String extractAndConvertResultAsString(Element element,AbstractXPathExpressionEngine xPathEngine, String pattern, Logger log) throws Exception {
 		DynamicNamespaceContext dnc = new DynamicNamespaceContext();
 		dnc.findPrefixNamespace(element);
-		return extractAndConvertResultAsString(element, dnc, xPathEngine, pattern, log);
+		return _extractAndConvertResultAsString(element, null,
+				dnc, xPathEngine, pattern, log);
 	}
 	public static String extractAndConvertResultAsString(Element element,DynamicNamespaceContext dnc,AbstractXPathExpressionEngine xPathEngine, String pattern, Logger log) throws Exception {
+		return _extractAndConvertResultAsString(element, null,
+				dnc, xPathEngine, pattern, log);
+	}
+	private static String _extractAndConvertResultAsString(Element element,String contentAsString,
+			DynamicNamespaceContext dnc,AbstractXPathExpressionEngine xPathEngine, String pattern, Logger log) throws Exception {
 		
 		// Provo a cercarlo prima come Node
 		NodeList nodeList = null;
 		Exception exceptionNodeSet = null;
 		String risultato = null;
 		try{
-			nodeList = (NodeList) xPathEngine.getMatchPattern(element, dnc, pattern,XPathReturnType.NODESET);
+			if(element!=null) {
+				nodeList = (NodeList) xPathEngine.getMatchPattern(element, dnc, pattern,XPathReturnType.NODESET);
+			}
+			else {
+				nodeList = (NodeList) xPathEngine.getMatchPattern(contentAsString, dnc, pattern,XPathReturnType.NODESET);
+			}
 			if(nodeList!=null){
 				risultato = xPathEngine.toString(nodeList);
 			}
@@ -906,7 +920,12 @@ public abstract class AbstractXPathExpressionEngine {
 		// Insomma il caso dell'xml sopra e' quello speciale, che pero' deve essere eseguito prima, perche' altrimenti il caso string sotto funziona sempre, e quindi non si ottiene mai l'xml.
 		if(risultato==null || "".equals(risultato)){
 			try{
-				risultato = xPathEngine.getStringMatchPattern(element, dnc, pattern);
+				if(element!=null) {
+					risultato = xPathEngine.getStringMatchPattern(element, dnc, pattern);
+				}
+				else {
+					risultato = xPathEngine.getStringMatchPattern(contentAsString, dnc, pattern);
+				}
 			}catch(Exception e){
 				if(exceptionNodeSet!=null){
 					log.debug("Errore avvenuto durante la getStringMatchPattern("+pattern
@@ -939,19 +958,35 @@ public abstract class AbstractXPathExpressionEngine {
 	
 	
 	
+	public static List<String> extractAndConvertResultAsList(String contentAsString,DynamicNamespaceContext dnc,AbstractXPathExpressionEngine xPathEngine, String pattern, Logger log) throws Exception {
+		return _extractAndConvertResultAsList(null, contentAsString,
+				dnc, xPathEngine, pattern, log);
+	}
 	public static List<String> extractAndConvertResultAsList(Element element,AbstractXPathExpressionEngine xPathEngine, String pattern, Logger log) throws Exception {
 		DynamicNamespaceContext dnc = new DynamicNamespaceContext();
 		dnc.findPrefixNamespace(element);
-		return extractAndConvertResultAsList(element, dnc, xPathEngine, pattern, log);
+		return _extractAndConvertResultAsList(element, null,
+				dnc, xPathEngine, pattern, log);
 	}
 	public static List<String> extractAndConvertResultAsList(Element element,DynamicNamespaceContext dnc,AbstractXPathExpressionEngine xPathEngine, String pattern, Logger log) throws Exception {
+		return _extractAndConvertResultAsList(element, null,
+				dnc, xPathEngine, pattern, log);
+	}
+	private static List<String> _extractAndConvertResultAsList(Element element,String contentAsString,
+			DynamicNamespaceContext dnc,AbstractXPathExpressionEngine xPathEngine, String pattern, Logger log) throws Exception {
+		
 		
 		// Provo a cercarlo prima come Node
 		NodeList nodeList = null;
 		Exception exceptionNodeSet = null;
 		List<String> risultato = new ArrayList<>();
 		try{
-			nodeList = (NodeList) xPathEngine.getMatchPattern(element, dnc, pattern,XPathReturnType.NODESET);
+			if(element!=null) {
+				nodeList = (NodeList) xPathEngine.getMatchPattern(element, dnc, pattern,XPathReturnType.NODESET);
+			}
+			else {
+				nodeList = (NodeList) xPathEngine.getMatchPattern(contentAsString, dnc, pattern,XPathReturnType.NODESET);
+			}
 			if(nodeList!=null){
 				risultato = xPathEngine.toList(nodeList);
 			}
@@ -963,7 +998,13 @@ public abstract class AbstractXPathExpressionEngine {
 		// Insomma il caso dell'xml sopra e' quello speciale, che pero' deve essere eseguito prima, perche' altrimenti il caso string sotto funziona sempre, e quindi non si ottiene mai l'xml.
 		if(risultato==null || risultato.isEmpty()){
 			try{
-				String s = xPathEngine.getStringMatchPattern(element, dnc, pattern);
+				String s = null;
+				if(element!=null) {
+					s = xPathEngine.getStringMatchPattern(element, dnc, pattern);
+				}
+				else {
+					s = xPathEngine.getStringMatchPattern(contentAsString, dnc, pattern);
+				}
 				if(risultato==null) {
 					risultato = new ArrayList<>();
 				}

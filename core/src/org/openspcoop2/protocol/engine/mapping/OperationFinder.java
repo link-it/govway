@@ -38,12 +38,12 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
-import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
+import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
@@ -156,7 +156,7 @@ public class OperationFinder {
 								azione = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, pattern,  log);
 							}
 							else {
-								azione = JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, pattern, log);
+								azione = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, pattern, log);
 							}
 						}
 						else if(ModalitaIdentificazioneAzione.INPUT_BASED.equals(modalitaIdentificazione)){

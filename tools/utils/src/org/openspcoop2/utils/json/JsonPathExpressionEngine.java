@@ -670,7 +670,7 @@ public class JsonPathExpressionEngine {
 	public static List<String> extractAndConvertResultAsList(String elementJson, String pattern, Logger log) throws Exception {
 		return  _extractAndConvertResultAsString(elementJson, pattern, log, true);
 	}
-	public static List<String> _extractAndConvertResultAsString(String elementJson, String pattern, Logger log, boolean returnAsList) throws Exception {
+	private static List<String> _extractAndConvertResultAsString(String elementJson, String pattern, Logger log, boolean returnAsList) throws Exception {
 		
 		List<String> lReturn = new ArrayList<>();
 		

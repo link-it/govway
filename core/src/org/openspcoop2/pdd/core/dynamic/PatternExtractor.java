@@ -25,7 +25,6 @@ package org.openspcoop2.pdd.core.dynamic;
 import java.util.List;
 
 import org.openspcoop2.message.xml.XMLUtils;
-import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.json.JsonPathNotFoundException;
 import org.openspcoop2.utils.json.JsonPathNotValidException;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
@@ -33,6 +32,7 @@ import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.XPathNotFoundException;
 import org.openspcoop2.utils.xml.XPathNotValidException;
 import org.openspcoop2.utils.xml.XPathReturnType;
+import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
@@ -95,7 +95,7 @@ public class PatternExtractor {
 				valore = AbstractXPathExpressionEngine.extractAndConvertResultAsString(this.element, this.dnc, xPathEngine, pattern, this.log);
 			}
 			else {
-				valore = JsonPathExpressionEngine.extractAndConvertResultAsString(this.elementJson, pattern, this.log);
+				valore = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(this.elementJson, pattern, this.log);
 			}
 		}
 		catch(XPathNotFoundException e){
@@ -152,7 +152,7 @@ public class PatternExtractor {
 				valore = AbstractXPathExpressionEngine.extractAndConvertResultAsList(this.element, this.dnc, xPathEngine, pattern, this.log);
 			}
 			else {
-				valore = JsonPathExpressionEngine.extractAndConvertResultAsList(this.elementJson, pattern, this.log);
+				valore = JsonXmlPathExpressionEngine.extractAndConvertResultAsList(this.elementJson, pattern, this.log);
 			}
 		}
 		catch(XPathNotFoundException e){

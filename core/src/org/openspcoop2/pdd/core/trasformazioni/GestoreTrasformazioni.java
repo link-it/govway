@@ -55,9 +55,9 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
+import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
@@ -294,7 +294,7 @@ public class GestoreTrasformazioni {
 								valore = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, check.getApplicabilita().getPattern(), this.log);
 							}
 							else {
-								valore = JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, check.getApplicabilita().getPattern(), this.log);
+								valore = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, check.getApplicabilita().getPattern(), this.log);
 							}
 						}catch(Exception e){
 							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+") fallita: "+e.getMessage(),e);
@@ -636,7 +636,7 @@ public class GestoreTrasformazioni {
 								valore = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, check.getApplicabilita().getPattern(), this.log);
 							}
 							else {
-								valore = JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, check.getApplicabilita().getPattern(), this.log);
+								valore = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, check.getApplicabilita().getPattern(), this.log);
 							}
 						}catch(Exception e){
 							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+") fallita: "+e.getMessage(),e);

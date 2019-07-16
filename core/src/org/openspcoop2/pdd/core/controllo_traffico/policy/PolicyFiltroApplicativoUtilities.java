@@ -34,10 +34,10 @@ import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.core.controllo_traffico.plugins.Dati;
 import org.openspcoop2.pdd.core.controllo_traffico.plugins.IRateLimiting;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolContext;
-import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
+import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
@@ -80,7 +80,7 @@ public class PolicyFiltroApplicativoUtilities {
 				return AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, nome,  log);
 			}
 			else {
-				return JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, nome, log);
+				return JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, nome, log);
 			}
 			
 		case URLBASED:

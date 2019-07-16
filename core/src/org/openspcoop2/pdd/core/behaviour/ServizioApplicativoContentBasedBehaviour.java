@@ -40,8 +40,8 @@ import org.openspcoop2.pdd.core.GestoreMessaggiException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
+import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
 import org.w3c.dom.Element;
 
 /**
@@ -158,7 +158,7 @@ public class ServizioApplicativoContentBasedBehaviour implements IBehaviour {
 						saNome = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, patternUsed, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
 					}
 					else {
-						saNome = JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, patternUsed, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+						saNome = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, patternUsed, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
 					}
 					if(saNome==null) {
 						throw new Exception("Nessun valore trovato");

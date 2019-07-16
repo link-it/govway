@@ -16,3 +16,4 @@ Funzionalità Avanzate
         connettori/index.rst
         correlazione
         autenticazione
+	contentBased

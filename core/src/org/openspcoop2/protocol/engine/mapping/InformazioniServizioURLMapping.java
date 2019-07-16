@@ -42,11 +42,11 @@ import org.openspcoop2.protocol.manifest.UrlMapping;
 import org.openspcoop2.protocol.manifest.constants.UrlMappingSourceType;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.transport.Credential;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
+import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
@@ -502,7 +502,7 @@ public class InformazioniServizioURLMapping {
 					return AbstractXPathExpressionEngine.extractAndConvertResultAsString(element,dnc, xPathEngine, mappingInfo.getPattern(),  this.log);
 				}
 				else {
-					return JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, mappingInfo.getPattern(), this.log);
+					return JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, mappingInfo.getPattern(), this.log);
 				}
 			}catch(Exception e){
 				throw new ProtocolException("URLMapping["+oggetto+"] identificazione "+ModalitaIdentificazione.CONTENT_BASED.toString()+" non riuscita: "+e.getMessage(),e);

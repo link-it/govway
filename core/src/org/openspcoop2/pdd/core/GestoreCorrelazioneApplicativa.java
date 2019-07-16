@@ -60,11 +60,11 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
-import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
+import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
 import org.slf4j.Logger;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
@@ -391,7 +391,7 @@ public class GestoreCorrelazioneApplicativa {
 							nomeElemento = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, elemento.getNome(), this.log);
 						}
 						else {
-							nomeElemento = JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getNome(), this.log);
+							nomeElemento = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getNome(), this.log);
 						}
 						if(nomeElemento!=null) {
 							matchNodePerCorrelazioneApplicativa = true;
@@ -505,7 +505,7 @@ public class GestoreCorrelazioneApplicativa {
 								idCorrelazioneApplicativa = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, elemento.getPattern(), this.log);
 							}
 							else {
-								idCorrelazioneApplicativa = JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getPattern(), this.log);
+								idCorrelazioneApplicativa = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getPattern(), this.log);
 							}
 														
 						}catch(Exception e){
@@ -853,7 +853,7 @@ public class GestoreCorrelazioneApplicativa {
 							nomeElemento = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, elemento.getNome(), this.log);
 						}
 						else {
-							nomeElemento = JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getNome(), this.log);
+							nomeElemento = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getNome(), this.log);
 						}
 						if(nomeElemento!=null) {
 							matchNodePerCorrelazioneApplicativa = true;
@@ -933,7 +933,7 @@ public class GestoreCorrelazioneApplicativa {
 								idCorrelazioneApplicativa = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, elemento.getPattern(), this.log);
 							}
 							else {
-								idCorrelazioneApplicativa = JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getPattern(), this.log);
+								idCorrelazioneApplicativa = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getPattern(), this.log);
 							}
 														
 						}catch(Exception e){

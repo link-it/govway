@@ -51,11 +51,11 @@ import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.protocol.utils.EsitoIdentificationModeContextProperty;
 import org.openspcoop2.protocol.utils.EsitoIdentificationModeSoapFault;
 import org.openspcoop2.protocol.utils.EsitoTransportContextIdentification;
-import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.rest.problem.JsonDeserializer;
 import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
 import org.openspcoop2.utils.rest.problem.XmlDeserializer;
 import org.openspcoop2.utils.transport.TransportRequestContext;
+import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -728,7 +728,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			// codice 
 			//$.exception.code.value
 			try {
-				String tipo = JsonPathExpressionEngine.extractAndConvertResultAsString(jsonBody, "$.exception.type", this.log);
+				String tipo = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(jsonBody, "$.exception.type", this.log);
 				if(TipoEccezione.PROTOCOL.getValue().equals(tipo)){
 					if(this.erroreProtocollo) {
 						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
@@ -738,7 +738,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					}
 				}
 				else{
-					String value = JsonPathExpressionEngine.extractAndConvertResultAsString(jsonBody, "$.exception.code.value", this.log);
+					String value = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(jsonBody, "$.exception.code.value", this.log);
 					String prefixFaultCode = erroreApplicativo.getFaultPrefixCode();
 					if(prefixFaultCode==null){
 						prefixFaultCode=Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
