@@ -2864,7 +2864,7 @@ public class RicezioneContenutiApplicativi {
 				String wwwAuthenticateErrorHeader = null;
 				try {						
 					EsitoAutorizzazionePortaDelegata esito = 
-							GestoreAutorizzazione.verificaAutorizzazionePortaDelegata(tipoAutorizzazione, datiInvocazione, pddContext, protocolFactory, requestMessage); 
+							GestoreAutorizzazione.verificaAutorizzazionePortaDelegata(tipoAutorizzazione, datiInvocazione, pddContext, protocolFactory, requestMessage, logCore); 
 					if(esito.getDetails()==null){
 						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
 					}else{

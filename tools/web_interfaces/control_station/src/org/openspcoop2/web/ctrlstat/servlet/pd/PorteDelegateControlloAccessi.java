@@ -244,6 +244,13 @@ public class PorteDelegateControlloAccessi extends Action {
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(idAsps),true);
 			String protocollo = ProtocolFactoryManager.getInstance().getProtocolByServiceType(asps.getTipo());
 			
+			// La XACML Policy, se definita nella porta delegata può solo essere cambiata, non annullata.
+			if(allegatoXacmlPolicy!=null && allegatoXacmlPolicy.getValue()==null) {
+				if(portaDelegata.getXacmlPolicy()!=null && !"".equals(portaDelegata.getXacmlPolicy())) {
+					allegatoXacmlPolicy.setValue(portaDelegata.getXacmlPolicy().getBytes());
+				}
+			}
+			
 			if(	porteDelegateHelper.isEditModeInProgress() && !applicaModifica){
 
 				if (autenticazione == null) {
@@ -610,6 +617,9 @@ public class PorteDelegateControlloAccessi extends Action {
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
+			
+			// cancello i file temporanei
+			porteDelegateHelper.deleteBinaryParameters(allegatoXacmlPolicy);
 			
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();

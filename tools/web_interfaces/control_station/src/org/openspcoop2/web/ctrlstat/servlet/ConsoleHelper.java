@@ -4255,6 +4255,7 @@ public class ConsoleHelper {
 			boolean old_xacmlPolicy = false;
 			String old_autorizzazione = null;
 			Long idPorta = null;
+			IDServizio idServizio = null;
 			
 			String nomePostback = this.getPostBackElementName();
 			if(!CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE.equals(nomePostback) &&
@@ -4275,6 +4276,9 @@ public class ConsoleHelper {
 					old_autorizzazione_scope = pd.getScope() != null && pd.getScope().getStato().equals(StatoFunzionalita.ABILITATO);
 					old_xacmlPolicy = StringUtils.isNotEmpty(pd.getXacmlPolicy());
 					idPorta = pd.getId();
+					idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
+							pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
+							pd.getServizio().getVersione());
 				}
 				else {
 					PortaApplicativa pa = (PortaApplicativa) oggetto;
@@ -4284,6 +4288,9 @@ public class ConsoleHelper {
 					old_autorizzazione_scope = pa.getScope() != null && pa.getScope().getStato().equals(StatoFunzionalita.ABILITATO);
 					old_xacmlPolicy = StringUtils.isNotEmpty(pa.getXacmlPolicy());
 					idPorta = pa.getId();
+					idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
+							pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(), 
+							pa.getServizio().getVersione());
 				}
 			}
 			
@@ -4687,6 +4694,24 @@ public class ConsoleHelper {
 							de.setRows(6);
 							de.setCols(55);
 						}
+						
+						org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = org.openspcoop2.core.registry.constants.ServiceBinding.REST;
+						if(idServizio!=null) {
+							AccordoServizioParteSpecifica asps = this.apsCore.getServizio(idServizio,false);
+							AccordoServizioParteComuneSintetico aspc = this.apcCore.getAccordoServizioSintetico(this.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+							serviceBinding = aspc.getServiceBinding();
+						}
+						
+						DataElementInfo dInfoTokenClaims = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
+						dInfoTokenClaims.setHeaderBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS);
+						if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+							dInfoTokenClaims.setListBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_REST_VALORI);
+						}
+						else {
+							dInfoTokenClaims.setListBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOAP_VALORI);
+						}
+						de.setInfo(dInfoTokenClaims);
+						
 						dati.addElement(de);
 					}
 				}

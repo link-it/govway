@@ -89,3 +89,36 @@ ruoli 'Operatore1' e 'Operatore2':
         </Rule>
         <Rule Effect="Deny" RuleId="ko" />
     </Policy>
+
+Un altro esempio di policy che verifica l'uguaglianza tra il valore del claim 'sub' presente nel token e quello fornito nel query parameter 'sub' è la seguente:
+
+.. code-block:: xml
+
+   <Policy PolicyId="Policy"
+	RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:permit-overrides"
+	xmlns="urn:oasis:names:tc:xacml:2.0:policy:schema:os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:oasis:names:tc:xacml:2.0:policy:schema:os http://docs.oasis-open.org/xacml/2.0/access_control-xacml-2.0-policy-schema-os.xsd">
+	<Target />
+	<Rule Effect="Permit" RuleId="ok">
+		<Condition>
+			<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:or">
+
+				 <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:any-of-any">
+					<Function FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal"/>
+					<ActionAttributeDesignator 
+					    AttributeId="org:govway:action:url:parameter:sub"
+					    DataType="http://www.w3.org/2001/XMLSchema#string"
+					    MustBePresent="false"
+					/>
+					<ActionAttributeDesignator 
+					    AttributeId="org:govway:action:token:introspection:claim:sub"
+					    DataType="http://www.w3.org/2001/XMLSchema#string"
+					    MustBePresent="false"
+					/>
+				</Apply>
+
+			</Apply>
+		</Condition>
+	</Rule>
+	<Rule Effect="Deny" RuleId="ko" />
+   </Policy>

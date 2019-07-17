@@ -33,5 +33,6 @@ aspetti che compongono il controllo degli accessi.
    modalitaAccesso
    creazioneRuolo
    attribuzioneRuoli
+   tokenClaims
    xacmlPolicy
    scope

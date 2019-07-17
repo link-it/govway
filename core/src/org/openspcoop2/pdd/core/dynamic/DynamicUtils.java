@@ -29,6 +29,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -39,12 +40,20 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
+import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.utils.DumpAttachment;
 import org.openspcoop2.message.utils.DumpMessaggio;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.protocol.engine.RequestInfo;
+import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.utils.DynamicStringReplace;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.ArchiveType;
@@ -72,6 +81,106 @@ import freemarker.template.TemplateModel;
  */
 public class DynamicUtils {
 
+	// *** DYNAMIC MAP ***
+	
+	// NOTA: uso volutamente le stesse costanti del connettore File
+	
+	public static void fillDynamicMapRequest(Logger log, Map<String, Object> dynamicMap, PdDContext pddContext, String urlInvocazione,
+			OpenSPCoop2Message message,
+			Element element,
+			String elementJson,
+			Busta busta, Properties trasporto, Properties url,
+			ErrorHandler errorHandler) {
+		_fillDynamicMap(log, dynamicMap, pddContext, urlInvocazione, 
+				message,
+				element, 
+				elementJson, 
+				busta, trasporto, url,
+				errorHandler);	
+    }
+	public static void fillDynamicMapResponse(Logger log, Map<String, Object> dynamicMap, Map<String, Object> dynamicMapRequest, PdDContext pddContext,
+			OpenSPCoop2Message message,
+			Element element,
+			String elementJson,
+			Busta busta, Properties trasporto,
+			ErrorHandler errorHandler) {
+		Map<String, Object> dynamicMapResponse = new HashMap<>();
+		_fillDynamicMap(log, dynamicMapResponse, pddContext, null, 
+				message,
+				element, 
+				elementJson, 
+				busta, trasporto, null,
+				errorHandler);
+		if(dynamicMapResponse!=null && !dynamicMapResponse.isEmpty()) {
+			Iterator<String> it = dynamicMapResponse.keySet().iterator();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				Object o = dynamicMapResponse.get(key);
+				if(Costanti.MAP_ERROR_HANDLER_OBJECT.toLowerCase().equals(key.toLowerCase()) 
+						|| 
+					Costanti.MAP_RESPONSE.toLowerCase().equals(key.toLowerCase())){
+					dynamicMap.put(key, o);
+				}
+				else {
+					String keyResponse = key+Costanti.MAP_SUFFIX_RESPONSE;
+					dynamicMap.put(keyResponse, o);
+					dynamicMap.put(keyResponse.toLowerCase(), o);
+				}
+			}
+		}
+		if(dynamicMapRequest!=null && !dynamicMapRequest.isEmpty()) {
+			Iterator<String> it = dynamicMapRequest.keySet().iterator();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				if(Costanti.MAP_ERROR_HANDLER_OBJECT.toLowerCase().equals(key.toLowerCase())
+						|| 
+					Costanti.MAP_REQUEST.toLowerCase().equals(key.toLowerCase())){
+					continue; // error handler viene usato quello istanziato per la risposta; mentre la richiesta è già stata consumata.
+				}
+				Object o = dynamicMapRequest.get(key);
+				if(o instanceof PatternExtractor) {
+					PatternExtractor pe = (PatternExtractor) o;
+					pe.refreshContent();
+				}
+				dynamicMap.put(key, o);
+			}
+		}
+	}
+	public static void _fillDynamicMap(Logger log, Map<String, Object> dynamicMap, PdDContext pddContext, String urlInvocazione,
+			OpenSPCoop2Message message,
+			Element element,
+			String elementJson,
+			Busta busta, Properties trasporto, Properties url,
+			ErrorHandler errorHandler) {
+		DynamicInfo dInfo = new DynamicInfo();
+		dInfo.setBusta(busta);
+		dInfo.setPddContext(pddContext);
+		if(trasporto!=null && !trasporto.isEmpty()) {
+			Properties pNew = new Properties();
+			pNew.putAll(trasporto);
+			dInfo.setTrasporto(pNew);
+		}
+		if(url!=null && !url.isEmpty()) {
+			Properties pNew = new Properties();
+			pNew.putAll(url);
+			dInfo.setQueryParameters(pNew);
+		}
+		if(urlInvocazione!=null) {
+			dInfo.setUrl(urlInvocazione);
+		}
+		if(element!=null) {
+			dInfo.setXml(element);
+		}
+		else if(elementJson!=null) {
+			dInfo.setJson(elementJson);
+		}
+		if(message!=null) {
+			dInfo.setMessage(message);
+		}
+		dInfo.setErrorHandler(errorHandler);
+		DynamicUtils.fillDynamicMap(log, dynamicMap, dInfo);		
+    }
+	
 	public static void fillDynamicMap(Logger log, Map<String, Object> dynamicMap, DynamicInfo dynamicInfo) {
 		if(dynamicMap.containsKey(Costanti.MAP_DATE_OBJECT)==false) {
 			dynamicMap.put(Costanti.MAP_DATE_OBJECT, DateManager.getDate());
@@ -92,8 +201,17 @@ public class DynamicUtils {
 					RequestInfo requestInfo = (RequestInfo)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 					if(requestInfo.getProtocolContext()!=null) {
 						dynamicMap.put(Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT, requestInfo.getProtocolContext());
+						dynamicMap.put(Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT.toLowerCase(), requestInfo.getProtocolContext());
 					}
 				}
+			}
+			if(dynamicMap.containsKey(Costanti.MAP_TOKEN_INFO)==false) {
+				Object oInformazioniTokenNormalizzate = dynamicInfo.getPddContext().getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+	    		if(oInformazioniTokenNormalizzate!=null) {
+	    			InformazioniToken informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
+	    			dynamicMap.put(Costanti.MAP_TOKEN_INFO, informazioniTokenNormalizzate);
+	    			dynamicMap.put(Costanti.MAP_TOKEN_INFO.toLowerCase(), informazioniTokenNormalizzate);
+	    		}
 			}
 		}
 		
@@ -159,6 +277,70 @@ public class DynamicUtils {
 		}
 	}
 
+	
+	
+	
+	// READ DYNAMIC INFO
+	
+	public static DynamicInfo readDynamicInfo(OpenSPCoop2Message message) throws DynamicException {
+		Element element = null;
+		String elementJson = null;
+		Properties parametriTrasporto = null;
+		Properties parametriUrl = null;
+		String urlInvocazione = null;
+		
+		try{
+			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
+				OpenSPCoop2SoapMessage soapMessage = message.castAsSoap();
+				element = soapMessage.getSOAPPart().getEnvelope();
+			}
+			else{
+				if(MessageType.XML.equals(message.getMessageType()) && message.castAsRest().hasContent()){
+					OpenSPCoop2RestXmlMessage xml = message.castAsRestXml();
+					element = xml.getContent();	
+				}
+				else if(MessageType.JSON.equals(message.getMessageType()) && message.castAsRest().hasContent()){
+					OpenSPCoop2RestJsonMessage json = message.castAsRestJson();
+					elementJson = json.getContent();
+				}
+			}
+			
+
+			if(message.getTransportRequestContext()!=null) {
+				if(message.getTransportRequestContext().getParametersTrasporto()!=null &&
+					!message.getTransportRequestContext().getParametersTrasporto().isEmpty()) {
+					parametriTrasporto = message.getTransportRequestContext().getParametersTrasporto();
+				}
+				if(message.getTransportRequestContext().getParametersFormBased()!=null &&
+						!message.getTransportRequestContext().getParametersFormBased().isEmpty()) {
+					parametriUrl = message.getTransportRequestContext().getParametersFormBased();
+				}
+				urlInvocazione = message.getTransportRequestContext().getUrlInvocazione_formBased();
+			}
+			else if(message.getTransportResponseContext()!=null) {
+				if(message.getTransportResponseContext().getParametersTrasporto()!=null &&
+						!message.getTransportResponseContext().getParametersTrasporto().isEmpty()) {
+					parametriTrasporto = message.getTransportResponseContext().getParametersTrasporto();
+				}
+			}
+			
+		}catch(Throwable e){
+			throw new DynamicException(e.getMessage(),e);
+		}
+		
+		DynamicInfo dInfo = new DynamicInfo();
+		dInfo.setJson(elementJson);
+		dInfo.setXml(element);
+		dInfo.setTrasporto(parametriTrasporto);
+		dInfo.setQueryParameters(parametriUrl);
+		dInfo.setUrl(urlInvocazione);
+		return dInfo;
+	}
+	
+	
+	
+	
+	// *** TEMPLATE GOVWAY ***
 
 	public static String convertDynamicPropertyValue(String name,String tmpParam,Map<String,Object> dynamicMap,PdDContext pddContext, boolean forceStartWithDollaro) throws DynamicException{
 		

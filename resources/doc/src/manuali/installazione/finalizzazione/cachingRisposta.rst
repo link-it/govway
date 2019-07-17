@@ -34,7 +34,7 @@ diversi tipi di memoria secondaria. Per ulteriori dettagli su come
 abilitare i vari tipi di memoria si rimanda alla documentazione:
 http://commons.apache.org/proper/commons-jcs/JCSPlugins.html.
 
-   **Note**
+.. note::
 
    Accedendo alla sezione *'Configurazione - Generale', tramite
    l'utilizzo della govwayConsole in modalità avanzata*, è possibile

@@ -13,6 +13,8 @@ Le regole di trasformazione possono avvalersi di un contesto di risorse, con val
 -   date.FORMAT: la data di elaborazione del messaggio; il formato fornito deve essere conforme a quanto richiesto dalla classe java 'java.text.SimpleDateFormat' (es. ${date:yyyyMMdd_HHmmssSSS})
 -   busta.FIELD: accesso alle informazioni proprie del profilo di interoperabilità utilizzato; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.protocol.sdk.Busta' (ad es. per il mittente usare *busta.mittente*)
 -   property.NAME: accesso alle proprietà contenute nella traccia (ad esempio l'identificativo SDI); Il valore 'NAME' indica il nome della proprietà da utilizzare.
+-   tokenInfo:FIELD: accesso ai claim di un token precedentemente validato; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.pdd.core.token.InformazioniToken' (es. per ottenere il valore del claim 'sub' usare ${tokenInfo:sub})
+-   transportContext:FIELD: accesso ai dati della richiesta http; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext' (es. per il principal usare ${transportContext:credential.principal})
 
 L'utilizzo dei suddetti elementi, come placeholder all'interno di template, comporta l'automatica sostituzione con il valore attuale a runtime da parte del gateway.
 
@@ -27,6 +29,8 @@ La sintassi per accedere le proprietà dinamiche sopraelencate è differente in 
 - ${date:FORMAT}
 - ${busta:FIELD}
 - ${property:NAME}
+- ${tokenInfo:FIELD}
+- ${transportContext:FIELD}
 
 Nei casi in cui il testo della trasformazione è interpretato da framework esterni (quali Freemarker o Velocity) le proprietà vengono rese disponibili da Govway inizializzando una mappa contenente i valori come oggetti. In questo caso le chiavi della mappa sono le seguenti (tra parentesi sono indicati i tipi di dato corrispondenti):
 
@@ -39,6 +43,8 @@ Nei casi in cui il testo della trasformazione è interpretato da framework ester
 - date (java.util.Date)
 - busta (org.openspcoop2.protocol.sdk.Busta)
 - property (java.util.Properties)
+- tokenInfo (org.openspcoop2.pdd.core.token.InformazioniToken)
+- transportContext (org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext)
 
 Nel caso di utilizzo di template 'Freemarker' o 'Velocity' sono disponibili i seguenti ulteriori oggetti:
  

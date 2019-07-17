@@ -46,6 +46,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -390,7 +391,7 @@ public class GestoreTrasformazioni {
 		this.log.debug("Costruzione dynamic map ...");
 		Map<String, Object> dynamicMap = new Hashtable<String, Object>();
 		ErrorHandler errorHandler = new ErrorHandler();
-		GestoreTrasformazioniUtilities.fillDynamicMapRequest(this.log, dynamicMap, this.pddContext, urlInvocazione,
+		DynamicUtils.fillDynamicMapRequest(this.log, dynamicMap, this.pddContext, urlInvocazione,
 				message,
 				element, elementJson, 
 				busta, parametriTrasporto, parametriUrl,
@@ -708,7 +709,7 @@ public class GestoreTrasformazioni {
 		this.log.debug("Costruzione dynamic map ...");
 		Map<String, Object> dynamicMap = new Hashtable<String, Object>();
 		ErrorHandler errorHandler = new ErrorHandler();
-		GestoreTrasformazioniUtilities.fillDynamicMapResponse(this.log, dynamicMap, this.dynamicMapRequest, this.pddContext, 
+		DynamicUtils.fillDynamicMapResponse(this.log, dynamicMap, this.dynamicMapRequest, this.pddContext, 
 				message,
 				element, elementJson, busta, parametriTrasporto,
 				errorHandler);

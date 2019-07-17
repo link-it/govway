@@ -5176,7 +5176,7 @@ public class RicezioneBuste {
 				
 				EsitoAutorizzazionePortaApplicativa esito = 
 						GestoreAutorizzazione.verificaAutorizzazionePortaApplicativa(tipoAutorizzazione, 
-								datiInvocazione, pddContext, protocolFactory, requestMessage);
+								datiInvocazione, pddContext, protocolFactory, requestMessage, logCore);
 				if(esito.getDetails()==null){
 					msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
 				}else{

@@ -265,6 +265,13 @@ public class PorteApplicativeControlloAccessi extends Action {
 				policyValues[(i+1)] = genericProperties.getNome();
 			}
 			
+			// La XACML Policy, se definita nella porta delegata può solo essere cambiata, non annullata.
+			if(allegatoXacmlPolicy!=null && allegatoXacmlPolicy.getValue()==null) {
+				if(pa.getXacmlPolicy()!=null && !"".equals(pa.getXacmlPolicy())) {
+					allegatoXacmlPolicy.setValue(pa.getXacmlPolicy().getBytes());
+				}
+			}
+			
 			if(	porteApplicativeHelper.isEditModeInProgress() && !applicaModifica){
 
 				if (autenticazione == null) {
@@ -628,6 +635,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
+						
+			// cancello i file temporanei
+			porteApplicativeHelper.deleteBinaryParameters(allegatoXacmlPolicy);
 			
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();

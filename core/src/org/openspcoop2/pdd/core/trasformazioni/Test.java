@@ -37,6 +37,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.dynamic.Costanti;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -612,7 +613,7 @@ public class Test {
 		
 		Map<String, Object> dynamicMapXmlRequest = new Hashtable<String, Object>();
 		ErrorHandler errorHandlerXmlRequest = new ErrorHandler();
-		GestoreTrasformazioniUtilities.fillDynamicMapRequest(log, dynamicMapXmlRequest, pddContext, urlInvocazione,
+		DynamicUtils.fillDynamicMapRequest(log, dynamicMapXmlRequest, pddContext, urlInvocazione,
 				xmlMessageRequest,
 				elementRequest, null, 
 				busta, parametriTrasporto, parametriUrl,
@@ -620,7 +621,7 @@ public class Test {
 		
 		Map<String, Object> dynamicMapXmlResponse = new Hashtable<String, Object>();
 		ErrorHandler errorHandlerXmlResponse = new ErrorHandler();
-		GestoreTrasformazioniUtilities.fillDynamicMapResponse(log, dynamicMapXmlResponse, dynamicMapXmlRequest, pddContext, 
+		DynamicUtils.fillDynamicMapResponse(log, dynamicMapXmlResponse, dynamicMapXmlRequest, pddContext, 
 				xmlMessageResponse,
 				elementResponse, null, 
 				busta, parametriTrasportoRisposta,
@@ -628,7 +629,7 @@ public class Test {
 		
 		Map<String, Object> dynamicMapJsonRequest = new Hashtable<String, Object>();
 		ErrorHandler errorHandlerJsonRequest = new ErrorHandler();
-		GestoreTrasformazioniUtilities.fillDynamicMapRequest(log, dynamicMapJsonRequest, pddContext, urlInvocazione,
+		DynamicUtils.fillDynamicMapRequest(log, dynamicMapJsonRequest, pddContext, urlInvocazione,
 				jsonMessageRequest,
 				null, JSON_REQUEST, 
 				busta, parametriTrasporto, parametriUrl,
@@ -636,7 +637,7 @@ public class Test {
 		
 		Map<String, Object> dynamicMapJsonResponse = new Hashtable<String, Object>();
 		ErrorHandler errorHandlerJsonResponse = new ErrorHandler();
-		GestoreTrasformazioniUtilities.fillDynamicMapResponse(log, dynamicMapJsonResponse, dynamicMapJsonRequest, pddContext, 
+		DynamicUtils.fillDynamicMapResponse(log, dynamicMapJsonResponse, dynamicMapJsonRequest, pddContext, 
 				jsonMessageResponse,
 				null, JSON_RESPONSE,  
 				busta, parametriTrasportoRisposta,

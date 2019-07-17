@@ -26,8 +26,6 @@ package org.openspcoop2.pdd.core.trasformazioni;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -54,13 +52,8 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
-import org.openspcoop2.pdd.core.dynamic.Costanti;
-import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
-import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
-import org.openspcoop2.pdd.core.dynamic.PatternExtractor;
 import org.openspcoop2.protocol.engine.RequestInfo;
-import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.utils.dch.DataContentHandlerManager;
 import org.openspcoop2.utils.dch.InputStreamDataSource;
 import org.openspcoop2.utils.io.ArchiveType;
@@ -82,104 +75,7 @@ import org.w3c.dom.Element;
 
 public class GestoreTrasformazioniUtilities {
 
-	// NOTA: uso volutamente le stesse costanti del connettore File
-	
-	public static void fillDynamicMapRequest(Logger log, Map<String, Object> dynamicMap, PdDContext pddContext, String urlInvocazione,
-			OpenSPCoop2Message message,
-			Element element,
-			String elementJson,
-			Busta busta, Properties trasporto, Properties url,
-			ErrorHandler errorHandler) {
-		_fillDynamicMap(log, dynamicMap, pddContext, urlInvocazione, 
-				message,
-				element, 
-				elementJson, 
-				busta, trasporto, url,
-				errorHandler);	
-    }
-	public static void fillDynamicMapResponse(Logger log, Map<String, Object> dynamicMap, Map<String, Object> dynamicMapRequest, PdDContext pddContext,
-			OpenSPCoop2Message message,
-			Element element,
-			String elementJson,
-			Busta busta, Properties trasporto,
-			ErrorHandler errorHandler) {
-		Map<String, Object> dynamicMapResponse = new HashMap<>();
-		_fillDynamicMap(log, dynamicMapResponse, pddContext, null, 
-				message,
-				element, 
-				elementJson, 
-				busta, trasporto, null,
-				errorHandler);
-		if(dynamicMapResponse!=null && !dynamicMapResponse.isEmpty()) {
-			Iterator<String> it = dynamicMapResponse.keySet().iterator();
-			while (it.hasNext()) {
-				String key = (String) it.next();
-				Object o = dynamicMapResponse.get(key);
-				if(Costanti.MAP_ERROR_HANDLER_OBJECT.toLowerCase().equals(key.toLowerCase()) 
-						|| 
-					Costanti.MAP_RESPONSE.toLowerCase().equals(key.toLowerCase())){
-					dynamicMap.put(key, o);
-				}
-				else {
-					String keyResponse = key+Costanti.MAP_SUFFIX_RESPONSE;
-					dynamicMap.put(keyResponse, o);
-					dynamicMap.put(keyResponse.toLowerCase(), o);
-				}
-			}
-		}
-		if(dynamicMapRequest!=null && !dynamicMapRequest.isEmpty()) {
-			Iterator<String> it = dynamicMapRequest.keySet().iterator();
-			while (it.hasNext()) {
-				String key = (String) it.next();
-				if(Costanti.MAP_ERROR_HANDLER_OBJECT.toLowerCase().equals(key.toLowerCase())
-						|| 
-					Costanti.MAP_REQUEST.toLowerCase().equals(key.toLowerCase())){
-					continue; // error handler viene usato quello istanziato per la risposta; mentre la richiesta è già stata consumata.
-				}
-				Object o = dynamicMapRequest.get(key);
-				if(o instanceof PatternExtractor) {
-					PatternExtractor pe = (PatternExtractor) o;
-					pe.refreshContent();
-				}
-				dynamicMap.put(key, o);
-			}
-		}
-	}
-	public static void _fillDynamicMap(Logger log, Map<String, Object> dynamicMap, PdDContext pddContext, String urlInvocazione,
-			OpenSPCoop2Message message,
-			Element element,
-			String elementJson,
-			Busta busta, Properties trasporto, Properties url,
-			ErrorHandler errorHandler) {
-		DynamicInfo dInfo = new DynamicInfo();
-		dInfo.setBusta(busta);
-		dInfo.setPddContext(pddContext);
-		if(trasporto!=null && !trasporto.isEmpty()) {
-			Properties pNew = new Properties();
-			pNew.putAll(trasporto);
-			dInfo.setTrasporto(pNew);
-		}
-		if(url!=null && !url.isEmpty()) {
-			Properties pNew = new Properties();
-			pNew.putAll(url);
-			dInfo.setQueryParameters(pNew);
-		}
-		if(urlInvocazione!=null) {
-			dInfo.setUrl(urlInvocazione);
-		}
-		if(element!=null) {
-			dInfo.setXml(element);
-		}
-		else if(elementJson!=null) {
-			dInfo.setJson(elementJson);
-		}
-		if(message!=null) {
-			dInfo.setMessage(message);
-		}
-		dInfo.setErrorHandler(errorHandler);
-		DynamicUtils.fillDynamicMap(log, dynamicMap, dInfo);		
-    }
-	
+
 	public static boolean isMatchContentType(String contentType, List<String> contentTypeCheckList) throws Exception {
 		
 		if(contentTypeCheckList==null || contentTypeCheckList.size()<=0) {

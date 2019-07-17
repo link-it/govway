@@ -23,11 +23,11 @@ sono i seguenti:
    precedentemente registrate sulla govwayConsole seguendo le
    indicazioni fornite in sezione :ref:`soggetto` e :ref:`applicativo`.
 
-.. note::
+   .. note::
        L'opzione di autorizzazione sui soggetti è disponibile solo se è
        stata attivata l'autenticazione.
 
-.. note::
+   .. note::
        L'opzione di autorizzazione sugli applicativi, nel caso di una
        erogazione, viene utilizzata per gestire l'accesso al servizio da
        parte di applicativi interni al dominio di GovWay.
@@ -60,7 +60,7 @@ sono i seguenti:
    ed abilitati per l'uso nei contesti di erogazione (o qualsiasi
    contesto).
 
-       **Note**
+   .. note::
 
        L'opzione di autorizzazione basata sugli scope è disponibile solo
        se è stata preventivamente attivata la Gestione Token e
@@ -73,7 +73,9 @@ sono i seguenti:
    riga, facendo seguire dopo l'uguale i valori ammessi separati da
    virgola.
 
-       **Note**
+   Per le indicazioni di dettaglio sui possibili controlli effettuabili su ogni claim si faccia riferimento alla sezione :ref:`tokenClaims`.
+
+   .. note::
 
        L'opzione di autorizzazione basata sui token è disponibile solo
        se è stata preventivamente attivata la Gestione Token e

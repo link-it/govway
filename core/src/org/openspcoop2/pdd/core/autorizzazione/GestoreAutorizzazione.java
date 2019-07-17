@@ -25,7 +25,9 @@
 package org.openspcoop2.pdd.core.autorizzazione;
 
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -50,6 +52,9 @@ import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazionePortaApplicativ
 import org.openspcoop2.pdd.core.autorizzazione.pd.DatiInvocazionePortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.pd.EsitoAutorizzazionePortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.pd.IAutorizzazionePortaDelegata;
+import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -61,8 +66,10 @@ import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
+import org.w3c.dom.Element;
 
 /**
  * Classe utilizzata per la gestione del processo di autorizzazione Buste
@@ -295,7 +302,7 @@ public class GestoreAutorizzazione {
 
 	// NOTA: le chiamate ad autorizzazione per contenuto non possono essere cachete, poiche' variano sempre i contenuti.
 	public static EsitoAutorizzazionePortaDelegata verificaAutorizzazionePortaDelegata(String tipoAutorizzazione, DatiInvocazionePortaDelegata datiInvocazione,
-	 		  PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg) throws Exception{
+	 		  PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg, Logger log) throws Exception{
 		
 		checkDatiPortaDelegata(datiInvocazione);
     	
@@ -322,7 +329,10 @@ public class GestoreAutorizzazione {
     	
     	if(datiInvocazione.getPd()!=null && datiInvocazione.getPd().getGestioneToken()!=null
     			&& datiInvocazione.getPd().getGestioneToken().getOptions()!=null) {
-    		EsitoAutorizzazionePortaDelegata esitoNew = (EsitoAutorizzazionePortaDelegata) autorizzazioneTokenOptions(datiInvocazione.getPd().getGestioneToken().getOptions(), esito, pddContext, datiInvocazione);
+    		EsitoAutorizzazionePortaDelegata esitoNew = 
+    				(EsitoAutorizzazionePortaDelegata) autorizzazioneTokenOptions(datiInvocazione.getPd().getGestioneToken().getOptions(), 
+    						esito, pddContext, datiInvocazione,
+    						log, msg);
     		if(esitoNew.isAutorizzato()==false) {
     			esitoNew.setErroreIntegrazione(ErroriIntegrazione.ERRORE_445_TOKEN_AUTORIZZAZIONE_FALLITA.getErroreIntegrazione());
     			return esitoNew;
@@ -394,7 +404,7 @@ public class GestoreAutorizzazione {
     }
 	
     public static EsitoAutorizzazionePortaApplicativa verificaAutorizzazionePortaApplicativa(String tipoAutorizzazione, DatiInvocazionePortaApplicativa datiInvocazione,
-    		PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg) throws Exception{
+    		PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg, Logger log) throws Exception{
     	  
     	checkDatiPortaApplicativa(datiInvocazione);
     
@@ -436,7 +446,10 @@ public class GestoreAutorizzazione {
     	}
     	
     	if(tokenOptions!=null) {
-    		EsitoAutorizzazionePortaApplicativa esitoNew = (EsitoAutorizzazionePortaApplicativa) autorizzazioneTokenOptions(tokenOptions, esito, pddContext, datiInvocazione);
+    		EsitoAutorizzazionePortaApplicativa esitoNew = 
+    				(EsitoAutorizzazionePortaApplicativa) autorizzazioneTokenOptions(tokenOptions, 
+    						esito, pddContext, datiInvocazione,
+    						log, msg);
     		if(esitoNew.isAutorizzato()==false) {
     			esitoNew.setErroreCooperazione(ErroriCooperazione.TOKEN_AUTORIZZAZIONE_FALLITA.getErroreCooperazione());
     			return esitoNew;
@@ -710,7 +723,8 @@ public class GestoreAutorizzazione {
     }
 
     private static EsitoAutorizzazione autorizzazioneTokenOptions(String tokenOptions, EsitoAutorizzazione esito, 
-    		PdDContext pddContext, AbstractDatiInvocazione datiInvocazione) throws Exception {
+    		PdDContext pddContext, AbstractDatiInvocazione datiInvocazione,
+    		Logger log, OpenSPCoop2Message message) throws Exception {
     	
     	boolean autorizzato = true;
 		String errorMessage = null;
@@ -754,10 +768,31 @@ public class GestoreAutorizzazione {
 	    			errorMessage = "Token without claims";
 	    		}
 	    		else {
+	    				    			
+	    			/* Costruisco dynamic Map */
+	    			
+	    			DynamicInfo dInfo = DynamicUtils.readDynamicInfo(message);
+	    			Element element = dInfo.getXml();
+	    			String elementJson = dInfo.getJson();
+	    			Properties parametriTrasporto = dInfo.getTrasporto();
+	    			Properties parametriUrl = dInfo.getQueryParameters();
+	    			String urlInvocazione = dInfo.getUrl();
+	    			Map<String, Object> dynamicMap = new Hashtable<String, Object>();
+	    			ErrorHandler errorHandler = new ErrorHandler();
+	    			DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
+	    					message,
+	    					element, elementJson, 
+	    					null, parametriTrasporto, parametriUrl,
+	    					errorHandler);
+	    				    			
+	    			/* Analisi claims di autorizzazione */
+	    			
 		    		Enumeration<?> en = properties.keys();
 		    		while (en.hasMoreElements()) {
 						String key = (String) en.nextElement();
-						String value = properties.getProperty(key);
+						
+						// verifica presenza claim nel token
+						log.debug("Verifico presenza '"+key+"' nel token ...");
 						if(informazioniTokenNormalizzate.getClaims().containsKey(key)==false) {
 							autorizzato = false;
 			    			errorMessage = "Token without claim '"+key+"'";
@@ -770,26 +805,113 @@ public class GestoreAutorizzazione {
 			    			errorMessage = "Token with claim '"+key+"' without value";
 							break;
 						}
-						if(value.contains(",")) {
-							String [] values = value.split(",");
+						
+						// verifica valore atteso per il claim
+						String expectedValue = properties.getProperty(key);
+						log.debug("Verifico valore '"+expectedValue+"' per claim '"+key+"' nel token ...");
+						if(expectedValue==null) {
+							throw new Exception("Claim '"+key+"' configuration without expected value");
+						}
+						expectedValue = expectedValue.trim();
+						
+						if(XACMLCostanti.AUTHZ_CLAIM_ANY_VALUE.equalsIgnoreCase(expectedValue)) {
+							
+							/** ANY VALUE */
+							
+							log.debug("Verifico valore del claim '"+key+"' non sia null e non sia vuoto ...");
+							
+							// basta che abbia un valore not null
 							boolean ok = false;
-							for (int i = 0; i < values.length; i++) {
-								String v = values[i].trim();
-								if(lClaimValues.contains(v)) {
+							for (String v : lClaimValues) {
+								if(v!=null && !"".equals(v)) {
 									ok = true;
 									break;
 								}
 							}
 							if(!ok) {
 								autorizzato = false;
-								errorMessage = "Token claim '"+key+"' with unexpected value";
+								errorMessage = "Token claim '"+key+"' with unexpected empty value";
+								break;
 							}
 						}
-						else {
-							if(lClaimValues.contains(value)==false) {
-								autorizzato = false;
-								errorMessage = "Token claim '"+key+"' with unexpected value";
+						else if(
+								(
+										expectedValue.toLowerCase().startsWith(XACMLCostanti.AUTHZ_CLAIM_REGEXP_MATCH_PREFIX.toLowerCase())
+										||
+										expectedValue.toLowerCase().startsWith(XACMLCostanti.AUTHZ_CLAIM_REGEXP_FIND_PREFIX.toLowerCase())
+								) 
+								&&
+								expectedValue.toLowerCase().endsWith(XACMLCostanti.AUTHZ_CLAIM_REGEXP_SUFFIX.toLowerCase())) {
+							
+							/** REGULAR EXPRESSION MATCH/FIND */
+							
+							boolean match = expectedValue.toLowerCase().startsWith(XACMLCostanti.AUTHZ_CLAIM_REGEXP_MATCH_PREFIX.toLowerCase());
+							String regexpPattern = null;
+							if(match) {
+								if(expectedValue.length()<= (XACMLCostanti.AUTHZ_CLAIM_REGEXP_MATCH_PREFIX.length()+XACMLCostanti.AUTHZ_CLAIM_REGEXP_SUFFIX.length()) ) {
+									throw new Exception("Claim '"+key+"' configuration without expected regexp match");
+								}
+								regexpPattern = expectedValue.substring(XACMLCostanti.AUTHZ_CLAIM_REGEXP_MATCH_PREFIX.length(), (expectedValue.length()-XACMLCostanti.AUTHZ_CLAIM_REGEXP_SUFFIX.length()));
 							}
+							else {
+								if(expectedValue.length()<= (XACMLCostanti.AUTHZ_CLAIM_REGEXP_FIND_PREFIX.length()+XACMLCostanti.AUTHZ_CLAIM_REGEXP_SUFFIX.length()) ) {
+									throw new Exception("Claim '"+key+"' configuration without expected regexp find");
+								}
+								regexpPattern = expectedValue.substring(XACMLCostanti.AUTHZ_CLAIM_REGEXP_FIND_PREFIX.length(), (expectedValue.length()-XACMLCostanti.AUTHZ_CLAIM_REGEXP_SUFFIX.length()));
+							}
+							regexpPattern = regexpPattern.trim();
+							log.debug("Verifico valore del claim '"+key+"' tramite espressione regolare (match:"+match+") '"+regexpPattern+"' ...");
+							
+							// basta che un valore abbia match
+							boolean ok = false;
+							for (String v : lClaimValues) {
+								if( match ? RegularExpressionEngine.isMatch(v, regexpPattern) : RegularExpressionEngine.isFind(v, regexpPattern)) {
+									ok = true;
+									break;
+								}
+							}
+							if(!ok) {
+								autorizzato = false;
+								String tipo = match ? "match" : "find";
+								errorMessage = "Token claim '"+key+"' with unexpected value (regExpr "+tipo+" failed)";
+								break;
+							}
+							
+						}
+						else {
+						
+							/** VALUE (con PLACEHOLDERS) */
+							
+							try {
+								expectedValue = DynamicUtils.convertDynamicPropertyValue(key, expectedValue, dynamicMap, pddContext, true);
+							}catch(Exception e) {
+								throw new Exception("Conversione valore per claim '"+key+"' non riuscita (valore: "+expectedValue+"): "+e.getMessage(),e);
+							}
+							
+							if(expectedValue.contains(",")) {
+								String [] values = expectedValue.split(",");
+								boolean ok = false;
+								for (int i = 0; i < values.length; i++) {
+									String v = values[i].trim();
+									if(lClaimValues.contains(v)) {
+										ok = true;
+										break;
+									}
+								}
+								if(!ok) {
+									autorizzato = false;
+									errorMessage = "Token claim '"+key+"' with unexpected value";
+									break;
+								}
+							}
+							else {
+								if(lClaimValues.contains(expectedValue)==false) {
+									autorizzato = false;
+									errorMessage = "Token claim '"+key+"' with unexpected value";
+									break;
+								}
+							}
+							
 						}
 					}
 	    		}
