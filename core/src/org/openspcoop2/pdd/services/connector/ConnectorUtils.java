@@ -141,7 +141,12 @@ public class ConnectorUtils {
 	
 	public static String getFullCodeWsdlUnsupported(IDService idService) {
 		StringBuffer bf = getPrefixCode(idService);
-		bf.append(ConnectorCostanti.CODE_WSDL);
+		bf.append(ConnectorCostanti.CODE_WSDL_UNSUPPORTED);
+		return bf.toString();
+	}
+	public static String getFullCodeWsdlNotDefined(IDService idService) {
+		StringBuffer bf = getPrefixCode(idService);
+		bf.append(ConnectorCostanti.CODE_WSDL_NOT_DEFINED);
 		return bf.toString();
 	}
 	

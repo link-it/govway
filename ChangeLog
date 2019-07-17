@@ -1,5 +1,17 @@
 2019-07-17  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	(https://github.com/link-it/govway/issues/33)
+	L'interfaccia WSDL di una API SOAP, registrata su GovWay, è adesso ottenibile attraverso una invocazione HTTP GET 
+	utilizzando la medesima url di invocazione arricchita del prefisso '?wsdl'.
+	Nell'installazione di default la gestione delle richieste HTTP GET con prefisso '?wsdl' è disabilitata 
+	e tali richieste ottengono un errore 'HTTP 404 Not Found'.
+	Per abilitare la funzionalità è possibile agire sul file esterno '/etc/govway/govway_local.properties' abilitando le seguenti proprietà:
+	- 'org.openspcoop2.pdd.pd.generateWsdl': abilita la gestione sulle fruizioni
+	- 'org.openspcoop2.pdd.pa.generateWsdl': abilita la gestione sulle erogazioni
+
+2019-07-17  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovWayConsole]
 	Aggiunta funzionalità OP-863
 	(https://github.com/link-it/govway/issues/44)

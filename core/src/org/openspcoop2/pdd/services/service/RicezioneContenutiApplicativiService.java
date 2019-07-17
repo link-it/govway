@@ -94,6 +94,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
 /**
@@ -264,7 +265,41 @@ public class RicezioneContenutiApplicativiService {
 		}
 		req.updateRequestInfo(requestInfo);
 						
-
+		// API Soap supporta solo POST e ?wsdl
+		if(ServiceBinding.SOAP.equals(requestInfo.getIntegrationServiceBinding())){
+			HttpRequestMethod method = null;
+			if(req!=null && req.getURLProtocolContext()!=null && req.getURLProtocolContext().getRequestType()!=null) {
+				try {
+					method = HttpRequestMethod.valueOf(req.getURLProtocolContext().getRequestType());
+				}catch(Exception e) {}
+			}
+			if(method!=null && !HttpRequestMethod.POST.equals(method)){
+				if(ServicesUtils.isRequestWsdl(req, logCore)) {
+					try {
+						ServicesUtils.writeWsdl(res, requestInfo, RicezioneContenutiApplicativiConnector.ID_SERVICE, serviceIdentificationReader, logCore);
+					}catch(Exception e) {
+						String msg = "Lettura wsdl fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
+						logCore.error(msg,e);
+						cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore,
+								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+									get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO),
+								IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+						// nel caso di wsdl request non emetto la transazione
+						//RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
+					}
+					return;
+				}
+				else {
+					String msg = "Metodo http '"+method+"' non supportato dall'API SOAP invocata";
+					logCore.error(msg);
+					ConnectorDispatcherErrorInfo cInfoError =  ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore,
+							ErroriIntegrazione.ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.getErrore439_FunzionalitaNotSupportedByProtocol(msg, protocolFactory),
+							IntegrationError.BAD_REQUEST, null, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+					RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfoError);
+					return;
+				}
+			}
+		}
 		
 		
 

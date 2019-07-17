@@ -56,6 +56,8 @@ import javax.wsdl.Types;
 import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.ExtensionRegistry;
+import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.xml.namespace.QName;
 
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
@@ -435,6 +437,26 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 	public PortType getPortType(QName arg0) {
 		return this.wsdlDefinition.getPortType(arg0);
 	}
+	
+	public PortType getPortType(String name) throws WSDLException {
+		try{
+			Map<?,?> m = this.wsdlDefinition.getAllPortTypes();
+			//System.out.println("REMOVE SIZE: "+m.size());
+			Iterator<?> it = m.values().iterator();
+			while (it.hasNext()){
+				PortType pt = (PortType)it.next();
+				if(pt.getQName()!=null) {
+					if(name.equals(pt.getQName().getLocalPart())) {
+						return pt;
+					}
+				}
+			}
+			return null;
+		}catch(Exception e){
+			//System.out.println("ERRORE: "+e.getMessage());
+			throw new WSDLException("getPortType("+name+")","Ricerca fallita",e);
+		}
+	}
 
 	@Override
 	public PortType removePortType(QName arg0) {
@@ -516,6 +538,42 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 		return this.wsdlDefinition.getBinding(arg0);
 	}
 	
+	public Binding getBinding(String name) throws WSDLException {
+		try{
+			Map<?,?> m = this.wsdlDefinition.getAllBindings();
+			Iterator<?> it = m.values().iterator();
+			while (it.hasNext()){
+				Binding binding = (Binding)it.next();
+				if(binding.getQName()!=null) {
+					if(name.equals(binding.getQName().getLocalPart())) {
+						return binding;
+					}
+				}
+			}
+			return null;
+		}catch(Exception e){
+			throw new WSDLException("getBinding("+name+")","Ricerca fallita",e);
+		}
+	}
+	
+	public Binding getBindingByPortType(String portType) throws WSDLException {
+		try{
+			Map<?,?> m = this.wsdlDefinition.getAllBindings();
+			Iterator<?> it = m.values().iterator();
+			while (it.hasNext()){
+				Binding binding = (Binding)it.next();
+				if(binding.getPortType()!=null && binding.getPortType().getQName()!=null) {
+					if(portType.equals(binding.getPortType().getQName().getLocalPart())) {
+						return binding;
+					}
+				}
+			}
+			return null;
+		}catch(Exception e){
+			throw new WSDLException("getBindingByPortType("+portType+")","Ricerca fallita",e);
+		}
+	}
+	
 	@Override
 	public Map<?,?> getBindings() {
 		return this.wsdlDefinition.getBindings();
@@ -591,6 +649,24 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 		return this.wsdlDefinition.getService(arg0);
 	}
 
+	public Service getService(String name) throws WSDLException {
+		try{
+			Map<?,?> m = this.wsdlDefinition.getAllServices();
+			Iterator<?> it = m.values().iterator();
+			while (it.hasNext()){
+				Service service = (Service)it.next();
+				if(service.getQName()!=null) {
+					if(name.equals(service.getQName().getLocalPart())) {
+						return service;
+					}
+				}
+			}
+			return null;
+		}catch(Exception e){
+			throw new WSDLException("getService("+name+")","Ricerca fallita",e);
+		}
+	}
+		
 	@Override
 	public Service removeService(QName arg0) {
 		return this.wsdlDefinition.removeService(arg0);
@@ -613,6 +689,82 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 
 
 	
+	
+	
+	/** ----------------- SERVICES - PORT -------------------------- */
+	
+	public Port getServicePort(String name) throws WSDLException {
+		try{
+			Map<?,?> m = this.wsdlDefinition.getAllServices();
+			Iterator<?> it = m.values().iterator();
+			while (it.hasNext()){
+				Service service = (Service)it.next();
+				Map<?,?> mPorts = service.getPorts();
+				Iterator<?> itPorts = mPorts.values().iterator();
+				while (itPorts.hasNext()){
+					Port port = (Port)it.next();
+					if(name.equals(port.getName())) {
+						return port;
+					}
+				}
+			}
+			return null;
+		}catch(Exception e){
+			throw new WSDLException("getServicePort("+name+")","Ricerca fallita",e);
+		}
+	}
+	
+	public Port getServicePortByBindingName(String bindingName) throws WSDLException {
+		try{
+			Map<?,?> m = this.wsdlDefinition.getAllServices();
+			Iterator<?> it = m.values().iterator();
+			while (it.hasNext()){
+				Service service = (Service)it.next();
+				Map<?,?> mPorts = service.getPorts();
+				Iterator<?> itPorts = mPorts.values().iterator();
+				while (itPorts.hasNext()){
+					Port port = (Port)itPorts.next();
+					if(port.getBinding()!=null && port.getBinding().getQName()!=null) {
+						if(bindingName.equals(port.getBinding().getQName().getLocalPart())) {
+							return port;
+						}
+					}
+				}
+			}
+			return null;
+		}catch(Exception e){
+			throw new WSDLException("getServicePortByBindingName("+bindingName+")","Ricerca fallita",e);
+		}
+	}
+	
+	public String getLocation(Port port) throws WSDLException {
+		if(port.getExtensibilityElements()!=null) {
+			for (Object object : port.getExtensibilityElements()) {
+				if(object instanceof SOAPAddress) {
+					return ((SOAPAddress)object).getLocationURI();
+				}
+				else if(object instanceof SOAP12Address) {
+					return ((SOAP12Address)object).getLocationURI();
+				}
+				// System.out.println("ALTRO ["+object.getClass().getName()+"]");
+			}
+		}
+		return null;
+	}
+	
+	public void updateLocation(Port port, String location) throws WSDLException {
+		if(port.getExtensibilityElements()!=null) {
+			for (Object object : port.getExtensibilityElements()) {
+				if(object instanceof SOAPAddress) {
+					((SOAPAddress)object).setLocationURI(location);
+				}
+				else if(object instanceof SOAP12Address) {
+					((SOAP12Address)object).setLocationURI(location);
+				}
+				// System.out.println("ALTRO ["+object.getClass().getName()+"]");
+			}
+		}
+	}
 
 
 	

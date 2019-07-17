@@ -23,15 +23,21 @@
 
 package org.openspcoop2.pdd.services;
 
+import java.io.ByteArrayOutputStream;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.wsdl.Binding;
+import javax.wsdl.Port;
+import javax.wsdl.PortType;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPHeader;
 
 import org.apache.commons.io.output.NullOutputStream;
+import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -39,8 +45,15 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TransferLengthModes;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.constants.TipologiaServizio;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
+import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
@@ -48,6 +61,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -59,22 +73,30 @@ import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
+import org.openspcoop2.pdd.services.connector.ConnectorUtils;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorOutMessage;
 import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.registry.CachedRegistryReader;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.CORSRequestType;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.utils.transport.http.WrappedHttpServletResponse;
+import org.openspcoop2.utils.wsdl.DefinitionWrapper;
+import org.openspcoop2.utils.wsdl.WSDLUtilities;
 import org.slf4j.Logger;
 
 
@@ -449,4 +471,191 @@ public class ServicesUtils {
 
 	}
 	
+	
+	public static boolean isRequestWsdl(ConnectorInMessage reqParam, Logger logCore) {
+		
+		try {
+		
+			if(reqParam==null || reqParam.getURLProtocolContext()==null || reqParam.getURLProtocolContext().getHttpServletRequest()==null) {
+				return false;
+			}
+			HttpServletRequest req = reqParam.getURLProtocolContext().getHttpServletRequest();
+			
+			if(HttpRequestMethod.GET.equals(req.getMethod())){
+				Enumeration<?> parameters = req.getParameterNames();
+				while(parameters.hasMoreElements()){
+					String key = (String) parameters.nextElement();
+					String value = req.getParameter(key);
+					if("wsdl".equalsIgnoreCase(key) && (value==null || "".equals(value)) ){
+						return true;
+					}
+				}
+			}
+			
+		}catch(Exception e){
+			logCore.error("Comprensione isRequestWsdl fallita: "+e.getMessage(),e);
+		}
+		
+		return false;
+	}
+	
+	public static void writeWsdl(ConnectorOutMessage response,RequestInfo requestInfo, 
+			IDService idService, ServiceIdentificationReader serviceIdentificationReader, Logger logCore) throws ConnectorException {
+		try {
+			
+			boolean generazioneWsdlEnabled = false;
+			if(IDService.PORTA_APPLICATIVA.equals(idService)) {
+				generazioneWsdlEnabled = OpenSPCoop2Properties.getInstance().isGenerazioneWsdlPortaApplicativaEnabled();
+			}
+			else {
+				generazioneWsdlEnabled = OpenSPCoop2Properties.getInstance().isGenerazioneWsdlPortaDelegataEnabled();
+			}
+			if(!generazioneWsdlEnabled) {
+				response.setStatus(404);
+				response.sendResponse(ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeWsdlUnsupported(idService)).getBytes());
+				return;
+			}
+			
+			byte [] wsdl = null;
+			if(requestInfo!=null && requestInfo.getIdServizio()!=null) {
+				AccordoServizioParteSpecifica asps = null;
+				AccordoServizioParteComune aspc = null;
+				byte [] wsdlLogico = null;
+				try {
+					asps = serviceIdentificationReader.getRegistryReader().getAccordoServizioParteSpecifica(requestInfo.getIdServizio(), false);
+				}catch(RegistryNotFound notFound) {}
+				if(asps!=null) {
+					try {
+						IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+						aspc = serviceIdentificationReader.getRegistryReader().getAccordoServizioParteComune(idAccordo, true);
+					}catch(RegistryNotFound notFound) {}
+				}
+				if(aspc!=null) {
+					if(TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio())){
+						wsdlLogico = aspc.getByteWsdlLogicoFruitore();
+					}
+					else {
+						wsdlLogico = aspc.getByteWsdlLogicoErogatore();
+					}
+				}
+				if(wsdlLogico!=null) {
+					// wsdl logico utilizzato dentro wsdlWrapperUtilities
+					XMLUtils xmlUtils = XMLUtils.getInstance();
+					WSDLUtilities wsdlUtilities = new WSDLUtilities(xmlUtils);
+					AccordoServizioWrapperUtilities wsdlWrapperUtilities = new AccordoServizioWrapperUtilities(logCore);
+					wsdlWrapperUtilities.setAccordoServizio(new AccordoServizioWrapper());
+					wsdlWrapperUtilities.getAccordoServizioWrapper().setAccordoServizio(aspc);
+					javax.wsdl.Definition wsdlDefinition = null;
+					if(TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio())){
+						wsdlWrapperUtilities.getAccordoServizioWrapper().setBytesWsdlImplementativoFruitore(asps.getByteWsdlImplementativoFruitore());
+						wsdlDefinition = wsdlWrapperUtilities.buildWsdlFruitoreFromBytes();
+					}
+					else {
+						wsdlWrapperUtilities.getAccordoServizioWrapper().setBytesWsdlImplementativoErogatore(asps.getByteWsdlImplementativoErogatore());
+						wsdlDefinition = wsdlWrapperUtilities.buildWsdlErogatoreFromBytes();
+					}
+					
+					if(asps.getPortType()!=null && requestInfo.getProtocolContext()!=null) {
+						ConfigurazioneProtocollo configurazioneProtocollo = ConfigurazionePdDManager.getInstance().getConfigurazioneProtocollo(requestInfo.getProtocolFactory().getProtocol());
+						String prefixGatewayUrl = null;
+						if(configurazioneProtocollo!=null) {
+							if(IDService.PORTA_APPLICATIVA.equals(idService)) {
+								prefixGatewayUrl = configurazioneProtocollo.getUrlInvocazioneServizioPA();
+							}
+							else {
+								prefixGatewayUrl = configurazioneProtocollo.getUrlInvocazioneServizioPD();
+							}
+						}
+						prefixGatewayUrl = prefixGatewayUrl.trim();
+						String suffix = requestInfo.getProtocolContext().getFunctionParameters();
+						if(suffix!=null && !"".equals(suffix)) {
+							if(!prefixGatewayUrl.endsWith("/")) {
+								if(!suffix.startsWith("/")) {
+									prefixGatewayUrl = prefixGatewayUrl +"/";
+								}
+							}
+							else {
+								if(suffix.startsWith("/") && suffix.length()>1) {
+									suffix = suffix.substring(1);
+								}
+							}
+							prefixGatewayUrl = prefixGatewayUrl + suffix;
+						}
+						DefinitionWrapper wrapper = new DefinitionWrapper(wsdlDefinition, xmlUtils);
+						PortType ptWSDL = wrapper.getPortType(asps.getPortType());
+						if(ptWSDL!=null && ptWSDL.getQName()!=null && ptWSDL.getQName().getLocalPart()!=null) {
+							Binding bindingWSDL = wrapper.getBindingByPortType(ptWSDL.getQName().getLocalPart());
+							if(bindingWSDL!=null && bindingWSDL.getQName()!=null && bindingWSDL.getQName().getLocalPart()!=null) {
+								Port portWSDL = wrapper.getServicePortByBindingName(bindingWSDL.getQName().getLocalPart());
+								if(portWSDL!=null) {
+									wrapper.updateLocation(portWSDL, prefixGatewayUrl);
+								}
+							}
+						}
+					}
+					
+					
+					ByteArrayOutputStream bout = new ByteArrayOutputStream();
+					wsdlUtilities.writeWsdlTo(wsdlDefinition, bout);
+					bout.flush();
+					bout.close();
+					wsdl = bout.toByteArray();
+				}
+			}
+			
+			if(wsdl!=null) {
+				HttpUtilities.setOutputFile(new ConnectorHttpServletResponse(response), true, "interface.wsdl");	
+				response.setStatus(200);
+				response.sendResponse(wsdl);
+			}
+			else {
+				response.setStatus(404);
+				response.sendResponse(ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeWsdlNotDefined(idService)).getBytes());
+			}
+			
+		}catch(Exception e){
+			logCore.error("Lettura wsdl fallita: "+e.getMessage(),e);
+			throw new ConnectorException("Lettura wsdl fallita: "+e.getMessage(),e);
+		}
+	}
+}
+
+class ConnectorHttpServletResponse extends WrappedHttpServletResponse {
+
+	@Override
+	public void setContentType(String type) {
+		try {
+			this.outMessage.setContentType(type);
+		}catch(Exception e) {
+			new RuntimeException(e.getMessage(),e);
+		}
+	}
+
+	@Override
+	public void setDateHeader(String arg0, long arg1) {
+		try {
+			this.outMessage.setHeader(arg0, arg1+"");
+		}catch(Exception e) {
+			new RuntimeException(e.getMessage(),e);
+		}
+	}
+
+	@Override
+	public void setHeader(String arg0, String arg1) {
+		try {
+			this.outMessage.setHeader(arg0, arg1);
+		}catch(Exception e) {
+			new RuntimeException(e.getMessage(),e);
+		}
+	}
+
+	private ConnectorOutMessage outMessage;
+	
+	public ConnectorHttpServletResponse(ConnectorOutMessage outMessage) {
+		super(null);
+		this.outMessage = outMessage;
+	}
+	
+	
+
 }

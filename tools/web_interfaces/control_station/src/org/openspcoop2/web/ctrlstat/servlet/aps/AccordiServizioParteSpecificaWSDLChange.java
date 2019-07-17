@@ -73,6 +73,7 @@ import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUti
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
@@ -227,8 +228,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			}
 			Soggetto soggettoErogatoreID = soggettiCore.getSoggettoRegistro(new IDSoggetto(asps.getTipoSoggettoErogatore(),asps.getNomeSoggettoErogatore()));
 
-			// Se idhid = null, devo visualizzare la pagina per l'inserimento
-			// dati
+
 			Parameter parameterAPSChange = new Parameter( tmpTitle, 
 					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE ,
 					new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+this.id),
@@ -241,17 +241,61 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			//						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeservizio),
 			//						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tiposervizio)
 					);
-			if (ServletUtils.isEditModeInProgress(this.editMode) && apsHelper.isEditModeInProgress()) {
-
-				List<Parameter> lstParm = new ArrayList<Parameter>();
+			
+			String tipoSoggettoFruitore = null;
+			String nomeSoggettoFruitore = null;
+			@SuppressWarnings("unused")
+			IDSoggetto idSoggettoFruitore = null;
+			Parameter pTipoSoggettoFruitore = null;
+			Parameter pNomeSoggettoFruitore = null;
+			if(gestioneFruitori) {
+				tipoSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE);
+				nomeSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE);
+				idSoggettoFruitore = new IDSoggetto(tipoSoggettoFruitore, nomeSoggettoFruitore);
+				pTipoSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE, tipoSoggettoFruitore);
+				pNomeSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE, nomeSoggettoFruitore);
+			}
+			
+			List<Parameter> lstParm = new ArrayList<Parameter>();
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
+			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+				if(gestioneFruitori) {
+					lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_FRUIZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
+				} else {
+					lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
+				}
+				List<Parameter> listErogazioniChange = new ArrayList<>();
+				Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
+				Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
+				Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
+				listErogazioniChange.add(pIdServizio);
+				listErogazioniChange.add(pNomeServizio);
+				listErogazioniChange.add(pTipoServizio);
+				if(gestioneFruitori) {
+					listErogazioniChange.add(pNomeSoggettoFruitore);
+					listErogazioniChange.add(pTipoSoggettoFruitore);
+				}
+				lstParm.add(new Parameter(tmpTitle, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, 
+						listErogazioniChange.toArray(new Parameter[1])));
+				
+				lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_MODIFICA_SERVIZIO_INFO_GENERALI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, 
+						listErogazioniChange.toArray(new Parameter[1])));
+				
+			} else {
 				if(gestioneFruitori) {
 					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				}
 				else {
 					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				}
+				
 				lstParm.add(parameterAPSChange);
-				lstParm.add(new Parameter(label , null));
+			}
+			
+			lstParm.add(new Parameter(label , null));
+			
+
+			if (ServletUtils.isEditModeInProgress(this.editMode) && apsHelper.isEditModeInProgress()) {
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParm );
@@ -259,9 +303,9 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-
-				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, this.id, null, null, dati);
-
+				
+				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, this.id, null, null, null,
+						null, tipoSoggettoFruitore, nomeSoggettoFruitore, dati);
 
 				dati = apsHelper.addWSDLToDati(TipoOperazione.OTHER, apsHelper.getSize(), asps, oldwsdl, this.tipo, this.validazioneDocumenti,
 						dati, tipologiaDocumentoScaricare, label);
@@ -277,16 +321,6 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			// Controlli sui campi immessi
 			boolean isOk = apsHelper.accordiParteSpecificaWSDLCheckData(pd, this.tipo, this.wsdl, asps, as, this.validazioneDocumenti);
 			if (!isOk) {
-				List<Parameter> lstParm = new ArrayList<Parameter>();
-
-				if(gestioneFruitori) {
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-				}
-				else {
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-				}
-				lstParm.add(parameterAPSChange);
-				lstParm.add(new Parameter(label , null));
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParm );
@@ -296,7 +330,8 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, this.id, null, null, dati);
+				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, this.id, null, null, null,
+						null, tipoSoggettoFruitore, nomeSoggettoFruitore, dati);
 
 				dati = apsHelper.addWSDLToDati(TipoOperazione.OTHER,  apsHelper.getSize(), asps, oldwsdl, this.tipo, this.validazioneDocumenti, 
 						dati, tipologiaDocumentoScaricare, label);
@@ -765,7 +800,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					null,null,null,null,null,null,false,
 					null,null,null,null,null,null,null,
 					protocollo, null,
-					null, null, null, null, null,
+					null, null, null, tipoSoggettoFruitore, nomeSoggettoFruitore,
 					null, null, null, null, null,
 					null, null, null, null,
 					null,null,null,null,null,null,null,null,null,

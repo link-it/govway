@@ -25,14 +25,12 @@
 package org.openspcoop2.pdd.services.connector;
 
 import java.io.IOException;
-import java.util.Enumeration;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.message.constants.IntegrationError;
-import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorOutMessage;
@@ -68,24 +66,25 @@ public class RicezioneBusteConnector {
 	public void doEngine(RequestInfo requestInfo, 
 			HttpServletRequest req, HttpServletResponse res, HttpRequestMethod method) throws ServletException, IOException {
 		
-		if(HttpRequestMethod.GET.equals(method)){
-			Enumeration<?> parameters = req.getParameterNames();
-			while(parameters.hasMoreElements()){
-				String key = (String) parameters.nextElement();
-				String value = req.getParameter(key);
-				if("wsdl".equalsIgnoreCase(key) && (value==null || "".equals(value)) ){
-					ConnectorDispatcherUtils.doWsdl(req, res, method, ID_SERVICE);
-					return;
-				}
-			}
-		}
-		
-		if(ServiceBinding.SOAP.equals(requestInfo.getProtocolServiceBinding()) && !HttpRequestMethod.POST.equals(method)){
-
-			ConnectorDispatcherUtils.doMethodNotSupported(req, res, method, ID_SERVICE);
-			return;
-			
-		}
+		// Devo prima leggere l'API invocata per comprendere il service binding effettivo
+//		if(HttpRequestMethod.GET.equals(method)){
+//			java.util.Enumeration<?> parameters = req.getParameterNames();
+//			while(parameters.hasMoreElements()){
+//				String key = (String) parameters.nextElement();
+//				String value = req.getParameter(key);
+//				if("wsdl".equalsIgnoreCase(key) && (value==null || "".equals(value)) ){
+//					ConnectorDispatcherUtils.doWsdl(req, res, method, ID_SERVICE);
+//					return;
+//				}
+//			}
+//		}
+//		
+//		if(org.openspcoop2.message.constants.ServiceBinding.SOAP.equals(requestInfo.getProtocolServiceBinding()) && !HttpRequestMethod.POST.equals(method)){
+//
+//			ConnectorDispatcherUtils.doMethodNotSupported(req, res, method, ID_SERVICE);
+//			return;
+//			
+//		}
 		
 		
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();

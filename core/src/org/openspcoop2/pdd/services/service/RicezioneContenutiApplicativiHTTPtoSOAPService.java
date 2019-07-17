@@ -266,7 +266,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			String msg = "Servizio utilizzabile solamente con API SOAP, riscontrata API REST";
 			logCore.error(msg);
 			ConnectorDispatcherErrorInfo cInfoError =  ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore,
-					ErroriIntegrazione.ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.getErroreIntegrazione(),
+					ErroriIntegrazione.ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.getErrore439_FunzionalitaNotSupportedByProtocol(msg, protocolFactory),
 					IntegrationError.BAD_REQUEST, null, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 			RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfoError);
 			return;
