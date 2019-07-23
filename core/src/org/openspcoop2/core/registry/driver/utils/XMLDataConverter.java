@@ -64,6 +64,7 @@ import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.RegistroServizi;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
@@ -160,6 +161,16 @@ public class XMLDataConverter {
 		XMLDataConverterSetup(sorgente,destinazione,superUser,protocolloDefault,log,logDriver);
 	}
 	
+	public XMLDataConverter(RegistroServizi sorgente,AccessoRegistroRegistro destinazione,String superUser,String protocolloDefault) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,destinazione,superUser,protocolloDefault,null,null);
+	}
+	public XMLDataConverter(RegistroServizi sorgente,AccessoRegistroRegistro destinazione,String superUser,String protocolloDefault,Logger log) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,destinazione,superUser,protocolloDefault,log,null);
+	}
+	public XMLDataConverter(RegistroServizi sorgente,AccessoRegistroRegistro destinazione,String superUser,String protocolloDefault,Logger log,Logger logDriver) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,destinazione,superUser,protocolloDefault,log,logDriver);
+	}
+	
 	private void XMLDataConverterSetup(Object sorgente,AccessoRegistroRegistro destinazione,String superUser,String protocolloDefault,Logger log,Logger logDriver) throws DriverRegistroServiziException{
 	
 		if(log == null)
@@ -176,7 +187,10 @@ public class XMLDataConverter {
 		
 		// Istanziazione sorgente
 		try{
-			if(sorgente instanceof String){
+			if(sorgente instanceof RegistroServizi) {
+				this.sorgenteRegistro = (RegistroServizi) sorgente;
+			}
+			else if(sorgente instanceof String){
 				createSorgente((String)sorgente);
 				// Calcolo directory padre
 				try{
@@ -332,6 +346,16 @@ public class XMLDataConverter {
 		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,superUser,protocolloDefault,log,logDriver);
 	}
 	
+	public XMLDataConverter(RegistroServizi sorgente,IDriverRegistroServiziCRUD gestoreCRUD, String tipoDestinazione,String superUser,String protocolloDefault) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,superUser,protocolloDefault,null,null);
+	}
+	public XMLDataConverter(RegistroServizi sorgente,IDriverRegistroServiziCRUD gestoreCRUD, String tipoDestinazione,String superUser,String protocolloDefault,Logger log) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,superUser,protocolloDefault,log,null);
+	}
+	public XMLDataConverter(RegistroServizi sorgente,IDriverRegistroServiziCRUD gestoreCRUD, String tipoDestinazione,String superUser,String protocolloDefault,Logger log,Logger logDriver) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,superUser,protocolloDefault,log,logDriver);
+	}
+	
 	private void XMLDataConverterSetup(Object sorgente, IDriverRegistroServiziCRUD gestoreCRUD, String tipoDestinazione,
 			String superUser,String protocolloDefault,Logger log,Logger logDriver) throws DriverRegistroServiziException{
 		
@@ -349,7 +373,10 @@ public class XMLDataConverter {
 		
 		// Istanziazione sorgente
 		try{
-			if(sorgente instanceof String){
+			if(sorgente instanceof RegistroServizi) {
+				this.sorgenteRegistro = (RegistroServizi) sorgente;
+			}
+			else if(sorgente instanceof String){
 				createSorgente((String)sorgente);
 				// Calcolo directory padre
 				try{
@@ -443,6 +470,16 @@ public class XMLDataConverter {
 		XMLDataConverterSetup(sorgente,connection,tipoDatabase,superUser,protocolloDefault,log,logDriver);
 	}
 	
+	public XMLDataConverter(RegistroServizi sorgente,Connection connection,String tipoDatabase,String superUser,String protocolloDefault) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,connection,tipoDatabase,superUser,protocolloDefault,null,null);
+	}
+	public XMLDataConverter(RegistroServizi sorgente,Connection connection,String tipoDatabase,String superUser,String protocolloDefault,Logger log) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,connection,tipoDatabase,superUser,protocolloDefault,log,null);
+	}
+	public XMLDataConverter(RegistroServizi sorgente,Connection connection,String tipoDatabase,String superUser,String protocolloDefault,Logger log,Logger logDriver) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,connection,tipoDatabase,superUser,protocolloDefault,log,logDriver);
+	}
+	
 	private File parentFile = null;
 
 	private void XMLDataConverterSetup(Object sorgente,Connection connection,String tipoDatabase,String superUser,String protocolloDefault,Logger log,Logger logDriver) throws DriverRegistroServiziException{
@@ -458,7 +495,10 @@ public class XMLDataConverter {
 		
 		// Istanziazione sorgente
 		try{
-			if(sorgente instanceof String){
+			if(sorgente instanceof RegistroServizi) {
+				this.sorgenteRegistro = (RegistroServizi) sorgente;
+			}
+			else if(sorgente instanceof String){
 				createSorgente((String)sorgente);
 				// Calcolo directory padre
 				try{

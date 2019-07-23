@@ -1,3 +1,8 @@
+2019-07-23  Andrea Poli <apoli@link.it>
+
+	Aggiunte restrizioni sui tipi di parametro utilizzati in una API Rest.
+	ALTER TABLE api_resources_parameter ADD COLUMN restrizioni TEXT;
+
 2019-07-15  Andrea Poli <apoli@link.it>
 
 	Aggiunta possibilità di sospendere una regola di trasformazione.

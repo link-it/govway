@@ -22,22 +22,20 @@
 
 package org.openspcoop2.utils.json.validation;
 
-import java.util.HashMap;
+import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.json.IJsonSchemaValidator;
+import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.json.JsonSchemaValidatorConfig;
 import org.openspcoop2.utils.json.ValidationException;
 import org.openspcoop2.utils.json.ValidationResponse;
 import org.openspcoop2.utils.json.ValidationResponse.ESITO;
+import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.report.LogLevel;
 import com.github.fge.jsonschema.core.report.ProcessingMessage;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
@@ -55,7 +53,12 @@ public class FGEJsonschemaValidator implements IJsonSchemaValidator {
 
 	private JsonValidator validator;
 	private JsonNode schema;
+	private byte[] schemaBytes;
+	
 	private ObjectMapper jsonMapper;
+
+	private Logger log;
+	private boolean logError;
 	
 	public FGEJsonschemaValidator() {
 		this.validator = JsonSchemaFactory.byDefault().getValidator();
@@ -64,57 +67,28 @@ public class FGEJsonschemaValidator implements IJsonSchemaValidator {
 	}
 
 	@Override
-	public ValidationResponse validate(byte[] rawObject) throws ValidationException {
-
-		ValidationResponse response = new ValidationResponse();
-		try {
-			JsonNode object = this.jsonMapper.readTree(rawObject);
-			ProcessingReport report = this.validator.validate(this.schema, object, true);
-			
-			if(report.isSuccess()) {
-				response.setEsito(ESITO.OK);
-			} else {
-				response.setEsito(ESITO.KO);
-				Iterator<ProcessingMessage> iterator = report.iterator();
-				while(iterator.hasNext()) {
-					
-					ProcessingMessage msg = iterator.next();
-					StringBuilder messageString = new StringBuilder();
-					if(msg.getLogLevel().equals(LogLevel.ERROR) || msg.getLogLevel().equals(LogLevel.FATAL)) {
-						response.getErrors().add(msg.getMessage());
-						messageString.append(msg.getMessage()).append("\n");
-					}
-					response.setException(new Exception(messageString.toString()));
-				}
-			}
-		} catch(Exception e) {
-			throw new ValidationException(e);
-		}
+	public void setSchema(byte[] schema, JsonSchemaValidatorConfig config, Logger log) throws ValidationException {
 		
-		return response;
-	}
-
-	@Override
-	public void setSchema(byte[] schema, JsonSchemaValidatorConfig config) throws ValidationException {
+		this.log = log;
+		if(this.log==null) {
+			this.log = LoggerWrapperFactory.getLogger(FGEJsonschemaValidator.class);
+		}
+		this.logError = config!=null ? config.isEmitLogError() : true;
+		this.schemaBytes = schema;
+		
 		try {
 			this.schema = this.jsonMapper.readTree(schema);
 
-			Map<String, String> map = new HashMap<>();
-			map.put("type", "string");
-			ObjectNode jsonStringTypeNode = this.jsonMapper.getNodeFactory().objectNode();
-			jsonStringTypeNode.set("type", this.jsonMapper.getNodeFactory().textNode("string"));
-			
-			BooleanNode booleanNode = this.jsonMapper.getNodeFactory().booleanNode(false);
 			switch(config.getAdditionalProperties()) {
 			case DEFAULT:
 				break;
-			case FORCE_DISABLE: addAdditionalProperties(this.schema, booleanNode, true);
+			case FORCE_DISABLE: ValidationUtils.disableAdditionalProperties(this.jsonMapper, this.schema, true, true);
 				break;
-			case FORCE_STRING: addAdditionalProperties(this.schema, jsonStringTypeNode, true);
+			case FORCE_STRING: ValidationUtils.disableAdditionalProperties(this.jsonMapper, this.schema, false, true);
 				break;
-			case IF_NULL_DISABLE: addAdditionalProperties(this.schema, booleanNode, false);
+			case IF_NULL_DISABLE: ValidationUtils.disableAdditionalProperties(this.jsonMapper, this.schema, true, false);
 				break;
-			case IF_NULL_STRING: addAdditionalProperties(this.schema, jsonStringTypeNode, false);
+			case IF_NULL_STRING: ValidationUtils.disableAdditionalProperties(this.jsonMapper, this.schema, false, false);
 				break;
 			default:
 				break;
@@ -123,43 +97,91 @@ public class FGEJsonschemaValidator implements IJsonSchemaValidator {
 			switch(config.getPoliticaInclusioneTipi()) {
 			case DEFAULT:
 				break;
-			case ALL: addTypes(this.schema, config.getTipi(), true);
+			case ALL: ValidationUtils.addTypes(this.jsonMapper, this.schema, config.getTipi(), true);
 				break;
-			case ANY: addTypes(this.schema, config.getTipi(), false);
+			case ANY: ValidationUtils.addTypes(this.jsonMapper, this.schema, config.getTipi(), false);
 				break;
 			default:
 				break;
 			}
+			
+			if(config.isVerbose()) {
+				try {
+					ByteArrayOutputStream bout = new ByteArrayOutputStream();
+					JSONUtils.getInstance(true).writeTo(this.schema, bout);
+					bout.flush();
+					bout.close();
+					this.log.debug("JSON Schema: "+bout.toString());
+				}catch(Exception e) {
+					this.log.debug("JSON Schema build error: "+e.getMessage(),e);
+				}
+			}
+			
 
 		} catch(Exception e) {
 			throw new ValidationException(e);
 		}
 	}
-	
-	private void addTypes(JsonNode jsonSchemaObject, List<String> nomi, boolean all) {
-		
-		String allAny = all ? "allOf" : "anyOf";
-		ArrayNode array = this.jsonMapper.getNodeFactory().arrayNode();
-		for(String nome: nomi) {
-			array.add(this.jsonMapper.getNodeFactory().objectNode().put("$ref", nome));
-		}
-		((ObjectNode)jsonSchemaObject).remove("allOf");
-		((ObjectNode)jsonSchemaObject).remove("anyOf");
-		((ObjectNode)jsonSchemaObject).set(allAny, array);
-	}
 
+	@Override
+	public ValidationResponse validate(byte[] rawObject) throws ValidationException {
 
-	
-	private void addAdditionalProperties(JsonNode jsonSchemaObject, JsonNode additionalPropertiesObject, boolean force) {
-		JsonNode definitions = jsonSchemaObject.get("definitions");
-		
-		Iterator<JsonNode> iterator = definitions.iterator();
-		while(iterator.hasNext()) {
-			ObjectNode definition = (ObjectNode) iterator.next();
-			if(force || !definition.has("additionalProperties")) {
-				definition.set("additionalProperties", additionalPropertiesObject);
+		ValidationResponse response = new ValidationResponse();
+		try {
+			boolean expectedString = false;
+			if(this.schema.has("type")) {
+				try {
+					JsonNode type = this.schema.get("type");
+					String vType = type.asText();
+					expectedString = "string".equals(vType);
+				}catch(Exception e) {}
 			}
+			
+	        JsonNode object = null;
+	        try {
+	        	if(expectedString) {
+	        		object = this.jsonMapper.getNodeFactory().textNode(new String(rawObject));
+	        	}
+	        	else {
+	        		object = this.jsonMapper.readTree(rawObject);
+	        	}
+	        }
+	        catch(Exception e) {
+	        	this.log.error(e.getMessage(),e);
+	        	String messageString = "Read rawObject as jsonNode failed: "+e.getMessage();
+	        	response.setEsito(ESITO.KO);
+	        	if(this.logError) {
+	        		ValidationUtils.logError(this.log, messageString.toString(), rawObject, this.schemaBytes, this.schema);
+	        	}
+				response.setException(new Exception(messageString.toString()));
+	        }
+	        
+	        if(object!=null) {
+				ProcessingReport report = this.validator.validate(this.schema, object, true);
+				if(report.isSuccess()) {
+					response.setEsito(ESITO.OK);
+				} else {
+					response.setEsito(ESITO.KO);
+					Iterator<ProcessingMessage> iterator = report.iterator();
+					while(iterator.hasNext()) {
+						
+						ProcessingMessage msg = iterator.next();
+						StringBuilder messageString = new StringBuilder();
+						if(msg.getLogLevel().equals(LogLevel.ERROR) || msg.getLogLevel().equals(LogLevel.FATAL)) {
+							response.getErrors().add(msg.getMessage());
+							messageString.append(msg.getMessage()).append("\n");
+						}
+						if(this.logError) {
+			        		ValidationUtils.logError(this.log, messageString.toString(), rawObject, this.schemaBytes, this.schema);
+						}
+						response.setException(new Exception(messageString.toString()));
+					}
+				}
+	        }
+		} catch(Exception e) {
+			throw new ValidationException(e);
 		}
+		
+		return response;
 	}
-
 }

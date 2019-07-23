@@ -137,6 +137,9 @@
 			<param name="TokenValue" value="="/>
                 </antcall>
 
+		<replace dir="${src_govwayMonitorApiRS}/org/openspcoop2/core/monitor/rs/server/model"
+			token="^[_A-Za-z][\-\._A-Za-z0-9]*$" value="^[_A-Za-z][\\-\\._A-Za-z0-9]*$" includes="*.java"/>
+
 	</target>
 
 	<target name="-replacePackage">

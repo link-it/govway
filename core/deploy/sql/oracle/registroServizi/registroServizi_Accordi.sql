@@ -406,6 +406,7 @@ CREATE TABLE api_resources_parameter
 	tipo_parametro VARCHAR2(255) NOT NULL,
 	required NUMBER NOT NULL,
 	tipo VARCHAR2(255) NOT NULL,
+	restrizioni CLOB,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints

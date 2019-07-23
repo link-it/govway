@@ -81,7 +81,6 @@ components:
       required:
         - data_ricezione
         - tipo
-        - url_invocazione
       properties:
         data_ricezione:
           type: string
@@ -106,7 +105,6 @@ components:
           example: POST
         url_invocazione:
           type: string
-          format: uri
           description: |-
            URI dell'invocazione
           example: http://govway/in/Ente/Protocollazione/v1/documenti?test=true

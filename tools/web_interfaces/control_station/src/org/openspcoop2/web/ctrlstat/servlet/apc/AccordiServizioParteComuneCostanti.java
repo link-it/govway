@@ -437,6 +437,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO = "tipoParametroResParam";
 	public final static String PARAMETRO_APC_RESOURCES_PARAMETER_REQUIRED = "requiredResParam";
 	public final static String PARAMETRO_APC_RESOURCES_PARAMETER_TIPO = "tipoResParam";
+	public final static String PARAMETRO_APC_RESOURCES_PARAMETER_RESTRIZIONI = "restrResParam";
 	
 	/* LABEL PARAMETRI */
 	public final static String LABEL_APC_STATO = "Stato";
@@ -547,6 +548,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO = "Tipo Parametro";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_REQUIRED = "Obbligatorio";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO = "Tipo";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_RESTRIZIONI = "Restrizioni";
 	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_COOKIE = "Cookie";
 	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_DYNAMIC_PATH = "Dynamic Path";
 	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_FORM = "Form";

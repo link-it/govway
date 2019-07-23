@@ -32,13 +32,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.json.IJsonSchemaValidator;
 import org.openspcoop2.utils.json.JsonSchemaValidatorConfig;
+import org.openspcoop2.utils.json.JsonSchemaValidatorConfig.ADDITIONAL;
 import org.openspcoop2.utils.json.JsonSchemaValidatorConfig.POLITICA_INCLUSIONE_TIPI;
 import org.openspcoop2.utils.json.JsonValidatorAPI.ApiName;
 import org.openspcoop2.utils.json.ValidationResponse;
 import org.openspcoop2.utils.json.ValidationResponse.ESITO;
 import org.openspcoop2.utils.json.ValidatorFactory;
+import org.slf4j.Logger;
 
 /**
  * ValidatorTest
@@ -52,6 +55,18 @@ public class ValidatorTest {
 	private static byte[] schema;
 	private static ExecutorService executor;
 
+	private static boolean printLogError = false;
+	
+	private static boolean everit_validaFileNonValidi = false;
+	
+	/*
+	 * NOTA: in caso di errore 'should be valid to one and only one of the schemas'
+	 * 
+	 * Significa che più elementi possono matchare in un oneOf. Questo succede se ad esempio non è stato definito "additionalProperties: false" in ogni oggetto riferito dal oneOf
+	 * 
+	 * */
+	
+	
 	public static void main(String[] args) throws Exception {
 		ValidatorTest.executor = Executors.newFixedThreadPool(100);
 		ValidatorTest.schema = ValidatorTest.loadResource("schema.json");
@@ -77,11 +92,18 @@ public class ValidatorTest {
 		file2M.add(json2M);
 
 		for(ApiName name : ApiName.values()) {
-			ValidatorTest.validazioneListaFile("fileNonValidi", name, fileNonValidi, 10, false);
+						
+			System.out.println("=========================== "+name+" ======================================");
+			
+			if(!ApiName.EVERIT.equals(name) || everit_validaFileNonValidi) {
+				ValidatorTest.validazioneListaFile("fileNonValidi", name, fileNonValidi, 10, false);
+			}
 			ValidatorTest.validazioneListaFile("file1K", name, file1K, 10000, true);
 			ValidatorTest.validazioneListaFile("file50K", name, file50K, 1000, true);
 			ValidatorTest.validazioneListaFile("file500K", name, file500K, 100, true);
 			ValidatorTest.validazioneListaFile("file2M", name, file2M, 10, true);
+			
+			System.out.println("=================================================================");
 		}
 		ValidatorTest.executor.shutdown();
 	}
@@ -106,9 +128,16 @@ public class ValidatorTest {
 		IJsonSchemaValidator validator = ValidatorFactory.newJsonSchemaValidator(name);
 
 		JsonSchemaValidatorConfig config = new JsonSchemaValidatorConfig();
+		config.setVerbose(false);
+		config.setEmitLogError(false);
+		config.setAdditionalProperties(ADDITIONAL.IF_NULL_DISABLE);
 		config.setPoliticaInclusioneTipi(POLITICA_INCLUSIONE_TIPI.ANY);
 		config.setTipi(Arrays.asList("#/definitions/Pet"));
-		validator.setSchema(ValidatorTest.schema, config);
+		Logger log = null;
+		if(printLogError) {
+			log = LoggerWrapperFactory.getLogger(ValidatorTest.class);
+		}
+		validator.setSchema(ValidatorTest.schema, config, log);
 
 		List<TestRunner> lst = new ArrayList<TestRunner>();
 		for(byte[] file: files) {

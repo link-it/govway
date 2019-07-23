@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/sqlserver/registroServizi/2019-07-23-patch.sql

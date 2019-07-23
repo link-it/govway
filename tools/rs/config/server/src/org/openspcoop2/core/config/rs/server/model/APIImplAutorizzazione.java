@@ -21,6 +21,9 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneConfig;
+import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneCustom;
+import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneXACMLConfig;
 import org.openspcoop2.core.config.rs.server.model.TipoAutorizzazioneEnum;
 import javax.validation.constraints.*;
 
@@ -34,7 +37,13 @@ public class APIImplAutorizzazione  {
   private TipoAutorizzazioneEnum tipo = null;
   
   @Schema(description = "")
-  private Object configurazione = null;
+  private APIImplAutorizzazioneConfig configurazione = null;
+  
+  @Schema(description = "")
+  private APIImplAutorizzazioneXACMLConfig configurazioneXacml = null;
+  
+  @Schema(description = "")
+  private APIImplAutorizzazioneCustom configurazioneCustom = null;
  /**
    * Get tipo
    * @return tipo
@@ -61,16 +70,54 @@ public class APIImplAutorizzazione  {
   **/
   @JsonProperty("configurazione")
   @Valid
-  public Object getConfigurazione() {
+  public APIImplAutorizzazioneConfig getConfigurazione() {
     return this.configurazione;
   }
 
-  public void setConfigurazione(Object configurazione) {
+  public void setConfigurazione(APIImplAutorizzazioneConfig configurazione) {
     this.configurazione = configurazione;
   }
 
-  public APIImplAutorizzazione configurazione(Object configurazione) {
+  public APIImplAutorizzazione configurazione(APIImplAutorizzazioneConfig configurazione) {
     this.configurazione = configurazione;
+    return this;
+  }
+
+ /**
+   * Get configurazioneXacml
+   * @return configurazioneXacml
+  **/
+  @JsonProperty("configurazione_xacml")
+  @Valid
+  public APIImplAutorizzazioneXACMLConfig getConfigurazioneXacml() {
+    return this.configurazioneXacml;
+  }
+
+  public void setConfigurazioneXacml(APIImplAutorizzazioneXACMLConfig configurazioneXacml) {
+    this.configurazioneXacml = configurazioneXacml;
+  }
+
+  public APIImplAutorizzazione configurazioneXacml(APIImplAutorizzazioneXACMLConfig configurazioneXacml) {
+    this.configurazioneXacml = configurazioneXacml;
+    return this;
+  }
+
+ /**
+   * Get configurazioneCustom
+   * @return configurazioneCustom
+  **/
+  @JsonProperty("configurazione_custom")
+  @Valid
+  public APIImplAutorizzazioneCustom getConfigurazioneCustom() {
+    return this.configurazioneCustom;
+  }
+
+  public void setConfigurazioneCustom(APIImplAutorizzazioneCustom configurazioneCustom) {
+    this.configurazioneCustom = configurazioneCustom;
+  }
+
+  public APIImplAutorizzazione configurazioneCustom(APIImplAutorizzazioneCustom configurazioneCustom) {
+    this.configurazioneCustom = configurazioneCustom;
     return this;
   }
 
@@ -82,6 +129,8 @@ public class APIImplAutorizzazione  {
     
     sb.append("    tipo: ").append(APIImplAutorizzazione.toIndentedString(this.tipo)).append("\n");
     sb.append("    configurazione: ").append(APIImplAutorizzazione.toIndentedString(this.configurazione)).append("\n");
+    sb.append("    configurazioneXacml: ").append(APIImplAutorizzazione.toIndentedString(this.configurazioneXacml)).append("\n");
+    sb.append("    configurazioneCustom: ").append(APIImplAutorizzazione.toIndentedString(this.configurazioneCustom)).append("\n");
     sb.append("}");
     return sb.toString();
   }

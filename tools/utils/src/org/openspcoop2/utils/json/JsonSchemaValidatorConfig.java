@@ -35,6 +35,9 @@ public class JsonSchemaValidatorConfig {
 	
 	public enum POLITICA_INCLUSIONE_TIPI {DEFAULT, ANY, ALL}
 	
+	private boolean verbose = false;
+	private boolean emitLogError = true;
+	
 	private ADDITIONAL additionalProperties = ADDITIONAL.DEFAULT;
 
 	private POLITICA_INCLUSIONE_TIPI politicaInclusioneTipi = POLITICA_INCLUSIONE_TIPI.DEFAULT;
@@ -65,4 +68,19 @@ public class JsonSchemaValidatorConfig {
 		this.tipi = tipi;
 	}
 	
+	public boolean isVerbose() {
+		return this.verbose;
+	}
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
+	}
+	
+	public boolean isEmitLogError() {
+		return this.emitLogError;
+	}
+
+	public void setEmitLogError(boolean emitLogError) {
+		this.emitLogError = emitLogError;
+	}
 }

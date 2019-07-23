@@ -50,7 +50,7 @@ Scenario: Erogazioni Creazione Fallita Erogatore Esterno
 Scenario: Erogazioni Creazione Petstore 204
 
     * call create ({ resourcePath: 'api', body: api_petstore })
-    * call create_204 ({ resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key })
+    * call create_201 ({ resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key })
     * call delete ({ resourcePath: api_petstore_path })
 
 @CreatePetstoreAuth204
@@ -70,7 +70,7 @@ Scenario: Erogazioni Creazione Petstore con autenticazione e autorizzazione
     * eval erogazione_petstore_auth.autorizzazione.configurazione.soggetto = soggetto_autenticato.nome
     * eval erogazione_petstore_auth.autorizzazione.configurazione.ruolo = ruolo_autenticato.nome
 
-    * call create_204 ({ resourcePath: 'erogazioni', body: erogazione_petstore_auth,  key: petstore_key })
+    * call create_201 ({ resourcePath: 'erogazioni', body: erogazione_petstore_auth,  key: petstore_key })
 
     * call delete ( { resourcePath: 'ruoli/' + ruolo_autenticato.nome })
     * call delete ( { resourcePath: 'soggetti/' + soggetto_autenticato.nome })
@@ -108,7 +108,7 @@ Scenario: Erogazioni Creazione SPCoop 204
     * eval erogazione_spcoop.autorizzazione.configurazione.soggetto = soggetto_autenticato.nome
     * eval erogazione_spcoop.autorizzazione.configurazione.ruolo = ruolo_autenticato.nome
 
-    * call create_204 ({ resourcePath: 'erogazioni', body: erogazione_spcoop,  key: spcoop_key })
+    * call create_201 ({ resourcePath: 'erogazioni', body: erogazione_spcoop,  key: spcoop_key })
 
     * call delete ( { resourcePath: 'ruoli/' + ruolo_autenticato.nome })
     * call delete ( { resourcePath: 'soggetti/' + soggetto_autenticato.nome })

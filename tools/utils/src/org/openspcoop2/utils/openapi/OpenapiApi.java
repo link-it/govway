@@ -40,9 +40,17 @@ import io.swagger.v3.oas.models.media.Schema;
  *
  */
 public class OpenapiApi extends Api {
-	private OpenAPI api;
-	private Map<String, Schema<?>> definitions;
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private transient OpenAPI api;
+	private transient Map<String, Schema<?>> definitions;
 
+	// struttura una volta che l'api è stata inizializzata per la validazione (e' serializzabile e cachabile)
+	private OpenapiApiValidatorStructure validationStructure;
 
 	public OpenapiApi(OpenAPI swagger) {
 		this.api = swagger;
@@ -75,4 +83,11 @@ public class OpenapiApi extends Api {
 		this.definitions = definitions;
 	}
 
+	public OpenapiApiValidatorStructure getValidationStructure() {
+		return this.validationStructure;
+	}
+
+	public void setValidationStructure(OpenapiApiValidatorStructure validationStructure) {
+		this.validationStructure = validationStructure;
+	}
 }

@@ -25,7 +25,6 @@ package org.openspcoop2.utils.regexp;
 import java.io.File;
 
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**	
  * Contiene utilities
@@ -48,27 +47,15 @@ public class RegExpUtilities {
 		testUrl.toString();
 	}
 	
-	public static void validateUri(String uri,boolean checkEsistenzaFile) throws UtilsException,java.net.MalformedURLException{
+	public static void validateUri(String uri) throws UtilsException,java.net.MalformedURLException{
 		if (uri.startsWith("http://")
 				|| uri.startsWith("file://")) {
 
-			if(checkEsistenzaFile)
-				HttpUtilities.requestHTTPFile(uri);
-			else
-				RegExpUtilities.validateUrl(uri);
+			RegExpUtilities.validateUrl(uri);
 
 		} else {
 			File f = new File(uri);
-			if(checkEsistenzaFile){
-				if(f.exists()==false){
-					throw new UtilsException("File non esistente");
-				}
-				else if(f.isDirectory()){
-					throw new UtilsException("File e' una directory");
-				}else if(f.canRead()==false){
-					throw new UtilsException("File non accessibile");
-				}
-			}
+			f.getAbsolutePath();
 		}
 	}
 	

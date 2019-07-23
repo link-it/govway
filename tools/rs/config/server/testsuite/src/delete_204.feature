@@ -9,7 +9,7 @@ Scenario: Template delete 204
     And params query_params
     And request body
     When method post
-    Then assert responseStatus == 204
+    Then assert responseStatus == 201
 
     #DELETE
     Given url configUrl

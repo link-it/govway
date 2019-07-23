@@ -34,11 +34,13 @@ import org.openspcoop2.utils.rest.api.ApiRequestDynamicPathParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestFormParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestQueryParameter;
 import org.openspcoop2.utils.rest.api.ApiResponse;
+import org.openspcoop2.utils.rest.api.ApiSchemaTypeRestriction;
 import org.openspcoop2.utils.rest.api.ApiUtilities;
 import org.openspcoop2.utils.rest.entity.Cookie;
 import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseResponseEntity;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 
 /**
  * ApiValidatorConfig
@@ -54,7 +56,7 @@ public abstract class AbstractApiValidator   {
 	
 	public abstract void validatePostConformanceCheck(HttpBaseEntity<?> httpEntity,ApiOperation operation,Object ... args) throws ProcessingException,ValidatorException;
 	
-	public abstract void validateValueAsType(String value,String type) throws ProcessingException,ValidatorException;
+	public abstract void validateValueAsType(String value,String type, ApiSchemaTypeRestriction typeRestriction) throws ProcessingException,ValidatorException;
 	
 	public void validate(Api api, HttpBaseEntity<?> httpEntity, Object ... args) throws ProcessingException,ValidatorException{
 		
@@ -80,6 +82,9 @@ public abstract class AbstractApiValidator   {
 			
 			
 			if(httpEntity.getContentType() != null) {
+				
+				String baseTypeHttp = ContentTypeUtilities.readBaseTypeFromContentType(httpEntity.getContentType());
+				
 				boolean contentTypeSupported = false;
 				List<ApiBodyParameter> requestBodyParametersList = null;
 				List<ApiResponse> responses = null;
@@ -92,10 +97,10 @@ public abstract class AbstractApiValidator   {
 				int status = -1;
 				
 				if(httpEntity instanceof HttpBaseRequestEntity<?>) {
-					
+										
 					if(requestBodyParametersList != null) {
 						for(ApiBodyParameter input: requestBodyParametersList) {
-							if(input.isAllMediaType() || input.getMediaType().equals(httpEntity.getContentType())) {
+							if(input.isAllMediaType() || ContentTypeUtilities.isMatch(baseTypeHttp, input.getMediaType())) {
 								contentTypeSupported = true;
 								break;
 							} 
@@ -109,7 +114,7 @@ public abstract class AbstractApiValidator   {
 							if(status==output.getHttpReturnCode() || output.isDefaultHttpReturnCode()) {
 								if(output.sizeBodyParameters()>0) {
 									for(ApiBodyParameter outputBodyParameter: output.getBodyParameters()) {
-										if(outputBodyParameter.isAllMediaType() || outputBodyParameter.getMediaType().equals(httpEntity.getContentType())) {
+										if(outputBodyParameter.isAllMediaType() || ContentTypeUtilities.isMatch(baseTypeHttp, outputBodyParameter.getMediaType()) ) {
 											contentTypeSupported = true;
 											break;
 										} 
@@ -123,9 +128,9 @@ public abstract class AbstractApiValidator   {
 				
 				if(!contentTypeSupported) {
 					if(status>0)
-						throw new ValidatorException("Content-Type ["+httpEntity.getContentType()+"] (http response with status '"+status+"') unsupported");
+						throw new ValidatorException("Content-Type ["+baseTypeHttp+"] (http response with status '"+status+"') unsupported");
 					else
-						throw new ValidatorException("Content-Type ["+httpEntity.getContentType()+"] unsupported");
+						throw new ValidatorException("Content-Type ["+baseTypeHttp+"] unsupported");
 				}
 			}
 			
@@ -150,7 +155,7 @@ public abstract class AbstractApiValidator   {
 						}
 						if(value!=null){
 							try{
-								validateValueAsType(value,paramHeader.getType());
+								validateValueAsType(value,paramHeader.getType(),paramHeader.getSchema());
 							}catch(ValidatorException val){
 								throw new ValidatorException("HttpHeader ["+name+"] with value ["+value+"] not valid (expected type ["+paramHeader.getType()+"]): "+val.getMessage(),val);
 							}
@@ -176,7 +181,7 @@ public abstract class AbstractApiValidator   {
 						}
 						if(value!=null){
 							try{
-								validateValueAsType(value,paramCookie.getType());
+								validateValueAsType(value,paramCookie.getType(),paramCookie.getSchema());
 							}catch(ValidatorException val){
 								throw new ValidatorException("Cookie ["+name+"] with value ["+value+"] not valid (expected type ["+paramCookie.getType()+"]): "+val.getMessage(),val);
 							}
@@ -201,9 +206,9 @@ public abstract class AbstractApiValidator   {
 						}
 						if(value!=null){
 							try{
-								validateValueAsType(value,paramQuery.getType());
+								validateValueAsType(value,paramQuery.getType(),paramQuery.getSchema());
 							}catch(ValidatorException val){
-								throw new ValidatorException("HttpHeader ["+name+"] with value ["+value+"] not valid (expected type ["+paramQuery.getType()+"]): "+val.getMessage(),val);
+								throw new ValidatorException("QueryParameter ["+name+"] with value ["+value+"] not valid (expected type ["+paramQuery.getType()+"]): "+val.getMessage(),val);
 							}
 						}
 					}
@@ -234,7 +239,7 @@ public abstract class AbstractApiValidator   {
 						}
 						if(find){
 							try{
-								validateValueAsType(valueFound,paramDynamicPath.getType());
+								validateValueAsType(valueFound,paramDynamicPath.getType(),paramDynamicPath.getSchema());
 							}catch(ValidatorException val){
 								throw new ValidatorException("DynamicPath ["+paramDynamicPath.getName()+"] with value ["+valueFound+"] not valid (expected type ["+paramDynamicPath.getType()+"]): "+val.getMessage(),val);
 							}
@@ -259,7 +264,7 @@ public abstract class AbstractApiValidator   {
 						}
 						if(value!=null){
 							try{
-								validateValueAsType(value,paramForm.getType());
+								validateValueAsType(value,paramForm.getType(),paramForm.getSchema());
 							}catch(ValidatorException val){
 								throw new ValidatorException("FormParameter ["+name+"] with value ["+value+"] not valid (expected type ["+paramForm.getType()+"]): "+val.getMessage(),val);
 							}
@@ -309,7 +314,7 @@ public abstract class AbstractApiValidator   {
 						}
 						if(value!=null){
 							try{
-								validateValueAsType(value,paramHeader.getType());
+								validateValueAsType(value,paramHeader.getType(),paramHeader.getSchema());
 							}catch(ValidatorException val){
 								throw new ValidatorException("HttpHeader ["+name+"] with value ["+value+"] not valid (expected type ["+paramHeader.getType()+"]): "+val.getMessage(),val);
 							}
@@ -335,7 +340,7 @@ public abstract class AbstractApiValidator   {
 						}
 						if(value!=null){
 							try{
-								validateValueAsType(value,paramCookie.getType());
+								validateValueAsType(value,paramCookie.getType(),paramCookie.getSchema());
 							}catch(ValidatorException val){
 								throw new ValidatorException("Cookie ["+name+"] with value ["+value+"] not valid (expected type ["+paramCookie.getType()+"]): "+val.getMessage(),val);
 							}

@@ -148,6 +148,10 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			ErogazioniApiHelper.createAps(env, asps, regConnettore, body, alreadyExists, true);
 
 			context.getLogger().info("Invocazione completata con successo");
+			
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
+			
 		} catch (javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
@@ -181,6 +185,9 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			ErogazioniApiHelper.createAllegatoAsps(body, env, asps);
 			context.getLogger().info("Invocazione completata con successo");
+			
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
 
 		} catch (javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
@@ -304,6 +311,8 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			context.getLogger().info("Invocazione completata con successo");
 
+			Helper.setContentType(context, allegato.getFile());
+			
 			return allegato.getByteContenuto();
 
 		} catch (javax.ws.rs.WebApplicationException e) {

@@ -48,7 +48,7 @@ public class ApiItem extends BaseSoggettoItem {
   private Integer versione = null;
   
   @Schema(example = "{\"formato\":\"OpenApi3.0\"}", required = true, description = "")
-  private Object formato = null;
+  private String formato = null;
   
   @Schema(required = true, description = "")
   private StatoApiEnum stato = null;
@@ -160,15 +160,15 @@ public class ApiItem extends BaseSoggettoItem {
   @JsonProperty("formato")
   @NotNull
   @Valid
-  public Object getFormato() {
+  public String getFormato() {
     return this.formato;
   }
 
-  public void setFormato(Object formato) {
+  public void setFormato(String formato) {
     this.formato = formato;
   }
 
-  public ApiItem formato(Object formato) {
+  public ApiItem formato(String formato) {
     this.formato = formato;
     return this;
   }

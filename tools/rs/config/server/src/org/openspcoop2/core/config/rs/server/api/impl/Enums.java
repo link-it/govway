@@ -41,7 +41,9 @@ import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneNewEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.rs.server.model.TipoAutorizzazioneNewEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoGestioneCorsEnum;
+import org.openspcoop2.core.config.rs.server.model.TipoSpecificaLivelloServizioEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoSpecificaSemiformaleEnum;
+import org.openspcoop2.core.config.rs.server.model.TipoSpecificaSicurezzaEnum;
 import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
@@ -50,7 +52,9 @@ import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
+import org.openspcoop2.core.registry.constants.TipiDocumentoLivelloServizio;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 
@@ -234,6 +238,19 @@ public class Enums {
 		Enums.tipoDocumentoSemiFormaleFromSpecifica.put(TipoSpecificaSemiformaleEnum.XML, TipiDocumentoSemiformale.XML);
 		Enums.tipoDocumentoSemiFormaleFromSpecifica.put(TipoSpecificaSemiformaleEnum.XSD, TipiDocumentoSemiformale.XSD);
 		Enums.tipoDocumentoSemiFormaleFromSpecifica.put(TipoSpecificaSemiformaleEnum.YAML, TipiDocumentoSemiformale.YAML);
+	}
+	
+	public static final Map<TipoSpecificaLivelloServizioEnum,TipiDocumentoLivelloServizio> tipoDocumentoLivelloServizioFromSpecifica = new HashMap<TipoSpecificaLivelloServizioEnum,TipiDocumentoLivelloServizio>();
+	static {
+		Enums.tipoDocumentoLivelloServizioFromSpecifica.put(TipoSpecificaLivelloServizioEnum.WS_AGREEMENT, TipiDocumentoLivelloServizio.WSAGREEMENT);
+		Enums.tipoDocumentoLivelloServizioFromSpecifica.put(TipoSpecificaLivelloServizioEnum.WSLA, TipiDocumentoLivelloServizio.WSLA);
+	}
+	
+	public static final Map<TipoSpecificaSicurezzaEnum,TipiDocumentoSicurezza> tipoDocumentoSicurezzaFromSpecifica = new HashMap<TipoSpecificaSicurezzaEnum,TipiDocumentoSicurezza>();
+	static {
+		Enums.tipoDocumentoSicurezzaFromSpecifica.put(TipoSpecificaSicurezzaEnum.WS_POLICY, TipiDocumentoSicurezza.WSPOLICY);
+		Enums.tipoDocumentoSicurezzaFromSpecifica.put(TipoSpecificaSicurezzaEnum.XACML_POLICY, TipiDocumentoSicurezza.XACML_POLICY);
+		Enums.tipoDocumentoSicurezzaFromSpecifica.put(TipoSpecificaSicurezzaEnum.LINGUAGGIO_NATURALE, TipiDocumentoSicurezza.LINGUAGGIO_NATURALE);
 	}
 	
 	

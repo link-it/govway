@@ -16,7 +16,7 @@ Background:
 
 @Create204
 Scenario: Api Create 204
-    * call create_204 ( { resourcePath: 'api', body: api, key: api.nome + '/' + api.versione } )
+    * call create_201 ( { resourcePath: 'api', body: api, key: api.nome + '/' + api.versione } )
 
 @Create409
 Scenario: Api Create 409
@@ -28,7 +28,7 @@ Scenario: Api Create SPCoop 204
     * def query_params = ( { profilo: "SPCoop", soggetto: soggetto.nome })
 
     * call create ( { resourcePath: 'soggetti', body: soggetto, key: soggetto.nome })
-    * call create_204 ( { resourcePath: 'api', body: api_spcoop, key: api_spcoop.nome + '/' + api_spcoop.versione } )
+    * call create_201 ( { resourcePath: 'api', body: api_spcoop, key: api_spcoop.nome + '/' + api_spcoop.versione } )
     * call delete ( { resourcePath: 'soggetti/' + soggetto.nome })
 
 @CreateSPCoopNoSoggetto400

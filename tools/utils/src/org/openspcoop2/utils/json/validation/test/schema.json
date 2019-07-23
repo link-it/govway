@@ -1,6 +1,30 @@
 {
 "$schema": "http://json-schema.org/draft-04/schema#",
 "definitions" : {
+  "FormatoSoapEnum": {
+    "type": "string",
+    "enum": [
+      "Wsdl1.1"
+    ],
+    "default": "Wsdl1.1"
+  },
+  "FormatoRestEnum": {
+    "type": "string",
+    "enum": [
+      "Wadl",
+      "Swagger2.0",
+      "OpenApi3.0"
+    ],
+    "default": "OpenApi3.0"
+  },
+  "TipoApiEnum": {
+    "type": "string",
+    "example": "rest",
+    "enum": [
+      "soap",
+      "rest"
+    ]
+  },
   "Order" : {
     "type" : "object",
     "properties" : {
@@ -49,6 +73,25 @@
       "name" : "Category"
     }
   },
+  "EsempioAllOf": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/components/schemas/User"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "username" : {
+		      "type" : "string"
+		    },
+		    "firstName" : {
+		      "type" : "string"
+		    }
+          }
+        }
+      ]
+    },
   "User" : {
     "type" : "object",
     "properties" : {
@@ -133,6 +176,30 @@
       },
       "costante" : {
       	"const" : "valoreCostante"
+      },
+      "tipo": {
+        "$ref": "#/definitions/TipoApiEnum"
+      },
+      "formato": {
+        "type": "string",
+        "example": {
+          "formato": "OpenApi3.0"
+        },
+        "discriminator": {
+          "propertyName": "tipo",
+          "mapping": {
+            "soap": "#/definitions/FormatoSoapEnum",
+            "rest": "#/definitions/FormatoRestEnum"
+          }
+        },
+        "oneOf": [
+          {
+            "$ref": "#/definitions/FormatoSoapEnum"
+          },
+          {
+            "$ref": "#/definitions/FormatoRestEnum"
+          }
+        ]
       }
     },
     "additionalProperties" : false,

@@ -2182,7 +2182,6 @@ components:
     TransazioneExtInformazioniSoggetto:
       required:
       - "codice"
-      - "indirizzo"
       - "tipo"
       type: "object"
       properties:
@@ -2225,7 +2224,7 @@ components:
       description: "Formato solo da caratteri e cifre"
     NCName:
       maxLength: 255
-      pattern: "^[_A-Za-z][\\\\-\\\\._A-Za-z0-9]*$"
+      pattern: "^[_A-Za-z][\\-\\._A-Za-z0-9]*$"
       type: "string"
       description: "Può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e\
         \ dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'"
@@ -2472,7 +2471,6 @@ components:
       required:
       - "data_ricezione"
       - "tipo"
-      - "url_invocazione"
       type: "object"
       properties:
         data_ricezione:
@@ -2485,7 +2483,6 @@ components:
           $ref: "#/components/schemas/HttpMethodEnum"
         url_invocazione:
           type: "string"
-          format: "uri"
           example: "/govway/in/Ente/PetStore/v2/pet"
     TransazioneDettaglioRisposta:
       type: "object"
@@ -2706,6 +2703,11 @@ components:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
+    201Created:
+      description: "Resource created"
+      headers:
+        Location:
+          $ref: "#/components/headers/Location"
   parameters:
     id_transazione:
       name: "id"
@@ -3111,3 +3113,8 @@ components:
       schema:
         type: "integer"
         format: "int32"
+    Location:
+      description: "Header Location inserito in una risposta ad una richiesta POST,\
+        \ terminata con successo 'http 201'.\nL'header indica l'id dell'oggetto creato."
+      schema:
+        type: "string"

@@ -4278,10 +4278,12 @@ public class InoltroBuste extends GenericLib{
 									isFault = hasContent && soapMsg.getSOAPBody().hasFault() || MessageRole.FAULT.equals(responseMessage.getMessageRole());
 								}
 								else{
-									OpenSPCoop2RestMessage<?> restMsg = responseMessage.castAsRest();
+									//OpenSPCoop2RestMessage<?> restMsg = responseMessage.castAsRest();
 									//hasContent = restMsg.hasContent();
 									hasContent = true; // devo controllare gli header etc...
-									isFault = restMsg.isProblemDetailsForHttpApis_RFC7807() || MessageRole.FAULT.equals(responseMessage.getMessageRole());
+									//isFault = restMsg.isProblemDetailsForHttpApis_RFC7807() || MessageRole.FAULT.equals(responseMessage.getMessageRole());
+									// fix: i problem detail devono far parte dell'interfaccia openapi
+									isFault = MessageRole.FAULT.equals(responseMessage.getMessageRole());
 								}
 								
 								if(hasContent && (isFault==false) ){

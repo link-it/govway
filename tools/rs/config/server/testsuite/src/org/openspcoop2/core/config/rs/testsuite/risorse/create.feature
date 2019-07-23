@@ -24,7 +24,7 @@ Background:
 Scenario: Creazione Risorse 204
 
 * call create ({ resourcePath: 'api', body: api })
-* call create_204 ({ resourcePath: risorse_path, body: risorsa,  key: risorsa.nome })
+* call create_201 ({ resourcePath: risorse_path, body: risorsa,  key: risorsa.nome })
 * call delete ({ resourcePath: api_path })
 
 @Create409

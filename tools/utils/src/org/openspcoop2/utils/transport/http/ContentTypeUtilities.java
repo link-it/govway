@@ -21,7 +21,9 @@
  */
 package org.openspcoop2.utils.transport.http;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.mail.internet.ContentType;
@@ -30,6 +32,7 @@ import javax.xml.soap.SOAPException;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.mime.MultipartUtils;
+import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 
 /**
  * ContentTypeUtilities
@@ -130,6 +133,80 @@ public class ContentTypeUtilities {
 		} catch (Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
+	}
+	
+	
+	
+	// match
+	
+	public static boolean isMatch(String contentType, String contentTypeAtteso) throws Exception {
+		List<String> l = new ArrayList<String>();
+		l.add(contentTypeAtteso);
+		return isMatch(contentTypeAtteso, l);
+	}
+	public static boolean isMatch(String contentType, List<String> contentTypeAttesi) throws Exception {
+		
+		if(contentTypeAttesi==null || contentTypeAttesi.size()<=0) {
+			return true;
+		}
+		
+		boolean found = false;
+		for (String checkContentType : contentTypeAttesi) {
+			if("empty".equals(checkContentType)){
+				if(contentType==null || "".equals(contentType)) {
+					found = true;
+					break;
+				}
+			}
+			else {
+				if(contentType==null) {
+					continue;
+				}
+				if(checkContentType==null || "".equals(checkContentType) ||
+						checkContentType.contains("/")==false ||
+						checkContentType.startsWith("/") ||
+						checkContentType.endsWith("/")) {
+					throw new Exception("Configurazione errata, content type indicato ("+checkContentType+") possiede un formato non corretto (atteso: type/subtype)");
+				}
+				String [] ctVerifica = checkContentType.split("/");
+				if(ctVerifica!=null && ctVerifica.length==2) {
+					StringBuffer bf = new StringBuffer();
+					String part1 = ctVerifica[0].trim();
+					if("*".equals(part1)) {
+						bf.append("(.+)");
+					}
+					else {
+						// escape special char
+						part1 = part1.replaceAll("\\+", "\\\\+");
+						bf.append(part1);
+					}
+					bf.append("/");
+					String part2 = ctVerifica[1].trim();
+					if("*".equals(part2)) {
+						bf.append("(.+)");
+					}
+					else if(part2.startsWith("*")) {
+						bf.append("(.+)");
+						String sub = part2.substring(1);
+						// escape special char
+						sub = sub.replaceAll("\\+", "\\\\+");
+						bf.append(sub);
+					}
+					else {
+						// escape special char
+						part2 = part2.replaceAll("\\+", "\\\\+");
+						bf.append(part2);
+					}
+					checkContentType = bf.toString();
+				}
+				if(RegularExpressionEngine.isMatch(contentType, checkContentType)) {
+					found = true;
+					break;
+				}
+			}
+			
+		}
+		return found;
 	}
 	
 	

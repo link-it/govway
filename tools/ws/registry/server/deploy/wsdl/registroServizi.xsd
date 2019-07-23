@@ -393,6 +393,7 @@
 		<xsd:attribute name="parameter-type" type="ParameterType" use="required"/>
 		<xsd:attribute default="false" name="required" type="xsd:boolean" use="optional"/>
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="restrizioni" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 	<xsd:complexType name="resource-representation">
 		<xsd:sequence>

@@ -17,7 +17,7 @@ Scenario: CRUD RATE LIMITING
     And request policy
     And params query_params
     When method post
-    Then status 204
+    Then status 201
 
     # LIST
     Given url configUrl

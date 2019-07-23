@@ -121,6 +121,7 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 				tipoAccordo = null;
 			String nome = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_NOME);
 			String tipo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_TIPO);
+			String restrizioni = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_RESTRIZIONI);
 			String tipoParametroS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO);
 			ParameterType tipoParametro =  StringUtils.isNotEmpty(tipoParametroS) ? ParameterType.toEnumConstant(tipoParametroS) : null;
 			String requiredS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_REQUIRED);
@@ -207,6 +208,7 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 					required = false;
 					tipoParametro = ParameterType.QUERY;
 					tipo = "";
+					restrizioni = null;
 				}
 
 				// preparo i campi
@@ -215,7 +217,7 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiResourceParameterToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,
-							 nomeRisorsa, isRequest, statusS, null, nome, descr,  tipoParametro, tipo, required);
+							 nomeRisorsa, isRequest, statusS, null, nome, descr,  tipoParametro, tipo, restrizioni, required);
 
 				pd.setDati(dati);
 
@@ -225,7 +227,8 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apcHelper.accordiResourceParameterCheckData(tipoOp, id, nomeRisorsa, isRequest, statusS, nome, descr, tipoParametro, tipo, required, idResource,idResponse,null,null);
+			boolean isOk = apcHelper.accordiResourceParameterCheckData(tipoOp, id, nomeRisorsa, isRequest, statusS, nome, descr, tipoParametro, 
+					tipo, restrizioni, required, idResource,idResponse,null,null);
 
 			if (!isOk) {
 
@@ -238,7 +241,7 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiResourceParameterToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,
-						 nomeRisorsa, isRequest, statusS, null, nome, descr,  tipoParametro, tipo, required);
+						 nomeRisorsa, isRequest, statusS, null, nome, descr,  tipoParametro, tipo, restrizioni, required);
 				
 				pd.setDati(dati);
 
@@ -252,6 +255,9 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 			newParameter.setParameterType(tipoParametro);
 			newParameter.setNome(nome);
 			newParameter.setTipo(tipo);
+			if(restrizioni!=null && !"".equals(restrizioni)) {
+				newParameter.setRestrizioni(restrizioni);
+			}
 			newParameter.setDescrizione(descr);
 			newParameter.setRequired(required);
 			

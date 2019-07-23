@@ -57,7 +57,6 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
@@ -2744,10 +2743,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									isFault = hasContent && soapMsg.getSOAPBody().hasFault() || MessageRole.FAULT.equals(responseMessage.getMessageRole());
 								}
 								else{
-									OpenSPCoop2RestMessage<?> restMsg = responseMessage.castAsRest();
+									//org.openspcoop2.message.OpenSPCoop2RestMessage<?> restMsg = responseMessage.castAsRest();
 									//hasContent = restMsg.hasContent();
 									hasContent = true; // devo controllare gli header etc...
-									isFault = restMsg.isProblemDetailsForHttpApis_RFC7807() || MessageRole.FAULT.equals(responseMessage.getMessageRole());
+									// fix: i problem detail devono far parte dell'interfaccia openapi
+									//isFault = restMsg.isProblemDetailsForHttpApis_RFC7807() || MessageRole.FAULT.equals(responseMessage.getMessageRole());
+									isFault = MessageRole.FAULT.equals(responseMessage.getMessageRole());
 								}
 								
 								if(hasContent && (isFault==false) ){

@@ -85,7 +85,7 @@ paths:
         required: true
       responses:
         201:
-          description: "API creata con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -478,7 +478,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Allegato creato con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -678,7 +678,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Risorsa creata con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -837,7 +837,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Servizio creato con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -996,7 +996,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Azione creata con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -1156,7 +1156,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Erogazione creata con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -1415,7 +1415,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Allegato creato con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -1820,7 +1820,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Gruppo creato con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -1948,7 +1948,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Azioni aggiunte con con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -2356,7 +2356,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Soggetti aggiunti con con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -2456,7 +2456,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Applicativi aggiunti con con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -2555,7 +2555,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Ruoli aggiunti con con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -2654,7 +2654,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Scope aggiunti con con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -2758,7 +2758,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Policy aggiunta con con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -3059,7 +3059,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Regola aggiunta con con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -3225,7 +3225,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Regola aggiunta con con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -3457,7 +3457,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Fruizione creata con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -3721,7 +3721,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Allegato creato con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -4135,7 +4135,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Gruppo creato con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -4265,7 +4265,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Azioni aggiunte con con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -4681,7 +4681,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Applicativi aggiunti con con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -4782,7 +4782,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Ruoli aggiunti con con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -4883,7 +4883,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Scope aggiunti con con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -4989,7 +4989,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Policy aggiunta con con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -5294,7 +5294,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Regola aggiunta con con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -5462,7 +5462,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Regola aggiunta con con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -5698,7 +5698,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Soggetto creato con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -5851,7 +5851,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Applicativo creato con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -6006,7 +6006,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Ruolo creato con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -6155,7 +6155,7 @@ paths:
         required: true
       responses:
         201:
-          description: "Scope creato con successo"
+          $ref: "#/components/responses/201Created"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -6348,7 +6348,7 @@ components:
           tipo:
             $ref: "#/components/schemas/TipoApiEnum"
           formato:
-            type: "object"
+            type: "string"
             example:
               formato: "OpenApi3.0"
             discriminator:
@@ -6377,15 +6377,15 @@ components:
         ruolo:
           $ref: "#/components/schemas/RuoloAllegatoAPI"
         allegato:
-          type: "object"
+          $ref: "#/components/schemas/Allegato"
+        tipo_allegato:
+          type: "string"
           discriminator:
             propertyName: "ruolo"
             mapping:
-              allegato: "govway_rs-api_config-commons.yaml#/components/schemas/AllegatoGenerico"
-              specificaSemiFormale: "govway_rs-api_config-commons.yaml#/components/schemas/AllegatoSpecificaSemiformale"
+              specificaSemiFormale: "govway_rs-api_config-commons.yaml#/components/schemas/TipoSpecificaSemiformaleEnum"
           oneOf:
-          - $ref: "#/components/schemas/AllegatoGenerico"
-          - $ref: "#/components/schemas/AllegatoSpecificaSemiformale"
+          - $ref: "#/components/schemas/TipoSpecificaSemiformaleEnum"
     ApiAllegatoItem:
       required:
       - "allegato"
@@ -6395,15 +6395,15 @@ components:
         ruolo:
           $ref: "#/components/schemas/RuoloAllegatoAPI"
         allegato:
-          type: "object"
+          $ref: "#/components/schemas/AllegatoItem"
+        tipo_allegato:
+          type: "string"
           discriminator:
             propertyName: "ruolo"
             mapping:
-              allegato: "govway_rs-api_config-commons.yaml#/components/schemas/AllegatoGenericoItem"
-              specificaSemiFormale: "govway_rs-api_config-commons.yaml#/components/schemas/AllegatoSpecificaSemiformaleItem"
+              specificaSemiFormale: "govway_rs-api_config-commons.yaml#/components/schemas/TipoSpecificaSemiformaleEnum"
           oneOf:
-          - $ref: "#/components/schemas/AllegatoGenericoItem"
-          - $ref: "#/components/schemas/AllegatoSpecificaSemiformaleItem"
+          - $ref: "#/components/schemas/TipoSpecificaSemiformaleEnum"
     ListaApiAllegati:
       type: "object"
       allOf:
@@ -6769,7 +6769,7 @@ components:
       description: "Formato solo da caratteri e cifre"
     NCName:
       maxLength: 255
-      pattern: "^[_A-Za-z][\\\\-\\\\._A-Za-z0-9]*$"
+      pattern: "^[_A-Za-z][\\-\\._A-Za-z0-9]*$"
       type: "string"
       description: "Può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e\
         \ dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'"
@@ -6863,12 +6863,12 @@ components:
           example: "abc123"
     ProfiloEnum:
       type: "string"
+      default: "APIGateway"
       enum:
       - "APIGateway"
       - "SPCoop"
       - "FatturaPA"
       - "eDelivery"
-      default: "APIGateway"
     ProfiloCollaborazioneEnum:
       type: "string"
       example: "sincrono"
@@ -6924,7 +6924,7 @@ components:
         versione:
           $ref: "#/components/schemas/Versione"
         formato:
-          type: "object"
+          type: "string"
           example:
             formato: "OpenApi3.0"
           discriminator:
@@ -6935,7 +6935,7 @@ components:
           oneOf:
           - $ref: "#/components/schemas/FormatoSoapEnum"
           - $ref: "#/components/schemas/FormatoRestEnum"
-    AllegatoGenerico:
+    Allegato:
       required:
       - "documento"
       - "nome"
@@ -6946,73 +6946,13 @@ components:
         documento:
           type: "string"
           format: "byte"
-    AllegatoSpecificaSemiformale:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/AllegatoGenerico"
-      - required:
-        - "tipo"
-        type: "object"
-        properties:
-          tipo:
-            $ref: "#/components/schemas/TipoSpecificaSemiformaleEnum"
-    AllegatoSpecificaSicurezza:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/AllegatoGenerico"
-      - required:
-        - "tipo"
-        type: "object"
-        properties:
-          tipo:
-            $ref: "#/components/schemas/TipoSpecificaSicurezzaEnum"
-    AllegatoSpecificaLivelloServizio:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/AllegatoGenerico"
-      - required:
-        - "tipo"
-        type: "object"
-        properties:
-          tipo:
-            $ref: "#/components/schemas/TipoSpecificaLivelloServizioEnum"
-    AllegatoGenericoItem:
+    AllegatoItem:
       required:
       - "nome"
       type: "object"
       properties:
         nome:
           $ref: "#/components/schemas/NCName"
-    AllegatoSpecificaSemiformaleItem:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/AllegatoGenericoItem"
-      - required:
-        - "tipo"
-        type: "object"
-        properties:
-          tipo:
-            $ref: "#/components/schemas/TipoSpecificaSemiformaleEnum"
-    AllegatoSpecificaSicurezzaItem:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/AllegatoGenericoItem"
-      - required:
-        - "tipo"
-        type: "object"
-        properties:
-          tipo:
-            $ref: "#/components/schemas/TipoSpecificaSicurezzaEnum"
-    AllegatoSpecificaLivelloServizioItem:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/AllegatoGenericoItem"
-      - required:
-        - "tipo"
-        type: "object"
-        properties:
-          tipo:
-            $ref: "#/components/schemas/TipoSpecificaLivelloServizioEnum"
     AuthenticationHttpBasic:
       required:
       - "password"
@@ -7028,6 +6968,7 @@ components:
           type: "string"
           format: "password"
           example: "pwd"
+      additionalProperties: false
     AuthenticationHttps:
       required:
       - "tipo"
@@ -7045,6 +6986,7 @@ components:
           oneOf:
           - $ref: "#/components/schemas/AuthenticationHttpsCertificato"
           - $ref: "#/components/schemas/AuthenticationHttpsConfigurazioneManuale"
+      additionalProperties: false
     AuthenticationHttpsCertificato:
       required:
       - "archivio"
@@ -7067,6 +7009,7 @@ components:
         strict_verification:
           type: "boolean"
           default: false
+      additionalProperties: false
     AuthenticationHttpsConfigurazioneManuale:
       required:
       - "subject"
@@ -7080,6 +7023,7 @@ components:
           maxLength: 2800
           type: "string"
           example: "cn=esterno"
+      additionalProperties: false
     AuthenticationPrincipal:
       required:
       - "userid"
@@ -7089,6 +7033,7 @@ components:
           maxLength: 255
           type: "string"
           example: "idEsterno"
+      additionalProperties: false
     BaseCredenziali:
       type: "object"
       properties:
@@ -7300,6 +7245,7 @@ components:
         forward:
           type: "boolean"
           default: false
+      additionalProperties: false
     APIImplAutenticazioneConfigurazionePrincipal:
       required:
       - "tipo"
@@ -7323,6 +7269,7 @@ components:
         forward:
           type: "boolean"
           default: false
+      additionalProperties: false
     APIImplAutenticazioneConfigurazioneCustom:
       type: "object"
       properties:
@@ -7330,6 +7277,7 @@ components:
           maxLength: 255
           type: "string"
           description: "nome autenticazione 'custom', set tipo='custom'"
+      additionalProperties: false
     APIImplAutenticazione:
       required:
       - "tipo"
@@ -7377,17 +7325,11 @@ components:
         tipo:
           $ref: "#/components/schemas/TipoAutorizzazioneEnum"
         configurazione:
-          type: "object"
-          discriminator:
-            propertyName: "tipo"
-            mapping:
-              abilitato: "#/components/schemas/APIImplAutorizzazioneConfig"
-              xacml-Policy: "#/components/schemas/APIImplAutorizzazioneXACMLBaseConfig"
-              custom: "#/components/schemas/APIImplAutorizzazioneCustom"
-          oneOf:
-          - $ref: "#/components/schemas/APIImplAutorizzazioneConfig"
-          - $ref: "#/components/schemas/APIImplAutorizzazioneXACMLBaseConfig"
-          - $ref: "#/components/schemas/APIImplAutorizzazioneCustom"
+          $ref: "#/components/schemas/APIImplAutorizzazioneConfig"
+        configurazione_xacml:
+          $ref: "#/components/schemas/APIImplAutorizzazioneXACMLViewConfig"
+        configurazione_custom:
+          $ref: "#/components/schemas/APIImplAutorizzazioneCustom"
     APIImplAutorizzazione:
       required:
       - "tipo"
@@ -7396,18 +7338,38 @@ components:
         tipo:
           $ref: "#/components/schemas/TipoAutorizzazioneEnum"
         configurazione:
-          type: "object"
-          discriminator:
-            propertyName: "tipo"
-            mapping:
-              abilitato: "#/components/schemas/APIImplAutorizzazioneConfig"
-              xacml-Policy: "#/components/schemas/APIImplAutorizzazioneXACMLConfig"
-              custom: "#/components/schemas/APIImplAutorizzazioneCustom"
-          oneOf:
-          - $ref: "#/components/schemas/APIImplAutorizzazioneConfig"
-          - $ref: "#/components/schemas/APIImplAutorizzazioneXACMLConfig"
-          - $ref: "#/components/schemas/APIImplAutorizzazioneCustom"
-    APIImplAutorizzazioneBaseConfig:
+          $ref: "#/components/schemas/APIImplAutorizzazioneConfig"
+        configurazione_xacml:
+          $ref: "#/components/schemas/APIImplAutorizzazioneXACMLConfig"
+        configurazione_custom:
+          $ref: "#/components/schemas/APIImplAutorizzazioneCustom"
+    APIImplAutorizzazioneConfigNew:
+      required:
+      - "richiedente"
+      - "ruoli"
+      type: "object"
+      properties:
+        richiedente:
+          type: "boolean"
+          default: true
+        soggetto:
+          $ref: "#/components/schemas/SimpleName"
+        ruoli:
+          type: "boolean"
+          default: false
+        ruoli_fonte:
+          $ref: "#/components/schemas/FonteEnum"
+        ruoli_richiesti:
+          $ref: "#/components/schemas/AllAnyEnum"
+        ruolo:
+          $ref: "#/components/schemas/NCName"
+      additionalProperties: false
+    APIImplAutorizzazioneConfig:
+      required:
+      - "richiedente"
+      - "ruoli"
+      - "scope"
+      - "token"
       type: "object"
       properties:
         richiedente:
@@ -7420,53 +7382,40 @@ components:
           $ref: "#/components/schemas/FonteEnum"
         ruoli_richiesti:
           $ref: "#/components/schemas/AllAnyEnum"
-    APIImplAutorizzazioneConfigNew:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/APIImplAutorizzazioneBaseConfig"
-      - type: "object"
-        properties:
-          soggetto:
-            $ref: "#/components/schemas/SimpleName"
-          ruolo:
-            $ref: "#/components/schemas/NCName"
-    APIImplAutorizzazioneConfig:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/APIImplAutorizzazioneBaseConfig"
-      - type: "object"
-        properties:
-          scope:
-            type: "boolean"
-            default: false
-          scope_richiesti:
-            $ref: "#/components/schemas/AllAnyEnum"
-          token:
-            type: "boolean"
-            default: false
-          token_claims:
-            maxLength: 4000
-            type: "string"
-            description: "Indicare per riga i claims richiesti (nome=valore); è possibile\
-              \ elencare differenti valori ammissibili separandoli con la virgola"
-    APIImplAutorizzazioneXACMLBaseConfig:
+        scope:
+          type: "boolean"
+          default: false
+        scope_richiesti:
+          $ref: "#/components/schemas/AllAnyEnum"
+        token:
+          type: "boolean"
+          default: false
+        token_claims:
+          maxLength: 4000
+          type: "string"
+          description: "Indicare per riga i claims richiesti (nome=valore); è possibile\
+            \ elencare differenti valori ammissibili separandoli con la virgola"
+      additionalProperties: false
+    APIImplAutorizzazioneXACMLViewConfig:
       required:
       - "ruoli_fonte"
       type: "object"
       properties:
         ruoli_fonte:
           $ref: "#/components/schemas/FonteEnum"
+      additionalProperties: false
     APIImplAutorizzazioneXACMLConfig:
+      required:
+      - "policy"
+      - "ruoli_fonte"
       type: "object"
-      allOf:
-      - $ref: "#/components/schemas/APIImplAutorizzazioneXACMLBaseConfig"
-      - required:
-        - "policy"
-        type: "object"
-        properties:
-          policy:
-            type: "string"
-            format: "byte"
+      properties:
+        ruoli_fonte:
+          $ref: "#/components/schemas/FonteEnum"
+        policy:
+          type: "string"
+          format: "byte"
+      additionalProperties: false
     APIImplAutorizzazioneCustom:
       required:
       - "nome"
@@ -7475,6 +7424,7 @@ components:
         nome:
           maxLength: 255
           type: "string"
+      additionalProperties: false
     ApiImplItem:
       type: "object"
       allOf:
@@ -7603,19 +7553,19 @@ components:
         ruolo:
           $ref: "#/components/schemas/RuoloAllegatoAPIImpl"
         allegato:
-          type: "object"
+          $ref: "#/components/schemas/Allegato"
+        tipo_allegato:
+          type: "string"
           discriminator:
             propertyName: "ruolo"
             mapping:
-              allegato: "#/components/schemas/AllegatoGenerico"
-              specificaSemiFormale: "#/components/schemas/AllegatoSpecificaSemiformale"
-              specificaSicurezza: "#/components/schemas/AllegatoSpecificaSicurezza"
-              specificaLivelloServizio: "#/components/schemas/AllegatoSpecificaLivelloServizio"
+              specificaSemiFormale: "#/components/schemas/TipoSpecificaSemiformaleEnum"
+              specificaSicurezza: "#/components/schemas/TipoSpecificaSicurezzaEnum"
+              specificaLivelloServizio: "#/components/schemas/TipoSpecificaLivelloServizioEnum"
           oneOf:
-          - $ref: "#/components/schemas/AllegatoGenerico"
-          - $ref: "#/components/schemas/AllegatoSpecificaSemiformale"
-          - $ref: "#/components/schemas/AllegatoSpecificaSicurezza"
-          - $ref: "#/components/schemas/AllegatoSpecificaLivelloServizio"
+          - $ref: "#/components/schemas/TipoSpecificaSemiformaleEnum"
+          - $ref: "#/components/schemas/TipoSpecificaSicurezzaEnum"
+          - $ref: "#/components/schemas/TipoSpecificaLivelloServizioEnum"
     ApiImplAllegatoItem:
       required:
       - "allegato"
@@ -7625,19 +7575,19 @@ components:
         ruolo:
           $ref: "#/components/schemas/RuoloAllegatoAPIImpl"
         allegato:
-          type: "object"
+          $ref: "#/components/schemas/AllegatoItem"
+        tipo_allegato:
+          type: "string"
           discriminator:
             propertyName: "ruolo"
             mapping:
-              allegato: "#/components/schemas/AllegatoGenericoItem"
-              specificaSemiFormale: "#/components/schemas/AllegatoSpecificaSemiformaleItem"
-              specificaSicurezza: "#/components/schemas/AllegatoSpecificaSicurezzaItem"
-              specificaLivelloServizio: "#/components/schemas/AllegatoSpecificaLivelloServizioItem"
+              specificaSemiFormale: "#/components/schemas/TipoSpecificaSemiformaleEnum"
+              specificaSicurezza: "#/components/schemas/TipoSpecificaSicurezzaEnum"
+              specificaLivelloServizio: "#/components/schemas/TipoSpecificaLivelloServizioEnum"
           oneOf:
-          - $ref: "#/components/schemas/AllegatoGenericoItem"
-          - $ref: "#/components/schemas/AllegatoSpecificaSemiformaleItem"
-          - $ref: "#/components/schemas/AllegatoSpecificaSicurezzaItem"
-          - $ref: "#/components/schemas/AllegatoSpecificaLivelloServizioItem"
+          - $ref: "#/components/schemas/TipoSpecificaSemiformaleEnum"
+          - $ref: "#/components/schemas/TipoSpecificaSicurezzaEnum"
+          - $ref: "#/components/schemas/TipoSpecificaLivelloServizioEnum"
     ListaApiImplAllegati:
       type: "object"
       allOf:
@@ -7783,8 +7733,6 @@ components:
         abilitato:
           type: "boolean"
     ApiImplConfigurazioneStato:
-      required:
-      - "ridefinito"
       type: "object"
       properties:
         ridefinito:
@@ -8378,16 +8326,16 @@ components:
           type: "boolean"
     FormatoSoapEnum:
       type: "string"
+      default: "Wsdl1.1"
       enum:
       - "Wsdl1.1"
-      default: "Wsdl1.1"
     FormatoRestEnum:
       type: "string"
+      default: "OpenApi3.0"
       enum:
       - "Wadl"
       - "Swagger2.0"
       - "OpenApi3.0"
-      default: "OpenApi3.0"
     TipoApiEnum:
       type: "string"
       example: "rest"
@@ -8416,35 +8364,35 @@ components:
     ContestoEnum:
       type: "string"
       example: "qualsiasi"
+      default: "qualsiasi"
       enum:
       - "qualsiasi"
       - "erogazione"
       - "fruizione"
-      default: "qualsiasi"
     FonteEnum:
       type: "string"
       example: "qualsiasi"
+      default: "qualsiasi"
       enum:
       - "qualsiasi"
       - "registro"
       - "esterna"
-      default: "qualsiasi"
     RuoloAllegatoAPI:
       type: "string"
       example: "specificaSemiFormale"
+      default: "allegato"
       enum:
       - "allegato"
       - "specificaSemiFormale"
-      default: "allegato"
     RuoloAllegatoAPIImpl:
       type: "string"
       example: "specificaSemiFormale"
+      default: "allegato"
       enum:
       - "allegato"
       - "specificaSemiFormale"
       - "specificaSicurezza"
       - "specificaLivelloServizio"
-      default: "allegato"
     TipoSpecificaSemiformaleEnum:
       type: "string"
       example: "XML"
@@ -8472,13 +8420,13 @@ components:
     SslTipologiaEnum:
       type: "string"
       example: "TLSv1.2"
+      default: "TLSv1.2"
       enum:
       - "SSLv2Hello"
       - "SSLv3"
       - "TLSv1"
       - "TLSv1.1"
       - "TLSv1.2"
-      default: "TLSv1.2"
     KeystoreEnum:
       type: "string"
       example: "jks"
@@ -8556,10 +8504,10 @@ components:
     AllAnyEnum:
       type: "string"
       example: "all"
+      default: "all"
       enum:
       - "all"
       - "any"
-      default: "all"
     ModalitaIdentificazioneAzioneEnum:
       type: "string"
       example: "interface-based"
@@ -8789,6 +8737,11 @@ components:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
+    201Created:
+      description: "Resource created"
+      headers:
+        Location:
+          $ref: "#/components/headers/Location"
   parameters:
     profilo:
       name: "profilo"
@@ -9154,3 +9107,8 @@ components:
       schema:
         type: "integer"
         format: "int32"
+    Location:
+      description: "Header Location inserito in una risposta ad una richiesta POST,\
+        \ terminata con successo 'http 201'.\nL'header indica l'id dell'oggetto creato."
+      schema:
+        type: "string"

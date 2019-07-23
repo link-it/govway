@@ -10,7 +10,7 @@ And  header Authorization = govwayConfAuth
 And request body
 And params query_params
 When method post
-Then assert responseStatus == 204
+Then assert responseStatus == 201
 
 
 #UPDATE

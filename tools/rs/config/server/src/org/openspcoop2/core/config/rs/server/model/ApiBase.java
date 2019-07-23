@@ -46,7 +46,7 @@ public class ApiBase  {
   private Integer versione = null;
   
   @Schema(example = "{\"formato\":\"OpenApi3.0\"}", required = true, description = "")
-  private Object formato = null;
+  private String formato = null;
  /**
    * Get referente
    * @return referente
@@ -152,15 +152,15 @@ public class ApiBase  {
   @JsonProperty("formato")
   @NotNull
   @Valid
-  public Object getFormato() {
+  public String getFormato() {
     return this.formato;
   }
 
-  public void setFormato(Object formato) {
+  public void setFormato(String formato) {
     this.formato = formato;
   }
 
-  public ApiBase formato(Object formato) {
+  public ApiBase formato(String formato) {
     this.formato = formato;
     return this;
   }

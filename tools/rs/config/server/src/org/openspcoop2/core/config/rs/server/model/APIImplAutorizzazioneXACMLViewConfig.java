@@ -21,35 +21,34 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.AllegatoGenerico;
-import org.openspcoop2.core.config.rs.server.model.TipoSpecificaSicurezzaEnum;
+import org.openspcoop2.core.config.rs.server.model.FonteEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class AllegatoSpecificaSicurezza extends AllegatoGenerico {
+public class APIImplAutorizzazioneXACMLViewConfig  {
   
   @Schema(required = true, description = "")
-  private TipoSpecificaSicurezzaEnum tipo = null;
+  private FonteEnum ruoliFonte = null;
  /**
-   * Get tipo
-   * @return tipo
+   * Get ruoliFonte
+   * @return ruoliFonte
   **/
-  @JsonProperty("tipo")
+  @JsonProperty("ruoli_fonte")
   @NotNull
   @Valid
-  public TipoSpecificaSicurezzaEnum getTipo() {
-    return this.tipo;
+  public FonteEnum getRuoliFonte() {
+    return this.ruoliFonte;
   }
 
-  public void setTipo(TipoSpecificaSicurezzaEnum tipo) {
-    this.tipo = tipo;
+  public void setRuoliFonte(FonteEnum ruoliFonte) {
+    this.ruoliFonte = ruoliFonte;
   }
 
-  public AllegatoSpecificaSicurezza tipo(TipoSpecificaSicurezzaEnum tipo) {
-    this.tipo = tipo;
+  public APIImplAutorizzazioneXACMLViewConfig ruoliFonte(FonteEnum ruoliFonte) {
+    this.ruoliFonte = ruoliFonte;
     return this;
   }
 
@@ -57,9 +56,9 @@ public class AllegatoSpecificaSicurezza extends AllegatoGenerico {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class AllegatoSpecificaSicurezza {\n");
-    sb.append("    ").append(AllegatoSpecificaSicurezza.toIndentedString(super.toString())).append("\n");
-    sb.append("    tipo: ").append(AllegatoSpecificaSicurezza.toIndentedString(this.tipo)).append("\n");
+    sb.append("class APIImplAutorizzazioneXACMLViewConfig {\n");
+    
+    sb.append("    ruoliFonte: ").append(APIImplAutorizzazioneXACMLViewConfig.toIndentedString(this.ruoliFonte)).append("\n");
     sb.append("}");
     return sb.toString();
   }

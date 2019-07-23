@@ -21,17 +21,40 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneXACMLBaseConfig;
+import org.openspcoop2.core.config.rs.server.model.FonteEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class APIImplAutorizzazioneXACMLConfig extends APIImplAutorizzazioneXACMLBaseConfig {
+public class APIImplAutorizzazioneXACMLConfig  {
+  
+  @Schema(required = true, description = "")
+  private FonteEnum ruoliFonte = null;
   
   @Schema(required = true, description = "")
   private byte[] policy = null;
+ /**
+   * Get ruoliFonte
+   * @return ruoliFonte
+  **/
+  @JsonProperty("ruoli_fonte")
+  @NotNull
+  @Valid
+  public FonteEnum getRuoliFonte() {
+    return this.ruoliFonte;
+  }
+
+  public void setRuoliFonte(FonteEnum ruoliFonte) {
+    this.ruoliFonte = ruoliFonte;
+  }
+
+  public APIImplAutorizzazioneXACMLConfig ruoliFonte(FonteEnum ruoliFonte) {
+    this.ruoliFonte = ruoliFonte;
+    return this;
+  }
+
  /**
    * Get policy
    * @return policy
@@ -57,7 +80,8 @@ public class APIImplAutorizzazioneXACMLConfig extends APIImplAutorizzazioneXACML
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class APIImplAutorizzazioneXACMLConfig {\n");
-    sb.append("    ").append(APIImplAutorizzazioneXACMLConfig.toIndentedString(super.toString())).append("\n");
+    
+    sb.append("    ruoliFonte: ").append(APIImplAutorizzazioneXACMLConfig.toIndentedString(this.ruoliFonte)).append("\n");
     sb.append("    policy: ").append(APIImplAutorizzazioneXACMLConfig.toIndentedString(this.policy)).append("\n");
     sb.append("}");
     return sb.toString();

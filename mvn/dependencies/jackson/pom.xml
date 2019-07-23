@@ -18,6 +18,7 @@
 		<jar.group.name>jackson</jar.group.name>
 		
 		<jackson.version>2.9.9</jackson.version>
+		<jackson-databind.version>2.9.9.1</jackson-databind.version>
 		<jackson-coreutils.version>1.8</jackson-coreutils.version>
 
 	</properties>
@@ -49,7 +50,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>${jackson.version}</version>
+			<version>${jackson-databind.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

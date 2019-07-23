@@ -288,6 +288,7 @@ CREATE TABLE api_resources_parameter
 	tipo_parametro VARCHAR(255) NOT NULL,
 	required SMALLINT NOT NULL DEFAULT 0,
 	tipo VARCHAR(255) NOT NULL,
+	restrizioni CLOB,
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- fk/pk keys constraints

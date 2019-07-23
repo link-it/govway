@@ -56,7 +56,6 @@ components:
       required:
         - data_ricezione
         - tipo
-        - url_invocazione
       properties:
         data_ricezione:
           type: string
@@ -70,7 +69,6 @@ components:
           $ref: 'govway_core.yaml#/components/schemas/HttpMethodEnum'
         url_invocazione:
           type: string
-          format: uri
           example: /govway/in/Ente/PetStore/v2/pet
     
     TransazioneDettaglioRisposta:

@@ -23,7 +23,7 @@ Scenario: Azioni Creazione 204
 
 * call create ({ resourcePath: 'api', body: api })
 * call create ({ resourcePath: 'api/' + api_path + '/servizi', body: servizio, key: servizio.nome })
-* call create_204 ({ resourcePath: 'api/' + servizio_path + '/' + 'azioni', body: azione,  key: azione.nome })
+* call create_201 ({ resourcePath: 'api/' + servizio_path + '/' + 'azioni', body: azione,  key: azione.nome })
 * call delete ({ resourcePath: 'api/' + servizio_path })
 * call delete ({ resourcePath: 'api/' + api_path })
 

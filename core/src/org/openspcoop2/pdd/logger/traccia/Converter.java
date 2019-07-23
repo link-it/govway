@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.joda.time.DateTime;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.transazioni.DumpAllegato;
 import org.openspcoop2.core.transazioni.DumpContenuto;
 import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
@@ -529,8 +530,14 @@ public class Converter {
 		}
 		if(extended) {
 			if(this.api_erogatoreExtraInfo) {
-				((TransazioneExtInformazioniApi)api).setInformazioniErogatore(_newTransazioneSoggetto(transazioneDB.getTipoSoggettoErogatore(), 
-						transazioneDB.getIdportaSoggettoErogatore(), transazioneDB.getIndirizzoSoggettoErogatore()));
+				if(transazioneDB.getNomeSoggettoErogatore()!=null && transazioneDB.getTipoSoggettoErogatore()!=null) {
+					String idPorta = transazioneDB.getIdportaSoggettoErogatore();
+					if(idPorta==null || "".equals(idPorta)) {
+						idPorta = protocolFactory.createTraduttore().getIdentificativoPortaDefault(new IDSoggetto(transazioneDB.getTipoSoggettoErogatore(), transazioneDB.getNomeSoggettoErogatore()));
+					}
+					((TransazioneExtInformazioniApi)api).setInformazioniErogatore(_newTransazioneSoggetto(transazioneDB.getTipoSoggettoErogatore(), 
+							idPorta, transazioneDB.getIndirizzoSoggettoErogatore()));
+				}
 			}
 			if(this.api_tipo) {
 				((TransazioneExtInformazioniApi)api).setTipo(transazioneDB.getTipoServizio());
@@ -588,8 +595,14 @@ public class Converter {
 		}
 		if(extended) {
 			if(this.mittente_fruitoreExtraInfo) {
-				((TransazioneExtInformazioniMittente)mittente).setInformazioniFruitore(_newTransazioneSoggetto(transazioneDB.getTipoSoggettoFruitore(), 
-						transazioneDB.getIdportaSoggettoFruitore(), transazioneDB.getIndirizzoSoggettoFruitore()));
+				if(transazioneDB.getNomeSoggettoFruitore()!=null && transazioneDB.getTipoSoggettoFruitore()!=null) {
+					String idPorta = transazioneDB.getIdportaSoggettoFruitore();
+					if(idPorta==null || "".equals(idPorta)) {
+						idPorta = protocolFactory.createTraduttore().getIdentificativoPortaDefault(new IDSoggetto(transazioneDB.getTipoSoggettoFruitore(), transazioneDB.getNomeSoggettoFruitore()));
+					}
+					((TransazioneExtInformazioniMittente)mittente).setInformazioniFruitore(_newTransazioneSoggetto(transazioneDB.getTipoSoggettoFruitore(), 
+							idPorta, transazioneDB.getIndirizzoSoggettoFruitore()));
+				}
 			}
 			if(this.mittente_applicativo) {
 				((TransazioneExtInformazioniMittente)mittente).setApplicativo(transazioneDB.getServizioApplicativoFruitore());

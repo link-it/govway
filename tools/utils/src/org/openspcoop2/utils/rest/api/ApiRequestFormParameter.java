@@ -22,29 +22,28 @@
 
 package org.openspcoop2.utils.rest.api;
 
+import java.io.Serializable;
+
 /**
- * ApiRequestBodyParameter
+ * ApiRequestFormParameter
  *
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ApiRequestFormParameter extends AbstractApiParameter {
-
-	private String type;
+public class ApiRequestFormParameter extends AbstractApiTypeParameter implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public ApiRequestFormParameter(String name, String type){
-		super(name);
-		this.type = type;
+		super(name, type);
 	}
-	
-	public String getType() {
-		return this.type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
+	public ApiRequestFormParameter(String name, String type, ApiSchemaTypeRestriction schema){
+		super(name, type, schema);
 	}
 	
 }

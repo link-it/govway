@@ -54,17 +54,23 @@ public class TestOpenApi3 {
 			
 			String baseUri = "http://petstore.swagger.io/api";
 			
+			// yaml inclusi anche da dentro il json
+			ApiSchema apiSchemaYaml = new ApiSchema("test_import.yaml", 
+					Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import.yaml")), ApiSchemaType.YAML);
+			ApiSchema apiSchemaYaml2 = new ApiSchema("test_import2.yaml", 
+					Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import2.yaml")), ApiSchemaType.YAML);
+			
 			if(tipo==null || "json".equalsIgnoreCase(tipo)) {
 			
 				URI jsonUri = TestOpenApi3.class.getResource("/org/openspcoop2/utils/openapi/testOpenAPI_3.0.json").toURI();
-				
+								
 				ApiSchema apiSchemaJson = new ApiSchema("test_import.json", 
 						Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import.json")), ApiSchemaType.JSON);
 				ApiSchema apiSchemaJson2 = new ApiSchema("test_import2.json", 
 						Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import2.json")), ApiSchemaType.JSON);
 				
 				Test.testValidation(jsonUri, baseUri, "json", ApiFormats.OPEN_API_3, 
-						apiSchemaJson, apiSchemaJson2);
+						apiSchemaJson, apiSchemaJson2, apiSchemaYaml, apiSchemaYaml2);
 				
 				System.out.println("\n\n\n==============================================================");
 				
@@ -85,12 +91,7 @@ public class TestOpenApi3 {
 			if(tipo==null || "yaml".equalsIgnoreCase(tipo)) {
 			
 				URI yamlUri = TestOpenApi3.class.getResource("/org/openspcoop2/utils/openapi/testOpenAPI_3.0.yaml").toURI();
-			
-				ApiSchema apiSchemaYaml = new ApiSchema("test_import.yaml", 
-						Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import.yaml")), ApiSchemaType.YAML);
-				ApiSchema apiSchemaYaml2 = new ApiSchema("test_import2.yaml", 
-						Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import2.yaml")), ApiSchemaType.YAML);
-			
+						
 				Test.testValidation(yamlUri, baseUri, "yaml", ApiFormats.OPEN_API_3, 
 						apiSchemaYaml, apiSchemaYaml2);
 				

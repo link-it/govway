@@ -22,6 +22,7 @@
 
 package org.openspcoop2.core.registry.rest;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.List;
 
@@ -33,6 +34,7 @@ import org.openspcoop2.core.registry.ResourceParameter;
 import org.openspcoop2.core.registry.ResourceRepresentation;
 import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.api.ApiBodyParameter;
 import org.openspcoop2.utils.rest.api.ApiCookieParameter;
@@ -44,6 +46,7 @@ import org.openspcoop2.utils.rest.api.ApiRequestDynamicPathParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestFormParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestQueryParameter;
 import org.openspcoop2.utils.rest.api.ApiResponse;
+import org.openspcoop2.utils.rest.api.ApiSchemaTypeRestriction;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
 /**
@@ -53,10 +56,15 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class RegistryAPI extends Api {
+public class RegistryAPI extends Api implements Serializable {
 
-	private AccordoServizioParteComune aspc = null;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
+	private AccordoServizioParteComune aspc = null;
+		
 	public AccordoServizioParteComune getAspc() {
 		return this.aspc;
 	}
@@ -120,11 +128,20 @@ public class RegistryAPI extends Api {
 		}
 	}
 	
-	private static void initParameterList(List<ResourceParameter> rpList, ApiRequest apiRequest, ApiResponse apiResponse) {
+	private static void initParameterList(List<ResourceParameter> rpList, ApiRequest apiRequest, ApiResponse apiResponse) throws UtilsException {
 		for (ResourceParameter rp : rpList) {
+			
+			ApiSchemaTypeRestriction schema = null;
+			if(rp.getRestrizioni()!=null) {
+				schema = ApiSchemaTypeRestriction.toApiSchemaTypeRestriction(rp.getRestrizioni());
+			}
+			if(schema.getType()==null) {
+				schema.setType(rp.getTipo());
+			}
+			
 			switch (rp.getParameterType()) {
 			case COOKIE:
-				ApiCookieParameter cookie = new ApiCookieParameter(rp.getNome(), rp.getTipo());
+				ApiCookieParameter cookie = new ApiCookieParameter(rp.getNome(), rp.getTipo(), schema);
 				cookie.setDescription(rp.getDescrizione());
 				cookie.setRequired(rp.isRequired());
 				if(apiRequest!=null) {
@@ -135,19 +152,19 @@ public class RegistryAPI extends Api {
 				}
 				break;
 			case DYNAMIC_PATH:
-				ApiRequestDynamicPathParameter dynamicPath = new ApiRequestDynamicPathParameter(rp.getNome(), rp.getTipo());
+				ApiRequestDynamicPathParameter dynamicPath = new ApiRequestDynamicPathParameter(rp.getNome(), rp.getTipo(), schema);
 				dynamicPath.setDescription(rp.getDescrizione());
 				dynamicPath.setRequired(rp.isRequired());
 				apiRequest.addDynamicPathParameter(dynamicPath);
 				break;
 			case FORM:
-				ApiRequestFormParameter form = new ApiRequestFormParameter(rp.getNome(), rp.getTipo());
+				ApiRequestFormParameter form = new ApiRequestFormParameter(rp.getNome(), rp.getTipo(), schema);
 				form.setDescription(rp.getDescrizione());
 				form.setRequired(rp.isRequired());
 				apiRequest.addFormParameter(form);
 				break;
 			case HEADER:
-				ApiHeaderParameter header = new ApiHeaderParameter(rp.getNome(), rp.getTipo());
+				ApiHeaderParameter header = new ApiHeaderParameter(rp.getNome(), rp.getTipo(), schema);
 				header.setDescription(rp.getDescrizione());
 				header.setRequired(rp.isRequired());
 				if(apiRequest!=null) {
@@ -158,7 +175,7 @@ public class RegistryAPI extends Api {
 				}
 				break;
 			case QUERY:
-				ApiRequestQueryParameter query = new ApiRequestQueryParameter(rp.getNome(), rp.getTipo());
+				ApiRequestQueryParameter query = new ApiRequestQueryParameter(rp.getNome(), rp.getTipo(), schema);
 				query.setDescription(rp.getDescrizione());
 				query.setRequired(rp.isRequired());
 				apiRequest.addQueryParameter(query);

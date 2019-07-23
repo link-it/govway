@@ -22,6 +22,8 @@
 
 package org.openspcoop2.utils.rest.api;
 
+import java.io.Serializable;
+
 /**
  * ApiRequestBodyParameter
  *
@@ -30,8 +32,13 @@ package org.openspcoop2.utils.rest.api;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ApiBodyParameter extends AbstractApiParameter {
+public class ApiBodyParameter extends AbstractApiParameter implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private static String MEDIA_TYPE_ALL_1 = "*/*";
 	private static String MEDIA_TYPE_ALL_2 = "*";
 	

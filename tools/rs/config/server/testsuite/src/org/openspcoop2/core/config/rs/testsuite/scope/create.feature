@@ -10,7 +10,7 @@ Background: Background name
 @CreateScope204
 Scenario: Creazione Scope 204 OK
 
-    * call create_204 { resourcePath: 'scope', body: '#(scope)', key: '#(scope.nome)' }
+    * call create_201 { resourcePath: 'scope', body: '#(scope)', key: '#(scope.nome)' }
 
 @Create409
 Scenario: Creazione Scope 409 Conflitto

@@ -18,14 +18,14 @@ Background:
 Scenario: Creazione Soggetti 204 OK
 
     * call create { resourcePath: 'ruoli', body: '#(ruolo)' }
-    * call create_204 { resourcePath: 'soggetti', body: '#(soggetto_http)', key: '#(soggetto_http.nome)' }
+    * call create_201 { resourcePath: 'soggetti', body: '#(soggetto_http)', key: '#(soggetto_http.nome)' }
     * call delete ( { resourcePath: 'ruoli' + '/' + ruolo.nome } )
 
 @CreateCredPrincipal
 Scenario: Creazione Soggetti 204 OK
 
     * call create { resourcePath: 'ruoli', body: '#(ruolo)' }
-    * call create_204 { resourcePath: 'soggetti', body: '#(soggetto_principal)', key: '#(soggetto_principal.nome)' }
+    * call create_201 { resourcePath: 'soggetti', body: '#(soggetto_principal)', key: '#(soggetto_principal.nome)' }
     * call delete ( { resourcePath: 'ruoli' + '/' + ruolo.nome } )
 
 @CreateSPCoop204
@@ -33,7 +33,7 @@ Scenario: Creazione Soggetto SPCoop
 
     * call create { resourcePath: 'ruoli', body: '#(ruolo)' }
     * def query_params = { profilo: "SPCoop" }
-    * call create_204 { resourcePath: 'soggetti', body: '#(soggetto_http)', key: '#(soggetto_http.nome)' }
+    * call create_201 { resourcePath: 'soggetti', body: '#(soggetto_http)', key: '#(soggetto_http.nome)' }
     * call delete ( { resourcePath: 'ruoli' + '/' + ruolo.nome } )
 
 @Create409

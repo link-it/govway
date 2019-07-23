@@ -31,6 +31,14 @@ components:
       schema:
         format: int32
         type: integer
+
+    Location:
+      description: |-
+        Header Location inserito in una risposta ad una richiesta POST, terminata con successo 'http 201'.
+        L'header indica l'id dell'oggetto creato.
+      schema:
+        type: string
+
   parameters:
     Etag:
       description: |
@@ -179,6 +187,12 @@ components:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Problem'
+
+    201Created:
+      description: Resource created
+      headers:
+        Location:
+          $ref: '#/components/headers/Location'
   schemas:
     Money:
       properties:

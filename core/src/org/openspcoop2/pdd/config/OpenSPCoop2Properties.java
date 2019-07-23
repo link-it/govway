@@ -130,6 +130,7 @@ import org.openspcoop2.utils.digest.IDigestReader;
 import org.openspcoop2.utils.id.IUniqueIdentifierGenerator;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
+import org.openspcoop2.utils.json.JsonSchemaValidatorConfig.ADDITIONAL;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
@@ -1556,9 +1557,11 @@ public class OpenSPCoop2Properties {
 			}
 			
 			// ValidazioneContenutiApplicativi
+			this.isValidazioneContenutiApplicativi_debug();
 			this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione();
 			this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione();
 			this.isValidazioneContenutiApplicativi_checkSoapAction();
+			this.getValidazioneContenutiApplicativi_json_policyAdditionalProperties();
 			
 			// CachingResponse
 			this.getCachingResponseDigestAlgorithm();
@@ -14040,6 +14043,30 @@ public class OpenSPCoop2Properties {
 	
 	/* ------------- Validazione Contenuti Applicativi ---------------------*/
 	
+	private static Boolean isValidazioneContenutiApplicativi_debug = null;
+	public boolean isValidazioneContenutiApplicativi_debug(){
+
+		if(OpenSPCoop2Properties.isValidazioneContenutiApplicativi_debug==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.debug"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isValidazioneContenutiApplicativi_debug = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.debug' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isValidazioneContenutiApplicativi_debug = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.debug' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isValidazioneContenutiApplicativi_debug = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isValidazioneContenutiApplicativi_debug;
+	}
+	
 	private static Boolean isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione = null;
 	public boolean isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione(){
 
@@ -14110,6 +14137,30 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isValidazioneContenutiApplicativi_checkSoapAction;
+	}
+	
+	private static ADDITIONAL getValidazioneContenutiApplicativi_json_policyAdditionalProperties = null;
+	public ADDITIONAL getValidazioneContenutiApplicativi_json_policyAdditionalProperties(){
+
+		if(OpenSPCoop2Properties.getValidazioneContenutiApplicativi_json_policyAdditionalProperties==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.json.additionalProperties"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getValidazioneContenutiApplicativi_json_policyAdditionalProperties = ADDITIONAL.valueOf(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.json.additionalProperties' non impostata, viene utilizzato il default");
+					OpenSPCoop2Properties.getValidazioneContenutiApplicativi_json_policyAdditionalProperties = ADDITIONAL.DEFAULT;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.json.additionalProperties' con un valore non ammesso (valori consentiti: "+ADDITIONAL.DEFAULT.name()+","+ADDITIONAL.IF_NULL_DISABLE+","+ADDITIONAL.FORCE_DISABLE+"), viene utilizzato il default, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getValidazioneContenutiApplicativi_json_policyAdditionalProperties = ADDITIONAL.DEFAULT;
+			}
+		}
+
+		return OpenSPCoop2Properties.getValidazioneContenutiApplicativi_json_policyAdditionalProperties;
 	}
 	
 	

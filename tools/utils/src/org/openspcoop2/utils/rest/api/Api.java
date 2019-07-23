@@ -22,9 +22,12 @@
 
 package org.openspcoop2.utils.rest.api;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.utils.beans.BaseBean;
 import org.openspcoop2.utils.rest.ProcessingException;
@@ -38,15 +41,36 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public abstract class Api extends BaseBean {
+public abstract class Api extends BaseBean implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String name;
 	private String description;
 	private URL baseURL;
 	
-	
 	private List<ApiSchema> schemas = new ArrayList<>();
 
+	
+	private Map<String, Serializable> mapSerializableVendorImpl = new HashMap<String, Serializable>();
+	
+	public Serializable getVendorImpl(String key) {
+		return this.mapSerializableVendorImpl.get(key);
+	}
+	public void removeVendorImpl(String key) {
+		this.mapSerializableVendorImpl.remove(key);
+	}
+	public void addVendorImpl(String key, Serializable serializable) {
+		this.mapSerializableVendorImpl.put(key, serializable);
+	}
+	public boolean containsKey(String key) {
+		return this.mapSerializableVendorImpl.containsKey(key);
+	}
+	
+	
 	public void addSchema(ApiSchema schema) {
 		this.schemas.add(schema);
 	}

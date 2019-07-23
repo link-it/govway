@@ -1,7 +1,7 @@
 { 
 	"nome": "RuoloJson2",
 	"descrizione": "Descrizione del ruoloJson2",
-	"fonte": "interna",
+	"fonte": "esterna",
 	"identificativo_esterno": "IdentEsternoRuoloJson2",
 	"contesto": "fruizione"
 }

@@ -23,6 +23,7 @@
 package org.openspcoop2.utils.rest;
 
 import org.openspcoop2.utils.beans.BaseBean;
+import org.openspcoop2.utils.json.JsonSchemaValidatorConfig.ADDITIONAL;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XMLUtils;
 
@@ -38,6 +39,7 @@ public class ApiValidatorConfig extends BaseBean {
 
 	private boolean verbose = false;
 	private AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
+	private ADDITIONAL policyAdditionalProperties = ADDITIONAL.DEFAULT;
 	
 	public AbstractXMLUtils getXmlUtils() {
 		return this.xmlUtils;
@@ -52,4 +54,11 @@ public class ApiValidatorConfig extends BaseBean {
 		this.verbose = verbose;
 	}
 	
+	public ADDITIONAL getPolicyAdditionalProperties() {
+		return this.policyAdditionalProperties;
+	}
+	public void setPolicyAdditionalProperties(ADDITIONAL policyAdditionalProperties) {
+		this.policyAdditionalProperties = policyAdditionalProperties;
+	}
+
 }

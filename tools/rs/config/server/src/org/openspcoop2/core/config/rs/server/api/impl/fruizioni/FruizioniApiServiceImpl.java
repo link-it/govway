@@ -158,6 +158,10 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			ErogazioniApiHelper.createAps(env, asps, regConnettore, body, alreadyExists, false);
 
 			context.getLogger().info("Invocazione completata con successo");
+			
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
+			
 		} catch (javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
@@ -202,6 +206,9 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			ErogazioniApiHelper.createAllegatoAsps(body, env, asps);
 
 			context.getLogger().info("Invocazione completata con successo");
+			
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
 
 		} catch (javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
@@ -329,6 +336,8 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 
 			context.getLogger().info("Invocazione completata con successo");
 
+			Helper.setContentType(context, allegato.getFile());
+			
 			return allegato.getByteContenuto();
 		} catch (javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());

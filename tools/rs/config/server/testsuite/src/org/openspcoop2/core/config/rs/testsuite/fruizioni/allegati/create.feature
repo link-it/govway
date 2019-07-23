@@ -30,7 +30,7 @@ Scenario: Create Allegati Fruizioni 204
     * call create ({ resourcePath: 'soggetti', body: erogatore })
     * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
     
-    * call create_204 ({ resourcePath: fruizione_petstore_path + '/allegati', body: allegato, key: allegato.allegato.nome})
+    * call create_201 ({ resourcePath: fruizione_petstore_path + '/allegati', body: allegato, key: allegato.allegato.nome})
 
     * call delete ({ resourcePath: 'fruizioni/' + fruizione_key })
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })

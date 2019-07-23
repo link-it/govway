@@ -89,7 +89,7 @@ paths:
               $ref: '#/components/schemas/Api'
       responses:
         '201':
-          description: API creata con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -473,7 +473,7 @@ paths:
               $ref: '#/components/schemas/ApiAllegato'
       responses:
         '201':
-          description: Allegato creato con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -668,7 +668,7 @@ paths:
               $ref: '#/components/schemas/ApiRisorsa'
       responses:
         '201':
-          description: Risorsa creata con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -823,7 +823,7 @@ paths:
               $ref: '#/components/schemas/ApiServizio'
       responses:
         '201':
-          description: Servizio creato con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -979,7 +979,7 @@ paths:
               $ref: '#/components/schemas/ApiAzione'
       responses:
         '201':
-          description: Azione creata con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -1135,7 +1135,7 @@ paths:
               $ref: '#/components/schemas/Erogazione'
       responses:
         '201':
-          description: Erogazione creata con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -1391,7 +1391,7 @@ paths:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ApiImplAllegato'
       responses:
         '201':
-          description: Allegato creato con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -1783,7 +1783,7 @@ paths:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Gruppo'
       responses:
         '201':
-          description: Gruppo creato con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -1911,7 +1911,7 @@ paths:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/GruppoAzioni'
       responses:
         '201':
-          description: Azioni aggiunte con con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -2311,7 +2311,7 @@ paths:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiAutorizzazioneSoggetto'
       responses:
         '201':
-          description: Soggetti aggiunti con con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -2409,7 +2409,7 @@ paths:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiAutorizzazioneApplicativo'
       responses:
         '201':
-          description: Applicativi aggiunti con con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -2507,7 +2507,7 @@ paths:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiAutorizzazioneRuolo'
       responses:
         '201':
-          description: Ruoli aggiunti con con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -2605,7 +2605,7 @@ paths:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiAutorizzazioneScope'
       responses:
         '201':
-          description: Scope aggiunti con con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -2708,7 +2708,7 @@ paths:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RateLimitingPolicyErogazione'
       responses:
         '201':
-          description: Policy aggiunta con con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -2999,7 +2999,7 @@ paths:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/CorrelazioneApplicativaRichiesta'
       responses:
         '201':
-          description: Regola aggiunta con con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -3158,7 +3158,7 @@ paths:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/CorrelazioneApplicativaRisposta'
       responses:
         '201':
-          description: Regola aggiunta con con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -3381,7 +3381,7 @@ paths:
               $ref: '#/components/schemas/Fruizione'
       responses:
         '201':
-          description: Fruizione creata con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -3641,7 +3641,7 @@ paths:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ApiImplAllegato'
       responses:
         '201':
-          description: Allegato creato con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -4039,7 +4039,7 @@ paths:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Gruppo'
       responses:
         '201':
-          description: Gruppo creato con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -4169,7 +4169,7 @@ paths:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/GruppoAzioni'
       responses:
         '201':
-          description: Azioni aggiunte con con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -4576,7 +4576,7 @@ paths:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiAutorizzazioneApplicativo'
       responses:
         '201':
-          description: Applicativi aggiunti con con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -4676,7 +4676,7 @@ paths:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiAutorizzazioneRuolo'
       responses:
         '201':
-          description: Ruoli aggiunti con con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -4776,7 +4776,7 @@ paths:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiAutorizzazioneScope'
       responses:
         '201':
-          description: Scope aggiunti con con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -4881,7 +4881,7 @@ paths:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RateLimitingPolicyFruizione'
       responses:
         '201':
-          description: Policy aggiunta con con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -5176,7 +5176,7 @@ paths:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/CorrelazioneApplicativaRichiesta'
       responses:
         '201':
-          description: Regola aggiunta con con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -5337,7 +5337,7 @@ paths:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/CorrelazioneApplicativaRisposta'
       responses:
         '201':
-          description: Regola aggiunta con con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -5562,7 +5562,7 @@ paths:
               $ref: '#/components/schemas/Soggetto'
       responses:
         '201':
-          description: Soggetto creato con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -5714,7 +5714,7 @@ paths:
               $ref: '#/components/schemas/Applicativo'
       responses:
         '201':
-          description: Applicativo creato con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -5865,7 +5865,7 @@ paths:
               $ref: '#/components/schemas/Ruolo'
       responses:
         '201':
-          description: Ruolo creato con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -6013,7 +6013,7 @@ paths:
               $ref: '#/components/schemas/Scope'
       responses:
         '201':
-          description: Scope creato con successo
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -6207,7 +6207,7 @@ components:
               tipo:
                 $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/TipoApiEnum'
               formato:
-                type: object
+                type: string
                 oneOf:
                   - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/FormatoSoapEnum'
                   - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/FormatoRestEnum'
@@ -6237,15 +6237,15 @@ components:
         ruolo:
           $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RuoloAllegatoAPI'
         allegato:
-          type: object
+          $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Allegato'
+        tipo_allegato:
+          type: string
           oneOf:
-            - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/AllegatoGenerico'
-            - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/AllegatoSpecificaSemiformale'
+            - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/TipoSpecificaSemiformaleEnum'
           discriminator:
             propertyName: ruolo
             mapping:
-              'allegato': 'govway_rs-api_config-commons.yaml#/components/schemas/AllegatoGenerico'
-              'specificaSemiFormale': 'govway_rs-api_config-commons.yaml#/components/schemas/AllegatoSpecificaSemiformale'
+              'specificaSemiFormale': 'govway_rs-api_config-commons.yaml#/components/schemas/TipoSpecificaSemiformaleEnum'
     ApiAllegatoItem:
       type: object
       required:
@@ -6255,15 +6255,15 @@ components:
         ruolo:
           $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RuoloAllegatoAPI'
         allegato:
-          type: object
+          $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/AllegatoItem'
+        tipo_allegato:
+          type: string
           oneOf:
-            - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/AllegatoGenericoItem'
-            - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/AllegatoSpecificaSemiformaleItem'
+            - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/TipoSpecificaSemiformaleEnum'
           discriminator:
             propertyName: ruolo
             mapping:
-              'allegato': 'govway_rs-api_config-commons.yaml#/components/schemas/AllegatoGenericoItem'
-              'specificaSemiFormale': 'govway_rs-api_config-commons.yaml#/components/schemas/AllegatoSpecificaSemiformaleItem'
+              'specificaSemiFormale': 'govway_rs-api_config-commons.yaml#/components/schemas/TipoSpecificaSemiformaleEnum'
     ListaApiAllegati:
        type: object
        allOf:

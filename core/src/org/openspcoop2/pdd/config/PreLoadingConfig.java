@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -53,6 +54,7 @@ import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
 import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.RegistroServizi;
+import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
@@ -107,6 +109,8 @@ public class PreLoadingConfig  {
 		List<String> controllaTrafficoActivePolicyNameList = new ArrayList<>();
 		List<byte[]> controllaTrafficoActivePolicyList = new ArrayList<>();
 		
+		HashMap<String, Document> contentList = new HashMap<>();
+		
 		File fTmp = File.createTempFile("preLoadConfiguration", ".zip");
 		//System.out.println("TMP: "+fTmp.getAbsolutePath());
 		try {
@@ -128,25 +132,63 @@ public class PreLoadingConfig  {
 							bytes = sBytes.getBytes();
 						}
 						try {
-							Element element = XMLUtils.getInstance().newElement(bytes);
-							if(org.openspcoop2.core.config.utils.XMLUtils.isConfigurazione(element)) {
-								configNameList.add(zipEntry.getName());
-								configList.add(bytes);
+							
+							String entryName = zipEntry.getName();
+							int indexOfWsdl = -1;
+							String name = null;
+							if(entryName.endsWith(CostantiRegistroServizi.SPECIFICA_INTERFACCIA_CONCETTUALE_WSDL) ) {
+								indexOfWsdl = entryName.indexOf(CostantiRegistroServizi.SPECIFICA_INTERFACCIA_CONCETTUALE_WSDL);
+								name = CostantiRegistroServizi.SPECIFICA_INTERFACCIA_CONCETTUALE_WSDL;
 							}
-							else if(org.openspcoop2.core.registry.utils.XMLUtils.isRegistroServizi(element)) {
-								registryNameList.add(zipEntry.getName());
-								registryList.add(bytes);
+							else if(entryName.endsWith(CostantiRegistroServizi.SPECIFICA_INTERFACCIA_LOGICA_EROGATORE_WSDL) ) {
+								indexOfWsdl = entryName.indexOf(CostantiRegistroServizi.SPECIFICA_INTERFACCIA_LOGICA_EROGATORE_WSDL);
+								name = CostantiRegistroServizi.SPECIFICA_INTERFACCIA_LOGICA_EROGATORE_WSDL;
 							}
-							else if(org.openspcoop2.core.controllo_traffico.utils.XMLUtils.isConfigurazionePolicy(element)) {
-								controllaTrafficoConfigPolicyNameList.add(zipEntry.getName());
-								controllaTrafficoConfigPolicyList.add(bytes);
+							else if(entryName.endsWith(CostantiRegistroServizi.SPECIFICA_INTERFACCIA_LOGICA_FRUITORE_WSDL) ) {
+								indexOfWsdl = entryName.indexOf(CostantiRegistroServizi.SPECIFICA_INTERFACCIA_LOGICA_FRUITORE_WSDL);
+								name = CostantiRegistroServizi.SPECIFICA_INTERFACCIA_LOGICA_FRUITORE_WSDL;
 							}
-							else if(org.openspcoop2.core.controllo_traffico.utils.XMLUtils.isAttivazionePolicy(element)) {
-								controllaTrafficoActivePolicyNameList.add(zipEntry.getName());
-								controllaTrafficoActivePolicyList.add(bytes);
+							if(indexOfWsdl>0) {
+								String prefixEntryName = entryName.substring(0, indexOfWsdl-1);
+								int posizione = 0; // default
+								if(prefixEntryName.contains(".") && !prefixEntryName.endsWith(".")) {
+									String posizioneEntry = prefixEntryName.substring(prefixEntryName.lastIndexOf(".")+1, prefixEntryName.length());
+									try {
+										posizione = Integer.valueOf(posizioneEntry);
+									}catch(Exception e) {
+										throw new Exception("Nome file 'wsdl' con posizione non intera '"+posizioneEntry+"': "+e.getMessage());
+									}
+									prefixEntryName = prefixEntryName.substring(0, prefixEntryName.lastIndexOf("."));
+								}
+								Document d = new Document();
+								d.content = bytes;
+								d.index = posizione;
+								d.name = name;
+								contentList.put(prefixEntryName, d);
 							}
 							else {
-								throw new Exception("unknown type");
+							
+								Element element = XMLUtils.getInstance().newElement(bytes);
+								if(org.openspcoop2.core.config.utils.XMLUtils.isConfigurazione(element)) {
+									configNameList.add(entryName);
+									configList.add(bytes);
+								}
+								else if(org.openspcoop2.core.registry.utils.XMLUtils.isRegistroServizi(element)) {
+									registryNameList.add(entryName);
+									registryList.add(bytes);
+								}
+								else if(org.openspcoop2.core.controllo_traffico.utils.XMLUtils.isConfigurazionePolicy(element)) {
+									controllaTrafficoConfigPolicyNameList.add(entryName);
+									controllaTrafficoConfigPolicyList.add(bytes);
+								}
+								else if(org.openspcoop2.core.controllo_traffico.utils.XMLUtils.isAttivazionePolicy(element)) {
+									controllaTrafficoActivePolicyNameList.add(entryName);
+									controllaTrafficoActivePolicyList.add(bytes);
+								}
+								else {
+									throw new Exception("unknown type");
+								}
+								
 							}
 						}catch(Exception e) {
 							this.log.error("PreLoading entry ["+zipEntry.getName()+"] error: "+e.getMessage(),e);
@@ -175,8 +217,29 @@ public class PreLoadingConfig  {
 				
 				try {
 					this.log.info("PreLoading Registry ["+name+"] ...");
-					@SuppressWarnings("unused")
 					RegistroServizi registry = deserializerRegistry.readRegistroServizi(content); // verifico file
+					
+					if(contentList!=null && contentList.containsKey(name)) {
+						Document d = contentList.get(name);
+						if(CostantiRegistroServizi.SPECIFICA_INTERFACCIA_CONCETTUALE_WSDL.equals(d.name)) {
+							if(registry.sizeAccordoServizioParteComuneList()<=d.index) {
+								throw new Exception("Documento '"+d.name+"' non associabile all'Api; la posizione indicata '"+d.index+"' è maggiore delle api disponibili '"+registry.sizeAccordoServizioParteComuneList()+"'");
+							}
+							registry.getAccordoServizioParteComune(d.index).setByteWsdlConcettuale(d.content);
+						}
+						else if(CostantiRegistroServizi.SPECIFICA_INTERFACCIA_LOGICA_EROGATORE_WSDL.equals(d.name)) {
+							if(registry.sizeAccordoServizioParteComuneList()<=d.index) {
+								throw new Exception("Documento '"+d.name+"' non associabile all'Api; la posizione indicata '"+d.index+"' è maggiore delle api disponibili '"+registry.sizeAccordoServizioParteComuneList()+"'");
+							}
+							registry.getAccordoServizioParteComune(d.index).setByteWsdlLogicoErogatore(d.content);
+						}
+						else if(CostantiRegistroServizi.SPECIFICA_INTERFACCIA_LOGICA_FRUITORE_WSDL.equals(d.name)) {
+							if(registry.sizeAccordoServizioParteComuneList()<=d.index) {
+								throw new Exception("Documento '"+d.name+"' non associabile all'Api; la posizione indicata '"+d.index+"' è maggiore delle api disponibili '"+registry.sizeAccordoServizioParteComuneList()+"'");
+							}
+							registry.getAccordoServizioParteComune(d.index).setByteWsdlLogicoFruitore(d.content);
+						}
+					}
 					
 					Connection con = null;
 					try {
@@ -184,7 +247,7 @@ public class PreLoadingConfig  {
 						con = driverRegistroServizi.getConnection("preLoading["+name+"]");
 						
 						org.openspcoop2.core.registry.driver.utils.XMLDataConverter xmlDataConverter = 
-								new org.openspcoop2.core.registry.driver.utils.XMLDataConverter(content,driverRegistroServizi,CostantiConfigurazione.REGISTRO_DB.getValue(),
+								new org.openspcoop2.core.registry.driver.utils.XMLDataConverter(registry,driverRegistroServizi,CostantiConfigurazione.REGISTRO_DB.getValue(),
 										superUser,this.protocolloDefault,
 										this.log,this.log);
 						boolean reset = false;
@@ -385,6 +448,14 @@ public class PreLoadingConfig  {
 		}
 
 	}
+	
+}
+
+class Document{
+	
+	byte[] content;
+	int index;
+	String name;
 	
 }
 

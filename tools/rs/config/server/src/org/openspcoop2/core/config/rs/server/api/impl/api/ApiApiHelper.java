@@ -21,7 +21,6 @@
  */
 package org.openspcoop2.core.config.rs.server.api.impl.api;
 
-import static org.openspcoop2.utils.service.beans.utils.BaseHelper.deserializev3;
 import static org.openspcoop2.utils.service.beans.utils.BaseHelper.evalnull;
 
 import java.util.List;
@@ -32,10 +31,8 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.rs.server.api.impl.Enums;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
-import org.openspcoop2.core.config.rs.server.model.AllegatoGenerico;
-import org.openspcoop2.core.config.rs.server.model.AllegatoGenericoItem;
-import org.openspcoop2.core.config.rs.server.model.AllegatoSpecificaSemiformale;
-import org.openspcoop2.core.config.rs.server.model.AllegatoSpecificaSemiformaleItem;
+import org.openspcoop2.core.config.rs.server.model.Allegato;
+import org.openspcoop2.core.config.rs.server.model.AllegatoItem;
 import org.openspcoop2.core.config.rs.server.model.Api;
 import org.openspcoop2.core.config.rs.server.model.ApiAllegato;
 import org.openspcoop2.core.config.rs.server.model.ApiAllegatoItem;
@@ -122,15 +119,17 @@ public class ApiApiHelper {
 		switch (body.getTipo()) {
 		case REST:
 			as.setByteWsdlConcettuale(interfaccia != null && !interfaccia.trim().replaceAll("\n", "").equals("") ? interfaccia.trim().getBytes() : null);
+			FormatoRestEnum formatoRest = FormatoRestEnum.fromValue(body.getFormato());
 			as.setFormatoSpecifica( BaseHelper.evalorElse( () -> 
-				Enums.formatoSpecificaFromRest.get((FormatoRestEnum) body.getFormato()),
+				Enums.formatoSpecificaFromRest.get(formatoRest),
 				FormatoSpecifica.OPEN_API_3
 				)); 
 			break;
 		case SOAP: 
 		
+			FormatoSoapEnum formatoSoap = FormatoSoapEnum.fromValue(body.getFormato());
 			as.setFormatoSpecifica( BaseHelper.evalorElse( 
-					() -> Enums.formatoSpecificaFromSoap.get((FormatoSoapEnum) body.getFormato() ), 
+					() -> Enums.formatoSpecificaFromSoap.get(formatoSoap), 
 					FormatoSpecifica.WSDL_11 
 				));
 			as.setByteWsdlLogicoErogatore(interfaccia != null && !interfaccia.trim().replaceAll("\n", "").equals("") ? interfaccia.trim().getBytes() : null);	// Da commenti e audit, WSDL solo logico ed erogatore
@@ -212,18 +211,21 @@ public class ApiApiHelper {
 		documento.setIdProprietarioDocumento(as.getId());
 		documento.setRuolo(Enums.ruoliDocumentoFromApi.get(body.getRuolo()).toString());
 		
+		Allegato allegato = body.getAllegato();
+		documento.setFile(allegato.getNome());
+		documento.setByteContenuto(allegato.getDocumento());
+		
 		switch (body.getRuolo()) {
 		case ALLEGATO:
-			AllegatoGenerico ag = deserializev3(body.getAllegato(), AllegatoGenerico.class).orElse(new AllegatoGenerico());
-			documento.setByteContenuto(ag.getDocumento());
-			documento.setFile(ag.getNome());
-			documento.setTipo( evalnull( () -> ag.getNome().substring( ag.getNome().lastIndexOf('.')+1, ag.getNome().length())) );
+			documento.setTipo( evalnull( () -> allegato.getNome().substring( allegato.getNome().lastIndexOf('.')+1, allegato.getNome().length())) );
 			break;
 		case SPECIFICASEMIFORMALE:
-			AllegatoSpecificaSemiformale ass = deserializev3(body.getAllegato(), AllegatoSpecificaSemiformale.class).orElse(new AllegatoSpecificaSemiformale());
-			documento.setByteContenuto(ass.getDocumento());
-			documento.setFile(ass.getNome());	
-			documento.setTipo( evalnull( () -> Enums.tipoDocumentoSemiFormaleFromSpecifica.get(ass.getTipo()).toString()) );
+			if(body.getTipoAllegato()==null) {
+				documento.setTipo(TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString()); // default
+			}
+			else {
+				documento.setTipo( evalnull( () -> Enums.tipoDocumentoSemiFormaleFromSpecifica.get(TipoSpecificaSemiformaleEnum.fromValue(body.getTipoAllegato())).toString()) );
+			}
 			break;
 		}
 
@@ -235,24 +237,23 @@ public class ApiApiHelper {
 		ApiAllegato ret = new ApiAllegato();
 		
 		ret.setRuolo(Enums.ruoliApiFromDocumento.get(Enum.valueOf(RuoliDocumento.class, d.getRuolo())));
-		AllegatoGenerico ag = null;
+		
+		Allegato ag = new Allegato();
+		ag.setDocumento(d.getByteContenuto());
+		ag.setNome(d.getFile());
+		ret.setAllegato(ag);
 		
 		switch (ret.getRuolo()) {
 		case ALLEGATO: {
-			ag = new AllegatoGenerico();
 			break;
 		}
 		case SPECIFICASEMIFORMALE: {
-			ag = new AllegatoSpecificaSemiformale();
 			TipiDocumentoSemiformale tipo = Enum.valueOf(TipiDocumentoSemiformale.class, d.getTipo());
-			((AllegatoSpecificaSemiformale) ag).setTipo(Helper.apiEnumToGovway(tipo, TipoSpecificaSemiformaleEnum.class));
+			ret.setTipoAllegato((Helper.apiEnumToGovway(tipo, TipoSpecificaSemiformaleEnum.class)).toString());
 			break;
 		}	
 		}
 		
-		ag.setDocumento(d.getByteContenuto());
-		ag.setNome(d.getFile());
-		ret.setAllegato(ag);
 		return ret;
 	}
 	
@@ -260,23 +261,22 @@ public class ApiApiHelper {
 		ApiAllegatoItem ret = new ApiAllegatoItem();
 		
 		ret.setRuolo(Enums.ruoliApiFromDocumento.get(Enum.valueOf(RuoliDocumento.class, d.getRuolo())));
-		AllegatoGenericoItem ag = null;
+		
+		AllegatoItem ag = new AllegatoItem();
+		ag.setNome(d.getFile());
+		ret.setAllegato(ag);
 		
 		switch (ret.getRuolo()) {
 		case ALLEGATO: {
-			ag = new AllegatoGenericoItem();
 			break;
 		}
 		case SPECIFICASEMIFORMALE: {
-			ag = new AllegatoSpecificaSemiformaleItem();
 			TipiDocumentoSemiformale tipo = Enum.valueOf(TipiDocumentoSemiformale.class, d.getTipo());
-			((AllegatoSpecificaSemiformaleItem) ag).setTipo(Helper.apiEnumToGovway(tipo, TipoSpecificaSemiformaleEnum.class));
+			ret.setTipoAllegato((Helper.apiEnumToGovway(tipo, TipoSpecificaSemiformaleEnum.class)).toString());
 			break;
 		}	
 		}
 		
-		ag.setNome(d.getFile());
-		ret.setAllegato(ag);
 		return ret;
 	}
 	
@@ -535,12 +535,12 @@ public class ApiApiHelper {
 		switch (as.getServiceBinding()) {
 		case REST:
 			ret.setTipo(TipoApiEnum.REST);
-			ret.setFormato(Enums.formatoRestFromSpecifica.get(as.getFormatoSpecifica()));
+			ret.setFormato(Enums.formatoRestFromSpecifica.get(as.getFormatoSpecifica()).toString());
 			ret.setInterfaccia(as.getByteWsdlConcettuale());
 			break;
 		case SOAP:
 			ret.setTipo(TipoApiEnum.SOAP);
-			ret.setFormato(Enums.formatoSoapFromSpecifica.get(as.getFormatoSpecifica()));
+			ret.setFormato(Enums.formatoSoapFromSpecifica.get(as.getFormatoSpecifica()).toString());
 			ret.setInterfaccia(as.getByteWsdlLogicoErogatore());
 			break;
 		}
@@ -554,8 +554,8 @@ public class ApiApiHelper {
 	
 	public static final void correggiDeserializzazione(Api body) {
 		
-		if (body.getTipo() == TipoApiEnum.REST) body.setFormato(FormatoRestEnum.fromValue((String) body.getFormato()));
-		if (body.getTipo() == TipoApiEnum.SOAP) body.setFormato(FormatoSoapEnum.fromValue((String) body.getFormato()));
+		if (body.getTipo() == TipoApiEnum.REST) body.setFormato(body.getFormato());
+		if (body.getTipo() == TipoApiEnum.SOAP) body.setFormato(body.getFormato());
 	}
 		
 	

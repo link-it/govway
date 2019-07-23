@@ -15,17 +15,17 @@ Background:
 @Create204
 Scenario: Applicativi Creazione 204 OK
 
-    * call create_204 { resourcePath: 'applicativi', body: '#(applicativo)', key: '#(applicativo.nome)' }
+    * call create_201 { resourcePath: 'applicativi', body: '#(applicativo)', key: '#(applicativo.nome)' }
 
 @Create204_httpsConfManuale
 Scenario: Applicativi Creazione 204 OK (credenziali https, configurazione manuale)
     
-    * call create_204 { resourcePath: 'applicativi', body: '#(applicativo_https)', key: '#(applicativo_https.nome)' }
+    * call create_201 { resourcePath: 'applicativi', body: '#(applicativo_https)', key: '#(applicativo_https.nome)' }
     
 @Create204_httpsCertificato
 Scenario: Applicativi Creazione 204 OK (credenziali https, upload certificato)
 
-    * call create_204 { resourcePath: 'applicativi', body: '#(applicativo_https_certificate)', key: '#(applicativo_https_certificate.nome)' }
+    * call create_201 { resourcePath: 'applicativi', body: '#(applicativo_https_certificate)', key: '#(applicativo_https_certificate.nome)' }
 
 @Create409
 Scenario: Applicativi Creazione 409 Conflitto

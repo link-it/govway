@@ -206,6 +206,27 @@ public class XMLDataConverter {
 				log,logDriver);
 	}
 	
+	public XMLDataConverter(org.openspcoop2.core.config.Openspcoop2 sorgente,AccessoConfigurazionePdD destinazione,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,destinazione,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				null,null);
+	}
+	public XMLDataConverter(org.openspcoop2.core.config.Openspcoop2 sorgente,AccessoConfigurazionePdD destinazione,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault,
+			Logger log) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,destinazione,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				log,null);
+	}
+	public XMLDataConverter(org.openspcoop2.core.config.Openspcoop2 sorgente,AccessoConfigurazionePdD destinazione,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault,
+			Logger log,Logger logDriver) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,destinazione,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				log,logDriver);
+	}
+	
 	private void XMLDataConverterSetup(Object sorgente,AccessoConfigurazionePdD destinazione,
 			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault,
 			Logger log,Logger logDriver) throws DriverConfigurazioneException{
@@ -224,7 +245,10 @@ public class XMLDataConverter {
 		
 		// Istanziazione sorgente
 		try{
-			if(sorgente instanceof String){
+			if(sorgente instanceof org.openspcoop2.core.config.Openspcoop2){
+				this.sorgenteConfigurazione = (org.openspcoop2.core.config.Openspcoop2) sorgente;
+			}
+			else if(sorgente instanceof String){
 				createSorgente((String)sorgente);
 			}
 			else if (sorgente instanceof byte[]){
@@ -367,6 +391,27 @@ public class XMLDataConverter {
 				log,logDriver);
 	}
 	
+	public XMLDataConverter(org.openspcoop2.core.config.Openspcoop2 sorgente,IDriverConfigurazioneCRUD gestoreCRUD,String tipoDestinazione,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				null,null);
+	}
+	public XMLDataConverter(org.openspcoop2.core.config.Openspcoop2 sorgente,IDriverConfigurazioneCRUD gestoreCRUD,String tipoDestinazione,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault,
+			Logger log) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				log,null);
+	}
+	public XMLDataConverter(org.openspcoop2.core.config.Openspcoop2 sorgente,IDriverConfigurazioneCRUD gestoreCRUD,String tipoDestinazione,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault,
+			Logger log,Logger logDriver) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				log,logDriver);
+	}
+	
 	private void XMLDataConverterSetup(Object sorgente,IDriverConfigurazioneCRUD gestoreCRUD,String tipoDestinazione,
 			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault,
 			Logger log,Logger logDriver) throws DriverConfigurazioneException{
@@ -385,7 +430,10 @@ public class XMLDataConverter {
 		
 		// Istanziazione sorgente
 		try{
-			if(sorgente instanceof String){
+			if(sorgente instanceof org.openspcoop2.core.config.Openspcoop2){
+				this.sorgenteConfigurazione = (org.openspcoop2.core.config.Openspcoop2) sorgente;
+			}
+			else if(sorgente instanceof String){
 				createSorgente((String)sorgente);
 			}
 			else if (sorgente instanceof byte[]){
@@ -507,6 +555,27 @@ public class XMLDataConverter {
 				log,logDriver);
 	}
 	
+	public XMLDataConverter(org.openspcoop2.core.config.Openspcoop2 sorgente,Connection connection,String tipoDatabase,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,connection,tipoDatabase,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				null,null);
+	}
+	public XMLDataConverter(org.openspcoop2.core.config.Openspcoop2 sorgente,Connection connection,String tipoDatabase,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault,
+			Logger log) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,connection,tipoDatabase,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				log,null);
+	}
+	public XMLDataConverter(org.openspcoop2.core.config.Openspcoop2 sorgente,Connection connection,String tipoDatabase,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault,
+			Logger log,Logger logDriver) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,connection,tipoDatabase,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				log,logDriver);
+	}
+	
 	private void XMLDataConverterSetup(Object sorgente,Connection connection,String tipoDatabase,
 			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault,
 			Logger log,Logger logDriver) throws DriverConfigurazioneException{
@@ -523,7 +592,10 @@ public class XMLDataConverter {
 		
 		// Istanziazione sorgente
 		try{
-			if(sorgente instanceof String){
+			if(sorgente instanceof org.openspcoop2.core.config.Openspcoop2){
+				this.sorgenteConfigurazione = (org.openspcoop2.core.config.Openspcoop2) sorgente;
+			}
+			else if(sorgente instanceof String){
 				createSorgente((String)sorgente);
 			}
 			else if (sorgente instanceof byte[]){

@@ -53,9 +53,12 @@ import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.service.beans.Lista;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
+import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
@@ -534,5 +537,27 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 			
 	}
 	
+	public static void setContentType(IContext context, String fileName) throws UtilsException {
+		String mimeType = null;
+		if(fileName.contains(".")){
+			String ext = null;
+			try{
+				ext = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length());
+			}catch(Exception e){}
+			MimeTypes mimeTypes = MimeTypes.getInstance();
+			if(ext!=null && mimeTypes.existsExtension(ext)){
+				mimeType = mimeTypes.getMimeType(ext);
+				//System.out.println("CUSTOM ["+mimeType+"]");		
+			}
+			else{
+				mimeType = HttpConstants.CONTENT_TYPE_X_DOWNLOAD;
+			}
+		}
+		else{
+			mimeType = HttpConstants.CONTENT_TYPE_X_DOWNLOAD;
+		}
+		
+		context.getServletResponse().setContentType(mimeType);
+	}
 
 }

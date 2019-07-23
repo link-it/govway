@@ -25,7 +25,7 @@ Scenario: Create Gruppi Erogazioni 204
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
     
-    * call create_204 ( { resourcePath: erogazione_petstore_path + '/gruppi', body: gruppo_petstore, key: gruppo_petstore.nome})
+    * call create_201 ( { resourcePath: erogazione_petstore_path + '/gruppi', body: gruppo_petstore, key: gruppo_petstore.nome})
     
     * call delete ({ resourcePath: erogazione_petstore_path })
     * call delete ({ resourcePath: api_petstore_path })
@@ -38,7 +38,7 @@ Scenario: Create Gruppi Erogazioni Eredita 204
     * call create ({ resourcePath: erogazione_petstore_path + '/gruppi', body: gruppo_petstore })
     
     * eval gruppo_eredita.configurazione.nome = gruppo_petstore.nome
-    * call create_204 ( { resourcePath: erogazione_petstore_path + '/gruppi', body: gruppo_eredita, key: gruppo_eredita.nome })
+    * call create_201 ( { resourcePath: erogazione_petstore_path + '/gruppi', body: gruppo_eredita, key: gruppo_eredita.nome })
     
     * call delete ({ resourcePath: erogazione_petstore_path + '/gruppi/' + gruppo_petstore.nome})
     * call delete ({ resourcePath: erogazione_petstore_path })

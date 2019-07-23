@@ -93,15 +93,10 @@ import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneCustom;
 import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneNew;
 import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneView;
 import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneXACMLConfig;
+import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneXACMLViewConfig;
 import org.openspcoop2.core.config.rs.server.model.AllAnyEnum;
-import org.openspcoop2.core.config.rs.server.model.AllegatoGenerico;
-import org.openspcoop2.core.config.rs.server.model.AllegatoGenericoItem;
-import org.openspcoop2.core.config.rs.server.model.AllegatoSpecificaLivelloServizio;
-import org.openspcoop2.core.config.rs.server.model.AllegatoSpecificaLivelloServizioItem;
-import org.openspcoop2.core.config.rs.server.model.AllegatoSpecificaSemiformale;
-import org.openspcoop2.core.config.rs.server.model.AllegatoSpecificaSemiformaleItem;
-import org.openspcoop2.core.config.rs.server.model.AllegatoSpecificaSicurezza;
-import org.openspcoop2.core.config.rs.server.model.AllegatoSpecificaSicurezzaItem;
+import org.openspcoop2.core.config.rs.server.model.Allegato;
+import org.openspcoop2.core.config.rs.server.model.AllegatoItem;
 import org.openspcoop2.core.config.rs.server.model.ApiImplAllegato;
 import org.openspcoop2.core.config.rs.server.model.ApiImplAllegatoItem;
 import org.openspcoop2.core.config.rs.server.model.ApiImplInformazioniGenerali;
@@ -209,6 +204,9 @@ import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
+import org.openspcoop2.core.registry.constants.TipiDocumentoLivelloServizio;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
@@ -1688,21 +1686,21 @@ public class ErogazioniApiHelper {
 		return ret;
 	}
 	
-	public static final AllegatoGenerico deserializeAllegatoGenerico(Object o) {
-		AllegatoGenerico ret = deserializeDefault(o, AllegatoGenerico.class);
-		if (StringUtils.isEmpty(ret.getNome()) || ret.getDocumento() == null) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(AllegatoGenerico.class.getName() + ": Indicare i campi obbligatori 'nome' e 'documento'");
-		}
-		return ret;
-	}
-	
-	public static final AllegatoSpecificaSemiformale deserializeAllegatoSpecificaSemiformale(Object o) {
-		AllegatoSpecificaSemiformale ret = deserializeDefault(o, AllegatoSpecificaSemiformale.class);
-		if (StringUtils.isEmpty(ret.getNome()) || ret.getDocumento() == null || ret.getTipo() == null) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(AllegatoSpecificaSemiformale.class.getName() + ": Indicare i campi obbligatori 'nome', 'documento' e 'tipo'");
-		}
-		return ret;
-	}
+//	public static final AllegatoGenerico deserializeAllegatoGenerico(Object o) {
+//		AllegatoGenerico ret = deserializeDefault(o, AllegatoGenerico.class);
+//		if (StringUtils.isEmpty(ret.getNome()) || ret.getDocumento() == null) {
+//			throw FaultCode.RICHIESTA_NON_VALIDA.toException(AllegatoGenerico.class.getName() + ": Indicare i campi obbligatori 'nome' e 'documento'");
+//		}
+//		return ret;
+//	}
+//	
+//	public static final AllegatoSpecificaSemiformale deserializeAllegatoSpecificaSemiformale(Object o) {
+//		AllegatoSpecificaSemiformale ret = deserializeDefault(o, AllegatoSpecificaSemiformale.class);
+//		if (StringUtils.isEmpty(ret.getNome()) || ret.getDocumento() == null || ret.getTipo() == null) {
+//			throw FaultCode.RICHIESTA_NON_VALIDA.toException(AllegatoSpecificaSemiformale.class.getName() + ": Indicare i campi obbligatori 'nome', 'documento' e 'tipo'");
+//		}
+//		return ret;
+//	}
 	
 	
 		
@@ -1716,40 +1714,41 @@ public class ErogazioniApiHelper {
 				.toString()
 			);
 		
+		Allegato allegato = body.getAllegato();
+		documento.setFile(allegato.getNome());
+		documento.setByteContenuto(allegato.getDocumento());
+		
 		if (body.getAllegato() != null) {
 			switch (body.getRuolo()) {
 			case ALLEGATO: {
-				AllegatoGenerico all = deserializeAllegatoGenerico(body.getAllegato());
-				documento.setByteContenuto(all.getDocumento());
-				documento.setFile(all.getNome());
-				documento.setTipo( evalnull( () -> all.getNome().substring( all.getNome().lastIndexOf('.')+1, all.getNome().length())) );
+				documento.setTipo( evalnull( () -> allegato.getNome().substring( allegato.getNome().lastIndexOf('.')+1, allegato.getNome().length())) );
 				break;
 			}
 			case SPECIFICASEMIFORMALE: {
-				AllegatoSpecificaSemiformale all = deserializeAllegatoSpecificaSemiformale(body.getAllegato());
-				documento.setByteContenuto(all.getDocumento());
-				documento.setFile(all.getNome());	
-				documento.setTipo( evalnull( () -> all.getTipo().toString()) );
+				if(body.getTipoAllegato()==null) {
+					documento.setTipo(TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString()); // default
+				}
+				else {
+					documento.setTipo( evalnull( () -> Enums.tipoDocumentoSemiFormaleFromSpecifica.get(TipoSpecificaSemiformaleEnum.fromValue(body.getTipoAllegato())).toString()) );
+				}
 				break;
 			}
 			case SPECIFICALIVELLOSERVIZIO: {
-				AllegatoSpecificaLivelloServizio all = deserializeDefault(body.getAllegato(), AllegatoSpecificaLivelloServizio.class);
-				if (StringUtils.isEmpty(all.getNome()) || all.getDocumento() == null || all.getTipo() == null) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(AllegatoSpecificaLivelloServizio.class.getName() + ": Indicare i campi obbligatori 'nome', 'documento' e 'tipo'");
+				if(body.getTipoAllegato()==null) {
+					documento.setTipo(TipiDocumentoLivelloServizio.WSLA.toString()); // default
 				}
-				documento.setByteContenuto(all.getDocumento());
-				documento.setFile(all.getNome());	
-				documento.setTipo( evalnull( () -> all.getTipo().toString())) ;
+				else {
+					documento.setTipo( evalnull( () -> Enums.tipoDocumentoLivelloServizioFromSpecifica.get(TipoSpecificaLivelloServizioEnum.fromValue(body.getTipoAllegato())).toString()) );
+				}
 				break;
 			}
 			case SPECIFICASICUREZZA: {
-				AllegatoSpecificaSicurezza all = deserializeDefault(body.getAllegato(), AllegatoSpecificaSicurezza.class);
-				if (StringUtils.isEmpty(all.getNome()) || all.getDocumento() == null || all.getTipo() == null) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(AllegatoSpecificaSicurezza.class.getName() + ": Indicare i campi obbligatori 'nome', 'documento' e 'tipo'");
+				if(body.getTipoAllegato()==null) {
+					documento.setTipo(TipiDocumentoSicurezza.LINGUAGGIO_NATURALE.toString()); // default
 				}
-				documento.setByteContenuto(all.getDocumento());
-				documento.setFile(all.getNome());	
-				documento.setTipo(evalnull( () -> all.getTipo().toString()) );
+				else {
+					documento.setTipo( evalnull( () -> Enums.tipoDocumentoSicurezzaFromSpecifica.get(TipoSpecificaSicurezzaEnum.fromValue(body.getTipoAllegato())).toString()) );
+				}
 				break;
 			}
 			}
@@ -1761,38 +1760,31 @@ public class ErogazioniApiHelper {
 	
 	public static final ApiImplAllegato documentoToImplAllegato(Documento doc) {
 		ApiImplAllegato ret = new ApiImplAllegato();
-	    ret.setRuolo(Enums.ruoliApiImplFromDocumento.get( RuoliDocumento.valueOf(doc.getRuolo())) );
 	    
+		ret.setRuolo(Enums.ruoliApiImplFromDocumento.get( RuoliDocumento.valueOf(doc.getRuolo())) );
+	    
+		Allegato ag = new Allegato();
+		ag.setDocumento(doc.getByteContenuto());
+		ag.setNome(doc.getFile());
+		ret.setAllegato(ag);
+		
 	    switch(ret.getRuolo()) {
 	    case ALLEGATO: {
-	    	AllegatoGenerico a = new AllegatoGenerico();
-	    	a.setDocumento(doc.getByteContenuto());
-	    	a.setNome(doc.getFile());
-	    	ret.setAllegato(a);
-	    	break;
-	    }
-	    case SPECIFICALIVELLOSERVIZIO: {
-	    	AllegatoSpecificaLivelloServizio a = new AllegatoSpecificaLivelloServizio();
-	    	a.setDocumento(doc.getByteContenuto());
-	    	a.setNome(doc.getFile());
-	    	a.setTipo(TipoSpecificaLivelloServizioEnum.fromValue(doc.getTipo()));
-	    	ret.setAllegato(a);
 	    	break;
 	    }
 	    case SPECIFICASEMIFORMALE: {
-	    	AllegatoSpecificaSemiformale a = new AllegatoSpecificaSemiformale();
-	    	a.setDocumento(doc.getByteContenuto());
-	    	a.setNome(doc.getFile());
-	    	a.setTipo(TipoSpecificaSemiformaleEnum.fromValue(doc.getTipo()));
-	    	ret.setAllegato(a);
+	    	TipiDocumentoSemiformale tipo = Enum.valueOf(TipiDocumentoSemiformale.class, doc.getTipo());
+			ret.setTipoAllegato((Helper.apiEnumToGovway(tipo, TipoSpecificaSemiformaleEnum.class)).toString());
+	    	break;
+	    }
+	    case SPECIFICALIVELLOSERVIZIO: {
+	    	TipiDocumentoLivelloServizio tipo = Enum.valueOf(TipiDocumentoLivelloServizio.class, doc.getTipo());
+			ret.setTipoAllegato((Helper.apiEnumToGovway(tipo, TipoSpecificaLivelloServizioEnum.class)).toString());
 	    	break;
 	    }
 	    case SPECIFICASICUREZZA: {
-	    	AllegatoSpecificaSicurezza a = new AllegatoSpecificaSicurezza();
-	    	a.setDocumento(doc.getByteContenuto());
-	    	a.setNome(doc.getFile());
-	    	a.setTipo(TipoSpecificaSicurezzaEnum.fromValue(doc.getTipo()));
-	    	ret.setAllegato(a);
+	    	TipiDocumentoSicurezza tipo = Enum.valueOf(TipiDocumentoSicurezza.class, doc.getTipo());
+			ret.setTipoAllegato((Helper.apiEnumToGovway(tipo, TipoSpecificaSicurezzaEnum.class)).toString());
 	    	break;
 	    }
 	    }
@@ -1803,35 +1795,14 @@ public class ErogazioniApiHelper {
 	
 	public static final ApiImplAllegatoItem ImplAllegatoToItem(ApiImplAllegato allegato) {
 		ApiImplAllegatoItem ret = new ApiImplAllegatoItem();
+		
 		ret.setRuolo(allegato.getRuolo());
 		
-		switch(ret.getRuolo()) {
-	    case ALLEGATO: {
-	    	AllegatoGenericoItem a = new AllegatoGenericoItem();
-	    	a.setNome( ( (AllegatoGenerico) allegato.getAllegato()).getNome());
-	    	ret.setAllegato(a);
-	    	break;
-	    }
-	    case SPECIFICALIVELLOSERVIZIO: {
-	    	AllegatoSpecificaLivelloServizioItem a = new AllegatoSpecificaLivelloServizioItem();
-	    	a.setNome( ( (AllegatoSpecificaLivelloServizio) allegato.getAllegato()).getNome());
-	    	a.setTipo( ( (AllegatoSpecificaLivelloServizio) allegato.getAllegato()).getTipo());
-	    	break;
-	    }
-	    case SPECIFICASEMIFORMALE: {
-	    	AllegatoSpecificaSemiformaleItem a = new AllegatoSpecificaSemiformaleItem();
-	    	a.setNome( ( (AllegatoSpecificaSemiformale) allegato.getAllegato()).getNome());
-	    	a.setTipo( ( (AllegatoSpecificaSemiformale) allegato.getAllegato()).getTipo());
-	    	break;
-	    }
-	    case SPECIFICASICUREZZA: {
-	    	AllegatoSpecificaSicurezzaItem a = new AllegatoSpecificaSicurezzaItem();
-	    	a.setNome( ( (AllegatoSpecificaSicurezza) allegato.getAllegato() ).getNome());
-	    	a.setTipo( ( (AllegatoSpecificaSicurezza) allegato.getAllegato() ).getTipo());
-	    	break;
-	    }
-	    }
+		AllegatoItem a = new AllegatoItem();
+		a.setNome(allegato.getAllegato().getNome());
+		ret.setAllegato(a);
 		
+		ret.setTipoAllegato(allegato.getTipoAllegato());
 		
 		return ret;
 		
@@ -3235,7 +3206,10 @@ public class ErogazioniApiHelper {
 			break;
 		}
 		case ABILITATO: {
-			APIImplAutorizzazioneConfig config = deserializeDefault(authz.getConfigurazione(), APIImplAutorizzazioneConfig.class);
+			APIImplAutorizzazioneConfig config = authz.getConfigurazione();
+			if(config==null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione non fornita");
+			}
 			
 			// defaults
 			if ( config.isRuoli() && config.getRuoliFonte() == null ) {
@@ -3293,14 +3267,20 @@ public class ErogazioniApiHelper {
 			break;
 		}
 		case CUSTOM:
-			APIImplAutorizzazioneCustom customConfig = deserializeDefault(authz.getConfigurazione(), APIImplAutorizzazioneCustom.class);
+			APIImplAutorizzazioneCustom customConfig = authz.getConfigurazioneCustom();
+			if(customConfig==null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione custom non fornita");
+			}
 			if (StringUtils.isEmpty(customConfig.getNome())) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneCustom.class.getName()+": Indicare il campo obbligatorio 'nome' ");
 			}
 			newPd.setAutorizzazione(customConfig.getNome());
 			break;
 		case XACML_POLICY: {
-			APIImplAutorizzazioneXACMLConfig xacmlConfig = deserializeDefault(authz.getConfigurazione(), APIImplAutorizzazioneXACMLConfig.class);
+			APIImplAutorizzazioneXACMLConfig xacmlConfig = authz.getConfigurazioneXacml();
+			if(xacmlConfig==null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione xacml non fornita");
+			}
 			if (xacmlConfig.getPolicy() == null) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneXACMLConfig.class.getName()+": Indicare il campo obbligatorio 'policy'");
 			}
@@ -3345,7 +3325,10 @@ public class ErogazioniApiHelper {
 		
 		
 		case ABILITATO: {
-			APIImplAutorizzazioneConfig config = deserializeDefault(authz.getConfigurazione(), APIImplAutorizzazioneConfig.class);
+			APIImplAutorizzazioneConfig config = authz.getConfigurazione();
+			if(config==null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione non fornita");
+			}
 			
 			// defaults
 			if ( config.isRuoli() && config.getRuoliFonte() == null ) {
@@ -3402,14 +3385,20 @@ public class ErogazioniApiHelper {
 			break;
 		}
 		case CUSTOM:
-			APIImplAutorizzazioneCustom customConfig = deserializeDefault(authz.getConfigurazione(), APIImplAutorizzazioneCustom.class);
+			APIImplAutorizzazioneCustom customConfig = authz.getConfigurazioneCustom();
+			if(customConfig==null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione custom non fornita");
+			}
 			if (StringUtils.isEmpty(customConfig.getNome())) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneCustom.class.getName()+": Indicare il campo obbligatorio 'nome' ");
 			}
 			newPa.setAutorizzazione(customConfig.getNome());
 			break;
 		case XACML_POLICY: {
-			APIImplAutorizzazioneXACMLConfig xacmlConfig = deserializeDefault(authz.getConfigurazione(), APIImplAutorizzazioneXACMLConfig.class);
+			APIImplAutorizzazioneXACMLConfig xacmlConfig = authz.getConfigurazioneXacml();
+			if(xacmlConfig==null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione xacml non fornita");
+			}
 			if (xacmlConfig.getPolicy() == null) {
         		throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneXACMLConfig.class.getName() + ": Indicare il campo obbligatorio 'policy'");
         	}
@@ -3490,7 +3479,7 @@ public class ErogazioniApiHelper {
 			config.setScope( pa.getScope() != null );
 			config.setScopeRichiesti( evalnull( () -> AllAnyEnum.fromValue( pa.getScope().getMatch().getValue() )));
 			
-			config.setToken( evalnull( () -> pa.getGestioneToken().getOptions() != null));
+			config.setToken( (pa.getGestioneToken()!=null && pa.getGestioneToken().getOptions() != null) ? true : false);
 			config.setTokenClaims( evalnull( () -> pa.getGestioneToken().getOptions() ));
 			
 			retAuthz.setConfigurazione(config);
@@ -3499,19 +3488,18 @@ public class ErogazioniApiHelper {
 		case CUSTOM: {
 			APIImplAutorizzazioneCustom config = new APIImplAutorizzazioneCustom();
 			config.setNome(pa.getAutorizzazione());
-			retAuthz.setConfigurazione(config);
+			retAuthz.setConfigurazioneCustom(config);
 			break;
 		}
 		case DISABILITATO: {
 			break;
 		}
 		case XACML_POLICY: {
-			APIImplAutorizzazioneXACMLConfig config = new APIImplAutorizzazioneXACMLConfig();
-			config.setPolicy( pa.getXacmlPolicy().getBytes() );
+			APIImplAutorizzazioneXACMLViewConfig config = new APIImplAutorizzazioneXACMLViewConfig();
 			config.setRuoliFonte( evalnull( () -> 
 					Enums.registroTipologiaToApiFonte(	AutorizzazioneUtilities.convertToRuoloTipologia(pa.getAutorizzazione()) )
 				));
-			retAuthz.setConfigurazione(config);
+			retAuthz.setConfigurazioneXacml(config);
 			break;
 		}
 		}
@@ -3547,7 +3535,7 @@ public class ErogazioniApiHelper {
 			config.setScope( pd.getScope() != null );
 			config.setScopeRichiesti( evalnull( () -> AllAnyEnum.fromValue( pd.getScope().getMatch().getValue() )));
 			
-			config.setToken( evalnull( () -> pd.getGestioneToken().getOptions() != null));
+			config.setToken( (pd.getGestioneToken()!=null && pd.getGestioneToken().getOptions() != null) ? true : false);
 			config.setTokenClaims( evalnull( () -> pd.getGestioneToken().getOptions() ));
 						retAuthz.setConfigurazione(config);
 			break;
@@ -3555,19 +3543,18 @@ public class ErogazioniApiHelper {
 		case CUSTOM: {
 			APIImplAutorizzazioneCustom config = new APIImplAutorizzazioneCustom();
 			config.setNome(pd.getAutorizzazione());
-			retAuthz.setConfigurazione(config);
+			retAuthz.setConfigurazioneCustom(config);
 			break;
 		}
 		case DISABILITATO: {
 			break;
 		}
 		case XACML_POLICY: {
-			APIImplAutorizzazioneXACMLConfig config = new APIImplAutorizzazioneXACMLConfig();
-			config.setPolicy( pd.getXacmlPolicy().getBytes() );
+			APIImplAutorizzazioneXACMLViewConfig config = new APIImplAutorizzazioneXACMLViewConfig();
 			config.setRuoliFonte( evalnull( () -> 
 					Enums.registroTipologiaToApiFonte(	AutorizzazioneUtilities.convertToRuoloTipologia(pd.getAutorizzazione()) )
 				));
-			retAuthz.setConfigurazione(config);
+			retAuthz.setConfigurazioneXacml(config);
 			break;
 		}
 		}

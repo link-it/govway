@@ -70,7 +70,9 @@ import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.basic.archive.APIUtils;
+import org.openspcoop2.utils.json.YAMLUtils;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
@@ -166,6 +168,10 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			env.apcCore.performCreateOperation(env.userLogin, false, as);
 			context.getLogger().info("Invocazione completata con successo");
+			
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
+			
 		} catch (javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
@@ -233,6 +239,10 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			env.apcCore.performUpdateOperation(env.userLogin, false, as);
 
 			context.getLogger().info("Invocazione completata con successo");
+			
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
+			
 		} catch (javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
@@ -311,6 +321,10 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					env.apcCore, env.apcHelper, as, pt, env.userLogin);
 
 			context.getLogger().info("Invocazione completata con successo");
+			
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
+			
 		} catch (javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
@@ -381,6 +395,10 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					env.apcHelper, as, env.userLogin);
 
 			context.getLogger().info("Invocazione completata con successo");
+			
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
+			
 		} catch (javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
@@ -442,6 +460,10 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			env.apcCore.performUpdateOperation(env.userLogin, false, as);
 
 			context.getLogger().info("Invocazione completata con successo");
+			
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
+			
 		} catch (javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
@@ -735,6 +757,8 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			context.getLogger().info("Invocazione completata con successo");
 
+			Helper.setContentType(context, doc.getFile());
+			
 			return doc.getByteContenuto();
 		} catch (javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
@@ -771,14 +795,47 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			context.getLogger().info("Invocazione completata con successo");
 
+			byte [] spec = null;
 			switch (as.getServiceBinding()) {
 			case REST:
-				return as.getByteWsdlConcettuale();
+				spec = as.getByteWsdlConcettuale();
+				break;
 			case SOAP:
-				return as.getByteWsdlLogicoErogatore();
+				spec = as.getByteWsdlLogicoErogatore();
+				break;
 			}
-
-			return null;
+			
+			String fileName = null;
+			switch (as.getFormatoSpecifica()) {
+			case WSDL_11:
+				fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_CONCETTUALE_WSDL;
+				break;
+			case OPEN_API_3:
+				YAMLUtils yamlUtils = YAMLUtils.getInstance();
+				if(yamlUtils.isYaml(spec)) {
+					fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_OPENAPI_3_0_YAML;
+				}
+				else {	
+					fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_OPENAPI_3_0_JSON;
+				}
+				break;
+			case SWAGGER_2:
+				yamlUtils = YAMLUtils.getInstance();
+				if(yamlUtils.isYaml(spec)) {
+					fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_SWAGGER_2_0_YAML;
+				}
+				else {
+					fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_SWAGGER_2_0_JSON;
+				}
+				break;
+			case WADL:
+				fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WADL;
+				break;
+			}
+			
+			Helper.setContentType(context, fileName);
+			
+			return spec;
 		} catch (javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
@@ -1076,7 +1133,8 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			ret.setSoggetto(item.getSoggetto());
 			ret.setTipo(item.getTipo());
 			ret.setVersione(item.getVersione());
-
+			ret.setStato(item.getStato());
+			ret.setStatoDescrizione(item.getStatoDescrizione());
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 
@@ -1291,11 +1349,11 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			switch (ret.getTipo()) {
 			case REST:
-				ret.setFormato(Enums.formatoRestFromSpecifica.get(as.getFormatoSpecifica()));
+				ret.setFormato(Enums.formatoRestFromSpecifica.get(as.getFormatoSpecifica()).toString());
 				ret.setInterfaccia(as.getByteWsdlConcettuale());
 				break;
 			case SOAP:
-				ret.setFormato(Enums.formatoSoapFromSpecifica.get(as.getFormatoSpecifica()));
+				ret.setFormato(Enums.formatoSoapFromSpecifica.get(as.getFormatoSpecifica()).toString());
 				ret.setInterfaccia(as.getByteWsdlLogicoErogatore());
 				break;
 			default:

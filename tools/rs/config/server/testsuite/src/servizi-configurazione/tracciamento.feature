@@ -14,7 +14,7 @@ Scenario: CRUD TRACCIAMENTO
     And request correlazione_richiesta
     And params query_params
     When method post
-    Then status 204
+    Then status 201
 
     # CREATE RISPOSTA
     Given url configUrl
@@ -23,7 +23,7 @@ Scenario: CRUD TRACCIAMENTO
     And request correlazione_risposta
     And params query_params
     When method post
-    Then status 204
+    Then status 201
 
 
     # LIST RICHIESTA

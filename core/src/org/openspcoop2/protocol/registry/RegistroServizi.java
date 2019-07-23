@@ -3105,9 +3105,9 @@ public class RegistroServizi  {
 			}
 		}catch(DriverRegistroServiziException e){
 			if(TipologiaServizio.CORRELATO.equals(servizio.getTipologiaServizio())){
-				throw new DriverRegistroServiziException("[WSDL-FRUITORE] "+e.getMessage(),e);
+				throw new DriverRegistroServiziException("[CORRELATO] "+e.getMessage(),e);
 			}else{
-				throw new DriverRegistroServiziException("[WSDL-EROGATORE] "+e.getMessage(),e);
+				throw new DriverRegistroServiziException(e.getMessage(),e);
 			}
 		}
 

@@ -59,6 +59,10 @@ public class Test {
 	
 			boolean testAdditionalProperties = !ApiFormats.SWAGGER_2.equals(format); // il parser dello swagger non legge l'additiona properties
 			
+			boolean addParameterTipizzati =  !ApiFormats.SWAGGER_2.equals(format); // aggiunti solo in openapi
+			
+			boolean bodyInDelete = ApiFormats.SWAGGER_2.equals(format); // openapi3 non lo permette
+			
 			IApiReader apiReader = ApiFactory.newApiReader(format);
 			apiReader.init(LoggerWrapperFactory.getLogger(Test.class), new File(uri), new ApiReaderConfig(), apiSchemas);
 			Api api = apiReader.read();
@@ -96,11 +100,182 @@ public class Test {
 				Properties parametersQuery = new Properties();
 				HttpBaseRequestEntity<?> httpEntity3 = new TextHttpRequestEntity();
 				parametersQuery.put("status", "available");
+				if(addParameterTipizzati) {
+					parametersQuery.put("profiloRefInLineByStatus", "APIGateway");
+					parametersQuery.put("soggettoRefInLineByStatus", "PROVA");
+					parametersQuery.put("numeroLimitatoRefInLineByStatus", "130");
+					
+					parametersQuery.put("profiloInLineByStatus", "SPCoop");
+					parametersQuery.put("soggettoInLineByStatus", "PROVA2");
+					parametersQuery.put("numeroLimitatoInLineByStatus", "150");
+					
+					parametersQuery.put("profiloRef", "FatturaPA");
+					parametersQuery.put("soggettoRef", "PROVA3");
+					parametersQuery.put("esempioNumericoRef", "200");
+					
+					parametersQuery.put("profilo", "eDelivery");
+					parametersQuery.put("soggetto", "PROVA4");
+					parametersQuery.put("esempioNumerico", "500");
+				}
 				httpEntity3.setParametersQuery(parametersQuery);
 				httpEntity3.setMethod(HttpRequestMethod.GET);
 				httpEntity3.setUrl(testUrl2);
 				apiValidator.validate(httpEntity3);		
 				System.out.println("["+testName+"] Test #3 completato\n\n");
+				
+				if(addParameterTipizzati) {
+					System.out.println("["+testName+"] Test #3-a (Richiesta GET con parametri query errati)");
+					httpEntity3.getParametersQuery().remove("profiloRefInLineByStatus");
+					parametersQuery.put("profiloRefInLineByStatus", "APIGatewayERRATO");
+					try {
+						apiValidator.validate(httpEntity3);
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					} catch(ValidatorException e) {
+						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "[profiloRefInLineByStatus] with value [APIGatewayERRATO] not valid (expected type [string]): Uncorrect enum value, expected: 'APIGateway,SPCoop,FatturaPA,eDelivery'";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
+						}
+						System.out.println("["+testName+"] Test #3-a (Richiesta GET con parametri query errati) completato\n\n");
+					}
+					httpEntity3.getParametersQuery().remove("profiloRefInLineByStatus");
+					httpEntity3.getParametersQuery().put("profiloRefInLineByStatus", "APIGateway");
+					
+					System.out.println("["+testName+"] Test #3-b (Richiesta GET con parametri query errati)");
+					httpEntity3.getParametersQuery().remove("soggettoInLineByStatus");
+					parametersQuery.put("soggettoInLineByStatus", "PROVA_PROVA");
+					try {
+						apiValidator.validate(httpEntity3);
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					} catch(ValidatorException e) {
+						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "[soggettoInLineByStatus] with value [PROVA_PROVA] not valid (expected type [string]): Pattern match failed ('^[0-9A-Za-z]+$')";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
+						}
+						System.out.println("["+testName+"] Test #3-b (Richiesta GET con parametri query errati) completato\n\n");
+					}
+					httpEntity3.getParametersQuery().remove("soggettoInLineByStatus");
+					httpEntity3.getParametersQuery().put("soggettoInLineByStatus", "PROVA");
+					
+					System.out.println("["+testName+"] Test #3-c (Richiesta GET con parametri query errati)");
+					httpEntity3.getParametersQuery().remove("soggettoInLineByStatus");
+					parametersQuery.put("soggettoInLineByStatus", "P");
+					try {
+						apiValidator.validate(httpEntity3);
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					} catch(ValidatorException e) {
+						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "[soggettoInLineByStatus] with value [P] not valid (expected type [string]): Too short, expected min length '2'";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
+						}
+						System.out.println("["+testName+"] Test #3-c (Richiesta GET con parametri query errati) completato\n\n");
+					}
+					httpEntity3.getParametersQuery().remove("soggettoInLineByStatus");
+					httpEntity3.getParametersQuery().put("soggettoInLineByStatus", "PROVA");
+					
+					System.out.println("["+testName+"] Test #3-d (Richiesta GET con parametri query errati)");
+					httpEntity3.getParametersQuery().remove("soggettoRef");
+					parametersQuery.put("soggettoRef", "P12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
+					try {
+						apiValidator.validate(httpEntity3);
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					} catch(ValidatorException e) {
+						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "not valid (expected type [string]): Too big, expected max length '255'";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
+						}
+						System.out.println("["+testName+"] Test #3-d (Richiesta GET con parametri query errati) completato\n\n");
+					}
+					httpEntity3.getParametersQuery().remove("soggettoRef");
+					httpEntity3.getParametersQuery().put("soggettoRef", "PROVA");
+					
+					System.out.println("["+testName+"] Test #3-e (Richiesta GET con parametri query errati)");
+					httpEntity3.getParametersQuery().remove("esempioNumerico");
+					parametersQuery.put("esempioNumerico", "23");
+					try {
+						apiValidator.validate(httpEntity3);
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					} catch(ValidatorException e) {
+						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "[esempioNumerico] with value [23] not valid (expected type [int32]): Value lowest than the minimum '100'";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
+						}
+						System.out.println("["+testName+"] Test #3-e (Richiesta GET con parametri query errati) completato\n\n");
+					}
+					httpEntity3.getParametersQuery().remove("esempioNumerico");
+					httpEntity3.getParametersQuery().put("esempioNumerico", "500");
+					
+					System.out.println("["+testName+"] Test #3-f (Richiesta GET con parametri query errati)");
+					httpEntity3.getParametersQuery().remove("esempioNumerico");
+					parametersQuery.put("esempioNumerico", "600");
+					try {
+						apiValidator.validate(httpEntity3);
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					} catch(ValidatorException e) {
+						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "[esempioNumerico] with value [600] not valid (expected type [int32]): Value equals to the maximum '600' and exclusive maximum is enabled";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
+						}
+						System.out.println("["+testName+"] Test #3-f (Richiesta GET con parametri query errati) completato\n\n");
+					}
+					httpEntity3.getParametersQuery().remove("esempioNumerico");
+					httpEntity3.getParametersQuery().put("esempioNumerico", "500");
+					
+					System.out.println("["+testName+"] Test #3-g (Richiesta GET con parametri query errati)");
+					httpEntity3.getParametersQuery().remove("esempioNumerico");
+					parametersQuery.put("esempioNumerico", "800");
+					try {
+						apiValidator.validate(httpEntity3);
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					} catch(ValidatorException e) {
+						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "[esempioNumerico] with value [800] not valid (expected type [int32]): Value higher than the maximum '600'";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
+						}
+						System.out.println("["+testName+"] Test #3-g (Richiesta GET con parametri query errati) completato\n\n");
+					}
+					httpEntity3.getParametersQuery().remove("esempioNumerico");
+					httpEntity3.getParametersQuery().put("esempioNumerico", "500");
+					
+					System.out.println("["+testName+"] Test #3-h (Richiesta GET con parametri query errati)");
+					httpEntity3.getParametersQuery().remove("esempioNumerico");
+					parametersQuery.put("esempioNumerico", "55GG33");
+					try {
+						apiValidator.validate(httpEntity3);
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					} catch(ValidatorException e) {
+						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "[esempioNumerico] with value [55GG33] not valid (expected type [int32]): For input string: \"55GG33\"";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
+						}
+						System.out.println("["+testName+"] Test #3-h (Richiesta GET con parametri query errati) completato\n\n");
+					}
+					httpEntity3.getParametersQuery().remove("esempioNumerico");
+					httpEntity3.getParametersQuery().put("esempioNumerico", "500");
+				}
 				
 				// [request] Test senza import
 				
@@ -527,49 +702,55 @@ public class Test {
 				TextHttpRequestEntity httpEntity13 = new TextHttpRequestEntity();
 				httpEntity13.setMethod(HttpRequestMethod.DELETE);
 				httpEntity13.setUrl("/pets");
-				httpEntity13.setContent("{\"name\" : \"aaa\",  \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"] }");
-				httpEntity13.setContentType("application/json");
+				// La delete non puo' avere una richiesta in openapi3
+				if(bodyInDelete) {
+					httpEntity13.setContent("{\"name\" : \"aaa\",  \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"] }");
+					httpEntity13.setContentType("application/json");
+				}
 				apiValidator.validate(httpEntity13);	
 				System.out.println("["+testName+"] Test #13 completato\n\n");
 				
-				System.out.println("["+testName+"] Test #14-additionalProperties (Richiesta DELETE con body json errato)");
-				TextHttpRequestEntity httpEntity14_additionalProperties = new TextHttpRequestEntity();
-				httpEntity14_additionalProperties.setMethod(HttpRequestMethod.DELETE);
-				httpEntity14_additionalProperties.setUrl("/pets");
-				httpEntity14_additionalProperties.setContent("{\"name\" : \"aaa\", \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"], \"a\":\"b\"}");
-				httpEntity14_additionalProperties.setContentType("application/json");
-				try {
-					apiValidator.validate(httpEntity14_additionalProperties);
-					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
-				} catch(ValidatorException e) {
-					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-						String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+				// La delete non puo' avere una richiesta in openapi3
+				if(bodyInDelete) {
+					System.out.println("["+testName+"] Test #14-additionalProperties (Richiesta DELETE con body json errato)");
+					TextHttpRequestEntity httpEntity14_additionalProperties = new TextHttpRequestEntity();
+					httpEntity14_additionalProperties.setMethod(HttpRequestMethod.DELETE);
+					httpEntity14_additionalProperties.setUrl("/pets");
+					httpEntity14_additionalProperties.setContent("{\"name\" : \"aaa\", \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"], \"a\":\"b\"}");
+					httpEntity14_additionalProperties.setContentType("application/json");
+					try {
+						apiValidator.validate(httpEntity14_additionalProperties);
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					} catch(ValidatorException e) {
+						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
 						}
+						System.out.println("["+testName+"] Test #14-additionalProperties completato\n\n");
 					}
-					System.out.println("["+testName+"] Test #14-additionalProperties completato\n\n");
-				}
-				
-				System.out.println("["+testName+"] Test #14-required (Richiesta DELETE con body json errato)");
-				TextHttpRequestEntity httpEntity14_required = new TextHttpRequestEntity();
-				httpEntity14_required.setMethod(HttpRequestMethod.DELETE);
-				httpEntity14_required.setUrl("/pets");
-				httpEntity14_required.setContent("{ \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"]}");
-				httpEntity14_required.setContentType("application/json");
-				try {
-					apiValidator.validate(httpEntity14_required);
-					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
-				} catch(ValidatorException e) {
-					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-						String msgErroreAtteso = "$.name: is missing but it is required";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+					
+					System.out.println("["+testName+"] Test #14-required (Richiesta DELETE con body json errato)");
+					TextHttpRequestEntity httpEntity14_required = new TextHttpRequestEntity();
+					httpEntity14_required.setMethod(HttpRequestMethod.DELETE);
+					httpEntity14_required.setUrl("/pets");
+					httpEntity14_required.setContent("{ \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"]}");
+					httpEntity14_required.setContentType("application/json");
+					try {
+						apiValidator.validate(httpEntity14_required);
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					} catch(ValidatorException e) {
+						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "$.name: is missing but it is required";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
 						}
+						System.out.println("["+testName+"] Test #14-required completato\n\n");
 					}
-					System.out.println("["+testName+"] Test #14-required completato\n\n");
 				}
 				
 				// [response] Test con import 
@@ -708,6 +889,7 @@ public class Test {
 		} catch(Exception e) {
 			System.err.println("["+testName+"] Errore durante l'esecuzione dei test: " + e.getMessage());
 			e.printStackTrace(System.err);
+			throw e;
 		}
 	}
 	

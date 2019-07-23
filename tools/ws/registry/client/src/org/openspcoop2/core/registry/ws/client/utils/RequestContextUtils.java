@@ -1,7 +1,7 @@
 /*
  * GovWay - A customizable API Gateway 
  * http://www.govway.org
- * 
+ *
  * from the Link.it OpenSPCoop project codebase
  * 
  * Copyright (c) 2005-2019 Link.it srl (http://link.it).
@@ -19,7 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 package org.openspcoop2.core.registry.ws.client.utils;
 
 import java.io.InputStream;
@@ -43,9 +42,9 @@ public class RequestContextUtils {
 	
 	public RequestContextUtils(String service) throws Exception {
 		try{
-			InputStream is = RequestContextUtils.class.getResourceAsStream(RequestContextUtils.PROPERTIES);
+			InputStream is = RequestContextUtils.class.getResourceAsStream(PROPERTIES);
 			if(is==null){
-				throw new Exception("File ["+RequestContextUtils.PROPERTIES+"] not found in classpath");
+				throw new Exception("File ["+PROPERTIES+"] not found in classpath");
 			}
 			Properties props = new Properties();
 			props.load(is);

@@ -82,6 +82,7 @@ import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.utils.rest.api.ApiResponse;
+import org.openspcoop2.utils.rest.api.ApiSchemaTypeRestriction;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -6142,7 +6143,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_DESCRIZIONE);
 			de.setValue(descrizione);
-			de.setType(DataElementType.TEXT_EDIT);
+			de.setType(DataElementType.TEXT_AREA);
+			de.setRows(3);
 			if( !modificheAbilitate && (descrizione==null || "".equals(descrizione)) )
 				de.setValue(" ");
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_DESCRIZIONE);
@@ -6973,7 +6975,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			List<String> labelList = new ArrayList<>();
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE);
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_NOME);
-			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_DESCRIZIONE);
+//			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_DESCRIZIONE);
 			if(this.isModalitaAvanzata())
 				labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO);
 			
@@ -7003,15 +7005,16 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							);
 					de.setValue(representation.getMediaType());
 					de.setIdToRemove(representation.getMediaType());
+					de.setToolTip(representation.getDescrizione());
 					e.addElement(de);
 					
 					de = new DataElement();
 					de.setValue(representation.getNome());
 					e.addElement(de);
 					
-					de = new DataElement();
-					de.setValue(representation.getDescrizione());
-					e.addElement(de);
+//					de = new DataElement();
+//					de.setValue(representation.getDescrizione());
+//					e.addElement(de);
 					
 					if(this.isModalitaAvanzata()) {
 						de = new DataElement();
@@ -7127,9 +7130,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			List<String> labelList = new ArrayList<>();
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME);
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO);
-			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_DESCRIZIONE);
+			//labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_DESCRIZIONE);
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_REQUIRED);
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO);
+			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_RESTRIZIONI);
 			
 			String[] labels = labelList.toArray(new String[labelList.size()]);
 			this.pd.setLabels(labels);
@@ -7157,6 +7161,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							);
 					de.setValue(parameter.getNome());
 					de.setIdToRemove(parameter.getParameterType().toString() +"/"+parameter.getNome());
+					de.setToolTip(parameter.getDescrizione());
 					e.addElement(de);
 					
 					de = new DataElement();
@@ -7180,9 +7185,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					}
 					e.addElement(de);
 					
-					de = new DataElement();
-					de.setValue(parameter.getDescrizione());
-					e.addElement(de);
+//					de = new DataElement();
+//					de.setValue(parameter.getDescrizione());
+//					e.addElement(de);
 					
 					de = new DataElement();
 					de.setValue(parameter.getRequired() ? AccordiServizioParteComuneCostanti.LABEL_SI : AccordiServizioParteComuneCostanti.LABEL_NO);
@@ -7190,6 +7195,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					
 					de = new DataElement();
 					de.setValue(parameter.getTipo());
+					e.addElement(de);
+					
+					de = new DataElement();
+					if(parameter.getRestrizioni().length()<100) {
+						de.setValue(parameter.getRestrizioni());
+					}
+					else {
+						de.setValue(parameter.getRestrizioni().substring(0, 97)+" ...");
+					}
 					e.addElement(de);
 
 					dati.addElement(e);
@@ -7292,7 +7306,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_DESCRIZIONE);
 			de.setValue(descrizione);
-			de.setType(DataElementType.TEXT_EDIT);
+			de.setType(DataElementType.TEXT_AREA);
+			de.setRows(3);
 			if( !modificheAbilitate && (descrizione==null || "".equals(descrizione)) )
 				de.setValue(" ");
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_DESCRIZIONE);
@@ -7467,7 +7482,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_DESCRIZIONE);
 			de.setValue(descrizione);
-			de.setType(DataElementType.TEXT_EDIT);
+			de.setType(DataElementType.TEXT_AREA);
+			de.setRows(3);
 			if( !modificheAbilitate && (descrizione==null || "".equals(descrizione)) )
 				de.setValue(" ");
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_DESCRIZIONE);
@@ -7729,7 +7745,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 	public Vector<DataElement> addAccordiResourceParameterToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati,
 			String id, String statoPackage, String tipoAccordo,  String nomeRisorsa,
-			boolean isRequest, String statusS, Integer idParInt, String nome, String descrizione, ParameterType tipoParametro, String tipo,
+			boolean isRequest, String statusS, Integer idParInt, String nome, String descrizione, ParameterType tipoParametro, 
+			String tipo, String restrizioni,
 			boolean required)  throws Exception{
 		try {
 			boolean modificheAbilitate = false;
@@ -7837,7 +7854,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_DESCRIZIONE);
 			de.setValue(descrizione);
-			de.setType(DataElementType.TEXT_EDIT);
+			de.setType(DataElementType.TEXT_AREA);
+			de.setRows(3);
 			if( !modificheAbilitate && (descrizione==null || "".equals(descrizione)) )
 				de.setValue(" ");
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_DESCRIZIONE);
@@ -7851,6 +7869,16 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_TIPO);
 			de.setSize(this.getSize());
 			de.setRequired(true);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_RESTRIZIONI);
+			de.setValue(restrizioni);
+			de.setType(DataElementType.TEXT_AREA);
+			de.setRows(3);
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_RESTRIZIONI);
+			de.setSize(this.getSize());
+			de.setRequired(false);
 			dati.addElement(de);
 			
 			de = new DataElement();
@@ -7885,7 +7913,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 	public boolean accordiResourceParameterCheckData(TipoOperazione tipoOp, String id, String nomeRisorsa,
 			boolean isRequest, String statusS, String nome, String descr,
-			ParameterType tipoParametro, String tipo, boolean required, Long idResource, Long idResponse, ParameterType oldTipoParametro, String oldNome) throws Exception {
+			ParameterType tipoParametro, String tipo, String restrizioni, boolean required, Long idResource, Long idResponse, ParameterType oldTipoParametro, String oldNome) throws Exception {
 		try{
 			// Campi obbligatori
 			// tipoparametro
@@ -7903,6 +7931,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (tipo == null || tipo.equals("")) {
 				this.pd.setMessage("Dati incompleti. E' necessario indicare un "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO);
 				return false;
+			}
+			
+			if(restrizioni!=null && !"".equals(restrizioni)) {
+				try {
+					ApiSchemaTypeRestriction.toApiSchemaTypeRestriction(restrizioni);
+				}catch(Exception e) {
+					this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_RESTRIZIONI+" - "+e.getMessage());
+					return false;
+				}
 			}
 			
 			// check lunghezza

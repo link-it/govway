@@ -143,12 +143,6 @@ public enum StatoFunzionalita implements IEnumeration , Serializable , Cloneable
 		}
 	}
 	public static StatoFunzionalita toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
-		
-		// workaround per console checkbox
-		if("yes".equalsIgnoreCase(value)) {
-			return StatoFunzionalita.ABILITATO;
-		}
-		
 		StatoFunzionalita res = null;
 		for (StatoFunzionalita tmp : values()) {
 			if(tmp.getValue().equals(value)){

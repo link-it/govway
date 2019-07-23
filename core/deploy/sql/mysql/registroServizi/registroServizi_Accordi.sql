@@ -289,6 +289,7 @@ CREATE TABLE api_resources_parameter
 	tipo_parametro VARCHAR(255) NOT NULL,
 	required BOOLEAN NOT NULL DEFAULT false,
 	tipo VARCHAR(255) NOT NULL,
+	restrizioni TEXT,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints

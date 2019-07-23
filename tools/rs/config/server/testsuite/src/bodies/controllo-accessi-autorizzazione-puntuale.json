@@ -5,9 +5,8 @@
         "configurazione": {
             "richiedente": true,
             "ruoli": false,
-            "scope": false
-            
-            
+            "scope": false,
+	    "token": false 
         }
     }
 }

@@ -4582,6 +4582,7 @@ public class DriverRegistroServiziDB_LIB {
 					sqlQueryObject.addInsertField("tipo_parametro", "?");
 					sqlQueryObject.addInsertField("required", "?");
 					sqlQueryObject.addInsertField("tipo", "?");
+					sqlQueryObject.addInsertField("restrizioni", "?");
 					updateQuery = sqlQueryObject.createSQLInsert();
 					updateStmt = con.prepareStatement(updateQuery);
 					int index = 1;
@@ -4590,7 +4591,8 @@ public class DriverRegistroServiziDB_LIB {
 					updateStmt.setString(index++, rp.getDescrizione());
 					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(rp.getParameterType()));
 					updateStmt.setBoolean(index++, rp.isRequired());
-					updateStmt.setString(index++, rp.getTipo());				
+					updateStmt.setString(index++, rp.getTipo());			
+					updateStmt.setString(index++, rp.getRestrizioni());
 					DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse (PARAMETER) CREATE :\n"+updateQuery);
 					n = updateStmt.executeUpdate();
 					DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse (PARAMETER) type = " + type + " row affected =" + n);

@@ -22,6 +22,8 @@
 
 package org.openspcoop2.utils.rest.api;
 
+import java.io.Serializable;
+
 import org.openspcoop2.utils.beans.BaseBean;
 
 /**
@@ -32,7 +34,12 @@ import org.openspcoop2.utils.beans.BaseBean;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ApiSchema extends BaseBean {
+public class ApiSchema extends BaseBean implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	private String name;
 	private byte[] content;

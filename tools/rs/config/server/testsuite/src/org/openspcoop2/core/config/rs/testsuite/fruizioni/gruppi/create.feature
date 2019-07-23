@@ -31,7 +31,7 @@ Scenario: Create Gruppi Fruizioni 204
     * call create ({ resourcePath: 'soggetti', body: erogatore })
     * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
     
-    * call create_204 ( { resourcePath: fruizione_petstore_path + '/gruppi', body: gruppo_petstore, key: gruppo_petstore.nome})
+    * call create_201 ( { resourcePath: fruizione_petstore_path + '/gruppi', body: gruppo_petstore, key: gruppo_petstore.nome})
     
     * call delete ({ resourcePath: fruizione_petstore_path })
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
@@ -46,7 +46,7 @@ Scenario: Create Gruppi Fruizioni Eredita 204
     * call create ({ resourcePath: fruizione_petstore_path + '/gruppi', body: gruppo_petstore })
     
     * eval gruppo_eredita.configurazione.nome = gruppo_petstore.nome
-    * call create_204 ( { resourcePath: fruizione_petstore_path + '/gruppi', body: gruppo_eredita, key: gruppo_eredita.nome })
+    * call create_201 ( { resourcePath: fruizione_petstore_path + '/gruppi', body: gruppo_eredita, key: gruppo_eredita.nome })
     
     * call delete ({ resourcePath: fruizione_petstore_path + '/gruppi/' + gruppo_petstore.nome})
     * call delete ({ resourcePath: fruizione_petstore_path })

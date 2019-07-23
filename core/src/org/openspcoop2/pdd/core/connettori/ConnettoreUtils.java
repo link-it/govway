@@ -216,7 +216,8 @@ public class ConnettoreUtils {
 							normalizedInterfaceName);
 				}
 				else{
-					return TransportUtils.buildLocationWithURLBasedParameter(p, location, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+					boolean encodeBaseLocation = true; // la base location può contenere dei parametri
+					return TransportUtils.buildLocationWithURLBasedParameter(p, location, encodeBaseLocation, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
 				}
 				
 			}catch(Exception e){

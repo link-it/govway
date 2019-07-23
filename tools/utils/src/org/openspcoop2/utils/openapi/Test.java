@@ -51,6 +51,9 @@ public class Test {
 
 		IApiReader apiReader = ApiFactory.newApiReader(format);
 		apiReader.init(LoggerWrapperFactory.getLogger(Test.class), new File(uri), new ApiReaderConfig());
+		if(apiReader instanceof AbstractOpenapiApiReader) {
+			((AbstractOpenapiApiReader)apiReader).setDebug(true);
+		}
 		Api api = apiReader.read();
 
 		File f = File.createTempFile("test", "");

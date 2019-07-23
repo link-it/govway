@@ -1,8 +1,8 @@
 {
     "autorizzazione": {
         "tipo": "custom",
-        "configurazione": {
-            "nome": "GesùGiuseppeMaria"
+        "configurazione_custom": {
+            "nome": "autorizzazioneTipoCustom"
         }
 
     }

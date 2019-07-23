@@ -21,34 +21,33 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.FonteEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class APIImplAutorizzazioneXACMLBaseConfig  {
+public class AllegatoItem  {
   
   @Schema(required = true, description = "")
-  private FonteEnum ruoliFonte = null;
+  private String nome = null;
  /**
-   * Get ruoliFonte
-   * @return ruoliFonte
+   * Get nome
+   * @return nome
   **/
-  @JsonProperty("ruoli_fonte")
+  @JsonProperty("nome")
   @NotNull
   @Valid
-  public FonteEnum getRuoliFonte() {
-    return this.ruoliFonte;
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getNome() {
+    return this.nome;
   }
 
-  public void setRuoliFonte(FonteEnum ruoliFonte) {
-    this.ruoliFonte = ruoliFonte;
+  public void setNome(String nome) {
+    this.nome = nome;
   }
 
-  public APIImplAutorizzazioneXACMLBaseConfig ruoliFonte(FonteEnum ruoliFonte) {
-    this.ruoliFonte = ruoliFonte;
+  public AllegatoItem nome(String nome) {
+    this.nome = nome;
     return this;
   }
 
@@ -56,9 +55,9 @@ public class APIImplAutorizzazioneXACMLBaseConfig  {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class APIImplAutorizzazioneXACMLBaseConfig {\n");
+    sb.append("class AllegatoItem {\n");
     
-    sb.append("    ruoliFonte: ").append(APIImplAutorizzazioneXACMLBaseConfig.toIndentedString(this.ruoliFonte)).append("\n");
+    sb.append("    nome: ").append(AllegatoItem.toIndentedString(this.nome)).append("\n");
     sb.append("}");
     return sb.toString();
   }

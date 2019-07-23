@@ -295,7 +295,6 @@ components:
       required:
         - tipo
         - codice
-        - indirizzo
       properties:
         tipo:
           $ref: 'govway_core.yaml#/components/schemas/Tipo'

@@ -71,7 +71,7 @@ Scenario: Configurazione Autorizzazione Erogazioni add Soggetto in Autorizzazion
     And request soggetto
     And params query_params
     When method post
-    Then status 204
+    Then status 201
 
     # Aggiungo il soggetto
     Given url configUrl
@@ -80,7 +80,7 @@ Scenario: Configurazione Autorizzazione Erogazioni add Soggetto in Autorizzazion
     And request soggetto_puntuale
     And params query_params
     When method post
-    Then status 204
+    Then status 201
 
     # Recupero il soggetto appena aggiunto per mezzo della findall
     Given url configUrl

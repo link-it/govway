@@ -142,7 +142,7 @@ components:
         versione:
           $ref: 'govway_core.yaml#/components/schemas/Versione'
         formato:
-          type: object
+          type: string
           oneOf:
             - $ref: '#/components/schemas/FormatoSoapEnum'
             - $ref: '#/components/schemas/FormatoRestEnum'
@@ -155,7 +155,7 @@ components:
             formato: 'OpenApi3.0' 
       
     # Base: Allegato
-    AllegatoGenerico:
+    Allegato:
       type: object
       required:
         - nome
@@ -165,75 +165,15 @@ components:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
         documento:
           type: string
-          format: byte
-    AllegatoSpecificaSemiformale:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/AllegatoGenerico'
-        - type: object
-          required:
-          - tipo
-          properties:
-            tipo:
-              $ref: '#/components/schemas/TipoSpecificaSemiformaleEnum'
-    AllegatoSpecificaSicurezza:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/AllegatoGenerico'
-        - type: object
-          required:
-          - tipo
-          properties:
-            tipo:
-              $ref: '#/components/schemas/TipoSpecificaSicurezzaEnum'
-    AllegatoSpecificaLivelloServizio:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/AllegatoGenerico'
-        - type: object
-          required:
-          - tipo
-          properties:
-            tipo:
-              $ref: '#/components/schemas/TipoSpecificaLivelloServizioEnum'     
+          format: byte  
 
-    AllegatoGenericoItem:
+    AllegatoItem:
       type: object
       required:
         - nome
       properties:
         nome:
-          $ref: 'govway_core.yaml#/components/schemas/NCName'
-    AllegatoSpecificaSemiformaleItem:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/AllegatoGenericoItem'
-        - type: object
-          required:
-          - tipo
-          properties:
-            tipo:
-              $ref: '#/components/schemas/TipoSpecificaSemiformaleEnum'
-    AllegatoSpecificaSicurezzaItem:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/AllegatoGenericoItem'
-        - type: object
-          required:
-          - tipo
-          properties:
-            tipo:
-              $ref: '#/components/schemas/TipoSpecificaSicurezzaEnum'
-    AllegatoSpecificaLivelloServizioItem:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/AllegatoGenericoItem'
-        - type: object
-          required:
-          - tipo
-          properties:
-            tipo:
-              $ref: '#/components/schemas/TipoSpecificaLivelloServizioEnum'              
+          $ref: 'govway_core.yaml#/components/schemas/NCName'            
 
     # Base: Credenziali
     AuthenticationHttpBasic:
@@ -251,6 +191,7 @@ components:
           format: password
           maxLength: 255
           example: 'pwd'
+      additionalProperties: false   
     AuthenticationHttps:
       type: object
       required:
@@ -268,6 +209,7 @@ components:
             mapping:
               'certificato': '#/components/schemas/AuthenticationHttpsCertificato'
               'configurazione-manuale': '#/components/schemas/AuthenticationHttpsConfigurazioneManuale' 
+      additionalProperties: false
     AuthenticationHttpsCertificato:
       type: object
       required:
@@ -291,6 +233,7 @@ components:
           type: boolean
           example: false
           default: false
+      additionalProperties: false
     AuthenticationHttpsConfigurazioneManuale:
       type: object
       required:
@@ -304,6 +247,7 @@ components:
           type: string
           maxLength: 2800
           example: 'cn=esterno'
+      additionalProperties: false
     AuthenticationPrincipal:
       type: object
       required:
@@ -313,6 +257,7 @@ components:
           type: string
           maxLength: 255
           example: 'idEsterno'
+      additionalProperties: false
     BaseCredenziali:
       type: object
       properties:
@@ -534,6 +479,7 @@ components:
           type: boolean
           default: false
           example: false
+      additionalProperties: false
     APIImplAutenticazioneConfigurazionePrincipal:
       type: object
       required:
@@ -556,14 +502,16 @@ components:
         forward:
           type: boolean
           default: false
-          example: false      
+          example: false
+      additionalProperties: false    
     APIImplAutenticazioneConfigurazioneCustom:
       type: object
       properties:
         nome:
           description: nome autenticazione 'custom', set tipo='custom'
           type: string
-          maxLength: 255   
+          maxLength: 255  
+      additionalProperties: false 
     APIImplAutenticazione:
       type: object
       required:
@@ -613,17 +561,11 @@ components:
         tipo:
           $ref: '#/components/schemas/TipoAutorizzazioneEnum'
         configurazione:
-          type: object
-          oneOf:
-            - $ref: '#/components/schemas/APIImplAutorizzazioneConfig'
-            - $ref: '#/components/schemas/APIImplAutorizzazioneXACMLBaseConfig'
-            - $ref: '#/components/schemas/APIImplAutorizzazioneCustom'
-          discriminator:
-            propertyName: tipo
-            mapping:
-              'abilitato': '#/components/schemas/APIImplAutorizzazioneConfig'
-              'xacml-Policy': '#/components/schemas/APIImplAutorizzazioneXACMLBaseConfig'
-              'custom': '#/components/schemas/APIImplAutorizzazioneCustom'
+          $ref: '#/components/schemas/APIImplAutorizzazioneConfig'
+        configurazione_xacml:
+          $ref: '#/components/schemas/APIImplAutorizzazioneXACMLViewConfig'
+        configurazione_custom:
+          $ref: '#/components/schemas/APIImplAutorizzazioneCustom'
     APIImplAutorizzazione:
       type: object
       required:
@@ -632,19 +574,41 @@ components:
         tipo:
           $ref: '#/components/schemas/TipoAutorizzazioneEnum'
         configurazione:
-          type: object
-          oneOf:
-            - $ref: '#/components/schemas/APIImplAutorizzazioneConfig'
-            - $ref: '#/components/schemas/APIImplAutorizzazioneXACMLConfig'
-            - $ref: '#/components/schemas/APIImplAutorizzazioneCustom'
-          discriminator:
-            propertyName: tipo
-            mapping:
-              'abilitato': '#/components/schemas/APIImplAutorizzazioneConfig'
-              'xacml-Policy': '#/components/schemas/APIImplAutorizzazioneXACMLConfig'
-              'custom': '#/components/schemas/APIImplAutorizzazioneCustom'
-    APIImplAutorizzazioneBaseConfig:
+          $ref: '#/components/schemas/APIImplAutorizzazioneConfig'
+        configurazione_xacml:
+          $ref: '#/components/schemas/APIImplAutorizzazioneXACMLConfig'
+        configurazione_custom:
+          $ref: '#/components/schemas/APIImplAutorizzazioneCustom'
+    APIImplAutorizzazioneConfigNew:
       type: object
+      required:
+        - richiedente
+        - ruoli
+      properties:
+        richiedente:
+          type: boolean
+          default: true
+          example: false
+        soggetto:
+          $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+        ruoli:
+          type: boolean
+          default: false
+          example: false
+        ruoli_fonte:
+          $ref: '#/components/schemas/FonteEnum' 
+        ruoli_richiesti:
+          $ref: '#/components/schemas/AllAnyEnum'
+        ruolo:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+      additionalProperties: false
+    APIImplAutorizzazioneConfig:
+      type: object
+      required:
+        - richiedente
+        - ruoli
+        - scope
+        - token
       properties:
         richiedente:
           type: boolean
@@ -657,55 +621,42 @@ components:
         ruoli_fonte:
           $ref: '#/components/schemas/FonteEnum' 
         ruoli_richiesti:
-          $ref: '#/components/schemas/AllAnyEnum'           
-    APIImplAutorizzazioneConfigNew:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/APIImplAutorizzazioneBaseConfig'
-        - type: object
-          properties:
-            soggetto:
-              $ref: 'govway_core.yaml#/components/schemas/SimpleName'
-            ruolo:
-              $ref: 'govway_core.yaml#/components/schemas/NCName'
-    APIImplAutorizzazioneConfig:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/APIImplAutorizzazioneBaseConfig'
-        - type: object
-          properties:
-            scope:
-              type: boolean
-              default: false
-              example: false
-            scope_richiesti:
-              $ref: '#/components/schemas/AllAnyEnum' 
-            token:
-              type: boolean
-              default: false
-              example: false
-            token_claims:
-              description: Indicare per riga i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
-              type: string
-              maxLength: 4000              
-    APIImplAutorizzazioneXACMLBaseConfig:
+          $ref: '#/components/schemas/AllAnyEnum'
+        scope:
+          type: boolean
+          default: false
+          example: false
+        scope_richiesti:
+          $ref: '#/components/schemas/AllAnyEnum' 
+        token:
+          type: boolean
+          default: false
+          example: false
+        token_claims:
+          description: Indicare per riga i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+          type: string
+          maxLength: 4000
+      additionalProperties: false
+    APIImplAutorizzazioneXACMLViewConfig:
       type: object
       required:
         - ruoli_fonte
       properties:
         ruoli_fonte:
-          $ref: '#/components/schemas/FonteEnum' 
+          $ref: '#/components/schemas/FonteEnum'
+      additionalProperties: false                 
     APIImplAutorizzazioneXACMLConfig:
       type: object
-      allOf:
-        - $ref: '#/components/schemas/APIImplAutorizzazioneXACMLBaseConfig'
-        - type: object
-          required:
-            - policy
-          properties:
-            policy:
-              type: string
-              format: byte
+      required:
+        - policy
+        - ruoli_fonte
+      properties:
+        ruoli_fonte:
+          $ref: '#/components/schemas/FonteEnum'
+        policy:
+          type: string
+          format: byte
+      additionalProperties: false 
     APIImplAutorizzazioneCustom:
       type: object
       required:
@@ -713,7 +664,8 @@ components:
       properties:
         nome:
           type: string
-          maxLength: 255   
+          maxLength: 255  
+      additionalProperties: false  
 
     ApiImplItem:
       type: object
@@ -840,19 +792,19 @@ components:
         ruolo:
           $ref: '#/components/schemas/RuoloAllegatoAPIImpl'
         allegato:
-          type: object
+          $ref: '#/components/schemas/Allegato'
+        tipo_allegato:
+          type: string
           oneOf:
-            - $ref: '#/components/schemas/AllegatoGenerico'
-            - $ref: '#/components/schemas/AllegatoSpecificaSemiformale'
-            - $ref: '#/components/schemas/AllegatoSpecificaSicurezza'
-            - $ref: '#/components/schemas/AllegatoSpecificaLivelloServizio'
+            - $ref: '#/components/schemas/TipoSpecificaSemiformaleEnum'
+            - $ref: '#/components/schemas/TipoSpecificaSicurezzaEnum'
+            - $ref: '#/components/schemas/TipoSpecificaLivelloServizioEnum'
           discriminator:
             propertyName: ruolo
             mapping:
-              'allegato': '#/components/schemas/AllegatoGenerico'
-              'specificaSemiFormale': '#/components/schemas/AllegatoSpecificaSemiformale'
-              'specificaSicurezza': '#/components/schemas/AllegatoSpecificaSicurezza'
-              'specificaLivelloServizio': '#/components/schemas/AllegatoSpecificaLivelloServizio'
+              'specificaSemiFormale': '#/components/schemas/TipoSpecificaSemiformaleEnum'
+              'specificaSicurezza': '#/components/schemas/TipoSpecificaSicurezzaEnum'
+              'specificaLivelloServizio': '#/components/schemas/TipoSpecificaLivelloServizioEnum'
     ApiImplAllegatoItem:
       type: object
       required:
@@ -862,19 +814,19 @@ components:
         ruolo:
           $ref: '#/components/schemas/RuoloAllegatoAPIImpl'
         allegato:
-          type: object
+          $ref: '#/components/schemas/AllegatoItem'
+        tipo_allegato:
+          type: string
           oneOf:
-            - $ref: '#/components/schemas/AllegatoGenericoItem'
-            - $ref: '#/components/schemas/AllegatoSpecificaSemiformaleItem'
-            - $ref: '#/components/schemas/AllegatoSpecificaSicurezzaItem'
-            - $ref: '#/components/schemas/AllegatoSpecificaLivelloServizioItem'
+            - $ref: '#/components/schemas/TipoSpecificaSemiformaleEnum'
+            - $ref: '#/components/schemas/TipoSpecificaSicurezzaEnum'
+            - $ref: '#/components/schemas/TipoSpecificaLivelloServizioEnum'
           discriminator:
             propertyName: ruolo
             mapping:
-              'allegato': '#/components/schemas/AllegatoGenericoItem'
-              'specificaSemiFormale': '#/components/schemas/AllegatoSpecificaSemiformaleItem'
-              'specificaSicurezza': '#/components/schemas/AllegatoSpecificaSicurezzaItem'
-              'specificaLivelloServizio': '#/components/schemas/AllegatoSpecificaLivelloServizioItem'
+              'specificaSemiFormale': '#/components/schemas/TipoSpecificaSemiformaleEnum'
+              'specificaSicurezza': '#/components/schemas/TipoSpecificaSicurezzaEnum'
+              'specificaLivelloServizio': '#/components/schemas/TipoSpecificaLivelloServizioEnum'
     ListaApiImplAllegati:
        type: object
        allOf:
@@ -1027,8 +979,6 @@ components:
     # --- Stato impostato a ridefinito come default per supportare in futuro la possibilità di indicare usa default o meno.
     ApiImplConfigurazioneStato:
       type: object
-      required:
-        - ridefinito
       properties:
         ridefinito:
           description: funzionalità non supportata al momento, indicare sempre 'true'.

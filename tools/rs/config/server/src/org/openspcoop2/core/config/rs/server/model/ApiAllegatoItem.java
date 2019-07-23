@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import org.openspcoop2.core.config.rs.server.model.AllegatoItem;
 import org.openspcoop2.core.config.rs.server.model.RuoloAllegatoAPI;
 import javax.validation.constraints.*;
 
@@ -34,7 +35,10 @@ public class ApiAllegatoItem  {
   private RuoloAllegatoAPI ruolo = null;
   
   @Schema(required = true, description = "")
-  private Object allegato = null;
+  private AllegatoItem allegato = null;
+  
+  @Schema(description = "")
+  private String tipoAllegato = null;
  /**
    * Get ruolo
    * @return ruolo
@@ -62,16 +66,35 @@ public class ApiAllegatoItem  {
   @JsonProperty("allegato")
   @NotNull
   @Valid
-  public Object getAllegato() {
+  public AllegatoItem getAllegato() {
     return this.allegato;
   }
 
-  public void setAllegato(Object allegato) {
+  public void setAllegato(AllegatoItem allegato) {
     this.allegato = allegato;
   }
 
-  public ApiAllegatoItem allegato(Object allegato) {
+  public ApiAllegatoItem allegato(AllegatoItem allegato) {
     this.allegato = allegato;
+    return this;
+  }
+
+ /**
+   * Get tipoAllegato
+   * @return tipoAllegato
+  **/
+  @JsonProperty("tipo_allegato")
+  @Valid
+  public String getTipoAllegato() {
+    return this.tipoAllegato;
+  }
+
+  public void setTipoAllegato(String tipoAllegato) {
+    this.tipoAllegato = tipoAllegato;
+  }
+
+  public ApiAllegatoItem tipoAllegato(String tipoAllegato) {
+    this.tipoAllegato = tipoAllegato;
     return this;
   }
 
@@ -83,6 +106,7 @@ public class ApiAllegatoItem  {
     
     sb.append("    ruolo: ").append(ApiAllegatoItem.toIndentedString(this.ruolo)).append("\n");
     sb.append("    allegato: ").append(ApiAllegatoItem.toIndentedString(this.allegato)).append("\n");
+    sb.append("    tipoAllegato: ").append(ApiAllegatoItem.toIndentedString(this.tipoAllegato)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -110,20 +110,31 @@ public class RestUtilities {
 				}
 				for (int i = 0; i < split.length; i++) {
 					if(split[i].contains("=")){
-						String [] splitNomeValore = split[i].split("=");
-						if(splitNomeValore!=null){
-							String nome = splitNomeValore[0];
-							if(nome!=null){
-								nome = nome.trim();
-							}
-							String valore = splitNomeValore[1];
-							if(valore!=null){
-								valore = valore.trim();
-							}
-							if(nome!=null && valore!=null){
-								p.put(nome,valore);
-							}
+						int indexOf = split[i].indexOf("=");
+						
+						String nome = null;
+						if(indexOf>0) {
+							nome = split[i].substring(0, indexOf);
 						}
+						if(nome!=null){
+							nome = nome.trim();
+						}
+						
+						String valore = null;
+						if((indexOf+1)<((split[i].length()-1))) {
+							valore = split[i].substring((indexOf+1));
+						}
+						if(valore!=null){
+							valore = valore.trim();
+						}
+						else {
+							valore = "";
+						}
+						
+						if(nome!=null && valore!=null){
+							p.put(nome,valore);
+						}
+						
 					}
 				}
 			}

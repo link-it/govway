@@ -287,6 +287,7 @@ CREATE TABLE api_resources_parameter
 	tipo_parametro VARCHAR(255) NOT NULL,
 	required BIT NOT NULL DEFAULT 'false',
 	tipo VARCHAR(255) NOT NULL,
+	restrizioni VARCHAR(max),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- fk/pk keys constraints

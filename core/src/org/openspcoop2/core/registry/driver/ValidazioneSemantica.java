@@ -72,8 +72,8 @@ import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.PrincipalType;
-import org.openspcoop2.utils.regexp.RegExpUtilities;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
 
 
@@ -862,49 +862,49 @@ public class ValidazioneSemantica {
 		// Se presenti i wsdl e le specifiche di conversazione (in tutto sono 7) devi controllare che siano URI valide o un path ad un file locale.
 		if(as.getWsdlConcettuale()!=null){
 			try{
-				RegExpUtilities.validateUri(as.getWsdlConcettuale(),this.checkEsistenzaFileDefinitoTramiteURI);
+				HttpUtilities.validateUri(as.getWsdlConcettuale(),this.checkEsistenzaFileDefinitoTramiteURI);
 			}catch(Exception e){
 				this.errori.add("Il wsdl concettuale nel "+uriAS+" non è valido: "+e.getMessage());
 			}
 		}
 		if(as.getWsdlDefinitorio()!=null){
 			try{
-				RegExpUtilities.validateUri(as.getWsdlDefinitorio(),this.checkEsistenzaFileDefinitoTramiteURI);
+				HttpUtilities.validateUri(as.getWsdlDefinitorio(),this.checkEsistenzaFileDefinitoTramiteURI);
 			}catch(Exception e){
 				this.errori.add("Il wsdl definitorio nel "+uriAS+" non è valido: "+e.getMessage());
 			}
 		}
 		if(as.getWsdlLogicoErogatore()!=null){
 			try{
-				RegExpUtilities.validateUri(as.getWsdlLogicoErogatore(),this.checkEsistenzaFileDefinitoTramiteURI);
+				HttpUtilities.validateUri(as.getWsdlLogicoErogatore(),this.checkEsistenzaFileDefinitoTramiteURI);
 			}catch(Exception e){
 				this.errori.add("Il wsdl logico erogatore nel "+uriAS+" non è valido: "+e.getMessage());
 			}
 		}
 		if(as.getWsdlLogicoFruitore()!=null){
 			try{
-				RegExpUtilities.validateUri(as.getWsdlLogicoFruitore(),this.checkEsistenzaFileDefinitoTramiteURI);
+				HttpUtilities.validateUri(as.getWsdlLogicoFruitore(),this.checkEsistenzaFileDefinitoTramiteURI);
 			}catch(Exception e){
 				this.errori.add("Il wsdl logico fruitore nel "+uriAS+" non è valido: "+e.getMessage());
 			}
 		}
 		if(as.getSpecificaConversazioneConcettuale()!=null){
 			try{
-				RegExpUtilities.validateUri(as.getSpecificaConversazioneConcettuale(),this.checkEsistenzaFileDefinitoTramiteURI);
+				HttpUtilities.validateUri(as.getSpecificaConversazioneConcettuale(),this.checkEsistenzaFileDefinitoTramiteURI);
 			}catch(Exception e){
 				this.errori.add("Il wsdl concettuale nel "+uriAS+" non è valido: "+e.getMessage());
 			}
 		}
 		if(as.getSpecificaConversazioneErogatore()!=null){
 			try{
-				RegExpUtilities.validateUri(as.getSpecificaConversazioneErogatore(),this.checkEsistenzaFileDefinitoTramiteURI);
+				HttpUtilities.validateUri(as.getSpecificaConversazioneErogatore(),this.checkEsistenzaFileDefinitoTramiteURI);
 			}catch(Exception e){
 				this.errori.add("Il wsdl definitorio nel "+uriAS+" non è valido: "+e.getMessage());
 			}
 		}
 		if(as.getSpecificaConversazioneFruitore()!=null){
 			try{
-				RegExpUtilities.validateUri(as.getSpecificaConversazioneFruitore(),this.checkEsistenzaFileDefinitoTramiteURI);
+				HttpUtilities.validateUri(as.getSpecificaConversazioneFruitore(),this.checkEsistenzaFileDefinitoTramiteURI);
 			}catch(Exception e){
 				this.errori.add("Il wsdl logico erogatore nel "+uriAS+" non è valido: "+e.getMessage());
 			}
@@ -1292,14 +1292,14 @@ public class ValidazioneSemantica {
 			// Wsdl
 			if(fru.getWsdlImplementativoErogatore()!=null){
 				try{
-					RegExpUtilities.validateUri(fru.getWsdlImplementativoErogatore(),this.checkEsistenzaFileDefinitoTramiteURI);
+					HttpUtilities.validateUri(fru.getWsdlImplementativoErogatore(),this.checkEsistenzaFileDefinitoTramiteURI);
 				}catch(Exception e){
 					this.errori.add("Il wsdl implementativo erogatore del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] del servizio "+uriServizio+" non è valido: "+e.getMessage());
 				}
 			}
 			if(fru.getWsdlImplementativoFruitore()!=null){
 				try{
-					RegExpUtilities.validateUri(fru.getWsdlImplementativoFruitore(),this.checkEsistenzaFileDefinitoTramiteURI);
+					HttpUtilities.validateUri(fru.getWsdlImplementativoFruitore(),this.checkEsistenzaFileDefinitoTramiteURI);
 				}catch(Exception e){
 					this.errori.add("Il wsdl implementativo fruitore del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] del servizio "+uriServizio+" non è valido: "+e.getMessage());
 				}
@@ -1395,14 +1395,14 @@ public class ValidazioneSemantica {
 		// Wsdl
 		if(asps.getWsdlImplementativoErogatore()!=null){
 			try{
-				RegExpUtilities.validateUri(asps.getWsdlImplementativoErogatore(),this.checkEsistenzaFileDefinitoTramiteURI);
+				HttpUtilities.validateUri(asps.getWsdlImplementativoErogatore(),this.checkEsistenzaFileDefinitoTramiteURI);
 			}catch(Exception e){
 				this.errori.add("Il wsdl implementativo erogatore del servizio "+uriServizio+" non è valido: "+e.getMessage());
 			}
 		}
 		if(asps.getWsdlImplementativoFruitore()!=null){
 			try{
-				RegExpUtilities.validateUri(asps.getWsdlImplementativoFruitore(),this.checkEsistenzaFileDefinitoTramiteURI);
+				HttpUtilities.validateUri(asps.getWsdlImplementativoFruitore(),this.checkEsistenzaFileDefinitoTramiteURI);
 			}catch(Exception e){
 				this.errori.add("Il wsdl implementativo fruitore del servizio "+uriServizio+" non è valido: "+e.getMessage());
 			}
@@ -1918,7 +1918,7 @@ public class ValidazioneSemantica {
 
 		// Validazione url
 		try{
-			RegExpUtilities.validateUri(doc.getFile(),this.checkEsistenzaFileDefinitoTramiteURI);
+			HttpUtilities.validateUri(doc.getFile(),this.checkEsistenzaFileDefinitoTramiteURI);
 		}catch(Exception e){
 			this.errori.add(idDocumento+" file non valido (oggetto: "+oggetto+"): "+e.getMessage());
 		}

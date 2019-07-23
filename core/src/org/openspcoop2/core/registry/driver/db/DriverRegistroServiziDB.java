@@ -2939,6 +2939,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				tmp = rs.getString("tipo");
 				rr.setTipo(((tmp == null || tmp.equals("")) ? null : tmp));
 				
+				tmp = rs.getString("restrizioni");
+				rr.setRestrizioni(((tmp == null || tmp.equals("")) ? null : tmp));
+				
 				long idRR = rs.getLong("id");
 				rr.setId(idRR);
 				
@@ -19039,6 +19042,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("tipo_parametro");
 				sqlQueryObject.addSelectField("required");
 				sqlQueryObject.addSelectField("tipo");
+				sqlQueryObject.addSelectField("restrizioni");
 				sqlQueryObject.addSelectField("id");
 				if(isRequest)
 					sqlQueryObject.addWhereCondition("id_resource_parameter = ?");
@@ -19063,6 +19067,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("tipo_parametro");
 				sqlQueryObject.addSelectField("required");
 				sqlQueryObject.addSelectField("tipo");
+				sqlQueryObject.addSelectField("restrizioni");
 				sqlQueryObject.addSelectField("id");
 				if(isRequest)
 					sqlQueryObject.addWhereCondition("id_resource_parameter = ?");
@@ -19100,6 +19105,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				
 				tmp = risultato.getString("tipo");
 				rr.setTipo(((tmp == null || tmp.equals("")) ? null : tmp));
+				
+				tmp = risultato.getString("restrizioni");
+				rr.setRestrizioni(((tmp == null || tmp.equals("")) ? null : tmp));
 				
 				long idRR = risultato.getLong("id");
 				rr.setId(idRR);

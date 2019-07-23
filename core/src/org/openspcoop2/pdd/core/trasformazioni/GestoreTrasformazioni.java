@@ -56,6 +56,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
@@ -269,7 +270,7 @@ public class GestoreTrasformazioni {
 					// controllo contentType
 					this.log.debug(suffix+" check applicabilità tra i "+check.getApplicabilita().sizeContentTypeList()+" content types ");
 					if(check.getApplicabilita().sizeContentTypeList()>0) {
-						if(GestoreTrasformazioniUtilities.isMatchContentType(message.getContentType(), check.getApplicabilita().getContentTypeList())==false) {
+						if(ContentTypeUtilities.isMatch(message.getContentType(), check.getApplicabilita().getContentTypeList())==false) {
 							continue;
 						}
 					}
@@ -612,7 +613,7 @@ public class GestoreTrasformazioni {
 					}
 					
 					// controllo contentType
-					if(GestoreTrasformazioniUtilities.isMatchContentType(message.getContentType(), check.getApplicabilita().getContentTypeList())==false) {
+					if(ContentTypeUtilities.isMatch(message.getContentType(), check.getApplicabilita().getContentTypeList())==false) {
 						continue;
 					}
 		

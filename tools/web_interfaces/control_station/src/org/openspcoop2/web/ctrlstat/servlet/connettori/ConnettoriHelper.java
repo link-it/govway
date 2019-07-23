@@ -2789,7 +2789,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				responseInputWaitTime = "";
 			
 			// Controllo che non ci siano spazi nei campi di testo
-			if ((url.indexOf(" ") != -1) || 
+			if (
 					(nome.indexOf(" ") != -1) ||
 					(user.indexOf(" ") != -1) || 
 					(password.indexOf(" ") != -1) || 
@@ -2797,7 +2797,6 @@ public class ConnettoriHelper extends ConsoleHelper {
 					(urlpgk.indexOf(" ") != -1) || 
 					(provurl.indexOf(" ") != -1) || 
 					(connfact.indexOf(" ") != -1) ||
-					(httpsurl.indexOf(" ") != -1) ||
 					(httpspath.indexOf(" ") != -1) ||
 					(httpspwd.indexOf(" ") != -1) ||
 					(httpsalgoritmo.indexOf(" ") != -1) ||
@@ -2827,6 +2826,39 @@ public class ConnettoriHelper extends ConsoleHelper {
 					) {
 				this.pd.setMessage("Non inserire spazi nei campi di testo");
 				return false;
+			}
+			
+			if(url.startsWith(" ") || url.endsWith(" ")) {
+				this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL+" non deve iniziare o terminare con uno spazio");
+				return false;
+			}
+			if(httpsurl.startsWith(" ") || httpsurl.endsWith(" ")) {
+				this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL+" non deve iniziare o terminare con uno spazio");
+				return false;
+			}
+			if(url.indexOf(" ") != -1) {
+				int indexOfSpace = url.indexOf(" ");
+				int indexOfParameterSeparator = url.indexOf("?");
+				if(indexOfParameterSeparator<=0) {
+					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL+" non può contenere degli spazi");
+					return false;
+				}
+				else if(indexOfSpace<indexOfParameterSeparator) {
+					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL+" può contenere degli spazi solamente nei parametri");
+					return false;
+				}
+			}
+			if(httpsurl.indexOf(" ") != -1) {
+				int indexOfSpace = httpsurl.indexOf(" ");
+				int indexOfParameterSeparator = httpsurl.indexOf("?");
+				if(indexOfParameterSeparator<=0) {
+					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL+" non può contenere degli spazi");
+					return false;
+				}
+				else if(indexOfSpace<indexOfParameterSeparator) {
+					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL+" può contenere degli spazi solamente nei parametri");
+					return false;
+				}
 			}
 			
 			if(ServletUtils.isCheckBoxEnabled(proxy_enabled)){

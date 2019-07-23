@@ -27,6 +27,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.openspcoop2.utils.Utilities;
@@ -49,6 +50,7 @@ import org.openspcoop2.utils.rest.api.ApiRequestFormParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestQueryParameter;
 import org.openspcoop2.utils.rest.api.ApiResponse;
 import org.openspcoop2.utils.rest.api.ApiSchema;
+import org.openspcoop2.utils.rest.api.ApiSchemaTypeRestriction;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
@@ -88,6 +90,11 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 	private ParseOptions parseOptions;
 	private List<ApiSchema> schemas;
 	
+	private boolean debug;
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
 	public AbstractOpenapiApiReader(ApiFormats format) {
 		this.format = format;
 		this.parseOptions = new ParseOptions();
@@ -286,27 +293,27 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 				for (String pathK : this.openApi.getPaths().keySet()) {
 					PathItem path = this.openApi.getPaths().get(pathK);
 					if(path.getGet() != null) {
-						ApiOperation operation = getOperation(path.getGet(), HttpRequestMethod.GET, pathK, api);
+						ApiOperation operation = getOperation(path.getGet(), path.getParameters(), HttpRequestMethod.GET, pathK, api);
 						api.addOperation(operation);
 					}
 					if(path.getPost() != null) {
-						ApiOperation operation = getOperation(path.getPost(), HttpRequestMethod.POST, pathK, api);
+						ApiOperation operation = getOperation(path.getPost(), path.getParameters(), HttpRequestMethod.POST, pathK, api);
 						api.addOperation(operation);
 					}
 					if(path.getPut() != null) {
-						ApiOperation operation = getOperation(path.getPut(), HttpRequestMethod.PUT, pathK, api);
+						ApiOperation operation = getOperation(path.getPut(), path.getParameters(), HttpRequestMethod.PUT, pathK, api);
 						api.addOperation(operation);
 					}
 					if(path.getDelete() != null) {
-						ApiOperation operation = getOperation(path.getDelete(), HttpRequestMethod.DELETE, pathK, api);
+						ApiOperation operation = getOperation(path.getDelete(), path.getParameters(), HttpRequestMethod.DELETE, pathK, api);
 						api.addOperation(operation);
 					}
 					if(path.getPatch() != null) {
-						ApiOperation operation = getOperation(path.getPatch(), HttpRequestMethod.PATCH, pathK, api);
+						ApiOperation operation = getOperation(path.getPatch(), path.getParameters(), HttpRequestMethod.PATCH, pathK, api);
 						api.addOperation(operation);
 					}
 					if(path.getOptions() != null) {
-						ApiOperation operation = getOperation(path.getOptions(), HttpRequestMethod.OPTIONS, pathK, api);
+						ApiOperation operation = getOperation(path.getOptions(), path.getParameters(), HttpRequestMethod.OPTIONS, pathK, api);
 						api.addOperation(operation);
 					}
 				}
@@ -317,15 +324,19 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 		}
 	}
 
-	private ApiOperation getOperation(Operation operation, HttpRequestMethod method, String pathK, OpenapiApi api) {
+	private ApiOperation getOperation(Operation operation, List<Parameter> listParameter, HttpRequestMethod method, String pathK, OpenapiApi api) {
 		ApiOperation apiOperation = new ApiOperation(method, pathK);
 		if(operation.getParameters() != null || operation.getRequestBody() != null) {
 			ApiRequest request = new ApiRequest();
 
+			if(listParameter!=null && !listParameter.isEmpty()) {
+				for(Parameter param: listParameter) {
+					addRequestParameter(param, request, method, pathK, api);
+				}
+			}
 			if(operation.getParameters() != null) {
 				for(Parameter param: operation.getParameters()) {
-
-					addRequestParameter(param, request);
+					addRequestParameter(param, request, method, pathK, api);
 				}
 			}
 			if(operation.getRequestBody() != null) {
@@ -351,6 +362,38 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 
 	private List<ApiBodyParameter> createRequestBody(RequestBody requestBody, HttpRequestMethod method, String path, OpenapiApi api) {
 
+		if(requestBody.get$ref()!=null) {
+			
+			String ref = requestBody.get$ref();
+			if(ref.contains("#")) {
+				ref = ref.substring(ref.indexOf("#"));
+			}
+			ref = ref.trim().replaceAll("#/components/requestBodies/", "").replaceAll("#/definitions/", "");
+			
+			if(api.getApi()==null) {
+				throw new RuntimeException("Richiesta non corretta: api da cui risolvere la ref '"+requestBody.get$ref()+"' non trovata");
+			}
+			if(api.getApi().getComponents()==null) {
+				throw new RuntimeException("Richiesta non corretta: componenti, sui cui risolvere la ref '"+requestBody.get$ref()+"', non presenti");
+			}
+			if(api.getApi().getComponents().getResponses()==null || api.getApi().getComponents().getResponses().size()<=0) {
+				throw new RuntimeException("Richiesta non corretta: richieste definite come componenti, sui cui risolvere la ref '"+requestBody.get$ref()+"', non presenti");
+			}
+			boolean find = false;
+			Iterator<String> itKeys = api.getApi().getComponents().getRequestBodies().keySet().iterator();
+			while (itKeys.hasNext()) {
+				String key = (String) itKeys.next();
+				if(key.equals(ref)) {
+					requestBody = api.getApi().getComponents().getRequestBodies().get(key);
+					find = true;
+					break;
+				}
+			}
+			if(!find) {
+				throw new RuntimeException("Richiesta non corretta: ref '"+requestBody.get$ref()+"' non presente tra le richieste definite come componenti");
+			}
+		}
+		
 		List<ApiBodyParameter> lst = new ArrayList<ApiBodyParameter>();
 
 		if(requestBody.getContent() != null && !requestBody.getContent().isEmpty()) {
@@ -395,30 +438,46 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 		return lst;
 	}
 
-	private void addRequestParameter(Parameter param, ApiRequest request) {
-
+	private void addRequestParameter(Parameter paramP, ApiRequest request, HttpRequestMethod method, String path, OpenapiApi api) {
+		
+		// resolve ref parameter
+		Parameter param = this.resolveParameterRef(paramP, api);
+		
 		AbstractApiParameter abstractParam = null;
-		String type = getParameterType(param.getSchema(), param.get$ref()); 
-		if(param instanceof PathParameter) {
-			abstractParam = new ApiRequestDynamicPathParameter(param.getName(), type);
-		} else if(param instanceof QueryParameter) {
-			abstractParam = new ApiRequestQueryParameter(param.getName(), type);
-		} else if(param instanceof HeaderParameter) {
-			abstractParam = new ApiHeaderParameter(param.getName(), type);
-		} else if(param instanceof CookieParameter) {
-			abstractParam = new ApiCookieParameter(param.getName(), type);
+		String name = param.getName();
+		if(name==null && param.get$ref()!=null) {
+			// provo a risolvere il nome di un eventuale parametro riferito
+			name = getRefParameterName(param.get$ref(), api);
 		}
-
+		String type = getParameterType(param.getSchema(), param.get$ref(), name, api);
+		ApiSchemaTypeRestriction schemaTypeRestriction = getParameterSchemaTypeRestriction(param.getSchema(), param.get$ref(), name, api);
+		
+		if(this.debug) {
+			System.out.println("=======================================");
+			System.out.println("REQUEST ("+method+" "+path+") name ["+name+"] type["+type+"] required["+param.getRequired()+"] className["+param.getClass().getName()+"] ref["+param.get$ref()+"] restrictionType["+schemaTypeRestriction.toString()+"]");
+			System.out.println("=======================================");
+		}
+		
+		if(param instanceof PathParameter) {
+			abstractParam = new ApiRequestDynamicPathParameter(name, type, schemaTypeRestriction);
+		} else if(param instanceof QueryParameter) {
+			abstractParam = new ApiRequestQueryParameter(name, type, schemaTypeRestriction);
+		} else if(param instanceof HeaderParameter) {
+			abstractParam = new ApiHeaderParameter(name, type, schemaTypeRestriction);
+		} else if(param instanceof CookieParameter) {
+			abstractParam = new ApiCookieParameter(name, type, schemaTypeRestriction);
+		}
+		
 		if(abstractParam == null) {
 			if(param.getIn() != null) {
 				if(param.getIn().equals("query")) {
-					abstractParam = new ApiRequestQueryParameter(param.getName(), type);
+					abstractParam = new ApiRequestQueryParameter(name, type, schemaTypeRestriction);
 				} else if(param.getIn().equals("header")) {
-					abstractParam = new ApiHeaderParameter(param.getName(), type);
+					abstractParam = new ApiHeaderParameter(name, type, schemaTypeRestriction);
 				} else if(param.getIn().equals("cookie")) {
-					abstractParam = new ApiCookieParameter(param.getName(), type);
+					abstractParam = new ApiCookieParameter(name, type, schemaTypeRestriction);
 				} else if(param.getIn().equals("path")) {
-					abstractParam = new ApiRequestDynamicPathParameter(param.getName(), type);
+					abstractParam = new ApiRequestDynamicPathParameter(name, type, schemaTypeRestriction);
 				}
 			}
 		}
@@ -443,17 +502,178 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 
 	}
 
-	private String getParameterType(Schema<?> schema, String ref) {
+	private Parameter resolveParameterRef(Parameter p,  OpenapiApi api) {
+		if(p.get$ref()==null || "".equals(p.get$ref())) {
+			return p;
+		}
+		
+		String ref = p.get$ref();
+		if(ref.contains("#")) {
+			ref = ref.substring(ref.indexOf("#"));
+		}
+		boolean refParameters = ref.startsWith("#/components/parameters/");
+		if(!refParameters) {
+			return p;
+		}
+		
+		if(api.getApi().getComponents().getParameters()==null || api.getApi().getComponents().getParameters().size()<=0) {
+			throw new RuntimeException("Parametro '"+p.getName()+"' non corretto: parametri definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+		}
+		String checkRef = ref.trim().replaceAll("#/components/parameters/", "");
+		Parameter param = null;
+		Iterator<String> itKeys = api.getApi().getComponents().getParameters().keySet().iterator();
+		while (itKeys.hasNext()) {
+			String key = (String) itKeys.next();
+			if(key.equals(checkRef)) {
+				param = api.getApi().getComponents().getParameters().get(key);
+				break;
+			}
+		}
+		if(param==null) {
+			throw new RuntimeException("Parametro '"+p.getName()+"' non corretto: ref '"+ref+"' non presente tra i parametri definiti come componenti");
+		}
+		else {
+			return param;
+		}
+	}
+	
+	private String getRefParameterName(String ref, OpenapiApi api) {
 		if(ref != null) {
-			return ref.replaceAll("#/components/schemas/", "").replaceAll("#/definitions/", "");
+			if(ref.contains("#")) {
+				ref = ref.substring(ref.indexOf("#"));
+			}
+			
+			boolean refParameters = ref.startsWith("#/components/parameters/"); 
+			if(refParameters) {
+				if(api.getApi()==null) {
+					throw new RuntimeException("Parametro non corretto: api da cui risolvere la ref '"+ref+"' non trovata");
+				}
+				if(api.getApi().getComponents()==null) {
+					throw new RuntimeException("Parametro non corretto: componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+				}
+
+				if(api.getApi().getComponents().getParameters()==null || api.getApi().getComponents().getParameters().size()<=0) {
+					throw new RuntimeException("Parametro non corretto: parametri definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+				}
+				String checkRef = ref.trim().replaceAll("#/components/parameters/", "");
+				Parameter param = null;
+				Iterator<String> itKeys = api.getApi().getComponents().getParameters().keySet().iterator();
+				while (itKeys.hasNext()) {
+					String key = (String) itKeys.next();
+					if(key.equals(checkRef)) {
+						param = api.getApi().getComponents().getParameters().get(key);
+						break;
+					}
+				}
+				if(param==null) {
+					throw new RuntimeException("Parametro  non corretto: ref '"+ref+"' non presente tra i parametri definiti come componenti");
+				}
+				else {
+					return param.getName();
+				}
+			
+			}					
+		}
+
+		return null;
+	}
+	
+	private String getParameterType(Schema<?> schema, String ref, String name, OpenapiApi api) {
+		if(ref != null) {
+			if(ref.contains("#")) {
+				ref = ref.substring(ref.indexOf("#"));
+			}
+			
+			boolean refHeaders = ref.startsWith("#/components/headers/");
+			boolean refParameters = ref.startsWith("#/components/parameters/"); 
+			boolean refSchema = ref.startsWith("#/components/schemas/"); 
+			if(refHeaders || refParameters || refSchema) {
+				if(api.getApi()==null) {
+					throw new RuntimeException("Parametro '"+name+"' non corretto: api da cui risolvere la ref '"+ref+"' non trovata");
+				}
+				if(api.getApi().getComponents()==null) {
+					throw new RuntimeException("Parametro '"+name+"' non corretto: componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+				}
+				if(refHeaders) {
+					if(api.getApi().getComponents().getHeaders()==null || api.getApi().getComponents().getHeaders().size()<=0) {
+						throw new RuntimeException("Parametro '"+name+"' non corretto: headers definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+					}
+					String checkRef = ref.trim().replaceAll("#/components/headers/", "");
+					Header hdr = null;
+					Iterator<String> itKeys = api.getApi().getComponents().getHeaders().keySet().iterator();
+					while (itKeys.hasNext()) {
+						String key = (String) itKeys.next();
+						if(key.equals(checkRef)) {
+							hdr = api.getApi().getComponents().getHeaders().get(key);
+							break;
+						}
+					}
+					if(hdr==null) {
+						throw new RuntimeException("Parametro '"+name+"' non corretto: ref '"+ref+"' non presente tra gli headers definiti come componenti");
+					}
+					else {
+						return getParameterType(hdr.getSchema(), hdr.get$ref(), name, api);
+					}
+				}
+				else if(refParameters) {
+					if(api.getApi().getComponents().getParameters()==null || api.getApi().getComponents().getParameters().size()<=0) {
+						throw new RuntimeException("Parametro '"+name+"' non corretto: parametri definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+					}
+					String checkRef = ref.trim().replaceAll("#/components/parameters/", "");
+					Parameter param = null;
+					Iterator<String> itKeys = api.getApi().getComponents().getParameters().keySet().iterator();
+					while (itKeys.hasNext()) {
+						String key = (String) itKeys.next();
+						if(key.equals(checkRef)) {
+							param = api.getApi().getComponents().getParameters().get(key);
+							break;
+						}
+					}
+					if(param==null) {
+						throw new RuntimeException("Parametro '"+name+"' non corretto: ref '"+ref+"' non presente tra i parametri definiti come componenti");
+					}
+					else {
+						if(name==null && param.getName()!=null) {
+							name = param.getName();
+						}
+						return getParameterType(param.getSchema(), param.get$ref(), name, api);
+					}
+				}
+				else {
+					if(api.getApi().getComponents().getSchemas()==null || api.getApi().getComponents().getSchemas().size()<=0) {
+						throw new RuntimeException("Parametro '"+name+"' non corretto: schemi definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+					}
+					String checkRef = ref.trim().replaceAll("#/components/schemas/", "");
+					Schema<?> schemaRiferito = null;
+					Iterator<String> itKeys = api.getApi().getComponents().getSchemas().keySet().iterator();
+					while (itKeys.hasNext()) {
+						String key = (String) itKeys.next();
+						if(key.equals(checkRef)) {
+							schemaRiferito = api.getApi().getComponents().getSchemas().get(key);
+							break;
+						}
+					}
+					if(schemaRiferito==null) {
+						throw new RuntimeException("Parametro '"+name+"' non corretto: ref '"+ref+"' non presente tra gli schemi definiti come componenti");
+					}
+					else {
+						return getParameterType(schemaRiferito, null, name, api);
+					}
+				}
+			}
+			else {
+				// i requestBodies e le response non dovrebbero rientrare in questo metodo
+				return ref.replaceAll("#/components/schemas/", "").replaceAll("#/definitions/", "");
+			}
+						
 		}
 
 		if(schema.get$ref() != null) {
-			return getParameterType(schema, schema.get$ref());
+			return getParameterType(schema, schema.get$ref(), name, api);
 		}
 		
 		if(schema instanceof ArraySchema) {
-			return getParameterType(((ArraySchema)schema).getItems(), null); 
+			return getParameterType(((ArraySchema)schema).getItems(), null, name, api); 
 		}
 		
 		if(schema.getFormat() != null) {
@@ -461,6 +681,129 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 		} else {
 			return schema.getType();
 		}
+	}
+	
+	private ApiSchemaTypeRestriction getParameterSchemaTypeRestriction(Schema<?> schema, String ref, String name, OpenapiApi api) {
+		if(ref != null) {
+			if(ref.contains("#")) {
+				ref = ref.substring(ref.indexOf("#"));
+			}
+			
+			boolean refHeaders = ref.startsWith("#/components/headers/");
+			boolean refParameters = ref.startsWith("#/components/parameters/"); 
+			boolean refSchema = ref.startsWith("#/components/schemas/"); 
+			if(refHeaders || refParameters || refSchema) {
+				if(api.getApi()==null) {
+					throw new RuntimeException("Parametro '"+name+"' non corretto: api da cui risolvere la ref '"+ref+"' non trovata");
+				}
+				if(api.getApi().getComponents()==null) {
+					throw new RuntimeException("Parametro '"+name+"' non corretto: componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+				}
+				if(refHeaders) {
+					if(api.getApi().getComponents().getHeaders()==null || api.getApi().getComponents().getHeaders().size()<=0) {
+						throw new RuntimeException("Parametro '"+name+"' non corretto: headers definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+					}
+					String checkRef = ref.trim().replaceAll("#/components/headers/", "");
+					Header hdr = null;
+					Iterator<String> itKeys = api.getApi().getComponents().getHeaders().keySet().iterator();
+					while (itKeys.hasNext()) {
+						String key = (String) itKeys.next();
+						if(key.equals(checkRef)) {
+							hdr = api.getApi().getComponents().getHeaders().get(key);
+							break;
+						}
+					}
+					if(hdr==null) {
+						throw new RuntimeException("Parametro '"+name+"' non corretto: ref '"+ref+"' non presente tra gli headers definiti come componenti");
+					}
+					else {
+						return getParameterSchemaTypeRestriction(hdr.getSchema(), hdr.get$ref(), name, api);
+					}
+				}
+				else if(refParameters) {
+					if(api.getApi().getComponents().getParameters()==null || api.getApi().getComponents().getParameters().size()<=0) {
+						throw new RuntimeException("Parametro '"+name+"' non corretto: parametri definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+					}
+					String checkRef = ref.trim().replaceAll("#/components/parameters/", "");
+					Parameter param = null;
+					Iterator<String> itKeys = api.getApi().getComponents().getParameters().keySet().iterator();
+					while (itKeys.hasNext()) {
+						String key = (String) itKeys.next();
+						if(key.equals(checkRef)) {
+							param = api.getApi().getComponents().getParameters().get(key);
+							break;
+						}
+					}
+					if(param==null) {
+						throw new RuntimeException("Parametro '"+name+"' non corretto: ref '"+ref+"' non presente tra i parametri definiti come componenti");
+					}
+					else {
+						if(name==null && param.getName()!=null) {
+							name = param.getName();
+						}
+						return getParameterSchemaTypeRestriction(param.getSchema(), param.get$ref(), name, api);
+					}
+				}
+				else {
+					if(api.getApi().getComponents().getSchemas()==null || api.getApi().getComponents().getSchemas().size()<=0) {
+						throw new RuntimeException("Parametro '"+name+"' non corretto: schemi definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+					}
+					String checkRef = ref.trim().replaceAll("#/components/schemas/", "");
+					Schema<?> schemaRiferito = null;
+					Iterator<String> itKeys = api.getApi().getComponents().getSchemas().keySet().iterator();
+					while (itKeys.hasNext()) {
+						String key = (String) itKeys.next();
+						if(key.equals(checkRef)) {
+							schemaRiferito = api.getApi().getComponents().getSchemas().get(key);
+							break;
+						}
+					}
+					if(schemaRiferito==null) {
+						throw new RuntimeException("Parametro '"+name+"' non corretto: ref '"+ref+"' non presente tra gli schemi definiti come componenti");
+					}
+					else {
+						return getParameterSchemaTypeRestriction(schemaRiferito, null, name, api);
+					}
+				}
+			}
+			else {
+				return null; // schema non trovato.
+			}
+						
+		}
+
+		if(schema.get$ref() != null) {
+			return getParameterSchemaTypeRestriction(schema, schema.get$ref(), name, api);
+		}
+		
+		if(schema instanceof ArraySchema) {
+			return getParameterSchemaTypeRestriction(((ArraySchema)schema).getItems(), null, name, api); 
+		}
+		
+		return this.convertTo(schema);
+	}
+
+	private ApiSchemaTypeRestriction convertTo(Schema<?> schema) {
+		ApiSchemaTypeRestriction schemaTypeRestriction = new ApiSchemaTypeRestriction();
+		schemaTypeRestriction.setSchema(schema);
+		schemaTypeRestriction.setType(schema.getType());
+		schemaTypeRestriction.setFormat(schema.getFormat());
+		
+		schemaTypeRestriction.setMinimum(schema.getMinimum());
+		schemaTypeRestriction.setExclusiveMinimum(schema.getExclusiveMinimum());
+		schemaTypeRestriction.setMaximum(schema.getMaximum());
+		schemaTypeRestriction.setExclusiveMaximum(schema.getExclusiveMaximum());
+		
+		schemaTypeRestriction.setMultipleOf(schema.getMultipleOf());
+
+		schemaTypeRestriction.setMinLength(schema.getMinLength()!=null ? new Long(schema.getMinLength()) : null);
+		schemaTypeRestriction.setMaxLength(schema.getMaxLength()!=null ? new Long(schema.getMaxLength()) : null);
+	
+		schemaTypeRestriction.setPattern(schema.getPattern());
+
+		schemaTypeRestriction.setEnumValues(schema.getEnum());
+		
+		return schemaTypeRestriction;
 	}
 
 	private ApiResponse createResponses(String responseK, io.swagger.v3.oas.models.responses.ApiResponse response, HttpRequestMethod method, String path, OpenapiApi api) {
@@ -482,15 +825,55 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 //		if(status<=0) {
 //			status = 200;
 //		}
+		
+		if(response.get$ref()!=null) {
+			
+			String ref = response.get$ref();
+			if(ref.contains("#")) {
+				ref = ref.substring(ref.indexOf("#"));
+			}
+			ref = ref.trim().replaceAll("#/components/responses/", "").replaceAll("#/definitions/", "");
+			
+			if(api.getApi()==null) {
+				throw new RuntimeException("Stato non corretto ["+responseK+"]: api da cui risolvere la ref '"+response.get$ref()+"' non trovata");
+			}
+			if(api.getApi().getComponents()==null) {
+				throw new RuntimeException("Stato non corretto ["+responseK+"]: componenti, sui cui risolvere la ref '"+response.get$ref()+"', non presenti");
+			}
+			if(api.getApi().getComponents().getResponses()==null || api.getApi().getComponents().getResponses().size()<=0) {
+				throw new RuntimeException("Stato non corretto ["+responseK+"]: risposte definite come componenti, sui cui risolvere la ref '"+response.get$ref()+"', non presenti");
+			}
+			boolean find = false;
+			Iterator<String> itKeys = api.getApi().getComponents().getResponses().keySet().iterator();
+			while (itKeys.hasNext()) {
+				String key = (String) itKeys.next();
+				if(key.equals(ref)) {
+					response = api.getApi().getComponents().getResponses().get(key);
+					find = true;
+					break;
+				}
+			}
+			if(!find) {
+				throw new RuntimeException("Stato non corretto ["+responseK+"]: ref '"+response.get$ref()+"' non presente tra le risposte definite come componenti");
+			}
+		}
+		
 		apiResponse.setDescription(response.getDescription());
 
 		if(response.getHeaders() != null) {
 			for(String header: response.getHeaders().keySet()) {
 				Header property = response.getHeaders().get(header);
 				
-				String type = getParameterType(property.getSchema(), property.get$ref());
+				String type = getParameterType(property.getSchema(), property.get$ref(), header, api);
+				ApiSchemaTypeRestriction schemaTypeRestriction = getParameterSchemaTypeRestriction(property.getSchema(), property.get$ref(), header, api);
 				
-				ApiHeaderParameter parameter = new ApiHeaderParameter(header, type);
+				if(this.debug) {
+					System.out.println("=======================================");
+					System.out.println("RESPONSE ("+method+" "+path+") name ["+header+"] type["+type+"] required["+property.getRequired()+"] className["+property.getClass().getName()+"] ref["+property.get$ref()+"] typeRestriction["+schemaTypeRestriction+"]");
+					System.out.println("=======================================");
+				}
+				
+				ApiHeaderParameter parameter = new ApiHeaderParameter(header, type, schemaTypeRestriction);
 				parameter.setDescription(property.getDescription());
 				if(property.getRequired() != null)
 					parameter.setRequired(property.getRequired());

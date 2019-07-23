@@ -216,6 +216,8 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			context.getLogger().info("Invocazione completata con successo");
         
      
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -296,6 +298,8 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 
 			context.getLogger().info("Invocazione completata con successo");
         
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
@@ -360,6 +364,9 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 		
 			context.getLogger().info("Invocazione completata con successo");
      
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
+			
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -462,6 +469,9 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			env.confCore.performCreateOperation(env.userLogin, false, policy);
 			
 			context.getLogger().info("Invocazione completata con successo");
+			
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -518,7 +528,8 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
         
 			context.getLogger().info("Invocazione completata con successo");
         
-     
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -572,7 +583,8 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			env.pdCore.performUpdateOperation(env.userLogin, false, pd);
 			context.getLogger().info("Invocazione completata con successo");
         
-     
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());

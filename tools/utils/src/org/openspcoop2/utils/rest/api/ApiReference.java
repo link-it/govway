@@ -22,6 +22,8 @@
 
 package org.openspcoop2.utils.rest.api;
 
+import java.io.Serializable;
+
 /**
  * ApiReference
  *
@@ -30,7 +32,12 @@ package org.openspcoop2.utils.rest.api;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ApiReference {
+public class ApiReference implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private String schemaRef;
 	private String type;

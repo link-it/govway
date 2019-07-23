@@ -29,11 +29,13 @@ import java.util.Map;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.json.IJsonSchemaValidator;
 import org.openspcoop2.utils.json.JsonSchemaValidatorConfig;
 import org.openspcoop2.utils.json.ValidationException;
 import org.openspcoop2.utils.json.ValidationResponse;
 import org.openspcoop2.utils.json.ValidationResponse.ESITO;
+import org.slf4j.Logger;
 
 import net.sf.json.JSONArray;
 
@@ -47,9 +49,20 @@ import net.sf.json.JSONArray;
 public class EveritJsonschemaValidator implements IJsonSchemaValidator {
 
 	private Schema schema;
+	private byte[] schemaBytes;
+	private Logger log;
+	private boolean logError;
 
 	@Override
-	public void setSchema(byte[] schema, JsonSchemaValidatorConfig config) throws ValidationException {
+	public void setSchema(byte[] schema, JsonSchemaValidatorConfig config, Logger log) throws ValidationException {
+		
+		this.log = log;
+		if(this.log==null) {
+			this.log = LoggerWrapperFactory.getLogger(EveritJsonschemaValidator.class);
+		}
+		this.logError = config!=null ? config.isEmitLogError() : true;
+		this.schemaBytes = schema;
+		
 		try {
 			JSONObject jsonSchemaObject = new JSONObject(new String(schema));
 			Map<String, String> map = new HashMap<>();
@@ -81,7 +94,7 @@ public class EveritJsonschemaValidator implements IJsonSchemaValidator {
 			default:
 				break;
 			}
-
+			
 			this.schema = SchemaLoader.load(jsonSchemaObject);
 			
 			System.out.println(jsonSchemaObject);
@@ -123,14 +136,33 @@ public class EveritJsonschemaValidator implements IJsonSchemaValidator {
 		
 		ValidationResponse response = new ValidationResponse();
 		try {
-			try {
-				this.schema.validate(new JSONObject(new String(object))); // throws a ValidationException if this object is invalid
-				response.setEsito(ESITO.OK);
-			} catch(org.everit.json.schema.ValidationException e) {
-				response.setEsito(ESITO.KO);
-				response.setException(e);
-				response.getErrors().add(e.getErrorMessage());
-			}
+			JSONObject jsonObject = null;
+	        try {
+	        	jsonObject = new JSONObject(new String(object));
+	        }
+	        catch(Exception e) {
+	        	this.log.error(e.getMessage(),e);
+	        	String messageString = "Read rawObject as jsonObject failed: "+e.getMessage();
+	        	response.setEsito(ESITO.KO);
+	        	if(this.logError) {
+	        		ValidationUtils.logError(this.log, messageString.toString(), object, this.schemaBytes, null);
+	        	}
+				response.setException(new Exception(messageString.toString()));
+	        }
+			
+	        if(jsonObject!=null) {
+				try {
+					this.schema.validate(jsonObject); // throws a ValidationException if this object is invalid
+					response.setEsito(ESITO.OK);
+				} catch(org.everit.json.schema.ValidationException e) {
+					response.setEsito(ESITO.KO);
+					response.setException(e);
+					response.getErrors().add(e.getErrorMessage());
+					if(this.logError) {
+		        		ValidationUtils.logError(this.log, e.getErrorMessage(), object, this.schemaBytes, null);
+					}
+				}
+	        }
 
 		} catch(Exception e) {
 			throw new ValidationException(e);

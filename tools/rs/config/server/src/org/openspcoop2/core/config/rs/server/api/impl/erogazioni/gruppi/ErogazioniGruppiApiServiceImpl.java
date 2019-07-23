@@ -327,6 +327,8 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			context.getLogger().info("Invocazione completata con successo");
         
      
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());

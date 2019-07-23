@@ -47,6 +47,7 @@ public class ResourceParameterModel extends AbstractModel<ResourceParameter> {
 		this.PARAMETER_TYPE = new Field("parameter-type",java.lang.String.class,"resource-parameter",ResourceParameter.class);
 		this.REQUIRED = new Field("required",boolean.class,"resource-parameter",ResourceParameter.class);
 		this.TIPO = new Field("tipo",java.lang.String.class,"resource-parameter",ResourceParameter.class);
+		this.RESTRIZIONI = new Field("restrizioni",java.lang.String.class,"resource-parameter",ResourceParameter.class);
 	
 	}
 	
@@ -59,6 +60,7 @@ public class ResourceParameterModel extends AbstractModel<ResourceParameter> {
 		this.PARAMETER_TYPE = new ComplexField(father,"parameter-type",java.lang.String.class,"resource-parameter",ResourceParameter.class);
 		this.REQUIRED = new ComplexField(father,"required",boolean.class,"resource-parameter",ResourceParameter.class);
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"resource-parameter",ResourceParameter.class);
+		this.RESTRIZIONI = new ComplexField(father,"restrizioni",java.lang.String.class,"resource-parameter",ResourceParameter.class);
 	
 	}
 	
@@ -73,6 +75,8 @@ public class ResourceParameterModel extends AbstractModel<ResourceParameter> {
 	public IField REQUIRED = null;
 	 
 	public IField TIPO = null;
+	 
+	public IField RESTRIZIONI = null;
 	 
 
 	@Override

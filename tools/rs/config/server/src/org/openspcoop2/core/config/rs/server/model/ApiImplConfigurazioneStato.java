@@ -21,15 +21,13 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import javax.validation.constraints.*;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
 public class ApiImplConfigurazioneStato  {
   
-  @Schema(required = true, description = "funzionalità non supportata al momento, indicare sempre 'true'.")
+  @Schema(description = "funzionalità non supportata al momento, indicare sempre 'true'.")
  /**
    * funzionalità non supportata al momento, indicare sempre 'true'.  
   **/
@@ -39,7 +37,6 @@ public class ApiImplConfigurazioneStato  {
    * @return ridefinito
   **/
   @JsonProperty("ridefinito")
-  @NotNull
   @Valid
   public Boolean isRidefinito() {
     return this.ridefinito;

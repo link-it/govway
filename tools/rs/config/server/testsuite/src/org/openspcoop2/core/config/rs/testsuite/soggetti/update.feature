@@ -9,7 +9,6 @@ Background:
 * def ruolo = read('classpath:bodies/ruolo.json')
 
 * eval randomize(soggetto_https_manuale, ["nome", "credenziali.certificato.issuer", "credenziali.certificato.subject"])
-* eval randomize(soggetto_https_cert, ["nome", "credenziali.userid"])
 * eval randomize(ruolo, ["nome"])
 * eval soggetto_https_manuale.ruoli = [ ruolo.nome ]
 * eval soggetto_https_cert.ruoli = [ ruolo.nome ]

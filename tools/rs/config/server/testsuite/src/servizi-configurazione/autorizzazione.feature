@@ -11,7 +11,7 @@ Background:
 @UpdateAutorizzazione
 Scenario: Update Autorizzazione
 
-    * eval autorizzazione.autorizzazione.configurazione = ({ richiedente: true, ruoli: true, scope: false })
+    * eval autorizzazione.autorizzazione.configurazione = ({ richiedente: true, ruoli: true, scope: false, token: false })
 
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione'
@@ -28,7 +28,7 @@ Scenario: Update Autorizzazione
     When method get
     Then status 200
     And match response.autorizzazione.tipo == "abilitato"
-    And match response.autorizzazione.configurazione contains ({richiedente: true, ruoli: true, scope: false })
+    And match response.autorizzazione.configurazione contains ({richiedente: true, ruoli: true, scope: false, token: false })
 
 @UpdateAutorizzazioneXacml
 Scenario: Update Autorizzazione Xacml
@@ -48,7 +48,7 @@ Scenario: Update Autorizzazione Xacml
     When method get
     Then status 200
     And match response.autorizzazione.tipo == "xacml-Policy"
-    And match response.autorizzazione.configurazione contains ({ ruoli_fonte: 'esterna' })
+    And match response.autorizzazione.configurazione_xacml contains ({ ruoli_fonte: 'esterna' })
 
 
 @UpdateAutorizzazioneCustom
@@ -69,7 +69,7 @@ Scenario: Update Autorizzazione Custom
     When method get
     Then status 200
     And match response.autorizzazione.tipo == "custom"
-    And match response.autorizzazione.configurazione.nome == autorizzazione_custom.autorizzazione.configurazione.nome
+    And match response.autorizzazione.configurazione_custom.nome == autorizzazione_custom.autorizzazione.configurazione_custom.nome
 
 @GetAutorizzazione
 Scenario: Get Autorizzazione
@@ -137,7 +137,7 @@ Scenario: Controllo accessi autorizzazione applicativi puntuale
     And request applicativo
     And params query_params
     When method post
-    Then status 204
+    Then status 201
 
     # Aggiungo l'applicativo all'autorizzazione
     Given url configUrl
@@ -146,7 +146,7 @@ Scenario: Controllo accessi autorizzazione applicativi puntuale
     And request applicativo_puntuale
     And params query_params
     When method post
-    Then status 204
+    Then status 201
 
     # Recupero l'applicativo appena aggiunto per mezzo della findall
     Given url configUrl
@@ -177,7 +177,7 @@ Scenario: Controllo accessi autorizzazione applicativi puntuale
 @AutorizzazioneRuoli
 Scenario: Controllo accessi autorizzazione ruoli
 
-    * eval autorizzazione.autorizzazione.configurazione = ({ richiedente: false, ruoli: true, scope: false })
+    * eval autorizzazione.autorizzazione.configurazione = ({ richiedente: false, ruoli: true, scope: false, token: false })
     # Imposto l'autorizzazione in modo che supporti l'autorizzazione per ruoli
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione'
@@ -198,7 +198,7 @@ Scenario: Controllo accessi autorizzazione ruoli
     And request ruolo_registro
     And params query_params
     When method post
-    Then status 204
+    Then status 201
 
     # Aggiungo il ruolo all'autorizzazione
     Given url configUrl
@@ -207,7 +207,7 @@ Scenario: Controllo accessi autorizzazione ruoli
     And request ruolo
     And params query_params
     When method post
-    Then status 204
+    Then status 201
 
     # Recupero il ruolo appena aggiunto per mezzo della findall
     Given url configUrl
@@ -287,7 +287,7 @@ Scenario: Controllo Accessi Autorizzazione Scope
     Then status 204
 
     # Abilito l'autorizzazione per scope
-    * eval autorizzazione.autorizzazione.configurazione = ({ richiedente: false, ruoli: false, scope: true })
+    * eval autorizzazione.autorizzazione.configurazione = ({ richiedente: false, ruoli: false, scope: true, token: false })
 
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione'
@@ -311,7 +311,7 @@ Scenario: Controllo Accessi Autorizzazione Scope
     And request scope
     And params query_params
     When method post
-    Then status 204
+    Then status 201
 
     # Recupero lo scope appena aggiunto per mezzo della findall
     Given url configUrl

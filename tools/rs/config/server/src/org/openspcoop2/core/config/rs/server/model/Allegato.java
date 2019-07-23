@@ -21,35 +21,56 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.AllegatoGenericoItem;
-import org.openspcoop2.core.config.rs.server.model.TipoSpecificaLivelloServizioEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class AllegatoSpecificaLivelloServizioItem extends AllegatoGenericoItem {
+public class Allegato  {
   
   @Schema(required = true, description = "")
-  private TipoSpecificaLivelloServizioEnum tipo = null;
+  private String nome = null;
+  
+  @Schema(required = true, description = "")
+  private byte[] documento = null;
  /**
-   * Get tipo
-   * @return tipo
+   * Get nome
+   * @return nome
   **/
-  @JsonProperty("tipo")
+  @JsonProperty("nome")
   @NotNull
   @Valid
-  public TipoSpecificaLivelloServizioEnum getTipo() {
-    return this.tipo;
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getNome() {
+    return this.nome;
   }
 
-  public void setTipo(TipoSpecificaLivelloServizioEnum tipo) {
-    this.tipo = tipo;
+  public void setNome(String nome) {
+    this.nome = nome;
   }
 
-  public AllegatoSpecificaLivelloServizioItem tipo(TipoSpecificaLivelloServizioEnum tipo) {
-    this.tipo = tipo;
+  public Allegato nome(String nome) {
+    this.nome = nome;
+    return this;
+  }
+
+ /**
+   * Get documento
+   * @return documento
+  **/
+  @JsonProperty("documento")
+  @NotNull
+  @Valid
+  public byte[] getDocumento() {
+    return this.documento;
+  }
+
+  public void setDocumento(byte[] documento) {
+    this.documento = documento;
+  }
+
+  public Allegato documento(byte[] documento) {
+    this.documento = documento;
     return this;
   }
 
@@ -57,9 +78,10 @@ public class AllegatoSpecificaLivelloServizioItem extends AllegatoGenericoItem {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class AllegatoSpecificaLivelloServizioItem {\n");
-    sb.append("    ").append(AllegatoSpecificaLivelloServizioItem.toIndentedString(super.toString())).append("\n");
-    sb.append("    tipo: ").append(AllegatoSpecificaLivelloServizioItem.toIndentedString(this.tipo)).append("\n");
+    sb.append("class Allegato {\n");
+    
+    sb.append("    nome: ").append(Allegato.toIndentedString(this.nome)).append("\n");
+    sb.append("    documento: ").append(Allegato.toIndentedString(this.documento)).append("\n");
     sb.append("}");
     return sb.toString();
   }

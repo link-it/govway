@@ -10,7 +10,7 @@ Background: Background name
 @CreateRuolo204
 Scenario: Creazione Ruolo 204 OK
 
-    * call create_204 { resourcePath: 'ruoli', body: '#(ruolo)', key: '#(ruolo.nome)' }
+    * call create_201 { resourcePath: 'ruoli', body: '#(ruolo)', key: '#(ruolo.nome)' }
 
 @Create409
 Scenario: Creazione Ruolo 409 Conflitto

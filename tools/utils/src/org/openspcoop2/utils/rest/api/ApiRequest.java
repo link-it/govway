@@ -22,6 +22,7 @@
 
 package org.openspcoop2.utils.rest.api;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,12 @@ import org.openspcoop2.utils.beans.BaseBean;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ApiRequest extends BaseBean {
+public class ApiRequest extends BaseBean implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	private List<ApiCookieParameter> cookieParameters = new ArrayList<>();
 	private List<ApiHeaderParameter> headerParameters = new ArrayList<>();

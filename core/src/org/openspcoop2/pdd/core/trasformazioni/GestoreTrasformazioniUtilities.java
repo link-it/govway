@@ -57,7 +57,6 @@ import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.utils.dch.DataContentHandlerManager;
 import org.openspcoop2.utils.dch.InputStreamDataSource;
 import org.openspcoop2.utils.io.ArchiveType;
-import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
@@ -75,64 +74,6 @@ import org.w3c.dom.Element;
 
 public class GestoreTrasformazioniUtilities {
 
-
-	public static boolean isMatchContentType(String contentType, List<String> contentTypeCheckList) throws Exception {
-		
-		if(contentTypeCheckList==null || contentTypeCheckList.size()<=0) {
-			return true;
-		}
-		
-		boolean found = false;
-		for (String checkContentType : contentTypeCheckList) {
-			if("empty".equals(checkContentType)){
-				if(contentType==null || "".equals(contentType)) {
-					found = true;
-					break;
-				}
-			}
-			else {
-				if(contentType==null) {
-					continue;
-				}
-				if(checkContentType==null || "".equals(checkContentType) ||
-						checkContentType.contains("/")==false ||
-						checkContentType.startsWith("/") ||
-						checkContentType.endsWith("/")) {
-					throw new Exception("Configurazione errata, content type indicato ("+checkContentType+") possiede un formato non corretto (atteso: type/subtype)");
-				}
-				String [] ctVerifica = checkContentType.split("/");
-				if(ctVerifica!=null && ctVerifica.length==2) {
-					StringBuffer bf = new StringBuffer();
-					String part1 = ctVerifica[0].trim();
-					if("*".equals(part1)) {
-						bf.append("(.+)");
-					}
-					else {
-						bf.append(part1);
-					}
-					bf.append("/");
-					String part2 = ctVerifica[1].trim();
-					if("*".equals(part2)) {
-						bf.append("(.+)");
-					}
-					else if(part2.startsWith("*")) {
-						bf.append("(.+)");
-						bf.append(part2.substring(1));
-					}
-					else {
-						bf.append(part2);
-					}
-					checkContentType = bf.toString();
-				}
-				if(RegularExpressionEngine.isMatch(contentType, checkContentType)) {
-					found = true;
-					break;
-				}
-			}
-			
-		}
-		return found;
-	}
 	
 	public static boolean isMatchServizioApplicativo(IDSoggetto soggettoFruitore, String sa, List<TrasformazioneRegolaApplicabilitaServizioApplicativo> saCheckList) throws Exception {
 		

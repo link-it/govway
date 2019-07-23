@@ -21,20 +21,53 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneBaseConfig;
+import org.openspcoop2.core.config.rs.server.model.AllAnyEnum;
+import org.openspcoop2.core.config.rs.server.model.FonteEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class APIImplAutorizzazioneConfigNew extends APIImplAutorizzazioneBaseConfig {
+public class APIImplAutorizzazioneConfigNew  {
+  
+  @Schema(required = true, description = "")
+  private Boolean richiedente = true;
   
   @Schema(description = "")
   private String soggetto = null;
   
+  @Schema(required = true, description = "")
+  private Boolean ruoli = false;
+  
+  @Schema(description = "")
+  private FonteEnum ruoliFonte = null;
+  
+  @Schema(description = "")
+  private AllAnyEnum ruoliRichiesti = null;
+  
   @Schema(description = "")
   private String ruolo = null;
+ /**
+   * Get richiedente
+   * @return richiedente
+  **/
+  @JsonProperty("richiedente")
+  @NotNull
+  @Valid
+  public Boolean isRichiedente() {
+    return this.richiedente;
+  }
+
+  public void setRichiedente(Boolean richiedente) {
+    this.richiedente = richiedente;
+  }
+
+  public APIImplAutorizzazioneConfigNew richiedente(Boolean richiedente) {
+    this.richiedente = richiedente;
+    return this;
+  }
+
  /**
    * Get soggetto
    * @return soggetto
@@ -51,6 +84,64 @@ public class APIImplAutorizzazioneConfigNew extends APIImplAutorizzazioneBaseCon
 
   public APIImplAutorizzazioneConfigNew soggetto(String soggetto) {
     this.soggetto = soggetto;
+    return this;
+  }
+
+ /**
+   * Get ruoli
+   * @return ruoli
+  **/
+  @JsonProperty("ruoli")
+  @NotNull
+  @Valid
+  public Boolean isRuoli() {
+    return this.ruoli;
+  }
+
+  public void setRuoli(Boolean ruoli) {
+    this.ruoli = ruoli;
+  }
+
+  public APIImplAutorizzazioneConfigNew ruoli(Boolean ruoli) {
+    this.ruoli = ruoli;
+    return this;
+  }
+
+ /**
+   * Get ruoliFonte
+   * @return ruoliFonte
+  **/
+  @JsonProperty("ruoli_fonte")
+  @Valid
+  public FonteEnum getRuoliFonte() {
+    return this.ruoliFonte;
+  }
+
+  public void setRuoliFonte(FonteEnum ruoliFonte) {
+    this.ruoliFonte = ruoliFonte;
+  }
+
+  public APIImplAutorizzazioneConfigNew ruoliFonte(FonteEnum ruoliFonte) {
+    this.ruoliFonte = ruoliFonte;
+    return this;
+  }
+
+ /**
+   * Get ruoliRichiesti
+   * @return ruoliRichiesti
+  **/
+  @JsonProperty("ruoli_richiesti")
+  @Valid
+  public AllAnyEnum getRuoliRichiesti() {
+    return this.ruoliRichiesti;
+  }
+
+  public void setRuoliRichiesti(AllAnyEnum ruoliRichiesti) {
+    this.ruoliRichiesti = ruoliRichiesti;
+  }
+
+  public APIImplAutorizzazioneConfigNew ruoliRichiesti(AllAnyEnum ruoliRichiesti) {
+    this.ruoliRichiesti = ruoliRichiesti;
     return this;
   }
 
@@ -78,8 +169,12 @@ public class APIImplAutorizzazioneConfigNew extends APIImplAutorizzazioneBaseCon
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class APIImplAutorizzazioneConfigNew {\n");
-    sb.append("    ").append(APIImplAutorizzazioneConfigNew.toIndentedString(super.toString())).append("\n");
+    
+    sb.append("    richiedente: ").append(APIImplAutorizzazioneConfigNew.toIndentedString(this.richiedente)).append("\n");
     sb.append("    soggetto: ").append(APIImplAutorizzazioneConfigNew.toIndentedString(this.soggetto)).append("\n");
+    sb.append("    ruoli: ").append(APIImplAutorizzazioneConfigNew.toIndentedString(this.ruoli)).append("\n");
+    sb.append("    ruoliFonte: ").append(APIImplAutorizzazioneConfigNew.toIndentedString(this.ruoliFonte)).append("\n");
+    sb.append("    ruoliRichiesti: ").append(APIImplAutorizzazioneConfigNew.toIndentedString(this.ruoliRichiesti)).append("\n");
     sb.append("    ruolo: ").append(APIImplAutorizzazioneConfigNew.toIndentedString(this.ruolo)).append("\n");
     sb.append("}");
     return sb.toString();

@@ -24,6 +24,7 @@ package org.openspcoop2.core.config.rs.server.api.impl.applicativi;
 import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.rs.server.api.ApplicativiApi;
@@ -128,6 +129,9 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			env.saCore.performCreateOperation(env.userLogin, false, sa);
 			
 			context.getLogger().info("Invocazione completata con successo");
+			
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -216,7 +220,8 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			int idLista = Liste.SERVIZIO_APPLICATIVO;
 
 			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
-							
+			ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO_SERVIZIO_APPLICATIVO, Filtri.VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_FRUITORE);				
+			
 			List<ServizioApplicativo> saLista = env.saCore.soggettiServizioApplicativoList(null, ricerca);
 			
 			final ListaApplicativi ret = ListaUtils.costruisciListaPaginata(

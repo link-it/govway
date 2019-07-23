@@ -25,7 +25,7 @@ Scenario: Creazione Servizi 204
 * def query_params = ({ profilo: "SPCoop", soggetto: soggettoDefault })
 * eval api_spcoop.referente = soggettoDefault
 * call create ({ resourcePath: 'api', body: api_spcoop })
-* call create_204 ({ resourcePath: api_spcoop_path + '/servizi', body: servizio,  key: servizio.nome })
+* call create_201 ({ resourcePath: api_spcoop_path + '/servizi', body: servizio,  key: servizio.nome })
 * call delete ({ resourcePath: api_spcoop_path })
 
 @Create409

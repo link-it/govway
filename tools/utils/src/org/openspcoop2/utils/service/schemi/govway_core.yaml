@@ -192,7 +192,7 @@ components:
       description: Formato solo da caratteri e cifre
     NCName:
       type: string
-      pattern: ^[_A-Za-z][\\-\\._A-Za-z0-9]*$
+      pattern: ^[_A-Za-z][\-\._A-Za-z0-9]*$
       maxLength: 255
       description: Può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'
     Tipo:

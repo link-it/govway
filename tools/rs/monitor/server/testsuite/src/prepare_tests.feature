@@ -46,7 +46,7 @@ Scenario: Preparazione Test
     And request correlazione_richiesta
     And params ({ gruppo: gruppo_authn_principal.nome })
     When method post
-    Then status 204
+    Then status 201
 
     Given url configUrl
     And path fruizione_petstore_path, 'configurazioni', 'tracciamento', 'correlazione-applicativa', 'richiesta'
@@ -54,7 +54,7 @@ Scenario: Preparazione Test
     And request correlazione_richiesta
     And params ({ gruppo: gruppo_authn_principal.nome })
     When method post
-    Then status 204
+    Then status 201
 
     # Crea soggetti e applicativi da utilizzare poi nelle ricerche
 

@@ -24,7 +24,7 @@ Scenario: Allegati Erogazioni Create 204
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
     
-    * call create_204 ( { resourcePath: erogazione_petstore_path + '/allegati', body: allegato, key: allegato.allegato.nome})
+    * call create_201 ( { resourcePath: erogazione_petstore_path + '/allegati', body: allegato, key: allegato.allegato.nome})
     
     * call delete ({ resourcePath: erogazione_petstore_path })
     * call delete ({ resourcePath: api_petstore_path })

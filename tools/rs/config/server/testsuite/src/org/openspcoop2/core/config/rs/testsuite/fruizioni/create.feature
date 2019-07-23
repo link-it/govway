@@ -40,7 +40,7 @@ Scenario: Creazione Fruizioni Petstore 204
 
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'soggetti', body: erogatore })
-    * call create_204 ({ resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key })
+    * call create_201 ({ resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key })
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
     * call delete ({ resourcePath: api_petstore_path })
 
@@ -63,7 +63,7 @@ Scenario: Creazione Fruizioni SPCoop 204
     * eval fruizione_spcoop.autorizzazione.configurazione.soggetto = soggetto_autenticato.nome
     * eval fruizione_spcoop.autorizzazione.configurazione.ruolo = ruolo_autenticato.nome
 
-    * call create_204 ({ resourcePath: 'fruizioni', body: fruizione_spcoop,  key: spcoop_key })
+    * call create_201 ({ resourcePath: 'fruizioni', body: fruizione_spcoop,  key: spcoop_key })
 
     * call delete ( { resourcePath: 'ruoli/' + ruolo_autenticato.nome })
     * call delete ( { resourcePath: 'soggetti/' + soggetto_autenticato.nome })

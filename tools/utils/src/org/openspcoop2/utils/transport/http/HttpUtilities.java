@@ -52,6 +52,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.mime.MimeTypes;
+import org.openspcoop2.utils.regexp.RegExpUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 
 
@@ -1008,4 +1009,31 @@ public class HttpUtilities {
 		}
 	}
 	
+	
+	
+	
+	public static void validateUri(String uri,boolean checkEsistenzaFile) throws UtilsException,java.net.MalformedURLException{
+		
+		if (uri.startsWith("http://")
+				|| uri.startsWith("file://")) {
+
+			if(checkEsistenzaFile)
+				HttpUtilities.requestHTTPFile(uri);
+			else
+				RegExpUtilities.validateUrl(uri);
+
+		} else {
+			File f = new File(uri);
+			if(checkEsistenzaFile){
+				if(f.exists()==false){
+					throw new UtilsException("File non esistente");
+				}
+				else if(f.isDirectory()){
+					throw new UtilsException("File e' una directory");
+				}else if(f.canRead()==false){
+					throw new UtilsException("File non accessibile");
+				}
+			}
+		}
+	}
 }

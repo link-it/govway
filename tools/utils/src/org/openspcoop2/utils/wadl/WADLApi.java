@@ -36,7 +36,12 @@ import org.openspcoop2.utils.rest.api.Api;
  */
 public class WADLApi extends Api {
 	
-	private ApplicationWrapper applicationWadlWrapper;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private transient ApplicationWrapper applicationWadlWrapper;
 	
 	public WADLApi(ApplicationWrapper applicationWadlWrapper){
 		this.applicationWadlWrapper = applicationWadlWrapper;

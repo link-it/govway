@@ -487,6 +487,9 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 								rp.setDescrizione(cookie.getDescription());
 								rp.setRequired(cookie.isRequired());
 								rp.setTipo(cookie.getType());
+								if(cookie.getSchema()!=null) {
+									rp.setRestrizioni(cookie.getSchema().toString());
+								}
 							}							
 						}
 						
@@ -512,6 +515,9 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 								rp.setDescrizione(dynamicPath.getDescription());
 								rp.setRequired(dynamicPath.isRequired());
 								rp.setTipo(dynamicPath.getType());
+								if(dynamicPath.getSchema()!=null) {
+									rp.setRestrizioni(dynamicPath.getSchema().toString());
+								}
 							}							
 						}
 						
@@ -537,6 +543,9 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 								rp.setDescrizione(form.getDescription());
 								rp.setRequired(form.isRequired());
 								rp.setTipo(form.getType());
+								if(form.getSchema()!=null) {
+									rp.setRestrizioni(form.getSchema().toString());
+								}
 							}							
 						}
 						
@@ -562,6 +571,9 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 								rp.setDescrizione(header.getDescription());
 								rp.setRequired(header.isRequired());
 								rp.setTipo(header.getType());
+								if(header.getSchema()!=null) {
+									rp.setRestrizioni(header.getSchema().toString());
+								}
 							}							
 						}
 						
@@ -587,6 +599,9 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 								rp.setDescrizione(query.getDescription());
 								rp.setRequired(query.isRequired());
 								rp.setTipo(query.getType());
+								if(query.getSchema()!=null) {
+									rp.setRestrizioni(query.getSchema().toString());
+								}
 							}							
 						}
 						
@@ -695,6 +710,9 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									rp.setDescrizione(cookie.getDescription());
 									rp.setRequired(cookie.isRequired());
 									rp.setTipo(cookie.getType());
+									if(cookie.getSchema()!=null) {
+										rp.setRestrizioni(cookie.getSchema().toString());
+									}
 								}							
 							}
 							
@@ -720,6 +738,9 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									rp.setDescrizione(header.getDescription());
 									rp.setRequired(header.isRequired());
 									rp.setTipo(header.getType());
+									if(header.getSchema()!=null) {
+										rp.setRestrizioni(header.getSchema().toString());
+									}
 								}							
 							}
 						}

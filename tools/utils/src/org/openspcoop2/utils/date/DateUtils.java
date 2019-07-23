@@ -22,8 +22,11 @@
 
 package org.openspcoop2.utils.date;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
+import org.openspcoop2.utils.UtilsException;
 
 /**     
  * DateUtils
@@ -172,6 +175,136 @@ public class DateUtils {
 		}
 		
 		return calendar.getTime();
+	}
+	
+	public static void validateDateTimeAsRFC3339_sec5_6(String dateTime) throws UtilsException {
+		// RFC 3339, section 5.6
+		// es 2017-07-21T17:32:28Z
+		String fullDate = null;
+		String fullTime = null;
+		try {
+			// date-time = full-date "T" full-time
+			if(dateTime.contains("T")==false) {
+				throw new Exception("Expected 'T' separator");
+			}
+			String [] split = dateTime.split("T");
+			if(split==null || split.length!=2) {
+				throw new Exception("Expected 'full-date T full-time' format");
+			}
+			
+			// full-date = date-fullyear "-" date-month "-" date-mday
+			// date-fullyear   = 4DIGIT
+			// date-month      = 2DIGIT  ; 01-12
+			// date-mday       = 2DIGIT  ; 01-28, 01-29, 01-30, 01-31 based on month/year
+			fullDate = split[0];
+			fullTime = split[1];
+		}catch(Throwable e){
+			throw new UtilsException("Found dateTime '"+dateTime+"' has wrong format (see RFC 3339, section 5.6): "+e.getMessage(),e);
+		}
+		
+		validateDateAsRFC3339_sec5_6(fullDate);
+		validateTimeAsRFC3339_sec5_6(fullTime);
+	}
+	
+	private static final String FULL_DATE_FORMAT = "yyyy-MM-dd";
+	public static void validateDateAsRFC3339_sec5_6(String fullDate) throws UtilsException {
+		// RFC 3339, section 5.6
+		// es 2017-07-21
+		try {
+			// full-date = date-fullyear "-" date-month "-" date-mday
+			// date-fullyear   = 4DIGIT
+			// date-month      = 2DIGIT  ; 01-12
+			// date-mday       = 2DIGIT  ; 01-28, 01-29, 01-30, 01-31 based on month/year
+			if(fullDate==null || "".equals(fullDate)) {
+				throw new Exception("undefined");
+			}
+			try {
+				SimpleDateFormat sdf = new SimpleDateFormat(FULL_DATE_FORMAT);
+				Date d = sdf.parse(fullDate);
+				d.toString();
+			}catch(Exception e) {
+				throw new Exception("uncorrect format: "+e.getMessage(),e);
+			}
+		}catch(Throwable e){
+			throw new UtilsException("Found date '"+fullDate+"' has wrong format (see RFC 3339, section 5.6): "+e.getMessage(),e);
+		}
+	}
+	
+	private static final String FULL_TIME_FORMAT_SECONDS = "HH:mm:ss.SSS";
+	private static final String FULL_TIME_FORMAT_WITHOUT_SECONDS = "HH:mm:ss";
+	private static final String FULL_TIME_FORMAT_OFFSET = "HH:mm";
+	public static void validateTimeAsRFC3339_sec5_6(String fullTime) throws UtilsException {
+		// RFC 3339, section 5.6
+		// es 17:32:28Z
+		try {
+			// full-time = partial-time time-offset
+			// partial-time    = time-hour ":" time-minute ":" time-second [time-secfrac]
+			// time-hour       = 2DIGIT  ; 00-23
+			// time-minute     = 2DIGIT  ; 00-59
+			// time-second     = 2DIGIT  ; 00-58, 00-59, 00-60 based on leap second
+			// time-secfrac    = "." 1*DIGIT
+			// time-offset     = "Z" / time-numoffset
+			// time-numoffset  = ("+" / "-") time-hour ":" time-minute
+			if(fullTime==null || "".equals(fullTime)) {
+				throw new Exception("undefined");
+			}
+			if(fullTime.length()<9) {
+				throw new Exception("too short");
+			}
+			String partialTime = null;
+			if(fullTime.endsWith("Z")) {
+				partialTime = fullTime.substring(0, fullTime.length()-1);
+			}
+			else {
+				if(fullTime.contains("+")==false && fullTime.contains("-")==false) {
+					throw new Exception("expected '(\"+\" / \"-\") or \"Z\" time-offset character");
+				}
+				String offset = null;
+				String [] splitFullTime = null;
+				if(fullTime.contains("+")) {
+					splitFullTime = fullTime.split("\\+");
+				}
+				else {
+					splitFullTime = fullTime.split("-");
+				}
+				if(splitFullTime==null || splitFullTime.length!=2) {
+					throw new Exception("expected partial-time time-offset");
+				}
+				partialTime = splitFullTime[0];
+				offset = splitFullTime[1];
+				
+				if(offset==null || "".equals(fullTime)) {
+					throw new Exception("undefined offset time");
+				}
+				try {
+					SimpleDateFormat sdf = new SimpleDateFormat(FULL_TIME_FORMAT_OFFSET);
+					Date d = sdf.parse(offset);
+					d.toString();
+				}catch(Exception e) {
+					throw new Exception("uncorrect offset format: "+e.getMessage(),e);
+				}
+			}
+			
+			if(partialTime==null || "".equals(partialTime)) {
+				throw new Exception("undefined partial time");
+			}
+			try {
+				SimpleDateFormat sdf = null;
+				if(partialTime.contains(".")) {
+					sdf = new SimpleDateFormat(FULL_TIME_FORMAT_SECONDS);
+				}
+				else {
+					sdf = new SimpleDateFormat(FULL_TIME_FORMAT_WITHOUT_SECONDS);
+				}
+				Date d = sdf.parse(partialTime);
+				d.toString();
+			}catch(Exception e) {
+				throw new Exception("uncorrect offset format: "+e.getMessage(),e);
+			}
+			
+		}catch(Throwable e){
+			throw new UtilsException("Found time '"+fullTime+"' has wrong format (see RFC 3339, section 5.6): "+e.getMessage(),e);
+		}
 	}
 	
 }

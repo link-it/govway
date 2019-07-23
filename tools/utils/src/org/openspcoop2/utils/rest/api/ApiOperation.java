@@ -22,6 +22,7 @@
 
 package org.openspcoop2.utils.rest.api;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,12 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ApiOperation extends BaseBean {
+public class ApiOperation extends BaseBean implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	private HttpRequestMethod httpMethod;
 	private String path;

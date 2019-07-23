@@ -42,6 +42,7 @@ import org.openspcoop2.utils.rest.ProcessingException;
 import org.openspcoop2.utils.rest.ValidatorException;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.api.ApiOperation;
+import org.openspcoop2.utils.rest.api.ApiSchemaTypeRestriction;
 import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseResponseEntity;
@@ -146,7 +147,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	}
 	
 	@Override
-	public void validateValueAsType(String value,String type) throws ProcessingException,ValidatorException{
+	public void validateValueAsType(String value,String type, ApiSchemaTypeRestriction typeRestriction) throws ProcessingException,ValidatorException{
 		
 		// Tipi XSD : {http://www.w3.org/2001/XMLSchema}string
 		if(type.startsWith("{http://www.w3.org/2001/XMLSchema}")){
