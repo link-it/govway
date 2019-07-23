@@ -419,11 +419,15 @@ public class GestoreTrasformazioni {
 			}
 			
 		} catch(Throwable er) {
-			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-					get5XX_ErroreProcessamento(er, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
-			String msgErrore = "Trasformazione richiesta fallita: "+er.getMessage();
-			this.log.error(msgErrore, er);
-			throw new GestoreTrasformazioniException(msgErrore,er);
+			// fix: la condizione serve nel caso vengano utilizate istruzioni come <#stop che lanciano una freemarker.core.StopException
+			//      ma comunque prima di lanciarla e' stato impostato correttamente l'error handler
+			if(!errorHandler.isError()) {
+				this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(er, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
+				String msgErrore = "Trasformazione richiesta fallita: "+er.getMessage();
+				this.log.error(msgErrore, er);
+				throw new GestoreTrasformazioniException(msgErrore,er);
+			}
 		}
 		
 		if(errorHandler.isError()) {
@@ -735,11 +739,15 @@ public class GestoreTrasformazioni {
 			}
 			
 		} catch(Throwable er) {
-			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-					get5XX_ErroreProcessamento(er, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
-			String msgErrore = "Trasformazione risposta fallita: "+er.getMessage();
-			this.log.error(msgErrore, er);
-			throw new GestoreTrasformazioniException(msgErrore,er);
+			// fix: la condizione serve nel caso vengano utilizate istruzioni come <#stop che lanciano una freemarker.core.StopException
+			//      ma comunque prima di lanciarla e' stato impostato correttamente l'error handler
+			if(!errorHandler.isError()) {
+				this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(er, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
+				String msgErrore = "Trasformazione risposta fallita: "+er.getMessage();
+				this.log.error(msgErrore, er);
+				throw new GestoreTrasformazioniException(msgErrore,er);
+			}
 		}
 		
 		if(errorHandler.isError()) {

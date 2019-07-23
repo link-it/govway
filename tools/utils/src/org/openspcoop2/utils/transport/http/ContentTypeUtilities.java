@@ -142,7 +142,7 @@ public class ContentTypeUtilities {
 	public static boolean isMatch(String contentType, String contentTypeAtteso) throws Exception {
 		List<String> l = new ArrayList<String>();
 		l.add(contentTypeAtteso);
-		return isMatch(contentTypeAtteso, l);
+		return isMatch(contentType, l);
 	}
 	public static boolean isMatch(String contentType, List<String> contentTypeAttesi) throws Exception {
 		
