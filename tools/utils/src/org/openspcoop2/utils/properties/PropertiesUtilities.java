@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.Scanner;
 
 import org.slf4j.Logger;
 
@@ -284,5 +285,37 @@ public class PropertiesUtilities {
 		}
 		return null;
 	}
+
 	
+	
+	public static Properties convertTextToProperties(String text) {
+		Scanner scanner = new Scanner(text);
+		Properties properties = new Properties();
+		try {
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				if(line==null || line.trim().equals("")) {
+					continue;
+				}
+				line = line.trim();
+				if(line!=null && line.startsWith("#")) {
+					continue;
+				}
+				if(line.contains("=")) {
+					String key = line.split("=")[0];
+					key = key.trim();
+					int valueIndex = line.indexOf("=");
+					String value = "";
+					if(valueIndex<line.length()) {
+						value = line.substring(valueIndex+1);
+						value = value.trim();
+					}
+					properties.put(key, value);
+				}
+			}
+		}finally {
+			scanner.close();
+		}
+		return properties;
+	}
 }

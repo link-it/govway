@@ -25,9 +25,11 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -72,6 +74,8 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -143,6 +147,8 @@ public final class PorteApplicativeAdd extends Action {
 			String statoValidazione = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_XSD);
 			String tipoValidazione = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE);
 			String autorizzazioneContenuti = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI);
+			String autorizzazioneContenutiStato = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_STATO);
+			String autorizzazioneContenutiProperties = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROPERTIES);
 			String applicaMTOM = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM);
 
 			String autenticazione = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE);
@@ -527,11 +533,15 @@ public final class PorteApplicativeAdd extends Action {
 				if(autorizzazioneScope == null) {
 					autorizzazioneScope = "";
 				}
+				
+				if(autorizzazioneContenutiStato == null)
+					autorizzazioneContenutiStato = StatoFunzionalita.DISABILITATO.getValue();
+				
 
 				dati = porteApplicativeHelper.addPorteAppToDati(TipoOperazione.ADD,dati, nomePorta, descr, soggvirt, soggettiList,
 						soggettiListLabel, servizio, serviziList, serviziListLabel, azione, azioniList, azioniListLabel,
 						stateless, ricsim, ricasim, null, null, statoValidazione, tipoValidazione, gestBody, gestManifest,
-						null,0,null,autorizzazioneContenuti,protocollo,
+						null,0,null,autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,protocollo,
 						numSA,numRuoli, ruoloMatch,
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,numProprProt,applicaMTOM,
 						behaviour,null,null,null,
@@ -578,7 +588,7 @@ public final class PorteApplicativeAdd extends Action {
 				dati = porteApplicativeHelper.addPorteAppToDati(TipoOperazione.ADD,dati, nomePorta, descr, soggvirt, soggettiList,
 						soggettiListLabel, servizio, serviziList,
 						serviziListLabel, azione, azioniList, azioniListLabel, stateless, ricsim, ricasim, 
-						null, null, statoValidazione, tipoValidazione, gestBody, gestManifest,null,0,null,autorizzazioneContenuti,protocollo,
+						null, null, statoValidazione, tipoValidazione, gestBody, gestManifest,null,0,null,autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,protocollo,
 						numSA,numRuoli, ruoloMatch,
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,numProprProt,applicaMTOM,
 						behaviour,null,null,null,
@@ -614,7 +624,26 @@ public final class PorteApplicativeAdd extends Action {
 			else{
 				pa.setStato(StatoFunzionalita.DISABILITATO);
 			}
-			pa.setAutorizzazioneContenuto(autorizzazioneContenuti);
+			if(autorizzazioneContenutiStato.equals(StatoFunzionalita.DISABILITATO.getValue())) {
+				pa.setAutorizzazioneContenuto(null);
+				pa.getProprietaAutorizzazioneContenutoList().clear();
+			} else if(autorizzazioneContenutiStato.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				pa.setAutorizzazioneContenuto(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN);
+				pa.getProprietaAutorizzazioneContenutoList().clear();
+				Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(autorizzazioneContenutiProperties);
+				
+				Enumeration<Object> keys = convertTextToProperties.keys();
+				while (keys.hasMoreElements()) {
+					String nome = (String) keys.nextElement();
+					String valore = convertTextToProperties.getProperty(nome);
+					Proprieta proprietaAutorizzazioneContenuto = new Proprieta();
+					proprietaAutorizzazioneContenuto.setNome(nome);
+					proprietaAutorizzazioneContenuto.setValore(valore);
+					pa.addProprietaAutorizzazioneContenuto(proprietaAutorizzazioneContenuto);
+				}
+			} else {
+				pa.setAutorizzazioneContenuto(autorizzazioneContenuti);
+			}
 			
 			if (autenticazione == null ||
 					!autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM))

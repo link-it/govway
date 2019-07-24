@@ -2948,6 +2948,7 @@ public class RicezioneBuste {
 						Exception eAutenticazione = null;
 						OpenSPCoop2Message errorMessageAutenticazione = null;
 						String wwwAuthenticateErrorHeader = null;
+						boolean detailsSet = false;
 						try {						
 							EsitoAutenticazionePortaApplicativa esito = 
 									GestoreAutenticazione.verificaAutenticazionePortaApplicativa(tipoAutenticazione,
@@ -2958,6 +2959,7 @@ public class RicezioneBuste {
 							}else{
 								msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
 							}
+							detailsSet = true;
 							credenzialeTrasporto = esito.getCredential();
 							
 							if(credenzialeTrasporto!=null) {
@@ -3018,6 +3020,9 @@ public class RicezioneBuste {
 									+ tipoAutenticazione + "] fallito, " + e.getMessage(),e);
 						}
 						if (erroreIntegrazione != null || erroreCooperazione!=null) {
+							if(!detailsSet) {
+								msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
+							}
 							String descrizioneErrore = null;
 							try{
 								if(erroreCooperazione != null)

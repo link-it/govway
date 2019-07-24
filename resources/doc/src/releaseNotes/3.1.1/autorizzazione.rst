@@ -9,7 +9,7 @@ La funzionalità di autorizzazione per Token Claims è stata estesa in modo da s
 - il valore abbia un match rispetto ad una espressione regolare
 - il valore atteso può adesso essere indicato con parti dinamiche, risolte a runtime dal gateway, che consentono di selezionare header http, parametri della url o parti del messaggio
 
-La funzionalità di autorizzazione basata sui contenuti è stata estesa per fornire una implementazione built-in che consente di effettuare controlli di uguaglianza tra i seguenti dati:
+La funzionalità di autorizzazione basata sui contenuti è stata estesa per fornire una implementazione built-in che consente di effettuare controlli sulle seguenti risorse:
 
 - header http
 - parametri o porzioni della url di invocazione

@@ -16,6 +16,8 @@
 -- DROP INDEX INDEX_PD_MTOMTRES;
 -- DROP INDEX INDEX_PD_MTOMTREQ;
 -- DROP INDEX INDEX_PD_PROP;
+-- DROP INDEX INDEX_PD_AUTHZC_PROP;
+-- DROP INDEX INDEX_PD_AUTHZ_PROP;
 -- DROP INDEX INDEX_PD_AUTH_PROP;
 -- DROP INDEX INDEX_PD_SA;
 DROP TABLE pd_transform_risp_hdr;
@@ -35,6 +37,8 @@ DROP TABLE pd_security_request;
 DROP TABLE pd_mtom_response;
 DROP TABLE pd_mtom_request;
 DROP TABLE pd_properties;
+DROP TABLE pd_authzc_properties;
+DROP TABLE pd_authz_properties;
 DROP TABLE pd_auth_properties;
 DROP TABLE porte_delegate_sa;
 DROP TABLE porte_delegate;

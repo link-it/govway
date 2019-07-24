@@ -390,7 +390,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZnakNDQkdvQ0NRRFV5U0VzeU1
 		base64 -w 0 deploy/https_examples/jks/multipleOU/soggetto1_multipleOU_serialNumberDifferente/soggetto1_multipleOU.pem
 		Per produrre i base64 dei certificati
 	-->
-	<soggetto tipo="gw" nome="EsempioSoggettoTrasparenteCert1_serialNumberDifferente" porta-dominio="PdDEsempioSoggettoTrasparenteCert1">
+	<soggetto tipo="gw" nome="EsempioSoggettoTrasparenteCert1SerialNumberDifferente" porta-dominio="PdDEsempioSoggettoTrasparenteCert1">
     
 		<connettore tipo="disabilitato" nome="CNT_API_EsempioSoggettoTrasparenteCert1_multipleOU"/>
 
@@ -422,7 +422,7 @@ certificate="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUdCakNDQk80Q0NRQ3htU3dvWVg
 		base64 -w 0 deploy/https_examples/jks/multipleOU/soggetto2_multipleOU_serialNumberDifferente/soggetto2_multipleOU.pem
 		Per produrre i base64 dei certificati
 	-->
-	<soggetto tipo="gw" nome="EsempioSoggettoTrasparenteCert2_multipleOU_serialNumberDifferente" porta-dominio="PdDEsempioSoggettoTrasparenteCert2">
+	<soggetto tipo="gw" nome="EsempioSoggettoTrasparenteCert2MultipleOUSerialNumberDifferente" porta-dominio="PdDEsempioSoggettoTrasparenteCert2">
     
 		<connettore tipo="disabilitato" nome="CNT_API_EsempioSoggettoTrasparenteCert2_multipleOU"/>
 

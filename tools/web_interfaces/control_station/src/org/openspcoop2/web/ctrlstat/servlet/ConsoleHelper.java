@@ -150,6 +150,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
+import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione;
 import org.openspcoop2.pdd.logger.LogLevels;
@@ -558,6 +559,10 @@ public class ConsoleHelper {
 			versioneInt = Integer.parseInt(versione);
 		}
 		return this.idServizioFactory.getIDServizioFromValues(tipo, nome, assr,versioneInt);
+	}
+	
+	public IDAccordo getIDAccordoFromUri(String uriAccordo) throws Exception{
+		return this.idAccordoFactory.getIDAccordoFromUri(uriAccordo);
 	}
 	
 	public int getSize() {
@@ -3798,6 +3803,7 @@ public class ConsoleHelper {
 					de.setType(DataElementType.HIDDEN);
 				}else {
 					de.setType(DataElementType.TEXT_EDIT);
+					de.setRequired(true);
 				}
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM);
 				de.setValue(autenticazioneCustom);
@@ -4150,14 +4156,16 @@ public class ConsoleHelper {
 			boolean confPers, boolean isSupportatoAutenticazione, boolean contaListe, boolean isPortaDelegata,
 			boolean addTitoloSezione,String autorizzazioneScope,  String urlAutorizzazioneScope, int numScope, String scope, String autorizzazioneScopeMatch,
 			String gestioneToken, String gestioneTokenPolicy, String autorizzazione_token, String autorizzazione_tokenOptions,BinaryParameter allegatoXacmlPolicy,
-			String urlAutorizzazioneErogazioneApplicativiAutenticati, int numErogazioneApplicativiAutenticati) throws Exception{
+			String urlAutorizzazioneErogazioneApplicativiAutenticati, int numErogazioneApplicativiAutenticati,
+			String urlAutorizzazioneCustomPropertiesList, int numAutorizzazioneCustomPropertiesList) throws Exception{
 		this.controlloAccessiAutorizzazione(dati, tipoOperazione, servletChiamante, oggetto, 
 				autenticazione, autorizzazione, autorizzazioneCustom, 
 				autorizzazioneAutenticati, urlAutorizzazioneAutenticati, numAutenticati, autenticati, null, autenticato, 
 				autorizzazioneRuoli, urlAutorizzazioneRuoli, numRuoli, ruolo, autorizzazioneRuoliTipologia, autorizzazioneRuoliMatch, 
 				confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, addTitoloSezione,autorizzazioneScope,urlAutorizzazioneScope,numScope,scope,autorizzazioneScopeMatch,
 				gestioneToken, gestioneTokenPolicy, autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
-				urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati);
+				urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati,
+				urlAutorizzazioneCustomPropertiesList, numAutorizzazioneCustomPropertiesList);
 		
 	}
 	
@@ -4168,7 +4176,8 @@ public class ConsoleHelper {
 			boolean confPers, boolean isSupportatoAutenticazione, boolean contaListe, boolean isPortaDelegata, boolean addTitoloSezione,
 			String autorizzazioneScope,  String urlAutorizzazioneScope, int numScope, String scope, String autorizzazioneScopeMatch,
 			String gestioneToken, String gestioneTokenPolicy, String autorizzazione_token, String autorizzazione_tokenOptions, BinaryParameter allegatoXacmlPolicy,
-			String urlAutorizzazioneErogazioneApplicativiAutenticati, int numErogazioneApplicativiAutenticati) throws Exception{
+			String urlAutorizzazioneErogazioneApplicativiAutenticati, int numErogazioneApplicativiAutenticati,
+			String urlAutorizzazioneCustomPropertiesList, int numAutorizzazioneCustomPropertiesList) throws Exception{
 		
 		boolean allHidden = false;
 		if(!this.isModalitaCompleta() && TipoOperazione.ADD.equals(tipoOperazione)) {
@@ -4243,16 +4252,17 @@ public class ConsoleHelper {
 				de.setType(DataElementType.HIDDEN);
 			} else {
 				de.setType(DataElementType.TEXT_EDIT);
+				de.setRequired(true); 
 			}
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
 			de.setValue(autorizzazioneCustom);
 			dati.addElement(de);
 			
-			
 			boolean old_autorizzazione_autenticazione = false;
 			boolean old_autorizzazione_ruoli = false;
 			boolean old_autorizzazione_scope = false;
 			boolean old_xacmlPolicy = false;
+			boolean old_autorizzazione_custom = false;
 			String old_autorizzazione = null;
 			Long idPorta = null;
 			IDServizio idServizio = null;
@@ -4279,6 +4289,7 @@ public class ConsoleHelper {
 					idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
 							pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
 							pd.getServizio().getVersione());
+					old_autorizzazione_custom = pd.getAutorizzazione() != null && !TipoAutorizzazione.getAllValues().contains(pd.getAutorizzazione());
 				}
 				else {
 					PortaApplicativa pa = (PortaApplicativa) oggetto;
@@ -4291,8 +4302,26 @@ public class ConsoleHelper {
 					idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
 							pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(), 
 							pa.getServizio().getVersione());
+					old_autorizzazione_custom = pa.getAutorizzazione() != null && !TipoAutorizzazione.getAllValues().contains(pa.getAutorizzazione());
 				}
 			}
+			
+			// se ho salvato il tipo custom faccio vedere il link alle proprieta'
+			if(autorizzazione != null && autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM)) {
+				if(old_autorizzazione_custom) {
+					de = new DataElement();
+					de.setType(DataElementType.LINK);
+					de.setUrl(urlAutorizzazioneCustomPropertiesList);
+					String labelCustomProperties = CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CUSTOM_PROPERTIES; 
+					if (contaListe) {
+						ServletUtils.setDataElementCustomLabel(de,labelCustomProperties,Long.valueOf(numAutorizzazioneCustomPropertiesList));
+					} else {
+						ServletUtils.setDataElementCustomLabel(de,labelCustomProperties);
+					}
+					dati.addElement(de);
+				}
+			}
+			
 			
 			if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)==false){
 			
@@ -4726,25 +4755,92 @@ public class ConsoleHelper {
 		}
 	}
 	
-	public void controlloAccessiAutorizzazioneContenuti(Vector<DataElement> dati, String autorizzazioneContenuti){
-		
-		if (this.isModalitaAvanzata()) {
-			DataElement de = new DataElement();
-			de.setType(DataElementType.TITLE);
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
-			dati.addElement(de);
-		}
+	public void controlloAccessiAutorizzazioneContenuti(Vector<DataElement> dati, TipoOperazione tipoOperazione,
+			String autorizzazioneContenutiStato, String autorizzazioneContenuti, String autorizzazioneContenutiProperties, ServiceBinding serviceBinding,
+			boolean old_autorizzazione_contenuti_custom, String urlAutorizzazioneContenutiCustomPropertiesList, int numAutorizzazioneContenutiCustomPropertiesList ){
 		
 		DataElement de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
-		if (this.isModalitaStandard()) 
-			de.setType(DataElementType.HIDDEN);
-		else
-			de.setType(DataElementType.TEXT_EDIT);
-
-		de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
-		de.setValue(autorizzazioneContenuti);
+		de.setType(DataElementType.TITLE);
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
 		dati.addElement(de);
+		
+		List<String> authContenutiLabels = new ArrayList<>();
+		List<String> authContenutiValues = new ArrayList<>();
+		
+		authContenutiLabels.addAll(Arrays.asList(CostantiControlStation.PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_LABELS));
+		authContenutiValues.addAll(Arrays.asList(CostantiControlStation.PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_VALUES));
+		
+		if(this.isModalitaAvanzata() || autorizzazioneContenutiStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM)) {
+			authContenutiLabels.add(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM);
+			authContenutiValues.add(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM);
+		}
+		
+		de = new DataElement();
+		de.setType(DataElementType.SELECT);
+		de.setSelected(autorizzazioneContenutiStato);
+		de.setValues(authContenutiValues);
+		de.setLabels(authContenutiLabels);
+		de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO);
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO);
+		de.setPostBack(true);
+		dati.addElement(de);
+		
+		if(!autorizzazioneContenutiStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_DISABILITATO)) {
+			// abilitato 
+			if(autorizzazioneContenutiStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_ABILITATO)) {
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+				de.setType(DataElementType.HIDDEN);
+				de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+				de.setValue(autorizzazioneContenuti);
+				dati.addElement(de);
+				
+				
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+				de.setType(DataElementType.TEXT_AREA);
+				de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_PROPERTIES);
+				de.setValue(autorizzazioneContenutiProperties);
+				de.setNote(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CONTENUTI_NOTE);
+				DataElementInfo info = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
+				info.setHeaderBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
+				if(ServiceBinding.REST.equals(serviceBinding)) {
+					info.setListBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CLAIMS_REST_VALORI);
+				}
+				else {
+					info.setListBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CLAIMS_SOAP_VALORI);
+				}
+				
+				de.setInfo(info );
+				dati.addElement(de);
+			}
+			
+			// custom
+			if(autorizzazioneContenutiStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM)) {
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+				de.setValue(autorizzazioneContenuti);
+				de.setRequired(true); 
+				dati.addElement(de);
+				
+				// link proprieta
+				if(old_autorizzazione_contenuti_custom) {
+					Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
+					de = new DataElement();
+					de.setType(DataElementType.LINK);
+					de.setUrl(urlAutorizzazioneContenutiCustomPropertiesList);
+					String labelCustomProperties = CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES; 
+					if (contaListe) {
+						ServletUtils.setDataElementCustomLabel(de,labelCustomProperties,Long.valueOf(numAutorizzazioneContenutiCustomPropertiesList));
+					} else {
+						ServletUtils.setDataElementCustomLabel(de,labelCustomProperties);
+					}
+					dati.addElement(de);
+				}
+			}
+		}
 	}
 	
 	public boolean controlloAccessiCheck(TipoOperazione tipoOperazione, 
@@ -4756,7 +4852,7 @@ public class ConsoleHelper {
 			String policy, String validazioneInput, String introspection, String userInfo, String forward,
 			String autorizzazione_token, String autorizzazione_tokenOptions,
 			String autorizzazioneScope, String autorizzazioneScopeMatch, BinaryParameter allegatoXacmlPolicy,
-			String autorizzazioneContenuto,
+			String autorizzazioneContenutiStato, String autorizzazioneContenuto, String autorizzazioneContenutiProperties,
 			String protocollo) throws Exception{
 		try {
 			
@@ -4792,6 +4888,20 @@ public class ConsoleHelper {
 						}
 					}
 					break;
+				}
+			}
+			
+			// tipo autenticazione custom
+			if(autenticazione != null && autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM)) {
+				String autenticazioneCustom = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM );
+				
+				if(StringUtils.isEmpty(autenticazioneCustom)){
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTENTICAZIONE_CUSTOM_NON_INDICATA);
+					return false;
+				}
+				
+				if(this.checkLength255(autenticazioneCustom, CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE_CUSTOM)==false) {
+					return false;
 				}
 			}
 			
@@ -5177,10 +5287,63 @@ public class ConsoleHelper {
 				}
 			}
 			
-			if(autorizzazioneContenuto!=null && !"".equalsIgnoreCase(autorizzazioneContenuto)) {
-				if(this.checkLength255(autorizzazioneContenuto,
-						CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI+" - "+CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI)==false) {
+			// tipo autorizzazione custom
+			if(autorizzazione != null && autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM)) {
+				String autorizzazioneCustom = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
+				
+				if(StringUtils.isEmpty(autorizzazioneCustom)){
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CUSTOM_NON_INDICATA);
 					return false;
+				}
+				
+				if(this.checkLength255(autorizzazioneCustom,CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CUSTOM)==false) {
+					return false;
+				}
+			}
+			
+			if(autorizzazioneContenutiStato!= null && !autorizzazioneContenutiStato.equals(StatoFunzionalita.DISABILITATO.getValue())) {
+				if(autorizzazioneContenutiStato.equals(StatoFunzionalita.ABILITATO.getValue())) {
+					if(autorizzazioneContenutiProperties==null || "".equals(autorizzazioneContenutiProperties)) {
+						this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_NON_INDICATA);
+						return false;
+					}
+					if(autorizzazioneContenutiProperties!=null) {
+						Scanner scanner = new Scanner(autorizzazioneContenutiProperties);
+						try {
+							while (scanner.hasNextLine()) {
+								String line = scanner.nextLine();
+								if(line==null || line.trim().equals("")) {
+									continue;
+								}
+								if(line.contains("=")==false) {
+									this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI);
+									return false;
+								}
+								String key = line.split("=")[0];
+								if(key==null || !key.contains("$")) {
+									this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI_RISORSA_NON_DEFINITA_PREFIX+line);
+									return false;
+								}
+							}
+						}finally {
+							scanner.close();
+						}
+						
+						if(this.checkLength(autorizzazioneContenutiProperties, CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CONTROLLI_AUTORIZZAZIONE,-1,4000)==false) {
+							return false;
+						}
+					}
+				}
+				
+				if(autorizzazioneContenutiStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM)) {
+					if(StringUtils.isEmpty(autorizzazioneContenuto)){
+						this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_CUSTOM_NON_INDICATA);
+						return false;
+					}
+					
+					if(this.checkLength255(autorizzazioneContenuto,	CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CONTROLLI_AUTORIZZAZIONE_CUSTOM)==false) {
+						return false;
+					}
 				}
 			}
 			
@@ -6091,7 +6254,7 @@ public class ConsoleHelper {
 				}
 				bf.append(" ");
 				bf.append(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
-				bfToolTip.append(": ").append(autorizzazioneContenuti);
+				bfToolTip.append(": ").append(autorizzazioneCustom);
 			}
 			
 			if(bf.length()>0) {
@@ -6127,7 +6290,10 @@ public class ConsoleHelper {
 			StringBuffer bfToolTip = new StringBuffer();
 			bf.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
 			bfToolTip.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
-			bfToolTip.append(": ").append(autorizzazioneContenuti);
+			if(!CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN.equals(autorizzazioneContenuti)) {
+				bf.append(" [ ").append(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM).append(" ]");
+				bfToolTip.append(": ").append(autorizzazioneContenuti);
+			}
 			de.addStatus(bfToolTip.toString(), bf.toString(), CheckboxStatusType.CONFIG_ENABLE);
 		}
 		
@@ -13142,4 +13308,36 @@ public class ConsoleHelper {
 		}
 	}
 	
+	public Vector<DataElement>  addProprietaAutorizzazioneCustomToDati(Vector<DataElement> dati, TipoOperazione tipoOp, String nome, String valore) {
+
+		DataElement de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CUSTOM_PROPERTIES);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+		de.setValue(nome);
+		if(TipoOperazione.ADD.equals(tipoOp)){
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setRequired(true);
+		}
+		else{
+			de.setType(DataElementType.TEXT);
+		}
+		de.setName(CostantiControlStation.PARAMETRO_NOME);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setRequired(true);
+		de.setName(CostantiControlStation.PARAMETRO_VALORE);
+		de.setValue(valore);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+
+		return dati;
+	}
 }

@@ -66,10 +66,5 @@ public class XACMLCostanti {
 	public static final String XACML_REQUEST_SUBJECT_TOKEN_USERNAME_ATTRIBUTE_ID = XACML_REQUEST_SUBJECT_TOKEN_ATTRIBUTE_PREFIX+":username";
 	public static final String XACML_REQUEST_SUBJECT_TOKEN_CLIENT_ID_ATTRIBUTE_ID = XACML_REQUEST_SUBJECT_TOKEN_ATTRIBUTE_PREFIX+":clientId";
 	public static final String XACML_REQUEST_SUBJECT_TOKEN_USERINFO_CLAIMS_PREFIX = XACML_REQUEST_SUBJECT_TOKEN_ATTRIBUTE_PREFIX+":userInfo:claim:";
-	
-	
-	public static final String AUTHZ_CLAIM_ANY_VALUE = "${anyValue}";
-	public static final String AUTHZ_CLAIM_REGEXP_MATCH_PREFIX = "${regExpMatch:";
-	public static final String AUTHZ_CLAIM_REGEXP_FIND_PREFIX = "${regExpFind:";
-	public static final String AUTHZ_CLAIM_REGEXP_SUFFIX = "}";
+
 }

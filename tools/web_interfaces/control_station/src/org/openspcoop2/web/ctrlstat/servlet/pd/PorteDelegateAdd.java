@@ -25,9 +25,11 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -74,6 +76,8 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -158,6 +162,8 @@ public final class PorteDelegateAdd extends Action {
 			String statoValidazione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_XSD);
 			String tipoValidazione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE);
 			String autorizzazioneContenuti = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+			String autorizzazioneContenutiStato = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_STATO);
+			String autorizzazioneContenutiProperties = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROPERTIES);
 			String forceWsdlBased = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED);
 			String applicaMTOM = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM);
 
@@ -525,6 +531,9 @@ public final class PorteDelegateAdd extends Action {
 				if(autorizzazioneScope == null) {
 					autorizzazioneScope = "";
 				}
+				
+				if(autorizzazioneContenutiStato == null)
+					autorizzazioneContenutiStato = StatoFunzionalita.DISABILITATO.getValue();
 
 				// i pattern sono i nomi
 				dati = porteDelegateHelper.addPorteDelegateToDati(TipoOperazione.ADD, 
@@ -539,7 +548,9 @@ public final class PorteDelegateAdd extends Action {
 						azione, numAzioni,  stateless, localForward, paLocalForward, ricsim, ricasim,
 						statoValidazione, tipoValidazione, 0, "", gestBody, gestManifest,
 						null, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, autenticazioneCustom, 
-						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,autorizzazioneContenuti,idsogg,protocollo,
+						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
+						autorizzazioneContenutiStato, autorizzazioneContenuti,autorizzazioneContenutiProperties,
+						idsogg,protocollo,
 						numSA,numRuoli, ruoloMatch,
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,
 						forceWsdlBased,applicaMTOM,false,
@@ -592,7 +603,9 @@ public final class PorteDelegateAdd extends Action {
 						azione, numAzioni, stateless, localForward, paLocalForward, ricsim, ricasim,
 						statoValidazione, tipoValidazione, 0, "", gestBody, gestManifest,
 						null, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, autenticazioneCustom, 
-						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,autorizzazioneContenuti ,idsogg,protocollo,
+						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
+						autorizzazioneContenutiStato, autorizzazioneContenuti,autorizzazioneContenutiProperties,
+						idsogg,protocollo,
 						numSA,numRuoli, ruoloMatch,
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,
 						forceWsdlBased,applicaMTOM,false,
@@ -635,6 +648,27 @@ public final class PorteDelegateAdd extends Action {
 			}
 			else{
 				portaDelegata.setStato(StatoFunzionalita.DISABILITATO);
+			}
+			
+			if(autorizzazioneContenutiStato.equals(StatoFunzionalita.DISABILITATO.getValue())) {
+				portaDelegata.setAutorizzazioneContenuto(null);
+				portaDelegata.getProprietaAutorizzazioneContenutoList().clear();
+			} else if(autorizzazioneContenutiStato.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				portaDelegata.setAutorizzazioneContenuto(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN);
+				portaDelegata.getProprietaAutorizzazioneContenutoList().clear();
+				Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(autorizzazioneContenutiProperties);
+				
+				Enumeration<Object> keys = convertTextToProperties.keys();
+				while (keys.hasMoreElements()) {
+					String nome = (String) keys.nextElement();
+					String valore = convertTextToProperties.getProperty(nome);
+					Proprieta proprietaAutorizzazioneContenuto = new Proprieta();
+					proprietaAutorizzazioneContenuto.setNome(nome);
+					proprietaAutorizzazioneContenuto.setValore(valore);
+					portaDelegata.addProprietaAutorizzazioneContenuto(proprietaAutorizzazioneContenuto);
+				}
+			} else {
+				portaDelegata.setAutorizzazioneContenuto(autorizzazioneContenuti);
 			}
 			
 			if (autenticazione == null ||

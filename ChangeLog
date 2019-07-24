@@ -1,3 +1,16 @@
+2019-07-24  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-867
+	La funzionalità di autorizzazione basata sui contenuti è stata estesa per fornire una implementazione 
+	che consenta di effettuare base controlli sulle seguenti risorse:
+	- header http
+	- parametri o porzioni della url di invocazione
+	- credenziali del chiamante (principal, username, subject …)
+	- claim presente in un token
+	- porzioni del messaggio individuate tramite espressioni xPath o jsonPath
+	- valori statici
+
 2019-07-23  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, Utils]

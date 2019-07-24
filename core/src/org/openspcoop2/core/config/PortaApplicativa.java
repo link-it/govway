@@ -47,6 +47,8 @@ import java.util.List;
  * 			&lt;element name="azione" type="{http://www.openspcoop2.org/core/config}porta-applicativa-azione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-applicativa-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="proprieta-autenticazione" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="proprieta-autorizzazione" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="proprieta-autorizzazione-contenuto" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="xacml-policy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="soggetti" type="{http://www.openspcoop2.org/core/config}porta-applicativa-autorizzazione-soggetti" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="servizi-applicativi-autorizzati" type="{http://www.openspcoop2.org/core/config}porta-applicativa-autorizzazione-servizi-applicativi" minOccurs="0" maxOccurs="1"/>
@@ -105,6 +107,8 @@ import java.util.List;
   	"azione",
   	"servizioApplicativo",
   	"proprietaAutenticazione",
+  	"proprietaAutorizzazione",
+  	"proprietaAutorizzazioneContenuto",
   	"xacmlPolicy",
   	"soggetti",
   	"serviziApplicativiAutorizzati",
@@ -247,6 +251,54 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   public int sizeProprietaAutenticazioneList() {
     return this.proprietaAutenticazione.size();
+  }
+
+  public void addProprietaAutorizzazione(Proprieta proprietaAutorizzazione) {
+    this.proprietaAutorizzazione.add(proprietaAutorizzazione);
+  }
+
+  public Proprieta getProprietaAutorizzazione(int index) {
+    return this.proprietaAutorizzazione.get( index );
+  }
+
+  public Proprieta removeProprietaAutorizzazione(int index) {
+    return this.proprietaAutorizzazione.remove( index );
+  }
+
+  public List<Proprieta> getProprietaAutorizzazioneList() {
+    return this.proprietaAutorizzazione;
+  }
+
+  public void setProprietaAutorizzazioneList(List<Proprieta> proprietaAutorizzazione) {
+    this.proprietaAutorizzazione=proprietaAutorizzazione;
+  }
+
+  public int sizeProprietaAutorizzazioneList() {
+    return this.proprietaAutorizzazione.size();
+  }
+
+  public void addProprietaAutorizzazioneContenuto(Proprieta proprietaAutorizzazioneContenuto) {
+    this.proprietaAutorizzazioneContenuto.add(proprietaAutorizzazioneContenuto);
+  }
+
+  public Proprieta getProprietaAutorizzazioneContenuto(int index) {
+    return this.proprietaAutorizzazioneContenuto.get( index );
+  }
+
+  public Proprieta removeProprietaAutorizzazioneContenuto(int index) {
+    return this.proprietaAutorizzazioneContenuto.remove( index );
+  }
+
+  public List<Proprieta> getProprietaAutorizzazioneContenutoList() {
+    return this.proprietaAutorizzazioneContenuto;
+  }
+
+  public void setProprietaAutorizzazioneContenutoList(List<Proprieta> proprietaAutorizzazioneContenuto) {
+    this.proprietaAutorizzazioneContenuto=proprietaAutorizzazioneContenuto;
+  }
+
+  public int sizeProprietaAutorizzazioneContenutoList() {
+    return this.proprietaAutorizzazioneContenuto.size();
   }
 
   public java.lang.String getXacmlPolicy() {
@@ -812,6 +864,66 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
   @Deprecated
   public int sizeProprietaAutenticazione() {
   	return this.proprietaAutenticazione.size();
+  }
+
+  @XmlElement(name="proprieta-autorizzazione",required=true,nillable=false)
+  protected List<Proprieta> proprietaAutorizzazione = new ArrayList<Proprieta>();
+
+  /**
+   * @deprecated Use method getProprietaAutorizzazioneList
+   * @return List<Proprieta>
+  */
+  @Deprecated
+  public List<Proprieta> getProprietaAutorizzazione() {
+  	return this.proprietaAutorizzazione;
+  }
+
+  /**
+   * @deprecated Use method setProprietaAutorizzazioneList
+   * @param proprietaAutorizzazione List<Proprieta>
+  */
+  @Deprecated
+  public void setProprietaAutorizzazione(List<Proprieta> proprietaAutorizzazione) {
+  	this.proprietaAutorizzazione=proprietaAutorizzazione;
+  }
+
+  /**
+   * @deprecated Use method sizeProprietaAutorizzazioneList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeProprietaAutorizzazione() {
+  	return this.proprietaAutorizzazione.size();
+  }
+
+  @XmlElement(name="proprieta-autorizzazione-contenuto",required=true,nillable=false)
+  protected List<Proprieta> proprietaAutorizzazioneContenuto = new ArrayList<Proprieta>();
+
+  /**
+   * @deprecated Use method getProprietaAutorizzazioneContenutoList
+   * @return List<Proprieta>
+  */
+  @Deprecated
+  public List<Proprieta> getProprietaAutorizzazioneContenuto() {
+  	return this.proprietaAutorizzazioneContenuto;
+  }
+
+  /**
+   * @deprecated Use method setProprietaAutorizzazioneContenutoList
+   * @param proprietaAutorizzazioneContenuto List<Proprieta>
+  */
+  @Deprecated
+  public void setProprietaAutorizzazioneContenuto(List<Proprieta> proprietaAutorizzazioneContenuto) {
+  	this.proprietaAutorizzazioneContenuto=proprietaAutorizzazioneContenuto;
+  }
+
+  /**
+   * @deprecated Use method sizeProprietaAutorizzazioneContenutoList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeProprietaAutorizzazioneContenuto() {
+  	return this.proprietaAutorizzazioneContenuto.size();
   }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")

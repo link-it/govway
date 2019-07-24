@@ -2111,6 +2111,7 @@ public class RicezioneContenutiApplicativi {
 				Exception eAutenticazione = null;
 				OpenSPCoop2Message errorMessageAutenticazione = null;
 				String wwwAuthenticateErrorHeader = null;
+				boolean detailsSet = false;
 				try {						
 						
 					EsitoAutenticazionePortaDelegata esito = 
@@ -2122,6 +2123,7 @@ public class RicezioneContenutiApplicativi {
 					}else{
 						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
 					}
+					detailsSet = true;
 					credenzialeTrasporto = esito.getCredential();
 					
 					if(credenzialeTrasporto!=null) {
@@ -2170,6 +2172,9 @@ public class RicezioneContenutiApplicativi {
 							+ tipoAutenticazione + "] fallito, " + e.getMessage(),e);
 				}
 				if (errore != null) {
+					if(!detailsSet) {
+						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
+					}
 					String descrizioneErrore = null;
 					try{
 						descrizioneErrore = errore.getDescrizione(protocolFactory);
@@ -2862,6 +2867,7 @@ public class RicezioneContenutiApplicativi {
 				Exception eAutorizzazione = null;
 				OpenSPCoop2Message errorMessageAutorizzazione = null;
 				String wwwAuthenticateErrorHeader = null;
+				boolean detailsSet = false;
 				try {						
 					EsitoAutorizzazionePortaDelegata esito = 
 							GestoreAutorizzazione.verificaAutorizzazionePortaDelegata(tipoAutorizzazione, datiInvocazione, pddContext, protocolFactory, requestMessage, logCore); 
@@ -2870,6 +2876,7 @@ public class RicezioneContenutiApplicativi {
 					}else{
 						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
 					}
+					detailsSet = true;
 					if (esito.isAutorizzato() == false) {
 						errore = esito.getErroreIntegrazione();
 						eAutorizzazione = esito.getEccezioneProcessamento();
@@ -2890,6 +2897,9 @@ public class RicezioneContenutiApplicativi {
 							+ tipoAutorizzazione + "] fallito, " + e.getMessage(),e);
 				}
 				if (errore != null) {
+					if(!detailsSet) {
+						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
+					}
 					String descrizioneErrore = null;
 					try{
 						descrizioneErrore = errore.getDescrizione(protocolFactory);
@@ -3664,6 +3674,7 @@ public class RicezioneContenutiApplicativi {
 				
 				ErroreIntegrazione errore = null;
 				Exception eAutorizzazione = null;
+				boolean detailsSet = false;
 				try {
 	//				if (RicezioneContenutiApplicativi.gestoriAutorizzazioneContenuto.containsKey(tipoAutorizzazioneContenuto) == false)
 	//					RicezioneContenutiApplicativi.aggiornaListaGestoreAutorizzazioneContenuto(
@@ -3692,6 +3703,7 @@ public class RicezioneContenutiApplicativi {
 							}else{
 								msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
 							}
+							detailsSet = true;
 							if (esito.isAutorizzato() == false) {
 								errore = esito.getErroreIntegrazione();
 								eAutorizzazione = esito.getEccezioneProcessamento();
@@ -3719,6 +3731,9 @@ public class RicezioneContenutiApplicativi {
 					logCore.error(msgErroreAutorizzazione,e);
 				}
 				if (errore != null) {
+					if(!detailsSet) {
+						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
+					}
 					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, errore.getDescrizione(protocolFactory));
 					msgDiag.logPersonalizzato("servizioApplicativoFruitore.contenuto.nonAutorizzato");
 					openspcoopstate.releaseResource();

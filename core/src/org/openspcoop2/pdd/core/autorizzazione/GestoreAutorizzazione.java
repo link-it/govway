@@ -29,7 +29,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Scanner;
 
 import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -66,6 +65,7 @@ import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
@@ -730,32 +730,8 @@ public class GestoreAutorizzazione {
 		String errorMessage = null;
     	if(tokenOptions!=null) {
     		
-    		Scanner scanner = new Scanner(tokenOptions);
-    		Properties properties = new Properties();
-			try {
-				while (scanner.hasNextLine()) {
-					String line = scanner.nextLine();
-					if(line==null || line.trim().equals("")) {
-						continue;
-					}
-					line = line.trim();
-					if(line.contains("=")) {
-						String key = line.split("=")[0];
-						key = key.trim();
-						int valueIndex = line.indexOf("=");
-						String value = "";
-						if(valueIndex<line.length()) {
-							value = line.substring(valueIndex+1);
-							value = value.trim();
-						}
-						properties.put(key, value);
-					}
-				}
-			}finally {
-				scanner.close();
-			}
-    		
-			if(properties.size()>0) {
+    		Properties properties = PropertiesUtilities.convertTextToProperties(tokenOptions);
+			if(properties!=null && properties.size()>0) {
 			
 	    		InformazioniToken informazioniTokenNormalizzate = null;
 	    		Object oInformazioniTokenNormalizzate = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
@@ -814,7 +790,7 @@ public class GestoreAutorizzazione {
 						}
 						expectedValue = expectedValue.trim();
 						
-						if(XACMLCostanti.AUTHZ_CLAIM_ANY_VALUE.equalsIgnoreCase(expectedValue)) {
+						if(CostantiAutorizzazione.AUTHZ_ANY_VALUE.equalsIgnoreCase(expectedValue)) {
 							
 							/** ANY VALUE */
 							
@@ -836,28 +812,28 @@ public class GestoreAutorizzazione {
 						}
 						else if(
 								(
-										expectedValue.toLowerCase().startsWith(XACMLCostanti.AUTHZ_CLAIM_REGEXP_MATCH_PREFIX.toLowerCase())
+										expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.toLowerCase())
 										||
-										expectedValue.toLowerCase().startsWith(XACMLCostanti.AUTHZ_CLAIM_REGEXP_FIND_PREFIX.toLowerCase())
+										expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.toLowerCase())
 								) 
 								&&
-								expectedValue.toLowerCase().endsWith(XACMLCostanti.AUTHZ_CLAIM_REGEXP_SUFFIX.toLowerCase())) {
+								expectedValue.toLowerCase().endsWith(CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.toLowerCase())) {
 							
 							/** REGULAR EXPRESSION MATCH/FIND */
 							
-							boolean match = expectedValue.toLowerCase().startsWith(XACMLCostanti.AUTHZ_CLAIM_REGEXP_MATCH_PREFIX.toLowerCase());
+							boolean match = expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.toLowerCase());
 							String regexpPattern = null;
 							if(match) {
-								if(expectedValue.length()<= (XACMLCostanti.AUTHZ_CLAIM_REGEXP_MATCH_PREFIX.length()+XACMLCostanti.AUTHZ_CLAIM_REGEXP_SUFFIX.length()) ) {
+								if(expectedValue.length()<= (CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.length()+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()) ) {
 									throw new Exception("Claim '"+key+"' configuration without expected regexp match");
 								}
-								regexpPattern = expectedValue.substring(XACMLCostanti.AUTHZ_CLAIM_REGEXP_MATCH_PREFIX.length(), (expectedValue.length()-XACMLCostanti.AUTHZ_CLAIM_REGEXP_SUFFIX.length()));
+								regexpPattern = expectedValue.substring(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.length(), (expectedValue.length()-CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()));
 							}
 							else {
-								if(expectedValue.length()<= (XACMLCostanti.AUTHZ_CLAIM_REGEXP_FIND_PREFIX.length()+XACMLCostanti.AUTHZ_CLAIM_REGEXP_SUFFIX.length()) ) {
+								if(expectedValue.length()<= (CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.length()+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()) ) {
 									throw new Exception("Claim '"+key+"' configuration without expected regexp find");
 								}
-								regexpPattern = expectedValue.substring(XACMLCostanti.AUTHZ_CLAIM_REGEXP_FIND_PREFIX.length(), (expectedValue.length()-XACMLCostanti.AUTHZ_CLAIM_REGEXP_SUFFIX.length()));
+								regexpPattern = expectedValue.substring(CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.length(), (expectedValue.length()-CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()));
 							}
 							regexpPattern = regexpPattern.trim();
 							log.debug("Verifico valore del claim '"+key+"' tramite espressione regolare (match:"+match+") '"+regexpPattern+"' ...");

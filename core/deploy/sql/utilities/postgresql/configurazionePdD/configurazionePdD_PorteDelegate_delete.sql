@@ -15,6 +15,8 @@ DELETE FROM pd_security_request;
 DELETE FROM pd_mtom_response;
 DELETE FROM pd_mtom_request;
 DELETE FROM pd_properties;
+DELETE FROM pd_authzc_properties;
+DELETE FROM pd_authz_properties;
 DELETE FROM pd_auth_properties;
 DELETE FROM porte_delegate_sa;
 DELETE FROM porte_delegate;

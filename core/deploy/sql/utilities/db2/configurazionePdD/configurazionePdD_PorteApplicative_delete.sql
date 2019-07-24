@@ -18,6 +18,8 @@ DELETE FROM pa_security_request;
 DELETE FROM pa_mtom_response;
 DELETE FROM pa_mtom_request;
 DELETE FROM pa_properties;
+DELETE FROM pa_authzc_properties;
+DELETE FROM pa_authz_properties;
 DELETE FROM pa_auth_properties;
 DELETE FROM porte_applicative_sa;
 DELETE FROM porte_applicative;

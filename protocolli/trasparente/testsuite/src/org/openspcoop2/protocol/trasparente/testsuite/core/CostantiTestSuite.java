@@ -515,7 +515,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_CERT1, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_CERT1);
 	
 	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteCert1 - serialNumberDifferente */
-	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_CERT1_SERIALNUMBERDIFFERENTE="EsempioSoggettoTrasparenteCert1_serialNumberDifferente";
+	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_CERT1_SERIALNUMBERDIFFERENTE="EsempioSoggettoTrasparenteCert1SerialNumberDifferente";
 	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteSsl */
 	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_CERT1_SERIALNUMBERDIFFERENTE=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TRASPARENTE_CERT1_SERIALNUMBERDIFFERENTE);
 	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteSsl */
@@ -531,7 +531,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_CERT2, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_CERT2);
 	
 	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteCert2 - serialNumberDifferente */
-	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_CERT2_SERIALNUMBERDIFFERENTE="EsempioSoggettoTrasparenteCert2_serialNumberDifferente";
+	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_CERT2_SERIALNUMBERDIFFERENTE="EsempioSoggettoTrasparenteCert2SerialNumberDifferente";
 	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteSsl */
 	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_CERT2_SERIALNUMBERDIFFERENTE=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TRASPARENTE_CERT2_SERIALNUMBERDIFFERENTE);
 	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteSsl */
@@ -539,7 +539,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_CERT2_SERIALNUMBERDIFFERENTE, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_CERT2_SERIALNUMBERDIFFERENTE);
 	
 	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteCert2 - serialNumberDifferente */
-	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_CERT2_MULTIPLEOU_SERIALNUMBERDIFFERENTE="EsempioSoggettoTrasparenteCert2_multipleOU_serialNumberDifferente";
+	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_CERT2_MULTIPLEOU_SERIALNUMBERDIFFERENTE="EsempioSoggettoTrasparenteCert2MultipleOUSerialNumberDifferente";
 	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteSsl */
 	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_CERT2_MULTIPLEOU_SERIALNUMBERDIFFERENTE=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TRASPARENTE_CERT2_MULTIPLEOU_SERIALNUMBERDIFFERENTE);
 	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteSsl */

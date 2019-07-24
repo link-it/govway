@@ -47,6 +47,7 @@ import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
@@ -68,6 +69,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -366,6 +368,26 @@ public final class PorteApplicativeChange extends Action {
 			String autorizzazioneRuoliTipologia = null;
 			String ruoloMatch = null;
 			String autorizzazioneContenuti = pa.getAutorizzazioneContenuto();
+			String autorizzazioneContenutiProperties = null;
+			String autorizzazioneContenutiStato = null;
+			
+			if(autorizzazioneContenuti == null) {
+				autorizzazioneContenutiStato = StatoFunzionalita.DISABILITATO.getValue();
+			} else if(autorizzazioneContenuti.equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN)) {
+				autorizzazioneContenutiStato = StatoFunzionalita.ABILITATO.getValue();
+				List<Proprieta> proprietaAutorizzazioneContenutoList = pa.getProprietaAutorizzazioneContenutoList();
+				StringBuilder sb = new StringBuilder();
+				for (Proprieta proprieta : proprietaAutorizzazioneContenutoList) {
+					if(sb.length() >0)
+						sb.append("\n");
+					
+					sb.append(proprieta.getNome()).append("=").append(proprieta.getValore()); 
+				}						
+				
+				autorizzazioneContenutiProperties = sb.toString();
+			} else { // custom
+				autorizzazioneContenutiStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM;
+			}
 			
 			if (pa.getAutorizzazione() != null &&
 					!TipoAutorizzazione.getAllValues().contains(pa.getAutorizzazione())) {
@@ -950,7 +972,7 @@ public final class PorteApplicativeChange extends Action {
 						nomePorta, descr, soggvirt, soggettiList, soggettiListLabel, servizio,
 						serviziList, serviziListLabel, azione, azioniList, azioniListLabel, stateless, ricsim, ricasim, idsogg, 
 						idPorta, statoValidazione, tipoValidazione, gestBody, gestManifest,integrazione,
-						numCorrApp,scadcorr,autorizzazioneContenuti,protocollo,
+						numCorrApp,scadcorr,autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, protocollo,
 						numSA,numRuoli,ruoloMatch,
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,numProprProt,applicaMTOM,
 						behaviour,servizioApplicativoList,servizioApplicativo,idSa,
@@ -1121,7 +1143,7 @@ public final class PorteApplicativeChange extends Action {
 						nomePorta, descr, soggvirt, soggettiList, soggettiListLabel, servizio, 
 						serviziList, serviziListLabel, azione, azioniList, azioniListLabel,  stateless, ricsim,
 						ricasim, idsogg, idPorta, statoValidazione, tipoValidazione, gestBody, gestManifest,integrazione,
-						numCorrApp,scadcorr,autorizzazioneContenuti,protocollo,
+						numCorrApp,scadcorr,autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,protocollo,
 						numSA,numRuoli,ruoloMatch,
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,numProprProt,applicaMTOM,
 						behaviour,servizioApplicativoList,servizioApplicativo,idSa,

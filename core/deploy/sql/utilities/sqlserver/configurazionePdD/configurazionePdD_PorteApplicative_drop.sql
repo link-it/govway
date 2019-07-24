@@ -19,6 +19,8 @@
 -- DROP INDEX INDEX_PA_MTOMTRES ON pa_mtom_response ;
 -- DROP INDEX INDEX_PA_MTOMTREQ ON pa_mtom_request ;
 -- DROP INDEX INDEX_PA_PROP ON pa_properties ;
+-- DROP INDEX INDEX_PA_AUTHZC_PROP ON pa_authzc_properties ;
+-- DROP INDEX INDEX_PA_AUTHZ_PROP ON pa_authz_properties ;
 -- DROP INDEX INDEX_PA_AUTH_PROP ON pa_auth_properties ;
 -- DROP INDEX INDEX_PA_SA ON porte_applicative_sa ;
 DROP TABLE pa_transform_risp_hdr;
@@ -41,6 +43,8 @@ DROP TABLE pa_security_request;
 DROP TABLE pa_mtom_response;
 DROP TABLE pa_mtom_request;
 DROP TABLE pa_properties;
+DROP TABLE pa_authzc_properties;
+DROP TABLE pa_authz_properties;
 DROP TABLE pa_auth_properties;
 DROP TABLE porte_applicative_sa;
 DROP TABLE porte_applicative;

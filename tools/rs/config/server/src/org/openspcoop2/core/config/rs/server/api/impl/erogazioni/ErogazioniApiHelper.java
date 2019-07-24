@@ -214,6 +214,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
+import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.protocol.basic.Utilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.information_missing.constants.StatoType;
@@ -3097,7 +3098,28 @@ public class ErogazioniApiHelper {
 		
 		TipoAutenticazionePrincipal	autenticazionePrincipal = env.pdCore.getTipoAutenticazionePrincipal(newPd.getProprietaAutenticazioneList());
 		List<String> autenticazioneParametroList = env.pdCore.getParametroAutenticazione(newPd.getAutenticazione(), newPd.getProprietaAutenticazioneList());
-        		
+        	
+		String autorizzazioneContenutiStato = null;
+		String autorizzazioneContenuti = newPd.getAutorizzazioneContenuto();
+		String autorizzazioneContenutiProperties = null;
+		if(autorizzazioneContenuti == null) {
+			autorizzazioneContenutiStato = StatoFunzionalita.DISABILITATO.getValue();
+		} else if(autorizzazioneContenuti.equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN)) {
+			autorizzazioneContenutiStato = StatoFunzionalita.ABILITATO.getValue();
+			List<Proprieta> proprietaAutorizzazioneContenutoList = newPd.getProprietaAutorizzazioneContenutoList();
+			StringBuilder sb = new StringBuilder();
+			for (Proprieta proprieta : proprietaAutorizzazioneContenutoList) {
+				if(sb.length() >0)
+					sb.append("\n");
+				
+				sb.append(proprieta.getNome()).append("=").append(proprieta.getValore()); 
+			}						
+			
+			autorizzazioneContenutiProperties = sb.toString();
+		} else { // custom
+			autorizzazioneContenutiStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM;
+		}
+		
 		return env.paHelper.controlloAccessiCheck(
 				TipoOperazione.OTHER, 
 				newPd.getAutenticazione(),				// Autenticazione
@@ -3126,7 +3148,7 @@ public class ErogazioniApiHelper {
 				evalnull( () -> ServletUtils.boolToCheckBoxStatus( autorizzazioneScope ) ),
 				evalnull( () -> newPd.getScope().getMatch().toString() ),
 				allegatoXacmlPolicy,
-				newPd.getAutorizzazioneContenuto(),
+				autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
 				env.tipo_protocollo);
 	}
 
@@ -3158,6 +3180,27 @@ public class ErogazioniApiHelper {
 		TipoAutenticazionePrincipal	autenticazionePrincipal = env.paCore.getTipoAutenticazionePrincipal(newPa.getProprietaAutenticazioneList());
 		List<String> autenticazioneParametroList = env.paCore.getParametroAutenticazione(newPa.getAutenticazione(), newPa.getProprietaAutenticazioneList());
 		
+		String autorizzazioneContenutiStato = null;
+		String autorizzazioneContenuti = newPa.getAutorizzazioneContenuto();
+		String autorizzazioneContenutiProperties = null;
+		if(autorizzazioneContenuti == null) {
+			autorizzazioneContenutiStato = StatoFunzionalita.DISABILITATO.getValue();
+		} else if(autorizzazioneContenuti.equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN)) {
+			autorizzazioneContenutiStato = StatoFunzionalita.ABILITATO.getValue();
+			List<Proprieta> proprietaAutorizzazioneContenutoList = newPa.getProprietaAutorizzazioneContenutoList();
+			StringBuilder sb = new StringBuilder();
+			for (Proprieta proprieta : proprietaAutorizzazioneContenutoList) {
+				if(sb.length() >0)
+					sb.append("\n");
+				
+				sb.append(proprieta.getNome()).append("=").append(proprieta.getValore()); 
+			}						
+			
+			autorizzazioneContenutiProperties = sb.toString();
+		} else { // custom
+			autorizzazioneContenutiStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM;
+		}
+		
 		return env.paHelper.controlloAccessiCheck(
 				TipoOperazione.OTHER, 
 				newPa.getAutenticazione(),				// Autenticazione
@@ -3186,7 +3229,7 @@ public class ErogazioniApiHelper {
 				evalnull( () -> ServletUtils.boolToCheckBoxStatus( autorizzazioneScope ) ),
 				evalnull( () -> newPa.getScope().getMatch().toString() ),
 				allegatoXacmlPolicy,
-				newPa.getAutorizzazioneContenuto(),
+				autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
 				env.tipo_protocollo);
 		
 	}

@@ -88,6 +88,8 @@ public final class CostantiDB {
     public static final String PORTE_APPLICATIVE = "porte_applicative";
     public static final String PORTE_APPLICATIVE_SA = "porte_applicative_sa";
     public static final String PORTE_APPLICATIVE_AUTENTICAZIONE_PROP = "pa_auth_properties";
+    public static final String PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP = "pa_authz_properties";
+    public static final String PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP = "pa_authzc_properties";
     public static final String PORTE_APPLICATIVE_PROP = "pa_properties";
     public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST = "pa_security_request";
     public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE = "pa_security_response";
@@ -117,6 +119,8 @@ public final class CostantiDB {
     public static final String PORTE_DELEGATE = "porte_delegate";
     public static final String PORTE_DELEGATE_SA = "porte_delegate_sa";
     public static final String PORTE_DELEGATE_AUTENTICAZIONE_PROP = "pd_auth_properties";
+    public static final String PORTE_DELEGATE_AUTORIZZAZIONE_PROP = "pd_authz_properties";
+    public static final String PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROP = "pd_authzc_properties";
     public static final String PORTE_DELEGATE_PROP = "pd_properties";
     public static final String PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST = "pd_security_request";
     public static final String PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE = "pd_security_response";

@@ -22,7 +22,9 @@
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,12 +51,21 @@ import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -90,7 +101,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
-		
+
 		boolean isPortaDelegata = false;
 
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
@@ -109,7 +120,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 			String idAsps = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
 			if(idAsps == null) 
 				idAsps = "";
-			
+
 			String autenticazione = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE );
 			String autenticazioneOpzionale = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE );
 			String autenticazionePrincipalTipo = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO);
@@ -118,13 +129,15 @@ public class PorteApplicativeControlloAccessi extends Action {
 			String autenticazioneCustom = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM );
 			String autorizzazione = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE);
 			String autorizzazioneCustom = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
-			
+
 			String autorizzazioneAutenticati = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE);
 			String autorizzazioneRuoli = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
 			String autorizzazioneRuoliTipologia = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
 			String ruoloMatch = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
-			
+
 			String autorizzazioneContenuti = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI);
+			String autorizzazioneContenutiStato = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_STATO);
+			String autorizzazioneContenutiProperties = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROPERTIES);
 
 			String applicaModificaS = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_APPLICA_MODIFICA);
 			boolean applicaModifica = ServletUtils.isCheckBoxEnabled(applicaModificaS);
@@ -136,20 +149,20 @@ public class PorteApplicativeControlloAccessi extends Action {
 			String gestioneTokenIntrospection = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
 			String gestioneTokenUserInfo = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 			String gestioneTokenTokenForward = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
-			
+
 			String autenticazioneTokenIssuer = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_ISSUER);
 			String autenticazioneTokenClientId = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_CLIENT_ID);
 			String autenticazioneTokenSubject = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_SUBJECT);
 			String autenticazioneTokenUsername = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME);
 			String autenticazioneTokenEMail = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL);
-			
+
 			String autorizzazione_token = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
 			String autorizzazione_tokenOptions = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
 			String autorizzazioneScope = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 			String autorizzazioneScopeMatch = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
-			
+
 			BinaryParameter allegatoXacmlPolicy = porteApplicativeHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
-			
+
 			String idTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!porteApplicativeHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
 				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
@@ -161,17 +174,19 @@ public class PorteApplicativeControlloAccessi extends Action {
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 			ConfigurazioneCore confCore = new ConfigurazioneCore(porteApplicativeCore);
+			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
 
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String idporta = pa.getNome();
-			
+
 			List<String> ruoli = new ArrayList<>();
 			if(pa!=null && pa.getRuoli()!=null && pa.getRuoli().sizeRuoloList()>0){
 				for (int i = 0; i < pa.getRuoli().sizeRuoloList(); i++) {
 					ruoli.add(pa.getRuoli().getRuolo(i).getNome());
 				}
 			}
-			
+
 			int numRuoli = 0;
 			if(pa.getRuoli()!=null){
 				numRuoli = pa.getRuoli().sizeRuoloList();
@@ -180,11 +195,33 @@ public class PorteApplicativeControlloAccessi extends Action {
 			if(pa.getScope()!=null){
 				numScope = pa.getScope().sizeScopeList();
 			}
+
+			int numAutorizzazioneCustomPropertiesList = pa.sizeProprietaAutorizzazioneList();
+			int numAutorizzazioneContenutiCustomPropertiesList = pa.sizeProprietaAutorizzazioneContenutoList();
+			String oldAutorizzazioneContenuto = pa.getAutorizzazioneContenuto() ;
+			String oldAutorizzazioneContenutoStato = StatoFunzionalita.DISABILITATO.getValue();
+					
+			boolean old_autorizzazione_contenuti_custom = false;
+			if(oldAutorizzazioneContenuto != null) {
+				if(oldAutorizzazioneContenuto.equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN)) {
+					oldAutorizzazioneContenutoStato = StatoFunzionalita.ABILITATO.getValue();
+				} else { // custom
+					old_autorizzazione_contenuti_custom = true;
+					oldAutorizzazioneContenutoStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM;
+				}
+			}
+			
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
+					pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(), 
+					pa.getServizio().getVersione());
+			AccordoServizioParteSpecifica asps = apsCore.getServizio(idServizio,false);
+			AccordoServizioParteComuneSintetico aspc = apcCore.getAccordoServizioSintetico(porteApplicativeHelper.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+			ServiceBinding serviceBinding = porteApplicativeCore.toMessageServiceBinding(aspc.getServiceBinding()); 
 			
 			Search searchForCount = new Search(true,1);
 			porteApplicativeCore.porteAppSoggettoList(idInt, searchForCount);
 			int sizeSoggettiPA = searchForCount.getNumEntries(Liste.PORTE_APPLICATIVE_SOGGETTO);
-			
+
 			Search searchForCountSAAutorizzati = new Search(true,1);
 			porteApplicativeCore.porteAppServiziApplicativiAutorizzatiList(idInt, searchForCountSAAutorizzati);
 			int numErogazioneApplicativiAutenticati = searchForCountSAAutorizzati.getNumEntries(Liste.PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO);
@@ -199,12 +236,12 @@ public class PorteApplicativeControlloAccessi extends Action {
 				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggInt);
 				tipoSoggettoProprietario = soggetto.getTipo();
 			}
-			
+
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoProprietario);
 			boolean isSupportatoAutenticazione = soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo);
-			
+
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
-			
+
 			String labelPerPorta = null;
 			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
 				labelPerPorta = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
@@ -215,20 +252,20 @@ public class PorteApplicativeControlloAccessi extends Action {
 			else {
 				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI_CONFIG_DI+idporta;
 			}
-			
+
 			lstParam.add(new Parameter(labelPerPorta,  null));
-			
+
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);
-			
-			
+
+
 			Parameter[] urlParmsAutorizzazioneAutenticati = { 
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID,id)	,
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg),
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps) };
 			Parameter urlAutorizzazioneAutenticatiParam= new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_LIST, urlParmsAutorizzazioneAutenticati);
 			String urlAutorizzazioneAutenticati = urlAutorizzazioneAutenticatiParam.getValue();
-			
+
 			Parameter[] urlParmsAutorizzazioneErogazioneApplicativiAutenticati = { 
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID,id)	,
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg),
@@ -242,29 +279,43 @@ public class PorteApplicativeControlloAccessi extends Action {
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps) };
 			Parameter urlAutorizzazioneRuoliParam = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_LIST , urlParmsAutorizzazioneRuoli);
 			String urlAutorizzazioneRuoli = urlAutorizzazioneRuoliParam.getValue();
-			
+
 			Parameter[] urlParmsAutorizzazioneScope = { 
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID,id)	,
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg),
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps) };
 			Parameter urlAutorizzazioneScopeParam = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SCOPE_LIST , urlParmsAutorizzazioneScope); 
 			String urlAutorizzazioneScope = urlAutorizzazioneScopeParam.getValue();
+
+			Parameter[] urlParmsAutorizzazioneCustomProperties = { 
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID,id)	,
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg),
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps) };
+			Parameter urlAutorizzazioneCustomPropertiesParam = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CUSTOM_PROPERTIES_LIST , urlParmsAutorizzazioneCustomProperties); 
+			String urlAutorizzazioneCustomProperties = urlAutorizzazioneCustomPropertiesParam.getValue();
 			
+			Parameter[] urlParmsAutorizzazioneContenutiCustomProperties = { 
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID,id)	,
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg),
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps) };
+			Parameter urlAutorizzazioneContenutiCustomPropertiesParam = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES_LIST , urlParmsAutorizzazioneContenutiCustomProperties); 
+			String urlAutorizzazioneContenutiCustomPropertiesList = urlAutorizzazioneContenutiCustomPropertiesParam.getValue();
+
 			String servletChiamante = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI;
-			
+
 			List<GenericProperties> gestorePolicyTokenList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
 			String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
 			String [] policyValues = new String[gestorePolicyTokenList.size() + 1];
-			
+
 			policyLabels[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
 			policyValues[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
-			
+
 			for (int i = 0; i < gestorePolicyTokenList.size(); i++) {
-			GenericProperties genericProperties = gestorePolicyTokenList.get(i);
+				GenericProperties genericProperties = gestorePolicyTokenList.get(i);
 				policyLabels[(i+1)] = genericProperties.getNome();
 				policyValues[(i+1)] = genericProperties.getNome();
 			}
-			
+
 			// La XACML Policy, se definita nella porta delegata può solo essere cambiata, non annullata.
 			if(allegatoXacmlPolicy!=null && allegatoXacmlPolicy.getValue()==null) {
 				if(pa.getXacmlPolicy()!=null && !"".equals(pa.getXacmlPolicy())) {
@@ -272,6 +323,20 @@ public class PorteApplicativeControlloAccessi extends Action {
 				}
 			}
 			
+			
+			// postback
+			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
+			if(postBackElementName != null) {
+				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_STATO)) {
+					if(autorizzazioneContenutiStato.equals(StatoFunzionalita.DISABILITATO.getValue()) || autorizzazioneContenutiStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM)) {
+						autorizzazioneContenuti = "";
+					}
+					if(autorizzazioneContenutiStato.equals(StatoFunzionalita.ABILITATO.getValue())) {
+						autorizzazioneContenuti = CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN;
+					}
+				}
+			}
+
 			if(	porteApplicativeHelper.isEditModeInProgress() && !applicaModifica){
 
 				if (autenticazione == null) {
@@ -281,7 +346,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 						autenticazioneCustom = autenticazione;
 						autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
 					}
-					
+
 					autenticazionePrincipal = porteApplicativeCore.getTipoAutenticazionePrincipal(pa.getProprietaAutenticazioneList());
 					autenticazioneParametroList = porteApplicativeCore.getParametroAutenticazione(autenticazione, pa.getProprietaAutenticazioneList());
 				}
@@ -308,17 +373,35 @@ public class PorteApplicativeControlloAccessi extends Action {
 						autorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(pa.getAutorizzazione()).getValue();
 					}
 				}
-				
+
 				if (ruoloMatch == null) {
 					if(pa.getRuoli()!=null && pa.getRuoli().getMatch()!=null){
 						ruoloMatch = pa.getRuoli().getMatch().getValue();
 					}
 				}
-				
-				if(autorizzazioneContenuti==null){
+
+				if(autorizzazioneContenutiStato==null){
 					autorizzazioneContenuti = pa.getAutorizzazioneContenuto();
+					
+					if(autorizzazioneContenuti == null) {
+						autorizzazioneContenutiStato = StatoFunzionalita.DISABILITATO.getValue();
+					} else if(autorizzazioneContenuti.equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN)) {
+						autorizzazioneContenutiStato = StatoFunzionalita.ABILITATO.getValue();
+						List<Proprieta> proprietaAutorizzazioneContenutoList = pa.getProprietaAutorizzazioneContenutoList();
+						StringBuilder sb = new StringBuilder();
+						for (Proprieta proprieta : proprietaAutorizzazioneContenutoList) {
+							if(sb.length() >0)
+								sb.append("\n");
+							
+							sb.append(proprieta.getNome()).append("=").append(proprieta.getValore()); 
+						}						
+						
+						autorizzazioneContenutiProperties = sb.toString();
+					} else { // custom
+						autorizzazioneContenutiStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM;
+					}
 				}
-				
+
 				if(gestioneToken == null) {
 					if(pa.getGestioneToken() != null) {
 						gestioneTokenPolicy = pa.getGestioneToken().getPolicy();
@@ -328,42 +411,42 @@ public class PorteApplicativeControlloAccessi extends Action {
 						} else {
 							gestioneToken = StatoFunzionalita.ABILITATO.getValue();
 						}
-						
+
 						StatoFunzionalita tokenOpzionale = pa.getGestioneToken().getTokenOpzionale();
 						if(tokenOpzionale == null) {
 							gestioneTokenOpzionale = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_OPZIONALE;
 						}else { 
 							gestioneTokenOpzionale = tokenOpzionale.getValue();
 						}
-						
+
 						StatoFunzionalitaConWarning validazione = pa.getGestioneToken().getValidazione();
 						if(validazione == null) {
 							gestioneTokenValidazioneInput = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_VALIDAZIONE_INPUT;
 						}else { 
 							gestioneTokenValidazioneInput = validazione.getValue();
 						}
-						
+
 						StatoFunzionalitaConWarning introspection = pa.getGestioneToken().getIntrospection();
 						if(introspection == null) {
 							gestioneTokenIntrospection = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_INTROSPECTION;
 						}else { 
 							gestioneTokenIntrospection = introspection.getValue();
 						}
-						
+
 						StatoFunzionalitaConWarning userinfo = pa.getGestioneToken().getUserInfo();
 						if(userinfo == null) {
 							gestioneTokenUserInfo = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_USER_INFO;
 						}else { 
 							gestioneTokenUserInfo = userinfo.getValue();
 						}
-						
+
 						StatoFunzionalita tokenForward = pa.getGestioneToken().getForward();
 						if(tokenForward == null) {
 							gestioneTokenTokenForward = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TOKEN_FORWARD;
 						}else { 
 							gestioneTokenTokenForward = tokenForward.getValue();
 						}
-						
+
 						autorizzazione_tokenOptions = pa.getGestioneToken().getOptions();
 						if((autorizzazione_tokenOptions!=null && !"".equals(autorizzazione_tokenOptions))) {
 							autorizzazione_token = Costanti.CHECK_BOX_ENABLED;
@@ -371,44 +454,44 @@ public class PorteApplicativeControlloAccessi extends Action {
 						else {
 							autorizzazione_token = Costanti.CHECK_BOX_DISABLED;
 						}
-						
+
 						if(pa.getGestioneToken().getAutenticazione() != null) {
-							
+
 							StatoFunzionalita issuer = pa.getGestioneToken().getAutenticazione().getIssuer();
 							if(issuer == null) {
 								autenticazioneTokenIssuer = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_ISSUER;
 							}else { 
 								autenticazioneTokenIssuer = issuer.getValue();
 							}
-							
+
 							StatoFunzionalita clientId = pa.getGestioneToken().getAutenticazione().getClientId();
 							if(clientId == null) {
 								autenticazioneTokenClientId = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_CLIENT_ID;
 							}else { 
 								autenticazioneTokenClientId = clientId.getValue();
 							}
-							
+
 							StatoFunzionalita subject = pa.getGestioneToken().getAutenticazione().getSubject();
 							if(subject == null) {
 								autenticazioneTokenSubject = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_SUBJECT;
 							}else { 
 								autenticazioneTokenSubject = subject.getValue();
 							}
-							
+
 							StatoFunzionalita username = pa.getGestioneToken().getAutenticazione().getUsername();
 							if(username == null) {
 								autenticazioneTokenUsername = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_USERNAME;
 							}else { 
 								autenticazioneTokenUsername = username.getValue();
 							}
-							
+
 							StatoFunzionalita mailTmp = pa.getGestioneToken().getAutenticazione().getEmail();
 							if(mailTmp == null) {
 								autenticazioneTokenEMail = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_EMAIL;
 							}else { 
 								autenticazioneTokenEMail = mailTmp.getValue();
 							}
-							
+
 						}
 						else {
 							autenticazioneTokenIssuer = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_ISSUER;
@@ -422,12 +505,12 @@ public class PorteApplicativeControlloAccessi extends Action {
 						gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
 						gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
 						gestioneTokenOpzionale = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_OPZIONALE;
-						
+
 						gestioneTokenValidazioneInput = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_VALIDAZIONE_INPUT;
 						gestioneTokenIntrospection = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_INTROSPECTION;
 						gestioneTokenUserInfo = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_USER_INFO;
 						gestioneTokenTokenForward = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TOKEN_FORWARD;
-						
+
 						autenticazioneTokenIssuer = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_ISSUER;
 						autenticazioneTokenClientId = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_CLIENT_ID;
 						autenticazioneTokenSubject = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_SUBJECT;
@@ -443,24 +526,24 @@ public class PorteApplicativeControlloAccessi extends Action {
 						autorizzazioneScope = "";
 					}
 				}
-				
+
 				if(autorizzazioneScopeMatch == null) {
 					if(pa.getScope()!=null && pa.getScope().getMatch()!=null){
 						autorizzazioneScopeMatch = pa.getScope().getMatch().getValue();
 					}
 				}
-				
+
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-				
+
 				porteApplicativeHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, 
 						gestioneTokenPolicy, gestioneTokenOpzionale, 
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa,false);
 
 				porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,false,
 						gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail);
-				
+
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 				porteApplicativeHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,pa,
 						autenticazione, autorizzazione, autorizzazioneCustom, 
@@ -469,10 +552,12 @@ public class PorteApplicativeControlloAccessi extends Action {
 						autorizzazioneRuoliTipologia, ruoloMatch,
 						confPers, isSupportatoAutenticazione, contaListe, false, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
 						gestioneToken, gestioneTokenPolicy, autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
-						urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati);
-				
-				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
-				
+						urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati,
+						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList);
+
+				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
+						old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList); 
+
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 
 				pd.setDati(dati);
@@ -491,21 +576,21 @@ public class PorteApplicativeControlloAccessi extends Action {
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 					autorizzazione_token,autorizzazione_tokenOptions,
 					autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
-					autorizzazioneContenuti,
+					autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
 					protocollo);
-					
+
 			if (!isOk) {
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-				
+
 				porteApplicativeHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, 
 						gestioneTokenPolicy, gestioneTokenOpzionale, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa,false);
 
 				porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,false,
 						gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail);
-				
+
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 				porteApplicativeHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,pa,
 						autenticazione, autorizzazione, autorizzazioneCustom, 
@@ -515,10 +600,12 @@ public class PorteApplicativeControlloAccessi extends Action {
 						confPers, isSupportatoAutenticazione, contaListe, false, false,
 						autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
 						gestioneToken, gestioneTokenPolicy, autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
-						urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati);
-				
-				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
-				
+						urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati,
+						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList);
+
+				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
+						old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList); 
+
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 
 				pd.setDati(dati);
@@ -530,7 +617,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 						ForwardParams.OTHER(""));
 			}
 
-			
+
 			if (autenticazione == null || !autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM))
 				pa.setAutenticazione(autenticazione);
 			else
@@ -547,23 +634,25 @@ public class PorteApplicativeControlloAccessi extends Action {
 			if(proprietaAutenticazione!=null && !proprietaAutenticazione.isEmpty()) {
 				pa.getProprietaAutenticazioneList().addAll(proprietaAutenticazione);
 			}
-			
-			if (autorizzazione == null || !autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM))
+
+			if (autorizzazione == null || !autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM)) {
 				pa.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(autorizzazione, 
 						ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati), 
 						ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli),
 						ServletUtils.isCheckBoxEnabled(autorizzazioneScope),
 						autorizzazione_tokenOptions,
 						RuoloTipologia.toEnumConstant(autorizzazioneRuoliTipologia)));
-			else
+				pa.getProprietaAutorizzazioneList().clear();
+			}else {
 				pa.setAutorizzazione(autorizzazioneCustom);
-			
+			}
+
 			if(autorizzazione != null && autorizzazione.equals(AutorizzazioneUtilities.STATO_XACML_POLICY) && allegatoXacmlPolicy.getValue() != null) {
 				pa.setXacmlPolicy(new String(allegatoXacmlPolicy.getValue()));
 			} else {
 				pa.setXacmlPolicy(null);
 			}
-			
+
 			if(ruoloMatch!=null && !"".equals(ruoloMatch)){
 				RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant(ruoloMatch);
 				if(tipoRuoloMatch!=null){
@@ -573,11 +662,11 @@ public class PorteApplicativeControlloAccessi extends Action {
 					pa.getRuoli().setMatch(tipoRuoloMatch);
 				}
 			}
-			
+
 			if(ServletUtils.isCheckBoxEnabled(autorizzazioneScope )) {
 				if(pa.getScope() == null)
 					pa.setScope(new AutorizzazioneScope());
-				
+
 				pa.getScope().setStato(StatoFunzionalita.ABILITATO); 
 			}
 			else {
@@ -592,12 +681,33 @@ public class PorteApplicativeControlloAccessi extends Action {
 					pa.getScope().setMatch(scopeTipoMatch);
 				}
 			}
-			
-			pa.setAutorizzazioneContenuto(autorizzazioneContenuti);
-			
+
+			if(autorizzazioneContenutiStato.equals(StatoFunzionalita.DISABILITATO.getValue())) {
+				pa.setAutorizzazioneContenuto(null);
+				pa.getProprietaAutorizzazioneContenutoList().clear();
+			} else if(autorizzazioneContenutiStato.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				pa.setAutorizzazioneContenuto(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN);
+				pa.getProprietaAutorizzazioneContenutoList().clear();
+				Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(autorizzazioneContenutiProperties);
+				
+				Enumeration<Object> keys = convertTextToProperties.keys();
+				while (keys.hasMoreElements()) {
+					String nome = (String) keys.nextElement();
+					String valore = convertTextToProperties.getProperty(nome);
+					Proprieta proprietaAutorizzazioneContenuto = new Proprieta();
+					proprietaAutorizzazioneContenuto.setNome(nome);
+					proprietaAutorizzazioneContenuto.setValore(valore);
+					pa.addProprietaAutorizzazioneContenuto(proprietaAutorizzazioneContenuto);
+				}
+			} else {
+				pa.setAutorizzazioneContenuto(autorizzazioneContenuti);
+				if(!autorizzazioneContenutiStato.equals(oldAutorizzazioneContenutoStato))
+					pa.getProprietaAutorizzazioneContenutoList().clear();
+			}
+
 			if(pa.getGestioneToken() == null)
 				pa.setGestioneToken(new GestioneToken());
-			
+
 			if(gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) {
 				pa.getGestioneToken().setPolicy(gestioneTokenPolicy);
 				if(ServletUtils.isCheckBoxEnabled(gestioneTokenOpzionale)) {
@@ -631,31 +741,35 @@ public class PorteApplicativeControlloAccessi extends Action {
 					pa.getGestioneToken().setAutenticazione(null);
 				}
 			}
-			
+
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
-						
+
 			// cancello i file temporanei
 			porteApplicativeHelper.deleteBinaryParameters(allegatoXacmlPolicy);
-			
+
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();
-			
+
 			pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			idporta = pa.getNome();
-			
+
 			ruoli = new ArrayList<>();
 			if(pa!=null && pa.getRuoli()!=null && pa.getRuoli().sizeRuoloList()>0){
 				for (int i = 0; i < pa.getRuoli().sizeRuoloList(); i++) {
 					ruoli.add(pa.getRuoli().getRuolo(i).getNome());
 				}
 			}
-			
+
 			numRuoli = 0;
 			if(pa.getRuoli()!=null){
 				numRuoli = pa.getRuoli().sizeRuoloList();
 			}
+
+			numAutorizzazioneCustomPropertiesList = pa.sizeProprietaAutorizzazioneList();
+			numAutorizzazioneContenutiCustomPropertiesList = pa.sizeProprietaAutorizzazioneContenutoList();
+			old_autorizzazione_contenuti_custom = pa.getAutorizzazioneContenuto() != null && !pa.getAutorizzazioneContenuto().equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN);
 			
 			if (autenticazione == null) {
 				autenticazione = pa.getAutenticazione();
@@ -664,7 +778,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 					autenticazioneCustom = autenticazione;
 					autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
 				}
-				
+
 				autenticazionePrincipal = porteApplicativeCore.getTipoAutenticazionePrincipal(pa.getProprietaAutenticazioneList());
 				autenticazioneParametroList = porteApplicativeCore.getParametroAutenticazione(autenticazione, pa.getProprietaAutenticazioneList());
 			}
@@ -691,17 +805,33 @@ public class PorteApplicativeControlloAccessi extends Action {
 					autorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(pa.getAutorizzazione()).getValue();
 				}
 			}
-			
+
 			if (ruoloMatch == null) {
 				if(pa.getRuoli()!=null && pa.getRuoli().getMatch()!=null){
 					ruoloMatch = pa.getRuoli().getMatch().getValue();
 				}
 			}
+
+			autorizzazioneContenuti = pa.getAutorizzazioneContenuto();
 			
-			if(autorizzazioneContenuti==null){
-				autorizzazioneContenuti = pa.getAutorizzazioneContenuto();
+			if(autorizzazioneContenuti == null) {
+				autorizzazioneContenutiStato = StatoFunzionalita.DISABILITATO.getValue();
+			} else if(autorizzazioneContenuti.equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN)) {
+				autorizzazioneContenutiStato = StatoFunzionalita.ABILITATO.getValue();
+				List<Proprieta> proprietaAutorizzazioneContenutoList = pa.getProprietaAutorizzazioneContenutoList();
+				StringBuilder sb = new StringBuilder();
+				for (Proprieta proprieta : proprietaAutorizzazioneContenutoList) {
+					if(sb.length() >0)
+						sb.append("\n");
+					
+					sb.append(proprieta.getNome()).append("=").append(proprieta.getValore()); 
+				}						
+				
+				autorizzazioneContenutiProperties = sb.toString();
+			} else { // custom
+				autorizzazioneContenutiStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM;
 			}
-			
+
 			if(pa.getGestioneToken() != null) {
 				gestioneTokenPolicy = pa.getGestioneToken().getPolicy();
 				if(gestioneTokenPolicy == null) {
@@ -710,81 +840,81 @@ public class PorteApplicativeControlloAccessi extends Action {
 				} else {
 					gestioneToken = StatoFunzionalita.ABILITATO.getValue();
 				}
-				
+
 				StatoFunzionalita tokenOpzionale = pa.getGestioneToken().getTokenOpzionale();
 				if(tokenOpzionale == null) {
 					gestioneTokenOpzionale = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_OPZIONALE;
 				}else { 
 					gestioneTokenOpzionale = tokenOpzionale.getValue();
 				}
-				
+
 				StatoFunzionalitaConWarning validazione = pa.getGestioneToken().getValidazione();
 				if(validazione == null) {
 					gestioneTokenValidazioneInput = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_VALIDAZIONE_INPUT;
 				}else { 
 					gestioneTokenValidazioneInput = validazione.getValue();
 				}
-				
+
 				StatoFunzionalitaConWarning introspection = pa.getGestioneToken().getIntrospection();
 				if(introspection == null) {
 					gestioneTokenIntrospection = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_INTROSPECTION;
 				}else { 
 					gestioneTokenIntrospection = introspection.getValue();
 				}
-				
+
 				StatoFunzionalitaConWarning userinfo = pa.getGestioneToken().getUserInfo();
 				if(userinfo == null) {
 					gestioneTokenUserInfo = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_USER_INFO;
 				}else { 
 					gestioneTokenUserInfo = userinfo.getValue();
 				}
-				
+
 				StatoFunzionalita tokenForward = pa.getGestioneToken().getForward();
 				if(tokenForward == null) {
 					gestioneTokenTokenForward = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TOKEN_FORWARD;
 				}else { 
 					gestioneTokenTokenForward = tokenForward.getValue();
 				}
-				
+
 				autorizzazione_tokenOptions = pa.getGestioneToken().getOptions();
-				
+
 				if(pa.getGestioneToken().getAutenticazione() != null) {
-					
+
 					StatoFunzionalita issuer = pa.getGestioneToken().getAutenticazione().getIssuer();
 					if(issuer == null) {
 						autenticazioneTokenIssuer = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_ISSUER;
 					}else { 
 						autenticazioneTokenIssuer = issuer.getValue();
 					}
-					
+
 					StatoFunzionalita clientId = pa.getGestioneToken().getAutenticazione().getClientId();
 					if(clientId == null) {
 						autenticazioneTokenClientId = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_CLIENT_ID;
 					}else { 
 						autenticazioneTokenClientId = clientId.getValue();
 					}
-					
+
 					StatoFunzionalita subject = pa.getGestioneToken().getAutenticazione().getSubject();
 					if(subject == null) {
 						autenticazioneTokenSubject = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_SUBJECT;
 					}else { 
 						autenticazioneTokenSubject = subject.getValue();
 					}
-					
+
 					StatoFunzionalita username = pa.getGestioneToken().getAutenticazione().getUsername();
 					if(username == null) {
 						autenticazioneTokenUsername = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_USERNAME;
 					}else { 
 						autenticazioneTokenUsername = username.getValue();
 					}
-					
+
 					StatoFunzionalita mailTmp = pa.getGestioneToken().getAutenticazione().getEmail();
 					if(mailTmp == null) {
 						autenticazioneTokenEMail = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_EMAIL;
 					}else { 
 						autenticazioneTokenEMail = mailTmp.getValue();
 					}
-					
+
 				}
 				else {
 					autenticazioneTokenIssuer = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_ISSUER;
@@ -798,19 +928,19 @@ public class PorteApplicativeControlloAccessi extends Action {
 				gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
 				gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
 				gestioneTokenOpzionale = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_OPZIONALE;
-				
+
 				gestioneTokenValidazioneInput = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_VALIDAZIONE_INPUT;
 				gestioneTokenIntrospection = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_INTROSPECTION;
 				gestioneTokenUserInfo = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_USER_INFO;
 				gestioneTokenTokenForward = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TOKEN_FORWARD;
-				
+
 				autenticazioneTokenIssuer = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_ISSUER;
 				autenticazioneTokenClientId = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_CLIENT_ID;
 				autenticazioneTokenSubject = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_SUBJECT;
 				autenticazioneTokenUsername = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_USERNAME;
 				autenticazioneTokenEMail = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_EMAIL;
 			}
-			
+
 			if(autorizzazioneScope == null) {
 				if(pa.getScope() != null) {
 					autorizzazioneScope =  pa.getScope().getStato().equals(StatoFunzionalita.ABILITATO) ? Costanti.CHECK_BOX_ENABLED : ""; 
@@ -818,20 +948,20 @@ public class PorteApplicativeControlloAccessi extends Action {
 					autorizzazioneScope = "";
 				}
 			}
-			
+
 			if(autorizzazioneScopeMatch == null) {
 				if(pa.getScope()!=null && pa.getScope().getMatch()!=null){
 					autorizzazioneScopeMatch = pa.getScope().getMatch().getValue();
 				}
 			}
-			
+
 			porteApplicativeHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale, 
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa,false);
 
 			porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,confPers, isSupportatoAutenticazione,false,
 					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail);
-			
+
 			// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 			porteApplicativeHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,pa,
 					autenticazione, autorizzazione, autorizzazioneCustom, 
@@ -841,14 +971,16 @@ public class PorteApplicativeControlloAccessi extends Action {
 					confPers, isSupportatoAutenticazione, contaListe, false, false
 					,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
 					gestioneToken, gestioneTokenPolicy, autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
-					urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati);
-			
-			porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
-			
+					urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati,
+					urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList);
+
+			porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
+					old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList); 
+
 			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);
-			
+
 			pd.setDati(dati);
-			
+
 			pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
 			//pd.disableEditMode();
 			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
@@ -857,7 +989,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, 
 					ForwardParams.OTHER(""));
-			
+
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
 					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI , 

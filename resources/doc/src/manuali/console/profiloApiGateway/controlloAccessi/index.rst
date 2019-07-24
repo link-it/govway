@@ -28,6 +28,7 @@ aspetti che compongono il controllo degli accessi.
    gestioneToken
    autenticazione
    autorizzazione
+   autorizzazioneContenuti
    creazioneSoggetto
    creazioneApplicativo
    modalitaAccesso

@@ -22,7 +22,9 @@
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,13 +50,20 @@ import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
@@ -127,6 +136,9 @@ public class PorteDelegateControlloAccessi extends Action {
 			String ruoloMatch = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
 			
 			String autorizzazioneContenuti = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI);
+			String autorizzazioneContenutiStato = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_STATO);
+			String autorizzazioneContenutiProperties = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROPERTIES);
+
 
 			String applicaModificaS = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_APPLICA_MODIFICA);
 			boolean applicaModifica = ServletUtils.isCheckBoxEnabled(applicaModificaS);
@@ -164,6 +176,7 @@ public class PorteDelegateControlloAccessi extends Action {
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 			ConfigurazioneCore confCore = new ConfigurazioneCore(porteDelegateCore);
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
 
 			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
 			String idporta = portaDelegata.getNome();
@@ -188,6 +201,28 @@ public class PorteDelegateControlloAccessi extends Action {
 			if(portaDelegata.getServizioApplicativoList() !=null){
 				sizeFruitori = portaDelegata.sizeServizioApplicativoList();
 			}
+			
+			int numAutorizzazioneCustomPropertiesList = portaDelegata.sizeProprietaAutorizzazioneList();
+			int numAutorizzazioneContenutiCustomPropertiesList = portaDelegata.sizeProprietaAutorizzazioneContenutoList();
+			String oldAutorizzazioneContenuto = portaDelegata.getAutorizzazioneContenuto() ;
+			String oldAutorizzazioneContenutoStato = StatoFunzionalita.DISABILITATO.getValue();
+					
+			boolean old_autorizzazione_contenuti_custom = false;
+			if(oldAutorizzazioneContenuto != null) {
+				if(oldAutorizzazioneContenuto.equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN)) {
+					oldAutorizzazioneContenutoStato = StatoFunzionalita.ABILITATO.getValue();
+				} else { // custom
+					old_autorizzazione_contenuti_custom = true;
+					oldAutorizzazioneContenutoStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM;
+				}
+			}
+			
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaDelegata.getServizio().getTipo(), portaDelegata.getServizio().getNome(), 
+					portaDelegata.getSoggettoErogatore().getTipo(), portaDelegata.getSoggettoErogatore().getNome(), 
+					portaDelegata.getServizio().getVersione());
+			AccordoServizioParteSpecifica asps = apsCore.getServizio(idServizio,false);
+			AccordoServizioParteComuneSintetico aspc = apcCore.getAccordoServizioSintetico(porteDelegateHelper.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+			ServiceBinding serviceBinding = porteDelegateCore.toMessageServiceBinding(aspc.getServiceBinding()); 
 
 			boolean isSupportatoAutenticazione = true; // sempre nelle porte delegate
 			
@@ -226,6 +261,14 @@ public class PorteDelegateControlloAccessi extends Action {
 			Parameter urlAutorizzazioneScopeParam = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SCOPE_LIST , urlParmsAutorizzazioneScope);
 			String urlAutorizzazioneScope = urlAutorizzazioneScopeParam.getValue();
 			
+			Parameter[] urlParmsAutorizzazioneCustomProperties = {  pId,pIdSoggetto,pIdAsps,pIdFrizione }; 
+			Parameter urlAutorizzazioneCustomPropertiesParam = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AUTORIZZAZIONE_CUSTOM_PROPERTIES_LIST , urlParmsAutorizzazioneCustomProperties);
+			String urlAutorizzazioneCustomProperties = urlAutorizzazioneCustomPropertiesParam.getValue();
+			
+			Parameter[] urlParmsAutorizzazioneContenutiCustomProperties = {  pId,pIdSoggetto,pIdAsps, pIdFrizione };
+			Parameter urlAutorizzazioneContenutiCustomPropertiesParam = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES_LIST , urlParmsAutorizzazioneContenutiCustomProperties); 
+			String urlAutorizzazioneContenutiCustomPropertiesList = urlAutorizzazioneContenutiCustomPropertiesParam.getValue();
+			
 			String servletChiamante = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI;
 			
 			List<GenericProperties> gestorePolicyTokenList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
@@ -241,13 +284,26 @@ public class PorteDelegateControlloAccessi extends Action {
 				policyValues[(i+1)] = genericProperties.getNome();
 			}
 			
-			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(idAsps),true);
+//			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(idAsps),true);
 			String protocollo = ProtocolFactoryManager.getInstance().getProtocolByServiceType(asps.getTipo());
 			
 			// La XACML Policy, se definita nella porta delegata può solo essere cambiata, non annullata.
 			if(allegatoXacmlPolicy!=null && allegatoXacmlPolicy.getValue()==null) {
 				if(portaDelegata.getXacmlPolicy()!=null && !"".equals(portaDelegata.getXacmlPolicy())) {
 					allegatoXacmlPolicy.setValue(portaDelegata.getXacmlPolicy().getBytes());
+				}
+			}
+			
+			// postback
+			String postBackElementName = porteDelegateHelper.getPostBackElementName();
+			if(postBackElementName != null) {
+				if(postBackElementName.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_STATO)) {
+					if(autorizzazioneContenutiStato.equals(StatoFunzionalita.DISABILITATO.getValue()) || autorizzazioneContenutiStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM)) {
+						autorizzazioneContenuti = "";
+					}
+					if(autorizzazioneContenutiStato.equals(StatoFunzionalita.ABILITATO.getValue())) {
+						autorizzazioneContenuti = CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN;
+					}
 				}
 			}
 			
@@ -294,8 +350,26 @@ public class PorteDelegateControlloAccessi extends Action {
 					}
 				}
 				
-				if(autorizzazioneContenuti==null){
+				if(autorizzazioneContenutiStato==null){
 					autorizzazioneContenuti = portaDelegata.getAutorizzazioneContenuto();
+					
+					if(autorizzazioneContenuti == null) {
+						autorizzazioneContenutiStato = StatoFunzionalita.DISABILITATO.getValue();
+					} else if(autorizzazioneContenuti.equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN)) {
+						autorizzazioneContenutiStato = StatoFunzionalita.ABILITATO.getValue();
+						List<Proprieta> proprietaAutorizzazioneContenutoList = portaDelegata.getProprietaAutorizzazioneContenutoList();
+						StringBuilder sb = new StringBuilder();
+						for (Proprieta proprieta : proprietaAutorizzazioneContenutoList) {
+							if(sb.length() >0)
+								sb.append("\n");
+							
+							sb.append(proprieta.getNome()).append("=").append(proprieta.getValore()); 
+						}						
+						
+						autorizzazioneContenutiProperties = sb.toString();
+					} else { // custom
+						autorizzazioneContenutiStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM;
+					}
 				}
 				
 				if(gestioneToken == null) {
@@ -449,9 +523,11 @@ public class PorteDelegateControlloAccessi extends Action {
 						confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
 						gestioneToken, gestioneTokenPolicy, 
 						autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
-						null, 0);
+						null, 0,
+						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList);
 				
-				porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
+				porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
+						old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList); 
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idSoggFruitore, null,idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -472,7 +548,7 @@ public class PorteDelegateControlloAccessi extends Action {
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						autorizzazioneContenuti,
+						autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
 						protocollo);
 			
 			if (!isOk) {
@@ -497,9 +573,11 @@ public class PorteDelegateControlloAccessi extends Action {
 						confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
 						gestioneToken, gestioneTokenPolicy, 
 						autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
-						null, 0);
+						null, 0,
+						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList);
 				
-				porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
+				porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
+						old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList); 
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idSoggFruitore, null,idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -531,15 +609,17 @@ public class PorteDelegateControlloAccessi extends Action {
 				portaDelegata.getProprietaAutenticazioneList().addAll(proprietaAutenticazione);
 			}
 			
-			if (autorizzazione == null || !autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM))
+			if (autorizzazione == null || !autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM)) {
 				portaDelegata.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(autorizzazione, 
 						ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati), 
 						ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli), 
 						ServletUtils.isCheckBoxEnabled(autorizzazioneScope),
 						autorizzazione_tokenOptions,
 						RuoloTipologia.toEnumConstant(autorizzazioneRuoliTipologia)));
-			else
+				portaDelegata.getProprietaAutorizzazioneList().clear();
+			} else {
 				portaDelegata.setAutorizzazione(autorizzazioneCustom);
+			}
 			
 			if(autorizzazione != null && autorizzazione.equals(AutorizzazioneUtilities.STATO_XACML_POLICY) && allegatoXacmlPolicy.getValue() != null) {
 				portaDelegata.setXacmlPolicy(new String(allegatoXacmlPolicy.getValue()));
@@ -575,7 +655,28 @@ public class PorteDelegateControlloAccessi extends Action {
 				}
 			}
 			
-			portaDelegata.setAutorizzazioneContenuto(autorizzazioneContenuti);
+			if(autorizzazioneContenutiStato.equals(StatoFunzionalita.DISABILITATO.getValue())) {
+				portaDelegata.setAutorizzazioneContenuto(null);
+				portaDelegata.getProprietaAutorizzazioneContenutoList().clear();
+			} else if(autorizzazioneContenutiStato.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				portaDelegata.setAutorizzazioneContenuto(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN);
+				portaDelegata.getProprietaAutorizzazioneContenutoList().clear();
+				Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(autorizzazioneContenutiProperties);
+				
+				Enumeration<Object> keys = convertTextToProperties.keys();
+				while (keys.hasMoreElements()) {
+					String nome = (String) keys.nextElement();
+					String valore = convertTextToProperties.getProperty(nome);
+					Proprieta proprietaAutorizzazioneContenuto = new Proprieta();
+					proprietaAutorizzazioneContenuto.setNome(nome);
+					proprietaAutorizzazioneContenuto.setValore(valore);
+					portaDelegata.addProprietaAutorizzazioneContenuto(proprietaAutorizzazioneContenuto);
+				}
+			} else {
+				portaDelegata.setAutorizzazioneContenuto(autorizzazioneContenuti);
+				if(!autorizzazioneContenutiStato.equals(oldAutorizzazioneContenutoStato))
+					portaDelegata.getProprietaAutorizzazioneContenutoList().clear();
+			}
 			
 			if(portaDelegata.getGestioneToken() == null)
 				portaDelegata.setGestioneToken(new GestioneToken());
@@ -639,6 +740,21 @@ public class PorteDelegateControlloAccessi extends Action {
 				numRuoli = portaDelegata.getRuoli().sizeRuoloList();
 			}
 			
+			numScope = 0;
+			if(portaDelegata.getScope()!=null){
+				numScope = portaDelegata.getScope().sizeScopeList();
+			}
+			
+			sizeFruitori = 0; 
+			if(portaDelegata.getServizioApplicativoList() !=null){
+				sizeFruitori = portaDelegata.sizeServizioApplicativoList();
+			}
+			
+			numAutorizzazioneCustomPropertiesList = portaDelegata.sizeProprietaAutorizzazioneList();
+			numAutorizzazioneContenutiCustomPropertiesList = portaDelegata.sizeProprietaAutorizzazioneContenutoList();
+			old_autorizzazione_contenuti_custom = portaDelegata.getAutorizzazioneContenuto() != null && !portaDelegata.getAutorizzazioneContenuto().equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN);
+			
+			
 			if (autenticazione == null) {
 				autenticazione = portaDelegata.getAutenticazione();
 				if (autenticazione != null &&
@@ -681,8 +797,24 @@ public class PorteDelegateControlloAccessi extends Action {
 				}
 			}
 			
-			if(autorizzazioneContenuti==null){
-				autorizzazioneContenuti = portaDelegata.getAutorizzazioneContenuto();
+			autorizzazioneContenuti = portaDelegata.getAutorizzazioneContenuto();
+			
+			if(autorizzazioneContenuti == null) {
+				autorizzazioneContenutiStato = StatoFunzionalita.DISABILITATO.getValue();
+			} else if(autorizzazioneContenuti.equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN)) {
+				autorizzazioneContenutiStato = StatoFunzionalita.ABILITATO.getValue();
+				List<Proprieta> proprietaAutorizzazioneContenutoList = portaDelegata.getProprietaAutorizzazioneContenutoList();
+				StringBuilder sb = new StringBuilder();
+				for (Proprieta proprieta : proprietaAutorizzazioneContenutoList) {
+					if(sb.length() >0)
+						sb.append("\n");
+					
+					sb.append(proprieta.getNome()).append("=").append(proprieta.getValore()); 
+				}						
+				
+				autorizzazioneContenutiProperties = sb.toString();
+			} else { // custom
+				autorizzazioneContenutiStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM;
 			}
 			
 			if(portaDelegata.getGestioneToken() != null) {
@@ -826,9 +958,11 @@ public class PorteDelegateControlloAccessi extends Action {
 					confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
 					gestioneToken, gestioneTokenPolicy, 
 					autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
-					null, 0);
+					null, 0,
+					urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList);
 			
-			porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
+			porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
+					old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList); 
 			
 			dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idSoggFruitore, null,idAsps, 
 					idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);

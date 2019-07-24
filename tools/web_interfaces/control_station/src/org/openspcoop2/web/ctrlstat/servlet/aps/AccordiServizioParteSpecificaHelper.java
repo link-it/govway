@@ -708,7 +708,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				String autorizzazioneScope = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 				String autorizzazioneScopeMatch = this.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 
+				String autorizzazioneContenutiStato = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO);
 				String autorizzazioneContenuti = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+				String autorizzazioneContenutiProperties = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_PROPERTIES);
 				
 				if(gestioneFruitori) {
 					
@@ -719,7 +721,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 							autorizzazione_token,autorizzazione_tokenOptions,
 							autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
-							autorizzazioneContenuti,
+							autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
 							protocollo)==false){
 						return false;
 					}
@@ -734,7 +736,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 							autorizzazione_token,autorizzazione_tokenOptions,
 							autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
-							autorizzazioneContenuti,
+							autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
 							protocollo)==false){
 						return false;
 					}
@@ -978,7 +980,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 				String protocollo = ProtocolFactoryManager.getInstance().getProtocolByServiceType(asps.getTipo());
 				
+				String autorizzazioneContenutiStato = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO);
 				String autorizzazioneContenuti = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+				String autorizzazioneContenutiProperties = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_PROPERTIES);
 				
 				if(this.controlloAccessiCheck(tipoOp, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList,
 						fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, 
@@ -987,7 +991,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						autorizzazioneContenuti,
+						autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
 						protocollo)==false){
 					return false;
 				}
@@ -2811,7 +2815,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							e.addElement(deVerificaConnettore);
 						}
 					}
-					
+					 
 					// controllo accessi
 					DataElement de = new DataElement();
 					if(visualizzazioneTabs)
@@ -5958,7 +5962,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, false, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,
 					gestioneToken, gestioneTokenPolicy, 
 					autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
-					null, 0);
+					null, 0, null, 0);
 			
 		}
 		
@@ -5988,7 +5992,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					false, true, contaListe, true, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,
 					gestioneToken, gestioneTokenPolicy, 
 					autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
-					null, 0);
+					null, 0, null, 0);
 			
 		}
 
@@ -6852,7 +6856,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						false, true, contaListe, true, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,
 						gestioneToken, gestioneTokenPolicy, 
 						autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
-						null, 0);
+						null, 0, null, 0);
 	
 			}
 
@@ -7756,7 +7760,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, false, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,
 					gestioneToken, gestioneTokenPolicy, 
 					autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
-					null, 0);
+					null, 0, null, 0);
 		}
 		
 		
@@ -7820,7 +7824,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String autorizzazioneRuoliTipologia = this.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
 			String ruoloMatch = this.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
 			
+			String autorizzazioneContenutiStato = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO);
 			String autorizzazioneContenuti = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+			String autorizzazioneContenutiProperties = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_PROPERTIES);
 			
 //			if() {
 //				
@@ -7872,7 +7878,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 					autorizzazione_token,autorizzazione_tokenOptions,
 					autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
-					autorizzazioneContenuti,
+					autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
 					protocollo)==false){
 				return false;
 			}
@@ -7940,7 +7946,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String autorizzazioneRuoliTipologia = this.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
 			String ruoloMatch = this.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
 			
+			String autorizzazioneContenutiStato = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO);
 			String autorizzazioneContenuti = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+			String autorizzazioneContenutiProperties = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_PROPERTIES);
 			
 			// Se autenticazione = custom, nomeauth dev'essere specificato
 			if (CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM.equals(autenticazione) && 
@@ -7989,7 +7997,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 					autorizzazione_token,autorizzazione_tokenOptions,
 					autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
-					autorizzazioneContenuti,
+					autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
 					protocollo)==false){
 				return false;
 			}
@@ -8131,7 +8139,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, true, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,
 				gestioneToken, gestioneTokenPolicy, 
 				autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
-				null, 0);
+				null, 0 , null, 0);
 		}
 		
 		return dati;

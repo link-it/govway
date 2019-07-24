@@ -47,6 +47,7 @@ import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.PortaDelegataLocalForward;
 import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
@@ -70,6 +71,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -336,6 +338,26 @@ public final class PorteDelegateChange extends Action {
 			String autorizzazioneRuoliTipologia = null;
 			String ruoloMatch = null;
 			String autorizzazioneContenuti = pde.getAutorizzazioneContenuto();
+			String autorizzazioneContenutiProperties = null;
+			String autorizzazioneContenutiStato = null;
+			
+			if(autorizzazioneContenuti == null) {
+				autorizzazioneContenutiStato = StatoFunzionalita.DISABILITATO.getValue();
+			} else if(autorizzazioneContenuti.equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN)) {
+				autorizzazioneContenutiStato = StatoFunzionalita.ABILITATO.getValue();
+				List<Proprieta> proprietaAutorizzazioneContenutoList = pde.getProprietaAutorizzazioneContenutoList();
+				StringBuilder sb = new StringBuilder();
+				for (Proprieta proprieta : proprietaAutorizzazioneContenutoList) {
+					if(sb.length() >0)
+						sb.append("\n");
+					
+					sb.append(proprieta.getNome()).append("=").append(proprieta.getValore()); 
+				}						
+				
+				autorizzazioneContenutiProperties = sb.toString();
+			} else { // custom
+				autorizzazioneContenutiStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM;
+			}
 			
 			if (pde.getAutorizzazione() != null &&
 					!TipoAutorizzazione.getAllValues().contains(pde.getAutorizzazione())) {
@@ -926,7 +948,8 @@ public final class PorteDelegateChange extends Action {
 						stateless, localForward, paLocalForward, ricsim, ricasim, statoValidazione,
 						tipoValidazione, numCorrApp, scadcorr, gestBody,
 						gestManifest,integrazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, autenticazioneCustom, 
-						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,autorizzazioneContenuti,
+						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
+						autorizzazioneContenutiStato, autorizzazioneContenuti,autorizzazioneContenutiProperties,
 						idsogg,protocollo,numSA,numRuoli,ruoloMatch,
 						statoMessageSecurity,statoMessageMTOM,
 						numCorrelazioneReq,numCorrelazioneRes,
@@ -1089,7 +1112,8 @@ public final class PorteDelegateChange extends Action {
 						numAzioni,  stateless, localForward, paLocalForward, ricsim, ricasim,
 						statoValidazione, tipoValidazione, numCorrApp, scadcorr, gestBody,
 						gestManifest,integrazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, autenticazioneCustom, 
-						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,autorizzazioneContenuti,
+						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
+						autorizzazioneContenutiStato, autorizzazioneContenuti,autorizzazioneContenutiProperties,
 						idsogg,protocollo,numSA,numRuoli,ruoloMatch,
 						statoMessageSecurity,statoMessageMTOM,
 						numCorrelazioneReq,numCorrelazioneRes,forceWsdlBased,applicaMTOM,riusoID,
