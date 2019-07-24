@@ -694,7 +694,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 
 	public void addImportToDati(Vector<DataElement> dati,
 			boolean validazioneDocumenti,boolean updateEnabled,
-			List<String> protocolliSelectList,String protocollo,
+			boolean showProtocols, List<String> protocolliSelectList,String protocollo,
 			List<ImportMode> importModes,String importMode,
 			List<ArchiveModeType> importTypes,String importType,
 			boolean deleter) throws Exception{
@@ -711,7 +711,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		
 		DataElement de = new DataElement();
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_PROTOCOLLO);
-		if(protocolliSelectList.size()>2){
+		if(showProtocols && protocolliSelectList.size()>2){
 			de.setType(DataElementType.SELECT);
 			de.setValues(protocolliSelectList.toArray(new String[1]));
 			List<String> protocolliSelectListLabels = new ArrayList<>();
@@ -736,21 +736,21 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 
 		de = new DataElement();
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO);
-		//if(importModes.size()>1){
-		// Lo vediamo sempre anche se solo con un valore, poiche' vogliamo vedere govlet e fuori dalla select list non e' bello graficamente.
-		List<String> tmpArchivi = new ArrayList<String>();
-		for (ImportMode imp : importModes) {
-			tmpArchivi.add(imp.toString());
+		if(importModes.size()>1){
+			// Lo vediamo sempre anche se solo con un valore, poiche' vogliamo vedere govlet e fuori dalla select list non e' bello graficamente.
+			List<String> tmpArchivi = new ArrayList<String>();
+			for (ImportMode imp : importModes) {
+				tmpArchivi.add(imp.toString());
+			}
+			de.setType(DataElementType.SELECT);
+			de.setValues(tmpArchivi.toArray(new String[1]));
+			de.setLabels(tmpArchivi.toArray(new String[1]));
+			de.setSelected(importMode);
+		}else{
+			de.setType(DataElementType.HIDDEN);
+			//de.setType(DataElementType.TEXT);
+			de.setValue(importMode);
 		}
-		de.setType(DataElementType.SELECT);
-		de.setValues(tmpArchivi.toArray(new String[1]));
-		de.setLabels(tmpArchivi.toArray(new String[1]));
-		de.setSelected(importMode);
-//		}else{
-//			//de.setType(DataElementType.HIDDEN);
-//			de.setType(DataElementType.TEXT);
-//			de.setValue(importMode);
-//		}
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO);
 		de.setSize(this.getSize());
 		if(importModes.size()>1){

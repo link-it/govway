@@ -55,8 +55,10 @@ import org.openspcoop2.protocol.sdk.constants.ArchiveStatoImport;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.spcoop.config.SPCoopProperties;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostantiArchivi;
 import org.openspcoop2.utils.Utilities;
+import org.slf4j.Logger;
 
 import it.gov.spcoop.sica.dao.Costanti;
 import it.gov.spcoop.sica.wsbl.ConceptualBehavior;
@@ -72,11 +74,13 @@ public class SPCoopArchive extends BasicArchive {
 
 	private SPCoopArchiveImport importEngine = null;
 	private SPCoopArchiveExport exportEngine = null;
+	private SPCoopProperties spcoopProperties = null;
 	
-	public SPCoopArchive(IProtocolFactory<?> protocolFactory) throws ProtocolException {
+	public SPCoopArchive(Logger log, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		super(protocolFactory);
 		this.importEngine = new SPCoopArchiveImport(protocolFactory);
 		this.exportEngine = new SPCoopArchiveExport(protocolFactory);
+		this.spcoopProperties = SPCoopProperties.getInstance(log);
 	}
 
 	
@@ -88,7 +92,8 @@ public class SPCoopArchive extends BasicArchive {
 	@Override
 	public MappingModeTypesExtensions getMappingTypesExtensions(ArchiveMode mode)
 			throws ProtocolException {
-		if(SPCoopCostantiArchivi.CNIPA_MODE.equals(mode) || 
+		
+		if(this.spcoopProperties.isGestionePackageSICA() && SPCoopCostantiArchivi.CNIPA_MODE.equals(mode) || 
 			SPCoopCostantiArchivi.EXPORT_MODE_COMPATIBILITA_CLIENT_SICA.equals(mode) ||
 			SPCoopCostantiArchivi.EXPORT_MODE_INFORMAZIONI_COMPLETE.equals(mode) ){
 
@@ -371,7 +376,9 @@ public class SPCoopArchive extends BasicArchive {
 	@Override
 	public List<ImportMode> getImportModes() throws ProtocolException {
 		List<ImportMode> list = super.getImportModes();
-		list.add(new ImportMode(SPCoopCostantiArchivi.CNIPA_MODE));
+		if(this.spcoopProperties.isGestionePackageSICA()) {
+			list.add(new ImportMode(SPCoopCostantiArchivi.CNIPA_MODE));
+		}
 		return list;
 	}
 
@@ -551,18 +558,20 @@ public class SPCoopArchive extends BasicArchive {
 	@Override
 	public List<ExportMode> getExportModes(ArchiveType archiveType) throws ProtocolException {
 		List<ExportMode> list = super.getExportModes(archiveType);
-		switch (archiveType) {
-		case ACCORDO_SERVIZIO_PARTE_COMUNE:
-		case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
-		case ACCORDO_SERVIZIO_COMPOSTO:
-		case ACCORDO_COOPERAZIONE:
-			ExportMode exportSICA = new ExportMode(SPCoopCostantiArchivi.EXPORT_MODE_COMPATIBILITA_CLIENT_SICA);
-			ExportMode exportComplete = new ExportMode(SPCoopCostantiArchivi.EXPORT_MODE_INFORMAZIONI_COMPLETE);
-			list.add(exportSICA);
-			list.add(exportComplete);
-			break;
-		default:
-			break;
+		if(this.spcoopProperties.isGestionePackageSICA()) {
+			switch (archiveType) {
+			case ACCORDO_SERVIZIO_PARTE_COMUNE:
+			case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
+			case ACCORDO_SERVIZIO_COMPOSTO:
+			case ACCORDO_COOPERAZIONE:
+				ExportMode exportSICA = new ExportMode(SPCoopCostantiArchivi.EXPORT_MODE_COMPATIBILITA_CLIENT_SICA);
+				ExportMode exportComplete = new ExportMode(SPCoopCostantiArchivi.EXPORT_MODE_INFORMAZIONI_COMPLETE);
+				list.add(exportSICA);
+				list.add(exportComplete);
+				break;
+			default:
+				break;
+			}
 		}
 		return list;
 	}

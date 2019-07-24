@@ -169,7 +169,7 @@ public class SPCoopFactory extends BasicFactory<SOAPHeaderElement> {
 	
 	@Override
 	public IArchive createArchive() throws ProtocolException{
-		return new SPCoopArchive(this);
+		return new SPCoopArchive(this.getLogger(), this);
 	}
 	
 	

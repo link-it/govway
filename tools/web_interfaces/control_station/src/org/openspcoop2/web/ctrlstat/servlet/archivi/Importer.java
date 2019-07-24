@@ -189,6 +189,12 @@ public final class Importer extends Action {
 			
 			
 			
+			// show Protocols se esiste più di un importMode per qualche protocollo
+			Hashtable<String, String> importModesMapRispettoATuttiIProtocolli = importerUtils.getImportModesWithProtocol(protocolli);
+			boolean showProtocols = importModesMapRispettoATuttiIProtocolli!=null && importModesMapRispettoATuttiIProtocolli.size()>1;
+			
+			
+			
 			// import modes
 			List<String> protocolliForModes = new ArrayList<String>();
 			if(this.protocollo!=null){
@@ -338,7 +344,7 @@ public final class Importer extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				archiviHelper.addImportToDati(dati, this.validazioneDocumenti, this.updateEnabled,
-						protocolli, this.protocollo, 
+						showProtocols, protocolli, this.protocollo, 
 						importModes, this.importMode, 
 						importTypes, this.importType,
 						deleter);
@@ -593,7 +599,7 @@ public final class Importer extends Action {
 				}
 				else{
 					archiviHelper.addImportToDati(dati, this.validazioneDocumenti, this.updateEnabled,
-							protocolli, this.protocollo, 
+							showProtocols, protocolli, this.protocollo, 
 							importModes, this.importMode, 
 							importTypes, this.importType,
 							deleter);

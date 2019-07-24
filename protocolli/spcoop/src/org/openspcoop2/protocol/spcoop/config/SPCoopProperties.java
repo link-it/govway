@@ -184,6 +184,11 @@ public class SPCoopProperties {
 			this.isGenerazioneDetailsSOAPFaultIntegrazionConInformazioniGeneriche();
 			this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
 			this.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
+			
+			
+			/* **** PACKAGE CNIPA **** */
+			
+			this.isGestionePackageSICA();
 
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo SPCoop, "+e.getMessage();
@@ -1170,5 +1175,33 @@ public class SPCoopProperties {
     	}
     	
     	return SPCoopProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD;
+	}
+    
+    
+    
+    
+    /* **** Package CNIPA **** */
+    
+    private static Boolean isGestionePackageSICA= null;
+    public Boolean isGestionePackageSICA(){
+    	if(SPCoopProperties.isGestionePackageSICA==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.packageSICA"); 
+				
+				if (value != null){
+					value = value.trim();
+					SPCoopProperties.isGestionePackageSICA = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.spcoop.packageSICA' non impostata, viene utilizzato il default=false");
+					SPCoopProperties.isGestionePackageSICA = false;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.spcoop.packageSICA' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				SPCoopProperties.isGestionePackageSICA = false;
+			}
+    	}
+    	
+    	return SPCoopProperties.isGestionePackageSICA;
 	}
 }

@@ -102,472 +102,478 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		if(api == null)
 			throw new ProcessingException("Api cannot be null");
 
-		this.api = api;
-		Api apiRest = null;
-		OpenapiApi openapiApi = null;
-		OpenapiApiValidatorStructure apiValidatorStructure = null;
-		if((api instanceof OpenapiApi)) {
-			openapiApi = (OpenapiApi) this.api;
-			apiRest = this.api;
-			apiValidatorStructure = openapiApi.getValidationStructure();
-		}
-		else if(api instanceof Api) {
-			apiRest = this.api;
-			if(apiRest.containsKey(VALIDATION_STRUCTURE)) {
-				apiValidatorStructure = (OpenapiApiValidatorStructure) apiRest.getVendorImpl(VALIDATION_STRUCTURE);
-			}
-			this.onlySchemas = true;
-		}
-		
-		ApiName jsonValidatorAPI;
-		ADDITIONAL policyAdditionalProperties = config.getPolicyAdditionalProperties();
-		if(config instanceof OpenapiApiValidatorConfig) {
-			jsonValidatorAPI = ((OpenapiApiValidatorConfig)config).getJsonValidatorAPI();
-		} else {
-			jsonValidatorAPI = ApiName.NETWORK_NT;
-		}
-		
-		try {
-			
-			this.validatorMap = new HashMap<>();
-			
-			
-			// Verifico se gli schemi importati o gli elementi definition dentro l'interfaccia api, 
-			// a loro volta importano altri schemi tramite il $ref standard di json schema
-			// Se cosi non è non serve serializzarli su file system, la cui serializzazione è ovviamente più costosa in termini di performance.
-			boolean existsRefInternal = false;
-			
-			
-			
-			
-			/* *** Validatore Principale *** */
-			
-			Map<String, byte[]> schemiValidatorePrincipale = new HashMap<>();
-			Map<String, JsonNode> nodeValidatorePrincipale = new HashMap<>();
- 			
-			if(apiValidatorStructure!=null) {
-				schemiValidatorePrincipale = apiValidatorStructure.getSchemiValidatorePrincipale();
-				nodeValidatorePrincipale = apiValidatorStructure.getNodeValidatorePrincipale();
-			}
-			else {
-			
-				if(openapiApi!=null) {
-								
-					Map<String, Schema<?>> definitions = openapiApi.getAllDefinitions();
-					String definitionString = Json.mapper().writeValueAsString(definitions);
-					definitionString = definitionString.replaceAll("#/components/schemas", "#/definitions");
-					for(String schemaName: definitions.keySet()) {
-						
-						ByteArrayOutputStream bout = new ByteArrayOutputStream();
-						bout.write("{".getBytes());
-						String defOggetto = Json.mapper().writeValueAsString(definitions.get(schemaName));
-						defOggetto = defOggetto.trim();
-						defOggetto = defOggetto.replaceAll("#/components/schemas", "#/definitions");
-						if(defOggetto.startsWith("{")) {
-							defOggetto = defOggetto.substring(1);
-						}
-						if(defOggetto.endsWith("}")) {
-							defOggetto = defOggetto.substring(0,defOggetto.length()-1);
-						}
-						defOggetto = defOggetto.trim();
-						bout.write(defOggetto.getBytes());
-						// DEVE ESSERE DEFINITO NEL JSON SCHEMA, NON POSSO DEFINIRLO STATICAMENTE
-						/*
-							bout.write(",\"additionalProperties\": ".getBytes());
-							if(defOggetto.startsWith("\"allOf\"") || defOggetto.startsWith("\"anyOf\"")){
-								// INDICARE ARTICOLO CHE SPIEGA
-								bout.write("true".getBytes());
-							}
-							else {
-								bout.write("false".getBytes());
-							}
-						*/
-						bout.write(",".getBytes());
-						bout.write("\"definitions\" : ".getBytes());
-						bout.write(definitionString.getBytes());
-						bout.write("}".getBytes());
-						
-						// Normalizzo schemi importati
-						JSONUtils jsonUtils = JSONUtils.getInstance();
-						JsonNode schemaNode = jsonUtils.getAsNode(bout.toByteArray());
-						nodeValidatorePrincipale.put(schemaName, schemaNode);
-						schemiValidatorePrincipale.put(schemaName, bout.toByteArray());
-						
-						// Verifico se gli elementi definition, a loro volta importano altri schemi
-						JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
-						List<String> refPath = engine.getStringMatchPattern(schemaNode, "$..$ref");
-						if(refPath!=null && !refPath.isEmpty()) {
-							for (String ref : refPath) {
-								String path = this.getRefPath(ref);
-								if(path!=null) {
-									existsRefInternal = true;
-									break;
-								}
-							}
-						}
-		
-					}
-				}
-			}
-			
-			
-			
-			
-			
-			// *** Gestione file importati ***
-			
-			this.fileSchema = new HashMap<>();
-			if(apiValidatorStructure!=null) {
-				this.fileSchema = apiValidatorStructure.getFileSchema();
-			}
-			else {
-				if(api.getSchemas()!=null && api.getSchemas().size()>0) {
-				
-					HashMap<String, JsonNode> tmpNode = new HashMap<>();
-					HashMap<String, byte[]> tmpByteArraySchema = new HashMap<>();
-					HashMap<String, ApiSchemaType> tmpSchemaType = new HashMap<>();
+		// la sincronizzazione sull'API serve per evitare che venga inizializzati più volte in maniera concorrente l'API
+		synchronized (api) {
 					
-					for (ApiSchema apiSchema : api.getSchemas()) {
-						
-						if(!ApiSchemaType.JSON.equals(apiSchema.getType()) && !ApiSchemaType.YAML.equals(apiSchema.getType())) {
+			this.api = api;
+			Api apiRest = null;
+			OpenapiApi openapiApi = null;
+			OpenapiApiValidatorStructure apiValidatorStructure = null;
+			if((api instanceof OpenapiApi)) {
+				openapiApi = (OpenapiApi) this.api;
+				apiRest = this.api;
+				apiValidatorStructure = openapiApi.getValidationStructure();
+			}
+			else if(api instanceof Api) {
+				apiRest = this.api;
+				if(apiRest.containsKey(VALIDATION_STRUCTURE)) {
+					apiValidatorStructure = (OpenapiApiValidatorStructure) apiRest.getVendorImpl(VALIDATION_STRUCTURE);
+				}
+				this.onlySchemas = true;
+			}
+			
+			ApiName jsonValidatorAPI;
+			ADDITIONAL policyAdditionalProperties = config.getPolicyAdditionalProperties();
+			if(config instanceof OpenapiApiValidatorConfig) {
+				jsonValidatorAPI = ((OpenapiApiValidatorConfig)config).getJsonValidatorAPI();
+			} else {
+				jsonValidatorAPI = ApiName.NETWORK_NT;
+			}
+			
+			try {
+				
+				this.validatorMap = new HashMap<>();
+				
+				
+				// Verifico se gli schemi importati o gli elementi definition dentro l'interfaccia api, 
+				// a loro volta importano altri schemi tramite il $ref standard di json schema
+				// Se cosi non è non serve serializzarli su file system, la cui serializzazione è ovviamente più costosa in termini di performance.
+				boolean existsRefInternal = false;
+				
+				
+				
+				
+				/* *** Validatore Principale *** */
+				
+				Map<String, byte[]> schemiValidatorePrincipale = new HashMap<>();
+				Map<String, JsonNode> nodeValidatorePrincipale = new HashMap<>();
+	 			
+				if(apiValidatorStructure!=null) {
+					schemiValidatorePrincipale = apiValidatorStructure.getSchemiValidatorePrincipale();
+					nodeValidatorePrincipale = apiValidatorStructure.getNodeValidatorePrincipale();
+				}
+				else {
+				
+					if(openapiApi!=null) {
+									
+						Map<String, Schema<?>> definitions = openapiApi.getAllDefinitions();
+						String definitionString = Json.mapper().writeValueAsString(definitions);
+						definitionString = definitionString.replaceAll("#/components/schemas", "#/definitions");
+						for(String schemaName: definitions.keySet()) {
 							
-							continue;
-							
-						}
-						byte [] schema = apiSchema.getContent();
-						JsonNode schemaNode = null;
-						AbstractUtils utils = null;
-						JSONUtils jsonUtils = JSONUtils.getInstance();
-						if(ApiSchemaType.JSON.equals(apiSchema.getType())) {
-							utils = JSONUtils.getInstance();
-							if(((JSONUtils)utils).isJson(schema)) {
-								schemaNode = utils.getAsNode(schema);
-							}
-						}
-						else {
-							utils = YAMLUtils.getInstance();
-							if(((YAMLUtils)utils).isYaml(schema)) {
-								schemaNode = utils.getAsNode(schema);
-							}
-						}
-						if(schemaNode==null) {
-							continue;
-						}
-						
-						
-						/* ** Potenziale import from swagger/openapi che utilizza uno standard components/schema invece di definition, ed inoltre non inizia con { } **/
-						if(schemaNode instanceof TextNode) {
 							ByteArrayOutputStream bout = new ByteArrayOutputStream();
 							bout.write("{".getBytes());
-							bout.write(schema);
-							bout.write("}".getBytes());
-							bout.flush();
-							bout.close();
-							schemaNode = utils.getAsNode(bout.toByteArray());
-						}
-						if(schemaNode instanceof ObjectNode) {
-							ObjectNode objectNode = (ObjectNode) schemaNode;
-							
-							boolean foundDefinitions = false;
-							JsonNode nodeDefinitions = objectNode.get("definitions");
-							if(nodeDefinitions!=null && nodeDefinitions instanceof ObjectNode) {
-								foundDefinitions = true;
+							String defOggetto = Json.mapper().writeValueAsString(definitions.get(schemaName));
+							defOggetto = defOggetto.trim();
+							defOggetto = defOggetto.replaceAll("#/components/schemas", "#/definitions");
+							if(defOggetto.startsWith("{")) {
+								defOggetto = defOggetto.substring(1);
 							}
-							
-							if(!foundDefinitions) {
-								JsonNode nodeComponents = objectNode.get("components");
-								if(nodeComponents instanceof ObjectNode) {
-									ObjectNode objectNodeComponents = (ObjectNode) nodeComponents;
-									JsonNode nodeSchemas = objectNodeComponents.get("schemas");
-									if(nodeSchemas!=null && nodeSchemas instanceof ObjectNode) {
-										
-										ObjectNode objectNodeDefinitions = (ObjectNode) utils.newObjectNode();
-										objectNodeDefinitions.set("definitions", nodeSchemas);
-										String schemaAsString = null;
-										if(ApiSchemaType.YAML.equals(apiSchema.getType())) {
-											// converto comunque in json poichè la validazione è supportata per json solo
-											schemaAsString = jsonUtils.toString(objectNodeDefinitions);
-										}
-										else {
-											schemaAsString = utils.toString(objectNodeDefinitions);
-										}
-										schemaAsString = schemaAsString.replaceAll("#/components/schemas", "#/definitions");
-										schema = schemaAsString.getBytes();
-										schemaNode = objectNodeDefinitions;
-										//System.out.println("SCHEMA ["+new String(schema)+"]");
-										
-									}
-									else {
-										schema = null;
-										schemaNode = null;
-									}
-								}
+							if(defOggetto.endsWith("}")) {
+								defOggetto = defOggetto.substring(0,defOggetto.length()-1);
 							}
-						}
-						
-						if(schemaNode!=null) {
-							if(this.onlySchemas) {
-								
-								// Interfaccia Registro senza OpenAPI
-								
-								IJsonSchemaValidator validator = ValidatorFactory.newJsonSchemaValidator(jsonValidatorAPI);
-								JsonSchemaValidatorConfig schemaValidationConfig = new JsonSchemaValidatorConfig();
-								schemaValidationConfig.setVerbose(config.isVerbose());
-								schemaValidationConfig.setAdditionalProperties(policyAdditionalProperties);
-								schemaValidationConfig.setPoliticaInclusioneTipi(POLITICA_INCLUSIONE_TIPI.DEFAULT);
-								//System.out.println("ADD SCHEMA PER ["+apiSchemaName+"#"+nameInternal+"] ["+new String(bout.toByteArray())+"]");
-								validator.setSchema(schema, schemaValidationConfig, log);
-								
-								this.validatorMap.put(apiSchema.getName(), validator);
-								
-							}
-							else {
-	
-								File tmp = File.createTempFile("validator", "."+ apiSchema.getType().name().toLowerCase());
-								this.fileSchema.put(apiSchema.getName(), tmp);
-								tmpNode.put(apiSchema.getName(), schemaNode);
-								tmpByteArraySchema.put(apiSchema.getName(), schema);
-								tmpSchemaType.put(apiSchema.getName(), apiSchema.getType());
-								
-							}
-						}
-					}
-					
-					
-					if(!this.onlySchemas) {
-					
-						// Verifico se gli schemi importati, a loro volta importano altri schemi
-						// Se cosi non è non serve serializzarli su file system
-						if(!existsRefInternal && !tmpByteArraySchema.isEmpty()) {
-							Iterator<String> itSchemas = tmpByteArraySchema.keySet().iterator();
-							while (itSchemas.hasNext()) {
-								String apiSchemaName = (String) itSchemas.next();
-								JsonNode schemaNode = tmpNode.get(apiSchemaName);
-								JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
-								List<String> refPath = engine.getStringMatchPattern(schemaNode, "$..$ref");
-								if(refPath!=null && !refPath.isEmpty()) {
-									for (String ref : refPath) {
-										String path = this.getRefPath(ref);
-										if(path!=null) {
-											existsRefInternal = true;
-											break;
-										}
-									}
-								}
-								if(existsRefInternal) {
-									break;
-								}
-							}
-						}
-						
-						if(existsRefInternal && !tmpByteArraySchema.isEmpty()) {
-							Iterator<String> itSchemas = tmpByteArraySchema.keySet().iterator();
-							while (itSchemas.hasNext()) {
-								String apiSchemaName = (String) itSchemas.next();
-								JsonNode schemaNode = tmpNode.get(apiSchemaName);
-								byte [] schemaContent = tmpByteArraySchema.get(apiSchemaName);
-								
-								JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
-								List<String> refPath = engine.getStringMatchPattern(schemaNode, "$..$ref");
-								String schemaRebuild = null;
-								if(refPath!=null && !refPath.isEmpty()) {
-									for (String ref : refPath) {
-										String path = this.getRefPath(ref);
-										if(path!=null) {
-											String normalizePath = this.normalizePath(path);
-											if(normalizePath!=null && this.fileSchema.containsKey(normalizePath)) {
-												if(schemaRebuild==null) {
-													schemaRebuild = new String(schemaContent);
-												}
-												if(schemaRebuild.contains(path)==false) {
-													if(path.startsWith("./")) {
-														path = path.substring(2);
-													}
-												}
-												File file = this.fileSchema.get(normalizePath);
-												while(schemaRebuild.contains(path)) {
-													schemaRebuild = schemaRebuild.replace(path, "file://"+file.getAbsolutePath());
-												}
-											}
-										}
-									}
-								}
-								
-								File f = this.fileSchema.get(apiSchemaName);
-								if(schemaRebuild!=null) {
-									FileSystemUtilities.writeFile(f, schemaRebuild.getBytes());
-									AbstractUtils utils = null;
-									if(ApiSchemaType.JSON.equals(tmpSchemaType.get(apiSchemaName))) {
-										utils = JSONUtils.getInstance();
-									}
-									else {
-										utils = YAMLUtils.getInstance();
-									}
-									schemaNode = utils.getAsNode(schemaRebuild);
-									tmpNode.put(apiSchemaName, schemaNode);
-									tmpByteArraySchema.put(apiSchemaName,schemaRebuild.getBytes());
+							defOggetto = defOggetto.trim();
+							bout.write(defOggetto.getBytes());
+							// DEVE ESSERE DEFINITO NEL JSON SCHEMA, NON POSSO DEFINIRLO STATICAMENTE
+							/*
+								bout.write(",\"additionalProperties\": ".getBytes());
+								if(defOggetto.startsWith("\"allOf\"") || defOggetto.startsWith("\"anyOf\"")){
+									// INDICARE ARTICOLO CHE SPIEGA
+									bout.write("true".getBytes());
 								}
 								else {
-									FileSystemUtilities.writeFile(f, schemaContent);
+									bout.write("false".getBytes());
+								}
+							*/
+							bout.write(",".getBytes());
+							bout.write("\"definitions\" : ".getBytes());
+							bout.write(definitionString.getBytes());
+							bout.write("}".getBytes());
+							
+							// Normalizzo schemi importati
+							JSONUtils jsonUtils = JSONUtils.getInstance();
+							JsonNode schemaNode = jsonUtils.getAsNode(bout.toByteArray());
+							nodeValidatorePrincipale.put(schemaName, schemaNode);
+							schemiValidatorePrincipale.put(schemaName, bout.toByteArray());
+							
+							// Verifico se gli elementi definition, a loro volta importano altri schemi
+							JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
+							List<String> refPath = engine.getStringMatchPattern(schemaNode, "$..$ref");
+							if(refPath!=null && !refPath.isEmpty()) {
+								for (String ref : refPath) {
+									String path = this.getRefPath(ref);
+									if(path!=null) {
+										existsRefInternal = true;
+										break;
+									}
 								}
 							}
-								
+			
+						}
+					}
+				}
+				
+				
+				
+				
+				
+				// *** Gestione file importati ***
+				
+				this.fileSchema = new HashMap<>();
+				if(apiValidatorStructure!=null) {
+					this.fileSchema = apiValidatorStructure.getFileSchema();
+				}
+				else {
+					if(api.getSchemas()!=null && api.getSchemas().size()>0) {
+					
+						HashMap<String, JsonNode> tmpNode = new HashMap<>();
+						HashMap<String, byte[]> tmpByteArraySchema = new HashMap<>();
+						HashMap<String, ApiSchemaType> tmpSchemaType = new HashMap<>();
+						
+						for (ApiSchema apiSchema : api.getSchemas()) {
 							
-							if(!tmpByteArraySchema.isEmpty()) {
-								itSchemas = tmpByteArraySchema.keySet().iterator();
+							if(!ApiSchemaType.JSON.equals(apiSchema.getType()) && !ApiSchemaType.YAML.equals(apiSchema.getType())) {
+								
+								continue;
+								
+							}
+							byte [] schema = apiSchema.getContent();
+							JsonNode schemaNode = null;
+							AbstractUtils utils = null;
+							JSONUtils jsonUtils = JSONUtils.getInstance();
+							if(ApiSchemaType.JSON.equals(apiSchema.getType())) {
+								utils = JSONUtils.getInstance();
+								if(((JSONUtils)utils).isJson(schema)) {
+									schemaNode = utils.getAsNode(schema);
+								}
+							}
+							else {
+								utils = YAMLUtils.getInstance();
+								if(((YAMLUtils)utils).isYaml(schema)) {
+									schemaNode = utils.getAsNode(schema);
+								}
+							}
+							if(schemaNode==null) {
+								continue;
+							}
+							
+							
+							/* ** Potenziale import from swagger/openapi che utilizza uno standard components/schema invece di definition, ed inoltre non inizia con { } **/
+							if(schemaNode instanceof TextNode) {
+								ByteArrayOutputStream bout = new ByteArrayOutputStream();
+								bout.write("{".getBytes());
+								bout.write(schema);
+								bout.write("}".getBytes());
+								bout.flush();
+								bout.close();
+								schemaNode = utils.getAsNode(bout.toByteArray());
+							}
+							if(schemaNode instanceof ObjectNode) {
+								ObjectNode objectNode = (ObjectNode) schemaNode;
+								
+								boolean foundDefinitions = false;
+								JsonNode nodeDefinitions = objectNode.get("definitions");
+								if(nodeDefinitions!=null && nodeDefinitions instanceof ObjectNode) {
+									foundDefinitions = true;
+								}
+								
+								if(!foundDefinitions) {
+									JsonNode nodeComponents = objectNode.get("components");
+									if(nodeComponents instanceof ObjectNode) {
+										ObjectNode objectNodeComponents = (ObjectNode) nodeComponents;
+										JsonNode nodeSchemas = objectNodeComponents.get("schemas");
+										if(nodeSchemas!=null && nodeSchemas instanceof ObjectNode) {
+											
+											ObjectNode objectNodeDefinitions = (ObjectNode) utils.newObjectNode();
+											objectNodeDefinitions.set("definitions", nodeSchemas);
+											String schemaAsString = null;
+											if(ApiSchemaType.YAML.equals(apiSchema.getType())) {
+												// converto comunque in json poichè la validazione è supportata per json solo
+												schemaAsString = jsonUtils.toString(objectNodeDefinitions);
+											}
+											else {
+												schemaAsString = utils.toString(objectNodeDefinitions);
+											}
+											schemaAsString = schemaAsString.replaceAll("#/components/schemas", "#/definitions");
+											schema = schemaAsString.getBytes();
+											schemaNode = objectNodeDefinitions;
+											//System.out.println("SCHEMA ["+new String(schema)+"]");
+											
+										}
+										else {
+											schema = null;
+											schemaNode = null;
+										}
+									}
+								}
+							}
+							
+							if(schemaNode!=null) {
+								if(this.onlySchemas) {
+									
+									// Interfaccia Registro senza OpenAPI
+									
+									IJsonSchemaValidator validator = ValidatorFactory.newJsonSchemaValidator(jsonValidatorAPI);
+									JsonSchemaValidatorConfig schemaValidationConfig = new JsonSchemaValidatorConfig();
+									schemaValidationConfig.setVerbose(config.isVerbose());
+									schemaValidationConfig.setAdditionalProperties(policyAdditionalProperties);
+									schemaValidationConfig.setPoliticaInclusioneTipi(POLITICA_INCLUSIONE_TIPI.DEFAULT);
+									//System.out.println("ADD SCHEMA PER ["+apiSchemaName+"#"+nameInternal+"] ["+new String(bout.toByteArray())+"]");
+									validator.setSchema(schema, schemaValidationConfig, log);
+									
+									this.validatorMap.put(apiSchema.getName(), validator);
+									
+								}
+								else {
+		
+									File tmp = File.createTempFile("validator", "."+ apiSchema.getType().name().toLowerCase());
+									this.fileSchema.put(apiSchema.getName(), tmp);
+									tmpNode.put(apiSchema.getName(), schemaNode);
+									tmpByteArraySchema.put(apiSchema.getName(), schema);
+									tmpSchemaType.put(apiSchema.getName(), apiSchema.getType());
+									
+								}
+							}
+						}
+						
+						
+						if(!this.onlySchemas) {
+						
+							// Verifico se gli schemi importati, a loro volta importano altri schemi
+							// Se cosi non è non serve serializzarli su file system
+							if(!existsRefInternal && !tmpByteArraySchema.isEmpty()) {
+								Iterator<String> itSchemas = tmpByteArraySchema.keySet().iterator();
 								while (itSchemas.hasNext()) {
 									String apiSchemaName = (String) itSchemas.next();
 									JsonNode schemaNode = tmpNode.get(apiSchemaName);
-									if(schemaNode instanceof ObjectNode) {
-										ObjectNode objectNode = (ObjectNode) schemaNode;
-										Iterator<String> it = objectNode.fieldNames();
-										String name = null;
-										while (it.hasNext()) {
-											name = (String) it.next();
-											if("definitions".equalsIgnoreCase(name)) {
-												JsonNode internalNode = objectNode.get(name);
-												if(internalNode instanceof ObjectNode) {
-													ObjectNode internalObjectNode = (ObjectNode) internalNode;
-													Iterator<String> itInternal = internalObjectNode.fieldNames();
-													while (itInternal.hasNext()) {
-														String nameInternal = (String) itInternal.next();
-														JsonNode typeDefinition = internalObjectNode.get(nameInternal);
-														
-														ByteArrayOutputStream bout = new ByteArrayOutputStream();
-														bout.write("{".getBytes());
-														String defOggetto = JSONUtils.getInstance().toString(typeDefinition);
-														defOggetto = defOggetto.trim();
-														defOggetto = defOggetto.replaceAll("#/components/schemas", "#/definitions");
-														if(defOggetto.startsWith("{")) {
-															defOggetto = defOggetto.substring(1);
+									JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
+									List<String> refPath = engine.getStringMatchPattern(schemaNode, "$..$ref");
+									if(refPath!=null && !refPath.isEmpty()) {
+										for (String ref : refPath) {
+											String path = this.getRefPath(ref);
+											if(path!=null) {
+												existsRefInternal = true;
+												break;
+											}
+										}
+									}
+									if(existsRefInternal) {
+										break;
+									}
+								}
+							}
+							
+							if(existsRefInternal && !tmpByteArraySchema.isEmpty()) {
+								Iterator<String> itSchemas = tmpByteArraySchema.keySet().iterator();
+								while (itSchemas.hasNext()) {
+									String apiSchemaName = (String) itSchemas.next();
+									JsonNode schemaNode = tmpNode.get(apiSchemaName);
+									byte [] schemaContent = tmpByteArraySchema.get(apiSchemaName);
+									
+									JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
+									List<String> refPath = engine.getStringMatchPattern(schemaNode, "$..$ref");
+									String schemaRebuild = null;
+									if(refPath!=null && !refPath.isEmpty()) {
+										for (String ref : refPath) {
+											String path = this.getRefPath(ref);
+											if(path!=null) {
+												String normalizePath = this.normalizePath(path);
+												if(normalizePath!=null && this.fileSchema.containsKey(normalizePath)) {
+													if(schemaRebuild==null) {
+														schemaRebuild = new String(schemaContent);
+													}
+													if(schemaRebuild.contains(path)==false) {
+														if(path.startsWith("./")) {
+															path = path.substring(2);
 														}
-														if(defOggetto.endsWith("}")) {
-															defOggetto = defOggetto.substring(0,defOggetto.length()-1);
-														}
-														defOggetto = defOggetto.trim();
-														bout.write(defOggetto.getBytes());
-														// DEVE ESSERE DEFINITO NEL JSON SCHEMA, NON POSSO DEFINIRLO STATICAMENTE
-														/*
-														bout.write(",\"additionalProperties\": ".getBytes());
-														if(defOggetto.startsWith("\"allOf\"") || defOggetto.startsWith("\"anyOf\"")){
-															// INDICARE ARTICOLO CHE SPIEGA
-															bout.write("true".getBytes());
-														}
-														else {
-															bout.write("false".getBytes());
-														}*/
-														bout.write(",".getBytes());
-														bout.write("\"definitions\" : ".getBytes());
-														String definitionStringSchema = JSONUtils.getInstance().toString(internalNode);
-														definitionStringSchema = definitionStringSchema.replaceAll("#/components/schemas", "#/definitions");
-														bout.write(definitionStringSchema.getBytes());
-														bout.write("}".getBytes());
-																								
-														IJsonSchemaValidator validator = ValidatorFactory.newJsonSchemaValidator(jsonValidatorAPI);
-														JsonSchemaValidatorConfig schemaValidationConfig = new JsonSchemaValidatorConfig();
-														schemaValidationConfig.setVerbose(config.isVerbose());
-														schemaValidationConfig.setAdditionalProperties(policyAdditionalProperties);
-														schemaValidationConfig.setPoliticaInclusioneTipi(POLITICA_INCLUSIONE_TIPI.DEFAULT);
-														//System.out.println("ADD SCHEMA PER ["+apiSchemaName+"#"+nameInternal+"] ["+new String(bout.toByteArray())+"]");
-														validator.setSchema(bout.toByteArray(), schemaValidationConfig, log);
-														
-														this.validatorMap.put(apiSchemaName+"#"+nameInternal, validator);
-														
+													}
+													File file = this.fileSchema.get(normalizePath);
+													while(schemaRebuild.contains(path)) {
+														schemaRebuild = schemaRebuild.replace(path, "file://"+file.getAbsolutePath());
 													}
 												}
 											}
 										}
 									}
+									
+									File f = this.fileSchema.get(apiSchemaName);
+									if(schemaRebuild!=null) {
+										FileSystemUtilities.writeFile(f, schemaRebuild.getBytes());
+										AbstractUtils utils = null;
+										if(ApiSchemaType.JSON.equals(tmpSchemaType.get(apiSchemaName))) {
+											utils = JSONUtils.getInstance();
+										}
+										else {
+											utils = YAMLUtils.getInstance();
+										}
+										schemaNode = utils.getAsNode(schemaRebuild);
+										tmpNode.put(apiSchemaName, schemaNode);
+										tmpByteArraySchema.put(apiSchemaName,schemaRebuild.getBytes());
+									}
+									else {
+										FileSystemUtilities.writeFile(f, schemaContent);
+									}
+								}
+									
 								
+								if(!tmpByteArraySchema.isEmpty()) {
+									itSchemas = tmpByteArraySchema.keySet().iterator();
+									while (itSchemas.hasNext()) {
+										String apiSchemaName = (String) itSchemas.next();
+										JsonNode schemaNode = tmpNode.get(apiSchemaName);
+										if(schemaNode instanceof ObjectNode) {
+											ObjectNode objectNode = (ObjectNode) schemaNode;
+											Iterator<String> it = objectNode.fieldNames();
+											String name = null;
+											while (it.hasNext()) {
+												name = (String) it.next();
+												if("definitions".equalsIgnoreCase(name)) {
+													JsonNode internalNode = objectNode.get(name);
+													if(internalNode instanceof ObjectNode) {
+														ObjectNode internalObjectNode = (ObjectNode) internalNode;
+														Iterator<String> itInternal = internalObjectNode.fieldNames();
+														while (itInternal.hasNext()) {
+															String nameInternal = (String) itInternal.next();
+															JsonNode typeDefinition = internalObjectNode.get(nameInternal);
+															
+															ByteArrayOutputStream bout = new ByteArrayOutputStream();
+															bout.write("{".getBytes());
+															String defOggetto = JSONUtils.getInstance().toString(typeDefinition);
+															defOggetto = defOggetto.trim();
+															defOggetto = defOggetto.replaceAll("#/components/schemas", "#/definitions");
+															if(defOggetto.startsWith("{")) {
+																defOggetto = defOggetto.substring(1);
+															}
+															if(defOggetto.endsWith("}")) {
+																defOggetto = defOggetto.substring(0,defOggetto.length()-1);
+															}
+															defOggetto = defOggetto.trim();
+															bout.write(defOggetto.getBytes());
+															// DEVE ESSERE DEFINITO NEL JSON SCHEMA, NON POSSO DEFINIRLO STATICAMENTE
+															/*
+															bout.write(",\"additionalProperties\": ".getBytes());
+															if(defOggetto.startsWith("\"allOf\"") || defOggetto.startsWith("\"anyOf\"")){
+																// INDICARE ARTICOLO CHE SPIEGA
+																bout.write("true".getBytes());
+															}
+															else {
+																bout.write("false".getBytes());
+															}*/
+															bout.write(",".getBytes());
+															bout.write("\"definitions\" : ".getBytes());
+															String definitionStringSchema = JSONUtils.getInstance().toString(internalNode);
+															definitionStringSchema = definitionStringSchema.replaceAll("#/components/schemas", "#/definitions");
+															bout.write(definitionStringSchema.getBytes());
+															bout.write("}".getBytes());
+																									
+															IJsonSchemaValidator validator = ValidatorFactory.newJsonSchemaValidator(jsonValidatorAPI);
+															JsonSchemaValidatorConfig schemaValidationConfig = new JsonSchemaValidatorConfig();
+															schemaValidationConfig.setVerbose(config.isVerbose());
+															schemaValidationConfig.setAdditionalProperties(policyAdditionalProperties);
+															schemaValidationConfig.setPoliticaInclusioneTipi(POLITICA_INCLUSIONE_TIPI.DEFAULT);
+															//System.out.println("ADD SCHEMA PER ["+apiSchemaName+"#"+nameInternal+"] ["+new String(bout.toByteArray())+"]");
+															validator.setSchema(bout.toByteArray(), schemaValidationConfig, log);
+															
+															this.validatorMap.put(apiSchemaName+"#"+nameInternal, validator);
+															
+														}
+													}
+												}
+											}
+										}
+									
+									}
+									
 								}
 								
 							}
-							
 						}
 					}
 				}
-			}
-			
-			
-			/* *** Validatore Principale *** */
-			
-			if(apiValidatorStructure!=null) {
-				this.validatorMap = apiValidatorStructure.getValidatorMap();
-			}
-			else {
-				if(schemiValidatorePrincipale!=null && schemiValidatorePrincipale.size()>0) {
-					Iterator<String> it = schemiValidatorePrincipale.keySet().iterator();
-					while (it.hasNext()) {
-						String schemaName = (String) it.next();
-						byte [] schema = schemiValidatorePrincipale.get(schemaName);
-						JsonNode schemaNode = nodeValidatorePrincipale.get(schemaName);
-					
-						JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
-						List<String> refPath = engine.getStringMatchPattern(schemaNode, "$..$ref");
-						String schemaRebuild = null;
-						if(refPath!=null && !refPath.isEmpty()) {
-							for (String ref : refPath) {
-								String path = this.getRefPath(ref);
-								if(path!=null) {
-									String normalizePath = this.normalizePath(path);
-									if(normalizePath!=null && this.fileSchema.containsKey(normalizePath)) {
-										if(schemaRebuild==null) {
-											schemaRebuild = new String(schema);
-										}
-										if(schemaRebuild.contains(path)==false) {
-											if(path.startsWith("./")) {
-												path = path.substring(2);
+				
+				
+				/* *** Validatore Principale *** */
+				
+				if(apiValidatorStructure!=null) {
+					this.validatorMap = apiValidatorStructure.getValidatorMap();
+				}
+				else {
+					if(schemiValidatorePrincipale!=null && schemiValidatorePrincipale.size()>0) {
+						Iterator<String> it = schemiValidatorePrincipale.keySet().iterator();
+						while (it.hasNext()) {
+							String schemaName = (String) it.next();
+							byte [] schema = schemiValidatorePrincipale.get(schemaName);
+							JsonNode schemaNode = nodeValidatorePrincipale.get(schemaName);
+						
+							JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
+							List<String> refPath = engine.getStringMatchPattern(schemaNode, "$..$ref");
+							String schemaRebuild = null;
+							if(refPath!=null && !refPath.isEmpty()) {
+								for (String ref : refPath) {
+									String path = this.getRefPath(ref);
+									if(path!=null) {
+										String normalizePath = this.normalizePath(path);
+										if(normalizePath!=null && this.fileSchema.containsKey(normalizePath)) {
+											if(schemaRebuild==null) {
+												schemaRebuild = new String(schema);
 											}
-										}
-										File file = this.fileSchema.get(normalizePath);
-										while(schemaRebuild.contains(path)) {
-											schemaRebuild = schemaRebuild.replace(path, "file://"+file.getAbsolutePath());
+											if(schemaRebuild.contains(path)==false) {
+												if(path.startsWith("./")) {
+													path = path.substring(2);
+												}
+											}
+											File file = this.fileSchema.get(normalizePath);
+											while(schemaRebuild.contains(path)) {
+												schemaRebuild = schemaRebuild.replace(path, "file://"+file.getAbsolutePath());
+											}
 										}
 									}
 								}
 							}
+							if(schemaRebuild!=null) {
+								schema = schemaRebuild.getBytes();
+							}		
+							
+							// Costruisco validatore
+							IJsonSchemaValidator validator = ValidatorFactory.newJsonSchemaValidator(jsonValidatorAPI);
+							JsonSchemaValidatorConfig schemaValidationConfig = new JsonSchemaValidatorConfig();
+							schemaValidationConfig.setVerbose(config.isVerbose());
+							schemaValidationConfig.setAdditionalProperties(policyAdditionalProperties);
+							schemaValidationConfig.setPoliticaInclusioneTipi(POLITICA_INCLUSIONE_TIPI.DEFAULT);
+							//System.out.println("ADD SCHEMA PER ["+schemaName+"] ["+new String(schema)+"]");
+							validator.setSchema(schema, schemaValidationConfig, log);
+							
+							this.validatorMap.put(schemaName, validator);
 						}
-						if(schemaRebuild!=null) {
-							schema = schemaRebuild.getBytes();
-						}		
-						
-						// Costruisco validatore
-						IJsonSchemaValidator validator = ValidatorFactory.newJsonSchemaValidator(jsonValidatorAPI);
-						JsonSchemaValidatorConfig schemaValidationConfig = new JsonSchemaValidatorConfig();
-						schemaValidationConfig.setVerbose(config.isVerbose());
-						schemaValidationConfig.setAdditionalProperties(policyAdditionalProperties);
-						schemaValidationConfig.setPoliticaInclusioneTipi(POLITICA_INCLUSIONE_TIPI.DEFAULT);
-						//System.out.println("ADD SCHEMA PER ["+schemaName+"] ["+new String(schema)+"]");
-						validator.setSchema(schema, schemaValidationConfig, log);
-						
-						this.validatorMap.put(schemaName, validator);
 					}
 				}
+				
+				
+				
+				// Salvo informazioni ricostruite
+				if(apiValidatorStructure==null) {
+					OpenapiApiValidatorStructure validationStructure = new OpenapiApiValidatorStructure();
+					validationStructure.setSchemiValidatorePrincipale(schemiValidatorePrincipale);
+					validationStructure.setNodeValidatorePrincipale(nodeValidatorePrincipale);
+					validationStructure.setFileSchema(this.fileSchema);
+					validationStructure.setValidatorMap(this.validatorMap);
+					if(openapiApi!=null) {
+						openapiApi.setValidationStructure(validationStructure);
+					}
+					else if(apiRest!=null) {
+						apiRest.addVendorImpl(VALIDATION_STRUCTURE, validationStructure);
+					}
+				}
+				
+								
+			} catch(Throwable e) {
+				try {
+					this.close(log, api, config); // per chiudere eventuali risorse parzialmente inizializzate
+				}catch(Throwable t) {}
+				
+				throw new ProcessingException(e);
 			}
 			
-			
-			
-			// Salvo informazioni ricostruite
-			if(apiValidatorStructure==null) {
-				OpenapiApiValidatorStructure validationStructure = new OpenapiApiValidatorStructure();
-				validationStructure.setSchemiValidatorePrincipale(schemiValidatorePrincipale);
-				validationStructure.setNodeValidatorePrincipale(nodeValidatorePrincipale);
-				validationStructure.setFileSchema(this.fileSchema);
-				validationStructure.setValidatorMap(this.validatorMap);
-				if(openapiApi!=null) {
-					openapiApi.setValidationStructure(validationStructure);
-				}
-				else if(apiRest!=null) {
-					apiRest.addVendorImpl(VALIDATION_STRUCTURE, validationStructure);
-				}
-			}
-					
-		} catch(Throwable e) {
-			try {
-				this.close(log, api, config); // per chiudere eventuali risorse parzialmente inizializzate
-			}catch(Throwable t) {}
-			
-			throw new ProcessingException(e);
 		}
 	}
 
