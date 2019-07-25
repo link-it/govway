@@ -589,6 +589,7 @@ public class CostantiControlStation {
 			LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_UTENTE
 	};
 	
+	public final static String LABEL_PARAMETRO_AUTENTICAZIONE_CUSTOM_PROPERTIES = "Propriet&agrave;";
 	public final static String LABEL_PARAMETRO_AUTORIZZAZIONE_CUSTOM_PROPERTIES = "Propriet&agrave;";
 	public final static String LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES = "Propriet&agrave;";
 	

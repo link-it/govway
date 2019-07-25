@@ -1381,6 +1381,26 @@
             <forward name="porteDelegateControlloAccessiError" path="/jsplib/info.jsp"/>
         </action>
         
+        <!--  Porte Delegate (Proprieta autenticazione custom) -->
+
+        <action path="/porteDelegateAutheCustomPropertiesAdd" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateProprietaAutenticazioneAdd"
+            scope="request" validate="true">
+            <forward name="porteDelegateAutheCustomPropertiesAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateAutheCustomPropertiesAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateAutheCustomPropertiesAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateAutheCustomPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateAutheCustomPropertiesList" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateProprietaAutenticazioneList"
+            scope="request" validate="true">
+            <forward name="porteDelegateAutheCustomPropertiesList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateAutheCustomPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateAutheCustomPropertiesDel" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateProprietaAutenticazioneDel"
+            scope="request" validate="true">
+            <forward name="porteDelegateAutheCustomPropertiesDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateAutheCustomPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        
         <!--  Porte Delegate (Proprieta autorizzazione custom) -->
 
         <action path="/porteDelegateAuthCustomPropertiesAdd" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateProprietaAutorizzazioneAdd"
@@ -2109,6 +2129,26 @@
             <forward name="porteApplicativeControlloAccessiOk" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeControlloAccessiCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeControlloAccessiError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Applicative (Proprieta autenticazione custom) -->
+
+        <action path="/porteApplicativeAutheCustomPropertiesAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeProprietaAutenticazioneAdd"
+            scope="request" validate="true">
+            <forward name="porteApplicativeAutheCustomPropertiesAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeAutheCustomPropertiesAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeAutheCustomPropertiesAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeAutheCustomPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeAutheCustomPropertiesList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeProprietaAutenticazioneList"
+            scope="request" validate="true">
+            <forward name="porteApplicativeAutheCustomPropertiesList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeAutheCustomPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeAutheCustomPropertiesDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeProprietaAutenticazioneDel"
+            scope="request" validate="true">
+            <forward name="porteApplicativeAutheCustomPropertiesDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeAutheCustomPropertiesError" path="/jsplib/info.jsp"/>
         </action>
         
         <!--  Porte Applicative (Proprieta autorizzazione custom) -->

@@ -1643,7 +1643,8 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			this.controlloAccessiAutenticazione(dati, tipoOp, autenticazione, autenticazioneCustom, autenticazioneOpzionale, 
 					autenticazionePrincipal, autenticazioneParametroList,
 					confPers, isSupportatoAutenticazioneSoggetti,false,
-					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail);
+					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
+					false, null, 0);
 			
 			String urlAutorizzazioneAutenticati = null;
 			String urlAutorizzazioneErogazioneApplicativiAutenticati = null;
@@ -5741,6 +5742,184 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			if (sa.equals("")) {
 				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_UN_APPLICATIVO);
 				return false;
+			}
+
+			return true;
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void preparePorteApplicativeAutenticazioneCustomPropList(String nomePorta, ISearch ricerca, List<Proprieta> lista) throws Exception {
+		try {
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
+			String idAsps = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+
+			String id = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			String idsogg = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
+
+			ServletUtils.addListElementIntoSession(this.session, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES,
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, id), 
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
+
+			int idLista = Liste.PORTE_APPLICATIVE_PROPRIETA_AUTENTICAZIONE;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+
+			PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(id));
+			String idporta = pa.getNome();
+
+			// setto la barra del titolo
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
+			
+			String labelPerPorta = null;
+			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta = this.porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI_CONFIG_DI,
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI,
+						pa);
+			}
+			else {
+				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI_CONFIG_DI+idporta;
+			}
+			
+			lstParam.add(new Parameter(labelPerPorta, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, 
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, id),
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)));
+			
+			String labelPagLista = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AUTENTICAZIONE_PROPRIETA;
+			
+			this.pd.setSearchLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+			if(search.equals("")){
+				this.pd.setSearchDescription("");
+				lstParam.add(new Parameter(labelPagLista,null));
+			}
+			else{
+				lstParam.add(new Parameter(labelPagLista,
+						PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AUTENTICAZIONE_CUSTOM_PROPERTIES_LIST,
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID,id),
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg),
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)
+						));
+				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RISULTATI_RICERCA, null));
+
+			}
+
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+
+			// controllo eventuali risultati ricerca
+			if (!search.equals("")) {
+				ServletUtils.enabledPageDataSearch(this.pd, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AUTENTICAZIONE_PROPRIETA, search);
+			}
+
+			// setto le label delle colonne
+			String[] labels = {CostantiControlStation.LABEL_PARAMETRO_NOME , CostantiControlStation.LABEL_PARAMETRO_VALORE };
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<Proprieta> it = lista.iterator();
+				while (it.hasNext()) {
+					Proprieta proprieta = it.next();
+		
+					Vector<DataElement> e = new Vector<DataElement>();
+		
+					DataElement de = new DataElement();
+					de.setValue(proprieta.getNome());
+					de.setIdToRemove(proprieta.getId() + "");
+					e.addElement(de);
+					
+					de = new DataElement();
+					de.setValue(proprieta.getValore());
+					e.addElement(de);
+		
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public boolean proprietaAutenticazioneCheckData(TipoOperazione tipoOp, String idPorta, String nome,String valore) throws Exception {
+		try {
+			// Campi obbligatori
+			if (nome.equals("") || valore.equals("")) {
+				String tmpElenco = "";
+				if (nome.equals("")) {
+					tmpElenco = "Nome";
+				}
+				if (valore.equals("")) {
+					if (tmpElenco.equals("")) {
+						tmpElenco = "Valore";
+					} else {
+						tmpElenco = tmpElenco + ", Valore";
+					}
+				}
+				this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
+				return false;
+			}
+			
+			// Check Lunghezza
+			if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)==false) {
+				return false;
+			}
+			if(this.checkLength255(valore, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE)==false) {
+				return false;
+			}
+			
+			// Se tipoOp = add, controllo che la property non sia gia'
+			// stata
+			// registrata per la porta applicativa
+			if (tipoOp.equals(TipoOperazione.ADD)) {
+				boolean giaRegistrato = false;
+				PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
+				String nomeporta = pa.getNome();
+
+				for (int i = 0; i < pa.sizeProprietaAutenticazioneList(); i++) {
+					Proprieta tmpProp = pa.getProprietaAutenticazione(i);
+					if (nome.equals(tmpProp.getNome())) {
+						giaRegistrato = true;
+						break;
+					}
+				}
+
+				if (giaRegistrato) {
+					Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
+					if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
+					
+					if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
+						nomeporta = this.porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(null,null, pa);
+						this.pd.setMessage(MessageFormat.format(
+								PorteApplicativeCostanti.MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_CONFIGURAZIONE_YY, nome,
+								nomeporta)); 
+					} else {
+						this.pd.setMessage(MessageFormat.format(
+								PorteApplicativeCostanti.MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_PORTA_APPLICATIVA_YY, nome,
+								nomeporta));	
+					}
+					
+					
+					return false;
+				}
 			}
 
 			return true;

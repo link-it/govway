@@ -5952,7 +5952,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,false);
 			
 			this.controlloAccessiAutenticazione(dati, tipoOp, erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList, false, erogazioneIsSupportatoAutenticazioneSoggetti,false,
-					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail);
+					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
+					false, null, 0);
 						
 			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, pa,
 					erogazioneAutenticazione, erogazioneAutorizzazione, null, 
@@ -5982,7 +5983,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,true);
 
 			this.controlloAccessiAutenticazione(dati, tipoOp, fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList, false, true,true,
-					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail);
+					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
+					false, null, 0);
 		
 			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,pd,
 					fruizioneAutenticazione, fruizioneAutorizzazione, null, 
@@ -6846,7 +6848,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,true);
 
 				this.controlloAccessiAutenticazione(dati, tipoOp, fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList, false, true,true,
-						gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail);
+						gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
+						false, null, 0);
 				
 				this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,
 						fruizioneAutenticazione, fruizioneAutorizzazione, null, 
@@ -7750,7 +7753,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,false);
 			
 			this.controlloAccessiAutenticazione(dati, tipoOperazione, erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList, false, erogazioneIsSupportatoAutenticazioneSoggetti,false,
-					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail);
+					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
+					false, null, 0);
 			
 			this.controlloAccessiAutorizzazione(dati, tipoOperazione, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null,
 					erogazioneAutenticazione, erogazioneAutorizzazione, null, 
@@ -8129,7 +8133,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,true);
 		
 			this.controlloAccessiAutenticazione(dati, tipoOp, fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList, false, true,true,
-					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail);
+					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
+					false, null, 0);
 			
 			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,
 				fruizioneAutenticazione, fruizioneAutorizzazione, null, 

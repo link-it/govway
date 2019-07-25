@@ -202,11 +202,13 @@ public class PorteDelegateControlloAccessi extends Action {
 				sizeFruitori = portaDelegata.sizeServizioApplicativoList();
 			}
 			
+			int numAutenticazioneCustomPropertiesList = portaDelegata.sizeProprietaAutenticazioneList();
 			int numAutorizzazioneCustomPropertiesList = portaDelegata.sizeProprietaAutorizzazioneList();
 			int numAutorizzazioneContenutiCustomPropertiesList = portaDelegata.sizeProprietaAutorizzazioneContenutoList();
 			String oldAutorizzazioneContenuto = portaDelegata.getAutorizzazioneContenuto() ;
 			String oldAutorizzazioneContenutoStato = StatoFunzionalita.DISABILITATO.getValue();
 					
+			boolean old_autenticazione_custom = portaDelegata.getAutenticazione() != null && !TipoAutenticazione.getValues().contains(portaDelegata.getAutenticazione());
 			boolean old_autorizzazione_contenuti_custom = false;
 			if(oldAutorizzazioneContenuto != null) {
 				if(oldAutorizzazioneContenuto.equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN)) {
@@ -261,6 +263,10 @@ public class PorteDelegateControlloAccessi extends Action {
 			Parameter urlAutorizzazioneScopeParam = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SCOPE_LIST , urlParmsAutorizzazioneScope);
 			String urlAutorizzazioneScope = urlAutorizzazioneScopeParam.getValue();
 			
+			Parameter[] urlParmsAutenticazioneCustomProperties = { pId,pIdSoggetto,pIdAsps,pIdFrizione };
+			Parameter urlAutenticazioneCustomPropertiesParam = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AUTENTICAZIONE_CUSTOM_PROPERTIES_LIST , urlParmsAutenticazioneCustomProperties); 
+			String urlAutenticazioneCustomProperties = urlAutenticazioneCustomPropertiesParam.getValue();
+			
 			Parameter[] urlParmsAutorizzazioneCustomProperties = {  pId,pIdSoggetto,pIdAsps,pIdFrizione }; 
 			Parameter urlAutorizzazioneCustomPropertiesParam = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AUTORIZZAZIONE_CUSTOM_PROPERTIES_LIST , urlParmsAutorizzazioneCustomProperties);
 			String urlAutorizzazioneCustomProperties = urlAutorizzazioneCustomPropertiesParam.getValue();
@@ -297,6 +303,12 @@ public class PorteDelegateControlloAccessi extends Action {
 			// postback
 			String postBackElementName = porteDelegateHelper.getPostBackElementName();
 			if(postBackElementName != null) {
+				if(postBackElementName.equals(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE)) {
+					if(autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM)) {
+						autenticazioneCustom = "";
+					}
+				}
+				
 				if(postBackElementName.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_STATO)) {
 					if(autorizzazioneContenutiStato.equals(StatoFunzionalita.DISABILITATO.getValue()) || autorizzazioneContenutiStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM)) {
 						autorizzazioneContenuti = "";
@@ -512,7 +524,8 @@ public class PorteDelegateControlloAccessi extends Action {
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata,isPortaDelegata);
 				
 				porteDelegateHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,isPortaDelegata,
-						gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail);
+						gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
+						old_autenticazione_custom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList);
 				
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 				porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,portaDelegata,
@@ -562,7 +575,8 @@ public class PorteDelegateControlloAccessi extends Action {
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata,isPortaDelegata);
 				
 				porteDelegateHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,isPortaDelegata,
-						gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail);
+						gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
+						old_autenticazione_custom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList);
 				
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 				porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,portaDelegata,
@@ -594,8 +608,12 @@ public class PorteDelegateControlloAccessi extends Action {
 			
 			if (autenticazione == null || !autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM))
 				portaDelegata.setAutenticazione(autenticazione);
-			else
+			else {
 				portaDelegata.setAutenticazione(autenticazioneCustom);
+				
+				if(!old_autenticazione_custom)
+					portaDelegata.getProprietaAutenticazioneList().clear();
+			}
 			if(autenticazioneOpzionale != null){
 				if(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale))
 					portaDelegata.setAutenticazioneOpzionale(StatoFunzionalita.ABILITATO);
@@ -603,10 +621,12 @@ public class PorteDelegateControlloAccessi extends Action {
 					portaDelegata.setAutenticazioneOpzionale(StatoFunzionalita.DISABILITATO);
 			} else 
 				portaDelegata.setAutenticazioneOpzionale(null);
-			portaDelegata.getProprietaAutenticazioneList().clear();
-			List<Proprieta> proprietaAutenticazione = porteDelegateCore.convertToAutenticazioneProprieta(autenticazione, autenticazionePrincipal, autenticazioneParametroList);
-			if(proprietaAutenticazione!=null && !proprietaAutenticazione.isEmpty()) {
-				portaDelegata.getProprietaAutenticazioneList().addAll(proprietaAutenticazione);
+			if (autenticazione == null || !autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM)) {
+				portaDelegata.getProprietaAutenticazioneList().clear();
+				List<Proprieta> proprietaAutenticazione = porteDelegateCore.convertToAutenticazioneProprieta(autenticazione, autenticazionePrincipal, autenticazioneParametroList);
+				if(proprietaAutenticazione!=null && !proprietaAutenticazione.isEmpty()) {
+					portaDelegata.getProprietaAutenticazioneList().addAll(proprietaAutenticazione);
+				}
 			}
 			
 			if (autorizzazione == null || !autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM)) {
@@ -750,10 +770,11 @@ public class PorteDelegateControlloAccessi extends Action {
 				sizeFruitori = portaDelegata.sizeServizioApplicativoList();
 			}
 			
+			numAutenticazioneCustomPropertiesList = portaDelegata.sizeProprietaAutenticazioneList();
 			numAutorizzazioneCustomPropertiesList = portaDelegata.sizeProprietaAutorizzazioneList();
 			numAutorizzazioneContenutiCustomPropertiesList = portaDelegata.sizeProprietaAutorizzazioneContenutoList();
 			old_autorizzazione_contenuti_custom = portaDelegata.getAutorizzazioneContenuto() != null && !portaDelegata.getAutorizzazioneContenuto().equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN);
-			
+			old_autenticazione_custom = portaDelegata.getAutenticazione() != null && !TipoAutenticazione.getValues().contains(portaDelegata.getAutenticazione());
 			
 			if (autenticazione == null) {
 				autenticazione = portaDelegata.getAutenticazione();
@@ -947,7 +968,8 @@ public class PorteDelegateControlloAccessi extends Action {
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata,isPortaDelegata);
 			
 			porteDelegateHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,isPortaDelegata,
-					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail);
+					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
+					old_autenticazione_custom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList);
 			
 			// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 			porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,portaDelegata,

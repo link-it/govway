@@ -3654,7 +3654,8 @@ public class ConsoleHelper {
 	public void controlloAccessiAutenticazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String autenticazione, String autenticazioneCustom, String autenticazioneOpzionale,
 			TipoAutenticazionePrincipal autenticazionePrincipal,  List<String> autenticazioneParametroList,
 			boolean confPers, boolean isSupportatoAutenticazioneSoggetti,boolean isPortaDelegata,
-			String gestioneToken,String gestioneTokenPolicy,String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail){
+			String gestioneToken,String gestioneTokenPolicy,String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
+			boolean old_autenticazione_custom, String urlAutenticazioneCustomProperties, int numAutenticazioneCustomPropertiesList){
 		
 		boolean tokenAbilitato = StatoFunzionalita.ABILITATO.getValue().equalsIgnoreCase(gestioneToken) &&
 				gestioneTokenPolicy != null && !gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
@@ -3808,6 +3809,23 @@ public class ConsoleHelper {
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM);
 				de.setValue(autenticazioneCustom);
 				dati.addElement(de);
+				
+				// se ho salvato il tipo custom faccio vedere il link alle proprieta'
+				if(autenticazione != null && autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM)) {
+					if(old_autenticazione_custom) {
+						Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
+						de = new DataElement();
+						de.setType(DataElementType.LINK);
+						de.setUrl(urlAutenticazioneCustomProperties);
+						String labelCustomProperties = CostantiControlStation.LABEL_PARAMETRO_AUTENTICAZIONE_CUSTOM_PROPERTIES; 
+						if (contaListe) {
+							ServletUtils.setDataElementCustomLabel(de,labelCustomProperties,Long.valueOf(numAutenticazioneCustomPropertiesList));
+						} else {
+							ServletUtils.setDataElementCustomLabel(de,labelCustomProperties);
+						}
+						dati.addElement(de);
+					}
+				}
 						
 				try {
 					if(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE.equals(this.getPostBackElementName())) {
@@ -13312,6 +13330,39 @@ public class ConsoleHelper {
 
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CUSTOM_PROPERTIES);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+		de.setValue(nome);
+		if(TipoOperazione.ADD.equals(tipoOp)){
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setRequired(true);
+		}
+		else{
+			de.setType(DataElementType.TEXT);
+		}
+		de.setName(CostantiControlStation.PARAMETRO_NOME);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setRequired(true);
+		de.setName(CostantiControlStation.PARAMETRO_VALORE);
+		de.setValue(valore);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+
+		return dati;
+	}
+	
+	public Vector<DataElement>  addProprietaAutenticazioneCustomToDati(Vector<DataElement> dati, TipoOperazione tipoOp, String nome, String valore) {
+
+		DataElement de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTENTICAZIONE_CUSTOM_PROPERTIES);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
