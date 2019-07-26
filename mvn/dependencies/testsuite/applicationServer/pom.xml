@@ -20,6 +20,7 @@
 		<module>wildfly14</module>
 		<module>wildfly15</module>
 		<module>wildfly16</module>
+		<module>wildfly17</module>
 	</modules>
 
 	<parent>

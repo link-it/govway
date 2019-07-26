@@ -45,7 +45,7 @@
 			<elseif>
 				<matches string="${as}" pattern="wildfly.*"/>
 				<then>
-					<var name="versioniSupportate" value="OpenSPCoop2 supportate le seguenti versioni: 8.x (wildfly8), 9.x (wildfly9), 10.x (wildfly10), 11.x (wildfly11), 12.x (wildfly12), 13.x (wildfly13), 14.x (wildfly14), 15.x (wildfly15) e 16.x (wildfly16)"/>
+					<var name="versioniSupportate" value="OpenSPCoop2 supportate le seguenti versioni: 8.x (wildfly8), 9.x (wildfly9), 10.x (wildfly10), 11.x (wildfly11), 12.x (wildfly12), 13.x (wildfly13), 14.x (wildfly14), 15.x (wildfly15), 16.x (wildfly16) e 17.x (wildfly17)"/>
 					<if>
 						<equals arg1="${as}" arg2="wildfly"/>
 						<then>
@@ -64,6 +64,7 @@
 								<equals arg1="${as}" arg2="wildfly14"/>
 								<equals arg1="${as}" arg2="wildfly15"/>
 								<equals arg1="${as}" arg2="wildfly16"/>
+								<equals arg1="${as}" arg2="wildfly17"/>
 							</or>
 						</not>
 						<then>

@@ -213,24 +213,24 @@ Scenario: Preparazione Test
     * def DbUtils = Java.type('org.openspcoop2.core.monitor.rs.testsuite.DbUtils')
     * def db = new DbUtils(govwayDbConfig)
 
-    * eval db.update("INSERT INTO credenziale_mittente(tipo,credenziale) VALUES ('token_username', '"+claims.username+"');");
-    * def result = db.readRows("SELECT * FROM credenziale_mittente WHERE tipo='token_username' AND credenziale ='"+claims.username+"';");
+    * eval db.update("INSERT INTO credenziale_mittente(tipo,credenziale) VALUES ('token_username', '"+claims.username+"')");
+    * def result = db.readRows("SELECT * FROM credenziale_mittente WHERE tipo='token_username' AND credenziale ='"+claims.username+"'");
     * eval id_credenziale.username = result[0].id;
 
-    * eval db.update("INSERT INTO credenziale_mittente(tipo,credenziale) VALUES ('token_issuer', '"+claims.issuer+"');");
-    * def result = db.readRows("SELECT * FROM credenziale_mittente WHERE tipo='token_issuer' AND credenziale ='"+claims.issuer+"';");
+    * eval db.update("INSERT INTO credenziale_mittente(tipo,credenziale) VALUES ('token_issuer', '"+claims.issuer+"')");
+    * def result = db.readRows("SELECT * FROM credenziale_mittente WHERE tipo='token_issuer' AND credenziale ='"+claims.issuer+"'");
     * eval id_credenziale.issuer = result[0].id;
 
-    * eval db.update("INSERT INTO credenziale_mittente(tipo,credenziale) VALUES ('token_clientId', '"+claims.client_id+"');");
-    * def result = db.readRows("SELECT * FROM credenziale_mittente WHERE tipo='token_clientId' AND credenziale ='"+claims.client_id+"';");
+    * eval db.update("INSERT INTO credenziale_mittente(tipo,credenziale) VALUES ('token_clientId', '"+claims.client_id+"')");
+    * def result = db.readRows("SELECT * FROM credenziale_mittente WHERE tipo='token_clientId' AND credenziale ='"+claims.client_id+"'");
     * eval id_credenziale.client_id = result[0].id;
 
-    * eval db.update("INSERT INTO credenziale_mittente(tipo,credenziale) VALUES ('token_subject', '"+claims.subject+"');");
-    * def result = db.readRows("SELECT * FROM credenziale_mittente WHERE tipo='token_subject' AND credenziale ='"+claims.subject+"';");
+    * eval db.update("INSERT INTO credenziale_mittente(tipo,credenziale) VALUES ('token_subject', '"+claims.subject+"')");
+    * def result = db.readRows("SELECT * FROM credenziale_mittente WHERE tipo='token_subject' AND credenziale ='"+claims.subject+"'");
     * eval id_credenziale.subject = result[0].id;
 
-    * eval db.update("INSERT INTO credenziale_mittente(tipo,credenziale) VALUES ('token_eMail', '"+claims.email+"');");
-    * def result = db.readRows("SELECT * FROM credenziale_mittente WHERE tipo='token_eMail' AND credenziale ='"+claims.email+"';");
+    * eval db.update("INSERT INTO credenziale_mittente(tipo,credenziale) VALUES ('token_eMail', '"+claims.email+"')");
+    * def result = db.readRows("SELECT * FROM credenziale_mittente WHERE tipo='token_eMail' AND credenziale ='"+claims.email+"'");
     * eval id_credenziale.email = result[0].id;
 
     # Esegue un'invocazione per recuperare l'id transazione dell'invocazione,
@@ -246,7 +246,7 @@ Scenario: Preparazione Test
     Then status 200
     * call pause(1000)
     * def id_transazione = responseHeaders['GovWay-Transaction-ID'][0];
-    * def dbquery = "UPDATE transazioni set token_username = '"+id_credenziale.username+"', token_issuer='"+id_credenziale.issuer+"', token_client_id='"+id_credenziale.client_id+"', token_subject='"+id_credenziale.subject+"', token_mail='"+id_credenziale.email+"' WHERE id='"+id_transazione+"';";
+    * def dbquery = "UPDATE transazioni set token_username = '"+id_credenziale.username+"', token_issuer='"+id_credenziale.issuer+"', token_client_id='"+id_credenziale.client_id+"', token_subject='"+id_credenziale.subject+"', token_mail='"+id_credenziale.email+"' WHERE id='"+id_transazione+"'";
     * eval db.update(dbquery);
     * call pause(1000)
 
@@ -258,7 +258,7 @@ Scenario: Preparazione Test
     Then status 200
     * call pause(1000)  
     * def id_transazione = responseHeaders['GovWay-Transaction-ID'][0];
-    * def dbquery = "UPDATE transazioni set token_username = '"+id_credenziale.username+"', token_issuer='"+id_credenziale.issuer+"', token_client_id='"+id_credenziale.client_id+"', token_subject='"+id_credenziale.subject+"', token_mail='"+id_credenziale.email+"' WHERE id='"+id_transazione+"';";
+    * def dbquery = "UPDATE transazioni set token_username = '"+id_credenziale.username+"', token_issuer='"+id_credenziale.issuer+"', token_client_id='"+id_credenziale.client_id+"', token_subject='"+id_credenziale.subject+"', token_mail='"+id_credenziale.email+"' WHERE id='"+id_transazione+"'";
     * eval db.update(dbquery);
 
 
@@ -267,7 +267,7 @@ Scenario: Preparazione Test
     * def delete_lock =
     """
     function(db) {
-        db.update("UPDATE op2_semaphore set node_id=NULL, creation_time=NULL, details=NULL, update_time=NULL WHERE node_id='TESTSUITE' AND applicative_id='GenerazioneStatisticheOrarie';");
+        db.update("UPDATE op2_semaphore set node_id=NULL, creation_time=NULL, details=NULL, update_time=NULL WHERE node_id='TESTSUITE' AND applicative_id='GenerazioneStatisticheOrarie'");
     }
     """
 
@@ -284,7 +284,7 @@ Scenario: Preparazione Test
 
             }
         } while(result[0].node_id != null)
-        db.update("UPDATE op2_semaphore set node_id='TESTSUITE', creation_time=CURRENT_TIMESTAMP, details='Lock testsuite monitoraggio' WHERE applicative_id='GenerazioneStatisticheOrarie';");
+        db.update("UPDATE op2_semaphore set node_id='TESTSUITE', creation_time=CURRENT_TIMESTAMP, details='Lock testsuite monitoraggio' WHERE applicative_id='GenerazioneStatisticheOrarie'");
         
     }
     """

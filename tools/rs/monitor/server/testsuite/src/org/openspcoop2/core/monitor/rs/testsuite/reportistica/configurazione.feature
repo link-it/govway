@@ -55,7 +55,8 @@ Scenario: Recupero Configurazione API
         versione: setup.erogazione_petstore.api_versione
     })
     """
-    Given params ({tipo: 'erogazione', limit: 0})
+    Given url configurazioneUrl
+    And params ({tipo: 'erogazione', limit: 0})
     When method get
     Then status 200
     And match response.items contains ([expected])

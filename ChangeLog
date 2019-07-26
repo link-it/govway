@@ -1,3 +1,9 @@
+2019-07-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-872
+	Supporto per WildFly versione 17
+
 2019-07-24  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayCore, GovWayConsole]
