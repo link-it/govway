@@ -10,8 +10,8 @@ si può invece far riferimento al file ChangeLog di questa versione.
 .. toctree::
         :maxdepth: 2
 
-	trasformazioni
 	autorizzazione
+	trasformazioni
 	xpathJSON
 	wsdl
 	installer

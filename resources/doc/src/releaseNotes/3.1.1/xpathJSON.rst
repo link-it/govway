@@ -1,6 +1,11 @@
-Nuova funzionalità XPATH su JSON
---------------------------------
+Miglioramenti della funzionalità di estrazione dei contenuti JSON
+-----------------------------------------------------------------
 
-L'estrazione dei contenuti da messaggi JSON, utilizzato nelle funzionalità di Correlazione Applicativa, Rate Limiting, Trasformazioni, Identificazione dell'azione etc. era attuabile unicamente attraverso la definizione di espressioni JSONPath.
+L'estrazione dei contenuti da messaggi JSON, utilizzata nelle
+funzionalità di Correlazione Applicativa, Rate Limiting,
+Trasformazioni, Identificazione dell'azione etc. era possibile
+attraverso la definizione di espressioni JSONPath.
 
-Poichè allo stato attuale quello che consente di fare JSONPath sono un sottoinsieme delle funzionalità offerte da XPath per XML, è stata aggiunta la possibilità di utilizzare espressioni XPath su di una rappresentazione xml dell'oggetto json in transito.
+Essendo allo stato attuale, XPath più espressivo di JSONPath, è stata
+introdotta la possibilità di utilizzare espressioni XPath su di una
+rappresentazione xml dell'oggetto json in transito.
