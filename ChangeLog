@@ -5,7 +5,6 @@
 	Gli header Header HTTP non venivano gestiti completamente 'case-insensitive' come richiesto dalla specifica rfc7230#page-22.
 	Venivano processati se utilizzavano la forma corretta (es. Content-Type) o una forma completamente minuscola o maiuscola (es. content-type).
 	Non veniva invece riconosciuto un header che possedeva un nome che non rientrava nei casi precedenti (es. Content-type o Soapaction).
-	E' stata inoltre aumentata la dimensione dell'informazione relativa al path associabile ad una trasformazione SOAP to REST.
 
 2019-07-29  Andrea Poli <apoli@link.it>
 

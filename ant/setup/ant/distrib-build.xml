@@ -185,6 +185,17 @@
 				</copy>
 			</else>
 		</if>
+		<if>
+			<equals arg1="${antinstaller_modalita_installazione}" arg2="aggiornamento"/>
+			<then>
+				<mkdir dir="${dist}/sql/profili"/>
+				<copy todir="${dist}/sql/profili">
+					<fileset dir="${tmp_sql}/profili">
+				    		<include name="GovWay*.sql"/>
+					</fileset>
+				</copy>
+			</then>
+		</if>
 		
 		<!-- Archivio -->
 		<mkdir dir="${dist}/archivi"/>

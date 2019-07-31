@@ -511,6 +511,25 @@ public class ImporterInformationMissingSetter {
 				archive.getAccordiServizioParteSpecifica().get(i).update(as, false);
 			}
 			
+			if(as.getAccordoServizioParteComune()!=null) {
+				try {
+					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(as.getAccordoServizioParteComune());
+					if(idAccordo.getSoggettoReferente()!=null) {
+						String tipoSoggettoReferenteAccordo = idAccordo.getSoggettoReferente().getTipo();
+						String nomeSoggettoReferenteAccordo = idAccordo.getSoggettoReferente().getNome();
+						if(matchSoggetto(soggetto.getReplaceMatch(), 
+								tipoSoggettoReferenteAccordo, nomeSoggettoReferenteAccordo)){
+							idAccordo.getSoggettoReferente().setTipo(idSoggetto.getTipo());
+							idAccordo.getSoggettoReferente().setNome(idSoggetto.getNome());
+							as.setAccordoServizioParteComune(IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordo));
+							archive.getAccordiServizioParteSpecifica().get(i).update(as, false);
+						}
+					}
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e );
+				}
+			}
+			
 			if(archiveAS.getMappingPorteApplicativeAssociate()!=null && !archiveAS.getMappingPorteApplicativeAssociate().isEmpty()) {
 				for (MappingErogazionePortaApplicativa mappingPA : archiveAS.getMappingPorteApplicativeAssociate()) {
 					if(mappingPA.getIdServizio()!=null && mappingPA.getIdServizio().getSoggettoErogatore()!=null) {

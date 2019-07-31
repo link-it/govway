@@ -1001,6 +1001,7 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 	</target>
 	
 	<target name="_setup_sql_aggiornamento">
+
 		<!-- SQL di Aggiornamento -->
 		<java classname="org.openspcoop2.core.commons.SQLScriptBuilder" fork="true" outputproperty="_output_sql_ddl">
 			<arg value="${deploy_sql}/sql_upgrade" />
@@ -1024,6 +1025,107 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 				<fail message="Generazione sql di aggiornamento: ${_output_sql_ddl}"/>	
 			</then>
 		</if>
+
+		<!-- SQL Extra per aggiunta di un profilo -->
+
+		<mkdir dir="${tmp_sql}/profili" />
+
+		<!-- trasparente -->
+		<if>
+			<istrue value="${antinstaller_protocollo_trasparente}" />
+			<then>
+				<copy file="${deploy_sql}/init_soggetto.sql" tofile="${tmp_sql}/profili/GovWay_upgrade_initialize-profilo-apiGateway.sql" overwrite="true"/>
+				<antcall target="sql_settings_by_protocol">
+				    <param name="file" value="${tmp_sql}/profili/GovWay_upgrade_initialize-profilo-apiGateway.sql"/>
+					<param name="sql_nome" value="${antinstaller_nomesoggetto}"/>
+					<param name="sql_tipo" value="${antinstaller_tiposoggetto_trasparente}"/>
+					<param name="sql_idporta" value="domain/gw/${antinstaller_nomesoggetto}"/>
+					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_trasparente}${antinstaller_nomesoggetto},c=it"/>
+					<param name="sql_protocollo_versione" value="1.0"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${tmp_sql}/profili/GovWay_upgrade_initialize-profilo-apiGateway.sql"/>
+					<param name="token" value="'@PDDCONSOLE_USERNAME@'"/>
+					<param name="value" value="(select login from users where permessi='SCMAU')"/>
+				</antcall>
+				<concat destfile="${tmp_sql}/profili/GovWay_upgrade_initialize-profilo-apiGateway.sql" append="yes" >
+<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa) VALUES ('trasparente','http://localhost:8080/govway/out/','http://localhost:8080/govway/');
+]]>
+				</concat>
+			</then>
+		</if>
+
+		<!-- spcoop -->
+		<if>
+			<istrue value="${antinstaller_protocollo_spcoop}" />
+			<then>
+				<copy file="${deploy_sql}/init_soggetto.sql" tofile="${tmp_sql}/profili/GovWay_upgrade_initialize-profilo-spcoop.sql" overwrite="true"/>
+				<antcall target="sql_settings_by_protocol">
+				    <param name="file" value="${tmp_sql}/profili/GovWay_upgrade_initialize-profilo-spcoop.sql"/>
+					<param name="sql_nome" value="${antinstaller_nomesoggetto}"/>
+					<param name="sql_tipo" value="${antinstaller_tiposoggetto_spcoop}"/>
+					<param name="sql_idporta" value="${antinstaller_nomesoggetto}SPCoopIT"/>
+					<param name="sql_codiceipa" value="o=${antinstaller_nomesoggetto},c=it"/>
+					<param name="sql_protocollo_versione" value="eGov1.1-lineeGuida1.1"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${tmp_sql}/profili/GovWay_upgrade_initialize-profilo-spcoop.sql"/>
+					<param name="token" value="'@PDDCONSOLE_USERNAME@'"/>
+					<param name="value" value="(select login from users where permessi='SCMAU')"/>
+				</antcall>
+			</then>
+		</if>
+		
+		<!-- as4 -->
+		<if>
+			<istrue value="${antinstaller_protocollo_as4}" />
+			<then>
+				<copy file="${deploy_sql}/init_soggetto.sql" tofile="${tmp_sql}/profili/GovWay_upgrade_initialize-profilo-eDelivery.sql" overwrite="true"/>
+				<antcall target="sql_settings_by_protocol">
+				    <param name="file" value="${tmp_sql}/profili/GovWay_upgrade_initialize-profilo-eDelivery.sql"/>
+					<param name="sql_nome" value="${antinstaller_nomesoggetto}"/>
+					<param name="sql_tipo" value="${antinstaller_tiposoggetto_as4}"/>
+					<param name="sql_idporta" value="domain/as4/${antinstaller_nomesoggetto}"/>
+					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_as4}${antinstaller_nomesoggetto},c=it"/>
+					<param name="sql_protocollo_versione" value="1.0"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${tmp_sql}/profili/GovWay_upgrade_initialize-profilo-eDelivery.sql"/>
+					<param name="token" value="'@PDDCONSOLE_USERNAME@'"/>
+					<param name="value" value="(select login from users where permessi='SCMAU')"/>
+				</antcall>
+				<concat destfile="${tmp_sql}/profili/GovWay_upgrade_initialize-profilo-eDelivery.sql" append="yes" >
+<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa) VALUES ('as4','http://localhost:8080/govway/as4/out/','${antinstaller_as4_msh}');
+]]>
+				</concat>
+			</then>
+		</if>
+
+		<!-- sdi -->
+		<if>
+			<istrue value="${antinstaller_protocollo_sdi}" />
+			<then>
+				<copy file="${deploy_sql}/init_soggetto.sql" tofile="${tmp_sql}/profili/GovWay_upgrade_initialize-profilo-fatturaPA.sql" overwrite="true"/>
+				<antcall target="sql_settings_by_protocol">
+				    <param name="file" value="${tmp_sql}/profili/GovWay_upgrade_initialize-profilo-fatturaPA.sql"/>
+					<param name="sql_nome" value="${antinstaller_nomesoggetto}"/>
+					<param name="sql_tipo" value="${antinstaller_tiposoggetto_sdi}"/>
+					<param name="sql_idporta" value="domain/sdi/${antinstaller_nomesoggetto}"/>
+					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_sdi}${antinstaller_nomesoggetto},c=it"/>
+					<param name="sql_protocollo_versione" value="1.0"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${tmp_sql}/profili/GovWay_upgrade_initialize-profilo-fatturaPA.sql"/>
+					<param name="token" value="'@PDDCONSOLE_USERNAME@'"/>
+					<param name="value" value="(select login from users where permessi='SCMAU')"/>
+				</antcall>
+				<concat destfile="${tmp_sql}/profili/GovWay_upgrade_initialize-profilo-fatturaPA" append="yes" >
+<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa) VALUES ('sdi','http://localhost:8080/govway/sdi/out/xml2soap/','http://localhost:8080/govway/sdi/in/');
+]]>
+				</concat>
+			</then>
+		</if>
+
 	</target>
 
 	<target name="setup_datasource" depends="_setup_datasource"/>

@@ -24,6 +24,9 @@ package org.openspcoop2.utils.test.transport;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +62,7 @@ public class TestCORS {
 
 	public static void main(String [] args) throws Exception {
 		TestCORS test = new TestCORS();
-		test.testDoFilterNullRequestType();
+		test.testDoFilterNullOrigin();
 	}
 	
 	private static final String ID_TEST = "CORS";
@@ -1282,6 +1285,14 @@ public class TestCORS {
 		}
 
 		@Override
+		public Enumeration<String> getHeaderNames() {
+			if(this.headers!=null && !this.headers.isEmpty() && this.headers.keySet()!=null) {
+				return Collections.enumeration(this.headers.keySet());
+			}
+			return null;
+		}
+		
+		@Override
 		public Object getAttribute(String name) {
 			return this.attributes.get(name);
 		}
@@ -1315,6 +1326,14 @@ public class TestCORS {
 		@Override
 		public String getHeader(String name) {
 			return this.map.get(name);
+		}
+		
+		@Override
+		public Collection<String> getHeaderNames() {
+			if(this.map!=null && !this.map.isEmpty()) {
+				return this.map.keySet();
+			}
+			return null;
 		}
 		
 		@Override

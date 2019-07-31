@@ -19,6 +19,8 @@ Sono stati risolti i seguenti bug:
   - la validazione dei parametri (header, query, path) non considerava
     eventuali restrizioni sul tipo (es. minLength, pattern ...).
 
+- *Gestione Header HTTP case-insensitive*: gli heder non venivano gestiti completamente in maniera 'case-insensitive' come richiesto dalla specifica rfc7230#page-22. Venivano processati correttamente se dichiarati nella forma standard (es. Content-Type) o in una forma completamente minuscola o maiuscola (es. content-type). Non venivano invece riconosciuti se possedevano un nome che non rientrava nei casi precedenti (es. Content-type o Soapaction).
+
 Sulla console di monitoraggio sono stati risolti i seguenti bug:
 
 - *Summary 'Ultimo Anno'*: risolto problema presente nel report
