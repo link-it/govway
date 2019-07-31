@@ -56,6 +56,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
@@ -442,9 +443,7 @@ public class GestoreTrasformazioni {
 			Properties forceAddTrasporto = new Properties();
 			GestoreTrasformazioniUtilities.trasformazione(this.log, richiesta.getHeaderList(), trasporto, forceAddTrasporto, "Header", dynamicMap, this.pddContext);
 			if(richiesta.getContentType()!=null) {
-				trasporto.remove(HttpConstants.CONTENT_TYPE);
-				trasporto.remove(HttpConstants.CONTENT_TYPE.toLowerCase());
-				trasporto.remove(HttpConstants.CONTENT_TYPE.toUpperCase());
+				TransportUtils.remove(trasporto, HttpConstants.CONTENT_TYPE);
 				trasporto.put(HttpConstants.CONTENT_TYPE, richiesta.getContentType());
 			}
 			
@@ -763,9 +762,7 @@ public class GestoreTrasformazioni {
 			Properties forceAddTrasporto = new Properties();
 			GestoreTrasformazioniUtilities.trasformazione(this.log, trasformazioneRisposta.getHeaderList(), trasporto, forceAddTrasporto, "Header", dynamicMap, this.pddContext);
 			if(trasformazioneRisposta.getContentType()!=null) {
-				trasporto.remove(HttpConstants.CONTENT_TYPE);
-				trasporto.remove(HttpConstants.CONTENT_TYPE.toLowerCase());
-				trasporto.remove(HttpConstants.CONTENT_TYPE.toUpperCase());
+				TransportUtils.remove(trasporto, HttpConstants.CONTENT_TYPE);
 				trasporto.put(HttpConstants.CONTENT_TYPE, trasformazioneRisposta.getContentType());
 			}
 			

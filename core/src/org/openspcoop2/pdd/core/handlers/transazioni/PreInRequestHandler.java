@@ -135,15 +135,7 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 	private static String getIPClientAddressFromHeader(List<String> headers, ConnectorInMessage req) throws ConnectorException{
 		if(headers.size()>0){
 			for (String header : headers) {
-				String transportAddr = req.getHeader(header);
-				if(transportAddr!=null){
-					return transportAddr;
-				}
-				transportAddr = req.getHeader(header.toLowerCase());
-				if(transportAddr!=null){
-					return transportAddr;
-				}
-				transportAddr = req.getHeader(header.toUpperCase());
+				String transportAddr = req.getHeader(header); // gestisce nell'implementazione il case insensitive
 				if(transportAddr!=null){
 					return transportAddr;
 				}

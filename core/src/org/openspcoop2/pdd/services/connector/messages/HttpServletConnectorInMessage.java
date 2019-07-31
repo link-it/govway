@@ -46,6 +46,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.Credential;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.slf4j.Logger;
 
 /**
@@ -130,12 +131,12 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	
 	@Override
 	public String getHeader(String key) throws ConnectorException{
-		return this.req.getHeader(key);
+		return TransportUtils.getHeader(this.req, key);
 	}
 	
 	@Override
 	public String getParameter(String key) throws ConnectorException{
-		return this.req.getParameter(key);
+		return TransportUtils.getParameter(this.req, key);
 	}
 
 	@Override

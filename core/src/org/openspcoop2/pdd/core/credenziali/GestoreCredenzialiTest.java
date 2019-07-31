@@ -27,6 +27,7 @@ import java.util.Properties;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
+import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
  * Esempio che definisce un gestore delle credenziali
@@ -97,9 +98,7 @@ public class GestoreCredenzialiTest extends AbstractCore implements IGestoreCred
 	
 	private boolean existsHeader(Properties properties, String name){
 		if(properties!=null){
-			return properties.containsKey(name) ||
-				properties.containsKey(name.toLowerCase()) ||
-				properties.containsKey(name.toUpperCase());
+			return TransportUtils.hasKey(properties, name);
 		}else{
 			return false;
 		}
@@ -107,14 +106,7 @@ public class GestoreCredenzialiTest extends AbstractCore implements IGestoreCred
 	
 	private String getProperty(Properties properties, String name){
 		if(properties!=null){
-			String tmp = properties.getProperty(name);
-			if(tmp==null){
-				tmp = properties.getProperty(name.toLowerCase());
-			}
-			if(tmp==null){
-				tmp = properties.getProperty(name.toUpperCase());
-			}
-			return tmp;
+			return TransportUtils.get(properties, name);
 		}else{
 			return null;
 		}

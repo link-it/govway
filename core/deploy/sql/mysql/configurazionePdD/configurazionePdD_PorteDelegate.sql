@@ -438,7 +438,7 @@ CREATE TABLE pd_transform
 	req_content_type VARCHAR(255),
 	rest_transformation INT NOT NULL DEFAULT 0,
 	rest_method VARCHAR(255),
-	rest_path VARCHAR(255),
+	rest_path VARCHAR(4000),
 	soap_transformation INT NOT NULL DEFAULT 0,
 	soap_version VARCHAR(255),
 	soap_action VARCHAR(255),

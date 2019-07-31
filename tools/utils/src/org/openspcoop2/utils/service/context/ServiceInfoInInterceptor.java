@@ -42,6 +42,7 @@ import org.openspcoop2.utils.logger.beans.context.core.Operation;
 import org.openspcoop2.utils.logger.beans.context.core.Request;
 import org.openspcoop2.utils.logger.beans.context.core.Service;
 import org.openspcoop2.utils.logger.constants.context.FlowMode;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
@@ -162,15 +163,7 @@ public class ServiceInfoInInterceptor extends org.apache.cxf.ext.logging.Logging
 		List<String> headers = HttpUtilities.getClientAddressHeaders();
 		if(headers.size()>0){
 			for (String header : headers) {
-				String transportAddr = req.get(header);
-				if(transportAddr!=null){
-					return transportAddr;
-				}
-				transportAddr = req.get(header.toLowerCase());
-				if(transportAddr!=null){
-					return transportAddr;
-				}
-				transportAddr = req.get(header.toUpperCase());
+				String transportAddr = TransportUtils.getObjectAsString(req, header);
 				if(transportAddr!=null){
 					return transportAddr;
 				}

@@ -2193,7 +2193,7 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="rest_path" />
+                                <linkit:sql-column-mapping name="rest_path" varchar="4000" />
                                 <linkit:sql-ddl-column-comment>Path utilizzato in caso di trasformazione rest</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>

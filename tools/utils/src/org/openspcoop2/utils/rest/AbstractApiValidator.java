@@ -40,6 +40,7 @@ import org.openspcoop2.utils.rest.entity.Cookie;
 import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseResponseEntity;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 
 /**
@@ -141,13 +142,7 @@ public abstract class AbstractApiValidator   {
 				if(operation.getRequest()!=null &&  operation.getRequest().sizeHeaderParameters()>0){
 					for (ApiHeaderParameter paramHeader : operation.getRequest().getHeaderParameters()) {
 						String name = paramHeader.getName();
-						String value = request.getParametersTrasporto().getProperty(name);
-						if(value==null){
-							value = request.getParametersTrasporto().getProperty(name.toLowerCase());
-						}
-						if(value==null){
-							value = request.getParametersTrasporto().getProperty(name.toUpperCase());
-						}
+						String value = TransportUtils.get(request.getParametersTrasporto(), name);
 						if(value==null){
 							if(paramHeader.isRequired()){
 								throw new ValidatorException("Required HttpHeader ["+name+"] not found");
@@ -192,13 +187,7 @@ public abstract class AbstractApiValidator   {
 				if(operation.getRequest()!=null &&  operation.getRequest().sizeQueryParameters()>0){
 					for (ApiRequestQueryParameter paramQuery : operation.getRequest().getQueryParameters()) {
 						String name = paramQuery.getName();
-						String value = request.getParametersQuery().getProperty(name);
-						if(value==null){
-							value = request.getParametersQuery().getProperty(name.toLowerCase());
-						}
-						if(value==null){
-							value = request.getParametersQuery().getProperty(name.toUpperCase());
-						}
+						String value = TransportUtils.get(request.getParametersQuery(), name);
 						if(value==null){
 							if(paramQuery.isRequired()){
 								throw new ValidatorException("Required QueryParameter ["+name+"] not found");
@@ -250,13 +239,7 @@ public abstract class AbstractApiValidator   {
 				if(operation.getRequest()!=null &&  operation.getRequest().sizeFormParameters()>0){
 					for (ApiRequestFormParameter paramForm : operation.getRequest().getFormParameters()) {
 						String name = paramForm.getName();
-						String value = request.getParametersForm().getProperty(name);
-						if(value==null){
-							value = request.getParametersForm().getProperty(name.toLowerCase());
-						}
-						if(value==null){
-							value = request.getParametersForm().getProperty(name.toUpperCase());
-						}
+						String value = TransportUtils.get(request.getParametersForm(), name);
 						if(value==null){
 							if(paramForm.isRequired()){
 								throw new ValidatorException("Required FormParameter ["+name+"] not found");
@@ -300,13 +283,7 @@ public abstract class AbstractApiValidator   {
 				if(apiResponseFound.sizeHeaderParameters()>0){
 					for (ApiHeaderParameter paramHeader : apiResponseFound.getHeaderParameters()) {
 						String name = paramHeader.getName();
-						String value = response.getParametersTrasporto().getProperty(name);
-						if(value==null){
-							value = response.getParametersTrasporto().getProperty(name.toLowerCase());
-						}
-						if(value==null){
-							value = response.getParametersTrasporto().getProperty(name.toUpperCase());
-						}
+						String value = TransportUtils.get(response.getParametersTrasporto(), name);
 						if(value==null){
 							if(paramHeader.isRequired()){
 								throw new ValidatorException("Required HttpHeader ["+name+"] not found");

@@ -67,6 +67,7 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 
@@ -514,9 +515,7 @@ public class Dump {
 				}
 			}
 			if(msg!=null &&
-					!transportHeader.containsKey(HttpConstants.CONTENT_TYPE) && 
-					!transportHeader.containsKey(HttpConstants.CONTENT_TYPE.toLowerCase()) &&
-					!transportHeader.containsKey(HttpConstants.CONTENT_TYPE.toUpperCase())) {
+					!TransportUtils.hasKey(transportHeader, HttpConstants.CONTENT_TYPE)) {
 				String contentType = msg.getContentType();
 				if(contentType!=null) {
 					transportHeader.put(HttpConstants.CONTENT_TYPE, contentType);

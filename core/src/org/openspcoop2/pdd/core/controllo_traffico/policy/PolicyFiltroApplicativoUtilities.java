@@ -21,7 +21,6 @@
  */
 package org.openspcoop2.pdd.core.controllo_traffico.policy;
 
-import java.util.Enumeration;
 import java.util.Properties;
 
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -36,6 +35,7 @@ import org.openspcoop2.pdd.core.controllo_traffico.plugins.IRateLimiting;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolContext;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
 import org.slf4j.Logger;
@@ -95,35 +95,12 @@ public class PolicyFiltroApplicativoUtilities {
 		case FORM_BASED:
 			
 			Properties pForm = context.getConnettore().getUrlProtocolContext().getParametersFormBased();
-			if(pForm.containsKey(nome)){
-				return pForm.getProperty(nome);
-			}
-			else{
-				return null;
-			}
+			return TransportUtils.get(pForm, nome);
 			
 		case HEADER_BASED:
 			
 			Properties pTrasporto = context.getConnettore().getUrlProtocolContext().getParametersTrasporto();
-		
-			Enumeration<?> en = pTrasporto.keys();
-			while (en.hasMoreElements()) {
-				Object object = (Object) en.nextElement();
-				if(object!=null && object instanceof String){
-					String key = (String) object;
-					if(key.equals(nome)){
-						return pTrasporto.getProperty(key);
-					}
-					else if(key.equals(nome.toLowerCase())){
-						return pTrasporto.getProperty(key);
-					}
-					else if(key.equals(nome.toUpperCase())){
-						return pTrasporto.getProperty(key);
-					}
-				}
-			}
-			
-			return null;
+			return TransportUtils.get(pTrasporto, nome);
 						
 		case SOAPACTION_BASED:
 			

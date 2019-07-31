@@ -90,6 +90,7 @@ import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.CORSRequestType;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -377,13 +378,7 @@ public class ServicesUtils {
 				utilitiesIntegrazione = UtilitiesIntegrazione.getInstancePAResponse(logCore);
 			}
 			
-			String idTransazione = propertiesTrasporto.getProperty(Costanti.ID_TRANSAZIONE);
-			if(idTransazione==null) {
-				idTransazione = propertiesTrasporto.getProperty(Costanti.ID_TRANSAZIONE.toLowerCase());
-			}
-			if(idTransazione==null) {
-				idTransazione = propertiesTrasporto.getProperty(Costanti.ID_TRANSAZIONE.toUpperCase());
-			}
+			String idTransazione = TransportUtils.get(propertiesTrasporto, Costanti.ID_TRANSAZIONE);
 			
 			if(idTransazione==null) {
 				idTransazione = (String) pddContext.getObject(Costanti.ID_TRANSAZIONE);

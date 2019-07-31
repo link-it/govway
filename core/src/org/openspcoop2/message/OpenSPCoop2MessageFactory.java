@@ -54,6 +54,7 @@ import org.openspcoop2.utils.rest.problem.ProblemRFC7807Builder;
 import org.openspcoop2.utils.rest.problem.XmlSerializer;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
@@ -520,9 +521,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			}
 			else if(context instanceof TransportRequestContext){
 				TransportRequestContext trc = (TransportRequestContext) context;
-				trc.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE);
-				trc.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE.toLowerCase());
-				trc.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE.toUpperCase());
+				TransportUtils.remove(trc.getParametersTrasporto(), HttpConstants.CONTENT_TYPE);
 				trc.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
 				
 				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0);
@@ -530,9 +529,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			}
 			else if(context instanceof TransportResponseContext){
 				TransportResponseContext trc = (TransportResponseContext) context;
-				trc.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE);
-				trc.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE.toLowerCase());
-				trc.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE.toUpperCase());
+				TransportUtils.remove(trc.getParametersTrasporto(), HttpConstants.CONTENT_TYPE);
 				trc.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
 				
 				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0);

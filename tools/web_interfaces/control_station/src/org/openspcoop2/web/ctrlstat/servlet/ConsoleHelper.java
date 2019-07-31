@@ -11075,15 +11075,21 @@ public class ConsoleHelper {
 			String nome, String returnCode, String statusMin, String statusMax, String pattern, String contentType) throws Exception {
 		return addTrasformazioneRispostaToDati(TipoOperazione.ADD, dati, 0, null, false, idTrasformazione, null, 
 				serviceBinding,
-				nome, returnCode, statusMin, statusMax, pattern, contentType, null, null, 0,
-				false,false,false,null,null,null,null,null,null,false,null,null,null,null);
+				nome, returnCode, statusMin, statusMax, pattern, contentType, 
+				null, null, 0,
+				false,false,false,
+				false,null,
+				null,null,null,null,
+				null,
+				false,null,
+				null,null,null);
 	}
 	
 	public Vector<DataElement> addTrasformazioneRispostaToDati(TipoOperazione tipoOP, Vector<DataElement> dati, long idPorta, TrasformazioneRegolaRisposta risposta, boolean isPortaDelegata, String idTrasformazione, String idTrasformazioneRisposta,
-			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding,
+			org.openspcoop2.core.registry.constants.ServiceBinding serviceBindingParam,
 			String nome, String returnCode, String statusMin, String statusMax, String pattern, String contentType,
 			String servletTrasformazioniRispostaHeadersList, List<Parameter> parametriInvocazioneServletTrasformazioniRispostaHeaders, int numeroTrasformazioniRispostaHeaders,
-			boolean trasformazioneContenutoRichiestaAbilitato, boolean trasformazioneRichiestaRestAbilitato,
+			boolean trasformazioneContenutoRichiestaAbilitato, boolean trasformazioneRichiestaRestAbilitato, boolean trasformazioneRichiestaSoapAbilitato,
 			boolean trasformazioneContenutoRispostaAbilitato, org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneContenutoRispostaTipo, 
 			BinaryParameter trasformazioneContenutoRispostaTemplate, String trasformazioneContenutoRispostaTipoCheck, String trasformazioneContenutoRispostaContentType, String trasformazioneContenutoRispostaReturnCode,
 			ServiceBinding serviceBindingMessage, 
@@ -11091,6 +11097,15 @@ public class ConsoleHelper {
 			org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneRispostaSoapEnvelopeTipo, BinaryParameter trasformazioneRispostaSoapEnvelopeTemplate, String trasformazioneRispostaSoapEnvelopeTipoCheck
 			
 			) throws Exception {
+		
+		
+		org.openspcoop2.core.registry.constants.ServiceBinding infoServiceBinding = serviceBindingParam;
+		if(trasformazioneRichiestaRestAbilitato) {
+			infoServiceBinding = org.openspcoop2.core.registry.constants.ServiceBinding.REST;
+		}
+		else if(trasformazioneRichiestaSoapAbilitato){
+			infoServiceBinding = org.openspcoop2.core.registry.constants.ServiceBinding.SOAP;
+		}
 		
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_TRASFORMAZIONE);
@@ -11186,7 +11201,7 @@ public class ConsoleHelper {
 		de.setValue(pattern);
 //		de.setRequired(true);
 		DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA+" - "+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
-		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(infoServiceBinding)) {
 			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_REST_RISPOSTA);
 			dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_PATTERN_VALORI_REST);
 		}
@@ -11264,7 +11279,7 @@ public class ConsoleHelper {
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO);
 				de.setPostBack(true);
 				de.setSelected(trasformazioneContenutoRispostaTipo.getValue());
-				setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO, trasformazioneContenutoRispostaTipo, serviceBinding, true);
+				setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO, trasformazioneContenutoRispostaTipo, infoServiceBinding, true);
 				dati.addElement(de);
 				
 				if(trasformazioneContenutoRispostaTipo.isTemplateRequired()) {	
@@ -11405,7 +11420,7 @@ public class ConsoleHelper {
 						de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO);
 						de.setSelected(trasformazioneRispostaSoapEnvelopeTipo.getValue());
 						de.setPostBack(true);
-						setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO, trasformazioneRispostaSoapEnvelopeTipo, serviceBinding, true);
+						setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO, trasformazioneRispostaSoapEnvelopeTipo, infoServiceBinding, true);
 						dati.addElement(de);
 						
 						if(trasformazioneRispostaSoapEnvelopeTipo!=null && trasformazioneRispostaSoapEnvelopeTipo.isTemplateRequired()) {
@@ -11657,6 +11672,9 @@ public class ConsoleHelper {
 						if (StringUtils.isEmpty(trasformazioneRestPath)) {
 							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
 									CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH));
+							return false;
+						}
+						if (!this.checkLength4000(trasformazioneRestPath, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH)) {
 							return false;
 						}
 					}
@@ -12701,7 +12719,8 @@ public class ConsoleHelper {
 						de = new DataElement();
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH);
 						de.setValue(trasformazioneRestPath);
-						de.setType(DataElementType.TEXT_EDIT);
+						de.setType(DataElementType.TEXT_AREA);
+						de.setRows(3);
 						de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH);
 						de.setSize(this.getSize());
 						de.setRequired(true);

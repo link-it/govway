@@ -47,6 +47,7 @@ import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 
@@ -422,25 +423,8 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				// Dati Risposta
 				if(this.debug)
 					this.logger.debug("Analisi risposta...");
-				String locationRisposta = null;
-				if(this.propertiesTrasportoRisposta!=null && this.propertiesTrasportoRisposta.size()>0){
-					
-					this.tipoRisposta = this.propertiesTrasportoRisposta.getProperty(HttpConstants.CONTENT_TYPE);
-					if(this.tipoRisposta==null){
-						this.tipoRisposta = this.propertiesTrasportoRisposta.getProperty(HttpConstants.CONTENT_TYPE.toLowerCase());
-					}
-					if(this.tipoRisposta==null){
-						this.tipoRisposta = this.propertiesTrasportoRisposta.getProperty(HttpConstants.CONTENT_TYPE.toUpperCase());
-					}
-					
-					locationRisposta = this.propertiesTrasportoRisposta.getProperty(HttpConstants.CONTENT_LOCATION);
-					if(locationRisposta==null){
-						locationRisposta = this.propertiesTrasportoRisposta.getProperty(HttpConstants.CONTENT_LOCATION.toLowerCase());
-					}
-					if(locationRisposta==null){
-						locationRisposta = this.propertiesTrasportoRisposta.getProperty(HttpConstants.CONTENT_LOCATION.toUpperCase());
-					}
-					
+				if(this.propertiesTrasportoRisposta!=null && this.propertiesTrasportoRisposta.size()>0){			
+					this.tipoRisposta = TransportUtils.get(this.propertiesTrasportoRisposta, HttpConstants.CONTENT_TYPE); 
 				}
 				if(this.tipoRisposta==null || "".equals(this.tipoRisposta)) {
 					this.tipoRisposta = contentTypeRichiesta;

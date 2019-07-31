@@ -132,10 +132,10 @@ public enum ErroriIntegrazione {
 	ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_INTERFACCIA +" del servizio non definito (o definito non correttamente) nel Registro dei Servizi",
 			CodiceErroreIntegrazione.CODICE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA),
 			
-	ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA("Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio ("+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_INTERFACCIA+") definito nel Registro dei Servizi",
+	ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA("Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio ("+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_INTERFACCIA+") definito nel Registro"+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_VALIDAZIONE_ERROR_MSG,
 			CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
 			
-	ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA("Il contenuto applicativo del messaggio di risposta non rispetta l'accordo di servizio ("+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_INTERFACCIA+") definito nel Registro dei Servizi",
+	ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA("Il contenuto applicativo del messaggio di risposta non rispetta l'accordo di servizio ("+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_INTERFACCIA+") definito nel Registro"+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_VALIDAZIONE_ERROR_MSG,
 			CodiceErroreIntegrazione.CODICE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA),
 			
 	ERRORE_420_BUSTA_PRESENTE_RICHIESTA_APPLICATIVA("Il messaggio inviato al servizio di ricezione contenuti applicativi presenta nell'header una busta",
@@ -574,21 +574,35 @@ public enum ErroriIntegrazione {
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
-	public ErroreIntegrazione getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(String tipoInterfaccia) {
+	public ErroreIntegrazione getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(String tipoInterfaccia, String errorMsg) {
 		if(!this.equals(ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA)){
 			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.name());
 		}
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_INTERFACCIA,tipoInterfaccia));
+		
+		String error = ""; 
+		if(errorMsg!=null && !"".equals(errorMsg) && !"null".equals(errorMsg)) {
+			error = ": "+errorMsg;
+		}
+		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_VALIDAZIONE_ERROR_MSG,error));
+			
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
-	public ErroreIntegrazione getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(String tipoInterfaccia) {
+	public ErroreIntegrazione getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(String tipoInterfaccia, String errorMsg) {
 		if(!this.equals(ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA)){
 			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.name());
 		}
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_INTERFACCIA,tipoInterfaccia));
+		
+		String error = ""; 
+		if(errorMsg!=null && !"".equals(errorMsg) && !"null".equals(errorMsg)) {
+			error = ": "+errorMsg;
+		}
+		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_VALIDAZIONE_ERROR_MSG,error));
+		
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 

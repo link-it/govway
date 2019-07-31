@@ -105,27 +105,13 @@ public class TransportRequestContext implements java.io.Serializable {
 		if(this.parametersFormBased==null){
 			return null;
 		}
-		String value = this.parametersFormBased.getProperty(name);
-		if(value==null){
-			value = this.parametersFormBased.getProperty(name.toLowerCase());
-		}
-		if(value==null){
-			value = this.parametersFormBased.getProperty(name.toUpperCase());
-		}
-		return value;
+		return TransportUtils.get(this.parametersFormBased, name);
 	}
 	public Object removeParameterFormBased(String name){
 		if(this.parametersFormBased==null){
 			return null;
 		}
-		Object value = this.parametersFormBased.remove(name);
-		if(value==null){
-			value = this.parametersFormBased.remove(name.toLowerCase());
-		}
-		if(value==null){
-			value = this.parametersFormBased.remove(name.toUpperCase());
-		}
-		return value;
+		return TransportUtils.remove(this.parametersFormBased, name);
 	}
 	public java.util.Properties getParametersTrasporto() {
 		return this.parametersTrasporto;
@@ -134,27 +120,13 @@ public class TransportRequestContext implements java.io.Serializable {
 		if(this.parametersTrasporto==null){
 			return null;
 		}
-		String value = this.parametersTrasporto.getProperty(name);
-		if(value==null){
-			value = this.parametersTrasporto.getProperty(name.toLowerCase());
-		}
-		if(value==null){
-			value = this.parametersTrasporto.getProperty(name.toUpperCase());
-		}
-		return value;
+		return TransportUtils.get(this.parametersTrasporto, name);
 	}
 	public Object removeParameterTrasporto(String name){
 		if(this.parametersTrasporto==null){
 			return null;
 		}
-		Object value = this.parametersTrasporto.remove(name);
-		if(value==null){
-			value = this.parametersTrasporto.remove(name.toLowerCase());
-		}
-		if(value==null){
-			value = this.parametersTrasporto.remove(name.toUpperCase());
-		}
-		return value;
+		return TransportUtils.remove(this.parametersTrasporto, name);
 	}
 	public String getContentType(){
 		if(this.parametersTrasporto!=null){
@@ -165,15 +137,9 @@ public class TransportRequestContext implements java.io.Serializable {
 	public String getContentType(boolean returnMsgErroreIfNotFound) throws Exception{
 
 		if(this.parametersTrasporto!=null && 
-				(
-						this.parametersTrasporto.containsKey(HttpConstants.CONTENT_TYPE)
-						||
-						this.parametersTrasporto.containsKey(HttpConstants.CONTENT_TYPE.toLowerCase())
-						||
-						this.parametersTrasporto.containsKey(HttpConstants.CONTENT_TYPE.toUpperCase())
-				) 
+				TransportUtils.hasKey(this.parametersTrasporto, HttpConstants.CONTENT_TYPE)
 			){
-			String ct = this.getParameterTrasporto(HttpConstants.CONTENT_TYPE);
+			String ct = TransportUtils.get(this.parametersTrasporto, HttpConstants.CONTENT_TYPE);
 			if(ct==null){
 				if(returnMsgErroreIfNotFound)
 					return HttpConstants.CONTENT_TYPE_NON_VALORIZZATO;

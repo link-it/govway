@@ -25,6 +25,8 @@ package org.openspcoop2.utils.transport.http;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.openspcoop2.utils.transport.TransportUtils;
+
 /**
  * AbstractHttp
  *
@@ -52,14 +54,7 @@ public abstract class AbstractHttp {
 		return this.headers;
 	}
 	public String getHeader(String header) {
-		String v = this.headers.get(header);
-		if(v==null){
-			v = this.headers.get(header.toLowerCase());
-		}
-		if(v==null){
-			v = this.headers.get(header.toUpperCase());
-		}
-		return v;
+		return TransportUtils.getObjectAsString(this.headers, header);
 	}
 	
 	public String getContentType() {

@@ -54,6 +54,7 @@ import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.regexp.RegExpUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.transport.TransportUtils;
 
 
 /**
@@ -103,15 +104,7 @@ public class HttpUtilities {
 	private static String getClientAddress(List<String> headers, HttpServletRequest request) throws UtilsException{
 		if(headers.size()>0){
 			for (String header : headers) {
-				String transportAddr = request.getHeader(header);
-				if(transportAddr!=null){
-					return transportAddr;
-				}
-				transportAddr = request.getHeader(header.toLowerCase());
-				if(transportAddr!=null){
-					return transportAddr;
-				}
-				transportAddr = request.getHeader(header.toUpperCase());
+				String transportAddr = TransportUtils.getHeader(request,header);
 				if(transportAddr!=null){
 					return transportAddr;
 				}
@@ -129,15 +122,7 @@ public class HttpUtilities {
 	private static String getClientAddress(List<String> headers, Properties transportProperties) throws UtilsException{
 		if(headers.size()>0){
 			for (String header : headers) {
-				String transportAddr = transportProperties.getProperty(header);
-				if(transportAddr!=null){
-					return transportAddr;
-				}
-				transportAddr = transportProperties.getProperty(header.toLowerCase());
-				if(transportAddr!=null){
-					return transportAddr;
-				}
-				transportAddr = transportProperties.getProperty(header.toUpperCase());
+				String transportAddr = TransportUtils.get(transportProperties,header);
 				if(transportAddr!=null){
 					return transportAddr;
 				}
@@ -460,13 +445,7 @@ public class HttpUtilities {
 	}
 	public static List<String> getDirectiveCacheControl(Properties headers){
 		
-		String cacheControl = headers.getProperty(HttpConstants.CACHE_STATUS_HTTP_1_1);		
-		if(cacheControl==null) {
-			cacheControl = headers.getProperty(HttpConstants.CACHE_STATUS_HTTP_1_1.toLowerCase());	
-		}
-		if(cacheControl==null) {
-			cacheControl = headers.getProperty(HttpConstants.CACHE_STATUS_HTTP_1_1.toUpperCase());	
-		}
+		String cacheControl = TransportUtils.get(headers, HttpConstants.CACHE_STATUS_HTTP_1_1);
 		
 		List<String> values = new ArrayList<>();
 		if(cacheControl!=null) {
@@ -485,13 +464,7 @@ public class HttpUtilities {
 	}
 	public static List<String> getDirectivePragma(Properties headers){
 		
-		String cacheControl = headers.getProperty(HttpConstants.CACHE_STATUS_HTTP_1_0);		
-		if(cacheControl==null) {
-			cacheControl = headers.getProperty(HttpConstants.CACHE_STATUS_HTTP_1_0.toLowerCase());		
-		}
-		if(cacheControl==null) {
-			cacheControl = headers.getProperty(HttpConstants.CACHE_STATUS_HTTP_1_0.toUpperCase());		
-		}
+		String cacheControl = TransportUtils.get(headers, HttpConstants.CACHE_STATUS_HTTP_1_0);
 		
 		List<String> values = new ArrayList<>();
 		if(cacheControl!=null) {

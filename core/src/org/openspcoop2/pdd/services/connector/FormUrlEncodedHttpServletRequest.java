@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.WrappedHttpServletRequest;
 
 
@@ -196,14 +197,7 @@ public class FormUrlEncodedHttpServletRequest extends WrappedHttpServletRequest 
 	}
 	
 	public String getFormUrlEncodedParameter(String key) {
-		String p = this.properties.getProperty(key);
-		if(p==null) {
-			p = this.properties.getProperty(key.toLowerCase());
-		}
-		if(p==null) {
-			p = this.properties.getProperty(key.toUpperCase());
-		}
-		return p;
+		return TransportUtils.get(this.properties, key);
 	}
 
 	public Enumeration<Object> getFormUrlEncodedParameterNames() {

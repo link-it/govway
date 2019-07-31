@@ -60,6 +60,7 @@ import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Charset;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -725,23 +726,10 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			}
 			
 			// TipoRisposta
-			this.tipoRisposta = this.httpConn.getHeaderField(HttpConstants.CONTENT_TYPE);
-			if(this.tipoRisposta==null){
-				this.tipoRisposta = this.httpConn.getHeaderField(HttpConstants.CONTENT_TYPE.toLowerCase());
-			}
-			if(this.tipoRisposta==null){
-				this.tipoRisposta = this.httpConn.getHeaderField(HttpConstants.CONTENT_TYPE.toUpperCase());
-			}
-
-			// ContentLength della risposta
-			String contentLenghtString = this.httpConn.getHeaderField(HttpConstants.CONTENT_LENGTH);
+			this.tipoRisposta = TransportUtils.getObjectAsString(mapHeaderHttpResponse, HttpConstants.CONTENT_TYPE);
 			
-			if(contentLenghtString==null){
-				contentLenghtString = this.httpConn.getHeaderField(HttpConstants.CONTENT_LENGTH.toLowerCase());
-			}
-			if(contentLenghtString==null){
-				contentLenghtString = this.httpConn.getHeaderField(HttpConstants.CONTENT_LENGTH.toUpperCase());
-			}
+			// ContentLength della risposta
+			String contentLenghtString = TransportUtils.getObjectAsString(mapHeaderHttpResponse, HttpConstants.CONTENT_LENGTH);
 			if(contentLenghtString!=null){
 				this.contentLength = Integer.valueOf(contentLenghtString);
 			}
@@ -755,10 +743,10 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			// Parametri di imbustamento
 			if(this.isSoap){
 				this.imbustamentoConAttachment = false;
-				if("true".equals(this.httpConn.getHeaderField(this.openspcoopProperties.getTunnelSOAPKeyWord_headerTrasporto()))){
+				if("true".equals(TransportUtils.getObjectAsString(mapHeaderHttpResponse, this.openspcoopProperties.getTunnelSOAPKeyWord_headerTrasporto()))){
 					this.imbustamentoConAttachment = true;
 				}
-				this.mimeTypeAttachment = this.httpConn.getHeaderField(this.openspcoopProperties.getTunnelSOAPKeyWordMimeType_headerTrasporto());
+				this.mimeTypeAttachment = TransportUtils.getObjectAsString(mapHeaderHttpResponse, this.openspcoopProperties.getTunnelSOAPKeyWordMimeType_headerTrasporto());
 				if(this.mimeTypeAttachment==null)
 					this.mimeTypeAttachment = HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP;
 				//System.out.println("IMB["+imbustamentoConAttachment+"] MIME["+mimeTypeAttachment+"]");
@@ -779,13 +767,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			else{
 				if(this.codice>299){
 					
-					String redirectLocation = this.httpConn.getHeaderField(HttpConstants.REDIRECT_LOCATION);
-					if(redirectLocation==null){
-						redirectLocation = this.httpConn.getHeaderField(HttpConstants.REDIRECT_LOCATION.toLowerCase());
-					}
-					if(redirectLocation==null){
-						redirectLocation = this.httpConn.getHeaderField(HttpConstants.REDIRECT_LOCATION.toUpperCase());
-					}
+					String redirectLocation = TransportUtils.getObjectAsString(mapHeaderHttpResponse, HttpConstants.REDIRECT_LOCATION);
 					
 					// 3XX
 					if(this.followRedirects){
@@ -794,9 +776,9 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 							throw new Exception("Non è stato rilevato l'header HTTP ["+HttpConstants.REDIRECT_LOCATION+"] necessario alla gestione del Redirect (code:"+this.codice+")"); 
 						}
 						
-						request.getConnectorProperties().remove(CostantiConnettori.CONNETTORE_LOCATION);
-						request.getConnectorProperties().remove(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_NUMBER);
-						request.getConnectorProperties().remove(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_ROUTE);
+						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori.CONNETTORE_LOCATION);
+						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori._CONNETTORE_HTTP_REDIRECT_NUMBER);
+						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori._CONNETTORE_HTTP_REDIRECT_ROUTE);
 						request.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION, redirectLocation);
 						request.getConnectorProperties().put(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_NUMBER, (this.numberRedirect+1)+"" );
 						if(this.routeRedirect!=null){
@@ -974,7 +956,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
     	return null;
     }
     private void buildLocation() throws ConnettoreException {
-    	this.location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);	
+    	this.location = TransportUtils.getObjectAsString(this.properties,CostantiConnettori.CONNETTORE_LOCATION);	
     	NameValue nv = this.getTokenQueryParameter();
     	if(nv!=null) {
     		if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {

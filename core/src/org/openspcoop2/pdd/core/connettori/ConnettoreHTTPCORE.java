@@ -24,7 +24,11 @@ package org.openspcoop2.pdd.core.connettori;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.Header;
@@ -63,6 +67,7 @@ import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Charset;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -476,63 +481,62 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			if(this.debug)
 				this.logger.debug("Analisi risposta...");
 			Header [] hdrRisposta = httpResponse.getAllHeaders();
+			Map<String, List<String>> mapHeaderHttpResponse = new HashMap<String, List<String>>();
 			if(hdrRisposta!=null){
 				for (int i = 0; i < hdrRisposta.length; i++) {
+					
+					String key = null;
+					String value = null;
+					
 					if(hdrRisposta[i].getName()==null){
 						// Check per evitare la coppia che ha come chiave null e come valore HTTP OK 200
 						if(this.debug)
 							this.logger.debug("HTTP risposta ["+HttpConstants.RETURN_CODE+"] ["+hdrRisposta[i].getValue()+"]...");
-						this.propertiesTrasportoRisposta.put(HttpConstants.RETURN_CODE, hdrRisposta[i].getValue());
+						key = HttpConstants.RETURN_CODE;
+						value = hdrRisposta[i].getValue();
 					}
 					else{
 						if(this.debug)
 							this.logger.debug("HTTP risposta ["+hdrRisposta[i].getName()+"] ["+hdrRisposta[i].getValue()+"]...");
-						this.propertiesTrasportoRisposta.put(hdrRisposta[i].getName(), hdrRisposta[i].getValue());
+						key = hdrRisposta[i].getName();
+						value = hdrRisposta[i].getValue();
 					}
+					
+					this.propertiesTrasportoRisposta.put(key, value);
+					
+					List<String> list = null;
+					if(mapHeaderHttpResponse.containsKey(key)) {
+						list = mapHeaderHttpResponse.get(key);
+					}
+					if(list==null) {
+						list = new ArrayList<String>();
+						mapHeaderHttpResponse.put(key, list);
+					}
+					list.add(value);
 				}
 			}
-			Header tipoRispostaHdr = httpResponse.getFirstHeader(HttpConstants.CONTENT_TYPE);
-			if(tipoRispostaHdr==null){
-				tipoRispostaHdr = httpResponse.getFirstHeader(HttpConstants.CONTENT_TYPE.toLowerCase());
-			}
-			if(tipoRispostaHdr==null){
-				tipoRispostaHdr = httpResponse.getFirstHeader(HttpConstants.CONTENT_TYPE.toUpperCase());
-			}
-			this.tipoRisposta = null;
-			if(tipoRispostaHdr!=null){
-				this.tipoRisposta = tipoRispostaHdr.getValue();
-			}
 			
-			Header contentLengthHdr = httpResponse.getFirstHeader(HttpConstants.CONTENT_LENGTH);
-			if(contentLengthHdr==null){
-				contentLengthHdr = httpResponse.getFirstHeader(HttpConstants.CONTENT_LENGTH.toLowerCase());
-			}
-			if(contentLengthHdr==null){
-				contentLengthHdr = httpResponse.getFirstHeader(HttpConstants.CONTENT_LENGTH.toUpperCase());
-			}
+			this.tipoRisposta = TransportUtils.getObjectAsString(mapHeaderHttpResponse, HttpConstants.CONTENT_TYPE);
+			
+			String contentLengthHdr = TransportUtils.getObjectAsString(mapHeaderHttpResponse, HttpConstants.CONTENT_LENGTH);
 			if(contentLengthHdr!=null){
-				this.contentLength = Long.parseLong(contentLengthHdr.getValue());
+				this.contentLength = Long.parseLong(contentLengthHdr);
 			}
-			
+			else {
+				if(this.httpEntityResponse.getContentLength()>0){
+					this.contentLength = this.httpEntityResponse.getContentLength();
+				}
+			}
 			
 			
 			//System.out.println("TIPO RISPOSTA["+tipoRisposta+"] LOCATION["+locationRisposta+"]");
 			
-			// ContentLength della risposta
-			if(this.httpEntityResponse.getContentLength()>0){
-				this.contentLength = this.httpEntityResponse.getContentLength();
-			}
-			
 			// Parametri di imbustamento
 			if(this.isSoap){
-				Header tunnelSoapHdr = httpResponse.getFirstHeader(this.openspcoopProperties.getTunnelSOAPKeyWord_headerTrasporto());
-				if(tunnelSoapHdr!=null && "true".equals(tunnelSoapHdr.getValue())){
+				if("true".equals(TransportUtils.getObjectAsString(mapHeaderHttpResponse, this.openspcoopProperties.getTunnelSOAPKeyWord_headerTrasporto()))){
 					this.imbustamentoConAttachment = true;
 				}
-				Header mimeTypeAttachmentHdr = httpResponse.getFirstHeader(this.openspcoopProperties.getTunnelSOAPKeyWordMimeType_headerTrasporto());
-				if(mimeTypeAttachmentHdr!=null){
-					this.mimeTypeAttachment = mimeTypeAttachmentHdr.getValue();
-				}
+				this.mimeTypeAttachment = TransportUtils.getObjectAsString(mapHeaderHttpResponse, this.openspcoopProperties.getTunnelSOAPKeyWordMimeType_headerTrasporto());
 				if(this.mimeTypeAttachment==null)
 					this.mimeTypeAttachment = HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP;
 				//System.out.println("IMB["+imbustamentoConAttachment+"] MIME["+mimeTypeAttachment+"]");

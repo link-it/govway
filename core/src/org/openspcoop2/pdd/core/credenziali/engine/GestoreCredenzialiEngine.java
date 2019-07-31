@@ -31,6 +31,7 @@ import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiConfigurationExcep
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.certificate.PrincipalType;
+import org.openspcoop2.utils.transport.TransportUtils;
 
 /**     
  * GestoreCredenzialiEngine
@@ -331,9 +332,7 @@ public class GestoreCredenzialiEngine {
 	
 	private boolean existsHeader(Properties properties, String name){
 		if(properties!=null){
-			return properties.containsKey(name) ||
-				properties.containsKey(name.toLowerCase()) ||
-				properties.containsKey(name.toUpperCase());
+			return TransportUtils.hasKey(properties, name);
 		}else{
 			return false;
 		}
@@ -341,14 +340,7 @@ public class GestoreCredenzialiEngine {
 	
 	private String getProperty(Properties properties, String name){
 		if(properties!=null){
-			String tmp = properties.getProperty(name);
-			if(tmp==null){
-				tmp = properties.getProperty(name.toLowerCase());
-			}
-			if(tmp==null){
-				tmp = properties.getProperty(name.toUpperCase());
-			}
-			return tmp;
+			return TransportUtils.get(properties, name);
 		}else{
 			return null;
 		}

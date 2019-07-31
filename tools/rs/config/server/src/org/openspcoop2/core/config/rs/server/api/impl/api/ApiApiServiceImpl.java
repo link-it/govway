@@ -868,7 +868,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					env.tipo_protocollo);
 
 			if (tipoApi != null)
-				ricerca.addFilter(idLista, Filtri.FILTRO_SERVICE_BINDING, Enums.serviceBindingFromTipo.get(tipoApi).toString());
+				ricerca.addFilter(idLista, Filtri.FILTRO_SERVICE_BINDING, Enums.serviceBindingFromTipo.get(tipoApi).toString().toLowerCase());
 
 			final String tipoAccordo = "apc"; // Dal debug.
 			final List<AccordoServizioParteComuneSintetico> lista = AccordiServizioParteComuneUtilities

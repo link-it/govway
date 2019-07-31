@@ -59,6 +59,7 @@ import org.openspcoop2.utils.dch.InputStreamDataSource;
 import org.openspcoop2.utils.io.ArchiveType;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
@@ -146,13 +147,7 @@ public class GestoreTrasformazioniUtilities {
 					}
 					Object vOld = null;
 					if(properties!=null) {
-						vOld = properties.remove(nome);
-						if(vOld==null) {
-							vOld = properties.remove(nome.toLowerCase());
-						}
-						if(vOld==null) {
-							vOld = properties.remove(nome.toUpperCase());
-						}
+						vOld = TransportUtils.remove(properties, nome);
 						if(vOld!=null) {
 							throw new Exception("["+oggetto+"] '"+nome+"' già esistente; utilizzare direttiva 'updateOrAdd' per aggiornarlo");
 						}
@@ -167,9 +162,7 @@ public class GestoreTrasformazioniUtilities {
 						throw new Exception("["+oggetto+"] Valore per '"+nome+"' non indicato");
 					}
 					if(properties!=null) {
-						properties.remove(nome);
-						properties.remove(nome.toLowerCase());
-						properties.remove(nome.toUpperCase());
+						TransportUtils.remove(properties, nome);
 						properties.put(nome, valore);
 					}
 					forceAddProperties.put(nome, valore);
@@ -177,13 +170,7 @@ public class GestoreTrasformazioniUtilities {
 				case UPDATE:
 					Object v = null;
 					if(properties!=null) {
-						v = properties.remove(nome);
-						if(v==null) {
-							v = properties.remove(nome.toLowerCase());
-						}
-						if(v==null) {
-							v = properties.remove(nome.toUpperCase());
-						}
+						v = TransportUtils.remove(properties, nome);
 						if(v!=null) {
 							if(valore==null) {
 								throw new Exception("["+oggetto+"] Valore del parametro '"+nome+"' non indicato");
@@ -195,9 +182,7 @@ public class GestoreTrasformazioniUtilities {
 					break;
 				case DELETE:
 					if(properties!=null) {
-						properties.remove(nome);
-						properties.remove(nome.toLowerCase());
-						properties.remove(nome.toUpperCase());
+						TransportUtils.remove(properties, nome);
 					}
 					break;
 				default:

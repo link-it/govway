@@ -49,7 +49,7 @@ public class HttpConstants {
 	public final static String RETURN_CODE = "ReturnCode";
 	
     /** ContentType */
-    public final static String CONTENT_TYPE_NON_VALORIZZATO = "Notv alued (null)";
+    public final static String CONTENT_TYPE_NON_VALORIZZATO = "Not valued (null)";
     public final static String CONTENT_TYPE_NON_PRESENTE = "Undefined";
 	
 	/** Transfer Encoding */

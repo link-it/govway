@@ -79,27 +79,13 @@ public class TransportResponseContext implements java.io.Serializable {
 		if(this.parametersTrasporto==null){
 			return null;
 		}
-		String value = this.parametersTrasporto.getProperty(name);
-		if(value==null){
-			value = this.parametersTrasporto.getProperty(name.toLowerCase());
-		}
-		if(value==null){
-			value = this.parametersTrasporto.getProperty(name.toUpperCase());
-		}
-		return value;
+		return TransportUtils.get(this.parametersTrasporto, name);
 	}
 	public Object removeParameterTrasporto(String name){
 		if(this.parametersTrasporto==null){
 			return null;
 		}
-		Object value = this.parametersTrasporto.remove(name);
-		if(value==null){
-			value = this.parametersTrasporto.remove(name.toLowerCase());
-		}
-		if(value==null){
-			value = this.parametersTrasporto.remove(name.toUpperCase());
-		}
-		return value;
+		return TransportUtils.remove(this.parametersTrasporto, name);
 	}
 	public String getContentType(){
 		if(this.parametersTrasporto!=null){

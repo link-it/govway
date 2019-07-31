@@ -38,6 +38,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.transport.TransportUtils;
 
 /**     
  * HashGenerator
@@ -183,13 +184,7 @@ public class HashGenerator {
 			}
 			Collections.sort(sortKeys);
 			for (String sortKey : sortKeys) {
-				String value = p.getProperty(sortKey);
-				if(value==null) {
-					value = p.getProperty(sortKey.toLowerCase());
-				}
-				if(value==null) {
-					value = p.getProperty(sortKey.toUpperCase());
-				}
+				String value = TransportUtils.get(p, sortKey);
 				String key = sortKey;
 				if(toLowerCase) {
 					key = key.toLowerCase();

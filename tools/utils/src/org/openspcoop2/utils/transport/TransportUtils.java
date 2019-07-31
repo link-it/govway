@@ -22,7 +22,13 @@
 package org.openspcoop2.utils.transport;
 
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.Charset;
@@ -39,6 +45,303 @@ import org.springframework.web.util.UriUtils;
  */
 public class TransportUtils {
 
+	/* Gestione CaseInsensitive per Properties */
+	
+	public static boolean hasKey(java.util.Properties p, String name) {
+		
+		// rfc7230#page-22: Each header field consists of a case-insensitive field name followed by a colon (":")
+		
+		if(p==null || p.isEmpty()) {
+			return false;
+		}
+		if(name==null) {
+			return false;
+		}
+		if(p.containsKey(name)) {
+			return true;
+		}
+		if(p.containsKey(name.toLowerCase())) {
+			return true;
+		}
+		if(p.containsKey(name.toUpperCase())) {
+			return true;
+		}
+		Enumeration<?> keys = p.keys();
+		while (keys.hasMoreElements()) {
+			Object objectKey = (Object) keys.nextElement();
+			if(objectKey!=null && objectKey instanceof String) {
+				String key = (String) objectKey;
+				String keyCaseInsensitive = key.toLowerCase();
+				String nameCaseInsensitive = name.toLowerCase();
+				if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
+					return true;
+				}
+			}
+		}
+		return false;
+		
+	}
+	
+	public static String get(java.util.Properties p, String name) {
+		Object o = _properties(p, name, true);
+		return (o !=null && o instanceof String) ? ((String)o) : null;
+	}
+	public static Object remove(java.util.Properties p, String name) {
+		return _properties(p, name, false);
+	}
+	private static Object _properties(java.util.Properties p, String name, boolean get) {
+		
+		// rfc7230#page-22: Each header field consists of a case-insensitive field name followed by a colon (":")
+		
+		if(p==null || p.isEmpty()) {
+			return null;
+		}
+		if(name==null) {
+			return null;
+		}
+		Object value = get ? p.getProperty(name) : p.remove(name);
+		if(value==null){
+			value = get ? p.getProperty(name.toLowerCase()) : p.remove(name.toLowerCase());
+		}
+		if(value==null){
+			value = get ? p.getProperty(name.toUpperCase()) : p.remove(name.toUpperCase()); 
+		}
+		if(value==null){
+			Enumeration<?> keys = p.keys();
+			while (keys.hasMoreElements()) {
+				Object objectKey = (Object) keys.nextElement();
+				if(objectKey!=null && objectKey instanceof String) {
+					String key = (String) objectKey;
+					String keyCaseInsensitive = key.toLowerCase();
+					String nameCaseInsensitive = name.toLowerCase();
+					if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
+						return get ? p.getProperty(key) : p.remove(key);
+					}
+				}
+			}
+		}
+		return value;
+		
+	}
+	
+	
+	
+	/* Gestione CaseInsensitive per Map */
+	
+	public static boolean mapHasKey(Map<String, Object> map, String name) {
+		
+		// rfc7230#page-22: Each header field consists of a case-insensitive field name followed by a colon (":")
+		
+		if(map==null || map.isEmpty()) {
+			return false;
+		}
+		if(name==null) {
+			return false;
+		}
+		if(map.containsKey(name)) {
+			return true;
+		}
+		if(map.containsKey(name.toLowerCase())) {
+			return true;
+		}
+		if(map.containsKey(name.toUpperCase())) {
+			return true;
+		}
+		Iterator<String> keys = map.keySet().iterator();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			if(key!=null) {
+				String keyCaseInsensitive = key.toLowerCase();
+				String nameCaseInsensitive = name.toLowerCase();
+				if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
+					return true;
+				}
+			}
+		}
+		return false;
+		
+	}
+	public static String getObjectAsString(Map<String, ?> map, String name) {
+		return _map(map, name, true);
+	}
+	public static String removeObjectAsString(Map<String, ?> map, String name) {
+		return _map(map, name, false);
+	}
+	public static void removeObject(Map<String, ?> map, String name) {
+		_map(map, name, false);
+	}
+	private static String _map(Map<String, ?> map, String name, boolean get) {
+		
+		// rfc7230#page-22: Each header field consists of a case-insensitive field name followed by a colon (":")
+		
+		if(map==null || map.isEmpty()) {
+			return null;
+		}
+		if(name==null) {
+			return null;
+		}
+		Object value = get? map.get(name) : map.remove(name);
+		if(value==null){
+			value = get? map.get(name.toLowerCase()) : map.remove(name.toLowerCase());
+		}
+		if(value==null){
+			value = get? map.get(name.toUpperCase()) : map.remove(name.toUpperCase());
+		}
+		if(value==null){
+			Iterator<String> keys = map.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = keys.next();
+				if(key!=null) {
+					String keyCaseInsensitive = key.toLowerCase();
+					String nameCaseInsensitive = name.toLowerCase();
+					if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
+						value = get? map.get(key) : map.remove(key);
+					}
+				}
+			}
+		}
+		if(value==null) {
+			return null;
+		}
+		if(value instanceof String) {
+			return (String) value;
+		}
+		else if(value instanceof List<?>) {
+			List<?> l = (List<?>) value;
+			StringBuffer bfHttpResponse = new StringBuffer();
+			for(int i=0;i<l.size();i++){
+				if(i>0){
+					bfHttpResponse.append(",");
+				}
+				bfHttpResponse.append(l.get(i));
+			}
+			if(bfHttpResponse.length()>0) {
+				return bfHttpResponse.toString();
+			}
+			else {
+				return null;
+			}
+		}
+		else {
+			return value.toString();
+		}
+		
+	}
+	
+	
+	
+	/* HttpServlet */
+	
+	public static String getParameter(HttpServletRequest request, String name) {
+		
+		// rfc7230#page-22: Each header field consists of a case-insensitive field name followed by a colon (":")
+		
+		if(request==null) {
+			return null;
+		}
+		if(name==null) {
+			return null;
+		}
+		String value = request.getParameter(name);
+		if(value==null){
+			value = request.getParameter(name.toLowerCase());
+		}
+		if(value==null){
+			value = request.getParameter(name.toUpperCase());
+		}
+		if(value==null){
+			Enumeration<String> keys = request.getParameterNames();
+			if(keys!=null) {
+				while (keys.hasMoreElements()) {
+					String key = keys.nextElement();
+					String keyCaseInsensitive = key.toLowerCase();
+					String nameCaseInsensitive = name.toLowerCase();
+					if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
+						return request.getParameter(key);
+					}
+				}
+			}
+		}
+		return value;
+		
+	}
+	
+	public static String getHeader(HttpServletRequest request, String name) {
+		
+		// rfc7230#page-22: Each header field consists of a case-insensitive field name followed by a colon (":")
+		
+		if(request==null) {
+			return null;
+		}
+		if(name==null) {
+			return null;
+		}
+		String value = request.getHeader(name);
+		if(value==null){
+			value = request.getHeader(name.toLowerCase());
+		}
+		if(value==null){
+			value = request.getHeader(name.toUpperCase());
+		}
+		if(value==null){
+			Enumeration<String> keys = request.getHeaderNames();
+			if(keys!=null) {
+				while (keys.hasMoreElements()) {
+					String key = keys.nextElement();
+					String keyCaseInsensitive = key.toLowerCase();
+					String nameCaseInsensitive = name.toLowerCase();
+					if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
+						return request.getHeader(key);
+					}
+				}
+			}
+		}
+		return value;
+		
+	}
+	
+	public static String getHeader(HttpServletResponse response, String name) {
+		
+		// rfc7230#page-22: Each header field consists of a case-insensitive field name followed by a colon (":")
+		
+		if(response==null) {
+			return null;
+		}
+		if(name==null) {
+			return null;
+		}
+		String value = response.getHeader(name);
+		if(value==null){
+			value = response.getHeader(name.toLowerCase());
+		}
+		if(value==null){
+			value = response.getHeader(name.toUpperCase());
+		}
+		if(value==null){
+			if(response.getHeaderNames()!=null && !response.getHeaderNames().isEmpty()) {
+				Iterator<String> keys = response.getHeaderNames().iterator();
+				if(keys!=null) {
+					while (keys.hasNext()) {
+						String key = keys.next();
+						String keyCaseInsensitive = key.toLowerCase();
+						String nameCaseInsensitive = name.toLowerCase();
+						if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
+							return response.getHeader(key);
+						}
+					}
+				}
+			}
+		}
+		return value;
+		
+	}
+	
+	
+	
+	
+	
+	/* Gestione URL */
+	
 	public static String buildLocationWithURLBasedParameter(Properties propertiesURLBased, String location){
 		return buildLocationWithURLBasedParameter(propertiesURLBased, location, false, LoggerWrapperFactory.getLogger(TransportUtils.class));
 	}

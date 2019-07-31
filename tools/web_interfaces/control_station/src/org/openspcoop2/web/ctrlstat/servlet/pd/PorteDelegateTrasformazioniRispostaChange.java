@@ -184,9 +184,11 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 			
 			boolean trasformazioneContenutoRichiestaAbilitato = false;
 			boolean trasformazioneRichiestaRestAbilitato = false;
+			boolean trasformazioneRichiestaSoapAbilitato = false;
 			if(oldRegola.getRichiesta() != null) {
 				trasformazioneContenutoRichiestaAbilitato = oldRegola.getRichiesta().getConversione();
 				trasformazioneRichiestaRestAbilitato = oldRegola.getRichiesta().getTrasformazioneRest() != null;
+				trasformazioneRichiestaSoapAbilitato = oldRegola.getRichiesta().getTrasformazioneSoap() != null;
 			}
 			
 			String nomeRispostaTitle = oldRisposta.getNome();
@@ -383,7 +385,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 						apc.getServiceBinding(),
 						nomeRisposta,
 						returnCode, statusMin, statusMax, pattern, contentType, servletTrasformazioniRispostaHeadersList, parametriInvocazioneServletTrasformazioniRispostaHeaders, numeroTrasformazioniRispostaHeaders, 
-						trasformazioneContenutoRichiestaAbilitato, trasformazioneRichiestaRestAbilitato, 
+						trasformazioneContenutoRichiestaAbilitato, trasformazioneRichiestaRestAbilitato, trasformazioneRichiestaSoapAbilitato,
 						trasformazioneContenutoRispostaAbilitato, trasformazioneContenutoRispostaTipo, trasformazioneContenutoRispostaTemplate, trasformazioneContenutoRispostaTipoCheck, trasformazioneContenutoRispostaContentType, trasformazioneContenutoRispostaReturnCode,
 						serviceBindingMessage, trasformazioneRispostaSoapAbilitato, trasformazioneRispostaSoapEnvelope, trasformazioneRispostaSoapEnvelopeTipo, trasformazioneRispostaSoapEnvelopeTemplate, trasformazioneRispostaSoapEnvelopeTipoCheck);
 				
@@ -433,7 +435,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 						apc.getServiceBinding(),
 						nomeRisposta,
 						returnCode, statusMin, statusMax, pattern, contentType, servletTrasformazioniRispostaHeadersList, parametriInvocazioneServletTrasformazioniRispostaHeaders, numeroTrasformazioniRispostaHeaders, 
-						trasformazioneContenutoRichiestaAbilitato, trasformazioneRichiestaRestAbilitato, 
+						trasformazioneContenutoRichiestaAbilitato, trasformazioneRichiestaRestAbilitato, trasformazioneRichiestaSoapAbilitato,
 						trasformazioneContenutoRispostaAbilitato, trasformazioneContenutoRispostaTipo, trasformazioneContenutoRispostaTemplate, trasformazioneContenutoRispostaTipoCheck, trasformazioneContenutoRispostaContentType, trasformazioneContenutoRispostaReturnCode,
 						serviceBindingMessage, trasformazioneRispostaSoapAbilitato, trasformazioneRispostaSoapEnvelope, trasformazioneRispostaSoapEnvelopeTipo, trasformazioneRispostaSoapEnvelopeTemplate, trasformazioneRispostaSoapEnvelopeTipoCheck);
 				

@@ -48,6 +48,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.Credential;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.slf4j.Logger;
 
 /**
@@ -198,7 +199,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	}
 	@Override
 	public String getHeader(String key) throws ConnectorException{
-		return this.headers.get(key);
+		return TransportUtils.getObjectAsString(this.headers, key);
 	}
 	
 	
@@ -208,7 +209,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	}
 	@Override
 	public String getParameter(String key) throws ConnectorException{
-		return this.parameters.get(key);
+		return TransportUtils.getObjectAsString(this.parameters, key);
 	}
 
 	

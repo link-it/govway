@@ -134,7 +134,7 @@ public class ServletTestService extends HttpServlet {
 		if(existsHttpHeaders!=null){
 			existsHttpHeaders = existsHttpHeaders.trim();
 			if(existsHttpHeaders.contains(",")==false) {
-				String v = _getHeader(request, existsHttpHeaders);
+				String v = TransportUtils.getHeader(request, existsHttpHeaders);
 				if(v==null){
 					throw new ServletException("Ricevuta una richiesta di verifica esistenza header ("+existsHttpHeaders+"). Header non presente");
 				}
@@ -145,7 +145,7 @@ public class ServletTestService extends HttpServlet {
 					throw new ServletException("Ricevuta una richiesta di verifica esistenza header non conforme (split null)");
 				}
 				for (String header : split) {
-					String v = _getHeader(request, header);
+					String v = TransportUtils.getHeader(request, header);
 					if(v==null){
 						throw new ServletException("Ricevuta una richiesta di verifica esistenza header ("+header+"). Header non presente");
 					}
@@ -157,7 +157,7 @@ public class ServletTestService extends HttpServlet {
 		if(notExistsHttpHeaders!=null){
 			notExistsHttpHeaders = notExistsHttpHeaders.trim();
 			if(notExistsHttpHeaders.contains(",")==false) {
-				String v = _getHeader(request, notExistsHttpHeaders);
+				String v = TransportUtils.getHeader(request, notExistsHttpHeaders);
 				if(v!=null){
 					throw new ServletException("Ricevuta una richiesta di verifica non esistenza header ("+notExistsHttpHeaders+"). Header presente");
 				}
@@ -168,7 +168,7 @@ public class ServletTestService extends HttpServlet {
 					throw new ServletException("Ricevuta una richiesta di verifica non esistenza header non conforme (split null)");
 				}
 				for (String header : split) {
-					String v = _getHeader(request, header);
+					String v = TransportUtils.getHeader(request, header);
 					if(v!=null){
 						throw new ServletException("Ricevuta una richiesta di verifica non esistenza header ("+header+"). Header presente");
 					}
@@ -180,7 +180,7 @@ public class ServletTestService extends HttpServlet {
 		if(existsQueryParameters!=null){
 			existsQueryParameters = existsQueryParameters.trim();
 			if(existsQueryParameters.contains(",")==false) {
-				String v = _getQueryParameter(request, existsQueryParameters);
+				String v = TransportUtils.getParameter(request, existsQueryParameters);
 				if(v==null){
 					throw new ServletException("Ricevuta una richiesta di verifica esistenza query parameter ("+existsQueryParameters+"). Parametro non presente");
 				}
@@ -191,7 +191,7 @@ public class ServletTestService extends HttpServlet {
 					throw new ServletException("Ricevuta una richiesta di verifica esistenza query parameter non conforme (split null)");
 				}
 				for (String header : split) {
-					String v = _getQueryParameter(request, header);
+					String v = TransportUtils.getParameter(request, header);
 					if(v==null){
 						throw new ServletException("Ricevuta una richiesta di verifica esistenza query parameter ("+header+"). Parametro non presente");
 					}
@@ -203,7 +203,7 @@ public class ServletTestService extends HttpServlet {
 		if(notExistsQueryParameters!=null){
 			notExistsQueryParameters = notExistsQueryParameters.trim();
 			if(notExistsQueryParameters.contains(",")==false) {
-				String v = _getQueryParameter(request, notExistsQueryParameters);
+				String v = TransportUtils.getParameter(request, notExistsQueryParameters);
 				if(v!=null){
 					throw new ServletException("Ricevuta una richiesta di verifica non esistenza query parameter ("+notExistsQueryParameters+"). Parametro presente");
 				}
@@ -214,7 +214,7 @@ public class ServletTestService extends HttpServlet {
 					throw new ServletException("Ricevuta una richiesta di verifica non esistenza query parameter non conforme (split null)");
 				}
 				for (String header : split) {
-					String v = _getQueryParameter(request, header);
+					String v = TransportUtils.getParameter(request, header);
 					if(v!=null){
 						throw new ServletException("Ricevuta una richiesta di verifica non esistenza query parameter ("+header+"). Parametro presente");
 					}
@@ -238,7 +238,7 @@ public class ServletTestService extends HttpServlet {
 			String key = split[0];
 			String valore = split[1];
 			
-			String v = _getHeader(request, key);
+			String v = TransportUtils.getHeader(request, key);
 			if(v==null){
 				throw new ServletException("Ricevuta una richiesta di verifica header ("+key+":"+valore+"). Header ["+key+"] non presente");
 			}
@@ -263,7 +263,7 @@ public class ServletTestService extends HttpServlet {
 			String key = split[0];
 			String valore = split[1];
 			
-			String v = _getQueryParameter(request, key);
+			String v = TransportUtils.getParameter(request, key);
 			if(v==null){
 				throw new ServletException("Ricevuta una richiesta di verifica query parameter ("+key+":"+valore+"). Parametro ["+key+"] non presente");
 			}
@@ -279,18 +279,18 @@ public class ServletTestService extends HttpServlet {
 				
 				boolean preflight = HttpRequestMethod.OPTIONS.equals(request.getMethod());
 				
-				String origin = _getHeader(request, HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN);
+				String origin = TransportUtils.getHeader(request, HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN);
 				if(origin==null || "".equals(origin)) {
 					throw new ServletException("Ricevuta una richiesta di verifica header ("+HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN+"). Header non presente");
 				}
 				
 				if(preflight) {
 					
-					String method = _getHeader(request, HttpConstants.ACCESS_CONTROL_REQUEST_METHOD);
+					String method = TransportUtils.getHeader(request, HttpConstants.ACCESS_CONTROL_REQUEST_METHOD);
 					if(method==null || "".equals(method)) {
 						throw new ServletException("Ricevuta una richiesta di verifica header ("+HttpConstants.ACCESS_CONTROL_REQUEST_METHOD+"). Header non presente");
 					}
-					String header = _getHeader(request, HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS);
+					String header = TransportUtils.getHeader(request, HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS);
 					if(header==null || "".equals(header)) {
 						throw new ServletException("Ricevuta una richiesta di verifica header ("+HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS+"). Header non presente");
 					}
@@ -300,26 +300,6 @@ public class ServletTestService extends HttpServlet {
 			}
 		}
 		
-	}
-	private static String _getHeader(HttpServletRequest request, String name) {
-		String v = request.getHeader(name);
-		if(v==null){
-			v = request.getHeader(name.toLowerCase());
-		}
-		if(v==null){
-			v = request.getHeader(name.toUpperCase());
-		}
-		return v;
-	}
-	private static String _getQueryParameter(HttpServletRequest request, String name) {
-		String v = request.getParameter(name);
-		if(v==null){
-			v = request.getParameter(name.toLowerCase());
-		}
-		if(v==null){
-			v = request.getParameter(name.toUpperCase());
-		}
-		return v;
 	}
 	
 	public void doEngine(HttpServletRequest req, HttpServletResponse res, boolean oneway, Properties headerRisposta)
@@ -713,15 +693,15 @@ public class ServletTestService extends HttpServlet {
 				if("true".equalsIgnoreCase(checkCORS)) {
 					boolean preflight = HttpRequestMethod.OPTIONS.equals(req.getMethod());
 					
-					String origin = _getHeader(req, HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN);
+					String origin = TransportUtils.getHeader(req, HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN);
 					headers.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN,origin);
 					
 					if(preflight) {
 						
-						String method = _getHeader(req, HttpConstants.ACCESS_CONTROL_REQUEST_METHOD);
+						String method = TransportUtils.getHeader(req, HttpConstants.ACCESS_CONTROL_REQUEST_METHOD);
 						headers.put(HttpConstants.ACCESS_CONTROL_ALLOW_METHODS,method);
 						
-						String header = _getHeader(req, HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS);
+						String header = TransportUtils.getHeader(req, HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS);
 						headers.put(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS,header);
 						
 					}
@@ -746,13 +726,7 @@ public class ServletTestService extends HttpServlet {
 					}
 					
 					for (String hdrName : tmp) {
-						String reqHdr = req.getHeader(hdrName);
-						if(reqHdr==null) {
-							reqHdr = req.getHeader(hdrName.toLowerCase());
-						}
-						if(reqHdr==null) {
-							reqHdr = req.getHeader(hdrName.toUpperCase());
-						}
+						String reqHdr = TransportUtils.getHeader(req, hdrName); 
 						if(reqHdr!=null) {
 							headers.put(replyPrefix+hdrName, reqHdr);
 						}
@@ -772,13 +746,7 @@ public class ServletTestService extends HttpServlet {
 					}
 					
 					for (String queryParmName : tmp) {
-						String reqQueryPar = req.getParameter(queryParmName);
-						if(reqQueryPar==null) {
-							reqQueryPar = req.getParameter(queryParmName.toLowerCase());
-						}
-						if(reqQueryPar==null) {
-							reqQueryPar = req.getParameter(queryParmName.toUpperCase());
-						}
+						String reqQueryPar = TransportUtils.getParameter(req, queryParmName); 
 						if(reqQueryPar!=null) {
 							headers.put(replyPrefix+queryParmName, reqQueryPar);
 						}

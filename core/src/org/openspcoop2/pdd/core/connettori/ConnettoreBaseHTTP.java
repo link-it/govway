@@ -37,6 +37,7 @@ import org.openspcoop2.message.rest.RestUtilities;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -201,13 +202,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 		 if(this.rest_proxyPassReverse && this.rest_proxyPassReverse_headers!=null) {
 			 
 			 for (String header : this.rest_proxyPassReverse_headers) {
-				 String redirectLocation = this.propertiesTrasportoRisposta.getProperty(header);
-				 if(redirectLocation==null){
-					 redirectLocation = this.propertiesTrasportoRisposta.getProperty(header.toLowerCase());
-				 }
-				 if(redirectLocation==null){
-					 redirectLocation = this.propertiesTrasportoRisposta.getProperty(header.toUpperCase());
-				 }
+				 String redirectLocation = TransportUtils.get(this.propertiesTrasportoRisposta, header); 
 				 if(redirectLocation!=null) {
 					 if(this.debug)
 						 this.logger.debug("Trovato Header '"+header+"':["+redirectLocation+"] ...");
@@ -238,9 +233,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 						 if(this.debug)
 							 this.logger.debug("Nuovo Header '"+header+"':["+newRedirectLocation+"] ...");
 	               
-						 this.propertiesTrasportoRisposta.remove(header);
-						 this.propertiesTrasportoRisposta.remove(header.toLowerCase());
-						 this.propertiesTrasportoRisposta.remove(header.toUpperCase());
+						 TransportUtils.remove(this.propertiesTrasportoRisposta, header);
 						 this.propertiesTrasportoRisposta.put(header, newRedirectLocation);
 					 }catch(Exception e) {
 						 throw new Exception("Errore durante l'aggiornamento dell'header '"+header+

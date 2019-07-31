@@ -371,7 +371,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 					env.tipo_protocollo);
 
 			if (tipoApi != null)
-				ricerca.addFilter(idLista, Filtri.FILTRO_SERVICE_BINDING, tipoApi.toString());
+				ricerca.addFilter(idLista, Filtri.FILTRO_SERVICE_BINDING, tipoApi.toString().toLowerCase());
 
 			List<AccordoServizioParteSpecifica> lista = env.apsCore.soggettiServizioList(null, ricerca, null, true, false);
 

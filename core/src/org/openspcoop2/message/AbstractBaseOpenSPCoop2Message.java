@@ -673,8 +673,6 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 				String key = (String) it.next();
 				String value = this.forceTransportHeaders.get(key);
 				msg.removeProperty(key);
-				msg.removeProperty(key.toLowerCase());
-				msg.removeProperty(key.toUpperCase());
 				msg.addProperty(key, value);
 			}
 		}
@@ -724,8 +722,6 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 				String key = (String) it.next();
 				String value = this.forceUrlProperties.get(key);
 				msg.removeProperty(key);
-				msg.removeProperty(key.toLowerCase());
-				msg.removeProperty(key.toUpperCase());
 				msg.addProperty(key, value);
 			}
 		}

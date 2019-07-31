@@ -25,6 +25,8 @@ package org.openspcoop2.message;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import org.openspcoop2.utils.transport.TransportUtils;
+
 /**
  * OpenSPCoop2MessageProperties
  *
@@ -51,7 +53,8 @@ public class OpenSPCoop2MessageProperties {
 	}
 	
 	public String removeProperty(String key){
-		return (String) this.props.remove(key);
+		Object o = TransportUtils.remove(this.props, key);
+		return (o!=null && o instanceof String) ? ((String)o) : null;
 	}
 	
 	public Enumeration<?> getKeys(){
@@ -59,7 +62,7 @@ public class OpenSPCoop2MessageProperties {
 	}
 	
 	public String getProperty(String key){
-		return this.props.getProperty(key);
+		return TransportUtils.get(this.props, key);
 	}
 	
 	public Properties getAsProperties(){

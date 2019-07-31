@@ -31,6 +31,7 @@ import org.openspcoop2.utils.regexp.RegExpException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.regexp.RegularExpressionPatternCompileMode;
+import org.openspcoop2.utils.transport.TransportUtils;
 
 
 
@@ -84,13 +85,7 @@ public class EsitoTransportContextIdentification  {
 		Enumeration<?> keys = p.keys();
 		while (keys.hasMoreElements()) {
 			String key = (String) keys.nextElement();
-			String valueKey = p.getProperty(key);
-			if(valueKey==null){
-				valueKey = p.getProperty(key.toLowerCase());
-			}
-			if(valueKey==null){
-				valueKey = p.getProperty(key.toUpperCase());
-			}
+			String valueKey = TransportUtils.get(p, key);
 			if(key.equalsIgnoreCase(this.name)){
 				
 				// trovato header con nome atteso
