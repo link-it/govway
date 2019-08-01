@@ -131,11 +131,11 @@ public class CostantiErroriIntegrazione {
 	
 	/** String che contiene un codice di errore OpenSPCoop2: Validazione xsd non riuscita*/
 	public final static String MSG_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA = 
-			"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio ("+WSDL_TYPE+") definito nel Registro dei Servizi";
+			"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio ("+WSDL_TYPE+") definito nel Registro";
 	
 	/** String che contiene un codice di errore OpenSPCoop2: Validazione xsd non riuscita*/
 	public final static String MSG_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA = 
-			"Il contenuto applicativo del messaggio di risposta non rispetta l'accordo di servizio ("+WSDL_TYPE+") definito nel Registro dei Servizi";
+			"Il contenuto applicativo del messaggio di risposta non rispetta l'accordo di servizio ("+WSDL_TYPE+") definito nel Registro";
 	
 	/** String che contiene un codice di errore OpenSPCoop2: Busta presente in una richiesta applicativa */
 	public final static String MSG_420_BUSTA_PRESENTE_RICHIESTA_APPLICATIVA = 

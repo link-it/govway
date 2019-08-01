@@ -1968,7 +1968,7 @@ public class RichiesteApplicativeScorrette {
 				Utilities.verificaFaultIntegrazione(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA), 
-						CostantiErroriIntegrazione.MSG_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA.replace("TIPO_WSDL", "Wsdl erogatore"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiErroriIntegrazione.MSG_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA.replace("TIPO_WSDL", "Wsdl erogatore"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -2050,7 +2050,7 @@ public class RichiesteApplicativeScorrette {
 				Utilities.verificaFaultIntegrazione(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"InoltroBuste", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA), 
-						CostantiErroriIntegrazione.MSG_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA.replace("TIPO_WSDL", "Schema xsd dei messaggi"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
+						CostantiErroriIntegrazione.MSG_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA.replace("TIPO_WSDL", "Schema xsd dei messaggi"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
