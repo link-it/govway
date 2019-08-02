@@ -198,16 +198,15 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 
 			// cript pwd
 			Password passwordManager = new Password();
-			this.getUser().setPassword(
-					passwordManager.cryptPw(this.user.getPassword()));
-
-			this.service.store(this.getUser());
+			String newPassword = passwordManager.cryptPw(this.user.getPassword());
+			((UserService)this.service).savePassword(this.user.getLogin(), newPassword);
 
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage("Password modificata correttamente"));
 
 			this.showFormCambiaPassword = false;
 		} catch (Exception e) {
+			log.error("Cambio Password non riuscito",e);
 			MessageUtils.addErrorMsg("Cambio Password non riuscito");
 		}
 

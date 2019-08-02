@@ -2156,4 +2156,50 @@ public class DriverUsersDB {
 			}catch(Exception eClose){}
 		}
 	}
+	
+	
+	public void savePassword(String login, String password) throws DriverUsersDBException {
+		if (login == null || password==null)
+			throw new DriverUsersDBException("[savePassword] Parametri Non Validi");
+
+		Connection connectionDB = null;
+		PreparedStatement stm = null;
+		try {
+			// Get Connection
+			if(this.connection!=null)
+				connectionDB = this.connection;
+			else{
+				connectionDB = this.datasource.getConnection();
+				if(connectionDB==null)
+					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addUpdateTable(CostantiDB.USERS);
+			sqlQueryObject.addUpdateField("password", "?");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLUpdate();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			stm.setString(1, password);
+			stm.setString(2, login);
+			stm.executeUpdate();
+			stm.close();
+
+		} catch (SQLException se) {
+			throw new DriverUsersDBException("[DriverUsersDB::savePassword] SqlException: " + se.getMessage(),se);
+		} catch (Exception ex) {
+			throw new DriverUsersDBException("[DriverUsersDB::savePassword] Exception: " + ex.getMessage(),ex);
+		} finally {
+			try {
+				stm.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
+		}
+	}
 }

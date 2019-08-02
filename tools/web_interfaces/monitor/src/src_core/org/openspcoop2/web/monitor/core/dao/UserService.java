@@ -132,5 +132,13 @@ public class UserService implements IUserService {
 		}
 	}
 	
+	@Override
+	public void savePassword(String login, String newPassword) {
+		try {
+			this.utenteDAO.savePassword(login, newPassword);
+		} catch (DriverUsersDBException e) {
+			UserService.log.error(e.getMessage(), e);
+		}
+	}
 	
 }

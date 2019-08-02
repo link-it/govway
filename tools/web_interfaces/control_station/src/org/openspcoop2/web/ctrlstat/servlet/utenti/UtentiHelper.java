@@ -342,7 +342,15 @@ public class UtentiHelper extends ConsoleHelper {
 			
 				}
 			}
-			
+			else {
+				
+				de = new DataElement();
+				de.setType(DataElementType.HIDDEN);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SOGGETTI_ALL);
+				de.setValue(isSoggettiAll);
+				dati.addElement(de);
+				
+			}
 			
 				
 			de = new DataElement();

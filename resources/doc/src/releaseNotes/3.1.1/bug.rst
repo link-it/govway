@@ -32,3 +32,5 @@ Sulla console di monitoraggio sono stati risolti i seguenti bug:
 
 - *Dump Binario*: la console non visualizzava il contenuto del dump binario se differente da xml.
 
+- *Modifica Password*: la modifica della password dell'utente non funzionava.
+

@@ -38,4 +38,6 @@ public interface IUserService extends IService<User, String>{
 
 	public void saveTableState(String nomeTabella, User user, Stato stato);
 	
+	public void savePassword(String login, String newPassword);
+	
 }

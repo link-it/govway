@@ -1,5 +1,13 @@
 2019-07-02  Andrea Poli <apoli@link.it>
 
+	* [GovWayMonitor, GovWayConsole]
+	Risolto Bug OP-882
+	Nella govwayConsole, agendo come gestore degli utenti, dopo il cambio password dell'utente operatore si otteneva il messaggio di errore:
+	'Per completare la configurazione dell'utente definire i soggetti visibili tramite govwayMonitor'
+	Il problema è stato risolto insieme ad un analogo problema che non consentiva nemmeno la modifica della password via govwayMonitor.
+
+2019-07-02  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovWayConsole]
 	Aggiunta funzionalità OP-880
 	Aggiunti Header di Integrazione compatibili con le versioni generate in OpenSPCoop v1 e v2
