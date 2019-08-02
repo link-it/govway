@@ -387,11 +387,18 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				if(propertiesReader.validaConfigurazione((java.lang.ClassLoader)o[0]) == false){
 					return;
 				}
+				if(classNameReader.validaConfigurazione((java.lang.ClassLoader)o[0], propertiesReader.getDatabaseType()) == false){
+					return;
+				}
 			}else{
 				if(propertiesReader.validaConfigurazione(null) == false){
 					return;
 				}
+				if(classNameReader.validaConfigurazione(null, propertiesReader.getDatabaseType()) == false){
+					return;
+				}
 			}
+			
 			OpenSPCoop2Startup.this.serverJ2EE = propertiesReader.isServerJ2EE();
 			if(propertiesReader.getClassLoader()!=null){
 				try{

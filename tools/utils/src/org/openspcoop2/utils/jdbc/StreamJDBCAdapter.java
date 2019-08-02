@@ -47,7 +47,7 @@ import org.openspcoop2.utils.UtilsException;
 public class StreamJDBCAdapter extends AbstractJDBCAdapter {
 
 	
-    protected StreamJDBCAdapter(TipiDatabase tipoDatabase) {
+	public StreamJDBCAdapter(TipiDatabase tipoDatabase) {
 		super(tipoDatabase);
 	}
 	

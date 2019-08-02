@@ -855,6 +855,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				dati.addElement(de);
 			}else{
 				de.setType(DataElementType.TEXT_EDIT);
+				de.enableTags();
+				DataElementInfo dInfo = new DataElementInfo(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_METADATI);
+				dInfo.setBody(CostantiControlStation.LABEL_METADATI_INFO);
+				de.setInfo(dInfo);
 				deIntegrazione.addElement(de);
 			}
 			

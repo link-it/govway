@@ -31,9 +31,44 @@ import java.util.List;
 import java.util.Properties;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.pdd.core.autenticazione.pa.IAutenticazionePortaApplicativa;
+import org.openspcoop2.pdd.core.autenticazione.pd.IAutenticazionePortaDelegata;
+import org.openspcoop2.pdd.core.autorizzazione.container.IAutorizzazioneSecurityContainer;
+import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazioneContenutoPortaApplicativa;
+import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazionePortaApplicativa;
+import org.openspcoop2.pdd.core.autorizzazione.pd.IAutorizzazioneContenutoPortaDelegata;
+import org.openspcoop2.pdd.core.autorizzazione.pd.IAutorizzazionePortaDelegata;
+import org.openspcoop2.pdd.core.behaviour.IBehaviour;
+import org.openspcoop2.pdd.core.connettori.IConnettore;
+import org.openspcoop2.pdd.core.controllo_traffico.plugins.IRateLimiting;
+import org.openspcoop2.pdd.core.credenziali.IGestoreCredenziali;
+import org.openspcoop2.pdd.core.credenziali.IGestoreCredenzialiIM;
+import org.openspcoop2.pdd.core.handlers.notifier.INotifierCallback;
+import org.openspcoop2.pdd.core.handlers.transazioni.ISalvataggioDiagnosticiManager;
+import org.openspcoop2.pdd.core.handlers.transazioni.ISalvataggioTracceManager;
+import org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePA;
+import org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePD;
+import org.openspcoop2.pdd.core.node.INodeReceiver;
+import org.openspcoop2.pdd.core.node.INodeSender;
+import org.openspcoop2.pdd.core.threshold.IThreshold;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
+import org.openspcoop2.protocol.engine.driver.IFiltroDuplicati;
+import org.openspcoop2.protocol.engine.driver.repository.IGestoreRepository;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
+import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
+import org.openspcoop2.security.message.MessageSecurityContext;
+import org.openspcoop2.security.message.MessageSecurityDigestReader;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.date.IDate;
+import org.openspcoop2.utils.id.IUniqueIdentifierGenerator;
+import org.openspcoop2.utils.jdbc.IJDBCAdapter;
+import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.slf4j.Logger;
 
 
@@ -74,7 +109,7 @@ public class ClassNameProperties {
 		if(OpenSPCoop2Startup.initialize)
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		else
-			this.log = LoggerWrapperFactory.getLogger(ClassNameProperties.class);
+			this.log = LoggerWrapperFactory.getLogger("govway.startup");
 		
 		/* ---- Lettura del cammino del file di configurazione ---- */
 		Properties propertiesReader = new Properties();
@@ -142,9 +177,347 @@ public class ClassNameProperties {
 		ClassNameProperties.classNameProperties.reader.setLocalImplementation(prop);
 	}*/
 
+	
+	
+	
+	
+	
+	public boolean validaConfigurazione(java.lang.ClassLoader loader, String db) {	
+		try{  
+			TipiDatabase tipiDatabase = TipiDatabase.DEFAULT;
+			if(db!=null) {
+				tipiDatabase = TipiDatabase.toEnumConstant(db);
+			}
+			
+			Loader loaderOpenSPCoop = null;
+			if(loader!=null){
+				loaderOpenSPCoop = Loader.getInstance(); // gia inizializzato nello startup
+			}else{
+				loaderOpenSPCoop = new Loader(loader);
+			}
+			
+			String[] tmp = getConnettore();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					if(CostantiConfigurazione.DISABILITATO.toString().equals(tipo)) {
+						continue;
+					}
+					if(TipiConnettore.JMS.getNome().equals(tipo)) {
+						continue; // sulle installazioni standalone non ci sono i jar jms
+					}
+					String className = this.getConnettore(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IConnettore.class) == false ) return false;
+				}
+			}
+			
+			tmp = getRealmContainerCustom();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getRealmContainerCustom(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IAutorizzazioneSecurityContainer.class) == false ) return false;
+				}
+			}
+			
+			tmp = getAutenticazionePortaDelegata();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					if(CostantiConfigurazione.AUTENTICAZIONE_NONE.toString().equals(tipo)) {
+						continue;
+					}
+					String className = this.getAutenticazionePortaDelegata(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IAutenticazionePortaDelegata.class) == false ) return false;
+				}
+			}
+			
+			tmp = getAutenticazionePortaApplicativa();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					if(CostantiConfigurazione.AUTENTICAZIONE_NONE.toString().equals(tipo)) {
+						continue;
+					}
+					String className = this.getAutenticazionePortaApplicativa(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IAutenticazionePortaApplicativa.class) == false ) return false;
+				}
+			}
+			
+			tmp = getAutorizzazionePortaDelegata();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					if(CostantiConfigurazione.AUTENTICAZIONE_NONE.toString().equals(tipo)) {
+						continue;
+					}
+					String className = this.getAutorizzazionePortaDelegata(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IAutorizzazionePortaDelegata.class) == false ) return false;
+				}
+			}
+			
+			tmp = getAutorizzazionePortaApplicativa();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					if(CostantiConfigurazione.AUTENTICAZIONE_NONE.toString().equals(tipo)) {
+						continue;
+					}
+					String className = this.getAutorizzazionePortaApplicativa(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IAutorizzazionePortaApplicativa.class) == false ) return false;
+				}
+			}
+			
+			tmp = getAutorizzazioneContenutoPortaDelegata();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					if(CostantiConfigurazione.AUTENTICAZIONE_NONE.toString().equals(tipo)) {
+						continue;
+					}
+					String className = this.getAutorizzazioneContenutoPortaDelegata(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IAutorizzazioneContenutoPortaDelegata.class) == false ) return false;
+				}
+			}
+			
+			tmp = getAutorizzazioneContenutoPortaApplicativa();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					if(CostantiConfigurazione.AUTENTICAZIONE_NONE.toString().equals(tipo)) {
+						continue;
+					}
+					String className = this.getAutorizzazioneContenutoPortaApplicativa(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IAutorizzazioneContenutoPortaApplicativa.class) == false ) return false;
+				}
+			}
+			
+			tmp = getIntegrazionePortaDelegata();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getIntegrazionePortaDelegata(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IGestoreIntegrazionePD.class) == false ) return false;
+				}
+			}
+			
+			tmp = getIntegrazionePortaApplicativa();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getIntegrazionePortaApplicativa(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IGestoreIntegrazionePA.class) == false ) return false;
+				}
+			}
+			
+			tmp = getJDBCAdapter();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getJDBCAdapter(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IJDBCAdapter.class, tipiDatabase) == false ) return false;
+				}
+			}
+			
+			tmp = getThreshold();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getThreshold(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IThreshold.class) == false ) return false;
+				}
+			}
+			
+			tmp = getMsgDiagnosticoOpenSPCoopAppender();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getMsgDiagnosticoOpenSPCoopAppender(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IDiagnosticProducer.class) == false ) return false;
+				}
+			}
+			
+			tmp = getTracciamentoOpenSPCoopAppender();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getTracciamentoOpenSPCoopAppender(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, ITracciaProducer.class) == false ) return false;
+				}
+			}
+			
+			tmp = getDumpOpenSPCoopAppender();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getDumpOpenSPCoopAppender(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IDumpProducer.class) == false ) return false;
+				}
+			}
+			
+			tmp = getNodeReceiver();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					if(TipiConnettore.JMS.getNome().equals(tipo)) {
+						continue; // sulle installazioni standalone non ci sono i jar jms
+					}
+					String className = this.getNodeReceiver(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, INodeReceiver.class) == false ) return false;
+				}
+			}
+			
+			tmp = getNodeSender();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					if(TipiConnettore.JMS.getNome().equals(tipo)) {
+						continue; // sulle installazioni standalone non ci sono i jar jms
+					}
+					String className = this.getNodeSender(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, INodeSender.class) == false ) return false;
+				}
+			}
+			
+			tmp = getRepositoryBuste();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getRepositoryBuste(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IGestoreRepository.class) == false ) return false;
+				}
+			}
+			
+			tmp = getSQLQueryObject();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getSQLQueryObject(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, ISQLQueryObject.class, tipiDatabase) == false ) return false;
+				}
+			}
+			
+			tmp = getDateManager();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getDateManager(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IDate.class) == false ) return false;
+				}
+			}
+			
+			tmp = getUniqueIdentifier();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getUniqueIdentifier(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IUniqueIdentifierGenerator.class) == false ) return false;
+				}
+			}
+			
+			tmp = getFiltroDuplicati();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getFiltroDuplicati(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IFiltroDuplicati.class) == false ) return false;
+				}
+			}
+			
+			// HANDLER: gia' verificati in properties openspcoop
+			
+			tmp = getOpenSPCoop2MessageFactory();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getOpenSPCoop2MessageFactory(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, OpenSPCoop2MessageFactory.class) == false ) return false;
+				}
+			}
+			
+			tmp = getMessageSecurityContext();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getMessageSecurityContext(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, MessageSecurityContext.class) == false ) return false;
+				}
+			}
+			
+			tmp = getMessageSecurityDigestReader();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getMessageSecurityDigestReader(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, MessageSecurityDigestReader.class) == false ) return false;
+				}
+			}
+			
+			tmp = getGestoreCredenziali();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getGestoreCredenziali(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IGestoreCredenziali.class) == false ) return false;
+				}
+			}
+			
+			tmp = getGestoreCredenzialiIM();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getGestoreCredenzialiIM(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IGestoreCredenzialiIM.class) == false ) return false;
+				}
+			}
+			
+			tmp = getNotifierCallback();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getNotifierCallback(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, INotifierCallback.class) == false ) return false;
+				}
+			}
+			
+			tmp = getBehaviour();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getBehaviour(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IBehaviour.class) == false ) return false;
+				}
+			}
+			
+			tmp = getSalvataggioTracceManager();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getSalvataggioTracceManager(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, ISalvataggioTracceManager.class) == false ) return false;
+				}
+			}
+			
+			tmp = getSalvataggioDiagnosticiManager();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getSalvataggioDiagnosticiManager(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, ISalvataggioDiagnosticiManager.class) == false ) return false;
+				}
+			}
+			
+			tmp = getRateLimiting();
+			if(tmp!=null && tmp.length>0) {
+				for (String tipo : tmp) {
+					String className = this.getRateLimiting(tipo);
+					if ( this.validate(loaderOpenSPCoop, className, tipo, IRateLimiting.class) == false ) return false;
+				}
+			}
+			
+			return true;
+			
+		}catch(java.lang.Exception e) {
+			this.log.error("Riscontrato errore durante la validazione lettura della proprieta' di openspcoop: "+e.getMessage(),e);
+			return false;
+		}
+	}
 
-
-
+	private boolean validate(Loader loaderOpenSPCoop, String className, String tipo, Class<?> classAttesa) {
+		return this.validate(loaderOpenSPCoop, className, tipo, classAttesa, null);
+	}
+	private boolean validate(Loader loaderOpenSPCoop, String className, String tipo, Class<?> classAttesa, TipiDatabase tipiDatabase) {
+		try{
+			Object o = null;
+			if(tipiDatabase==null) {
+				o = loaderOpenSPCoop.newInstance(className);
+			}
+			else {
+				o = loaderOpenSPCoop.newInstance(className, tipiDatabase);
+			}
+			o.toString();
+			
+			if(classAttesa.isInstance(o)==false) {
+				throw new Exception("Classe '"+className+"' non implementa l'interfaccia '"+classAttesa.getName()+"'");
+			}
+			
+			return true;
+			
+		}catch(Throwable e){
+			this.log.error("Riscontrato errore durante l'istanziazione della classe '"+className+"' associata al tipo '"+tipo+
+					"' riguardante la gestione dell'interfaccia '"+classAttesa.getName()+"': "+e.getMessage(),e);
+			return false;
+		} 
+	}
 
 
 
@@ -818,17 +1191,6 @@ public class ClassNameProperties {
 		return this.getTipiGestiti("org.openspcoop2.integrationManager.gestoreCredenziali.");
 	}
 	
-	/**
-	 * Ritorna la classe che implementa la IProtocolFactory per la servletcontext invocata
-	 * 
-	 * 
-	 */
-	public String getProtocol(String nome){
-		return this.getValue("org.openspcoop2.protocol.", nome);
-	}
-	public String[] getProtocol() throws Exception{
-		return this.getTipiGestiti("org.openspcoop2.protocol.");
-	}
 	
 	
 	/**

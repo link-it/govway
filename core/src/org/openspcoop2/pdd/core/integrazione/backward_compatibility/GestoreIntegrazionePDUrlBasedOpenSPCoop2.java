@@ -20,30 +20,21 @@
  *
  */
 
-
-
-package org.openspcoop2.utils.jdbc;
-
-import org.openspcoop2.utils.TipiDatabase;
+package org.openspcoop2.pdd.core.integrazione.backward_compatibility;
 
 /**
- * Implementazione dell'interfaccia JDBCAdapter 
- * che definisce un adapter JDBC per la gestione del repository del messaggi
+ * Classe utilizzata per la ricezione di informazioni di integrazione 
+ * dai servizi applicativi verso la porta di dominio.
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
+public class GestoreIntegrazionePDUrlBasedOpenSPCoop2 extends AbstractGestoreIntegrazionePDUrlBasedBC{
 
-public class BytesJDBCAdapter extends AbstractJDBCAdapter {
-	
-    public BytesJDBCAdapter(TipiDatabase tipoDatabase) {
-		super(tipoDatabase);
+	public GestoreIntegrazionePDUrlBasedOpenSPCoop2() {
+		super(UtilitiesIntegrazioneBC.OPENSPCOOP_V2);
 	}
+
 	
 }
-
-
-
-
-

@@ -136,3 +136,12 @@ virgola:
 
 .. note::
    Utilizzabile solamente con API di tipologia SOAP
+
+-  *openspcoop2-<tipo>* o *openspcoop1-<tipo>*: sono disponibili header di integrazione compatibili con le versioni di OpenSPCoop 2.x e 1.x:
+
+   - openspcoop2-trasporto o openspcoop1-trasporto: le informazioni sono veicolate all'interno di header HTTP senza prefisso 'X-'
+   - openspcoop2-x-trasporto o openspcoop1-x-trasporto: le informazioni sono veicolate all'interno di header HTTP con prefisso 'X-'
+   - openspcoop2-urlBased o openspcoop1-urlBased: le informazioni sono veicolate come parametri della url
+   - openspcoop2-soap o openspcoop1-soap: le informazioni sono incluse in uno specifico header SOAP proprietario di OpenSPCoop 2.x o 1.x
+   - openspcoop2-<tipo>Ext: rispetto alla descrizione fornita precedentemente, le informazioni vengono veicolate anche fuori dal dominio di gestione
+

@@ -626,6 +626,7 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO_VALIDAZIONE;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE = CostantiControlStation.LABEL_INTEGRAZIONE;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_METADATI = CostantiControlStation.LABEL_METADATI;
+	
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_STATELESS = CostantiControlStation.LABEL_STATELESS;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD = CostantiControlStation.LABEL_LOCAL_FORWARD;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_STATO = "Stato";

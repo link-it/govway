@@ -1709,6 +1709,10 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				dati.addElement(de);
 			}else{
 				de.setType(DataElementType.TEXT_EDIT);
+				de.enableTags();
+				DataElementInfo dInfo = new DataElementInfo(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_METADATI);
+				dInfo.setBody(CostantiControlStation.LABEL_METADATI_INFO);
+				de.setInfo(dInfo);
 				deIntegrazione.addElement(de);
 			}
 		}

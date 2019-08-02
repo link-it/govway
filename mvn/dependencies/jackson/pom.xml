@@ -18,7 +18,7 @@
 		<jar.group.name>jackson</jar.group.name>
 		
 		<jackson.version>2.9.9</jackson.version>
-		<jackson-databind.version>2.9.9.1</jackson-databind.version>
+		<jackson-databind.version>2.9.9.2</jackson-databind.version>
 		<jackson-coreutils.version>1.8</jackson-coreutils.version>
 
 	</properties>

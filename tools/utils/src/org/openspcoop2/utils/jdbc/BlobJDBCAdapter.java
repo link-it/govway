@@ -44,7 +44,7 @@ import org.openspcoop2.utils.UtilsException;
 public class BlobJDBCAdapter extends AbstractJDBCAdapter {
 
 	
-    protected BlobJDBCAdapter(TipiDatabase tipoDatabase) {
+	public BlobJDBCAdapter(TipiDatabase tipoDatabase) {
 		super(tipoDatabase);
 	}
 

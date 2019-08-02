@@ -20,30 +20,31 @@
  *
  */
 
+package org.openspcoop2.pdd.core.integrazione.backward_compatibility;
 
-
-package org.openspcoop2.utils.jdbc;
-
-import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
+import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazioneException;
+import org.openspcoop2.pdd.core.integrazione.OutResponsePAMessage;
 
 /**
- * Implementazione dell'interfaccia JDBCAdapter 
- * che definisce un adapter JDBC per la gestione del repository del messaggi
+ * Classe utilizzata per la spedizione di informazioni di integrazione 
+ * dalla porta di dominio verso i servizi applicativi.
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
+public class AbstractGestoreIntegrazionePAUrlBasedWithResponseOutBC extends AbstractGestoreIntegrazionePAUrlBasedBC{
 
-public class BytesJDBCAdapter extends AbstractJDBCAdapter {
-	
-    public BytesJDBCAdapter(TipiDatabase tipoDatabase) {
-		super(tipoDatabase);
+	public AbstractGestoreIntegrazionePAUrlBasedWithResponseOutBC(boolean openspcoop2) {
+		super(openspcoop2);
 	}
-	
+
+	@Override
+	public void setOutResponseHeader(HeaderIntegrazione integrazione,
+			OutResponsePAMessage outResponsePAMessage) throws HeaderIntegrazioneException{
+		
+		// e' cmq una NOP, la url nella risposta non esiste.
+		
+	}
 }
-
-
-
-
-

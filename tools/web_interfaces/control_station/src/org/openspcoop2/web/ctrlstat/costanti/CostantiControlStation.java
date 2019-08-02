@@ -280,6 +280,23 @@ public class CostantiControlStation {
 	public final static String LABEL_APPLICATIVI = "Applicativi";
 	public final static String LABEL_INTEGRAZIONE = "Integrazione";
 	public final static String LABEL_METADATI = "Metadati";
+	public final static String LABEL_METADATI_INFO = "Per consentire lo scambio di informazioni, funzionali all’integrazione tra applicativi e gateway, sono previste differenti strutture dati, indicate con il termine Header di Integrazione, che possono essere attivate tramite i tipi descritti di seguito<BR/>"+
+			"Il Gateway dispone di una sua configurazione di default per la generazione degli header. Tramite il campo '"+CostantiControlStation.LABEL_METADATI+"' è possibile ridefinire tale comportamento.<BR/>"+
+			"<BR/>"+
+			"<b>trasporto</b>: le informazioni sono veicolate all'interno di header HTTP<BR/>"+
+			"<b>urlBased</b>: le informazioni sono veicolate come parametri della url<BR/>"+
+			"<b>soap</b>: le informazioni sono incluse in uno specifico header SOAP proprietario di GovWay<BR/>"+
+			"<b>wsa</b>: le informazioni sono incluse in un header SOAP secondo il formato standard WS-Addressing<BR/>"+
+			"<b>none</b>: non viene utilizzata alcuna modalità; questo tipo serve a sovrascrivere le impostazioni di default del Gateway<BR/>"+
+			"<b>trasportoExt, urlBasedExt, soapExt, wsaExt</b>: rispetto alla descrizione fornita precedentemente, le informazioni vengono veicolate anche fuori dal dominio di gestione<BR/>"+
+			"<BR/>"+
+			"Sono inoltre disponibili modalità che generano gli header di integrazione compatibili con le versioni di OpenSPCoop 2.x e 1.x:<BR/>"+
+			"<b>openspcoop2-trasporto</b> o <b>openspcoop1-trasporto</b>: le informazioni sono veicolate all'interno di header HTTP senza prefisso 'X-'<BR/>"+
+			"<b>openspcoop2-x-trasporto</b> o <b>openspcoop1-x-trasporto</b>: le informazioni sono veicolate all'interno di header HTTP con prefisso 'X-'<BR/>"+
+			"<b>openspcoop2-urlBased</b> o <b>openspcoop1-urlBased</b>: le informazioni sono veicolate come parametri della url<BR/>"+
+			"<b>openspcoop2-soap</b> o <b>openspcoop1-soap</b>: le informazioni sono incluse in uno specifico header SOAP proprietario di OpenSPCoop 2.x o 1.x<BR/>"+
+			"<b>openspcoop2-*Ext</b>: rispetto alla descrizione fornita precedentemente, le informazioni vengono veicolate anche fuori dal dominio di gestione<BR/>";
+	
 	public final static String LABEL_METADATI_INTEGRAZIONE = "Metadati Integrazione";
 	public final static String LABEL_STATELESS = "Stateless";
 	public final static String LABEL_GESTIONE_STATELESS = "Gestione Stateless";
