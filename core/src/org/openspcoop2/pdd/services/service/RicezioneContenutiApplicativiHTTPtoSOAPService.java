@@ -116,10 +116,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		this.generatoreErrore.setForceMessageTypeResponse(MessageType.XML); // forzo xml
 	}
 	
-	public void process(ConnectorInMessage req, ConnectorOutMessage res) throws ConnectorException {
+	public void process(ConnectorInMessage req, ConnectorOutMessage res, Date dataAccettazioneRichiesta) throws ConnectorException {
 		
 		// Timestamp
-		Date dataAccettazioneRichiesta = DateManager.getDate();
 		Date dataIngressoRichiesta = null;
 		
 		// IDModulo

@@ -313,5 +313,27 @@ public class PipedUnblockedStream extends InputStream {
 		}
 
 	}
+	
+	public void write(byte[] b, int off, int len) throws IOException{
+		
+		//this.log.debug("########### WRITE byte ["+b.length+"] off:"+off+" len:"+len+" .....");
+		
+		if(this.bout==null){
+			throw new IOException("Stream already closed");
+		}
+		
+		if(this.bout.size()>this.sizeBuffer){
+			this.writeWaitEmptyBuffer();
+		}
+		
+		//this.log.debug("########### WRITE byte ["+b.length+"] off:"+off+" len:"+len+" SYNC ...");
+		synchronized (this.semaphore) {
+			this.bout.write(b, off, len);
+			//this.log.debug("########### WRITE byte ["+b.length+"] off:"+off+" len:"+len+" SYNC OK");
+			//System.out.println("########### WRITE byte SYNC OK ADD["+b.length+"] SIZE_ATTUALE["+this.bout.size()+"]");
+		}
+
+	}
+
 
 }

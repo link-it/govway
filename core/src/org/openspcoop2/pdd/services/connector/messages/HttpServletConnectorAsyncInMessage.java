@@ -56,7 +56,7 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class HttpServletConnectorInMessage implements ConnectorInMessage {
+public class HttpServletConnectorAsyncInMessage implements ConnectorInMessage {
 
 	public static OpenSPCoop2MessageFactory factory = OpenSPCoop2MessageFactory.getMessageFactory();
 	
@@ -71,7 +71,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	private MessageType requestMessageType;
 	protected Date dataIngressoRichiesta;
 	
-	public HttpServletConnectorInMessage(RequestInfo requestInfo, HttpServletRequest req,
+	public HttpServletConnectorAsyncInMessage(RequestInfo requestInfo, HttpServletRequest req,
 			IDService idModuloAsIDService, String idModulo) throws ConnectorException{
 		try{
 			this.requestInfo = requestInfo;
@@ -81,7 +81,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 			if(this.log==null)
-				this.log = LoggerWrapperFactory.getLogger(HttpServletConnectorInMessage.class);
+				this.log = LoggerWrapperFactory.getLogger(HttpServletConnectorAsyncInMessage.class);
 			
 			this.idModuloAsIDService = idModuloAsIDService;
 			this.idModulo = idModulo;
@@ -96,10 +96,6 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
-	}
-	
-	public void updateInputStream(InputStream is) {
-		this.is = is;
 	}
 	
 	@Override

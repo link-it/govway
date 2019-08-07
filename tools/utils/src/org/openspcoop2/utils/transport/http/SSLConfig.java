@@ -70,6 +70,49 @@ public class SSLConfig implements Serializable  {
 	// TipologiaSSL
 	private String sslType= null;
 	
+	@Override
+	public String toString() {
+		StringBuffer bf = new StringBuffer("ssl");
+		if(this.sslType!=null) {
+			bf.append(" ").append("sslType:").append(this.sslType);
+		}
+		if(this.classNameHostnameVerifier!=null) {
+			bf.append(" ").append("classNameHostnameVerifier:").append(this.classNameHostnameVerifier);
+		}
+		bf.append(" ").append("hostnameVerifier:").append(this.hostnameVerifier);
+		
+		if(this.keyStoreType!=null) {
+			bf.append(" ").append("keyStoreType:").append(this.keyStoreType);
+		}
+		if(this.keyManagementAlgorithm!=null) {
+			bf.append(" ").append("keyManagementAlgorithm:").append(this.keyManagementAlgorithm);
+		}
+		if(this.keyPassword!=null) {
+			bf.append(" ").append("keyPassword:").append(this.keyPassword);
+		}
+		if(this.keyStorePassword!=null) {
+			bf.append(" ").append("keyStorePassword:").append(this.keyStorePassword);
+		}
+		if(this.keyStoreLocation!=null) {
+			bf.append(" ").append("keyStoreLocation:").append(this.keyStoreLocation);
+		}
+		
+		if(this.trustStoreLocation!=null) {
+			bf.append(" ").append("trustStoreLocation:").append(this.trustStoreLocation);
+		}
+		if(this.trustStorePassword!=null) {
+			bf.append(" ").append("trustStorePassword:").append(this.trustStorePassword);
+		}
+		if(this.trustManagementAlgorithm!=null) {
+			bf.append(" ").append("trustManagementAlgorithm:").append(this.trustManagementAlgorithm);
+		}
+		if(this.trustStoreType!=null) {
+			bf.append(" ").append("trustStoreType:").append(this.trustStoreType);
+		}
+		
+		return bf.toString();
+	}
+	
 
 	public String getTrustStoreLocation() {
 		return this.trustStoreLocation;

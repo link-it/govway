@@ -3379,7 +3379,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 	}
 	
 		
-	private void sendErroreProcessamento(boolean localForward,LocalForwardEngine localForwardEngine, EJBUtils ejbUtils, ErroreIntegrazione errore,
+	protected void sendErroreProcessamento(boolean localForward,LocalForwardEngine localForwardEngine, EJBUtils ejbUtils, ErroreIntegrazione errore,
 			String idModuloInAttesa,Busta bustaRichiesta,String idCorrelazioneApplicativa, String idCorrelazioneApplicativaRisposta,
 			String servizioApplicativoFruitore, Throwable e, ParseException parseException) throws LocalForwardException, EJBUtilsException, ProtocolException{
 		if(localForward){
@@ -3390,7 +3390,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		}
 	}
 	
-	private void sendErroreProcessamento(boolean localForward,LocalForwardEngine localForwardEngine, EJBUtils ejbUtils, OpenSPCoop2Message errorMessage, String errorDetail,
+	protected void sendErroreProcessamento(boolean localForward,LocalForwardEngine localForwardEngine, EJBUtils ejbUtils, OpenSPCoop2Message errorMessage, String errorDetail,
 			String idModuloInAttesa,Busta bustaRichiesta,String idCorrelazioneApplicativa, String idCorrelazioneApplicativaRisposta,
 			String servizioApplicativoFruitore) throws LocalForwardException, EJBUtilsException, ProtocolException{
 		if(localForward){
@@ -3402,7 +3402,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		}
 	}
 
-	private void mappingProtocolProperties(java.util.Properties protocolProperties,java.util.Properties propertiesDaImpostare,
+	protected void mappingProtocolProperties(java.util.Properties protocolProperties,java.util.Properties propertiesDaImpostare,
 			IDSoggetto soggettoFruitoreHeaderIntegrazione, IDServizio servizioHeaderIntegrazione,
 			IDSoggetto soggettoFruitore,IDServizio idServizio,
 			Busta bustaRichiesta, String idCorrelazioneApplicativa){
@@ -3529,7 +3529,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 	}
 	
 	
-	private void emitDiagnostico(boolean invokerNonSupportato, Busta bustaRichiesta, MsgDiagnostico msgDiag, boolean errorConsegna) {
+	protected void emitDiagnostico(boolean invokerNonSupportato, Busta bustaRichiesta, MsgDiagnostico msgDiag, boolean errorConsegna) {
 		if(invokerNonSupportato==false){
 			if(bustaRichiesta.getMittente()!=null && bustaRichiesta.getTipoMittente()!=null){
 				if(errorConsegna){

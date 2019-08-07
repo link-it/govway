@@ -41,6 +41,7 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 	PORTA_DELEGATA ("RicezioneContenutiApplicativi"),
 	PORTA_DELEGATA_INTEGRATION_MANAGER ("RicezioneContenutiApplicativiIntegrationManager"),
 	PORTA_DELEGATA_XML_TO_SOAP ("RicezioneContenutiApplicativiHTTP"),
+	PORTA_DELEGATA_NIO ("RicezioneContenutiApplicativiNIO"),
 	
 	PORTA_APPLICATIVA ("RicezioneBuste"),
 	

@@ -25,6 +25,7 @@
 package org.openspcoop2.pdd.services.connector;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +43,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
@@ -63,6 +65,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPConnector {
 	public void doEngine(RequestInfo requestInfo, 
 			HttpServletRequest req, HttpServletResponse res, HttpRequestMethod method) throws ServletException, IOException {
 
+		Date dataAccettazioneRichiesta = DateManager.getDate();
+		
 		// Devo prima leggere l'API invocata per comprendere il service binding effettivo
 //		if(!org.openspcoop2.message.constants.ServiceBinding.SOAP.equals(requestInfo.getIntegrationServiceBinding())){
 //
@@ -120,7 +124,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPConnector {
 		}
 			
 		try{
-			ricezioneContenutiApplicativi.process(httpIn, httpOut);
+			ricezioneContenutiApplicativi.process(httpIn, httpOut, dataAccettazioneRichiesta);
 		}catch(Exception e){
 			ConnectorUtils.getErrorLog().error("RicezioneContenutiApplicativiXMLtoSOAP.process error: "+e.getMessage(),e);
 			throw new ServletException(e.getMessage(),e);

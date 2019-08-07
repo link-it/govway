@@ -43,6 +43,17 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPatch;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpTrace;
+import org.apache.http.nio.entity.ContentBufferEntity;
+import org.apache.http.nio.entity.NByteArrayEntity;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -56,6 +67,7 @@ import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 import org.openspcoop2.utils.transport.http.RFC2047Utilities;
@@ -74,25 +86,21 @@ import org.openspcoop2.utils.transport.http.WrappedLogSSLSocketFactory;
  * @version $Rev$, $Date$
  */
 
-public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
-
-	// NOTA: HttpMethod PATCH/LINK/UNLINK funziona solo con java 8
-	// Con java7 si ottiene l'errore:
-	// Caused by: java.net.ProtocolException: HTTP method PATCH doesn't support output
-	//    at sun.net.www.protocol.http.HttpURLConnection.getOutputStream(HttpURLConnection.java:1081)
-
+public class ConnettoreNIO extends ConnettoreExtBaseHTTP {
 
 	
 	/* ********  F I E L D S  P R I V A T I  ******** */
-	
+
+
 	/** Connessione */
-	protected HttpURLConnection httpConn = null;
+	protected ConnettoreNIO_connection httpClient = null;
+	protected HttpRequestBase httpRequest = null;
 			
 	/* Costruttori */
-	public ConnettoreHTTP(){
+	public ConnettoreNIO(){
 		super();
 	}
-	public ConnettoreHTTP(boolean https){
+	public ConnettoreNIO(boolean https){
 		super(https);
 	}
 	
@@ -112,18 +120,50 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 		
 		try{
 
-			// Gestione https
-			SSLContext sslContext = null;
+			// Parametri di connessione
+			StringBuffer bfDebug =new StringBuffer();
+			ConnettoreNIO_connectionConfig connectionConfig = new ConnettoreNIO_connectionConfig();
 			if(this.sslContextProperties!=null){
-				
-				StringBuffer bfSSLConfig = new StringBuffer();
-				sslContext = SSLUtilities.generateSSLContext(this.sslContextProperties, bfSSLConfig);
-				
-				if(this.debug)
-					this.logger.info(bfSSLConfig.toString(),false);					
+				connectionConfig.setSslConfig(this.sslContextProperties);
 			}
+			if(this.proxyType!=null){
+				connectionConfig.setProxyHost(this.proxyHostname);
+				connectionConfig.setProxyPort(this.proxyPort);
+			}
+			int connectionTimeout = -1;
+			int readConnectionTimeout = -1;
+			if(this.properties.get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)!=null){
+				try{
+					connectionTimeout = Integer.parseInt(this.properties.get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT));
+				}catch(Exception e){
+					this.logger.error("Parametro '"+CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT+"' errato",e);
+				}
+			}
+			if(connectionTimeout==-1){
+				connectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
+			}
+			if(this.properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)!=null){
+				try{
+					readConnectionTimeout = Integer.parseInt(this.properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT));
+				}catch(Exception e){
+					this.logger.error("Parametro "+CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT+" errato",e);
+				}
+			}
+			if(readConnectionTimeout==-1){
+				readConnectionTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
+			}
+			connectionConfig.setConnectionTimeout(connectionTimeout);
+			connectionConfig.setReadTimeout(readConnectionTimeout);
 			
 
+			// Connessione
+			this.httpClient = ConnettoreNIO_connectionManager.getConnettoreNIO(connectionConfig, this.loader, this.logger.getLogger(), bfDebug);
+			if(this.debug) {
+				this.logger.debug("Creazione Connessione ...");
+				this.logger.debug(bfDebug.toString());
+			}
+			
+			
 			// Creazione URL
 			if(this.debug)
 				this.logger.debug("Creazione URL...");
@@ -140,85 +180,71 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 			}
 
 			
-			// Creazione Connessione
-			URLConnection connection = null;
+			// Creazione Richiesta
+			// HttpMethod
+			if(this.httpMethod==null){
+				throw new Exception("HttpRequestMethod non definito");
+			}
+			switch (this.httpMethod) {
+				case GET:
+					this.httpRequest = new HttpGet(url.toString());
+					break;
+				case DELETE:
+					this.httpRequest = new HttpDelete(url.toString());
+					break;
+				case HEAD:
+					this.httpRequest = new HttpHead(url.toString());
+					break;
+				case POST:
+					this.httpRequest = new HttpPost(url.toString());
+					break;
+				case PUT:
+					this.httpRequest = new HttpPost(url.toString());
+					break;
+				case OPTIONS:
+					this.httpRequest = new HttpOptions(url.toString());
+					break;
+				case TRACE:
+					this.httpRequest = new HttpTrace(url.toString());
+					break;
+				case PATCH:
+					this.httpRequest = new HttpPatch(url.toString());
+					break;	
+				case LINK:
+				case UNLINK:
+				default:
+					this.httpRequest = new HttpEntityEnclosingRequestBase() {
+						
+						HttpRequestMethod httpMethod;
+						public HttpEntityEnclosingRequestBase init(HttpRequestMethod httpMethod) {
+							this.httpMethod = httpMethod;
+							return this;
+						}
+						
+						@Override
+						public String getMethod() {
+							return this.httpMethod.toString();
+						}
+						
+					}.init(this.httpMethod);	
+					break;	
+			}
+			if(this.httpRequest==null){
+				throw new Exception("HttpRequest non definito ?");
+			}
+			
+			// Proxy AUTH
 			if(this.proxyType==null){
 				if(this.debug)
-					this.logger.info("Creazione connessione alla URL ["+this.location+"]...",false);
-				connection = url.openConnection();
-			}
-			else{
-				if(this.debug)
-					this.logger.info("Creazione connessione alla URL ["+this.location+"] (via proxy "+
-								this.proxyHostname+":"+this.proxyPort+") (username["+this.proxyUsername+"] password["+this.proxyPassword+"])...",false);
-					
-				if(this.proxyUsername!=null){
-					//The problem with the 2nd code is that it sets a new default Authenticator and 
-					// I don't want to do that, because this proxy is only used by a part of the application 
-					// and a different part of the application could be using a different proxy.
-					// Vedi articolo: http://stackoverflow.com/questions/34877470/basic-proxy-authentification-for-https-urls-returns-http-1-0-407-proxy-authentic
-					// Authenticator.setDefault(new HttpAuthenticator(this.proxyUsername, this.proxyPassword));
-					
-					// Soluzione attuale:
-					// Dopo aver instaurato la connesione, più sotto nel codice, viene creato l'header Proxy-Authorization
-					// NOTA: Works for HTTP only! Doesn't work for HTTPS!
-				}
-				
-				Proxy proxy = new Proxy(this.proxyType, new InetSocketAddress(this.proxyHostname, this.proxyPort));
-				connection = url.openConnection(proxy);
-			}
-			this.httpConn = (HttpURLConnection) connection;	
-			
-			
-			// Imposta Contesto SSL se attivo
-			if(this.sslContextProperties!=null){
-				HttpsURLConnection httpsConn = (HttpsURLConnection) this.httpConn;
-				SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-				if(this.debug) {
-					String clientCertificateConfigurated = this.sslContextProperties.getKeyStoreLocation();
-					sslSocketFactory = new WrappedLogSSLSocketFactory(sslSocketFactory, 
-							this.logger.getLogger(), this.logger.buildMsg(""),
-							clientCertificateConfigurated);
-				}		
-				httpsConn.setSSLSocketFactory(sslSocketFactory);
-				
-				StringBuffer bfLog = new StringBuffer();
-				HostnameVerifier hostnameVerifier = SSLUtilities.generateHostnameVerifier(this.sslContextProperties, bfLog, 
-						this.logger.getLogger(), this.loader);
-				if(this.debug)
-					this.logger.debug(bfLog.toString());
-				if(hostnameVerifier!=null){
-					httpsConn.setHostnameVerifier(hostnameVerifier);
-				}
+					this.logger.info("Predispongo parametri per connessione alla URL ["+this.location+"]...",false);
 			}
 			else {
-				if(this.debug && (this.httpConn instanceof HttpsURLConnection)) {
-					HttpsURLConnection httpsConn = (HttpsURLConnection) this.httpConn;
-					if(httpsConn.getSSLSocketFactory()!=null) {
-						SSLSocketFactory sslSocketFactory = httpsConn.getSSLSocketFactory();
-						String clientCertificateConfigurated = SSLUtilities.getJvmHttpsClientCertificateConfigurated();
-						sslSocketFactory = new WrappedLogSSLSocketFactory(sslSocketFactory, 
-								this.logger.getLogger(), this.logger.buildMsg(""),
-								clientCertificateConfigurated);
-						httpsConn.setSSLSocketFactory(sslSocketFactory);
-					}
-				}
+				this.logger.info("Predispongo parametri per connessione alla URL ["+this.location+"] (via proxy "+
+						this.proxyHostname+":"+this.proxyPort+") (username["+this.proxyUsername+"] password["+this.proxyPassword+"])...",false);
 			}
-
 			
-			// Gestione automatica del redirect
-			// The HttpURLConnection‘s follow redirect is just an indicator, in fact it won’t help you to do the “real” http redirection, you still need to handle it manually.
-			/*
-			if(followRedirect){
-				this.httpConn.setInstanceFollowRedirects(true);
-			}
-			*/
-			// Deve essere impostato a false, altrimenti nel caso si intenda leggere gli header o l'input stream di un 302
-			// si ottiene il seguente errore:
-			//    java.net.HttpRetryException: cannot retry due to redirection, in streaming mode
-			this.httpConn.setInstanceFollowRedirects(false);
-
-			
+	
+				
 			
 			// Tipologia di servizio
 			OpenSPCoop2SoapMessage soapMessageRequest = null;
@@ -278,49 +304,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 			if(this.httpMethod==null){
 				throw new Exception("HttpRequestMethod non definito");
 			}
-
-			
-			// Impostazione transfer-length
-			if(this.debug)
-				this.logger.debug("Impostazione transfer-length...");			
-			if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(this.tlm)){
-				HttpUtilities.setChunkedStreamingMode(this.httpConn, this.chunkLength, this.httpMethod, contentTypeRichiesta);
-				//this.httpConn.setChunkedStreamingMode(chunkLength);
-			}
-			if(this.debug)
-				this.logger.info("Impostazione transfer-length effettuata (chunkLength:"+this.chunkLength+"): "+this.tlm,false);
-			
-			
-			// Impostazione timeout
-			if(this.debug)
-				this.logger.debug("Impostazione timeout...");
-			int connectionTimeout = -1;
-			int readConnectionTimeout = -1;
-			if(this.properties.get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)!=null){
-				try{
-					connectionTimeout = Integer.parseInt(this.properties.get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT));
-				}catch(Exception e){
-					this.logger.error("Parametro '"+CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT+"' errato",e);
-				}
-			}
-			if(connectionTimeout==-1){
-				connectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
-			}
-			if(this.properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)!=null){
-				try{
-					readConnectionTimeout = Integer.parseInt(this.properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT));
-				}catch(Exception e){
-					this.logger.error("Parametro "+CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT+" errato",e);
-				}
-			}
-			if(readConnectionTimeout==-1){
-				readConnectionTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
-			}
-			if(this.debug)
-				this.logger.info("Impostazione http timeout CT["+connectionTimeout+"] RT["+readConnectionTimeout+"]",false);
-			this.httpConn.setConnectTimeout(connectionTimeout);
-			this.httpConn.setReadTimeout(readConnectionTimeout);
-
+		
 
 			// Aggiunga del SoapAction Header in caso di richiesta SOAP
 			if(this.isSoap && this.sbustamentoSoap == false){
@@ -422,11 +406,8 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 			// Impostazione Metodo
 			if(this.debug)
 				this.logger.info("Impostazione "+this.httpMethod+"...",false);
-			HttpUtilities.setStream(this.httpConn, this.httpMethod, contentTypeRichiesta);
 			HttpBodyParameters httpBody = new  HttpBodyParameters(this.httpMethod, contentTypeRichiesta);
-//			this.httpConn.setRequestMethod( method );
-//			this.httpConn.setDoOutput(false);
-//			this.httpConn.setDoInput(true);
+
 
 			
 			// Spedizione byte
@@ -437,41 +418,55 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 				}
 				if(this.debug)
 					this.logger.debug("Spedizione byte (consume-request-message:"+consumeRequestMessage+")...");
-				OutputStream out = this.httpConn.getOutputStream();
-				if(this.debug){
-					ByteArrayOutputStream bout = new ByteArrayOutputStream();
-					if(this.isSoap && this.sbustamentoSoap){
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				if(this.isSoap && this.sbustamentoSoap){
+					if(this.debug)
 						this.logger.debug("Sbustamento...");
-						TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,bout);
-					}else{
-						this.requestMsg.writeTo(bout, consumeRequestMessage);
-					}
-					bout.flush();
-					bout.close();
-					out.write(bout.toByteArray());
-					this.logger.info("Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+bout.toString(),false);
-					bout.close();
-					
-					this.dumpBinarioRichiestaUscita(bout.toByteArray(), this.location, propertiesTrasportoDebug);
-					
+					TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,out);
 				}else{
-					if(this.isSoap && this.sbustamentoSoap){
-						if(this.debug)
-							this.logger.debug("Sbustamento...");
-						TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,out);
-					}else{
-						this.requestMsg.writeTo(out, consumeRequestMessage);
-					}
+					this.requestMsg.writeTo(out, consumeRequestMessage);
 				}
 				out.flush();
 				out.close();
+				if(this.debug){
+					this.logger.info("Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+out.toString(),false);
+					
+					this.dumpBinarioRichiestaUscita(out.toByteArray(), this.location, propertiesTrasportoDebug);				
+				}
+				out.flush();
+				out.close();
+				
+				NByteArrayEntity asyncEntity = new NByteArrayEntity( out.toByteArray() );
+				asyncEntity.setContentType( contentTypeRichiesta );
+				if(this.httpRequest instanceof HttpEntityEnclosingRequestBase){
+					((HttpEntityEnclosingRequestBase)this.httpRequest).setEntity(asyncEntity);
+				}
+				else{
+					throw new Exception("Tipo ["+this.httpRequest.getClass().getName()+"] non utilizzabile per una richiesta di tipo ["+this.httpMethod+"]");
+				}
+				
+				// Impostazione transfer-length
+				if(this.debug)
+					this.logger.debug("Impostazione transfer-length...");			
+				if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(this.tlm)){					
+					asyncEntity.setChunked(true);
+				}
+				if(this.debug)
+					this.logger.info("Impostazione transfer-length effettuata (chunkLength:"+this.chunkLength+"): "+this.tlm,false);
+				
+				this.httpClient.execute(this.httpRequest, this.callback);
+		
 			}
+			
+			// La gestione della risposta è sincrona in questo metodo.
+			
+			Invece andrebbe suddiviso il fatto che ok che si processa la risposta, ma poi si attiva un meteodo per continuare.
 			
 
 			// Analisi MimeType e ContentLocation della risposta
 			if(this.debug)
 				this.logger.debug("Analisi risposta...");
-			Map<String, List<String>> mapHeaderHttpResponse = this.httpConn.getHeaderFields();
+			Map<String, List<String>> mapHeaderHttpResponse = this.httpClient.getHeaderFields();
 			if(mapHeaderHttpResponse!=null && mapHeaderHttpResponse.size()>0){
 				if(this.propertiesTrasportoRisposta==null){
 					this.propertiesTrasportoRisposta = new Properties();
@@ -505,8 +500,8 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 				this.contentLength = Integer.valueOf(contentLenghtString);
 			}
 			else{
-				if(this.httpConn.getContentLength()>0){
-					this.contentLength = this.httpConn.getContentLength();
+				if(this.httpClient.getContentLength()>0){
+					this.contentLength = this.httpClient.getContentLength();
 				}
 			}		
 			
@@ -529,11 +524,11 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 			this.initConfigurationAcceptOnlyReturnCode_202_200();
 			
 			// return code
-			this.codice = this.httpConn.getResponseCode();
-			this.resultHTTPMessage = this.httpConn.getResponseMessage();
+			this.codice = this.httpClient.getResponseCode();
+			this.resultHTTPMessage = this.httpClient.getResponseMessage();
 			
 			if(this.codice>=400){
-				this.isResponse = this.httpConn.getErrorStream();
+				this.isResponse = this.httpClient.getErrorStream();
 			}
 			else{
 				if(this.codice>299){
@@ -589,9 +584,9 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 						else {
 							this.logger.debug("Gestione redirect (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non attiva");
 							if(httpBody.isDoInput()){
-								this.isResponse = this.httpConn.getInputStream();
+								this.isResponse = this.httpClient.getInputStream();
 								if(this.isResponse==null) {
-									this.isResponse = this.httpConn.getErrorStream();
+									this.isResponse = this.httpClient.getErrorStream();
 								}
 							}
 						}
@@ -604,7 +599,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 						}
 					}
 					if(httpBody.isDoInput()){
-						this.isResponse = this.httpConn.getInputStream();
+						this.isResponse = this.httpClient.getInputStream();
 					}
 				}
 			}
@@ -686,10 +681,10 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 			}
 	
 			// fine HTTP.
-	    	if(this.httpConn!=null){
+	    	if(this.httpClient!=null){
 	    		if(this.debug && this.logger!=null)
 					this.logger.debug("Chiusura connessione...");
-				this.httpConn.disconnect();
+				this.httpClient.disconnect();
 	    	}
 	    	
 	    	// super.disconnect (Per risorse base)
@@ -702,7 +697,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
     
     @Override
 	protected void setRequestHeader(String key,String value) {
-    	this.httpConn.setRequestProperty(key,value);
+    	this.httpRequest.addHeader(key,value);
     }
 }
 
