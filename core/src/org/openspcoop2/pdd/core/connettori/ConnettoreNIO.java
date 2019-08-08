@@ -26,23 +26,13 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-
+import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
@@ -52,8 +42,10 @@ import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
-import org.apache.http.nio.entity.ContentBufferEntity;
+import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.nio.ContentDecoder;
 import org.apache.http.nio.entity.NByteArrayEntity;
+import org.apache.http.nio.util.ContentInputBuffer;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -63,16 +55,14 @@ import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStream;
 import org.openspcoop2.utils.resources.Charset;
-import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 import org.openspcoop2.utils.transport.http.RFC2047Utilities;
-import org.openspcoop2.utils.transport.http.SSLUtilities;
-import org.openspcoop2.utils.transport.http.WrappedLogSSLSocketFactory;
 
 
 
@@ -95,7 +85,12 @@ public class ConnettoreNIO extends ConnettoreExtBaseHTTP {
 	/** Connessione */
 	protected ConnettoreNIO_connection httpClient = null;
 	protected HttpRequestBase httpRequest = null;
-			
+	protected boolean invocationSuccess = true;
+	
+	private boolean stream = false; // TODO: rendere una proprieta'
+	private int dimensione_buffer = 61140; // TODO: rendere una proprieta'
+
+	
 	/* Costruttori */
 	public ConnettoreNIO(){
 		super();
@@ -408,249 +403,82 @@ public class ConnettoreNIO extends ConnettoreExtBaseHTTP {
 				this.logger.info("Impostazione "+this.httpMethod+"...",false);
 			HttpBodyParameters httpBody = new  HttpBodyParameters(this.httpMethod, contentTypeRichiesta);
 
-
 			
 			// Spedizione byte
+			PipedUnblockedStream pipe = null;
 			if(httpBody.isDoOutput()){
 				boolean consumeRequestMessage = true;
 				if(this.followRedirects){
 					consumeRequestMessage = false;
 				}
-				if(this.debug)
-					this.logger.debug("Spedizione byte (consume-request-message:"+consumeRequestMessage+")...");
-				ByteArrayOutputStream out = new ByteArrayOutputStream();
-				if(this.isSoap && this.sbustamentoSoap){
-					if(this.debug)
-						this.logger.debug("Sbustamento...");
-					TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,out);
-				}else{
-					this.requestMsg.writeTo(out, consumeRequestMessage);
-				}
-				out.flush();
-				out.close();
-				if(this.debug){
-					this.logger.info("Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+out.toString(),false);
-					
-					this.dumpBinarioRichiestaUscita(out.toByteArray(), this.location, propertiesTrasportoDebug);				
-				}
-				out.flush();
-				out.close();
 				
-				NByteArrayEntity asyncEntity = new NByteArrayEntity( out.toByteArray() );
-				asyncEntity.setContentType( contentTypeRichiesta );
+				HttpEntity httpEntity = null;
+				
+				if(!this.stream || 
+						(this.isSoap && this.sbustamentoSoap) ||
+						this.debug || 
+						TransferLengthModes.CONTENT_LENGTH.equals(this.tlm)) {
+					
+					if(this.debug)
+						this.logger.debug("Spedizione byte (consume-request-message:"+consumeRequestMessage+")...");
+					ByteArrayOutputStream out = new ByteArrayOutputStream();
+					if(this.isSoap && this.sbustamentoSoap){
+						if(this.debug)
+							this.logger.debug("Sbustamento...");
+						TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,out);
+					}else{
+						this.requestMsg.writeTo(out, consumeRequestMessage);
+					}
+					out.flush();
+					out.close();
+					if(this.debug){
+						this.logger.info("Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+out.toString(),false);
+						
+						this.dumpBinarioRichiestaUscita(out.toByteArray(), this.location, propertiesTrasportoDebug);				
+					}
+					out.flush();
+					out.close();
+				
+					httpEntity = new NByteArrayEntity( out.toByteArray() );
+					//((NByteArrayEntity)httpEntity).setContentType( contentTypeRichiesta );
+					
+					// Impostazione transfer-length
+					if(this.debug)
+						this.logger.debug("Impostazione transfer-length...");			
+					if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(this.tlm)){					
+						((NByteArrayEntity)httpEntity).setChunked(true);
+					}
+					if(this.debug)
+						this.logger.info("Impostazione transfer-length effettuata: "+this.tlm,false);
+					
+				}
+				else {
+					pipe = new PipedUnblockedStream(this.logger.getLogger(), this.dimensione_buffer);
+					httpEntity = new InputStreamEntity(pipe);
+				}
+					
 				if(this.httpRequest instanceof HttpEntityEnclosingRequestBase){
-					((HttpEntityEnclosingRequestBase)this.httpRequest).setEntity(asyncEntity);
+					((HttpEntityEnclosingRequestBase)this.httpRequest).setEntity(httpEntity);
 				}
 				else{
 					throw new Exception("Tipo ["+this.httpRequest.getClass().getName()+"] non utilizzabile per una richiesta di tipo ["+this.httpMethod+"]");
 				}
-				
-				// Impostazione transfer-length
-				if(this.debug)
-					this.logger.debug("Impostazione transfer-length...");			
-				if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(this.tlm)){					
-					asyncEntity.setChunked(true);
-				}
-				if(this.debug)
-					this.logger.info("Impostazione transfer-length effettuata (chunkLength:"+this.chunkLength+"): "+this.tlm,false);
-				
-				this.httpClient.execute(this.httpRequest, this.callback);
-		
 			}
 			
-			// La gestione della risposta è sincrona in questo metodo.
+			ConnettoreNIO_responseCallback responseCallback = new ConnettoreNIO_responseCallback(this, request, httpBody);
+			this.httpClient.getHttpclient().execute(this.httpRequest, responseCallback);
 			
-			Invece andrebbe suddiviso il fatto che ok che si processa la risposta, ma poi si attiva un meteodo per continuare.
+//			if(this.stream && pipe!=null) {
+//				this.requestMsg.writeTo(pipe, false);
+//			}
 			
-
-			// Analisi MimeType e ContentLocation della risposta
-			if(this.debug)
-				this.logger.debug("Analisi risposta...");
-			Map<String, List<String>> mapHeaderHttpResponse = this.httpClient.getHeaderFields();
-			if(mapHeaderHttpResponse!=null && mapHeaderHttpResponse.size()>0){
-				if(this.propertiesTrasportoRisposta==null){
-					this.propertiesTrasportoRisposta = new Properties();
-				}
-				Iterator<String> itHttpResponse = mapHeaderHttpResponse.keySet().iterator();
-				while(itHttpResponse.hasNext()){
-					String keyHttpResponse = itHttpResponse.next();
-					List<String> valueHttpResponse = mapHeaderHttpResponse.get(keyHttpResponse);
-					StringBuffer bfHttpResponse = new StringBuffer();
-					for(int i=0;i<valueHttpResponse.size();i++){
-						if(i>0){
-							bfHttpResponse.append(",");
-						}
-						bfHttpResponse.append(valueHttpResponse.get(i));
-					}
-					if(keyHttpResponse==null){ // Check per evitare la coppia che ha come chiave null e come valore HTTP OK 200
-						keyHttpResponse=HttpConstants.RETURN_CODE;
-					}
-					if(this.debug)
-						this.logger.debug("HTTP risposta ["+keyHttpResponse+"] ["+bfHttpResponse.toString()+"]...");
-					this.propertiesTrasportoRisposta.put(keyHttpResponse, bfHttpResponse.toString());
-				}
+			try {
+				this.httpRequest.wait(readConnectionTimeout); // sincronizzo sulla richiesta
+			}catch(Throwable t) {
+				throw new Exception("Read Timeout expired ("+readConnectionTimeout+")",t);
 			}
 			
-			// TipoRisposta
-			this.tipoRisposta = TransportUtils.getObjectAsString(mapHeaderHttpResponse, HttpConstants.CONTENT_TYPE);
-			
-			// ContentLength della risposta
-			String contentLenghtString = TransportUtils.getObjectAsString(mapHeaderHttpResponse, HttpConstants.CONTENT_LENGTH);
-			if(contentLenghtString!=null){
-				this.contentLength = Integer.valueOf(contentLenghtString);
-			}
-			else{
-				if(this.httpClient.getContentLength()>0){
-					this.contentLength = this.httpClient.getContentLength();
-				}
-			}		
-			
-		
-			// Parametri di imbustamento
-			if(this.isSoap){
-				this.imbustamentoConAttachment = false;
-				if("true".equals(TransportUtils.getObjectAsString(mapHeaderHttpResponse, this.openspcoopProperties.getTunnelSOAPKeyWord_headerTrasporto()))){
-					this.imbustamentoConAttachment = true;
-				}
-				this.mimeTypeAttachment = TransportUtils.getObjectAsString(mapHeaderHttpResponse, this.openspcoopProperties.getTunnelSOAPKeyWordMimeType_headerTrasporto());
-				if(this.mimeTypeAttachment==null)
-					this.mimeTypeAttachment = HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP;
-				//System.out.println("IMB["+imbustamentoConAttachment+"] MIME["+mimeTypeAttachment+"]");
-			}
-
-			// Ricezione Risposta
-			if(this.debug)
-				this.logger.debug("Analisi risposta input stream e risultato http...");
-			this.initConfigurationAcceptOnlyReturnCode_202_200();
-			
-			// return code
-			this.codice = this.httpClient.getResponseCode();
-			this.resultHTTPMessage = this.httpClient.getResponseMessage();
-			
-			if(this.codice>=400){
-				this.isResponse = this.httpClient.getErrorStream();
-			}
-			else{
-				if(this.codice>299){
-					
-					String redirectLocation = TransportUtils.getObjectAsString(mapHeaderHttpResponse, HttpConstants.REDIRECT_LOCATION);
-					
-					// 3XX
-					if(this.followRedirects){
-								
-						if(redirectLocation==null){
-							throw new Exception("Non è stato rilevato l'header HTTP ["+HttpConstants.REDIRECT_LOCATION+"] necessario alla gestione del Redirect (code:"+this.codice+")"); 
-						}
-						
-						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori.CONNETTORE_LOCATION);
-						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori._CONNETTORE_HTTP_REDIRECT_NUMBER);
-						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori._CONNETTORE_HTTP_REDIRECT_ROUTE);
-						request.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION, redirectLocation);
-						request.getConnectorProperties().put(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_NUMBER, (this.numberRedirect+1)+"" );
-						if(this.routeRedirect!=null){
-							request.getConnectorProperties().put(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_ROUTE, this.routeRedirect+" -> "+redirectLocation );
-						}else{
-							request.getConnectorProperties().put(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_ROUTE, redirectLocation );
-						}
-						
-						this.logger.warn("(hope:"+(this.numberRedirect+1)+") Redirect verso ["+redirectLocation+"] ...");
-						
-						if(this.numberRedirect==this.maxNumberRedirects){
-							throw new Exception("Gestione redirect (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non consentita ulteriormente, sono già stati gestiti "+this.maxNumberRedirects+" redirects: "+this.routeRedirect);
-						}
-						
-						boolean acceptOnlyReturnCode_307 = false;
-						if(this.isSoap) {
-							if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-								acceptOnlyReturnCode_307 = this.openspcoopProperties.isAcceptOnlyReturnCode_307_consegnaContenutiApplicativi();
-							}
-							else{
-								// InoltroBuste e InoltroRisposte
-								acceptOnlyReturnCode_307 = this.openspcoopProperties.isAcceptOnlyReturnCode_307_inoltroBuste();
-							}
-						}
-						if(acceptOnlyReturnCode_307){
-							if(this.codice!=307){
-								throw new Exception("Return code ["+this.codice+"] (redirect "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non consentito dal WS-I Basic Profile (http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#HTTP_Redirect_Status_Codes)");
-							}
-						}
-						
-						return this.send(request); // caching ricorsivo non serve
-						
-					}else{
-						if(this.isSoap) {
-							throw new Exception("Gestione redirect (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non attiva");
-						}
-						else {
-							this.logger.debug("Gestione redirect (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non attiva");
-							if(httpBody.isDoInput()){
-								this.isResponse = this.httpClient.getInputStream();
-								if(this.isResponse==null) {
-									this.isResponse = this.httpClient.getErrorStream();
-								}
-							}
-						}
-					}
-				}
-				else{
-					if(this.isSoap && this.acceptOnlyReturnCode_202_200){
-						if(this.codice!=200 && this.codice!=202){
-							throw new Exception("Return code ["+this.codice+"] non consentito dal WS-I Basic Profile (http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#HTTP_Success_Status_Codes)");
-						}
-					}
-					if(httpBody.isDoInput()){
-						this.isResponse = this.httpClient.getInputStream();
-					}
-				}
-			}
-			
-
-			
-			/* ------------  PostOutRequestHandler ------------- */
-			this.postOutRequest();
-			
-			
-			
-			
-			/* ------------  PreInResponseHandler ------------- */
-			this.preInResponse();
-			
-			// Lettura risposta parametri NotifierInputStream per la risposta
-			this.notifierInputStreamParams = null;
-			if(this.preInResponseContext!=null){
-				this.notifierInputStreamParams = this.preInResponseContext.getNotifierInputStreamParams();
-			}
-			
-			
-			/* ------------  Gestione Risposta ------------- */
-			
-			this.normalizeInputStreamResponse();
-			
-			this.initCheckContentTypeConfiguration();
-			
-			if(this.debug){
-				this.dumpResponse(this.propertiesTrasportoRisposta);
-			}
-			
-			if(this.isRest){
-							
-				if(this.doRestResponse()==false){
-					return false;
-				}
-				
-			}
-			else{
-			
-				if(this.doSoapResponse()==false){
-					return false;
-				}
-				
-			}
-
-			if(this.debug)
-				this.logger.info("Gestione invio/risposta http effettuata con successo",false);
-			
-			return true;
+			return this.invocationSuccess;
 
 		}  catch(Exception e){ 
 			this.eccezioneProcessamento = e;
@@ -679,14 +507,7 @@ public class ConnettoreNIO extends ConnettoreExtBaseHTTP {
 	    			this.logger.debug("Chiusura socket...");
 				this.isResponse.close();
 			}
-	
-			// fine HTTP.
-	    	if(this.httpClient!=null){
-	    		if(this.debug && this.logger!=null)
-					this.logger.debug("Chiusura connessione...");
-				this.httpClient.disconnect();
-	    	}
-	    	
+		    	
 	    	// super.disconnect (Per risorse base)
 	    	super.disconnect();
 			

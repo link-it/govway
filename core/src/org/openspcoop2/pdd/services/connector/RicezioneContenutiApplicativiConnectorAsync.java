@@ -202,7 +202,6 @@ public class RicezioneContenutiApplicativiConnectorAsync {
 					this.is.close();
 				
 					// Avvio un thread su cui poi chiamare un wait / notify in fase di consegna NIO.
-					FINIRE!
 					RicezioneContenutiApplicativiService ricezioneContenutiApplicativi = new RicezioneContenutiApplicativiService(this.generatoreErrore);
 					this.httpIn.updateInputStream(new ByteArrayInputStream(this.os.toByteArray()));	
 					new Thread() {
@@ -282,12 +281,31 @@ public class RicezioneContenutiApplicativiConnectorAsync {
 		
 		if(stream) {
 			RicezioneContenutiApplicativiService ricezioneContenutiApplicativi = new RicezioneContenutiApplicativiService(generatoreErrore);
-			try{
-				ricezioneContenutiApplicativi.process(httpIn, httpOut, dataAccettazioneRichiesta);
-			}catch(Exception e){
-				ConnectorUtils.getErrorLog().error("RicezioneContenutiApplicativi.process error: "+e.getMessage(),e);
-				throw new IOException(e.getMessage(),e);
-			}
+			new Thread() {
+				
+				private RicezioneContenutiApplicativiService ricezioneContenutiApplicativi;
+				private HttpServletConnectorInMessage httpIn;
+				private HttpServletConnectorAsyncOutMessage httpOut;
+				
+				public Thread init(RicezioneContenutiApplicativiService ricezioneContenutiApplicativi,
+						HttpServletConnectorInMessage httpIn,
+						HttpServletConnectorAsyncOutMessage httpOut) {
+					this.ricezioneContenutiApplicativi = ricezioneContenutiApplicativi;
+					this.httpIn = httpIn;
+					this.httpOut = httpOut;
+					return this;
+				}
+				
+				@Override
+				public void run() {
+					try{
+						this.ricezioneContenutiApplicativi.process(this.httpIn, this.httpOut, dataAccettazioneRichiesta);
+					}catch(Throwable e){
+						ConnectorUtils.getErrorLog().error("NIO RicezioneContenutiApplicativi.process error: "+e.getMessage(),e);
+					}
+					
+				}
+			}.init(ricezioneContenutiApplicativi, httpIn, httpOut).start();
 		}
 			
 	}
