@@ -117,6 +117,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.mdb.InoltroBuste;
+import org.openspcoop2.pdd.services.connector.AsyncThreadPool;
 import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
@@ -1501,7 +1502,15 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
-			
+			/* ----------- Inizializzazione NIO Async Server ------------ */
+			try{
+				if(propertiesReader.isNIOConfig_asyncServer_applicativeThreadPoolEnabled()) {
+					AsyncThreadPool.initialize(propertiesReader.getNIOConfig_asyncServer_applicativeThreadPoolSize());
+				}
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione NIO Async Server Manager");
+				return;
+			}
 			
 			/* ----------- Inizializzazione NIO Async Client ------------ */
 			try{
@@ -2541,6 +2550,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			properties = OpenSPCoop2Properties.getInstance();
 		}catch(Throwable e){}
 		
+		// NIO Async Server Manager
+		try{
+			AsyncThreadPool.shutdown();
+		}catch(Throwable e){}
 		// NIO Async Client Manager
 		try{
 			ConnettoreNIO_connectionManager.stop();

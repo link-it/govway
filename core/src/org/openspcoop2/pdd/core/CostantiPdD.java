@@ -288,7 +288,9 @@ public class CostantiPdD {
     
     /** Dimensione della cache */
     public static final int CONNETTORE_HTTP_URL_HTTPS_CACHE_SIZE = 10000;
-    
+   
+    /** Pool Size Applicative Threads */
+    public static final int CONNETTORE_NIO_ASYNC_SERVER_POOL_SIZE = 100;
     /** Maximum limit of connection on a per route basis */
     public static final int CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE = 100;
     /** Maximum limit of connection on total */

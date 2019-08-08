@@ -1091,6 +1091,9 @@ public class OpenSPCoop2Properties {
 			this.getConnectionLife_inoltroBuste();
 			
 			// Connettore (NIO)
+			if(this.isNIOConfig_asyncServer_applicativeThreadPoolEnabled()) {
+				this.getNIOConfig_asyncServer_applicativeThreadPoolSize();
+			}
 			this.getNIOConfig_asyncClient_maxPerRoute();
 			this.getNIOConfig_asyncClient_maxTotal();
 			this.getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds();
@@ -9981,6 +9984,52 @@ public class OpenSPCoop2Properties {
 
 	
 	/* ***************** NIO  ************* */
+	
+	private static Boolean isNIOConfig_asyncServer_applicativeThreadPoolEnabled = null;
+	public boolean isNIOConfig_asyncServer_applicativeThreadPoolEnabled() {	
+		if(OpenSPCoop2Properties.isNIOConfig_asyncServer_applicativeThreadPoolEnabled==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncServer.applicativeThreadPool.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.isNIOConfig_asyncServer_applicativeThreadPoolEnabled = Boolean.parseBoolean(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false);
+					OpenSPCoop2Properties.isNIOConfig_asyncServer_applicativeThreadPoolEnabled = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isNIOConfig_asyncServer_applicativeThreadPoolEnabled = false;
+			}  
+		}
+
+		return OpenSPCoop2Properties.isNIOConfig_asyncServer_applicativeThreadPoolEnabled;
+	}
+	
+	private static Integer getNIOConfig_asyncServer_applicativeThreadPoolSize = null;
+	public int getNIOConfig_asyncServer_applicativeThreadPoolSize() {	
+		if(OpenSPCoop2Properties.getNIOConfig_asyncServer_applicativeThreadPoolSize==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncServer.applicativeThreadPool.size";
+			try{ 
+				String v = null;
+				v = this.reader.getValue_convertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					OpenSPCoop2Properties.getNIOConfig_asyncServer_applicativeThreadPoolSize = java.lang.Integer.parseInt(v);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_SERVER_POOL_SIZE);
+					OpenSPCoop2Properties.getNIOConfig_asyncServer_applicativeThreadPoolSize = CostantiPdD.CONNETTORE_NIO_ASYNC_SERVER_POOL_SIZE;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_SERVER_POOL_SIZE+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getNIOConfig_asyncServer_applicativeThreadPoolSize = CostantiPdD.CONNETTORE_NIO_ASYNC_SERVER_POOL_SIZE;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getNIOConfig_asyncServer_applicativeThreadPoolSize;
+	}
 	
 	private static Integer getNIOConfig_asyncClient_maxPerRoute = null;
 	public int getNIOConfig_asyncClient_maxPerRoute() {	

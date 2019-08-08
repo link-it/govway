@@ -92,7 +92,7 @@ public class RicezioneContenutiApplicativiConnectorAsync {
 			logCore.error(msg,e);
 			ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, // il metodo doError gestisce il generatoreErrore a null
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-					get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
+					get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO), 
 					IntegrationError.INTERNAL_ERROR, e, res, logCore);
 			return;
 		}
@@ -125,6 +125,7 @@ public class RicezioneContenutiApplicativiConnectorAsync {
 		boolean stream = op2Properties.isNIOConfig_asyncServer_doStream();
 		int dimensione_buffer =  op2Properties.getNIOConfig_asyncServer_buffer();
 		int timeout = (int) op2Properties.getNodeReceiverTimeoutRicezioneContenutiApplicativi();
+		boolean applicativeThreadPool = op2Properties.isNIOConfig_asyncServer_applicativeThreadPoolEnabled();
 		
 		req.getInputStream().setReadListener( (new ReadListener() {
 			private ServletInputStream is = null;
@@ -133,15 +134,19 @@ public class RicezioneContenutiApplicativiConnectorAsync {
 			private HttpServletConnectorInMessage httpIn;
 			private HttpServletConnectorAsyncOutMessage httpOut;
 			
+			private boolean applicativeThreadPool;
+			
 			private boolean stream;
 			private ByteArrayOutputStream os = null; // soluzione che bufferizza tutta la richiesta
 			private PipedUnblockedStream pipe; // soluzione stream
 			
-			public ReadListener init(Logger log, ServletInputStream is, boolean stream, int sizeBuffer, 
+			public ReadListener init(Logger log, ServletInputStream is, boolean stream, int sizeBuffer,
+					boolean applicativeThreadPool,
 					RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore, 
 					HttpServletConnectorInMessage httpIn, HttpServletConnectorAsyncOutMessage httpOut ) {
 				this.is = is;
 				this.log = log;
+				this.applicativeThreadPool = applicativeThreadPool;
 				this.generatoreErrore = generatoreErrore;
 				this.httpIn = httpIn;
 				this.httpOut = httpOut;
@@ -202,35 +207,47 @@ public class RicezioneContenutiApplicativiConnectorAsync {
 					// Avvio un thread su cui poi chiamare un wait / notify in fase di consegna NIO.
 					RicezioneContenutiApplicativiService ricezioneContenutiApplicativi = new RicezioneContenutiApplicativiService(this.generatoreErrore);
 					this.httpIn.updateInputStream(new ByteArrayInputStream(this.os.toByteArray()));	
-					new Thread() {
-						
-						private RicezioneContenutiApplicativiService ricezioneContenutiApplicativi;
-						private HttpServletConnectorInMessage httpIn;
-						private HttpServletConnectorAsyncOutMessage httpOut;
-						
-						public Thread init(RicezioneContenutiApplicativiService ricezioneContenutiApplicativi,
-								HttpServletConnectorInMessage httpIn,
-								HttpServletConnectorAsyncOutMessage httpOut) {
-							this.ricezioneContenutiApplicativi = ricezioneContenutiApplicativi;
-							this.httpIn = httpIn;
-							this.httpOut = httpOut;
-							return this;
-						}
-						
-						@Override
-						public void run() {
-							try{
-								this.ricezioneContenutiApplicativi.process(this.httpIn, this.httpOut, dataAccettazioneRichiesta);
-							}catch(Throwable e){
-								ConnectorUtils.getErrorLog().error("NIO RicezioneContenutiApplicativi.process error: "+e.getMessage(),e);
+					if(this.applicativeThreadPool) {
+						Runnable runnable = new Runnable() {
+							
+							private RicezioneContenutiApplicativiService ricezioneContenutiApplicativi;
+							private HttpServletConnectorInMessage httpIn;
+							private HttpServletConnectorAsyncOutMessage httpOut;
+							
+							public Runnable init(RicezioneContenutiApplicativiService ricezioneContenutiApplicativi,
+									HttpServletConnectorInMessage httpIn,
+									HttpServletConnectorAsyncOutMessage httpOut) {
+								this.ricezioneContenutiApplicativi = ricezioneContenutiApplicativi;
+								this.httpIn = httpIn;
+								this.httpOut = httpOut;
+								return this;
 							}
 							
+							@Override
+							public void run() {
+								try{
+									this.ricezioneContenutiApplicativi.process(this.httpIn, this.httpOut, dataAccettazioneRichiesta);
+								}catch(Throwable e){
+									ConnectorUtils.getErrorLog().error("NIO RicezioneContenutiApplicativi.process error: "+e.getMessage(),e);
+								}
+								
+							}
+						}.init(ricezioneContenutiApplicativi, this.httpIn, this.httpOut);
+						AsyncThreadPool.execute(runnable);
+					}
+					else {
+						try{
+							ricezioneContenutiApplicativi.process(this.httpIn, this.httpOut, dataAccettazioneRichiesta);
+						}catch(Throwable e){
+							ConnectorUtils.getErrorLog().error("NIO RicezioneContenutiApplicativi.process error: "+e.getMessage(),e);
+							throw new IOException("NIO RicezioneContenutiApplicativi.process error: "+e.getMessage(),e);
 						}
-					}.init(ricezioneContenutiApplicativi, this.httpIn, this.httpOut).start();
+					}
 				}
 				
 			}
 		}).init(logCore, req.getInputStream(), stream, dimensione_buffer, 
+				applicativeThreadPool,
 				generatoreErrore,
 				httpIn, httpOut) );
 
@@ -279,31 +296,47 @@ public class RicezioneContenutiApplicativiConnectorAsync {
 			
 		if(stream) {
 			RicezioneContenutiApplicativiService ricezioneContenutiApplicativi = new RicezioneContenutiApplicativiService(generatoreErrore);
-			new Thread() {
+			if(applicativeThreadPool) {
+				Runnable runnable = new Runnable() {
 				
-				private RicezioneContenutiApplicativiService ricezioneContenutiApplicativi;
-				private HttpServletConnectorInMessage httpIn;
-				private HttpServletConnectorAsyncOutMessage httpOut;
-				
-				public Thread init(RicezioneContenutiApplicativiService ricezioneContenutiApplicativi,
-						HttpServletConnectorInMessage httpIn,
-						HttpServletConnectorAsyncOutMessage httpOut) {
-					this.ricezioneContenutiApplicativi = ricezioneContenutiApplicativi;
-					this.httpIn = httpIn;
-					this.httpOut = httpOut;
-					return this;
-				}
-				
-				@Override
-				public void run() {
-					try{
-						this.ricezioneContenutiApplicativi.process(this.httpIn, this.httpOut, dataAccettazioneRichiesta);
-					}catch(Throwable e){
-						ConnectorUtils.getErrorLog().error("NIO RicezioneContenutiApplicativi.process error: "+e.getMessage(),e);
+					private RicezioneContenutiApplicativiService ricezioneContenutiApplicativi;
+					private HttpServletConnectorInMessage httpIn;
+					private HttpServletConnectorAsyncOutMessage httpOut;
+					
+					public Runnable init(RicezioneContenutiApplicativiService ricezioneContenutiApplicativi,
+							HttpServletConnectorInMessage httpIn,
+							HttpServletConnectorAsyncOutMessage httpOut) {
+						this.ricezioneContenutiApplicativi = ricezioneContenutiApplicativi;
+						this.httpIn = httpIn;
+						this.httpOut = httpOut;
+						return this;
 					}
 					
+					@Override
+					public void run() {
+						try{
+							this.ricezioneContenutiApplicativi.process(this.httpIn, this.httpOut, dataAccettazioneRichiesta);
+						}catch(Throwable e){
+							ConnectorUtils.getErrorLog().error("NIO RicezioneContenutiApplicativi.process error: "+e.getMessage(),e);
+						}
+						
+					}
+				}.init(ricezioneContenutiApplicativi, httpIn, httpOut);
+				AsyncThreadPool.execute(runnable);
+			}
+			else {
+				try{
+					ricezioneContenutiApplicativi.process(httpIn, httpOut, dataAccettazioneRichiesta);
+				}catch(Throwable e){
+					String msg = "Inizializzazione Generatore Errore fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
+					logCore.error(msg,e);
+					ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, // il metodo doError gestisce il generatoreErrore a null
+							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO), 
+							IntegrationError.INTERNAL_ERROR, e, res, logCore);
+					return;
 				}
-			}.init(ricezioneContenutiApplicativi, httpIn, httpOut).start();
+			}
 		}
 			
 	}
