@@ -290,6 +290,9 @@ public class ConnettoreNIO_connectionManager {
 					clientBuilder.disableAuthCaching();
 					resource.setHttpclient(clientBuilder.build());
 					resource.getHttpclient().start();
+					
+					map.put(key, resource);
+					
 				} catch ( Throwable t ) {
 					throw new ConnettoreException( t.getMessage(),t );
 				}

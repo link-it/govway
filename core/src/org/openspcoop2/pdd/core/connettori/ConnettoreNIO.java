@@ -84,6 +84,7 @@ public class ConnettoreNIO extends ConnettoreExtBaseHTTP {
 	protected ConnettoreNIO_connection httpClient = null;
 	protected HttpRequestBase httpRequest = null;
 	protected boolean invocationSuccess = true;
+	protected boolean callbackResponseFinished = false;
 	
 	private boolean stream = OpenSPCoop2Properties.getInstance().isNIOConfig_asyncClient_doStream();
 	private int dimensione_buffer = OpenSPCoop2Properties.getInstance().getNIOConfig_asyncClient_buffer();
@@ -477,9 +478,29 @@ public class ConnettoreNIO extends ConnettoreExtBaseHTTP {
 			}
 			
 			try {
-				this.httpRequest.wait(readConnectionTimeout); // sincronizzo sulla richiesta
+				if(this.debug) {
+					this.logger.debug("NIO - Sync Wait ...");
+				}
+				synchronized (this.httpRequest) {
+					if(this.callbackResponseFinished) { // questo controllo serve per evitare che si vada in wait sleep dopo che la callback e' già terminata (e quindi ha già fatto il notify)
+						// la callback associata alla chiamata precedente 'getHttpclient().execute' è già terminata. Non serve dormire.
+						if(this.debug) {
+							this.logger.debug("NIO - Sync Wait non necessario, callback gia' terminata");
+						}
+					}
+					else {
+						if(this.debug) {
+							this.logger.debug("NIO - Wait ...");
+						}
+						this.httpRequest.wait(readConnectionTimeout); // sincronizzo sulla richiesta
+					}
+				}
 			}catch(Throwable t) {
 				throw new Exception("Read Timeout expired ("+readConnectionTimeout+")",t);
+			}
+			
+			if(this.debug) {
+				this.logger.debug("NIO - Terminata gestione");
 			}
 			
 			return this.invocationSuccess;

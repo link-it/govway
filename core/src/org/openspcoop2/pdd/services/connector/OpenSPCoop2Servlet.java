@@ -205,6 +205,13 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 				
 			}
+			else if((idServiceCustom!=null && IDService.PORTA_DELEGATA_NIO.equals(idServiceCustom))
+				){
+				
+				RicezioneContenutiApplicativiConnectorAsync r = new RicezioneContenutiApplicativiConnectorAsync();
+				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+				
+			}
 			else if(
 					(function.equals(URLProtocolContext.PDtoSOAP_FUNCTION) && op2Properties.isEnabledFunctionPDtoSOAP()) 
 					|| 

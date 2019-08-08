@@ -26,7 +26,9 @@ public class ConnettoreNIO_responseCallback implements FutureCallback<HttpRespon
 	public void completed(final HttpResponse response) {
 
 		try {
-
+			if(this.connettore.debug) {
+				this.connettore.logger.debug("NIO - Callback Response started after 'complete' event ...");
+			}
 			// Analisi MimeType e ContentLocation della risposta
 			if(this.connettore.debug)
 				this.connettore.logger.debug("Analisi risposta...");
@@ -216,22 +218,27 @@ public class ConnettoreNIO_responseCallback implements FutureCallback<HttpRespon
 			
 		} finally {
 			
-			this.connettore.httpRequest.notify(); // risveglio gestione ferma sul connettore
+			this.notifyCallbackFinished();
 			
 		}
 
+		
 	}
 
 	@Override
 	public void failed(final Exception e) {
 		try {
 			
+			if(this.connettore.debug) {
+				this.connettore.logger.debug("NIO - Callback Response started after 'failed' event ...");
+			}
+			
 			this.writeExceptionResponse(e);
 			return;
 			
 		} finally {
 			
-			this.connettore.httpRequest.notify(); // risveglio gestione ferma sul connettore
+			this.notifyCallbackFinished();
 			
 		}
 	}
@@ -246,10 +253,26 @@ public class ConnettoreNIO_responseCallback implements FutureCallback<HttpRespon
 			
 		} finally {
 			
-			this.connettore.httpRequest.notify(); // risveglio gestione ferma sul connettore
+			this.notifyCallbackFinished();
 			
 		}
 		
+	}
+	
+	private void notifyCallbackFinished() {
+		if(this.connettore.debug) {
+			this.connettore.logger.debug("NIO - Sync Notify ...");
+		}
+		this.connettore.callbackResponseFinished = true;
+		synchronized (this.connettore.httpRequest) {
+			if(this.connettore.debug) {
+				this.connettore.logger.debug("NIO - Notify ...");
+			}
+			this.connettore.httpRequest.notify(); // risveglio gestione ferma sul connettore	
+		}
+		if(this.connettore.debug) {
+			this.connettore.logger.debug("NIO - Callback Response finished");
+		}
 	}
 	
 	private void writeExceptionResponse(final Exception e) {

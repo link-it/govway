@@ -122,7 +122,9 @@ public class FunctionContextCustom implements java.io.Serializable {
 	private static void checkIDService(IDService idService) throws ProtocolException {
 		if(!IDService.PORTA_DELEGATA.equals(idService) &&
 				!IDService.PORTA_DELEGATA_XML_TO_SOAP.equals(idService) &&
+				!IDService.PORTA_DELEGATA_NIO.equals(idService) &&
 				!IDService.PORTA_APPLICATIVA.equals(idService) &&
+				!IDService.PORTA_APPLICATIVA_NIO.equals(idService) &&
 				!IDService.INTEGRATION_MANAGER_SOAP.equals(idService) ) {
 			throw new ProtocolException("IDService '"+idService+"' unsupported");
 		}
