@@ -44,6 +44,7 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 	PORTA_DELEGATA_NIO ("RicezioneContenutiApplicativiNIO"),
 	
 	PORTA_APPLICATIVA ("RicezioneBuste"),
+	PORTA_APPLICATIVA_NIO ("RicezioneBusteNIO"),
 	
 	INTEGRATION_MANAGER_SOAP ("IntegrationManager"),
 	
@@ -53,7 +54,9 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 	// ID: 7 cifre (parlante)
 	private final static String ID_OPENSPCOOP_SERVLET = "OP20000";
 	private final static String ID_PORTA_DELEGATA = "PD00000";
+	private final static String ID_PORTA_DELEGATA_NIO = "PDNIO00";
 	private final static String ID_PORTA_APPLICATIVA = "PA00000";
+	private final static String ID_PORTA_APPLICATIVA_NIO = "PANIO00";
 	private final static String ID_PORTA_DELEGATA_IMBUSTAMENTO_SOAP = "PD2SOAP";
 	private final static String ID_INTEGRATION_MANAGER = "IM00000";
 	private final static String ID_PORTA_DELEGATA_INTEGRATION_MANAGER = "PDIM000";
@@ -69,8 +72,12 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 			return ID_PORTA_DELEGATA_IMBUSTAMENTO_SOAP;
 		case PORTA_DELEGATA_INTEGRATION_MANAGER:
 			return ID_PORTA_DELEGATA_INTEGRATION_MANAGER;
+		case PORTA_DELEGATA_NIO:
+			return ID_PORTA_DELEGATA_NIO;
 		case PORTA_APPLICATIVA:
 			return ID_PORTA_APPLICATIVA;
+		case PORTA_APPLICATIVA_NIO:
+			return ID_PORTA_APPLICATIVA_NIO;
 		case INTEGRATION_MANAGER_SOAP:
 			return ID_INTEGRATION_MANAGER;
 		case CHECK_PDD:

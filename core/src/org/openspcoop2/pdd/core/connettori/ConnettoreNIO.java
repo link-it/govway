@@ -26,8 +26,6 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -43,18 +41,18 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.nio.ContentDecoder;
 import org.apache.http.nio.entity.NByteArrayEntity;
-import org.apache.http.nio.util.ContentInputBuffer;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedOutputStream;
 import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStream;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
@@ -87,8 +85,8 @@ public class ConnettoreNIO extends ConnettoreExtBaseHTTP {
 	protected HttpRequestBase httpRequest = null;
 	protected boolean invocationSuccess = true;
 	
-	private boolean stream = false; // TODO: rendere una proprieta'
-	private int dimensione_buffer = 61140; // TODO: rendere una proprieta'
+	private boolean stream = OpenSPCoop2Properties.getInstance().isNIOConfig_asyncClient_doStream();
+	private int dimensione_buffer = OpenSPCoop2Properties.getInstance().getNIOConfig_asyncClient_buffer();
 
 	
 	/* Costruttori */
@@ -405,17 +403,16 @@ public class ConnettoreNIO extends ConnettoreExtBaseHTTP {
 
 			
 			// Spedizione byte
-			PipedUnblockedStream pipe = null;
+			PipedUnblockedOutputStream streamOut = null;
+			boolean consumeRequestMessage = true;
+			if(this.followRedirects){
+				consumeRequestMessage = false;
+			}
 			if(httpBody.isDoOutput()){
-				boolean consumeRequestMessage = true;
-				if(this.followRedirects){
-					consumeRequestMessage = false;
-				}
 				
 				HttpEntity httpEntity = null;
 				
 				if(!this.stream || 
-						(this.isSoap && this.sbustamentoSoap) ||
 						this.debug || 
 						TransferLengthModes.CONTENT_LENGTH.equals(this.tlm)) {
 					
@@ -453,7 +450,8 @@ public class ConnettoreNIO extends ConnettoreExtBaseHTTP {
 					
 				}
 				else {
-					pipe = new PipedUnblockedStream(this.logger.getLogger(), this.dimensione_buffer);
+					PipedUnblockedStream pipe = new PipedUnblockedStream(this.logger.getLogger(), this.dimensione_buffer);
+					streamOut = new PipedUnblockedOutputStream(pipe);
 					httpEntity = new InputStreamEntity(pipe);
 				}
 					
@@ -468,9 +466,15 @@ public class ConnettoreNIO extends ConnettoreExtBaseHTTP {
 			ConnettoreNIO_responseCallback responseCallback = new ConnettoreNIO_responseCallback(this, request, httpBody);
 			this.httpClient.getHttpclient().execute(this.httpRequest, responseCallback);
 			
-//			if(this.stream && pipe!=null) {
-//				this.requestMsg.writeTo(pipe, false);
-//			}
+			if(this.stream && streamOut!=null) {
+				if(this.isSoap && this.sbustamentoSoap){
+					if(this.debug)
+						this.logger.debug("Sbustamento...");
+					TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,streamOut);
+				}else{
+					this.requestMsg.writeTo(streamOut, consumeRequestMessage);
+				}
+			}
 			
 			try {
 				this.httpRequest.wait(readConnectionTimeout); // sincronizzo sulla richiesta

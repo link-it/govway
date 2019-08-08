@@ -175,6 +175,18 @@ public class ConnettoreNIO_connectionManager {
                 while (!this.shutdown) {
                     synchronized (this) {
                         wait(5000);
+                        
+                        // DEBUG
+                        System.out.println("Connessioni attive: "+map.size());
+                        Iterator<String> it = map.keySet().iterator();
+                        int index = 1;
+        				while (it.hasNext()) {
+        					String key = (String) it.next();
+        					ConnettoreNIO_connection connection = map.get(key);
+        					System.out.println("- "+index+" ("+key+"): isRunning: "+connection.getHttpclient().isRunning());
+        					index++;
+        				}
+
                         // Close expired connections
                         this.connMgr.closeExpiredConnections();
                         // Optionally, close connections
@@ -190,7 +202,7 @@ public class ConnettoreNIO_connectionManager {
         public void shutdown() {
             this.shutdown = true;
             synchronized (this) {
-                notifyAll();
+                notify();
             }
         }
 

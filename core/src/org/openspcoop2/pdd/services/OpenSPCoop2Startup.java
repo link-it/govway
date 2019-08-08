@@ -91,6 +91,7 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.StatoServiziPdD;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
+import org.openspcoop2.pdd.core.connettori.ConnettoreNIO_connectionManager;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.NotificatoreEventi;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.DatiStatisticiDAOManager;
@@ -1500,6 +1501,22 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			
+			
+			/* ----------- Inizializzazione NIO Async Client ------------ */
+			try{
+				ConnettoreNIO_connectionManager.initialize(propertiesReader.getNIOConfig_asyncClient_maxPerRoute(), 
+						propertiesReader.getNIOConfig_asyncClient_maxTotal(), 
+						propertiesReader.getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds());
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione NIO Async Client Manager");
+				return;
+			}
+			
+			
+			
+			
+			
 			/* ----------- Inizializzazione Mailcap Activation per Gestione Attachments ------------ */
 			try{
 				MailcapActivationReader.initDataContentHandler(OpenSPCoop2Startup.log,propertiesReader.isTunnelSOAP_loadMailcap());
@@ -2522,6 +2539,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		OpenSPCoop2Properties properties = null;
 		try {
 			properties = OpenSPCoop2Properties.getInstance();
+		}catch(Throwable e){}
+		
+		// NIO Async Client Manager
+		try{
+			ConnettoreNIO_connectionManager.stop();
 		}catch(Throwable e){}
 		
 		// Eventi

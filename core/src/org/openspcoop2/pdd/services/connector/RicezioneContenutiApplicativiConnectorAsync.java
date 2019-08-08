@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.message.constants.IntegrationError;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorAsyncOutMessage;
 import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorInMessage;
@@ -120,13 +121,10 @@ public class RicezioneContenutiApplicativiConnectorAsync {
 			throw new ServletException(e.getMessage(),e);
 		}
 		
-		boolean stream = false; // TODO: rendere una proprieta'
-		int dimensione_buffer = 1024; // TODO: rendere una proprieta'
-		if(stream) {
-			dimensione_buffer = 61140; // TODO: rendere proprieta'
-		}
-		
-		int timeout = 60000; // TODO: rendere  proprieta' C'è gia???
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		boolean stream = op2Properties.isNIOConfig_asyncServer_doStream();
+		int dimensione_buffer =  op2Properties.getNIOConfig_asyncServer_buffer();
+		int timeout = (int) op2Properties.getNodeReceiverTimeoutRicezioneContenutiApplicativi();
 		
 		req.getInputStream().setReadListener( (new ReadListener() {
 			private ServletInputStream is = null;
@@ -154,7 +152,7 @@ public class RicezioneContenutiApplicativiConnectorAsync {
 					this.httpIn.updateInputStream(this.pipe);
 				}
 				else {
-					this.os = new ByteArrayOutputStream(sizeBuffer);
+					this.os = new ByteArrayOutputStream();
 				}
 				return this;
 			}
@@ -276,9 +274,9 @@ public class RicezioneContenutiApplicativiConnectorAsync {
 				//((HttpServletResponse)ac.getResponse()).setStatus(500);
 			}
 		}.init(httpOut));
-		ac.setTimeout(60000);
 		
-		
+		ac.setTimeout(timeout);
+			
 		if(stream) {
 			RicezioneContenutiApplicativiService ricezioneContenutiApplicativi = new RicezioneContenutiApplicativiService(generatoreErrore);
 			new Thread() {
