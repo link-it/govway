@@ -811,7 +811,7 @@ public class RicezioneBusteService  {
 		if(res instanceof DirectVMConnectorOutMessage){
 			vm = (DirectVMConnectorOutMessage) res;
 		}
-		else if(req instanceof DumpRawConnectorOutMessage){
+		else if(res instanceof DumpRawConnectorOutMessage){
 			if( ((DumpRawConnectorOutMessage)res).getWrappedConnectorOutMessage() instanceof DirectVMConnectorOutMessage ){
 				vm = (DirectVMConnectorOutMessage) ((DumpRawConnectorOutMessage)res).getWrappedConnectorOutMessage();
 			}

@@ -60,6 +60,7 @@ import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.services.connector.IAsyncResponseCallback;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.dump.DumpException;
@@ -177,6 +178,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     
     protected Dump dump;
 	
+    /** AsyncResponseCallback */
+    protected IAsyncResponseCallback asyncResponseCallback;
 
 	protected ConnettoreBase(){
 		this.creationDate = DateManager.getDate();
@@ -191,6 +194,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			this.errore = "Messaggio da consegnare is Null (ConnettoreMsg)";
 			return false;
 		}
+		
+		this.asyncResponseCallback = request.getAsyncResponseCallback();
 		
 		// Raccolta parametri per costruttore logger
 		this.properties = request.getConnectorProperties();
@@ -640,23 +645,50 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	
 	protected abstract boolean send(ConnettoreMsg request);
 	
+	protected boolean asynWait = false;
+	protected boolean asyncInvocationSuccess = false;
+	
 	@Override
 	public boolean send(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request){
 		
-		if(this.initializePreSend(responseCachingConfig, request)==false){
-			return false;
-		}
+		try {
 		
-		// caching response
-		if(this.responseAlready) {
-			return true;
+			if(this.initializePreSend(responseCachingConfig, request)==false){
+				return false;
+			}
+			
+			// caching response
+			if(this.responseAlready) {
+				return true;
+			}
+			
+			boolean returnEsitoSend = send(request);
+			if(returnEsitoSend) {
+				saveResponseInCache();
+			}
+			return returnEsitoSend;
+			
+		}finally {
+			if(this.asyncResponseCallback!=null && !this.asynWait) {
+				try {
+					this.asyncResponseCallback.asyncComplete(this.asyncInvocationSuccess);
+				}catch(Exception e) {
+					this.logger.error("AsyncCallback.complete: "+e.getMessage(),e);
+				}
+			}
 		}
-		
-		boolean returnEsitoSend = send(request);
-		if(returnEsitoSend) {
-			saveResponseInCache();
+	}
+	
+	protected void asyncComplete() {
+		try {
+			if(this.asyncResponseCallback==null) {
+				this.logger.error("Async context not active");
+				this.errore = "Async context not active";
+			}
+			this.asyncResponseCallback.asyncComplete(this.asyncInvocationSuccess);
+		}catch(Exception e) {
+			this.logger.error("AsyncCallback.complete: "+e.getMessage(),e);
 		}
-		return returnEsitoSend;
 	}
 	
 	/**

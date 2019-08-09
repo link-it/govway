@@ -226,7 +226,7 @@ public class RicezioneContenutiApplicativiConnectorAsync {
 							@Override
 							public void run() {
 								try{
-									this.ricezioneContenutiApplicativi.process(this.httpIn, this.httpOut, dataAccettazioneRichiesta);
+									this.ricezioneContenutiApplicativi.process(this.httpIn, this.httpOut, dataAccettazioneRichiesta, ConnectorCostanti.ASYNC);
 								}catch(Throwable e){
 									ConnectorUtils.getErrorLog().error("NIO RicezioneContenutiApplicativi.process error: "+e.getMessage(),e);
 								}
@@ -237,7 +237,7 @@ public class RicezioneContenutiApplicativiConnectorAsync {
 					}
 					else {
 						try{
-							ricezioneContenutiApplicativi.process(this.httpIn, this.httpOut, dataAccettazioneRichiesta);
+							ricezioneContenutiApplicativi.process(this.httpIn, this.httpOut, dataAccettazioneRichiesta, ConnectorCostanti.ASYNC);
 						}catch(Throwable e){
 							ConnectorUtils.getErrorLog().error("NIO RicezioneContenutiApplicativi.process error: "+e.getMessage(),e);
 							throw new IOException("NIO RicezioneContenutiApplicativi.process error: "+e.getMessage(),e);
@@ -315,7 +315,7 @@ public class RicezioneContenutiApplicativiConnectorAsync {
 					@Override
 					public void run() {
 						try{
-							this.ricezioneContenutiApplicativi.process(this.httpIn, this.httpOut, dataAccettazioneRichiesta);
+							this.ricezioneContenutiApplicativi.process(this.httpIn, this.httpOut, dataAccettazioneRichiesta, ConnectorCostanti.ASYNC);
 						}catch(Throwable e){
 							ConnectorUtils.getErrorLog().error("NIO RicezioneContenutiApplicativi.process error: "+e.getMessage(),e);
 						}
@@ -326,7 +326,7 @@ public class RicezioneContenutiApplicativiConnectorAsync {
 			}
 			else {
 				try{
-					ricezioneContenutiApplicativi.process(httpIn, httpOut, dataAccettazioneRichiesta);
+					ricezioneContenutiApplicativi.process(httpIn, httpOut, dataAccettazioneRichiesta, ConnectorCostanti.ASYNC);
 				}catch(Throwable e){
 					String msg = "Inizializzazione Generatore Errore fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
 					logCore.error(msg,e);

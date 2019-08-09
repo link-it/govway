@@ -133,7 +133,7 @@ public class RicezioneContenutiApplicativiConnector {
 		}
 			
 		try{
-			ricezioneContenutiApplicativi.process(httpIn, httpOut, dataAccettazioneRichiesta);
+			ricezioneContenutiApplicativi.process(httpIn, httpOut, dataAccettazioneRichiesta, ConnectorCostanti.SYNC);
 		}catch(Exception e){
 			ConnectorUtils.getErrorLog().error("RicezioneContenutiApplicativi.process error: "+e.getMessage(),e);
 			throw new ServletException(e.getMessage(),e);

@@ -133,7 +133,7 @@ public class ConnettoreNIO_responseCallback implements FutureCallback<HttpRespon
 							}
 						}
 
-						this.connettore.invocationSuccess = this.connettore.send(this.request); // caching ricorsivo non serve
+						this.connettore.asyncInvocationSuccess = this.connettore.send(this.request); // caching ricorsivo non serve
 						return;
 
 					}else{
@@ -191,7 +191,7 @@ public class ConnettoreNIO_responseCallback implements FutureCallback<HttpRespon
 			if(this.connettore.isRest){
 
 				if(this.connettore.doRestResponse()==false){
-					this.connettore.invocationSuccess = false;
+					this.connettore.asyncInvocationSuccess = false;
 					return;
 				}
 
@@ -199,7 +199,7 @@ public class ConnettoreNIO_responseCallback implements FutureCallback<HttpRespon
 			else{
 
 				if(this.connettore.doSoapResponse()==false){
-					this.connettore.invocationSuccess = false;
+					this.connettore.asyncInvocationSuccess = false;
 					return;
 				}
 
@@ -208,7 +208,7 @@ public class ConnettoreNIO_responseCallback implements FutureCallback<HttpRespon
 			if(this.connettore.debug)
 				this.connettore.logger.info("Gestione invio/risposta http effettuata con successo",false);
 
-			this.connettore.invocationSuccess = true;
+			this.connettore.asyncInvocationSuccess = true;
 			return;
 
 		}  catch(Exception e){ 
@@ -260,16 +260,17 @@ public class ConnettoreNIO_responseCallback implements FutureCallback<HttpRespon
 	}
 	
 	private void notifyCallbackFinished() {
-		if(this.connettore.debug) {
-			this.connettore.logger.debug("NIO - Sync Notify ...");
-		}
-		this.connettore.callbackResponseFinished = true;
-		synchronized (this.connettore.httpRequest) {
-			if(this.connettore.debug) {
-				this.connettore.logger.debug("NIO - Notify ...");
-			}
-			this.connettore.httpRequest.notify(); // risveglio gestione ferma sul connettore	
-		}
+//		if(this.connettore.debug) {
+//			this.connettore.logger.debug("NIO - Sync Notify ...");
+//		}
+//		this.connettore.callbackResponseFinished = true;
+//		synchronized (this.connettore.httpRequest) {
+//			if(this.connettore.debug) {
+//				this.connettore.logger.debug("NIO - Notify ...");
+//			}
+//			this.connettore.httpRequest.notify(); // risveglio gestione ferma sul connettore	
+//		}
+		this.connettore.asyncComplete();
 		if(this.connettore.debug) {
 			this.connettore.logger.debug("NIO - Callback Response finished");
 		}
@@ -285,6 +286,6 @@ public class ConnettoreNIO_responseCallback implements FutureCallback<HttpRespon
 			this.connettore.errore = msgErrore;
 		}
 		this.connettore.logger.error("Errore avvenuto durante la consegna HTTP: "+msgErrore,e);
-		this.connettore.invocationSuccess = false;
+		this.connettore.asyncInvocationSuccess = false;
 	}
 }

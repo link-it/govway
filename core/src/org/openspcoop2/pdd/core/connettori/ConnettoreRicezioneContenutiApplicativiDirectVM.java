@@ -28,6 +28,7 @@ package org.openspcoop2.pdd.core.connettori;
 import java.util.Date;
 
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.pdd.services.connector.ConnectorCostanti;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorOutMessage;
@@ -69,7 +70,7 @@ public class ConnettoreRicezioneContenutiApplicativiDirectVM extends AbstractCon
 	public void process(DirectVMConnectorInMessage inMessage,DirectVMConnectorOutMessage outMessage) throws ConnectorException{	
 		Date dataAccettazioneRichiesta = DateManager.getDate();
 		RicezioneContenutiApplicativiService soapConnector = new RicezioneContenutiApplicativiService(null); // il generatore di errori verrà creato direttamente dal servizio
-		soapConnector.process(inMessage, outMessage, dataAccettazioneRichiesta);
+		soapConnector.process(inMessage, outMessage, dataAccettazioneRichiesta, ConnectorCostanti.SYNC);
 	}
 	
 	@Override

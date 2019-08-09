@@ -21,12 +21,20 @@
  */
 package org.openspcoop2.pdd.services.connector.messages;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 import javax.servlet.AsyncContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.slf4j.Logger;
 
 /**
  * HttpServletConnectorOutMessage
@@ -64,6 +72,47 @@ public class HttpServletConnectorAsyncOutMessage extends HttpServletConnectorOut
 		this.nioException = nioException;
 	}
 	
+	private boolean bufferingResponse = false; // TODO PARAMETRO ? Siamo sicuri serva in caso di streaming
+	
+	@Override
+	protected void msgWrite(OpenSPCoop2Message msg, OutputStream os, boolean consume) throws ConnectorException {
+		if(!this.bufferingResponse || !(os instanceof  ServletOutputStream) ) {
+			super.msgWrite(msg, os, consume);
+		}
+		else {
+			try{
+				ByteArrayOutputStream bout = new ByteArrayOutputStream();
+				msg.writeTo(bout,consume);
+				bout.flush();
+				bout.close();
+				this.asyncWrite(os, bout.toByteArray());
+			}catch(Exception e){
+				throw new ConnectorException(e.getMessage(),e);
+			}
+		}
+	}
+	
+	@Override
+	protected void responseWrite(byte[] message, OutputStream os) throws ConnectorException{
+		if(!this.bufferingResponse || !(os instanceof  ServletOutputStream) ) {
+			super.responseWrite(message, os);
+		}
+		else {
+			try{
+				this.asyncWrite(os, message);
+			}catch(Exception e){
+				throw new ConnectorException(e.getMessage(),e);
+			}
+		}
+	}
+	
+	private void asyncWrite(OutputStream os, byte[] content) {
+		ServletOutputStream servletOutputStream = (ServletOutputStream) os;
+		AsyncWriteListener writeListener = new AsyncWriteListener(this._ac, content, 
+				servletOutputStream, this.protocolFactory.getLogger());
+		servletOutputStream.setWriteListener(writeListener);
+	}
+	
 	@Override
 	public void flush(boolean throwException) throws ConnectorException {
 	
@@ -80,7 +129,7 @@ public class HttpServletConnectorAsyncOutMessage extends HttpServletConnectorOut
 		super.close(throwException);
 		
 		try{
-			if(this._ac!=null){
+			if(this._ac!=null && !this.bufferingResponse){
 				try{
 					this._ac.complete();
 				}catch(Exception e){
@@ -92,5 +141,41 @@ public class HttpServletConnectorAsyncOutMessage extends HttpServletConnectorOut
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}	
+	}
+}
+
+class AsyncWriteListener implements WriteListener {
+	
+	private AsyncContext ac;
+	private int index = 0;
+	private byte[] content;
+	private ServletOutputStream servletOutputStream;
+	private Logger log;
+	
+	public AsyncWriteListener(AsyncContext ac, byte[] content, ServletOutputStream servletOutputStream, Logger log){
+		this.ac = ac;
+		this.content = content;
+		this.servletOutputStream = servletOutputStream;
+		this.log = log;
+	}
+	
+	@Override
+	public void onWritePossible() throws IOException {
+        while ( this.index < this.content.length && this.servletOutputStream.isReady() ) {
+        	int toBeWrite = this.content.length - this.index;
+        	if ( toBeWrite > 1024 )
+        		toBeWrite = 1024;
+        	this.servletOutputStream.write(this.content, this.index, toBeWrite);
+        	this.index += toBeWrite;
+        }
+		if ( this.index >= this.content.length ) {
+			this.ac.complete();
+		}
+	}
+
+	@Override
+	public void onError(Throwable t) {
+        this.log.error( "Errore durante la consegna della risposta asincrona: "+t.getMessage(), t );
+        this.ac.complete();
 	}
 }

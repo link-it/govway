@@ -120,7 +120,14 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 					soap.saveChanges();
 				}
 			}  
-			msg.writeTo(this.getHttpServletResponseOutputStream(),consume);		
+			this.msgWrite(msg, this.getHttpServletResponseOutputStream(), consume);
+		}catch(Exception e){
+			throw new ConnectorException(e.getMessage(),e);
+		}
+	}
+	protected void msgWrite(OpenSPCoop2Message msg, OutputStream os, boolean consume) throws ConnectorException {
+		try{
+			msg.writeTo(os,consume);		
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
@@ -129,7 +136,14 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	@Override
 	public void sendResponse(byte[] message) throws ConnectorException{
 		try{
-			this.getHttpServletResponseOutputStream().write(message);	
+			this.responseWrite(message, this.getHttpServletResponseOutputStream());	
+		}catch(Exception e){
+			throw new ConnectorException(e.getMessage(),e);
+		}
+	}
+	protected void responseWrite(byte[] message, OutputStream os) throws ConnectorException{
+		try{
+			os.write(message);
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}

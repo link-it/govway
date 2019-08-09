@@ -671,7 +671,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.completata");
 			
 			// Invocazione...
-			RicezioneContenutiApplicativi gestoreRichiesta = new RicezioneContenutiApplicativi(context,generatoreErrore);
+			RicezioneContenutiApplicativi gestoreRichiesta = new RicezioneContenutiApplicativi(context,generatoreErrore, null);
 			gestoreRichiesta.process(req);
 			msgResponse = context.getMessageResponse();
 			if(context.getMsgDiagnostico()!=null){

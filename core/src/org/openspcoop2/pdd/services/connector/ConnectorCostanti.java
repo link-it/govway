@@ -39,6 +39,9 @@ public class ConnectorCostanti {
 	public final static String KEYWORD_SERVICE_BINDING = "@SERVICE_BINDING@";
 	public final static String MESSAGE_SERVICE_BINDING_NOT_SUPPORTED = "ServiceBinding "+KEYWORD_SERVICE_BINDING+" non supportato";
 
+	public final static boolean ASYNC = true;
+	public final static boolean SYNC = false;
+	
 	// ID: 7 cifre (parlante)
 	public final static String ID_ERRORE_GENERICO = "0000000";
 	// Altri codici definiti in org.openspcoop2.protocol.engine.constants.IDService

@@ -508,7 +508,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.completata");
 			
 			// Invocazione...
-			RicezioneContenutiApplicativi gestoreRichiesta = new RicezioneContenutiApplicativi(context, this.generatoreErrore);
+			RicezioneContenutiApplicativi gestoreRichiesta = new RicezioneContenutiApplicativi(context, this.generatoreErrore, null);
 			gestoreRichiesta.process(req);
 			responseMessage = context.getMessageResponse();
 						
@@ -732,7 +732,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		if(res instanceof DirectVMConnectorOutMessage){
 			vm = (DirectVMConnectorOutMessage) res;
 		}
-		else if(req instanceof DumpRawConnectorOutMessage){
+		else if(res instanceof DumpRawConnectorOutMessage){
 			if( ((DumpRawConnectorOutMessage)res).getWrappedConnectorOutMessage() instanceof DirectVMConnectorOutMessage ){
 				vm = (DirectVMConnectorOutMessage) ((DumpRawConnectorOutMessage)res).getWrappedConnectorOutMessage();
 			}
