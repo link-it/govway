@@ -122,65 +122,77 @@ public class TokenUtilities {
 				}
 			}
 			
-			if(gestioneToken.getValidazione()!=null) {
-				switch (gestioneToken.getValidazione()) {
-				case ABILITATO:
-					policy.setValidazioneJWT(true);
-					policy.setValidazioneJWT_warningOnly(false);
-					break;
-				case WARNING_ONLY:
-					policy.setValidazioneJWT(true);
-					policy.setValidazioneJWT_warningOnly(true);
-					break;
-				case DISABILITATO:
-					policy.setValidazioneJWT(false);
-					policy.setValidazioneJWT_warningOnly(false);
-					break;
+			boolean validazioneEnabledDaPolicy = isValidazioneEnabled(multiProperties);
+			if(validazioneEnabledDaPolicy) {
+				if(gestioneToken.getValidazione()!=null) {
+					switch (gestioneToken.getValidazione()) {
+					case ABILITATO:
+						policy.setValidazioneJWT(true);
+						policy.setValidazioneJWT_warningOnly(false);
+						break;
+					case WARNING_ONLY:
+						policy.setValidazioneJWT(true);
+						policy.setValidazioneJWT_warningOnly(true);
+						break;
+					case DISABILITATO:
+						policy.setValidazioneJWT(false);
+						policy.setValidazioneJWT_warningOnly(false);
+						break;
+					}
 				}
 			}
 			
-			if(gestioneToken.getIntrospection()!=null) {
-				switch (gestioneToken.getIntrospection()) {
-				case ABILITATO:
-					policy.setIntrospection(true);
-					policy.setIntrospection_warningOnly(false);
-					break;
-				case WARNING_ONLY:
-					policy.setIntrospection(true);
-					policy.setIntrospection_warningOnly(true);
-					break;
-				case DISABILITATO:
-					policy.setIntrospection(false);
-					policy.setIntrospection_warningOnly(false);
-					break;
+			boolean introspectionEnabledDaPolicy = isIntrospectionEnabled(multiProperties);
+			if(introspectionEnabledDaPolicy) {
+				if(gestioneToken.getIntrospection()!=null) {
+					switch (gestioneToken.getIntrospection()) {
+					case ABILITATO:
+						policy.setIntrospection(true);
+						policy.setIntrospection_warningOnly(false);
+						break;
+					case WARNING_ONLY:
+						policy.setIntrospection(true);
+						policy.setIntrospection_warningOnly(true);
+						break;
+					case DISABILITATO:
+						policy.setIntrospection(false);
+						policy.setIntrospection_warningOnly(false);
+						break;
+					}
 				}
 			}
 			
-			if(gestioneToken.getUserInfo()!=null) {
-				switch (gestioneToken.getUserInfo()) {
-				case ABILITATO:
-					policy.setUserInfo(true);
-					policy.setUserInfo_warningOnly(false);
-					break;
-				case WARNING_ONLY:
-					policy.setUserInfo(true);
-					policy.setUserInfo_warningOnly(true);
-					break;
-				case DISABILITATO:
-					policy.setUserInfo(false);
-					policy.setUserInfo_warningOnly(false);
-					break;
+			boolean userInfoEnabledDaPolicy = isUserInfoEnabled(multiProperties);
+			if(userInfoEnabledDaPolicy) {
+				if(gestioneToken.getUserInfo()!=null) {
+					switch (gestioneToken.getUserInfo()) {
+					case ABILITATO:
+						policy.setUserInfo(true);
+						policy.setUserInfo_warningOnly(false);
+						break;
+					case WARNING_ONLY:
+						policy.setUserInfo(true);
+						policy.setUserInfo_warningOnly(true);
+						break;
+					case DISABILITATO:
+						policy.setUserInfo(false);
+						policy.setUserInfo_warningOnly(false);
+						break;
+					}
 				}
 			}
 			
-			if(gestioneToken.getForward()!=null) {
-				switch (gestioneToken.getForward()) {
-				case ABILITATO:
-					policy.setForwardToken(true);
-					break;
-				case DISABILITATO:
-					policy.setForwardToken(false);
-					break;
+			boolean forwardEnabledDaPolicy = isTokenForwardEnabled(multiProperties);
+			if(forwardEnabledDaPolicy) {
+				if(gestioneToken.getForward()!=null) {
+					switch (gestioneToken.getForward()) {
+					case ABILITATO:
+						policy.setForwardToken(true);
+						break;
+					case DISABILITATO:
+						policy.setForwardToken(false);
+						break;
+					}
 				}
 			}
 			

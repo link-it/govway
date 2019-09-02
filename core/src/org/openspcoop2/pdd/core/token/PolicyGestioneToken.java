@@ -160,7 +160,7 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 			return bf.toString();
 		}
 		else {
-			return "";
+			return "Nessuna Validazione Attiva";
 		}
 	}
 	

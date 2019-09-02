@@ -1169,16 +1169,14 @@ public class GestoreToken {
 		
 		boolean remove = false;
 		if(esitoPresenzaToken.getHeaderHttp()!=null) {
-			if(!HttpConstants.AUTHORIZATION.equals(esitoPresenzaToken.getHeaderHttp())) {
-				if(!policyGestioneToken.isForwardToken()) {
-					remove = true;
-				}
-				else if(!trasparente) {
-					remove = true;
-				}
-				else if(!esitoPresenzaToken.getHeaderHttp().equals(forwardTrasparenteMode_header)) {
-					remove = true;
-				}
+			if(!policyGestioneToken.isForwardToken()) {
+				remove = true;
+			}
+			else if(!trasparente) {
+				remove = true;
+			}
+			else if(!esitoPresenzaToken.getHeaderHttp().equalsIgnoreCase(forwardTrasparenteMode_header)) {
+				remove = true;
 			}
 			if(remove) {
 				datiInvocazione.getMessage().getTransportRequestContext().removeParameterTrasporto(esitoPresenzaToken.getHeaderHttp());

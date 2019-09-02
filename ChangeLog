@@ -1,3 +1,16 @@
+2019-09-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto bug OP-885
+	(https://github.com/link-it/govway/issues/45)
+	Sono stati risolti i seguenti problemi:
+	- La funzionalità di Token Forward non gestiva correttamente il forward o meno del token passato tramite header http 'Authorization'.
+	- Nello scenario in cui una funzionalità (Introspection, UserInfo, Forward ..) configurata sulla TokenPolicy veniva abilitata sull'erogazione/fruizione
+	  e veniva successivamente disabilitata sulla TokenPolicy, succedeva che tale funzionalità rimaneva comunque abilitata sull'erogazione/fruizione 
+	  anche se non veniva più visualizzata nella maschera di controllo degli accessi e quindi non era disabilitabile.
+	- Il truststore per gestire le comunicazioni ssl verso Google conteneva un certificato scaduto 
+	  che è stato rimosso lasciando solamente nel truststore la CA che possiede una scadenza in data Dicembre 2021.
+
 2019-08-06  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.1.1
