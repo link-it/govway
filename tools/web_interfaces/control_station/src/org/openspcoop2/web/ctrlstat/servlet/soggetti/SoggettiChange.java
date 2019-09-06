@@ -50,7 +50,6 @@ import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
@@ -75,7 +74,6 @@ import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
@@ -113,7 +111,6 @@ public final class SoggettiChange extends Action {
 	private IRegistryReader registryReader = null; 
 	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
-	private ConsoleInterfaceType consoleInterfaceType = null;
 	private String protocolPropertiesSet = null;
 
 	private String tipoauthSoggetto = null;
@@ -147,8 +144,7 @@ public final class SoggettiChange extends Action {
 		List<ProtocolProperty> oldProtocolPropertyList = null;
 		try {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
-			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(soggettiHelper); 
-
+			
 			this.id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			int idSogg = Integer.parseInt(this.id);
 			this.nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
@@ -375,7 +371,7 @@ public final class SoggettiChange extends Action {
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
 			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigSoggetto(this.consoleOperationType, this.consoleInterfaceType, 
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigSoggetto(this.consoleOperationType, soggettiHelper, 
 					this.registryReader, this.configRegistryReader, idSoggetto);
 			this.protocolProperties = soggettiHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 			
@@ -750,7 +746,7 @@ public final class SoggettiChange extends Action {
 				
 				// Inizializzazione delle properties da db al primo accesso alla pagina
 				if(this.protocolPropertiesSet == null){
-					ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
+					ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
 				}
 
 				// preparo i campi
@@ -760,9 +756,9 @@ public final class SoggettiChange extends Action {
 
 
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, soggettiHelper, this.protocolProperties, 
 						this.registryReader, this.configRegistryReader, idSoggetto); 
-
+				
 				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
 						this.isRouter, tipiSoggetti, this.versioneProtocollo, this.privato, this.codiceIpa, versioniProtocollo,
 						isSupportatoCodiceIPA, isSupportatoIdentificativoPorta,
@@ -776,7 +772,7 @@ public final class SoggettiChange extends Action {
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSoggetto,tipoCredenzialiSSLWizardStep);
 
 				// aggiunta campi custom
-				dati = soggettiHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType,this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				dati = soggettiHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
 				// aggiunta opzione per modifica soggetto da configurazione
 				if(this.modificaOperativo!=null && !"".equals(this.modificaOperativo)) {
@@ -803,10 +799,16 @@ public final class SoggettiChange extends Action {
 					tipoOp, this.id, this.tipoprov, this.nomeprov, this.codiceIpa, this.pd_url_prefix_rewriter, this.pa_url_prefix_rewriter,
 					soggettoRegistry, isSupportatoAutenticazioneSoggetti, this.descr);
 
+			// updateDynamic
+			if(isOk) {
+				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, soggettiHelper, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idSoggetto); 		
+			}
+			
 			// Validazione base dei parametri custom 
 			if(isOk){
 				try{
-					soggettiHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+					soggettiHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -818,7 +820,7 @@ public final class SoggettiChange extends Action {
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, 
+					this.consoleDynamicConfiguration.validateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, soggettiHelper, this.protocolProperties, 
 							this.registryReader, this.configRegistryReader, idSoggetto); 
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
@@ -840,7 +842,7 @@ public final class SoggettiChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, soggettiHelper, this.protocolProperties, 
 						this.registryReader, this.configRegistryReader, idSoggetto); 
 
 				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
@@ -856,7 +858,7 @@ public final class SoggettiChange extends Action {
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSoggetto,tipoCredenzialiSSLWizardStep);
 
 				// aggiunta campi custom
-				dati = soggettiHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType,this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				dati = soggettiHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
 				pd.setDati(dati);
 
@@ -1008,7 +1010,7 @@ public final class SoggettiChange extends Action {
 			soggettoConfig.setPaUrlPrefixRewriter(this.pa_url_prefix_rewriter);
 
 			//imposto properties custom
-			soggettoRegistry.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType, oldProtocolPropertyList)); 
+			soggettoRegistry.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(this.protocolProperties, this.consoleOperationType, oldProtocolPropertyList)); 
 
 			SoggettoCtrlStat sog = new SoggettoCtrlStat(soggettoRegistry, soggettoConfig);
 			sog.setOldNomeForUpdate(oldnomeprov);

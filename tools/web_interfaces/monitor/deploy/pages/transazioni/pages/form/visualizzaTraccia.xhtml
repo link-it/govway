@@ -279,18 +279,28 @@
 					
 					
 					
-					<rich:spacer id="spacerInformazioniAggiuntiveProtocollo" height="20px" rendered="#{not empty dettagliBean.traccia.bustaBean.properties}"/>
+					<rich:spacer id="spacerInformazioniAggiuntiveProtocollo" height="20px" rendered="#{not empty dettagliBean.traccia.bustaBean.extInfoProperties}"/>
 				
 					<link:fieldset legend="Informazioni #{dettagliBean.dettaglio.protocolloLabel}"
-							rendered="#{not empty dettagliBean.traccia.bustaBean.properties}" collapsible="false" closed="false">
+							rendered="#{not empty dettagliBean.traccia.bustaBean.extInfoProperties}" collapsible="false" closed="false">
 					
 						 <h:panelGrid id="panelInformazioniAggiuntiveProtocollo2" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDx,valueAllineataSx">
 							
-							<c:forEach items="#{dettagliBean.traccia.bustaBean.propertiesAsList}" var="property" >
+							<c:forEach items="#{dettagliBean.traccia.bustaBean.extInfoPropertiesAsList}" var="gruppo" >
 								
-								<h:outputLabel styleClass="outputFieldLabel" value="#{property.key}" />
+								<h:outputText value="" styleClass="" rendered="#{gruppo.key != ''}"/>
+								<a4j:outputPanel layout="block" styleClass="subtitle-nopaddingleft-nomarginleft" 
+									rendered="#{gruppo.key != ''}">
+									<h:outputText value="#{gruppo.key}" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+								</a4j:outputPanel>
 								
-								<h:outputText value="#{property.value}" />
+								<c:forEach items="#{gruppo.value}" var="property" >
+								
+									<h:outputLabel styleClass="outputFieldLabel" value="#{property.key}" />
+									
+									<h:outputText value="#{property.value}" />
+									
+								</c:forEach>
 																								
 							</c:forEach>
 						

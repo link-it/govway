@@ -68,4 +68,9 @@ public class AS4ProtocolConfiguration extends BasicConfiguration {
 		
 	}
 	
+	@Override
+	public boolean isDataPresenteInIdentificativoMessaggio() {
+		return !this.properties.generateIDasUUID();
+	}
+	
 }

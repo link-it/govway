@@ -37,4 +37,19 @@ public class NumberConsoleItem extends AbstractConsoleItem<Long> {
 		super(id, label, type);
 	}
 
+	private long min = -1;
+	private long max = Integer.MAX_VALUE;
+	
+	public long getMin() {
+		return this.min;
+	}
+	public void setMin(int min) {
+		this.min = min;
+	}
+	public long getMax() {
+		return this.max;
+	}
+	public void setMax(int max) {
+		this.max = max;
+	}
 }

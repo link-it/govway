@@ -29,8 +29,8 @@ import org.openspcoop2.protocol.basic.config.BasicVersionManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
-import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.slf4j.Logger;
@@ -62,27 +62,47 @@ public class TrasparenteProtocolVersionManager extends TrasparenteProtocolManage
 	/* *********** FUNZIONALITA' OFFERTE DALLA Porta di Dominio ******************* */
 	
 	@Override
-	public StatoFunzionalitaProtocollo getFiltroDuplicati(ProfiloDiCollaborazione profiloCollaborazione) {
-		return this.basicVersionManager.getFiltroDuplicati(profiloCollaborazione);
+	public StatoFunzionalitaProtocollo getFiltroDuplicati(Busta busta) {
+		return this.basicVersionManager.getFiltroDuplicati(busta);
+	}
+	@Override
+	public StatoFunzionalitaProtocollo getFiltroDuplicati(Servizio infoServizio) {
+		return this.basicVersionManager.getFiltroDuplicati(infoServizio);
 	}
 	
 	@Override
-	public StatoFunzionalitaProtocollo getConsegnaAffidabile(ProfiloDiCollaborazione profiloCollaborazione){
-		return this.basicVersionManager.getConsegnaAffidabile(profiloCollaborazione);
+	public StatoFunzionalitaProtocollo getConsegnaAffidabile(Busta busta){
+		return this.basicVersionManager.getConsegnaAffidabile(busta);
+	}
+	@Override
+	public StatoFunzionalitaProtocollo getConsegnaAffidabile(Servizio infoServizio){
+		return this.basicVersionManager.getConsegnaAffidabile(infoServizio);
 	}
 	
 	@Override
-	public StatoFunzionalitaProtocollo getConsegnaInOrdine(ProfiloDiCollaborazione profiloCollaborazione){
-		return this.basicVersionManager.getConsegnaInOrdine(profiloCollaborazione);
+	public StatoFunzionalitaProtocollo getConsegnaInOrdine(Busta busta){
+		return this.basicVersionManager.getConsegnaInOrdine(busta);
+	}
+	@Override
+	public StatoFunzionalitaProtocollo getConsegnaInOrdine(Servizio infoServizio){
+		return this.basicVersionManager.getConsegnaInOrdine(infoServizio);
 	}
 	
 	@Override
-	public StatoFunzionalitaProtocollo getCollaborazione(ProfiloDiCollaborazione profiloCollaborazione){
+	public StatoFunzionalitaProtocollo getCollaborazione(Busta busta){
+		return StatoFunzionalitaProtocollo.REGISTRO;
+	}
+	@Override
+	public StatoFunzionalitaProtocollo getCollaborazione(Servizio infoServizio){
 		return StatoFunzionalitaProtocollo.REGISTRO;
 	}
 	
 	@Override
-	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(ProfiloDiCollaborazione profiloCollaborazione){
+	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(Busta busta){
+		return StatoFunzionalitaProtocollo.REGISTRO;
+	}
+	@Override
+	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(Servizio infoServizio){
 		return StatoFunzionalitaProtocollo.REGISTRO;
 	}
 	

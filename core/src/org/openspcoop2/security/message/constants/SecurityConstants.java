@@ -144,6 +144,8 @@ public class SecurityConstants {
     public static final String SYMMETRIC_KEY_TRUE = "true";
     public static final String SYMMETRIC_KEY_FALSE = "false";
     
+    public static final String ENABLE_REVOCATION = ConfigurationConstants.ENABLE_REVOCATION;
+    
     public static final String ENCRYPT_ACTION = ConfigurationConstants.ENCRYPT;
     public static final String DECRYPT_ACTION = "Decrypt";
     public static final String ENCRYPTION_USER = ConfigurationConstants.ENCRYPTION_USER;
@@ -278,6 +280,8 @@ public class SecurityConstants {
     public static final String JOSE_USE_HEADERS = "joseUseHeaders";
     public static final String JOSE_USE_HEADERS_X5C = "joseUseHeaders.x5c";
     public static final String JOSE_USE_HEADERS_X5U = "joseUseHeaders.x5u";
+    public static final String JOSE_USE_HEADERS_X5T = "joseUseHeaders.x5t";
+    public static final String JOSE_USE_HEADERS_X5T_256 = "joseUseHeaders.x5t256";
     public static final String JOSE_USE_HEADERS_JWK = "joseUseHeaders.jwk";
     public static final String JOSE_USE_HEADERS_JKU = "joseUseHeaders.jku";
     public static final String JOSE_USE_HEADERS_KID = "joseUseHeaders.kid";
@@ -287,10 +291,12 @@ public class SecurityConstants {
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_TYPE = "joseUseHeaders.truststore.type";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_FILE = "joseUseHeaders.truststore.file";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_PASSWORD = "joseUseHeaders.truststore.password";
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_CRL =  "joseUseHeaders.truststore.crl";
     
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_TYPE = JoseConstants.RSSEC_KEY_STORE_TYPE+".ssl";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_FILE = JoseConstants.RSSEC_KEY_STORE_FILE+".ssl";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_PASSWORD = JoseConstants.RSSEC_KEY_STORE_PSWD+".ssl";
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_CRL =  JoseConstants.RSSEC_KEY_STORE+".ssl.crl";
     
     public static final String JOSE_USE_HEADERS_KEYSTORE_TYPE = "joseUseHeaders.keystore.type";
     public static final String JOSE_USE_HEADERS_KEYSTORE_FILE = "joseUseHeaders.keystore.file";
@@ -380,6 +386,11 @@ public class SecurityConstants {
     public static final String KEY_IDENTIFIER_EMBEDDED_KEY_NAME = "EmbeddedKeyName";
     public static final String KEY_IDENTIFIER_THUMBPRINT = "Thumbprint";
     public static final String KEY_IDENTIFIER_ENCRYPTED_KEY_SHA1 = "EncryptedKeySHA1";
+
+    public static final String KEY_IDENTIFIER_BST_DIRECT_REFERENCE_USE_SINGLE_CERTIFICATE = ConfigurationConstants.USE_SINGLE_CERTIFICATE;
+    
+    public static final String KEY_IDENTIFIER_INCLUDE_SIGNATURE_TOKEN = ConfigurationConstants.INCLUDE_SIGNATURE_TOKEN;
+    public static final String KEY_IDENTIFIER_INCLUDE_ENCRYPT_TOKEN = ConfigurationConstants.INCLUDE_ENCRYPTION_TOKEN;
     
     public static final String IS_BSP_COMPLIANT = ConfigurationConstants.IS_BSP_COMPLIANT;
     

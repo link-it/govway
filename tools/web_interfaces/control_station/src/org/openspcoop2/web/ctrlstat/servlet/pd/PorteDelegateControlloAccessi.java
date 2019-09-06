@@ -523,9 +523,11 @@ public class PorteDelegateControlloAccessi extends Action {
 						gestioneTokenPolicy,gestioneTokenOpzionale, 
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata,isPortaDelegata);
 				
-				porteDelegateHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,isPortaDelegata,
+				porteDelegateHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, servletChiamante,portaDelegata,
+						autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,isPortaDelegata,
 						gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						old_autenticazione_custom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList);
+						old_autenticazione_custom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList,
+						false, false);
 				
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 				porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,portaDelegata,
@@ -574,9 +576,11 @@ public class PorteDelegateControlloAccessi extends Action {
 						gestioneTokenPolicy, gestioneTokenOpzionale, 
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata,isPortaDelegata);
 				
-				porteDelegateHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,isPortaDelegata,
+				porteDelegateHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, servletChiamante,portaDelegata,
+						autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,isPortaDelegata,
 						gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						old_autenticazione_custom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList);
+						old_autenticazione_custom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList,
+						false, false);
 				
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 				porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,portaDelegata,
@@ -967,9 +971,11 @@ public class PorteDelegateControlloAccessi extends Action {
 					gestioneTokenPolicy, gestioneTokenOpzionale,
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata,isPortaDelegata);
 			
-			porteDelegateHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,isPortaDelegata,
+			porteDelegateHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, servletChiamante,portaDelegata,
+					autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,isPortaDelegata,
 					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-					old_autenticazione_custom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList);
+					old_autenticazione_custom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList,
+					false, false);
 			
 			// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 			porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,portaDelegata,

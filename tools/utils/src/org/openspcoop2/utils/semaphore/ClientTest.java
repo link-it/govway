@@ -805,8 +805,6 @@ class ClientTestThread implements Runnable{
 
 class EventGeneratorLog implements ISemaphoreEventGenerator{
 
-	private static final String format = "yyyy-MM-dd_HH:mm:ss.SSS";
-	
 	private Logger log;
 	
 	private List<String> acquisiti = new ArrayList<>();
@@ -839,7 +837,7 @@ class EventGeneratorLog implements ISemaphoreEventGenerator{
 	
 	@Override
 	public void emitEvent(Connection con, SemaphoreEvent event) {
-		SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 		this.log.info("["+event.getSeverity()+"] ["+event.getOperationType()+"] Date["+dateformat.format(event.getDate())+"] IdNode["+event.getIdNode()+"] [Lock:"+event.isLock()+"]: "+event.getDetails()+"\n");
 		if(event.isLock()) {
 			if(SemaphoreOperationType.NEW.equals(event.getOperationType())) {

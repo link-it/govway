@@ -129,6 +129,7 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.handlers.transazioni" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.integrazione" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.integrazione.backward_compatibility" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.keystore" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.behaviour" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.jmx" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.node" />

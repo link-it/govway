@@ -39,6 +39,8 @@ public class JWTOptions {
 	
 	private boolean permitUseHeaderX5C = true;
 	private boolean permitUseHeaderX5U = true;
+	private boolean permitUseHeaderX5T = true;
+	private boolean permitUseHeaderX5T_256 = true;
 	private boolean permitUseHeaderJWK= true;
 	private boolean permitUseHeaderJKU = true;
 	private boolean permitUseHeaderKID = true;
@@ -69,6 +71,20 @@ public class JWTOptions {
 		this.permitUseHeaderX5U = permitUseHeaderX5U;
 	}
 
+	public boolean isPermitUseHeaderX5T() {
+		return this.permitUseHeaderX5T;
+	}
+	public void setPermitUseHeaderX5T(boolean permitUseHeaderX5T) {
+		this.permitUseHeaderX5T = permitUseHeaderX5T;
+	}
+
+	public boolean isPermitUseHeaderX5T_256() {
+		return this.permitUseHeaderX5T_256;
+	}
+	public void setPermitUseHeaderX5T_256(boolean permitUseHeaderX5T_256) {
+		this.permitUseHeaderX5T_256 = permitUseHeaderX5T_256;
+	}
+	
 	public boolean isPermitUseHeaderJWK() {
 		return this.permitUseHeaderJWK;
 	}
@@ -111,6 +127,16 @@ public class JWTOptions {
 		if(hdrs.getJsonWebKeysUrl()!=null) {
 			if(this.isPermitUseHeaderJKU()==false) {
 				list.add(JwtHeaders.JWT_HDR_JKU);
+			}
+		}
+		if(hdrs.getX509Thumbprint()!=null) {
+			if(this.isPermitUseHeaderX5T()==false) {
+				list.add(JwtHeaders.JWT_HDR_X5T);
+			}
+		}
+		if(hdrs.getX509ThumbprintSHA256()!=null) {
+			if(this.isPermitUseHeaderX5T_256()==false) {
+				list.add(JwtHeaders.JWT_HDR_X5t_S256);
 			}
 		}
 		if(hdrs.getKeyId()!=null) {

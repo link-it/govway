@@ -1,0 +1,34 @@
+# ** Richiesta **
+
+# Endpoint
+push.request.endpoint=http://localhost:9001/
+
+# SOAPAction
+push.request.soapAction="push.request"
+
+# Identificativo risorsa
+# Se viene fornito un valore minore o uguale a zero, viene sollevata una eccezione
+push.request.idResource=1
+
+# Indicazione ReplyTo
+push.request.replyTo=http://localhost:9002/
+
+# Autenticazione BASIC
+#push.request.username=username
+#push.request.password=123456
+
+
+# ** Risposta **
+
+# Endpoint
+push.response.endpoint=http://localhost:9002/
+
+# SOAPAction
+push.response.soapAction="push.response"
+
+# CorrelationId
+push.response.correlationId=XXX
+
+# Autenticazione BASIC
+#push.response.username=username
+#push.response.password=123456

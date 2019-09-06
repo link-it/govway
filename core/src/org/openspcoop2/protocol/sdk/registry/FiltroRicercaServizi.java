@@ -40,6 +40,7 @@ public class FiltroRicercaServizi {
 	private String nomeServizio;
 	private Integer versioneServizio;
 	private IDSoggetto soggettoErogatore;
+	private String portType;
 	private ProtocolProperties protocolPropertiesServizi;
 
 	public IDAccordo getIdAccordoServizioParteComune() {
@@ -71,6 +72,12 @@ public class FiltroRicercaServizi {
 	}
 	public void setSoggettoErogatore(IDSoggetto soggetto) {
 		this.soggettoErogatore = soggetto;
+	}
+	public String getPortType() {
+		return this.portType;
+	}
+	public void setPortType(String portType) {
+		this.portType = portType;
 	}
 	public ProtocolProperties getProtocolPropertiesServizi() {
 		return this.protocolPropertiesServizi;

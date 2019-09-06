@@ -53,6 +53,7 @@ import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
+import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -75,7 +76,6 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
@@ -98,7 +98,6 @@ import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
-import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
@@ -133,7 +132,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	httpstipo, httpspwd, httpsalgoritmo,
 	httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 	httpstipokey, httpspwdkey, httpspwdprivatekey,
-	httpsalgoritmokey;
+	httpsalgoritmokey,
+	httpsKeyAlias,
+	httpsTrustStoreCRLs;
 	private String httpshostverifyS, httpsstatoS;
 	private boolean httpshostverify, httpsstato;
 	private String nomeSoggettoErogatore = "";
@@ -182,7 +183,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	private IRegistryReader registryReader = null; 
 	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
-	private ConsoleInterfaceType consoleInterfaceType = null;
 	
 	private BinaryParameter wsdlimpler, wsdlimplfru;
 
@@ -234,8 +234,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 		try {
 			
 			ErogazioniHelper apsHelper = new ErogazioniHelper(request, pd, session);
-			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(apsHelper); 
-
+			
 			this.parametersPOST = null;
 
 			this.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
@@ -330,6 +329,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			this.httpspwdkey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 			this.httpspwdprivatekey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 			this.httpsalgoritmokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+			this.httpsKeyAlias = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
+			this.httpsTrustStoreCRLs = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			if(TipiConnettore.HTTPS.toString().equals(this.endpointtype)){
 				this.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				this.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -592,14 +593,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.fruizioneAutenticazione = null;
 						this.erogazioneAutorizzazione = null;
 						this.fruizioneAutorizzazione = null;
+						
+						this.providerSoggettoFruitore = null;
 					}
 					
 					this.url = null;
 					
 					this.provider = null;
 					this.tiposervizio = null;
-
-					this.providerSoggettoFruitore = null;
 					
 					// reset protocol properties
 					apsHelper.deleteBinaryParameters(this.wsdlimpler,this.wsdlimplfru);
@@ -616,9 +617,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				
 			}
 
-
 			// Lista port-type associati all'accordo di servizio
 			AccordoServizioParteComuneSintetico as = null;
+			boolean forceHttps = false;
+			boolean forceHttpsClient = false;
 			if (this.accordo != null && !"".equals(this.accordo)) {
 				as = apcCore.getAccordoServizioSintetico(Long.parseLong(this.accordo));
 			} else {
@@ -679,6 +681,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.servcorr=Costanti.CHECK_BOX_DISABLED;
 						}							
 					}
+				}
+				
+				if(generaPortaDelegata && apsHelper.isProfiloModIPA(this.tipoProtocollo)) {
+					forceHttps = apsHelper.forceHttpsProfiloModiPA();
+					forceHttpsClient = apsHelper.forceHttpsClientProfiloModiPA(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as), this.portType);
 				}
 
 			}
@@ -1032,10 +1039,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			// ServiziApplicativi
 			List<String> saFruitoriList = new ArrayList<String>();
 			saFruitoriList.add("-");
+			IDSoggetto idSoggettoFruitoreSelected = null;
 			if(gestioneFruitori && this.nomeSoggettoFruitore!=null && this.tipoSoggettoFruitore!=null){
 				try{
 					
-					IDSoggetto idSoggettoSelected = new IDSoggetto(this.tipoSoggettoFruitore, this.nomeSoggettoFruitore);
+					idSoggettoFruitoreSelected = new IDSoggetto(this.tipoSoggettoFruitore, this.nomeSoggettoFruitore);
 					
 					String auth = this.fruizioneAutenticazione;
 					if(auth==null || "".equals(auth)){
@@ -1043,11 +1051,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}
 					List<ServizioApplicativo> oldSilList = null;
 					if(apsCore.isVisioneOggettiGlobale(userLogin)){
-						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoSelected,null,
+						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitoreSelected,null,
 								org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(auth));
 					}
 					else {
-						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoSelected,userLogin,
+						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitoreSelected,userLogin,
 								org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(auth));
 					}
 					if(oldSilList!=null && oldSilList.size()>0){
@@ -1101,10 +1109,25 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
 			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
 						
-			// ID Accordo Null per default
-			IDServizio idAps = null;
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(this.consoleOperationType, this.consoleInterfaceType, 
-					this.registryReader, this.configRegistryReader, idAps );
+			// ID Accordo, i dati del servizio sono null, è presente solamente l'id dell'API
+			IDServizio idAps = new IDServizio();
+			if(as!=null) {
+				idAps.setUriAccordoServizioParteComune(idAccordoFactory.getUriFromAccordo(as));
+			}
+			IDFruizione idFruizione = null;
+			if(idSoggettoFruitoreSelected!=null) {
+				idFruizione = new IDFruizione();
+				idFruizione.setIdServizio(idAps);
+				idFruizione.setIdFruitore(idSoggettoFruitoreSelected);
+			}
+			if(gestioneFruitori) {
+				this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleOperationType, apsHelper, 
+						this.registryReader, this.configRegistryReader, idFruizione);
+			}
+			else {
+				this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(this.consoleOperationType, apsHelper, 
+						this.registryReader, this.configRegistryReader, idAps );
+			}
 			this.protocolProperties = apsHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 			
 			List<GenericProperties> gestorePolicyTokenList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
@@ -1409,8 +1432,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idAps);
+				if(gestioneFruitori) {
+					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idFruizione);
+				}
+				else {
+					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idAps);
+				}
 
 				dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio,  null, null, 
 						this.provider, null, null, 
@@ -1453,8 +1482,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.httpshostverify, this.httpspath, this.httpstipo, this.httpspwd,
 							this.httpsalgoritmo, this.httpsstato, this.httpskeystore,
 							this.httpspwdprivatekeytrust, this.httpspathkey,
-							this.httpstipokey, this.httpspwdkey, this.httpspwdprivatekey,
-							this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
+							this.httpstipokey, this.httpspwdkey, 
+							this.httpspwdprivatekey, this.httpsalgoritmokey,
+							this.httpsKeyAlias, this.httpsTrustStoreCRLs,
+							this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
 							null, null, null, null, null, null, true,
 							isConnettoreCustomUltimaImmagineSalvata, 
 							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
@@ -1463,7 +1494,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 							this.autenticazioneToken,this.token_policy,
-							listExtendedConnettore, forceEnableConnettore);
+							listExtendedConnettore, forceEnableConnettore,
+							this.tipoProtocollo, forceHttps, forceHttpsClient);
 					
 					// url suggerita
 					if(urlAPI!=null) {
@@ -1479,7 +1511,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 					
 				// aggiunta campi custom
-				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+				dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
 				
 				pd.setDati(dati);
 
@@ -1520,7 +1552,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.httpskeystore, this.httpspwdprivatekeytrust,
 					this.httpspathkey, this.httpstipokey,
 					this.httpspwdkey, this.httpspwdprivatekey,
-					this.httpsalgoritmokey, this.tipoconn,this.versione,this.validazioneDocumenti,null,this.autenticazioneHttp,
+					this.httpsalgoritmokey,
+					this.httpsKeyAlias, this.httpsTrustStoreCRLs,
+					this.tipoconn,this.versione,this.validazioneDocumenti,null,this.autenticazioneHttp,
 					this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 					this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
 					this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
@@ -1548,10 +1582,22 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 			}
 
+			// updateDynamic
+			if(isOk) {
+				if(gestioneFruitori) {
+					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idFruizione);
+				}
+				else {
+					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idAps);
+				}
+			}
+			
 			// Validazione base dei parametri custom 
 			if(isOk){
 				try{
-					apsHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+					apsHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -1564,8 +1610,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				try{
 					idAps = apsHelper.getIDServizioFromValues(this.tiposervizio, this.nomeservizio, this.provider, this.versione);
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, 
-							this.registryReader, this.configRegistryReader, idAps);
+					if(gestioneFruitori) {
+						this.consoleDynamicConfiguration.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties,  
+								this.registryReader, this.configRegistryReader, idFruizione);
+					}
+					else {
+						this.consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
+								this.registryReader, this.configRegistryReader, idAps);
+					}
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -1581,8 +1633,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
-						this.registryReader, this.configRegistryReader, idAps);
+				if(gestioneFruitori) {
+					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idFruizione);
+				}
+				else {
+					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idAps);
+				}
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
@@ -1626,7 +1684,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.httpskeystore, this.httpspwdprivatekeytrust,
 							this.httpspathkey, this.httpstipokey,
 							this.httpspwdkey, this.httpspwdprivatekey,
-							this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
+							this.httpsalgoritmokey, 
+							this.httpsKeyAlias, this.httpsTrustStoreCRLs,
+							this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
 							null, null, null, null, null, null, true,
 							isConnettoreCustomUltimaImmagineSalvata, 
 							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
@@ -1635,7 +1695,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 							this.autenticazioneToken,this.token_policy,
-							listExtendedConnettore, forceEnableConnettore);
+							listExtendedConnettore, forceEnableConnettore,
+							this.tipoProtocollo, forceHttps, forceHttpsClient);
 					
 					// url suggerita
 					if(urlAPI!=null) {
@@ -1652,7 +1713,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 
 				// aggiunta campi custom
-				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+				dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
 
 				pd.setDati(dati);
 
@@ -1759,6 +1820,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.httpspathkey, this.httpstipokey,
 						this.httpspwdkey, this.httpspwdprivatekey,
 						this.httpsalgoritmokey,
+						this.httpsKeyAlias, this.httpsTrustStoreCRLs,
 						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 						this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
 						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
@@ -1818,8 +1880,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					Vector<DataElement> dati = new Vector<DataElement>();
 
 					// update della configurazione 
-					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
-							this.registryReader, this.configRegistryReader, idAps);
+					if(gestioneFruitori) {
+						this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
+								this.registryReader, this.configRegistryReader, idFruizione);
+					}
+					else {
+						this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
+								this.registryReader, this.configRegistryReader, idAps);
+					}
 
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 					
@@ -1864,7 +1932,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								this.httpskeystore, this.httpspwdprivatekeytrust,
 								this.httpspathkey, this.httpstipokey,
 								this.httpspwdkey, this.httpspwdprivatekey,
-								this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
+								this.httpsalgoritmokey, 
+								this.httpsKeyAlias, this.httpsTrustStoreCRLs,
+								this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
 								null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
 								this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
@@ -1873,12 +1943,13 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 								this.autenticazioneToken,this.token_policy,
-								listExtendedConnettore, forceEnableConnettore);
+								listExtendedConnettore, forceEnableConnettore,
+								this.tipoProtocollo, forceHttps, forceHttpsClient);
 						
 					}
 
 					// aggiunta campi custom
-					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+					dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
 
 					pd.setDati(dati);
 
@@ -1908,8 +1979,24 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 			else {
 				if(generaPortaApplicativa){
+					
+					boolean forceDisableOptional = false;
+					if(apsHelper.isProfiloModIPA(this.tipoProtocollo)) {
+						forceDisableOptional = apsHelper.forceHttpsClientProfiloModiPA(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as), this.portType);
+					}
+					
 					autenticazione = this.erogazioneAutenticazione;
-					autenticazioneOpzionale = this.erogazioneAutenticazioneOpzionale;
+					if(forceDisableOptional) {
+						autenticazioneOpzionale = Costanti.CHECK_BOX_DISABLED;
+					}
+					else{
+						if(apsHelper.isProfiloModIPA(this.tipoProtocollo)) {
+							autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
+						}
+						else {
+							autenticazioneOpzionale = this.erogazioneAutenticazioneOpzionale;
+						}
+					}
 					autenticazionePrincipal = this.erogazioneAutenticazionePrincipal;
 					autenticazioneParametroList = this.erogazioneAutenticazioneParametroList;
 				}
@@ -1927,7 +2014,18 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 			else {
 				if(generaPortaApplicativa){
-					autorizzazione = this.erogazioneAutorizzazione;
+					if(apsHelper.isProfiloModIPA(this.tipoProtocollo)) {
+						boolean forceDisableOptional = apsHelper.forceHttpsClientProfiloModiPA(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as), this.portType);
+						if(!forceDisableOptional) {
+							autorizzazione = AutorizzazioneUtilities.STATO_DISABILITATO;
+						}
+						else {
+							autorizzazione = this.erogazioneAutorizzazione;
+						}
+					}
+					else {
+						autorizzazione = this.erogazioneAutorizzazione;
+					}
 					autorizzazioneAutenticati = this.erogazioneAutorizzazioneAutenticati;
 					autorizzazioneRuoli = this.erogazioneAutorizzazioneRuoli;
 					autorizzazioneRuoliTipologia = this.erogazioneAutorizzazioneRuoliTipologia;

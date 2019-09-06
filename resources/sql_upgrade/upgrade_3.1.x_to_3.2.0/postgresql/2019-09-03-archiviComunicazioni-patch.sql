@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/postgresql/archiviComunicazioni/2019-09-03-patch.sql

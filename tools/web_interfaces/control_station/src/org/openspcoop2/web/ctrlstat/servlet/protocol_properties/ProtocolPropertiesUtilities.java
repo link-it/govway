@@ -28,7 +28,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import org.openspcoop2.core.registry.ProtocolProperty;
-import org.openspcoop2.core.registry.constants.ProprietariProtocolProperty;
+import org.openspcoop2.core.mapping.ProprietariProtocolProperty;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemValueType;
@@ -68,9 +68,41 @@ public class ProtocolPropertiesUtilities {
 		return ConsoleInterfaceType.AVANZATA;
 	}
 
-	public static Vector<DataElement> itemToDataElement(Vector<DataElement> dati ,BaseConsoleItem item, Object defaultItemValue,
-			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
+	public static Vector<DataElement> itemToDataElement(Vector<DataElement> dati ,
+			ConsoleHelper consoleHelper,
+			BaseConsoleItem item, Object defaultItemValue,
+			ConsoleOperationType consoleOperationType, 
 			Properties binaryChangeProperties, ProtocolProperty protocolProperty, int size) throws Exception {
+		return _itemToDataElement(dati, consoleHelper,
+				item, defaultItemValue, 
+				consoleOperationType, 
+				binaryChangeProperties, 
+				protocolProperty!=null ? protocolProperty.getId() : null, 
+				protocolProperty!=null ? protocolProperty.getFile() : null, 
+				size,
+				protocolProperty!=null ? (protocolProperty.getByteFile()!=null) : false);
+	}
+	public static Vector<DataElement> itemToDataElement(Vector<DataElement> dati ,
+			ConsoleHelper consoleHelper,
+			BaseConsoleItem item, Object defaultItemValue,
+			ConsoleOperationType consoleOperationType, 
+			Properties binaryChangeProperties, org.openspcoop2.core.config.ProtocolProperty protocolProperty, int size) throws Exception {
+		return _itemToDataElement(dati, consoleHelper,
+				item, defaultItemValue, 
+				consoleOperationType, 
+				binaryChangeProperties, 
+				protocolProperty!=null ? protocolProperty.getId() : null, 
+				protocolProperty!=null ? protocolProperty.getFile() : null, 
+				size,
+				protocolProperty!=null ? (protocolProperty.getByteFile()!=null) : false);
+	}
+	private static Vector<DataElement> _itemToDataElement(Vector<DataElement> dati ,
+			ConsoleHelper consoleHelper,
+			BaseConsoleItem item, Object defaultItemValue,
+			ConsoleOperationType consoleOperationType, 
+			Properties binaryChangeProperties, 
+			Long protocolPropertyId, String protocolPropertyFile, int size,
+			boolean contentSaved) throws Exception {
 		if(item == null)
 			return dati;
 
@@ -85,13 +117,16 @@ public class ProtocolPropertiesUtilities {
 				dati = getText(dati,abItem, size, DataElementType.CRYPT);
 				break;
 			case FILE:
-				dati = getFile(dati,abItem, size, consoleOperationType,consoleInterfaceType,binaryChangeProperties, protocolProperty); 
+				dati = getFile(dati,consoleHelper, abItem, size, consoleOperationType,binaryChangeProperties, protocolPropertyId, protocolPropertyFile, contentSaved); 
 				break;
 			case HIDDEN:
 				dati = getHidden(dati,abItem, size);
 				break;
 			case SELECT:
 				dati = getSelect(dati,abItem, defaultItemValue, size);
+				break;
+			case MULTI_SELECT:
+				dati = getMultiSelect(dati,abItem, defaultItemValue, size);
 				break;
 			case TEXT:
 				dati = getText(dati,abItem, size, DataElementType.TEXT);
@@ -104,6 +139,13 @@ public class ProtocolPropertiesUtilities {
 				break;
 			case TEXT_EDIT:
 				dati = getText(dati,abItem, size, DataElementType.TEXT_EDIT);
+				break;
+			case TAGS:
+				dati = getText(dati,abItem, size, DataElementType.TEXT_EDIT);
+				dati.get(dati.size()-1).enableTags();
+				break;
+			case NUMBER:
+				dati = getText(dati,abItem, size, DataElementType.NUMBER);
 				break;
 			default:
 				throw new ProtocolException("Item con classe ["+abItem.getClass()+"] identificato come tipo AbstractConsoleItem ma con Type: ["+abItem.getType()+"] di tipo titolo o note");
@@ -120,6 +162,9 @@ public class ProtocolPropertiesUtilities {
 			case TITLE:
 				dati = getTitle(dati,item, size,DataElementType.TITLE);
 				break;
+			case HIDDEN:
+				dati = getHidden(dati,item, size);
+				break;
 			default:
 				throw new ProtocolException("Item con classe ["+item.getClass()+"] non identificato come tipo AbstractConsoleItem ma con Type: ["+item.getType()+"] non di tipo titolo o note");
 			}
@@ -129,7 +174,7 @@ public class ProtocolPropertiesUtilities {
 	}
 	
 	public static Vector<DataElement> itemToDataElementAsHidden(Vector<DataElement> dati ,BaseConsoleItem item, Object defaultItemValue,
-			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
+			ConsoleOperationType consoleOperationType, 
 			Properties binaryChangeProperties, ProtocolProperty protocolProperty, int size) throws Exception {
 		if(item == null)
 			return dati;
@@ -143,10 +188,13 @@ public class ProtocolPropertiesUtilities {
 			case FILE:
 			case HIDDEN:
 			case SELECT:
+			case MULTI_SELECT:
 			case TEXT:
 			case TEXT_AREA:
 			case TEXT_AREA_NO_EDIT:
 			case TEXT_EDIT:
+			case TAGS:
+			case NUMBER:
 				dati = getHidden(dati,abItem, size);
 				break;
 			default:
@@ -158,6 +206,7 @@ public class ProtocolPropertiesUtilities {
 			case NOTE:
 			case SUBTITLE:
 			case TITLE:
+			case HIDDEN:
 				break;
 			default:
 				throw new ProtocolException("Item con classe ["+item.getClass()+"] non identificato come tipo AbstractConsoleItem ma con Type: ["+item.getType()+"] non di tipo titolo o note");
@@ -187,6 +236,7 @@ public class ProtocolPropertiesUtilities {
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
 		de.setPostBack(item.isReloadOnChange()); 
+		de.setNote(item.getNote());
 		de.setSize(size);
 
 		ConsoleItemValueType consoleItemValueType = ProtocolPropertiesUtils.getConsoleItemValueType(item);
@@ -200,10 +250,17 @@ public class ProtocolPropertiesUtilities {
 		case NUMBER:
 			NumberConsoleItem numberItem = (NumberConsoleItem) item;
 			de.setValue(numberItem.getDefaultValue() != null ? numberItem.getDefaultValue() + "" : "");
+			if(DataElementType.NUMBER.equals(type)) {
+				de.setMinValue((int)numberItem.getMin());
+				de.setMaxValue((int)numberItem.getMax());
+			}
 			break;
 		case STRING:
 			StringConsoleItem stringItem = (StringConsoleItem) item;
 			de.setValue(stringItem.getDefaultValue() != null ? stringItem.getDefaultValue() : "");
+			if(stringItem.getRows()!=null) {
+				de.setRows(stringItem.getRows());
+			}
 			break;
 		case BINARY: // [TODO] da decidere 
 			de.setValue("Prova Binary");
@@ -217,14 +274,39 @@ public class ProtocolPropertiesUtilities {
 		return dati;
 	}
 
-	public static Vector<DataElement> getFile(Vector<DataElement> dati ,AbstractConsoleItem<?> item, int size, ConsoleOperationType consoleOperationType, 
-			ConsoleInterfaceType consoleInterfaceType, Properties binaryChangeProperties,ProtocolProperty protocolProperty) throws Exception{
+	public static Vector<DataElement> getFile(Vector<DataElement> dati ,
+			ConsoleHelper consoleHelper,
+			AbstractConsoleItem<?> item, int size, ConsoleOperationType consoleOperationType, 
+			Properties binaryChangeProperties,
+			Long protocolPropertyId, String protocolPropertyFile,
+			boolean contentSaved) throws Exception{
 		DataElement de = new DataElement();
 		DataElement de2 =null ;
 		List<DataElement> df = null;
 		de.setName(item.getId());
 
-		if(consoleOperationType.equals(ConsoleOperationType.ADD)){
+//		String nameRechange = ProtocolPropertiesCostanti.PARAMETER_FILENAME_RECHANGE_PREFIX + item.getId();
+//		String nameRechangeParamTmp = consoleHelper.getParameter(nameRechange);
+//		boolean isNameRechange = "true".equals(nameRechangeParamTmp);
+//		
+//		org.openspcoop2.protocol.sdk.properties.BinaryConsoleItem bci = null;
+//		String fileName = null;
+//		if(item!=null && item instanceof org.openspcoop2.protocol.sdk.properties.BinaryConsoleItem) {
+//			bci = (org.openspcoop2.protocol.sdk.properties.BinaryConsoleItem) item;
+//			fileName = bci.getFileName();
+//		}
+//		if(!consoleOperationType.equals(ConsoleOperationType.ADD) && fileName==null) {
+//			// aggiungo riferimento per dopo
+//			DataElement deChange = new DataElement();
+//			deChange.setName(nameRechange);
+//			deChange.setValue("true");
+//			deChange.setType(DataElementType.HIDDEN);
+//			dati.addElement(deChange);
+//		}
+		
+		boolean addDE = true;
+		
+		if(consoleOperationType.equals(ConsoleOperationType.ADD) || !contentSaved){
 			BinaryConsoleItem binaryItem = (BinaryConsoleItem) item;
 
 			BinaryParameter bp = new BinaryParameter();
@@ -238,8 +320,13 @@ public class ProtocolPropertiesUtilities {
 			df = bp.getFileNameDataElement();
 			de2 = bp.getFileIdDataElement();
 		} else {
+			
+//			if(fileName==null || isNameRechange) {
+//				addDE = false;
+//			}
+			
 			de.setType(DataElementType.LINK);
-			String idItem = protocolProperty != null ? protocolProperty.getId() + "" : ""; 
+			String idItem = protocolPropertyId != null ? protocolPropertyId + "" : ""; 
 			String idProprietario = binaryChangeProperties.getProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO);
 			String urlChange= binaryChangeProperties.getProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE);
 			String tipoProprietario = binaryChangeProperties.getProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO);
@@ -265,16 +352,18 @@ public class ProtocolPropertiesUtilities {
 			// CHANGE Label del link
 			de.setValue(item.getLabel());
 
-			if(protocolProperty != null){
+			if(protocolPropertyFile != null){
 				de2 = new DataElement();
 				de2.setName(ProtocolPropertiesCostanti.PARAMETER_FILENAME_PREFIX + item.getId());
-				de2.setValue(protocolProperty.getFile());
+				de2.setValue(protocolPropertyFile);
 				de2.setType(DataElementType.HIDDEN);
 
 			}
 		}
 
-		dati.addElement(de);
+		if(addDE) {
+			dati.addElement(de);
+		}
 		
 		if(df != null)
 			dati.addAll(df);
@@ -335,6 +424,7 @@ public class ProtocolPropertiesUtilities {
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
 		de.setPostBack(item.isReloadOnChange()); 
+		de.setNote(item.getNote());
 		de.setSize(size);
 
 		ConsoleItemValueType consoleItemValueType = ProtocolPropertiesUtils.getConsoleItemValueType(item);
@@ -373,6 +463,7 @@ public class ProtocolPropertiesUtilities {
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
 		de.setPostBack(item.isReloadOnChange()); 
+		de.setNote(item.getNote());
 		de.setSize(size);
 
 		ConsoleItemValueType consoleItemValueType = ProtocolPropertiesUtils.getConsoleItemValueType(item);
@@ -402,6 +493,17 @@ public class ProtocolPropertiesUtilities {
 
 		return dati;
 	}
+	
+	public static Vector<DataElement> getHidden(Vector<DataElement> dati ,BaseConsoleItem item, int size) throws Exception{
+		DataElement de = new DataElement();
+		de.setName(item.getId());
+		de.setType(DataElementType.HIDDEN);
+		de.setLabel(item.getLabel());
+		de.setSize(size);
+		dati.addElement(de);
+
+		return dati;
+	}
 
 	public static Vector<DataElement> getSelect(Vector<DataElement> dati ,AbstractConsoleItem<?> item, Object defaultItemValue, int size) throws Exception{
 		DataElement de = new DataElement();
@@ -410,6 +512,7 @@ public class ProtocolPropertiesUtilities {
 		de.setRequired(item.isRequired());
 		de.setLabel(item.getLabel());
 		de.setPostBack(item.isReloadOnChange()); 
+		de.setNote(item.getNote());
 		de.setSize(size);
 
 		ConsoleItemValueType consoleItemValueType = ProtocolPropertiesUtils.getConsoleItemValueType(item);
@@ -464,6 +567,56 @@ public class ProtocolPropertiesUtilities {
 
 		return dati;
 	}
+	
+	public static Vector<DataElement> getMultiSelect(Vector<DataElement> dati ,AbstractConsoleItem<?> item, Object defaultItemValue, int size) throws Exception{
+		DataElement de = new DataElement();
+		de.setName(item.getId());
+		de.setType(DataElementType.MULTI_SELECT);
+		de.setRequired(item.isRequired());
+		de.setLabel(item.getLabel());
+		de.setPostBack(item.isReloadOnChange());
+		de.setNote(item.getNote());
+		de.setSize(size);
+
+		ConsoleItemValueType consoleItemValueType = ProtocolPropertiesUtils.getConsoleItemValueType(item);
+
+		List<String> values = new ArrayList<String>();
+		List<String> labels = new ArrayList<String>();
+
+		switch(consoleItemValueType){
+		case STRING:
+			StringConsoleItem stringItem = (StringConsoleItem) item;
+			String selectedStringValue = getSelectedValue(stringItem, defaultItemValue);
+			if(selectedStringValue!=null) {
+				if(selectedStringValue.contains(",")) {
+					de.setSelezionati(selectedStringValue.split(","));
+				}
+				else {
+					de.setSelezionati(new String[] {selectedStringValue});
+				}
+			}
+			if(stringItem.getRows()!=null) {
+				de.setRows(stringItem.getRows());
+			}
+			
+			Map<String, String> stringMapLabelValues = stringItem.getMapLabelValues();
+			for (String key : stringMapLabelValues.keySet()) {
+				labels.add(key);
+				values.add(stringMapLabelValues.get(key)+ "");
+			}
+			break;
+		
+		default:
+			throw new ProtocolException("Item con consoleItemType ["+consoleItemValueType+"] non puo' essere visualizzato come una Multi-Select List");
+		}
+
+		de.setValues(values);
+		de.setLabels(labels); 
+
+		dati.addElement(de);
+
+		return dati;
+	}
 
 	public static String getLabelTipoProprietario(ProprietariProtocolProperty tipoProprietario, String tipoAccordo) {
 		if(tipoProprietario != null){
@@ -486,6 +639,8 @@ public class ProtocolPropertiesUtilities {
 				return ProtocolPropertiesCostanti.LABEL_RESOURCE;
 			case SOGGETTO:
 				return ProtocolPropertiesCostanti.LABEL_SOGGETTO;
+			case SERVIZIO_APPLICATIVO:
+				return ProtocolPropertiesCostanti.LABEL_SERVIZIO_APPLICATIVO;
 			}
 		}
 		return null;

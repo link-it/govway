@@ -25,6 +25,9 @@ package org.openspcoop2.utils.security;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
+import java.security.cert.CertStore;
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateNotYetValidException;
 import java.util.Properties;
 
 import javax.crypto.SecretKey;
@@ -54,6 +57,7 @@ import org.apache.cxf.rs.security.jose.jws.JwsSignatureVerifier;
 import org.apache.cxf.rs.security.jose.jws.JwsUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.json.JSONUtils;
@@ -171,7 +175,7 @@ public class JsonUtils {
 		return new UtilsException(bf.toString(),t);
 	}
 	
-	public static File normalizeProperties(Properties props) throws Exception {
+	public static byte[] readKeystoreFromURI(Properties props) throws Exception {
 		
 		String propertyKeystoreName = JoseConstants.RSSEC_KEY_STORE_FILE;
 		String path = props.getProperty(propertyKeystoreName);
@@ -212,6 +216,14 @@ public class JsonUtils {
 			File f = new File(new URI(path));
 			content = FileSystemUtilities.readBytesFromFile(f);
 		}
+		
+		return content;
+	}
+	
+	public static File normalizeProperties(Properties props) throws Exception {
+		
+		String propertyKeystoreName = JoseConstants.RSSEC_KEY_STORE_FILE;
+		byte[] content = readKeystoreFromURI(props);
 		
 		File fTmp = null;
 		if(content!=null) {
@@ -519,4 +531,31 @@ public class JsonUtils {
 
         return JweUtils.getDirectKeyJweDecryption(ctDecryptionKey, contentAlgo);
 	}
+	
+	public static void validate(CertificateInfo certificatoInfo,
+			KeyStore trustStoreCertificatiX509, CertStore crlX509, String headerName,
+			boolean verifaCA) throws Exception {
+		if(trustStoreCertificatiX509!=null) {
+			if(verifaCA && certificatoInfo.isVerified(trustStoreCertificatiX509)==false) {
+				throw new Exception("Certificato presente nell'header '"+headerName+"' non è verificabile rispetto alle CA conosciute");
+			}
+			try {
+				certificatoInfo.checkValid();
+			}catch(CertificateExpiredException e) {
+				throw new Exception("Certificato presente nell'header '"+headerName+"' scaduto: "+e.getMessage(),e);
+			}catch(CertificateNotYetValidException e) {
+				throw new Exception("Certificato presente nell'header '"+headerName+"' non ancora valido: "+e.getMessage(),e);
+			}catch(Exception e) {
+				throw new Exception("Certificato presente nell'header '"+headerName+"' non valido: "+e.getMessage(),e);
+			}
+			if(crlX509!=null) {
+				try {
+					certificatoInfo.checkValid(crlX509, trustStoreCertificatiX509);
+				}catch(Exception e) {
+					throw new Exception("Certificato presente nell'header '"+headerName+"' non valido: "+e.getMessage(),e);
+				}
+			}
+		}
+	}
+	
  }

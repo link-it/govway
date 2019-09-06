@@ -46,6 +46,7 @@ import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 
 /**
  * ServiziApplicativiUtilities
@@ -83,7 +84,7 @@ public class ServiziApplicativiUtilities {
 	
 	public static ServiziApplicativiGeneralInfo getGeneralInfo(boolean useIdSogg, String provider, List<String> listaTipiProtocollo,
 			ServiziApplicativiCore saCore, ServiziApplicativiHelper saHelper, String superUser, boolean singlePdD,
-			String soggettoMultitenantSelezionato) throws Exception {
+			String soggettoMultitenantSelezionato, String dominio) throws Exception {
 		
 		SoggettiCore soggettiCore = new SoggettiCore(saCore);
 		PddCore pddCore = new PddCore(saCore);
@@ -93,12 +94,14 @@ public class ServiziApplicativiUtilities {
 		
 		String tipoProtocollo = null;
 		String tipoENomeSoggetto = "";
+		IDSoggetto idSoggetto = null;
 		if(useIdSogg) {
 			org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(Long.parseLong(provider)); 
 			if(tipoProtocollo == null){
 				tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
 			}
 			tipoENomeSoggetto = saHelper.getLabelNomeSoggetto(tipoProtocollo, soggetto.getTipo() , soggetto.getNome());
+			idSoggetto = new IDSoggetto(soggetto.getTipo() , soggetto.getNome());
 			
 			soggettiList = new String[1];
 			soggettiList[0] = soggetto.getId().toString();
@@ -111,6 +114,11 @@ public class ServiziApplicativiUtilities {
 				tipoProtocollo = saCore.getProtocolloDefault(saHelper.getSession(), listaTipiProtocollo);
 			}
 		
+			boolean filtraSoggettiEsterni = false;
+			if(saHelper.isProfiloModIPA(tipoProtocollo)) {
+				filtraSoggettiEsterni = SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio);
+			}
+				
 			List<String> tipiSoggettiCompatibiliGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(tipoProtocollo);
 			long providerTmp = -1;
 			
@@ -139,8 +147,15 @@ public class ServiziApplicativiUtilities {
 					List<Soggetto> listFiltrata = new ArrayList<Soggetto>();
 					for (Soggetto soggetto : list) {
 						boolean pddEsterna = pddCore.isPddEsterna(soggetto.getPortaDominio());
-						if(!pddEsterna){
-							listFiltrata.add(soggetto);
+						if(filtraSoggettiEsterni) {
+							if(pddEsterna){
+								listFiltrata.add(soggetto);
+							}
+						}
+						else {
+							if(!pddEsterna){
+								listFiltrata.add(soggetto);
+							}
 						}
 					}
 					list = listFiltrata;
@@ -187,8 +202,10 @@ public class ServiziApplicativiUtilities {
 				for (org.openspcoop2.core.config.Soggetto soggetto : list) {
 					if(tipiSoggettiCompatibiliGestitiProtocollo.contains(soggetto.getTipo())){
 						listFiltrataCompatibileProtocollo.add(soggetto);
-						if(providerTmp < 0)
+						if(providerTmp < 0) {
 							providerTmp = soggetto.getId();
+							idSoggetto = new IDSoggetto(soggetto.getTipo() , soggetto.getNome());
+						}
 					}
 				}
 				
@@ -215,6 +232,7 @@ public class ServiziApplicativiUtilities {
 		saGeneralInfo.setTipoENomeSoggetto(tipoENomeSoggetto);
 		saGeneralInfo.setTipoProtocollo(tipoProtocollo);
 		saGeneralInfo.setProvider(provider);
+		saGeneralInfo.setIdSoggetto(idSoggetto);
 		return saGeneralInfo;
 	}
 	

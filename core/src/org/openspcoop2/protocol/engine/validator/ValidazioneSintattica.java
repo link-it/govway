@@ -28,6 +28,7 @@ import javax.xml.soap.SOAPHeader;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
@@ -75,6 +76,7 @@ public class ValidazioneSintattica {
 	protected java.util.List<Eccezione> erroriValidazione;
 	/** Errori di processamento riscontrati sulla busta */
 	protected java.util.List<Eccezione> erroriProcessamento;
+	private String erroreProcessamento_internalMessage;	
 	/** Errors riscontrati sulla lista eccezioni */
 	protected java.util.List<Eccezione> errorsTrovatiSullaListaEccezioni;
 	/** Busta */
@@ -82,6 +84,7 @@ public class ValidazioneSintattica {
 	protected Boolean isRichiesta;
 	/** Eventuale errore avvenuto durante il processo di validazione */
 	protected ErroreCooperazione errore;
+	protected IntegrationError errore_integrationError;
 	/** Indicazione se leggere gli attributi qualificati */
 	protected boolean readQualifiedAttribute;
 
@@ -190,7 +193,10 @@ public class ValidazioneSintattica {
 	public java.util.List<Eccezione> getEccezioniProcessamento(){
 		return this.erroriProcessamento;
 	}
-
+	public String getErroreProcessamento_internalMessage() {
+		return this.erroreProcessamento_internalMessage;
+	}
+	
 	/**
 	 * Ritorna un List contenente eventuali eccezioni riscontrate nella busta durante il processo di validazione.   
 	 *
@@ -211,6 +217,10 @@ public class ValidazioneSintattica {
 	public ErroreCooperazione getErrore(){
 		return this.errore;
 	}
+	public IntegrationError getErrore_integrationError() {
+		return this.errore_integrationError;
+	}
+
 
 	/**
 	 * Metodo che effettua una validazione sintattica di una busta. 
@@ -250,10 +260,12 @@ public class ValidazioneSintattica {
 					this.bustaErroreHeaderIntestazione = result.getBustaErrore();
 				
 				this.errore = result.getErrore();
+				this.errore_integrationError = result.getErrore_integrationError();
 				
 				this.erroriProcessamento = result.getErroriProcessamento();
 				if(this.erroriProcessamento == null) 
 					this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
+				this.erroreProcessamento_internalMessage = result.getErroreProcessamento_internalMessage();
 				
 				this.erroriValidazione = result.getErroriValidazione();
 				if(this.erroriValidazione == null) 
@@ -307,9 +319,12 @@ public class ValidazioneSintattica {
 			this.erroriProcessamento = result.getErroriProcessamento();
 			if(this.erroriProcessamento == null) 
 				this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
+			this.erroreProcessamento_internalMessage = result.getErroreProcessamento_internalMessage();
+			
 			this.erroriValidazione = result.getErroriValidazione();
 			if(this.erroriValidazione == null) 
 				this.erroriValidazione = new java.util.ArrayList<Eccezione>();
+			
 			this.errorsTrovatiSullaListaEccezioni = result.getErrorsTrovatiSullaListaEccezioni();
 			if(this.errorsTrovatiSullaListaEccezioni == null) 
 				this.errorsTrovatiSullaListaEccezioni = new java.util.ArrayList<Eccezione>();
@@ -339,9 +354,12 @@ public class ValidazioneSintattica {
 			this.erroriProcessamento = result.getErroriProcessamento();
 			if(this.erroriProcessamento == null) 
 				this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
+			this.erroreProcessamento_internalMessage = result.getErroreProcessamento_internalMessage();
+			
 			this.erroriValidazione = result.getErroriValidazione();
 			if(this.erroriValidazione == null) 
 				this.erroriValidazione = new java.util.ArrayList<Eccezione>();
+			
 			this.errorsTrovatiSullaListaEccezioni = result.getErrorsTrovatiSullaListaEccezioni();
 			if(this.errorsTrovatiSullaListaEccezioni == null) 
 				this.errorsTrovatiSullaListaEccezioni = new java.util.ArrayList<Eccezione>();

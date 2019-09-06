@@ -45,6 +45,12 @@ public class ConnettoreConfigurazioneHttpsClient  {
   **/
   private String keyPassword = null;
   
+  @Schema(example = "pwd", description = "alias della chiave privata")
+ /**
+   * alias della chiave privata  
+  **/
+  private String keyAlias = null;
+  
   @Schema(example = "SunX509", description = "")
   private String algoritmo = "SunX509";
  /**
@@ -128,6 +134,25 @@ public class ConnettoreConfigurazioneHttpsClient  {
   }
 
  /**
+   * alias della chiave privata
+   * @return keyAlias
+  **/
+  @JsonProperty("key_alias")
+  @Valid
+ @Size(max=255)  public String getKeyAlias() {
+    return this.keyAlias;
+  }
+
+  public void setKeyAlias(String keyAlias) {
+    this.keyAlias = keyAlias;
+  }
+
+  public ConnettoreConfigurazioneHttpsClient keyAlias(String keyAlias) {
+    this.keyAlias = keyAlias;
+    return this;
+  }
+
+ /**
    * Get algoritmo
    * @return algoritmo
   **/
@@ -156,6 +181,7 @@ public class ConnettoreConfigurazioneHttpsClient  {
     sb.append("    keystoreTipo: ").append(ConnettoreConfigurazioneHttpsClient.toIndentedString(this.keystoreTipo)).append("\n");
     sb.append("    keystorePassword: ").append(ConnettoreConfigurazioneHttpsClient.toIndentedString(this.keystorePassword)).append("\n");
     sb.append("    keyPassword: ").append(ConnettoreConfigurazioneHttpsClient.toIndentedString(this.keyPassword)).append("\n");
+    sb.append("    keyAlias: ").append(ConnettoreConfigurazioneHttpsClient.toIndentedString(this.keyAlias)).append("\n");
     sb.append("    algoritmo: ").append(ConnettoreConfigurazioneHttpsClient.toIndentedString(this.algoritmo)).append("\n");
     sb.append("}");
     return sb.toString();

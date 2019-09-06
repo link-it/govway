@@ -38,10 +38,12 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
+import org.openspcoop2.protocol.sdk.constants.FaseImbustamento;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.spcoop.SPCoopBustaRawContent;
+import org.openspcoop2.utils.Utilities;
 
 /**
  * Classe che implementa, in base al protocollo SPCoop, l'interfaccia {@link org.openspcoop2.protocol.sdk.builder.IBustaBuilder} 
@@ -84,7 +86,7 @@ public class SPCoopBustaBuilder extends BasicStateComponentFactory implements or
 				return null;
 			}
 			
-			SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd_HH:mm"); // SimpleDateFormat non e' thread-safe
+			SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMinute();
 			String tmp = split[3]+"_"+split[4];
 			Date d = dateformat.parse(tmp);
 			return d;
@@ -95,10 +97,18 @@ public class SPCoopBustaBuilder extends BasicStateComponentFactory implements or
 	}
 	
 	@Override
-	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta, Busta bustaRichiesta,
 			RuoloMessaggio ruoloMessaggio,
-			ProprietaManifestAttachments proprietaManifestAttachments)
+			ProprietaManifestAttachments proprietaManifestAttachments,
+			FaseImbustamento faseImbustamento)
 			throws ProtocolException {
+		
+		if(FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO.equals(faseImbustamento)) {
+			ProtocolMessage protocolMessage = new ProtocolMessage();
+			protocolMessage.setPhaseUnsupported(true);
+			return protocolMessage;
+		}
+		
 		SOAPHeaderElement element =  this.spcoopImbustamento.imbustamento(msg, busta, 
 				ruoloMessaggio, 
 				proprietaManifestAttachments);
@@ -110,7 +120,15 @@ public class SPCoopBustaBuilder extends BasicStateComponentFactory implements or
 
 	@Override
 	public ProtocolMessage addTrasmissione(OpenSPCoop2Message message,
-			Trasmissione trasmissione) throws ProtocolException {
+			Trasmissione trasmissione,
+			FaseImbustamento faseImbustamento) throws ProtocolException {
+		
+		if(FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO.equals(faseImbustamento)) {
+			ProtocolMessage protocolMessage = new ProtocolMessage();
+			protocolMessage.setPhaseUnsupported(true);
+			return protocolMessage;
+		}
+		
 		SOAPHeaderElement element =  this.spcoopImbustamento.addTrasmissione(message, trasmissione);
 		ProtocolMessage protocolMessage = new ProtocolMessage();
 		protocolMessage.setBustaRawContent(new SPCoopBustaRawContent(element));
@@ -136,6 +154,7 @@ public class SPCoopBustaBuilder extends BasicStateComponentFactory implements or
 			protocolMessage.setMessage(msg);
 		}
 		
+		protocolMessage.setUseBustaRawContentReadByValidation(true);
 		return protocolMessage;
 	}
 

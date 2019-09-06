@@ -145,9 +145,15 @@
             
             <item type="checkbox" name="joseUseHeaders.x5c" label="X.509 Certificate (x5c)" defaultSelected="false" reloadOnChange="true">
 				<property name="joseUseHeaders.x5c"/>
-			</item>
+			</item>		
             <item type="checkbox" name="joseUseHeaders.x5u" label="X.509 URL (x5u)" defaultSelected="false" reloadOnChange="true">
 				<property name="joseUseHeaders.x5u"/>
+			</item>
+			<item type="checkbox" name="joseUseHeaders.x5t" label="X.509 SHA-1 (x5t)" defaultSelected="false" reloadOnChange="true">
+				<property name="joseUseHeaders.x5t"/>
+			</item>
+			<item type="checkbox" name="joseUseHeaders.x5t256" label="X.509 SHA-256 (x5t#256)" defaultSelected="false" reloadOnChange="true">
+				<property name="joseUseHeaders.x5t256"/>
 			</item>
 			<item type="checkbox" name="joseUseHeaders.jwk" label="JSON Web Key (jwk)" defaultSelected="false" reloadOnChange="true">
 				<property name="joseUseHeaders.jwk"/>
@@ -186,7 +192,19 @@
 			<item type="text" name="joseUseHeaders.ssl.password" label="Password" required="false">
 			    <property name="rs.security.keystore.password.ssl" />
 			</item>
-            
+
+			<item type="checkbox" name="joseUseHeaders.ssl.enableRevocation" label="CRL" reloadOnChange="true" defaultSelected="false">
+				<property name="joseUseHeaders.ssl.enableRevocation" />
+			</item>	
+			<item type="textarea" name="joseUseHeaders.ssl.crlFiles" label="CRL File(s)" required="true" note="Elencare più file separandoli con la ','">
+				<conditions>
+					<condition>
+						<selected name="joseUseHeaders.ssl.enableRevocation"/>
+					</condition>
+				</conditions>
+			      	<property name="rs.security.keystore.ssl.crl" />
+			</item>            
+
         </subsection>
         
         <subsection label="Certificati JWK (jwk/jku) - KeyStore">
@@ -223,6 +241,8 @@
                     <condition and="false">
                             <selected name="joseUseHeaders.x5c" />
                             <selected name="joseUseHeaders.x5u" />
+                            <selected name="joseUseHeaders.x5t" />
+                            <selected name="joseUseHeaders.x5t256" />
                     </condition>
             </conditions>
             <item type="select" name="joseUseHeaders.keystore.type" label="Tipo" default="jks" reloadOnChange="true">
@@ -462,6 +482,17 @@
 			    <property name="joseUseHeaders.truststore.password" />
 			</item>
             
+			<item type="checkbox" name="joseUseHeaders.truststore.crl.enableRevocation" label="CRL" reloadOnChange="true" defaultSelected="false">
+				<property name="joseUseHeaders.truststore.crl.enableRevocation" />
+			</item>	
+			<item type="textarea" name="joseUseHeaders.truststore.crl" label="CRL File(s)" required="true" note="Elencare più file separandoli con la ','">
+				<conditions>
+					<condition>
+						<selected name="joseUseHeaders.truststore.crl.enableRevocation"/>
+					</condition>
+				</conditions>
+			      	<property name="joseUseHeaders.truststore.crl" />
+			</item>
         </subsection>
 
 	</section>

@@ -309,6 +309,8 @@ public class CostantiPdD {
     public static final String JMX_TOKEN = "GestioneToken";
     /** MBean per il caching delle risposte */
     public static final String JMX_RESPONSE_CACHING = "ResponseCaching";
+    /** MBean per il caching dei keystore */
+    public static final String JMX_KEYSTORE_CACHING = "Keystore";
     /** MBean per il repository dei messaggi */
     public static final String JMX_REPOSITORY_MESSAGGI = "RepositoryMessaggi";
     /** MBean per lo stato dei servizi PdD */

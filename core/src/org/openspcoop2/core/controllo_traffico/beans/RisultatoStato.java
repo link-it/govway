@@ -26,6 +26,8 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.openspcoop2.utils.Utilities;
+
 /**
  * RisultatoAllarme 
  *
@@ -55,8 +57,6 @@ public class RisultatoStato implements Serializable {
 		this.dateCheck = dateCheck;
 	}
 	
-	private static final String format = "yyyy-MM-dd_HH:mm:ss.SSS";
-	
 	@Override
 	public String toString(){
 		
@@ -70,7 +70,7 @@ public class RisultatoStato implements Serializable {
 		
 		bf.append("\n");
 		
-		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+		SimpleDateFormat dateFormat = Utilities.getSimpleDateFormatMs();
 		bf.append("UltimoAggiornamento: ");
 		if(this.dateCheck!=null)
 			bf.append(dateFormat.format(this.dateCheck));

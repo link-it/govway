@@ -162,6 +162,7 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION = "httpspath";
 	public final static String PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE = "httpstipo";
 	public final static String PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD = "httpspwd";
+	public final static String PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL = "httpscrl";
 	public final static String PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM = "httpsalgoritmo";
 	public final static String PARAMETRO_CONNETTORE_HTTPS_STATO = "httpsstato";
 	public final static String PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE = "httpskeystore";
@@ -170,6 +171,7 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE = "httpstipokey";
 	public final static String PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD = "httpspwdkey";
 	public final static String PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE = "httpspwdprivatekey";
+	public final static String PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE = "httpsaliasprivatekey";
 	public final static String PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM = "httpsalgoritmokey";
 	
 	public final static String PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME = "requestOutputFileName";
@@ -267,6 +269,9 @@ public class ConnettoriCostanti {
 	public final static int LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION_SIZE = LABEL_PARAMETRO_CONNETTORE_TEXT_AREA_SIZE;
 	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE = "Tipo";
 	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD ="Password";
+	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL = "CRL File(s)";
+	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL_NOTE = "Elencare più file separandoli con la ','";
+	public final static int LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL_SIZE = 2;
 	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM = "Algoritmo";
 	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_STATO = "Abilitato";
 	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE ="Dati Accesso al KeyStore";
@@ -276,6 +281,7 @@ public class ConnettoriCostanti {
 	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE = "Tipo";
 	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD = "Password";
 	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE = "Password Chiave Privata";
+	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE = "Alias Chiave Privata";
 	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM = "Algoritmo";
 	
 	public final static String LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME = "File";
@@ -347,7 +353,9 @@ public class ConnettoriCostanti {
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_SSL_TYPE = LABEL_PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE;
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_HOSTNAME_VERIFIER = LABEL_PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY;
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE = "Auth Server - TrustStore";
+	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLs = "Auth Server - CRLs";
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE = "Auth Client - KeyStore";
+	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEY_ALIAS = "Auth Client - Key Alias";
 	
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY = "Proxy";
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_HOSTNAME = LABEL_PARAMETRO_CONNETTORE_PROXY_HOSTNAME;

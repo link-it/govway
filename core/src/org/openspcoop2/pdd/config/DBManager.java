@@ -39,6 +39,7 @@ import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 //import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
@@ -74,8 +75,6 @@ public class DBManager implements IMonitoraggioRisorsa {
 	/** Stato di inizializzazione del manager */
 	private static boolean initialized = false;
 
-	private static final String DATE_FORMAT = "yyyy-MM-dd_HH:mm:ss.SSS";
-	
 	public static String[] getStatoRisorse() throws Exception{	
 		return getStatoRisorse(DBManager.risorseInGestione);
 	}
@@ -94,7 +93,7 @@ public class DBManager implements IMonitoraggioRisorsa {
 			if(rr.getIdTransazione()!=null){
 				r[i] = r[i] +"."+rr.getIdTransazione();
 			}
-			SimpleDateFormat dateformat = new SimpleDateFormat (DATE_FORMAT); // SimpleDateFormat non e' thread-safe
+			SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 			r[i] = r[i] +" ("+dateformat.format(rr.getDate())+")";
 		}
 		return r;

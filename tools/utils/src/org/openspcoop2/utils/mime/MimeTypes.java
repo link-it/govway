@@ -110,7 +110,7 @@ public class MimeTypes {
 		if(ext==null){
 			ext = "bin";
 		}
-		return this.getMimeType(file);
+		return this.getMimeType(ext);
 	}
 	public String getMimeType(String ext){
 		return this.mapExtToMime.get(ext.trim().toLowerCase());

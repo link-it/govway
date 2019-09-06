@@ -23,15 +23,23 @@
 package org.openspcoop2.utils.certificate;
 
 import java.io.Serializable;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
+import java.security.cert.CertPathValidator;
+import java.security.cert.CertPathValidatorException;
+import java.security.cert.CertStore;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.CertificateParsingException;
+import java.security.cert.PKIXParameters;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -204,6 +212,25 @@ public class CertificateInfo implements Serializable {
 	}
 	public void checkValid() throws CertificateExpiredException, CertificateNotYetValidException {
 		this.certificate.checkValidity(DateManager.getDate());
+	}
+	
+	public boolean isValid(CertStore crlCertstore, KeyStore trustStore) {
+		try {
+			this.checkValid(crlCertstore, trustStore);
+			return true;
+		}catch(Exception e) {
+			return false;
+		}
+	}
+	public void checkValid(CertStore crlCertstore, KeyStore trustStore) throws CertPathValidatorException, InvalidAlgorithmParameterException, CertificateException, KeyStoreException, SecurityException, NoSuchAlgorithmException {
+		PKIXParameters pkixParameters = new PKIXParameters(trustStore.getKeystore());
+		pkixParameters.setDate(DateManager.getDate()); // per validare i certificati scaduti
+		pkixParameters.addCertStore(crlCertstore);
+		pkixParameters.setRevocationEnabled(true);
+		CertPathValidator certPathValidator = CertPathValidator.getInstance(CertPathValidator.getDefaultType());
+		List<java.security.cert.Certificate> lCertificate = new ArrayList<java.security.cert.Certificate>();
+		lCertificate.add(this.certificate);
+		certPathValidator.validate(CertificateFactory.getInstance("X.509").generateCertPath(lCertificate), pkixParameters);
 	}
 	
 	public boolean isVerified(KeyStore trustStore) {

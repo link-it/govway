@@ -838,6 +838,73 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="keystore-statocache" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="keystore_statocache"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se i dati relativi ai keystore vengono mantenuti in una cache (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                             
+                                <linkit:sql-column-comment><![CDATA[Cache per la gestione dei keystore]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="keystore-dimensionecache" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="keystore_dimensionecache"/>
+                                <linkit:sql-ddl-column-comment>Numero massimo di elementi che risiedono nella cache dei dati di gestione dei keystore</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="keystore-algoritmocache" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="keystore_algoritmocache"/>
+                                <linkit:sql-ddl-column-comment>Algoritmo di svecchiamento degli elementi che risiedono nella cache di gestione dei keystore (LRU/MRU)</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="keystore-idlecache" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="keystore_idlecache"/>
+                                <linkit:sql-ddl-column-comment>Massimo tempo di inutilizzo (in minuti) degli elementi che risiedono nella cache di gestione dei keystore</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="keystore-lifecache" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="keystore_lifecache"/>
+                                <linkit:sql-ddl-column-comment>Tempo di vita (in minuti) degli elementi che risiedono nella cache di gestione dei keystore</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="keystore-crl-lifecache" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="keystore_crl_lifecache"/>
+                                <linkit:sql-ddl-column-comment>Tempo di vita (in minuti) degli elementi che risiedono nella cache di gestione dei keystore, in particolare per le CRL</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>        
                 <xsd:element name="mod_risposta" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
@@ -1300,6 +1367,50 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="url_pa"/>
                                 <linkit:sql-ddl-column-comment>URL di invocazione del servizio PA</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="urlInvocazioneServizioRestPD" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="url_pd_rest"/>
+                                <linkit:sql-ddl-column-comment>URL di invocazione del servizio PD con service binding REST</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="urlInvocazioneServizioRestPA" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="url_pa_rest"/>
+                                <linkit:sql-ddl-column-comment>URL di invocazione del servizio PA con service binding REST</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="urlInvocazioneServizioSoapPD" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="url_pd_soap"/>
+                                <linkit:sql-ddl-column-comment>URL di invocazione del servizio PD con service binding SOAP</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="urlInvocazioneServizioSoapPA" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="url_pa_soap"/>
+                                <linkit:sql-ddl-column-comment>URL di invocazione del servizio PA con service binding SOAP</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

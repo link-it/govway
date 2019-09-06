@@ -456,7 +456,7 @@
 					<h:outputText id="idDatiIdProtocollo" value="Filtro Identificativo Messaggio" styleClass="subtitle"/>
 				</div>
 				
-				<link:prop label="Tipo Messaggio" rendered="#{sf_bean.periodo != 'Live'}" >
+				<link:prop label="Tipo" rendered="#{sf_bean.periodo != 'Live'}" >
 					<rich:comboBox id="tipoIdMessaggioCombo" value="#{sf_bean.tipoIdMessaggio}"
 						defaultLabel="Seleziona Tipo" directInputSuggestions="true"
 						width="416" converter="selectItemConverter" enableManualInput="false">

@@ -22,6 +22,9 @@
 
 package org.openspcoop2.utils.transport.http;
 
+import java.security.KeyStore;
+import java.security.cert.CertStore;
+
 /**
  * Classe che contiene la risposta http
  *
@@ -43,9 +46,13 @@ public class HttpRequest extends AbstractHttp {
 	
 	private Boolean followRedirects;
 	
-	private String trustStore;
+	private KeyStore trustStore;
+	private String trustStorePath;
 	private String trustStorePassword;
 	private String trustStoreType;
+	
+	private CertStore crlStore;
+	private String crlPath;
 	
 	public Boolean getFollowRedirects() {
 		return this.followRedirects;
@@ -103,12 +110,12 @@ public class HttpRequest extends AbstractHttp {
 		this.method = method;
 	}
 	
-	public String getTrustStore() {
-		return this.trustStore;
+	public String getTrustStorePath() {
+		return this.trustStorePath;
 	}
 
-	public void setTrustStore(String trustStore) {
-		this.trustStore = trustStore;
+	public void setTrustStorePath(String trustStorePath) {
+		this.trustStorePath = trustStorePath;
 	}
 
 	public String getTrustStorePassword() {
@@ -126,4 +133,29 @@ public class HttpRequest extends AbstractHttp {
 	public void setTrustStoreType(String trustStoreType) {
 		this.trustStoreType = trustStoreType;
 	}
+	
+	public KeyStore getTrustStore() {
+		return this.trustStore;
+	}
+
+	public void setTrustStore(KeyStore trustStore) {
+		this.trustStore = trustStore;
+	}
+	
+	public CertStore getCrlStore() {
+		return this.crlStore;
+	}
+
+	public void setCrlStore(CertStore crlStore) {
+		this.crlStore = crlStore;
+	}
+
+	public String getCrlPath() {
+		return this.crlPath;
+	}
+
+	public void setCrlPath(String crlPath) {
+		this.crlPath = crlPath;
+	}
+
 }

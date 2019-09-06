@@ -1,0 +1,16 @@
+endpoint=http://localhost:9003/
+
+# SOAPAction
+soapAction="pull"
+
+# Tipo Operazione
+tipo=all
+#tipo=richiesta
+#tipo=richiestaStato
+#tipo=risposta
+
+# identificativo correlazione (da utilizzare in caso di tipo=richiestaStato o tipo=risposta)
+idCorrelazione=XXX
+
+#username=username
+#password=123456

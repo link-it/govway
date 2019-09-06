@@ -236,6 +236,12 @@ public enum ErroriIntegrazione {
 	ERRORE_446_PORTA_SOSPESA("Porta disabilitata",
 			CodiceErroreIntegrazione.CODICE_446_SUSPEND),
 	
+	ERRORE_447_API_NON_INVOCABILE_CONTESTO_UTILIZZATO("L'API invocata possiede un service binding non abilitato sul contesto utilizzato",
+			CodiceErroreIntegrazione.CODICE_447_API_NON_INVOCABILE_CONTESTO_UTILIZZATO),
+	
+	ERRORE_448_API_NON_INVOCABILE_TIPO_SERVIZIO_UTILIZZATO("L'API invocata possiede un service binding non abilitato per il tipo di servizio utilizzato",
+			CodiceErroreIntegrazione.CODICE_448_API_NON_INVOCABILE_TIPO_SERVIZIO_UTILIZZATO),
+	
 	// errori spediti in buste errore
 	
 	ERRORE_450_PA_INESISTENTE("La porta applicativa richiesta dalla busta non esiste",

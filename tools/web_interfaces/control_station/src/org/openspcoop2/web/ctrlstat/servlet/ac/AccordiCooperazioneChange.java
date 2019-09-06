@@ -56,7 +56,6 @@ import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
@@ -70,7 +69,6 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -101,7 +99,6 @@ public final class AccordiCooperazioneChange extends Action {
 	private IRegistryReader registryReader = null; 
 	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
-	private ConsoleInterfaceType consoleInterfaceType = null;
 	private String protocolPropertiesSet = null;
 	private String editMode = null;
 	
@@ -136,7 +133,6 @@ public final class AccordiCooperazioneChange extends Action {
 
 		try {
 			AccordiCooperazioneHelper acHelper = new AccordiCooperazioneHelper(request, pd, session);
-			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(acHelper); 
 			
 			this.editMode = acHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			this.protocolPropertiesSet = acHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
@@ -293,7 +289,7 @@ public final class AccordiCooperazioneChange extends Action {
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
 			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoCooperazione(this.consoleOperationType, this.consoleInterfaceType, 
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoCooperazione(this.consoleOperationType, acHelper, 
 					this.registryReader, this.configRegistryReader, idAcOLD);
 					
 			this.protocolProperties = acHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
@@ -301,7 +297,7 @@ public final class AccordiCooperazioneChange extends Action {
 			oldProtocolPropertyList = ac.getProtocolPropertyList();
 			
 			if(this.protocolPropertiesSet == null){
-				ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
+				ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
 			}
 			
 			Properties propertiesProprietario = new Properties();
@@ -338,7 +334,7 @@ public final class AccordiCooperazioneChange extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+				this.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(this.consoleConfiguration, this.consoleOperationType, acHelper, this.protocolProperties, 
 						this.registryReader, this.configRegistryReader, idAcOLD);
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
@@ -351,7 +347,7 @@ public final class AccordiCooperazioneChange extends Action {
 								,tipoProtocollo, listaTipiProtocollo,used);
 				
 				// aggiunta campi custom
-				dati = acHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				dati = acHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
 
 				pd.setDati(dati);
@@ -369,10 +365,16 @@ public final class AccordiCooperazioneChange extends Action {
 			// Controlli sui campi immessi
 			boolean isOk = acHelper.accordiCooperazioneCheckData(tipoOp, nome, descr, id, referente, versione,privato,idAccordoOLD);
 			
+			// updateDynamic
+			if(isOk) {
+				this.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(this.consoleConfiguration, this.consoleOperationType, acHelper, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idAcOLD);
+			}
+			
 			// Validazione base dei parametri custom 
 			if(isOk){
 				try{
-					acHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+					acHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType,  this.protocolProperties);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -384,7 +386,7 @@ public final class AccordiCooperazioneChange extends Action {
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigCooperazione(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, 
+					this.consoleDynamicConfiguration.validateDynamicConfigCooperazione(this.consoleConfiguration, this.consoleOperationType, acHelper, this.protocolProperties, 
 							this.registryReader, this.configRegistryReader, idAcOLD);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
@@ -404,7 +406,7 @@ public final class AccordiCooperazioneChange extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+				this.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(this.consoleConfiguration, this.consoleOperationType, acHelper, this.protocolProperties, 
 						this.registryReader, this.configRegistryReader, idAcOLD);
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
@@ -416,7 +418,7 @@ public final class AccordiCooperazioneChange extends Action {
 						privato,statoPackage,oldStatoPackage,tipoProtocollo, listaTipiProtocollo,used);
 				
 				// aggiunta campi custom
-				dati = acHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				dati = acHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
 				pd.setDati(dati);
 
@@ -440,7 +442,7 @@ public final class AccordiCooperazioneChange extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+				this.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(this.consoleConfiguration, this.consoleOperationType, acHelper, this.protocolProperties, 
 						this.registryReader, this.configRegistryReader, idAcOLD);
 
 				dati.addElement(ServletUtils.getDataElementForEditModeInProgress());
@@ -456,10 +458,10 @@ public final class AccordiCooperazioneChange extends Action {
 						privato,statoPackage,oldStatoPackage,tipoProtocollo, listaTipiProtocollo,used);
 			
 				// aggiunta campi custom
-				dati = acHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				dati = acHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 				
 				// aggiunta campi custom come hidden, quelli sopra vengono bruciati dal no-edit
-				dati = acHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				dati = acHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 				
 				String msg = "Attenzione, esistono Accordi di Servizio Composto che riferiscono l''Accordo di Cooperazione [{0}] che si sta modificando, continuare?";
 				String uriAccordo = idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordoOLD);
@@ -544,7 +546,7 @@ public final class AccordiCooperazioneChange extends Action {
 					Vector<DataElement> dati = new Vector<DataElement>();
 					
 					// update della configurazione 
-					this.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+					this.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(this.consoleConfiguration, this.consoleOperationType, acHelper, this.protocolProperties, 
 							this.registryReader, this.configRegistryReader, idAcOLD);
 
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
@@ -556,7 +558,7 @@ public final class AccordiCooperazioneChange extends Action {
 							privato,statoPackage,oldStatoPackage,tipoProtocollo, listaTipiProtocollo,used);
 					
 					// aggiunta campi custom
-					dati = acHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+					dati = acHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
 					pd.setDati(dati);
 
@@ -596,7 +598,7 @@ public final class AccordiCooperazioneChange extends Action {
 			}
 
 			//imposto properties custom
-			ac.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType, oldProtocolPropertyList));
+			ac.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(this.protocolProperties, this.consoleOperationType, oldProtocolPropertyList));
 
 			acCore.performUpdateOperation(userLogin, acHelper.smista(), oggettiDaAggiornare.toArray());
 

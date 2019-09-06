@@ -27,6 +27,7 @@ import java.util.Hashtable;
 import java.util.Properties;
 
 import org.joda.time.DateTime;
+import org.openspcoop2.security.keystore.KeystoreConstants;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 
 
@@ -226,20 +227,25 @@ public class SAMLUtilities {
 	}
 	
 	
-	public static Properties convertToMerlinProperties(String keystoreType,String keystoreFile, String keystorePassword) throws Exception {
+	public static Properties convertToMerlinProperties(String keystoreType,String keystoreFile, String keystorePassword, boolean useKeystoreCache) throws Exception {
 		Properties p = new Properties();
-		p.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
+		if(useKeystoreCache) {
+			p.put(KeystoreConstants.PROPERTY_PROVIDER, KeystoreConstants.PROVIDER_GOVWAY);
+		}
+		else {
+			p.put(KeystoreConstants.PROPERTY_PROVIDER, KeystoreConstants.OLD_PROVIDER_DEFAULT);
+		}
 		if(keystoreType!=null) {
-			p.put("org.apache.ws.security.crypto.merlin.keystore.type", keystoreType);
+			p.put(KeystoreConstants.PROPERTY_KEYSTORE_TYPE, keystoreType);
 		}
 		if(keystoreFile==null) {
 			throw new Exception("Keystore file undefined");
 		}
-		p.put("org.apache.ws.security.crypto.merlin.file",keystoreFile);
+		p.put(KeystoreConstants.PROPERTY_KEYSTORE_PATH, keystoreFile);
 		if(keystorePassword==null) {
 			throw new Exception("Keystore file undefined");
 		}
-		p.put("org.apache.ws.security.crypto.merlin.keystore.password",keystorePassword);
+		p.put(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD, keystorePassword);
 		return p;
 	}
 }

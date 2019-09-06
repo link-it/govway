@@ -32,7 +32,7 @@ import javax.xml.soap.SOAPElement;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ElementReference extends Reference {
+public class ElementReference extends Reference  {
 
 	private SOAPElement element;
 	

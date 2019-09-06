@@ -293,6 +293,29 @@ public class RicezioneBusteServiceUtils {
 				}
 				return null;
 			}
+			
+			// Controllo Service Binding rispetto alla url e al tipo di servizio
+			if(requestInfo.getProtocolContext()!=null && bindingConfig.isServiceBindingContextEnabled(protocolServiceBinding, requestInfo.getProtocolContext().getProtocolWebContext())==false) {
+				if(res!=null) {
+					String url = requestInfo.getProtocolContext().getRequestURI();
+					logCore.error("L'API invocata possiede un service binding '"+protocolServiceBinding+"' non abilitato sul contesto utilizzato: "+url);
+					msgDiag.logErroreGenerico("L'API invocata possiede un service binding '"+protocolServiceBinding+"' non abilitato sul contesto utilizzato", "CheckServiceBinding");
+					return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, 
+							ErroriIntegrazione.ERRORE_447_API_NON_INVOCABILE_CONTESTO_UTILIZZATO.getErroreIntegrazione(),
+							IntegrationError.BAD_REQUEST, null, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
+				}
+				return null;
+			}
+			if(bindingConfig.isServiceBindingServiceTypeEnabled(protocolServiceBinding, idServizio.getTipo())==false) {
+				if(res!=null) {
+					logCore.error("L'API invocata possiede un service binding '"+protocolServiceBinding+"' non abilitato per il tipo di servizio '"+idServizio.getTipo()+"'");
+					msgDiag.logErroreGenerico("L'API invocata possiede un service binding '"+protocolServiceBinding+"' non abilitato per il tipo di servizio '"+idServizio.getTipo(), "CheckServiceBinding");
+					return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, 
+							ErroriIntegrazione.ERRORE_448_API_NON_INVOCABILE_TIPO_SERVIZIO_UTILIZZATO.getErroreIntegrazione(),
+							IntegrationError.BAD_REQUEST, null, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
+				}
+				return null;
+			}
 		}
 	
 		if(requestInfo!=null && requestInfo.getProtocolServiceBinding()!=null && 

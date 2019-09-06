@@ -52,7 +52,9 @@ public class AccordoServizioParteComuneSintetico extends org.openspcoop2.utils.b
 	public AccordoServizioParteComuneSintetico(AccordoServizioParteComune apc) {
 		this.id = apc.getId();
 		this.soggettoReferente = apc.getSoggettoReferente();
-		this.servizioComposto = new AccordoServizioParteComuneServizioCompostoSintetico(apc.getServizioComposto());
+		if(apc.getServizioComposto()!=null) {
+			this.servizioComposto = new AccordoServizioParteComuneServizioCompostoSintetico(apc.getServizioComposto());
+		}
 		if(apc.sizeAzioneList()>0) {
 			for (Azione azione : apc.getAzioneList()) {
 				this.azione.add(new AzioneSintetica(azione));

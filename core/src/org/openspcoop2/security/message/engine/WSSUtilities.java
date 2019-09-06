@@ -50,7 +50,15 @@ public class WSSUtilities {
 			boolean mustUnderstandValue = false;
 			Object mustUnderstand = messageSecurityContext.getIncomingProperties().get(SecurityConstants.MUST_UNDERSTAND);
 			if(mustUnderstand!=null){
-				mustUnderstandValue = Boolean.parseBoolean((String)mustUnderstand);
+				if(mustUnderstand instanceof String) {
+					mustUnderstandValue = Boolean.parseBoolean((String)mustUnderstand);
+				}
+				else if(mustUnderstand instanceof Boolean) {
+					mustUnderstandValue = (Boolean) mustUnderstand;
+				}
+				else {
+					throw new SecurityException("Unexected type '"+mustUnderstand.getClass().getName()+"' for property '"+SecurityConstants.MUST_UNDERSTAND+"'");
+				}
 			}
 			String actor = messageSecurityContext.getActor();
 			if("".equals(messageSecurityContext.getActor()))
@@ -79,7 +87,15 @@ public class WSSUtilities {
 			boolean mustUnderstandValue = false;
 			Object mustUnderstand = messageSecurityContext.getIncomingProperties().get(SecurityConstants.MUST_UNDERSTAND);
 			if(mustUnderstand!=null){
-				mustUnderstandValue = Boolean.parseBoolean((String)mustUnderstand);
+				if(mustUnderstand instanceof String) {
+					mustUnderstandValue = Boolean.parseBoolean((String)mustUnderstand);
+				}
+				else if(mustUnderstand instanceof Boolean) {
+					mustUnderstandValue = (Boolean) mustUnderstand;
+				}
+				else {
+					throw new SecurityException("Unexected type '"+mustUnderstand.getClass().getName()+"' for property '"+SecurityConstants.MUST_UNDERSTAND+"'");
+				}
 			}
 			String actor = messageSecurityContext.getActor();
 			if("".equals(messageSecurityContext.getActor()))

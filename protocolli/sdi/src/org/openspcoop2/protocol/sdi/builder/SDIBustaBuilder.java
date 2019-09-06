@@ -42,6 +42,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
+import org.openspcoop2.protocol.sdk.constants.FaseImbustamento;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -70,12 +71,20 @@ public class SDIBustaBuilder extends BustaBuilder<SOAPElement> {
 	}
 
 	@Override
-	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta, Busta bustaRichiesta,
 			RuoloMessaggio ruoloMessaggio,
-			ProprietaManifestAttachments proprietaManifestAttachments)
+			ProprietaManifestAttachments proprietaManifestAttachments,
+			FaseImbustamento faseImbustamento)
 			throws ProtocolException {
 		
-		ProtocolMessage protocolMessage = super.imbustamento(msg, busta, ruoloMessaggio, proprietaManifestAttachments);
+		if(FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO.equals(faseImbustamento)) {
+			ProtocolMessage protocolMessage = new ProtocolMessage();
+			protocolMessage.setPhaseUnsupported(true);
+			return protocolMessage;
+		}
+		
+		ProtocolMessage protocolMessage = super.imbustamento(msg, busta, bustaRichiesta,
+				ruoloMessaggio, proprietaManifestAttachments, faseImbustamento);
 		
 		// Modifico il messaggio per aggiungere la struttura SDI in base all'azione invocata e al ruolo (Richiesta/Risposta) e al fatto che non vi sono errori.
 		// TODO: il body attuale lo devo inserire come valore codificato in base 64 tramite la struttura Corretta

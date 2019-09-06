@@ -42,9 +42,11 @@ import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
+import org.openspcoop2.core.config.AccessoDatiKeystore;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneMultitenant;
 import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -134,6 +136,8 @@ import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
 import org.openspcoop2.protocol.engine.mapping.ModalitaIdentificazioneAzione;
 import org.openspcoop2.protocol.engine.mapping.OperationFinder;
+import org.openspcoop2.protocol.manifest.Context;
+import org.openspcoop2.protocol.manifest.WebEmptyContext;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
@@ -2948,12 +2952,12 @@ public class ConfigurazionePdDReader {
 		return connettoreMsg;
 	}
 
-	protected GestioneErrore getGestioneErroreConnettore_InvocazioneServizio(Connection connectionPdD,ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected GestioneErrore getGestioneErroreConnettore_InvocazioneServizio(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding, Connection connectionPdD,ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		//  Servizio applicativo
 		if(sa.getInvocazioneServizio()==null || 
 				sa.getInvocazioneServizio().getGestioneErrore()==null)
-			return getGestioneErroreConnettoreComponenteIntegrazione(connectionPdD);
+			return getGestioneErroreConnettoreComponenteIntegrazione(protocolFactory, serviceBinding, connectionPdD);
 		InvocazioneServizio invocazione = sa.getInvocazioneServizio();
 		return invocazione.getGestioneErrore();
 	}
@@ -3211,12 +3215,12 @@ public class ConfigurazionePdDReader {
 		return connettoreMsg;
 	}
 
-	protected GestioneErrore getGestioneErroreConnettore_RispostaAsincrona(Connection connectionPdD,ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected GestioneErrore getGestioneErroreConnettore_RispostaAsincrona(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding, Connection connectionPdD,ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		//  Servizio applicativo
 		if(sa.getRispostaAsincrona()==null ||
 				sa.getRispostaAsincrona().getGestioneErrore()==null	)
-			return getGestioneErroreConnettoreComponenteIntegrazione(connectionPdD);
+			return getGestioneErroreConnettoreComponenteIntegrazione(protocolFactory, serviceBinding, connectionPdD);
 		RispostaAsincrona asincrona = sa.getRispostaAsincrona();
 		return asincrona.getGestioneErrore();
 
@@ -3464,6 +3468,46 @@ public class ConfigurazionePdDReader {
 		*/
 		
 		return ConfigurazionePdDReader.accessoDatiGestioneToken;
+	}
+	
+	/**
+	 * Restituisce le informazioni necessarie alla porta di dominio per accedere ai dati di gestione dei keystore
+	 *
+	 * @return informazioni
+	 * 
+	 */
+	private static AccessoDatiKeystore accessoDatiKeystore = null;
+	private static Boolean accessoDatiKeystoreLetto = false;
+	protected AccessoDatiKeystore getAccessoDatiKeystore(Connection connectionPdD){
+
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.accessoDatiKeystoreLetto==false){
+			AccessoDatiKeystore tmp = null;
+			try{
+				tmp = this.configurazionePdD.getAccessoDatiKeystore(connectionPdD);
+			}catch(DriverConfigurazioneNotFound e){
+				this.log.debug("getAccessoDatiKeystore (not found): "+e.getMessage());
+			}catch(Exception e){
+				this.log.error("getAccessoDatiKeystore",e);
+			}
+
+			ConfigurazionePdDReader.accessoDatiKeystore = tmp;
+			ConfigurazionePdDReader.accessoDatiKeystoreLetto = true;
+		}
+
+		/*
+		if(ConfigurazionePdDReader.accessoDatiKeystore.getCache()==null){
+			System.out.println("ACCESSO_DATI_KEYSTORE CACHE DISABILITATA");
+		}else{
+			System.out.println("ACCESSO_DATI_KEYSTORE CACHE ABILITATA");
+			System.out.println("ACCESSO_DATI_KEYSTORE CACHE ALGORITMO: "+ConfigurazionePdDReader.accessoDatiKeystore.getCache().getAlgoritmo());
+			System.out.println("ACCESSO_DATI_KEYSTORE CACHE DIMENSIONE: "+ConfigurazionePdDReader.accessoDatiKeystore.getCache().getDimensione());
+			System.out.println("ACCESSO_DATI_KEYSTORE CACHE ITEM IDLE: "+ConfigurazionePdDReader.accessoDatiKeystore.getCache().getItemIdleTime());
+			System.out.println("ACCESSO_DATI_KEYSTORE CACHE ITEM LIFE SECOND: "+ConfigurazionePdDReader.accessoDatiKeystore.getCache().getItemLifeSecond());
+			System.out.println("ACCESSO_DATI_KEYSTORE CACHE ITEM LIFE SECOND: "+ConfigurazionePdDReader.accessoDatiKeystore.getCrlItemLifeSecond());
+		}
+		*/
+		
+		return ConfigurazionePdDReader.accessoDatiKeystore;
 	}
 	
 	/**
@@ -4321,7 +4365,7 @@ public class ConfigurazionePdDReader {
 	 * 
 	 */
 	private static GestioneErrore gestioneErroreConnettoreComponenteCooperazione = null;
-	protected GestioneErrore getGestioneErroreConnettoreComponenteCooperazione(Connection connectionPdD){
+	protected GestioneErrore getGestioneErroreConnettoreComponenteCooperazione(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding, Connection connectionPdD){
 
 		if( this.configurazioneDinamica || ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazione==null){
 			try{
@@ -4356,12 +4400,12 @@ public class ConfigurazionePdDReader {
 					this.log.error("getGestioneErroreConnettoreComponenteCooperazione",e);
 				}
 				if(gestione == null)
-					ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazione = GestoreErroreConnettore.getGestioneErroreDefaultComponenteCooperazione();
+					ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazione = GestoreErroreConnettore.getGestioneErroreDefaultComponenteCooperazione(protocolFactory, serviceBinding);
 				else
 					ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazione = gestione;
 
 			}catch(Exception e){
-				ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazione = GestoreErroreConnettore.getGestioneErroreDefaultComponenteCooperazione();
+				ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazione = GestoreErroreConnettore.getGestioneErroreDefaultComponenteCooperazione(protocolFactory, serviceBinding);
 			}  	
 		}
 
@@ -4376,7 +4420,7 @@ public class ConfigurazionePdDReader {
 	 * 
 	 */
 	private static GestioneErrore gestioneErroreConnettoreComponenteIntegrazione = null;
-	protected GestioneErrore getGestioneErroreConnettoreComponenteIntegrazione(Connection connectionPdD){
+	protected GestioneErrore getGestioneErroreConnettoreComponenteIntegrazione(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding, Connection connectionPdD){
 
 		if( this.configurazioneDinamica || ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazione==null){
 			try{
@@ -4411,12 +4455,12 @@ public class ConfigurazionePdDReader {
 					this.log.error("getGestioneErroreConnettoreComponenteIntegrazione",e);
 				}
 				if(gestione == null)
-					ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazione = GestoreErroreConnettore.getGestioneErroreDefaultComponenteIntegrazione();
+					ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazione = GestoreErroreConnettore.getGestioneErroreDefaultComponenteIntegrazione(protocolFactory, serviceBinding);
 				else
 					ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazione = gestione;
 
 			}catch(Exception e){
-				ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazione = GestoreErroreConnettore.getGestioneErroreDefaultComponenteIntegrazione();
+				ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazione = GestoreErroreConnettore.getGestioneErroreDefaultComponenteIntegrazione(protocolFactory, serviceBinding);
 			}  	
 		}
 
@@ -4894,6 +4938,14 @@ public class ConfigurazionePdDReader {
 		return cors;
 	}
 	
+	public ConfigurazioneMultitenant getConfigurazioneMultitenant(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		ConfigurazioneMultitenant conf = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getMultitenant();
+		if(conf==null) {
+			return new ConfigurazioneMultitenant();
+		}
+		return conf;
+	}
+	
 	public ResponseCachingConfigurazione getConfigurazioneResponseCaching(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		ResponseCachingConfigurazioneGenerale c = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getResponseCaching();
 		if(c==null) {
@@ -4928,7 +4980,12 @@ public class ConfigurazionePdDReader {
 			configProtocollo = new ConfigurazioneProtocollo();
 			configProtocollo.setNome(protocollo);
 		}
-		if(configProtocollo.getUrlInvocazioneServizioPD()==null || configProtocollo.getUrlInvocazioneServizioPA()==null) {
+		if(configProtocollo.getUrlInvocazioneServizioPD()==null || 
+				configProtocollo.getUrlInvocazioneServizioPA()==null ||
+				configProtocollo.getUrlInvocazioneServizioRestPD()==null ||
+				configProtocollo.getUrlInvocazioneServizioRestPA()==null || 
+				configProtocollo.getUrlInvocazioneServizioSoapPD()==null ||
+				configProtocollo.getUrlInvocazioneServizioSoapPA()==null) {
 			initConfigurazioneProtocolloUrlInvocazione(configProtocollo);
 		}
 		return configProtocollo;
@@ -4938,18 +4995,79 @@ public class ConfigurazionePdDReader {
 		try {
 			ProtocolFactoryManager pManager = ProtocolFactoryManager.getInstance();
 			IProtocolFactory<?> pFactory = pManager.getProtocolFactoryByName(configProtocollo.getNome());
-			String context = "";
+			String contextWithoutBinding = null;
+			String contextWithRestBinding = null;
+			String contextWithSoapBinding = null;
+			if(pFactory.getManifest().getWeb().getEmptyContext()!=null) {
+				WebEmptyContext ctx = pFactory.getManifest().getWeb().getEmptyContext();
+				if(ctx.getBinding()==null) {
+					if(contextWithoutBinding==null) {
+						contextWithoutBinding = "";
+					}
+				}
+				else if(org.openspcoop2.protocol.manifest.constants.ServiceBinding.REST.equals(ctx.getBinding())) {
+					if(contextWithRestBinding==null) {
+						contextWithRestBinding = "";
+					}
+				}
+				else if(org.openspcoop2.protocol.manifest.constants.ServiceBinding.SOAP.equals(ctx.getBinding())) {
+					if(contextWithSoapBinding==null) {
+						contextWithSoapBinding = "";
+					}
+				}
+			}
 			if(pFactory.getManifest().getWeb().sizeContextList()>0) {
-				context = pFactory.getManifest().getWeb().getContext(0).getName();
+				for (Context ctx : pFactory.getManifest().getWeb().getContextList()) {
+					if(ctx.getBinding()==null) {
+						if(contextWithoutBinding==null) {
+							contextWithoutBinding = ctx.getName();
+						}
+					}
+					else if(org.openspcoop2.protocol.manifest.constants.ServiceBinding.REST.equals(ctx.getBinding())) {
+						if(contextWithRestBinding==null) {
+							contextWithRestBinding = ctx.getName();
+						}
+					}
+					else if(org.openspcoop2.protocol.manifest.constants.ServiceBinding.SOAP.equals(ctx.getBinding())) {
+						if(contextWithSoapBinding==null) {
+							contextWithSoapBinding = ctx.getName();
+						}
+					}
+				}
+			}
+			
+			// Assegno i contesti se non trovati altri.
+			if(contextWithRestBinding==null) {
+				contextWithRestBinding = contextWithoutBinding;
+			}
+			if(contextWithSoapBinding==null) {
+				contextWithSoapBinding = contextWithoutBinding;
+			}
+			if(contextWithoutBinding==null) {
+				throw new Exception("Contesto senza uno specifico binding non indicato");
 			}
 			
 			if(configProtocollo.getUrlInvocazioneServizioPD()==null) {
-				configProtocollo.setUrlInvocazioneServizioPD(CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(context));
+				configProtocollo.setUrlInvocazioneServizioPD(CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(contextWithoutBinding));
+			}
+			if(configProtocollo.getUrlInvocazioneServizioPA()==null) {
+				configProtocollo.setUrlInvocazioneServizioPA(CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(contextWithoutBinding));
 			}
 			
-			if(configProtocollo.getUrlInvocazioneServizioPA()==null) {
-				configProtocollo.setUrlInvocazioneServizioPA(CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(context));
+			if(configProtocollo.getUrlInvocazioneServizioRestPD()==null) {
+				configProtocollo.setUrlInvocazioneServizioRestPD(CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(contextWithRestBinding));
 			}
+			if(configProtocollo.getUrlInvocazioneServizioRestPA()==null) {
+				configProtocollo.setUrlInvocazioneServizioRestPA(CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(contextWithRestBinding));
+			}
+			
+			if(configProtocollo.getUrlInvocazioneServizioSoapPD()==null) {
+				configProtocollo.setUrlInvocazioneServizioSoapPD(CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(contextWithSoapBinding));
+			}
+			if(configProtocollo.getUrlInvocazioneServizioSoapPA()==null) {
+				configProtocollo.setUrlInvocazioneServizioSoapPA(CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(contextWithSoapBinding));
+			}
+			
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}

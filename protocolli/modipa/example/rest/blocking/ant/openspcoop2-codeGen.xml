@@ -1,0 +1,69 @@
+<project name="openspcoop2-codeGen-restBlocking">
+    <description>
+       Generazione sorgenti relativi al package org.openspcoop2.protocol.modipa.example.rest.blocking
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/swagger-codegen.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+
+
+	<!-- ***** CODICE GENERATO A PARTIRE DAI SORGENTI ************ -->
+	
+	<target name="codegen_from_swagger">
+
+		<!--
+		<if>
+		        <equals arg1="${overwriteImpl}" arg2="$${overwriteImpl}"/>
+		        <then>
+		                <fail message="Parametro overwriteImpl non fornito, la proprietà indica (true/false) se generare le classi 'impl'"/>
+		        </then>
+		</if>
+		-->
+
+		<delete dir="${build_restBlocking}/srcStubCXF"/>
+		<mkdir dir="${build_restBlocking}/srcStubCXF"/>
+		<delete dir="${build_restBlocking}/buildStubCXF"/>
+		<mkdir dir="${build_restBlocking}/buildStubCXF"/>
+
+	    	<antcall target="-swagger_codegen">
+			<param name="swaggerCodeGen.inputSpec" value="${src_restBlocking}/schemi/rest-blocking.yaml"/>
+			<param name="swaggerCodeGen.package" value="org.openspcoop2.protocol.modipa.example.rest.blocking"/>
+			<param name="swaggerCodeGen.packagePath" value="org/openspcoop2/protocol/modipa/example/rest/blocking"/>
+			<param name="swaggerCodeGen.outputDir" value="${build_restBlocking}/srcStubCXF"/>
+			<!-- <param name="swaggerCodeGen.writeImpl" value="${overwriteImpl}"/> -->
+			<param name="swaggerCodeGen.writeImpl" value="false"/>
+			<param name="swaggerCodeGen.withXmlAnnotations" value="false"/>
+			<param name="swaggerCodeGen.beanValidation" value="true"/>
+			<param name="swaggerCodeGen.useGovwayTemplate" value="false"/>
+			<param name="swaggerCodeGen.deleteOldSrc" value="true"/>
+			<param name="swaggerCodeGen.addGPLDeclaration" value="true"/>
+
+			<!-- Devo modificare i sorgenti (ErrorMessage.java) per aggiungere annotazione '@JsonIgnoreProperties(ignoreUnknown = true)' per potere leggere i claim aggiuntivi inseriti da GovWay -->
+			<param name="swaggerCodeGen.addAnnotationIgnoreProblem" value="true"/> 
+			<param name="swaggerCodeGen.problemClassName" value="ErrorMessage"/>
+
+			<!-- Stub -->
+			<param name="swaggerCodeGen.buildJar" value="true"/> 
+			<param name="swaggerCodeGen.buildDir" value="${build_restBlocking}/buildStubCXF"/>
+			<param name="debug" value="${debug}"/>
+			<param name="swaggerCodeGen.cleanSrcDir" value="false"/>
+			<param name="swaggerCodeGen.jar" value="${dist_restBlocking}/openspcoop2_protocol-modipa-rest-blocking-stub-cxf.jar"/>
+			<param name="swaggerCodeGen.buildJarIncludeImpl" value="false"/> 
+		</antcall>
+
+		<copy file="${dist_restBlocking}/openspcoop2_protocol-modipa-rest-blocking-stub-cxf.jar" todir="${stub_restBlocking}"/>
+		<delete file="${dist_restBlocking}/openspcoop2_protocol-modipa-rest-blocking-stub-cxf.jar"/>	
+		<delete dir="${build_restBlocking}/srcStubCXF"/>
+		<delete dir="${build_restBlocking}/buildStubCXF"/>
+
+	</target>
+
+</project>

@@ -22,6 +22,8 @@
 
 package org.openspcoop2.security.message.constants;
 
+import org.openspcoop2.generic_project.exception.NotFoundException;
+
 /**     
  * EncryptionSymmetricKeyWrapAlgorithm
  *
@@ -48,5 +50,26 @@ public enum EncryptionSymmetricKeyWrapAlgorithm {
 	
 	public String getUri() {
 		return this.uri;
+	}
+	
+	public static EncryptionSymmetricKeyWrapAlgorithm toEnumConstant(String uri){
+		try{
+			return toEnumConstant(uri,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static EncryptionSymmetricKeyWrapAlgorithm toEnumConstant(String uri, boolean throwNotFoundException) throws NotFoundException{
+		EncryptionSymmetricKeyWrapAlgorithm res = null;
+		for (EncryptionSymmetricKeyWrapAlgorithm tmp : values()) {
+			if(tmp.getUri().equals(uri)){
+				res = tmp;
+				break;
+			}
+		}
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with uri ["+uri+"] not found");
+		}
+		return res;
 	}
 }

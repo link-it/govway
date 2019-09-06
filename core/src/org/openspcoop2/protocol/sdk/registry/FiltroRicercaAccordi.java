@@ -23,6 +23,7 @@
 package org.openspcoop2.protocol.sdk.registry;
 
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 
 /**
@@ -37,6 +38,7 @@ public class FiltroRicercaAccordi {
 	private String nome;
 	private Integer versione;
 	private IDSoggetto soggetto;
+	private ServiceBinding serviceBinding;
 	private ProtocolProperties protocolProperties;
 	
 	private Boolean escludiServiziComposti;
@@ -59,6 +61,12 @@ public class FiltroRicercaAccordi {
 	}
 	public void setSoggetto(IDSoggetto soggetto) {
 		this.soggetto = soggetto;
+	}
+	public ServiceBinding getServiceBinding() {
+		return this.serviceBinding;
+	}
+	public void setServiceBinding(ServiceBinding serviceBinding) {
+		this.serviceBinding = serviceBinding;
 	}
 	public ProtocolProperties getProtocolProperties() {
 		return this.protocolProperties;

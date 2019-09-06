@@ -20,26 +20,36 @@
  *
  */
 
+package org.openspcoop2.security.keystore.cache;
 
-package org.openspcoop2.core.registry.constants;
+import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.security.keystore.JWKSetStore;
+
 /**
- *
+ * JWKSetStoreCache
  *
  * @author Andrea Poli <apoli@link.it>
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum ProprietariProtocolProperty {
+public class JWKSetStoreCache extends AbstractKeystoreCache<JWKSetStore> {
 
-	SOGGETTO, ACCORDO_COOPERAZIONE, 
-	ACCORDO_SERVIZIO_PARTE_COMUNE,  // vale anche per il servizio composto
-	PORT_TYPE, OPERATION,
-	AZIONE_ACCORDO,
-	RESOURCE,
-	ACCORDO_SERVIZIO_PARTE_SPECIFICA,
-	FRUITORE;
-	
+	@Override
+	public JWKSetStore createKeystore(String key, Object... params) throws SecurityException{
+		if(params==null){
+			throw new SecurityException("Params is null");
+		}
+		String endpoint = key;
+		if(params.length==0){
+			return new JWKSetStore(endpoint);
+		}
+		else{
+			throw new SecurityException("Params [lenght:"+params.length+"] not supported");
+		}
+	}
 
+	@Override
+	public String getPrefixKey() {
+		return "JWKSet ";
+	}
 }
-
-

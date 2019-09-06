@@ -32,6 +32,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
+import org.openspcoop2.protocol.sdk.constants.FaseImbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -96,20 +97,42 @@ public class Imbustamento  {
 
 	/* ----------------  Metodi per la costruzione di una busta  -------------------- */
 
-	public ProtocolMessage imbustamento(OpenSPCoop2Message msg,Busta busta,Integrazione integrazione,ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{	
-		return this.imbustamento(msg, busta,integrazione, false, RuoloMessaggio.RISPOSTA, false, proprietaManifestAttachments);
+	public ProtocolMessage imbustamentoRichiesta(OpenSPCoop2Message msg,Busta busta,
+			Integrazione integrazione,boolean gestioneManifest,boolean scartaBody,
+			ProprietaManifestAttachments proprietaManifestAttachments,
+			FaseImbustamento faseImbustamento) throws ProtocolException{	
+		return this._imbustamento(msg, busta, null,
+				integrazione, gestioneManifest, RuoloMessaggio.RICHIESTA, scartaBody, 
+				proprietaManifestAttachments, faseImbustamento);
+	}
+	public ProtocolMessage imbustamentoRisposta(OpenSPCoop2Message msg,Busta busta, Busta bustaRichiesta,
+			Integrazione integrazione,boolean gestioneManifest,boolean scartaBody,
+			ProprietaManifestAttachments proprietaManifestAttachments,
+			FaseImbustamento faseImbustamento) throws ProtocolException{	
+		return this._imbustamento(msg, busta, bustaRichiesta,
+				integrazione, gestioneManifest, RuoloMessaggio.RISPOSTA, scartaBody, 
+				proprietaManifestAttachments, faseImbustamento);
+	}
+	public ProtocolMessage imbustamentoRisposta(OpenSPCoop2Message msg,Busta busta,Busta bustaRichiesta,
+			Integrazione integrazione,ProprietaManifestAttachments proprietaManifestAttachments, 
+			FaseImbustamento faseImbustamento) throws ProtocolException{	
+		return this._imbustamento(msg, busta, bustaRichiesta,
+				integrazione, false, RuoloMessaggio.RISPOSTA, false, 
+				proprietaManifestAttachments, 
+				faseImbustamento);
 	}
 
-
-	public ProtocolMessage imbustamento(OpenSPCoop2Message msg,Busta busta,Integrazione integrazione,
-			boolean gestioneManifest,RuoloMessaggio ruoloMessaggio,boolean scartaBody,
-			ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{	
+	private ProtocolMessage _imbustamento(OpenSPCoop2Message msg,Busta busta,Busta bustaRichiesta,
+			Integrazione integrazione,boolean gestioneManifest,RuoloMessaggio ruoloMessaggio,boolean scartaBody,
+			ProprietaManifestAttachments proprietaManifestAttachments,
+			FaseImbustamento faseImbustamento) throws ProtocolException{	
 		if(proprietaManifestAttachments==null){
 			proprietaManifestAttachments = new ProprietaManifestAttachments();
 		}
 		proprietaManifestAttachments.setGestioneManifest(gestioneManifest);
 		proprietaManifestAttachments.setScartaBody(scartaBody);
-		return this.protocolFactory.createBustaBuilder(this.state).imbustamento(msg, busta, ruoloMessaggio, proprietaManifestAttachments);
+		return this.protocolFactory.createBustaBuilder(this.state).imbustamento(msg, busta, bustaRichiesta,
+				ruoloMessaggio, proprietaManifestAttachments, faseImbustamento);
 	}
 
 
@@ -120,8 +143,8 @@ public class Imbustamento  {
 	 * 
 	 */
 
-	public ProtocolMessage addTrasmissione(OpenSPCoop2Message message,Trasmissione trasmissione,boolean readQualifiedAttribute) throws ProtocolException{
-		return this.protocolFactory.createBustaBuilder(this.state).addTrasmissione(message, trasmissione);
+	public ProtocolMessage addTrasmissione(OpenSPCoop2Message message,Trasmissione trasmissione,boolean readQualifiedAttribute, FaseImbustamento faseImbustamento) throws ProtocolException{
+		return this.protocolFactory.createBustaBuilder(this.state).addTrasmissione(message, trasmissione, faseImbustamento);
 	}
 
 

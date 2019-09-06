@@ -26,13 +26,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.mail.internet.ContentType;
-import javax.mail.internet.ParameterList;
+//import javax.mail.internet.ContentType;
+//import javax.mail.internet.ParameterList;
+import com.sun.xml.messaging.saaj.packaging.mime.internet.ContentType;
+import com.sun.xml.messaging.saaj.packaging.mime.internet.ParameterList;
+
 import javax.xml.soap.SOAPException;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.mime.MultipartUtils;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+
+
 
 /**
  * ContentTypeUtilities
@@ -61,8 +66,37 @@ public class ContentTypeUtilities {
 					cType.getParameterList().remove(parameterName);
 					cType.getParameterList().set(parameterName, parameterValue);
 				}
+				
 			}
-			String ct = cType.toString();
+			
+			/*
+			 * //import javax.mail.internet.ContentType;
+				//import javax.mail.internet.ParameterList;
+
+				import com.sun.xml.messaging.saaj.packaging.mime.internet.ContentType;
+				import com.sun.xml.messaging.saaj.packaging.mime.internet.ParameterList;
+				
+				Utilizzo la versione saaj poiche il toString di javax.mail.internet.ContentType in presenza di un valore con ':' non funziona correttamente e genera valori action*0 e action*1
+			 * 
+			 * */
+			
+			String ct = cType.toString(); // il toString in presenza di action con valore http://... non funziona correttamente e genera valori action*0 e action*1
+			
+			// Reimplementare il toString non basta poiche' i ':' fanno schiantare un successivo parser del javax.mail.internet.ContentType
+//			StringBuilder ctBufferParam = new StringBuilder();
+//			ParameterList pList = cType.getParameterList();
+//			if(pList!=null && pList.size()>0) {
+//				java.util.Enumeration<String> en = pList.getNames();
+//				while (en.hasMoreElements()) {
+//					String name = (String) en.nextElement();
+//					ctBufferParam.append("; ");
+//					ctBufferParam.append(name).append("=").append(pList.get(name));
+//				}
+//			}
+//			String ct = cType.getBaseType();
+//			if(ctBufferParam.length()>0) {
+//				ct = ct + ctBufferParam.toString();
+//			}
 			ct = normalizeToRfc7230(ct);			
 			ct = ct.trim();
 			return ct;

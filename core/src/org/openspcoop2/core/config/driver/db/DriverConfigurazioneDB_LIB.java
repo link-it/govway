@@ -48,6 +48,7 @@ import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
+import org.openspcoop2.core.config.AccessoDatiKeystore;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Attachments;
@@ -100,6 +101,7 @@ import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.ProtocolProperty;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
@@ -170,6 +172,9 @@ import org.openspcoop2.core.constants.CRUDType;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.mapping.DBProtocolPropertiesUtils;
+import org.openspcoop2.core.mapping.ProprietariProtocolProperty;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.certificate.CertificateUtils;
@@ -3919,6 +3924,11 @@ public class DriverConfigurazioneDB_LIB {
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli al servizioApplicativo "+idServizioApplicativo);
 				
 				
+				// ProtocolProperties
+				DriverConfigurazioneDB_LIB.CRUDProtocolProperty(CostantiDB.CREATE, aSA.getProtocolPropertyList(), 
+						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDB_LIB.tipoDB);
+				
+				
 				break;
 
 			case UPDATE:
@@ -4212,7 +4222,9 @@ public class DriverConfigurazioneDB_LIB {
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli al servizioApplicativo "+idServizioApplicativo);
 				
 				
-				
+				// ProtocolProperties
+				DriverConfigurazioneDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, aSA.getProtocolPropertyList(), 
+						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDB_LIB.tipoDB);
 				
 				break;
 
@@ -4226,6 +4238,10 @@ public class DriverConfigurazioneDB_LIB {
 				idServizioApplicativo = DriverConfigurazioneDB_LIB.getIdServizioApplicativo(nomeSA, tipoProprietario, nomeProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
 				DriverConfigurazioneDB_LIB.log.debug("get ID Servizio Applicativo: "+idServizioApplicativo); 
 
+				// ProtocolProperties
+				DriverConfigurazioneDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
+						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDB_LIB.tipoDB);
+				
 				// ruoli
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
@@ -8073,6 +8089,7 @@ public class DriverConfigurazioneDB_LIB {
 		AccessoDatiAutorizzazione aDatiAuthz = config.getAccessoDatiAutorizzazione();
 		AccessoDatiAutenticazione aDatiAuthn = config.getAccessoDatiAutenticazione();
 		AccessoDatiGestioneToken aDatiGestioneToken = config.getAccessoDatiGestioneToken();
+		AccessoDatiKeystore aDatiKeystore = config.getAccessoDatiKeystore();
 		Attachments att = config.getAttachments();
 
 		ConfigurazioneMultitenant multitenant = config.getMultitenant();
@@ -8340,6 +8357,26 @@ public class DriverConfigurazioneDB_LIB {
 			token_idleCache = token_cache.getItemIdleTime();
 			token_lifeCache = token_cache.getItemLifeSecond();
 		}
+		
+		Cache keystore_cache = null;
+		String keystore_dimensioneCache = null;
+		String keystore_algoritmoCache = null;
+		String keystore_idleCache = null;
+		String keystore_lifeCache = null;
+		String keystore_statoCache = null;
+		String keystore_crlLifeCache = null;
+		if(aDatiKeystore !=null){
+			keystore_cache = aDatiKeystore.getCache();
+			keystore_crlLifeCache = aDatiKeystore.getCrlItemLifeSecond();
+
+		}
+		keystore_statoCache = (keystore_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (keystore_statoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			keystore_dimensioneCache = keystore_cache.getDimensione();
+			keystore_algoritmoCache = DriverConfigurazioneDB_LIB.getValue(keystore_cache.getAlgoritmo());
+			keystore_idleCache = keystore_cache.getItemIdleTime();
+			keystore_lifeCache = keystore_cache.getItemLifeSecond();
+		}
 
 		Tracciamento t = config.getTracciamento();
 		String tracciamentoBuste = null;
@@ -8451,6 +8488,13 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("token_algoritmocache", "?");
 				sqlQueryObject.addInsertField("token_idlecache", "?");
 				sqlQueryObject.addInsertField("token_lifecache", "?");
+				// keystore cache
+				sqlQueryObject.addInsertField("keystore_statocache", "?");
+				sqlQueryObject.addInsertField("keystore_dimensionecache", "?");
+				sqlQueryObject.addInsertField("keystore_algoritmocache", "?");
+				sqlQueryObject.addInsertField("keystore_idlecache", "?");
+				sqlQueryObject.addInsertField("keystore_lifecache", "?");
+				sqlQueryObject.addInsertField("keystore_crl_lifecache", "?");
 				// multitenant
 				sqlQueryObject.addInsertField("multitenant_stato", "?");
 				sqlQueryObject.addInsertField("multitenant_fruizioni", "?");
@@ -8543,6 +8587,13 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, token_algoritmoCache);
 				updateStmt.setString(index++, token_idleCache);
 				updateStmt.setString(index++, token_lifeCache);
+				// keystore cache
+				updateStmt.setString(index++, keystore_statoCache);
+				updateStmt.setString(index++, keystore_dimensioneCache);
+				updateStmt.setString(index++, keystore_algoritmoCache);
+				updateStmt.setString(index++, keystore_idleCache);
+				updateStmt.setString(index++, keystore_lifeCache);
+				updateStmt.setString(index++, keystore_crlLifeCache);
 				// multitenant
 				updateStmt.setString(index++, multitenant!=null ? getValue(multitenant.getStato()) : null);
 				updateStmt.setString(index++, multitenant!=null ? getValue(multitenant.getFruizioneSceltaSoggettiErogatori()) : null);
@@ -8609,6 +8660,7 @@ public class DriverConfigurazioneDB_LIB {
 								authz_statoCache, authz_dimensioneCache, authz_algoritmoCache, authz_idleCache, authz_lifeCache,
 								authn_statoCache, authn_dimensioneCache, authn_algoritmoCache, authn_idleCache, authn_lifeCache,
 								token_statoCache, token_dimensioneCache, token_algoritmoCache, token_idleCache, token_lifeCache,
+								keystore_statoCache, keystore_dimensioneCache, keystore_algoritmoCache, keystore_idleCache, keystore_lifeCache, keystore_crlLifeCache,
 								(multitenant!=null ? getValue(multitenant.getStato()) : null),
 								(multitenant!=null ? getValue(multitenant.getFruizioneSceltaSoggettiErogatori()) : null),
 								(multitenant!=null ? getValue(multitenant.getErogazioneSceltaSoggettiFruitori()) : null),
@@ -8643,11 +8695,20 @@ public class DriverConfigurazioneDB_LIB {
 						sqlQueryObject.addInsertField("nome", "?");
 						sqlQueryObject.addInsertField("url_pd", "?");
 						sqlQueryObject.addInsertField("url_pa", "?");
+						sqlQueryObject.addInsertField("url_pd_rest", "?");
+						sqlQueryObject.addInsertField("url_pa_rest", "?");
+						sqlQueryObject.addInsertField("url_pd_soap", "?");
+						sqlQueryObject.addInsertField("url_pa_soap", "?");
 						updateQuery = sqlQueryObject.createSQLInsert();
 						updateStmt = con.prepareStatement(updateQuery);
-						updateStmt.setString(1, configProtocollo.getNome());
-						updateStmt.setString(2, configProtocollo.getUrlInvocazioneServizioPD());
-						updateStmt.setString(3, configProtocollo.getUrlInvocazioneServizioPA());
+						int indexP = 1;
+						updateStmt.setString(indexP++, configProtocollo.getNome());
+						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioPD());
+						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioPA());
+						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioRestPD());
+						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioRestPA());
+						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioSoapPD());
+						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioSoapPA());
 						updateStmt.executeUpdate();
 						updateStmt.close();
 
@@ -9023,6 +9084,13 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("token_algoritmocache", "?");
 				sqlQueryObject.addUpdateField("token_idlecache", "?");
 				sqlQueryObject.addUpdateField("token_lifecache", "?");
+				// keystore cache
+				sqlQueryObject.addUpdateField("keystore_statocache", "?");
+				sqlQueryObject.addUpdateField("keystore_dimensionecache", "?");
+				sqlQueryObject.addUpdateField("keystore_algoritmocache", "?");
+				sqlQueryObject.addUpdateField("keystore_idlecache", "?");
+				sqlQueryObject.addUpdateField("keystore_lifecache", "?");
+				sqlQueryObject.addUpdateField("keystore_crl_lifecache", "?");
 				// multitenant
 				sqlQueryObject.addUpdateField("multitenant_stato", "?");
 				sqlQueryObject.addUpdateField("multitenant_fruizioni", "?");
@@ -9115,6 +9183,13 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, token_algoritmoCache);
 				updateStmt.setString(index++, token_idleCache);
 				updateStmt.setString(index++, token_lifeCache);
+				// keystore cache
+				updateStmt.setString(index++, keystore_statoCache);
+				updateStmt.setString(index++, keystore_dimensioneCache);
+				updateStmt.setString(index++, keystore_algoritmoCache);
+				updateStmt.setString(index++, keystore_idleCache);
+				updateStmt.setString(index++, keystore_lifeCache);
+				updateStmt.setString(index++, keystore_crlLifeCache);
 				// multitenant
 				updateStmt.setString(index++, multitenant!=null ? getValue(multitenant.getStato()) : null);
 				updateStmt.setString(index++, multitenant!=null ? getValue(multitenant.getFruizioneSceltaSoggettiErogatori()) : null);
@@ -9182,6 +9257,7 @@ public class DriverConfigurazioneDB_LIB {
 								authz_statoCache, authz_dimensioneCache, authz_algoritmoCache, authz_idleCache, authz_lifeCache,
 								authn_statoCache, authn_dimensioneCache, authn_algoritmoCache, authn_idleCache, authn_lifeCache,
 								token_statoCache, token_dimensioneCache, token_algoritmoCache, token_idleCache, token_lifeCache,
+								keystore_statoCache, keystore_dimensioneCache, keystore_algoritmoCache, keystore_idleCache, keystore_lifeCache, keystore_crlLifeCache,
 								(multitenant!=null ? getValue(multitenant.getStato()) : null),
 								(multitenant!=null ? getValue(multitenant.getFruizioneSceltaSoggettiErogatori()) : null),
 								(multitenant!=null ? getValue(multitenant.getErogazioneSceltaSoggettiFruitori()) : null),
@@ -9213,11 +9289,20 @@ public class DriverConfigurazioneDB_LIB {
 						sqlQueryObject.addInsertField("nome", "?");
 						sqlQueryObject.addInsertField("url_pd", "?");
 						sqlQueryObject.addInsertField("url_pa", "?");
+						sqlQueryObject.addInsertField("url_pd_rest", "?");
+						sqlQueryObject.addInsertField("url_pa_rest", "?");
+						sqlQueryObject.addInsertField("url_pd_soap", "?");
+						sqlQueryObject.addInsertField("url_pa_soap", "?");
 						updateQuery = sqlQueryObject.createSQLInsert();
 						updateStmt = con.prepareStatement(updateQuery);
-						updateStmt.setString(1, configProtocollo.getNome());
-						updateStmt.setString(2, configProtocollo.getUrlInvocazioneServizioPD());
-						updateStmt.setString(3, configProtocollo.getUrlInvocazioneServizioPA());
+						int indexP = 1;
+						updateStmt.setString(indexP++, configProtocollo.getNome());
+						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioPD());
+						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioPA());
+						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioRestPD());
+						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioRestPA());
+						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioSoapPD());
+						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioSoapPA());
 						updateStmt.executeUpdate();
 						updateStmt.close();
 
@@ -12106,4 +12191,45 @@ public class DriverConfigurazioneDB_LIB {
 		}
 	}
 	
+	
+	
+	
+	
+	
+	public static void CRUDProtocolProperty(int type, List<ProtocolProperty> listPP, long idProprietario,
+			org.openspcoop2.core.mapping.ProprietariProtocolProperty tipologiaProprietarioProtocolProperty, Connection connection,
+			String tipoDatabase) throws DriverConfigurazioneException {
+		try {
+			DBProtocolPropertiesUtils.CRUDConfigProtocolProperty(log, type, listPP, idProprietario, tipologiaProprietarioProtocolProperty, connection, tipoDatabase);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	
+	public static List<ProtocolProperty> getListaProtocolProperty(long idProprietario, org.openspcoop2.core.mapping.ProprietariProtocolProperty tipologiaProprietario, 
+			Connection connection,
+			String tipoDatabase) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		try {
+			return DBProtocolPropertiesUtils.getListaProtocolPropertyConfig(idProprietario,tipologiaProprietario,connection,tipoDatabase);
+		}
+		catch(NotFoundException e) {
+			throw new DriverConfigurazioneNotFound(e.getMessage(),e);
+		}
+		catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public static ProtocolProperty getProtocolProperty(long id, Connection connection, String tipoDatabase) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		try {
+			return DBProtocolPropertiesUtils.getProtocolPropertyConfig(id, connection, tipoDatabase);
+		}
+		catch(NotFoundException e) {
+			throw new DriverConfigurazioneNotFound(e.getMessage(),e);
+		}
+		catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
 }

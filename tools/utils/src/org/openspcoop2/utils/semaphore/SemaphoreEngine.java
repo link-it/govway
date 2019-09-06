@@ -51,8 +51,6 @@ import org.slf4j.Logger;
  */
 public class SemaphoreEngine {
 
-	private static final String format = "yyyy-MM-dd_HH:mm:ss.SSS";
-	
 	protected static SemaphoreEngine getSemaphore(SemaphoreMapping mapping, SemaphoreConfiguration config, TipiDatabase databaseType, Logger log) throws UtilsException {
 		return new SemaphoreEngine(mapping, config, databaseType, log);
 	}
@@ -194,7 +192,7 @@ public class SemaphoreEngine {
 				
 				Timestamp now = DateManager.getTimestamp();
 				
-				SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+				SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 				StringBuffer statoLock = new StringBuffer("Lock per tabella ["+table+"]");
 				if(this.mapping.sizeUniqueConditionValues()>0) {
 					for (int i = 0; i < this.mapping.sizeUniqueConditionValues(); i++) {

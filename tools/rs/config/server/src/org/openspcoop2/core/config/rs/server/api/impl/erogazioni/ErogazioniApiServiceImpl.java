@@ -785,7 +785,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 				oldConnT = TipiConnettore.CUSTOM.toString();
 			}
 
-			if (!ErogazioniApiHelper.connettoreCheckData(body, env)) {
+			if (!ErogazioniApiHelper.connettoreCheckData(body, env, true)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 

@@ -186,14 +186,14 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	/**
 	 * Ritorna l'indicazione se l'autenticazione dei soggetti viene supportato dal protocollo
 	 * 
-	 * @return True se se l'autenticazione dei soggetti viene supportato dal protocollo
+	 * @return True se l'autenticazione dei soggetti viene supportato dal protocollo
 	 */
 	public boolean isSupportoAutenticazioneSoggetti();
 	
 	/**
 	 * Ritorna l'indicazione se l'autenticazione degli applicativi sulle erogazioni viene supportato dal protocollo
 	 * 
-	 * @return True se se l'autenticazione degli applicativi sulle erogazioni viene supportato dal protocollo
+	 * @return True se l'autenticazione degli applicativi sulle erogazioni viene supportato dal protocollo
 	 */
 	public boolean isSupportoAutenticazioneApplicativiErogazioni();
 	
@@ -242,23 +242,30 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	/**
 	 * Ritorna l'indicazione se il protocollo, per la tipologia SOAP, supporta la scelta del fault
 	 * 
-	 * @return True se se il protocollo, per la tipologia SOAP, supporta la scelta del fault
+	 * @return True se il protocollo, per la tipologia SOAP, supporta la scelta del fault
 	 */
 	public boolean isSupportoSceltaFault();
 	
 	/**
 	 * Ritorna l'indicazione se il protocollo, per la correlazione applicativa, supporta il riuso dell'id di protocollo
 	 * 
-	 * @return True se se il protocollo, per la correlazione applicativa, supporta il riuso dell'id di protocollo
+	 * @return True se il protocollo, per la correlazione applicativa, supporta il riuso dell'id di protocollo
 	 */
 	public boolean isAbilitatoRiusoIdCorrelazioneApplicativa();
 	
 	/**
 	 * Ritorna l'indicazione se il protocollo, supporta la generazione delle tracce
 	 * 
-	 * @return True se se il protocollo, supporta la generazione delle tracce
+	 * @return True se il protocollo, supporta la generazione delle tracce
 	 */
 	public boolean isAbilitataGenerazioneTracce();
+	
+	/**
+	 * Ritorna l'indicazione se il protocollo, prevede un identificativo messaggio che contiene una data
+	 * 
+	 * @return True se l'identificativo del protocollo contiene un identificativo messaggio. 
+	 */
+	public boolean isDataPresenteInIdentificativoMessaggio();
 		
 	/**
 	 * Ritorna i bypass da attivare sulla Porta relativi al protocollo

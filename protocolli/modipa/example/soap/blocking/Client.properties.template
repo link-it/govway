@@ -1,0 +1,10 @@
+endpoint=http://localhost:9000/
+
+soapAction="blocking"
+
+# identificativo risorsa
+# Se viene fornito un valore minore o uguale a zero, viene sollevata una eccezione
+idResource=1
+
+#username=username
+#password=123456

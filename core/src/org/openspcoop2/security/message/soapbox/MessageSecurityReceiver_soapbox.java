@@ -25,6 +25,7 @@ package org.openspcoop2.security.message.soapbox;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -450,6 +451,27 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 		}
 		return null;
 	}
+	
+	@Override
+	public X509Certificate getX509Certificate() throws SecurityException {
+		if(this.certificates!=null){
+			if(this.certificates.length > 0){
+				return this.certificates[0];
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public PublicKey getPublicKey() {
+		if(this.certificates!=null){
+			if(this.certificates.length > 0){
+				return this.certificates[0].getPublicKey();
+			}
+		}
+		return null;
+	}
+	
 
 	@Override
 	public List<Reference> getDirtyElements(

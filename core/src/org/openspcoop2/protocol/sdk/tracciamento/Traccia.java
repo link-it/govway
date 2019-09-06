@@ -305,7 +305,7 @@ public class Traccia implements java.io.Serializable {
         return this.busta;
     }
     public void setBusta(Busta value) {
-        this.busta = value;
+        this.busta = value!=null ? value.clone() : null;
         if(value!=null)
         	this.traccia.setBusta(value.getBusta());
         else

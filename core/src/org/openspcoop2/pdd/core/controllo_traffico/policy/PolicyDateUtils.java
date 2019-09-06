@@ -26,6 +26,7 @@ import java.util.Date;
 
 import org.openspcoop2.core.controllo_traffico.constants.TipoFinestra;
 import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.utils.Utilities;
 
 /**     
  * PolicyDateUtils
@@ -36,12 +37,10 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  */
 public class PolicyDateUtils {
 
-	private static final String format = "yyyy-MM-dd_HH:mm:ss.SSS";
-	
 	public static String toStringIntervalloTemporale(TipoFinestra tipoFinestra, Date leftDate,Date rightDate,Date checkDate, boolean statistic) throws NotFoundException{
 		StringBuffer bf = new StringBuffer("");
 		
-		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+		SimpleDateFormat dateFormat = Utilities.getSimpleDateFormatMs();
 		
 		if(statistic){
 			bf.append("[campionamento statistico, finestra osservazione ");

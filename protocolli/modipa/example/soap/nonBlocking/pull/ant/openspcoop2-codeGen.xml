@@ -1,0 +1,49 @@
+<project name="openspcoop2-codeGen-soapNonBlockingPull">
+    <description>
+       Generazione sorgenti relativi al package org.openspcoop2.protocol.modipa.example.soap.non_blocking.pull
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/stub-build.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+
+
+	<!-- ***** CODICE GENERATO A PARTIRE DAI SORGENTI ************ -->
+	
+	<target name="codegen_from_wsdl">
+
+		<delete dir="${build_soapNonBlockingPull}/srcStubCXF"/>
+		<mkdir dir="${build_soapNonBlockingPull}/srcStubCXF"/>
+		<delete dir="${build_soapNonBlockingPull}/buildStubCXF"/>
+		<mkdir dir="${build_soapNonBlockingPull}/buildStubCXF"/>
+
+		<copy file="${src_soapNonBlockingPull}/schemi/soap-nonblocking.wsdl" todir="${build_soapNonBlockingPull}/buildStubCXF"/>
+		<antcall target="build_cxf">
+			<param name="stubBuild.srcDir" value="${build_soapNonBlockingPull}/srcStubCXF"/>
+			<param name="stubBuild.cleanSrcDir" value="false"/>
+			<param name="stubBuild.urlWSDL" value="${src_soapNonBlockingPull}/schemi/soap-nonblocking.wsdl"/>
+			<param name="stubBuild.buildDir" value="${build_soapNonBlockingPull}/buildStubCXF"/>
+			<param name="debug" value="${debug}"/>
+			<param name="stubBuild.buildJar" value="true"/>
+			<param name="stubBuild.jar" value="${dist_soapNonBlockingPull}/openspcoop2_protocol-modipa-soap-nonBlocking-pull-stub-cxf.jar"/>
+			<param name="stubPackageOverriding" value="org.openspcoop2.protocol.modipa.example.soap.non_blocking.pull.stub"/>
+			<param name="serviceFile" value="${build_soapNonBlockingPull}/srcStubCXF/org/openspcoop2/protocol/modipa/example/soap/non_blocking/pull/stub/SOAPNonBlockingPullImplService.java"/>
+			<param name="className" value="SOAPNonBlockingPullImplService"/>
+			<param name="wsdlName" value="soap-nonblocking.wsdl"/>
+		</antcall>
+
+		<copy file="${dist_soapNonBlockingPull}/openspcoop2_protocol-modipa-soap-nonBlocking-pull-stub-cxf.jar" todir="${stub_soapNonBlockingPull}"/>
+		<delete file="${dist_soapNonBlockingPull}/openspcoop2_protocol-modipa-soap-nonBlocking-pull-stub-cxf.jar"/>	
+		<delete dir="${build_soapNonBlockingPull}/srcStubCXF"/>
+		<delete dir="${build_soapNonBlockingPull}/buildStubCXF"/>
+
+	</target>
+
+</project>

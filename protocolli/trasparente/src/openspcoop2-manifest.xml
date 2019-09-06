@@ -84,7 +84,7 @@
     		</integration>
     		<integrationError>
     			<internal problemType="rfc7807">
-    				<rfc7807 details="true" govwayStatus="true" instance="false" useAcceptHeader="true"/>
+    				<rfc7807 details="true" govwayStatus="true" govwayTransactionId="true" instance="false" useAcceptHeader="true"/>
 	    			<authentication httpReturnCode="500" messageType="soapAsRequest" />
 	    			<authorization httpReturnCode="500" messageType="soapAsRequest" />
 	    			<notFound httpReturnCode="500" messageType="soapAsRequest" />
@@ -95,7 +95,7 @@
 	    			<default httpReturnCode="500" messageType="none" /> <!-- se non sono riuscito a capire la versione soap, ritorno 500 senza alcun fault -->
     			</internal>	
     			<external problemType="rfc7807" useInternalFault="true">
-    				<rfc7807 details="true" govwayStatus="true" instance="false" useAcceptHeader="true"/>
+    				<rfc7807 details="true" govwayStatus="true" govwayTransactionId="true" instance="false" useAcceptHeader="true"/>
 	    			<authentication httpReturnCode="500" messageType="soapAsRequest" />
 	    			<authorization httpReturnCode="500" messageType="soapAsRequest" />
 	    			<notFound httpReturnCode="500" messageType="soapAsRequest" />
@@ -169,7 +169,7 @@
     		</integration>
     		<integrationError>
     			<internal problemType="rfc7807">
-    				<rfc7807 details="true" govwayStatus="true" instance="false" useAcceptHeader="true"/>
+    				<rfc7807 details="true" govwayStatus="true" govwayTransactionId="true" instance="false" useAcceptHeader="true"/>
 	    			<authentication httpReturnCode="401" messageType="sameAsRequest" />
 	    			<authorization httpReturnCode="403" messageType="sameAsRequest" />
 	    			<notFound httpReturnCode="404" messageType="sameAsRequest" />
@@ -180,7 +180,7 @@
 	    			<default httpReturnCode="500" messageType="json" />
     			</internal>
     			<external problemType="rfc7807">
-    				<rfc7807 details="true" govwayStatus="true" instance="false" useAcceptHeader="true"/>
+    				<rfc7807 details="true" govwayStatus="true" govwayTransactionId="true" instance="false" useAcceptHeader="true"/>
 	    			<authentication httpReturnCode="401" messageType="sameAsRequest" />
 	    			<authorization httpReturnCode="403" messageType="sameAsRequest" />
 	    			<notFound httpReturnCode="404" messageType="sameAsRequest" />

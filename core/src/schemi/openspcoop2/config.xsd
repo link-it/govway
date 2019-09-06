@@ -763,6 +763,8 @@
 			<xsd:element name="invocazione-porta" type="invocazione-porta" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="invocazione-servizio" type="invocazione-servizio" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="risposta-asincrona" type="risposta-asincrona" maxOccurs="1" minOccurs="0" />
+			<!-- Protocol Properties -->
+			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="id-soggetto" type="xsd:unsignedLong" use="optional">
@@ -991,6 +993,45 @@
 
 
 	<!-- Oggetti interni livello -->
+
+	<!-- ProtocolProperty -->
+	<xsd:complexType name="protocol-property">
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<!-- Uno dei 3 campi sottostanti e' obbligatorio -->
+		<xsd:attribute name="value" type="xsd:string" use="optional"/>
+		<xsd:attribute name="number-value" type="xsd:unsignedLong" use="optional"/>
+		<xsd:attribute name="boolean-value">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="false|true"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="file" type="xsd:string" use="optional"/>
+		<!-- start-extensions -->
+		<xsd:attribute name="byte-file" type="xsd:base64Binary" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="tipo-proprietario" type="xsd:string" use="optional"/>
+		<xsd:attribute name="id-proprietario" type="xsd:unsignedLong" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping transient="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<!-- end-extensions -->
+	</xsd:complexType>
 
 	<!-- Correlazione Applicativa -->
 	<xsd:complexType name="correlazione-applicativa">
@@ -1514,6 +1555,7 @@
 			<xsd:element name="accesso-dati-autorizzazione" type="accesso-dati-autorizzazione" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="accesso-dati-autenticazione" type="accesso-dati-autenticazione" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="accesso-dati-gestione-token" type="accesso-dati-gestione-token" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="accesso-dati-keystore" type="accesso-dati-keystore" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="multitenant" type="configurazione-multitenant" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="protocolli" type="configurazione-protocolli" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="validazione-buste" type="validazione-buste" maxOccurs="1" minOccurs="0" />
@@ -1631,6 +1673,14 @@
 			<xsd:element name="cache" type="cache" maxOccurs="1" minOccurs="0"/>
 		</xsd:sequence>
 	</xsd:complexType>
+	
+	<!-- Informazioni per l'accesso a keystore e crlstore -->
+	<xsd:complexType name="accesso-dati-keystore">
+		<xsd:sequence>
+			<xsd:element name="cache" type="cache" maxOccurs="1" minOccurs="0"/>
+			<xsd:element name="crl-item-life-second" type="xsd:string" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
 
 	<!-- Configurazione Multitenant -->
 	<xsd:complexType name="configurazione-multitenant">
@@ -1649,6 +1699,10 @@
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="urlInvocazioneServizioPD" type="xsd:string" use="optional"/>
 		<xsd:attribute name="urlInvocazioneServizioPA" type="xsd:string" use="optional"/>
+		<xsd:attribute name="urlInvocazioneServizioRestPD" type="xsd:string" use="optional"/>
+		<xsd:attribute name="urlInvocazioneServizioRestPA" type="xsd:string" use="optional"/>
+		<xsd:attribute name="urlInvocazioneServizioSoapPD" type="xsd:string" use="optional"/>
+		<xsd:attribute name="urlInvocazioneServizioSoapPA" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 
 	<!-- Validazione Buste -->

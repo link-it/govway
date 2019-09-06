@@ -533,6 +533,8 @@ public class ErogazioniApiHelper {
         		evalnull( () -> httpsClient.getKeystorePassword() ), 	 		// httpspwdkey
         		evalnull( () -> httpsClient.getKeyPassword() ),	 				// httpspwdprivatekey
         		evalnull( () -> httpsClient.getAlgoritmo() ),					// httpsalgoritmokey
+        		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
+        		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
         		null, 								// tipoconn Da debug = null.	
         		as.getVersione().toString(), 		// Versione aspc
         		false,								// validazioneDocumenti Da debug = false
@@ -1097,6 +1099,8 @@ public class ErogazioniApiHelper {
         		evalnull( () -> httpsClient.getKeystorePassword() ), 	 		// httpspwdkey
         		evalnull( () -> httpsClient.getKeyPassword() ),	 				// httpspwdprivatekey
         		evalnull( () -> httpsClient.getAlgoritmo() ),					// httpsalgoritmokey
+        		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
+        		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
         		null, 								// tipoconn Da debug = null.	
         		as.getVersione().toString(), 		// Versione aspc
         		false,								// validazioneDocumenti Da debug = false
@@ -1167,7 +1171,8 @@ public class ErogazioniApiHelper {
 	
 	public static final boolean connettoreCheckData(
 			final Connettore conn,
-			final ErogazioniEnv env
+			final ErogazioniEnv env,
+			boolean erogazione
 			) throws Exception {
 		
 		
@@ -1205,6 +1210,8 @@ public class ErogazioniApiHelper {
 		}
         			    
 		return env.saHelper.endPointCheckData(
+				env.tipo_protocollo,
+				erogazione,
 				endpointtype,
 				conn.getEndpoint(),
 				null,	// nome
@@ -1231,6 +1238,8 @@ public class ErogazioniApiHelper {
 				evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
 				evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
 				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey, 
+        		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
+        		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
 				null,																//	tipoconn (personalizzato)
 				ServletUtils.boolToCheckBoxStatus( http_stato ),										 	//autenticazioneHttp,
 				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
@@ -1340,6 +1349,8 @@ public class ErogazioniApiHelper {
 				evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
 				evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
 				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey,
+        		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
+        		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
 			
 				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
 				evalnull( () -> proxy.getHostname() ),
@@ -1449,6 +1460,8 @@ public class ErogazioniApiHelper {
 				evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
 				evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
 				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey,
+        		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
+        		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
 			
 				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
 				evalnull( () -> proxy.getHostname() ),
@@ -2270,6 +2283,16 @@ public class ErogazioniApiHelper {
 		boolean useInterfaceNameInInvocationURL = env.paHelper.useInterfaceNameInImplementationInvocationURL(env.tipo_protocollo, env.apcCore.toMessageServiceBinding(aspc.getServiceBinding()));
 
 		String prefix = configProt.getUrlInvocazioneServizioPA();
+		if(ServiceBinding.REST.equals(aspc.getServiceBinding())) {
+			if(configProt.getUrlInvocazioneServizioRestPA()!=null) {
+				prefix = configProt.getUrlInvocazioneServizioRestPA();
+			}
+		}
+		else if(ServiceBinding.SOAP.equals(aspc.getServiceBinding())) {
+			if(configProt.getUrlInvocazioneServizioSoapPA()!=null) {
+				prefix = configProt.getUrlInvocazioneServizioSoapPA();
+			}
+		}
 		prefix = prefix.trim();
 		if(useInterfaceNameInInvocationURL) {
 			if(prefix.endsWith("/")==false) {
@@ -2303,6 +2326,16 @@ public class ErogazioniApiHelper {
 		boolean useInterfaceNameInInvocationURL = env.paHelper.useInterfaceNameInImplementationInvocationURL(env.tipo_protocollo, env.apcCore.toMessageServiceBinding(aspc.getServiceBinding()));
 
 		String prefix = configProt.getUrlInvocazioneServizioPD();
+		if(ServiceBinding.REST.equals(aspc.getServiceBinding())) {
+			if(configProt.getUrlInvocazioneServizioRestPD()!=null) {
+				prefix = configProt.getUrlInvocazioneServizioRestPD();
+			}
+		}
+		else if(ServiceBinding.SOAP.equals(aspc.getServiceBinding())) {
+			if(configProt.getUrlInvocazioneServizioSoapPD()!=null) {
+				prefix = configProt.getUrlInvocazioneServizioSoapPD();
+			}
+		}
 		prefix = prefix.trim();
 		if(useInterfaceNameInInvocationURL) {
 			if(prefix.endsWith("/")==false) {

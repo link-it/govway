@@ -60,6 +60,8 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.saml.SAMLConstants;
+import org.openspcoop2.security.message.utils.EncryptionBean;
+import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.digest.IDigestReader;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
@@ -140,6 +142,23 @@ public abstract class MessageSecurityContext{
 	}
 	public void setReferences(List<Reference> references) {
 		this.references = references;
+	}
+	
+	// I due bean signatureBean e encryptionBean servono per un utilizzo manuale delle classi di sicurezza.
+	
+	private SignatureBean signatureBean;
+	private EncryptionBean encryptionBean;
+	public SignatureBean getSignatureBean() {
+		return this.signatureBean;
+	}
+	public void setSignatureBean(SignatureBean signatureBean) {
+		this.signatureBean = signatureBean;
+	}
+	public EncryptionBean getEncryptionBean() {
+		return this.encryptionBean;
+	}
+	public void setEncryptionBean(EncryptionBean encryptionBean) {
+		this.encryptionBean = encryptionBean;
 	}
 	
 	/**
@@ -320,8 +339,14 @@ public abstract class MessageSecurityContext{
 	 * @param secProperties
 	 */
     public void setIncomingProperties(Hashtable<String,Object> secProperties) throws SecurityException{
-    	if(secProperties!=null && secProperties.size()>0) {
-    		this.incomingProperties = convertSecProperties(secProperties);
+    	this.setIncomingProperties(secProperties, true, false);
+    }
+    public void setIncomingProperties(Hashtable<String,Object> secProperties, boolean convertSecProperties) throws SecurityException{
+    	this.setIncomingProperties(secProperties, convertSecProperties, false);
+    }
+    public void setIncomingProperties(Hashtable<String,Object> secProperties, boolean convertSecProperties, boolean preserveNotStringProperty) throws SecurityException{
+    	if(secProperties!=null && secProperties.size()>0 && convertSecProperties) {
+    		this.incomingProperties = convertSecProperties(secProperties, preserveNotStringProperty);
     	}
     	else {
     		this.incomingProperties = secProperties;
@@ -339,9 +364,15 @@ public abstract class MessageSecurityContext{
 	 * @param secProperties
 	 */
     public void setOutgoingProperties(Hashtable<String,Object> secProperties) throws SecurityException{
+    	this.setOutgoingProperties(secProperties, true, false);
+    }
+    public void setOutgoingProperties(Hashtable<String,Object> secProperties, boolean convertSecProperties) throws SecurityException{
+    	this.setOutgoingProperties(secProperties, convertSecProperties, false);
+    }
+    public void setOutgoingProperties(Hashtable<String,Object> secProperties, boolean convertSecProperties, boolean preserveNotStringProperty) throws SecurityException{
     	
-    	if(secProperties!=null && secProperties.size()>0) {
-    		this.outgoingProperties = convertSecProperties(secProperties);
+    	if(secProperties!=null && secProperties.size()>0 && convertSecProperties) {
+    		this.outgoingProperties = convertSecProperties(secProperties, preserveNotStringProperty);
     	}
     	else {
     		this.outgoingProperties = secProperties;
@@ -355,10 +386,12 @@ public abstract class MessageSecurityContext{
     	return this.outgoingProperties;
     }
     
-    private Hashtable<String,Object> convertSecProperties(Hashtable<String,Object> secProperties) throws SecurityException{
+    private Hashtable<String,Object> convertSecProperties(Hashtable<String,Object> secProperties, boolean preserveNotStringProperty) throws SecurityException{
     	
     	try {
     	
+    		Map<String, Object> mapNoStringProperty = new HashMap<>();
+    		
 	    	Map<String, String> map = new HashMap<>();
 	    	Enumeration<String> keys = secProperties.keys();
 	    	while (keys.hasMoreElements()) {
@@ -369,6 +402,12 @@ public abstract class MessageSecurityContext{
 					v = (String) value;
 				}
 				map.put(key, v);
+				
+				if(preserveNotStringProperty) {
+					if(value!=null && !(value instanceof String)) {
+						mapNoStringProperty.put(key, value);
+					}
+				}
 			}
 	    	
 	    	Map<String, Properties> multiMap = DBPropertiesUtils.toMultiMap(map);
@@ -393,7 +432,36 @@ public abstract class MessageSecurityContext{
 	    	}
 	    	
 	    	if(multiMap.size()>0) { // ho rimosso la mappa di default
+	    		
+	    		if(preserveNotStringProperty && mapNoStringProperty.size()>0) {
+	    			
+	    			List<String> keysMultiMap = new ArrayList<>();
+	    			keysMultiMap.addAll(multiMap.keySet());
+	    			
+	    			Iterator<String> it = mapNoStringProperty.keySet().iterator();
+	    			while (it.hasNext()) {
+						String keyWithPrefix = (String) it.next();
+						Object object = mapNoStringProperty.get(keyWithPrefix);
+						
+		    			String prefix = DBPropertiesUtils.startsWith(keysMultiMap, keyWithPrefix);	
+		    			if(prefix==null) {
+		    				table.put(keyWithPrefix, object);
+		    			}
+		    			else {
+		    				String keyWithoutPrefix = DBPropertiesUtils.normalizePropertyName(prefix, keyWithPrefix);
+		    				multiMap.get(prefix).put(keyWithoutPrefix, object);
+		    			}
+					}
+	    			
+	    		}
+	    		
 	    		table.putAll(multiMap);
+	    		
+	    	}
+	    	else {
+	    		if(preserveNotStringProperty && mapNoStringProperty.size()>0) {
+	    			table.putAll(mapNoStringProperty);
+	    		}
 	    	}
 	    	
 	    	return table;

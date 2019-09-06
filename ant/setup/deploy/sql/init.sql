@@ -56,6 +56,13 @@ UPDATE configurazione set token_dimensionecache='5000';
 UPDATE configurazione set token_algoritmocache='lru';
 UPDATE configurazione set token_lifecache='600';
 
+-- Configurazione Cache Dati Keystore
+UPDATE configurazione set keystore_statocache='abilitato';
+UPDATE configurazione set keystore_dimensionecache='1000';
+UPDATE configurazione set keystore_algoritmocache='lru';
+UPDATE configurazione set keystore_lifecache='7200';
+UPDATE configurazione set keystore_crl_lifecache='1800';
+
 -- Configurazione CORS
 UPDATE configurazione set cors_stato='abilitato';
 UPDATE configurazione set cors_tipo='gateway';

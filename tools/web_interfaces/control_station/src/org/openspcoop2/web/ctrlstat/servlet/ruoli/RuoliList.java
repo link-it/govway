@@ -38,6 +38,7 @@ import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -89,6 +90,11 @@ public final class RuoliList extends Action {
 			}
 			
 			ruoliHelper.prepareRuoliList(ricerca, lista);
+			
+			String msg = ruoliHelper.getParameter(Costanti.PARAMETER_NAME_MSG_ERROR_EXPORT);
+			if(msg!=null && !"".equals(msg)){
+				pd.setMessage("Errore durante esportazione: "+msg);
+			}
 			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

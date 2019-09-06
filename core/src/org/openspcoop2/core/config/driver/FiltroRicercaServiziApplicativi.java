@@ -25,6 +25,8 @@
 package org.openspcoop2.core.config.driver;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openspcoop2.core.id.IDRuolo;
 
@@ -55,6 +57,22 @@ public class FiltroRicercaServiziApplicativi extends FiltroRicercaBase implement
 	/** Ruolo */
 	private IDRuolo idRuolo;
 
+	/** ProtocolProperty */
+	private List<FiltroRicercaProtocolProperty> protocolProperties = new ArrayList<FiltroRicercaProtocolProperty>();
+
+	public List<FiltroRicercaProtocolProperty> getProtocolProperties() {
+		return this.protocolProperties;
+	}
+
+	public void setProtocolProperties(
+			List<FiltroRicercaProtocolProperty> list) {
+		this.protocolProperties = list;
+	}
+
+	public void addProtocolProperty(FiltroRicercaProtocolProperty filtro){
+		this.protocolProperties.add(filtro);
+	}
+	
 	@Override
 	public String toString(){
 		StringBuffer bf = new StringBuffer();
@@ -65,6 +83,14 @@ public class FiltroRicercaServiziApplicativi extends FiltroRicercaBase implement
 			bf.append(" [nomeSoggetto:"+this.nomeSoggetto+"]");
 		if(this.idRuolo!=null)
 			bf.append(" [ruolo:"+this.idRuolo+"]");
+		if(this.protocolProperties!=null && this.protocolProperties.size()>0){
+			bf.append(" [protocol-properties:"+this.protocolProperties.size()+"]");
+			for (int i = 0; i < this.protocolProperties.size(); i++) {
+				bf.append(" [protocol-properties["+i+"]:");
+				this.protocolProperties.get(i).addDetails(bf);
+				bf.append("]");
+			}
+		}
 		if(bf.length()=="Filtro:".length())
 			bf.append(" nessun filtro presente");
 		return bf.toString();

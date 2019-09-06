@@ -20,6 +20,13 @@
 	<classpathentry excluding="openspcoop2-manifest.xml" kind="src" path="protocolli/as4/src"/>
 	<classpathentry kind="src" path="protocolli/as4/example/domibusClient/src"/>
 	<classpathentry kind="src" path="protocolli/as4/example/domibusJMSClient/src"/>
+	<classpathentry excluding="openspcoop2-manifest.xml" kind="src" path="protocolli/modipa/src"/>
+	<classpathentry kind="src" path="protocolli/modipa/example/soap/blocking/src"/>
+	<classpathentry kind="src" path="protocolli/modipa/example/soap/nonBlocking/push/src"/>
+	<classpathentry kind="src" path="protocolli/modipa/example/soap/nonBlocking/pull/src"/>
+	<classpathentry kind="src" path="protocolli/modipa/example/rest/blocking/src"/>
+	<classpathentry kind="src" path="protocolli/modipa/example/rest/nonBlocking/push/src"/>
+	<classpathentry kind="src" path="protocolli/modipa/example/rest/nonBlocking/pull/src"/>
 	<classpathentry kind="src" path="tools/web_interfaces/lib/audit/src"/>
 	<classpathentry kind="src" path="tools/web_interfaces/lib/mvc/src"/>
 	<classpathentry kind="src" path="tools/web_interfaces/lib/queue/src"/>
@@ -59,10 +66,10 @@
 	<classpathentry kind="src" path="example/pdd/client/JMXClient/src"/>
 	<classpathentry excluding="*/jboss*.xml*" kind="src" path="example/pdd/server/testService/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.1_lib"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.1_lib_axis14_withoutSecurity"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.1_lib_stub"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.1_lib_jboss6"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.1_lib_faces"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.2_lib"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.2_lib_axis14_withoutSecurity"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.2_lib_stub"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.2_lib_jboss6"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.2_lib_faces"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

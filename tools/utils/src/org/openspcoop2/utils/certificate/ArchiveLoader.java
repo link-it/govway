@@ -87,7 +87,7 @@ public class ArchiveLoader {
 					String aliasCheck = (String) en.nextElement();
 					java.security.cert.Certificate baseCert = ks.getCertificate(aliasCheck);
 					if(!(baseCert instanceof X509Certificate)) {
-						if(aliasCheck.equals(alias)) {
+						if(aliasCheck.equalsIgnoreCase(alias)) {
 							throw new Exception("Certificate ["+alias+"] isn't X509");
 						}else {
 							continue;
@@ -109,7 +109,7 @@ public class ArchiveLoader {
 					}
 					
 					
-					if(aliasCheck.equals(alias)) {
+					if(aliasCheck.equalsIgnoreCase(alias)) {
 						return new Certificate(aliasCheck, cert, certChain);
 					}
 					else if(position>=0) {

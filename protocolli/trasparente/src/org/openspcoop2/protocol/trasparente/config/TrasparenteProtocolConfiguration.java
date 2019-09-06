@@ -69,4 +69,9 @@ public class TrasparenteProtocolConfiguration extends BasicConfiguration {
 		}
 		return super.isAbilitataGenerazioneTracce();
 	}
+	
+	@Override
+	public boolean isDataPresenteInIdentificativoMessaggio() {
+		return !this.properties.generateIDasUUID();
+	}
 }

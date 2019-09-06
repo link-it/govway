@@ -33,6 +33,8 @@ import java.util.Enumeration;
 
 import javax.crypto.SecretKey;
 
+import org.apache.cxf.common.util.Base64UrlUtility;
+import org.apache.cxf.rt.security.crypto.MessageDigestUtils;
 import org.openspcoop2.utils.UtilsException;
 
 /**	
@@ -125,6 +127,62 @@ public class KeyStore {
 			throw new UtilsException(e.getMessage(),e);
 		}	
 	}
+	
+	public Certificate getCertificateByDigestMD5UrlEncoded(String digest) throws UtilsException{
+		return getCertificateByDigestUrlEncoded(digest, MessageDigestUtils.ALGO_MD5);
+	}
+	public Certificate getCertificateByDigestSHA1UrlEncoded(String digest) throws UtilsException{
+		return getCertificateByDigestUrlEncoded(digest, MessageDigestUtils.ALGO_SHA_1);
+	}
+	public Certificate getCertificateByDigestSHA256UrlEncoded(String digest) throws UtilsException{
+		return getCertificateByDigestUrlEncoded(digest, MessageDigestUtils.ALGO_SHA_256);
+	}
+	public Certificate getCertificateByDigestUrlEncoded(String digest, String digestAlgo) throws UtilsException{
+		try{
+			Enumeration<String> aliases = this.keystore.aliases();
+			while (aliases.hasMoreElements()) {
+				String alias = (String) aliases.nextElement();
+				Certificate cer = this.keystore.getCertificate(alias);
+				String digestCer = this.buildDigestUrlEncoded(cer, digestAlgo);
+				if(digestCer.equals(digest)) {
+					return cer;
+				}
+			}
+			return null;
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}	
+	}
+	
+	public String getDigestMD5UrlEncoded(String alias) throws UtilsException{
+		return this.getDigestUrlEncoded(alias, MessageDigestUtils.ALGO_MD5);
+	}
+	public String getDigestSHA1UrlEncoded(String alias) throws UtilsException{
+		return this.getDigestUrlEncoded(alias, MessageDigestUtils.ALGO_SHA_1);
+	}
+	public String getDigestSHA256UrlEncoded(String alias) throws UtilsException{
+		return this.getDigestUrlEncoded(alias, MessageDigestUtils.ALGO_SHA_256);
+	}
+	public String getDigestUrlEncoded(String alias, String digestAlgo) throws UtilsException{
+		try{
+			Certificate cer = getCertificate(alias);
+			if(cer==null) {
+				throw new Exception("Certificate '"+alias+"' not exists");
+			}
+			return this.buildDigestUrlEncoded(cer, digestAlgo);
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}	
+	}
+	private String buildDigestUrlEncoded(Certificate cer, String digestAlgo) throws UtilsException{
+		try{
+			byte[] digestB = MessageDigestUtils.createDigest(cer.getEncoded(), digestAlgo);
+			return Base64UrlUtility.encode(digestB);
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
 	public boolean existsAlias(String alias) throws UtilsException{
 		try{
 			return this.keystore.containsAlias(alias);

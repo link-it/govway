@@ -39,13 +39,29 @@ public class MerlinKeystoreCache extends AbstractKeystoreCache<MerlinKeystore> {
 		if(params==null){
 			throw new SecurityException("Params is null");
 		}
-		if(params.length==1){
+		if(params.length==0){
+			String propertyFilePath = key;
+			return new MerlinKeystore(propertyFilePath);
+		}
+		else if(params.length==1){
 			if( ! (params[0] instanceof String) ){
 				throw new SecurityException("Param[0] must be String (passwordPrivateKey)");
 			}
 			String propertyFilePath = key;
 			String passwordPrivateKey = (String) params[0];
 			return new MerlinKeystore(propertyFilePath, passwordPrivateKey);
+		}
+		else if(params.length==2){
+			if( ! (params[0] instanceof String) ){
+				throw new SecurityException("Param[0] must be String (tipoStore)");
+			}
+			if( ! (params[1] instanceof String) ){
+				throw new SecurityException("Param[1] must be String (passwordStore)");
+			}
+			String pathStore = key;
+			String tipoStore = (String) params[0];
+			String passwordStore = (String) params[1];
+			return new MerlinKeystore(pathStore, tipoStore, passwordStore);
 		}
 		else if(params.length==3){
 			if( ! (params[0] instanceof String) ){
@@ -66,6 +82,11 @@ public class MerlinKeystoreCache extends AbstractKeystoreCache<MerlinKeystore> {
 		else{
 			throw new SecurityException("Params [lenght:"+params.length+"] not supported");
 		}
+	}
+
+	@Override
+	public String getPrefixKey() {
+		return "Keystore ";
 	}
 
 }

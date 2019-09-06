@@ -184,6 +184,21 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.jmx.GestoreRisorseJ
 	}
 	
 	/**
+	 * Registrazione del MBean per il salvataggio dei keystore
+	 * 
+	 * @throws RisorseJMXException
+	 */
+	public void registerMBeanKeystoreCaching()throws RisorseJMXException{
+		try{
+			this.registerMBean(org.openspcoop2.pdd.core.jmx.EngineKeystoreCaching.class, CostantiPdD.JMX_KEYSTORE_CACHING);
+		}catch(Exception e){
+			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX Keystore Caching: "+e.getMessage(),e);
+			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX Keystore Caching: "+e.getMessage(),e);
+		}	
+		
+	}
+	
+	/**
 	 * Registrazione del MBean per il repository dei Messaggi
 	 * 
 	 * @throws RisorseJMXException

@@ -73,6 +73,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
+import org.openspcoop2.core.config.driver.FiltroRicercaProtocolProperty;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.core.config.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.config.driver.IDServizioUtils;
@@ -90,9 +91,12 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.id.IdentificativiErogazione;
 import org.openspcoop2.core.id.IdentificativiFruizione;
+import org.openspcoop2.core.mapping.DBProtocolPropertiesUtils;
+import org.openspcoop2.core.mapping.ProprietariProtocolProperty;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsAlreadyExistsException;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
@@ -102,10 +106,12 @@ import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
 import org.openspcoop2.utils.datasource.DataSourceParams;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
+import org.openspcoop2.utils.jdbc.JDBCAdapterException;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.slf4j.Logger;
 
 /**
@@ -7405,6 +7411,16 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stm.close();
 				
 				
+				// Protocol Properties
+				try{
+					List<ProtocolProperty> listPP = DriverConfigurazioneDB_LIB.getListaProtocolProperty(sa.getId(), ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, this.tipoDB);
+					if(listPP!=null && listPP.size()>0){
+						for (ProtocolProperty protocolProperty : listPP) {
+							sa.addProtocolProperty(protocolProperty);
+						}
+					}
+				}catch(DriverConfigurazioneNotFound dNotFound){}
+				
 				
 				return sa;
 
@@ -8967,6 +8983,103 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	}
 	
 	
+	
+	@Override
+	public AccessoDatiKeystore getAccessoDatiKeystore() throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("getAccessoDatiKeystore");
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoDatiKeystore] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			AccessoDatiKeystore accessoDatiKeystore = new AccessoDatiKeystore();
+			Cache cache = null;
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE);
+			sqlQueryObject.addSelectField("*");
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+
+			this.log.debug("eseguo query : " + sqlQuery);
+
+			rs = stm.executeQuery();
+
+			if (rs.next()) {
+				String tmpCache = rs.getString("keystore_statocache");
+				if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
+					cache = new Cache();
+
+					String tmpDim = rs.getString("keystore_dimensionecache");
+					if (tmpDim != null && !tmpDim.equals(""))
+						cache.setDimensione(tmpDim);
+
+					String tmpAlg = rs.getString("keystore_algoritmocache");
+					if (tmpAlg.equalsIgnoreCase("LRU"))
+						cache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
+					else
+						cache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
+
+					String tmpIdle = rs.getString("keystore_idlecache");
+					String tmpLife = rs.getString("keystore_lifecache");
+					String tmpCrlLife = rs.getString("keystore_crl_lifecache");
+
+					if (tmpIdle != null && !tmpIdle.equals(""))
+						cache.setItemIdleTime(tmpIdle);
+					if (tmpLife != null && !tmpLife.equals(""))
+						cache.setItemLifeSecond(tmpLife);
+
+					accessoDatiKeystore.setCache(cache);
+					
+					if (tmpCrlLife != null && !tmpCrlLife.equals(""))
+						accessoDatiKeystore.setCrlItemLifeSecond(tmpCrlLife);
+
+				}
+				rs.close();
+				stm.close();
+			}
+
+			return accessoDatiKeystore;
+
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoDatiKeystore] SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoDatiKeystore] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	
 
 	public void createAccessoDatiAutorizzazione(AccessoDatiAutorizzazione accessoDatiAutorizzazione) throws DriverConfigurazioneException {
 
@@ -10492,6 +10605,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					configurazioneProtocollo.setNome(rs1.getString("nome"));
 					configurazioneProtocollo.setUrlInvocazioneServizioPD(rs1.getString("url_pd"));
 					configurazioneProtocollo.setUrlInvocazioneServizioPA(rs1.getString("url_pa"));
+					configurazioneProtocollo.setUrlInvocazioneServizioRestPD(rs1.getString("url_pd_rest"));
+					configurazioneProtocollo.setUrlInvocazioneServizioRestPA(rs1.getString("url_pa_rest"));
+					configurazioneProtocollo.setUrlInvocazioneServizioSoapPD(rs1.getString("url_pd_soap"));
+					configurazioneProtocollo.setUrlInvocazioneServizioSoapPA(rs1.getString("url_pa_soap"));
 					if(config.getProtocolli()==null) {
 						config.setProtocolli(new ConfigurazioneProtocolli());
 					}
@@ -10915,6 +11032,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		// - AccessoDatiGestioneToken
 		try{
 			config.setAccessoDatiGestioneToken(getAccessoDatiGestioneToken());
+		}catch (Exception e) {}
+		
+		// - AccessoDatiKeystore
+		try{
+			config.setAccessoDatiKeystore(getAccessoDatiKeystore());
 		}catch (Exception e) {}
 
 		// - RoutingTable
@@ -24111,7 +24233,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				con = getConnectionFromDatasource("getPropertiesConnettore");
 
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverRegistroServiziDB::getPropertiesConnettore] Exception accedendo al datasource :" + e.getMessage(),e);
+				throw new DriverConfigurazioneException("[DriverDB::getPropertiesConnettore] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -24124,7 +24246,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			List<Property> cList = ConnettorePropertiesUtilities.getPropertiesConnettore(nomeConnettore, connection,this.tipoDB);
 			return cList.toArray(new Property[cList.size()]);
 		} catch (Exception e) {
-			throw new DriverConfigurazioneException("[DriverRegistroServiziDB::getPropertiesConnettore] DriverConfigurazioneException : " + e.getMessage(),e);
+			throw new DriverConfigurazioneException("[DriverDB::getPropertiesConnettore] DriverConfigurazioneException : " + e.getMessage(),e);
 		}
 	}
 
@@ -24840,6 +24962,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".nome = ?");
 				if(filtroRicerca.getIdRuolo()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo = ?");
+				setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca, CostantiDB.SERVIZI_APPLICATIVI);
 			}
 
 			sqlQueryObject.setANDLogicOperator(true);
@@ -24878,6 +25001,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					stm.setString(indexStmt, filtroRicerca.getIdRuolo().getNome());
 					indexStmt++;
 				}
+				setProtocolPropertiesForSearch(stm, indexStmt, filtroRicerca, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO);
 			}
 			rs = stm.executeQuery();
 			List<IDServizioApplicativo> idsSA = new ArrayList<IDServizioApplicativo>();
@@ -26064,4 +26188,142 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		}
 	}
+	
+	
+	
+	
+	
+	public boolean existsProtocolProperty(ProprietariProtocolProperty proprietarioProtocolProperty, long idProprietario, String nome) throws DriverConfigurazioneException {
+
+		Connection connection;
+		if (this.atomica) {
+			try {
+				connection = this.getConnectionFromDatasource("existsProtocolProperty");
+				connection.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("DriverConfigurazioneDB::existsProtocolProperty] Exception accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else
+			connection = this.globalConnection;
+
+		this.log.debug("operazione atomica = " + this.atomica);
+		try {
+			return DBProtocolPropertiesUtils.existsProtocolProperty(proprietarioProtocolProperty, idProprietario, nome, connection, this.tipoDB);
+		} catch (Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		} finally {
+
+			if (this.atomica) {
+				try {
+					connection.close();
+				} catch (Exception e) {
+					// ignore
+				}
+			}
+		}
+
+	}
+
+	public ProtocolProperty getProtocolProperty(ProprietariProtocolProperty proprietarioProtocolProperty, long idProprietario, String nome) throws DriverConfigurazioneException {
+		String nomeMetodo = "getProtocolProperty";
+
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("getProtocolProperty");
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(), e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		try {
+			return DBProtocolPropertiesUtils.getProtocolPropertyConfig(proprietarioProtocolProperty, idProprietario, nome, con, this.tipoDB);
+		} catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneException::" + nomeMetodo + "] Exception: " + se.getMessage());
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+
+	public ProtocolProperty getProtocolProperty(long idProtocolProperty) throws DriverConfigurazioneException {
+		String nomeMetodo = "getProtocolProperty";
+
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("getProtocolProperty");
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(), e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		try {
+
+			return DriverConfigurazioneDB_LIB.getProtocolProperty(idProtocolProperty, con, this.tipoDB);
+
+		} catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneException::" + nomeMetodo + "] Exception: " + se.getMessage());
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	
+	private void setProtocolPropertiesForSearch(ISQLQueryObject sqlQueryObject, FiltroRicercaServiziApplicativi filtroRicerca, String tabella) throws SQLQueryObjectException{
+		if(filtroRicerca!=null){
+			this._setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca.getProtocolProperties(), tabella);
+		}
+	}
+	private void _setProtocolPropertiesForSearch(ISQLQueryObject sqlQueryObject, List<FiltroRicercaProtocolProperty> list, String tabella) throws SQLQueryObjectException{
+		if(list!=null && list.size()>0){
+			List<org.openspcoop2.core.mapping.FiltroRicercaProtocolProperty> l = new ArrayList<>();
+			l.addAll(list);
+			DBProtocolPropertiesUtils.setProtocolPropertiesForSearch(sqlQueryObject, l, tabella);
+		}
+	}
+	
+	
+	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicercaServiziApplicativi filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
+		if(filtroRicerca!=null){
+			this._setProtocolPropertiesForSearch(stmt, index, filtroRicerca.getProtocolProperties(), proprietario);
+		}
+	}
+	
+	private void _setProtocolPropertiesForSearch(PreparedStatement stmt, int index, 
+			List<FiltroRicercaProtocolProperty> list, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
+		if(list!=null && list.size()>0){
+			List<org.openspcoop2.core.mapping.FiltroRicercaProtocolProperty> l = new ArrayList<>();
+			l.addAll(list);
+			DBProtocolPropertiesUtils.setProtocolPropertiesForSearch(stmt, index, l, proprietario, this.tipoDB, this.log);
+		}
+	}
+	
 }

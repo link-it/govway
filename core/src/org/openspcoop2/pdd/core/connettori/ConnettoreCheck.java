@@ -453,7 +453,12 @@ public class ConnettoreCheck {
 			// Check
 			connect = true;
 			httpConn.connect();
-		}finally {
+		}
+		catch(Exception e) {
+			String msgException = ConnettoreBase._readExceptionMessageFromException(e);
+			throw new Exception(msgException, e);
+		}
+		finally {
 			try {
 				if(httpConn!=null && connect) {
 					httpConn.disconnect();

@@ -695,7 +695,7 @@ public class LocalForwardEngine {
 			if(behaviourResponseTo){
 			
 				this.localForwardParameter.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.DATA_PRESA_IN_CARICO, 
-						org.openspcoop2.core.constants.Costanti.newSimpleDateFormat().format(DateManager.getDate()));
+						Utilities.getSimpleDateFormatMs().format(DateManager.getDate()));
 				
 				this.localForwardParameter.getMsgDiag().mediumDebug("Invio messaggio 'OK' al modulo di RicezioneContenutiApplicativi (Behaviour)...");	
 				
@@ -717,7 +717,7 @@ public class LocalForwardEngine {
 			}else if(this.localForwardParameter.isStateless()==false || this.localForwardParameter.isOneWayVersione11() || this.ejbUtils.isGestioneSolamenteConIntegrationManager()){
 				
 				this.localForwardParameter.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.DATA_PRESA_IN_CARICO, 
-						org.openspcoop2.core.constants.Costanti.newSimpleDateFormat().format(DateManager.getDate()));
+						Utilities.getSimpleDateFormatMs().format(DateManager.getDate()));
 				
 				this.localForwardParameter.getMsgDiag().mediumDebug("Invio messaggio 'OK' al modulo di RicezioneContenutiApplicativi...");	
 				

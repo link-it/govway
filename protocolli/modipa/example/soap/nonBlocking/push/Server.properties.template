@@ -1,0 +1,13 @@
+# ** Richiesta **
+
+# Endpoint
+push.request.endpoint=http://localhost:9001/
+
+# Generazione CorrelationId
+push.request.generateCorrelationId=true
+
+
+# ** Risposta **
+
+# Endpoint
+push.response.endpoint=http://localhost:9002/

@@ -33,8 +33,12 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.Riscontro;
 import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
+import org.openspcoop2.protocol.sdk.tracciamento.TracciaExtInfo;
+import org.openspcoop2.utils.MapEntry;
 import org.openspcoop2.utils.beans.BlackListElement;
+import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
+import org.slf4j.Logger;
 
 /****
  * 
@@ -52,7 +56,7 @@ public class BustaBean extends Busta {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
 	private transient IProtocolFactory<?> protocolFactory;
 	private transient ITraduttore traduttore;
 
@@ -193,6 +197,77 @@ public class BustaBean extends Busta {
 	}
 
 //	@Override
+	public Hashtable<String,Map<String, String>> getExtInfoProperties(){
+	
+		Hashtable<String,Map<String, String>> map = new Hashtable<>();
+		try {
+			List<TracciaExtInfo> extInfoList = this.protocolFactory.createTracciaSerializer().extractExtInfo(this);
+			if(extInfoList==null || extInfoList.isEmpty() || extInfoList.size()<=1) {
+				map.put("", this.getProperties());
+			}
+			else {
+				for (TracciaExtInfo tracciaExtInfo : extInfoList) {
+					map.put(tracciaExtInfo.getLabel()!=null ? tracciaExtInfo.getLabel() : "", tracciaExtInfo.getProprietaAsMap());		
+				}
+			}
+		}catch(Exception e) {
+			log.error("Conversione extInfo properties fallita: "+e.getMessage(),e);
+			map.put("", this.getProperties());
+		}
+		return map;
+	}
+	public List<Map.Entry<String, List<Map.Entry<String, String>>>> getExtInfoPropertiesAsList(){
+		
+		List<Map.Entry<String, List<Map.Entry<String, String>>>> toRet = new ArrayList<>();
+		
+		try {
+			List<TracciaExtInfo> extInfoList = this.protocolFactory.createTracciaSerializer().extractExtInfo(this);
+			if(extInfoList==null || extInfoList.isEmpty() || extInfoList.size()<=1) {
+				
+				Map.Entry<String, List<Map.Entry<String, String>>> entry = this.getMapEntryExtInfoDefault();
+				toRet.add(entry);
+				
+			}
+			else {
+				
+				for (TracciaExtInfo tracciaExtInfo : extInfoList) {
+				
+					Map.Entry<String, List<Map.Entry<String, String>>> entry = 
+							new MapEntry<String, List<Map.Entry<String, String>>>(tracciaExtInfo.getLabel()!=null ? tracciaExtInfo.getLabel() : "",
+									tracciaExtInfo.getProprietaAsMapEntry());
+					toRet.add(entry);	
+				
+				}
+				
+			}
+		}catch(Exception e) {
+			log.error("Conversione extInfo properties fallita: "+e.getMessage(),e);
+			
+			Map.Entry<String, List<Map.Entry<String, String>>> entry = this.getMapEntryExtInfoDefault();
+			toRet.add(entry);
+			
+		}
+		
+		return toRet;
+	}
+
+	private Map.Entry<String, List<Map.Entry<String, String>>> getMapEntryExtInfoDefault(){
+		List<Map.Entry<String, String>> internalEntry = new ArrayList<>();
+		Map<String, String> internalMap = this.getProperties();
+		java.util.ArrayList<String> listKeys = new ArrayList<String>();
+		for (String internalKey : internalMap.keySet()) {
+			listKeys.add(internalKey);
+		}
+		java.util.Collections.sort(listKeys);
+		for (String internalKey : listKeys) {
+			Map.Entry<String, String> entry = new MapEntry<String, String>(internalKey, internalMap.get(internalKey));
+			internalEntry.add(entry);
+		}
+		Map.Entry<String, List<Map.Entry<String, String>>> entry = new MapEntry<String, List<Map.Entry<String, String>>>("",internalEntry);
+		return entry;
+	}
+	
+	
 	public Hashtable<String, String> getProperties(){
 		Hashtable<String, String> map = new Hashtable<String, String>();
 		
@@ -237,31 +312,4 @@ public class BustaBean extends Busta {
 		
 		return toRet;
 	}
-}
-
-final class MapEntry<K, V> implements Map.Entry<K, V> {
-    private final K key;
-    private V value;
-
-    public MapEntry(K key, V value) {
-        this.key = key;
-        this.value = value;
-    }
-
-    @Override
-    public K getKey() {
-        return this.key;
-    }
-
-    @Override
-    public V getValue() {
-        return this.value;
-    }
-
-    @Override
-    public V setValue(V value) {
-        V old = this.value;
-        this.value = value;
-        return old;
-    }
 }

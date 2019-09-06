@@ -63,6 +63,7 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -70,7 +71,6 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.Subscription;
-import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
@@ -94,7 +94,6 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
-import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
@@ -126,7 +125,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 	httpstipo, httpspwd, httpsalgoritmo,
 	httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 	httpstipokey, httpspwdkey, httpspwdprivatekey,
-	httpsalgoritmokey;
+	httpsalgoritmokey,
+	httpsKeyAlias,
+	httpsTrustStoreCRLs;
 	private String httpshostverifyS, httpsstatoS;
 	private boolean httpshostverify, httpsstato;
 	private String statoPackage;
@@ -175,8 +176,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 	private IRegistryReader registryReader = null; 
 	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
-	private ConsoleInterfaceType consoleInterfaceType = null;
-
+	
 	private BinaryParameter wsdlimpler, wsdlimplfru;
 
 
@@ -203,8 +203,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 		try {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(apsHelper); 
-
+			
 			this.parametersPOST = null;
 
 			this.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
@@ -318,6 +317,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			this.httpspwdkey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 			this.httpspwdprivatekey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 			this.httpsalgoritmokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+			this.httpsKeyAlias = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
+			this.httpsTrustStoreCRLs = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			if(TipiConnettore.HTTPS.toString().equals(this.endpointtype)){
 				this.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				this.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -417,6 +418,13 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			String tiposervizio = asps.getTipo();
 			Integer versioneservizio = asps.getVersione();
 
+			IDServizio idServizioObject = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+			idServizioObject.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+			
+			IDFruizione idFruizione = new IDFruizione();
+			idFruizione.setIdServizio(idServizioObject);
+			
+			
 			if(this.correlato == null){
 				this.correlato = ((TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio()) ?
 						AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_CORRELATO :
@@ -494,6 +502,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				}
 			}
 
+			idFruizione.setIdFruitore(idSoggettoSelected);
 
 			// Versioni
 			String[] versioniValues = new String[versioniProtocollo.size()+1];
@@ -540,12 +549,18 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
 			
 			// ID Accordo Null per default
-			IDFruizione idFruizione = null;
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleOperationType, this.consoleInterfaceType, 
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleOperationType, apsHelper, 
 					this.registryReader, this.configRegistryReader, idFruizione  );
 			this.protocolProperties = apsHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
 			AccordoServizioParteComuneSintetico as = apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
+			
+			boolean forceHttps = false;
+			boolean forceHttpsClient = false;
+			if(apsHelper.isProfiloModIPA(protocollo)) {
+				forceHttps = apsHelper.forceHttpsProfiloModiPA();
+				forceHttpsClient = apsHelper.forceHttpsClientProfiloModiPA(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as), asps.getPortType());
+			}
 			
 			List<GenericProperties> gestorePolicyTokenList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
 			String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
@@ -718,7 +733,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					}
 					
 					// update della configurazione 
-					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
 							this.registryReader, this.configRegistryReader, idFruizione);
 
 
@@ -751,8 +766,10 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								this.httpshostverify, this.httpspath, this.httpstipo, this.httpspwd,
 								this.httpsalgoritmo, this.httpsstato, this.httpskeystore,
 								this.httpspwdprivatekeytrust, this.httpspathkey,
-								this.httpstipokey, this.httpspwdkey, this.httpspwdprivatekey,
-								this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
+								this.httpstipokey, this.httpspwdkey, 
+								this.httpspwdprivatekey, this.httpsalgoritmokey,
+								this.httpsKeyAlias, this.httpsTrustStoreCRLs,
+								this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
 								null, null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
 								this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
@@ -761,14 +778,15 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 								this.autenticazioneToken,this.token_policy,
-								listExtendedConnettore, false);
+								listExtendedConnettore, false,
+								protocollo, forceHttps, forceHttpsClient);
 					}else{
 						//spostato dentro l'helper
 					}
 				}
 
 				// aggiunta campi custom
-				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+				dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
 
 				pd.setDati(dati);
 
@@ -791,7 +809,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					this.httpskeystore, this.httpspwdprivatekeytrust,
 					this.httpspathkey, this.httpstipokey,
 					this.httpspwdkey, this.httpspwdprivatekey,
-					this.httpsalgoritmokey, this.tipoconn,this.validazioneDocumenti,null,this.autenticazioneHttp,
+					this.httpsalgoritmokey, 
+					this.httpsKeyAlias, this.httpsTrustStoreCRLs,
+					this.tipoconn,this.validazioneDocumenti,null,this.autenticazioneHttp,
 					this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 					this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
 					this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
@@ -803,10 +823,16 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					this.autenticazioneToken,this.token_policy,
 					listExtendedConnettore);
 
+			// updateDynamic
+			if(isOk) {
+				this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idFruizione);		
+			}
+			
 			// Validazione base dei parametri custom 
 			if(isOk){
 				try{
-					apsHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+					apsHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -817,11 +843,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			// Valido i parametri custom se ho gia' passato tutta la validazione prevista
 			if(isOk){
 				try{
-					idFruizione = new IDFruizione();
-					idFruizione.setIdServizio(apsHelper.getIDServizioFromValues(tiposervizio, nomeservizio, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), versioneservizio+""));
-					idFruizione.setIdFruitore(idSoggettoSelected); 
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, 
+					this.consoleDynamicConfiguration.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
 							this.registryReader, this.configRegistryReader, idFruizione);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
@@ -853,7 +876,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+				this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
 						this.registryReader, this.configRegistryReader, idFruizione);
 
 				dati = apsHelper.addHiddenFieldsToDati(tipoOp, this.id, null, null, dati);
@@ -886,7 +909,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							this.httpskeystore, this.httpspwdprivatekeytrust,
 							this.httpspathkey, this.httpstipokey,
 							this.httpspwdkey, this.httpspwdprivatekey,
-							this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
+							this.httpsalgoritmokey, 
+							this.httpsKeyAlias, this.httpsTrustStoreCRLs,
+							this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
 							null, null, null, null, null, null, null, true,
 							isConnettoreCustomUltimaImmagineSalvata, 
 							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
@@ -895,13 +920,14 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 							this.autenticazioneToken,this.token_policy,
-							listExtendedConnettore, false);
+							listExtendedConnettore, false,
+							protocollo, forceHttps, forceHttpsClient);
 				}else{
 					//spostato dentro l'helper
 				}
 
 				// aggiunta campi custom
-				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+				dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
 
 				pd.setDati(dati);
 
@@ -942,6 +968,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						this.httpspathkey, this.httpstipokey,
 						this.httpspwdkey, this.httpspwdprivatekey,
 						this.httpsalgoritmokey,
+						this.httpsKeyAlias, this.httpsTrustStoreCRLs,
 						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 						this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
 						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
@@ -1004,7 +1031,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 					// update della configurazione 
-					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
 							this.registryReader, this.configRegistryReader, idFruizione);
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, this.id, null, null, dati);
@@ -1037,7 +1064,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								this.httpskeystore, this.httpspwdprivatekeytrust,
 								this.httpspathkey, this.httpstipokey,
 								this.httpspwdkey, this.httpspwdprivatekey,
-								this.httpsalgoritmokey, this.tipoconn, 
+								this.httpsalgoritmokey, 
+								this.httpsKeyAlias, this.httpsTrustStoreCRLs,
+								this.tipoconn, 
 								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
 								null, null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
@@ -1047,13 +1076,14 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 								this.autenticazioneToken,this.token_policy,
-								listExtendedConnettore, false);
+								listExtendedConnettore, false,
+								protocollo, forceHttps, forceHttpsClient);
 					}else{
 						//spostato dentro l'helper
 					}
 
 					// aggiunta campi custom
-					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+					dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
 
 					pd.setDati(dati);
 
@@ -1065,7 +1095,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			}
 
 			//imposto properties custom
-			fruitore.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType,null));
+			fruitore.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(this.protocolProperties, this.consoleOperationType,null));
 
 			servsp.addFruitore(fruitore);
 			apsCore.performUpdateOperation(superUser, apsHelper.smista(), servsp);

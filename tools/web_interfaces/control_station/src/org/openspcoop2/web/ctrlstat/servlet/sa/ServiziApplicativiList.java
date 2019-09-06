@@ -39,6 +39,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -123,6 +124,11 @@ public final class ServiziApplicativiList extends Action {
 
 			saHelper.prepareServizioApplicativoList(ricerca, lista, useIdSogg);
 
+			String msg = saHelper.getParameter(Costanti.PARAMETER_NAME_MSG_ERROR_EXPORT);
+			if(msg!=null && !"".equals(msg)){
+				pd.setMessage("Errore durante esportazione: "+msg);
+			}
+			
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

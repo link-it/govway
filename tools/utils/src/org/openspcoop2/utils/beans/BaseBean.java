@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.serialization.ISerializer;
 import org.openspcoop2.utils.serialization.JavaSerializer;
@@ -51,7 +52,7 @@ import org.openspcoop2.utils.xml.JaxbUtils;
 public abstract class BaseBean {
 
 	
-	private static final java.text.SimpleDateFormat DATE_FORMAT = new java.text.SimpleDateFormat("yyyy-MM-dd_HH:mm:ss.SSS");
+	private static final java.text.SimpleDateFormat DATE_FORMAT = Utilities.getSimpleDateFormatMs();
 	
 	
 	

@@ -43,6 +43,7 @@ import org.openspcoop2.pdd.services.core.AbstractContext;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.dump.DumpException;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
@@ -59,8 +60,6 @@ import org.slf4j.Logger;
  */
 public class DumpRaw {
 
-	private static final String format = "yyyy-MM-dd_HH:mm:ss.SSS";
-	
 	private StringBuffer bfContext = new StringBuffer();
 	private StringBuffer bfRequest = new StringBuffer();
 	private StringBuffer bfResponse = new StringBuffer();
@@ -135,13 +134,13 @@ public class DumpRaw {
 		
 		try{
 			if(dataAccettazioneRichiesta!=null){
-				SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+				SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 				this.bfContext.append("Date (Accept Request): ");
 				this.bfContext.append(dateformat.format(dataAccettazioneRichiesta));
 				this.bfContext.append("\n");
 			}
 			if(dataIngressoRichiesta!=null){
-				SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+				SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 				this.bfContext.append("Date (Received Request): ");
 				this.bfContext.append(dateformat.format(dataIngressoRichiesta));
 				this.bfContext.append("\n");

@@ -91,6 +91,7 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	
 	/* Context */	
 	public Map<String, Object> context = new Hashtable<String, Object>();
+	private String transactionId;
 	
 	/* ContentType */
 	public Map<String, String> contentTypeParamaters = new Hashtable<String, String>();
@@ -160,6 +161,7 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 				base.forwardUrlProperties = this.forwardUrlProperties;
 			}
 			base.context = this.context;
+			base.transactionId = this.transactionId;
 			base.messageRole = this.messageRole;
 			if(!skipTransportInfo) {
 				base.incomingsize = this.incomingsize;
@@ -188,6 +190,7 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 					newInstance.addContextProperty(contextKey, this.context.get(contextKey));
 				}
 			}	
+			newInstance.setTransactionId(this.transactionId);
 			newInstance.setMessageRole(this.messageRole);
 			newInstance.setProtocolName(this.protocolName);
 		}
@@ -797,6 +800,15 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	@Override
 	public Object removeContextProperty(String property){
 		return this.context.remove(property);
+	}
+	
+	@Override
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
+	}
+	@Override
+	public String getTransactionId() {
+		return this.transactionId;
 	}
 	
 	

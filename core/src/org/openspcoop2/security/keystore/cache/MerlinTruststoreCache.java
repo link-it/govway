@@ -60,4 +60,8 @@ public class MerlinTruststoreCache extends AbstractKeystoreCache<MerlinTruststor
 		}
 	}
 
+	@Override
+	public String getPrefixKey() {
+		return "Truststore ";
+	}
 }

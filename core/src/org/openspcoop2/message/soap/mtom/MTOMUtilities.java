@@ -26,7 +26,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.mail.internet.ContentType;
+//import javax.mail.internet.ContentType;
+import com.sun.xml.messaging.saaj.packaging.mime.internet.ContentType;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MimeHeaders;

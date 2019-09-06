@@ -39,4 +39,9 @@ public class SPCoopProtocolConfiguration extends BasicConfiguration {
 		super(factory);
 	}
 	
+	@Override
+	public boolean isDataPresenteInIdentificativoMessaggio() {
+		return true;
+	}
+	
 }

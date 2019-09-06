@@ -55,6 +55,7 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.mapping.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -70,7 +71,6 @@ import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
-import org.openspcoop2.core.registry.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.utils.RegistroServiziUtils;
 import org.openspcoop2.protocol.abstraction.Erogazione;
@@ -101,9 +101,9 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveScope;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
+import org.openspcoop2.protocol.sdk.constants.ArchiveVersion;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
-import org.openspcoop2.protocol.sdk.constants.ArchiveVersion;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.ZipUtilities;
 import org.slf4j.Logger;
@@ -543,7 +543,19 @@ public class ZIPReadUtils  {
 									
 									// ------------ servizio applicativo --------------------
 									else if(nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_SERVIZI_APPLICATIVI_DIR+File.separatorChar)) ){
-										this.readServizioApplicativo(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, validationDocuments, idCorrelazione);
+										
+										String nomeFileServizioApplicativo = nomeFile.substring((Costanti.OPENSPCOOP2_ARCHIVE_SERVIZI_APPLICATIVI_DIR+File.separatorChar).length());
+										
+										if(nomeFileServizioApplicativo.contains((File.separatorChar+""))==false){
+											this.readServizioApplicativo(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, validationDocuments, idCorrelazione);
+										}
+										else {
+											
+											String nomeServizioApplicativo = nomeFileServizioApplicativo.substring(0, nomeFileServizioApplicativo.indexOf(File.separatorChar));
+											String nomeFileSenzaServizioApplicativo = nomeFileServizioApplicativo.substring(nomeFileServizioApplicativo.indexOf(File.separatorChar)+1);
+											this.readProprietaServizioApplicativo(archivio, content, entryName, tipoSoggetto, nomeSoggetto, nomeServizioApplicativo, nomeFileSenzaServizioApplicativo, 
+													archiveVersion, mapKeyProtocolProperties);
+										}
 									}
 									
 									// ------------ porta delegata --------------------
@@ -938,7 +950,8 @@ public class ZIPReadUtils  {
 			String nomeVersioneAccordo = (nomeAccordo==null?"":nomeAccordo) + (versioneAccordo==null?"":versioneAccordo);
 			bf.append(nomeVersioneAccordo==null?"":nomeVersioneAccordo);
 		}
-		else {
+		else if(ProprietarioProprietaProtocollo.SOGGETTO.equals(proprietario) ||
+				ProprietarioProprietaProtocollo.SERVIZIO_APPLICATIVO.equals(proprietario)) {
 			bf.append(tipoSoggetto==null?"":tipoSoggetto);
 			bf.append("_");
 			bf.append(nomeSoggetto==null?"":nomeSoggetto);
@@ -948,8 +961,13 @@ public class ZIPReadUtils  {
 			bf.append(tipoSoggetto==null?"":tipoSoggettoFruitore);
 			bf.append("_");
 			bf.append(nomeSoggetto==null?"":nomeSoggettoFruitore);
+			bf.append("_");
 		}
-
+		if(ProprietarioProprietaProtocollo.SERVIZIO_APPLICATIVO.equals(proprietario)) {
+			bf.append(nomeAccordo==null?"":nomeAccordo);
+			bf.append("_");
+		}
+		
 		bf.append("_");
 		bf.append(nomeDocumento);
 		return bf.toString();
@@ -1375,6 +1393,34 @@ public class ZIPReadUtils  {
 			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (servizio-applicativo) non valida rispetto allo schema (ConfigurazionePdD): "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
+	}
+	public void readProprietaServizioApplicativo(Archive archivio,byte[]content,String entryName, String tipoSoggetto, String nomeSoggetto, String nomeSA,
+			String nomeFileSenzaServizioApplicativo, ArchiveVersion archiveVersion,
+			Hashtable<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties) throws ProtocolException {
+		org.openspcoop2.core.config.ServizioApplicativo servizioApplicativo = null;
+		String key = ArchiveServizioApplicativo.buildKey(tipoSoggetto, nomeSoggetto, nomeSA);
+		if(archivio.getServiziApplicativi().containsKey(key)){
+			servizioApplicativo = archivio.getServiziApplicativi().get(key).getServizioApplicativo();
+		}
+		else {
+			throw new ProtocolException("Elemento ["+entryName+"] errato. Non risulta la definizione dell'applicativo ["+tipoSoggetto+"/"+nomeSoggetto+" "+nomeSA+"]");
+		}
+		
+		List<org.openspcoop2.core.config.ProtocolProperty> listPP = new ArrayList<>();
+		if(servizioApplicativo.sizeProtocolPropertyList()>0) {
+			for (org.openspcoop2.core.config.ProtocolProperty protocolProperty : servizioApplicativo.getProtocolPropertyList()) {
+				if(protocolProperty.getTipoProprietario()==null) {
+					protocolProperty.setTipoProprietario(ProprietariProtocolProperty.SERVIZIO_APPLICATIVO.name());
+				}
+				listPP.add(protocolProperty);
+			}
+		}
+		
+		processProtocolPropertyConfig(nomeFileSenzaServizioApplicativo, archiveVersion, entryName, content, 
+				ProprietarioProprietaProtocollo.SERVIZIO_APPLICATIVO, 
+				tipoSoggetto, nomeSoggetto, nomeSA, 
+				mapKeyProtocolProperties, listPP, null);
+		
 	}
 	
 	public PortaDelegata readPortaDelegata(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
@@ -2545,6 +2591,58 @@ public class ZIPReadUtils  {
 	
 	
 	
+	private void processProtocolPropertyConfig(String nomeFileSenzaId,ArchiveVersion archiveVersion, String entryName, byte[] xml,
+			ProprietarioProprietaProtocollo proprietario,
+			String tipoSoggetto, String nomeSoggetto, String nome,
+			Hashtable<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties, 
+			List<org.openspcoop2.core.config.ProtocolProperty> protocolProperties,
+			HashMap<String,Long> mapIdToLong) throws ProtocolException{
+		String nomePP = nomeFileSenzaId.substring((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar).length());
+		
+		String nomePPSenzaEstensione = nomePP;
+		if(nomePP.contains(".")==false){
+			throw new ProtocolException("Elemento ["+entryName+"] errato. Per le protocol properties è attesa una estensione");
+		}
+		nomePPSenzaEstensione = nomePP.substring(0,nomePP.lastIndexOf("."));
+		String keyProtocolProperty = getKeyProtocolProperty(tipoSoggetto, nomeSoggetto, nome, null, null, null, proprietario, nomePPSenzaEstensione);
+		if(nomeFileSenzaId.endsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_ID)){
+			String tmp = new String(xml);
+			IdentificativoProprietaProtocollo identificativoPP = new IdentificativoProprietaProtocollo();
+			identificativoPP.tipo = ProprietariProtocolProperty.valueOf(tmp.split(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR)[0]); 
+			int prefixLength = identificativoPP.tipo.name().length()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR.length();
+			identificativoPP.nome = tmp.substring(prefixLength);
+			mapKeyProtocolProperties.put(keyProtocolProperty, identificativoPP);
+		}
+		else if(nomeFileSenzaId.endsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_CONTENT)){
+			IdentificativoProprietaProtocollo identificativoPP = mapKeyProtocolProperties.get(keyProtocolProperty);
+			if(identificativoPP==null){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Non è stato rilevato precedentemente il corrispettivo file contenente l'identificativo (con estensione '"+
+							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_ID+"')");
+			}
+			this.getProtocolPropertyConfig(proprietario, protocolProperties, 
+					identificativoPP.nome, identificativoPP.tipo,
+					identificativoPP.idProprietario, mapIdToLong,
+					entryName).setByteFile(xml);
+		}
+		else {
+			throw new ProtocolException("Elemento ["+entryName+"] non atteso.");
+		}
+
+	}
+	private org.openspcoop2.core.config.ProtocolProperty getProtocolPropertyConfig(ProprietarioProprietaProtocollo proprietario,
+			List<org.openspcoop2.core.config.ProtocolProperty> protocolProperties, String nome, ProprietariProtocolProperty tipo, 
+			String idProprietario, HashMap<String,Long> mapIdToLong, 
+			String entryName) throws ProtocolException{
+			
+		for (org.openspcoop2.core.config.ProtocolProperty pp : protocolProperties) {
+			if(pp.getTipoProprietario().equals(tipo.name()) && pp.getName().equals(nome)) {
+				return pp;
+			}
+		}
+		throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire una proprietà di protocollo senza definirlo anche all'interno della definizione xml ("+proprietario.name()+")");
+	}
+	
+	
 	
 	protected String toStringXmlElementForErrorMessage(byte[]xml){
 		return xml!=null ? "Xml: ["+new String(xml)+"] \n" : "Xml Undefined. \n";
@@ -2590,6 +2688,7 @@ enum ProprietarioProprietaProtocollo{
 	ACCORDO_COOPERAZIONE,
 	ACCORDO_SERVIZIO_PARTE_COMUNE,
 	ACCORDO_SERVIZIO_PARTE_SPECIFICA,
-	FRUITORE
+	FRUITORE,
+	SERVIZIO_APPLICATIVO
 	
 }

@@ -355,6 +355,8 @@
 			<xsd:element maxOccurs="1" minOccurs="0" name="invocazione-porta" type="invocazione-porta"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="invocazione-servizio" type="invocazione-servizio"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="risposta-asincrona" type="risposta-asincrona"/>
+			<!-- Protocol Properties -->
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="protocol-property" type="protocol-property"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="id-soggetto" type="xsd:unsignedLong" use="optional">
@@ -457,6 +459,31 @@
 
 
 	<!-- Oggetti interni livello -->
+
+	<!-- ProtocolProperty -->
+	<xsd:complexType name="protocol-property">
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<!-- Uno dei 3 campi sottostanti e' obbligatorio -->
+		<xsd:attribute name="value" type="xsd:string" use="optional"/>
+		<xsd:attribute name="number-value" type="xsd:unsignedLong" use="optional"/>
+		<xsd:attribute name="boolean-value">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="false|true"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="file" type="xsd:string" use="optional"/>
+		<!-- start-extensions -->
+		<xsd:attribute name="byte-file" type="xsd:base64Binary" use="optional">
+			
+		</xsd:attribute>
+		<xsd:attribute name="tipo-proprietario" type="xsd:string" use="optional"/>
+		<xsd:attribute name="id-proprietario" type="xsd:unsignedLong" use="optional">
+			
+		</xsd:attribute>
+		<!-- end-extensions -->
+	</xsd:complexType>
 
 	<!-- Correlazione Applicativa -->
 	<xsd:complexType name="correlazione-applicativa">
@@ -816,6 +843,7 @@
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-autorizzazione" type="accesso-dati-autorizzazione"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-autenticazione" type="accesso-dati-autenticazione"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-gestione-token" type="accesso-dati-gestione-token"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-keystore" type="accesso-dati-keystore"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="multitenant" type="configurazione-multitenant"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="protocolli" type="configurazione-protocolli"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="validazione-buste" type="validazione-buste"/>
@@ -933,6 +961,14 @@
 			<xsd:element maxOccurs="1" minOccurs="0" name="cache" type="cache"/>
 		</xsd:sequence>
 	</xsd:complexType>
+	
+	<!-- Informazioni per l'accesso a keystore e crlstore -->
+	<xsd:complexType name="accesso-dati-keystore">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" name="cache" type="cache"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="crl-item-life-second" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
 
 	<!-- Configurazione Multitenant -->
 	<xsd:complexType name="configurazione-multitenant">
@@ -951,6 +987,10 @@
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="urlInvocazioneServizioPD" type="xsd:string" use="optional"/>
 		<xsd:attribute name="urlInvocazioneServizioPA" type="xsd:string" use="optional"/>
+		<xsd:attribute name="urlInvocazioneServizioRestPD" type="xsd:string" use="optional"/>
+		<xsd:attribute name="urlInvocazioneServizioRestPA" type="xsd:string" use="optional"/>
+		<xsd:attribute name="urlInvocazioneServizioSoapPD" type="xsd:string" use="optional"/>
+		<xsd:attribute name="urlInvocazioneServizioSoapPA" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 
 	<!-- Validazione Buste -->

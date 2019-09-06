@@ -38,6 +38,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveCascadeConfiguration;
 import org.openspcoop2.protocol.sdk.archive.ExportMode;
@@ -48,6 +49,9 @@ import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -207,6 +211,27 @@ public final class Exporter extends Action {
 						protocolli.add(protocollo);
 					}
 				}
+				break;
+			case SERVIZIO_APPLICATIVO:
+				provenienza = new Parameter(ServiziApplicativiCostanti.LABEL_APPLICATIVI, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST);
+				identificativi = exporterUtils.getIdsServiziApplicativi(objToExport);
+				for (Object id : identificativi) {
+					IDServizioApplicativo idServizioApplicativo = (IDServizioApplicativo) id;
+					String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(idServizioApplicativo.getIdSoggettoProprietario().getTipo());
+					if(protocolli.contains(protocollo)==false){
+						protocolli.add(protocollo);
+					}
+				}
+				break;
+			case RUOLO:
+				provenienza = new Parameter(RuoliCostanti.LABEL_RUOLI, RuoliCostanti.SERVLET_NAME_RUOLI_LIST);
+				identificativi = exporterUtils.getIdsRuoli(objToExport);
+				protocolli = archiviCore.getProtocolli(session);
+				break;
+			case SCOPE:
+				provenienza = new Parameter(ScopeCostanti.LABEL_SCOPE, ScopeCostanti.SERVLET_NAME_SCOPE_LIST);
+				identificativi = exporterUtils.getIdsScope(objToExport);
+				protocolli = archiviCore.getProtocolli(session);
 				break;
 			case CONFIGURAZIONE:
 				//provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE, null); e' al primo livello

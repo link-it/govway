@@ -191,18 +191,23 @@
 			<item type="select" name="signatureKeyIdentifier" label="Tipo" reloadOnChange="true" default="DirectReference" >
 			<!--   note="Per maggiori dettagli vedi: http://coheigea.blogspot.com/2013/03/signature-and-encryption-key.html"> -->
 				<values>
-					<value value="DirectReference" label="DirectReference"/>
-					<value value="IssuerSerial" label="IssuerSerial"/>
-					<value value="X509KeyIdentifier" label="X509KeyIdentifier"/>
-					<value value="SKIKeyIdentifier" label="SKIKeyIdentifier"/>
-					<value value="EmbeddedKeyName" label="EmbeddedKeyName"/>
-					<value value="Thumbprint" label="Thumbprint"/>
-					<value value="EncryptedKeySHA1" label="EncryptedKeySHA1"/>
-					<value value="KeyValue" label="KeyValue"/>
+					<value value="DirectReference" label="Binary Security Token"/>
+					<value value="IssuerSerial" label="Issuer-Serial Security Token Reference"/>
+					<value value="X509KeyIdentifier" label="X509 Key Identifier"/>
+					<value value="Thumbprint" label="Thumbprint Key Identifier"/>
+					<value value="SKIKeyIdentifier" label="SKI Key Identifier"/>
+					<!-- <value value="EmbeddedKeyName" label="Embedded Key Name"/> NON FUNZIONA -->
+					<!-- <value value="EncryptedKeySHA1" label="EncryptedKeySHA1 Key Identifier"/> SOLO per Encrypt -->
+					<value value="KeyValue" label="Public Key Value"/>
 				</values>
 				<property name="signatureKeyIdentifier" />
 			</item>
 			<item type="checkbox" name="useSingleCertificate" label="Certificato Singolo" defaultSelected="true">
+				<conditions>
+				    <condition>
+				    	<equals name="signatureKeyIdentifier" value="DirectReference" />
+				    </condition>
+			   	</conditions>
 				<property name="useSingleCertificate" selectedValue="true" unselectedValue="false"/>
 			</item>
 			<item type="checkbox" name="includeSignatureToken" label="Include Signature Token" defaultSelected="false">
@@ -220,7 +225,7 @@
 		
 		<subsection label="KeyStore">
 
-			<item type="hidden" name="signatureCryptoProvider" value="org.apache.ws.security.components.crypto.Merlin">
+			<item type="hidden" name="signatureCryptoProvider" value="org.openspcoop2.security.keystore.Merlin">
 				<property name="org.apache.ws.security.crypto.provider" force="true" properties="signaturePropRefId"/>
 			</item>
 

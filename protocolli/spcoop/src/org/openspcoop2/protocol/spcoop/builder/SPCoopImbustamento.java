@@ -255,7 +255,7 @@ public class SPCoopImbustamento {
 	
 			// Date nel formato aaaa-mm-gg_hh:mm
 			Date now=DateManager.getDate();
-			SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd_HH:mm"); // SimpleDateFormat non e' thread-safe
+			SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMinute();
 			bf.append(dateformat.format(now));
 	
 			return bf.toString();

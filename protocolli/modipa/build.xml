@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="ProtocolloModelloInteroperabilitaPA" default="build" basedir=".">
+	
+	<description>
+        Plugin Modello Interoperabilita PA
+    </description>
+
+	<import file="./local_env.xml" />
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+
+	<!-- directory root -->
+	<property name="gitrepo_root" location="${openspcoop2}" />
+
+	<!-- Properties -->
+	<property name="src_modipa" location="src" />
+	<property name="build" location="build" />
+	<property name="dist" location="dist" />
+	<property name="doc" location="doc" />
+
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="*.userlibraries"/>
+			<include name="commons/*"/>
+			<include name="cxf/*"/>
+			<include name="saaj/*"/>
+			<include name="jax/jaxb*"/>
+			<include name="javax/*"/>
+			<include name="jackson/*"/>
+			<include name="log/*"/>
+			<include name="security/*"/>
+			<include name="shared/*"/>
+			<include name="soapbox/*"/>
+			<include name="spring/*"/>
+			<include name="spring-security/*"/>
+			<include name="stub/*"/>
+			<include name="wss4j/*"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${openspcoop2}/core/dist" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>	
+
+	
+	
+	<!-- Clean -->
+	<target name="clean">
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+	</target>
+
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile">
+		<mkdir dir="${build}" />
+		<mkdir dir="${dist}" />
+	</target>	
+	
+	
+	
+	<target name="compile_modipa_plugin" description="compila il plugin modipa" depends="init_compile">
+
+		<!-- Info git -->
+		<runtarget target="checkgit" />
+		<!-- <echo message="GIT:[${jgit.jar.presente}]"/> -->
+				
+		<!-- org.openspcoop2.protocol.modipa -->
+		<var name="packagesCompiled" value="org.openspcoop2.protocol.modipa" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.modipa.builder" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.modipa.config" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.modipa.constants" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.modipa.utils" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.modipa.properties" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.modipa.tracciamento" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.modipa.validator" />
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_modipa}"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="modipa-protocol-plugin"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="org/openspcoop2/protocol/modipa/**/*.java"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.protocol.modipa"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="modipa"/>
+		</antcall>
+
+		<!-- Jar contenente la configurazione -->
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_modipa}"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="modipa-protocol-config"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value=""/>
+			<param name="compile_src_openspcoop2.SRC_INCLUDES" value="**/*.xml"/>
+			<param name="compile_src_openspcoop2.SRC_INCLUDES_2" value="**/*.properties"/>
+			<param name="compile_src_openspcoop2.SRC_EXCLUDES_2" value="**/binding.xml"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.protocol.modipa.config"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="modipa"/>
+		</antcall>
+		
+		<!-- schemi xsd -->
+		<!--
+		<antcall target="build_jar_schema">
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+			<param name="compile_src_openspcoop2.JAR_SRC_DIR" value="${src_modipa}/schemi"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="modipa-protocol-schemi"/>
+			<param name="compile_src_openspcoop2.JAR_SRC_INCLUDES" value="**"/>
+			<param name="compile_src_openspcoop2.JAR_SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="modipa"/>
+		</antcall>
+		-->
+
+				
+		<!-- Jar Complessivo -->
+		<antcall target="jar_2_jar_openspcoop2">
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="modipa-protocol"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="modipa"/>
+		</antcall>
+		
+		<!-- API -->
+		<if>
+			<istrue value="${buildAPI}"/>
+			<then>
+				<mkdir dir="${doc}"/>
+			</then>
+		</if>
+		<antcall target="compile_api_openspcoop2">
+			<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+			<param name="compile_src_openspcoop2.API_NAME" value="modipa"/>
+			<param name="compile_src_openspcoop2.API_DIR" value="${doc}/api"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+			<param name="src" value="${src_modipa}"/>
+		</antcall>
+			
+	</target>
+	<target name="build" depends="compile_modipa_plugin" />
+	
+	
+	
+	
+	<!-- Classi Test Standalone -->
+	
+	<!-- CLASSPATH -->
+	<path id="classpath_run_lib" >
+		<fileset dir="${required_lib}" >
+			<include name="**/*"/>
+		</fileset>
+	</path>
+	<path id="classpath_run_openspcoop_dist" >
+		<fileset dir="${openspcoop2}/core/dist" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>	
+	<path id="classpath_run_dist" >
+		<fileset dir="${dist}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>	
+	
+	
+	
+</project>

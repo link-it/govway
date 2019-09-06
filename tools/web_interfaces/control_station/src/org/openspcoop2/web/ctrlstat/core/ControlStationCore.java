@@ -27,14 +27,13 @@ import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -82,7 +81,6 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
-import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
@@ -96,7 +94,6 @@ import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
-import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -117,7 +114,7 @@ import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.pdd.logger.DriverMsgDiagnostici;
 import org.openspcoop2.pdd.logger.DriverTracciamento;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.engine.utils.AzioniUtils;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -5313,6 +5310,31 @@ public class ControlStationCore {
 		return l;
 	}
 	
+	public List<org.openspcoop2.core.registry.Soggetto> getSoggetti() throws DriverRegistroServiziException{
+		return this.getSoggetti(null);
+	}
+	public List<org.openspcoop2.core.registry.Soggetto> getSoggetti(String protocollo) throws DriverRegistroServiziException{
+		Search s = new Search(true);
+		if(protocollo!=null) {
+			s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, protocollo); // imposto protocollo
+		}
+		return this.soggettiRegistroList(null, s);
+	}
+	
+	public List<IDSoggetto> getIdSoggetti() throws DriverRegistroServiziException{
+		return this.getIdSoggetti(null);
+	}
+	public List<IDSoggetto> getIdSoggetti(String protocollo) throws DriverRegistroServiziException{
+		List<org.openspcoop2.core.registry.Soggetto> list = this.getSoggetti(protocollo);
+		List<IDSoggetto> l = new ArrayList<>();
+		if(list!=null && !list.isEmpty()) {
+			for (org.openspcoop2.core.registry.Soggetto soggetto : list) {
+				l.add(new IDSoggetto(soggetto.getTipo(), soggetto.getNome()));
+			}
+		}
+		return l;
+	}
+	
 	public IDSoggetto convertSoggettoSelezionatoToID(String soggettoOperativoSelezionato) {
 		return new IDSoggetto(soggettoOperativoSelezionato.split("/")[0], soggettoOperativoSelezionato.split("/")[1]);
 	}
@@ -5716,20 +5738,15 @@ public class ControlStationCore {
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		}
 	}
-	
-	public boolean isFunzionalitaProtocolloSupportataDalProtocolloDefault(ServiceBinding serviceBinding,FunzionalitaProtocollo funzionalitaProtocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
-		String nomeMetodo = "isFunzionalitaProtocolloSupportataDalProtocolloDefault";
-		try{
-			return this.protocolFactoryManager.getDefaultProtocolFactory().createProtocolConfiguration().isSupportato(serviceBinding,funzionalitaProtocollo );
-		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		}
-	}
-	
+		
 	public boolean isFunzionalitaProtocolloSupportataDalProtocollo(String protocollo,ServiceBinding serviceBinding, FunzionalitaProtocollo funzionalitaProtocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "isFunzionalitaProtocolloSupportataDalProtocollo";
 		try{
+			if(this.isProfiloModIPA(protocollo)) {
+				if(FunzionalitaProtocollo.FILTRO_DUPLICATI.equals(funzionalitaProtocollo)) {
+					return false;
+				}
+			}
 			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportato(serviceBinding,funzionalitaProtocollo);
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -5821,213 +5838,19 @@ public class ControlStationCore {
 	
 	public List<String> getAzioni(AccordoServizioParteSpecifica asps,AccordoServizioParteComuneSintetico aspc, 
 			boolean addTrattinoSelezioneNonEffettuata, boolean throwException, List<String> filtraAzioniUtilizzate) throws DriverConfigurazioneException{
-		String nomeMetodo = "getAzioni";
-		try {
-			// Prendo le azioni associate al servizio
-			List<String> azioniList = null;
-			try {
-				if(aspc!=null) {
-					org.openspcoop2.core.registry.constants.ServiceBinding sb = aspc.getServiceBinding();
-					switch (sb) {
-					case SOAP:
-						if (asps != null) {
-							
-							IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
-							
-							if(asps.getPortType()!=null){
-								// Bisogna prendere le operations del port type
-								PortTypeSintetico pt = null;
-								for (int i = 0; i < aspc.getPortType().size(); i++) {
-									if(aspc.getPortType().get(i).getNome().equals(asps.getPortType())){
-										pt = aspc.getPortType().get(i);
-										break;
-									}
-								}
-								if(pt==null){
-									throw new Exception("Servizio ["+idServizio.toString()+"] possiede il port type ["+asps.getPortType()+"] che non risulta essere registrato nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"]");
-								}
-								if(pt.getAzione().size()>0){
-									azioniList = new ArrayList<String>();
-									for (int i = 0; i < pt.getAzione().size(); i++) {
-										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(pt.getAzione().get(i).getNome())) {
-											azioniList.add(pt.getAzione().get(i).getNome());
-										}
-									}
-								}
-							}else{
-								if(aspc.getAzione().size()>0){
-									azioniList = new ArrayList<String>();
-									for (int i = 0; i < aspc.getAzione().size(); i++) {
-										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getAzione().get(i).getNome())) {
-											azioniList.add(aspc.getAzione().get(i).getNome());
-										}
-									}
-								}
-							}				
-						}
-						break;
-
-					case REST:
-						if(aspc.getResource().size()>0){
-							azioniList = new ArrayList<String>();
-							for (int i = 0; i < aspc.getResource().size(); i++) {
-								if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getResource().get(i).getNome())) {
-									azioniList.add(aspc.getResource().get(i).getNome());
-								}
-							}
-						}
-						break;
-					}
-					
-				}
-			} catch (Exception e) {
-				if(throwException) {
-					throw e;
-				}
-			}
-			
-			List<String> azioniListReturn = null;
-			if(azioniList!=null && azioniList.size()>0) {
-				Collections.sort(azioniList);
-				
-				azioniListReturn = new ArrayList<String>();
-				if(addTrattinoSelezioneNonEffettuata) {
-					azioniListReturn.add(CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA);
-				}
-				azioniListReturn.addAll(azioniList);
-			}
-				
-			return azioniListReturn;
-			
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		}
-		
+		return AzioniUtils.getAzioni(asps, aspc, 
+				addTrattinoSelezioneNonEffettuata, throwException, filtraAzioniUtilizzate, 
+				CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA, ControlStationCore.log);
 	}
 	
 	public Map<String,String> getMapAzioni(AccordoServizioParteSpecifica asps,AccordoServizioParteComuneSintetico aspc, 
 			boolean addTrattinoSelezioneNonEffettuata, boolean throwException, List<String> filtraAzioniUtilizzate, 
 			boolean sortByLabel, boolean sortFirstByPath // per soap questi due parametri sono  ininfluenti
 			) throws DriverConfigurazioneException{
-		String nomeMetodo = "getAzioni";
-		try {
-			// Prendo le azioni associate al servizio
-			Map<String,String> azioniMap = null; // <id,label>
-			List<String> sortList = null;
-			Map<String,String> sortMap = null; // <sort,id>
-			try {
-				if(aspc!=null) {
-					org.openspcoop2.core.registry.constants.ServiceBinding sb = aspc.getServiceBinding();
-					switch (sb) {
-					case SOAP:
-						if (asps != null) {
-							
-							IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
-							
-							if(asps.getPortType()!=null){
-								// Bisogna prendere le operations del port type
-								PortTypeSintetico pt = null;
-								for (int i = 0; i < aspc.getPortType().size(); i++) {
-									if(aspc.getPortType().get(i).getNome().equals(asps.getPortType())){
-										pt = aspc.getPortType().get(i);
-										break;
-									}
-								}
-								if(pt==null){
-									throw new Exception("Servizio ["+idServizio.toString()+"] possiede il port type ["+asps.getPortType()+"] che non risulta essere registrato nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"]");
-								}
-								if(pt.getAzione().size()>0){
-									azioniMap = new HashMap<String,String>();
-									sortList = new ArrayList<String>();
-									for (int i = 0; i < pt.getAzione().size(); i++) {
-										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(pt.getAzione().get(i).getNome())) {
-											sortList.add(pt.getAzione().get(i).getNome());
-											azioniMap.put(pt.getAzione().get(i).getNome(),pt.getAzione().get(i).getNome());
-										}
-									}
-								}
-							}else{
-								if(aspc.getAzione().size()>0){
-									azioniMap = new HashMap<String,String>();
-									sortList = new ArrayList<String>();
-									for (int i = 0; i < aspc.getAzione().size(); i++) {
-										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getAzione().get(i).getNome())) {
-											sortList.add(aspc.getAzione().get(i).getNome());
-											azioniMap.put(aspc.getAzione().get(i).getNome(),aspc.getAzione().get(i).getNome());
-										}
-									}
-								}
-							}				
-						}
-						break;
-
-					case REST:
-						if(aspc.getResource().size()>0){
-							azioniMap = new HashMap<String,String>();
-							sortList = new ArrayList<String>();
-							if(sortByLabel) {
-								sortMap = new HashMap<>();
-							}
-							for (int i = 0; i < aspc.getResource().size(); i++) {
-								if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getResource().get(i).getNome())) {
-									if(sortByLabel) {
-										String sortLabelId = null;
-										if(!sortFirstByPath) {
-											sortLabelId = NamingUtils.getLabelResource(aspc.getResource().get(i));
-										}
-										else {
-											String path = aspc.getResource().get(i).getPath()!=null ? aspc.getResource().get(i).getPath() : CostantiDB.API_RESOURCE_PATH_ALL_VALUE;
-											String method = aspc.getResource().get(i).getMethod()!=null ? aspc.getResource().get(i).getMethod().getValue() : CostantiDB.API_RESOURCE_HTTP_METHOD_ALL_VALUE;
-											sortLabelId = path+" "+method;
-										}
-										sortList.add(sortLabelId);
-										sortMap.put(sortLabelId, aspc.getResource().get(i).getNome());
-									}
-									else {
-										sortList.add(aspc.getResource().get(i).getNome());
-									}
-									azioniMap.put(aspc.getResource().get(i).getNome(),NamingUtils.getLabelResource(aspc.getResource().get(i)));
-								}
-							}
-						}
-						break;
-					}
-					
-				}
-			} catch (Exception e) {
-				if(throwException) {
-					throw e;
-				}
-			}
-			
-			Map<String, String> mapAzioniReturn = new LinkedHashMap<String, String>();
-			if(sortList!=null && sortList.size()>0) {
-				Collections.sort(sortList);
-				
-				if(addTrattinoSelezioneNonEffettuata) {
-					mapAzioniReturn.put(CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA,CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA);
-				}
-				
-				if(sortMap!=null) {
-					for (String idSort : sortList) { 
-						String id  = sortMap.get(idSort);
-						mapAzioniReturn.put(id, azioniMap.get(id));
-					}
-				}
-				else {
-					for (String id : sortList) { // nelle sortList ci sono gli id
-						mapAzioniReturn.put(id, azioniMap.get(id));
-					}
-				}
-			}
-				
-			return mapAzioniReturn;
-			
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		}
+		return AzioniUtils.getMapAzioni(asps, aspc, 
+				addTrattinoSelezioneNonEffettuata, throwException, filtraAzioniUtilizzate, 
+				sortByLabel, sortFirstByPath, 
+				CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA, CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA, ControlStationCore.log);
 	}
 	
 	public Map<String,String> getAzioniConLabel(AccordoServizioParteSpecifica asps,AccordoServizioParteComuneSintetico aspc, 
@@ -6230,5 +6053,15 @@ public class ControlStationCore {
 
 		Rectangle2D rectangle2d = fontToCheck.getStringBounds(text, this.fontRenderContext);
 		return (int) rectangle2d.getWidth(); 
-	}	
+	}
+	
+	public boolean isProfiloModIPA(String protocollo) {
+		try {
+			Class<?> classCostanti = Class.forName("org.openspcoop2.protocol.modipa.constants.ModICostanti");
+			Field f = classCostanti.getDeclaredField("MODIPA_PROTOCOL_NAME");
+			return protocollo!=null && protocollo.equals(f.get(null));
+		}catch(Throwable t) {
+			return false;
+		}
+	}
 }

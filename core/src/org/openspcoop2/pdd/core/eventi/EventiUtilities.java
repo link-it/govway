@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core.eventi;
 
 import org.openspcoop2.core.eventi.Evento;
 import org.openspcoop2.core.eventi.utils.SeveritaConverter;
+import org.openspcoop2.utils.Utilities;
 
 import java.text.SimpleDateFormat;
 
@@ -35,11 +36,10 @@ import java.text.SimpleDateFormat;
  */
 public class EventiUtilities {
 
-	private static final String format = "yyyy-MM-dd_HH:mm:ss.SSS";
 	public static String toString(Evento evento){
 		StringBuffer bf = new StringBuffer();
 
-		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		SimpleDateFormat sdf = Utilities.getSimpleDateFormatMs();
 		if(evento.getOraRegistrazione()!=null){
 			bf.append("<").append(sdf.format(evento.getOraRegistrazione())).append(">");
 		}

@@ -25,6 +25,7 @@ import java.util.Vector;
 
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
@@ -97,7 +98,8 @@ public class ServiziApplicativiCostanti {
 	public final static String LABEL_INVOCAZIONE_SERVIZIO = "Invocazione Servizio";
 	public final static String LABEL_RISPOSTA_ASINCRONA = "Risposta Asincrona";
 	public final static String LABEL_CONNETTORE_ABILITATO_SOLO_IM =  CostantiConfigurazione.ABILITATO + " (MessageBox)";
-	
+	public final static String LABEL_SERVIZI_APPLICATIVI_ESPORTA_SELEZIONATI = "Esporta";
+	public final static String LABEL_SERVIZI_APPLICATIVI_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.SERVIZIO_APPLICATIVO.name()+"')";
 	public final static String LABEL_APPLICATIVI_MENU_VISUALE_AGGREGATA = "Applicativi";
 	public final static String LABEL_SA_MENU_VISUALE_AGGREGATA = "Servizi Applicativi";
 	
@@ -205,6 +207,9 @@ public class ServiziApplicativiCostanti {
 	public static String getLabelSbustamentoProtocollo(String nomeProtocollo) {
 		if("spcoop".equals(nomeProtocollo)) {
 			return ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO  + " SPCoop";
+		}
+		else if("modipa".equals(nomeProtocollo)) {
+			return ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO  + " ModI PA";
 		}
 		else {
 			return ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO  + " " +nomeProtocollo.toUpperCase();

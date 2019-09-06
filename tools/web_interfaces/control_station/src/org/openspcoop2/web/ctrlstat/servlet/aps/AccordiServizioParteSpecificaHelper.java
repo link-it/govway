@@ -212,7 +212,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String httpsalgoritmo, boolean httpsstato, String httpskeystore,
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
-			String httpspwdprivatekey, String httpsalgoritmokey, String tipoconn, String versione,
+			String httpspwdprivatekey, String httpsalgoritmokey, 
+			String httpsKeyAlias, String httpsTrustStoreCRLs,
+			String tipoconn, String versione,
 			boolean validazioneDocumenti,  String backToStato,
 			String autenticazioneHttp,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
@@ -422,13 +424,16 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				connettoreStatic = this.apsCore.isConnettoreStatic(protocollo);
 			}
 			if(!connettoreStatic) {
-				if (!this.endPointCheckData(endpointtype, url, nome, tipo,
+				if (!this.endPointCheckData(protocollo, gestioneErogatori,
+						endpointtype, url, nome, tipo,
 						user, password, initcont, urlpgk, provurl, connfact,
 						sendas, httpsurl, httpstipologia, httpshostverify,
 						httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
 						httpskeystore, httpspwdprivatekeytrust, httpspathkey,
-						httpstipokey, httpspwdkey, httpspwdprivatekey,
-						httpsalgoritmokey, tipoconn,autenticazioneHttp,
+						httpstipokey, httpspwdkey, 
+						httpspwdprivatekey, httpsalgoritmokey,
+						httpsKeyAlias, httpsTrustStoreCRLs,
+						tipoconn,autenticazioneHttp,
 						proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
 						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
@@ -766,7 +771,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String httpsalgoritmo, boolean httpsstato, String httpskeystore,
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
-			String httpspwdprivatekey, String httpsalgoritmokey, String tipoconn, 
+			String httpspwdprivatekey, String httpsalgoritmokey, 
+			String httpsKeyAlias, String httpsTrustStoreCRLs,
+			String tipoconn, 
 			boolean validazioneDocumenti, String backToStato,
 			String autenticazioneHttp,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
@@ -838,6 +845,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				idInt = Integer.parseInt(id);
 			}
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(idInt);
+			String protocollo = ProtocolFactoryManager.getInstance().getProtocolByServiceType(asps.getTipo());
 			
 //			String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 //			boolean gestioneFruitori = false;
@@ -896,13 +904,16 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	
 				// Controllo dell'end-point
 				// Non li puo' prendere dalla servtlet
-				if (!this.endPointCheckData(endpointtype, url, nome, tipo,
+				if (!this.endPointCheckData(protocollo, false,
+						endpointtype, url, nome, tipo,
 						user, password, initcont, urlpgk, provurl, connfact,
 						sendas, httpsurl, httpstipologia, httpshostverify,
 						httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
 						httpskeystore, httpspwdprivatekeytrust, httpspathkey,
-						httpstipokey, httpspwdkey, httpspwdprivatekey,
-						httpsalgoritmokey, tipoconn,autenticazioneHttp,
+						httpstipokey, httpspwdkey,
+						httpspwdprivatekey, httpsalgoritmokey,
+						httpsKeyAlias, httpsTrustStoreCRLs,
+						tipoconn,autenticazioneHttp,
 						proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
 						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
@@ -977,9 +988,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				String autorizzazione_tokenOptions = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
 				String autorizzazioneScope = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 				String autorizzazioneScopeMatch = this.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
-				
-				String protocollo = ProtocolFactoryManager.getInstance().getProtocolByServiceType(asps.getTipo());
-				
+								
 				String autorizzazioneContenutiStato = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO);
 				String autorizzazioneContenuti = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
 				String autorizzazioneContenutiProperties = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_PROPERTIES);
@@ -2823,10 +2832,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps);
 					if(visualizzazioneTabs) {
-						this.setStatoControlloAccessiPortaApplicativa(paAssociata, de);
+						this.setStatoControlloAccessiPortaApplicativa(protocollo, paAssociata, de);
 					}
 					else {
-						String statoControlloAccessi = getStatoControlloAccessiPortaApplicativa(paAssociata); 
+						String statoControlloAccessi = getStatoControlloAccessiPortaApplicativa(protocollo, paAssociata); 
 						de.setValue(statoControlloAccessi);
 					}
 					de.allineaTdAlCentro();
@@ -4420,10 +4429,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI);
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
 					if(visualizzazioneTabs) {
-						this.setStatoControlloAccessiPortaDelegata(pdAssociata, de); 
+						this.setStatoControlloAccessiPortaDelegata(protocollo, pdAssociata, de); 
 					}
 					else {
-						String statoControlloAccessi = this.getStatoControlloAccessiPortaDelegata(pdAssociata); 				
+						String statoControlloAccessi = this.getStatoControlloAccessiPortaDelegata(protocollo, pdAssociata); 				
 						de.setValue(statoControlloAccessi);
 					}
 					de.allineaTdAlCentro();
@@ -4924,15 +4933,29 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			dati.addElement(de);
 		}
 		
+		String tmpModificaProfilo = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO);
+		boolean modificaProfilo = false;
+		if(tmpModificaProfilo!=null) {
+			modificaProfilo = "true".equals(tmpModificaProfilo);
+			
+			DataElement de = new DataElement();
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO);
+			de.setValue(tmpModificaProfilo);
+			de.setType(DataElementType.HIDDEN);
+			dati.addElement(de);
+		}
+		
 		Boolean showInformazioniGeneraliErogazioniFruizioniView = null;
 		if(gestioneFruitori || gestioneErogatori) {
-			if(showModificaAPIErogazioniFruizioniView!=null) {
-				if(showModificaAPIErogazioniFruizioniView) {
-					showInformazioniGeneraliErogazioniFruizioniView = false;
-				}
-				else {
-					showInformazioniGeneraliErogazioniFruizioniView = true;
-				}
+			if(showModificaAPIErogazioniFruizioniView!=null && showModificaAPIErogazioniFruizioniView) {
+				showInformazioniGeneraliErogazioniFruizioniView = false;
+			}
+			else if(modificaProfilo) {
+				showInformazioniGeneraliErogazioniFruizioniView = false;
+				showModificaAPIErogazioniFruizioniView = false; // forzo il false
+			}
+			else {
+				showInformazioniGeneraliErogazioniFruizioniView = true;
 			}
 		}
 		
@@ -5008,7 +5031,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		else {
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_INFO_GENERALI);
 		}
-		de.setType(DataElementType.TITLE);
+		if(modificaProfilo) {
+			de.setType(DataElementType.HIDDEN);
+		}
+		else {
+			de.setType(DataElementType.TITLE);
+		}
 		dati.addElement(de);
 
 		// Gestione del tipo protocollo per la maschera add
@@ -5945,15 +5973,29 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			pa.setServizio(new PortaApplicativaServizio());
 			pa.getServizio().setTipo(tipoServizio);
 			
-			this.controlloAccessiAdd(dati, tipoOp, controlloAccessiStato);
+			boolean forceAutenticato = false; 
+			boolean forceHttps = false;
+			boolean forceDisableOptional = false;
+			if(this.isProfiloModIPA(tipoProtocollo)) {
+				if(idAccordoParteComune==null) {
+					idAccordoParteComune = this.idAccordoFactory.getIDAccordoFromUri(uriAccordo);
+				}
+				forceAutenticato = true; // in modI ci vuole sempre autenticazione https sull'erogazione (cambia l'opzionalita' o meno)
+				forceHttps = forceAutenticato;
+				forceDisableOptional = this.forceHttpsClientProfiloModiPA(idAccordoParteComune, portType);
+			}
+			
+			this.controlloAccessiAdd(dati, tipoOp, controlloAccessiStato, forceAutenticato);
 			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale, 
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,false);
 			
-			this.controlloAccessiAutenticazione(dati, tipoOp, erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList, false, erogazioneIsSupportatoAutenticazioneSoggetti,false,
+			this.controlloAccessiAutenticazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, pa,
+					erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList, false, erogazioneIsSupportatoAutenticazioneSoggetti,false,
 					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-					false, null, 0);
+					false, null, 0,
+					forceHttps, forceDisableOptional);
 						
 			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, pa,
 					erogazioneAutenticazione, erogazioneAutorizzazione, null, 
@@ -5976,15 +6018,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			pd.setServizio(new PortaDelegataServizio());
 			pd.getServizio().setTipo(tipoServizio);
 			
-			this.controlloAccessiAdd(dati, tipoOp, controlloAccessiStato);
+			this.controlloAccessiAdd(dati, tipoOp, controlloAccessiStato, false);
 			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale, 
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,true);
 
-			this.controlloAccessiAutenticazione(dati, tipoOp, fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList, false, true,true,
+			this.controlloAccessiAutenticazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,pd,
+					fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList, false, true,true,
 					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-					false, null, 0);
+					false, null, 0,
+					false, false);
 		
 			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,pd,
 					fruizioneAutenticazione, fruizioneAutorizzazione, null, 
@@ -6758,6 +6802,19 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 		}
 		
+		String tmpModificaProfilo = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO);
+		@SuppressWarnings("unused")
+		boolean modificaProfilo = false;
+		if(tmpModificaProfilo!=null) {
+			modificaProfilo = "true".equals(tmpModificaProfilo);
+			
+			DataElement de = new DataElement();
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO);
+			de.setValue(tmpModificaProfilo);
+			de.setType(DataElementType.HIDDEN);
+			dati.addElement(de);
+		}
+		
 		if(azioneConnettore!=null && !"".equals(azioneConnettore)) {
 			DataElement de = new DataElement();
 			de.setType(DataElementType.HIDDEN);
@@ -6841,15 +6898,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			if(isSoggettoGestitoPorta){
 				
-				this.controlloAccessiAdd(dati, tipoOp, controlloAccessiStato);
+				this.controlloAccessiAdd(dati, tipoOp, controlloAccessiStato, false);
 				
 				this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 						gestioneTokenPolicy, gestioneTokenOpzionale,
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,true);
 
-				this.controlloAccessiAutenticazione(dati, tipoOp, fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList, false, true,true,
+				this.controlloAccessiAutenticazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,
+						fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList, false, true,true,
 						gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						false, null, 0);
+						false, null, 0,
+						false, false);
 				
 				this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,
 						fruizioneAutenticazione, fruizioneAutorizzazione, null, 
@@ -7746,15 +7805,26 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			// Controllo Accesso
 			
-			this.controlloAccessiAdd(dati, tipoOperazione, controlloAccessiStato);
+			boolean forceAutenticato = false; 
+			boolean forceHttps = false;
+			boolean forceDisableOptional = false;
+			if(this.isProfiloModIPA(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore()))) {
+				forceAutenticato = true; // in modI ci vuole sempre autenticazione https sull'erogazione (cambia l'opzionalita' o meno)
+				forceHttps = forceAutenticato;
+				forceDisableOptional = this.forceHttpsClientProfiloModiPA(this.idAccordoFactory.getIDAccordoFromAccordo(as),asps.getPortType());
+			}
+			
+			this.controlloAccessiAdd(dati, tipoOperazione, controlloAccessiStato, forceAutenticato);
 			
 			this.controlloAccessiGestioneToken(dati, tipoOperazione, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale,
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,false);
 			
-			this.controlloAccessiAutenticazione(dati, tipoOperazione, erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList, false, erogazioneIsSupportatoAutenticazioneSoggetti,false,
+			this.controlloAccessiAutenticazione(dati, tipoOperazione, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null,
+					erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList, false, erogazioneIsSupportatoAutenticazioneSoggetti,false,
 					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-					false, null, 0);
+					false, null, 0,
+					forceHttps, forceDisableOptional);
 			
 			this.controlloAccessiAutorizzazione(dati, tipoOperazione, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null,
 					erogazioneAutenticazione, erogazioneAutorizzazione, null, 
@@ -8126,15 +8196,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 		if(!modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
 			
-			this.controlloAccessiAdd(dati, tipoOp, controlloAccessiStato);
+			this.controlloAccessiAdd(dati, tipoOp, controlloAccessiStato, false);
 			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale,
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,true);
 		
-			this.controlloAccessiAutenticazione(dati, tipoOp, fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList, false, true,true,
+			this.controlloAccessiAutenticazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,
+					fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList, false, true,true,
 					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-					false, null, 0);
+					false, null, 0,
+					false, false);
 			
 			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,
 				fruizioneAutenticazione, fruizioneAutorizzazione, null, 
@@ -8181,7 +8253,13 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			listaParams.add(new Parameter(labelApsTitle, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, listParametersErogazioniChange));
 			
-			labelApsChange = ErogazioniCostanti.LABEL_ASPS_MODIFICA_SERVIZIO_INFO_GENERALI;
+			String paramModificaProfilo = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO);
+			if("true".equals(paramModificaProfilo)) {
+				labelApsChange = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO;
+			}
+			else {
+				labelApsChange = ErogazioniCostanti.LABEL_ASPS_MODIFICA_SERVIZIO_INFO_GENERALI;
+			}
 			
 		} else {
 			if(gestioneFruitori) {
@@ -8200,5 +8278,5 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 		return listaParams;
 	}
-	
+
 }

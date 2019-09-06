@@ -51,6 +51,8 @@ public class Costanti {
 	public static final String PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_INTEGRATION = ERRORE_INTEGRAZIONE_PREFIX+":";
 	public static final String PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_PROTOCOL = ERRORE_PROTOCOLLO_PREFIX+":";
 	
+	public static final String PROBLEM_RFC7807_GOVWAY_TRANSACTION_ID = "govway_id";
+	
     /** Ora di creazione di un tracciamento. Il token 'locale' indica il tempo locale
     non sincronizzato da sistema che lo imposta*/
     public static final String TIPO_TEMPO_LOCALE = "Locale";

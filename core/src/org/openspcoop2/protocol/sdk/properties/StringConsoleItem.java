@@ -36,5 +36,13 @@ public class StringConsoleItem extends AbstractConsoleItem<String> {
 	protected StringConsoleItem(String id, String label, ConsoleItemType type) throws ProtocolException {
 		super(id, label, type);
 	}
+	
+	private Integer rows;
+	public Integer getRows() {
+		return this.rows;
+	}
+	public void setRows(Integer rows) {
+		this.rows = rows;
+	}
 
 }

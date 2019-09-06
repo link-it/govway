@@ -23,6 +23,8 @@
 
 package org.openspcoop2.security.message.jose;
 
+import java.security.PublicKey;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -36,6 +38,8 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.security.keystore.CRLCertstore;
+import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.AbstractRESTMessageSecurityReceiver;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.constants.SecurityConstants;
@@ -138,11 +142,13 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				}
 				if(bean!=null) {
 					Properties signatureProperties = bean.getProperties();
+					JOSEUtils.injectKeystore(signatureProperties, messageSecurityContext.getLog()); // serve per leggere il keystore dalla cache
 					this.jsonVerifierSignature = new JsonVerifySignature(signatureProperties, options);	
 				}
 				else if(useHeaders) {
 					KeyStore trustStore = JOSEUtils.readTrustStoreJwtX509Cert(messageSecurityContext.getIncomingProperties());
-					Properties trustStoreSsl = JOSEUtils.toSslConfigJwtUrlHeader(messageSecurityContext.getIncomingProperties());
+					KeyStore trustStoreSsl = JOSEUtils.readTrustStoreSsl(messageSecurityContext.getIncomingProperties());
+					// La versione con le properties non usa le cache: Properties trustStoreSsl = JOSEUtils.toSslConfigJwtUrlHeader(messageSecurityContext.getIncomingProperties());
 					this.jsonVerifierSignature = new JsonVerifySignature(trustStoreSsl, trustStore, options);
 				}
 				else {	
@@ -208,7 +214,26 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 							restJsonMessage, JOSECostanti.JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION);
 				}
 				
+				String signatureCRL = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_CRL);
+				if(signatureCRL==null || "".equals(signatureCRL)) {
+					signatureCRL = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_CRL);	
+				}
+				if(signatureCRL!=null && !"".equals(signatureCRL)) {
+					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(signatureCRL);
+					if(crlCertstore==null) {
+						throw new Exception("Process CRL '"+signatureCRL+"' failed");
+					}
+					this.jsonVerifierSignature.setCrlX509(crlCertstore.getCertStore());
+				}
 				
+				String httpsCRL = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_CRL);
+				if(httpsCRL!=null && !"".equals(httpsCRL)) {
+					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(httpsCRL);
+					if(crlCertstore==null) {
+						throw new Exception("Process CRL '"+httpsCRL+"' failed");
+					}
+					this.jsonVerifierSignature.setCrlHttps(crlCertstore.getCertStore());
+				}
 				
 				// **************** Process **************************
 
@@ -257,10 +282,12 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				}
 				if(bean!=null) {
 					Properties encryptionProperties = bean.getProperties();
+					JOSEUtils.injectKeystore(encryptionProperties, messageSecurityContext.getLog()); // serve per leggere il keystore dalla cache
 					this.jsonDecrypt = new JsonDecrypt(encryptionProperties, options);	
 				}
 				else if(useHeaders) {
-					Properties trustStoreSsl = JOSEUtils.toSslConfigJwtUrlHeader(messageSecurityContext.getIncomingProperties());
+					KeyStore trustStoreSsl = JOSEUtils.readTrustStoreSsl(messageSecurityContext.getIncomingProperties());
+					// La versione con le properties non usa le cache: Properties trustStoreSsl = JOSEUtils.toSslConfigJwtUrlHeader(messageSecurityContext.getIncomingProperties());
 					if(JOSEUtils.isJWKSetKeystore(messageSecurityContext.getIncomingProperties())) {
 						JsonWebKeys jsonWebKeys = null;
 						JWKSet jkwSet = JOSEUtils.readKeyStoreJwtJsonWebKeysCert(messageSecurityContext.getIncomingProperties());
@@ -342,6 +369,23 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 
 				}
 				
+				String encryptionCRL = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_CRL);
+				if(encryptionCRL!=null && !"".equals(encryptionCRL)) {
+					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(encryptionCRL);
+					if(crlCertstore==null) {
+						throw new Exception("Process CRL '"+encryptionCRL+"' failed");
+					}
+					this.jsonDecrypt.setCrlX509(crlCertstore.getCertStore());
+				}
+				
+				String httpsCRL = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_CRL);
+				if(httpsCRL!=null && !"".equals(httpsCRL)) {
+					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(httpsCRL);
+					if(crlCertstore==null) {
+						throw new Exception("Process CRL '"+httpsCRL+"' failed");
+					}
+					this.jsonDecrypt.setCrlHttps(crlCertstore.getCertStore());
+				}
 	
 				
 				// **************** Process **************************
@@ -443,6 +487,34 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 
 	@Override
 	public String getCertificate() throws SecurityException {
+		if(this.jsonVerifierSignature!=null && this.jsonVerifierSignature.getX509Certificate()!=null) {
+			return this.jsonVerifierSignature.getX509Certificate().getSubjectX500Principal().toString();
+		}
+		else if(this.jsonDecrypt!=null && this.jsonDecrypt.getX509Certificate()!=null) {
+			return this.jsonDecrypt.getX509Certificate().getSubjectX500Principal().toString();
+		}
+		return null;
+	}
+
+	@Override
+	public X509Certificate getX509Certificate() throws SecurityException {
+		if(this.jsonVerifierSignature!=null) {
+			return this.jsonVerifierSignature.getX509Certificate();
+		}
+		else if(this.jsonDecrypt!=null) {
+			return this.jsonDecrypt.getX509Certificate();
+		}
+		return null;
+	}
+
+	@Override
+	public PublicKey getPublicKey() {
+		if(this.jsonVerifierSignature!=null) {
+			return this.jsonVerifierSignature.getRsaPublicKey();
+		}
+		else if(this.jsonDecrypt!=null) {
+			return this.jsonDecrypt.getRsaPublicKey();
+		}
 		return null;
 	}
 

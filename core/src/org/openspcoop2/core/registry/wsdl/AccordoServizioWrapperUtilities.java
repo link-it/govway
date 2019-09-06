@@ -568,8 +568,8 @@ public class AccordoServizioWrapperUtilities {
 				throw new DriverRegistroServiziException("Port types non presenti");
 			}
 			java.util.Iterator<?> portTypeIterator = portTypes.values().iterator();
-			HashMap<String,QName> mapPartQName_input = new HashMap<String,QName>();
-			HashMap<String,QName> mapPartQName_output = new HashMap<String,QName>();
+			HashMap<String, HashMap<String,QName> > mapOperationTo_mapPartQName_input = new HashMap<String, HashMap<String,QName>>() ;
+			HashMap<String, HashMap<String,QName> > mapOperationTo_mapPartQName_output = new HashMap<String, HashMap<String,QName>>();
 			while(portTypeIterator.hasNext()) {
 				portTypeWSDL = (javax.wsdl.PortType) portTypeIterator.next();
 				
@@ -590,9 +590,13 @@ public class AccordoServizioWrapperUtilities {
 					this.logger.debug("add operation: ["+operationWSDL.getName()+"]");
 					
 					// Prendo la definizione del messaggio di input
+					HashMap<String, QName> mapPartQName_input = new HashMap<String, QName>();
+					mapOperationTo_mapPartQName_input.put(operationAS.getNome(), mapPartQName_input);
 					addMessageInputOperation(operationWSDL, this.logger, operationAS, mapPartQName_input);
 					
 					// Prendo la definizione del messaggio di output
+					HashMap<String, QName> mapPartQName_output = new HashMap<String, QName>();
+					mapOperationTo_mapPartQName_output.put(operationAS.getNome(), mapPartQName_output);
 					addMessageOutputOperation(operationWSDL, this.logger, operationAS, mapPartQName_output);
 					
 					ptAS.addAzione(operationAS);
@@ -646,10 +650,10 @@ public class AccordoServizioWrapperUtilities {
 						setOperationSoapBindingInformation(bindingOperation, this.logger, operationAS, ptAS);
 											
 						// Raccolgo Message-Input
-						setMessageInputSoapBindingInformation(bindingOperation, this.logger, operationAS, ptAS, mapPartQName_input);
+						setMessageInputSoapBindingInformation(bindingOperation, this.logger, operationAS, ptAS, mapOperationTo_mapPartQName_input.get(operationAS.getNome()));
 						
 						// Raccolgo Message-Output
-						setMessageOutputSoapBindingInformation(bindingOperation, this.logger, operationAS, ptAS, mapPartQName_output);
+						setMessageOutputSoapBindingInformation(bindingOperation, this.logger, operationAS, ptAS, mapOperationTo_mapPartQName_output.get(operationAS.getNome()));
 						
 						ptAS.addAzione(operationAS);
 					}		

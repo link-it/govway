@@ -389,7 +389,7 @@ public class SbustamentoRisposte extends GenericLib {
 		try{
 
 			boolean ricezioneRiscontri = false;
-			switch (protocolManager.getConsegnaAffidabile(bustaRisposta.getProfiloDiCollaborazione())) {
+			switch (protocolManager.getConsegnaAffidabile(bustaRisposta)) {
 			case ABILITATA:
 				ricezioneRiscontri = true;
 				break;
@@ -402,7 +402,7 @@ public class SbustamentoRisposte extends GenericLib {
 			}
 			
 			boolean imbustamentoFiltroDuplicatiAbilitato = false;
-			switch (protocolManager.getFiltroDuplicati(bustaRisposta.getProfiloDiCollaborazione())) {
+			switch (protocolManager.getFiltroDuplicati(bustaRisposta)) {
 			case ABILITATA:
 				imbustamentoFiltroDuplicatiAbilitato = true;
 				break;

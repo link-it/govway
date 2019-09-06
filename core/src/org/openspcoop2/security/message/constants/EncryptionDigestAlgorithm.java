@@ -22,6 +22,8 @@
 
 package org.openspcoop2.security.message.constants;
 
+import org.openspcoop2.generic_project.exception.NotFoundException;
+
 /**     
  * EncryptionDigestAlgorithm
  *
@@ -45,5 +47,26 @@ public enum EncryptionDigestAlgorithm {
 	
 	public String getUri() {
 		return this.uri;
+	}
+	
+	public static EncryptionDigestAlgorithm toEnumConstant(String uri){
+		try{
+			return toEnumConstant(uri,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static EncryptionDigestAlgorithm toEnumConstant(String uri, boolean throwNotFoundException) throws NotFoundException{
+		EncryptionDigestAlgorithm res = null;
+		for (EncryptionDigestAlgorithm tmp : values()) {
+			if(tmp.getUri().equals(uri)){
+				res = tmp;
+				break;
+			}
+		}
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with uri ["+uri+"] not found");
+		}
+		return res;
 	}
 }

@@ -23,8 +23,6 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -42,11 +40,9 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServiziApplicativi;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.config.constants.CredenzialeTipo;
-import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -101,10 +97,16 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoAdd extends Act
 			
 			String idSAToAdd = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO);
 
+			String modipaGestioneSpeciale = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA);
+			boolean modipa = false;
+			if(modipaGestioneSpeciale!=null && "true".equalsIgnoreCase(modipaGestioneSpeciale)) {
+				modipa = true;
+			}
+			
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(porteApplicativeCore);
-
+			
 			boolean escludiSoggettoErogatore = false;
 
 			
@@ -150,74 +152,22 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoAdd extends Act
 			// Prendo nome della porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String nomePorta = pa.getNome();
-			CredenzialeTipo tipoAutenticazione = CredenzialeTipo.toEnumConstant(pa.getAutenticazione());
 			
 
-			// lista soggetti disponibili
-			String[] soggettiList = null;
-			String[] soggettiListLabel = null;
-			List<org.openspcoop2.core.registry.Soggetto> listSoggetti = soggettiCore.getSoggettiOperativi(protocollo);
-			if(listSoggetti!=null && !listSoggetti.isEmpty() && escludiSoggettoErogatore) {
-				for (int i = 0; i < listSoggetti.size(); i++) {
-					Soggetto soggettoCheck = listSoggetti.get(i);
-					if(soggettoCheck.getTipo().equals(pa.getTipoSoggettoProprietario()) && soggettoCheck.getNome().equals(pa.getNomeSoggettoProprietario())) {
-						listSoggetti.remove(i);
-						break;
-					}
-				}
-			}
+			// Calcolo liste
+			PorteApplicativeServizioApplicativoAutorizzatoUtilities utilities = new PorteApplicativeServizioApplicativoAutorizzatoUtilities();
+			utilities.buildList(pa, modipa, protocollo, escludiSoggettoErogatore,
+					idSoggettoToAdd,
+					porteApplicativeCore, porteApplicativeHelper);
+			
+			String[] soggettiList = utilities.soggettiList;
+			String[] soggettiListLabel = utilities.soggettiListLabel;
+			Map<String,List<ServizioApplicativo>> listServiziApplicativi = utilities.listServiziApplicativi;
+			idSoggettoToAdd = utilities.idSoggettoToAdd;
+			int saSize = utilities.saSize;
+			PortaApplicativaAutorizzazioneServiziApplicativi saList = utilities.saList;
 			
 			
-			PortaApplicativaAutorizzazioneServiziApplicativi saList = pa.getServiziApplicativiAutorizzati();
-			int saSize = saList!=null ? saList.sizeServizioApplicativoList() : 0;
-			Map<String,List<ServizioApplicativo>> listServiziApplicativi = new HashMap<>();
-			if(listSoggetti!=null && !listSoggetti.isEmpty()) {
-				List<String> soggettiListBuild = new ArrayList<>();
-				List<String> soggettiLabelListBuild = new ArrayList<>();
-				
-				for (org.openspcoop2.core.registry.Soggetto soggetto : listSoggetti) {
-					IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(), soggetto.getNome());
-					List<ServizioApplicativo> listServiziApplicativiTmp = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione);
-					List<ServizioApplicativo> listServiziApplicativiTmpUnique = new ArrayList<>();
-					
-					// scarto i sa già associati
-					if(listServiziApplicativiTmp!=null && listServiziApplicativiTmp.size()>0) {
-						for (ServizioApplicativo sa : listServiziApplicativiTmp) {
-							boolean found = false;
-							if(saList!=null && saList.sizeServizioApplicativoList()>0) {
-								for (PortaApplicativaAutorizzazioneServizioApplicativo saAssociatoPA : saList.getServizioApplicativoList()) { 
-									if(saAssociatoPA.getNome().equals(sa.getNome()) && 
-											saAssociatoPA.getTipoSoggettoProprietario().equals(soggetto.getTipo()) && 
-											saAssociatoPA.getNomeSoggettoProprietario().equals(soggetto.getNome())) {
-										found = true;
-										break;
-									}
-								}
-							}
-							if(!found) {
-								listServiziApplicativiTmpUnique.add(sa);
-							}
-						}
-					}
-
-					if(listServiziApplicativiTmpUnique!=null && listServiziApplicativiTmpUnique.size()>0) {
-						String id = soggetto.getId().toString();
-						soggettiListBuild.add(id);
-						soggettiLabelListBuild.add(porteApplicativeHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo() , soggetto.getNome()));
-						listServiziApplicativi.put(id, listServiziApplicativiTmpUnique);
-						if(idSoggettoToAdd==null || "".equals(idSoggettoToAdd)) {
-							idSoggettoToAdd = id;
-						}
-					}
-				}
-				
-				if(soggettiListBuild!=null && soggettiListBuild.size()>0) {
-					soggettiList = soggettiListBuild.toArray(new String[1]);
-					soggettiListLabel = soggettiLabelListBuild.toArray(new String[1]);
-				}
-			}
-
-		
 			
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			
@@ -259,7 +209,7 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoAdd extends Act
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addPorteServizioApplicativoAutorizzatiToDati(TipoOperazione.ADD, dati, soggettiListLabel, soggettiList, idSoggettoToAdd, saSize, 
-						listServiziApplicativi, idSAToAdd, true);
+						listServiziApplicativi, idSAToAdd, true, true, modipa);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps,dati);
 
@@ -283,7 +233,7 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoAdd extends Act
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addPorteServizioApplicativoAutorizzatiToDati(TipoOperazione.ADD, dati, soggettiListLabel, soggettiList, idSoggettoToAdd, saSize, 
-						listServiziApplicativi, idSAToAdd, true);
+						listServiziApplicativi, idSAToAdd, true, true, modipa);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
 

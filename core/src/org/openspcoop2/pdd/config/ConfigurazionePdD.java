@@ -37,6 +37,7 @@ import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
+import org.openspcoop2.core.config.AccessoDatiKeystore;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.Credenziali;
@@ -142,6 +143,7 @@ public class ConfigurazionePdD  {
 	private static AccessoDatiAutorizzazione accessoDatiAutorizzazione = null;
 	private static AccessoDatiAutenticazione accessoDatiAutenticazione = null;
 	private static AccessoDatiGestioneToken accessoDatiGestioneToken = null;
+	private static AccessoDatiKeystore accessoDatiKeystore = null;
 	/** ConfigurazioneDinamica */
 	private boolean configurazioneDinamica = false;
 
@@ -1036,6 +1038,13 @@ public class ConfigurazionePdD  {
 		try{
 			this.cache.remove(_getKey_getAccessoDatiGestioneToken());
 			this.getAccessoDatiGestioneToken(connectionPdD);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		try{
+			this.cache.remove(_getKey_getAccessoDatiKeystore());
+			this.getAccessoDatiKeystore(connectionPdD);
 		}
 		catch(DriverConfigurazioneNotFound notFound){}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
@@ -2902,6 +2911,56 @@ public class ConfigurazionePdD  {
 		}
 		else{
 			throw new DriverConfigurazioneNotFound("[getAccessoDatiGestioneToken] Configurazione di accesso ai dati di gestione token non trovata");
+		}
+	} 
+
+	
+	private String _getKey_getAccessoDatiKeystore(){
+		return "getAccessoDatiKeystore";
+	}
+	public AccessoDatiKeystore getAccessoDatiKeystore(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		// Se e' attiva una configurazione statica, la utilizzo.
+		if(this.configurazioneDinamica==false){
+			if(ConfigurazionePdD.accessoDatiKeystore!=null)
+				return ConfigurazionePdD.accessoDatiKeystore;
+		}
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = _getKey_getAccessoDatiKeystore();
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((AccessoDatiKeystore) response.getObject());
+				}
+			}
+		}
+			
+		// Algoritmo CACHE
+		AccessoDatiKeystore object = null;
+		if(this.cache!=null){
+			object = (AccessoDatiKeystore) this.getObjectCache(key,"getAccessoDatiKeystore",connectionPdD,CONFIGURAZIONE_PORTA);
+		}else{
+			object = (AccessoDatiKeystore) this.getObject("getAccessoDatiKeystore",connectionPdD,CONFIGURAZIONE_PORTA);
+		}
+		
+		if(object!=null){
+			// Se e' attiva una configurazione statica, la utilizzo.
+			if(this.configurazioneDinamica==false){
+				ConfigurazionePdD.accessoDatiKeystore = object;
+			}
+			return object;
+		}
+		else{
+			throw new DriverConfigurazioneNotFound("[getAccessoDatiKeystore] Configurazione di accesso ai dati di gestione keystore non trovata");
 		}
 	} 
 

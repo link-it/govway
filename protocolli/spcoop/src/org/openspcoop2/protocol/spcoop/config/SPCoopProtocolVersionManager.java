@@ -26,6 +26,7 @@ package org.openspcoop2.protocol.spcoop.config;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
@@ -52,13 +53,16 @@ public class SPCoopProtocolVersionManager extends SPCoopProtocolManager implemen
 	
 	/* *********** FUNZIONALITA' OFFERTE DALLA Porta di Dominio ******************* */
 	
-	/**
-	 * Ritorna l'indicazione sulla modalità di gestione che la Porta di Dominio deve attuare per il filtro duplicati.
-	 * 
-	 * @return Indicazione che la PdS deve intraprendere indicata tramite l'oggetto {link org.openspcoop.engine.modules.StatoFunzionalitaProtocollo}.
-	 */
 	@Override
-	public StatoFunzionalitaProtocollo getFiltroDuplicati(ProfiloDiCollaborazione profiloCollaborazione){
+	public StatoFunzionalitaProtocollo getFiltroDuplicati(Busta busta){
+		return this._getFiltroDuplicati();
+	}
+	@Override
+	public StatoFunzionalitaProtocollo getFiltroDuplicati(Servizio infoServizio){
+		return this._getFiltroDuplicati();
+	}
+	private StatoFunzionalitaProtocollo _getFiltroDuplicati(){
+
 		if(SPCoopCostanti.PROFILO_CNIPA_LINEE_GUIDA_11_BUSTA_EGOV_11.equals(this.versione)){
 			return StatoFunzionalitaProtocollo.ABILITATA;
 		} else {
@@ -66,13 +70,15 @@ public class SPCoopProtocolVersionManager extends SPCoopProtocolManager implemen
 		}
 	}
 	
-	/**
-	 * Ritorna l'indicazione sulla modalità di gestione che la Porta di Dominio deve attuare per la consegna affidabile.
-	 * 
-	 * @return Indicazione che la PdS deve intraprendere indicata tramite l'oggetto {link org.openspcoop.engine.modules.StatoFunzionalitaProtocollo}.
-	 */
 	@Override
-	public StatoFunzionalitaProtocollo getConsegnaAffidabile(ProfiloDiCollaborazione profiloCollaborazione){
+	public StatoFunzionalitaProtocollo getConsegnaAffidabile(Busta busta){
+		return this._getConsegnaAffidabile();
+	}
+	@Override
+	public StatoFunzionalitaProtocollo getConsegnaAffidabile(Servizio infoServizio){
+		return this._getConsegnaAffidabile();
+	}
+	private StatoFunzionalitaProtocollo _getConsegnaAffidabile(){
 		if(SPCoopCostanti.PROFILO_CNIPA_LINEE_GUIDA_11_BUSTA_EGOV_11.equals(this.versione)){
 			return StatoFunzionalitaProtocollo.DISABILITATA;
 		} else {
@@ -80,13 +86,15 @@ public class SPCoopProtocolVersionManager extends SPCoopProtocolManager implemen
 		}
 	}
 	
-	/**
-	 * Ritorna l'indicazione sulla modalità di gestione che la Porta di Dominio deve attuare per la consegna in ordine.
-	 * 
-	 * @return Indicazione che la PdS deve intraprendere indicata tramite l'oggetto {link org.openspcoop.engine.modules.StatoFunzionalitaProtocollo}.
-	 */
 	@Override
-	public StatoFunzionalitaProtocollo getConsegnaInOrdine(ProfiloDiCollaborazione profiloCollaborazione){
+	public StatoFunzionalitaProtocollo getConsegnaInOrdine(Busta busta){
+		return this._getConsegnaInOrdine();
+	}
+	@Override
+	public StatoFunzionalitaProtocollo getConsegnaInOrdine(Servizio infoServizio){
+		return this._getConsegnaInOrdine();
+	}
+	private StatoFunzionalitaProtocollo _getConsegnaInOrdine(){
 		if(SPCoopCostanti.PROFILO_CNIPA_LINEE_GUIDA_11_BUSTA_EGOV_11.equals(this.versione)){
 			return StatoFunzionalitaProtocollo.DISABILITATA;
 		} else {
@@ -94,13 +102,15 @@ public class SPCoopProtocolVersionManager extends SPCoopProtocolManager implemen
 		}
 	}
 	
-	/**
-	 * Ritorna l'indicazione sulla modalità di gestione che la Porta di Dominio deve attuare per inserire più transazioni in una unica collaborazione
-	 * 
-	 * @return Indicazione che la PdS deve intraprendere indicata tramite l'oggetto {link org.openspcoop.engine.modules.StatoFunzionalitaProtocollo}.
-	 */
 	@Override
-	public StatoFunzionalitaProtocollo getCollaborazione(ProfiloDiCollaborazione profiloCollaborazione){
+	public StatoFunzionalitaProtocollo getCollaborazione(Busta busta){
+		return this._getCollaborazione(busta.getProfiloDiCollaborazione());
+	}
+	@Override
+	public StatoFunzionalitaProtocollo getCollaborazione(Servizio infoServizio){
+		return this._getCollaborazione(infoServizio.getProfiloDiCollaborazione());
+	}
+	private StatoFunzionalitaProtocollo _getCollaborazione(ProfiloDiCollaborazione profiloCollaborazione){
 		if(SPCoopCostanti.PROFILO_CNIPA_LINEE_GUIDA_11_BUSTA_EGOV_11.equals(this.versione)){
 			if(profiloCollaborazione==null || ProfiloDiCollaborazione.UNKNOWN.equals(profiloCollaborazione)){
 				return StatoFunzionalitaProtocollo.REGISTRO;
@@ -118,7 +128,14 @@ public class SPCoopProtocolVersionManager extends SPCoopProtocolManager implemen
 	}
 	
 	@Override
-	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(ProfiloDiCollaborazione profiloCollaborazione){
+	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(Busta busta){
+		return this._getIdRiferimentoRichiesta();
+	}
+	@Override
+	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(Servizio infoServizio){
+		return this._getIdRiferimentoRichiesta();
+	}
+	private StatoFunzionalitaProtocollo _getIdRiferimentoRichiesta(){
 		return StatoFunzionalitaProtocollo.DISABILITATA; // non supportato in spcoop la relazione tra piu invocazioni oneway
 	}
 

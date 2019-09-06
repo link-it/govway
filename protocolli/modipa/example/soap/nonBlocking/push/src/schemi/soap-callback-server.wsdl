@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<wsdl:definitions  
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+	xmlns:tns="http://amministrazioneesempio.it/nomeinterfacciaservizio" 
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/"  
+	name="SOAPCallbackServerService" 
+	targetNamespace="http://amministrazioneesempio.it/nomeinterfacciaservizio">
+	<wsdl:types>
+		<xs:schema 
+			xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+			xmlns:tns="http://amministrazioneesempio.it/nomeinterfacciaservizio" 
+			attributeFormDefault="unqualified" elementFormDefault="unqualified" 
+			targetNamespace="http://amministrazioneesempio.it/nomeinterfacciaservizio">
+			
+			<xs:element name="MRequest" type="tns:MRequest"/>
+			<xs:element name="MRequestResponse" type="tns:MRequestResponse"/>
+			
+			<xs:element name="ErrorMessageFault" nillable="true" type="tns:errorMessageFault"/>
+			<xs:element name="X-ReplyTo" nillable="true" type="xs:string"/>
+			<xs:element name="X-Correlation-ID" nillable="true" type="xs:string"/>
+			
+			<xs:complexType name="MRequest">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="M" type="tns:mType"/>
+				</xs:sequence>
+			</xs:complexType>
+			
+			<xs:complexType name="mType">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="o_id" type="xs:int"/>
+					<xs:element minOccurs="0" name="a" type="tns:aComplexType"/>
+					<xs:element minOccurs="0" name="b" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			
+			<xs:complexType name="aComplexType">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="a1s" nillable="true" type="xs:string"/>
+					<xs:element minOccurs="0" name="a2" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			
+			<xs:complexType name="MRequestResponse">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="return" type="tns:ackMessage"/>
+				</xs:sequence>
+			</xs:complexType>
+			
+			<xs:complexType name="ackMessage">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="outcome" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			
+			<xs:complexType name="errorMessageFault">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="customFaultCode" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			
+			
+		</xs:schema>
+	</wsdl:types>
+	
+	<wsdl:message name="MRequest">
+		<wsdl:part element="tns:MRequest" name="parameters"/>
+		<wsdl:part element="tns:X-ReplyTo" name="X-ReplyTo"/>
+	</wsdl:message>
+	
+	<wsdl:message name="MRequestResponse">
+		<wsdl:part element="tns:MRequestResponse" name="result"/>
+		<wsdl:part element="tns:X-Correlation-ID" name="X-Correlation-ID"/>
+	</wsdl:message>
+	
+	<wsdl:message name="ErrorMessageException">
+		<wsdl:part element="tns:ErrorMessageFault" name="ErrorMessageException"/>
+	</wsdl:message>
+	
+	<wsdl:portType name="SOAPCallback">
+		<wsdl:operation name="MRequest">
+			<wsdl:input message="tns:MRequest" name="MRequest"/>
+			<wsdl:output message="tns:MRequestResponse" name="MRequestResponse"/>
+			<wsdl:fault message="tns:ErrorMessageException" name="ErrorMessageException"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	
+	<wsdl:binding name="SOAPCallbackServiceSoapBinding" type="tns:SOAPCallback">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="MRequest">
+			<soap:operation soapAction="" style="document"/>
+			<wsdl:input name="MRequest">
+				<soap:header message="tns:MRequest" part="X-ReplyTo" use="literal"/>
+				<soap:body parts="parameters" use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="MRequestResponse">
+				<soap:header message="tns:MRequestResponse" part="X-Correlation-ID" use="literal"/>
+				<soap:body parts="result" use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="ErrorMessageException">
+				<soap:fault name="ErrorMessageException" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	
+	<wsdl:service name="SOAPCallbackService">
+		<wsdl:port name="SOAPCallbackPort" binding="tns:SOAPCallbackServiceSoapBinding" >
+			<soap:address location="https://api.amministrazioneesempio.it/soap/nomeinterfacciaservizio/v1"/>
+		</wsdl:port>
+	</wsdl:service>
+	
+</wsdl:definitions>

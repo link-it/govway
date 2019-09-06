@@ -26,6 +26,7 @@ import java.util.Date;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
@@ -271,8 +272,6 @@ public class GestoreCacheControlloTraffico {
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(this.debug);
 	}
 	
-	private static final String format = "yyyy-MM-dd_HH:mm:ss.SSS";
-	
 	
 	
 	
@@ -288,7 +287,7 @@ public class GestoreCacheControlloTraffico {
 			DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy) throws Exception{
 						
 		// BuildKey
-		SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 		
 		TipoPdD tipoPdDTransazioneInCorso = datiTransazione.getTipoPdD();
 		
@@ -394,7 +393,7 @@ public class GestoreCacheControlloTraffico {
 			DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy) throws Exception{
 		
 		// BuildKey
-		SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 		
 		TipoPdD tipoPdDTransazioneInCorso = datiTransazione.getTipoPdD();
 		
@@ -502,7 +501,7 @@ public class GestoreCacheControlloTraffico {
 			DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy) throws Exception{
 		
 		// BuildKey
-		SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 		
 		TipoPdD tipoPdDTransazioneInCorso = datiTransazione.getTipoPdD();
 		

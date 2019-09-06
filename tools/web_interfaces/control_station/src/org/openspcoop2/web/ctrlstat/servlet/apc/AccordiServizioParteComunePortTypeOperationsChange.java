@@ -57,7 +57,6 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
@@ -70,7 +69,6 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -101,7 +99,6 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 	private IRegistryReader registryReader = null; 
 	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
-	private ConsoleInterfaceType consoleInterfaceType = null;
 	private String editMode = null;
 	private String protocolPropertiesSet = null;
 
@@ -133,8 +130,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			SoggettiCore soggettiCore = new SoggettiCore(apcCore);
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
-			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(apcHelper); 
-
+			
 			this.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			this.protocolPropertiesSet = apcHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 			String opcorrelata = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_CORRELATA);
@@ -245,7 +241,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 			IDPortTypeAzione idAzione = new IDPortTypeAzione();
 			idAzione.setIdPortType(idPt);
 			idAzione.setNome(nomeop);
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigOperation(this.consoleOperationType, this.consoleInterfaceType, 
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigOperation(this.consoleOperationType, apcHelper, 
 					this.registryReader, this.configRegistryReader, idAzione );
 			this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
@@ -262,7 +258,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 				oldProtocolPropertyList = opOLD.getProtocolPropertyList();
 
 			if(this.protocolPropertiesSet == null){
-				ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
+				ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
 			}
 
 			Properties propertiesProprietario = new Properties();
@@ -458,7 +454,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigOperation(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+				this.consoleDynamicConfiguration.updateDynamicConfigOperation(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
 						this.registryReader, this.configRegistryReader, idAzione);
 
 				dati = apcHelper.addAccordiPorttypeOperationToDati(dati, id, nomept, nomeop, profProtocollo, 
@@ -470,7 +466,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 												soapActionOp, styleOp, useOp, nsWSDLOp, 
 												opTypeOp, messageInputCnt, messageOutputCnt,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 				// aggiunta campi custom
-				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
 				pd.setDati(dati);
 
@@ -486,10 +482,16 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 			// Controlli sui campi immessi
 			boolean isOk = apcHelper.accordiPorttypeOperationCheckData(tipoOp, id, nomept, nomeop, profProtocollo, filtrodupop, confricop, idcollop, idRifRichiestaOp, consordop, scadenzaop, servcorr, azicorr, profcollop, styleOp, soapActionOp, useOp, opTypeOp, nsWSDLOp);
 
+			// updateDynamic
+			if(isOk) {
+				this.consoleDynamicConfiguration.updateDynamicConfigOperation(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idAzione);
+			}
+			
 			// Validazione base dei parametri custom 
 			if(isOk){
 				try{
-					apcHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+					apcHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -501,7 +503,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigOperation(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, 
+					this.consoleDynamicConfiguration.validateDynamicConfigOperation(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
 							this.registryReader, this.configRegistryReader, idAzione);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
@@ -570,7 +572,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigOperation(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+				this.consoleDynamicConfiguration.updateDynamicConfigOperation(this.consoleConfiguration, this.consoleOperationType, apcHelper, this.protocolProperties, 
 						this.registryReader, this.configRegistryReader, idAzione);
 
 				dati = apcHelper.addAccordiPorttypeOperationToDati(dati, id, nomept, nomeop, profProtocollo, 
@@ -582,7 +584,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 												soapActionOp, styleOp, useOp, nsWSDLOp,  opTypeOp, messageInputCnt, messageOutputCnt,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 
 				// aggiunta campi custom
-				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
 				pd.setDati(dati);
 
@@ -718,7 +720,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 			pt.addAzione(newOp);
 			
 			//imposto properties custom
-			newOp.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType, oldProtocolPropertyList));
+			newOp.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(this.protocolProperties, this.consoleOperationType, oldProtocolPropertyList));
 
 			// effettuo le operazioni
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), pt);

@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.logger.AbstractBasicLogger;
 import org.openspcoop2.utils.logger.IContext;
@@ -170,7 +171,7 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 		}
 		
 		if(event.getDate()!=null){
-			SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd_HH:mm:ss.SSS"); // SimpleDateFormat non e' thread-safe
+			SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 			out.append("Date:"+dateformat.format(event.getDate()));
 			out.append(" \n");
 		}
@@ -256,7 +257,7 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 		}
 		showMsg.append(diagnostic.getFunction());
 		showMsg.append(" <");
-		SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd_HH:mm:ss.SSS"); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 		showMsg.append(dateformat.format(diagnostic.getDate()));
 		showMsg.append("> ");
 		showMsg.append("(");

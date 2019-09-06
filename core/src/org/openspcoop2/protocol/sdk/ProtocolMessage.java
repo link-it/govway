@@ -36,7 +36,14 @@ public class ProtocolMessage {
 	private BustaRawContent<?> bustaRawContent;
 	private boolean useBustaRawContentReadByValidation = false;
 	private OpenSPCoop2Message message;
+	private boolean phaseUnsupported = false;
 	
+	public boolean isPhaseUnsupported() {
+		return this.phaseUnsupported;
+	}
+	public void setPhaseUnsupported(boolean phaseUnsupported) {
+		this.phaseUnsupported = phaseUnsupported;
+	}
 	public BustaRawContent<?> getBustaRawContent() {
 		return this.bustaRawContent;
 	}

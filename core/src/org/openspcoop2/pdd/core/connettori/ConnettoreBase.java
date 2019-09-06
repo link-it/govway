@@ -43,6 +43,7 @@ import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
@@ -704,6 +705,14 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	 */
 	@Override
 	public OpenSPCoop2Message getResponse(){
+		if(this.responseMsg!=null) {
+			if(this.getProtocolFactory()!=null) {
+				this.responseMsg.setProtocolName(this.getProtocolFactory().getProtocol());
+			}
+			if(this.getPddContext()!=null) {
+				this.responseMsg.setTransactionId(PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, this.getPddContext()));
+			}
+		}
 		return this.responseMsg;
 	}
 
@@ -875,8 +884,47 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     		}
     	}
     	
-    	// 3. java.io.IOException
-    	if(e instanceof java.io.IOException){
+    	// 3. java.security.cert.CertificateException
+    	if(java.security.cert.CertificateException.class.isInstance(e)){
+    		java.security.cert.CertificateException ce = (java.security.cert.CertificateException) e;
+    		if(_isNotNullMessageException(ce)){
+    			return ce.getMessage();
+    		}
+    	}
+    	if(Utilities.existsInnerInstanceException(e, java.security.cert.CertificateException.class)){
+    		boolean last = true;
+    		
+    		Throwable internalNotYetValid = Utilities.getInnerInstanceException(e, java.security.cert.CertificateNotYetValidException.class, last);
+    		if(internalNotYetValid!=null) {
+	    		if(_isNotNullMessageException(internalNotYetValid)){
+	    			return _buildException(e, internalNotYetValid);
+	    		}
+    		}
+    		
+    		Throwable internalExpired = Utilities.getInnerInstanceException(e, java.security.cert.CertificateExpiredException.class, last);
+    		if(internalExpired!=null) {
+	    		if(_isNotNullMessageException(internalExpired)){
+	    			return _buildException(e, internalExpired);
+	    		}
+    		}
+    		
+    		// Anche in questo caso vengono due eccezioni uguali
+//    		Throwable internalRevoked = Utilities.getInnerInstanceException(e, java.security.cert.CertificateRevokedException.class, last);
+//    		if(internalRevoked!=null) {
+//	    		if(_isNotNullMessageException(internalRevoked)){
+//	    			return _buildException(e, internalRevoked);
+//	    		}
+//    		}
+//    		
+    		// solo nei casi precedenti costruisco una eccezione con la parte interna.
+    		// Negli altri casi (es. certificato non presente nel truststore 'unable to find valid certification path to requested target') verrebbero due eccezioni uguali
+    		if(_isNotNullMessageException(e)){
+    			return e.getMessage();
+    		}
+    	}
+    	
+    	// 4. java.io.IOException
+    	if(e instanceof java.io.IOException || java.io.IOException.class.isInstance(e)){
     		java.io.IOException io = (java.io.IOException) e;
     		if(_isNotNullMessageException(io)){
     			return io.getMessage();
@@ -889,14 +937,14 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     		}
     	}
     	
-    	// 4. ClientAbortException (Succede nel caso il buffer del client non sia più disponibile)
+    	// 5. ClientAbortException (Succede nel caso il buffer del client non sia più disponibile)
     	if(Utilities.existsInnerException(e, "org.apache.catalina.connector.ClientAbortException")){
     		Throwable internal = Utilities.getInnerException(e, "org.apache.catalina.connector.ClientAbortException");
     		if(_isNotNullMessageException(internal)){
     			return "ClientAbortException - "+ _buildException(e, internal);
     		}
     	}
-    	
+    	    	    	    	
     	// Check Null Message
     	if(_isNotNullMessageException(e)){
     		return e.getMessage();
@@ -917,7 +965,14 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     }
     private static String _buildException(Throwable original,Throwable internal){
     	if(_isNotNullMessageException(original)){
-    		return internal.getMessage() + " (sourceException: "+original.getMessage()+")";
+    		String internalMessage = internal.getMessage();
+    		String originalMessage = original.getMessage();
+    		if(originalMessage!=null && !originalMessage.equals(internalMessage)) {
+    			return internalMessage + " (sourceException: "+originalMessage+")";
+    		}
+    		else {
+    			return internal.getMessage();
+    		}
     	}
     	else{
     		return internal.getMessage();

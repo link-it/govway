@@ -23,7 +23,7 @@
 package org.openspcoop2.protocol.sdk.config;
 
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 
 /**
@@ -42,42 +42,87 @@ public interface IProtocolVersionManager extends IProtocolManager {
 	/**
 	 * Ritorna l'indicazione sulla modalità di gestione che la Porta di Dominio deve attuare per il filtro duplicati.
 	 * 
-	 * @param profiloCollaborazione Profilo di Collaborazione (oneway/sincrono/asincronoSimmetrico/asincronoAsimmetrico)
+	 * @param busta Busta
 	 * @return Indicazione che la PdS deve intraprendere indicata tramite l'oggetto {link org.openspcoop.engine.modules.StatoFunzionalitaProtocollo}.
 	 */
-	public StatoFunzionalitaProtocollo getFiltroDuplicati(ProfiloDiCollaborazione profiloCollaborazione);
+	public StatoFunzionalitaProtocollo getFiltroDuplicati(Busta busta);
+	
+	/**
+	 * Ritorna l'indicazione sulla modalità di gestione che la Porta di Dominio deve attuare per il filtro duplicati.
+	 * 
+	 * @param infoServizio InfoServizio
+	 * @return Indicazione che la PdS deve intraprendere indicata tramite l'oggetto {link org.openspcoop.engine.modules.StatoFunzionalitaProtocollo}.
+	 */
+	public StatoFunzionalitaProtocollo getFiltroDuplicati(Servizio infoServizio);
+	
 	
 	/**
 	 * Ritorna l'indicazione sulla modalità di gestione che la Porta di Dominio deve attuare per la consegna affidabile.
 	 *
-	 * @param profiloCollaborazione Profilo di Collaborazione (oneway/sincrono/asincronoSimmetrico/asincronoAsimmetrico)
+	 * @param busta Busta
 	 * @return Indicazione che la PdS deve intraprendere indicata tramite l'oggetto {link org.openspcoop.engine.modules.StatoFunzionalitaProtocollo}.
 	 */
-	public StatoFunzionalitaProtocollo getConsegnaAffidabile(ProfiloDiCollaborazione profiloCollaborazione);
+	public StatoFunzionalitaProtocollo getConsegnaAffidabile(Busta busta);
+	
+	/**
+	 * Ritorna l'indicazione sulla modalità di gestione che la Porta di Dominio deve attuare per la consegna affidabile.
+	 *
+	 * @param infoServizio InfoServizio
+	 * @return Indicazione che la PdS deve intraprendere indicata tramite l'oggetto {link org.openspcoop.engine.modules.StatoFunzionalitaProtocollo}.
+	 */
+	public StatoFunzionalitaProtocollo getConsegnaAffidabile(Servizio infoServizio);
+	
 	
 	/**
 	 * Ritorna l'indicazione sulla modalità di gestione che la Porta di Dominio deve attuare per la consegna in ordine.
 	 *
-	 * @param profiloCollaborazione Profilo di Collaborazione (oneway/sincrono/asincronoSimmetrico/asincronoAsimmetrico)
+	 * @param busta Busta
 	 * @return Indicazione che la PdS deve intraprendere indicata tramite l'oggetto {link org.openspcoop.engine.modules.StatoFunzionalitaProtocollo}.
 	 */
-	public StatoFunzionalitaProtocollo getConsegnaInOrdine(ProfiloDiCollaborazione profiloCollaborazione);
+	public StatoFunzionalitaProtocollo getConsegnaInOrdine(Busta busta);
+	
+	/**
+	 * Ritorna l'indicazione sulla modalità di gestione che la Porta di Dominio deve attuare per la consegna in ordine.
+	 *
+	 * @param infoServizio InfoServizio
+	 * @return Indicazione che la PdS deve intraprendere indicata tramite l'oggetto {link org.openspcoop.engine.modules.StatoFunzionalitaProtocollo}.
+	 */
+	public StatoFunzionalitaProtocollo getConsegnaInOrdine(Servizio infoServizio);
+	
 	
 	/**
 	 * Ritorna l'indicazione sulla modalità di gestione che la Porta di Dominio deve attuare per inserire più transazioni in una unica collaborazione
 	 * 
-	 * @param profiloCollaborazione Profilo di Collaborazione (oneway/sincrono/asincronoSimmetrico/asincronoAsimmetrico)
+	 * @param busta Busta
 	 * @return Indicazione che la PdS deve intraprendere indicata tramite l'oggetto {link org.openspcoop.engine.modules.StatoFunzionalitaProtocollo}.
 	 */
-	public StatoFunzionalitaProtocollo getCollaborazione(ProfiloDiCollaborazione profiloCollaborazione);
+	public StatoFunzionalitaProtocollo getCollaborazione(Busta busta);
+	
+	/**
+	 * Ritorna l'indicazione sulla modalità di gestione che la Porta di Dominio deve attuare per inserire più transazioni in una unica collaborazione
+	 * 
+	 * @param infoServizio InfoServizio
+	 * @return Indicazione che la PdS deve intraprendere indicata tramite l'oggetto {link org.openspcoop.engine.modules.StatoFunzionalitaProtocollo}.
+	 */
+	public StatoFunzionalitaProtocollo getCollaborazione(Servizio infoServizio);
+	
 	
 	/**
 	 * Ritorna l'indicazione sulla modalità di gestione che la Porta di Dominio attua per gestire il riferimento di una precedente richiesta
 	 * 
-	 * @param profiloCollaborazione Profilo di Collaborazione (oneway/sincrono/asincronoSimmetrico/asincronoAsimmetrico)
+	 * @param busta Busta
 	 * @return Indicazione che la PdS deve intraprendere indicata tramite l'oggetto {link org.openspcoop.engine.modules.StatoFunzionalitaProtocollo}.
 	 */
-	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(ProfiloDiCollaborazione profiloCollaborazione);
+	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(Busta busta);
+	
+	/**
+	 * Ritorna l'indicazione sulla modalità di gestione che la Porta di Dominio attua per gestire il riferimento di una precedente richiesta
+	 * 
+	 * @param infoServizio InfoServizio
+	 * @return Indicazione che la PdS deve intraprendere indicata tramite l'oggetto {link org.openspcoop.engine.modules.StatoFunzionalitaProtocollo}.
+	 */
+	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(Servizio infoServizio);
+	
 	
 	
 	

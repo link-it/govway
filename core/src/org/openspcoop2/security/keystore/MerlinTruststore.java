@@ -22,13 +22,17 @@
 
 package org.openspcoop2.security.keystore;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.security.KeyStore;
+import java.security.cert.Certificate;
 import java.util.Properties;
 
 import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.utils.Utilities;
 
 /**
  * MerlinTruststore
@@ -37,12 +41,25 @@ import org.openspcoop2.security.SecurityException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class MerlinTruststore {
+public class MerlinTruststore implements Serializable {
 
-	private KeyStore ks = null;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private transient KeyStore ks = null;
+	private byte[] ksBytes;
 	private String tipoStore = null;
 	private String pathStore = null;
 	private String passwordStore = null;
+	
+	@Override
+	public String toString() {
+		StringBuffer bf = new StringBuffer();
+		bf.append("TrustStore (").append(this.tipoStore).append(") ").append(this.pathStore);
+		return bf.toString();
+	}
 	
 	public MerlinTruststore(String propertyFilePath) throws SecurityException{
 		
@@ -56,7 +73,10 @@ public class MerlinTruststore {
 			if(fStore.exists()){
 				isStore = new FileInputStream(fStore);
 			}else{
-				isStore = MerlinTruststore.class.getResourceAsStream("/"+propertyFilePath);
+				isStore = MerlinTruststore.class.getResourceAsStream(propertyFilePath);
+				if(isStore==null){
+					isStore = MerlinTruststore.class.getResourceAsStream("/"+propertyFilePath);
+				}
 				if(isStore==null){
 					throw new Exception("Store ["+propertyFilePath+"] not found");
 				}
@@ -132,24 +152,69 @@ public class MerlinTruststore {
 				throw new Exception("Password dello Store non indicata");
 			}
 			
-			File fPathStore = new File(this.pathStore);
-			if(fPathStore.exists()==false){
-				throw new Exception("keystore ["+fPathStore.getAbsolutePath()+"] not found");
+			InputStream isStore = null;
+			try{
+				File fPathStore = new File(this.pathStore);
+				if(fPathStore.exists()){
+					isStore = new FileInputStream(fPathStore);
+				}else{
+					isStore = MerlinTruststore.class.getResourceAsStream(this.pathStore);
+					if(isStore==null){
+						isStore = MerlinTruststore.class.getResourceAsStream("/"+this.pathStore);
+					}
+					if(isStore==null){
+						throw new Exception("Keystore ["+this.pathStore+"] not found");
+					}
+				}
+				this.ksBytes = Utilities.getAsByteArray(isStore);
+			}finally{
+				try{
+					if(isStore!=null){
+						isStore.close();
+					}
+				}catch(Exception eClose){}
 			}
-			FileInputStream finStore = new FileInputStream(fPathStore);
-			
-			this.ks = KeyStore.getInstance(this.tipoStore);
-			this.ks.load(finStore, this.passwordStore.toCharArray());
-			finStore.close();
-			FixTrustAnchorsNotEmpty.addCertificate(this.ks);
+
+			this.initKS();
 			
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);
 		}
 	}
 	
+	private void checkInit() throws SecurityException{
+		if(this.ks==null) {
+			this.initKS();
+		}
+	}
+	private synchronized void initKS() throws SecurityException{
+		if(this.ks==null) {
+			try(ByteArrayInputStream bin = new ByteArrayInputStream(this.ksBytes)){
+				this.ks = KeyStore.getInstance(this.tipoStore);
+				this.ks.load(bin, this.passwordStore.toCharArray());
+				FixTrustAnchorsNotEmpty.addCertificate(this.ks);
+			}
+			catch(Exception e){
+				throw new SecurityException(e.getMessage(),e);
+			}
+		}
+	}
+	
+	
+	public Certificate getCertificate(String alias) throws SecurityException {
+		if(alias==null) {
+			throw new SecurityException("Alias non fornito");
+		}
+		this.checkInit(); // per ripristino da Serializable
+		try{
+			return this.ks.getCertificate(alias);
+		}catch(Exception e){
+			throw new SecurityException(e.getMessage(),e);
+		}
+	}
 	
 	public KeyStore getTrustStore() throws SecurityException {
+		this.checkInit(); // per ripristino da Serializable
 		try{
 			return this.ks;
 		}catch(Exception e){

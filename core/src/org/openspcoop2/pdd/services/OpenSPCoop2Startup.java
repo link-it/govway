@@ -49,6 +49,7 @@ import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
+import org.openspcoop2.core.config.AccessoDatiKeystore;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -108,6 +109,7 @@ import org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX;
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPorta;
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPortaCache;
 import org.openspcoop2.pdd.core.jmx.StatoServiziJMXResource;
+import org.openspcoop2.pdd.core.keystore.GestoreKeystoreCaching;
 import org.openspcoop2.pdd.core.response_caching.GestoreCacheResponseCaching;
 import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.logger.LogLevels;
@@ -571,8 +573,6 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				// MessageSecurity
 				MessageSecurityFactory.setMessageSecurityContextClassName(classNameReader.getMessageSecurityContext(propertiesReader.getMessageSecurityContext()));
 				MessageSecurityFactory.setMessageSecurityDigestReaderClassName(classNameReader.getMessageSecurityDigestReader(propertiesReader.getMessageSecurityDigestReader()));
-				GestoreKeystoreCache.setKeystoreCacheParameters(propertiesReader.isAbilitataCacheMessageSecurityKeystore(),
-						propertiesReader.getItemLifeSecondCacheMessageSecurityKeystore(), propertiesReader.getDimensioneCacheMessageSecurityKeystore());
 				
 				// XML
 				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
@@ -628,9 +628,6 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				if(propertiesReader.isPrintInfoMessageSecurity()){
 					OpenSPCoop2Startup.log.info("MessageSecurity Context: "+MessageSecurityFactory.messageSecurityContextImplClass);
 					OpenSPCoop2Startup.log.info("MessageSecurity DigestReader: "+MessageSecurityFactory.messageSecurityDigestReaderImplClass);
-					OpenSPCoop2Startup.log.info("MessageSecurity Keystore Cache enabled["+propertiesReader.isAbilitataCacheMessageSecurityKeystore()+"] itemLifeSecond["+
-							propertiesReader.getItemLifeSecondCacheMessageSecurityKeystore()+"] size["+
-							propertiesReader.getDimensioneCacheMessageSecurityKeystore()+"]");
 					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) EncryptedDataHeaderBlock: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getEncryptedDataHeaderBlockClass());
 					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) ProcessPartialEncryptedMessage: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getProcessPartialEncryptedMessageClass());
 					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) getSignPartialMessageProcessor: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getSignPartialMessageProcessorClass());
@@ -1106,6 +1103,90 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				msgDiag.logStartupError(e,"Gestore Response Caching");
 				return;
 			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			/* ----------- Inizializzazione Keystore Security ------------ */
+			
+			try{
+				AccessoDatiKeystore keystoreCacheConfig = configurazionePdDManager.getAccessoDatiKeystore();
+				if(keystoreCacheConfig!=null && keystoreCacheConfig.getCache()!=null){
+					
+					int dimensioneCache = -1;
+					if(keystoreCacheConfig.getCache().getDimensione()!=null){
+						try{
+							dimensioneCache = Integer.parseInt(keystoreCacheConfig.getCache().getDimensione());
+						}catch(Exception e){
+							throw new Exception("Parametro 'dimensioneCache' errato per la cache di accesso ai keystore");
+						}
+					}
+					
+					String algoritmo = null;
+					if(keystoreCacheConfig.getCache().getAlgoritmo()!=null){
+						algoritmo = keystoreCacheConfig.getCache().getAlgoritmo().toString();
+					}
+					
+					long idleTime = -1;
+					if(keystoreCacheConfig.getCache().getItemIdleTime()!=null){
+						try{
+							idleTime = Integer.parseInt(keystoreCacheConfig.getCache().getItemIdleTime());
+						}catch(Exception e){
+							throw new Exception("Parametro 'idleTime' errato per la cache di accesso ai keystore");
+						}
+					}
+					
+					long itemLifeSecond = -1;
+					if(keystoreCacheConfig.getCache().getItemLifeSecond()!=null){
+						try{
+							itemLifeSecond = Integer.parseInt(keystoreCacheConfig.getCache().getItemLifeSecond());
+						}catch(Exception e){
+							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di accesso ai keystore");
+						}
+					}
+					
+					long itemCrlLifeSecond = -1;
+					if(keystoreCacheConfig.getCrlItemLifeSecond()!=null){
+						try{
+							itemCrlLifeSecond = Integer.parseInt(keystoreCacheConfig.getCrlItemLifeSecond());
+						}catch(Exception e){
+							throw new Exception("Parametro 'itemCrlLifeSecond' errato per la cache di accesso ai keystore");
+						}
+					}
+
+					GestoreKeystoreCaching.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					
+					if(itemCrlLifeSecond>0) {
+						GestoreKeystoreCaching.setCacheCrlLifeSeconds(itemCrlLifeSecond, logCore);
+					}
+				}
+				else{
+					GestoreKeystoreCaching.initialize(logCore);
+					
+					// Provo ad utilizzare la cache alternativa in memoria
+					GestoreKeystoreCache.setKeystoreCacheParameters(propertiesReader.isAbilitataCacheMessageSecurityKeystore(),
+							propertiesReader.getItemLifeSecondCacheMessageSecurityKeystore(), 
+							propertiesReader.getDimensioneCacheMessageSecurityKeystore());
+					OpenSPCoop2Startup.log.info("MessageSecurity Keystore Cache In-Memory enabled["+propertiesReader.isAbilitataCacheMessageSecurityKeystore()+"] itemLifeSecond["+
+							propertiesReader.getItemLifeSecondCacheMessageSecurityKeystore()+"] size["+
+							propertiesReader.getDimensioneCacheMessageSecurityKeystore()+"]");
+					
+				}
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Gestore Response Caching");
+				return;
+			}
+			
+			
+			
 			
 			
 			
@@ -1769,6 +1850,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}catch(Exception e){
 					msgDiag.logStartupError(e,"RisorsaJMX - risposte salvate in cache");
 				}
+				// MBean GestioneKeystoreCaching
+				try{
+					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanKeystoreCaching();
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"RisorsaJMX - keystore salvate in cache");
+				}
 				// MBean RepositoryMessaggi
 				try{
 					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanRepositoryMessaggi();
@@ -1861,6 +1948,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				informazioniStatoPortaCache_responseCaching.setStatoCache(infoResponseCaching.printStatCache());
 			}
 			informazioniStatoPortaCache.add(informazioniStatoPortaCache_responseCaching);
+			
+			org.openspcoop2.pdd.core.jmx.EngineKeystoreCaching infoKeystoreCaching = new org.openspcoop2.pdd.core.jmx.EngineKeystoreCaching();
+			InformazioniStatoPortaCache informazioniStatoPortaCache_keystoreCaching = new InformazioniStatoPortaCache(CostantiPdD.JMX_KEYSTORE_CACHING, infoKeystoreCaching.isCacheAbilitata());
+			if(infoKeystoreCaching.isCacheAbilitata()){
+				informazioniStatoPortaCache_keystoreCaching.setStatoCache(infoKeystoreCaching.printStatCache());
+			}
+			informazioniStatoPortaCache.add(informazioniStatoPortaCache_keystoreCaching);
 			
 			org.openspcoop2.pdd.core.jmx.RepositoryMessaggi infoRepositoryMessaggi = new org.openspcoop2.pdd.core.jmx.RepositoryMessaggi();
 			InformazioniStatoPortaCache informazioniStatoPortaCache_repositoryMessaggi = new InformazioniStatoPortaCache(CostantiPdD.JMX_REPOSITORY_MESSAGGI, infoRepositoryMessaggi.isCacheAbilitata());

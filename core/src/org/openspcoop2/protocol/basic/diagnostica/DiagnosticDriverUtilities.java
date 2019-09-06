@@ -38,6 +38,7 @@ import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnostici;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.utils.StringWrapper;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
@@ -211,8 +212,6 @@ public class DiagnosticDriverUtilities {
 
 	}
 	
-	private static final String format = "yyyy-MM-dd_HH:mm:ss.SSS";
-	
 	public static int setValues_searchMessaggiDiagnostici(FiltroRicercaDiagnostici filter,Object object,int startIndex) throws SQLQueryObjectException, SQLException{
 		return DiagnosticDriverUtilities.setValuesSearch(filter, object,startIndex, DiagnosticSearchType.MSGDIAGNOSTICI);
 	}
@@ -226,7 +225,7 @@ public class DiagnosticDriverUtilities {
 	private static int setValuesSearch(FiltroRicercaDiagnostici filter,Object object,int startIndex, DiagnosticSearchType tipoRicerca) throws SQLQueryObjectException, SQLException{
 		
 		
-		SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 		
 		PreparedStatement pstmt = null;
 		StringWrapper query = null;

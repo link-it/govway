@@ -92,8 +92,6 @@ public class CostantiExporter {
 	
 	public final static String DATA_INIZIO = "dataInizio";
 	public final static String DATA_FINE = "dataFine";
-	public static final String FORMAT_TIME = "yyyy-MM-dd_HH:mm:ss.SSS";
-	public static final String FORMAT_DATE = "yyyy-MM-dd";
 	
 	public final static String PROTOCOLLO  = "protocollo";
 	public final static String MITTENTE  = "mittente";

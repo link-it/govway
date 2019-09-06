@@ -127,6 +127,7 @@ public class ServiceBindingConfiguration implements Serializable {
 		return true;
 	}
 		
+
 	public boolean isServiceBindingServiceTypeEnabled(ServiceBinding serviceBinding, String serviceType){
 		if(this.restrictedServiceBindingServiceType.containsKey(serviceType)){
 			if(ServiceBinding.SOAP.equals(this.restrictedServiceBindingServiceType.get(serviceType))){

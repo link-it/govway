@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="restNonBlockingPull" basedir=".">
+
+	<import file="./local_env.xml" />
+	<import file="./ant/openspcoop2-build.xml" />
+	<import file="./ant/openspcoop2-codeGen.xml" />
+	
+	<!-- directory root -->
+	<property name="gitrepo_root" location="${openspcoop2}" />
+	
+	<!-- set properties for this build -->
+	<property name="restNonBlockingPull" location="${basedir}" />
+	
+	<property name="src_restNonBlockingPull" value="${restNonBlockingPull}/src" />
+	<property name="build_restNonBlockingPull" location="build/restNonBlockingPull" />
+	<property name="dist_restNonBlockingPull" location="dist" />
+	<property name="doc_restNonBlockingPull" location="doc" />
+	<property name="stub_restNonBlockingPull" value="deploy/stub" />
+	
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="*.userlibraries"/>
+			<exclude name="axis14/*"/>
+		</fileset>
+		<fileset dir="${openspcoop2.dist}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >		
+	</path>	
+	<path id="classpath_run" >
+		<fileset dir="${dist_restNonBlockingPull}" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2.dist}" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${stub_restNonBlockingPull}" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}" >
+			<include name="log/*"/>
+			<include name="cxf/*"/>
+			<include name="jetty/*"/>
+			<include name="jackson/*.jar"/>
+			<include name="commons/commons-codec-1.11.jar"/>
+			<include name="security/neethi-3.1.1.jar"/>
+			<include name="shared/wsdl4j-1.6.3.jar"/>
+			<include name="shared/joda-time-2.10.jar"/>
+			<include name="javax/javax.servlet-api-3.1.0.jar"/>
+			<include name="javax/javax.annotation-api-1.2.jar"/>
+		</fileset>
+	</path>
+	
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean_restNonBlockingPull">
+		<delete dir="${build_restNonBlockingPull}" />
+		<delete dir="build" />
+		<delete dir="${dist_restNonBlockingPull}" />
+		<delete dir="${doc_restNonBlockingPull}" />
+	</target>
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile_restNonBlockingPull">
+		<mkdir dir="${build_restNonBlockingPull}" />
+		<mkdir dir="${build_restNonBlockingPull}/tmp" />
+		<mkdir dir="${build_restNonBlockingPull}/tmp_css" />
+		<mkdir dir="${dist_restNonBlockingPull}" />
+	</target>
+	
+		
+
+	<!-- Compilazione del servizio-->
+	<target name="compile_restNonBlockingPull" depends="init_compile_restNonBlockingPull,compile_openspcoop2_restNonBlockingPull" />
+
+
+	<!-- Creazione del modulo .WAR -->
+	<target name="build_restNonBlockingPull" depends="compile_restNonBlockingPull" />
+
+	
+	<!-- alias -->
+	<target name="build" depends="build_restNonBlockingPull"/>
+	<target name="build_without_dipendencies" depends="compile_openspcoop2_restNonBlockingPull"/>
+	<target name="clean" depends="clean_restNonBlockingPull"/>
+
+	<!-- Run the Server -->
+	<target name="runServer"
+        	description="Esegue il Server PULL" >
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.protocol.modipa.example.rest.non_blocking.pull.Server" fork="true">
+			<classpath>
+				<path refid="classpath_run" />
+				<pathelement path="."/>
+			</classpath>
+		</java>
+
+	</target>
+
+	<!-- Run the Client -->
+	<target name="runClient"
+        	description="Esegue il Client" >
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.protocol.modipa.example.rest.non_blocking.pull.Client" fork="true">
+			<arg value="${idOperazione}" />
+			<classpath>
+				<path refid="classpath_run" />
+				<pathelement path="."/>
+			</classpath>
+		</java>
+
+	</target>
+
+</project>

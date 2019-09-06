@@ -1,0 +1,60 @@
+<project name="openspcoop2-codeGen-soapNonBlockingPush">
+    <description>
+       Generazione sorgenti relativi al package org.openspcoop2.protocol.modipa.example.soap.non_blocking.push
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/stub-build.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+
+
+	<!-- ***** CODICE GENERATO A PARTIRE DAI SORGENTI ************ -->
+	
+	<target name="codegen_from_wsdl">
+
+	    	<antcall target="-codegen_from_wsdl_internal">
+			<param name="implType" value="server"/>
+		</antcall>
+		<antcall target="-codegen_from_wsdl_internal">
+			<param name="implType" value="client"/>
+		</antcall>
+
+	</target>
+
+	<target name="-codegen_from_wsdl_internal">
+
+		<delete dir="${build_soapNonBlockingPush}/srcStubCXF"/>
+		<mkdir dir="${build_soapNonBlockingPush}/srcStubCXF"/>
+		<delete dir="${build_soapNonBlockingPush}/buildStubCXF"/>
+		<mkdir dir="${build_soapNonBlockingPush}/buildStubCXF"/>
+
+		<copy file="${src_soapNonBlockingPush}/schemi/soap-callback-${implType}.wsdl" todir="${build_soapNonBlockingPush}/buildStubCXF"/>
+		<antcall target="build_cxf">
+			<param name="stubBuild.srcDir" value="${build_soapNonBlockingPush}/srcStubCXF"/>
+			<param name="stubBuild.cleanSrcDir" value="false"/>
+			<param name="stubBuild.urlWSDL" value="${src_soapNonBlockingPush}/schemi/soap-callback-${implType}.wsdl"/>
+			<param name="stubBuild.buildDir" value="${build_soapNonBlockingPush}/buildStubCXF"/>
+			<param name="debug" value="${debug}"/>
+			<param name="stubBuild.buildJar" value="true"/>
+			<param name="stubBuild.jar" value="${dist_soapNonBlockingPush}/openspcoop2_protocol-modipa-soap-nonBlocking-push-${implType}-stub-cxf.jar"/>
+			<param name="stubPackageOverriding" value="org.openspcoop2.protocol.modipa.example.soap.non_blocking.push.${implType}.stub"/>
+			<param name="serviceFile" value="${build_soapNonBlockingPush}/srcStubCXF/org/openspcoop2/protocol/modipa/example/soap/non_blocking/push/${implType}/stub/SOAPNonBlockingPushImplService.java"/>
+			<param name="className" value="SOAPNonBlockingPushImplService"/>
+			<param name="wsdlName" value="soap-callback-${implType}.wsdl"/>
+		</antcall>
+
+		<copy file="${dist_soapNonBlockingPush}/openspcoop2_protocol-modipa-soap-nonBlocking-push-${implType}-stub-cxf.jar" todir="${stub_soapNonBlockingPush}"/>
+		<delete file="${dist_soapNonBlockingPush}/openspcoop2_protocol-modipa-soap-nonBlocking-push-${implType}-stub-cxf.jar"/>	
+		<delete dir="${build_soapNonBlockingPush}/srcStubCXF"/>
+		<delete dir="${build_soapNonBlockingPush}/buildStubCXF"/>
+
+	</target>
+
+</project>

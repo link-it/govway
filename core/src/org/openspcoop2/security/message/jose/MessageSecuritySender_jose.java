@@ -40,11 +40,11 @@ import org.openspcoop2.security.message.utils.KeystoreUtils;
 import org.openspcoop2.security.message.utils.PropertiesUtils;
 import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.JWKSet;
+import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWEOptions;
 import org.openspcoop2.utils.security.JWSOptions;
-import org.openspcoop2.utils.certificate.JWKSet;
-import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.security.JsonEncrypt;
 import org.openspcoop2.utils.security.JsonSignature;
 import org.openspcoop2.utils.security.JwtHeaders;
@@ -138,6 +138,7 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 				}
 				if(bean!=null) {
 					Properties signatureProperties = bean.getProperties();
+					JOSEUtils.injectKeystore(signatureProperties, messageSecurityContext.getLog()); // serve per leggere il keystore dalla cache
 					JwtHeaders jwtHeaders = JOSEUtils.getJwtHeaders(messageSecurityContext.getOutgoingProperties(), messageParam); // la configurazione per kid, jwk e x5c viene configurata via properties
 					jsonSignature = new JsonSignature(signatureProperties, jwtHeaders, jwsOptions);	
 				}
@@ -253,6 +254,7 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 				}
 				if(bean!=null) {
 					Properties encryptionProperties = bean.getProperties();
+					JOSEUtils.injectKeystore(encryptionProperties, messageSecurityContext.getLog()); // serve per leggere il keystore dalla cache
 					JwtHeaders jwtHeaders = JOSEUtils.getJwtHeaders(messageSecurityContext.getOutgoingProperties(), messageParam); // la configurazione per kid, jwk e x5c viene configurata via properties
 					jsonEncrypt = new JsonEncrypt(encryptionProperties, jwtHeaders, jweOptions); 
 				}

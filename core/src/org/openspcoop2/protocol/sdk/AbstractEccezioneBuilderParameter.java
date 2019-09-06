@@ -58,6 +58,7 @@ public abstract class AbstractEccezioneBuilderParameter {
 	private ConfigurationRFC7807 rfc7807;
 	private int httpStatus;
 	private String nomePorta;
+	private String transactionId;
 	
 	public ParseException getParseException() {
 		return this.parseException;
@@ -142,6 +143,12 @@ public abstract class AbstractEccezioneBuilderParameter {
 	}
 	public void setNomePorta(String nomePorta) {
 		this.nomePorta = nomePorta;
+	}
+	public String getTransactionId() {
+		return this.transactionId;
+	}
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
 	}
 	public abstract SOAPFaultCode getSoapFaultCode();
 }

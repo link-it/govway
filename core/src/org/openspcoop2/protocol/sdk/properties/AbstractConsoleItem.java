@@ -42,6 +42,7 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 	private boolean required;
 	private String regexpr;
 	private TreeMap<String,T> mapLabelValues;
+	private String note;
 
 	protected AbstractConsoleItem(String id, String label, ConsoleItemType type) throws ProtocolException{
 		super(id, label, type);
@@ -100,6 +101,13 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 	}
 	public void addLabelValue(String key, T value){
 		this.mapLabelValues.put(key, value);
+	}
+	
+	public String getNote() {
+		return this.note;
+	}
+	public void setNote(String note) {
+		this.note = note;
 	}
 	
 }

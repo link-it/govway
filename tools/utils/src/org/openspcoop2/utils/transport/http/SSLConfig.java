@@ -24,6 +24,8 @@
 package org.openspcoop2.utils.transport.http;
 
 import java.io.Serializable;
+import java.security.KeyStore;
+import java.security.cert.CertStore;
 
 
 /**
@@ -41,6 +43,8 @@ public class SSLConfig implements Serializable  {
 	private static final long serialVersionUID = 1L;
 	
 	// AUTENTICAZIONE SERVER:
+	// TrustStore
+	private KeyStore trustStore;
 	// Path del trustStore che contiene il certificato del server.
 	private String trustStoreLocation;
 	// Password del trustStore che contiene il certificato del server.
@@ -49,12 +53,21 @@ public class SSLConfig implements Serializable  {
 	private String trustManagementAlgorithm;
 	// tipo del truststore
 	private String trustStoreType;
+	// CRLs
+	private String trustStoreCRLsLocation;
+	// CertStore
+	private CertStore trustStoreCRLs;
+	
 	
 	// AUTENTICAZIONE CLIENT:
+	// KeyStore
+	private KeyStore keyStore;
 	// Path del keyStore che contiene il certificato del client e la chiave privata del client.
 	private String keyStoreLocation;
 	// Password del keyStore che contiene il certificato del client
 	private String keyStorePassword;
+	// Alias della chiave privata
+	private String keyAlias;
 	// Password della chiave privata
 	private String keyPassword;
 	// the standard name of the requested key management algorithm
@@ -66,11 +79,28 @@ public class SSLConfig implements Serializable  {
 	private boolean hostnameVerifier = true;
 	// Eventuale classe da utilizzare per effettuare hostnameVerifier al posto di quella di default
 	private String classNameHostnameVerifier;
-
+	
 	// TipologiaSSL
 	private String sslType= null;
 	
 
+	
+	public KeyStore getTrustStore() {
+		return this.trustStore;
+	}
+
+	public void setTrustStore(KeyStore trustStore) {
+		this.trustStore = trustStore;
+	}
+
+	public KeyStore getKeyStore() {
+		return this.keyStore;
+	}
+
+	public void setKeyStore(KeyStore keyStore) {
+		this.keyStore = keyStore;
+	}
+	
 	public String getTrustStoreLocation() {
 		return this.trustStoreLocation;
 	}
@@ -102,6 +132,22 @@ public class SSLConfig implements Serializable  {
 	public void setTrustStoreType(String trustStoreType) {
 		this.trustStoreType = trustStoreType;
 	}
+	
+	public String getTrustStoreCRLsLocation() {
+		return this.trustStoreCRLsLocation;
+	}
+
+	public void setTrustStoreCRLsLocation(String trustStoreCRLsLocation) {
+		this.trustStoreCRLsLocation = trustStoreCRLsLocation;
+	}
+
+	public CertStore getTrustStoreCRLs() {
+		return this.trustStoreCRLs;
+	}
+
+	public void setTrustStoreCRLs(CertStore trustStoreCRLs) {
+		this.trustStoreCRLs = trustStoreCRLs;
+	}
 
 	public String getKeyStoreLocation() {
 		return this.keyStoreLocation;
@@ -119,6 +165,14 @@ public class SSLConfig implements Serializable  {
 		this.keyStorePassword = keyStorePassword;
 	}
 
+	public String getKeyAlias() {
+		return this.keyAlias;
+	}
+
+	public void setKeyAlias(String keyAlias) {
+		this.keyAlias = keyAlias;
+	}
+	
 	public String getKeyPassword() {
 		return this.keyPassword;
 	}

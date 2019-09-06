@@ -43,7 +43,10 @@ import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServiziApplicativi;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -55,6 +58,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
@@ -68,6 +72,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -172,10 +177,11 @@ public class PorteApplicativeControlloAccessi extends Action {
 
 			// Prendo il nome della porta
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
+			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
 			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 			ConfigurazioneCore confCore = new ConfigurazioneCore(porteApplicativeCore);
-			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
+			ServiziApplicativiCore saCore = new ServiziApplicativiCore(porteApplicativeCore);
 
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String idporta = pa.getNome();
@@ -241,7 +247,16 @@ public class PorteApplicativeControlloAccessi extends Action {
 
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoProprietario);
 			boolean isSupportatoAutenticazione = soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo);
-
+			
+			boolean forceAutenticato = false; 
+			boolean forceHttps = false;
+			boolean forceDisableOptional = false;
+			if(porteApplicativeHelper.isProfiloModIPA(protocollo)) {
+				forceAutenticato = true; // in modI ci vuole sempre autenticazione https sull'erogazione (cambia l'opzionalita' o meno)
+				forceHttps = forceAutenticato;
+				forceDisableOptional = porteApplicativeHelper.forceHttpsClientProfiloModiPA(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), asps.getPortType());
+			}
+			
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 
 			String labelPerPorta = null;
@@ -556,9 +571,11 @@ public class PorteApplicativeControlloAccessi extends Action {
 						gestioneTokenPolicy, gestioneTokenOpzionale, 
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa,false);
 
-				porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,false,
+				porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, servletChiamante,pa,
+						autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,false,
 						gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						old_autenticazione_custom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList);
+						old_autenticazione_custom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList,
+						forceHttps, forceDisableOptional);
 
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 				porteApplicativeHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,pa,
@@ -595,6 +612,42 @@ public class PorteApplicativeControlloAccessi extends Action {
 					autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
 					protocollo);
 
+			if(isOk) {
+
+				if(porteApplicativeHelper.isProfiloModIPA(protocollo)) {
+					
+					String statoAutorizzazioneModiPA = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA_STATO);
+					
+					if(StatoFunzionalita.ABILITATO.getValue().equals(statoAutorizzazioneModiPA)) {
+					
+						String idSoggettoToAdd = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO);
+						
+						String idSAToAdd = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO);
+						
+						int sizeSAautorizzati = 0;
+						if(pa.getServiziApplicativiAutorizzati()!=null) {
+							sizeSAautorizzati = pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList();
+						}
+						
+						if( 
+								sizeSAautorizzati<=0
+								&&
+								(
+										(idSoggettoToAdd==null || "".equals(idSoggettoToAdd))
+										||
+										(idSAToAdd==null || "".equals(idSAToAdd))
+								)
+								
+								) {
+							isOk = false;
+							pd.setMessage("Per abilitare l'autorizzazione deve essere registrato almeno un applicativo con configurazione 'ModI PA' per la sicurezza del messaggio");
+						}
+					}
+					
+				}
+
+			}
+			
 			if (!isOk) {
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -604,10 +657,12 @@ public class PorteApplicativeControlloAccessi extends Action {
 				porteApplicativeHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, 
 						gestioneTokenPolicy, gestioneTokenOpzionale, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa,false);
 
-				porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,false,
+				porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, servletChiamante,pa,
+						autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,false,
 						gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						old_autenticazione_custom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList);
-
+						old_autenticazione_custom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList,
+						forceHttps, forceDisableOptional);
+				
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 				porteApplicativeHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,pa,
 						autenticazione, autorizzazione, autorizzazioneCustom, 
@@ -766,6 +821,77 @@ public class PorteApplicativeControlloAccessi extends Action {
 				}
 			}
 
+			if(porteApplicativeHelper.isProfiloModIPA(protocollo)) {
+				
+				String statoAutorizzazioneModiPA = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA_STATO);
+				
+				if(StatoFunzionalita.ABILITATO.getValue().equals(statoAutorizzazioneModiPA)) {
+				
+					int sizeSAautorizzati = 0;
+					if(pa.getServiziApplicativiAutorizzati()!=null) {
+						sizeSAautorizzati = pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList();
+					}
+					
+					if(sizeSAautorizzati<=0) {
+					
+						String idSoggettoToAdd = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO);
+						
+						String idSAToAdd = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO);
+						
+						//decodifica soggetto scelto
+						String tipoSoggettoScelto = null;
+						String nomeSoggettoScelto = null;
+						String nomeSAScelto = null;
+						if(idSoggettoToAdd != null) {
+							long soggettoToAddInt = Long.parseLong(idSoggettoToAdd);
+							
+							if(porteApplicativeCore.isRegistroServiziLocale()){
+								org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggettoToAddInt);
+								tipoSoggettoScelto = soggetto.getTipo();
+								nomeSoggettoScelto = soggetto.getNome();
+							}
+							else{
+								org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggettoToAddInt);
+								tipoSoggettoScelto = soggetto.getTipo();
+								nomeSoggettoScelto = soggetto.getNome();
+							}
+							
+							if(idSAToAdd != null) {
+								long idSAToAddInt = Long.parseLong(idSAToAdd);
+								ServizioApplicativo servizioApplicativo = saCore.getServizioApplicativo(idSAToAddInt);
+								nomeSAScelto = servizioApplicativo.getNome();
+							}
+						}
+						
+						// Inserisco il servizioApplicativo nel db
+						PortaApplicativaAutorizzazioneServizioApplicativo paSaAutorizzato = new PortaApplicativaAutorizzazioneServizioApplicativo();
+						paSaAutorizzato.setNome(nomeSAScelto);
+						paSaAutorizzato.setTipoSoggettoProprietario(tipoSoggettoScelto);
+						paSaAutorizzato.setNomeSoggettoProprietario(nomeSoggettoScelto);
+							
+						PortaApplicativaAutorizzazioneServiziApplicativi saList = pa.getServiziApplicativiAutorizzati();
+						if(saList != null)
+							saList.addServizioApplicativo(paSaAutorizzato);
+						else {
+							saList = new PortaApplicativaAutorizzazioneServiziApplicativi();
+							saList.addServizioApplicativo(paSaAutorizzato);
+							pa.setServiziApplicativiAutorizzati(saList);
+						}
+						
+						numErogazioneApplicativiAutenticati++;
+						
+					}
+					
+				}
+				else {
+					if(pa.getServiziApplicativiAutorizzati()!=null) {
+						while(pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
+							pa.getServiziApplicativiAutorizzati().removeServizioApplicativo(0);
+						}
+					}
+				}
+			}
+			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
@@ -985,10 +1111,12 @@ public class PorteApplicativeControlloAccessi extends Action {
 					gestioneTokenPolicy, gestioneTokenOpzionale, 
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa,false);
 
-			porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,confPers, isSupportatoAutenticazione,false,
+			porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, servletChiamante,pa,
+					autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,confPers, isSupportatoAutenticazione,false,
 					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-					old_autenticazione_custom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList);
-
+					old_autenticazione_custom, urlAutenticazioneCustomProperties, numAutenticazioneCustomPropertiesList,
+					forceHttps, forceDisableOptional);
+			
 			// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 			porteApplicativeHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,pa,
 					autenticazione, autorizzazione, autorizzazioneCustom, 

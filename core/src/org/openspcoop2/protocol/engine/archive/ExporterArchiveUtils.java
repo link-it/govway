@@ -480,7 +480,7 @@ public class ExporterArchiveUtils {
 						this.readPortaDelegata(archive, idPD, cascadeConfig, ArchiveType.RUOLO);
 					}
 				}
-			}catch(DriverRegistroServiziNotFound notFound){}	
+			}catch(DriverConfigurazioneNotFound notFound){}	
 			
 			
 			// porteApplicative
@@ -494,7 +494,7 @@ public class ExporterArchiveUtils {
 						this.readPortaApplicativa(archive, idPA, cascadeConfig, ArchiveType.RUOLO);
 					}
 				}
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverConfigurazioneNotFound notFound){}
 			
 			
 			// serviziApplicativi
@@ -508,7 +508,7 @@ public class ExporterArchiveUtils {
 						this.readServizioApplicativo(archive, idSA, cascadeConfig, ArchiveType.RUOLO);
 					}
 				}
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverConfigurazioneNotFound notFound){}
 		}
 		
 		
@@ -560,7 +560,7 @@ public class ExporterArchiveUtils {
 						this.readPortaDelegata(archive, idPD, cascadeConfig, ArchiveType.SCOPE);
 					}
 				}
-			}catch(DriverRegistroServiziNotFound notFound){}	
+			}catch(DriverConfigurazioneNotFound notFound){}	
 			
 			
 			// porteApplicative
@@ -574,7 +574,7 @@ public class ExporterArchiveUtils {
 						this.readPortaApplicativa(archive, idPA, cascadeConfig, ArchiveType.SCOPE);
 					}
 				}
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverConfigurazioneNotFound notFound){}
 			
 
 			

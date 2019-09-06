@@ -26,6 +26,9 @@ package org.openspcoop2.security.message.wss4j;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.security.Principal;
+import java.security.PublicKey;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -40,10 +43,14 @@ import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
+import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.WSConstants;
+import org.apache.wss4j.dom.WSDataRef;
 import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
 import org.apache.wss4j.dom.handler.WSHandlerConstants;
 import org.apache.wss4j.dom.handler.WSHandlerResult;
+import org.apache.wss4j.dom.message.token.Timestamp;
+import org.apache.wss4j.dom.str.STRParser;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -129,13 +136,13 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 			org.openspcoop2.security.message.wss4j.WSSUtilities.updateAttachments(listAttachments, message);
 			
 			
-			// ** Lettura Subject Certificato **/
+			// ** Lettura Subject Certificato e informazioni relative al processamento effettuato **/
 			
-			this.certificate=getPrincipal(msgCtx,wssContext.getActor());
+			this.examineResults(msgCtx, wssContext.getActor());
 						
 		} catch (Exception e) {
 			
-			SecurityException wssException = new SecurityException(e.getMessage(), e);
+			SecurityException wssException = null;
 			
 			
 			/* **** MESSAGGIO ***** */
@@ -160,6 +167,20 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 				}
 			}
 			
+			// L'if scopre l'eventuale motivo preciso riguardo al fallimento della cifratura/firma.
+			if(Utilities.existsInnerException(e, WSSecurityException.class)){
+				Throwable t = Utilities.getLastInnerException(e);
+				if(t instanceof WSSecurityException){
+					if(messaggio!=null){
+						messaggio = messaggio + " ; " + t.getMessage();
+					}
+					else{
+						messaggio = t.getMessage();
+					}
+				}
+			}
+			
+			wssException = new SecurityException(messaggio, e);
 			wssException.setMsgErrore(messaggio);
 			
 			
@@ -209,11 +230,43 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 
 	}
 
+	private Timestamp timestamp;
+	public Timestamp getTimestamp() {
+		return this.timestamp;
+	}
+	
+	private List<WSDataRef> signatureRefs;
+	public List<WSDataRef> getSignatureRefs() {
+		return this.signatureRefs;
+	}
 
+	private List<WSDataRef> encryptionRefs;
+	public List<WSDataRef> getEncryptionRefs() {
+		return this.encryptionRefs;
+	}
+	
 	private String certificate;
+	private STRParser.REFERENCE_TYPE x509ReferenceType;
+	private X509Certificate x509Certificate;
+	private X509Certificate [] x509Certificates;
+	private PublicKey publicKey;
 	@Override
 	public String getCertificate() throws SecurityException{
 		return this.certificate;
+	}
+	public STRParser.REFERENCE_TYPE getX509ReferenceType() {
+		return this.x509ReferenceType;
+	}
+	@Override
+	public X509Certificate getX509Certificate() throws SecurityException {
+		return this.x509Certificate;
+	}
+	public X509Certificate[] getX509Certificates() {
+		return this.x509Certificates;
+	}
+	@Override
+	public PublicKey getPublicKey() {
+		return this.publicKey;
 	}
 
 	
@@ -232,6 +285,7 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 				}
 				else if(SecurityConstants.SIGNATURE_PROPERTY_REF_ID.equals(key) || 
 						SecurityConstants.SIGNATURE_VERIFICATION_PROPERTY_REF_ID.equals(key) || 
+						SecurityConstants.SIGNATURE_TRUSTSTORE_PROPERTY_REF_ID.equals(key) || 
 						SecurityConstants.ENCRYPTION_PROPERTY_REF_ID.equals(key) || 
 						SecurityConstants.DECRYPTION_PROPERTY_REF_ID.equals(key) ) {
 					if(value!=null) {
@@ -255,50 +309,159 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 		}
     }
 
-	private String getPrincipal(SoapMessage msgCtx, String actor) {
-		
-		
-		String principal = null;
+	private void examineResults(SoapMessage msgCtx, String actor) {
+				
 		List<?> results = (List<?>) msgCtx.get(WSHandlerConstants.RECV_RESULTS);
 		//System.out.println("Potential number of usernames: " + results.size());
 		for (int i = 0; results != null && i < results.size(); i++) {
+			//System.out.println("RESULT["+i+"]: "+results.get(i).getClass().getName());
 			WSHandlerResult hResult = (WSHandlerResult)results.get(i);
-			if (actor != null) {
-				//prendo solo i risultati dell'actor in config.xml
-				if (hResult.getActor().compareTo(actor) == 0) {
-					List<WSSecurityEngineResult> hResults = hResult.getResults();
-					for (int j = 0; j < hResults.size(); j++) {
-						WSSecurityEngineResult eResult = hResults.get(j);
-						// An encryption or timestamp action does not have an associated principal,
-						// only Signature and UsernameToken actions return a principal
-						int actionGet = ((java.lang.Integer)  eResult.get(WSSecurityEngineResult.TAG_ACTION)).intValue();
-						if ((actionGet == WSConstants.SIGN) || 
-								(actionGet == WSConstants.UT) || 
-								(actionGet == WSConstants.ST_SIGNED)) {
-							principal =  ((Principal) eResult.get(WSSecurityEngineResult.TAG_PRINCIPAL)).getName();
-							// Signature and UsernameToken actions return a principal
-							//System.out.println("Principal's name: " + principal);
-						}
-					}
-				}
-			} else {
+			//System.out.println("RESULT["+i+"] actor: "+hResult.getActor());
+			
+			boolean actorCompatibile = false;
+			if(actor==null) {
+				actorCompatibile = hResult.getActor()==null;
+			}
+			else {
+				actorCompatibile = actor.equals(hResult.getActor());
+			}
+			
+			if(actorCompatibile) {
+				
+				//System.out.println("RESULT["+i+"] ESAMINO SENZA ["+actor+"]");
+				
 				List<WSSecurityEngineResult> hResults = hResult.getResults();
 				for (int j = 0; j < hResults.size(); j++) {
 					WSSecurityEngineResult eResult = hResults.get(j);
+					
+					/*
+					Iterator<String> resultIt = eResult.keySet().iterator();
+					while (resultIt.hasNext()) {
+						String resultItKey = (String) resultIt.next();
+						Object resultItObject = eResult.get(resultItKey);
+						System.out.println("RESULT-INTERNAL ["+i+"]["+j+"] ["+resultItKey+"]["+resultItObject+"]["+(resultItObject!=null ? resultItObject.getClass().getName() : "n.d.")+"]");
+					}*/
+					
+					int actionGet = ((java.lang.Integer)  eResult.get(WSSecurityEngineResult.TAG_ACTION)).intValue();
+					
 					// An encryption or timestamp action does not have an associated principal,
 					// only Signature and UsernameToken actions return a principal
-					int actionGet = ((java.lang.Integer)  eResult.get(WSSecurityEngineResult.TAG_ACTION)).intValue();
 					if ((actionGet == WSConstants.SIGN) || 
 							(actionGet == WSConstants.UT) || 
+							(actionGet == WSConstants.UT_SIGN) || 
 							(actionGet == WSConstants.ST_SIGNED)) {
-						principal =  ((Principal) eResult.get(WSSecurityEngineResult.TAG_PRINCIPAL)).getName();
-						// Signature and UsernameToken actions return a principal
-						//System.out.println("Principal's name: " + principal);
+						
+						Object oPrincipal = eResult.get(WSSecurityEngineResult.TAG_PRINCIPAL);
+						if(oPrincipal!=null && oPrincipal instanceof Principal) {
+							Principal principal =  (Principal) oPrincipal;
+							if(principal!=null) {
+								this.certificate = principal.getName();
+							}
+						}
+	
+						Object oX509Certificate = eResult.get(WSSecurityEngineResult.TAG_X509_CERTIFICATE);
+						if(oX509Certificate!=null && oX509Certificate instanceof X509Certificate) {
+							this.x509Certificate = (X509Certificate) oX509Certificate;
+							if(this.x509Certificate!=null) {
+								this.publicKey = this.x509Certificate.getPublicKey();
+							}
+						}
+							
+						Object oListX509Certificates = eResult.get(WSSecurityEngineResult.TAG_X509_CERTIFICATES);
+						if(oListX509Certificates!=null && oListX509Certificates instanceof X509Certificate []){
+							this.x509Certificates = (X509Certificate []) oListX509Certificates;
+							
+							/*
+							if(this.x509Certificates!=null && this.x509Certificates.length>0) {
+								System.out.println("CERTS: "+this.x509Certificates.length);
+								int index = 0;
+								for (X509Certificate X509Certificate : this.x509Certificates) {
+									System.out.println("CERT["+index+"]: "+X509Certificate.getSubjectX500Principal().toString());	
+									index ++;
+								}
+							}
+							*/
+							
+						}
+						
+						Object oX509ReferenceType = eResult.get(WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE);
+						if(oX509ReferenceType!=null && oX509ReferenceType instanceof STRParser.REFERENCE_TYPE) {
+							this.x509ReferenceType = (STRParser.REFERENCE_TYPE) oX509ReferenceType;
+							
+							//System.out.println("REFERENCE TYPE: "+this.x509ReferenceType);
+						}
+						
+						Object oSignatureRefs = eResult.get(WSSecurityEngineResult.TAG_DATA_REF_URIS);
+						if(oSignatureRefs!=null && oSignatureRefs instanceof List<?>) {
+							List<WSDataRef> l = new ArrayList<WSDataRef>();
+							List<?> lRefs = (List<?>) oSignatureRefs;
+							for (Object oRef : lRefs) {
+								if(oRef!=null && oRef instanceof WSDataRef) {
+									l.add((WSDataRef)oRef);
+								}
+							}
+							if(!l.isEmpty()) {
+								this.signatureRefs = l;
+							}
+						}
+					}
+					
+					if( actionGet == WSConstants.ENCR ) {
+						
+						Object oEncryptionRefs = eResult.get(WSSecurityEngineResult.TAG_DATA_REF_URIS);
+						if(oEncryptionRefs!=null && oEncryptionRefs instanceof List<?>) {
+							List<WSDataRef> l = new ArrayList<WSDataRef>();
+							List<?> lRefs = (List<?>) oEncryptionRefs;
+							for (Object oRef : lRefs) {
+								if(oRef!=null && oRef instanceof WSDataRef) {
+									l.add((WSDataRef)oRef);
+								}
+							}
+							if(!l.isEmpty()) {
+								this.encryptionRefs = l;
+							}
+						}
+						
+					}
+					
+					if( actionGet == WSConstants.TS ) {
+						
+						Object oTimestamp = eResult.get(WSSecurityEngineResult.TAG_TIMESTAMP);
+						if(oTimestamp!=null && oTimestamp instanceof Timestamp) {
+							this.timestamp =  (Timestamp) oTimestamp;
+						}
+						
+					}
+				}
+				
+			}
+
+		}
+
+		/*
+		String key = "org.apache.cxf.headers.Header.list";
+		if(msgCtx.containsKey(key)) {
+			Object o = msgCtx.get(key);
+			if(o instanceof List<?> ) {
+				List<?> l = (List<?>) o;
+				System.out.println("SIZE ["+l.size()+"]");
+				if(!l.isEmpty()) {
+					int index = 0;
+					for (Object entry : l) {
+						if(entry!=null) {
+							System.out.println("ENTRY ["+index+"]: "+entry.getClass().getName());
+							if(entry instanceof org.apache.cxf.binding.soap.SoapHeader) {
+								org.apache.cxf.binding.soap.SoapHeader soapHdr = (org.apache.cxf.binding.soap.SoapHeader) entry;
+								System.out.println("HDR ("+soapHdr.getActor()+") ("+soapHdr.getObject().getClass().getName()+"): "+soapHdr.getName());
+							}
+							
+						}
+						index++;
 					}
 				}
 			}
 		}
-		return principal;
+		*/
 	}
 	
 

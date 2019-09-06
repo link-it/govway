@@ -78,6 +78,7 @@ import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -1093,6 +1094,16 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			boolean useInterfaceNameInInvocationURL = this.useInterfaceNameInImplementationInvocationURL(protocollo, serviceBinding);
 			
 			String prefix = configProt.getUrlInvocazioneServizioPA();
+			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(aspc.getServiceBinding())) {
+				if(configProt.getUrlInvocazioneServizioRestPA()!=null) {
+					prefix = configProt.getUrlInvocazioneServizioRestPA();
+				}
+			}
+			else if(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(aspc.getServiceBinding())) {
+				if(configProt.getUrlInvocazioneServizioSoapPA()!=null) {
+					prefix = configProt.getUrlInvocazioneServizioSoapPA();
+				}
+			}
 			prefix = prefix.trim();
 			if(useInterfaceNameInInvocationURL) {
 				if(prefix.endsWith("/")==false) {
@@ -1637,20 +1648,32 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		}else {
 			// Pintori 29/11/2017 Gestione Accessi spostata nella servlet PorteApplicativeControlloAccessi,  in ADD devo mostrare comunque la form.
 			
+			String servletChiamante = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ADD;
+			
+			boolean forceAutenticato = false; 
+			boolean forceHttps = false;
+			boolean forceDisableOptional = false;
+			if(this.isProfiloModIPA(protocollo)) {
+				forceAutenticato = true; // in modI ci vuole sempre autenticazione https sull'erogazione (cambia l'opzionalita' o meno)
+				forceHttps = forceAutenticato;
+				forceDisableOptional = this.forceHttpsClientProfiloModiPA(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(aspc),asps!=null ? asps.getPortType() : null);
+			}
+			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,false);
 
-			this.controlloAccessiAutenticazione(dati, tipoOp, autenticazione, autenticazioneCustom, autenticazioneOpzionale, 
+			this.controlloAccessiAutenticazione(dati, tipoOp, servletChiamante, null,
+					autenticazione, autenticazioneCustom, autenticazioneOpzionale, 
 					autenticazionePrincipal, autenticazioneParametroList,
 					confPers, isSupportatoAutenticazioneSoggetti,false,
 					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-					false, null, 0);
+					false, null, 0,
+					forceHttps, forceDisableOptional);
 			
 			String urlAutorizzazioneAutenticati = null;
 			String urlAutorizzazioneErogazioneApplicativiAutenticati = null;
 			String urlAutorizzazioneRuoli = null;
 			String urlAutorizzazioneScope = null;
-			String servletChiamante = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ADD;
 			String urlAutorizzazioneErogazioneCustomPropertiesList = null;
 			String urlAutorizzazioneContenutiErogazioneCustomPropertiesList = null;
 			
@@ -2222,7 +2245,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					de = new DataElement();
 					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps);
-					String statoControlloAccessi = this.getStatoControlloAccessiPortaApplicativa(pa);
+					String statoControlloAccessi = this.getStatoControlloAccessiPortaApplicativa(protocollo, pa);
 					de.setValue(statoControlloAccessi);
 					e.addElement(de);
 					
@@ -3226,13 +3249,20 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			if(idAsps == null)
 				idAsps = "";
 
-			String idPorta = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-			String idsogg = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
-
+			String idPorta = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			String idsogg = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
+			String modipa = this.request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA);
+			boolean modipaEnabled = "true".equalsIgnoreCase(modipa);
+			
+			List<Parameter> listP = new ArrayList<>();
+			listP.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
+			listP.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
+			listP.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
+			if(modipa!=null) {
+				listP.add(new Parameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA, modipa));
+			}
 			ServletUtils.addListElementIntoSession(this.session,  PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO,
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
+					listP);
 
 			int idLista = Liste.PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO;
 			int limit = ricerca.getPageSize(idLista);
@@ -3302,7 +3332,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 
 			// setto le label delle colonne
 			List<String> labels = new ArrayList<>();
-			if(this.porteApplicativeCore.isMultitenant()) {
+			if(this.porteApplicativeCore.isMultitenant() || modipaEnabled) {
 				labels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO);
 			}
 			labels.add(CostantiControlStation.LABEL_PARAMETRO_APPLICATIVO);
@@ -3318,7 +3348,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 
 					Vector<DataElement> e = new Vector<DataElement>();
 
-					if(this.porteApplicativeCore.isMultitenant()) {
+					if(this.porteApplicativeCore.isMultitenant() || modipaEnabled) {
 						Long idSoggetto =this.soggettiCore.getIdSoggetto(sa.getNomeSoggettoProprietario(), sa.getTipoSoggettoProprietario());	
 						DataElement de = new DataElement();
 						if(this.isModalitaCompleta()) {

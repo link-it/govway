@@ -43,6 +43,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
@@ -373,7 +374,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 				// NOTA2: Le transazioni esportate sono sempre ordinate per data
 				List<String> orderFix = new ArrayList<String>();
 				Hashtable<String, String> orderMap = new Hashtable<String, String>();
-				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss.SSS");
+				SimpleDateFormat format = Utilities.getSimpleDateFormatMs();
 				
 				Iterator<TransazioneBean> it = this.selectedIds.keySet().iterator();
 				while (it.hasNext()) {
@@ -450,7 +451,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 //				// NOTA2: Le transazioni esportate sono sempre ordinate per data
 //				List<String> orderFix = new ArrayList<String>();
 //				Hashtable<String, String> orderMap = new Hashtable<String, String>();
-//				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss.SSS");
+//				SimpleDateFormat format = Utilities.getSimpleDateFormatMs();
 //				
 //				Iterator<TransazioneBean> it = this.selectedIds.keySet().iterator();
 //				while (it.hasNext()) {

@@ -255,12 +255,13 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_POLITICHE_SLA = "Politiche SLA";
 	public final static String LABEL_NON_DISPONIBILE = "non disp.";
 	public final static String LABEL_WSDL_CHANGE_CLEAR_WARNING = "Attenzione";
-	public final static String LABEL_WSDL_CHANGE_CLEAR = "Se si desidera eliminare un documento precedentemente caricato cliccare su 'Invia' senza selezionare alcun file"; //fornirne un'altra versione";
+	public final static String LABEL_WSDL_CHANGE_CLEAR = "Se si desidera eliminare un documento precedentemente caricato cliccare su 'Salva' senza selezionare alcun file"; //fornirne un'altra versione";
 	public final static String LABEL_COMPONENTI = "Componenti";
 	public final static String LABEL_WSDL_AGGIORNAMENTO = "Aggiornamento";
 	public final static String LABEL_WSDL_NOT_FOUND = "non fornito";
 	public final static String LABEL_WSDL_ATTUALE = "Attuale";
 	public final static String LABEL_WSDL_NUOVO = "Nuovo";
+	public final static String LABEL_INTERFACCIA = "Interfaccia";
 
 	public final static String LABEL_APC_MENU_VISUALE_AGGREGATA = "API";
 	public final static String LABEL_ASC_MENU_VISUALE_AGGREGATA = "API (Servizio Composto)";
@@ -446,7 +447,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_REFERENTE = "Soggetto Referente";
 	public final static String LABEL_PARAMETRO_APC_VERSIONE = "Versione";
 	public final static String LABEL_PARAMETRO_APC_PRIVATO = "Privato";
-	public final static String LABEL_PARAMETRO_APC_PRIVATO_INFORMATIVA_VISIBILITA = "Visibilità accordo";
+	public final static String LABEL_PARAMETRO_APC_PRIVATO_INFORMATIVA_VISIBILITA = "Visibilità API";
 	public final static String LABEL_PARAMETRO_APC_IS_SERVIZIO_COMPOSTO = "Servizio Composto";
 	public final static String LABEL_PARAMETRO_APC_STATO_PACKAGE = CostantiControlStation.LABEL_PARAMETRO_STATO_PACKAGE;
 	public final static String LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICA = "Validazione Specifica";
@@ -461,11 +462,11 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE = "Specifica Fruitore";
 	public final static String LABEL_PARAMETRO_APC_PROFILO_COLLABORAZIONE = "Profilo di collaborazione";
 	public final static String LABEL_PARAMETRO_APC_UTILIZZO_SENZA_AZIONE = "Utilizzo Senza Azione";
-	public final static String LABEL_PARAMETRO_APC_FILTRO_DUPLICATI = "Filtro duplicati";
-	public final static String LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE = "Conferma ricezione";
+	public final static String LABEL_PARAMETRO_APC_FILTRO_DUPLICATI = "Filtro Duplicati";
+	public final static String LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE = "Conferma Ricezione";
 	public final static String LABEL_PARAMETRO_APC_COLLABORAZIONE = "ID Collaborazione";
 	public final static String LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA = "Riferimento ID Richiesta";
-	public final static String LABEL_PARAMETRO_APC_CONSEGNA_ORDINE = "Consegna in ordine";
+	public final static String LABEL_PARAMETRO_APC_CONSEGNA_ORDINE = "Consegna in Ordine";
 	public final static String LABEL_PARAMETRO_APC_SCADENZA = "Scadenza";
 	public final static String LABEL_PARAMETRO_APC_RIPRISTINA_STATO_OPERATIVO = "Ripristina Stato Operativo";
 	public final static String LABEL_PARAMETRO_APC_SERVICE_BINDING = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING;
@@ -585,8 +586,8 @@ public class AccordiServizioParteComuneCostanti {
 
 	public final static String INFORMAZIONI_CLIENT_AUTH_DEFAULT = "default";
 
-	public final static String LABEL_INFORMAZIONI_PROTOCOLLO_DEFAULT_ACCORDO = "profilo accordo";
-	public final static String[] LABEL_INFORMAZIONI_PROTOCOLLO_ACCORDO = { "usa profilo accordo", "ridefinisci" };
+	public final static String LABEL_INFORMAZIONI_PROTOCOLLO_DEFAULT_ACCORDO = "profilo API";
+	public final static String[] LABEL_INFORMAZIONI_PROTOCOLLO_ACCORDO = { "usa profilo API", "ridefinisci" };
 
 	public final static String LABEL_INFORMAZIONI_PROTOCOLLO_DEFAULT_PORT_TYPE = "profilo servizio";
 	public final static String[] LABEL_INFORMAZIONI_PROTOCOLLO_PORT_TYPE = { "usa profilo servizio", "ridefinisci" };

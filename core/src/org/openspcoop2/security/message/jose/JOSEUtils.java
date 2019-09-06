@@ -23,6 +23,7 @@
 
 package org.openspcoop2.security.message.jose;
 
+import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -33,12 +34,17 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.security.keystore.CRLCertstore;
+import org.openspcoop2.security.keystore.MerlinTruststore;
+import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.JWKSet;
@@ -47,6 +53,7 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWTOptions;
 import org.openspcoop2.utils.security.JwtHeaders;
+import org.slf4j.Logger;
 
 /**     
  * JOSEUtils
@@ -118,6 +125,7 @@ public class JOSEUtils {
 					}
 					else if(keystore!=null) {
 						hdrs.addX509cert((X509Certificate)keystore.getCertificate(alias));
+						hdrs.setAddX5C(true);
 					}
 				}catch(Exception e) {
 					throw new SecurityException(e.getMessage(),e);
@@ -315,6 +323,22 @@ public class JOSEUtils {
 					}
 				}
 				
+				if(properties.containsKey(SecurityConstants.JOSE_USE_HEADERS_X5T)) {
+					value = (String) properties.get(SecurityConstants.JOSE_USE_HEADERS_X5T);
+					if(value!=null) {
+						value = value.trim();
+						options.setPermitUseHeaderX5T(SecurityConstants.JOSE_USE_HEADERS_TRUE.equalsIgnoreCase(value));
+					}
+				}
+				
+				if(properties.containsKey(SecurityConstants.JOSE_USE_HEADERS_X5T_256)) {
+					value = (String) properties.get(SecurityConstants.JOSE_USE_HEADERS_X5T_256);
+					if(value!=null) {
+						value = value.trim();
+						options.setPermitUseHeaderX5T_256(SecurityConstants.JOSE_USE_HEADERS_TRUE.equalsIgnoreCase(value));
+					}
+				}
+				
 				if(properties.containsKey(SecurityConstants.JOSE_USE_HEADERS_JWK)) {
 					value = (String) properties.get(SecurityConstants.JOSE_USE_HEADERS_JWK);
 					if(value!=null) {
@@ -368,6 +392,16 @@ public class JOSEUtils {
 			}
 		}
 		return properties;
+	}
+	public static KeyStore readTrustStoreSsl(Hashtable<String, Object> propertiesParam) throws SecurityException, UtilsException {
+		Properties properties = new Properties();
+		properties.putAll(propertiesParam);
+		return readTrustStoreSsl(properties);
+	}
+	public static KeyStore readTrustStoreSsl(Properties properties) throws SecurityException, UtilsException {
+		return _readTrustStore(properties, SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_FILE, 
+				SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_TYPE, 
+				SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_PASSWORD);
 	}
 
 	public static KeyStore readTrustStoreJwtX509Cert(Hashtable<String, Object> propertiesParam) throws SecurityException, UtilsException {
@@ -470,7 +504,7 @@ public class JOSEUtils {
 			throw new SecurityException(e.getMessage(),e);
 		}
 	}
-	
+		
 	private static KeyStore _readTrustStore(Properties properties, String file, String type, String password) throws SecurityException, UtilsException {
 		
 		KeyStore keystore = null;
@@ -498,10 +532,157 @@ public class JOSEUtils {
 				}
 				keystorePassword = keystorePassword.trim();
 				
-				keystore = new KeyStore(keystoreFile, keystoreType, keystorePassword);
+				keystore = new KeyStore(GestoreKeystoreCache.getMerlinTruststore(keystoreFile, keystoreType, keystorePassword).getTrustStore());
 			}
 		}
 		
 		return keystore;
+	}
+	
+	public static void injectKeystore(Properties properties, Logger log) {
+		
+		if(log==null) {
+			log = LoggerWrapperFactory.getLogger(JOSEUtils.class);
+		}
+		
+		if(properties!=null && properties.containsKey(JoseConstants.RSSEC_KEY_STORE_FILE)) {
+			
+			String file = properties.getProperty(JoseConstants.RSSEC_KEY_STORE_FILE);
+			String type = properties.getProperty(JoseConstants.RSSEC_KEY_STORE_TYPE);
+			if(type==null) {
+				type = "jks";
+			}
+			String password = properties.getProperty(JoseConstants.RSSEC_KEY_STORE_PSWD);
+			boolean passwordDefined = (password!=null && !"".equals(password));
+			
+			if(file!=null && !"".equals(file) && 
+					(passwordDefined || "jwk".equalsIgnoreCase(type))) {
+				
+				if(file!=null && (file.startsWith("http") || file.startsWith("https"))) {
+					
+					byte[]content = null;
+					try {
+						String _trustStoreSslProperty =  JoseConstants.RSSEC_KEY_STORE_FILE+".ssl";
+						String trustStoreSslProperty =  properties.getProperty(_trustStoreSslProperty);
+						MerlinTruststore trustStoreSsl = null;
+						if(trustStoreSslProperty!=null) {
+							String _trustStoreSslPasswordProperty =  JoseConstants.RSSEC_KEY_STORE_PSWD+".ssl";
+							String _trustStoreSslTypeProperty =  JoseConstants.RSSEC_KEY_STORE_TYPE+".ssl";
+							String trustStoreSslPasswordProperty =  properties.getProperty(_trustStoreSslPasswordProperty);
+							String trustStoreSslTypeProperty =  properties.getProperty(_trustStoreSslTypeProperty);
+							if(trustStoreSslPasswordProperty==null) {
+								throw new Exception("TrustStore ssl password undefined");
+							}
+							if(trustStoreSslTypeProperty==null) {
+								throw new Exception("TrustStore ssl type undefined");
+							}
+							trustStoreSsl = GestoreKeystoreCache.getMerlinTruststore(trustStoreSslProperty, trustStoreSslTypeProperty, trustStoreSslPasswordProperty);
+						}
+						
+						String _trustStoreSslCrlProperty =  JoseConstants.RSSEC_KEY_STORE+".crl.ssl";
+						String trustStoreSslCrlProperty =  properties.getProperty(_trustStoreSslCrlProperty);
+						CRLCertstore crlStore = null;
+						if(trustStoreSslCrlProperty!=null) {
+							crlStore = GestoreKeystoreCache.getCRLCertstore(trustStoreSslCrlProperty);
+						}
+						
+						String _trustStoreSslConnectionTimeoutProperty =  JoseConstants.RSSEC_KEY_STORE+".ssl.connectionTimeout";
+						String _trustStoreSslReadTimeoutProperty =  JoseConstants.RSSEC_KEY_STORE+".ssl.readTimeout";
+						String trustStoreSslConnectionTimeoutProperty =  properties.getProperty(_trustStoreSslConnectionTimeoutProperty);
+						String trustStoreSslReadTimeoutProperty =  properties.getProperty(_trustStoreSslReadTimeoutProperty);
+						Integer connectionTimeout = null;
+						Integer readTimeout = null;
+						if(trustStoreSslConnectionTimeoutProperty!=null && trustStoreSslReadTimeoutProperty!=null) {
+							connectionTimeout = Integer.valueOf(trustStoreSslConnectionTimeoutProperty);
+							readTimeout = Integer.valueOf(trustStoreSslReadTimeoutProperty);
+						}
+						
+						if(connectionTimeout!=null && readTimeout!=null) {
+							if(trustStoreSsl!=null) {
+								if(crlStore!=null) {
+									content = GestoreKeystoreCache.getHttpStore(file, connectionTimeout, readTimeout, trustStoreSsl, crlStore).getStoreBytes();
+								}
+								else {
+									content = GestoreKeystoreCache.getHttpStore(file, connectionTimeout, readTimeout, trustStoreSsl).getStoreBytes();
+								}
+							}
+							else {
+								content = GestoreKeystoreCache.getHttpStore(file, connectionTimeout, readTimeout).getStoreBytes();
+							}
+						}
+						else {
+							if(trustStoreSsl!=null) {
+								if(crlStore!=null) {
+									content = GestoreKeystoreCache.getHttpStore(file, trustStoreSsl, crlStore).getStoreBytes();
+								}
+								else {
+									content = GestoreKeystoreCache.getHttpStore(file, trustStoreSsl).getStoreBytes();
+								}
+							}
+							else {
+								content = GestoreKeystoreCache.getHttpStore(file).getStoreBytes();
+							}
+						}
+					}catch(Throwable e) {
+						log.error("Errore durante l'accesso al keystore via http '"+file+"': "+e.getMessage(),e);
+					}
+					if(content!=null) {
+						if("jwk".equalsIgnoreCase(type)) {
+							properties.remove(JoseConstants.RSSEC_KEY_STORE_FILE);
+							properties.remove(JoseConstants.RSSEC_KEY_STORE_PSWD);
+							properties.put(JoseConstants.RSSEC_KEY_STORE_JWKSET, new String(content));
+						}
+						else {
+							java.security.KeyStore keystore = null;
+							try {
+								keystore = java.security.KeyStore.getInstance(type);
+								try(ByteArrayInputStream bin = new ByteArrayInputStream(content)){
+									keystore.load(bin, password.toCharArray());
+								}
+							}catch(Throwable e) {
+								log.error("Errore durante istanziazione del keystore ottenuto via http '"+file+"': "+e.getMessage(),e);
+								keystore = null;
+							}
+							if(keystore!=null) {
+								properties.remove(JoseConstants.RSSEC_KEY_STORE_FILE);
+								properties.remove(JoseConstants.RSSEC_KEY_STORE_TYPE);
+								properties.remove(JoseConstants.RSSEC_KEY_STORE_PSWD);
+								properties.put(JoseConstants.RSSEC_KEY_STORE, keystore);
+							}
+						}
+					}
+				}
+				else {
+					if("jwk".equalsIgnoreCase(type)) {
+						String jwkSet = null;
+						try {
+							jwkSet = GestoreKeystoreCache.getJwkSetStore(file).getJwkSetContent();
+						}catch(Throwable e) {
+							log.error("Errore durante l'accesso al jwk set '"+file+"': "+e.getMessage(),e);
+						}
+						if(jwkSet!=null) {
+							properties.remove(JoseConstants.RSSEC_KEY_STORE_FILE);
+							properties.remove(JoseConstants.RSSEC_KEY_STORE_PSWD);
+							properties.put(JoseConstants.RSSEC_KEY_STORE_JWKSET, jwkSet);
+						}
+					}
+					else {
+						java.security.KeyStore keystore = null;
+						try {
+							keystore = GestoreKeystoreCache.getMerlinKeystore(file, type, password).getKeyStore();
+						}catch(Throwable e) {
+							log.error("Errore durante l'accesso al keystore '"+file+"': "+e.getMessage(),e);
+						}
+						if(keystore!=null) {
+							properties.remove(JoseConstants.RSSEC_KEY_STORE_FILE);
+							properties.remove(JoseConstants.RSSEC_KEY_STORE_TYPE);
+							properties.remove(JoseConstants.RSSEC_KEY_STORE_PSWD);
+							properties.put(JoseConstants.RSSEC_KEY_STORE, keystore);
+						}
+					}
+				}
+			}
+		}
+		
 	}
 }

@@ -282,6 +282,7 @@
 
         <comment displayText="Profilo" bold="true"/>
         <checkbox defaultValue="true" property="antinstaller_protocollo_trasparente" force="true" value="trasparente" displayText="API Gateway"/>
+	<checkbox defaultValue="false" property="antinstaller_protocollo_modipa" value="modipa" displayText="ModI PA"/>
         <checkbox defaultValue="false" property="antinstaller_protocollo_spcoop" value="spcoop" displayText="SPCoop"/>
 	<checkbox defaultValue="false" property="antinstaller_protocollo_as4" value="as4" displayText="eDelivery"/>
         <checkbox defaultValue="false" property="antinstaller_protocollo_sdi" value="sdi" displayText="Fatturazione Elettronica"/>
@@ -291,6 +292,7 @@
         <!-- <comment displayText="Soggetto della PdD" bold="true"/> -->
         <hidden property="antinstaller_tiposoggetto_trasparente" value="gw"/>
         <hidden property="antinstaller_tiposoggetto_as4" value="as4"/>
+	<hidden property="antinstaller_tiposoggetto_modipa" value="modipa"/>
         <hidden property="antinstaller_tiposoggetto_spcoop" value="spc"/>
         <hidden property="antinstaller_tiposoggetto_sdi" value="sdi"/>
         <validated defaultValue="" property="antinstaller_nomesoggetto" displayText="Soggetto" regex="^[0-9A-Za-z]+$"/>
@@ -315,6 +317,7 @@
 
         <comment displayText="Profilo" bold="true"/>
         <checkbox defaultValue="true" property="antinstaller_protocollo_trasparente" force="true" value="trasparente" displayText="API Gateway"/>
+	<checkbox defaultValue="false" property="antinstaller_protocollo_modipa" value="modipa" displayText="ModI PA"/>
         <checkbox defaultValue="false" property="antinstaller_protocollo_spcoop" value="spcoop" displayText="SPCoop"/>
 	<checkbox defaultValue="false" property="antinstaller_protocollo_as4" value="as4" displayText="eDelivery"/>
         <checkbox defaultValue="false" property="antinstaller_protocollo_sdi" value="sdi" displayText="Fatturazione Elettronica"/>
@@ -324,6 +327,7 @@
         <!-- <comment displayText="Soggetto della PdD" bold="true"/> -->
         <hidden property="antinstaller_tiposoggetto_trasparente" value="gw"/>
         <hidden property="antinstaller_tiposoggetto_as4" value="as4"/>
+	<hidden property="antinstaller_tiposoggetto_modipa" value="modipa"/>
         <hidden property="antinstaller_tiposoggetto_spcoop" value="spc"/>
         <hidden property="antinstaller_tiposoggetto_sdi" value="sdi"/>
         <validated defaultValue="" property="antinstaller_nomesoggetto" displayText="Soggetto" regex="^[0-9A-Za-z]+$"/>

@@ -26,6 +26,7 @@ import java.util.Date;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
@@ -272,8 +273,7 @@ public class GestoreCacheResponseCaching {
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 	}
 	
-	private static final String format = "yyyy-MM-dd_HH:mm:ss.SSS";
-	
+
 	
 	
 	
@@ -376,7 +376,7 @@ public class GestoreCacheResponseCaching {
 				ResponseCached responseCached = (ResponseCached) response.getObject();
 				Date now = DateManager.getDate();
 				if(now.after(responseCached.getScadenza())) {
-					SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+					SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 					String scadenza = dateformat.format(responseCached.getScadenza());
 					String nowS = dateformat.format(now);
 					this.log.debug("In cache è presente un messaggio [uuid ("+uuidKey+") - digest ("+digestKey+")] scaduto (scadenza:"+scadenza+") (now:"+nowS+")");
@@ -463,7 +463,7 @@ public class GestoreCacheResponseCaching {
 				Date now = DateManager.getDate();
 				if(now.after(responseCached.getScadenza())) {
 					String uuidKey = formatKeyUUID(responseCached.getUuid());
-					SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+					SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 					String scadenza = dateformat.format(responseCached.getScadenza());
 					String nowS = dateformat.format(now);
 					this.log.debug("In cache è presente un messaggio [uuid ("+uuidKey+") - digest ("+digestKey+")] scaduto (scadenza:"+scadenza+") (now:"+nowS+")");

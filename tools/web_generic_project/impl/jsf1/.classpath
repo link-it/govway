@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/op2_3.1.dev"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.1_lib_faces"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.1_lib"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/op2_3.2.dev"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.2_lib_faces"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.2_lib"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

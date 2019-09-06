@@ -154,9 +154,10 @@ public class ValidazioneSemantica  {
 	 *   {@link Eccezione}, e viene inserito nel List <var>errors</var>.
 	 *
 	 * @param proprietaValidazione tipo di Validazione
+	 * @throws ProtocolException 
 	 * 
 	 */
-	public void valida(OpenSPCoop2Message msg, ProprietaValidazione proprietaValidazione,RuoloBusta tipoBusta,String versioneProtocollo){
+	public void valida(OpenSPCoop2Message msg, ProprietaValidazione proprietaValidazione,RuoloBusta tipoBusta,String versioneProtocollo) throws ProtocolException{
 		try {
 			
 			proprietaValidazione.setValidazioneIDCompleta(this.validazioneIdentificativiCompleta);
@@ -195,7 +196,7 @@ public class ValidazioneSemantica  {
 				if( RuoloBusta.BUSTA_DI_SERVIZIO.equals(tipoBusta.toString()) == false ){ 
 					//log.info("Validazione Collaborazione...");
 					IProtocolVersionManager protocolVersioneManager = this.protocolFactory.createProtocolVersionManager(versioneProtocollo);
-					StatoFunzionalitaProtocollo modalitaGestioneCollaborazione = protocolVersioneManager.getCollaborazione(this.busta.getProfiloDiCollaborazione());
+					StatoFunzionalitaProtocollo modalitaGestioneCollaborazione = protocolVersioneManager.getCollaborazione(this.busta);
 					if(StatoFunzionalitaProtocollo.ABILITATA.equals(modalitaGestioneCollaborazione) || 
 							(StatoFunzionalitaProtocollo.REGISTRO.equals(modalitaGestioneCollaborazione) && (this.infoServizio!=null) && this.infoServizio.getCollaborazione() ) ){
 						riconoscimentoCollaborazione(tipoBusta);		
@@ -205,6 +206,7 @@ public class ValidazioneSemantica  {
 			
 		} catch (ProtocolException e) {
 			this.log.error("ProtocolException error",e);
+			throw e;
 		}
 	}
 

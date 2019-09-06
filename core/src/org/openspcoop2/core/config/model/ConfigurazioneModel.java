@@ -48,6 +48,7 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 		this.ACCESSO_DATI_AUTORIZZAZIONE = new org.openspcoop2.core.config.model.AccessoDatiAutorizzazioneModel(new Field("accesso-dati-autorizzazione",org.openspcoop2.core.config.AccessoDatiAutorizzazione.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_AUTENTICAZIONE = new org.openspcoop2.core.config.model.AccessoDatiAutenticazioneModel(new Field("accesso-dati-autenticazione",org.openspcoop2.core.config.AccessoDatiAutenticazione.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_GESTIONE_TOKEN = new org.openspcoop2.core.config.model.AccessoDatiGestioneTokenModel(new Field("accesso-dati-gestione-token",org.openspcoop2.core.config.AccessoDatiGestioneToken.class,"configurazione",Configurazione.class));
+		this.ACCESSO_DATI_KEYSTORE = new org.openspcoop2.core.config.model.AccessoDatiKeystoreModel(new Field("accesso-dati-keystore",org.openspcoop2.core.config.AccessoDatiKeystore.class,"configurazione",Configurazione.class));
 		this.MULTITENANT = new org.openspcoop2.core.config.model.ConfigurazioneMultitenantModel(new Field("multitenant",org.openspcoop2.core.config.ConfigurazioneMultitenant.class,"configurazione",Configurazione.class));
 		this.PROTOCOLLI = new org.openspcoop2.core.config.model.ConfigurazioneProtocolliModel(new Field("protocolli",org.openspcoop2.core.config.ConfigurazioneProtocolli.class,"configurazione",Configurazione.class));
 		this.VALIDAZIONE_BUSTE = new org.openspcoop2.core.config.model.ValidazioneBusteModel(new Field("validazione-buste",org.openspcoop2.core.config.ValidazioneBuste.class,"configurazione",Configurazione.class));
@@ -80,6 +81,7 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 		this.ACCESSO_DATI_AUTORIZZAZIONE = new org.openspcoop2.core.config.model.AccessoDatiAutorizzazioneModel(new ComplexField(father,"accesso-dati-autorizzazione",org.openspcoop2.core.config.AccessoDatiAutorizzazione.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_AUTENTICAZIONE = new org.openspcoop2.core.config.model.AccessoDatiAutenticazioneModel(new ComplexField(father,"accesso-dati-autenticazione",org.openspcoop2.core.config.AccessoDatiAutenticazione.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_GESTIONE_TOKEN = new org.openspcoop2.core.config.model.AccessoDatiGestioneTokenModel(new ComplexField(father,"accesso-dati-gestione-token",org.openspcoop2.core.config.AccessoDatiGestioneToken.class,"configurazione",Configurazione.class));
+		this.ACCESSO_DATI_KEYSTORE = new org.openspcoop2.core.config.model.AccessoDatiKeystoreModel(new ComplexField(father,"accesso-dati-keystore",org.openspcoop2.core.config.AccessoDatiKeystore.class,"configurazione",Configurazione.class));
 		this.MULTITENANT = new org.openspcoop2.core.config.model.ConfigurazioneMultitenantModel(new ComplexField(father,"multitenant",org.openspcoop2.core.config.ConfigurazioneMultitenant.class,"configurazione",Configurazione.class));
 		this.PROTOCOLLI = new org.openspcoop2.core.config.model.ConfigurazioneProtocolliModel(new ComplexField(father,"protocolli",org.openspcoop2.core.config.ConfigurazioneProtocolli.class,"configurazione",Configurazione.class));
 		this.VALIDAZIONE_BUSTE = new org.openspcoop2.core.config.model.ValidazioneBusteModel(new ComplexField(father,"validazione-buste",org.openspcoop2.core.config.ValidazioneBuste.class,"configurazione",Configurazione.class));
@@ -115,6 +117,8 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 	public org.openspcoop2.core.config.model.AccessoDatiAutenticazioneModel ACCESSO_DATI_AUTENTICAZIONE = null;
 	 
 	public org.openspcoop2.core.config.model.AccessoDatiGestioneTokenModel ACCESSO_DATI_GESTIONE_TOKEN = null;
+	 
+	public org.openspcoop2.core.config.model.AccessoDatiKeystoreModel ACCESSO_DATI_KEYSTORE = null;
 	 
 	public org.openspcoop2.core.config.model.ConfigurazioneMultitenantModel MULTITENANT = null;
 	 

@@ -25,8 +25,11 @@
 package org.openspcoop2.protocol.basic.tracciamento;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openspcoop2.core.tracciamento.Eccezione;
+import org.openspcoop2.core.tracciamento.Proprieta;
 import org.openspcoop2.core.tracciamento.Riscontro;
 import org.openspcoop2.core.tracciamento.Trasmissione;
 import org.openspcoop2.core.tracciamento.constants.TipoCodificaEccezione;
@@ -36,6 +39,7 @@ import org.openspcoop2.core.tracciamento.constants.TipoRilevanzaEccezione;
 import org.openspcoop2.core.tracciamento.constants.TipoTempo;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
+import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.XMLRootElement;
@@ -47,11 +51,13 @@ import org.openspcoop2.protocol.sdk.constants.SubCodiceErrore;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.openspcoop2.protocol.sdk.tracciamento.TracciaExtInfo;
+import org.openspcoop2.protocol.sdk.tracciamento.TracciaExtInfoDefinition;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.w3c.dom.Element;
 
 /**
- * XMLTracciaBuilder
+ * TracciaSerializer
  *
  * @author Andrea Poli <apoli@link.it>
  * @author $Author$
@@ -328,5 +334,95 @@ public class TracciaSerializer extends BasicComponentFactory implements org.open
 	@Override
 	public XMLRootElement getXMLRootElement() throws ProtocolException {
 		return new TracciaXMLRootElement();
+	}
+	
+	
+	@Override
+	public List<TracciaExtInfoDefinition> getExtInfoDefinition(){
+		return null;
+	}
+	@Override
+	public List<TracciaExtInfo> extractExtInfo(Busta busta){
+		List<TracciaExtInfoDefinition> extInfoDefinitionList = this.getExtInfoDefinition();
+		List<TracciaExtInfo> list = null;
+		if(extInfoDefinitionList!=null && !extInfoDefinitionList.isEmpty()) {
+			
+			list = new ArrayList<TracciaExtInfo>();
+			TracciaExtInfo extInfoNoPrefix = new TracciaExtInfo();
+			extInfoNoPrefix.setEmpty(true);
+			list.add(extInfoNoPrefix);
+			
+			List<String> propertyNamesEsistentiNellaBusta = new ArrayList<>();
+			for (String pName : busta.getPropertiesNames()) {
+				propertyNamesEsistentiNellaBusta.add(pName);
+			}
+			
+			for (TracciaExtInfoDefinition tracciaExtInfoDefinition : extInfoDefinitionList) {
+				
+				TracciaExtInfo extInfo = new TracciaExtInfo();
+				extInfo.setLabel(tracciaExtInfoDefinition.getLabel());
+				
+				List<String> proprietaDaRimuovere = new ArrayList<>();
+				
+				if(!propertyNamesEsistentiNellaBusta.isEmpty()) {
+					for (String pName : propertyNamesEsistentiNellaBusta) {
+						if(pName.startsWith(tracciaExtInfoDefinition.getPrefixId())) {
+							String pValue = busta.getProperty(pName);
+							String pNameWithoutPrefix = pName.substring(tracciaExtInfoDefinition.getPrefixId().length());
+							Proprieta proprieta = new Proprieta();
+							proprieta.setNome(pNameWithoutPrefix);
+							proprieta.setValore(pValue);
+							extInfo.getProprieta().add(proprieta);
+							
+							proprietaDaRimuovere.add(pName);
+						}
+					}
+					
+				}
+				
+				if(!proprietaDaRimuovere.isEmpty()) {
+					for (String pName : proprietaDaRimuovere) {
+						propertyNamesEsistentiNellaBusta.remove(pName);
+					}
+				}
+				
+				if(!extInfo.getProprieta().isEmpty()) {
+					
+					if(tracciaExtInfoDefinition.isOrder()) {
+						
+						java.util.ArrayList<String> listKeys = new ArrayList<>(); 
+						for (Proprieta proprieta : extInfo.getProprieta()) {
+							listKeys.add(proprieta.getNome());
+						}
+						java.util.Collections.sort(listKeys);
+						List<Proprieta> proprietaOrdinate = new ArrayList<Proprieta>();
+						for (String key : listKeys) {	
+							Proprieta p = extInfo.getProprieta(key);
+							proprietaOrdinate.add(p);
+						}
+						extInfo.setProprieta(proprietaOrdinate);
+						
+					}
+					
+					list.add(extInfo);
+				}
+				
+			}
+			
+			if(!propertyNamesEsistentiNellaBusta.isEmpty()) {
+				for (String pName : propertyNamesEsistentiNellaBusta) {
+					Proprieta proprieta = new Proprieta();
+					proprieta.setNome(pName);
+					proprieta.setValore(busta.getProperty(pName));
+					extInfoNoPrefix.getProprieta().add(proprieta);
+				}
+			}
+			
+			if(list.get(0).getProprieta().isEmpty()) {
+				list.remove(0); // noPrefix
+			}
+		
+		}
+		return list;
 	}
 }

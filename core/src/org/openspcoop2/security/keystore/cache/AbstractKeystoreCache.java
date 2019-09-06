@@ -22,10 +22,13 @@
 
 package org.openspcoop2.security.keystore.cache;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Hashtable;
 
 import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.date.DateManager;
 
 /**
@@ -35,35 +38,42 @@ import org.openspcoop2.utils.date.DateManager;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public abstract class AbstractKeystoreCache<T> {
+public abstract class AbstractKeystoreCache<T extends Serializable> {
 
 	private int cacheLifeSecond = -1;
 	private int cacheSize = -1;
 	
-	private Hashtable<String, KeystoreCacheEntry<T>> cache = new Hashtable<String, KeystoreCacheEntry<T>>();
+	private Hashtable<String, KeystoreCacheEntry<T>> cache_hashtable = new Hashtable<String, KeystoreCacheEntry<T>>();
+	private Cache cache_jcs = null;
 
 	public void setKeystoreCacheParameters(int cacheLifeSecond,int cacheSize){
 		this.cacheLifeSecond = cacheLifeSecond;
 		this.cacheSize = cacheSize;
 	}
-	
-	public boolean existsKeystore(String key){
-		return this.cache.containsKey(key);
+	public void setCacheJCS(int cacheLifeSecond,Cache cache_jcs) {
+		this.cacheLifeSecond = cacheLifeSecond;
+		this.cache_jcs = cache_jcs;
 	}
-	public T getKeystore(String key) throws SecurityException{
-		KeystoreCacheEntry<T> o = this.cache.get(key);
+	public void updateCacheLifeSecond(int cacheLifeSecond) {
+		this.cacheLifeSecond = cacheLifeSecond;
+	}
+	
+	
+	
+	public T getKeystore(String keyParam) throws SecurityException{
+		KeystoreCacheEntry<T> o = this.getObjectFromCache(keyParam);
 		if(o==null){
-			throw new SecurityException("Keystore with key ["+key+"] not found");
+			throw new SecurityException("Keystore with key ["+keyParam+"] not found");
 		}
 		else {
 			return estraiKeystore(o);
 		}
 	}
-	public T getKeystoreAndCreateIfNotExists(String key,Object ... params) throws SecurityException{
-		KeystoreCacheEntry<T> o = this.cache.get(key);
+	public T getKeystoreAndCreateIfNotExists(String keyParam,Object ... params) throws SecurityException{
+		KeystoreCacheEntry<T> o = this.getObjectFromCache(keyParam);
 		if(o==null){
 			//System.out.println("NON trovato ["+key+"], creo...");
-			return initKeystore(key, params);
+			return initKeystore(keyParam, params);
 		}
 		else {
 			//System.out.println("GIA PRESENTE ["+key+"] ESTRAGGO");
@@ -71,25 +81,89 @@ public abstract class AbstractKeystoreCache<T> {
 		}
 	}
 	public abstract T createKeystore(String key,Object ... params) throws SecurityException;
+	public abstract String getPrefixKey();
 	
 	
 	/* UTILITY */
 	
-	private synchronized T initKeystore(String key,Object ... params) throws SecurityException{
-		if(this.cache.containsKey(key)==false){
-			T keystore = createKeystore(key, params);
-			KeystoreCacheEntry<T> cacheEntry = new KeystoreCacheEntry<T>();
-			cacheEntry.setKey(key);
-			cacheEntry.setKeystore(keystore);
-			cacheEntry.setDate(DateManager.getDate());
-			this.cache.put(key, cacheEntry);
-			//System.out.println("CREATO ["+key+"] !!!! DATA["+cacheEntry.getDate()+"]");
-			return keystore;
+	@SuppressWarnings("unchecked")
+	private KeystoreCacheEntry<T> getObjectFromCache(String keyParam) {
+		String keyCache = this.getPrefixKey() + keyParam;
+		KeystoreCacheEntry<T> o = null;
+		if(this.cache_jcs!=null) {
+			Object object = this.cache_jcs.get(keyCache);
+			if(object!=null) {
+				o = (KeystoreCacheEntry<T>) object;
+			}
 		}
-		else{
-			return estraiKeystore(this.cache.get(key));
+		else {
+			o = this.cache_hashtable.get(keyCache);
 		}
+		return o;
 	}
+	
+	private T initKeystore(String keyParam,Object ... params) throws SecurityException{
+		
+		Object sincronizedObject = null;
+		if(this.cache_jcs!=null) {
+			sincronizedObject = this.cache_jcs;
+		}
+		else {
+			sincronizedObject = this.cache_hashtable;
+		}
+		synchronized (sincronizedObject) {
+			String keyCache = this.getPrefixKey() + keyParam;
+			KeystoreCacheEntry<T> o = this.getObjectFromCache(keyCache);
+			if(o==null) {
+				T keystore = createKeystore(keyParam, params);
+				KeystoreCacheEntry<T> cacheEntry = new KeystoreCacheEntry<T>();
+				cacheEntry.setKey(keyCache);
+				cacheEntry.setKeystore(keystore);
+				cacheEntry.setDate(DateManager.getDate());
+				if(this.cache_jcs!=null) {
+					try {
+						this.cache_jcs.put(keyCache, cacheEntry);
+					}catch(Exception e) {
+						throw new SecurityException(e.getMessage(),e);
+					}
+				}
+				else {
+					this.cache_hashtable.put(keyCache, cacheEntry);
+				}
+				//System.out.println("CREATO ["+key+"] !!!! DATA["+cacheEntry.getDate()+"]");
+				return keystore;
+			}
+			else {
+				return estraiKeystore(o);
+			}
+		}
+		
+	}
+	
+	private void removeKeystore(String key) throws SecurityException{
+		
+		Object sincronizedObject = null;
+		if(this.cache_jcs!=null) {
+			sincronizedObject = this.cache_jcs;
+		}
+		else {
+			sincronizedObject = this.cache_hashtable;
+		}
+		synchronized (sincronizedObject) {
+			if(this.cache_jcs!=null) {
+				try {
+					this.cache_jcs.remove(key);
+				}catch(Exception e) {
+					throw new SecurityException(e.getMessage(),e);
+				}
+			}
+			else {
+				this.cache_hashtable.remove(key);
+			}
+		}
+		
+	}
+	
 	private T estraiKeystore(KeystoreCacheEntry<T> entry) throws SecurityException{
 		
 		T keystore = entry.getKeystore();
@@ -101,28 +175,40 @@ public abstract class AbstractKeystoreCache<T> {
 				removeKeystore(entry.getKey());
 			}
 		}
-		if(this.cacheSize>-1){
-			if(this.cache.size()>this.cacheSize){
-				//System.out.println("ECCEDUTA DIMENSIONE ["+entry.getKey()+"]");
-				clearKeystore();
+		if(this.cache_jcs==null) {
+			if(this.cacheSize>-1){
+				if(this.cache_hashtable.size()>this.cacheSize){
+					//System.out.println("ECCEDUTA DIMENSIONE ["+entry.getKey()+"]");
+					clearCacheHashtable();
+				}
 			}
 		}
 		return keystore;
 	}
-	private synchronized void removeKeystore(String key){
-		if(this.cache.containsKey(key)){
-			this.cache.remove(key);
+	private void clearCacheHashtable(){
+		synchronized (this.cache_hashtable) {
+			this.cache_hashtable.clear();
 		}
-	}
-	private synchronized void clearKeystore(){
-		this.cache.clear();
 	}
 	
 	
 	
 	
 }
-class KeystoreCacheEntry<T> {
+class KeystoreCacheEntry<T extends Serializable> implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	@Override
+	public String toString() {
+		StringBuffer bf = new StringBuffer();
+		bf.append("Data ").append(Utilities.getSimpleDateFormatMs().format(this.date)).append("\n");
+		bf.append(this.keystore.toString());
+		return bf.toString();
+	}
 	
 	private String key;
 	private T keystore;

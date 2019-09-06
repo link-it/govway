@@ -26,7 +26,6 @@ package org.openspcoop2.pdd.core.integrazione;
 
 import java.util.Iterator;
 
-import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
@@ -34,8 +33,9 @@ import javax.xml.soap.SOAPHeaderElement;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
-import org.openspcoop2.message.soap.SoapUtils;
-import org.openspcoop2.message.xml.ValidatoreXSD;
+import org.openspcoop2.message.soap.wsaddressing.Costanti;
+import org.openspcoop2.message.soap.wsaddressing.WSAddressingHeader;
+import org.openspcoop2.message.soap.wsaddressing.WSAddressingUtilities;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.slf4j.Logger;
 
@@ -65,23 +65,10 @@ public class UtilitiesIntegrazioneWSAddressing {
 	private final static String WSA_ID_FORMAT = "uuid:<id>";
 	private final static String WSA_RELATES_TO_FORMAT = "uuid:<id>";
 	
-	public final static String WSA_NAMESPACE = "http://www.w3.org/2005/08/addressing";
-	public final static String WSA_PREFIX = "wsa";
-	public final static String WSA_RELATIONSHIP_TYPE_REPLY = "http://www.w3.org/2005/08/addressing/reply";
-	public final static String WSA_SOAP_HEADER_TO = "To";
-	public final static String WSA_SOAP_HEADER_FROM = "From";
-	public final static String WSA_SOAP_HEADER_ACTION = "Action";
-	public final static String WSA_SOAP_HEADER_ID = "MessageID";
-	public final static String WSA_SOAP_HEADER_RELATES_TO = "RelatesTo";
-	public final static String WSA_SOAP_HEADER_RELATES_TO_ATTRIBUTE = "RelationshipType";
-
-	public final static String WSA_SOAP_HEADER_EPR_ADDRESS = "Address";
-	
 	public final static boolean INTERPRETA_COME_ID_BUSTA = true;
 	public final static boolean INTERPRETA_COME_ID_APPLICATIVO = false;
 	
-	public final static boolean BUILD_VALUE_AS_EPR = true;
-	public final static boolean BUILD_VALUE_RAW = false;
+	private final static boolean MUST_UNDERSTAND = false;
 	
 	
 	public static void _readDatiWSAToOrAction(String wsaValue,String format, HeaderIntegrazione integrazione) throws HeaderIntegrazioneException{
@@ -247,10 +234,8 @@ public class UtilitiesIntegrazioneWSAddressing {
 		return "http://"+tipoSoggettoErogatore+"_"+nomeSoggettoErogatore+".govway.org/services/"+tipoServizio+"_"+nomeServizio+"/"+versioneServizio;
 	}
 	public static SOAPHeaderElement buildWSATo(OpenSPCoop2SoapMessage msg,String actor,String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio,Integer versioneServizio) throws Exception{
-		QName name =  new QName(UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE,UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_TO,UtilitiesIntegrazioneWSAddressing.WSA_PREFIX);
-		SOAPHeaderElement header = UtilitiesIntegrazioneWSAddressing.buildHeaderElement(msg,name,
-				UtilitiesIntegrazioneWSAddressing.buildDatiWSATo(tipoSoggettoErogatore,nomeSoggettoErogatore,tipoServizio,nomeServizio,versioneServizio),actor,BUILD_VALUE_RAW);
-		return header;
+		return WSAddressingUtilities.buildWSATo(msg, actor, MUST_UNDERSTAND,
+				UtilitiesIntegrazioneWSAddressing.buildDatiWSATo(tipoSoggettoErogatore,nomeSoggettoErogatore,tipoServizio,nomeServizio,versioneServizio));
 	}
 	
 	
@@ -319,9 +304,8 @@ public class UtilitiesIntegrazioneWSAddressing {
 			return "http://"+servizioApplicativoFruitore+"."+tipoSoggetto+"_"+nomeSoggetto+".govway.org";
 	}
 	public static SOAPHeaderElement buildWSAFrom(OpenSPCoop2SoapMessage msg,String actor,String servizioApplicativoFruitore,String tipoSoggetto,String nomeSoggetto) throws Exception{
-		QName name =  new QName(UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE,UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_FROM,UtilitiesIntegrazioneWSAddressing.WSA_PREFIX);
-		SOAPHeaderElement header = UtilitiesIntegrazioneWSAddressing.buildHeaderElement(msg,name,UtilitiesIntegrazioneWSAddressing.buildDatiWSAFrom(servizioApplicativoFruitore,tipoSoggetto,nomeSoggetto),actor,BUILD_VALUE_AS_EPR);
-		return header;
+		return WSAddressingUtilities.buildWSAFrom(msg, actor, MUST_UNDERSTAND,
+				UtilitiesIntegrazioneWSAddressing.buildDatiWSAFrom(servizioApplicativoFruitore,tipoSoggetto,nomeSoggetto));
 	}
 	
 	
@@ -332,9 +316,8 @@ public class UtilitiesIntegrazioneWSAddressing {
 		return "http://"+tipoSoggettoErogatore+"_"+nomeSoggettoErogatore+".govway.org/services/"+tipoServizio+"_"+nomeServizio+"/"+versioneServizio+"/"+azione;
 	}
 	public static SOAPHeaderElement buildWSAAction(OpenSPCoop2SoapMessage msg,String actor,String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio,Integer versioneServizio,String azione) throws Exception{
-		QName name =  new QName(UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE,UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_ACTION,UtilitiesIntegrazioneWSAddressing.WSA_PREFIX);
-		SOAPHeaderElement header = UtilitiesIntegrazioneWSAddressing.buildHeaderElement(msg,name,UtilitiesIntegrazioneWSAddressing.buildDatiWSAAction(tipoSoggettoErogatore,nomeSoggettoErogatore,tipoServizio,nomeServizio,versioneServizio,azione),actor,BUILD_VALUE_RAW);
-		return header;
+		return WSAddressingUtilities.buildWSAAction(msg, actor, MUST_UNDERSTAND,
+				UtilitiesIntegrazioneWSAddressing.buildDatiWSAAction(tipoSoggettoErogatore,nomeSoggettoErogatore,tipoServizio,nomeServizio,versioneServizio,azione));
 	}
 	
 	
@@ -357,9 +340,8 @@ public class UtilitiesIntegrazioneWSAddressing {
 		return "uuid:"+id;
 	}
 	public static SOAPHeaderElement buildWSAID(OpenSPCoop2SoapMessage msg,String actor,String wsaID) throws Exception{
-		QName name =  new QName(UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE,UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_ID,UtilitiesIntegrazioneWSAddressing.WSA_PREFIX);
-		SOAPHeaderElement header = UtilitiesIntegrazioneWSAddressing.buildHeaderElement(msg,name,UtilitiesIntegrazioneWSAddressing.buildDatiWSAID(wsaID),actor,BUILD_VALUE_RAW);
-		return header;
+		return WSAddressingUtilities.buildWSAID(msg, actor, MUST_UNDERSTAND,
+				UtilitiesIntegrazioneWSAddressing.buildDatiWSAID(wsaID));
 	}
 	
 	
@@ -379,32 +361,10 @@ public class UtilitiesIntegrazioneWSAddressing {
 		return "uuid:"+id;
 	}
 	public static SOAPHeaderElement buildWSARelatesTo(OpenSPCoop2SoapMessage msg,String actor, String id) throws Exception{
-		QName name =  new QName(UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE,UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_RELATES_TO,UtilitiesIntegrazioneWSAddressing.WSA_PREFIX);
-		SOAPHeaderElement header = UtilitiesIntegrazioneWSAddressing.buildHeaderElement(msg,name,UtilitiesIntegrazioneWSAddressing.buildDatiWSARelatesTo(id),actor,BUILD_VALUE_RAW);
-		return header;
+		return WSAddressingUtilities.buildWSARelatesTo(msg, actor, MUST_UNDERSTAND,
+				UtilitiesIntegrazioneWSAddressing.buildDatiWSARelatesTo(id));
 	}
-	
-	private static SOAPHeaderElement buildHeaderElement(OpenSPCoop2SoapMessage msg,QName name,String value,String actor,boolean epr) throws Exception{
-		
-		SOAPHeader hdr = msg.getSOAPHeader();
-		if(hdr==null){
-			hdr = msg.getSOAPPart().getEnvelope().addHeader(); 
-		}
-		SOAPHeaderElement element = msg.newSOAPHeaderElement(hdr, name); 
-		element.setActor(actor);
-		element.setMustUnderstand(false);
-		
-		if(epr==false){
-			element.setValue(value);
-		}
-		else{
-			QName nameAddressEPR =  new QName(WSA_NAMESPACE,WSA_SOAP_HEADER_EPR_ADDRESS,WSA_PREFIX);
-			element.addChildElement(nameAddressEPR).setValue(value);
-		}
-		return element;
-		
-	}
-	
+
 	
 	
 	private static UtilitiesIntegrazioneWSAddressing utilitiesIntegrazione = null;
@@ -428,14 +388,7 @@ public class UtilitiesIntegrazioneWSAddressing {
 	
 	// ***** INSTANCE *****
 	
-	private ValidatoreXSD validatoreXSD = null;
-	
 	private UtilitiesIntegrazioneWSAddressing(Logger log){
-		try{
-			this.validatoreXSD = new ValidatoreXSD(log,UtilitiesIntegrazione.class.getResourceAsStream("/ws-addr.xsd"));
-		}catch(Exception e){
-			log.error("ws-addr.xsd, errore durante la costruzione del validatore xsd: "+e.getMessage(),e);
-		}
 	}
 	
 	public void readHeader(OpenSPCoop2SoapMessage message,HeaderIntegrazione integrazione,
@@ -460,38 +413,14 @@ public class UtilitiesIntegrazioneWSAddressing {
 			SOAPHeaderElement wsaID = null; 
 			SOAPHeaderElement wsaRelatesTo = null; 
 			
-			java.util.Iterator<?> it = header.examineAllHeaderElements();
-			while( it.hasNext()  ){
-				// Test Header Element
-				SOAPHeaderElement headerElement = (SOAPHeaderElement) it.next();
-				
-				//Controllo Namespace
-				String namespace = headerElement.getNamespaceURI();
-				String actorCheck = SoapUtils.getSoapActor(headerElement, message.getMessageType());
-				
-				if(actorIntegrazione.equals(actorCheck) && UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE.equals(namespace)){
-					log.debug("Trovato header WSAddressing ["+headerElement.getLocalName()+"]");
-					
-					if(UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_TO.equals(headerElement.getLocalName())){
-						wsaTO = headerElement;
-					}
-					else if(UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_FROM.equals(headerElement.getLocalName())){
-						wsaFROM = headerElement;
-					}
-					else if(UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_ACTION.equals(headerElement.getLocalName())){
-						wsaAction = headerElement;
-					}
-					else if(UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_ID.equals(headerElement.getLocalName())){
-						wsaID = headerElement;
-					}
-					else if(UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_RELATES_TO.equals(headerElement.getLocalName())){
-						wsaRelatesTo = headerElement;
-					}
-					else{
-						log.debug("Header non conosciuto");
-					}
-				}
-				
+			WSAddressingUtilities wsaddressingUtilities = new WSAddressingUtilities(log);
+			WSAddressingHeader hdrReaded = wsaddressingUtilities.read(message, actorIntegrazione, false);
+			if(hdrReaded!=null) {
+				wsaTO = hdrReaded.getTo();
+				wsaFROM = hdrReaded.getFrom();
+				wsaAction = hdrReaded.getAction();
+				wsaID = hdrReaded.getId();
+				wsaRelatesTo = hdrReaded.getRelatesTo();
 			}
 			if(wsaTO==null && wsaFROM==null  &&  wsaAction==null && wsaID==null  &&  wsaRelatesTo==null){
 				log.debug("Header di integrazione non presente");
@@ -500,59 +429,36 @@ public class UtilitiesIntegrazioneWSAddressing {
 			
 			// ValidazioneXSD
 			log.debug("Validazione XSD...");
-			validaElementoWSA(this.validatoreXSD,wsaTO,log,message);
-			validaElementoWSA(this.validatoreXSD,wsaFROM,log,message);
-			validaElementoWSA(this.validatoreXSD,wsaAction,log,message);
-			validaElementoWSA(this.validatoreXSD,wsaID,log,message);
-			validaElementoWSA(this.validatoreXSD,wsaRelatesTo,log,message);
+			wsaddressingUtilities.validate(message, hdrReaded);
 			log.debug("Validazione XSD effettuate");
 			
 			// delete
 			if(wsaTO!=null){
 				log.debug("Read dati da WSATo...");
-				UtilitiesIntegrazioneWSAddressing.readDatiWSATo(wsaTO.getValue(), integrazione);
+				UtilitiesIntegrazioneWSAddressing.readDatiWSATo(hdrReaded.getToValue(), integrazione);
 			}
 			if(wsaFROM!=null){
 				log.debug("Read dati da WSAFrom...");
-				Iterator<?> itFROM = wsaFROM.getChildElements();
-				while (itFROM.hasNext()) {
-					Object o = itFROM.next();
-					if(o!=null && (o instanceof SOAPElement) ){
-						SOAPElement s = (SOAPElement) o;
-						if(WSA_SOAP_HEADER_EPR_ADDRESS.equals(s.getLocalName())){
-							UtilitiesIntegrazioneWSAddressing.readDatiWSAFrom(s.getValue(), integrazione);
-							break;
-						}
-					}
-				}
+				UtilitiesIntegrazioneWSAddressing.readDatiWSAFrom(hdrReaded.getFromValue(), integrazione);
 			}
 			if(wsaAction!=null){
 				log.debug("Read dati da WSAAction...");
-				UtilitiesIntegrazioneWSAddressing.readDatiWSAAction(wsaAction.getValue(), integrazione);
+				UtilitiesIntegrazioneWSAddressing.readDatiWSAAction(hdrReaded.getActionValue(), integrazione);
 			}
 			if(wsaID!=null){
 				log.debug("Read dati da WSAId...");
-				UtilitiesIntegrazioneWSAddressing.readDatiWSAID(wsaID.getValue(), integrazione, interpretaIDComeIDBusta);
+				UtilitiesIntegrazioneWSAddressing.readDatiWSAID(hdrReaded.getIdValue(), integrazione, interpretaIDComeIDBusta);
 			}	
 			if(wsaRelatesTo!=null){
 				log.debug("Read dati da WSARelatesTo...");
-				UtilitiesIntegrazioneWSAddressing.readDatiWSARelatesTo(wsaRelatesTo.getValue(), integrazione);
+				UtilitiesIntegrazioneWSAddressing.readDatiWSARelatesTo(hdrReaded.getRelatesToValue(), integrazione);
 			}
 		
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("UtilitiesIntegrazione, lettura dell'header soap non riuscita: "+e.getMessage(),e);
 		}
 	}
-
-	private void validaElementoWSA(ValidatoreXSD validatoreXSD,SOAPHeaderElement headerElement,Logger log,OpenSPCoop2SoapMessage msg) throws Exception{
-		if(headerElement!=null){
-			log.debug("Validazione XSD ["+headerElement.getLocalName()+"]...");
-			// validazione XSD
-			if(validatoreXSD==null)
-				throw new Exception("Validatore XSD non istanziato");
-			validatoreXSD.valida(new java.io.ByteArrayInputStream(msg.getAsByte(headerElement, false)));
-		}
-	}
+	
 	
 	public void updateHeader(OpenSPCoop2SoapMessage message,IDSoggetto soggettoFruitore,IDServizio idServizio,
 			String idBusta,String servizioApplicativo,
@@ -609,38 +515,17 @@ public class UtilitiesIntegrazioneWSAddressing {
 		}else{
 
 			// cerco soap di integrazione
-			java.util.Iterator<?> it = header.examineAllHeaderElements();
-			while( it.hasNext()  ){
-				
-				SOAPHeaderElement headerElement = (SOAPHeaderElement) it.next();
-				
-				//Controllo Namespace
-				String namespace = headerElement.getNamespaceURI();
-				
-				if(UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE.equals(namespace)){
-					log.debug("Trovato header WSAddressing ["+headerElement.getLocalName()+"]");
-					
-					if(UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_TO.equals(headerElement.getLocalName())){
-						wsaTO = headerElement;
-					}
-					else if(UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_FROM.equals(headerElement.getLocalName())){
-						wsaFROM = headerElement;
-					}
-					else if(UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_ACTION.equals(headerElement.getLocalName())){
-						wsaAction = headerElement;
-					}
-					else if(UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_ID.equals(headerElement.getLocalName())){
-						wsaID = headerElement;
-					}
-					else if(UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_RELATES_TO.equals(headerElement.getLocalName())){
-						wsaRelatesTo = headerElement;
-					}
-					else{
-						log.debug("Header non conosciuto");
-					}
-				}
-
+			
+			WSAddressingUtilities wsaddressingUtilities = new WSAddressingUtilities(log);
+			WSAddressingHeader hdrReaded = wsaddressingUtilities.read(message, actorIntegrazione, false);
+			if(hdrReaded!=null) {
+				wsaTO = hdrReaded.getTo();
+				wsaFROM = hdrReaded.getFrom();
+				wsaAction = hdrReaded.getAction();
+				wsaID = hdrReaded.getId();
+				wsaRelatesTo = hdrReaded.getRelatesTo();
 			}
+			
 		}
 
 		if(integrazione.getBusta()!=null){
@@ -687,7 +572,7 @@ public class UtilitiesIntegrazioneWSAddressing {
 						Object o = itFROM.next();
 						if(o!=null && (o instanceof SOAPElement) ){
 							SOAPElement s = (SOAPElement) o;
-							if(WSA_SOAP_HEADER_EPR_ADDRESS.equals(s.getLocalName())){
+							if(Costanti.WSA_SOAP_HEADER_EPR_ADDRESS.equals(s.getLocalName())){
 								s.setValue(buildDatiWSAFrom(integrazione.getServizioApplicativo(),hBusta.getTipoMittente(),hBusta.getMittente()));
 								break;
 							}
@@ -747,67 +632,8 @@ public class UtilitiesIntegrazioneWSAddressing {
 				return;
 			}
 			
-			SOAPHeaderElement wsaTO = null; 
-			SOAPHeaderElement wsaFROM = null; 
-			SOAPHeaderElement wsaAction = null; 
-			SOAPHeaderElement wsaID = null; 
-			SOAPHeaderElement wsaRelatesTo = null; 
-			
-			java.util.Iterator<?> it = header.examineAllHeaderElements();
-			while( it.hasNext()  ){
-				// Test Header Element
-				SOAPHeaderElement headerElement = (SOAPHeaderElement) it.next();
-				
-				//Controllo Namespace
-				String namespace = headerElement.getNamespaceURI();
-				String actorCheck = SoapUtils.getSoapActor(headerElement, message.getMessageType());
-				
-				if(actorIntegrazione.equals(actorCheck) && UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE.equals(namespace)){
-					log.debug("Trovato header WSAddressing ["+headerElement.getLocalName()+"]");
-					
-					if(UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_TO.equals(headerElement.getLocalName())){
-						wsaTO = headerElement;
-					}
-					else if(UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_FROM.equals(headerElement.getLocalName())){
-						wsaFROM = headerElement;
-					}
-					else if(UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_ACTION.equals(headerElement.getLocalName())){
-						wsaAction = headerElement;
-					}
-					else if(UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_ID.equals(headerElement.getLocalName())){
-						wsaID = headerElement;
-					}
-					else if(UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_RELATES_TO.equals(headerElement.getLocalName())){
-						wsaRelatesTo = headerElement;
-					}
-					else{
-						log.debug("Header non conosciuto");
-					}
-				}
-				
-				
-			}
-			if(wsaTO==null && wsaFROM==null  &&  wsaAction==null && wsaID==null  &&  wsaRelatesTo==null){
-				log.debug("Header di integrazione non presente");
-				return;
-			}
-			
-			// delete
-			if(wsaTO!=null){
-				header.removeChild(wsaTO);
-			}
-			if(wsaFROM!=null){
-				header.removeChild(wsaFROM);
-			}
-			if(wsaAction!=null){
-				header.removeChild(wsaAction);
-			}
-			if(wsaID!=null){
-				header.removeChild(wsaID);
-			}	
-			if(wsaRelatesTo!=null){
-				header.removeChild(wsaRelatesTo);
-			}
+			WSAddressingUtilities wsaddressingUtilities = new WSAddressingUtilities(log);
+			wsaddressingUtilities.delete(message, actorIntegrazione);
 		
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("UtilitiesIntegrazione, lettura dell'header soap non riuscita: "+e.getMessage(),e);

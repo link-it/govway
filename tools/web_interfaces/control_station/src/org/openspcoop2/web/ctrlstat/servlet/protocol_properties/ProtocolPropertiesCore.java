@@ -23,6 +23,8 @@ package org.openspcoop2.web.ctrlstat.servlet.protocol_properties;
 
 import java.sql.Connection;
 
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
@@ -44,6 +46,7 @@ public class ProtocolPropertiesCore  extends ControlStationCore {
 	public ProtocolPropertiesCore(ControlStationCore core) throws Exception {
 		super(core);
 	}
+	
 	public ProtocolProperty getProtocolPropertyBinaria(long idProperty) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getProtocolPropertyBinaria";
@@ -59,6 +62,26 @@ public class ProtocolPropertiesCore  extends ControlStationCore {
 		}  catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public org.openspcoop2.core.config.ProtocolProperty getProtocolPropertyConfigBinaria(long idProperty) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getProtocolPropertyConfigBinaria";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().getProtocolProperty(idProperty);
+		}  catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}

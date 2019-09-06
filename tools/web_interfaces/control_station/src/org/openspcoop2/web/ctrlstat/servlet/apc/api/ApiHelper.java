@@ -43,6 +43,11 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
@@ -50,6 +55,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneHelper
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -444,7 +450,8 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		
 		// soggetto referente
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
-		boolean supportatoSoggettoReferente = protocolFactoryManager.getProtocolFactoryByName(tipoProtocollo).createProtocolConfiguration().isSupportoSoggettoReferenteAccordiParteComune();
+		IProtocolFactory<?> protocolFactory = protocolFactoryManager.getProtocolFactoryByName(tipoProtocollo);
+		boolean supportatoSoggettoReferente = protocolFactory.createProtocolConfiguration().isSupportoSoggettoReferenteAccordiParteComune();
 		if(supportatoSoggettoReferente) {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE);
@@ -459,12 +466,35 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			dati.addElement(de);
 		}
 		
-		if(showProtocolli) {
+		// ProtocolProperties
+		IConsoleDynamicConfiguration consoleDynamicConfiguration = protocolFactory.createDynamicConfigurationConsole();
+		IRegistryReader registryReader = this.apcCore.getRegistryReader(protocolFactory); 
+		IConfigIntegrationReader configRegistryReader = this.apcCore.getConfigIntegrationReader(protocolFactory);
+		ConsoleConfiguration consoleConfiguration = ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_SERVIZIO_COMPOSTO.equals(tipoAccordo) ? 
+				consoleDynamicConfiguration.getDynamicConfigAccordoServizioComposto(ConsoleOperationType.CHANGE, this, 
+						registryReader, configRegistryReader, idAccordo)
+				: consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteComune(ConsoleOperationType.CHANGE, this, 
+						registryReader, configRegistryReader, idAccordo);
+		boolean modificaDatiProfilo = false;
+		if(consoleConfiguration!=null && consoleConfiguration.getConsoleItem()!=null && !consoleConfiguration.getConsoleItem().isEmpty()) {
+			modificaDatiProfilo = true;
+		}
+		if(showProtocolli || modificaDatiProfilo) {
 			de = new DataElement();
 			String labelProtocollo =this.getLabelProtocollo(tipoProtocollo);
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO);
 			de.setValue(labelProtocollo);
 			de.setType(DataElementType.TEXT);
+			
+			if(modificaDatiProfilo) {
+				image = new DataElementImage();
+				listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_PROFILO);
+				image.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
+				image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO));
+				image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
+				de.setImage(image);
+			}
+			
 			dati.addElement(de);
 		}
 		

@@ -144,7 +144,8 @@ public class RestUtilities {
 		
 	}
 	
-	public static String buildPassReverseUrl(TransportRequestContext transportRequestContext, String baseUrl, String redirectLocationUrl, String prefixGatewayUrl) throws MalformedURLException {
+	public static String buildPassReverseUrl(TransportRequestContext transportRequestContext, String baseUrl, String redirectLocationUrl, String prefixGatewayUrl,
+			String interfaceName) throws MalformedURLException {
                
 		String r = baseUrl;
 		if(r.contains("?")) {
@@ -227,7 +228,12 @@ public class RestUtilities {
 					}
 				}
 			}
-			bf.append(transportRequestContext.getInterfaceName());
+			if(interfaceName!=null) {
+				bf.append(interfaceName);
+			}
+			else {
+				bf.append(transportRequestContext.getInterfaceName());
+			}
 			if(suffix.startsWith("/")==false) {
 				bf.append("/");
 			}

@@ -28,6 +28,7 @@ import java.util.Map;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -216,6 +217,11 @@ public abstract class BasicManager extends BasicComponentFactory implements IPro
 	public org.openspcoop2.core.registry.Connettore getStaticRoute(IDSoggetto idSoggettoMittente, IDServizio idServizio,
 			IRegistryReader registryReader) throws ProtocolException{
 		return null;
+	}
+	
+	@Override
+	public boolean isSuccessfulHttpRedirectStatusCode(ServiceBinding serviceBinding) throws ProtocolException{
+		return false;
 	}
 	
 	

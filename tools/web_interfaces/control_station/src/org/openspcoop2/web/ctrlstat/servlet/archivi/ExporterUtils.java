@@ -32,8 +32,13 @@ import javax.servlet.http.HttpSession;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
+import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -66,6 +71,9 @@ import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 
 /**
@@ -83,7 +91,11 @@ public class ExporterUtils {
 	@SuppressWarnings("unused")
 	private AccordiServizioParteSpecificaCore aspsCore;
 	private AccordiCooperazioneCore acCore;
-	
+	private ServiziApplicativiCore saCore;
+	@SuppressWarnings("unused")
+	private RuoliCore ruoliCore;
+	@SuppressWarnings("unused")
+	private ScopeCore scopeCore;
 	
 	public ExporterUtils(ArchiviCore archiviCore) throws Exception{
 		this.archiviCore = archiviCore;
@@ -91,6 +103,9 @@ public class ExporterUtils {
 		this.aspcCore = new AccordiServizioParteComuneCore(archiviCore);
 		this.aspsCore = new AccordiServizioParteSpecificaCore(archiviCore);
 		this.acCore = new AccordiCooperazioneCore(archiviCore);
+		this.saCore = new ServiziApplicativiCore(archiviCore);
+		this.ruoliCore = new RuoliCore(archiviCore);
+		this.scopeCore = new ScopeCore(archiviCore);
 	}
 
 	public List<ExportMode> getExportModesCompatibleWithAllProtocol(List<String> protocolli,ArchiveType archiveType) throws ProtocolException{
@@ -166,6 +181,20 @@ public class ExporterUtils {
 		return idsSoggetti;
 	}
 	
+	public List<?> getIdsServiziApplicativi(String ids) throws DriverConfigurazioneNotFound, DriverConfigurazioneException{
+		List<IDServizioApplicativo> idsSA = new ArrayList<IDServizioApplicativo>();
+		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
+		for (String id : idsToExport) {
+			long idLong = Long.parseLong(id);
+			ServizioApplicativo sa = this.saCore.getServizioApplicativo(idLong);
+			IDServizioApplicativo idSA = new IDServizioApplicativo();
+			idSA.setIdSoggettoProprietario(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+			idSA.setNome(sa.getNome());
+			idsSA.add(idSA);
+		}
+		return idsSA;
+	}
+	
 	public List<?> getIdsAccordiServizioComposti(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
 		return this.getIdsAccordiServizioParteComune(ids);
 	}
@@ -201,6 +230,26 @@ public class ExporterUtils {
 			idsAccordi.add(this.acCore.getIdAccordoCooperazione(idLong));
 		}
 		return idsAccordi;
+	}
+	
+	public List<?> getIdsRuoli(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
+		List<IDRuolo> idsRuoli = new ArrayList<IDRuolo>();
+		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
+		for (String id : idsToExport) {
+			IDRuolo idRuolo = new IDRuolo(id);
+			idsRuoli.add(idRuolo);
+		}
+		return idsRuoli;
+	}
+	
+	public List<?> getIdsScope(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
+		List<IDScope> idsScope = new ArrayList<IDScope>();
+		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
+		for (String id : idsToExport) {
+			IDScope idScope = new IDScope(id);
+			idsScope.add(idScope);
+		}
+		return idsScope;
 	}
 	
 	public void filterByProtocol(List<String> tipiSoggetti,List<String> tipiServizi,Archive archive) throws ProtocolException {

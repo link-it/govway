@@ -35,7 +35,9 @@ import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.RestUtilities;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
+import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -222,14 +224,42 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 							 if(configurazioneProtocollo!=null) {
 								 if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
 									 prefixGatewayUrl = configurazioneProtocollo.getUrlInvocazioneServizioPA();
+									 if(configurazioneProtocollo.getUrlInvocazioneServizioRestPA()!=null) {
+										 prefixGatewayUrl = configurazioneProtocollo.getUrlInvocazioneServizioRestPA();
+									 }
 								 }
 								 else {
 									 prefixGatewayUrl = configurazioneProtocollo.getUrlInvocazioneServizioPD();
+									 if(configurazioneProtocollo.getUrlInvocazioneServizioRestPD()!=null) {
+										 prefixGatewayUrl = configurazioneProtocollo.getUrlInvocazioneServizioRestPD();
+									 }
 								 }
 							 }
 						 }
 						 
-						 String newRedirectLocation = RestUtilities.buildPassReverseUrl(this.requestMsg.getTransportRequestContext(), baseUrl, redirectLocation, prefixGatewayUrl);
+						 String interfaceName = null;
+						 if(this.requestMsg!=null) {
+							 Object porta = this.requestMsg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
+							 if(porta!=null && porta instanceof String) {
+								 interfaceName = (String) porta;
+							 }
+							 if(interfaceName==null) {
+								 if(this.requestMsg.getTransportRequestContext()!=null) {
+									 interfaceName = this.requestMsg.getTransportRequestContext().getInterfaceName();
+								 }
+							 }
+						 }
+						 if(interfaceName!=null) {
+							 PorteNamingUtils utils = new PorteNamingUtils(this.getProtocolFactory());
+							 if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+								 interfaceName = utils.normalizePA(interfaceName);
+							 }
+							 else {
+								 interfaceName = utils.normalizePD(interfaceName);
+							 }
+						 }
+						 
+						 String newRedirectLocation = RestUtilities.buildPassReverseUrl(this.requestMsg.getTransportRequestContext(), baseUrl, redirectLocation, prefixGatewayUrl, interfaceName);
 						 if(this.debug)
 							 this.logger.debug("Nuovo Header '"+header+"':["+newRedirectLocation+"] ...");
 	               

@@ -48,6 +48,8 @@ public class SAMLBuilderConfigConstants {
 	public static final String SAML_CONFIG_BUILDER_ISSUER_QUALIFIER = "openspcoop2.saml.issuer.qualifier";
 	public static final String SAML_CONFIG_BUILDER_ISSUER_FORMAT = "openspcoop2.saml.issuer.format";
 	
+	public static final String SAML_CONFIG_BUILDER_USE_KEYSTORE_CACHE = "openspcoop2.keystoreCache";
+	
 	public static final String SAML_CONFIG_BUILDER_SIGN_ASSERTION = "openspcoop2.saml.assertion.sign";
 	public static final String SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_FILE = "openspcoop2.saml.assertion.sign.cryptoProp.file";
 	public static final String SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_REF_ID = "openspcoop2.saml.assertion.sign.cryptoProp.refId"; // si indica true. A questo punto il properties stesso e' usato anche come crypto

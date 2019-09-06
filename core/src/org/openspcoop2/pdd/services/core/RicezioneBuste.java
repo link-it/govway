@@ -194,6 +194,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.FaseImbustamento;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
@@ -2111,6 +2112,11 @@ public class RicezioneBuste {
 					sendRispostaBustaErrore(parametriInvioBustaErrore);
 				}
 			}else{
+				
+				IntegrationError integrationError = IntegrationError.BAD_REQUEST;
+				if(validatore.getErrore_integrationError()!=null) {
+					integrationError = validatore.getErrore_integrationError();
+				}
 				try{
 					msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, validatore.getErrore().getDescrizione(protocolFactory));
 				}catch(Exception e){
@@ -2118,7 +2124,7 @@ public class RicezioneBuste {
 				}
 				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_VALIDAZIONE_BUSTA, "sintattica");
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"validazioneNonRiuscita");
-				setSOAPFault_intestazione(IntegrationError.BAD_REQUEST, validatore.getErrore());
+				setSOAPFault_intestazione(integrationError, validatore.getErrore());
 			}
 			openspcoopstate.releaseResource();
 			return;
@@ -2980,7 +2986,14 @@ public class RicezioneBuste {
 							else {
 								if(esito.isClientIdentified()) {
 									soggettoAutenticato = true;
-									soggettoFruitore = esito.getIdSoggetto();
+									IDSoggetto idSoggettoFruitoreIdentificato = esito.getIdSoggetto();
+									if(soggettoFruitore!=null &&  soggettoFruitore.getNome()!=null && soggettoFruitore.getTipo()!=null) {
+										if(!soggettoFruitore.equals(idSoggettoFruitoreIdentificato)) {
+											throw new Exception("Identificato un soggetto (tramite profilo di interoperabilità) '"+soggettoFruitore
+													+"' differente da quello identificato tramite il processo di autenticazione '"+idSoggettoFruitoreIdentificato+"'");
+										}
+									}
+									soggettoFruitore = 	idSoggettoFruitoreIdentificato;
 									if(esito.getIdServizioApplicativo()!=null) {
 										servizioApplicativoFruitore = esito.getIdServizioApplicativo().getNome();
 										parametriGenerazioneBustaErrore.setServizioApplicativoFruitore(servizioApplicativoFruitore);
@@ -3371,9 +3384,6 @@ public class RicezioneBuste {
 			msgDiag.addKeywords(validatore.getBusta(), true);
 		}
 				
-		// overwrite info sulla busta
-		bustaRichiesta.setServizioApplicativoFruitore(servizioApplicativoFruitore);
-		
 		// VM ProtocolInfo (se siamo arrivati da un canale VM)
 		if(pddContext!=null && bustaRichiesta!=null)
 			DirectVMProtocolInfo.setInfoFromContext(pddContext, bustaRichiesta);
@@ -4991,7 +5001,8 @@ public class RicezioneBuste {
 			if( CodiceErroreCooperazione.isEccezioneMittente(er.getCodiceEccezione()) ||			
 				CodiceErroreCooperazione.isEccezioneDestinatario(er.getCodiceEccezione()) ||	
 				CodiceErroreCooperazione.isEccezioneServizio(er.getCodiceEccezione()) ||	
-				CodiceErroreCooperazione.isEccezioneIdentificativoMessaggio(er.getCodiceEccezione()) ){
+				CodiceErroreCooperazione.isEccezioneIdentificativoMessaggio(er.getCodiceEccezione()) ||	
+				CodiceErroreCooperazione.isEccezioneSicurezzaAutorizzazione(er.getCodiceEccezione()) ){
 
 				if(functionAsRouter==false){ 
 					// Può esistere un errore mittente, che non è altro che una segnalazione sull'indirizzo telematico
@@ -5018,6 +5029,11 @@ public class RicezioneBuste {
 						errs.add(erroriValidazione.get(add));
 					}
 					parametriGenerazioneBustaErrore.setError(errs);
+					
+					if(CodiceErroreCooperazione.isEccezioneSicurezzaAutorizzazione(er.getCodiceEccezione())) {
+						parametriGenerazioneBustaErrore.setIntegrationError(IntegrationError.AUTHORIZATION);
+					}
+					
 					OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
 					
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
@@ -6270,9 +6286,9 @@ public class RicezioneBuste {
 				
 				if(validatore.getInfoServizio()!=null){
 					sbustamentoMSG.setFiltroDuplicatiRichiestoAccordo(Inoltro.SENZA_DUPLICATI.equals(validatore.getInfoServizio().getInoltro()));
-					if(StatoFunzionalitaProtocollo.REGISTRO.equals(moduleManager.getConsegnaAffidabile(bustaRichiesta.getProfiloDiCollaborazione())))
+					if(StatoFunzionalitaProtocollo.REGISTRO.equals(moduleManager.getConsegnaAffidabile(bustaRichiesta)))
 						sbustamentoMSG.setConfermaRicezioneRichiestoAccordo(validatore.getInfoServizio().getConfermaRicezione());
-					if(StatoFunzionalitaProtocollo.REGISTRO.equals(moduleManager.getConsegnaInOrdine(bustaRichiesta.getProfiloDiCollaborazione())))	
+					if(StatoFunzionalitaProtocollo.REGISTRO.equals(moduleManager.getConsegnaInOrdine(bustaRichiesta)))	
 						sbustamentoMSG.setConsegnaOrdineRichiestoAccordo(validatore.getInfoServizio().getOrdineConsegna());
 				}
 
@@ -6631,7 +6647,7 @@ public class RicezioneBuste {
 					richiestaRispostaProtocollo = false;
 				} else if ( bustaDiServizio  ) {
 					richiestaRispostaProtocollo = false;
-				} else if( StatoFunzionalitaProtocollo.DISABILITATA.equals(moduleManager.getConsegnaAffidabile(bustaRichiesta.getProfiloDiCollaborazione())) ||
+				} else if( StatoFunzionalitaProtocollo.DISABILITATA.equals(moduleManager.getConsegnaAffidabile(bustaRichiesta)) ||
 						(propertiesReader.isGestioneRiscontri(implementazionePdDMittente)==false) ||
 						(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(bustaRichiesta.getProfiloDiCollaborazione()) &&
 								(bustaRichiesta.isConfermaRicezione()==false))
@@ -6939,11 +6955,13 @@ public class RicezioneBuste {
 
 
 
-				/* ------------  Imbustamento  ------------- */	
+				/* ------------  Imbustamento (Prima della Sicurezza)  ------------- */	
+				
 				msgDiag.mediumDebug("Imbustamento della risposta...");
 				BustaRawContent<?> headerBustaRisposta = null;
+				boolean gestioneManifestRisposta = false;
+				Imbustamento imbustatore = null;
 				try{
-					boolean gestioneManifestRisposta = false;
 					if(functionAsRouter){
 						gestioneManifestRisposta = configurazionePdDReader.isGestioneManifestAttachments();
 					}else{
@@ -6955,7 +6973,7 @@ public class RicezioneBuste {
 							gestioneManifestRisposta = configurazionePdDReader.isGestioneManifestAttachments(pa,protocolFactory);
 						}
 					}
-					Imbustamento imbustatore = new Imbustamento(logCore, protocolFactory,openspcoopstate.getStatoRichiesta());
+					imbustatore = new Imbustamento(logCore, protocolFactory,openspcoopstate.getStatoRichiesta());
 					if(functionAsRouter && 
 							!( identitaPdD.getTipo().equals(bustaRisposta.getTipoMittente()) && identitaPdD.getNome().equals(bustaRisposta.getMittente()) ) 
 					){
@@ -6963,8 +6981,9 @@ public class RicezioneBuste {
 						// Se il mittente e' il router, logicamente la busta sara' un errore generato dal router
 						if( propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente)){
 							msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
-							ProtocolMessage protocolMessage = imbustatore.addTrasmissione(responseMessage, tras, readQualifiedAttribute);
-							if(protocolMessage!=null) {
+							ProtocolMessage protocolMessage = imbustatore.addTrasmissione(responseMessage, tras, readQualifiedAttribute, 
+									FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
+							if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 								headerBustaRisposta = protocolMessage.getBustaRawContent();
 								responseMessage = protocolMessage.getMessage(); // updated
 							}
@@ -6976,9 +6995,10 @@ public class RicezioneBuste {
 						}
 					}else{
 						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
-						ProtocolMessage protocolMessage = imbustatore.imbustamento(responseMessage,bustaRisposta,infoIntegrazione,
-								gestioneManifestRisposta,RuoloMessaggio.RISPOSTA,scartaBody,proprietaManifestAttachments);
-						if(protocolMessage!=null) {
+						ProtocolMessage protocolMessage = imbustatore.imbustamentoRisposta(responseMessage,bustaRisposta,bustaRichiesta,
+								infoIntegrazione,gestioneManifestRisposta,scartaBody,proprietaManifestAttachments,
+								FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
+						if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 							headerBustaRisposta = protocolMessage.getBustaRawContent();
 							responseMessage = protocolMessage.getMessage(); // updated
 						}
@@ -6988,9 +7008,9 @@ public class RicezioneBuste {
 					if(functionAsRouter && 
 							!( identitaPdD.getTipo().equals(bustaRisposta.getTipoMittente()) && identitaPdD.getNome().equals(bustaRisposta.getMittente()) ) 
 					){
-						msgDiag.logErroreGenerico(e,"imbustatore.addTrasmissione(risposta)");
+						msgDiag.logErroreGenerico(e,"imbustatore.pre-security.addTrasmissione(risposta)");
 					}else{
-						msgDiag.logErroreGenerico(e,"imbustatore.imbustamento(risposta)");
+						msgDiag.logErroreGenerico(e,"imbustatore.pre-security-imbustamento(risposta)");
 					}
 	
 					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
@@ -7147,6 +7167,63 @@ public class RicezioneBuste {
 					}
 				}
 				
+				
+				
+				
+				
+				/* ------------  Imbustamento (Dopo della Sicurezza)  ------------- */	
+				
+				msgDiag.mediumDebug("Imbustamento della risposta dopo la sicurezza...");
+				try{
+					if(functionAsRouter && 
+							!( identitaPdD.getTipo().equals(bustaRisposta.getTipoMittente()) && identitaPdD.getNome().equals(bustaRisposta.getMittente()) ) 
+					){
+						// Aggiungo trasmissione solo se la busta e' stata generata dalla porta di dominio destinataria della richiesta.
+						// Se il mittente e' il router, logicamente la busta sara' un errore generato dal router
+						if( propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente)){
+							msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento (after-security) ["+responseMessage.getClass().getName()+"]");
+							ProtocolMessage protocolMessage = imbustatore.addTrasmissione(responseMessage, tras, readQualifiedAttribute, 
+									FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
+							if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
+								headerBustaRisposta = protocolMessage.getBustaRawContent();
+								responseMessage = protocolMessage.getMessage(); // updated
+							}
+							msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento (after-security) ["+responseMessage.getClass().getName()+"]");
+						}
+						// else gia' effettuato nella precedente fase pre-sicurezza
+					}else{
+						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento (after-security) ["+responseMessage.getClass().getName()+"]");
+						ProtocolMessage protocolMessage = imbustatore.imbustamentoRisposta(responseMessage,bustaRisposta,bustaRichiesta,
+								infoIntegrazione,gestioneManifestRisposta,scartaBody,proprietaManifestAttachments,
+								FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
+						if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
+							headerBustaRisposta = protocolMessage.getBustaRawContent();
+							responseMessage = protocolMessage.getMessage(); // updated
+						}
+						msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento (after-security) ["+responseMessage.getClass().getName()+"]");
+					}
+				}catch(Exception e){
+					if(functionAsRouter && 
+							!( identitaPdD.getTipo().equals(bustaRisposta.getTipoMittente()) && identitaPdD.getNome().equals(bustaRisposta.getMittente()) ) 
+					){
+						msgDiag.logErroreGenerico(e,"imbustatore.after-security.addTrasmissione(risposta)");
+					}else{
+						msgDiag.logErroreGenerico(e,"imbustatore.after-security-imbustamento(risposta)");
+					}
+	
+					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
+					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_526_GESTIONE_IMBUSTAMENTO));
+
+					OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+					
+					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
+					parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+					parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
+					sendRispostaBustaErrore(parametriInvioBustaErrore);
+					openspcoopstate.releaseResource();
+					return;
+				}
 				
 				
 				
@@ -8466,7 +8543,7 @@ public class RicezioneBuste {
 		RequestInfo requestInfo = (RequestInfo) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		
 		boolean consegnaAffidabile = false;
-		switch (protocolManager.getConsegnaAffidabile(bustaRichiesta.getProfiloDiCollaborazione())) {
+		switch (protocolManager.getConsegnaAffidabile(bustaRichiesta)) {
 		case ABILITATA:
 			consegnaAffidabile = true;
 			break;
@@ -8643,9 +8720,19 @@ public class RicezioneBuste {
 			else{
 				msg = this.generatoreErrore.buildErroreIntestazione(IntegrationError.INTERNAL_ERROR);
 			}
-			ProtocolMessage protocolMessage = imbustatore.imbustamento(msg,bustaHTTPReply,integrazione,
-					false,RuoloMessaggio.RISPOSTA,false,null);
-			if(protocolMessage!=null) {
+			
+			
+			ProtocolMessage protocolMessage = imbustatore.imbustamentoRisposta(msg,bustaHTTPReply,bustaRichiesta,
+					integrazione,false,false,null,
+					FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
+			if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
+				msg = protocolMessage.getMessage(); // updated
+			}
+			
+			protocolMessage = imbustatore.imbustamentoRisposta(msg,bustaHTTPReply,bustaRichiesta,
+					integrazione,false,false,null,
+					FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
+			if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 				msg = protocolMessage.getMessage(); // updated
 			}
 			

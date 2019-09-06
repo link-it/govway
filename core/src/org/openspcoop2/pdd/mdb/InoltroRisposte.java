@@ -94,6 +94,7 @@ import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
+import org.openspcoop2.protocol.sdk.constants.FaseImbustamento;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
@@ -598,15 +599,18 @@ public class InoltroRisposte extends GenericLib{
 			/* ------------  Imbustamento ------------- */	
 			msgDiag.mediumDebug("Imbustamento ...");
 			BustaRawContent<?> headerBusta = null;
+			org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = null;
+			boolean gestioneManifest = false;
+			RuoloMessaggio ruoloMessaggio = null;
 			if(inoltroRisposteMsg.isImbustamento()){
 				try{
-					RuoloMessaggio ruoloMessaggio = RuoloMessaggio.RISPOSTA;
+					ruoloMessaggio = RuoloMessaggio.RISPOSTA;
 					if(inoltroSegnalazioneErrore)
 						ruoloMessaggio = RuoloMessaggio.RICHIESTA;
-					org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = 
+					imbustatore = 
 							new org.openspcoop2.protocol.engine.builder.Imbustamento(this.log,protocolFactory, openspcoopstate.getStatoRichiesta());
 	
-					boolean gestioneManifest = configurazionePdDManager.isGestioneManifestAttachments();
+					gestioneManifest = configurazionePdDManager.isGestioneManifestAttachments();
 					// viene controllato servizio is not null, poiche' i riscontri non hanno un servizio
 					if(functionAsRouter==false && inoltroSegnalazioneErrore==false  && busta.getTipoServizio()!=null && busta.getServizio()!=null){
 						gestioneManifest = configurazionePdDManager.isGestioneManifestAttachments(pa,protocolFactory);
@@ -617,8 +621,9 @@ public class InoltroRisposte extends GenericLib{
 						// Aggiungo trasmissione solo se la busta e' stata generata dalla porta di dominio destinataria della richiesta.
 						// Se il mittente e' il router, logicamente la busta sara' un errore generato dal router
 						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
-						ProtocolMessage protocolMessage = imbustatore.addTrasmissione(responseMessage, tras, readQualifiedAttribute);
-						if(protocolMessage!=null) {
+						ProtocolMessage protocolMessage = imbustatore.addTrasmissione(responseMessage, tras, readQualifiedAttribute,
+								FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
+						if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 							headerBusta = protocolMessage.getBustaRawContent();
 							responseMessage = protocolMessage.getMessage(); // updated
 						}
@@ -628,9 +633,18 @@ public class InoltroRisposte extends GenericLib{
 						Integrazione integrazione = new Integrazione();
 						integrazione.setStateless(false);
 						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
-						ProtocolMessage protocolMessage = imbustatore.imbustamento(responseMessage,busta,integrazione,
-								gestioneManifest,ruoloMessaggio,scartaBody,proprietaManifestAttachments);
-						if(protocolMessage!=null) {
+						ProtocolMessage protocolMessage = null;
+						if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)) {
+							protocolMessage = imbustatore.imbustamentoRichiesta(responseMessage,busta,
+									integrazione,gestioneManifest,scartaBody,proprietaManifestAttachments,
+									FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
+						}
+						else {
+							protocolMessage = imbustatore.imbustamentoRisposta(responseMessage,busta,null,
+									integrazione,gestioneManifest,scartaBody,proprietaManifestAttachments,
+									FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
+						}
+						if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 							headerBusta = protocolMessage.getBustaRawContent();
 							responseMessage = protocolMessage.getMessage(); // updated
 						}
@@ -638,9 +652,9 @@ public class InoltroRisposte extends GenericLib{
 					}
 				}catch(Exception e){
 					if(functionAsRouter)
-						msgDiag.logErroreGenerico(e, "imbustatore.addTrasmissione");
+						msgDiag.logErroreGenerico(e, "imbustatore.before-security.addTrasmissione");
 					else
-						msgDiag.logErroreGenerico(e, "imbustatore.imbustamento");
+						msgDiag.logErroreGenerico(e, "imbustatore.before-security.imbustamento");
 					ejbUtils.rollbackMessage("Imbustamento non riuscito.", esito);
 					openspcoopstate.releaseResource();  
 					esito.setStatoInvocazioneErroreNonGestito(e);
@@ -794,6 +808,62 @@ public class InoltroRisposte extends GenericLib{
 			}
 			
 			
+			
+			
+			
+			
+
+			/* ------------  Imbustamento ------------- */	
+			msgDiag.mediumDebug("Imbustamento (after-security) ...");
+			if(inoltroRisposteMsg.isImbustamento()){
+				try{
+					if(functionAsRouter && 
+							!( identitaPdD.getTipo().equals(busta.getTipoMittente()) && identitaPdD.getNome().equals(busta.getMittente()) ) 
+					){
+						// Aggiungo trasmissione solo se la busta e' stata generata dalla porta di dominio destinataria della richiesta.
+						// Se il mittente e' il router, logicamente la busta sara' un errore generato dal router
+						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento (after-security) ["+responseMessage.getClass().getName()+"]");
+						ProtocolMessage protocolMessage = imbustatore.addTrasmissione(responseMessage, tras, readQualifiedAttribute,
+								FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
+						if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
+							headerBusta = protocolMessage.getBustaRawContent();
+							responseMessage = protocolMessage.getMessage(); // updated
+						}
+						msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento (after-security) ["+responseMessage.getClass().getName()+"]");
+					}
+					else{
+						Integrazione integrazione = new Integrazione();
+						integrazione.setStateless(false);
+						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento (after-security) ["+responseMessage.getClass().getName()+"]");
+						ProtocolMessage protocolMessage = null;
+						if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)) {
+							protocolMessage = imbustatore.imbustamentoRichiesta(responseMessage,busta,
+									integrazione,gestioneManifest,scartaBody,proprietaManifestAttachments,
+									FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
+						}
+						else {
+							protocolMessage = imbustatore.imbustamentoRisposta(responseMessage,busta,null,
+									integrazione,gestioneManifest,scartaBody,proprietaManifestAttachments,
+									FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
+						}
+						if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
+							headerBusta = protocolMessage.getBustaRawContent();
+							responseMessage = protocolMessage.getMessage(); // updated
+						}
+						msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento (after-security) ["+responseMessage.getClass().getName()+"]");
+					}
+				}catch(Exception e){
+					if(functionAsRouter)
+						msgDiag.logErroreGenerico(e, "imbustatore.after-security.addTrasmissione");
+					else
+						msgDiag.logErroreGenerico(e, "imbustatore.after-security.imbustamento");
+					ejbUtils.rollbackMessage("Imbustamento non riuscito (after-security).", esito);
+					openspcoopstate.releaseResource();  
+					esito.setStatoInvocazioneErroreNonGestito(e);
+					esito.setEsitoInvocazione(false); 
+					return esito;
+				}
+			}
 			
 			
 			
@@ -1039,7 +1109,7 @@ public class InoltroRisposte extends GenericLib{
 					motivoErroreConsegna = "Errore durante la consegna";
 				}
 				//	interpretazione esito consegna
-				GestioneErrore gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettoreComponenteCooperazione();
+				GestioneErrore gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettoreComponenteCooperazione(protocolFactory, responseMessage.getServiceBinding());
 				GestoreErroreConnettore  gestoreErrore = new GestoreErroreConnettore();
 				errorConsegna = !gestoreErrore.verificaConsegna(gestioneConsegnaConnettore,motivoErroreConsegna,eccezioneProcessamentoConnettore,connectorSender.getCodiceTrasporto(),connectorSender.getResponse());
 				if(errorConsegna){

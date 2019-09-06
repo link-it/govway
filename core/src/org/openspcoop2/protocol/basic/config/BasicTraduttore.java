@@ -43,6 +43,7 @@ import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.SubCodiceErrore;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 
 
@@ -177,7 +178,7 @@ public class BasicTraduttore extends BasicComponentFactory implements org.opensp
 	public String getDate_protocolFormat(Date date) {
 		if(date == null) 
 			date = DateManager.getDate();
-		SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd_HH:mm:ss.SSS"); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 		return dateformat.format(date).replace('_','T');
 	}
 

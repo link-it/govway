@@ -341,6 +341,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ProtocolProperty }
+     */
+    public ProtocolProperty createProtocolProperty() {
+        return new ProtocolProperty();
+    }
+
+    /**
      * Create an instance of {@link PortaDelegata }
      */
     public PortaDelegata createPortaDelegata() {
@@ -387,6 +394,13 @@ public class ObjectFactory {
      */
     public ServizioApplicativo createServizioApplicativo() {
         return new ServizioApplicativo();
+    }
+
+    /**
+     * Create an instance of {@link AccessoDatiKeystore }
+     */
+    public AccessoDatiKeystore createAccessoDatiKeystore() {
+        return new AccessoDatiKeystore();
     }
 
     /**

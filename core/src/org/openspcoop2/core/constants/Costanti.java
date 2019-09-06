@@ -22,8 +22,6 @@
 
 package org.openspcoop2.core.constants;
 
-import java.text.SimpleDateFormat;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.datasource.DataSourceParams;
@@ -111,11 +109,6 @@ public class Costanti {
     
 	public final static String CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION = "CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION";
 	public final static String CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION = "CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION";
-	
-	public final static String dateFormat = "yyyy-MM-dd_HH:mm:ss.SSS"; 
-	public static SimpleDateFormat newSimpleDateFormat(){
-		return new SimpleDateFormat(dateFormat); // SimpleDateFormat non e' thread-safe
-	}
 	
 	public final static String SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED = "undefined";
 	public final static String SESSION_ATTRIBUTE_VALUE_FILTER_UNDEFINED = "undefined";

@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.registry.constants.ServiceBinding;
 
 /**
  * Permette il filtro di ricerca attraverso i driver che implementano l'interfaccia 'get'
@@ -66,9 +67,19 @@ public class FiltroRicercaAccordi implements Serializable{
 	/** Tipo */
 	private String tipoSoggettoReferente;
 
+	/** Service Binding */
+	private ServiceBinding serviceBinding;
+	
 	private IDAccordoCooperazione idAccordoCooperazione;
 	private Boolean servizioComposto;
 
+	public ServiceBinding getServiceBinding() {
+		return this.serviceBinding;
+	}
+	public void setServiceBinding(ServiceBinding serviceBinding) {
+		this.serviceBinding = serviceBinding;
+	}
+	
 	/** ProtocolProperty */
 	private List<FiltroRicercaProtocolProperty> protocolPropertiesAccordo = new ArrayList<FiltroRicercaProtocolProperty>();
 

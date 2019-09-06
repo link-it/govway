@@ -602,6 +602,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			}
 			Utilities.printFreeMemory("IntegrationManager - Post costruzione richiesta");
 			msgRequest.setProtocolName(protocolFactory.getProtocol());
+			msgRequest.setTransactionId( idTransazione);
 			Object nomePortaInvocataObject = context.getPddContext().getObject(CostantiPdD.NOME_PORTA_INVOCATA);
 			if(nomePortaInvocataObject!=null && nomePortaInvocataObject instanceof String) {
 				msgRequest.addContextProperty(CostantiPdD.NOME_PORTA_INVOCATA, (String) nomePortaInvocataObject );

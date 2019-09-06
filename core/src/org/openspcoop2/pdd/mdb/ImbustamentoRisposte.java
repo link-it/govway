@@ -427,7 +427,7 @@ public class ImbustamentoRisposte extends GenericLib {
 				throw new Exception("Busta di risposta ["+scenarioCooperazione+"] non generata.");
 			}
 
-			switch (protocolManager.getConsegnaAffidabile(bustaRisposta.getProfiloDiCollaborazione())) {
+			switch (protocolManager.getConsegnaAffidabile(bustaRisposta)) {
 			case ABILITATA:
 				bustaRisposta.setConfermaRicezione(true);
 				break;
@@ -439,7 +439,7 @@ public class ImbustamentoRisposte extends GenericLib {
 				break;
 			}
 			
-			switch (protocolManager.getFiltroDuplicati(bustaRisposta.getProfiloDiCollaborazione())) {
+			switch (protocolManager.getFiltroDuplicati(bustaRisposta)) {
 			case ABILITATA:
 				bustaRisposta.setInoltro(Inoltro.SENZA_DUPLICATI,protocolFactory.createTraduttore().toString(Inoltro.SENZA_DUPLICATI));
 				break;

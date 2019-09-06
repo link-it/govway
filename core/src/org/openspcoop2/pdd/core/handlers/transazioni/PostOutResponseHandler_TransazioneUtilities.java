@@ -44,6 +44,7 @@ import org.openspcoop2.pdd.core.handlers.ExtendedTransactionInfo;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
@@ -121,8 +122,9 @@ public class PostOutResponseHandler_TransazioneUtilities {
 
 		try {
 
+			IProtocolFactory<?> protocolFactory = context.getProtocolFactory();
 
-			IBustaBuilder<?> protocolBustaBuilder = context.getProtocolFactory().createBustaBuilder(context.getStato());
+			IBustaBuilder<?> protocolBustaBuilder = protocolFactory.createBustaBuilder(context.getStato());
 
 
 			Transazione transactionDTO = new Transazione();
@@ -447,7 +449,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				// Richiesta
 				String idMessaggioRichiesta = context.getProtocollo().getIdRichiesta();
 				Timestamp dateInternaIdProtocolloRichiesta = null;
-				if(op2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled()){
+				if(op2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 					if(idMessaggioRichiesta!=null){
 						dateInternaIdProtocolloRichiesta = DateUtility.getTimestampIntoIdProtocollo(this.logger,protocolBustaBuilder,idMessaggioRichiesta);
 					}
@@ -460,13 +462,13 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				// Se e' presenta una busta di risposta nella transazione deve pero' finire l'id di protocollo della busta.
 				if(tracciaRisposta!=null && tracciaRisposta.getBusta()!=null && tracciaRisposta.getBusta().getID()!=null){
 					idMessaggioRisposta = tracciaRisposta.getBusta().getID();
-					if(op2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled()){
+					if(op2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 						dateInternaIdProtocolloRisposta = DateUtility.getTimestampIntoIdProtocollo(this.logger,protocolBustaBuilder,idMessaggioRisposta);
 					}
 				}
 				else if(context.getProtocollo().getIdRisposta()!=null){
 					idMessaggioRisposta = context.getProtocollo().getIdRisposta();
-					if(op2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled()){
+					if(op2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 						dateInternaIdProtocolloRisposta =  DateUtility.getTimestampIntoIdProtocollo(this.logger,protocolBustaBuilder,idMessaggioRisposta);
 					}
 				}
@@ -474,7 +476,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				// Set
 				transactionDTO.setIdMessaggioRichiesta(idMessaggioRichiesta);
 				transactionDTO.setIdMessaggioRisposta(idMessaggioRisposta);
-				if(op2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled()){
+				if(op2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 					transactionDTO.setDataIdMsgRichiesta(dateInternaIdProtocolloRichiesta);
 					transactionDTO.setDataIdMsgRisposta(dateInternaIdProtocolloRisposta);
 				}
@@ -534,6 +536,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 
 
 			// ** Identificativo asincrono se utilizzato come riferimento messaggio nella richiesta (2 fase asincrona) **
+				
 			if(tracciaRichiesta!=null && tracciaRichiesta.getBusta()!=null &&
 					(ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(tracciaRichiesta.getBusta().getProfiloDiCollaborazione()) || ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(tracciaRichiesta.getBusta().getProfiloDiCollaborazione()) ) ){
 				Busta busta = tracciaRichiesta.getBusta();
@@ -561,8 +564,25 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					transactionDTO.setNomeServizioCorrelato(busta.getServizioCorrelato());
 				}
 			}
-
-
+			
+			if(transactionDTO.getIdCollaborazione()==null) {
+				if(tracciaRichiesta!=null && tracciaRichiesta.getBusta()!=null && tracciaRichiesta.getBusta().getCollaborazione()!=null) {
+					transactionDTO.setIdCollaborazione(tracciaRichiesta.getBusta().getCollaborazione());
+				}
+				else if(tracciaRisposta!=null && tracciaRisposta.getBusta()!=null && tracciaRisposta.getBusta().getCollaborazione()!=null) {
+					transactionDTO.setIdCollaborazione(tracciaRisposta.getBusta().getCollaborazione());
+				}
+			}
+			
+			boolean asincrono = tracciaRichiesta!=null && tracciaRichiesta.getBusta()!=null &&
+					(ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(tracciaRichiesta.getBusta().getProfiloDiCollaborazione()) || ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(tracciaRichiesta.getBusta().getProfiloDiCollaborazione()) );
+			if(!asincrono) {
+				if(transactionDTO.getIdAsincrono()==null) {
+					if(tracciaRichiesta!=null && tracciaRichiesta.getBusta()!=null && tracciaRichiesta.getBusta().getRiferimentoMessaggio()!=null) {
+						transactionDTO.setIdAsincrono(tracciaRichiesta.getBusta().getRiferimentoMessaggio());
+					}
+				}
+			}
 
 			// ** info protocollo **
 			if(tracciaRichiesta!=null){

@@ -1,0 +1,65 @@
+<project name="openspcoop2-compile-restNonBlockingPull">
+    <description>
+        Produzione dei jar relativi al package org.openspcoop2.protocol.modipa.example.rest.non_blocking.pull
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+	<!-- Compilazione della libreria 'org.openspcoop.web.ctrlstat.*' -->
+	<target name="compile_openspcoop2_restNonBlockingPull" description="compila la libreria org.openspcoop2.protocol.modipa.example.rest.non_blocking.pull.*">
+
+		<if>
+			<istrue value="${buildrestNonBlockingPull}"/>
+			<then>
+		
+				<!-- Info git -->
+				<runtarget target="checkgit" />
+				
+				<!-- org.openspcoop2.web.config -->
+				<var name="packagesCompiled" value="org.openspcoop2.protocol.modipa.example.rest.non_blocking.pull" />				
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_restNonBlockingPull}/"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="protocol-modipa-rest-nonblocking-push"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.protocol.modipa.example.rest.non_blocking.pull"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+					<param name="dist" value="${dist_restNonBlockingPull}"/>
+					<param name="build" value="${build_restNonBlockingPull}"/>
+				</antcall>
+				
+				<!-- API -->
+				<if>
+					<istrue value="${buildAPI}"/>
+					<then>
+						<mkdir dir="${doc_restNonBlockingPull}"/>
+					</then>
+				</if>
+				<antcall target="compile_api_openspcoop2">
+					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+					<param name="compile_src_openspcoop2.API_NAME" value="protocol-modipa-rest-nonblocking-push"/>
+					<param name="compile_src_openspcoop2.API_DIR" value="${doc_restNonBlockingPull}/api/restNonBlockingPull"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="src" value="${src_restNonBlockingPull}"/>
+					<param name="doc" value="${doc_restNonBlockingPull}"/>
+					<param name="dist" value="${dist_restNonBlockingPull}"/>
+				</antcall>
+				
+			</then>
+		</if>
+		
+	</target>
+	
+</project>

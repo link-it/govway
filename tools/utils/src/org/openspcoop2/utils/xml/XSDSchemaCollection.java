@@ -36,6 +36,7 @@ import java.util.zip.ZipOutputStream;
 import javax.xml.validation.Schema;
 
 import org.slf4j.Logger;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 
@@ -339,7 +340,7 @@ public class XSDSchemaCollection {
 	
 	private static long counter = 0;
 	private static synchronized String getIdForDebug(){
-		SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss.SSS"); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 		XSDSchemaCollection.counter++;
 		return "ID_"+XSDSchemaCollection.counter+"_"+dateformat.format(DateManager.getDate());
 	}

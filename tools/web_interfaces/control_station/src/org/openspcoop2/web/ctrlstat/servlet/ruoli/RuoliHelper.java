@@ -37,6 +37,8 @@ import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
+import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
+import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -333,6 +335,32 @@ public class RuoliHelper extends ConsoleHelper{
 
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
+			
+			// preparo bottoni
+			if(lista!=null && lista.size()>0){
+				if (this.core.isShowPulsantiImportExport()) {
+
+					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+					if(exporterUtils.existsAtLeastOneExportMpde(org.openspcoop2.protocol.sdk.constants.ArchiveType.RUOLO, this.session)){
+
+						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+
+						AreaBottoni ab = new AreaBottoni();
+						Vector<DataElement> otherbott = new Vector<DataElement>();
+						DataElement de = new DataElement();
+						de.setValue(RuoliCostanti.LABEL_RUOLI_ESPORTA_SELEZIONATI);
+						de.setOnClick(RuoliCostanti.LABEL_RUOLI_ESPORTA_SELEZIONATI_ONCLICK);
+						otherbott.addElement(de);
+						ab.setBottoni(otherbott);
+						bottoni.addElement(ab);
+
+						this.pd.setAreaBottoni(bottoni);
+
+					}
+
+				}
+			}
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);

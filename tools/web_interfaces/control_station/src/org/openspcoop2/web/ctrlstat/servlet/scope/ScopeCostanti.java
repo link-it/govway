@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.openspcoop2.core.registry.constants.ScopeContesto;
+import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 //import org.openspcoop2.core.registry.constants.ScopeTipologia;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 
@@ -79,7 +80,8 @@ public class ScopeCostanti {
 	public final static String LABEL_PARAMETRO_SCOPE_NOME_ESTERNO = "Identificativo Esterno";
 	public final static String LABEL_PARAMETRO_SCOPE_CONTESTO = CostantiControlStation.LABEL_PARAMETRO_SCOPE_CONTESTO;
 	
-	
+	public final static String LABEL_SCOPE_ESPORTA_SELEZIONATI = "Esporta";
+	public final static String LABEL_SCOPE_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.SCOPE.name()+"')";
 	
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_SCOPE_TIPOLOGIA = "qualsiasi" ; //ScopeTipologia.QUALSIASI.getValue();

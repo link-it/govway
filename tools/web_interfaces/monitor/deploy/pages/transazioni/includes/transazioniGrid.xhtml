@@ -317,6 +317,20 @@
 					<h:outputText id="outIDMessaggioRisposta2" value="#{item.idMessaggioRisposta}"/>
 					<rich:toolTip for="outIDMessaggioRisposta2" value="#{item.idMessaggioRisposta}"/>
 				</rich:column>
+				<rich:column id="colIDCollaborazione" sortable="false" label="ID Collaborazione" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outIDCollaborazione1" value="ID Collaborazione" />
+					</f:facet>
+					<h:outputText id="outIDCollaborazione2" value="#{item.idCollaborazione}"/>
+					<rich:toolTip for="outIDCollaborazione2" value="#{item.idCollaborazione}"/>
+				</rich:column>
+				<rich:column id="colRiferimentoIdRichiesta" sortable="false" label="Riferimento ID Richiesta" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outRiferimentoIdRichiesta1" value="Rif. ID Richiesta" />
+					</f:facet>
+					<h:outputText id="outRiferimentoIdRichiesta2" value="#{item.idAsincrono}"/>
+					<rich:toolTip for="outRiferimentoIdRichiesta2" value="#{item.idAsincrono}"/>
+				</rich:column>
 				<rich:column id="colProfColl" sortable="false" label="Profilo Collaborazione" visible="false">
 					<f:facet name="header">
 						<h:outputText id="outProfColl1" value="Profilo Collaborazione" />

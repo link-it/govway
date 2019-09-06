@@ -28,6 +28,7 @@ import java.util.Date;
 
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
+import org.openspcoop2.utils.Utilities;
 
 /**
  * UniqueIdentifierUtilities 
@@ -38,13 +39,12 @@ import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
  */
 public class UniqueIdentifierUtilities {
 
-	private static final String format = "yyyy-MM-dd_HH:mm:ss.SSS";
 	private static final String separator = "#";
 	
 	public static String getUniqueId(AttivazionePolicy attivazionePolicy){
 		String idActivePolicy = attivazionePolicy.getIdActivePolicy();
 		
-		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+		SimpleDateFormat dateFormat = Utilities.getSimpleDateFormatMs();
 		String time = dateFormat.format(attivazionePolicy.getUpdateTime());
 		
 		return idActivePolicy + separator + time;
@@ -52,7 +52,7 @@ public class UniqueIdentifierUtilities {
 	
 	public static String getUniqueId(IdActivePolicy idActivePolicy){
 		
-		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+		SimpleDateFormat dateFormat = Utilities.getSimpleDateFormatMs();
 		return idActivePolicy.getNome()+separator+dateFormat.format(idActivePolicy.getUpdateTime());
 		
 	}
@@ -62,7 +62,7 @@ public class UniqueIdentifierUtilities {
 	}
 	
 	public static Date extractUpdateTimeActivePolicy(String id) throws ParseException{
-		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+		SimpleDateFormat dateFormat = Utilities.getSimpleDateFormatMs();
 		return dateFormat.parse(id.split(separator)[1]);
 	}
 }

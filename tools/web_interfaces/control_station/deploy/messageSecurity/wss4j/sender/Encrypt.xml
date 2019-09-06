@@ -153,18 +153,23 @@
 			<item type="select" name="encryptKeyIdentifier" label="Tipo" reloadOnChange="true" default="DirectReference" >
 			<!--   note="Per maggiori dettagli vedi: http://coheigea.blogspot.com/2013/03/encrypt-and-encryption-key.html"> -->
 				<values>
-					<value value="DirectReference" label="DirectReference"/>
-					<value value="IssuerSerial" label="IssuerSerial"/>
-					<value value="X509KeyIdentifier" label="X509KeyIdentifier"/>
-					<value value="SKIKeyIdentifier" label="SKIKeyIdentifier"/>
-					<value value="EmbeddedKeyName" label="EmbeddedKeyName"/>
-					<value value="Thumbprint" label="Thumbprint"/>
-					<value value="EncryptedKeySHA1" label="EncryptedKeySHA1"/>
-					<value value="KeyValue" label="KeyValue"/>
+					<value value="DirectReference" label="Binary Security Token"/>
+					<value value="IssuerSerial" label="Issuer-Serial Security Token Reference"/>
+					<value value="X509KeyIdentifier" label="X509 Key Identifier"/>
+					<value value="Thumbprint" label="Thumbprint Key Identifier"/>
+					<value value="SKIKeyIdentifier" label="SKI Key Identifier"/>
+					<!-- <value value="EmbeddedKeyName" label="Embedded Key Name"/> NON FUNZIONA -->
+					<value value="EncryptedKeySHA1" label="EncryptedKeySHA1 Key Identifier"/>
+					<!-- <value value="KeyValue" label="Public Key Value"/> SOLO per Signature -->
 				</values>
 				<property name="encryptionKeyIdentifier" />
 			</item>
 			<item type="checkbox" name="useSingleCertificate" label="Certificato Singolo" defaultSelected="true">
+				<conditions>
+				    <condition>
+				    	<equals name="encryptKeyIdentifier" value="DirectReference" />
+				    </condition>
+			   	</conditions>
 				<property name="useSingleCertificate" selectedValue="true" unselectedValue="false"/>
 			</item>
 			<item type="checkbox" name="includeEncryptionToken" label="Include Encryption Token" defaultSelected="false">
@@ -188,7 +193,7 @@
                    </condition>
            	</conditions>
            	
-           	<item type="hidden" name="encryptCryptoProviderKeyStore" value="org.apache.ws.security.components.crypto.Merlin">
+           	<item type="hidden" name="encryptCryptoProviderKeyStore" value="org.openspcoop2.security.keystore.Merlin">
 				<property name="org.apache.ws.security.crypto.provider" force="true" properties="encryptionPropRefId"/>
 			</item>
            	
@@ -226,7 +231,7 @@
            	</conditions>
            	 -->
            	
-           	<item type="hidden" name="encryptCryptoProviderTrustStore" value="org.apache.ws.security.components.crypto.Merlin">
+           	<item type="hidden" name="encryptCryptoProviderTrustStore" value="org.openspcoop2.security.keystore.Merlin">
 				<property name="org.apache.ws.security.crypto.provider" force="true" properties="encryptionPropRefId"/>
 			</item>
            	

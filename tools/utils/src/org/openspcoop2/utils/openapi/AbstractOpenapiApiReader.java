@@ -273,11 +273,13 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 				}catch(Exception e) {
 					// provo a verificare se il problema è che non e' stato definito il protocollo (es. in swagger lo 'schemes')
 					if(server!=null && server.startsWith("/")) {
-						server = "http:"+server;
-						try {
-							url = new URL(server);
-						}catch(Exception e2) {
-							// nop
+						if(!server.equals("/")) {
+							server = "http:"+server;
+							try {
+								url = new URL(server);
+							}catch(Exception e2) {
+								// nop
+							}
 						}
 					}
 				}

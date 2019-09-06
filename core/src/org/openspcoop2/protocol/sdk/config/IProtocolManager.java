@@ -27,6 +27,7 @@ import java.util.Map;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -270,6 +271,14 @@ public interface IProtocolManager extends IComponentFactory {
 	public org.openspcoop2.core.registry.Connettore getStaticRoute(IDSoggetto idSoggettoMittente, IDServizio idServizio,
 			IRegistryReader registryReader) throws ProtocolException;
 	
+	/**
+	 * Indica se un http return code redirect '3XX' deve essere segnalato con errore o meno.
+	 * 
+	 * @param serviceBinding ServiceBinding (REST/SOAP)
+	 * @return indicazione se un http return code redirect '3XX' deve essere segnalato con errore (false) o come consegna con successo (true).
+	 * @throws ProtocolException
+	 */
+	public boolean isSuccessfulHttpRedirectStatusCode(ServiceBinding serviceBinding) throws ProtocolException;
 	
     
     

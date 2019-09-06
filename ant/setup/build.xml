@@ -91,11 +91,13 @@
 
 		Cooperazione Applicativa
 			antinstaller_protocollo_trasparente=true
+			antinstaller_protocollo_modipa=true
 			antinstaller_protocollo_spcoop=true
 			antinstaller_protocollo_as4=true
 			antinstaller_protocollo_sdi=false
 			antinstaller_nomesoggetto=NOMESOGGETTO
 			antinstaller_tiposoggetto_trasparente=gw
+			antinstaller_tiposoggetto_modipa=modipa
 			antinstaller_tiposoggetto_spcoop=spc
 			antinstaller_tiposoggetto_as4=as4
 			antinstaller_tiposoggetto_sdi=sdi
@@ -272,6 +274,14 @@
 			</then>
 		</if>
 
+		<!-- Impostazione ModI PA -->
+		<if>
+			<istrue value="${antinstaller_protocollo_modipa}" />
+			<then>
+				<antcall target="setup_modipa"/>
+			</then>
+		</if>
+
 		<!-- Impostazione SPCoop -->
 		<if>
 			<istrue value="${antinstaller_protocollo_spcoop}" />
@@ -310,6 +320,15 @@
 			<then>
 				<antcall target="_setup_workDir_protocollo">
 					<param name="protocolName" value="trasparente"/>
+				</antcall>
+			</then>
+		</if>
+		<!-- Impostazione ModI PA -->
+		<if>
+			<istrue value="${antinstaller_protocollo_modipa}" />
+			<then>
+				<antcall target="_setup_workDir_protocollo">
+					<param name="protocolName" value="modipa"/>
 				</antcall>
 			</then>
 		</if>
@@ -377,6 +396,12 @@
 	<target name="_setup_trasparente">
 		<!-- per ora e' NOP -->
 		<!-- <copy file="${deploy_resources}/protocolli/trasparente/trasparente_local.properties" todir="${tmp_cfg}"/> -->
+	</target>
+
+	<target name="setup_modipa" depends="_setup_modipa"/>
+	<target name="_setup_modipa">
+		<!-- per ora e' NOP -->
+		<!-- <copy file="${deploy_resources}/protocolli/modipa/modipa_local.properties" todir="${tmp_cfg}"/> -->
 	</target>
 
 	<target name="setup_spcoop" depends="_setup_spcoop"/>
@@ -504,6 +529,17 @@
 						<copy todir="${tmp_archivi}/govway.ear/lib">
 						    <fileset dir="${deploy_sw}">
 						      <include name="openspcoop2_trasparente-protocol_*.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
+				<!-- modipa -->
+				<if>
+					<istrue value="${antinstaller_protocollo_modipa}" />
+					<then>
+						<copy todir="${tmp_archivi}/govway.ear/lib">
+						    <fileset dir="${deploy_sw}">
+						      <include name="openspcoop2_modipa-protocol_*.jar"/>
 						    </fileset>
 						</copy>
 					</then>
@@ -719,6 +755,17 @@
 				</copy>
 			</then>
 		</if>
+		<!-- modipa -->
+		<if>
+			<istrue value="${antinstaller_protocollo_modipa}" />
+			<then>
+				<copy todir="${tomcat_war}/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_modipa-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
 		<!-- spcoop -->
 		<if>
 			<istrue value="${antinstaller_protocollo_spcoop}" />
@@ -846,10 +893,40 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 		                           files="init_soggetto_trasparente.sql"/>
 				</concat>
 				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
-<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa) VALUES ('trasparente','http://localhost:8080/govway/out/','http://localhost:8080/govway/');
+<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa,url_pd_rest,url_pa_rest,url_pd_soap,url_pa_soap) VALUES ('trasparente','http://localhost:8080/govway/out/','http://localhost:8080/govway/', 'http://localhost:8080/govway/out/','http://localhost:8080/govway/', 'http://localhost:8080/govway/out/','http://localhost:8080/govway/');
 ]]>
 				</concat>
 				<delete file="${tmp_sql}/init_soggetto_trasparente.sql" failonerror="false"/>
+			</then>
+		</if>
+
+		<!-- modipa -->
+		<if>
+			<istrue value="${antinstaller_protocollo_modipa}" />
+			<then>
+				<copy file="${deploy_sql}/init_soggetto.sql" tofile="${tmp_sql}/init_soggetto_modipa.sql" overwrite="true"/>
+				<antcall target="sql_settings_by_protocol">
+				    <param name="file" value="${tmp_sql}/init_soggetto_modipa.sql"/>
+					<param name="sql_nome" value="${antinstaller_nomesoggetto}"/>
+					<param name="sql_tipo" value="${antinstaller_tiposoggetto_modipa}"/>
+					<param name="sql_idporta" value="domain/modipa/${antinstaller_nomesoggetto}"/>
+					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_modipa}${antinstaller_nomesoggetto},c=it"/>
+					<param name="sql_protocollo_versione" value="1.0"/>
+				</antcall>
+				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
+				  <header filtering="no" trimleading="yes">
+
+-- Protocol modipa
+				      	
+				  </header>
+				  <filelist dir="${tmp_sql}"
+		                           files="init_soggetto_modipa.sql"/>
+				</concat>
+				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
+<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa,url_pd_rest,url_pa_rest,url_pd_soap,url_pa_soap) VALUES ('modipa','http://localhost:8080/govway/modipa/out/','http://localhost:8080/govway/modipa/','http://localhost:8080/govway/rest/out/','http://localhost:8080/govway/rest/','http://localhost:8080/govway/soap/out/','http://localhost:8080/govway/soap/');
+]]>
+				</concat>
+				<delete file="${tmp_sql}/init_soggetto_modipa.sql" failonerror="false"/>
 			</then>
 		</if>
 
@@ -902,7 +979,7 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 		                           files="init_soggetto_as4.sql"/>
 				</concat>
 				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
-<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa) VALUES ('as4','http://localhost:8080/govway/as4/out/','${antinstaller_as4_msh}');
+<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa,url_pd_rest,url_pa_rest,url_pd_soap,url_pa_soap) VALUES ('as4','http://localhost:8080/govway/as4/out/','${antinstaller_as4_msh}', 'http://localhost:8080/govway/as4/out/','${antinstaller_as4_msh}', 'http://localhost:8080/govway/as4/out/','${antinstaller_as4_msh}');
 ]]>
 				</concat>
 				<delete file="${tmp_sql}/init_soggetto_as4.sql" failonerror="false"/>
@@ -932,7 +1009,7 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 		                           files="init_soggetto_sdi.sql"/>
 				</concat>
 				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
-<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa) VALUES ('sdi','http://localhost:8080/govway/sdi/out/xml2soap/','http://localhost:8080/govway/sdi/in/');
+<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa,url_pd_rest,url_pa_rest,url_pd_soap,url_pa_soap) VALUES ('sdi','http://localhost:8080/govway/sdi/out/xml2soap/','http://localhost:8080/govway/sdi/in/', 'http://localhost:8080/govway/sdi/out/xml2soap/','http://localhost:8080/govway/sdi/in/', 'http://localhost:8080/govway/sdi/out/xml2soap/','http://localhost:8080/govway/sdi/in/');
 ]]>
 				</concat>
 				<delete file="${tmp_sql}/init_soggetto_sdi.sql" failonerror="false"/>
@@ -1321,6 +1398,17 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 				</copy>
 			</then>
 		</if>
+		<!-- modipa -->
+		<if>
+			<istrue value="${antinstaller_protocollo_modipa}"/>
+			<then>
+				<copy todir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_modipa-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
 		<!-- spcoop -->
 		<if>
 			<istrue value="${antinstaller_protocollo_spcoop}"/>
@@ -1395,6 +1483,17 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 				<copy todir="${tmp_archivi}/govwayMonitor.war/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}">
 				      <include name="openspcoop2_trasparente-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
+		<!-- modipa -->
+		<if>
+			<istrue value="${antinstaller_protocollo_modipa}"/>
+			<then>
+				<copy todir="${tmp_archivi}/govwayMonitor.war/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_modipa-protocol_*.jar"/>
 				    </fileset>
 				</copy>
 			</then>
@@ -1474,6 +1573,17 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 						<copy todir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib">
 						    <fileset dir="${deploy_sw}">
 						      <include name="openspcoop2_trasparente-protocol_*.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
+				<!-- modipa -->
+				<if>
+					<istrue value="${antinstaller_protocollo_modipa}"/>
+					<then>
+						<copy todir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib">
+						    <fileset dir="${deploy_sw}">
+						      <include name="openspcoop2_modipa-protocol_*.jar"/>
 						    </fileset>
 						</copy>
 					</then>
@@ -1561,6 +1671,17 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 						</copy>
 					</then>
 				</if>
+				<!-- modipa -->
+				<if>
+					<istrue value="${antinstaller_protocollo_modipa}"/>
+					<then>
+						<copy todir="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/lib">
+						    <fileset dir="${deploy_sw}">
+						      <include name="openspcoop2_modipa-protocol_*.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
 				<!-- spcoop -->
 				<if>
 					<istrue value="${antinstaller_protocollo_spcoop}"/>
@@ -1637,6 +1758,17 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 						<copy todir="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/lib">
 						    <fileset dir="${deploy_sw}">
 						      <include name="openspcoop2_trasparente-protocol_*.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
+				<!-- modipa -->
+				<if>
+					<istrue value="${antinstaller_protocollo_modipa}"/>
+					<then>
+						<copy todir="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/lib">
+						    <fileset dir="${deploy_sw}">
+						      <include name="openspcoop2_modipa-protocol_*.jar"/>
 						    </fileset>
 						</copy>
 					</then>

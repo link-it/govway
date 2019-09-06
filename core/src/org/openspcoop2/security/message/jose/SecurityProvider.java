@@ -54,6 +54,8 @@ public class SecurityProvider implements IProvider {
 					!jwtOptions.isPermitUseHeaderJWK() &&
 					!jwtOptions.isPermitUseHeaderX5C() &&
 					!jwtOptions.isPermitUseHeaderX5U() &&
+					!jwtOptions.isPermitUseHeaderX5T() &&
+					!jwtOptions.isPermitUseHeaderX5T_256() &&
 					!jwtOptions.isPermitUseHeaderKID()
 					){
 						throw new ProviderValidationException("Selezionare almeno un header");

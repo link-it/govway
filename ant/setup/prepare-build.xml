@@ -10,6 +10,7 @@
 	<import file="./ant/prepare/pdd-build.xml" />
 	<import file="./ant/prepare/sql-build.xml" />
 	<import file="./ant/prepare/trasparente-build.xml" />
+	<import file="./ant/prepare/modipa-build.xml" />
 	<import file="./ant/prepare/spcoop-build.xml" />
 	<import file="./ant/prepare/as4-build.xml" />
 	<import file="./ant/prepare/sdi-build.xml" />
@@ -33,6 +34,7 @@
 		<antcall target="prepare_shared_jar_setup" />
 		<antcall target="prepare_pdd_setup" />
 		<antcall target="prepare_trasparente_setup" />
+		<antcall target="prepare_modipa_setup" />
 		<antcall target="prepare_spcoop_setup" />
 		<antcall target="prepare_as4_setup" />
 		<antcall target="prepare_sdi_setup" />

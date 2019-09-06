@@ -60,6 +60,9 @@ public class HttpConstants {
 	public final static String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
 	public final static String CONTENT_TRANSFER_ENCODING_VALUE_BINARY = "binary";
 	
+	/** Content Encoding */
+	public final static String CONTENT_ENCODING = "Content-Encoding";
+	
 	/** Redirect */
 	public final static String REDIRECT_LOCATION = "Location";
 	
@@ -71,6 +74,14 @@ public class HttpConstants {
 	
 	/** Retry-After */
 	public final static String RETRY_AFTER = "Retry-After";
+	
+	/** Digest */
+	public final static String DIGEST = "Digest";
+	public final static String DIGEST_ALGO_MD5 = "MD5";
+	public final static String DIGEST_ALGO_SHA_1 = "SHA";
+	public final static String DIGEST_ALGO_SHA_256 = "SHA-256";
+	public final static String DIGEST_ALGO_SHA_384 = "SHA-384";
+	public final static String DIGEST_ALGO_SHA_512 = "SHA-512";
 	
 	/** Authorization */
 	public final static String AUTHORIZATION = "Authorization";

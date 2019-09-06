@@ -27,6 +27,8 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.openspcoop2.utils.Utilities;
+
 /**
  * RisultatoStatistico 
  *
@@ -70,8 +72,6 @@ public class RisultatoStatistico implements Serializable {
 		this.dataFine = dataFine;
 	}
 	
-	private static final String format = "yyyy-MM-dd_HH:mm:ss.SSS";
-	
 	@Override
 	public String toString(){
 		
@@ -82,7 +82,7 @@ public class RisultatoStatistico implements Serializable {
 		
 		bf.append("\n");
 		
-		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+		SimpleDateFormat dateFormat = Utilities.getSimpleDateFormatMs();
 		
 		bf.append("DataInizio: ");
 		if(this.dataInizio!=null)

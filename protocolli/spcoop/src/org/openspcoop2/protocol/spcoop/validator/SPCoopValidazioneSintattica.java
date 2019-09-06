@@ -76,6 +76,7 @@ import org.openspcoop2.protocol.spcoop.config.SPCoopProperties;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostantiPosizioneEccezione;
 import org.openspcoop2.protocol.spcoop.utils.SPCoopUtils;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.w3c.dom.Node;
 
@@ -612,7 +613,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					if(split != null && split.length == 5){
 						Date dataIntoIDEgov = null;
 						try{
-							SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd_HH:mm"); // SimpleDateFormat non e' thread-safe
+							SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMinute();
 							dataIntoIDEgov = dateformat.parse(split[3]+"_"+split[4]);
 						}catch(Exception e){}
 						if(dataIntoIDEgov!=null){
@@ -4462,7 +4463,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			if(split != null && split.length == 5){
 				Date dataIntoIDEgov = null;
 				try{
-					SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd_HH:mm"); // SimpleDateFormat non e' thread-safe
+					SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMinute();
 					dataIntoIDEgov = dateformat.parse(split[3]+"_"+split[4]);
 				}catch(Exception e){}
 				if(dataIntoIDEgov!=null){

@@ -32,12 +32,11 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.mapping.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.ProtocolProperty;
-import org.openspcoop2.core.registry.constants.ProprietariProtocolProperty;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.AbstractConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
@@ -83,7 +82,6 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 	private IRegistryReader registryReader = null;
 	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
-	private ConsoleInterfaceType consoleInterfaceType = null;
 	
 	private BinaryParameter contenutoDocumento= null;
 
@@ -106,7 +104,8 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 		String label = "";
 
 		TipoOperazione tipoOp = TipoOperazione.CHANGE;
-		List<ProtocolProperty> oldProtocolPropertyList = null;
+		List<ProtocolProperty> oldProtocolPropertyListRegistry = null;
+		List<org.openspcoop2.core.config.ProtocolProperty> oldProtocolPropertyListConfig = null;
 
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
 		this.consoleOperationType = ConsoleOperationType.CHANGE;
@@ -116,13 +115,13 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 
 		try{
 			ProtocolPropertiesHelper ppHelper = new ProtocolPropertiesHelper(request, pd, session);
-			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(ppHelper); 
-
+			
 			this.id = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_ID);
 			this.idProprietario = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO);
 			String tipoProprietarioS = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO);
 			if(tipoProprietarioS!= null)
 				this.tipoProprietario = ProprietariProtocolProperty.valueOf(tipoProprietarioS);
+			boolean propertyRegistry = ppHelper.isProtocolPropertiesRegistry(this.tipoProprietario);
 			this.nome = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME);
 			this.nomeProprietario = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO);
 			this.nomeParentProprietario = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PARENT_PROPRIETARIO);
@@ -152,17 +151,23 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			Object idOggettoProprietario = ppHelper.getIdOggettoProprietario(oggettoProprietario, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
 
 			this.consoleConfiguration = ppHelper.getConsoleDynamicConfiguration(idOggettoProprietario, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo,
-					this.consoleOperationType, this.consoleInterfaceType, 
+					this.consoleOperationType,  
 					this.registryReader, this.configRegistryReader, this.consoleDynamicConfiguration);
 
 			this.protocolProperties = ppHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType, this.nome, this.contenutoDocumento);
 
-			oldProtocolPropertyList = ppHelper.getProtocolProperties(oggettoProprietario, this.id, this.nome, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
-			
-			ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
+			if(propertyRegistry) {
+				oldProtocolPropertyListRegistry = ppHelper.getProtocolPropertiesRegistry(oggettoProprietario, this.id, this.nome, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
+				ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(this.protocolProperties, oldProtocolPropertyListRegistry, this.consoleOperationType);
+			}
+			else {
+				oldProtocolPropertyListConfig = ppHelper.getProtocolPropertiesConfig(oggettoProprietario, this.id, this.nome, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
+				ProtocolPropertiesUtils.mergeProtocolPropertiesConfig(this.protocolProperties, oldProtocolPropertyListConfig, this.consoleOperationType);
+			}
 
 			// vecchio valore della property sul DB 
-			ProtocolProperty protocolProperty = null; 
+			ProtocolProperty protocolPropertyRegistry = null; 
+			org.openspcoop2.core.config.ProtocolProperty protocolPropertyConfig = null; 
 
 			// binaryConsoleItem
 			AbstractConsoleItem<?> binaryConsoleItem = ProtocolPropertiesUtils.getAbstractConsoleItem(this.consoleConfiguration.getConsoleItem(), this.nome); 
@@ -170,10 +175,12 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			label = binaryConsoleItem.getLabel();
 			
 			boolean readOnly = false;
+			boolean showContent = true;
 			BinaryConsoleItem b = null;
 			if(binaryConsoleItem instanceof BinaryConsoleItem) {
 				b = (BinaryConsoleItem) binaryConsoleItem;
 				readOnly = b.isReadOnly();
+				showContent = b.isShowContent();
 			}
 			
 			// Preparo il menu
@@ -181,14 +188,25 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 
 			// se la property e' presente sul db allora la leggo
 			if(idProtocolProperty > 0){
-				protocolProperty = ProtocolPropertiesUtils.getProtocolProperty(this.nome, oldProtocolPropertyList); 
+				if(propertyRegistry) {
+					protocolPropertyRegistry = ProtocolPropertiesUtils.getProtocolPropertyRegistry(this.nome, oldProtocolPropertyListRegistry);
+				}
+				else {
+					protocolPropertyConfig = ProtocolPropertiesUtils.getProtocolPropertyConfig(this.nome, oldProtocolPropertyListConfig);
+				}
 			}
 
 			oldContenutoDocumento = new BinaryParameter();
-			if(protocolProperty != null){
+			if(protocolPropertyRegistry != null){
 				// carico il vecchio contenuto della property
-				oldContenutoDocumento.setValue(protocolProperty.getByteFile());
-				oldContenutoDocumento.setFilename(protocolProperty.getFile());
+				oldContenutoDocumento.setValue(protocolPropertyRegistry.getByteFile());
+				oldContenutoDocumento.setFilename(protocolPropertyRegistry.getFile());
+				oldContenutoDocumento.setName(this.nome); 
+			}
+			else if(protocolPropertyConfig != null){
+				// carico il vecchio contenuto della property
+				oldContenutoDocumento.setValue(protocolPropertyConfig.getByteFile());
+				oldContenutoDocumento.setFilename(protocolPropertyConfig.getFile());
 				oldContenutoDocumento.setName(this.nome); 
 			}
 
@@ -202,7 +220,10 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 					oldContenutoDocumento.setFilename(binaryConsoleItem.getLabel());
 				}
 			}
-			String errore = Utilities.getTestoVisualizzabile(oldValue,contenutoDocumentoStringBuffer);
+			String errore = null;
+			if(showContent) {
+				errore = Utilities.getTestoVisualizzabile(oldValue,contenutoDocumentoStringBuffer);
+			}
 			
 			// Parametri Barra titolo TIPO PROPRIETARIO / LABEL OGGETTO / GESTIONE DOCUMENTO
 			List<Parameter> lstParam = ppHelper.getTitolo(oggettoProprietario, this.tipoProprietario,  this.id, this.nome, this.idProprietario, this.nomeProprietario,this.nomeParentProprietario,this.urlChange, this.tipoAccordo);
@@ -242,7 +263,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			boolean isOk = true;
 
 			try{
-				ppHelper.validaProtocolPropertyBinaria(this.nome,this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+				ppHelper.validaProtocolPropertyBinaria(this.nome,this.consoleConfiguration, this.consoleOperationType, this.protocolProperties);
 			}catch(ProtocolException e){
 				ControlStationCore.getLog().error(e.getMessage(),e);
 				pd.setMessage(e.getMessage());
@@ -272,7 +293,10 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				contenutoDocumentoStringBuffer = new StringBuffer();
-				errore = Utilities.getTestoVisualizzabile(this.contenutoDocumento.getValue(),contenutoDocumentoStringBuffer);
+				errore = null;
+				if(showContent) {
+					errore = Utilities.getTestoVisualizzabile(this.contenutoDocumento.getValue(),contenutoDocumentoStringBuffer);
+				}
 
 				dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, this.protocollo, this.id, this.nome, this.idProprietario,this.tipoProprietario,this.tipoAccordo,this.nomeProprietario,this.nomeParentProprietario,this.urlChange, label,
 						this.contenutoDocumento,contenutoDocumentoStringBuffer,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly);
@@ -289,10 +313,15 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			}
 
 			// salvataggio delle properties con hack in ADD per far settare il valore della property binary
-			List<ProtocolProperty> protocolPropertiesAggiornate = ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, ConsoleOperationType.ADD, oldProtocolPropertyList);
-			
-			ppHelper.salvaProperties(userLogin, ppHelper.smista(), oggettoProprietario, protocolPropertiesAggiornate, this.id, this.nome, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
-
+			if(propertyRegistry) {
+				List<ProtocolProperty> protocolPropertiesAggiornate = ProtocolPropertiesUtils.toProtocolPropertiesRegistry(this.protocolProperties, ConsoleOperationType.ADD, oldProtocolPropertyListRegistry);
+				ppHelper.salvaPropertiesRegistry(userLogin, ppHelper.smista(), oggettoProprietario, protocolPropertiesAggiornate, this.id, this.nome, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
+			}
+			else {
+				List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertiesAggiornate = ProtocolPropertiesUtils.toProtocolPropertiesConfig(this.protocolProperties, ConsoleOperationType.ADD, oldProtocolPropertyListConfig);
+				ppHelper.salvaPropertiesConfig(userLogin, ppHelper.smista(), oggettoProprietario, protocolPropertiesAggiornate, this.id, this.nome, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
+			}
+				
 			//cancello il file temporaneo
 			ppHelper.deleteBinaryProtocolPropertyTmpFiles(this.protocolProperties, this.nome, ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
 			
@@ -313,16 +342,26 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			// ricaricare il valore dell'id property
 			oggettoProprietario = ppHelper.getOggettoProprietario(this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
 			
-			oldProtocolPropertyList = ppHelper.getProtocolProperties(oggettoProprietario, this.id, this.nome, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
-			
-			protocolProperty = ProtocolPropertiesUtils.getProtocolProperty(this.nome, oldProtocolPropertyList);
-			
-			this.id = null;
-			if(protocolProperty != null)
-				this.id = ""+ protocolProperty.getId();
+			if(propertyRegistry) {
+				oldProtocolPropertyListRegistry = ppHelper.getProtocolPropertiesRegistry(oggettoProprietario, this.id, this.nome, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
+				ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolPropertyRegistry(this.nome, oldProtocolPropertyListRegistry);
+				this.id = null;
+				if(protocolProperty != null)
+					this.id = ""+ protocolProperty.getId();
+			}
+			else {
+				oldProtocolPropertyListConfig = ppHelper.getProtocolPropertiesConfig(oggettoProprietario, this.id, this.nome, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
+				org.openspcoop2.core.config.ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolPropertyConfig(this.nome, oldProtocolPropertyListConfig);
+				this.id = null;
+				if(protocolProperty != null)
+					this.id = ""+ protocolProperty.getId();
+			}
 			
 			contenutoDocumentoStringBuffer = new StringBuffer();
-			errore = Utilities.getTestoVisualizzabile(this.contenutoDocumento.getValue(),contenutoDocumentoStringBuffer);
+			errore = null;
+			if(showContent) {
+				errore = Utilities.getTestoVisualizzabile(this.contenutoDocumento.getValue(),contenutoDocumentoStringBuffer);
+			}
 
 			dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, this.protocollo, this.id, this.nome, this.idProprietario,this.tipoProprietario,this.tipoAccordo,this.nomeProprietario,this.nomeParentProprietario,this.urlChange, label,
 					this.contenutoDocumento,contenutoDocumentoStringBuffer,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly);

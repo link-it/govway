@@ -1,0 +1,35 @@
+
+<project name="prepare-setup-modipa" basedir=".">
+	
+	<description>
+        	PREPARE SETUP ModI PA
+	</description>
+
+	
+	<!-- Protocollo ModI PA -->
+	<target name="prepare_modipa_setup">
+		
+		<if>
+			<not>
+				<available file="${modipa}/local_env.xml"/>
+			</not>
+			<then>
+				<copy file="${modipa}/local_env.xml.template" tofile="${modipa}/local_env.xml" />
+			</then>
+		</if>
+				
+		<antcall target="compile_modipa_plugin" >
+	    		<param name="dist" value="${deploy_sw}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_modipa" value="${src_modipa}"/>
+	 	</antcall>
+		
+		<delete includeEmptyDirs="true">
+		    <fileset dir="${deploy_sw}/modipa" includes="*"/>
+		</delete>
+		<delete dir="${deploy_sw}/modipa"/>
+		
+	</target>
+	
+	
+</project>

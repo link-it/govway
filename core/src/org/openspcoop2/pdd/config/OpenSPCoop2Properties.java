@@ -109,6 +109,7 @@ import org.openspcoop2.protocol.engine.driver.repository.GestoreRepositoryFactor
 import org.openspcoop2.protocol.engine.driver.repository.IGestoreRepository;
 import org.openspcoop2.protocol.sdk.BypassMustUnderstandCheck;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
@@ -1623,7 +1624,7 @@ public class OpenSPCoop2Properties {
 				this.isTransazioniSaveDumpInUniqueTransaction();
 				this.isTransazioniFaultPrettyPrint();
 				
-				this.isTransazioniFiltroDuplicatiSaveDateEnabled();
+				this._isTransazioniFiltroDuplicatiSaveDateEnabled();
 				if(this.isTransazioniFiltroDuplicatiTramiteTransazioniEnabled()) {
 					this.isTransazioniFiltroDuplicatiTramiteTransazioniUsePdDConnection();
 					this.isTransazioniFiltroDuplicatiTramiteTransazioniForceIndex();
@@ -16510,7 +16511,7 @@ public class OpenSPCoop2Properties {
 	// FiltroDuplicati
 	
 	private static Boolean isTransazioniFiltroDuplicatiSaveDateEnabled = null;
-	public boolean isTransazioniFiltroDuplicatiSaveDateEnabled() {	
+	private boolean _isTransazioniFiltroDuplicatiSaveDateEnabled() throws ProtocolException {	
 		if(OpenSPCoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled==null){
 			try{ 
 				String name = null;
@@ -16528,6 +16529,9 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled;
+	}
+	public boolean isTransazioniFiltroDuplicatiSaveDateEnabled(IProtocolFactory<?> protocolFactory) throws ProtocolException {	
+		return _isTransazioniFiltroDuplicatiSaveDateEnabled() && protocolFactory.createProtocolConfiguration().isDataPresenteInIdentificativoMessaggio();
 	}
 	
 	private static Boolean isTransazioniFiltroDuplicatiTramiteTransazioniEnabled = null;

@@ -49,6 +49,7 @@ import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.xml.ValidatoreXSD;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
@@ -504,7 +505,7 @@ public class XMLUtils  {
 		if(de!=null){
 			
 			if(de.getTimestamp()!=null){
-				SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd_HH:mm:ss.SSS"); // SimpleDateFormat non e' thread-safe
+				SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 				bf.append("("+dateformat.format(de.getTimestamp())+")");
 			}
 			

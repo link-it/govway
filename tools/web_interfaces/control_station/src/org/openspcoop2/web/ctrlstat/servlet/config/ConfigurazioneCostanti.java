@@ -365,6 +365,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_TRACCIAMENTO_MENU = "Tracciamento";
 	
 	public final static String LABEL_CONFIGURAZIONE_GENERALE = "Configurazione Generale";
+	public final static String LABEL_CONFIGURAZIONE_CACHE = "Configurazione Cache";
 	
 	public final static String LABEL_CONFIGURAZIONE_ELENCO_APPENDER_TRACCIAMENTO = "Elenco Appender Tracciamento";
 	public final static String LABEL_CONFIGURAZIONE_ELENCO_APPENDER_MESSAGGI_DIAGNOSTICI = "Elenco Appender Messaggi Diagnostici";
@@ -431,6 +432,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_RESPONSE_CACHING = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING;
 	public final static String LABEL_CONFIGURAZIONE_REGISTRO_SERVIZI = "Registro dei Servizi";
 	
+	public final static String LABEL_CONFIGURAZIONE_CACHES = "Cache";
+	
 	public final static String LABEL_CONFIGURAZIONE_CACHE_REGISTRY = "Cache";
 	
 	public final static String LABEL_CONFIGURAZIONE_CACHE_CONFIG = "Cache (Configurazione della Porta)";
@@ -440,6 +443,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_CACHE_AUTHN = "Cache (Dati di Autenticazione)";
 	
 	public final static String LABEL_CONFIGURAZIONE_CACHE_TOKEN = "Cache (Gestione dei Token)";
+	
+	public final static String LABEL_CONFIGURAZIONE_CACHE_KEYSTORE = "Cache (Keystore)";
 	
 	public final static String LABEL_CONFIGURAZIONE_CACHE_RISPOSTE = "Cache (Risposte)";
 	
@@ -606,8 +611,13 @@ public class ConfigurazioneCostanti {
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_NAME = "protocolConfigName";
 	public final static String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_SOGGETTO = "protocolConfigSoggetto";
-	public final static String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD = "protocolConfigUrlPD";
-	public final static String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA = "protocolConfigUrlPA";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD_NOBINDING = "protocolConfigUrlPD";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA_NOBINDING = "protocolConfigUrlPA";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD_REST = "protocolConfigUrlPDREST";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA_REST = "protocolConfigUrlPAREST";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD_SOAP = "protocolConfigUrlPDSOAP";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA_SOAP = "protocolConfigUrlPASOAP";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_VALORE_UNDEFINED = "-"; 
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA = "statoLog4jDiagnostica";
 	public final static String PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP = "statoLog4jOpenspcoop";
@@ -615,6 +625,8 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO = "statoLog4jTracciamento";
 	public final static String PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP = "statoLog4jDump";
 
+	public final static String PARAMETRO_CONFIGURAZIONE_CACHES = "configCaches";
+	
 	public final static String PARAMETRO_CONFIGURAZIONE_STATO_CACHE_REGISTRY = "statocacheRegistry";
 	public final static String PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_REGISTRY = "dimensionecacheRegistry";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_REGISTRY = "algoritmocacheRegistry";
@@ -644,6 +656,13 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_TOKEN = "algoritmocacheToken";
 	public final static String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_TOKEN = "idlecacheToken";
 	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_TOKEN = "lifecacheToken";
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_STATO_CACHE_KEYSTORE = "statocacheKeystore";
+	public final static String PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_KEYSTORE = "dimensionecacheKeystore";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_KEYSTORE = "algoritmocacheKeystore";
+	public final static String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_KEYSTORE = "idlecacheKeystore";
+	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_KEYSTORE = "lifecacheKeystore";
+	public final static String PARAMETRO_CONFIGURAZIONE_CRL_LIFE_CACHE_KEYSTORE = "crllifecacheKeystore";
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_STATO_CACHE_RISPOSTE = "statocacheRisposte";
 	public final static String PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_RISPOSTE = "dimensionecacheRisposte";
@@ -951,6 +970,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE = "Algoritmo";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_IDLE_CACHE = "Item Idle Time (Secondi)";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LIFE_CACHE = "Item Life Time (Secondi)";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CRL_LIFE_CACHE = "CRL Life Time (Secondi)";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_LRU = "LRU";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_MRU = "MRU";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PD = "Porta Delegata";
@@ -961,8 +981,12 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_SOGGETTO = "Soggetto";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_SOGGETTO_VISUALIZZA_DATI = "Visualizza Dati Soggetto";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD = "Base URL Fruizione";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD_REST = LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD + " REST";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD_SOAP = LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD + " SOAP";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA = "Base URL Erogazione";
-	
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA_REST = LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA + " REST";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA_SOAP = LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA + " SOAP";
+
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_LABEL = "Log4j XML Diagnostici";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_NOTE = "govway_diagnostici.log";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_LABEL = "Log4J Diagnostici";
@@ -1293,14 +1317,7 @@ public class ConfigurazioneCostanti {
 	
 	public final static String TRACCIAMENTO_ESITI_PERSONALIZZATO = "personalizzato";
 	
-	
-	public static String getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(String context) {
-		return CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(context);
-	}
-	public static String getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(String context) {
-		return CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(context);
-	}
-	
+		
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_SSL = TipoAutenticazione.SSL.getValue();
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_BASIC = TipoAutenticazione.BASIC.getValue();
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_PRINCIPAL = TipoAutenticazione.PRINCIPAL.getValue();
@@ -1339,6 +1356,7 @@ public class ConfigurazioneCostanti {
 		CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI.add("MemoriaOccupata");
 		CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI.add("IdleTime");
 		CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI.add("LifeTime");
+		CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI.add("CRLsLifeTime");
 	}
 	
 	public final static  String [] STATI = CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA; 

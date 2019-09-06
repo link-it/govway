@@ -759,8 +759,7 @@ public class ClientTest {
 			
 			sqlQueryObject = (SQLQueryObjectCore) createSQLQueryObjectCore(tipo,selectForUpdate);
 			
-			String format = "yyyy-MM-dd_HH:mm:ss.SSS";
-			SimpleDateFormat dateformat = new SimpleDateFormat (format);
+			SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 			
 			sqlQueryObject.addFromTable(table);
 			sqlQueryObject.addSelectField("descrizione");

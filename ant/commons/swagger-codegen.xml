@@ -119,6 +119,27 @@
 		</if>
 		<delete dir="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN"/>
 
+		<!-- BugFix CodeGen -->
+		<if>
+			<istrue value="${swaggerCodeGen.bugFixCodeGen}" />
+			<then>
+				<antcall target="-swagger_codegen_fix_bug_header_param">
+					<param name="swaggerCodeGen.srcDir" value="${swaggerCodeGen.outputDir}"/>
+				</antcall>	
+			</then>
+		</if>
+
+		<!-- Gestione classi 'Problem' -->
+		<if>
+			<istrue value="${swaggerCodeGen.addAnnotationIgnoreProblem}" />
+			<then>			
+				<antcall target="-swagger_codegen_ignore_properties">
+					<param name="problemFile" value="${swaggerCodeGen.outputDir}/${swaggerCodeGen.packagePath}/model/${swaggerCodeGen.problemClassName}.java"/>
+					<param name="problemClassName" value="${swaggerCodeGen.problemClassName}"/>
+				</antcall>	
+			</then>
+		</if>
+
 		<!-- Aggiunta GPL ai nuovi sorgenti generati -->	
 		<if>
 			<istrue value="${swaggerCodeGen.addGPLDeclaration}" />
@@ -150,6 +171,21 @@
 					</then>
 				</if>
 			</then>
+		</if>
+		
+		<!-- jar -->
+		<if>
+			<istrue value="${swaggerCodeGen.buildJar}" />
+			<then>			
+				<antcall target="-swagger_codegen_jar_stub">
+					<param name="swaggerCodeGen.buildDir" value="${swaggerCodeGen.buildDir}"/>
+					<param name="debug" value="${debug}"/>
+					<param name="swaggerCodeGen.srcDir" value="${swaggerCodeGen.outputDir}"/>
+					<param name="swaggerCodeGen.cleanSrcDir" value="${swaggerCodeGen.cleanSrcDir}"/>
+					<param name="swaggerCodeGen.jar" value="${swaggerCodeGen.jar}"/>
+					<param name="swaggerCodeGen.buildJarIncludeImpl" value="${swaggerCodeGen.buildJarIncludeImpl}"/>
+				</antcall>	
+			</then>	
 		</if>
 
 	</target>
@@ -267,6 +303,27 @@ paths:
 		</copy>
 		<delete dir="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN"/>
 
+		<!-- BugFix CodeGen -->
+		<if>
+			<istrue value="${swaggerCodeGen.bugFixCodeGen}" />
+			<then>
+				<antcall target="-swagger_codegen_fix_bug_header_param">
+					<param name="swaggerCodeGen.srcDir" value="${swaggerCodeGen.outputDir}"/>
+				</antcall>	
+			</then>
+		</if>
+
+		<!-- Gestione classi 'Problem' -->
+		<if>
+			<istrue value="${swaggerCodeGen.addAnnotationIgnoreProblem}" />
+			<then>			
+				<antcall target="-swagger_codegen_ignore_properties">
+					<param name="problemFile" value="${swaggerCodeGen.outputDir}/${swaggerCodeGen.packagePath}/model/${swaggerCodeGen.problemClassName}.java"/>
+					<param name="problemClassName" value="${swaggerCodeGen.problemClassName}"/>
+				</antcall>	
+			</then>
+		</if>
+
 		<!-- Aggiunta GPL ai nuovi sorgenti generati -->
 		<if>
 			<istrue value="${swaggerCodeGen.addGPLDeclaration}" />
@@ -279,6 +336,104 @@ paths:
 					</classpath>
 				</java>
 			</then>
+		</if>
+
+		<!-- jar -->
+		<if>
+			<istrue value="${swaggerCodeGen.buildJar}" />
+			<then>			
+				<antcall target="-swagger_codegen_jar_stub">
+					<param name="swaggerCodeGen.buildDir" value="${swaggerCodeGen.buildDir}"/>
+					<param name="debug" value="${debug}"/>
+					<param name="swaggerCodeGen.srcDir" value="${swaggerCodeGen.outputDir}"/>
+					<param name="swaggerCodeGen.cleanSrcDir" value="${swaggerCodeGen.cleanSrcDir}"/>
+					<param name="swaggerCodeGen.jar" value="${swaggerCodeGen.jar}"/>
+					<param name="swaggerCodeGen.buildJarIncludeImpl" value="${swaggerCodeGen.buildJarIncludeImpl}"/>
+				</antcall>	
+			</then>
+		</if>
+
+	</target>
+
+
+	<target name="-swagger_codegen_ignore_properties">
+
+		<!-- Impostazione Annotazione -->
+		<!-- Devo modificare i sorgenti che rappresentano un Problem per aggiungere annotazione '@JsonIgnoreProperties(ignoreUnknown = true)' per potere leggere i claim aggiuntivi inseriti da GovWay -->
+		<if>
+			<available file="${problemFile}" type="file"/>
+			<then>
+				<echo message="Add JsonIgnoreProperties at file '${problemFile}'"/>	
+				<var name="replacetoken" value="public class ${problemClassName}" />
+				<replace file="${problemFile}" token="${replacetoken}">
+					<replacevalue>@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
+public class @CLASS_NAME@</replacevalue>				
+				</replace>
+				<replace file="${problemFile}" token="@CLASS_NAME@" value="${problemClassName}"/>
+			</then>
+	    </if>
+
+	</target>
+
+
+	<target name="-swagger_codegen_fix_bug_header_param">
+
+		<!-- 
+			Risolve il bug di generazione dele codice che genera una firma, in presenza di un header param, scorretta che non compila:
+			public ... opName(....., @Valid ObjectType body@HeaderParam("X-ReplyTo") String xReplyTo) 
+		-->
+		<echo message="Fix Bug HeaderParam in src dir '${swaggerCodeGen.srcDir}'"/>	
+		<var name="replacetoken" value=" body@HeaderParam(" />
+		<replace dir="${swaggerCodeGen.srcDir}" token="${replacetoken}">
+			<replacevalue> body, @HeaderParam(</replacevalue>				
+		</replace>
+		
+	</target>
+
+	<target name="-swagger_codegen_jar_stub">
+				
+		<!-- Compilazione classi -->
+		<javac includeantruntime="false" destdir="${swaggerCodeGen.buildDir}" debug="${debug}" encoding="UTF-8">
+			<src path="${swaggerCodeGen.srcDir}" />
+			<exclude name="**/api/impl/**"/>
+			<classpath>
+				<fileset dir="${required_lib}/cxf" includes="*.jar"/>
+				<fileset dir="${required_lib}/saaj" includes="*.jar"/>
+				<fileset dir="${required_lib}/jackson" includes="*.jar"/>
+				<fileset dir="${required_lib}/jax" includes="jaxb*.jar"/>
+				<fileset dir="${required_lib}/javax" includes="validation-api-2.0.1.Final.jar"/>
+				<fileset dir="${required_lib}/shared" includes="activation-1.1.1.jar"/>
+				<fileset dir="${required_lib}/shared" includes="velocity-1.7.jar"/>
+				<fileset dir="${required_lib}/shared" includes="wsdl4j-1.6.3.jar"/>
+				<fileset dir="${required_lib}/security" includes="neethi-3.1.1.jar"/>
+				<fileset dir="${required_lib}/swagger" includes="*.jar"/>
+				<fileset dir="${required_lib}/commons" includes="*.jar"/>
+			</classpath>
+		</javac>
+
+		<!-- Rimozione sorgenti-->
+		<if>
+			<istrue value="${swaggerCodeGen.cleanSrcDir}" />
+			<then>
+				<delete dir="${swaggerCodeGen.srcDir}" />
+			</then>
+		</if>
+
+		<!-- jar -->
+		<if>
+			<istrue value="${swaggerCodeGen.buildJarIncludeImpl}" />
+			<then>
+				<jar jarfile="${swaggerCodeGen.jar}">
+					<zipfileset dir="${swaggerCodeGen.buildDir}" >
+						<exclude name="**/api/impl/**"/>
+					</zipfileset>
+				</jar>
+			</then>
+			<else>
+				<jar jarfile="${swaggerCodeGen.jar}">
+					<zipfileset dir="${swaggerCodeGen.buildDir}" />
+				</jar>
+			</else>
 		</if>
 
 	</target>

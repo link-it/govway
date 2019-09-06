@@ -32,6 +32,7 @@ public class BinaryProperty extends AbstractProperty<byte[]> {
 
 	private String fileName;
 	private String fileId;
+	private boolean clearContent = false;
 	
 	protected BinaryProperty(String id, byte[] value, String fileName, String fileId) {
 		super(id, value);
@@ -55,4 +56,11 @@ public class BinaryProperty extends AbstractProperty<byte[]> {
 		this.fileId = fileId;
 	}
 	
+	public boolean isClearContent() {
+		return this.clearContent;
+	}
+
+	public void setClearContent(boolean clearContent) {
+		this.clearContent = clearContent;
+	}
 }

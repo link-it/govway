@@ -171,6 +171,8 @@ CREATE INDEX INDEX_TR_FILTROD_REQ ON transazioni (id_messaggio_richiesta,pdd_ruo
 CREATE INDEX INDEX_TR_FILTROD_RES ON transazioni (id_messaggio_risposta,pdd_ruolo);
 CREATE INDEX INDEX_TR_FILTROD_REQ_2 ON transazioni (data_id_msg_richiesta,id_messaggio_richiesta);
 CREATE INDEX INDEX_TR_FILTROD_RES_2 ON transazioni (data_id_msg_risposta,id_messaggio_risposta);
+CREATE INDEX INDEX_TR_COLLABORAZIONE ON transazioni (id_collaborazione);
+CREATE INDEX INDEX_TR_RIF_RICHIESTA ON transazioni (id_asincrono);
 
 CREATE TABLE transazioni_info
 (

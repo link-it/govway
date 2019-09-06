@@ -112,12 +112,15 @@ public class ErroreApplicativoBuilder  {
 	public void setTipoPdD(TipoPdD tipoPdD) {
 		this.tipoPdD = tipoPdD;
 	}
+	
+	private String idTransazione;
 
 	public ErroreApplicativoBuilder(Logger aLog, IProtocolFactory<?> protocolFactory,
 			IDSoggetto dominio,IDSoggetto mittente,IDServizio servizio,String idFunzione,
 			ProprietaErroreApplicativo proprietaErroreApplicativo,MessageType messageType,
 			ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta,
-			TipoPdD tipoPdD,String servizioApplicativo) throws ProtocolException{
+			TipoPdD tipoPdD,String servizioApplicativo,
+			String idTransazione) throws ProtocolException{
 		if(aLog!=null)
 			this.log = aLog;
 		else
@@ -148,6 +151,8 @@ public class ErroreApplicativoBuilder  {
 		
 		this.tipoPdD = tipoPdD;
 		this.servizioApplicativo = servizioApplicativo;
+		
+		this.idTransazione = idTransazione;
 	}
 
 	public IProtocolFactory<?> getProtocolFactory(){
@@ -172,6 +177,7 @@ public class ErroreApplicativoBuilder  {
 		parameters.setRfc7807(this.rfc7807);
 		parameters.setHttpStatus(this.httpStatus);
 		parameters.setNomePorta(this.nomePorta);
+		parameters.setTransactionId(this.idTransazione);
 		
 		parameters.setTipoPorta(this.tipoPdD);
 		

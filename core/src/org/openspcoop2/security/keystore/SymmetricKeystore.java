@@ -22,6 +22,7 @@
 
 package org.openspcoop2.security.keystore;
 
+import java.io.Serializable;
 import java.security.Key;
 import java.security.KeyStore;
 
@@ -37,11 +38,24 @@ import org.openspcoop2.security.SecurityException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SymmetricKeystore {
+public class SymmetricKeystore implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private SecretKeySpec key = null;
-	private KeyStore keyStore = null;
+	private transient KeyStore keyStore = null;
 	private String passwordKey = null;
+	private String alias = null;
+	
+	@Override
+	public String toString() {
+		StringBuffer bf = new StringBuffer();
+		bf.append("SymmetricKeystore (").append(this.alias).append(") ");
+		return bf.toString();
+	}
 	
 	public SymmetricKeystore(String alias,String key,String algoritmo) throws SecurityException{
 		try{
@@ -54,21 +68,43 @@ public class SymmetricKeystore {
 			}
 
 			this.key = new SecretKeySpec(key.getBytes(),algorithm);
-			this.keyStore = KeyStore.getInstance("JCEKS");
-			this.keyStore.load(null);
+			
+			this.alias = alias;
 			this.passwordKey = "PASSWORD_CUSTOM";
-			this.keyStore.setKeyEntry(alias, this.key,this.passwordKey.toCharArray(), null);
-			FixTrustAnchorsNotEmpty.addCertificate(this.keyStore);			
+			
+			this.initKS();
+			
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);
 		}
 	}
+	
+	private void checkInit() throws SecurityException{
+		if(this.keyStore==null) {
+			this.initKS();
+		}
+	}
+	private synchronized void initKS() throws SecurityException{
+		if(this.keyStore==null) {
+			try {
+				this.keyStore = KeyStore.getInstance("JCEKS");
+				this.keyStore.load(null);
+				this.keyStore.setKeyEntry(this.alias, this.key,this.passwordKey.toCharArray(), null);
+				FixTrustAnchorsNotEmpty.addCertificate(this.keyStore);			
+			}
+			catch(Exception e){
+				throw new SecurityException(e.getMessage(),e);
+			}
+		}
+	}
+	
 	
 	public Key getKey() throws SecurityException {
 		return this.key;
 	}
 
 	public KeyStore getKeyStore() throws SecurityException {
+		this.checkInit(); // per ripristino da Serializable
 		return this.keyStore; 
 	}
 

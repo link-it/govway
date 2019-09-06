@@ -122,6 +122,13 @@ CREATE TABLE configurazione
 	token_algoritmocache VARCHAR(255),
 	token_idlecache VARCHAR(255),
 	token_lifecache VARCHAR(255),
+	-- Cache per la gestione dei keystore
+	keystore_statocache VARCHAR(255),
+	keystore_dimensionecache VARCHAR(255),
+	keystore_algoritmocache VARCHAR(255),
+	keystore_idlecache VARCHAR(255),
+	keystore_lifecache VARCHAR(255),
+	keystore_crl_lifecache VARCHAR(255),
 	-- connessione su cui vengono inviate le risposte
 	-- reply: connessione esistente (es. http reply)
 	-- new: nuova connessione
@@ -189,6 +196,10 @@ CREATE TABLE config_protocolli
 	nome VARCHAR(255) NOT NULL,
 	url_pd VARCHAR(255),
 	url_pa VARCHAR(255),
+	url_pd_rest VARCHAR(255),
+	url_pa_rest VARCHAR(255),
+	url_pd_soap VARCHAR(255),
+	url_pa_soap VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_config_protocolli') NOT NULL,
 	-- unique constraints

@@ -159,6 +159,10 @@ public class TransazioniService implements ITransazioniService {
 	private List<Index> forceIndexIdMessaggioRichiestaCount;
 	private List<Index> forceIndexIdMessaggioRispostaFindAll;
 	private List<Index> forceIndexIdMessaggioRispostaCount;
+	private List<Index> forceIndexIdCollaborazioneFindAll;
+	private List<Index> forceIndexIdCollaborazioneCount;
+	private List<Index> forceIndexRiferimentoIdRichiestaFindAll;
+	private List<Index> forceIndexRiferimentoIdRichiestaCount;
 	private List<Index> forceIndexIdTransazioneFindAll;
 	private List<Index> forceIndexIdTransazioneCount;
 	private List<Index> forceIndexGetByIdTransazione;
@@ -172,6 +176,10 @@ public class TransazioniService implements ITransazioniService {
 		this.forceIndexIdMessaggioRichiestaCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdMessaggioRichiestaCount(repositoryExternal));
 		this.forceIndexIdMessaggioRispostaFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdMessaggioRispostaFindAll(repositoryExternal));
 		this.forceIndexIdMessaggioRispostaCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdMessaggioRispostaCount(repositoryExternal));
+		this.forceIndexIdCollaborazioneFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdCollaborazioneFindAll(repositoryExternal));
+		this.forceIndexIdCollaborazioneCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdCollaborazioneCount(repositoryExternal));
+		this.forceIndexRiferimentoIdRichiestaFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexRiferimentoIdRichiestaFindAll(repositoryExternal));
+		this.forceIndexRiferimentoIdRichiestaCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexRiferimentoIdRichiestaCount(repositoryExternal));
 		this.forceIndexIdTransazioneFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdTransazioneFindAll(repositoryExternal));
 		this.forceIndexIdTransazioneCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdTransazioneCount(repositoryExternal));
 		this.forceIndexGetByIdTransazione = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexGetByIdTransazione(repositoryExternal));
@@ -201,6 +209,10 @@ public class TransazioniService implements ITransazioniService {
 				return this.forceIndexIdMessaggioRichiestaFindAll;
 			case Risposta:
 				return this.forceIndexIdMessaggioRispostaFindAll;
+			case Collaborazione:
+				return this.forceIndexIdCollaborazioneFindAll;
+			case RiferimentoRichiesta:
+				return this.forceIndexRiferimentoIdRichiestaFindAll;
 			}
 			break;
 		case ID_TRANSAZIONE:
@@ -223,6 +235,10 @@ public class TransazioniService implements ITransazioniService {
 				return this.forceIndexIdMessaggioRichiestaCount;
 			case Risposta:
 				return this.forceIndexIdMessaggioRispostaCount;
+			case Collaborazione:
+				return this.forceIndexIdCollaborazioneCount;
+			case RiferimentoRichiesta:
+				return this.forceIndexRiferimentoIdRichiestaCount;
 			}
 			break;
 		case ID_TRANSAZIONE:
@@ -2075,6 +2091,12 @@ public class TransazioniService implements ITransazioniService {
 					break;
 				case Risposta:
 					filter.equals(Transazione.model().ID_MESSAGGIO_RISPOSTA, value);
+					break;
+				case Collaborazione:
+					filter.equals(Transazione.model().ID_COLLABORAZIONE, value);
+					break;
+				case RiferimentoRichiesta:
+					filter.equals(Transazione.model().ID_ASINCRONO, value);
 					break;
 				}
 				// Inefficente altrimenti fare la OR

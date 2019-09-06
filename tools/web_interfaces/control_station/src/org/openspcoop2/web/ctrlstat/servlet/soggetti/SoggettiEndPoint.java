@@ -166,6 +166,8 @@ public final class SoggettiEndPoint extends Action {
 			String httpspwdkey = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 			String httpspwdprivatekey = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 			String httpsalgoritmokey = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+			String httpsKeyAlias = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
+			String httpsTrustStoreCRLs = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				password = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -406,6 +408,8 @@ public final class SoggettiEndPoint extends Action {
 					httpspwdkey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 					httpspwdprivatekey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD);
 					httpsalgoritmokey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+					httpsKeyAlias = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_ALIAS);
+					httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
 					if (httpspathkey == null) {
 						httpsstato = false;
 						httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
@@ -492,8 +496,10 @@ public final class SoggettiEndPoint extends Action {
 						httpshostverify, httpspath, httpstipo, httpspwd,
 						httpsalgoritmo, httpsstato, httpskeystore,
 						httpspwdprivatekeytrust, httpspathkey,
-						httpstipokey, httpspwdkey, httpspwdprivatekey,
-						httpsalgoritmokey, tipoconn, SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT, id, nomeprov,
+						httpstipokey, httpspwdkey, 
+						httpspwdprivatekey, httpsalgoritmokey,
+						httpsKeyAlias, httpsTrustStoreCRLs,
+						tipoconn, SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT, id, nomeprov,
 						tipoprov, null, null, null, null, null, true, 
 						isConnettoreCustomUltimaImmagineSalvata, 
 						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
@@ -502,7 +508,8 @@ public final class SoggettiEndPoint extends Action {
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken,token_policy,
-						listExtendedConnettore, false);
+						listExtendedConnettore, false,
+						protocollo, false, false);
 
 				pd.setDati(dati);
 
@@ -538,8 +545,10 @@ public final class SoggettiEndPoint extends Action {
 						httpshostverify, httpspath, httpstipo, httpspwd,
 						httpsalgoritmo, httpsstato, httpskeystore,
 						httpspwdprivatekeytrust, httpspathkey,
-						httpstipokey, httpspwdkey, httpspwdprivatekey,
-						httpsalgoritmokey, tipoconn, SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT, id, nomeprov,
+						httpstipokey, httpspwdkey, 
+						httpspwdprivatekey,	httpsalgoritmokey,
+						httpsKeyAlias, httpsTrustStoreCRLs,
+						tipoconn, SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT, id, nomeprov,
 						tipoprov, null, null, null, null, null, true,
 						isConnettoreCustomUltimaImmagineSalvata, 
 						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
@@ -548,7 +557,8 @@ public final class SoggettiEndPoint extends Action {
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken,token_policy,
-						listExtendedConnettore, false);
+						listExtendedConnettore, false,
+						protocollo, false, false);
 
 				pd.setDati(dati);
 
@@ -568,8 +578,9 @@ public final class SoggettiEndPoint extends Action {
 					httpsurl, httpstipologia, httpshostverify, httpspath,
 					httpstipo, httpspwd, httpsalgoritmo, httpsstato,
 					httpskeystore, httpspwdprivatekeytrust, httpspathkey,
-					httpstipokey, httpspwdkey, httpspwdprivatekey,
-					httpsalgoritmokey,
+					httpstipokey, httpspwdkey, 
+					httpspwdprivatekey,	httpsalgoritmokey,
+					httpsKeyAlias, httpsTrustStoreCRLs,
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,

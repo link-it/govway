@@ -458,14 +458,17 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 			ConfigurationRFC7807 rfc7807 = null;
 			int httpStatus; 
 			String nomePorta;
+			String transactionId;
 			if(eccezioneIntegrazione!=null){
 				rfc7807 = eccezioneIntegrazione.getRfc7807();
 				httpStatus = eccezioneIntegrazione.getHttpStatus();
 				nomePorta = eccezioneIntegrazione.getNomePorta();
+				transactionId = eccezioneIntegrazione.getTransactionId();
 			}else{
 				rfc7807 = eccezioneProtocollo.getRfc7807();
 				httpStatus = eccezioneProtocollo.getHttpStatus();
 				nomePorta = eccezioneProtocollo.getNomePorta();
+				transactionId = eccezioneProtocollo.getTransactionId();
 			}
 			
 			ProblemRFC7807Builder rfc7807ProblemBuilder = null;
@@ -498,6 +501,9 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 			}
 			if(rfc7807.isInstance()) {
 				problemRFC7807.setInstance(nomePorta);
+			}
+			if(rfc7807.isGovwayTransactionId()) {
+				problemRFC7807.getCustom().put(org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_TRANSACTION_ID, transactionId);
 			}
 			return problemRFC7807;
 		}catch(Exception e){

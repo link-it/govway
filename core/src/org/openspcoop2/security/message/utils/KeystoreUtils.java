@@ -49,6 +49,10 @@ public class KeystoreUtils {
 
 	public static EncryptionBean getSenderEncryptionBean(MessageSecurityContext messageSecurityContext) throws Exception {
 		
+		if(messageSecurityContext.getEncryptionBean()!=null) {
+			return messageSecurityContext.getEncryptionBean();
+		}
+		
 		JWKSet encryptionJWKSet = null;
 		KeyStore encryptionKS = null;
 		KeyStore encryptionTrustStoreKS = null;
@@ -236,6 +240,10 @@ public class KeystoreUtils {
 	}
 	public static EncryptionBean getReceiverEncryptionBean(MessageSecurityContext messageSecurityContext) throws Exception {
 
+		if(messageSecurityContext.getEncryptionBean()!=null) {
+			return messageSecurityContext.getEncryptionBean();
+		}
+		
 		JWKSet decryptionJWKSet = null;
 		KeyStore decryptionKS = null;
 		KeyStore decryptionTrustStoreKS = null;
@@ -424,6 +432,10 @@ public class KeystoreUtils {
 
 	public static SignatureBean getSenderSignatureBean(MessageSecurityContext messageSecurityContext) throws Exception {
 
+		if(messageSecurityContext.getSignatureBean()!=null) {
+			return messageSecurityContext.getSignatureBean();
+		}
+		
 		JWKSet signatureJWKSet = null;
 		KeyStore signatureKS = null;
 		KeyStore signatureTrustStoreKS = null;
@@ -585,6 +597,10 @@ public class KeystoreUtils {
 	}	
 	public static SignatureBean getReceiverSignatureBean(MessageSecurityContext messageSecurityContext) throws Exception {
 
+		if(messageSecurityContext.getSignatureBean()!=null) {
+			return messageSecurityContext.getSignatureBean();
+		}
+		
 		JWKSet signatureJWKSet = null;
 		KeyStore signatureKS = null;
 		KeyStore signatureTrustStoreKS = null;

@@ -1,3 +1,19 @@
+2019-09-03  Andrea Poli <apoli@link.it>
+
+	Aggiunta nuova cache per i keystore acceduti dal Gateway
+	ALTER TABLE configurazione ADD COLUMN keystore_statocache VARCHAR(255);
+	ALTER TABLE configurazione ADD COLUMN keystore_dimensionecache VARCHAR(255);
+	ALTER TABLE configurazione ADD COLUMN keystore_algoritmocache VARCHAR(255);
+	ALTER TABLE configurazione ADD COLUMN keystore_idlecache VARCHAR(255);
+	ALTER TABLE configurazione ADD COLUMN keystore_lifecache VARCHAR(255);
+	ALTER TABLE configurazione ADD COLUMN keystore_crl_lifecache VARCHAR(255);
+
+2019-09-03  Andrea Poli <apoli@link.it>
+
+	Aggiunti nuovi indici per ricerche tramite id collaborazione e id rif. richiesta
+	CREATE INDEX INDEX_TR_COLLABORAZIONE ON transazioni (id_collaborazione);
+	CREATE INDEX INDEX_TR_RIF_RICHIESTA ON transazioni (id_asincrono);
+
 2019-07-31  Andrea Poli <apoli@link.it>
 
 	Aumentata dimensione colonna per rest_path:
@@ -24,6 +40,14 @@
 
 	ALTER TABLE pa_transform ADD COLUMN stato VARCHAR(255);
 	ALTER TABLE pd_transform ADD COLUMN stato VARCHAR(255);
+
+2019-06-20  Andrea Poli <apoli@link.it>
+
+	Differenziate url per service binding in config_protocolli:	
+	ALTER TABLE config_protocolli ADD COLUMN url_pd_rest VARCHAR(255);
+	ALTER TABLE config_protocolli ADD COLUMN url_pa_rest VARCHAR(255);
+	ALTER TABLE config_protocolli ADD COLUMN url_pd_soap VARCHAR(255);
+	ALTER TABLE config_protocolli ADD COLUMN url_pa_soap VARCHAR(255);
 
 2019-06-07  Andrea Poli <apoli@link.it>
 	

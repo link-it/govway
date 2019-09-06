@@ -57,7 +57,6 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
@@ -79,7 +78,6 @@ import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -116,7 +114,6 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 	private IRegistryReader registryReader = null; 
 	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
-	private ConsoleInterfaceType consoleInterfaceType = null;
 	
 	private BinaryParameter wsdlimpler, wsdlimplfru;
 
@@ -140,8 +137,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			this.consoleOperationType = ConsoleOperationType.CHANGE;
 						
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(apsHelper); 
-
+			
 			this.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			this.id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			this.tipo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO);
@@ -462,6 +458,8 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String httpspwdkey = "";
 			String httpspwdprivatekey = "";
 			String httpsalgoritmokey = "";
+			String httpsKeyAlias = null;
+			String httpsTrustStoreCRLs = null;
 			boolean autenticazioneToken = false;
 			String token_policy = null;
 			String proxy_enabled = null, proxy_hostname  = null,proxy_port  = null,proxy_username  = null,proxy_password = null;
@@ -676,6 +674,8 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					httpspwdkey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 					httpspwdprivatekey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD);
 					httpsalgoritmokey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+					httpsKeyAlias = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_ALIAS);
+					httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
 					if (httpspathkey == null) {
 						httpsstato = false;
 						httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
@@ -766,12 +766,12 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
 			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
 			IDServizio idAps = apsHelper.getIDServizioFromValues(tiposervizio, nomeservizio, tipoSoggettoErogatore,nomeSoggettoErogatore, versioneservizio+"");
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(this.consoleOperationType, this.consoleInterfaceType, 
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(this.consoleOperationType, apsHelper, 
 					this.registryReader, this.configRegistryReader, idAps );
 					
 			List<ProtocolProperty> oldProtocolPropertyList = as.getProtocolPropertyList();
 			this.protocolProperties = apsHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
-			ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
+			ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
 			
 			Properties propertiesProprietario = new Properties();
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO, this.id);
@@ -816,8 +816,10 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					httpshostverify, httpspath, httpstipo, httpspwd,
 					httpsalgoritmo, httpsstato, httpskeystore,
 					httpspwdprivatekeytrust, httpspathkey,
-					httpstipokey, httpspwdkey, httpspwdprivatekey,
-					httpsalgoritmokey, tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, this.id,
+					httpstipokey, httpspwdkey, 
+					httpspwdprivatekey, httpsalgoritmokey,
+					httpsKeyAlias, httpsTrustStoreCRLs,
+					tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, this.id,
 					nomeservizio, tiposervizio, versioneservizio.intValue()+"", null, null, null, null, true,
 					isConnettoreCustomUltimaImmagineSalvata, 
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
@@ -826,7 +828,8 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					autenticazioneToken, token_policy,
-					listExtendedConnettore, false);
+					listExtendedConnettore, false,
+					protocollo,false,false);
 
 			pd.setDati(dati);
 

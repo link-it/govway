@@ -1002,7 +1002,6 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		// Consegna da effettuare
 		msgDiag.mediumDebug("Inizializzo contesto per la gestione (Consegna)...");
 		ConnettoreMsg connettoreMsg = null;
-		GestioneErrore gestioneConsegnaConnettore = null;
 		boolean consegnaPerRiferimento = false;
 		boolean rispostaPerRiferimento = false;
 		ValidazioneContenutiApplicativi validazioneContenutoApplicativoApplicativo = null;
@@ -1019,8 +1018,6 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				}
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getTipoValidazioneContenutoApplicativo) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente);
-				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_RispostaAsincrona) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
-				gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_RispostaAsincrona(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaPerRiferimento) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				consegnaPerRiferimento = configurazionePdDManager.consegnaRispostaAsincronaPerRiferimento(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaRispostaPerRiferimento) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
@@ -1044,8 +1041,6 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				}
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getTipoValidazioneContenutoApplicativo) [AsincronoAsimmetricoPolling]...");
 				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente);
-				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_RispostaAsincrona) [AsincronoAsimmetricoPolling]...");
-				gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_RispostaAsincrona(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaPerRiferimento) [AsincronoAsimmetricoPolling]...");
 				consegnaPerRiferimento = configurazionePdDManager.consegnaRispostaAsincronaPerRiferimento(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaRispostaPerRiferimento) [AsincronoAsimmetricoPolling]...");
@@ -1066,8 +1061,6 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				}
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getTipoValidazioneContenutoApplicativo)...");
 				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente);
-				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_InvocazioneServizio)...");
-				gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_InvocazioneServizio(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (invocazioneServizioPerRiferimento)...");
 				consegnaPerRiferimento = configurazionePdDManager.invocazioneServizioPerRiferimento(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (invocazioneServizioRispostaPerRiferimento)...");
@@ -1093,14 +1086,6 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		connettoreMsg.setGestioneManifest(gestioneManifest);
 		connettoreMsg.setProprietaManifestAttachments(proprietaManifestAttachments);
 		connettoreMsg.setLocalForward(localForward);
-		
-		if(gestioneConsegnaConnettore==null){
-			msgDiag.logErroreGenerico("Gestore Errore di consegna non definito nella configurazione (is null)", "getDatiConsegna(sa:"+servizioApplicativo+")");
-			ejbUtils.rollbackMessage("Gestione Errore di consegna non definito per il sa ["+servizioApplicativo+"]",servizioApplicativo, esito);
-			esito.setEsitoInvocazione(false); 
-			esito.setStatoInvocazione(EsitoLib.ERRORE_NON_GESTITO, "Gestione Errore di consegna non definito per il sa ["+servizioApplicativo+"]");
-			return esito;
-		}
 
 		// Identificativo di una risposta.
 		String idMessageResponse = null;
@@ -1186,8 +1171,18 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		}
 		boolean consegnaInOrdine = false;
 		// Sequenza: deve essere abilitata la consegna affidabile + la collaborazione e infine la consegna in ordine e non deve essere richiesto il profilo linee guida 1.0
+		Busta bustaIndicazioneConsegnaInOrdine = null;
 		if(Costanti.SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO.equals(scenarioCooperazione)){
-			switch (protocolManager.getConsegnaInOrdine(profiloCollaborazione)) {
+			
+			if(bustaRichiesta!=null) {
+				bustaIndicazioneConsegnaInOrdine = bustaRichiesta.clone();
+			}
+			else {
+				bustaIndicazioneConsegnaInOrdine = new Busta(protocolFactory.getProtocol());
+			}
+			bustaIndicazioneConsegnaInOrdine.setProfiloDiCollaborazione(profiloCollaborazione);
+			
+			switch (protocolManager.getConsegnaInOrdine(bustaIndicazioneConsegnaInOrdine)) {
 			case ABILITATA:
 				consegnaInOrdine = true;
 				break;
@@ -1627,8 +1622,53 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				}
 			}
 			
-			
-			
+			// GestioneErrore
+			GestioneErrore gestioneConsegnaConnettore = null;
+			if(Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI.equals(scenarioCooperazione) ||
+					Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA.equals(scenarioCooperazione) ){
+				try{
+					msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_RispostaAsincrona) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
+					gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_RispostaAsincrona(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
+				}catch(Exception e){
+					msgDiag.logErroreGenerico(e, "ConsegnaAsincrona.getDatiConsegna(sa:"+servizioApplicativo+")");
+					ejbUtils.rollbackMessage("[ConsegnaAsincrona] Connettore per consegna applicativa non definito:"+e.getMessage(),servizioApplicativo, esito);
+					esito.setEsitoInvocazione(false); 
+					esito.setStatoInvocazioneErroreNonGestito(e);
+					return esito;
+				}
+
+
+			}
+			else if(Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_POLLING.equals(scenarioCooperazione)){
+				try{
+					msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_RispostaAsincrona) [AsincronoAsimmetricoPolling]...");
+					gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_RispostaAsincrona(protocolFactory, consegnaMessage.getServiceBinding(), sa);
+				}catch(Exception e){
+					msgDiag.logErroreGenerico(e, "AsincronoSimmetricoPolling.getDatiConsegna(sa:"+servizioApplicativo+")");
+					ejbUtils.rollbackMessage("[AsincronoSimmetricoPolling] Connettore per consegna applicativa non definito:"+e.getMessage(),servizioApplicativo, esito);
+					esito.setEsitoInvocazione(false); 
+					esito.setStatoInvocazioneErroreNonGestito(e);
+					return esito;
+				}
+			}else{
+				try{
+					gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_InvocazioneServizio(protocolFactory, consegnaMessage.getServiceBinding(), sa);
+					msgDiag.mediumDebug("Inizializzo contesto per la gestione (invocazioneServizioPerRiferimento)...");
+				}catch(Exception e){
+					msgDiag.logErroreGenerico(e, "InvocazioneServizio.getDatiConsegna(sa:"+servizioApplicativo+")");
+					ejbUtils.rollbackMessage("Connettore per consegna applicativa non definito:"+e.getMessage(),servizioApplicativo, esito);
+					esito.setEsitoInvocazione(false); 
+					esito.setStatoInvocazioneErroreNonGestito(e);
+					return esito;
+				}
+			}
+			if(gestioneConsegnaConnettore==null){
+				msgDiag.logErroreGenerico("Gestore Errore di consegna non definito nella configurazione (is null)", "getDatiConsegna(sa:"+servizioApplicativo+")");
+				ejbUtils.rollbackMessage("Gestione Errore di consegna non definito per il sa ["+servizioApplicativo+"]",servizioApplicativo, esito);
+				esito.setEsitoInvocazione(false); 
+				esito.setStatoInvocazione(EsitoLib.ERRORE_NON_GESTITO, "Gestione Errore di consegna non definito per il sa ["+servizioApplicativo+"]");
+				return esito;
+			}
 			
 			
 			
@@ -2527,7 +2567,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					Busta bustaHTTPReply = null;
 					
 					boolean consegnaAffidabile = false;
-					switch (protocolManager.getConsegnaAffidabile(profiloCollaborazione)) {
+					switch (protocolManager.getConsegnaAffidabile(bustaIndicazioneConsegnaInOrdine)) {
 					case ABILITATA:
 						consegnaAffidabile = true;
 						break;

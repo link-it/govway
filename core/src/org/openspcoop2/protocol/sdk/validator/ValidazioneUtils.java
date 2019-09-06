@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.protocol.as4.validator;
+package org.openspcoop2.protocol.sdk.validator;
 
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -28,17 +28,17 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 
 /**
- * AS4ValidazioneUtils
+ * ValidazioneUtils
  * 
  * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AS4ValidazioneUtils {
+public class ValidazioneUtils {
 
 	private IProtocolFactory<?> protocolFactory;
 	
-	public AS4ValidazioneUtils(IProtocolFactory<?> protocolFactory){
+	public ValidazioneUtils(IProtocolFactory<?> protocolFactory){
 		this.protocolFactory = protocolFactory;
 	}
 	

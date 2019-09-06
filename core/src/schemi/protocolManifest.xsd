@@ -180,6 +180,7 @@
               <xsd:attribute name="details" type="xsd:boolean" use="required" />
               <xsd:attribute name="instance" type="xsd:boolean" use="required" />
               <xsd:attribute name="govwayStatus" type="xsd:boolean" use="required" />
+              <xsd:attribute name="govwayTransactionId" type="xsd:boolean" use="required" />
               <xsd:attribute name="type" type="xsd:boolean" default="true" />
 	      <xsd:attribute name="typeFormat" type="xsd:string" default="https://httpstatuses.com/%d" />
        </xsd:complexType>

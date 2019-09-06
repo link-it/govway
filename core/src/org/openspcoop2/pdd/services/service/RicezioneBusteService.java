@@ -237,6 +237,7 @@ public class RicezioneBusteService  {
 				TransactionContext.createTransaction(idTransazione);
 			}
 			requestInfo.setIdTransazione(idTransazione);
+			this.generatoreErrore.getImbustamentoErrore().setIdTransazione(idTransazione);
 		}catch(Throwable e) {
 			context = null;
 			protocolFactory = null;
@@ -515,6 +516,7 @@ public class RicezioneBusteService  {
 				context.setDataIngressoRichiesta(dataIngressoRichiesta);
 				Utilities.printFreeMemory("RicezioneBuste - Post costruzione richiesta");
 				requestMessage.setProtocolName(protocolFactory.getProtocol());
+				requestMessage.setTransactionId(PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext));
 				requestMessage.addContextProperty(org.openspcoop2.core.constants.Costanti.REQUEST_INFO,requestInfo); // serve nelle comunicazione non stateless (es. riscontro salvato) per poterlo rispedire
 				requestMessage.addContextProperty(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE,pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)); // serve nelle comunicazione non stateless (es. riscontro salvato) per poterlo rispedire
 				Object nomePortaInvocataObject = context.getPddContext().getObject(CostantiPdD.NOME_PORTA_INVOCATA);

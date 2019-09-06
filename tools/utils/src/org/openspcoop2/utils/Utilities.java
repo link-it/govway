@@ -34,6 +34,7 @@ import java.io.OutputStream;
 import java.io.SequenceInputStream;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -54,7 +55,36 @@ import org.slf4j.Logger;
 
 public class Utilities {
 
+	/** FORMAT Simple Date Format */
+	
+	public static final String SIMPLE_DATE_FORMAT_MS = "yyyy-MM-dd_HH:mm:ss.SSS";
+	public static SimpleDateFormat getSimpleDateFormatMs() {
+		return new SimpleDateFormat (SIMPLE_DATE_FORMAT_MS); // SimpleDateFormat non e' thread-safe
+	}
+	
+	public static final String SIMPLE_DATE_FORMAT_SECOND = "yyyy-MM-dd_HH:mm:ss";
+	public static SimpleDateFormat getSimpleDateFormatSecond() {
+		return new SimpleDateFormat (SIMPLE_DATE_FORMAT_SECOND); // SimpleDateFormat non e' thread-safe
+	}
+	
+	public static final String SIMPLE_DATE_FORMAT_MINUTE = "yyyy-MM-dd_HH:mm";
+	public static SimpleDateFormat getSimpleDateFormatMinute() {
+		return new SimpleDateFormat (SIMPLE_DATE_FORMAT_MINUTE); // SimpleDateFormat non e' thread-safe
+	}
+	
+	public static final String SIMPLE_DATE_FORMAT_HOUR = "yyyy-MM-dd_HH";
+	public static SimpleDateFormat getSimpleDateFormatHour() {
+		return new SimpleDateFormat (SIMPLE_DATE_FORMAT_HOUR); // SimpleDateFormat non e' thread-safe
+	}
+	
+	public static final String SIMPLE_DATE_FORMAT_DAY = "yyyy-MM-dd";
+	public static SimpleDateFormat getSimpleDateFormatDay() {
+		return new SimpleDateFormat (SIMPLE_DATE_FORMAT_DAY); // SimpleDateFormat non e' thread-safe
+	}
 
+	
+	
+	
 	
 	// ** Thread Sleep **
 	public static void sleep(long ms) {
@@ -818,6 +848,59 @@ public class Utilities {
 		else{
 			return false;
 		}
+	}
+	
+	public static boolean existsInnerInstanceException(Throwable e,Class<?> found){
+		//System.out.println("ANALIZZO ["+e.getClass().getName()+"] ("+found+")");
+		if(found.isInstance(e) ){
+			//System.out.println("OK ["+e.getClass().getName()+"]");
+			return true;
+		}else{
+			if(e.getCause()!=null){
+				//System.out.println("INNER ["+e.getClass().getName()+"]...");
+				return Utilities.existsInnerInstanceException(e.getCause(), found);
+			}
+			else{
+				//System.out.println("ESCO ["+e.getClass().getName()+"]");
+				return false;
+			}
+		}
+	}
+	public static boolean existsInnerInstanceException(Throwable e,String found) throws ClassNotFoundException{
+		return Utilities.existsInnerInstanceException(e,Class.forName(found));
+	}
+	
+	public static Throwable getInnerInstanceException(Throwable e,Class<?> found, boolean last){
+		//System.out.println("ANALIZZO ["+e.getClass().getName()+"] ("+found+")");
+		if(found.isInstance(e) ){
+			
+			if(last) {
+				if(e.getCause()!=null && existsInnerInstanceException(e.getCause(), found)) {
+					//System.out.println("INNER ["+e.getClass().getName()+"]...");
+					return Utilities.getInnerInstanceException(e.getCause(), found, last);
+				}
+				else {
+					//System.out.println("OK ["+e.getClass().getName()+"]");
+					return e;
+				}
+			}
+			else {
+				//System.out.println("OK ["+e.getClass().getName()+"]");
+				return e;
+			}
+		}else{
+			if(e.getCause()!=null){
+				//System.out.println("INNER ["+e.getClass().getName()+"]...");
+				return Utilities.getInnerInstanceException(e.getCause(), found, last);
+			}
+			else{
+				//System.out.println("ESCO ["+e.getClass().getName()+"]");
+				return null;
+			}
+		}
+	}
+	public static Throwable getInnerInstanceException(Throwable e,String found, boolean last) throws ClassNotFoundException{
+		return Utilities.getInnerInstanceException(e,Class.forName(found), last);
 	}
 	
 	public static boolean existsInnerException(Throwable e,Class<?> found){

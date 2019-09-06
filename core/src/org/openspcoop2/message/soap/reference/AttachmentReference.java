@@ -30,7 +30,7 @@ package org.openspcoop2.message.soap.reference;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AttachmentReference  extends Reference {
+public class AttachmentReference extends Reference  {
 	
 	public static final int TYPE_ENCRYPT_ATTACHMENT = 4;
 	public static final int TYPE_SIGN_ATTACHMENT = 5;

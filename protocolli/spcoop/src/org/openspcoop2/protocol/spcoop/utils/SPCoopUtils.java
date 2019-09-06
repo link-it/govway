@@ -26,6 +26,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.openspcoop2.utils.Utilities;
+
 /**
  * Utilities per il protocollo SPCoop
  *
@@ -34,8 +36,6 @@ import java.util.Date;
  * @version $Rev$, $Date$
  */
 public class SPCoopUtils {
-	
-	private static final String format = "yyyy-MM-dd_HH:mm:ss.SSS";
 	
 	/**
 	 * Metodo che si occupa di costruire una stringa formata da una data
@@ -51,12 +51,12 @@ public class SPCoopUtils {
 	}
 		
 	public static String getDate_eGovFormat(Date date) {
-		SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 		return dateformat.format(date).replace('_','T');
 	}
 	
 	public static Date getDate_eGovFormat(String date) throws ParseException {
-		SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 		return dateformat.parse(date.replace('T','_'));
 	}
 }

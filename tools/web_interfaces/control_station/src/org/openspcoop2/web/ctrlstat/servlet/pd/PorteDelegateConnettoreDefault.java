@@ -48,6 +48,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -195,6 +196,8 @@ public class PorteDelegateConnettoreDefault extends Action {
 			String httpspwdkey = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 			String httpspwdprivatekey = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 			String httpsalgoritmokey = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+			String httpsKeyAlias = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
+			String httpsTrustStoreCRLs = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				password = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -260,6 +263,15 @@ public class PorteDelegateConnettoreDefault extends Action {
 						portaDelegata.getServizio().getNome(), 
 						new IDSoggetto(portaDelegata.getSoggettoErogatore().getTipo(), portaDelegata.getSoggettoErogatore().getNome()), 
 						portaDelegata.getServizio().getVersione());
+			}
+			
+			String protocollo = apsCore.getProtocolloAssociatoTipoServizio(idServizio.getTipo());
+			
+			boolean forceHttps = false;
+			boolean forceHttpsClient = false;
+			if(asps!=null && porteDelegateHelper.isProfiloModIPA(protocollo)) {
+				forceHttps = porteDelegateHelper.forceHttpsProfiloModiPA();
+				forceHttpsClient = porteDelegateHelper.forceHttpsClientProfiloModiPA(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), asps.getPortType());
 			}
 			
 			String modalita = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE);
@@ -418,8 +430,10 @@ public class PorteDelegateConnettoreDefault extends Action {
 							httpshostverify, httpspath, httpstipo, httpspwd,
 							httpsalgoritmo, httpsstato, httpskeystore,
 							httpspwdprivatekeytrust, httpspathkey,
-							httpstipokey, httpspwdkey, httpspwdprivatekey,
-							httpsalgoritmokey, tipoconn, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONNETTORE_DEFAULT, null, null,
+							httpstipokey, httpspwdkey, 
+							httpspwdprivatekey, httpsalgoritmokey, 
+							httpsKeyAlias, httpsTrustStoreCRLs,
+							tipoconn, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONNETTORE_DEFAULT, null, null,
 							null, null, null, null, null, null, false,
 							isConnettoreCustomUltimaImmagineSalvata, 
 							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
@@ -428,7 +442,8 @@ public class PorteDelegateConnettoreDefault extends Action {
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							autenticazioneToken,token_policy,
-							listExtendedConnettore, forceEnableConnettore);
+							listExtendedConnettore, forceEnableConnettore,
+							protocollo, forceHttps, forceHttpsClient);
 				}
 
 				pd.setDati(dati);
@@ -447,13 +462,16 @@ public class PorteDelegateConnettoreDefault extends Action {
 			boolean isOk = porteDelegateHelper.connettoreDefaultRidefinitoCheckData(TipoOperazione.OTHER, modalita);
 			
 			if(isOk && modalita.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_RIDEFINITO)) {
-				isOk = porteDelegateHelper.endPointCheckData(endpointtype, url, nomeCodaJms, tipoJms,
+				isOk = porteDelegateHelper.endPointCheckData(protocollo, false,
+						endpointtype, url, nomeCodaJms, tipoJms,
 						user, password, initcont, urlpgk, provurl, connfact,
 						tipoSendas, httpsurl, httpstipologia, httpshostverify,
 						httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
 						httpskeystore, httpspwdprivatekeytrust, httpspathkey,
-						httpstipokey, httpspwdkey, httpspwdprivatekey,
-						httpsalgoritmokey, tipoconn,autenticazioneHttp,
+						httpstipokey, httpspwdkey, 
+						httpspwdprivatekey, httpsalgoritmokey,
+						httpsKeyAlias, httpsTrustStoreCRLs,
+						tipoconn,autenticazioneHttp,
 						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
@@ -485,8 +503,10 @@ public class PorteDelegateConnettoreDefault extends Action {
 							httpshostverify, httpspath, httpstipo, httpspwd,
 							httpsalgoritmo, httpsstato, httpskeystore,
 							httpspwdprivatekeytrust, httpspathkey,
-							httpstipokey, httpspwdkey, httpspwdprivatekey,
-							httpsalgoritmokey, tipoconn, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONNETTORE_DEFAULT, null, null,
+							httpstipokey, httpspwdkey, 
+							httpspwdprivatekey, httpsalgoritmokey,
+							httpsKeyAlias, httpsTrustStoreCRLs,
+							tipoconn, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONNETTORE_DEFAULT, null, null,
 							null, null, null, null, null, null, false,
 							isConnettoreCustomUltimaImmagineSalvata, 
 							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
@@ -495,7 +515,8 @@ public class PorteDelegateConnettoreDefault extends Action {
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							autenticazioneToken,token_policy,
-							listExtendedConnettore, forceEnableConnettore);
+							listExtendedConnettore, forceEnableConnettore,
+							protocollo, forceHttps, forceHttpsClient);
 				}
 
 				pd.setDati(dati);
@@ -524,6 +545,7 @@ public class PorteDelegateConnettoreDefault extends Action {
 					httpspathkey, httpstipokey,
 					httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey,
+					httpsKeyAlias, httpsTrustStoreCRLs,
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,

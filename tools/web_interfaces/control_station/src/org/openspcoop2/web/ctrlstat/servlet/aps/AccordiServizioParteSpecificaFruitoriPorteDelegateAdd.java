@@ -253,6 +253,8 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			String httpspwdkey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 			String httpspwdprivatekey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 			String httpsalgoritmokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+			String httpsKeyAlias = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
+			String httpsTrustStoreCRLs = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -328,12 +330,24 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						
 			AccordoServizioParteComuneSintetico as = null;
 			ServiceBinding serviceBinding = null;
+			IDAccordo idAccordo = null;
+			String protocollo = null;
+			String portType = null;
 			if (asps != null) {
-				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+				idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
 				as = apcCore.getAccordoServizioSintetico(idAccordo);
 				serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
+				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore());
+				portType = asps.getPortType();
 			}
 
+			boolean forceHttps = false;
+			boolean forceHttpsClient = false;
+			if(idAccordo!=null && apsHelper.isProfiloModIPA(protocollo)) {
+				forceHttps = apsHelper.forceHttpsProfiloModiPA();
+				forceHttpsClient = apsHelper.forceHttpsClientProfiloModiPA(idAccordo,portType);
+			}
+			
 			// Prendo le azioni  disponibili
 			boolean addTrattinoSelezioneNonEffettuata = false;
 			int sogliaAzioni = addTrattinoSelezioneNonEffettuata ? 1 : 0;
@@ -591,8 +605,10 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 								httpshostverify, httpspath, httpstipo, httpspwd,
 								httpsalgoritmo, httpsstato, httpskeystore,
 								httpspwdprivatekeytrust, httpspathkey,
-								httpstipokey, httpspwdkey, httpspwdprivatekey,
-								httpsalgoritmokey, tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_ADD, null, null,
+								httpstipokey, httpspwdkey, 
+								httpspwdprivatekey, httpsalgoritmokey,
+								httpsKeyAlias, httpsTrustStoreCRLs,
+								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_ADD, null, null,
 								null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
 								proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
@@ -601,7 +617,8 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								autenticazioneToken, token_policy,
-								listExtendedConnettore, forceEnableConnettore);
+								listExtendedConnettore, forceEnableConnettore,
+								protocollo, forceHttps, forceHttpsClient);
 					}
 				}
 					
@@ -619,13 +636,16 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			
 			// controllo endpoint
 			if(isOk && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
-				isOk = apsHelper.endPointCheckData(endpointtype, url, nome, tipoJms,
+				isOk = apsHelper.endPointCheckData(protocollo, false,
+						endpointtype, url, nome, tipoJms,
 						user, password, initcont, urlpgk, provurl, connfact,
 						tipoSendas, httpsurl, httpstipologia, httpshostverify,
 						httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
 						httpskeystore, httpspwdprivatekeytrust, httpspathkey,
-						httpstipokey, httpspwdkey, httpspwdprivatekey,
-						httpsalgoritmokey, tipoconn,autenticazioneHttp,
+						httpstipokey, httpspwdkey, 
+						httpspwdprivatekey, httpsalgoritmokey,
+						httpsKeyAlias, httpsTrustStoreCRLs,
+						tipoconn,autenticazioneHttp,
 						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
@@ -672,8 +692,10 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							httpshostverify, httpspath, httpstipo, httpspwd,
 							httpsalgoritmo, httpsstato, httpskeystore,
 							httpspwdprivatekeytrust, httpspathkey,
-							httpstipokey, httpspwdkey, httpspwdprivatekey,
-							httpsalgoritmokey, tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_ADD, null, null,
+							httpstipokey, httpspwdkey, 
+							httpspwdprivatekey, httpsalgoritmokey,
+							httpsKeyAlias, httpsTrustStoreCRLs,
+							tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_ADD, null, null,
 							null, null, null, null, null, null, true,
 							isConnettoreCustomUltimaImmagineSalvata, 
 							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
@@ -682,7 +704,8 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							autenticazioneToken, token_policy,
-							listExtendedConnettore, forceEnableConnettore);
+							listExtendedConnettore, forceEnableConnettore,
+							protocollo, forceHttps, forceHttpsClient);
 				}
 
 				pd.setDati(dati);
@@ -726,6 +749,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey,
 					httpspwdprivatekey, httpsalgoritmokey,
+					httpsKeyAlias, httpsTrustStoreCRLs,
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,

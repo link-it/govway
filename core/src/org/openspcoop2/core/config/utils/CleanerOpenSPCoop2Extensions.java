@@ -26,6 +26,7 @@ import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.ProtocolProperty;
 import org.openspcoop2.core.config.ServizioApplicativo;
 
 /**
@@ -104,6 +105,12 @@ public class CleanerOpenSPCoop2Extensions {
 			}
 			if(servizioApplicativo.getRispostaAsincrona().getGestioneErrore()!=null){
 				this.clean(servizioApplicativo.getRispostaAsincrona().getGestioneErrore());	
+			}
+		}
+		
+		if(servizioApplicativo.sizeProtocolPropertyList()>0) {
+			for (ProtocolProperty pp : servizioApplicativo.getProtocolPropertyList()) {
+				this.clean(pp);
 			}
 		}
 	}
@@ -201,6 +208,12 @@ public class CleanerOpenSPCoop2Extensions {
 	
 	private void clean(org.openspcoop2.core.config.GestioneErrore gestioneErrore){
 		gestioneErrore.setNome(null);
+	}
+	
+	private void clean(ProtocolProperty pp){
+		pp.setByteFile(null);
+		pp.setIdProprietario(null);
+		pp.setTipoProprietario(null);
 	}
 	
 }

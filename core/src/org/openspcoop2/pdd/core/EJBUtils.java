@@ -96,6 +96,8 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Integrazione;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
+import org.openspcoop2.protocol.sdk.config.ITraduttore;
+import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
@@ -1275,8 +1277,10 @@ public class EJBUtils {
 			busta.setID(idBustaConsegna);
 			busta.setRiferimentoMessaggio(this.idSessione);
 			
+			busta.setProfiloDiCollaborazione(richiestaDelegata.getProfiloCollaborazione());
+			
 			boolean idCollaborazione = false;
-			switch (this.protocolFactory.createProtocolVersionManager(richiestaDelegata.getProfiloGestione()).getCollaborazione(richiestaDelegata.getProfiloCollaborazione())) {
+			switch (this.protocolFactory.createProtocolVersionManager(richiestaDelegata.getProfiloGestione()).getCollaborazione(busta)) {
 			case ABILITATA:
 				idCollaborazione = true;
 				break;
@@ -2274,6 +2278,29 @@ public class EJBUtils {
 					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
 					RuoloMessaggio.RISPOSTA);
 
+		// CodiceErrore (da fare prima di imbustamentoErrore che svuola la lista eccezioni)
+		CodiceErroreCooperazione codiceErroreCooperazione = null;
+		String descrizioneErroreCooperazione = null;
+		if(eccezioni!=null && eccezioni.size()>0) {
+			Eccezione eccezioneDaInviare = Eccezione.getEccezioneValidazione(ErroriCooperazione.ERRORE_GENERICO_PROTOCOLLO_NON_CORRETTO.getErroreCooperazione(), this.protocolFactory);
+			if(eccezioni.size()>1){
+				ITraduttore traduttore = this.protocolFactory.createTraduttore();
+				StringBuffer bfDescrizione = new StringBuffer();
+				for(int k=0; k<eccezioni.size();k++){
+					Eccezione error = eccezioni.get(k);
+					if(error.getDescrizione(this.protocolFactory)!=null) {
+						bfDescrizione.append("["+traduttore.toString(error.getCodiceEccezione(),error.getSubCodiceEccezione())+"] "+error.getDescrizione(this.protocolFactory)+"\n");
+					}
+				}
+				if(bfDescrizione.length()>0)
+					eccezioneDaInviare.setDescrizione(bfDescrizione.toString());
+			}else{
+				eccezioneDaInviare = eccezioni.get(0);
+			}
+			codiceErroreCooperazione = eccezioneDaInviare.getCodiceEccezione();
+			descrizioneErroreCooperazione = eccezioneDaInviare.getDescrizione(this.protocolFactory);
+		}
+		
 		//ErroreValidazioneProtocollo: Header
 		busta = this.generatoreErrorePortaApplicativa.getImbustamentoErrore().
 				buildMessaggioErroreProtocollo_Validazione(eccezioni,busta,id_bustaErrore,this.propertiesReader.getTipoTempoBusta(this.implementazionePdDSoggettoMittente));	
@@ -2287,8 +2314,13 @@ public class EJBUtils {
 		}
 
 		//ErroreValidazioneProtocollo: Msg
-		OpenSPCoop2Message msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.integrationErrorPortaApplicativa);
-		
+		OpenSPCoop2Message msg = null;
+		if(codiceErroreCooperazione!=null && descrizioneErroreCooperazione!=null) {
+			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.integrationErrorPortaApplicativa, codiceErroreCooperazione, descrizioneErroreCooperazione);
+		}
+		else {
+			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.integrationErrorPortaApplicativa);
+		}
 		if(msg == null){
 			throw new EJBUtilsException("EJBUtils.sendRispostaErroreValidazioneProtocollo error: Costruzione messaggio Errore Protocollo fallita.");
 		}
@@ -2315,14 +2347,42 @@ public class EJBUtils {
 					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
 					RuoloMessaggio.RISPOSTA);
 
+		// CodiceErrore (da fare prima di imbustamentoErrore che svuola la lista eccezioni)
+		CodiceErroreCooperazione codiceErroreCooperazione = null;
+		String descrizioneErroreCooperazione = null;
+		if(eccezioni!=null && eccezioni.size()>0) {
+			Eccezione eccezioneDaInviare = Eccezione.getEccezioneValidazione(ErroriCooperazione.ERRORE_GENERICO_PROTOCOLLO_NON_CORRETTO.getErroreCooperazione(), this.protocolFactory);
+			if(eccezioni.size()>1){
+				ITraduttore traduttore = this.protocolFactory.createTraduttore();
+				StringBuffer bfDescrizione = new StringBuffer();
+				for(int k=0; k<eccezioni.size();k++){
+					Eccezione error = eccezioni.get(k);
+					if(error.getDescrizione(this.protocolFactory)!=null) {
+						bfDescrizione.append("["+traduttore.toString(error.getCodiceEccezione(),error.getSubCodiceEccezione())+"] "+error.getDescrizione(this.protocolFactory)+"\n");
+					}
+				}
+				if(bfDescrizione.length()>0)
+					eccezioneDaInviare.setDescrizione(bfDescrizione.toString());
+			}else{
+				eccezioneDaInviare = eccezioni.get(0);
+			}
+			codiceErroreCooperazione = eccezioneDaInviare.getCodiceEccezione();
+			descrizioneErroreCooperazione = eccezioneDaInviare.getDescrizione(this.protocolFactory);
+		}
+		
 		//ErroreValidazioneProtocollo: Header
 		// L'inoltro di segnalazione avviene in SbustamentoRisposte quindi devo riferire l'implemenazione della PdD del Soggetto Destinatario
 		busta = this.generatoreErrorePortaApplicativa.getImbustamentoErrore().
 				buildMessaggioErroreProtocollo_Validazione(eccezioni,busta,id_bustaErrore,this.propertiesReader.getTipoTempoBusta(this.implementazionePdDSoggettoDestinatario));	
 
 		//ErroreValidazioneProtocollo: Msg
-		OpenSPCoop2Message msg = 
-				this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.integrationErrorPortaApplicativa);
+		OpenSPCoop2Message msg = null;
+		if(codiceErroreCooperazione!=null && descrizioneErroreCooperazione!=null) {
+			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.integrationErrorPortaApplicativa, codiceErroreCooperazione, descrizioneErroreCooperazione);
+		}
+		else {
+			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.integrationErrorPortaApplicativa);
+		}
 		if(msg == null){
 			throw new EJBUtilsException("EJBUtils.sendRispostaErroreProtocollo_BustaRispostaMalformata error: Costruzione Msg Errore Protocollo fallita.");
 		}

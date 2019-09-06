@@ -30,6 +30,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -56,7 +57,7 @@ import org.openspcoop2.web.lib.users.dao.User;
  */
 public class OperazioniHelper extends ConsoleHelper{
 
-	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss"); // SimpleDateFormat non e' thread-safe
+	private SimpleDateFormat formatter = Utilities.getSimpleDateFormatSecond();
 
 	public OperazioniHelper(HttpServletRequest request, PageData pd, 
 			HttpSession session) throws Exception {

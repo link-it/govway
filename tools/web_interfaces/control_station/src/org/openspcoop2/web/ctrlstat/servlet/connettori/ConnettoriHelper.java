@@ -534,6 +534,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
+			String httpsKeyAlias, String httpsTrustStoreCRLs,
 			String tipoconn, String servletChiamante, String elem1, String elem2, String elem3,
 			String elem4, String elem5, String elem6, String elem7, String elem8,
 			boolean showSectionTitle,
@@ -544,14 +545,17 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			boolean autenticazioneToken, String tokenPolicy,
-			List<ExtendedConnettore> listExtendedConnettore, boolean forceEnabled) throws Exception {
+			List<ExtendedConnettore> listExtendedConnettore, boolean forceEnabled,
+			String protocollo, boolean forceHttps, boolean forceHttpsClient) throws Exception {
 		return addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, prefix, url, nome, tipo, user,
 				password, initcont, urlpgk, provurl, connfact, sendas,
 				objectName,tipoOperazione, httpsurl, httpstipologia, httpshostverify,
 				httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
 				httpskeystore, httpspwdprivatekeytrust, httpspathkey,
-				httpstipokey, httpspwdkey, httpspwdprivatekey,
-				httpsalgoritmokey, tipoconn, servletChiamante, elem1, elem2, elem3,
+				httpstipokey, httpspwdkey, 
+				httpspwdprivatekey, httpsalgoritmokey, 
+				httpsKeyAlias, httpsTrustStoreCRLs,
+				tipoconn, servletChiamante, elem1, elem2, elem3,
 				elem4, elem5, elem6, elem7, elem8, null, showSectionTitle,
 				isConnettoreCustomUltimaImmagineSalvata,
 				proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
@@ -560,7 +564,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 				requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 				responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 				autenticazioneToken, tokenPolicy,
-				listExtendedConnettore, forceEnabled);
+				listExtendedConnettore, forceEnabled,
+				protocollo, forceHttps, forceHttpsClient);
 	}
 
 	// Controlla i dati del connettore custom
@@ -1087,11 +1092,21 @@ public class ConnettoriHelper extends ConsoleHelper {
 		return dati;
 	}
 	
+	
 	public Vector<DataElement> addCredenzialiToDati(Vector<DataElement> dati, String tipoauth, String utente, String password, String subject, String principal,
 			String toCall, boolean showLabelCredenzialiAccesso, String endpointtype,boolean connettore,boolean visualizzaTipoAutenticazione,
 			String prefix, boolean autenticazioneNessunaAbilitata) throws Exception {
 		return this.addCredenzialiToDati(dati, tipoauth, utente, password, subject, principal, toCall, showLabelCredenzialiAccesso, endpointtype, connettore, visualizzaTipoAutenticazione, prefix, autenticazioneNessunaAbilitata, 
-				null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+				null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+				null);
+	}
+	public Vector<DataElement> addCredenzialiToDati(Vector<DataElement> dati, String tipoauth, String utente, String password, String subject, String principal,
+			String toCall, boolean showLabelCredenzialiAccesso, String endpointtype,boolean connettore,boolean visualizzaTipoAutenticazione,
+			String prefix, boolean autenticazioneNessunaAbilitata,
+			String subtitleConfigurazione) throws Exception {
+		return this.addCredenzialiToDati(dati, tipoauth, utente, password, subject, principal, toCall, showLabelCredenzialiAccesso, endpointtype, connettore, visualizzaTipoAutenticazione, prefix, autenticazioneNessunaAbilitata, 
+				null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+				subtitleConfigurazione);
 	} 
 	
 	public Vector<DataElement> addCredenzialiToDati(Vector<DataElement> dati, String tipoauth, String utente, String password, String subject, String principal,
@@ -1101,7 +1116,27 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String tipoCredenzialiSSLAliasCertificatoType, String tipoCredenzialiSSLAliasCertificatoVersion, String tipoCredenzialiSSLAliasCertificatoSerialNumber, String tipoCredenzialiSSLAliasCertificatoSelfSigned,
 			String tipoCredenzialiSSLAliasCertificatoNotBefore, String tipoCredenzialiSSLAliasCertificatoNotAfter, String tipoCredenzialiSSLVerificaTuttiICampi, String tipoCredenzialiSSLConfigurazioneManualeSelfSigned,
 			String issuer, String tipoCredenzialiSSLStatoElaborazioneCertificato) throws Exception{
+		return addCredenzialiToDati(dati, tipoauth, utente, password, subject, principal,
+				toCall, showLabelCredenzialiAccesso, endpointtype,connettore,visualizzaTipoAutenticazione,
+				prefix, autenticazioneNessunaAbilitata,tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword,
+				listaAliasEstrattiCertificato, tipoCredenzialiSSLAliasCertificato,tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
+				tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, tipoCredenzialiSSLAliasCertificatoSelfSigned,
+				tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned,
+				issuer, tipoCredenzialiSSLStatoElaborazioneCertificato,null);
+	}
+	public Vector<DataElement> addCredenzialiToDati(Vector<DataElement> dati, String tipoauth, String utente, String password, String subject, String principal,
+			String toCall, boolean showLabelCredenzialiAccesso, String endpointtype,boolean connettore,boolean visualizzaTipoAutenticazione,
+			String prefix, boolean autenticazioneNessunaAbilitata,String tipoCredenzialiSSLSorgente, ArchiveType tipoCredenzialiSSLTipoArchivio, BinaryParameter tipoCredenzialiSSLFileCertificato, String tipoCredenzialiSSLFileCertificatoPassword,
+			List<String> listaAliasEstrattiCertificato, String tipoCredenzialiSSLAliasCertificato,	String tipoCredenzialiSSLAliasCertificatoSubject, String tipoCredenzialiSSLAliasCertificatoIssuer,
+			String tipoCredenzialiSSLAliasCertificatoType, String tipoCredenzialiSSLAliasCertificatoVersion, String tipoCredenzialiSSLAliasCertificatoSerialNumber, String tipoCredenzialiSSLAliasCertificatoSelfSigned,
+			String tipoCredenzialiSSLAliasCertificatoNotBefore, String tipoCredenzialiSSLAliasCertificatoNotAfter, String tipoCredenzialiSSLVerificaTuttiICampi, String tipoCredenzialiSSLConfigurazioneManualeSelfSigned,
+			String issuer, String tipoCredenzialiSSLStatoElaborazioneCertificato,
+			String subtitleConfigurazione) throws Exception{
 
+		if(subtitleConfigurazione==null) {
+			subtitleConfigurazione = ConnettoriCostanti.LABEL_CONFIGURAZIONE_SSL_TITLE_CONFIGURAZIONE;
+		}
+		
 		DataElement de = null;
 
 		if(prefix==null){
@@ -1291,7 +1326,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						!tipoCredenzialiSSLStatoElaborazioneCertificato.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_NO_WIZARD_ARCHIVI);
 				
 				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_CONFIGURAZIONE_SSL_TITLE_CONFIGURAZIONE);
+				de.setLabel(subtitleConfigurazione);
 				de.setType(DataElementType.SUBTITLE);
 				dati.addElement(de);
 				
@@ -1652,6 +1687,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
+			String httpsKeyAlias, String httpsTrustStoreCRLs,
 			String tipoconn, String servletChiamante, String elem1, String elem2, String elem3,
 			String elem4, String elem5, String elem6, String elem7, String elem8,
 			String stato,
@@ -1663,7 +1699,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			boolean autenticazioneToken, String tokenPolicy,
-			List<ExtendedConnettore> listExtendedConnettore, boolean forceEnabled) throws Exception {
+			List<ExtendedConnettore> listExtendedConnettore, boolean forceEnabled,
+			String protocollo, boolean forceHttps, boolean forceHttpsClient) throws Exception {
 
 
 		Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
@@ -1695,6 +1732,21 @@ public class ConnettoriHelper extends ConsoleHelper {
 			dati.addElement(de);
 		}
 
+		boolean soloConnettoriHttp = false;
+		if(forceHttps) {
+			if(!this.isProfiloModIPA(protocollo)) {
+				// la scelta se usare il tipo https o la configurazione jvm per https deve rimanere.
+				// viene forzata solamente l'autenticazione client nel caso si scelga un connettore https per il profilo ModI PA
+				endpointtype = TipiConnettore.HTTPS.toString();
+			}
+			else {
+				// profilo modIPA, si deve usare solamente i connettori http
+				if (!TipologiaConnettori.TIPOLOGIA_CONNETTORI_HTTP.equals(tipologiaConnettori)) {
+					soloConnettoriHttp = true;
+				}
+			}
+		}
+		
 
 		/** VISUALIZZAZIONE HTTP ONLY MODE */
 
@@ -1792,7 +1844,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String tmpUrl = url;
 			if(url==null || "".equals(url) || "http://".equals(url) || "https://".equals(url) ){
 				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-					tmpUrl =endpointtype+"://";
+					if(this.isProfiloModIPA(protocollo)) {
+						tmpUrl =TipiConnettore.HTTPS.toString()+"://";
+					}
+					else {
+						tmpUrl =endpointtype+"://";
+					}
 				}
 			}
 			de.setValue(tmpUrl);
@@ -1930,7 +1987,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 				ConnettoreHTTPSUtils.addHTTPSDati(dati, httpsurl, httpstipologia, httpshostverify, httpspath, httpstipo, 
 						httpspwd, httpsalgoritmo, httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, 
-						httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, stato, this.core, this, this.getSize(), false, prefix);
+						httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, 
+						httpsKeyAlias, httpsTrustStoreCRLs,
+						stato, 
+						this.core, this, this.getSize(), false, prefix,
+						forceHttpsClient);
 			}
 			
 			// Proxy
@@ -1996,7 +2057,15 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
 			de.setType(DataElementType.SELECT);
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
-			de.setValues(tipoEP);
+			if(soloConnettoriHttp) {
+				List<String> connettoriListHttp = new ArrayList<>();
+				connettoriListHttp.add(TipiConnettore.HTTP.toString());
+				connettoriListHttp.add(TipiConnettore.HTTPS.toString());
+				de.setValues(connettoriListHttp);
+			}
+			else {
+				de.setValues(tipoEP);
+			}
 			de.setSelected(endpointtype);
 			//		    de.setOnChange("CambiaEndPoint('" + tipoOp + "')");
 			de.setPostBack(true);
@@ -2043,7 +2112,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String tmpUrl = url;
 			if(url==null || "".equals(url) || "http://".equals(url) || "https://".equals(url) ){
 				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-					tmpUrl =endpointtype+"://";
+					if(this.isProfiloModIPA(protocollo)) {
+						tmpUrl =TipiConnettore.HTTPS.toString()+"://";
+					}
+					else {
+						tmpUrl =endpointtype+"://";
+					}
 				}
 			}
 			de.setValue(tmpUrl);
@@ -2307,8 +2381,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 			// Https
 			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 				ConnettoreHTTPSUtils.addHTTPSDati(dati, httpsurl, httpstipologia, httpshostverify, httpspath, httpstipo, httpspwd, httpsalgoritmo, 
-						httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, stato,
-						this.core, this, this.getSize(), false, prefix);
+						httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, 
+						httpsKeyAlias, httpsTrustStoreCRLs,
+						stato,
+						this.core, this, this.getSize(), false, prefix,
+						forceHttpsClient);
 			}
 
 			// Jms
@@ -2368,6 +2445,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
+			String httpsKeyAlias, String httpsTrustStoreCRLs,
 			String tipoconn, String servletChiamante, String elem1, String elem2, String elem3,
 			String elem4, String elem5, String elem6, String elem7, String stato,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
@@ -2411,6 +2489,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_CHECK);
 			if(!TipiConnettore.HTTP.toString().equals(endpointtype) &&
+					!TipiConnettore.HTTPS.toString().equals(endpointtype) &&
 					!TipiConnettore.DISABILITATO.toString().equals(endpointtype)){
 //				de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_CONNETTORE_IMPOSTATO_MODALITA_AVANZATA);
 				de.setType(DataElementType.HIDDEN);
@@ -2538,7 +2617,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 		if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 			ConnettoreHTTPSUtils.addHTTPSDatiAsHidden(dati, httpsurl, httpstipologia, httpshostverify, httpspath, httpstipo, httpspwd, 
-					httpsalgoritmo, httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, stato,
+					httpsalgoritmo, httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, 
+					httpsKeyAlias, httpsTrustStoreCRLs,
+					stato,
 					this.core,this.getSize());
 			
 		}
@@ -2579,7 +2660,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 
 	// Controlla i dati dell'end-point
-	public boolean endPointCheckData(List<ExtendedConnettore> listExtendedConnettore) throws Exception {
+	public boolean endPointCheckData(String protocollo, boolean servizioApplicativo, List<ExtendedConnettore> listExtendedConnettore) throws Exception {
 		try {
 
 			//String endpointtype = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
@@ -2643,7 +2724,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdkey = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 			String httpspwdprivatekey = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 			String httpsalgoritmokey = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
-
+			String httpsKeyAlias = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
+			String httpsTrustStoreCRLs = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
+			
 			if(ServletUtils.isCheckBoxEnabled(autenticazioneHttp)){
 				user = this.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				password = this.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -2661,13 +2744,15 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String responseInputWaitTime = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 			
 			
-			return endPointCheckData(endpointtype, url, nome, tipo, user,
+			return endPointCheckData(protocollo, servizioApplicativo, endpointtype, url, nome, tipo, user,
 					password, initcont, urlpgk, provurl, connfact, sendas,
 					httpsurl, httpstipologia, httpshostverify,
 					httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
 					httpskeystore, httpspwdprivatekeytrust, httpspathkey,
-					httpstipokey, httpspwdkey, httpspwdprivatekey,
-					httpsalgoritmokey, tipoconn, autenticazioneHttp,
+					httpstipokey, httpspwdkey, 
+					httpspwdprivatekey, httpsalgoritmokey,
+					httpsKeyAlias, httpsTrustStoreCRLs,
+					tipoconn, autenticazioneHttp,
 					proxy_enabled,proxy_hostname,proxy_port,proxy_username,proxy_password,
 					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
@@ -2683,7 +2768,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 	}
 
 	// Controlla i dati dell'end-point
-	public boolean endPointCheckData(String endpointtype, String url, String nome,
+	public boolean endPointCheckData(String protocollo, boolean servizioApplicativo,
+			String endpointtype, String url, String nome,
 			String tipo, String user, String password, String initcont,
 			String urlpgk, String provurl, String connfact, String sendas,
 			String httpsurl, String httpstipologia, boolean httpshostverify,
@@ -2692,6 +2778,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
+			String httpsKeyAlias, String httpsTrustStoreCRLs,
 			String tipoconn, String autenticazioneHttp,
 			String proxy_enabled, String proxy_hostname, String proxy_port, String proxy_username, String proxy_password,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
@@ -2749,6 +2836,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 				httpspwdprivatekey = "";
 			if (httpsalgoritmokey == null)
 				httpsalgoritmokey = "";
+			if (httpsKeyAlias == null)
+				httpsKeyAlias = "";
+			if (httpsTrustStoreCRLs == null)
+				httpsTrustStoreCRLs = "";
 			if (tipoconn == null)
 				tipoconn = "";	
 			if (proxy_enabled == null)
@@ -2806,6 +2897,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					(httpspwdkey.indexOf(" ") != -1) ||
 					(httpspwdprivatekey.indexOf(" ") != -1) ||
 					(httpsalgoritmokey.indexOf(" ") != -1) ||
+					(httpsKeyAlias.indexOf(" ") != -1) ||
 					(tipoconn.indexOf(" ") != -1) ||
 					(proxy_hostname.indexOf(" ") != -1) ||
 					(proxy_port.indexOf(" ") != -1) ||
@@ -2827,7 +2919,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				this.pd.setMessage("Non inserire spazi nei campi di testo");
 				return false;
 			}
-			
+
 			if(url.startsWith(" ") || url.endsWith(" ")) {
 				this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL+" non deve iniziare o terminare con uno spazio");
 				return false;
@@ -3091,6 +3183,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 				if(this.checkLength255(url, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL)==false) {
 					return false;
 				}
+				if(this.isProfiloModIPA(protocollo) && !servizioApplicativo) {
+					if(!httpsurl.toLowerCase().trim().startsWith("https://")) {
+						this.pd.setMessage("Il profilo richiede una url con prefisso https://");
+						return false;
+					}
+				}
 			}
 
 			// Controllo campi obbligatori per il tipo di connettore jms
@@ -3171,6 +3269,17 @@ public class ConnettoriHelper extends ConsoleHelper {
 					return false;
 				}
 				
+				if(!httpsurl.toLowerCase().trim().startsWith("https://")) {
+					if(this.isProfiloModIPA(protocollo)) {
+						this.pd.setMessage("Il profilo richiede una url con prefisso https://");
+						return false;
+					}
+					else {
+						this.pd.setMessage("Url deve possedere il prefisso https://");
+						return false;
+					}
+				}
+				
 				if ("".equals(httpspath)) {
 					this.pd.setMessage("Il campo 'Path' è obbligatorio per l'Autenticazione Server");
 					return false;
@@ -3201,6 +3310,23 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				if(this.checkLength255(httpsalgoritmo, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM)==false) {
 					return false;
+				}
+				
+				if(httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
+					httpsTrustStoreCRLs = httpsTrustStoreCRLs.trim();
+					String [] tmp = httpsTrustStoreCRLs.split(",");
+					if(tmp!=null && tmp.length>0) {
+						for (String crl : tmp) {
+							if(crl!=null) {
+								crl = crl.trim();
+								if(!"".equals(crl) && crl.contains(" ")) {
+									this.pd.setMessage("I path inseriti nel campo '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL+"' non devono contenere spazi");
+									return false;
+								}
+							}
+						}
+					}
+					
 				}
 				
 				if (httpsstato) {
@@ -3380,6 +3506,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
+			String httpsKeyAlias, String httpsTrustStoreCRLs,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
@@ -3462,6 +3589,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				ConnettoreHTTPSUtils.fillConnettoreRegistry(connettore, httpsurl, httpstipologia, httpshostverify, httpspath, 
 						httpstipo, httpspwd, httpsalgoritmo, httpsstato, httpskeystore, httpspwdprivatekeytrust, 
 						httpspathkey, httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
+						httpsKeyAlias, httpsTrustStoreCRLs,
 						user, pwd);
 			} else if (tipoConnettore.equals(TipiConnettore.FILE.getNome())) {
 				ConnettoreFileUtils.fillConnettoreRegistry(connettore, 
@@ -3619,6 +3747,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
+			String httpsKeyAlias, String httpsTrustStoreCRLs,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
@@ -3686,7 +3815,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			} else if (tipoConnettore.equals(TipiConnettore.HTTPS.getNome())) {
 				ConnettoreHTTPSUtils.fillConnettoreConfig(connettore, httpsurl, httpstipologia, httpshostverify, httpspath, httpstipo, 
 						httpspwd, httpsalgoritmo, httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, httpstipokey, 
-						httpspwdkey, httpspwdprivatekey, httpsalgoritmokey);
+						httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
+						httpsKeyAlias, httpsTrustStoreCRLs);
 			} else if (tipoConnettore.equals(TipiConnettore.FILE.getNome())) {
 				ConnettoreFileUtils.fillConnettoreConfig(connettore, 
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,

@@ -45,6 +45,10 @@ public class ConfigurazioneProtocolloModel extends AbstractModel<ConfigurazioneP
 		this.NOME = new Field("nome",java.lang.String.class,"configurazione-protocollo",ConfigurazioneProtocollo.class);
 		this.URL_INVOCAZIONE_SERVIZIO_PD = new Field("urlInvocazioneServizioPD",java.lang.String.class,"configurazione-protocollo",ConfigurazioneProtocollo.class);
 		this.URL_INVOCAZIONE_SERVIZIO_PA = new Field("urlInvocazioneServizioPA",java.lang.String.class,"configurazione-protocollo",ConfigurazioneProtocollo.class);
+		this.URL_INVOCAZIONE_SERVIZIO_REST_PD = new Field("urlInvocazioneServizioRestPD",java.lang.String.class,"configurazione-protocollo",ConfigurazioneProtocollo.class);
+		this.URL_INVOCAZIONE_SERVIZIO_REST_PA = new Field("urlInvocazioneServizioRestPA",java.lang.String.class,"configurazione-protocollo",ConfigurazioneProtocollo.class);
+		this.URL_INVOCAZIONE_SERVIZIO_SOAP_PD = new Field("urlInvocazioneServizioSoapPD",java.lang.String.class,"configurazione-protocollo",ConfigurazioneProtocollo.class);
+		this.URL_INVOCAZIONE_SERVIZIO_SOAP_PA = new Field("urlInvocazioneServizioSoapPA",java.lang.String.class,"configurazione-protocollo",ConfigurazioneProtocollo.class);
 	
 	}
 	
@@ -55,6 +59,10 @@ public class ConfigurazioneProtocolloModel extends AbstractModel<ConfigurazioneP
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"configurazione-protocollo",ConfigurazioneProtocollo.class);
 		this.URL_INVOCAZIONE_SERVIZIO_PD = new ComplexField(father,"urlInvocazioneServizioPD",java.lang.String.class,"configurazione-protocollo",ConfigurazioneProtocollo.class);
 		this.URL_INVOCAZIONE_SERVIZIO_PA = new ComplexField(father,"urlInvocazioneServizioPA",java.lang.String.class,"configurazione-protocollo",ConfigurazioneProtocollo.class);
+		this.URL_INVOCAZIONE_SERVIZIO_REST_PD = new ComplexField(father,"urlInvocazioneServizioRestPD",java.lang.String.class,"configurazione-protocollo",ConfigurazioneProtocollo.class);
+		this.URL_INVOCAZIONE_SERVIZIO_REST_PA = new ComplexField(father,"urlInvocazioneServizioRestPA",java.lang.String.class,"configurazione-protocollo",ConfigurazioneProtocollo.class);
+		this.URL_INVOCAZIONE_SERVIZIO_SOAP_PD = new ComplexField(father,"urlInvocazioneServizioSoapPD",java.lang.String.class,"configurazione-protocollo",ConfigurazioneProtocollo.class);
+		this.URL_INVOCAZIONE_SERVIZIO_SOAP_PA = new ComplexField(father,"urlInvocazioneServizioSoapPA",java.lang.String.class,"configurazione-protocollo",ConfigurazioneProtocollo.class);
 	
 	}
 	
@@ -65,6 +73,14 @@ public class ConfigurazioneProtocolloModel extends AbstractModel<ConfigurazioneP
 	public IField URL_INVOCAZIONE_SERVIZIO_PD = null;
 	 
 	public IField URL_INVOCAZIONE_SERVIZIO_PA = null;
+	 
+	public IField URL_INVOCAZIONE_SERVIZIO_REST_PD = null;
+	 
+	public IField URL_INVOCAZIONE_SERVIZIO_REST_PA = null;
+	 
+	public IField URL_INVOCAZIONE_SERVIZIO_SOAP_PD = null;
+	 
+	public IField URL_INVOCAZIONE_SERVIZIO_SOAP_PA = null;
 	 
 
 	@Override

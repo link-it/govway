@@ -343,7 +343,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabaseRuntime);
 			if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiTramiteTransazioniForceIndex()){
-				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled()){
+				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 					//System.out.println("ADD FORCE INDEX esisteTransazione INDEX2");
 					sqlQueryObject.addSelectForceIndex(this.nomeTabellaTransazioni, CostantiDB.TABLE_TRANSAZIONI_INDEX_FILTRO_REQ_2);
 					sqlQueryObject.addSelectForceIndex(this.nomeTabellaTransazioni, CostantiDB.TABLE_TRANSAZIONI_INDEX_FILTRO_RES_2);
@@ -358,7 +358,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			sqlQueryObject.addFromTable(this.nomeTabellaTransazioni);
 			if(idBustaRichiesta!=null){
 				// Solo una porta applicativa puo' ricevere una busta di richiesta (serve per evitare i problemi in caso di loopback)
-				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled()){
+				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 					sqlQueryObject.addWhereCondition(true,this.colonna_data_id_msg_richiesta+"=?",this.colonna_id_messaggio_richiesta+"=?",this.colonna_pdd_ruolo+"=?");	
 				}
 				else{
@@ -367,7 +367,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			}
 			if(idBustaRisposta!=null){
 				 // Solo una porta delegata puo' ricevere una busta di risposta (serve per evitare i problemi in caso di loopback)
-				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled()){
+				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 					sqlQueryObject.addWhereCondition(true,this.colonna_data_id_msg_risposta+"=?",this.colonna_id_messaggio_risposta+"=?",this.colonna_pdd_ruolo+"=?");
 				}
 				else{
@@ -381,7 +381,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			int index = 1;
 			Timestamp t = null;
 			if(idBustaRichiesta!=null){
-				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled()){
+				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 					t = DateUtility.getTimestampIntoIdProtocollo(this.log,protocolBustaBuilder,idBustaRichiesta);
 					if(t==null){
 						throw new Exception("Estrazione data dall'id busta ["+idBustaRichiesta+"] non riuscita");
@@ -392,7 +392,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 				pstmt.setString(index++, TipoPdD.APPLICATIVA.getTipo());
 			}
 			if(idBustaRisposta!=null){
-				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled()){
+				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 					t = DateUtility.getTimestampIntoIdProtocollo(this.log,protocolBustaBuilder,idBustaRisposta);
 					if(t==null){
 						throw new Exception("Estrazione data dall'id busta ["+idBustaRisposta+"] non riuscita");
@@ -405,18 +405,18 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			
 			if(this.debug){
 				SimpleDateFormat dateformat = null;
-				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled()){
+				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 					dateformat = new SimpleDateFormat ("yyyy-MM-dd HH:mm"); // SimpleDateFormat non e' thread-safe
 				}
 				if(idBustaRichiesta!=null){
-					if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled()){
+					if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 						sql = sql.replaceFirst("\\?", "'"+dateformat.format(t)+"'");
 					}
 					sql = sql.replaceFirst("\\?", "'"+idBustaRichiesta+"'");
 					sql = sql.replaceFirst("\\?", "'"+TipoPdD.APPLICATIVA.getTipo()+"'");
 				}
 				if(idBustaRisposta!=null){
-					if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled()){
+					if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 						sql = sql.replaceFirst("\\?", "'"+dateformat.format(t)+"'");
 					}
 					sql = sql.replaceFirst("\\?", "'"+idBustaRisposta+"'");
@@ -504,7 +504,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 				
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabaseRuntime);
 			if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiTramiteTransazioniForceIndex()){
-				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled()){
+				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 					//	System.out.println("ADD FORCE INDEX esisteTransazione INDEX1");
 					sqlQueryObject.addSelectForceIndex(this.nomeTabellaTransazioni, CostantiDB.TABLE_TRANSAZIONI_INDEX_FILTRO_REQ_2);
 					sqlQueryObject.addSelectForceIndex(this.nomeTabellaTransazioni, CostantiDB.TABLE_TRANSAZIONI_INDEX_FILTRO_RES_2);
@@ -517,7 +517,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			sqlQueryObject.addUpdateTable(this.nomeTabellaTransazioni);
 			if(richiesta){
 				sqlQueryObject.addUpdateField("duplicati_richiesta", "duplicati_richiesta+1");
-				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled()){
+				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 					sqlQueryObject.addWhereCondition(this.colonna_data_id_msg_richiesta+"=?");
 				}
 				sqlQueryObject.addWhereCondition(this.colonna_id_messaggio_richiesta+"=?");
@@ -525,7 +525,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			}
 			else{
 				sqlQueryObject.addUpdateField("duplicati_risposta", "duplicati_risposta+1");
-				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled()){
+				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 					sqlQueryObject.addWhereCondition(this.colonna_data_id_msg_risposta+"=?");
 				}
 				sqlQueryObject.addWhereCondition(this.colonna_id_messaggio_risposta+"=?");
@@ -533,8 +533,8 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			}
 			sqlQueryObject.setANDLogicOperator(true); 
 			
-			Timestamp t = DateUtility.getTimestampIntoIdProtocollo(this.log,protocolBustaBuilder,idBusta);
-			if(t==null){
+			Timestamp timestampId = DateUtility.getTimestampIntoIdProtocollo(this.log,protocolBustaBuilder,idBusta);
+			if(timestampId==null && this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 				throw new Exception("Estrazione data dall'id busta ["+idBusta+"] non riuscita");
 			}
 			
@@ -542,16 +542,16 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			//System.out.println("incrementDuplicatiTransazione SQL: "+sql);
 			pstmt = con.prepareStatement(sql);
 			int index = 1;
-			if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled()){
-				pstmt.setTimestamp(index++, t);
+			if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
+				pstmt.setTimestamp(index++, timestampId);
 			}
 			pstmt.setString(index++, idBusta);
 			pstmt.setInt(index++, 0);
 			
 			if(this.debug){
-				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled()){
+				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
 					SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd HH:mm"); // SimpleDateFormat non e' thread-safe
-					sql = sql.replaceFirst("\\?", "'"+dateformat.format(t)+"'");
+					sql = sql.replaceFirst("\\?", "'"+dateformat.format(timestampId)+"'");
 				}
 				if(idBusta!=null){
 					sql = sql.replaceFirst("\\?", "'"+idBusta+"'");

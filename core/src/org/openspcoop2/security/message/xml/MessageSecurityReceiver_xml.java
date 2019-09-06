@@ -23,6 +23,9 @@
 
 package org.openspcoop2.security.message.xml;
 
+import java.security.PublicKey;
+import java.security.cert.X509Certificate;
+
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
@@ -320,6 +323,52 @@ public class MessageSecurityReceiver_xml extends AbstractRESTMessageSecurityRece
 					// RSA
 					if(	this.xmlVerifierSignature.getKeyInfo().getPublicKey()!=null) {
 						// non c'e' una stringa da tornare
+					}
+				}
+				return null;
+			}
+			else if(this.xmlDecrypt!=null) {
+				return null;
+			}
+			else {
+				throw new SecurityException(XMLCostanti.XML_ENGINE_DESCRIPTION+" (getCertificate method) usable only after one function beetwen encrypt or signature");
+			}
+		}catch(Exception e) {
+			throw new SecurityException(e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public X509Certificate getX509Certificate() throws SecurityException {
+		try {
+			if(this.xmlVerifierSignature!=null) {
+				if(	this.xmlVerifierSignature.getKeyInfo()!=null ) {
+					// X509
+					if(	this.xmlVerifierSignature.getKeyInfo().getX509Certificate()!=null && this.xmlVerifierSignature.getKeyInfo().getX509Certificate().getIssuerX500Principal()!=null ) {
+						return this.xmlVerifierSignature.getKeyInfo().getX509Certificate();
+					}
+				}
+				return null;
+			}
+			else if(this.xmlDecrypt!=null) {
+				return null;
+			}
+			else {
+				throw new SecurityException(XMLCostanti.XML_ENGINE_DESCRIPTION+" (getCertificate method) usable only after one function beetwen encrypt or signature");
+			}
+		}catch(Exception e) {
+			throw new SecurityException(e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public PublicKey getPublicKey() throws SecurityException {
+		try {
+			if(this.xmlVerifierSignature!=null) {
+				if(	this.xmlVerifierSignature.getKeyInfo()!=null ) {
+					// RSA
+					if(	this.xmlVerifierSignature.getKeyInfo().getPublicKey()!=null) {
+						return this.xmlVerifierSignature.getKeyInfo().getPublicKey();
 					}
 				}
 				return null;

@@ -39,6 +39,10 @@ import java.io.Serializable;
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="urlInvocazioneServizioPD" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="urlInvocazioneServizioPA" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="urlInvocazioneServizioRestPD" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="urlInvocazioneServizioRestPA" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="urlInvocazioneServizioSoapPD" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="urlInvocazioneServizioSoapPA" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -95,6 +99,38 @@ public class ConfigurazioneProtocollo extends org.openspcoop2.utils.beans.BaseBe
     this.urlInvocazioneServizioPA = urlInvocazioneServizioPA;
   }
 
+  public java.lang.String getUrlInvocazioneServizioRestPD() {
+    return this.urlInvocazioneServizioRestPD;
+  }
+
+  public void setUrlInvocazioneServizioRestPD(java.lang.String urlInvocazioneServizioRestPD) {
+    this.urlInvocazioneServizioRestPD = urlInvocazioneServizioRestPD;
+  }
+
+  public java.lang.String getUrlInvocazioneServizioRestPA() {
+    return this.urlInvocazioneServizioRestPA;
+  }
+
+  public void setUrlInvocazioneServizioRestPA(java.lang.String urlInvocazioneServizioRestPA) {
+    this.urlInvocazioneServizioRestPA = urlInvocazioneServizioRestPA;
+  }
+
+  public java.lang.String getUrlInvocazioneServizioSoapPD() {
+    return this.urlInvocazioneServizioSoapPD;
+  }
+
+  public void setUrlInvocazioneServizioSoapPD(java.lang.String urlInvocazioneServizioSoapPD) {
+    this.urlInvocazioneServizioSoapPD = urlInvocazioneServizioSoapPD;
+  }
+
+  public java.lang.String getUrlInvocazioneServizioSoapPA() {
+    return this.urlInvocazioneServizioSoapPA;
+  }
+
+  public void setUrlInvocazioneServizioSoapPA(java.lang.String urlInvocazioneServizioSoapPA) {
+    this.urlInvocazioneServizioSoapPA = urlInvocazioneServizioSoapPA;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -113,5 +149,21 @@ public class ConfigurazioneProtocollo extends org.openspcoop2.utils.beans.BaseBe
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="urlInvocazioneServizioPA",required=false)
   protected java.lang.String urlInvocazioneServizioPA;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="urlInvocazioneServizioRestPD",required=false)
+  protected java.lang.String urlInvocazioneServizioRestPD;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="urlInvocazioneServizioRestPA",required=false)
+  protected java.lang.String urlInvocazioneServizioRestPA;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="urlInvocazioneServizioSoapPD",required=false)
+  protected java.lang.String urlInvocazioneServizioSoapPD;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="urlInvocazioneServizioSoapPA",required=false)
+  protected java.lang.String urlInvocazioneServizioSoapPA;
 
 }

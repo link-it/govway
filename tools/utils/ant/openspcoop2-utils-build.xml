@@ -444,6 +444,7 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.authentication.entrypoint" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.authentication.entrypoint.jaxrs" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.authentication.filter" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.authentication.handler" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.authentication.handler.jaxrs" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.authentication.preauth.filter" />

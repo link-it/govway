@@ -337,6 +337,14 @@
 							<linkit:sql-table-index-field name="data-id-msg-risposta" ignoreTypeCompatibility="true"/>
 							<linkit:sql-table-index-field name="id-messaggio-risposta"/>
 						</linkit:sql-table-index>
+				    	<!-- Indici per ottimizzare la ricerca per id collaborazione -->
+				    	<linkit:sql-table-index name="INDEX_TR_COLLABORAZIONE">
+				    		<linkit:sql-table-index-field name="id-collaborazione"/>
+				    	</linkit:sql-table-index>
+				    	<!-- Indici per ottimizzare la ricerca per id rif. richiesta -->
+				    	<linkit:sql-table-index name="INDEX_TR_RIF_RICHIESTA">
+				    		<linkit:sql-table-index-field name="id-asincrono"/>
+				    	</linkit:sql-table-index>
 					</linkit:sql-table-mapping>
 				</linkit:generator>
 			</xsd:appinfo>

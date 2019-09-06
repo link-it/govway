@@ -57,4 +57,8 @@ public class SymmetricKeystoreCache extends AbstractKeystoreCache<SymmetricKeyst
 		}
 	}
 
+	@Override
+	public String getPrefixKey() {
+		return "SymmetricKeystore ";
+	}
 }

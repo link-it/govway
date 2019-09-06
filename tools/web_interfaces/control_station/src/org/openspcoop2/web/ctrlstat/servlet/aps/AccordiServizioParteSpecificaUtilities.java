@@ -264,8 +264,17 @@ public class AccordiServizioParteSpecificaUtilities {
 		}
 
 		//imposto properties custom
-		if(!alreadyExists) {
-			asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(protocolProperties, consoleOperationType,null));
+		if(generaPortaDelegata){
+			for (Fruitore fruitore : asps.getFruitoreList()) {
+				if(fruitore.getTipo().equals(idFruitore.getTipo()) && fruitore.getNome().equals(idFruitore.getNome())) {
+					fruitore.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, consoleOperationType,null));
+				}
+			}
+		}
+		else {
+			if(!alreadyExists) {
+				asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, consoleOperationType,null));
+			}
 		}
 
 		if(alreadyExists) {
@@ -1458,6 +1467,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
+			String httpsKeyAlias, String httpsTrustStoreCRLs,
 			String proxy_enabled, String proxy_hostname, String proxy_port, String proxy_username, String proxy_password,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
@@ -1535,6 +1545,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					httpspathkey, httpstipokey,
 					httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey,
+					httpsKeyAlias, httpsTrustStoreCRLs,
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
@@ -1834,6 +1845,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
+			String httpsKeyAlias, String httpsTrustStoreCRLs,
 			String proxy_enabled, String proxy_hostname, String proxy_port, String proxy_username, String proxy_password,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
@@ -1897,6 +1909,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					httpspathkey, httpstipokey,
 					httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey,
+					httpsKeyAlias, httpsTrustStoreCRLs,
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,

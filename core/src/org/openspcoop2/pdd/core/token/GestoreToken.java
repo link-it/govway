@@ -66,6 +66,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.security.message.jose.JOSEUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
@@ -640,8 +641,9 @@ public class GestoreToken {
     			JsonVerifySignature jsonCompactVerify = null;
     			try {
     				JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
-    				jsonCompactVerify = new JsonVerifySignature(policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID),
-    						options);
+    				Properties p = policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
+    				JOSEUtils.injectKeystore(p, log); // serve per leggere il keystore dalla cache
+    				jsonCompactVerify = new JsonVerifySignature(p, options);
     				if(jsonCompactVerify.verify(token)) {
     					informazioniToken = new InformazioniToken(SorgenteInformazioniToken.JWT,jsonCompactVerify.getDecodedPayload(),tokenParser);
     				}
@@ -658,8 +660,9 @@ public class GestoreToken {
     			JsonDecrypt jsonDecrypt = null;
     			try {
     				JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
-    				jsonDecrypt = new JsonDecrypt(policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID),
-    						options);
+    				Properties p = policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID);
+    				JOSEUtils.injectKeystore(p, log); // serve per leggere il keystore dalla cache
+    				jsonDecrypt = new JsonDecrypt(p, options);
     				jsonDecrypt.decrypt(token);
     				informazioniToken = new InformazioniToken(SorgenteInformazioniToken.JWT,jsonDecrypt.getDecodedPayload(),tokenParser);
     			}catch(Exception e) {
@@ -1091,6 +1094,10 @@ public class GestoreToken {
 				}
 				else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(forwardInformazioniRaccolteMode)) {
 					jwtSecurity = policyGestioneToken.getProperties().get(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_ENCRYP_PROP_REF_ID);
+				}
+				
+				if(jwtSecurity!=null) {
+					JOSEUtils.injectKeystore(jwtSecurity, log); // serve per leggere il keystore dalla cache
 				}
 				
 				forwardValidazioneJWT = policyGestioneToken.isForwardToken_informazioniRaccolte_validazioneJWT();

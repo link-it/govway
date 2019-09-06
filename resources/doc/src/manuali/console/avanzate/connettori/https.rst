@@ -47,7 +47,7 @@ il significato dei parametri:
 
    -  **Password**: Password per l'accesso al TrustStore
 
-   -  **Algoritmo**: Algoritmo di firma utilizzato (default: PKIX)
+   -  **CRL File(s)**: Path dove è presente una CRL da utilizzare per validare i certificati server. L'indicazione di una CRL è opzionale e ne possono essere indicate più di una separando i path con la virgola.
 
 -  *Autenticazione Client (opzionale)*
 
@@ -64,4 +64,4 @@ il significato dei parametri:
    -  **Password Chiave Privata**: Password per accedere alla chiave
       privata presente nel keystore.
 
-   -  **Algoritmo**: Algoritmo di firma utilizzato (default: SunX509)
+   -  **Alias Chiave Privata**: Alias che individua la chiave privata, presente nel keystore, da utilizzare. L'indicazione di un alias è opzionale e se non fornito viene utilizzata la prima chiave trovata.

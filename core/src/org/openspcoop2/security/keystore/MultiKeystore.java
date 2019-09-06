@@ -25,6 +25,7 @@ package org.openspcoop2.security.keystore;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.security.Key;
 import java.security.KeyStore;
 import java.util.ArrayList;
@@ -42,8 +43,13 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class MultiKeystore {
+public class MultiKeystore implements Serializable  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private final static String ALIASES = "aliases";
 	private final static String KEYSTORE_TYPE = ".keystore.type";
 	private final static String KEYSTORE_PATH = ".keystore.path";
@@ -54,9 +60,17 @@ public class MultiKeystore {
 	private final static String KEY_ALGORITHM = ".key.algorithm";
 	
 	private List<String> aliases = new ArrayList<String>();
-	private Hashtable<String, Object> keystores = new Hashtable<String, Object>();
+	private Hashtable<String, Serializable> keystores = new Hashtable<String, Serializable>();
 	private Hashtable<String, String> mappingAliasToKeyAlias = new Hashtable<String, String>();
 	private Hashtable<String, String> mappingAliasToKeyPassword = new Hashtable<String, String>();
+	
+	@Override
+	public String toString() {
+		StringBuffer bf = new StringBuffer();
+		bf.append("MultiKeystore ").append(this.aliases);
+		return bf.toString();
+	}
+	
 	
 	public MultiKeystore(String propertyFilePath) throws SecurityException{
 		
@@ -66,7 +80,10 @@ public class MultiKeystore {
 			if(fStore.exists()){
 				isStore = new FileInputStream(fStore);
 			}else{
-				isStore = MerlinKeystore.class.getResourceAsStream("/"+propertyFilePath);
+				isStore = MerlinKeystore.class.getResourceAsStream(propertyFilePath);
+				if(isStore==null){
+					isStore = MerlinKeystore.class.getResourceAsStream("/"+propertyFilePath);
+				}
 				if(isStore==null){
 					throw new Exception("Store ["+propertyFilePath+"] not found");
 				}
@@ -153,7 +170,7 @@ public class MultiKeystore {
 			if(keystore instanceof MerlinKeystore){
 				return ((MerlinKeystore)keystore).getKey(this.mappingAliasToKeyAlias.get(alias));
 			}
-			else if(keystore instanceof MerlinKeystore){
+			else if(keystore instanceof SymmetricKeystore){
 				return ((SymmetricKeystore)keystore).getKey();
 			}
 			else{
@@ -181,7 +198,7 @@ public class MultiKeystore {
 			if(keystore instanceof MerlinKeystore){
 				return ((MerlinKeystore)keystore).getKeyStore();
 			}
-			else if(keystore instanceof MerlinKeystore){
+			else if(keystore instanceof SymmetricKeystore){
 				return ((SymmetricKeystore)keystore).getKeyStore();
 			}
 			else{

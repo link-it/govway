@@ -36,6 +36,7 @@ public class BinaryConsoleItem extends AbstractConsoleItem<byte[]> {
 	private String fileName = null;
 	private String fileId = null;
 	private boolean readOnly = false; // vale solo in change
+	private boolean showContent = true; // vale solo in change
 
 	protected BinaryConsoleItem(String id, String label, ConsoleItemType type) throws ProtocolException {
 		this(id, label, type, null, null);
@@ -69,6 +70,14 @@ public class BinaryConsoleItem extends AbstractConsoleItem<byte[]> {
 
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
+	}
+	
+	public boolean isShowContent() {
+		return this.showContent;
+	}
+
+	public void setShowContent(boolean showContent) {
+		this.showContent = showContent;
 	}
 
 }

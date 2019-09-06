@@ -60,6 +60,7 @@ public class ProtocolPropertiesCostanti {
 	public final static String PARAMETRO_PP_PROTOCOLLO = "protocollo";
 	public static final String PARAMETRO_PP_TIPO_ACCORDO = "tipoAccordo";
 	public final static String PARAMETRO_PP_ID_ALLEGATO = "idAllegato";
+	public static final String PARAMETRO_PP_CHANGE_BINARY = "changeBinary";
 	
 	/* LABEL PARAMETRI */
 	
@@ -70,6 +71,7 @@ public class ProtocolPropertiesCostanti {
 	public final static String LABEL_GESTIONE = "Gestione ";
 
 	public final static String LABEL_SOGGETTO = "Soggetto";
+	public final static String LABEL_SERVIZIO_APPLICATIVO = "Applicativo";
 	public final static String LABEL_APC = "Accordo Parte Comune";
 	public final static String LABEL_ASC = "Servizio Composto";
 	public final static String LABEL_APS = "Accordo Parte Specifica";
@@ -90,9 +92,10 @@ public class ProtocolPropertiesCostanti {
 	public final static String LABEL_DOCUMENTO_NUOVO = "Nuovo Documento";
 	public final static String LABEL_CONTENUTO_NUOVO = "Nuovo Contenuto";
 	public final static String LABEL_DOCUMENTO_CHANGE_CLEAR_WARNING = "Warning: ";
-	public final static String LABEL_DOCUMENTO_CHANGE_CLEAR = "Se si desidera eliminare un documento precedentemente caricato cliccare su 'Invia' senza selezionare alcun file"; //fornirne un'altra versione";
+	public final static String LABEL_DOCUMENTO_CHANGE_CLEAR = "Se si desidera eliminare un contenuto precedentemente caricato cliccare su 'Salva' senza selezionare alcun file"; //fornirne un'altra versione";
 
 	/* VALORI PARAMETRI */
+	public static final String PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_SERVIZIO_APPLICATIVO = "SERVIZIO_APPLICATIVO";
 	public static final String PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_SOGGETTO = "SOGGETTO";
 	public static final String PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_ACCORDO_COOPERAZIONE = "ACCORDO_COOPERAZIONE";
 	public static final String PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_ACCORDO_SERVIZIO_PARTE_COMUNE = "ACCORDO_SERVIZIO_PARTE_COMUNE";
@@ -109,5 +112,6 @@ public class ProtocolPropertiesCostanti {
 
 	public static final String PARAMETER_FILENAME_PREFIX = Costanti.PARAMETER_FILENAME_PREFIX;  
 	public static final String PARAMETER_FILEID_PREFIX = Costanti.PARAMETER_FILEID_PREFIX;
+	public static final String PARAMETER_FILENAME_RECHANGE_PREFIX = "__fnReChange__";
  
 }

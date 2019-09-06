@@ -1,3 +1,20 @@
+2019-09-06  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayMonitor, GovWayConsole, ProtocolloModIPA, InstallerVersioneBinaria]
+	Aggiunta funzionalità OP-841
+	Realizzato un nuovo profilo di interoperabilità 'ModI PA' che soddisfa le linee guida pubblicate al link:
+	- https://docs.italia.it/italia/piano-triennale-ict/lg-modellointeroperabilita-docs/it/bozza/
+	Il lavoro include diverse migliorie quali:	
+	- Aggiunta una cache dedicata a tutti i kestore acceduti dalle verie funzionalità del gateway come ssl, wssecurity, jws, jwe, oauth2 ...
+	- Al connettore https è stata aggiunta la possibilità di indicare opzionalmente l'alias della chiave privata da utilizzare per l'autenticazione client,
+	  se il keystore ne contiene più di una, . 
+	- È stata aggiunta la possibilità di impostare CRL per la validazione dei certificati sia sul connettore https 
+	  che nelle configurazioni relative alla sicurezza messaggio. 
+	- Sulla govwayMonitor è stata aggiunta la possibilità di effettuare ricerche per id di collaborazione e 
+	  per id che riferisce una precedente richiesta.
+	- Risolto bug che non faceva funzionare il riconoscimento dell'azione basato sull'interfaccia wsdl se vi erano più operazioni 
+	  che condividevano la definizione di un medesimo header.
+
 2019-09-02  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

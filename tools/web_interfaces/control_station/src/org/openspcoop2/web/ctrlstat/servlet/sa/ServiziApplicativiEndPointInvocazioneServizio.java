@@ -230,6 +230,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			String httpspwdkey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 			String httpspwdprivatekey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 			String httpsalgoritmokey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+			String httpsKeyAlias = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
+			String httpsTrustStoreCRLs = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				password = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -282,6 +284,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			SoggettiCore soggettiCore = new SoggettiCore(saCore);
 
 			ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
 			InvocazionePorta invocazionePorta = sa.getInvocazionePorta();
 			InvocazioneServizio is = sa.getInvocazioneServizio();
 			InvocazioneCredenziali cis = is.getCredenziali();
@@ -660,6 +663,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					httpspwdkey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 					httpspwdprivatekey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD);
 					httpsalgoritmokey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+					httpsKeyAlias = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_ALIAS);
+					httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
 					if (httpspathkey == null) {
 						httpsstato = false;
 						httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
@@ -748,8 +753,10 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						httpshostverify, httpspath, httpstipo, httpspwd,
 						httpsalgoritmo, httpsstato, httpskeystore,
 						httpspwdprivatekeytrust, httpspathkey,
-						httpstipokey, httpspwdkey, httpspwdprivatekey,
-						httpsalgoritmokey, tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
+						httpstipokey, httpspwdkey, 
+						httpspwdprivatekey, httpsalgoritmokey, 
+						httpsKeyAlias, httpsTrustStoreCRLs,
+						tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
 						nomeservizioApplicativo, idsil, idAsps, idPorta, null, null,
 						null, null, true,
 						isConnettoreCustomUltimaImmagineSalvata, 
@@ -759,7 +766,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken,token_policy,
-						listExtendedConnettore, forceEnabled);
+						listExtendedConnettore, forceEnabled,
+						nomeProtocollo, false, false);
 				
 				dati = saHelper.addHiddenFieldsToDati(dati, provider, idAsps, idPorta);
 				
@@ -772,7 +780,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = saHelper.servizioApplicativoEndPointCheckData(listExtendedConnettore);
+			boolean isOk = saHelper.servizioApplicativoEndPointCheckData(protocollo, listExtendedConnettore);
 			if (!isOk) {
 				
 				// setto la barra del titolo
@@ -798,8 +806,10 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						httpshostverify, httpspath, httpstipo, httpspwd,
 						httpsalgoritmo, httpsstato, httpskeystore,
 						httpspwdprivatekeytrust, httpspathkey,
-						httpstipokey, httpspwdkey, httpspwdprivatekey,
-						httpsalgoritmokey, tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
+						httpstipokey, httpspwdkey, 
+						httpspwdprivatekey, httpsalgoritmokey,
+						httpsKeyAlias, httpsTrustStoreCRLs,
+						tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
 						nomeservizioApplicativo, idsil, null, null, null, null,
 						null, null, true,
 						isConnettoreCustomUltimaImmagineSalvata, 
@@ -809,7 +819,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken,token_policy,
-						listExtendedConnettore, forceEnabled);
+						listExtendedConnettore, forceEnabled,
+						nomeProtocollo, false, false);
 				
 				dati = saHelper.addHiddenFieldsToDati(dati, provider, idAsps, idPorta);
 
@@ -874,6 +885,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					httpspathkey, httpstipokey,
 					httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey,
+					httpsKeyAlias, httpsTrustStoreCRLs,
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,

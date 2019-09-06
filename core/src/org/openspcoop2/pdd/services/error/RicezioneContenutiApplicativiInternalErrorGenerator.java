@@ -86,7 +86,8 @@ public class RicezioneContenutiApplicativiInternalErrorGenerator extends Abstrac
 				this.idModulo, 
 				this.proprietaErroreAppl, 
 				messageTypeError, rfc7807, httpStatus, this.getInterfaceName(),
-				this.tipoPdD, this.servizioApplicativo);
+				this.tipoPdD, this.servizioApplicativo,
+				this.requestInfo.getIdTransazione());
 		return erroreApplicativoBuilder;
 	}
 	

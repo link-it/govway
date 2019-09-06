@@ -55,6 +55,7 @@ import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.keystore.GestoreKeystoreCaching;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.UtilsException;
@@ -344,6 +345,31 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			// Gestione https
 			SSLContext sslContext = null;
 			if(this.sslContextProperties!=null){
+				
+				// provo a leggere i keystore dalla cache
+				if(this.sslContextProperties.getKeyStoreLocation()!=null) {
+					try {
+						this.sslContextProperties.setKeyStore(GestoreKeystoreCaching.getMerlinKeystore(this.sslContextProperties.getKeyStoreLocation(), 
+								this.sslContextProperties.getKeyStoreType(), this.sslContextProperties.getKeyStorePassword()).getKeyStore());
+					}catch(Exception e) {
+						this.logger.error("Lettura keystore '"+this.sslContextProperties.getKeyStoreLocation()+"' dalla cache fallita: "+e.getMessage(),e);
+					}
+				}
+				if(this.sslContextProperties.getTrustStoreLocation()!=null) {
+					try {
+						this.sslContextProperties.setTrustStore(GestoreKeystoreCaching.getMerlinTruststore(this.sslContextProperties.getTrustStoreLocation(), 
+								this.sslContextProperties.getTrustStoreType(), this.sslContextProperties.getTrustStorePassword()).getTrustStore());
+					}catch(Exception e) {
+						this.logger.error("Lettura truststore '"+this.sslContextProperties.getTrustStoreLocation()+"' dalla cache fallita: "+e.getMessage(),e);
+					}
+				}
+				if(this.sslContextProperties.getTrustStoreCRLsLocation()!=null) {
+					try {
+						this.sslContextProperties.setTrustStoreCRLs(GestoreKeystoreCaching.getCRLCertstore(this.sslContextProperties.getTrustStoreCRLsLocation()).getCertStore());
+					}catch(Exception e) {
+						this.logger.error("Lettura CRLs '"+this.sslContextProperties.getTrustStoreLocation()+"' dalla cache fallita: "+e.getMessage(),e);
+					}
+				}
 				
 				StringBuffer bfSSLConfig = new StringBuffer();
 				sslContext = SSLUtilities.generateSSLContext(this.sslContextProperties, bfSSLConfig);

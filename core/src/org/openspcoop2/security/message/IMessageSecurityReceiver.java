@@ -22,6 +22,8 @@
 
 package org.openspcoop2.security.message;
 
+import java.security.PublicKey;
+import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Map;
 
@@ -97,5 +99,8 @@ public interface IMessageSecurityReceiver {
 	public void detachSecurity(MessageSecurityContext messageSecurityContext,OpenSPCoop2RestMessage<?> message) throws SecurityException;
 	
 	public String getCertificate() throws SecurityException;
+	public X509Certificate getX509Certificate() throws SecurityException;
+	public PublicKey getPublicKey() throws SecurityException;
+	
 	
 }

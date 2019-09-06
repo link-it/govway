@@ -270,7 +270,7 @@ public class SecurityProvider implements IProvider {
 			return SignatureDigestAlgorithm.SHA256.getUri();
 		}
 		else if(XMLCostanti.ID_SIGNATURE_C14N_ALGORITHM.equals(id)) {
-			return SignatureC14NAlgorithm.INCLUSIVE_C14N_10_WITH_COMMENTS.getUri();
+			return SignatureC14NAlgorithm.EXCLUSIVE_C14N_10_OMITS_COMMENTS.getUri(); // richiesto da WSI-BasicProfile
 		}
 		
 		else if(XMLCostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id)) {

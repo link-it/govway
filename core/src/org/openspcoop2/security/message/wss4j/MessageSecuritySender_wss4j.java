@@ -161,7 +161,7 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 				}
 			}
 			
-			SecurityException wssException = new SecurityException(e.getMessage(), e);
+			SecurityException wssException = new SecurityException(messaggio, e);
 			wssException.setMsgErrore(messaggio);
 			throw wssException;
 		}

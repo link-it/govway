@@ -67,6 +67,8 @@ import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.DBProtocolPropertiesUtils;
+import org.openspcoop2.core.mapping.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -113,7 +115,6 @@ import org.openspcoop2.core.registry.constants.ParameterType;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
-import org.openspcoop2.core.registry.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
@@ -146,7 +147,6 @@ import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsAlreadyExistsException;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
@@ -160,7 +160,6 @@ import org.openspcoop2.utils.datasource.DataSourceParams;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterException;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
-import org.openspcoop2.utils.jdbc.JDBCParameterUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -3237,6 +3236,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 					if(filtroRicercaBase.getNomeSoggettoReferente()!=null)
 						sqlQueryObject.addWhereCondition(this.tabellaSoggetti+".nome_soggetto=?");
 				}
+				if(filtroRicercaBase.getServiceBinding()!=null)
+					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".service_binding = ?");
 
 				if( (filtroRicercaBase.getIdAccordoCooperazione()!=null &&
 						(filtroRicercaBase.getIdAccordoCooperazione().getNome()!=null || 
@@ -3337,6 +3338,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 						indexStmt++;
 					}
 				}
+				if(filtroRicercaBase.getServiceBinding()!=null) {
+					this.log.debug("serviceBinding stmt.setString("+filtroRicercaBase.getServiceBinding().getValue()+")");
+					stm.setString(indexStmt, filtroRicercaBase.getServiceBinding().getValue());
+					indexStmt++;
+				}
+					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".service_binding = ?");
 				if(filtroRicercaBase.getIdAccordoCooperazione()!=null &&
 						(filtroRicercaBase.getIdAccordoCooperazione().getNome()!=null || 
 						filtroRicercaBase.getIdAccordoCooperazione().getSoggettoReferente()!=null || 
@@ -9838,6 +9845,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".nome_servizio = ?");
 				if(filtroRicerca.getVersione()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".versione_servizio = ?");
+				if(filtroRicerca.getPortType()!=null)
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".port_type = ?");
 				if(filtroRicerca.getTipologia()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".servizio_correlato = ?");
 				if(filtroRicerca.getTipoSoggettoErogatore()!=null)
@@ -9901,6 +9910,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(filtroRicerca.getVersione()!=null){
 					this.log.debug("versioneServizio stmt.setString("+filtroRicerca.getVersione()+")");
 					stm.setInt(indexStmt, filtroRicerca.getVersione());
+					indexStmt++;
+				}
+				if(filtroRicerca.getPortType()!=null){
+					this.log.debug("portType stmt.setString("+filtroRicerca.getPortType()+")");
+					stm.setString(indexStmt, filtroRicerca.getPortType());
 					indexStmt++;
 				}
 				if(filtroRicerca.getTipologia()!=null){
@@ -22571,13 +22585,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 	
 	
 	
-	
 	public boolean existsProtocolProperty(ProprietariProtocolProperty proprietarioProtocolProperty, long idProprietario, String nome) throws DriverRegistroServiziException {
 
-		boolean exist = false;
 		Connection connection;
-		PreparedStatement stm = null;
-		ResultSet rs = null;
 		if (this.atomica) {
 			try {
 				connection = this.getConnectionFromDatasource("existsProtocolProperty");
@@ -22592,35 +22602,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		this.log.debug("operazione atomica = " + this.atomica);
 		try {
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES);
-			sqlQueryObject.addSelectField("id");
-			sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
-			sqlQueryObject.addWhereCondition("id_proprietario = ?");
-			sqlQueryObject.addWhereCondition("name = ?");
-			sqlQueryObject.setANDLogicOperator(true);
-			String sqlQuery = sqlQueryObject.createSQLQuery();
-			stm = connection.prepareStatement(sqlQuery);
-			stm.setString(1, proprietarioProtocolProperty.name());
-			stm.setLong(2, idProprietario);
-			stm.setString(3, nome);
-			rs = stm.executeQuery();
-			if (rs.next())
-				exist = true;
-			rs.close();
-			stm.close();
+			return DBProtocolPropertiesUtils.existsProtocolProperty(proprietarioProtocolProperty, idProprietario, nome, connection, this.tipoDB);
 		} catch (Exception e) {
-			exist = false;
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		} finally {
-
-			//Chiudo statement and resultset
-			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
 
 			if (this.atomica) {
 				try {
@@ -22631,7 +22616,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 		}
 
-		return exist;
 	}
 
 	public ProtocolProperty getProtocolProperty(ProprietariProtocolProperty proprietarioProtocolProperty, long idProprietario, String nome) throws DriverRegistroServiziException {
@@ -22653,9 +22637,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 
 		try {
-			long idPP = DBUtils.getIdProtocolProperty(proprietarioProtocolProperty.name(),idProprietario,nome,con,this.tipoDB);
-			return DriverRegistroServiziDB_LIB.getProtocolProperty(idPP, con, this.tipoDB);
-
+			return DBProtocolPropertiesUtils.getProtocolPropertyRegistry(proprietarioProtocolProperty, idProprietario, nome, con, this.tipoDB);
 		} catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziException::" + nomeMetodo + "] Exception: " + se.getMessage());
 		} finally {
@@ -22748,89 +22730,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 	}
 	private void _setProtocolPropertiesForSearch(ISQLQueryObject sqlQueryObject, List<FiltroRicercaProtocolProperty> list, String tabella) throws SQLQueryObjectException{
 		if(list!=null && list.size()>0){
-			String [] conditions = new String[list.size()];
-			for (int i = 0; i < conditions.length; i++) {
-				String aliasTabella = "pp"+i+tabella;
-				sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES, aliasTabella);
-				sqlQueryObject.setANDLogicOperator(true);
-				sqlQueryObject.addWhereCondition(aliasTabella+".tipo_proprietario=?");
-				sqlQueryObject.addWhereCondition(aliasTabella+".id_proprietario="+tabella+".id");
-				FiltroRicercaProtocolProperty f = list.get(i);
-								
-				if(f.getName()!=null){
-					if(conditions[i]!=null){
-						conditions[i] = conditions[i] + " AND ";
-					}
-					else {
-						conditions[i] = "";
-					}
-					conditions[i] = conditions[i] + " " + aliasTabella+".name=?";
-				}
-				
-				if(f.getValueAsString()!=null){
-					if(conditions[i]!=null){
-						conditions[i] = conditions[i] + " AND ";
-					}
-					else {
-						conditions[i] = "";
-					}
-					conditions[i] = conditions[i] + " " + aliasTabella+".value_string=?";
-				}
-				else if(f.getValueAsLong()!=null){
-					if(conditions[i]!=null){
-						conditions[i] = conditions[i] + " AND ";
-					}
-					else {
-						conditions[i] = "";
-					}
-					conditions[i] = conditions[i] + " " + aliasTabella+".value_number=?";
-				}
-				else if(f.getValueAsBoolean()!=null){
-					if(conditions[i]!=null){
-						conditions[i] = conditions[i] + " AND ";
-					}
-					else {
-						conditions[i] = "";
-					}
-					conditions[i] = conditions[i] + " " + aliasTabella+".value_boolean=?";
-				}
-				else {
-					if(conditions[i]!=null){
-						conditions[i] = conditions[i] + " AND ";
-					}
-					else {
-						conditions[i] = "";
-					}
-					conditions[i] = conditions[i] + " " + aliasTabella+".value_string is null";
-					conditions[i] = conditions[i] + " AND ";
-					conditions[i] = conditions[i] + " " + aliasTabella+".value_number is null";
-					conditions[i] = conditions[i] + " AND ";
-					conditions[i] = conditions[i] + " " + aliasTabella+".value_boolean is null";
-				}
-				
-				// casoSpecialeValoreNull
-				ISQLQueryObject sqlQueryObjectPropertyNotExists = null;
-				// in un caso dove il valore non e' definito nel database ci possono essere due casistiche:
-				// 1) Passando via govwayConsole, la proprieta' esiste con il nome ('name') ed e' valorizzata null in tutte le colonne (value_string,value_number,value_boolean)
-				// 2) Passando via govwayLoader, in una configurazione xml, non si definisce la proprietà senza il valore, quindi la riga con il nome non esistera proprio nel db.
-				if(f.getValueAsString()==null && f.getValueAsLong()==null && f.getValueAsBoolean()==null){
-					
-					ISQLQueryObject sqlQueryObjectPropertyNotExistsInternal = sqlQueryObject.newSQLQueryObject();
-					String aliasTabellaNotExists =  "not_exists_"+aliasTabella;
-					sqlQueryObjectPropertyNotExistsInternal.addFromTable(CostantiDB.PROTOCOL_PROPERTIES, aliasTabellaNotExists);
-					sqlQueryObjectPropertyNotExistsInternal.addSelectField(aliasTabellaNotExists, "id");
-					sqlQueryObjectPropertyNotExistsInternal.addWhereCondition(aliasTabellaNotExists+".id_proprietario="+aliasTabella+".id_proprietario");
-					sqlQueryObjectPropertyNotExistsInternal.addWhereCondition(aliasTabellaNotExists+".tipo_proprietario="+aliasTabella+".tipo_proprietario");
-					sqlQueryObjectPropertyNotExistsInternal.addWhereCondition(aliasTabellaNotExists+".name=?");
-					sqlQueryObjectPropertyNotExistsInternal.setANDLogicOperator(true);
-					
-					sqlQueryObjectPropertyNotExists = sqlQueryObject.newSQLQueryObject();
-					sqlQueryObjectPropertyNotExists.addWhereExistsCondition(true, sqlQueryObjectPropertyNotExistsInternal);
-
-					conditions[i] = "( " + conditions[i] + " ) OR ( " + sqlQueryObjectPropertyNotExists.createSQLConditions() + " )";
-				}
-			}
-			sqlQueryObject.addWhereCondition(true, conditions);
+			List<org.openspcoop2.core.mapping.FiltroRicercaProtocolProperty> l = new ArrayList<>();
+			l.addAll(list);
+			DBProtocolPropertiesUtils.setProtocolPropertiesForSearch(sqlQueryObject, l, tabella);
 		}
 	}
 	
@@ -22877,46 +22779,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 	
 	private void _setProtocolPropertiesForSearch(PreparedStatement stmt, int index, 
 			List<FiltroRicercaProtocolProperty> list, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
-		
-		JDBCParameterUtilities jdbcParameterUtilities = new JDBCParameterUtilities(TipiDatabase.toEnumConstant(this.tipoDB));
-		
 		if(list!=null && list.size()>0){
-			for (int i = 0; i < list.size(); i++) {
-				
-				this.log.debug("FiltroRicercaProtocolProperty size:"+list.size()+" ["+i+"] Proprietario stmt.setString("+proprietario.name()+")");
-				stmt.setString(index++, proprietario.name());
-				
-			}
-			for (int i = 0; i < list.size(); i++) {
-				
-				FiltroRicercaProtocolProperty f = list.get(i);
-				if(f.getName()!=null){
-					this.log.debug("FiltroRicercaProtocolProperty["+i+"] Name stmt.setString("+f.getName()+")");
-					stmt.setString(index++, f.getName());
-				}
-				
-				if(f.getValueAsString()!=null){
-					this.log.debug("FiltroRicercaProtocolProperty["+i+"] ValueAsString stmt.setString("+f.getValueAsString()+")");
-					jdbcParameterUtilities.setParameter(stmt, index++, f.getValueAsString(), String.class);
-				}
-				else if(f.getValueAsLong()!=null){
-					this.log.debug("FiltroRicercaProtocolProperty["+i+"] ValueAsLong stmt.setLong("+f.getValueAsLong()+")");
-					jdbcParameterUtilities.setParameter(stmt, index++, f.getValueAsLong(), Long.class);
-				}
-				else if(f.getValueAsBoolean()!=null){
-					this.log.debug("FiltroRicercaProtocolProperty["+i+"] ValueAsBoolean stmt.setBoolean("+f.getValueAsBoolean()+")");
-					jdbcParameterUtilities.setParameter(stmt, index++, f.getValueAsBoolean(), Boolean.class);
-				}
-				
-				// casoSpecialeValoreNull
-				// in un caso dove il valore non e' definito nel database ci possono essere due casistiche:
-				// 1) Passando via govwayConsole, la proprieta' esiste con il nome ('name') ed e' valorizzata null in tutte le colonne (value_string,value_number,value_boolean)
-				// 2) Passando via govwayLoader, in una configurazione xml, non si definisce la proprietà senza il valore, quindi la riga con il nome non esistera proprio nel db.
-				if(f.getValueAsString()==null && f.getValueAsLong()==null && f.getValueAsBoolean()==null){
-					this.log.debug("FiltroRicercaProtocolProperty["+i+"] Name stmt.setString("+f.getName()+")");
-					stmt.setString(index++, f.getName());
-				}
-			}
+			List<org.openspcoop2.core.mapping.FiltroRicercaProtocolProperty> l = new ArrayList<>();
+			l.addAll(list);
+			DBProtocolPropertiesUtils.setProtocolPropertiesForSearch(stmt, index, l, proprietario, this.tipoDB, this.log);
 		}
 	}
 }

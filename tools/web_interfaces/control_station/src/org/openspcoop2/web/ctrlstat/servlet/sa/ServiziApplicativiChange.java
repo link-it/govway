@@ -23,11 +23,13 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.sa;
 
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -50,6 +52,7 @@ import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.Property;
+import org.openspcoop2.core.config.ProtocolProperty;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -63,6 +66,18 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
+import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
@@ -77,6 +92,8 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
+import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
@@ -104,6 +121,16 @@ public final class ServiziApplicativiChange extends Action {
 	
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
 
+	// Protocol Properties
+	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
+	private ConsoleConfiguration consoleConfiguration =null;
+	private ProtocolProperties protocolProperties = null;
+	private IProtocolFactory<?> protocolFactory= null;
+	private IRegistryReader registryReader = null; 
+	private IConfigIntegrationReader configRegistryReader = null; 
+	private ConsoleOperationType consoleOperationType = null;
+	private String protocolPropertiesSet = null;
+	
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -117,7 +144,11 @@ public final class ServiziApplicativiChange extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 		
-
+		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
+		this.consoleOperationType = ConsoleOperationType.CHANGE;
+		
+		// Parametri relativi al tipo operazione
+		List<ProtocolProperty> oldProtocolPropertyList = null;
 		try {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(session);
 
@@ -159,8 +190,11 @@ public final class ServiziApplicativiChange extends Action {
 //				ruoloErogatore = TipologiaErogazione.DISABILITATO.getValue();
 //			}
 			
+			this.protocolPropertiesSet = saHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
+			
 			//String nome = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME);
 			String provider = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			String dominio = saHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO);			
 			String fault = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT);
 			
 			String tipoauthSA = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
@@ -300,6 +334,8 @@ public final class ServiziApplicativiChange extends Action {
 			String httpspwdkey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 			String httpspwdprivatekey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 			String httpsalgoritmokey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+			String httpsKeyAlias = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
+			String httpsTrustStoreCRLs = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				password = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -375,23 +411,55 @@ public final class ServiziApplicativiChange extends Action {
 			
 			String nomeProtocollo = null;
 			String tipoENomeSoggetto = null;
+			String nomePdd = null;
+			IDSoggetto idSoggetto = null;
 			if(saCore.isRegistroServiziLocale()){
 				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(idProv);
 				nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
 				tipoENomeSoggetto = saHelper.getLabelNomeSoggetto(nomeProtocollo, soggetto.getTipo() , soggetto.getNome());
+				nomePdd = soggetto.getPortaDominio();
+				idSoggetto = new IDSoggetto(soggetto.getTipo() , soggetto.getNome());
 			}
 			else{
 				Soggetto soggetto = soggettiCore.getSoggetto(idProv);
 				nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
 				tipoENomeSoggetto = saHelper.getLabelNomeSoggetto(nomeProtocollo, soggetto.getTipo() , soggetto.getNome());
+				idSoggetto = new IDSoggetto(soggetto.getTipo() , soggetto.getNome());
 			}
 
+			if(dominio==null) {
+				if(saHelper.isProfiloModIPA(nomeProtocollo)) {
+					PddCore pddCore = new PddCore(saCore);
+					dominio = pddCore.isPddEsterna(nomePdd) ? SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE : SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE;
+				}
+			}
+			
 			String labelApplicativi = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
 			String labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI;
 			if(saHelper.isModalitaCompleta()==false) {
 				labelApplicativi = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
 				labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_APPLICATIVI_DI;
 			}
+			
+			// Protocol Properties	
+			IDServizioApplicativo idSA = new IDServizioApplicativo();
+			idSA.setNome(nome);
+			idSA.setIdSoggettoProprietario(idSoggetto);
+			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(nomeProtocollo);
+			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
+			this.registryReader = saCore.getRegistryReader(this.protocolFactory); 
+			this.configRegistryReader = saCore.getConfigIntegrationReader(this.protocolFactory);
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigServizioApplicativo(this.consoleOperationType, saHelper, 
+					this.registryReader, this.configRegistryReader, idSA);
+			this.protocolProperties = saHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
+			oldProtocolPropertyList = sa.getProtocolPropertyList(); 
+			
+			Properties propertiesProprietario = new Properties();
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO, idServizioApplicativo+"");
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO, ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_SERVIZIO_APPLICATIVO);
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO, idSA.toString());
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE, URLEncoder.encode( ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE + "?" + request.getQueryString(), "UTF-8"));
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, nomeProtocollo);
 			
 			String postBackElementName = saHelper.getPostBackElementName();
 			String labelButtonSalva = Costanti.LABEL_MONITOR_BUTTON_INVIA;
@@ -985,6 +1053,8 @@ public final class ServiziApplicativiChange extends Action {
 					httpspwdkey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 					httpspwdprivatekey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD);
 					httpsalgoritmokey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+					httpsKeyAlias = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_ALIAS);
+					httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
 					if (httpspathkey == null) {
 						httpsstato = false;
 						httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
@@ -1052,15 +1122,22 @@ public final class ServiziApplicativiChange extends Action {
 					
 				}
 				
+				// Inizializzazione delle properties da db al primo accesso alla pagina
+				if(this.protocolPropertiesSet == null){
+					ProtocolPropertiesUtils.mergeProtocolPropertiesConfig(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
+				}
 				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
+				this.consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(this.consoleConfiguration, this.consoleOperationType, saHelper, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idSA); 
+				
 				dati = saHelper.addServizioApplicativoToDati(dati, nome, tipoENomeSoggetto, fault, 
-						TipoOperazione.CHANGE, idServizioApplicativo, contaListe,null,null,provider
-						,utenteSA,passwordSA,subjectSA,principalSA,tipoauthSA,faultactor,genericfault,prefixfault,invrifRisposta,
+						TipoOperazione.CHANGE, idServizioApplicativo, contaListe,null,null,provider,dominio,
+						utenteSA,passwordSA,subjectSA,principalSA,tipoauthSA,faultactor,genericfault,prefixfault,invrifRisposta,
 						sbustamentoInformazioniProtocolloRisposta,
 						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,id,nomeProtocollo,
 						ruoloFruitore,ruoloErogatore,
@@ -1075,6 +1152,7 @@ public final class ServiziApplicativiChange extends Action {
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey,
 						httpspwdprivatekey, httpsalgoritmokey,
+						httpsKeyAlias, httpsTrustStoreCRLs,
 						tipoconn, connettoreDebug,
 						isConnettoreCustomUltimaImmagineSalvata, 
 						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
@@ -1089,6 +1167,9 @@ public final class ServiziApplicativiChange extends Action {
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSA,tipoCredenzialiSSLWizardStep,
 						autenticazioneToken,token_policy);
 
+				// aggiunta campi custom
+				dati = saHelper.addProtocolPropertiesToDatiConfig(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+			
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -1099,6 +1180,37 @@ public final class ServiziApplicativiChange extends Action {
 			// Controlli sui campi immessi
 			boolean isOk = saHelper.servizioApplicativoCheckData(TipoOperazione.CHANGE, null, idProv, ruoloFruitore, ruoloErogatore,
 					listExtendedConnettore, sa);
+			
+			// updateDynamic
+			if(isOk) {
+				this.consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(this.consoleConfiguration, this.consoleOperationType, saHelper, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idSA); 
+			}
+			
+			// Validazione base dei parametri custom 
+			if(isOk){
+				try{
+					saHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties);
+				}catch(ProtocolException e){
+					ControlStationCore.getLog().error(e.getMessage(),e);
+					pd.setMessage(e.getMessage());
+					isOk = false;
+				}
+			}
+
+			// Valido i parametri custom se ho gia' passato tutta la validazione prevista
+			if(isOk){
+				try{
+					//validazione campi dinamici
+					this.consoleDynamicConfiguration.validateDynamicConfigServizioApplicativo(this.consoleConfiguration, this.consoleOperationType, saHelper, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idSA);   
+				}catch(ProtocolException e){
+					ControlStationCore.getLog().error(e.getMessage(),e);
+					pd.setMessage(e.getMessage());
+					isOk = false;
+				}
+			}
+			
 			if (!isOk) {
 				
 				// setto la barra del titolo
@@ -1125,9 +1237,12 @@ public final class ServiziApplicativiChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
+				this.consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(this.consoleConfiguration, this.consoleOperationType, saHelper, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idSA); 
+				
 				dati = saHelper.addServizioApplicativoToDati(dati, nome, tipoENomeSoggetto, fault, 
-						TipoOperazione.CHANGE, idServizioApplicativo, contaListe,null,null,provider
-						,utenteSA,passwordSA,subjectSA,principalSA,tipoauthSA,faultactor,genericfault,prefixfault,invrifRisposta,
+						TipoOperazione.CHANGE, idServizioApplicativo, contaListe,null,null,provider,dominio,
+						utenteSA,passwordSA,subjectSA,principalSA,tipoauthSA,faultactor,genericfault,prefixfault,invrifRisposta,
 						sbustamentoInformazioniProtocolloRisposta,
 						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,id,nomeProtocollo,
 						ruoloFruitore,ruoloErogatore,
@@ -1142,6 +1257,7 @@ public final class ServiziApplicativiChange extends Action {
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey,
 						httpspwdprivatekey, httpsalgoritmokey,
+						httpsKeyAlias, httpsTrustStoreCRLs,
 						tipoconn, connettoreDebug,
 						isConnettoreCustomUltimaImmagineSalvata, 
 						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
@@ -1156,6 +1272,9 @@ public final class ServiziApplicativiChange extends Action {
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSA,tipoCredenzialiSSLWizardStep,
 						autenticazioneToken,token_policy);
 
+				// aggiunta campi custom
+				dati = saHelper.addProtocolPropertiesToDatiConfig(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+							
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -1374,6 +1493,7 @@ public final class ServiziApplicativiChange extends Action {
 						httpspathkey, httpstipokey,
 						httpspwdkey, httpspwdprivatekey,
 						httpsalgoritmokey,
+						httpsKeyAlias, httpsTrustStoreCRLs,
 						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
@@ -1395,6 +1515,9 @@ public final class ServiziApplicativiChange extends Action {
 				}
 				sa.setInvocazioneServizio(is);					
 			}
+			
+			//imposto properties custom
+			sa.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesConfig(this.protocolProperties, this.consoleOperationType, oldProtocolPropertyList)); 
 			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			saCore.performUpdateOperation(userLogin, saHelper.smista(), sa);

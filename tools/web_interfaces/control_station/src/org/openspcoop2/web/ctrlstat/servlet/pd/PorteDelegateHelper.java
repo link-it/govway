@@ -255,6 +255,16 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			boolean useInterfaceNameInInvocationURL = this.useInterfaceNameInSubscriptionInvocationURL(protocollo, serviceBinding);
 			
 			String prefix = configProt.getUrlInvocazioneServizioPD();
+			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(aspc.getServiceBinding())) {
+				if(configProt.getUrlInvocazioneServizioRestPD()!=null) {
+					prefix = configProt.getUrlInvocazioneServizioRestPD();
+				}
+			}
+			else if(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(aspc.getServiceBinding())) {
+				if(configProt.getUrlInvocazioneServizioSoapPD()!=null) {
+					prefix = configProt.getUrlInvocazioneServizioSoapPD();
+				}
+			}
 			prefix = prefix.trim();
 			if(useInterfaceNameInInvocationURL) {
 				if(prefix.endsWith("/")==false) {
@@ -777,6 +787,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 		}else {
 			
+			String servletChiamante = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ADD;
+			
 			boolean isSupportatoAutenticazioneSoggetti = true; // sempre nelle porte delegate
 			Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 			
@@ -784,16 +796,17 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					gestioneTokenPolicy, gestioneTokenOpzionale,
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,true);
 			
-			this.controlloAccessiAutenticazione(dati, tipoOp, autenticazione, autenticazioneCustom, autenticazioneOpzionale, 
+			this.controlloAccessiAutenticazione(dati, tipoOp, servletChiamante,null,
+					autenticazione, autenticazioneCustom, autenticazioneOpzionale, 
 					autenticazionePrincipal, autenticazioneParametroList,
 					confPers , isSupportatoAutenticazioneSoggetti,true,
 					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-					false, null, 0);
+					false, null, 0,
+					false, false);
 			
 			String urlAutorizzazioneAutenticati = null;
 			String urlAutorizzazioneRuoli = null;
 			String urlAutorizzazioneScope = null;
-			String servletChiamante = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ADD;
 			
 			this.controlloAccessiAutorizzazione(dati, tipoOp, servletChiamante,null,
 					autenticazione, autorizzazione, autorizzazioneCustom, 
@@ -2138,7 +2151,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					// Controllo Accessi
 					de = new DataElement();
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
-					String statoControlloAccessi = this.getStatoControlloAccessiPortaDelegata(pd); 
+					String statoControlloAccessi = this.getStatoControlloAccessiPortaDelegata(protocollo, pd); 
 					de.setValue(statoControlloAccessi);
 					e.addElement(de);
 					

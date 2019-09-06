@@ -67,8 +67,6 @@ import org.openspcoop2.utils.Utilities;
 
 public class DumpProducer extends BasicProducer implements IDumpProducer{
 
-	private static final String format = "yyyy-MM-dd_HH:mm:ss.SSS";
-	
 	public DumpProducer(IProtocolFactory<?> factory) throws ProtocolException{
 		super(factory, BasicProducerType.DUMP);
 	}
@@ -141,7 +139,7 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 			
 			SimpleDateFormat dateformat = null;
 			if(this.debug) {
-				dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+				dateformat = Utilities.getSimpleDateFormatMs();
 			}
 						
 			// MESSAGGIO BASE

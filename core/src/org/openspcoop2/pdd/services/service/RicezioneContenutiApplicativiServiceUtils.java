@@ -251,6 +251,30 @@ public class RicezioneContenutiApplicativiServiceUtils {
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Comprensione MessageType fallita"),
 							IntegrationError.INTERNAL_ERROR, error, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 				}
+				
+				// Controllo Service Binding rispetto alla url e al tipo di servizio
+				if(requestInfo.getProtocolContext()!=null && bindingConfig.isServiceBindingContextEnabled(integrationServiceBinding, requestInfo.getProtocolContext().getProtocolWebContext())==false) {
+					if(res!=null) {
+						String url = requestInfo.getProtocolContext().getRequestURI();
+						logCore.error("L'API invocata possiede un service binding '"+integrationServiceBinding+"' non abilitato sul contesto utilizzato: "+url);
+						msgDiag.logErroreGenerico("L'API invocata possiede un service binding '"+integrationServiceBinding+"' non abilitato sul contesto utilizzato", "CheckServiceBinding");
+						return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, 
+								ErroriIntegrazione.ERRORE_447_API_NON_INVOCABILE_CONTESTO_UTILIZZATO.getErroreIntegrazione(),
+								IntegrationError.BAD_REQUEST, null, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
+					}
+					return null;
+				}
+				if(bindingConfig.isServiceBindingServiceTypeEnabled(integrationServiceBinding, idServizio.getTipo())==false) {
+					if(res!=null) {
+						logCore.error("L'API invocata possiede un service binding '"+integrationServiceBinding+"' non abilitato per il tipo di servizio '"+idServizio.getTipo()+"'");
+						msgDiag.logErroreGenerico("L'API invocata possiede un service binding '"+integrationServiceBinding+"' non abilitato per il tipo di servizio '"+idServizio.getTipo(), "CheckServiceBinding");
+						return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, 
+								ErroriIntegrazione.ERRORE_448_API_NON_INVOCABILE_TIPO_SERVIZIO_UTILIZZATO.getErroreIntegrazione(),
+								IntegrationError.BAD_REQUEST, null, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
+					}
+					return null;
+				}
+				
 			}
 		}
 			

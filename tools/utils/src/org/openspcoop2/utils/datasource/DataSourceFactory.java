@@ -63,8 +63,6 @@ public class DataSourceFactory {
 		return mapUUIDtoDatasources.size();
 	}
 	
-	private static final String DATE_FORMAT = "yyyy-MM-dd_HH:mm:ss.SSS";
-	
 	public static String[] getJmxStatus() throws UtilsException{	
 		if(mapUUIDtoDatasources==null || mapUUIDtoDatasources.size()<=0)
 			return null;
@@ -75,7 +73,7 @@ public class DataSourceFactory {
 		while (it.hasNext()) {
 			org.openspcoop2.utils.datasource.DataSource datasource = (org.openspcoop2.utils.datasource.DataSource) it.next();
 			StringBuffer bf = new StringBuffer();
-			SimpleDateFormat dateformat = new SimpleDateFormat (DATE_FORMAT); // SimpleDateFormat non e' thread-safe
+			SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 			bf.append("(").append(dateformat.format(datasource.getDate())).append(") ");
 			bf.append("idDatasource:");
 			bf.append(datasource.getUuidDatasource());

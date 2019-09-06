@@ -120,6 +120,7 @@ public class ValidazioneSintattica<BustaRawType> extends BasicStateComponentFact
 		bustaRisposta.setID(this.bustaBuilder.newID(new IDSoggetto(bustaRisposta.getTipoMittente(), bustaRisposta.getMittente(), bustaRisposta.getIdentificativoPortaMittente()),
 				idSenzaData, RuoloMessaggio.RISPOSTA));
 		bustaRisposta.setInoltro(bustaRichiesta.getInoltro(), bustaRichiesta.getInoltroValue());
+		bustaRisposta.setCollaborazione(bustaRichiesta.getCollaborazione());
 		
 		// Se e' presente UNA lista trasmissione la inverto
 		if(bustaRichiesta.sizeListaTrasmissioni()==1){

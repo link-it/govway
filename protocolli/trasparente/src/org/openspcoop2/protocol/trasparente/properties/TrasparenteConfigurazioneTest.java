@@ -27,7 +27,6 @@ import java.util.List;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemValueType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
@@ -37,6 +36,7 @@ import org.openspcoop2.protocol.sdk.properties.BinaryConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.BinaryProperty;
 import org.openspcoop2.protocol.sdk.properties.BooleanProperty;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
+import org.openspcoop2.protocol.sdk.properties.IConsoleHelper;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesFactory;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
@@ -103,22 +103,22 @@ public class TrasparenteConfigurazioneTest {
 	
 	
 	public static  ConsoleConfiguration getDynamicConfigTest(ConsoleOperationType consoleOperationType,
-			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IProtocolFactory<?> factory,List<ProtocolProperty> protocolPropertyList)
+			IConsoleHelper consoleHelper, IRegistryReader registryReader, IProtocolFactory<?> factory,List<ProtocolProperty> protocolPropertyList)
 					throws ProtocolException {
 		
 		ConsoleConfiguration configuration = new ConsoleConfiguration();
 		
 		if(ConsoleOperationType.ADD.equals(consoleOperationType))
-			configuration = getDynamicConfigTestAdd(consoleOperationType, consoleInterfaceType, registryReader, factory, protocolPropertyList);
+			configuration = getDynamicConfigTestAdd(consoleOperationType, consoleHelper, registryReader, factory, protocolPropertyList);
 		else 
-			configuration = getDynamicConfigTestChange(consoleOperationType, consoleInterfaceType, registryReader, factory, protocolPropertyList);
+			configuration = getDynamicConfigTestChange(consoleOperationType, consoleHelper, registryReader, factory, protocolPropertyList);
 		
 		return configuration;
 	}
 	
 	
 	public static  ConsoleConfiguration getDynamicConfigTestAdd(ConsoleOperationType consoleOperationType,
-			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IProtocolFactory<?> factory,List<ProtocolProperty> protocolPropertyList)
+			IConsoleHelper consoleHelper, IRegistryReader registryReader, IProtocolFactory<?> factory,List<ProtocolProperty> protocolPropertyList)
 					throws ProtocolException {
 		
 		ConsoleConfiguration configuration = new ConsoleConfiguration();
@@ -210,7 +210,7 @@ public class TrasparenteConfigurazioneTest {
 	}
 	
 	public static  ConsoleConfiguration getDynamicConfigTestChange(ConsoleOperationType consoleOperationType,
-			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IProtocolFactory<?> factory,List<ProtocolProperty> protocolPropertyList)
+			IConsoleHelper consoleHelper, IRegistryReader registryReader, IProtocolFactory<?> factory,List<ProtocolProperty> protocolPropertyList)
 					throws ProtocolException {
 		
 		ConsoleConfiguration configuration = new ConsoleConfiguration();
@@ -303,7 +303,7 @@ public class TrasparenteConfigurazioneTest {
 
 
 	public static void updateDynamicConfig(ConsoleConfiguration consoleConfiguration,
-			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
+			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper,
 			ProtocolProperties properties, IRegistryReader registryReader) throws ProtocolException {
 		
 //		BooleanConsoleItem booleanConsoleItemDinamica  = (BooleanConsoleItem) ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), TrasparenteConfigurazioneTest.PROP_BOOLEAN_DINAMICA_ID);

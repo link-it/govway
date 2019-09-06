@@ -47,6 +47,7 @@ import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.transport.http.HttpServletCredential;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -526,11 +527,11 @@ public class ReportExporter extends HttpServlet{
 		Date dInizio = null;
 		try{
 			if(dataInizio.contains(":")){
-				SimpleDateFormat sdf = new SimpleDateFormat(CostantiExporter.FORMAT_TIME);
+				SimpleDateFormat sdf = Utilities.getSimpleDateFormatMs();
 				dInizio = sdf.parse(dataInizio);
 			}
 			else{
-				SimpleDateFormat sdf = new SimpleDateFormat(CostantiExporter.FORMAT_DATE);
+				SimpleDateFormat sdf = Utilities.getSimpleDateFormatDay();
 				dInizio = sdf.parse(dataInizio);
 				Calendar c = DateManager.getCalendar();
 				c.setTime(dInizio);
@@ -542,7 +543,7 @@ public class ReportExporter extends HttpServlet{
 			}
 		}catch(Exception e){
 			throw new ParameterUncorrectException("Parametro '"+CostantiExporter.DATA_INIZIO+"' fornito possiede un valore '"+dataInizio
-					+"' non valido. I formati supportati sono '"+CostantiExporter.FORMAT_TIME+"' o '"+CostantiExporter.FORMAT_DATE+"'. Errore rilevato: "+e.getMessage(),e);
+					+"' non valido. I formati supportati sono '"+Utilities.SIMPLE_DATE_FORMAT_MS+"' o '"+Utilities.SIMPLE_DATE_FORMAT_DAY+"'. Errore rilevato: "+e.getMessage(),e);
 		}
 		
 		String dataFine = req.getParameter(CostantiExporter.DATA_FINE);
@@ -553,11 +554,11 @@ public class ReportExporter extends HttpServlet{
 		Date dFine = null;
 		try{
 			if(dataFine.contains(":")){
-				SimpleDateFormat sdf = new SimpleDateFormat(CostantiExporter.FORMAT_TIME);
+				SimpleDateFormat sdf = Utilities.getSimpleDateFormatMs();
 				dFine = sdf.parse(dataFine);
 			}
 			else{
-				SimpleDateFormat sdf = new SimpleDateFormat(CostantiExporter.FORMAT_DATE);
+				SimpleDateFormat sdf = Utilities.getSimpleDateFormatDay();
 				dFine = sdf.parse(dataFine);
 				Calendar c = DateManager.getCalendar();
 				c.setTime(dFine);
@@ -569,7 +570,7 @@ public class ReportExporter extends HttpServlet{
 			}
 		}catch(Exception e){
 			throw new ParameterUncorrectException("Parametro '"+CostantiExporter.DATA_FINE+"' fornito possiede un valore '"+dataFine
-					+"' non valido. I formati supportati sono '"+CostantiExporter.FORMAT_TIME+"' o '"+CostantiExporter.FORMAT_DATE+"'. Errore rilevato: "+e.getMessage(),e);
+					+"' non valido. I formati supportati sono '"+Utilities.SIMPLE_DATE_FORMAT_MS+"' o '"+Utilities.SIMPLE_DATE_FORMAT_DAY+"'. Errore rilevato: "+e.getMessage(),e);
 		}
 	
 		statSearchForm.setDataInizio(dInizio);

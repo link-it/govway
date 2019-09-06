@@ -819,6 +819,9 @@
 			<item type="text" name="endpointHttpsTruststoreAlgoritmo" label="Algoritmo" default="PKIX" required="true">
 			      	<property name="trustManagementAlgorithm" properties="sslConfig" />
 			</item>
+			<item type="textarea" name="endpointHttpsTrustStoreCRLs" label="CRL File(s)" required="false" note="Elencare più file separandoli con la ','">
+			      	<property name="trustStoreCRLs" />
+			</item>
 			
 		</subsection>
 		
@@ -869,6 +872,9 @@
 			</item>
 			<item type="text" name="endpointHttpsClientPasswordChiavePrivata" label="Password Chiave Privata" required="true">
 				<property name="keyPassword" properties="sslClientConfig" />
+			</item>
+			<item type="text" name="endpointHttpsClientAliasChiavePrivata" label="Alias Chiave Privata" required="false">
+				<property name="keyAlias" properties="sslClientConfig" />
 			</item>
 			<item type="text" name="endpointHttpsClientAlgoritmo" label="Algoritmo" default="SunX509" required="true">
 				<property name="keyManagementAlgorithm" properties="sslClientConfig" />

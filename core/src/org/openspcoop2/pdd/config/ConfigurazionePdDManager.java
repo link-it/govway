@@ -33,8 +33,10 @@ import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
+import org.openspcoop2.core.config.AccessoDatiKeystore;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Cache;
+import org.openspcoop2.core.config.ConfigurazioneMultitenant;
 import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -82,6 +84,7 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
@@ -742,8 +745,8 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getInvocazioneServizio(this.getConnection(), sa, idPA);
 	}
 	
-	public GestioneErrore getGestioneErroreConnettore_InvocazioneServizio(ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.getGestioneErroreConnettore_InvocazioneServizio(this.getConnection(), sa);
+	public GestioneErrore getGestioneErroreConnettore_InvocazioneServizio(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding, ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getGestioneErroreConnettore_InvocazioneServizio(protocolFactory, serviceBinding, this.getConnection(), sa);
 	}
 	
 	public boolean invocazioneServizioPerRiferimento(ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -785,8 +788,8 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getConsegnaRispostaAsincrona(this.getConnection(), sa, idPA);
 	}
 	
-	public GestioneErrore getGestioneErroreConnettore_RispostaAsincrona(ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.getGestioneErroreConnettore_RispostaAsincrona(this.getConnection(), sa);
+	public GestioneErrore getGestioneErroreConnettore_RispostaAsincrona(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding, ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getGestioneErroreConnettore_RispostaAsincrona(protocolFactory, serviceBinding, this.getConnection(), sa);
 	}
 	
 	public boolean consegnaRispostaAsincronaPerRiferimento(ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -818,6 +821,10 @@ public class ConfigurazionePdDManager {
 	
 	public AccessoDatiGestioneToken getAccessoDatiGestioneToken(){
 		return this.configurazionePdDReader.getAccessoDatiGestioneToken(this.getConnection());
+	}
+	
+	public AccessoDatiKeystore getAccessoDatiKeystore(){
+		return this.configurazionePdDReader.getAccessoDatiKeystore(this.getConnection());
 	}
 	
 	public StatoFunzionalitaConWarning getTipoValidazione(String implementazionePdDSoggetto){
@@ -904,12 +911,12 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getOpenSPCoopAppender_Dump(this.getConnection());
 	}
 	
-	public GestioneErrore getGestioneErroreConnettoreComponenteCooperazione(){
-		return this.configurazionePdDReader.getGestioneErroreConnettoreComponenteCooperazione(this.getConnection());
+	public GestioneErrore getGestioneErroreConnettoreComponenteCooperazione(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding){
+		return this.configurazionePdDReader.getGestioneErroreConnettoreComponenteCooperazione(protocolFactory, serviceBinding, this.getConnection());
 	}
 	
-	public GestioneErrore getGestioneErroreConnettoreComponenteIntegrazione(){
-		return this.configurazionePdDReader.getGestioneErroreConnettoreComponenteIntegrazione(this.getConnection());
+	public GestioneErrore getGestioneErroreConnettoreComponenteIntegrazione(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding){
+		return this.configurazionePdDReader.getGestioneErroreConnettoreComponenteIntegrazione(protocolFactory, serviceBinding, this.getConnection());
 	}
 	
 	public String[] getIntegrationManagerAuthentication(){
@@ -974,6 +981,10 @@ public class ConfigurazionePdDManager {
 	
 	public CorsConfigurazione getConfigurazioneCORS() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		return this.configurazionePdDReader.getConfigurazioneCORS(this.getConnection());
+	}
+	
+	public ConfigurazioneMultitenant getConfigurazioneMultitenant() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getConfigurazioneMultitenant(this.getConnection());
 	}
 	
 	public ResponseCachingConfigurazione getConfigurazioneResponseCaching() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 

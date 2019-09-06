@@ -25,8 +25,8 @@ package org.openspcoop2.protocol.basic.config;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
-import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 
 /**	
@@ -47,27 +47,47 @@ public abstract class BasicVersionManager extends BasicManager implements IProto
 	/* *********** FUNZIONALITA' OFFERTE DALLA PORTA DI DOMINIO ******************* */
 	
 	@Override
-	public StatoFunzionalitaProtocollo getFiltroDuplicati(ProfiloDiCollaborazione profiloCollaborazione) {
+	public StatoFunzionalitaProtocollo getFiltroDuplicati(Busta busta) {
+		return StatoFunzionalitaProtocollo.DISABILITATA;
+	}
+	@Override
+	public StatoFunzionalitaProtocollo getFiltroDuplicati(Servizio infoServizio) {
 		return StatoFunzionalitaProtocollo.DISABILITATA;
 	}
 
 	@Override
-	public StatoFunzionalitaProtocollo getConsegnaAffidabile(ProfiloDiCollaborazione profiloCollaborazione) {
+	public StatoFunzionalitaProtocollo getConsegnaAffidabile(Busta busta) {
+		return StatoFunzionalitaProtocollo.DISABILITATA;
+	}
+	@Override
+	public StatoFunzionalitaProtocollo getConsegnaAffidabile(Servizio infoServizio) {
 		return StatoFunzionalitaProtocollo.DISABILITATA;
 	}
 
 	@Override
-	public StatoFunzionalitaProtocollo getConsegnaInOrdine(ProfiloDiCollaborazione profiloCollaborazione) {
+	public StatoFunzionalitaProtocollo getConsegnaInOrdine(Busta busta) {
+		return StatoFunzionalitaProtocollo.DISABILITATA;
+	}
+	@Override
+	public StatoFunzionalitaProtocollo getConsegnaInOrdine(Servizio infoServizio) {
 		return StatoFunzionalitaProtocollo.DISABILITATA;
 	}
 
 	@Override
-	public StatoFunzionalitaProtocollo getCollaborazione(ProfiloDiCollaborazione profiloCollaborazione) {
+	public StatoFunzionalitaProtocollo getCollaborazione(Busta busta) {
+		return StatoFunzionalitaProtocollo.DISABILITATA;
+	}
+	@Override
+	public StatoFunzionalitaProtocollo getCollaborazione(Servizio infoServizio) {
 		return StatoFunzionalitaProtocollo.DISABILITATA;
 	}
 	
 	@Override
-	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(ProfiloDiCollaborazione profiloCollaborazione) {
+	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(Busta busta) {
+		return StatoFunzionalitaProtocollo.DISABILITATA;
+	}
+	@Override
+	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(Servizio infoServizio) {
 		return StatoFunzionalitaProtocollo.DISABILITATA;
 	}
 

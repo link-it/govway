@@ -2787,6 +2787,18 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				dati.addElement(de);
 
 			}else {
+				
+				if(gestioneParziale!=null && !"".equals(gestioneParziale)) {
+				
+					de = new DataElement();
+					de.setType(DataElementType.TITLE);
+					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INTERFACCIA+ " "+ labelWSDL);
+					de.setValue("");
+					de.setSize(this.getSize());
+					dati.addElement(de);
+					
+				}
+				
 				de = new DataElement();
 				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_WSDL_ATTUALE );
 				de.setType(DataElementType.TEXT);
@@ -2985,12 +2997,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 		
 		boolean gestioneInformazioniGenerali = false;
+		@SuppressWarnings("unused")
+		boolean gestioneInformazioniProfilo = false;
 		boolean gestioneSoggettoReferente = false;
 		boolean gestioneDescrizione = false;
 		boolean gestioneSpecificaInterfacce = false;
 		boolean gestioneInformazioniProtocollo = false;
 		if(TipoOperazione.ADD.equals(tipoOperazione) || isModalitaVistaApiCustom==null || !isModalitaVistaApiCustom) {
 			gestioneInformazioniGenerali = true;
+			gestioneInformazioniProfilo = true;
 			gestioneSoggettoReferente = true;
 			gestioneDescrizione = true;
 			gestioneSpecificaInterfacce = true;
@@ -2999,6 +3014,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		else  {
 			if(ApiCostanti.VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI.equals(apiGestioneParziale)) {
 				gestioneInformazioniGenerali = true;
+			}
+			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_PROFILO.equals(apiGestioneParziale)) {
+				gestioneInformazioniProfilo = true;
 			}
 			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_SOGGETTO_REFERENTE.equals(apiGestioneParziale)) {
 				gestioneSoggettoReferente = true;
@@ -4482,7 +4500,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			// String tiposervizio = this.getParameter("tiposervizio");
 			String endpointtype = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
 
-			if (!this.endPointCheckData(listExtendedConnettore)) {
+			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
+			
+			if (!this.endPointCheckData(protocollo, false, listExtendedConnettore)) {
 				return false;
 			}
 
@@ -8010,6 +8030,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			listaParams.add(parameterApcApiChange);
 			if(ApiCostanti.VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI.equals(apiGestioneParziale)) {
 				labelApcChange = ApiCostanti.APC_API_LABEL_APS_INFO_GENERALI;
+			}
+			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_PROFILO.equals(apiGestioneParziale)) {
+				labelApcChange = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO;
 			}
 			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_SOGGETTO_REFERENTE.equals(apiGestioneParziale)) {
 				labelApcChange = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE;

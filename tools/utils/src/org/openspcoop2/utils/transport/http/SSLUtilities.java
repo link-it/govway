@@ -22,16 +22,26 @@
 
 package org.openspcoop2.utils.transport.http;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.security.Key;
 import java.security.KeyStore;
 import java.security.Provider;
 import java.security.Provider.Service;
 import java.security.Security;
+import java.security.cert.CertStore;
+import java.security.cert.CertificateFactory;
+import java.security.cert.CollectionCertStoreParameters;
+import java.security.cert.PKIXBuilderParameters;
+import java.security.cert.X509CRL;
+import java.security.cert.X509CertSelector;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
+import javax.net.ssl.CertPathTrustManagerParameters;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
@@ -40,9 +50,11 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.slf4j.Logger;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
+import org.slf4j.Logger;
 
 /**
  * SSLUtilities
@@ -258,7 +270,7 @@ public class SSLUtilities {
 		try{
 		
 			// Autenticazione CLIENT
-			if(sslConfig.getKeyStoreLocation()!=null){
+			if(sslConfig.getKeyStore()!=null || sslConfig.getKeyStoreLocation()!=null){
 				bfLog.append("Gestione keystore...\n");
 				bfLog.append("\tKeystore type["+sslConfig.getKeyStoreType()+"]\n");
 				bfLog.append("\tKeystore location["+sslConfig.getKeyStoreLocation()+"]\n");
@@ -267,19 +279,42 @@ public class SSLUtilities {
 				//bfLog.append("\tKeystore keyPassword["+sslConfig.getKeyPassword()+"]\n");
 				String location = null;
 				try {
-					location = sslConfig.getKeyStoreLocation();
-					KeyStore keystore = KeyStore.getInstance(sslConfig.getKeyStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
-					File file = new File(location);
-					if(file.exists()) {
-						finKeyStore = new FileInputStream(file);
+					location = sslConfig.getKeyStoreLocation(); // per debug
+				
+					KeyStore keystore = null;
+					KeyStore keystoreParam = null;
+					if(sslConfig.getKeyStore()!=null) {
+						keystoreParam = sslConfig.getKeyStore();
 					}
 					else {
-						finKeyStore = SSLUtilities.class.getResourceAsStream(location);
+						keystoreParam = KeyStore.getInstance(sslConfig.getKeyStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr 
+						File file = new File(location);
+						if(file.exists()) {
+							finKeyStore = new FileInputStream(file);
+						}
+						else {
+							finKeyStore = SSLUtilities.class.getResourceAsStream(location);
+						}
+						if(finKeyStore == null) {
+							throw new Exception("Keystore not found");
+						}
+						keystoreParam.load(finKeyStore, sslConfig.getKeyStorePassword().toCharArray());
 					}
-					if(finKeyStore == null) {
-						throw new Exception("Keystore not found");
-					}				
-					keystore.load(finKeyStore, sslConfig.getKeyStorePassword().toCharArray());
+					
+					if(sslConfig.getKeyAlias()!=null) {
+						Key key = keystoreParam.getKey(sslConfig.getKeyAlias(), sslConfig.getKeyPassword().toCharArray());
+						if(key==null) {
+							throw new Exception("Key with alias '"+sslConfig.getKeyAlias()+"' not found");
+						}
+						keystore = KeyStore.getInstance(sslConfig.getKeyStoreType());
+						keystore.load(null); // inizializza il keystore
+						keystore.setKeyEntry(sslConfig.getKeyAlias(), key, 
+								sslConfig.getKeyPassword().toCharArray(), keystoreParam.getCertificateChain(sslConfig.getKeyAlias()));
+					}
+					else {
+						keystore = keystoreParam;
+					}
+					
 					KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(sslConfig.getKeyManagementAlgorithm());
 					keyManagerFactory.init(keystore, sslConfig.getKeyPassword().toCharArray());
 					km = keyManagerFactory.getKeyManagers();
@@ -296,7 +331,7 @@ public class SSLUtilities {
 	
 	
 			// Autenticazione SERVER
-			if(sslConfig.getTrustStoreLocation()!=null){
+			if(sslConfig.getTrustStore()!=null || sslConfig.getTrustStoreLocation()!=null){
 				bfLog.append("Gestione truststore...\n");
 				bfLog.append("\tTruststore type["+sslConfig.getTrustStoreType()+"]\n");
 				bfLog.append("\tTruststore location["+sslConfig.getTrustStoreLocation()+"]\n");
@@ -304,21 +339,50 @@ public class SSLUtilities {
 				bfLog.append("\tTruststore trustManagementAlgorithm["+sslConfig.getTrustManagementAlgorithm()+"]\n");
 				String location = null;
 				try {
-					location = sslConfig.getTrustStoreLocation();
-					KeyStore truststore = KeyStore.getInstance(sslConfig.getTrustStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
-					File file = new File(location);
-					if(file.exists()) {
-						finTrustStore = new FileInputStream(file);
+					location = sslConfig.getTrustStoreLocation(); // per debug
+					
+					KeyStore truststoreParam = null;
+					if(sslConfig.getTrustStore()!=null) {
+						truststoreParam = sslConfig.getTrustStore();
 					}
 					else {
-						finTrustStore = SSLUtilities.class.getResourceAsStream(location);
+						truststoreParam = KeyStore.getInstance(sslConfig.getTrustStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
+						File file = new File(location);
+						if(file.exists()) {
+							finTrustStore = new FileInputStream(file);
+						}
+						else {
+							finTrustStore = SSLUtilities.class.getResourceAsStream(location);
+						}
+						if(finTrustStore == null) {
+							throw new Exception("Keystore not found");
+						}		
+						truststoreParam.load(finTrustStore, sslConfig.getTrustStorePassword().toCharArray());
 					}
-					if(finTrustStore == null) {
-						throw new Exception("Keystore not found");
-					}		
-					truststore.load(finTrustStore, sslConfig.getTrustStorePassword().toCharArray());
+					
 					TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(sslConfig.getTrustManagementAlgorithm());
-					trustManagerFactory.init(truststore);
+					String trustManagementAlgo = sslConfig.getTrustManagementAlgorithm();
+					if(trustManagementAlgo!=null) {
+						trustManagementAlgo = trustManagementAlgo.trim();
+					}
+					if("PKIX".equalsIgnoreCase(trustManagementAlgo)) {
+					
+						 // create the parameters for the validator
+						if(sslConfig.getTrustStoreCRLs()!=null) {
+							bfLog.append("\tTruststore CRLs\n");
+						}
+						else if(sslConfig.getTrustStoreCRLsLocation()!=null) {
+							bfLog.append("\tTruststore CRLs["+sslConfig.getTrustStoreCRLsLocation()+"]\n");
+						}
+						CertPathTrustManagerParameters params = buildCertPathTrustManagerParameters(truststoreParam, sslConfig.getTrustStoreCRLs(), sslConfig.getTrustStoreCRLsLocation());
+						trustManagerFactory.init(params);
+						
+					}
+					else {
+					
+						trustManagerFactory.init(truststoreParam);
+						
+					}
 					tm = trustManagerFactory.getTrustManagers();
 					bfLog.append("Gestione truststore effettuata\n");
 				}catch(Throwable e) {
@@ -353,6 +417,101 @@ public class SSLUtilities {
 					finTrustStore.close();
 				}
 			}catch(Exception e){}
+		}
+	}
+	
+	public static CertPathTrustManagerParameters buildCertPathTrustManagerParameters(KeyStore truststoreParam,
+			CertStore crlStore, String crlLocation) throws Exception {
+		
+		 // create the parameters for the validator
+		
+		// Ricreo il truststore altrimenti i certificati presenti come coppia (chiave privata e pubblica non sono trusted)
+		KeyStore truststore = KeyStore.getInstance(KeyStore.getDefaultType()); // JKS
+		truststore.load(null); // inizializza il truststore
+		Enumeration<String> aliases = truststoreParam.aliases();
+		while (aliases.hasMoreElements()) {
+			String alias = (String) aliases.nextElement();
+			//System.out.println("ALIAS: '"+alias+"'");
+			truststore.setCertificateEntry(alias, truststoreParam.getCertificate(alias));
+		}
+		
+		PKIXBuilderParameters pkixParams = new PKIXBuilderParameters(truststore, new X509CertSelector());
+		pkixParams.setRevocationEnabled(false);
+		pkixParams.setDate(DateManager.getDate());
+		
+		/*
+		java.security.cert.PKIXRevocationChecker revocationChecker =
+	            (java.security.cert.PKIXRevocationChecker) java.security.cert.CertPathBuilder.getInstance(trustManagementAlgo).getRevocationChecker();
+	    pkixParams.addCertPathChecker(revocationChecker);
+	    revocationChecker.setOcspResponder(uriResponse);
+	    */
+				        
+		if(crlStore!=null || crlLocation!=null) {
+	        CertStore crlsCertstore = null;
+	        if(crlStore!=null) {
+	        	crlsCertstore = crlStore;
+	        }else {
+	        	crlsCertstore = _buildCRLCertStore(crlLocation);
+	        }
+	        pkixParams.addCertStore(crlsCertstore);
+	        pkixParams.setRevocationEnabled(true);
+		}
+		
+		return new CertPathTrustManagerParameters(pkixParams);
+		
+	}
+	
+	private static CertStore _buildCRLCertStore(String crlsPath) throws Exception {
+    	List<byte[]> crlBytes = new ArrayList<>();
+    	List<String> crlPathsList = new ArrayList<String>();
+		if(crlsPath.contains(",")) {
+			String [] tmp = crlsPath.split(",");
+			for (String crlPath : tmp) {
+				crlPathsList.add(crlPath.trim());
+			}
+		}
+		else {
+			crlPathsList.add(crlsPath.trim());
+		}
+		for (String crlPath : crlPathsList) {
+			InputStream isStore = null;
+			try{
+				File fStore = new File(crlPath);
+				if(fStore.exists()){
+					isStore = new FileInputStream(fStore);
+				}else{
+					isStore = SSLUtilities.class.getResourceAsStream(crlPath);
+				}
+				if(isStore==null){
+					throw new Exception("CRL ["+crlPath+"] not found");
+				}
+				crlBytes.add(Utilities.getAsByteArray(isStore));
+			}finally{
+				try{
+					if(isStore!=null){
+						isStore.close();
+					}
+				}catch(Exception eClose){}
+			}
+		}
+		List<X509CRL> caCrls = new ArrayList<>();
+		CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+    	for (int i = 0; i < crlBytes.size(); i++) {
+			byte [] crl = crlBytes.get(i);
+			try(ByteArrayInputStream bin = new ByteArrayInputStream(crl)){
+				X509CRL caCrl = (X509CRL) certFactory.generateCRL(bin); 
+				caCrls.add(caCrl);
+			}
+			catch(Exception e){
+				throw new SecurityException("Error loading CRL '"+crlPathsList.get(i)+"': "+e.getMessage(),e);
+			}
+		}
+		try {
+			CollectionCertStoreParameters certStoreParams =
+		                new CollectionCertStoreParameters(caCrls);
+			return CertStore.getInstance("Collection", certStoreParams);
+		}catch(Exception e){
+			throw new SecurityException("Build CertStore failed: "+e.getMessage(),e);
 		}
 	}
 

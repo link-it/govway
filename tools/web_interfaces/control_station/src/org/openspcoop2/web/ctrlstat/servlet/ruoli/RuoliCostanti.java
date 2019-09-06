@@ -27,6 +27,7 @@ import java.util.Vector;
 
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 
 /**
@@ -78,7 +79,8 @@ public class RuoliCostanti {
 	public final static String LABEL_PARAMETRO_RUOLO_NOME_ESTERNO = "Identificativo Esterno";
 	public final static String LABEL_PARAMETRO_RUOLO_CONTESTO = CostantiControlStation.LABEL_PARAMETRO_RUOLO_CONTESTO;
 	
-	
+	public final static String LABEL_RUOLI_ESPORTA_SELEZIONATI = "Esporta";
+	public final static String LABEL_RUOLI_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.RUOLO.name()+"')";
 	
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_RUOLO_TIPOLOGIA = RuoloTipologia.QUALSIASI.getValue();

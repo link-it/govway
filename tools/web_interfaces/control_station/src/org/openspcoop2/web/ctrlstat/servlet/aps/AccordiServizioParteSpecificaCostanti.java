@@ -263,6 +263,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String PARAMETRO_APS_GESTIONE_GRUPPI = "gestioneGruppi";
 	public final static String PARAMETRO_APS_GESTIONE_CONFIGURAZIONI = "gestioneConfigurazioni";
 	public final static String PARAMETRO_APS_MODIFICA_API = "modificaAPI";
+	public final static String PARAMETRO_APS_MODIFICA_PROFILO = "modificaProfilo";
 	public final static String PARAMETRO_APS_CONFERMA_MODIFICA_DATI_SERVIZIO = "backToConfermaModificaDatiServizio";
 	
 	/* ATTRIBUTI SESSIONE */

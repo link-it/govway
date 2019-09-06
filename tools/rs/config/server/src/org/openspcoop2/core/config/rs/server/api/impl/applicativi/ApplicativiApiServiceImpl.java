@@ -108,9 +108,10 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			
 			List<String> listaTipiProtocollo = ProtocolFactoryManager.getInstance().getProtocolNamesAsList();
 			IDSoggetto soggettoMultitenantSelezionato = new IDSoggetto(env.idSoggetto.getTipo(), env.idSoggetto.getNome());
+			String dominio = null;
 			ServiziApplicativiGeneralInfo generalInfo = ServiziApplicativiUtilities.getGeneralInfo(false, env.idSoggetto.getId().toString(), listaTipiProtocollo, 
 					env.saCore, env.saHelper, env.userLogin, true, 
-					soggettoMultitenantSelezionato.toString());
+					soggettoMultitenantSelezionato.toString(), dominio);
 						
 
 			List<ExtendedConnettore> listExtendedConnettore = null;	// Non serve alla checkData perchè gli applicativi sono sempre fruitori

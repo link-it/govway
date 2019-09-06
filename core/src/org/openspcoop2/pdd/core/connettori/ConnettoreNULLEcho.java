@@ -56,6 +56,7 @@ import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.Riscontro;
 import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
+import org.openspcoop2.protocol.sdk.constants.FaseImbustamento;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
@@ -381,9 +382,18 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 					// imbustamento nuova busta
 					Integrazione integrazione = new Integrazione();
 					integrazione.setStateless(true);
-					ProtocolMessage protocolMessageRisposta = imbustatore.imbustamento(this.responseMsg,bustaRisposta,integrazione,gestioneManifest,RuoloMessaggio.RISPOSTA,false,
-							this.openspcoopProperties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD));
-					if(protocolMessageRisposta!=null) {
+					
+					ProtocolMessage protocolMessageRisposta = imbustatore.imbustamentoRisposta(this.responseMsg,bustaRisposta,busta,integrazione,gestioneManifest,false,
+							this.openspcoopProperties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD),
+							FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
+					if(protocolMessageRisposta!=null && !protocolMessageRisposta.isPhaseUnsupported()) {
+						this.responseMsg = protocolMessageRisposta.getMessage(); // updated
+					}
+					
+					protocolMessageRisposta = imbustatore.imbustamentoRisposta(this.responseMsg,bustaRisposta,busta,integrazione,gestioneManifest,false,
+							this.openspcoopProperties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD),
+							FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
+					if(protocolMessageRisposta!=null && !protocolMessageRisposta.isPhaseUnsupported()) {
 						this.responseMsg = protocolMessageRisposta.getMessage(); // updated
 					}
 

@@ -33,6 +33,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
+import org.openspcoop2.protocol.sdk.constants.FaseImbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.trasparente.config.TrasparenteProperties;
@@ -54,12 +55,20 @@ public class TrasparenteBustaBuilder extends BustaBuilder<BasicEmptyRawContent> 
 	}
 
 	@Override
-	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta, Busta bustaRichiesta,
 			RuoloMessaggio ruoloMessaggio,
-			ProprietaManifestAttachments proprietaManifestAttachments)
+			ProprietaManifestAttachments proprietaManifestAttachments,
+			FaseImbustamento faseImbustamento)
 			throws ProtocolException {
 		
-		ProtocolMessage protocolMessage = super.imbustamento(msg, busta, ruoloMessaggio, proprietaManifestAttachments);
+		if(FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO.equals(faseImbustamento)) {
+			ProtocolMessage protocolMessage = new ProtocolMessage();
+			protocolMessage.setPhaseUnsupported(true);
+			return protocolMessage;
+		}
+		
+		ProtocolMessage protocolMessage = super.imbustamento(msg, busta, bustaRichiesta,
+				ruoloMessaggio, proprietaManifestAttachments, faseImbustamento);
 				
 		if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && busta.sizeListaEccezioni()>0 ){
 			// le eccezioni vengono tornate anche per gli errori di processamento poiche' in TrasparenteProtocolVersionManager

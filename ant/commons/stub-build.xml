@@ -202,7 +202,8 @@
 		<if>
  			<available file="${serviceFile}" type="file"/>
 			<then>
- 				<var name="replacetoken" value="java.util.logging.LogUtilities.getLogger(" />
+				<replace file="${serviceFile}" token="(MalformedURLException e)" value="(Exception e)"/>
+ 				<var name="replacetoken" value="java.util.logging.Logger.getLogger(" />
 				<replace file="${serviceFile}" token="${replacetoken}">
 					<replacevalue>
 		}
@@ -213,11 +214,12 @@
 			url = @OBJECT_TYPE@.class.getClassLoader().getResource("/@WSDL_NAME@");
 		}
 		if (url==null ){
-			java.util.logging.LogUtilities.getLogger(</replacevalue>
+			java.util.logging.Logger.getLogger(</replacevalue>
 				
 				</replace>
 				<replace file="${serviceFile}" token="@OBJECT_TYPE@" value="${className}"/>
 				<replace file="${serviceFile}" token="@WSDL_NAME@" value="${wsdlName}"/>
+				<replace file="${serviceFile}" token="file:${stubBuild.urlWSDL}" value="URL_ERRATA_FORZARE_CARICAMENTO_WSDL_DA_JAR"/>
 				<replace file="${serviceFile}" token="${stubBuild.urlWSDL}" value="URL_ERRATA_FORZARE_CARICAMENTO_WSDL_DA_JAR"/>
             </then>
 	    </if>

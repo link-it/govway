@@ -24,8 +24,10 @@
 package org.openspcoop2.utils.security;
 
 import java.io.File;
+import java.security.cert.CertStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPublicKey;
 import java.util.List;
 import java.util.Properties;
 
@@ -46,7 +48,8 @@ import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.io.Base64Utilities;
-import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.transport.http.HttpResponse;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**	
  * Encrypt
@@ -65,8 +68,19 @@ public class JsonVerifySignature {
 	private String decodedPayload;
 	private byte[] decodedPayloadAsByte;
 	
-	private KeyStore trustStoreCertificatiX509; // per verificare i certificati presenti nell'header 
+	private KeyStore trustStoreCertificatiX509; // per verificare i certificati presenti nell'header
 	private JsonWebKeys jsonWebKeys; // dove prendere il certificato per validare rispetto al kid
+	
+	private KeyStore trustStoreHttps; // per accedere ad un endpoint https dove scaricare i certificati
+	private CertStore crlHttps; // per verificare i certificati http server rispetto alle crl
+	public void setCrlHttps(CertStore crlHttps) {
+		this.crlHttps = crlHttps;
+	}
+	
+	private CertStore crlX509; // per verificare i certificati rispetto alle crl
+	public void setCrlX509(CertStore crlX509) {
+		this.crlX509 = crlX509;
+	}
 	
 	public JsonVerifySignature(Properties props, JWTOptions options) throws UtilsException{
 		try {
@@ -169,24 +183,39 @@ public class JsonVerifySignature {
 	
 	
 	public JsonVerifySignature(JWTOptions options) throws UtilsException{
-		_initVerifyCertificatiHeaderJWT(null, null, options);
+		_initVerifyCertificatiHeaderJWT(null, null, 
+				null, options);
 	}
 	public JsonVerifySignature(Properties propsTrustStoreHttps, java.security.KeyStore trustStoreVerificaCertificato, JWTOptions options) throws UtilsException{
-		_initVerifyCertificatiHeaderJWT(propsTrustStoreHttps, new KeyStore(trustStoreVerificaCertificato), options);
+		_initVerifyCertificatiHeaderJWT(propsTrustStoreHttps, null, 
+				new KeyStore(trustStoreVerificaCertificato), options);
 	}
 	public JsonVerifySignature(Properties propsTrustStoreHttps, KeyStore trustStore, JWTOptions options) throws UtilsException{
-		_initVerifyCertificatiHeaderJWT(propsTrustStoreHttps, trustStore, options);
+		_initVerifyCertificatiHeaderJWT(propsTrustStoreHttps, null,
+				trustStore, options);
+	}
+	public JsonVerifySignature(java.security.KeyStore trustStoreHttps, java.security.KeyStore trustStoreVerificaCertificato, JWTOptions options) throws UtilsException{
+		_initVerifyCertificatiHeaderJWT(null, new KeyStore(trustStoreHttps), 
+				new KeyStore(trustStoreVerificaCertificato), options);
+	}
+	public JsonVerifySignature(KeyStore trustStoreHttps, KeyStore trustStore, JWTOptions options) throws UtilsException{
+		_initVerifyCertificatiHeaderJWT(null, trustStoreHttps,
+				trustStore, options);
 	}
 	public JsonVerifySignature(java.security.KeyStore trustStoreVerificaCertificato, JWTOptions options) throws UtilsException{
-		_initVerifyCertificatiHeaderJWT(null, new KeyStore(trustStoreVerificaCertificato), options);
+		_initVerifyCertificatiHeaderJWT(null, null, 
+				new KeyStore(trustStoreVerificaCertificato), options);
 	}
 	public JsonVerifySignature(KeyStore trustStore, JWTOptions options) throws UtilsException{
-		_initVerifyCertificatiHeaderJWT(null, trustStore, options);
+		_initVerifyCertificatiHeaderJWT(null, null, 
+				trustStore, options);
 	}
-	private void _initVerifyCertificatiHeaderJWT(Properties propsTrustStoreHttps, KeyStore trustStoreVerificaCertificato, JWTOptions options) throws UtilsException{
+	private void _initVerifyCertificatiHeaderJWT(Properties propsTrustStoreHttps, KeyStore trustStoreHttps,
+			KeyStore trustStoreVerificaCertificato, JWTOptions options) throws UtilsException{
 		// verra usato l'header per validare ed ottenere il certificato
 		this.options=options;
 		this.properties = propsTrustStoreHttps; // le proprieta' servono per risolvere le url https
+		this.trustStoreHttps = trustStoreHttps;
 		this.trustStoreCertificatiX509 = trustStoreVerificaCertificato;
 	}
 	
@@ -292,6 +321,15 @@ public class JsonVerifySignature {
 	}
 	
 	
+	private X509Certificate x509Certificate;
+	private RSAPublicKey rsaPublicKey;
+	public X509Certificate getX509Certificate() {
+		return this.x509Certificate;
+	}
+	public RSAPublicKey getRsaPublicKey() {
+		return this.rsaPublicKey;
+	}
+
 	private JwsSignatureVerifier getProvider(JwsHeaders jwsHeaders) throws Exception {
 		
 		JwsSignatureVerifier provider = this.provider;
@@ -316,97 +354,171 @@ public class JsonVerifySignature {
 			}
 			
 			if(jwsHeaders.getX509Chain()!=null && !jwsHeaders.getX509Chain().isEmpty() && this.options.isPermitUseHeaderX5C()) {
-				byte [] cer = Base64Utilities.decode(jwsHeaders.getX509Chain().get(0));
-				CertificateInfo certificatoInfo = ArchiveLoader.load(cer).getCertificate();
-				if(this.trustStoreCertificatiX509!=null) {
-					if(certificatoInfo.isVerified(this.trustStoreCertificatiX509)==false) {
-						throw new Exception("Certificato presente nell'header '"+JwtHeaders.JWT_HDR_X5U+"' non è verificabile rispetto alle CA conosciute");
-					}
-				}
-				X509Certificate cerx509 = certificatoInfo.getCertificate();
-				provider = JwsUtils.getPublicKeySignatureVerifier(cerx509, algo);
-			}
-			else if(jwsHeaders.getJsonWebKey()!=null && this.options.isPermitUseHeaderJWK()) {
-				provider = JwsUtils.getPublicKeySignatureVerifier(JwkUtils.toRSAPublicKey(jwsHeaders.getJsonWebKey()), algo);
-			}
-			else if(jwsHeaders.getX509Url()!=null && this.options.isPermitUseHeaderX5U()) {
-				if(this.properties==null) {
-					this.properties = new Properties();
-				}
-				this.properties.put(JoseConstants.RSSEC_KEY_STORE_FILE, jwsHeaders.getX509Url());
-				File fTmp = null;
 				try {
-					fTmp = JsonUtils.normalizeProperties(this.properties); // in caso di url http viene letta la risorsa remota e salvata in tmp
-					byte [] cer = FileSystemUtilities.readBytesFromFile(fTmp);
+					byte [] cer = Base64Utilities.decode(jwsHeaders.getX509Chain().get(0));
 					CertificateInfo certificatoInfo = ArchiveLoader.load(cer).getCertificate();
 					if(this.trustStoreCertificatiX509!=null) {
-						if(certificatoInfo.isVerified(this.trustStoreCertificatiX509)==false) {
-							throw new Exception("Certificato presente nell'header '"+JwtHeaders.JWT_HDR_X5U+"' non è verificabile rispetto alle CA conosciute");
-						}
+						JsonUtils.validate(certificatoInfo, this.trustStoreCertificatiX509, this.crlX509, JwtHeaders.JWT_HDR_X5C, true);
 					}
-					X509Certificate cerx509 = certificatoInfo.getCertificate();
-					provider = JwsUtils.getPublicKeySignatureVerifier(cerx509, algo);
-				}finally {
-					try {
-						if(fTmp!=null) {
-							fTmp.delete();
-						}
-					}catch(Throwable t) {}
+					this.x509Certificate = certificatoInfo.getCertificate();
+					provider = JwsUtils.getPublicKeySignatureVerifier(this.x509Certificate, algo);
+				}catch(Exception e) {
+					throw new Exception("Process '"+JwtHeaders.JWT_HDR_X5C+"' error: "+e.getMessage(),e);
 				}
 			}
-			else if(jwsHeaders.getJsonWebKeysUrl()!=null && this.options.isPermitUseHeaderJKU()) {
-				if(this.properties==null) {
-					this.properties = new Properties();
-				}
-				this.properties.put(JoseConstants.RSSEC_KEY_STORE_FILE, jwsHeaders.getJsonWebKeysUrl());
-				File fTmp = null;
+			else if(jwsHeaders.getJsonWebKey()!=null && this.options.isPermitUseHeaderJWK()) {
 				try {
-					fTmp = JsonUtils.normalizeProperties(this.properties); // in caso di url http viene letta la risorsa remota e salvata in tmp
-					JWKSet set = new JWKSet(FileSystemUtilities.readFile(fTmp));
-					JsonWebKeys jsonWebKeys = set.getJsonWebKeys();
-					JsonWebKey jsonWebKey = null;
-					if(jsonWebKeys.size()==1) {
-						jsonWebKey = jsonWebKeys.getKeys().get(0);
+					this.rsaPublicKey = JwkUtils.toRSAPublicKey(jwsHeaders.getJsonWebKey());
+					provider = JwsUtils.getPublicKeySignatureVerifier(this.rsaPublicKey, algo);
+				}catch(Exception e) {
+					throw new Exception("Process '"+JwtHeaders.JWT_HDR_JWK+"' error: "+e.getMessage(),e);
+				}
+			}
+			else if(
+					(jwsHeaders.getX509Url()!=null && this.options.isPermitUseHeaderX5U()) 
+					||
+					(jwsHeaders.getJsonWebKeysUrl()!=null && this.options.isPermitUseHeaderJKU())
+					) {
+				
+				boolean x509 = true;
+				String path = jwsHeaders.getX509Url();
+				String hdr = JwtHeaders.JWT_HDR_X5U;
+				if(path==null) {
+					path=jwsHeaders.getJsonWebKeysUrl();
+					x509 = false;
+					hdr = JwtHeaders.JWT_HDR_JKU;
+				}
+				try {
+					byte [] cer = null;
+					if(this.properties!=null) {
+						this.properties.put(JoseConstants.RSSEC_KEY_STORE_FILE, path);
+						cer = JsonUtils.readKeystoreFromURI(this.properties);
 					}
 					else {
-						if(jwsHeaders.getKeyId()==null) {
-							throw new Exception("Kid non definito e JwkSet contiene più di un certificato");
+						HttpResponse httpResponse = null;
+						try {
+							if(this.trustStoreHttps!=null) {
+								httpResponse = HttpUtilities.getHTTPSResponse(path, this.trustStoreHttps.getKeystore(), this.crlHttps);
+							}
+							else {
+								httpResponse = HttpUtilities.getHTTPResponse(path);
+							}
+						}catch(Exception e) {
+							throw new Exception("Resource '"+path+"' unavailable: "+e.getMessage(),e);
 						}
-						jsonWebKey = jsonWebKeys.getKey(jwsHeaders.getKeyId());
-					}
-					if(jsonWebKey==null) {
-						throw new Exception("JsonWebKey non trovata");
-					}
-					provider = JwsUtils.getPublicKeySignatureVerifier(JwkUtils.toRSAPublicKey(jsonWebKey), algo);
-				}finally {
-					try {
-						if(fTmp!=null) {
-							fTmp.delete();
+						if(httpResponse==null || httpResponse.getContent()==null) {
+							throw new Exception("Resource '"+path+"' unavailable");
 						}
-					}catch(Throwable t) {}
+						if(httpResponse.getResultHTTPOperation()!=200) {
+							throw new Exception("Retrieve '"+path+"' failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
+						}
+						cer = httpResponse.getContent();
+					}
+					if(cer==null) {
+						throw new Exception("Resource '"+path+"' unavailable");
+					}
+					if(x509) {
+						CertificateInfo certificatoInfo = ArchiveLoader.load(cer).getCertificate();
+						if(this.trustStoreCertificatiX509!=null) {
+							JsonUtils.validate(certificatoInfo, this.trustStoreCertificatiX509, this.crlX509, hdr, true);
+						}
+						this.x509Certificate = certificatoInfo.getCertificate();
+						provider = JwsUtils.getPublicKeySignatureVerifier(this.x509Certificate, algo);
+					}
+					else {
+						JWKSet set = new JWKSet(new String(cer));
+						JsonWebKeys jsonWebKeys = set.getJsonWebKeys();
+						JsonWebKey jsonWebKey = null;
+						if(jsonWebKeys.size()==1) {
+							jsonWebKey = jsonWebKeys.getKeys().get(0);
+						}
+						else {
+							if(jwsHeaders.getKeyId()==null) {
+								throw new Exception("Kid non definito e JwkSet contiene più di un certificato");
+							}
+							jsonWebKey = jsonWebKeys.getKey(jwsHeaders.getKeyId());
+						}
+						if(jsonWebKey==null) {
+							throw new Exception("JsonWebKey non trovata");
+						}
+						this.rsaPublicKey = JwkUtils.toRSAPublicKey(jsonWebKey);
+						provider = JwsUtils.getPublicKeySignatureVerifier(this.rsaPublicKey, algo);
+					}
+				}catch(Exception e) {
+					throw new Exception("Process '"+hdr+"' error: "+e.getMessage(),e);
 				}
 			}
 			else if(jwsHeaders.getKeyId()!=null && this.options.isPermitUseHeaderKID()) {
-				String kid = jwsHeaders.getKeyId();
-				if(this.jsonWebKeys!=null) {
-					JsonWebKey jsonWebKey = null;
-					try {
-						jsonWebKey = this.jsonWebKeys.getKey(kid);
-					}catch(Exception e) {}
-					if(jsonWebKey!=null) {
-						provider = JwsUtils.getPublicKeySignatureVerifier(JwkUtils.toRSAPublicKey(jsonWebKey), algo);
+				try {
+					String kid = jwsHeaders.getKeyId();
+					if(this.jsonWebKeys!=null) {
+						JsonWebKey jsonWebKey = null;
+						try {
+							jsonWebKey = this.jsonWebKeys.getKey(kid);
+						}catch(Exception e) {}
+						if(jsonWebKey!=null) {
+							this.rsaPublicKey = JwkUtils.toRSAPublicKey(jsonWebKey);
+							provider = JwsUtils.getPublicKeySignatureVerifier(this.rsaPublicKey, algo);
+						}
 					}
-				}
-				if(provider==null) {
-					if(this.trustStoreCertificatiX509!=null) {
-						if(this.trustStoreCertificatiX509.existsAlias(kid)) {
-							Certificate cer = this.trustStoreCertificatiX509.getCertificate(kid);
-							if(cer instanceof X509Certificate) {
-								X509Certificate x509Certificate = (X509Certificate) cer;
-								provider = JwsUtils.getPublicKeySignatureVerifier(x509Certificate, algo);
+					if(provider==null) {
+						if(this.trustStoreCertificatiX509!=null) {
+							if(this.trustStoreCertificatiX509.existsAlias(kid)) {
+								Certificate cer = this.trustStoreCertificatiX509.getCertificate(kid);
+								if(cer instanceof X509Certificate) {
+									this.x509Certificate = (X509Certificate) cer;
+									
+									// La validazione serve per verificare la data e il crl
+									JsonUtils.validate(new CertificateInfo(this.x509Certificate, kid), this.trustStoreCertificatiX509, this.crlX509, JwtHeaders.JWT_HDR_KID, false);
+									
+									provider = JwsUtils.getPublicKeySignatureVerifier(this.x509Certificate, algo);
+								}
 							}
 						}
 					}
+					if(provider==null) {
+						throw new Exception("Certificato, corrispondente al kid indicato, non trovato nel TrustStore dei certificati");
+					}
+				}catch(Exception e) {
+					throw new Exception("Process '"+JwtHeaders.JWT_HDR_KID+"' error: "+e.getMessage(),e);
+				}
+			}
+			else if(
+					(jwsHeaders.getX509ThumbprintSHA256()!=null && this.options.isPermitUseHeaderX5T_256())
+					||
+					(jwsHeaders.getX509Thumbprint()!=null && this.options.isPermitUseHeaderX5T())
+					) {
+				String hdr = JwtHeaders.JWT_HDR_X5T;
+				if (jwsHeaders.getX509ThumbprintSHA256()!=null) {
+					hdr = JwtHeaders.JWT_HDR_X5t_S256;
+				}
+				try {
+					if(this.trustStoreCertificatiX509==null) {
+						throw new Exception("TrustStore dei certificati non fornito"); 
+					}
+					Certificate cer = null;
+					if(jwsHeaders.getX509ThumbprintSHA256()!=null) {
+						cer = this.trustStoreCertificatiX509.getCertificateByDigestSHA256UrlEncoded(jwsHeaders.getX509ThumbprintSHA256());
+					}
+					else{
+						cer = this.trustStoreCertificatiX509.getCertificateByDigestSHA1UrlEncoded(jwsHeaders.getX509Thumbprint());
+					}
+					if(cer==null) {
+						throw new Exception("Certificato, corrispondente al digest indicato, non trovato nel TrustStore dei certificati");
+					}	
+					if(cer instanceof X509Certificate) {
+						this.x509Certificate = (X509Certificate) cer;
+						
+						// La validazione serve per verificare la data e il crl
+						JsonUtils.validate(new CertificateInfo(this.x509Certificate, hdr), this.trustStoreCertificatiX509, this.crlX509, hdr, false);
+						
+						provider = JwsUtils.getPublicKeySignatureVerifier(this.x509Certificate, algo);
+					}
+					else {
+						throw new Exception("Certificato indicato non è nel formato X.509");
+					}
+				}catch(Exception e) {
+					throw new Exception("Process '"+hdr+"' error: "+e.getMessage(),e);
 				}
 			}
 			else {

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="soapBlocking" basedir=".">
+
+	<import file="./local_env.xml" />
+	<import file="./ant/openspcoop2-build.xml" />
+	<import file="./ant/openspcoop2-codeGen.xml" />
+	
+	<!-- directory root -->
+	<property name="gitrepo_root" location="${openspcoop2}" />
+	
+	<!-- set properties for this build -->
+	<property name="soapBlocking" location="${basedir}" />
+	
+	<property name="src_soapBlocking" value="${soapBlocking}/src" />
+	<property name="build_soapBlocking" location="build/soapBlocking" />
+	<property name="dist_soapBlocking" location="dist" />
+	<property name="doc_soapBlocking" location="doc" />
+	<property name="stub_soapBlocking" value="deploy/stub" />
+	
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="*.userlibraries"/>
+			<exclude name="axis14/*"/>
+		</fileset>
+		<fileset dir="${openspcoop2.dist}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >		
+	</path>	
+	<path id="classpath_run" >
+		<fileset dir="${dist_soapBlocking}" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2.dist}" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${stub_soapBlocking}" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}" >
+			<include name="log/*"/>
+			<include name="cxf/*"/>
+			<include name="jetty/*"/>
+			<include name="jackson/*.jar"/>
+			<include name="commons/commons-codec-1.11.jar"/>
+			<include name="security/neethi-3.1.1.jar"/>
+			<include name="shared/wsdl4j-1.6.3.jar"/>
+			<include name="shared/joda-time-2.10.jar"/>
+			<include name="javax/javax.servlet-api-3.1.0.jar"/>
+			<include name="javax/javax.annotation-api-1.2.jar"/>
+		</fileset>
+	</path>
+	
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean_soapBlocking">
+		<delete dir="${build_soapBlocking}" />
+		<delete dir="build" />
+		<delete dir="${dist_soapBlocking}" />
+		<delete dir="${doc_soapBlocking}" />
+	</target>
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile_soapBlocking">
+		<mkdir dir="${build_soapBlocking}" />
+		<mkdir dir="${build_soapBlocking}/tmp" />
+		<mkdir dir="${build_soapBlocking}/tmp_css" />
+		<mkdir dir="${dist_soapBlocking}" />
+	</target>
+	
+		
+
+	<!-- Compilazione del servizio-->
+	<target name="compile_soapBlocking" depends="init_compile_soapBlocking,compile_openspcoop2_soapBlocking" />
+
+
+	<!-- Creazione del modulo .WAR -->
+	<target name="build_soapBlocking" depends="compile_soapBlocking" />
+
+	
+	<!-- alias -->
+	<target name="build" depends="build_soapBlocking"/>
+	<target name="build_without_dipendencies" depends="compile_openspcoop2_soapBlocking"/>
+	<target name="clean" depends="clean_soapBlocking"/>
+
+	<!-- Run the Server -->
+	<target name="runServer"
+        	description="Esegue il Server" >
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.protocol.modipa.example.soap.blocking.Server" fork="true">
+			<classpath>
+				<path refid="classpath_run" />
+				<pathelement path="."/>
+			</classpath>
+		</java>
+
+	</target>
+
+	<!-- Run the Client -->
+	<target name="runClient"
+        	description="Esegue il Server" >
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.protocol.modipa.example.soap.blocking.Client" fork="true">
+			<arg value="${idResource}" />
+			<classpath>
+				<path refid="classpath_run" />
+				<pathelement path="."/>
+			</classpath>
+		</java>
+
+	</target>
+
+</project>

@@ -65,6 +65,7 @@ import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSintatticaResult;
+import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
 
 /**
  * Classe che implementa, in base al protocollo AS4, l'interfaccia {@link org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica}
@@ -78,11 +79,11 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 
 	public AS4ValidazioneSintattica(IProtocolFactory<SOAPElement> factory, IState state) throws ProtocolException {
 		super(factory,state);
-		this.validazioneUtils = new AS4ValidazioneUtils(factory);
+		this.validazioneUtils = new ValidazioneUtils(factory);
 	}
 	
 	/** ValidazioneUtils */
-	protected AS4ValidazioneUtils validazioneUtils;
+	protected ValidazioneUtils validazioneUtils;
 	
 	/** SOAPElement senza il contenuto (SoloProtocolloAS4) */
 	private AS4RawContent headerElement;

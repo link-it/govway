@@ -87,6 +87,7 @@ import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
@@ -330,7 +331,7 @@ public class Sbustamento extends GenericLib{
 		try{
 
 			boolean ricezioneRiscontri = false;
-			switch (protocolManager.getConsegnaAffidabile(bustaRichiesta.getProfiloDiCollaborazione())) {
+			switch (protocolManager.getConsegnaAffidabile(bustaRichiesta)) {
 			case ABILITATA:
 				ricezioneRiscontri = true;
 				break;
@@ -343,7 +344,7 @@ public class Sbustamento extends GenericLib{
 			}
 
 			boolean consegnaAffidabile = false;
-			switch (protocolManager.getConsegnaAffidabile(bustaRichiesta.getProfiloDiCollaborazione())) {
+			switch (protocolManager.getConsegnaAffidabile(bustaRichiesta)) {
 			case ABILITATA:
 				consegnaAffidabile = true;
 				break;
@@ -356,7 +357,7 @@ public class Sbustamento extends GenericLib{
 			}
 			
 			boolean idCollaborazione = false;
-			switch (protocolManager.getCollaborazione(bustaRichiesta.getProfiloDiCollaborazione())) {
+			switch (protocolManager.getCollaborazione(bustaRichiesta)) {
 			case ABILITATA:
 				idCollaborazione = true;
 				break;
@@ -369,7 +370,7 @@ public class Sbustamento extends GenericLib{
 			}
 					
 			boolean consegnaInOrdine = false;
-			switch (protocolManager.getConsegnaInOrdine(bustaRichiesta.getProfiloDiCollaborazione())) {
+			switch (protocolManager.getConsegnaInOrdine(bustaRichiesta)) {
 				case ABILITATA:
 					consegnaInOrdine = true;
 					break;
@@ -386,7 +387,7 @@ public class Sbustamento extends GenericLib{
 			}
 			
 			boolean imbustamentoFiltroDuplicatiAbilitato = false;
-			switch (protocolManager.getFiltroDuplicati(bustaRichiesta.getProfiloDiCollaborazione())) {
+			switch (protocolManager.getFiltroDuplicati(bustaRichiesta)) {
 			case ABILITATA:
 				imbustamentoFiltroDuplicatiAbilitato = true;
 				break;
@@ -646,6 +647,7 @@ public class Sbustamento extends GenericLib{
 							ejbUtils.setRollbackRichiestaInCasoErrore(false); // viene effettuato da gestioneErrore
 							if(mittenteRegistrato){
 								msgDiag.mediumDebug("Invio segnalazione di errore ...");
+								ejbUtils.setIntegrationErrorPortaApplicativa(IntegrationError.BAD_REQUEST);
 								ejbUtils.sendAsRispostaBustaErroreValidazione(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,errorsClone,
 										idCorrelazioneApplicativa,null,servizioApplicativoFruitore);
 							}
@@ -2191,7 +2193,7 @@ public class Sbustamento extends GenericLib{
 			if(  generazioneMsgOK || behaviourResponseTo ) {
 				try{
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.DATA_PRESA_IN_CARICO, 
-							org.openspcoop2.core.constants.Costanti.newSimpleDateFormat().format(DateManager.getDate()));
+							Utilities.getSimpleDateFormatMs().format(DateManager.getDate()));
 					
 					if(behaviourResponseTo){
 					
@@ -2242,7 +2244,7 @@ public class Sbustamento extends GenericLib{
 			}else if( ricevutaAsincrona !=null ){
 				try{
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.DATA_PRESA_IN_CARICO, 
-							org.openspcoop2.core.constants.Costanti.newSimpleDateFormat().format(DateManager.getDate()));
+							Utilities.getSimpleDateFormatMs().format(DateManager.getDate()));
 					
 					//	Invio sblocco
 					// Se non e' abilitato la risposta su di una nuova connessione, e l'indirizzo telematico 

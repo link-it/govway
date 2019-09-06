@@ -44,4 +44,8 @@ public class MultiKeystoreCache extends AbstractKeystoreCache<MultiKeystore> {
 		return new MultiKeystore(propertyFilePath);
 	}
 
+	@Override
+	public String getPrefixKey() {
+		return "MultiKeystore ";
+	}
 }

@@ -30,6 +30,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /** <p>Java class for servizio-applicativo complex type.
@@ -42,6 +44,7 @@ import java.io.Serializable;
  * 			&lt;element name="invocazione-porta" type="{http://www.openspcoop2.org/core/config}invocazione-porta" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="invocazione-servizio" type="{http://www.openspcoop2.org/core/config}invocazione-servizio" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="risposta-asincrona" type="{http://www.openspcoop2.org/core/config}risposta-asincrona" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/config}protocol-property" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="id-soggetto" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
  * 		&lt;attribute name="tipo-soggetto-proprietario" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
@@ -65,7 +68,8 @@ import java.io.Serializable;
   propOrder = {
   	"invocazionePorta",
   	"invocazioneServizio",
-  	"rispostaAsincrona"
+  	"rispostaAsincrona",
+  	"protocolProperty"
   }
 )
 
@@ -119,6 +123,30 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
 
   public void setRispostaAsincrona(RispostaAsincrona rispostaAsincrona) {
     this.rispostaAsincrona = rispostaAsincrona;
+  }
+
+  public void addProtocolProperty(ProtocolProperty protocolProperty) {
+    this.protocolProperty.add(protocolProperty);
+  }
+
+  public ProtocolProperty getProtocolProperty(int index) {
+    return this.protocolProperty.get( index );
+  }
+
+  public ProtocolProperty removeProtocolProperty(int index) {
+    return this.protocolProperty.remove( index );
+  }
+
+  public List<ProtocolProperty> getProtocolPropertyList() {
+    return this.protocolProperty;
+  }
+
+  public void setProtocolPropertyList(List<ProtocolProperty> protocolProperty) {
+    this.protocolProperty=protocolProperty;
+  }
+
+  public int sizeProtocolPropertyList() {
+    return this.protocolProperty.size();
   }
 
   public java.lang.Long getIdSoggetto() {
@@ -215,6 +243,36 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
 
   @XmlElement(name="risposta-asincrona",required=false,nillable=false)
   protected RispostaAsincrona rispostaAsincrona;
+
+  @XmlElement(name="protocol-property",required=true,nillable=false)
+  protected List<ProtocolProperty> protocolProperty = new ArrayList<ProtocolProperty>();
+
+  /**
+   * @deprecated Use method getProtocolPropertyList
+   * @return List<ProtocolProperty>
+  */
+  @Deprecated
+  public List<ProtocolProperty> getProtocolProperty() {
+  	return this.protocolProperty;
+  }
+
+  /**
+   * @deprecated Use method setProtocolPropertyList
+   * @param protocolProperty List<ProtocolProperty>
+  */
+  @Deprecated
+  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
+  	this.protocolProperty=protocolProperty;
+  }
+
+  /**
+   * @deprecated Use method sizeProtocolPropertyList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeProtocolProperty() {
+  	return this.protocolProperty.size();
+  }
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idSoggetto;

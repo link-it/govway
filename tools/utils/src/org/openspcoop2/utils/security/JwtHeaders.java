@@ -65,7 +65,8 @@ public class JwtHeaders {
 	private String kid; 
 	private List<String> criticalHeaders = new ArrayList<>();
 	private URI x509Url;
-	private List<X509Certificate> x509c = new ArrayList<>();
+	private List<X509Certificate> x509c = new ArrayList<>(); // i certificati servono anche per sha1 e sha256, il field addX5C serve quindi per capire se poi far uscire anche X5C
+	private boolean addX5C = false;
 	boolean x509IncludeCertSha1 = false;
 	boolean x509IncludeCertSha256 = false;
 	private URI jwkUrl;
@@ -89,6 +90,9 @@ public class JwtHeaders {
 	}
 	public void addX509cert(X509Certificate x509c) {
 		this.x509c.add(x509c);
+	}
+	public void setAddX5C(boolean addX5C) {
+		this.addX5C = addX5C;
 	}
 	public boolean isX509IncludeCertSha1() {
 		return this.x509IncludeCertSha1;
@@ -123,6 +127,9 @@ public class JwtHeaders {
 	}
 	public URI getX509Url() {
 		return this.x509Url;
+	}
+	public boolean isAddX5C() {
+		return this.addX5C;
 	}
 	public List<X509Certificate> getX509c() {
 		return this.x509c;
@@ -162,7 +169,9 @@ public class JwtHeaders {
 		}
 		if(this.x509c!=null && !this.x509c.isEmpty()) {
 			// fix: lo aggiungo solo se non c'è la url. Nell'oggetto JwtHreader il certificato ho dovuto mettercelo per creare i sha
-			if(!list.contains(JWT_HDR_X5U)) {
+			//if(!list.contains(JWT_HDR_X5U)) {
+			// il fix era errato, aggiunto field apposito 'addX5C'
+			if(this.addX5C) {
 				list.add(JWT_HDR_X5C);
 			}
 		}
@@ -231,7 +240,9 @@ public class JwtHeaders {
 		if(this.x509c!=null && !this.x509c.isEmpty()) {
 			if(!hdrs.containsHeader(JWT_HDR_X5C) || forceOverride) {
 				// fix: lo aggiungo solo se non c'è la url. Nell'oggetto JwtHreader il certificato ho dovuto mettercelo per creare i sha
-				if(!hdrs.containsHeader(JWT_HDR_X5U)) {
+				//if(!hdrs.containsHeader(JWT_HDR_X5U)) {
+				// il fix era errato, aggiunto field apposito 'addX5C'
+				if(this.addX5C) {
 					X509Certificate[] chain = this.x509c.toArray(new X509Certificate[1]);
 					hdrs.setX509Chain(KeyManagementUtils.encodeX509CertificateChain(chain));
 				}

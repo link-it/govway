@@ -41,6 +41,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
+import org.openspcoop2.protocol.sdk.constants.FaseImbustamento;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
@@ -63,10 +64,17 @@ public class AS4BustaBuilder extends BustaBuilder<SOAPElement> {
 	}
 
 	@Override
-	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta, Busta bustaRichiesta,
 			RuoloMessaggio ruoloMessaggio,
-			ProprietaManifestAttachments proprietaManifestAttachments)
+			ProprietaManifestAttachments proprietaManifestAttachments,
+			FaseImbustamento faseImbustamento)
 			throws ProtocolException {
+		
+		if(FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO.equals(faseImbustamento)) {
+			ProtocolMessage protocolMessage = new ProtocolMessage();
+			protocolMessage.setPhaseUnsupported(true);
+			return protocolMessage;
+		}
 		
 		if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)) {
 			AS4Imbustamento imbustamento = new AS4Imbustamento();

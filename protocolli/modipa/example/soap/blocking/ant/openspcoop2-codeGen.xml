@@ -1,0 +1,49 @@
+<project name="openspcoop2-codeGen-soapBlocking">
+    <description>
+       Generazione sorgenti relativi al package org.openspcoop2.protocol.modipa.example.soap.blocking
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/stub-build.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+
+
+	<!-- ***** CODICE GENERATO A PARTIRE DAI SORGENTI ************ -->
+	
+	<target name="codegen_from_wsdl">
+
+		<delete dir="${build_soapBlocking}/srcStubCXF"/>
+		<mkdir dir="${build_soapBlocking}/srcStubCXF"/>
+		<delete dir="${build_soapBlocking}/buildStubCXF"/>
+		<mkdir dir="${build_soapBlocking}/buildStubCXF"/>
+
+		<copy file="${src_soapBlocking}/schemi/soap-blocking.wsdl" todir="${build_soapBlocking}/buildStubCXF"/>
+		<antcall target="build_cxf">
+			<param name="stubBuild.srcDir" value="${build_soapBlocking}/srcStubCXF"/>
+			<param name="stubBuild.cleanSrcDir" value="false"/>
+			<param name="stubBuild.urlWSDL" value="${src_soapBlocking}/schemi/soap-blocking.wsdl"/>
+			<param name="stubBuild.buildDir" value="${build_soapBlocking}/buildStubCXF"/>
+			<param name="debug" value="${debug}"/>
+			<param name="stubBuild.buildJar" value="true"/>
+			<param name="stubBuild.jar" value="${dist_soapBlocking}/openspcoop2_protocol-modipa-soap-blocking-stub-cxf.jar"/>
+			<param name="stubPackageOverriding" value="org.openspcoop2.protocol.modipa.example.soap.blocking.stub"/>
+			<param name="serviceFile" value="${build_soapBlocking}/srcStubCXF/org/openspcoop2/protocol/modipa/example/soap/blocking/stub/SOAPBlockingImplService.java"/>
+			<param name="className" value="SOAPBlockingImplService"/>
+			<param name="wsdlName" value="soap-blocking.wsdl"/>
+		</antcall>
+
+		<copy file="${dist_soapBlocking}/openspcoop2_protocol-modipa-soap-blocking-stub-cxf.jar" todir="${stub_soapBlocking}"/>
+		<delete file="${dist_soapBlocking}/openspcoop2_protocol-modipa-soap-blocking-stub-cxf.jar"/>	
+		<delete dir="${build_soapBlocking}/srcStubCXF"/>
+		<delete dir="${build_soapBlocking}/buildStubCXF"/>
+
+	</target>
+
+</project>

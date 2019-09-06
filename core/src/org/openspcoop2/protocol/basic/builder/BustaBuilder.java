@@ -54,6 +54,7 @@ import org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
+import org.openspcoop2.protocol.sdk.constants.FaseImbustamento;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
@@ -167,10 +168,18 @@ public class BustaBuilder<BustaRawType> extends BasicStateComponentFactory imple
 
 	
 	@Override
-	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta, Busta bustaRichiesta,
 			RuoloMessaggio ruoloMessaggio,
-			ProprietaManifestAttachments proprietaManifestAttachments)
+			ProprietaManifestAttachments proprietaManifestAttachments,
+			FaseImbustamento faseImbustamento)
 			throws ProtocolException {
+		
+		if(FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO.equals(faseImbustamento)) {
+			ProtocolMessage protocolMessage = new ProtocolMessage();
+			protocolMessage.setPhaseUnsupported(true);
+			return protocolMessage;
+		}
+		
 		if(busta.getProfiloDiCollaborazione() != null) {
 			switch (busta.getProfiloDiCollaborazione()) {
 			case ONEWAY:
@@ -246,7 +255,8 @@ public class BustaBuilder<BustaRawType> extends BasicStateComponentFactory imple
 	
 	@Override
 	public ProtocolMessage addTrasmissione(OpenSPCoop2Message message,
-			Trasmissione trasmissione) throws ProtocolException {
+			Trasmissione trasmissione,
+			FaseImbustamento faseImbustamento) throws ProtocolException {
 		ProtocolMessage protocolMessage = new ProtocolMessage();
 		protocolMessage.setMessage(message);
 		return protocolMessage;

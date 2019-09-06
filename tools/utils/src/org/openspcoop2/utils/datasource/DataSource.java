@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
@@ -68,8 +69,6 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 	
 	private Hashtable<String,org.openspcoop2.utils.datasource.Connection> releasedConnections = new Hashtable<String,org.openspcoop2.utils.datasource.Connection>();
 	
-	private static final String DATE_FORMAT = "yyyy-MM-dd_HH:mm:ss.SSS";
-	
 	public String[] getJmxStatus() throws UtilsException{	
 		if(this.releasedConnections==null || this.releasedConnections.size()<=0)
 			return null;
@@ -80,7 +79,7 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 		while (it.hasNext()) {
 			org.openspcoop2.utils.datasource.Connection connection = (org.openspcoop2.utils.datasource.Connection) it.next();
 			StringBuffer bf = new StringBuffer();
-			SimpleDateFormat dateformat = new SimpleDateFormat (DATE_FORMAT); // SimpleDateFormat non e' thread-safe
+			SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 			bf.append("(").append(dateformat.format(connection.getDate())).append(") ");
 			if(connection.getIdTransazione()!=null){
 				if(bf.length() > 0){

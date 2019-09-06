@@ -662,6 +662,11 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 							}
 						}
 					}
+					if(filtroRicercaBase.getServiceBinding()!=null){
+						if(as.getServiceBinding().equals(filtroRicercaBase.getServiceBinding()) == false){
+							continue;
+						}
+					}
 					
 					if(filtroRicercaBase.getIdAccordoCooperazione()!=null &&
 							(filtroRicercaBase.getIdAccordoCooperazione().getNome()!=null || 
@@ -2102,6 +2107,11 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 					}
 					if(filtroRicerca.getVersione()!=null){
 						if(serv.getVersione().intValue() != filtroRicerca.getVersione().intValue()){
+							continue;
+						}
+					}
+					if(filtroRicerca.getPortType()!=null){
+						if(serv.getPortType().equals(filtroRicerca.getPortType()) == false){
 							continue;
 						}
 					}

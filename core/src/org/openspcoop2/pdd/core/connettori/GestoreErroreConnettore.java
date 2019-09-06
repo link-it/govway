@@ -25,27 +25,26 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.sql.Timestamp;
-import java.util.Enumeration;
+import java.util.HashMap;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
 import org.openspcoop2.core.config.GestioneErroreSoapFault;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.core.GestoreMessaggiException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 
 
 /**
@@ -71,119 +70,143 @@ public class GestoreErroreConnettore {
 
 
 	/** GestoreErrore di default per il componente di integrazione */
-	private static GestioneErrore gestioneErroreDefaultComponenteIntegrazione = null;
+	private static HashMap<String, GestioneErrore> gestioneErroreDefaultComponenteIntegrazioneMap = new HashMap<>();
 	/** GestoreErrore di default per il componente di cooperazione */
-	private static GestioneErrore gestioneErroreDefaultComponenteCooperazione = null;
+	private static HashMap<String, GestioneErrore> gestioneErroreDefaultComponenteCooperazioneMap = new HashMap<>();
 
 
-	public static GestioneErrore getGestioneErroreDefaultComponenteIntegrazione(){
-		if(GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazione!=null){
-			return GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazione;
+	public static GestioneErrore getGestioneErroreDefaultComponenteIntegrazione(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding) {
+		
+		String protocol = protocolFactory.getProtocol();
+		
+		if(GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.containsKey(protocol)){
+			return GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.get(protocol);
 		}else{
-			GestioneErrore gestione = new GestioneErrore();
-			// default si rispedisce
-			gestione.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG);
-			// si accetta il codice di trasporto 200
-			GestioneErroreCodiceTrasporto codiceTrasporto = new GestioneErroreCodiceTrasporto();
-			codiceTrasporto.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_ACCETTA_MSG);
-			codiceTrasporto.setValoreMinimo(200);
-			codiceTrasporto.setValoreMassimo(299);
-			gestione.addCodiceTrasporto(codiceTrasporto);
-
-
-			// Qualsiasi fault si accetta, senza effettuare un re-invio. 
-			GestioneErroreSoapFault faultAccetta = new GestioneErroreSoapFault();
-			faultAccetta.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_ACCETTA_MSG);
-			gestione.addSoapFault(faultAccetta);
 			
-			
-			GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazione = gestione;
-			return gestione;
+			synchronized (gestioneErroreDefaultComponenteIntegrazioneMap) {
+
+				if(GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.containsKey(protocol)){
+					return GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.get(protocol);
+				}
+				
+				GestioneErrore gestione = new GestioneErrore();
+				// default si rispedisce
+				gestione.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG);
+				// si accetta il codice di trasporto 200
+				GestioneErroreCodiceTrasporto codiceTrasporto = new GestioneErroreCodiceTrasporto();
+				codiceTrasporto.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_ACCETTA_MSG);
+				codiceTrasporto.setValoreMinimo(200);
+				codiceTrasporto.setValoreMassimo(299);
+				boolean isSuccessfulHttpRedirectStatusCode = false;
+				try {
+					isSuccessfulHttpRedirectStatusCode = protocolFactory.createProtocolManager().isSuccessfulHttpRedirectStatusCode(serviceBinding);
+				}catch(Exception e) {
+					log.error(e.getMessage(),e);
+				}
+				if(isSuccessfulHttpRedirectStatusCode) {
+					codiceTrasporto.setValoreMassimo(399);
+				}
+				gestione.addCodiceTrasporto(codiceTrasporto);
+	
+	
+				// Qualsiasi fault si accetta, senza effettuare un re-invio. 
+				GestioneErroreSoapFault faultAccetta = new GestioneErroreSoapFault();
+				faultAccetta.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_ACCETTA_MSG);
+				gestione.addSoapFault(faultAccetta);
+				
+				
+				GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.put(protocol, gestione);
+				return gestione;
+				
+			}
 		}
 	}
 
-	public static GestioneErrore getGestioneErroreDefaultComponenteCooperazione(){
+	public static GestioneErrore getGestioneErroreDefaultComponenteCooperazione(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding) {
 
-		if(GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazione!=null){
-			return GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazione;
-		}else{
-			GestioneErrore gestione = new GestioneErrore();
-			// default si rispedisce
-			gestione.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG);
-			// si accetta il codice di trasporto 200-299
-			GestioneErroreCodiceTrasporto codiceTrasporto = new GestioneErroreCodiceTrasporto();
-			codiceTrasporto.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_ACCETTA_MSG);
-			codiceTrasporto.setValoreMinimo(200);
-			codiceTrasporto.setValoreMassimo(299);
-			gestione.addCodiceTrasporto(codiceTrasporto);
-
-
-			// Per qualsiasi fault si effettua una rispedizione, a meno di fault
-			// integrati in buste errore:
-
-			// BUSTE ERRORE DI VALIDAZIONE
-			// SoapActor == null
-			// SoapFaultCode == soap:Client
-			// SoapFaultString contain "*_001 - Formato Busta non corretto"
-			ProtocolFactoryManager protocolFactoryManager = null;
-			try {
-				protocolFactoryManager = ProtocolFactoryManager.getInstance();
-			} catch (Exception e) {
-				// TODO Succede in caso di incostintenza nella configurazione. Che faccio?
-			} 
-			
-			Enumeration<String> factoriesKeys =  protocolFactoryManager.getProtocolNames();
-			while (factoriesKeys.hasMoreElements()) {
+		String protocol = protocolFactory.getProtocol();
 				
-				String protocolName = factoriesKeys.nextElement();
-				IProtocolFactory<?> protocolFactory;
+		if(GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.containsKey(protocol)){
+			return GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.get(protocol);
+		}else{
+			
+			synchronized (gestioneErroreDefaultComponenteCooperazioneMap) {
+
+				if(GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.containsKey(protocol)){
+					return GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.get(protocol);
+				}
+				
+				GestioneErrore gestione = new GestioneErrore();
+				// default si rispedisce
+				gestione.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG);
+				// si accetta il codice di trasporto 200-299
+				GestioneErroreCodiceTrasporto codiceTrasporto = new GestioneErroreCodiceTrasporto();
+				codiceTrasporto.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_ACCETTA_MSG);
+				codiceTrasporto.setValoreMinimo(200);
+				boolean isSuccessfulHttpRedirectStatusCode = false;
+				try {
+					isSuccessfulHttpRedirectStatusCode = protocolFactory.createProtocolManager().isSuccessfulHttpRedirectStatusCode(serviceBinding);
+				}catch(Exception e) {
+					log.error(e.getMessage(),e);
+				}
+				if(isSuccessfulHttpRedirectStatusCode) {
+					codiceTrasporto.setValoreMassimo(399);
+				}
+				gestione.addCodiceTrasporto(codiceTrasporto);
+	
+	
+				// Per qualsiasi fault si effettua una rispedizione, a meno di fault
+				// integrati in buste errore:
+	
+				// BUSTE ERRORE DI VALIDAZIONE
+				// SoapActor == null
+				// SoapFaultCode == soap:Client
+				// SoapFaultString contain "*_001 - Formato Busta non corretto"
+
 				org.openspcoop2.protocol.sdk.config.ITraduttore trasl = null;
 				try {
-					protocolFactory = protocolFactoryManager.getProtocolFactoryByName(protocolName);
 					trasl = protocolFactory.createTraduttore();
-				} catch (ProtocolException e) {
-					// TODO Succede in caso di incostintenza nella configurazione. Che faccio?
-					e.printStackTrace();
-					continue;
-				} 
-
-				// per gestire actor Client senza soap:
-				GestioneErroreSoapFault faultClient = new GestioneErroreSoapFault();
-				faultClient.setFaultCode("Client");
-				faultClient.setFaultString(trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE));
-				faultClient.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_ACCETTA_MSG);
-				gestione.addSoapFault(faultClient);
-				// per gestire actor Client con soap:
-//				GestioneErroreSoapFault faultSoapClient = new GestioneErroreSoapFault();
-//				faultSoapClient.setFaultCode("soap:Client");
-//				faultSoapClient.setFaultString(trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE));
-//				faultSoapClient.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_ACCETTA_MSG);
-//				gestione.addSoapFault(faultSoapClient);
-
-
-
-				// BUSTE ERRORE DI PROCESSAMENTO
-				// SoapActor == null
-				// SoapFaultCode == soap:Server
-				// SoapFaultString contain "*_300 - Errore nel processamento del messaggio"
+				}catch(Exception e) {
+					log.error(e.getMessage(),e);
+				}
 	
-				// per gestire actor Server senza soap:
-				GestioneErroreSoapFault faultServer = new GestioneErroreSoapFault();
-				faultServer.setFaultCode("Server");
-				faultServer.setFaultString(trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO));
-				faultServer.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG);
-				gestione.addSoapFault(faultServer);
-				// per gestire actor Server con soap:
-//				GestioneErroreSoapFault faultSoapServer = new GestioneErroreSoapFault();
-//				faultSoapServer.setFaultCode("soap:Server");
-//				faultSoapServer.setFaultString(trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO));
-//				faultSoapServer.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG);
-//				gestione.addSoapFault(faultSoapServer);
+				if(trasl!=null) {
+					// per gestire actor Client senza soap:
+					GestioneErroreSoapFault faultClient = new GestioneErroreSoapFault();
+					faultClient.setFaultCode("Client");
+					faultClient.setFaultString(trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE));
+					faultClient.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_ACCETTA_MSG);
+					gestione.addSoapFault(faultClient);
+					// per gestire actor Client con soap:
+	//				GestioneErroreSoapFault faultSoapClient = new GestioneErroreSoapFault();
+	//				faultSoapClient.setFaultCode("soap:Client");
+	//				faultSoapClient.setFaultString(trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE));
+	//				faultSoapClient.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_ACCETTA_MSG);
+	//				gestione.addSoapFault(faultSoapClient);
+	
+					// BUSTE ERRORE DI PROCESSAMENTO
+					// SoapActor == null
+					// SoapFaultCode == soap:Server
+					// SoapFaultString contain "*_300 - Errore nel processamento del messaggio"
+		
+					// per gestire actor Server senza soap:
+					GestioneErroreSoapFault faultServer = new GestioneErroreSoapFault();
+					faultServer.setFaultCode("Server");
+					faultServer.setFaultString(trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO));
+					faultServer.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG);
+					gestione.addSoapFault(faultServer);
+					// per gestire actor Server con soap:
+	//				GestioneErroreSoapFault faultSoapServer = new GestioneErroreSoapFault();
+	//				faultSoapServer.setFaultCode("soap:Server");
+	//				faultSoapServer.setFaultString(trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO));
+	//				faultSoapServer.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG);
+	//				gestione.addSoapFault(faultSoapServer);
+				}
+				
+				GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.put(protocol, gestione);
+				return gestione;
+				
 			}
-
-
-			GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazione = gestione;
-			return gestione;
 		}
 	}
 

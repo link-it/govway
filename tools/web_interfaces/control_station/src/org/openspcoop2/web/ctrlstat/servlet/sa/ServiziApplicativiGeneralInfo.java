@@ -22,6 +22,8 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.sa;
 
+import org.openspcoop2.core.id.IDSoggetto;
+
 /**
  * ServiziApplicativiGeneralInfo
  * 
@@ -37,7 +39,14 @@ public class ServiziApplicativiGeneralInfo {
 	private String tipoProtocollo = null;
 	private String tipoENomeSoggetto = "";
 	private String provider = null;
+	private IDSoggetto idSoggetto = null;
 	
+	public IDSoggetto getIdSoggetto() {
+		return this.idSoggetto;
+	}
+	public void setIdSoggetto(IDSoggetto idSoggetto) {
+		this.idSoggetto = idSoggetto;
+	}
 	public String[] getSoggettiList() {
 		return this.soggettiList;
 	}

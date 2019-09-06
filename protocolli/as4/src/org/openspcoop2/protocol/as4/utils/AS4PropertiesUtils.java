@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 
 /**
  * AS4PropertiesUtils
@@ -37,48 +38,14 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 public class AS4PropertiesUtils {
 
 	public static String getRequiredStringValue(List<ProtocolProperty> list, String propertyName) throws ProtocolException{
-		String value = getStringValue(list, propertyName, true);
-		if(value==null){
-			throw new ProtocolException("Property ["+propertyName+"] with null value?");
-		}
-		return value;
+		return ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(list, propertyName);
 	}
 	public static String getOptionalStringValue(List<ProtocolProperty> list, String propertyName) throws ProtocolException{
-		String value = getStringValue(list, propertyName, false);
-		return value;
-	}
-	private static String getStringValue(List<ProtocolProperty> list, String propertyName, boolean throwNotFoundException) throws ProtocolException{
-		
-		ProtocolProperty pp = getProtocolProperty(list, propertyName, throwNotFoundException);
-		if(pp!=null){
-			return pp.getValue();
-		}
-		if(throwNotFoundException){
-			throw new ProtocolException("Property ["+propertyName+"] not found");
-		}
-		else{
-			return null;
-		}
-		
+		return ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(list, propertyName);
 	}
 	
 	public static ProtocolProperty getProtocolProperty(List<ProtocolProperty> list, String propertyName, boolean throwNotFoundException) throws ProtocolException{
-		
-		if(list==null || list.size()<=0){
-			return null;
-		}
-		for (ProtocolProperty protocolProperty : list) {
-			if(propertyName.equals(protocolProperty.getName())){
-				return protocolProperty;
-			}
-		}
-		
-		if(throwNotFoundException){
-			throw new ProtocolException("Property ["+propertyName+"] not found");
-		}
-		else{
-			return null;
-		}
+		return ProtocolPropertiesUtils.getProtocolPropertyRegistry(list, propertyName, throwNotFoundException);
 	}
 	
 }

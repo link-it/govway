@@ -322,11 +322,6 @@ public class NotificatoreEventi {
 	}
 	
 	
-	private static final String format = "yyyy-MM-dd_HH:mm:ss.SSS";
-	private static SimpleDateFormat newSimpleDateFormat(){
-		return new SimpleDateFormat(format);
-	}
-	
 	private static void logInfo(Logger log,boolean debug,String msg){
 		if(debug){
 			log.info(msg);
@@ -340,7 +335,7 @@ public class NotificatoreEventi {
 	
 	public Date process(Logger log, IEventoService eventoService, int secondi, Date lastInterval, Connection connection, boolean debug, boolean forceCheckPrimoAvvioConfig) throws Exception{
 		
-		SimpleDateFormat df = newSimpleDateFormat();
+		SimpleDateFormat df = Utilities.getSimpleDateFormatMs();
 		
 		logInfo(log,debug,"=================================================================================");
 		

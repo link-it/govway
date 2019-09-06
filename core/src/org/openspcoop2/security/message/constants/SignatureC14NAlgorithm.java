@@ -22,6 +22,8 @@
 
 package org.openspcoop2.security.message.constants;
 
+import org.openspcoop2.generic_project.exception.NotFoundException;
+
 /**     
  * SignatureC14NAlgorithm
  *
@@ -50,5 +52,26 @@ public enum SignatureC14NAlgorithm {
 	}
 	public String getLabel() {
 		return this.label;
+	}
+	
+	public static SignatureC14NAlgorithm toEnumConstant(String uri){
+		try{
+			return toEnumConstant(uri,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static SignatureC14NAlgorithm toEnumConstant(String uri, boolean throwNotFoundException) throws NotFoundException{
+		SignatureC14NAlgorithm res = null;
+		for (SignatureC14NAlgorithm tmp : values()) {
+			if(tmp.getUri().equals(uri)){
+				res = tmp;
+				break;
+			}
+		}
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with uri ["+uri+"] not found");
+		}
+		return res;
 	}
 }

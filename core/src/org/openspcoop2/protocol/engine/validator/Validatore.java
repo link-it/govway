@@ -34,6 +34,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.transazioni.utils.TempiElaborazione;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.Configurazione;
@@ -89,10 +90,12 @@ public class Validatore  {
 	private ProprietaValidazione proprietaValidazione;
 	/** Eventuale errore avvenuto durante il processo di validazione */
 	ErroreCooperazione errore;
+	IntegrationError errore_integrationError;
 	/** Errori di validazione riscontrati sulla busta */
 	private java.util.List<Eccezione> erroriValidazione = new ArrayList<Eccezione>();
 	/** Errori di processamento riscontrati sulla busta */
 	private java.util.List<Eccezione> erroriProcessamento = new ArrayList<Eccezione>();
+	private String erroreProcessamento_internalMessage;	
 	/** Indicazione se la busta validata e' un messaggio errore */
 	private boolean isMessaggioErrore;
 	private boolean isMessaggioErroreIntestazione;
@@ -229,6 +232,7 @@ public class Validatore  {
 			this.validatoreSintattico = new ValidazioneSintattica(this.state,this.msg, busta, isRichiesta, this.log,this.readQualifiedAttribute, this.protocolFactory);
 			if (this.validatoreSintattico.valida() == false){
 				this.errore = this.validatoreSintattico.getErrore();
+				this.errore_integrationError = this.validatoreSintattico.getErrore_integrationError();
 				this.bustaErroreHeaderIntestazione = this.validatoreSintattico.getBustaErroreHeaderIntestazione();
 				return false;
 			}
@@ -239,7 +243,7 @@ public class Validatore  {
 			this.isMessaggioErrore = validatoreErrori.isBustaErrore(this.busta,this.msg,pValidazioneErrori);
 			this.isMessaggioErroreIntestazione = validatoreErrori.isBustaErroreIntestazione(this.busta, this.msg,pValidazioneErrori);
 			this.isMessaggioErroreProcessamento = validatoreErrori.isBustaErroreProcessamento(this.busta, this.msg,pValidazioneErrori);
-				
+							
 			this.isBustaDiServizio = this.protocolFactory.createProtocolManager().isBustaServizio(this.busta);
 
 			if(this.isMessaggioErrore){
@@ -249,6 +253,7 @@ public class Validatore  {
 				addListaEccezioni(this.validatoreSintattico.getEccezioniValidazione(),this.erroriValidazione);
 			}
 			addListaEccezioni(this.validatoreSintattico.getEccezioniProcessamento(),this.erroriProcessamento);
+			this.erroreProcessamento_internalMessage = this.validatoreSintattico.getErroreProcessamento_internalMessage();
 			
 			// Se comunque e' arrivata un busta di servizio, che non possiede nemmeno uno delle seguenti cose:
 			// - lista eccezioni
@@ -598,6 +603,9 @@ public class Validatore  {
 	public ErroreCooperazione getErrore(){
 		return this.errore;
 	}
+	public IntegrationError getErrore_integrationError() {
+		return this.errore_integrationError;
+	}
 
 	/**
 	 * Indicazione se la validazione della busta ha riscontrato eccezioni
@@ -638,6 +646,10 @@ public class Validatore  {
 			return this.erroriProcessamento;
 		else
 			return new java.util.ArrayList<Eccezione>();
+	}
+	
+	public String getErroreProcessamento_internalMessage() {
+		return this.erroreProcessamento_internalMessage;
 	}
 
 	/**

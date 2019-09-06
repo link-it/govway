@@ -59,7 +59,7 @@ public class MessageSecurityContext_wss4j implements IMessageSecurityContext{
 	/** WSS Id Allocator */
 	private static org.apache.wss4j.dom.WsuIdAllocator wsuIdAllocator = null;
 	private static String prefixWsuId = null;
-	private static synchronized void initWsuIdAllocator(String prefixWsuIdParam,Logger log) throws Exception{
+	public static synchronized void initWsuIdAllocator(String prefixWsuIdParam,Logger log) throws Exception{
 		if(MessageSecurityContext_wss4j.wsuIdAllocator==null){
 			WSSConfig config = WSSConfig.getNewInstance();
 			MessageSecurityContext_wss4j.prefixWsuId=prefixWsuIdParam;

@@ -36,7 +36,10 @@ import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -54,6 +57,9 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCor
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -245,6 +251,18 @@ public class ArchiviExporter extends HttpServlet {
 				identificativi = exporterUtils.getIdsAccordiCooperazione(objToExport);
 				redirect = AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST;
 				break;
+			case SERVIZIO_APPLICATIVO:
+				identificativi = exporterUtils.getIdsServiziApplicativi(objToExport);
+				redirect = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST;
+				break;
+			case RUOLO:
+				identificativi = exporterUtils.getIdsRuoli(objToExport);
+				redirect = RuoliCostanti.SERVLET_NAME_RUOLI_LIST;
+				break;
+			case SCOPE:
+				identificativi = exporterUtils.getIdsScope(objToExport);
+				redirect = ScopeCostanti.SERVLET_NAME_SCOPE_LIST;
+				break;
 			default:
 				// altri tipi che non prevedono la lista degli identificativi schermata di errore
 				redirect = LoginCostanti.SERVLET_NAME_MESSAGE_PAGE;
@@ -370,6 +388,33 @@ public class ArchiviExporter extends HttpServlet {
 	                	fileName+="_"+idAccordo.getVersione();
 	                }
 					fileName +="."+extSingleArchive;
+				}
+				break;
+			case SERVIZIO_APPLICATIVO:
+				if(identificativi.size()>1){
+					fileName = prefix+"Applicativi."+ext;
+				}else{
+					IDServizioApplicativo idServizioApplicativo = ((IDServizioApplicativo)identificativi.get(0));
+					fileName = idServizioApplicativo.getIdSoggettoProprietario().getTipo()+idServizioApplicativo.getIdSoggettoProprietario().getNome()+
+							"_"+
+							idServizioApplicativo.getNome()+
+							"."+extSingleArchive;
+				}
+				break;
+			case RUOLO:
+				if(identificativi.size()>1){
+					fileName = prefix+"Ruoli."+ext;
+				}else{
+					IDRuolo idRuolo = ((IDRuolo)identificativi.get(0));
+					fileName = idRuolo.getNome()+"."+extSingleArchive;
+				}
+				break;
+			case SCOPE:
+				if(identificativi.size()>1){
+					fileName = prefix+"Scope."+ext;
+				}else{
+					IDScope idScope = ((IDScope)identificativi.get(0));
+					fileName = idScope.getNome()+"."+extSingleArchive;
 				}
 				break;
 			default:

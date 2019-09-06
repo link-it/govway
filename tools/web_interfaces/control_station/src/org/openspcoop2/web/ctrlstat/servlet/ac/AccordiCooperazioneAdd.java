@@ -45,7 +45,6 @@ import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
@@ -57,7 +56,6 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -94,8 +92,7 @@ public final class AccordiCooperazioneAdd extends Action {
 	private IRegistryReader registryReader = null; 
 	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
-	private ConsoleInterfaceType consoleInterfaceType = null;
-
+	
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -119,8 +116,7 @@ public final class AccordiCooperazioneAdd extends Action {
 
 		try {
 			AccordiCooperazioneHelper acHelper = new AccordiCooperazioneHelper(request, pd, session);
-			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(acHelper); 
-
+			
 			this.editMode = acHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			this.nome = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME);
 			this.descr = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE);
@@ -237,7 +233,7 @@ public final class AccordiCooperazioneAdd extends Action {
 			
 			// ID Accordo Null per default
 			IDAccordo idAc = null;
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoCooperazione(this.consoleOperationType, this.consoleInterfaceType, 
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoCooperazione(this.consoleOperationType, acHelper, 
 					this.registryReader, this.configRegistryReader, idAc );
 			this.protocolProperties = acHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
@@ -289,14 +285,14 @@ public final class AccordiCooperazioneAdd extends Action {
 					this.referente = "";
 
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(this.consoleConfiguration,
-						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+						this.consoleOperationType, acHelper, this.protocolProperties, 
 						this.registryReader, this.configRegistryReader, idAc);
 
 				dati = acHelper.addAccordiCooperazioneToDati(dati, this.nome, this.descr, "0", tipoOp, this.referente,
 						this.versione, providersList, providersListLabel, false,this.statoPackage,this.statoPackage, this.tipoProtocollo, listaTipiProtocollo,false);
 
 				// aggiunta campi custom
-				dati = acHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+				dati = acHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
 
 				pd.setDati(dati);
 
@@ -310,10 +306,17 @@ public final class AccordiCooperazioneAdd extends Action {
 			boolean isOk = acHelper.accordiCooperazioneCheckData(tipoOp, this.nome, this.descr, "0",
 					this.referente, this.versione, this.privato, null);
 
+			// updateDynamic
+			if(isOk) {
+				this.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(this.consoleConfiguration,
+						this.consoleOperationType, acHelper, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idAc);
+			}
+			
 			// Validazione base dei parametri custom 
 			if(isOk){
 				try{
-					acHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+					acHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -326,7 +329,7 @@ public final class AccordiCooperazioneAdd extends Action {
 				try{
 					idAc = acHelper.getIDAccordoFromValues(this.nome, this.referente, this.versione);
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigCooperazione(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, 
+					this.consoleDynamicConfiguration.validateDynamicConfigCooperazione(this.consoleConfiguration, this.consoleOperationType, acHelper, this.protocolProperties, 
 							this.registryReader, this.configRegistryReader, idAc);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
@@ -346,14 +349,14 @@ public final class AccordiCooperazioneAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(this.consoleConfiguration,
-						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+						this.consoleOperationType, acHelper, this.protocolProperties, 
 						this.registryReader, this.configRegistryReader, idAc);
 
 				dati = acHelper.addAccordiCooperazioneToDati(dati, this.nome, this.descr, "0", tipoOp, 
 						this.referente, this.versione, providersList, providersListLabel, this.privato,this.statoPackage,this.statoPackage, this.tipoProtocollo, listaTipiProtocollo,false);
 
 				// aggiunta campi custom
-				dati = acHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+				dati = acHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
 
 				pd.setDati(dati);
 
@@ -391,7 +394,7 @@ public final class AccordiCooperazioneAdd extends Action {
 			ac.setPrivato(this.privato ? Boolean.TRUE : Boolean.FALSE);
 			ac.setSuperUser(userLogin);
 
-			// stato
+			// stato	
 			ac.setStatoPackage(this.statoPackage);
 
 			// Check stato
@@ -414,14 +417,14 @@ public final class AccordiCooperazioneAdd extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(this.consoleConfiguration,
-							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+							this.consoleOperationType, acHelper, this.protocolProperties, 
 							this.registryReader, this.configRegistryReader, idAc);
 
 					dati = acHelper.addAccordiCooperazioneToDati(dati, this.nome, this.descr, "0", tipoOp, 
 							this.referente, this.versione, providersList, providersListLabel, this.privato,this.statoPackage,this.statoPackage, this.tipoProtocollo, listaTipiProtocollo,false);
 
 					// aggiunta campi custom
-					dati = acHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+					dati = acHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
 
 					pd.setDati(dati);
 
@@ -433,7 +436,7 @@ public final class AccordiCooperazioneAdd extends Action {
 			}
 
 			//imposto properties custom
-			ac.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType,null));
+			ac.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(this.protocolProperties, this.consoleOperationType,null));
 
 			// effettuo le operazioni
 			acCore.performCreateOperation(userLogin, acHelper.smista(), ac);

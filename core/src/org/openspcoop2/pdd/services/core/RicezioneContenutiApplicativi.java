@@ -4409,7 +4409,7 @@ public class RicezioneContenutiApplicativi {
 			// solo dopo aver terminato di gestire la richiesta con relativa ricevuta.
 			if(ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(infoServizio.getProfiloDiCollaborazione()) && portaStateless){
 				
-				if (StatoFunzionalitaProtocollo.ABILITATA.equals(moduleManager.getCollaborazione(infoServizio.getProfiloDiCollaborazione()))) {
+				if (StatoFunzionalitaProtocollo.ABILITATA.equals(moduleManager.getCollaborazione(infoServizio))) {
 					// Se presente riferimentoMessaggio utilizzo quello come riferimento asincrono per la risposta.
 					if (headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio() != null) {
 						richiestaAsincronaSimmetricaStateless = false;

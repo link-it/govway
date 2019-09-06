@@ -67,6 +67,8 @@ public class FiltroRicercaServizi extends FiltroRicerca implements Serializable{
 	/** nome Soggetto Fruitore */
 	private String nomeSoggettoFruitore;
 	
+	private String portType;
+	
 
 	
 	public TipologiaServizio getTipologia() {
@@ -144,6 +146,14 @@ public class FiltroRicercaServizi extends FiltroRicerca implements Serializable{
 	
 	
 	
+	public String getPortType() {
+		return this.portType;
+	}
+	public void setPortType(String portType) {
+		this.portType = portType;
+	}
+	
+	
 	@Override
 	public String toString(){
 		StringBuffer bf = new StringBuffer();
@@ -169,6 +179,8 @@ public class FiltroRicercaServizi extends FiltroRicerca implements Serializable{
 			bf.append(" [tipo-soggetto-fruitore:"+this.tipoSoggettoFruitore+"]");
 		if(this.nomeSoggettoFruitore!=null)
 			bf.append(" [nome-soggetto-fruitore:"+this.nomeSoggettoFruitore+"]");
+		if(this.portType!=null)
+			bf.append(" [portType:"+this.portType+"]");
 		super.addDetails(bf);
 	}
 

@@ -51,6 +51,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -72,6 +73,11 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -1099,11 +1105,20 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		Parameter pIdSogg = null;
 		Parameter pTipoSoggettoFruitore = null;
 		Parameter pNomeSoggettoFruitore = null;
+		Parameter pIdProviderFruitore = null;
 		if(gestioneFruitori) {
 			pIdFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, fruitore.getId()+ "");
 			pIdSogg = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO, fruitore.getIdSoggetto() + "");
 			pTipoSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE, fruitore.getTipo());
 			pNomeSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE, fruitore.getNome());
+			
+			Long idSoggettoLong = fruitore.getIdSoggetto();
+			if(idSoggettoLong==null) {
+				idSoggettoLong = this.soggettiCore.getIdSoggetto(fruitore.getNome(), fruitore.getTipo());
+				pIdSogg = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO, idSoggettoLong + "");
+			}
+			pIdProviderFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE, idSoggettoLong + "");
+		
 		}
 
 		Soggetto sog = this.soggettiCore.getSoggettoRegistro(asps.getIdSoggetto());
@@ -1139,6 +1154,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		if(gestioneFruitori) {
 			listParametersServizio.add(pTipoSoggettoFruitore);
 			listParametersServizio.add(pNomeSoggettoFruitore);
+			listParametersServizio.add(pIdProviderFruitore);
 		}
 		listParametersServizio.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_API, "false")); // lasciare come ultimo! Si leva e si riaggiunge dopo
 		
@@ -1236,6 +1252,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		de.setValue(MessageFormat.format(ErogazioniCostanti.MESSAGE_METADATI_SERVIZIO_EROGAZIONI_EDIT, labelServiceBinding, labelAPI));
 		de.setType(DataElementType.TEXT);
 		
+		
 		// Lista di Accordi Compatibili
 		List<AccordoServizioParteComune> asParteComuneCompatibili = null;
 		try{
@@ -1270,16 +1287,71 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		de.addImage(image);
 		dati.addElement(de);
 
-
-		if(showProtocolli) {
+		
+		// ProtocolProperties
+		
+		IDServizio idAps = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+		idAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+		IConsoleDynamicConfiguration consoleDynamicConfiguration = protocolFactory.createDynamicConfigurationConsole();
+		IRegistryReader registryReader = this.apcCore.getRegistryReader(protocolFactory); 
+		IConfigIntegrationReader configRegistryReader = this.apcCore.getConfigIntegrationReader(protocolFactory);
+		ConsoleConfiguration consoleConfiguration = null;
+		if(gestioneErogatori) {
+			consoleConfiguration = consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType.CHANGE, this, 
+					registryReader, configRegistryReader, idAps );
+		}
+		else {
+			IDFruizione idFruizione = new IDFruizione();
+			idFruizione.setIdServizio(idAps);
+			idFruizione.setIdFruitore(new IDSoggetto(fruitore.getTipo(), fruitore.getNome()));
+			consoleConfiguration = consoleDynamicConfiguration.getDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleOperationType.CHANGE, this,  
+					registryReader, configRegistryReader, idFruizione);
+		}
+		boolean modificaDatiProfilo = false;
+		if(consoleConfiguration!=null && consoleConfiguration.getConsoleItem()!=null && !consoleConfiguration.getConsoleItem().isEmpty()) {
+			modificaDatiProfilo = true;
+		}
+		if(showProtocolli || modificaDatiProfilo) {
+			
 			de = new DataElement();
 			String labelProtocollo =this.getLabelProtocollo(protocollo);
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROTOCOLLO);
 			de.setValue(labelProtocollo);
 			de.setType(DataElementType.TEXT);
+			
+			if(modificaDatiProfilo) {
+				
+				listParametersServizio.remove(listParametersServizio.size()-1);
+				listParametersServizio.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO, "true"));
+				
+				image = new DataElementImage();
+				if(gestioneFruitori) {
+					List<Parameter> list = new ArrayList<>();
+					list.addAll(listParametersServizio);
+					list.add(pIdFruitore);
+					image.setUrl(
+							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE,
+							list.toArray(new Parameter[1]));
+				}
+				else {
+					image.setUrl(
+							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,
+							listParametersServizio.toArray(new Parameter[1]));
+				}
+				image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,
+						AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROTOCOLLO));
+				image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+				de.setImage(image);
+				
+			}
+			
 			dati.addElement(de);
+			
 		}
 		
+		
+		// Fruitore
 		if(showSoggettoFruitoreInFruizioni) {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO_FRUITORE);
@@ -1288,6 +1360,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			dati.addElement(de);
 		}
 
+		
 		// Url Invocazione
 		Parameter paIdSogg = null;
 		Parameter paNomePorta = null;
@@ -1329,6 +1402,16 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				boolean useInterfaceNameInInvocationURL = this.useInterfaceNameInImplementationInvocationURL(protocollo, serviceBinding);
 
 				String prefix = configProt.getUrlInvocazioneServizioPA();
+				if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(as.getServiceBinding())) {
+					if(configProt.getUrlInvocazioneServizioRestPA()!=null) {
+						prefix = configProt.getUrlInvocazioneServizioRestPA();
+					}
+				}
+				else if(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(as.getServiceBinding())) {
+					if(configProt.getUrlInvocazioneServizioSoapPA()!=null) {
+						prefix = configProt.getUrlInvocazioneServizioSoapPA();
+					}
+				}
 				prefix = prefix.trim();
 				if(useInterfaceNameInInvocationURL) {
 					if(prefix.endsWith("/")==false) {
@@ -1338,7 +1421,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 
 				urlInvocazione = prefix;
 				if(useInterfaceNameInInvocationURL) {
-					PorteNamingUtils utils = new PorteNamingUtils(ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo));
+					PorteNamingUtils utils = new PorteNamingUtils(protocolFactory);
 					urlInvocazione = urlInvocazione + utils.normalizePA(paDefault.getNome());
 				}
 			} else {
@@ -1470,13 +1553,6 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			Parameter pConnettoreDaListaAPS = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONNETTORE_DA_LISTA_APS, Costanti.CHECK_BOX_ENABLED_TRUE);
 			
 			
-			Long idSoggettoLong = fruitore.getIdSoggetto();
-			if(idSoggettoLong==null) {
-				idSoggettoLong = this.soggettiCore.getIdSoggetto(fruitore.getNome(), fruitore.getTipo());
-				pIdSogg = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO, idSoggettoLong + "");
-			}
-			Parameter pIdProviderFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE, idSoggettoLong + "");
-		
 			// url invocazione
 			de = new DataElement();
 			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE);
@@ -1487,6 +1563,16 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			boolean useInterfaceNameInInvocationURL = this.useInterfaceNameInSubscriptionInvocationURL(protocollo, serviceBinding);
 			
 			String prefix = configProt.getUrlInvocazioneServizioPD();
+			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(as.getServiceBinding())) {
+				if(configProt.getUrlInvocazioneServizioRestPD()!=null) {
+					prefix = configProt.getUrlInvocazioneServizioRestPD();
+				}
+			}
+			else if(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(as.getServiceBinding())) {
+				if(configProt.getUrlInvocazioneServizioSoapPD()!=null) {
+					prefix = configProt.getUrlInvocazioneServizioSoapPD();
+				}
+			}
 			prefix = prefix.trim();
 			if(useInterfaceNameInInvocationURL) {
 				if(prefix.endsWith("/")==false) {
@@ -1496,7 +1582,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			urlInvocazione = prefix;
 			if(useInterfaceNameInInvocationURL) {
-				PorteNamingUtils utils = new PorteNamingUtils(ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo));
+				PorteNamingUtils utils = new PorteNamingUtils(protocolFactory);
 				urlInvocazione = urlInvocazione + utils.normalizePD(pdDefault.getNome());
 			}
 			
@@ -2344,7 +2430,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 
 					// controllo accessi
 					boolean controlloAccessiAbilitato = false;
-					String statoControlloAccessi = this.getStatoControlloAccessiPortaApplicativa(paAssociata);
+					String statoControlloAccessi = this.getStatoControlloAccessiPortaApplicativa(this.apsCore.getProtocolloAssociatoTipoServizio(asps.getTipo()), paAssociata);
 
 					if(statoControlloAccessi.equals(CostantiControlStation.DEFAULT_VALUE_ABILITATO)) {
 						controlloAccessiAbilitato = true;

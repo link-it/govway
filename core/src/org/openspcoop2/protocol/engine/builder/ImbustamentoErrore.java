@@ -60,6 +60,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
+import org.openspcoop2.protocol.sdk.constants.FaseImbustamento;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
@@ -105,9 +106,11 @@ public class ImbustamentoErrore  {
 	private IState state;
 	private IErroreApplicativoBuilder erroreApplicativoBuilder;
 	private String actorInternalSoapFault;
+	private String idTransazione;
 	
 	public ImbustamentoErrore(Logger aLog, org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory, IState state, 
-			ServiceBinding serviceBinding, String actorInternalSoapFault) throws ProtocolException{
+			ServiceBinding serviceBinding, String actorInternalSoapFault,
+			String idTransazione) throws ProtocolException{
 		if(aLog!=null)
 			this.log = aLog;
 		else
@@ -129,12 +132,17 @@ public class ImbustamentoErrore  {
 		this.erroreApplicativoBuilder = this.protocolFactory.createErroreApplicativoBuilder();
 		
 		this.actorInternalSoapFault = actorInternalSoapFault;
+		
+		this.idTransazione = idTransazione;
 	}
 
 	public org.openspcoop2.protocol.sdk.IProtocolFactory<?> getProtocolFactory(){
 		return this.protocolFactory;
 	}
 
+	public void setIdTransazione(String idTransazione) {
+		this.idTransazione = idTransazione;
+	}
 	
 
 
@@ -511,7 +519,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					byte [] xml = null;
 					String contentTypeXml = null;
 					if(rfc7807!=null) {
-						ProblemRFC7807 problemRFC7807 = this._buildProblemRFC7807(rfc7807, httpStatus, nomePorta, dettaglioEccezione);
+						ProblemRFC7807 problemRFC7807 = this._buildProblemRFC7807(rfc7807, httpStatus, nomePorta, this.idTransazione, dettaglioEccezione);
 						XmlSerializer xmlSerializer = new XmlSerializer();	
 						boolean omitXMLDeclaration = true;
 						xml = xmlSerializer.toByteArray(problemRFC7807, !omitXMLDeclaration);
@@ -534,7 +542,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					byte [] json = null;
 					String contentTypeJson = null;
 					if(rfc7807!=null) {
-						ProblemRFC7807 problemRFC7807 = this._buildProblemRFC7807(rfc7807, httpStatus, nomePorta, dettaglioEccezione);
+						ProblemRFC7807 problemRFC7807 = this._buildProblemRFC7807(rfc7807, httpStatus, nomePorta, this.idTransazione, dettaglioEccezione);
 						JsonSerializer jsonSerializer = new JsonSerializer();
 						json = jsonSerializer.toByteArray(problemRFC7807);
 						contentTypeJson = HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807;
@@ -621,7 +629,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 						Detail d = fault.addDetail();
 						Element e = null;
 						if(rfc7807!=null) {
-							ProblemRFC7807 problemRFC7807 = this._buildProblemRFC7807(rfc7807, httpStatus, nomePorta, dettaglioEccezione);
+							ProblemRFC7807 problemRFC7807 = this._buildProblemRFC7807(rfc7807, httpStatus, nomePorta, this.idTransazione, dettaglioEccezione);
 							XmlSerializer xmlSerializer = new XmlSerializer();	
 							e = xmlSerializer.toNode(problemRFC7807);
 						}
@@ -644,7 +652,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 
 	}
 	
-	private ProblemRFC7807 _buildProblemRFC7807(ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta, DettaglioEccezione dettaglioEccezione)throws ProtocolException{
+	private ProblemRFC7807 _buildProblemRFC7807(ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta, String transactionId, DettaglioEccezione dettaglioEccezione)throws ProtocolException{
 		
 		try{			
 			ProblemRFC7807Builder rfc7807ProblemBuilder = null;
@@ -679,6 +687,9 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			}
 			if(rfc7807.isInstance()) {
 				problemRFC7807.setInstance(nomePorta);
+			}
+			if(rfc7807.isGovwayTransactionId()) {
+				problemRFC7807.getCustom().put(org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_TRANSACTION_ID, transactionId);
 			}
 			return problemRFC7807;
 		}catch(Exception e){
@@ -814,6 +825,11 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 		boolean useProblemRFC7807 = rfc7807!=null;
 		try{
 
+			Busta bustaRichiesta = null;
+			if(busta!=null) {
+				bustaRichiesta = busta.clone();
+			}
+			
 			// Lista trasmissioni della richiesta
 			ArrayList<Trasmissione> listaTrasmissioniBustaRichiesta = 
 				new ArrayList<Trasmissione>();
@@ -910,8 +926,9 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 
 			
 			// imbustamento
-			ProtocolMessage protocolMessage = this.imbustamento.imbustamento(responseMessage, busta, integrazione, null);
-			if(protocolMessage!=null) {
+			ProtocolMessage protocolMessage = this.imbustamento.imbustamentoRisposta(responseMessage, busta, bustaRichiesta, integrazione, null, 
+					FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
+			if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 				responseMessage = protocolMessage.getMessage(); // updated
 			}
 
@@ -921,7 +938,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 				if(messageSecurityPropertiesResponse.size() > 0){
 					messageSecurityContext.setOutgoingProperties(messageSecurityPropertiesResponse);
 					if(messageSecurityContext.processOutgoing(responseMessage,ctx, tempiElaborazione) == false){
-						return this.msgErroreProtocollo_Intestazione(identitaPdD, tipoPdD, ctx, 
+						responseMessage = this.msgErroreProtocollo_Intestazione(identitaPdD, tipoPdD, ctx, 
 								modulo,	busta, integrazione, idTransazione,
 								ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(messageSecurityContext.getMsgErrore(), messageSecurityContext.getCodiceErrore()),
 								null,null,attesaAttiva,checkInterval,profiloGestione,tipoTempo,generazioneListaTrasmissioni, 
@@ -932,6 +949,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 				}
 			}
 
+			// imbustamento
+			protocolMessage = this.imbustamento.imbustamentoRisposta(responseMessage, busta, bustaRichiesta, integrazione, null, 
+					FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
+			if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
+				responseMessage = protocolMessage.getMessage(); // updated
+			}
+			
 			return responseMessage;
 
 		}catch(Exception e) {
@@ -1005,6 +1029,11 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 		boolean useProblemRFC7807 = rfc7807!=null;
 		try{
 
+			Busta bustaRichiesta = null;
+			if(busta!=null) {
+				bustaRichiesta = busta.clone();
+			}
+			
 			// Lista trasmissioni della richiesta
 			ArrayList<Trasmissione> listaTrasmissioniBustaRichiesta = 
 				new ArrayList<Trasmissione>();
@@ -1083,10 +1112,10 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 				busta.addTrasmissione(tras);
 			}
 
-			// Add header
-
-			ProtocolMessage protocolMessage = this.imbustamento.imbustamento(responseMessage, busta,integrazione, null);
-			if(protocolMessage!=null) {
+			// Imbustamento
+			ProtocolMessage protocolMessage = this.imbustamento.imbustamentoRisposta(responseMessage, busta, bustaRichiesta, integrazione, null, 
+					FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
+			if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 				responseMessage = protocolMessage.getMessage(); // updated
 			}
 
@@ -1095,7 +1124,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 				if(messageSecurityPropertiesResponse.size() > 0){
 					messageSecurityContext.setOutgoingProperties(messageSecurityPropertiesResponse);
 					if(messageSecurityContext.processOutgoing(responseMessage,ctx, tempiElaborazione) == false){
-						return this.msgErroreProtocollo_Intestazione(identitaPdD,tipoPdD,ctx,
+						responseMessage = this.msgErroreProtocollo_Intestazione(identitaPdD,tipoPdD,ctx,
 								modulo,	busta, integrazione, idTransazione,
 								ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(messageSecurityContext.getMsgErrore(), messageSecurityContext.getCodiceErrore()),
 								null,null,attesaAttiva,checkInterval,profiloGestione,tipoTempo,generazioneListaTrasmissioni, 
@@ -1106,6 +1135,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 				}
 			}
 
+			// Imbustamento
+			protocolMessage = this.imbustamento.imbustamentoRisposta(responseMessage, busta, bustaRichiesta, integrazione, null, 
+					FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
+			if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
+				responseMessage = protocolMessage.getMessage(); // updated
+			}
+			
 			return responseMessage;
 
 		}catch(Exception e) {

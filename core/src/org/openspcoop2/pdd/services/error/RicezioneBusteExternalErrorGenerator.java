@@ -76,7 +76,8 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		this.state = state;
 		
 		this.imbustamentoErrore = new ImbustamentoErrore(this.log, this.protocolFactory, this.state, this.serviceBinding,
-				this.openspcoopProperties.getProprietaGestioneErrorePD(this.protocolFactory.createProtocolManager()).getFaultActor());
+				this.openspcoopProperties.getProprietaGestioneErrorePD(this.protocolFactory.createProtocolManager()).getFaultActor(),
+				requestInfo.getIdTransazione());
 		
 		this.forceSoapPrefixCompatibilitOpenSPCoopV1 = this.openspcoopProperties.isForceSoapPrefixCompatibilitaOpenSPCoopV1();
 

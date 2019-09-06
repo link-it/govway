@@ -565,6 +565,11 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 							}
 						}
 					}
+					if(filtroRicercaBase.getServiceBinding()!=null){
+						if(asList[i].getServiceBinding().equals(filtroRicercaBase.getServiceBinding()) == false){
+							continue;
+						}
+					}
 					
 					if(filtroRicercaBase.getIdAccordoCooperazione()!=null &&
 							(filtroRicercaBase.getIdAccordoCooperazione().getNome()!=null || 
@@ -1913,6 +1918,11 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 					}
 					if(filtroRicerca.getVersione()!=null){
 						if(servList[i].getVersione().intValue() != filtroRicerca.getVersione().intValue()){
+							continue;
+						}
+					}
+					if(filtroRicerca.getPortType()!=null){
+						if(servList[i].getPortType().equals(filtroRicerca.getPortType()) == false){
 							continue;
 						}
 					}

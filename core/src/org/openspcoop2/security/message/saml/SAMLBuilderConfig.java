@@ -154,6 +154,9 @@ public class SAMLBuilderConfig {
 	
 	private Properties p;	
 	
+	// Usage keystore caching
+	private boolean useKeystoreCache = false;
+	
 	// Version
 	private Version version = null;
 
@@ -217,6 +220,9 @@ public class SAMLBuilderConfig {
 	
 	public SAMLBuilderConfig(Properties p) throws IOException{
 		this.p = p;
+		
+		// Usage keystore caching
+		this.useKeystoreCache = isTrue(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_USE_KEYSTORE_CACHE, false);
 		
 		// Version
 		boolean saml2 = false;
@@ -723,7 +729,12 @@ public class SAMLBuilderConfig {
 	}
 	
 
-		
+	
+	// Usage keystore caching
+	
+	public boolean isUseKeystoreCache() {
+		return this.useKeystoreCache;
+	}	
 	
 	// Version
 	
@@ -762,7 +773,8 @@ public class SAMLBuilderConfig {
 			}
 			else if(this.signAssertionCryptoPropCustomKeystoreFile!=null) {
 				Properties p = SAMLUtilities.convertToMerlinProperties(this.signAssertionCryptoPropCustomKeystoreType, 
-						this.signAssertionCryptoPropCustomKeystoreFile, this.signAssertionCryptoPropCustomKeystorePassword);
+						this.signAssertionCryptoPropCustomKeystoreFile, this.signAssertionCryptoPropCustomKeystorePassword,
+						this.useKeystoreCache);
 				this.signAssertionCrypto = CryptoFactory.getInstance(p);
 			}
 			else {
@@ -836,7 +848,8 @@ public class SAMLBuilderConfig {
 			}
 			else if(this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreFile!=null) {
 				Properties p = SAMLUtilities.convertToMerlinProperties(this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreType, 
-						this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreFile, this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystorePassword);
+						this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreFile, this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystorePassword,
+						this.useKeystoreCache);
 				this.subjectConfirmationMethod_holderOfKey_crypto = CryptoFactory.getInstance(p);
 			}
 			else {

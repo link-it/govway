@@ -559,6 +559,7 @@ public class ServiceBindingConfigurationReader  {
 			rfc7807.setUseAcceptHeader(rfc7807_protocolManifest.getUseAcceptHeader());
 			rfc7807.setInstance(rfc7807_protocolManifest.getInstance());
 			rfc7807.setGovwayStatus(rfc7807_protocolManifest.getGovwayStatus());
+			rfc7807.setGovwayTransactionId(rfc7807_protocolManifest.getGovwayTransactionId());
 			rfc7807.setDetails(rfc7807_protocolManifest.getDetails());
 		}
 		

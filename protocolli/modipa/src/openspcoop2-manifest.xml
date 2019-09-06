@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openspcoop2 xmlns="http://www.openspcoop2.org/protocol/manifest">
+
+    <protocol name="modipa" label="ModI PA"
+    	descrizione="Modello di supporto alla strategia di interoperabilità e cooperazione tra le Pubbliche Amministrazioni"
+    	webSite="https://docs.italia.it/italia/piano-triennale-ict/lg-modellointeroperabilita-docs/it/">
+    	<factory>org.openspcoop2.protocol.modipa.ModIFactory</factory>
+    </protocol>
+    
+
+
+    <binding default="rest">
+    	<soap soap11="true" soap11_withAttachments="true" soap11_mtom="true"
+    		  soap12="true" soap12_withAttachments="true" soap12_mtom="true">
+    		<integration>
+    		 	<implementation>
+    		 		<name>
+    		 			<param actor="providerType" suffix="_"/>
+    		 			<param actor="providerName" suffix="/"/>
+    		 			<param actor="serviceType" suffix="_"/>
+    		 			<param actor="serviceName" suffix="/"/>
+    		 			<param actor="serviceVersion" prefix="v"/>
+    		 		</name>
+					<resourceIdentification>
+	    		 		<identificationModes default="url" forceInterfaceMode="true">
+	    		 			<mode name="interface" />
+		    		 		<mode name="header" />
+		    		 		<mode name="url" />
+		    		 		<mode name="content" />
+		    		 		<mode name="input" />
+		    		 		<mode name="soapAction" />
+	    		 		</identificationModes>
+	    		 		<identificationParameter>
+		    		 		<param prefix=".*/(?:" actor="providerType" suffix="_)?"/>
+	    		 			<param actor="providerName" suffix="/"/>
+	    		 			<param prefix="(?:" actor="serviceType" suffix="_)?"/>
+	    		 			<param actor="serviceName" suffix="/"/>
+	    		 			<param actor="serviceVersion" prefix="v" suffix="/([^/|^?]*).*"/>
+	    		 		</identificationParameter>
+						<specificResource>
+							<name>
+	    		 				<param prefix="__" actor="name" suffix="__"/>
+	    		 				<param actor="ruleName" />
+	    		 			</name>
+	    		 		</specificResource>
+	    		 	</resourceIdentification>
+	    		 </implementation>
+	    		 <subscription>
+    		 		<name>
+    		 			<param actor="subscriberType" suffix="_"/>
+    		 			<param actor="subscriberName" suffix="/"/>
+    		 			<param actor="providerType" suffix="_"/>
+    		 			<param actor="providerName" suffix="/"/>
+    		 			<param actor="serviceType" suffix="_"/>
+    		 			<param actor="serviceName" suffix="/"/>
+    		 			<param actor="serviceVersion" prefix="v"/>
+    		 		</name>
+					<resourceIdentification>
+	    		 		<identificationModes default="url" forceInterfaceMode="true">
+	    		 			<mode name="interface" />
+		    		 		<mode name="header" />
+		    		 		<mode name="url" />
+		    		 		<mode name="content" />
+		    		 		<mode name="input" />
+		    		 		<mode name="soapAction" />
+	    		 		</identificationModes>
+	    		 		<identificationParameter>
+	    		 			<param prefix=".*/(?:" actor="subscriberType" suffix="_)?"/>
+	    		 			<param actor="subscriberName" suffix="/"/>
+	    		 			<param prefix="(?:" actor="providerType" suffix="_)?"/>
+	    		 			<param actor="providerName" suffix="/"/>
+	    		 			<param prefix="(?:" actor="serviceType" suffix="_)?"/>
+	    		 			<param actor="serviceName" suffix="/"/>
+	    		 			<param actor="serviceVersion" prefix="v" suffix="/([^/|^?]*).*"/>
+	    		 		</identificationParameter>
+						<specificResource>
+							<name>
+	    		 				<param prefix="__" actor="name" suffix="__"/>
+	    		 				<param actor="ruleName" />
+	    		 			</name>
+	    		 		</specificResource>
+	    		 	</resourceIdentification>
+	    		 </subscription>
+    		</integration>
+    		<integrationError>
+    			<internal problemType="rfc7807">
+    				<rfc7807 details="true" govwayStatus="true" govwayTransactionId="true" instance="false" useAcceptHeader="true"/>
+	    			<authentication httpReturnCode="500" messageType="soapAsRequest" />
+	    			<authorization httpReturnCode="500" messageType="soapAsRequest" />
+	    			<notFound httpReturnCode="500" messageType="soapAsRequest" />
+	    			<badRequest httpReturnCode="500" messageType="soapAsRequest" />
+	    			<tooManyRequests httpReturnCode="500" messageType="soapAsRequest" />
+	    			<internalError httpReturnCode="500" messageType="soapAsRequest" />
+	    			<serviceUnavailable httpReturnCode="500" messageType="soapAsRequest" />
+	    			<default httpReturnCode="500" messageType="none" /> <!-- se non sono riuscito a capire la versione soap, ritorno 500 senza alcun fault -->
+    			</internal>	
+    			<external problemType="rfc7807" useInternalFault="true">
+    				<rfc7807 details="true" govwayStatus="true" govwayTransactionId="true" instance="false" useAcceptHeader="true"/>
+	    			<authentication httpReturnCode="500" messageType="soapAsRequest" />
+	    			<authorization httpReturnCode="500" messageType="soapAsRequest" />
+	    			<notFound httpReturnCode="500" messageType="soapAsRequest" />
+	    			<badRequest httpReturnCode="500" messageType="soapAsRequest" />
+	    			<tooManyRequests httpReturnCode="500" messageType="soapAsRequest" />
+	    			<internalError httpReturnCode="500" messageType="soapAsRequest" />
+	    			<serviceUnavailable httpReturnCode="500" messageType="soapAsRequest" />
+	    			<default httpReturnCode="500" messageType="none" /> <!-- se non sono riuscito a capire la versione soap, ritorno 500 senza alcun fault -->
+    			</external>	
+    		</integrationError>
+    		<mediaTypeCollection>
+    			<mediaType messageType="soap11">text/xml</mediaType>
+    			<default messageType="soap12"/>
+    		</mediaTypeCollection>
+    		<interfaces>
+    			<specification type="wsdl11" />
+    		</interfaces>
+    		<functionality conversationIdentifier="true" referenceToRequestIdentifier="true"/>
+    	</soap>
+    	<rest xml="true" json="true" 
+    		  binary="true" mimeMultipart="true">
+    		  <integration>
+    		 	<implementation>
+    		 		<name>
+    		 			<param actor="providerType" suffix="_"/>
+    		 			<param actor="providerName" suffix="/"/>
+    		 			<param actor="serviceType" suffix="_"/>
+    		 			<param actor="serviceName" suffix="/"/>
+    		 			<param actor="serviceVersion" prefix="v" />
+    		 		</name>
+					<resourceIdentification>
+	    		 		<identificationModes default="interface" forceInterfaceMode="true">
+	    		 			<mode name="interface" />
+		    		 		<mode name="header" onlyAdvancedMode="true" />
+		    		 		<mode name="content" onlyAdvancedMode="true" />
+		    		 		<mode name="input" onlyAdvancedMode="true" />
+	    		 		</identificationModes>
+						<specificResource>
+							<name>
+	    		 				<param prefix="__" actor="name" suffix="__"/>
+	    		 				<param actor="ruleName" />
+	    		 			</name>
+	    		 		</specificResource>
+	    		 	</resourceIdentification>
+	    		 </implementation>
+	    		 <subscription>
+    		 		<name>
+    		 			<param actor="subscriberType" suffix="_"/>
+    		 			<param actor="subscriberName" suffix="/"/>
+    		 			<param actor="providerType" suffix="_"/>
+    		 			<param actor="providerName" suffix="/"/>
+    		 			<param actor="serviceType" suffix="_"/>
+    		 			<param actor="serviceName" suffix="/"/>
+    		 			<param actor="serviceVersion" prefix="v" />
+    		 		</name>
+					<resourceIdentification>
+	    		 		<identificationModes default="interface" forceInterfaceMode="true">
+	    		 			<mode name="interface" />
+		    		 		<mode name="header" onlyAdvancedMode="true" />
+		    		 		<mode name="content" onlyAdvancedMode="true" />
+		    		 		<mode name="input" onlyAdvancedMode="true" />
+	    		 		</identificationModes>
+						<specificResource>
+							<name>
+	    		 				<param prefix="__" actor="name" suffix="__"/>
+	    		 				<param actor="ruleName" />
+	    		 			</name>
+	    		 		</specificResource>
+	    		 	</resourceIdentification>
+	    		 </subscription>
+    		</integration>
+    		<integrationError>
+    			<internal problemType="rfc7807">
+    				<rfc7807 details="true" govwayStatus="true" govwayTransactionId="true" instance="false" useAcceptHeader="true"/>
+	    			<authentication httpReturnCode="401" messageType="sameAsRequest" />
+	    			<authorization httpReturnCode="403" messageType="sameAsRequest" />
+	    			<notFound httpReturnCode="404" messageType="sameAsRequest" />
+	    			<badRequest httpReturnCode="400" messageType="sameAsRequest" />
+	    			<tooManyRequests httpReturnCode="429" messageType="sameAsRequest" />
+	    			<internalError httpReturnCode="500" messageType="sameAsRequest" />
+	    			<serviceUnavailable httpReturnCode="503" messageType="sameAsRequest" />
+	    			<default httpReturnCode="500" messageType="json" />
+    			</internal>
+    			<external problemType="rfc7807">
+    				<rfc7807 details="true" govwayStatus="true" govwayTransactionId="true" instance="false" useAcceptHeader="true"/>
+	    			<authentication httpReturnCode="401" messageType="sameAsRequest" />
+	    			<authorization httpReturnCode="403" messageType="sameAsRequest" />
+	    			<notFound httpReturnCode="404" messageType="sameAsRequest" />
+	    			<badRequest httpReturnCode="400" messageType="sameAsRequest" />
+	    			<tooManyRequests httpReturnCode="429" messageType="sameAsRequest" />
+	    			<internalError httpReturnCode="500" messageType="sameAsRequest" />
+	    			<serviceUnavailable httpReturnCode="503" messageType="sameAsRequest" />
+	    			<default httpReturnCode="500" messageType="json" />
+    			</external>
+    		</integrationError>
+    		<mediaTypeCollection>
+    			<mediaType messageType="xml">text/xml</mediaType>
+    			<mediaType messageType="xml">application/xml</mediaType>
+    			<mediaType messageType="xml" regExpr="true">.*\+xml</mediaType>
+    			<mediaType messageType="json">text/json</mediaType>
+				<mediaType messageType="json">text/x-json</mediaType>
+    			<mediaType messageType="json">application/json</mediaType>
+    			<mediaType messageType="json">application/x-json</mediaType>
+    			<mediaType messageType="json" regExpr="true">.*\+json</mediaType>
+    			<mediaType messageType="mimeMultipart" regExpr="true">multipart\/related*</mediaType>
+    			<!-- rfc1341: mixed|alternative|digest|parallel -->
+    			<mediaType messageType="mimeMultipart" regExpr="true">multipart\/(related|mixed|alternative|digest|parallel)+</mediaType>
+    			<!-- rfc2616: byteranges -->
+    			<mediaType messageType="mimeMultipart" regExpr="true">multipart\/byteranges*</mediaType>
+    			<!-- rfc1847: encrypted|signed -->
+    			<mediaType messageType="mimeMultipart" regExpr="true">multipart\/(encrypted|signed)+</mediaType>
+    			<default messageType="binary"/>
+    			<undefined messageType="binary"/>
+    		</mediaTypeCollection>
+    		<interfaces>
+    			<specification type="openApi3" />
+    		</interfaces>
+    		<functionality conversationIdentifier="true" referenceToRequestIdentifier="true"/>
+    	</rest>
+    </binding>
+
+    <web>
+    
+    	<!-- Contesto supporta sia il service binding soap che rest 
+	 	     (Controllo Runtime) -->
+    	    <context name="modipa" emptyFunction="PA"/>
+    
+	    <!-- Contesto soap supporta solamente il service binding soap 
+	 	     (Controllo Runtime) -->
+    	    <context name="soap" binding="soap" emptyFunction="PA"/>
+
+	    <!-- Contesto rest supporta solamente il service binding rest 
+	 	     (Controllo Runtime) -->
+    	    <context name="rest" binding="rest" emptyFunction="PA"/>
+	
+    </web>
+
+    <registry>
+
+        <organization>
+            <types>
+            	<type name="modipa"/>
+            </types>
+        </organization>
+
+        <service trace="true" protocolEnvelopeManagement="true">
+            <types>
+            
+                <!-- Il tipo proxy supporta sia soap che rest 
+		     		con il mapping definito a livello generare di binding -->
+                <type name="modipa" />
+            
+            </types>
+        </service>
+
+        <versions>
+        	<version name="1.0"/>
+        </versions>
+
+    </registry>
+
+    <urlMapping type="PROPERTIES">
+        <file>/modipa-url-mapping.properties</file>
+    </urlMapping>
+
+</openspcoop2>

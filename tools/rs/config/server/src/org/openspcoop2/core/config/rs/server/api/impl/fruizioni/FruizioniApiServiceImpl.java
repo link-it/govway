@@ -858,7 +858,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 
 			ErogazioniApiHelper.fillConnettoreRegistro(connettore, env, body, oldConnT);
 
-			if (!ErogazioniApiHelper.connettoreCheckData(body, env)) {
+			if (!ErogazioniApiHelper.connettoreCheckData(body, env, false)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
 			}
 

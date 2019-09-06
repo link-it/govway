@@ -39,6 +39,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="details" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
  * 		&lt;attribute name="instance" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
  * 		&lt;attribute name="govwayStatus" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
+ * 		&lt;attribute name="govwayTransactionId" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
  * 		&lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
  * 		&lt;attribute name="typeFormat" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="https://httpstatuses.com/%d"/>
  * &lt;/complexType>
@@ -107,6 +108,18 @@ public class RFC7807 extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.govwayStatus = govwayStatus;
   }
 
+  public boolean isGovwayTransactionId() {
+    return this.govwayTransactionId;
+  }
+
+  public boolean getGovwayTransactionId() {
+    return this.govwayTransactionId;
+  }
+
+  public void setGovwayTransactionId(boolean govwayTransactionId) {
+    this.govwayTransactionId = govwayTransactionId;
+  }
+
   public boolean isType() {
     return this.type;
   }
@@ -146,6 +159,10 @@ public class RFC7807 extends org.openspcoop2.utils.beans.BaseBean implements Ser
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="govwayStatus",required=true)
   protected boolean govwayStatus;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="govwayTransactionId",required=true)
+  protected boolean govwayTransactionId;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="type",required=false)

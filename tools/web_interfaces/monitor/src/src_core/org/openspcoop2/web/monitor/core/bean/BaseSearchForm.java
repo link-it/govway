@@ -1379,8 +1379,10 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 	public List<SelectItem> getTipiIdMessaggio() {
 		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
-		list.add(new SelectItem(TipoMessaggio.Richiesta.name()));
-		list.add(new SelectItem(TipoMessaggio.Risposta.name()));
+		list.add(new SelectItem(TipoMessaggio.Richiesta.name(),TipoMessaggio.Richiesta.getLabel()));
+		list.add(new SelectItem(TipoMessaggio.Risposta.name(),TipoMessaggio.Risposta.getLabel()));
+		list.add(new SelectItem(TipoMessaggio.Collaborazione.name(),TipoMessaggio.Collaborazione.getLabel()));
+		list.add(new SelectItem(TipoMessaggio.RiferimentoRichiesta.name(),TipoMessaggio.RiferimentoRichiesta.getLabel()));
 		return list;
 	}
 

@@ -60,6 +60,15 @@ public class ProtocolUtils {
 			}
 		}
 		
+		// modipa
+		for (int i = 0; i < newL.size(); i++) {
+			String protocollo = newL.get(i);
+			if("modipa".equals(protocollo)) {
+				l.add(newL.remove(i));
+				break;
+			}
+		}
+		
 		// spcoop
 		for (int i = 0; i < newL.size(); i++) {
 			String protocollo = newL.get(i);

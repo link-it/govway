@@ -627,7 +627,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					List<ExtendedConnettore> listExtendedConnettore = 
 							ServletExtendedConnettoreUtils.getExtendedConnettore(is.getConnettore(), ConnettoreServletType.WIZARD_CONFIG, this, false, endpointtype);
 					
-					boolean isOk = saHelper.servizioApplicativoEndPointCheckData(listExtendedConnettore);
+					boolean isOk = saHelper.servizioApplicativoEndPointCheckData(null, listExtendedConnettore);
 					if (!isOk) {
 						return false;
 					}
@@ -657,7 +657,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					List<ExtendedConnettore> listExtendedConnettore = 
 							ServletExtendedConnettoreUtils.getExtendedConnettore(connettore, ConnettoreServletType.WIZARD_REGISTRY, this, false, endpointtype);
 					
-					boolean isOk = this.endPointCheckData(listExtendedConnettore);
+					boolean isOk = this.endPointCheckData(null, false, listExtendedConnettore);
 					if (!isOk) {
 						return false;
 					}
@@ -1154,6 +1154,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String httpspwdkey = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 			String httpspwdprivatekey = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 			String httpsalgoritmokey = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+			String httpsKeyAlias = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
+			String httpsTrustStoreCRLs = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = this.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				password = this.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -1190,6 +1192,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					httpspathkey, httpstipokey,
 					httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey,
+					httpsKeyAlias, httpsTrustStoreCRLs,
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
@@ -1291,6 +1294,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String httpspwdkey = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 			String httpspwdprivatekey = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 			String httpsalgoritmokey = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+			String httpsKeyAlias = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
+			String httpsTrustStoreCRLs = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = this.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				password = this.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -1324,6 +1329,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					httpspathkey, httpstipokey,
 					httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey,
+					httpsKeyAlias, httpsTrustStoreCRLs,
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
@@ -2532,6 +2538,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String httpspwdkey = null;
 			String httpspwdprivatekey = null;
 			String httpsalgoritmokey = null;
+			String httpsKeyAlias = null;
+			String httpsTrustStoreCRLs = null;
 			
 			boolean httpshostverify = false;
 			boolean httpsstato = false;
@@ -2642,6 +2650,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			httpspwdkey = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 			httpspwdprivatekey = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 			httpsalgoritmokey = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+			httpsKeyAlias = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
+			httpsTrustStoreCRLs = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				password = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -2676,8 +2686,10 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					httpshostverify, httpspath, httpstipo, httpspwd,
 					httpsalgoritmo, httpsstato, httpskeystore,
 					httpspwdprivatekeytrust, httpspathkey,
-					httpstipokey, httpspwdkey, httpspwdprivatekey,
-					httpsalgoritmokey, tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
+					httpstipokey, httpspwdkey, 
+					httpspwdprivatekey, httpsalgoritmokey,
+					httpsKeyAlias, httpsTrustStoreCRLs,
+					tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
 					"", "", null, null, null,null,
 					null, null, showSectionTitle,
 					isConnettoreCustomUltimaImmagineSalvata, 
@@ -2687,7 +2699,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					autenticazioneToken,token_policy,
-					listExtendedConnettore, forceEnabled);
+					listExtendedConnettore, forceEnabled,
+					null, false,false);
 			
 		}finally{
 			// ripristino tipologia

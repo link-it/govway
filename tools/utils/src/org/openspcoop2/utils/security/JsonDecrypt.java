@@ -25,8 +25,10 @@ package org.openspcoop2.utils.security;
 
 import java.io.File;
 import java.security.PrivateKey;
+import java.security.cert.CertStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +53,8 @@ import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.io.Base64Utilities;
-import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.transport.http.HttpResponse;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**	
  * Encrypt
@@ -74,6 +77,17 @@ public class JsonDecrypt {
 	private KeyStore keyStore; // dove prendere la chiave privata
 	private HashMap<String, String> keystore_mapAliasPassword;
 	private KeyStore trustStoreVerificaCertificatiX509; // per verificare i certificati presenti nell'header 
+	
+	private KeyStore trustStoreHttps; // per accedere ad un endpoint https dove scaricare i certificati
+	private CertStore crlHttps; // per verificare i certificati http server rispetto alle crl
+	public void setCrlHttps(CertStore crlHttps) {
+		this.crlHttps = crlHttps;
+	}
+		
+	private CertStore crlX509; // per verificare i certificati rispetto alle crl
+	public void setCrlX509(CertStore crlX509) {
+		this.crlX509 = crlX509;
+	}
 	
 	public JsonDecrypt(Properties props, JWTOptions options) throws UtilsException{
 		try {
@@ -189,57 +203,90 @@ public class JsonDecrypt {
 	public JsonDecrypt(Properties propsTrustStoreHttps, java.security.KeyStore trustStoreVerificaCertificato, 
 			java.security.KeyStore keyStore, HashMap<String, String> keystore_mapAliasPassword, 
 			JWTOptions options) throws UtilsException{
-		_initDecryptHeaderJWT(propsTrustStoreHttps, new KeyStore(trustStoreVerificaCertificato), 
+		_initDecryptHeaderJWT(propsTrustStoreHttps, null, 
+				new KeyStore(trustStoreVerificaCertificato), 
+				new KeyStore(keyStore), keystore_mapAliasPassword,
+				options);
+	}
+	public JsonDecrypt(KeyStore trustStoreHttps, java.security.KeyStore trustStoreVerificaCertificato, 
+			java.security.KeyStore keyStore, HashMap<String, String> keystore_mapAliasPassword, 
+			JWTOptions options) throws UtilsException{
+		_initDecryptHeaderJWT(null, trustStoreHttps, 
+				new KeyStore(trustStoreVerificaCertificato), 
 				new KeyStore(keyStore), keystore_mapAliasPassword,
 				options);
 	}
 	public JsonDecrypt(Properties propsTrustStoreHttps, KeyStore trustStore, 
 			KeyStore keyStore, HashMap<String, String> keystore_mapAliasPassword, 
 			JWTOptions options) throws UtilsException{
-		_initDecryptHeaderJWT(propsTrustStoreHttps, trustStore, 
+		_initDecryptHeaderJWT(propsTrustStoreHttps, null, 
+				trustStore, 
+				keyStore, keystore_mapAliasPassword,
+				options);
+	}
+	public JsonDecrypt(KeyStore trustStoreHttps, KeyStore trustStore, 
+			KeyStore keyStore, HashMap<String, String> keystore_mapAliasPassword, 
+			JWTOptions options) throws UtilsException{
+		_initDecryptHeaderJWT(null, trustStoreHttps, 
+				trustStore, 
 				keyStore, keystore_mapAliasPassword,
 				options);
 	}
 	public JsonDecrypt(java.security.KeyStore trustStoreVerificaCertificato, 
 			java.security.KeyStore keyStore, HashMap<String, String> keystore_mapAliasPassword, 
 			JWTOptions options) throws UtilsException{
-		_initDecryptHeaderJWT(null, new KeyStore(trustStoreVerificaCertificato), 
+		_initDecryptHeaderJWT(null, null, 
+				new KeyStore(trustStoreVerificaCertificato), 
 				new KeyStore(keyStore), keystore_mapAliasPassword,
 				options);
 	}
 	public JsonDecrypt(KeyStore trustStore, 
 			KeyStore keyStore, HashMap<String, String> keystore_mapAliasPassword, 
 			JWTOptions options) throws UtilsException{
-		_initDecryptHeaderJWT(null, trustStore, 
+		_initDecryptHeaderJWT(null, null, 
+				trustStore, 
 				keyStore, keystore_mapAliasPassword,
 				options);
 	}
-	private void _initDecryptHeaderJWT(Properties propsTrustStoreHttps, KeyStore trustStoreVerificaCertificato, 
+	private void _initDecryptHeaderJWT(Properties propsTrustStoreHttps, KeyStore trustStoreHttps,
+			KeyStore trustStoreVerificaCertificato, 
 			KeyStore keyStore, HashMap<String, String> keystore_mapAliasPassword, 
 			JWTOptions options) throws UtilsException{
 		// verra usato l'header per validare ed ottenere il certificato
 		this.options=options;
 		this.properties = propsTrustStoreHttps; // le proprieta' servono per risolvere le url https
+		this.trustStoreHttps = trustStoreHttps;
 		this.trustStoreVerificaCertificatiX509 = trustStoreVerificaCertificato;
 		this.keyStore = keyStore;
 		this.keystore_mapAliasPassword = keystore_mapAliasPassword;
 	}
 	
+	
 	public JsonDecrypt(Properties propsTrustStoreHttps, JsonWebKeys jsonWebKeys, 
 			JWTOptions options) throws UtilsException{
-		_initDecryptHeaderJWT(propsTrustStoreHttps, jsonWebKeys,
+		_initDecryptHeaderJWT(propsTrustStoreHttps, null,
+				jsonWebKeys,
+				options);
+	}
+	public JsonDecrypt(KeyStore trustStoreHttps, JsonWebKeys jsonWebKeys, 
+			JWTOptions options) throws UtilsException{
+		_initDecryptHeaderJWT(null, trustStoreHttps,
+				jsonWebKeys,
 				options);
 	}
 	public JsonDecrypt(JsonWebKeys jsonWebKeys, 
 			JWTOptions options) throws UtilsException{
-		_initDecryptHeaderJWT(null, jsonWebKeys,
+		_initDecryptHeaderJWT(null, null, 
+				jsonWebKeys,
 				options);
 	}
-	private void _initDecryptHeaderJWT(Properties propsTrustStoreHttps, JsonWebKeys jsonWebKeys, 
+	private void _initDecryptHeaderJWT(Properties propsTrustStoreHttps, KeyStore trustStoreHttps,
+			JsonWebKeys jsonWebKeys, 
 			JWTOptions options) throws UtilsException{
 		// verra usato l'header per validare ed ottenere il certificato
 		this.options=options;
 		this.properties = propsTrustStoreHttps; // le proprieta' servono per risolvere le url https
+		this.trustStoreHttps = trustStoreHttps;
 		this.jsonWebKeys = jsonWebKeys;
 	}
 	
@@ -301,6 +348,16 @@ public class JsonDecrypt {
 		return this.decodedPayloadAsByte;
 	}
 	
+	
+	private X509Certificate x509Certificate;
+	private RSAPublicKey rsaPublicKey;
+	public X509Certificate getX509Certificate() {
+		return this.x509Certificate;
+	}
+	public RSAPublicKey getRsaPublicKey() {
+		return this.rsaPublicKey;
+	}
+	
 	private JweDecryptionProvider getProvider(JweHeaders jweHeaders, JweHeaders jweUnprotectedHeaders) throws Exception {
 		
 		JweDecryptionProvider provider = this.provider;
@@ -338,87 +395,100 @@ public class JsonDecrypt {
 				//   that the X.509 public key certificate or certificate chain [RFC5280]
 				//   contains the public key to which the JWE was encrypted; this can be
 				//   used to determine the private key needed to decrypt the JWE.
-				byte [] cer = Base64Utilities.decode(jweHeaders.getX509Chain().get(0));
-				CertificateInfo certificatoInfo = ArchiveLoader.load(cer).getCertificate();
-				if(this.trustStoreVerificaCertificatiX509!=null) {
-					if(certificatoInfo.isVerified(this.trustStoreVerificaCertificatiX509)==false) {
-						throw new Exception("Certificato presente nell'header '"+JwtHeaders.JWT_HDR_X5U+"' non è verificabile rispetto alle CA conosciute");
+				try {
+					byte [] cer = Base64Utilities.decode(jweHeaders.getX509Chain().get(0));
+					CertificateInfo certificatoInfo = ArchiveLoader.load(cer).getCertificate();
+					if(this.trustStoreVerificaCertificatiX509!=null) {
+						JsonUtils.validate(certificatoInfo, this.trustStoreVerificaCertificatiX509, this.crlX509, JwtHeaders.JWT_HDR_X5C, true);
 					}
+					provider = getProviderX509(certificatoInfo, keyAlgo, contentAlgo);
+				}catch(Exception e) {
+					throw new Exception("Process '"+JwtHeaders.JWT_HDR_X5C+"' error: "+e.getMessage(),e);
 				}
-				provider = getProviderX509(certificatoInfo, keyAlgo, contentAlgo);
 			}
 			else if(jweHeaders.getJsonWebKey()!=null && this.options.isPermitUseHeaderJWK()) {
 				// This parameter has the same meaning, syntax, and processing rules as
 				//   the "jwk" Header Parameter defined in Section 4.1.3 of [JWS], except
 				//   that the key is the public key to which the JWE was encrypted; this
 				//   can be used to determine the private key needed to decrypt the JWE.
-				JsonWebKey webKey = jweHeaders.getJsonWebKey();
-				provider = getProviderJWK(webKey, keyAlgo, contentAlgo);
-			}
-			else if(jweHeaders.getX509Url()!=null && this.options.isPermitUseHeaderX5U()) {
-				// This parameter has the same meaning, syntax, and processing rules as
-				//   the "x5u" Header Parameter defined in Section 4.1.5 of [JWS], except
-				//   that the X.509 public key certificate or certificate chain [RFC5280]
-				//   contains the public key to which the JWE was encrypted; this can be
-				//   used to determine the private key needed to decrypt the JWE.
-				if(this.properties==null) {
-					this.properties = new Properties();
-				}
-				this.properties.put(JoseConstants.RSSEC_KEY_STORE_FILE, jweHeaders.getX509Url());
-				File fTmp = null;
 				try {
-					fTmp = JsonUtils.normalizeProperties(this.properties); // in caso di url http viene letta la risorsa remota e salvata in tmp
-					byte [] cer = FileSystemUtilities.readBytesFromFile(fTmp);
-					CertificateInfo certificatoInfo = ArchiveLoader.load(cer).getCertificate();
-					if(this.trustStoreVerificaCertificatiX509!=null) {
-						if(certificatoInfo.isVerified(this.trustStoreVerificaCertificatiX509)==false) {
-							throw new Exception("Certificato presente nell'header '"+JwtHeaders.JWT_HDR_X5U+"' non è verificabile rispetto alle CA conosciute");
-						}
-					}
-					provider = getProviderX509(certificatoInfo, keyAlgo, contentAlgo);
-				}finally {
-					try {
-						if(fTmp!=null) {
-							fTmp.delete();
-						}
-					}catch(Throwable t) {}
+					JsonWebKey webKey = jweHeaders.getJsonWebKey();
+					provider = getProviderJWK(webKey, keyAlgo, contentAlgo);
+				}catch(Exception e) {
+					throw new Exception("Process '"+JwtHeaders.JWT_HDR_JWK+"' error: "+e.getMessage(),e);
 				}
 			}
-			else if(jweHeaders.getJsonWebKeysUrl()!=null && this.options.isPermitUseHeaderJKU()) {
-				// This parameter has the same meaning, syntax, and processing rules as
-				//   the "jku" Header Parameter defined in Section 4.1.2 of [JWS], except
-				//   that the JWK Set resource contains the public key to which the JWE
-				//   was encrypted; this can be used to determine the private key needed
-				//   to decrypt the JWE.
-				if(this.properties==null) {
-					this.properties = new Properties();
+			else if(
+					(jweHeaders.getX509Url()!=null && this.options.isPermitUseHeaderX5U()) 
+					||
+					(jweHeaders.getJsonWebKeysUrl()!=null && this.options.isPermitUseHeaderJKU())
+					) {
+			
+				boolean x509 = true;
+				String path = jweHeaders.getX509Url();
+				String hdr = JwtHeaders.JWT_HDR_X5U;
+				if(path==null) {
+					path=jweHeaders.getJsonWebKeysUrl();
+					x509 = false;
+					hdr = JwtHeaders.JWT_HDR_JKU;
 				}
-				this.properties.put(JoseConstants.RSSEC_KEY_STORE_FILE, jweHeaders.getJsonWebKeysUrl());
-				File fTmp = null;
 				try {
-					fTmp = JsonUtils.normalizeProperties(this.properties); // in caso di url http viene letta la risorsa remota e salvata in tmp
-					JWKSet set = new JWKSet(FileSystemUtilities.readFile(fTmp));
-					JsonWebKeys jsonWebKeys = set.getJsonWebKeys();
-					JsonWebKey jsonWebKey = null;
-					if(jsonWebKeys.size()==1) {
-						jsonWebKey = jsonWebKeys.getKeys().get(0);
+					byte [] cer = null;
+					if(this.properties!=null) {
+						this.properties.put(JoseConstants.RSSEC_KEY_STORE_FILE, path);
+						cer = JsonUtils.readKeystoreFromURI(this.properties);
 					}
 					else {
-						if(jweHeaders.getKeyId()==null) {
-							throw new Exception("Kid non definito e JwkSet contiene più di un certificato");
+						HttpResponse httpResponse = null;
+						try {
+							if(this.trustStoreHttps!=null) {
+								httpResponse = HttpUtilities.getHTTPSResponse(path, this.trustStoreHttps.getKeystore(), this.crlHttps);
+							}
+							else {
+								httpResponse = HttpUtilities.getHTTPResponse(path);
+							}
+						}catch(Exception e) {
+							throw new Exception("Resource '"+path+"' unavailable: "+e.getMessage(),e);
 						}
-						jsonWebKey = jsonWebKeys.getKey(jweHeaders.getKeyId());
-					}
-					if(jsonWebKey==null) {
-						throw new Exception("JsonWebKey non trovata");
-					}
-					provider = getProviderJWK(jsonWebKey, keyAlgo, contentAlgo);
-				}finally {
-					try {
-						if(fTmp!=null) {
-							fTmp.delete();
+						if(httpResponse==null || httpResponse.getContent()==null) {
+							throw new Exception("Resource '"+path+"' unavailable");
 						}
-					}catch(Throwable t) {}
+						if(httpResponse.getResultHTTPOperation()!=200) {
+							throw new Exception("Retrieve '"+path+"' failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
+						}
+						cer = httpResponse.getContent();
+					}
+					if(cer==null) {
+						throw new Exception("Resource '"+path+"' unavailable");
+					}
+					
+					if(x509) {
+						CertificateInfo certificatoInfo = ArchiveLoader.load(cer).getCertificate();
+						if(this.trustStoreVerificaCertificatiX509!=null) {
+							JsonUtils.validate(certificatoInfo, this.trustStoreVerificaCertificatiX509, this.crlX509, JwtHeaders.JWT_HDR_X5U, true);
+						}
+						provider = getProviderX509(certificatoInfo, keyAlgo, contentAlgo);
+					}
+					else {
+						JWKSet set = new JWKSet(new String(cer));
+						JsonWebKeys jsonWebKeys = set.getJsonWebKeys();
+						JsonWebKey jsonWebKey = null;
+						if(jsonWebKeys.size()==1) {
+							jsonWebKey = jsonWebKeys.getKeys().get(0);
+						}
+						else {
+							if(jweHeaders.getKeyId()==null) {
+								throw new Exception("Kid non definito e JwkSet contiene più di un certificato");
+							}
+							jsonWebKey = jsonWebKeys.getKey(jweHeaders.getKeyId());
+						}
+						if(jsonWebKey==null) {
+							throw new Exception("JsonWebKey non trovata");
+						}
+						provider = getProviderJWK(jsonWebKey, keyAlgo, contentAlgo);
+					}
+				}catch(Exception e) {
+					throw new Exception("Process '"+hdr+"' error: "+e.getMessage(),e);
 				}
 			}
 			else if(jweHeaders.getKeyId()!=null && this.options.isPermitUseHeaderKID()) {
@@ -428,27 +498,74 @@ public class JsonDecrypt {
 				//   encrypted; this can be used to determine the private key needed to
 				//   decrypt the JWE.  This parameter allows originators to explicitly
 				//   signal a change of key to JWE recipients.
-				String kid = jweHeaders.getKeyId();
-				if(this.jsonWebKeys!=null) {
-					JsonWebKey jsonWebKey = null;
-					try {
-						jsonWebKey = this.jsonWebKeys.getKey(kid);
-					}catch(Exception e) {}
-					if(jsonWebKey!=null) {
-						provider = getProviderJWK(jsonWebKey, keyAlgo, contentAlgo);
+				try {
+					String kid = jweHeaders.getKeyId();
+					if(this.jsonWebKeys!=null) {
+						JsonWebKey jsonWebKey = null;
+						try {
+							jsonWebKey = this.jsonWebKeys.getKey(kid);
+						}catch(Exception e) {}
+						if(jsonWebKey!=null) {
+							provider = getProviderJWK(jsonWebKey, keyAlgo, contentAlgo);
+						}
 					}
-				}
-				if(provider==null) {
-					if(this.keyStore!=null) {
-						if(this.keyStore.existsAlias(kid)) {
-							Certificate cer = this.keyStore.getCertificate(kid);
-							if(cer instanceof X509Certificate) {
-								X509Certificate x509Certificate = (X509Certificate) cer;
-								CertificateInfo certificatoInfo = new CertificateInfo(x509Certificate, kid);
-								provider = getProviderX509(certificatoInfo, keyAlgo, contentAlgo);
+					if(provider==null) {
+						if(this.keyStore!=null) {
+							if(this.keyStore.existsAlias(kid)) {
+								Certificate cer = this.keyStore.getCertificate(kid);
+								if(cer instanceof X509Certificate) {
+									X509Certificate x509Certificate = (X509Certificate) cer;
+									
+									// La validazione serve per verificare la data e il crl
+									JsonUtils.validate(new CertificateInfo(x509Certificate, kid), this.keyStore, this.crlX509, JwtHeaders.JWT_HDR_KID, false);
+									
+									CertificateInfo certificatoInfo = new CertificateInfo(x509Certificate, kid);
+									provider = getProviderX509(certificatoInfo, keyAlgo, contentAlgo);
+								}
 							}
 						}
 					}
+				}catch(Exception e) {
+					throw new Exception("Process '"+JwtHeaders.JWT_HDR_KID+"' error: "+e.getMessage(),e);
+				}
+			}
+			else if(
+					(jweHeaders.getX509ThumbprintSHA256()!=null && this.options.isPermitUseHeaderX5T_256())
+					||
+					(jweHeaders.getX509Thumbprint()!=null && this.options.isPermitUseHeaderX5T())
+					) {
+				String hdr = JwtHeaders.JWT_HDR_X5T;
+				if (jweHeaders.getX509ThumbprintSHA256()!=null) {
+					hdr = JwtHeaders.JWT_HDR_X5t_S256;
+				}
+				try {
+					if(this.keyStore==null) {
+						throw new Exception("KeyStore dei certificati non fornito"); 
+					}
+					Certificate cer = null;
+					if(jweHeaders.getX509ThumbprintSHA256()!=null) {
+						cer = this.keyStore.getCertificateByDigestSHA256UrlEncoded(jweHeaders.getX509ThumbprintSHA256());
+					}
+					else{
+						cer = this.keyStore.getCertificateByDigestSHA1UrlEncoded(jweHeaders.getX509Thumbprint());
+					}
+					if(cer==null) {
+						throw new Exception("Certificato, corrispondente al digest indicato, non trovato nel KeyStore dei certificati");
+					}
+					if(cer instanceof X509Certificate) {
+						X509Certificate x509Certificate = (X509Certificate) cer;
+						
+						// La validazione serve per verificare la data e il crl
+						JsonUtils.validate(new CertificateInfo(x509Certificate, hdr), this.keyStore, this.crlX509, hdr, false);
+						
+						CertificateInfo certificatoInfo = new CertificateInfo(x509Certificate, "x5t");
+						provider = getProviderX509(certificatoInfo, keyAlgo, contentAlgo);
+					}
+					else {
+						throw new Exception("Certificato indicato non è nel formato X.509");
+					}
+				}catch(Exception e) {
+					throw new Exception("Process '"+hdr+"' error: "+e.getMessage(),e);
 				}
 			}
 			else {
@@ -473,6 +590,7 @@ public class JsonDecrypt {
 		if(this.keystore_mapAliasPassword==null) {
 			throw new Exception("Mappping alias-password non definito");
 		}
+		this.x509Certificate = certificatoInfo.getCertificate();
 		PrivateKey privateKey = null;
 		Enumeration<String> aliases = this.keyStore.aliases();
 		while (aliases.hasMoreElements()) {
@@ -509,6 +627,7 @@ public class JsonDecrypt {
 		if(this.jsonWebKeys==null) {
 			throw new Exception("JWKSet da utilizzare per il recupero dei certificati non definito");
 		}
+		this.rsaPublicKey = JwkUtils.toRSAPublicKey(webKey);
 		List<JsonWebKey> keys = this.jsonWebKeys.getKeys();
 		if(keys==null || keys.isEmpty()) {
 			throw new Exception("JWKSet da utilizzare per il recupero dei certificati vuoto");

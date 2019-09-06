@@ -301,7 +301,7 @@ public class Imbustamento extends GenericLib{
 				scadenzaBusta = this.propertiesReader.getRepositoryIntervalloScadenzaMessaggi();
 			}
 			
-			switch (protocolManager.getFiltroDuplicati(infoServizio.getProfiloDiCollaborazione())) {
+			switch (protocolManager.getFiltroDuplicati(infoServizio)) {
 			case ABILITATA:
 				busta.setInoltro(Inoltro.SENZA_DUPLICATI,protocolFactory.createTraduttore().toString(Inoltro.SENZA_DUPLICATI));
 				break;
@@ -314,7 +314,7 @@ public class Imbustamento extends GenericLib{
 			}
 				
 			boolean consegnaAffidabile = false;
-			switch (protocolManager.getConsegnaAffidabile(infoServizio.getProfiloDiCollaborazione())) {
+			switch (protocolManager.getConsegnaAffidabile(infoServizio)) {
 			case ABILITATA:
 				consegnaAffidabile = true;
 				break;
@@ -327,7 +327,7 @@ public class Imbustamento extends GenericLib{
 			}
 			
 			boolean idCollaborazione = false;
-			switch (protocolManager.getCollaborazione(infoServizio.getProfiloDiCollaborazione())) {
+			switch (protocolManager.getCollaborazione(infoServizio)) {
 			case ABILITATA:
 				idCollaborazione = true;
 				break;
@@ -340,7 +340,7 @@ public class Imbustamento extends GenericLib{
 			}
 			
 			boolean idRiferimentoMessaggioRichiesta = false;
-			switch (protocolManager.getIdRiferimentoRichiesta(infoServizio.getProfiloDiCollaborazione())) {
+			switch (protocolManager.getIdRiferimentoRichiesta(infoServizio)) {
 			case ABILITATA:
 				idRiferimentoMessaggioRichiesta = true;
 				break;
@@ -353,7 +353,7 @@ public class Imbustamento extends GenericLib{
 			}
 			
 			boolean consegnaInOrdine = false;
-			switch (protocolManager.getConsegnaInOrdine(infoServizio.getProfiloDiCollaborazione())) {
+			switch (protocolManager.getConsegnaInOrdine(infoServizio)) {
 			case ABILITATA:
 				consegnaInOrdine = true;
 				break;
@@ -1151,7 +1151,7 @@ public class Imbustamento extends GenericLib{
 			if(  generazioneMsgOK ) {
 				
 				pddContext.addObject(org.openspcoop2.core.constants.Costanti.DATA_PRESA_IN_CARICO, 
-						org.openspcoop2.core.constants.Costanti.newSimpleDateFormat().format(DateManager.getDate()));
+						Utilities.getSimpleDateFormatMs().format(DateManager.getDate()));
 				
 				msgDiag.mediumDebug("Invio messaggio 'OK' al modulo di RicezioneContenutiApplicativi...");
 				if(protocolManager.isHttpEmptyResponseOneWay())

@@ -22,10 +22,12 @@
 package org.openspcoop2.protocol.sdk.properties;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.tracciamento.Proprieta;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemValueType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
@@ -74,6 +76,35 @@ public class ProtocolPropertiesUtils {
 			}
 		}
 	}
+	
+	public static List<String> getListFromMultiSelectValue(String value) {
+		List<String> l = new ArrayList<>();
+		if(value.contains(",")) {
+			l = Arrays.asList(value.split(","));
+		}
+		else {
+			l.add(value);
+		}
+		return l;
+	}
+	
+	public static String getValueMultiSelect(String []list) {
+		return getValueMultiSelect(Arrays.asList(list));
+	}
+	public static String getValueMultiSelect(List<String> list) {
+		StringBuffer bf = new StringBuffer();
+		for (String s : list) {
+			if(bf.length()>0) {
+				bf.append(",");
+			}
+			bf.append(s);
+		}
+		return bf.toString();
+	}
+	public static void setDefaultValueMultiSelect(List<String> list, StringConsoleItem item) {
+		item.setDefaultValue(getValueMultiSelect(list));
+	}
+	
 
 	public static BaseConsoleItem getBaseConsoleItem(List<BaseConsoleItem> consoleItems, AbstractProperty<?> property){
 		if(property ==null)
@@ -182,7 +213,7 @@ public class ProtocolPropertiesUtils {
 	}
 
 
-	public static List<ProtocolProperty> toProtocolProperties (ProtocolProperties protocolProperties, ConsoleOperationType consoleOperationType, List<ProtocolProperty> oldProtocolPropertyList){
+	public static List<ProtocolProperty> toProtocolPropertiesRegistry (ProtocolProperties protocolProperties, ConsoleOperationType consoleOperationType, List<ProtocolProperty> oldProtocolPropertyList){
 		List<ProtocolProperty> lstProtocolProperty = new ArrayList<>();
 
 
@@ -212,7 +243,7 @@ public class ProtocolPropertiesUtils {
 				add = true;
 			} else if(property instanceof BinaryProperty){
 				BinaryProperty bp = (BinaryProperty) property;
-				if(consoleOperationType.equals(ConsoleOperationType.ADD)){
+				if(consoleOperationType.equals(ConsoleOperationType.ADD) || bp.getValue()!=null){
 					prop.setByteFile(bp.getValue());
 					prop.setFile(bp.getFileName());
 					if(bp.getValue() != null && bp.getValue().length > 0)
@@ -221,11 +252,92 @@ public class ProtocolPropertiesUtils {
 					// caso change non si puo' modificare un binary quindi riporto il valore che ho trovato sul db a inizio change
 					for (ProtocolProperty protocolProperty : oldProtocolPropertyList) {
 						if(property.getId().equals(protocolProperty.getName())){
-							prop.setByteFile(protocolProperty.getByteFile());
-							prop.setFile(protocolProperty.getFile());
-							if(protocolProperty.getByteFile() != null && protocolProperty.getByteFile().length > 0){
+							
+							if(bp.isClearContent()) {
+								prop.setByteFile(null);
+								prop.setFile(null);
 								add = true;
 							}
+							else {
+								prop.setByteFile(protocolProperty.getByteFile());
+								prop.setFile(protocolProperty.getFile());
+								if(protocolProperty.getByteFile() != null && protocolProperty.getByteFile().length > 0){
+									add = true;
+								}
+							}
+							
+							break;
+						}
+					}
+				}
+
+			} else if(property instanceof BooleanProperty){
+				BooleanProperty bp = (BooleanProperty) property;
+				prop.setBooleanValue(bp.getValue() != null ? bp.getValue() : false);
+				//if(bp.getValue() != null)
+				// aggiungo sempre per cercare proprieta' non valorizzate nelle search
+				add = true;
+			}   
+
+			if(add)
+				lstProtocolProperty.add(prop);
+		}
+
+		return lstProtocolProperty;
+	}
+	public static List<org.openspcoop2.core.config.ProtocolProperty> toProtocolPropertiesConfig (ProtocolProperties protocolProperties, ConsoleOperationType consoleOperationType, List<org.openspcoop2.core.config.ProtocolProperty> oldProtocolPropertyList){
+		List<org.openspcoop2.core.config.ProtocolProperty> lstProtocolProperty = new ArrayList<>();
+
+
+		for (int i = 0; i < protocolProperties.sizeProperties(); i++) {
+			AbstractProperty<?> property = protocolProperties.getProperty(i);
+
+			org.openspcoop2.core.config.ProtocolProperty prop = new org.openspcoop2.core.config.ProtocolProperty();
+
+			prop.setName(property.getId());
+			boolean add = false;
+
+			if(property instanceof StringProperty){
+				StringProperty sp = (StringProperty) property;
+				if(StringUtils.isNotEmpty(sp.getValue())) {
+					prop.setValue(sp.getValue());
+				}
+				//if(StringUtils.isNotEmpty(sp.getValue()))
+				// aggiungo sempre per cercare proprieta' non valorizzate nelle search
+				add = true;
+			} else if(property instanceof NumberProperty){
+				NumberProperty np = (NumberProperty) property;
+				if(np.getValue() != null) {
+					prop.setNumberValue(np.getValue());
+				}
+				//if(np.getValue() != null)
+				// aggiungo sempre per cercare proprieta' non valorizzate nelle search
+				add = true;
+			} else if(property instanceof BinaryProperty){
+				BinaryProperty bp = (BinaryProperty) property;
+				if(consoleOperationType.equals(ConsoleOperationType.ADD) || bp.getValue()!=null){
+					prop.setByteFile(bp.getValue());
+					prop.setFile(bp.getFileName());
+					if(bp.getValue() != null && bp.getValue().length > 0)
+						add = true;
+				}else {
+					// caso change non si puo' modificare un binary quindi riporto il valore che ho trovato sul db a inizio change
+					for (org.openspcoop2.core.config.ProtocolProperty protocolProperty : oldProtocolPropertyList) {
+						if(property.getId().equals(protocolProperty.getName())){
+							
+							if(bp.isClearContent()) {
+								prop.setByteFile(null);
+								prop.setFile(null);
+								add = true;
+							}
+							else {
+								prop.setByteFile(protocolProperty.getByteFile());
+								prop.setFile(protocolProperty.getFile());
+								if(protocolProperty.getByteFile() != null && protocolProperty.getByteFile().length > 0){
+									add = true;
+								}
+							}
+							
 							break;
 						}
 					}
@@ -246,7 +358,7 @@ public class ProtocolPropertiesUtils {
 		return lstProtocolProperty;
 	}
 
-	public static void mergeProtocolProperties (ProtocolProperties protocolProperties, List<ProtocolProperty> listaProtocolPropertiesDaDB, ConsoleOperationType consoleOperationType){
+	public static void mergeProtocolPropertiesRegistry (ProtocolProperties protocolProperties, List<ProtocolProperty> listaProtocolPropertiesDaDB, ConsoleOperationType consoleOperationType){
 		for (int i = 0; i < protocolProperties.sizeProperties(); i++) {
 			AbstractProperty<?> property = protocolProperties.getProperty(i);
 
@@ -271,8 +383,33 @@ public class ProtocolPropertiesUtils {
 			}
 		}
 	}
+	public static void mergeProtocolPropertiesConfig (ProtocolProperties protocolProperties, List<org.openspcoop2.core.config.ProtocolProperty> listaProtocolPropertiesDaDB, ConsoleOperationType consoleOperationType){
+		for (int i = 0; i < protocolProperties.sizeProperties(); i++) {
+			AbstractProperty<?> property = protocolProperties.getProperty(i);
 
-	public static ProtocolProperty getProtocolProperty (String propertyId , List<ProtocolProperty> listaProtocolPropertiesDaDB){
+			for (org.openspcoop2.core.config.ProtocolProperty protocolProperty : listaProtocolPropertiesDaDB) {
+				if(property.getId().equals(protocolProperty.getName())){
+					if(property instanceof StringProperty){
+						StringProperty sp = (StringProperty) property;
+						sp.setValue(protocolProperty.getValue());
+					} else if(property instanceof NumberProperty){
+						NumberProperty np = (NumberProperty) property;
+						np.setValue(protocolProperty.getNumberValue());
+					} else if(property instanceof BinaryProperty){
+						BinaryProperty bp = (BinaryProperty) property;
+						bp.setValue(protocolProperty.getByteFile());
+						bp.setFileName(protocolProperty.getFile());
+					} else if(property instanceof BooleanProperty){
+						BooleanProperty bp = (BooleanProperty) property;
+						bp.setValue(protocolProperty.getBooleanValue());
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	public static ProtocolProperty getProtocolPropertyRegistry (String propertyId , List<ProtocolProperty> listaProtocolPropertiesDaDB){
 		if(listaProtocolPropertiesDaDB == null || propertyId == null)
 			return null;
 		
@@ -284,5 +421,259 @@ public class ProtocolPropertiesUtils {
 		
 		return null;
 	}
+	public static org.openspcoop2.core.config.ProtocolProperty getProtocolPropertyConfig (String propertyId , List<org.openspcoop2.core.config.ProtocolProperty> listaProtocolPropertiesDaDB){
+		if(listaProtocolPropertiesDaDB == null || propertyId == null)
+			return null;
+		
+		for (org.openspcoop2.core.config.ProtocolProperty protocolProperty : listaProtocolPropertiesDaDB) {
+			if(propertyId.equals(protocolProperty.getName())){
+				return protocolProperty;
+			}
+		}
+		
+		return null;
+	}
 
+
+	
+	
+	public static String getRequiredStringValuePropertyRegistry(List<ProtocolProperty> list, String propertyName) throws ProtocolException{
+		String value = getStringValuePropertyRegistry(list, propertyName, true);
+		if(value==null){
+			throw new ProtocolException("Property ["+propertyName+"] with null value?");
+		}
+		return value;
+	}
+	public static String getOptionalStringValuePropertyRegistry(List<ProtocolProperty> list, String propertyName) throws ProtocolException{
+		String value = getStringValuePropertyRegistry(list, propertyName, false);
+		return value;
+	}
+	private static String getStringValuePropertyRegistry(List<ProtocolProperty> list, String propertyName, boolean throwNotFoundException) throws ProtocolException{
+		
+		ProtocolProperty pp = getProtocolPropertyRegistry(list, propertyName, throwNotFoundException);
+		if(pp!=null){
+			return pp.getValue();
+		}
+		if(throwNotFoundException){
+			throw new ProtocolException("Property ["+propertyName+"] not found");
+		}
+		else{
+			return null;
+		}
+		
+	}
+	public static String getRequiredStringValuePropertyConfig(List<org.openspcoop2.core.config.ProtocolProperty> list, String propertyName) throws ProtocolException{
+		String value = getStringValuePropertyConfig(list, propertyName, true);
+		if(value==null){
+			throw new ProtocolException("Property ["+propertyName+"] with null value?");
+		}
+		return value;
+	}
+	public static String getOptionalStringValuePropertyConfig(List<org.openspcoop2.core.config.ProtocolProperty> list, String propertyName) throws ProtocolException{
+		String value = getStringValuePropertyConfig(list, propertyName, false);
+		return value;
+	}
+	private static String getStringValuePropertyConfig(List<org.openspcoop2.core.config.ProtocolProperty> list, String propertyName, boolean throwNotFoundException) throws ProtocolException{
+		
+		org.openspcoop2.core.config.ProtocolProperty pp = getProtocolPropertyConfig(list, propertyName, throwNotFoundException);
+		if(pp!=null){
+			return pp.getValue();
+		}
+		if(throwNotFoundException){
+			throw new ProtocolException("Property ["+propertyName+"] not found");
+		}
+		else{
+			return null;
+		}
+		
+	}
+	
+	public static byte[] getRequiredBinaryValuePropertyRegistry(List<ProtocolProperty> list, String propertyName) throws ProtocolException{
+		byte[] value = getBinaryValuePropertyRegistry(list, propertyName, true);
+		if(value==null){
+			throw new ProtocolException("Property ["+propertyName+"] with null value?");
+		}
+		return value;
+	}
+	public static byte[] getOptionalBinaryValuePropertyRegistry(List<ProtocolProperty> list, String propertyName) throws ProtocolException{
+		byte[] value = getBinaryValuePropertyRegistry(list, propertyName, false);
+		return value;
+	}
+	private static byte[] getBinaryValuePropertyRegistry(List<ProtocolProperty> list, String propertyName, boolean throwNotFoundException) throws ProtocolException{
+		
+		ProtocolProperty pp = getProtocolPropertyRegistry(list, propertyName, throwNotFoundException);
+		if(pp!=null){
+			return pp.getByteFile();
+		}
+		if(throwNotFoundException){
+			throw new ProtocolException("Property ["+propertyName+"] not found");
+		}
+		else{
+			return null;
+		}
+		
+	}
+	public static byte[] getRequiredBinaryValuePropertyConfig(List<org.openspcoop2.core.config.ProtocolProperty> list, String propertyName) throws ProtocolException{
+		byte[] value = getBinaryValuePropertyConfig(list, propertyName, true);
+		if(value==null){
+			throw new ProtocolException("Property ["+propertyName+"] with null value?");
+		}
+		return value;
+	}
+	public static byte[] getOptionalBinaryValuePropertyConfig(List<org.openspcoop2.core.config.ProtocolProperty> list, String propertyName) throws ProtocolException{
+		byte[] value = getBinaryValuePropertyConfig(list, propertyName, false);
+		return value;
+	}
+	private static byte[] getBinaryValuePropertyConfig(List<org.openspcoop2.core.config.ProtocolProperty> list, String propertyName, boolean throwNotFoundException) throws ProtocolException{
+		
+		org.openspcoop2.core.config.ProtocolProperty pp = getProtocolPropertyConfig(list, propertyName, throwNotFoundException);
+		if(pp!=null){
+			return pp.getByteFile();
+		}
+		if(throwNotFoundException){
+			throw new ProtocolException("Property ["+propertyName+"] not found");
+		}
+		else{
+			return null;
+		}
+		
+	}
+	
+	public static boolean getBooleanValuePropertyRegistry(List<ProtocolProperty> list, String propertyName, boolean throwNotFoundException) throws ProtocolException{
+		
+		ProtocolProperty pp = getProtocolPropertyRegistry(list, propertyName, throwNotFoundException);
+		if(pp!=null){
+			return pp.getBooleanValue()!=null ? pp.getBooleanValue() : false;
+		}
+		if(throwNotFoundException){
+			throw new ProtocolException("Property ["+propertyName+"] not found");
+		}
+		else{
+			return false;
+		}
+		
+	}
+	public static boolean getBooleanValuePropertyConfig(List<org.openspcoop2.core.config.ProtocolProperty> list, String propertyName, boolean throwNotFoundException) throws ProtocolException{
+		
+		org.openspcoop2.core.config.ProtocolProperty pp = getProtocolPropertyConfig(list, propertyName, throwNotFoundException);
+		if(pp!=null){
+			return pp.getBooleanValue()!=null ? pp.getBooleanValue() : false;
+		}
+		if(throwNotFoundException){
+			throw new ProtocolException("Property ["+propertyName+"] not found");
+		}
+		else{
+			return false;
+		}
+		
+	}
+	
+	
+	public static Long getRequiredNumberValuePropertyRegistry(List<ProtocolProperty> list, String propertyName) throws ProtocolException{
+		Long value = getNumberValuePropertyRegistry(list, propertyName, true);
+		if(value==null){
+			throw new ProtocolException("Property ["+propertyName+"] with null value?");
+		}
+		return value;
+	}
+	public static Long getOptionalNumberValuePropertyRegistry(List<ProtocolProperty> list, String propertyName) throws ProtocolException{
+		Long value = getNumberValuePropertyRegistry(list, propertyName, false);
+		return value;
+	}
+	private static Long getNumberValuePropertyRegistry(List<ProtocolProperty> list, String propertyName, boolean throwNotFoundException) throws ProtocolException{
+		
+		ProtocolProperty pp = getProtocolPropertyRegistry(list, propertyName, throwNotFoundException);
+		if(pp!=null){
+			return pp.getNumberValue();
+		}
+		if(throwNotFoundException){
+			throw new ProtocolException("Property ["+propertyName+"] not found");
+		}
+		else{
+			return null;
+		}
+		
+	}
+	public static Long getRequiredNumberValuePropertyConfig(List<org.openspcoop2.core.config.ProtocolProperty> list, String propertyName) throws ProtocolException{
+		Long value = getNumberValuePropertyConfig(list, propertyName, true);
+		if(value==null){
+			throw new ProtocolException("Property ["+propertyName+"] with null value?");
+		}
+		return value;
+	}
+	public static Long getOptionalNumberValuePropertyConfig(List<org.openspcoop2.core.config.ProtocolProperty> list, String propertyName) throws ProtocolException{
+		Long value = getNumberValuePropertyConfig(list, propertyName, false);
+		return value;
+	}
+	private static Long getNumberValuePropertyConfig(List<org.openspcoop2.core.config.ProtocolProperty> list, String propertyName, boolean throwNotFoundException) throws ProtocolException{
+		
+		org.openspcoop2.core.config.ProtocolProperty pp = getProtocolPropertyConfig(list, propertyName, throwNotFoundException);
+		if(pp!=null){
+			return pp.getNumberValue();
+		}
+		if(throwNotFoundException){
+			throw new ProtocolException("Property ["+propertyName+"] not found");
+		}
+		else{
+			return null;
+		}
+		
+	}
+	
+	
+	public static ProtocolProperty getProtocolPropertyRegistry(List<ProtocolProperty> list, String propertyName, boolean throwNotFoundException) throws ProtocolException{
+		
+		if(list==null || list.size()<=0){
+			return null;
+		}
+		for (ProtocolProperty protocolProperty : list) {
+			if(propertyName.equals(protocolProperty.getName())){
+				return protocolProperty;
+			}
+		}
+		
+		if(throwNotFoundException){
+			throw new ProtocolException("Property ["+propertyName+"] not found");
+		}
+		else{
+			return null;
+		}
+	}
+	public static org.openspcoop2.core.config.ProtocolProperty getProtocolPropertyConfig(List<org.openspcoop2.core.config.ProtocolProperty> list, String propertyName, boolean throwNotFoundException) throws ProtocolException{
+		
+		if(list==null || list.size()<=0){
+			return null;
+		}
+		for (org.openspcoop2.core.config.ProtocolProperty protocolProperty : list) {
+			if(propertyName.equals(protocolProperty.getName())){
+				return protocolProperty;
+			}
+		}
+		
+		if(throwNotFoundException){
+			throw new ProtocolException("Property ["+propertyName+"] not found");
+		}
+		else{
+			return null;
+		}
+	}
+	public static Proprieta getProtocolPropertySDK(List<Proprieta> list, String propertyName, boolean throwNotFoundException) throws ProtocolException{
+		
+		if(list==null || list.size()<=0){
+			return null;
+		}
+		for (Proprieta protocolProperty : list) {
+			if(propertyName.equals(protocolProperty.getNome())){
+				return protocolProperty;
+			}
+		}
+		
+		if(throwNotFoundException){
+			throw new ProtocolException("Property ["+propertyName+"] not found");
+		}
+		else{
+			return null;
+		}
+	}
+	
 }

@@ -36,7 +36,7 @@ import java.io.Serializable;
  * @version $Rev$, $Date$
  */
 
-public class FiltroRicercaProtocolProperty implements Serializable{
+public class FiltroRicercaProtocolProperty extends org.openspcoop2.core.mapping.FiltroRicercaProtocolProperty implements Serializable{
 
 	
 	/**
@@ -44,66 +44,4 @@ public class FiltroRicercaProtocolProperty implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/** Nome */
-	private String name;
-	
-	/** Valore */
-	private String valueAsString;
-	
-	/** ValoreNumerico */
-	private Long valueAsLong;
-	
-	/** ValoreBoolean */
-	private Boolean valueAsBoolean;
-	
-	public String getName() {
-		return this.name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getValueAsString() {
-		return this.valueAsString;
-	}
-	public void setValueAsString(String valore) {
-		this.valueAsString = valore;
-	}
-	public Long getValueAsLong() {
-		return this.valueAsLong;
-	}
-	public void setValueAsLong(Long valoreNumerico) {
-		this.valueAsLong = valoreNumerico;
-	}
-	public Boolean getValueAsBoolean() {
-		return this.valueAsBoolean;
-	}
-	public void setValueAsBoolean(Boolean valueAsBoolean) {
-		this.valueAsBoolean = valueAsBoolean;
-	}
-	
-	@Override
-	public String toString(){
-		return this.toString(true);
-	}
-	public String toString(boolean checkEmpty){
-		StringBuffer bf = new StringBuffer();
-		bf.append("FiltroProtocolProperty: ");
-		this.addDetails(bf);
-		if(checkEmpty){
-			if(bf.length()=="FiltroProtocolProperty: ".length()){
-				bf.append(" nessun filtro presente");
-			}
-		}
-		return bf.toString();
-	}
-	public void addDetails(StringBuffer bf){
-		if(this.name!=null)
-			bf.append(" [name:"+this.name+"]");
-		if(this.valueAsString!=null)
-			bf.append(" [value-string:"+this.valueAsString+"]");
-		if(this.valueAsLong!=null)
-			bf.append(" [value-long:"+this.valueAsLong+"]");
-		if(this.valueAsBoolean!=null)
-			bf.append(" [value-boolean:"+this.valueAsBoolean+"]");
-	}
 }

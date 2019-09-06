@@ -101,6 +101,9 @@ public interface OpenSPCoop2Message {
 	public Iterator<String> keysContextProperty();
 	public Object getContextProperty(String property);
 	public Object removeContextProperty(String property);
+	
+	public void setTransactionId(String transactionId);
+	public String getTransactionId();
 		
 		
 	/* ContentType */
@@ -166,7 +169,7 @@ public interface OpenSPCoop2Message {
 	public void setProtocolName(String protocolName);
 	public String getProtocolName();
 	
-	
+
 	/* Stream */
 	
 	public void setNotifierInputStream(NotifierInputStream is);	

@@ -75,6 +75,10 @@ public class ConnettoreHTTPSProperties extends SSLConfig implements Serializable
 			}else{
 				propertiesHTTPS.setTrustStoreType(KeyStore.getDefaultType()); // JKS
 			}
+			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs)!=null){
+				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs).trim();
+				propertiesHTTPS.setTrustStoreCRLsLocation(tmp);
+			}
 		}
 		
 		// AUTENTICAZIONE CLIENT
@@ -96,6 +100,10 @@ public class ConnettoreHTTPSProperties extends SSLConfig implements Serializable
 			}else{
 				throw new Exception("Valore non definito per la proprieta' '"+CostantiConnettori.CONNETTORE_HTTPS_KEY_PASSWORD
 						+"' nonostante sia stato definito un trustStore attraverso la proprieta' '"+CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION+"'");
+			}
+			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_ALIAS)!=null){
+				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_ALIAS).trim();
+				propertiesHTTPS.setKeyAlias(tmp);
 			}
 			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM)!=null){
 				tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM).trim();

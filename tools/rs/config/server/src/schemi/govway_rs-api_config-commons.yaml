@@ -314,6 +314,8 @@ components:
           format: password
           maxLength: 255
           example: 'pwd'
+        truststore_crl:
+          type: string
         algoritmo:
           type: string
           maxLength: 255
@@ -343,6 +345,11 @@ components:
           format: password
           maxLength: 255
           description: password della chiave privata
+          example: 'pwd'
+        key_alias:
+          type: string
+          maxLength: 255
+          description: alias della chiave privata
           example: 'pwd'
         algoritmo:
           type: string

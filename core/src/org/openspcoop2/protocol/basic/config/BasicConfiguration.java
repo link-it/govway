@@ -422,6 +422,11 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	}
 	
 	@Override
+	public boolean isDataPresenteInIdentificativoMessaggio() {
+		return false;
+	}
+	
+	@Override
 	public List<BypassMustUnderstandCheck> getBypassMustUnderstandCheck(){
 		List<BypassMustUnderstandCheck> list = new ArrayList<BypassMustUnderstandCheck>();
 		if( this.manifest.getBinding().getSoap()!=null &&

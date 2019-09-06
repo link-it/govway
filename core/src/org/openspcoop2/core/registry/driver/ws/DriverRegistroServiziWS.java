@@ -828,6 +828,9 @@ public class DriverRegistroServiziWS extends BeanUtilities
 				if(filtroRicerca.getIdAccordoCooperazione()!=null){
 					// NOP
 				}
+				if(filtroRicerca.getServiceBinding()!=null){
+					filter.setServiceBinding(filtroRicerca.getServiceBinding());
+				}
 			}
 			List<IDAccordo> idsOpenSPCoop = new ArrayList<IDAccordo>();
 			if(filtroRicerca.getProtocolPropertiesAccordo()==null || filtroRicerca.getProtocolPropertiesAccordo().size()<=0){
@@ -951,6 +954,9 @@ public class DriverRegistroServiziWS extends BeanUtilities
 				}			
 				if(filtroRicercaBase.getIdAccordoCooperazione()!=null){
 					// NOP
+				}
+				if(filtroRicercaBase.getServiceBinding()!=null){
+					filter.setServiceBinding(filtroRicercaBase.getServiceBinding());
 				}
 			}
 			
@@ -1140,12 +1146,14 @@ public class DriverRegistroServiziWS extends BeanUtilities
 					filter.setAccordoServizioParteComune(IDAccordoFactory.getInstance().getUriFromIDAccordo(filtroRicerca.getIdAccordoServizioParteComune()));
 				}
 				if(filtroRicerca.getNome()!=null || filtroRicerca.getTipo()!=null || filtroRicerca.getVersione()!=null ||
+						filtroRicerca.getPortType()!=null ||
 						filtroRicerca.getNomeSoggettoErogatore()!=null ||
 						filtroRicerca.getTipoSoggettoErogatore()!=null ||
 						filtroRicerca.getTipologia()!=null){
 					filter.setTipo(filtroRicerca.getTipo());
 					filter.setNome(filtroRicerca.getNome());
 					filter.setVersione(Long.valueOf(filtroRicerca.getVersione()));
+					filter.setPortType(filtroRicerca.getPortType());
 					filter.setTipoSoggettoErogatore(filtroRicerca.getTipoSoggettoErogatore());
 					filter.setNomeSoggettoErogatore(filtroRicerca.getNomeSoggettoErogatore());
 					if(filtroRicerca.getTipologia()!=null){
@@ -1223,12 +1231,14 @@ public class DriverRegistroServiziWS extends BeanUtilities
 					filter.setAccordoServizioParteComune(IDAccordoFactory.getInstance().getUriFromIDAccordo(filtroRicerca.getIdAccordoServizioParteComune()));
 				}
 				if(filtroRicerca.getNome()!=null || filtroRicerca.getTipo()!=null || filtroRicerca.getVersione()!=null ||
+						filtroRicerca.getPortType()!=null ||
 						filtroRicerca.getNomeSoggettoErogatore()!=null ||
 						filtroRicerca.getTipoSoggettoErogatore()!=null ||
 						filtroRicerca.getTipologia()!=null){
 					filter.setTipo(filtroRicerca.getTipo());
 					filter.setNome(filtroRicerca.getNome());
 					filter.setVersione(Long.valueOf(filtroRicerca.getVersione()));
+					filter.setPortType(filtroRicerca.getPortType());
 					filter.setTipoSoggettoErogatore(filtroRicerca.getTipoSoggettoErogatore());
 					filter.setNomeSoggettoErogatore(filtroRicerca.getNomeSoggettoErogatore());
 					if(filtroRicerca.getTipologia()!=null){

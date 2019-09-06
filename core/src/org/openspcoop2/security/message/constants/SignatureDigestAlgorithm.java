@@ -22,6 +22,8 @@
 
 package org.openspcoop2.security.message.constants;
 
+import org.openspcoop2.generic_project.exception.NotFoundException;
+
 /**     
  * SignatureDigestAlgorithm
  *
@@ -44,5 +46,26 @@ public enum SignatureDigestAlgorithm {
 	
 	public String getUri() {
 		return this.uri;
+	}
+	
+	public static SignatureDigestAlgorithm toEnumConstant(String uri){
+		try{
+			return toEnumConstant(uri,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static SignatureDigestAlgorithm toEnumConstant(String uri, boolean throwNotFoundException) throws NotFoundException{
+		SignatureDigestAlgorithm res = null;
+		for (SignatureDigestAlgorithm tmp : values()) {
+			if(tmp.getUri().equals(uri)){
+				res = tmp;
+				break;
+			}
+		}
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with uri ["+uri+"] not found");
+		}
+		return res;
 	}
 }

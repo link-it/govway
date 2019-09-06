@@ -8,6 +8,8 @@
 -- DROP INDEX index_dump_messaggi_3 ON dump_messaggi ;
 -- DROP INDEX index_dump_messaggi_2 ON dump_messaggi ;
 -- DROP INDEX index_dump_messaggi_1 ON dump_messaggi ;
+-- DROP INDEX INDEX_TR_RIF_RICHIESTA ON transazioni ;
+-- DROP INDEX INDEX_TR_COLLABORAZIONE ON transazioni ;
 -- DROP INDEX INDEX_TR_FILTROD_RES_2 ON transazioni ;
 -- DROP INDEX INDEX_TR_FILTROD_REQ_2 ON transazioni ;
 -- DROP INDEX INDEX_TR_FILTROD_RES ON transazioni ;

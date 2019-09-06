@@ -24,6 +24,7 @@ package org.openspcoop2.protocol.sdk.validator;
 
 import java.util.List;
 
+import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.Eccezione;
@@ -52,18 +53,23 @@ public class ValidazioneSintatticaResult<BustaRawType> {
 	private List<Eccezione> erroriValidazione;
 	/** Errori di processamento riscontrati sulla busta */
 	private List<Eccezione> erroriProcessamento;
+	private String erroreProcessamento_internalMessage;	
 	/** Errors riscontrati sulla lista eccezioni */
 	private List<Eccezione> errorsTrovatiSullaListaEccezioni;
+	
 	/** Busta */
 	private Busta busta;
 	/** Eventuale errore avvenuto durante il processo di validazione */
 	private ErroreCooperazione errore;
+	private IntegrationError errore_integrationError;
 	/** bustaErroreHeaderIntestazione: generata solo quando la busta arrivata non contiene gli elementi principali */
 	private Busta bustaErrore;
 	/** Elemento che raccoglie i dati di cooperazione */
 	private BustaRawContent<BustaRawType> bustaRaw;
+
 	/** Indica se il messaggio e' valido o meno */
 	private boolean isValido;
+	
 	
 	/**
 	 * Imposta i risultati del processo di validazione sintattiva
@@ -115,7 +121,13 @@ public class ValidazioneSintatticaResult<BustaRawType> {
 	public ErroreCooperazione getErrore() {
 		return this.errore;
 	}
-	
+	public IntegrationError getErrore_integrationError() {
+		return this.errore_integrationError;
+	}
+	public void setErrore_integrationError(IntegrationError errore_integrationError) {
+		this.errore_integrationError = errore_integrationError;
+	}
+
 	public Busta getBustaErrore() {
 		return this.bustaErrore;
 	}
@@ -123,9 +135,18 @@ public class ValidazioneSintatticaResult<BustaRawType> {
 	public BustaRawContent<BustaRawType> getBustaRawContent() {
 		return this.bustaRaw;
 	}
+	public void setBustaRaw(BustaRawContent<BustaRawType> bustaRaw) {
+		this.bustaRaw = bustaRaw;
+	}
 	
 	public boolean isValido(){
 		return this.isValido;
 	}
 
+	public String getErroreProcessamento_internalMessage() {
+		return this.erroreProcessamento_internalMessage;
+	}
+	public void setErroreProcessamento_internalMessage(String erroreProcessamento_internalMessage) {
+		this.erroreProcessamento_internalMessage = erroreProcessamento_internalMessage;
+	}
 }

@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.date.UnitaTemporale;
@@ -375,7 +376,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	@Override
 	public String toString(){
 		
-		SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 		
 		StringBuffer bf = new StringBuffer();
 		
@@ -840,7 +841,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 
 			boolean after = now.after(rightInterval);
 			if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
-				SimpleDateFormat dateformat = new SimpleDateFormat (format);
+				SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 				log.debug("checkPolicyCounterForDate now["+dateformat.format(now)+"] after policyDate["+dateformat.format(rightInterval)+"]: "+after+"");
 			}
 			if(after){
@@ -862,7 +863,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				dRight = DateUtils.convertToRightInterval(dRight, this.policyDateTypeInterval);
 				boolean before = dRight.before(now);
 				if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
-					SimpleDateFormat dateformat = new SimpleDateFormat (format);
+					SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 					log.debug("checkPolicyCounterForDate Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
 							dateformat.format(now)+"]: "+before);
 				}
@@ -886,7 +887,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 					dRight = DateUtils.convertToRightInterval(dRight, this.policyDateTypeInterval);
 					before = dRight.before(now);
 					if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
-						SimpleDateFormat dateformat = new SimpleDateFormat (format);
+						SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 						log.debug("checkPolicyCounterForDate Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
 								dateformat.format(now)+"]: "+before);
 					}
@@ -933,7 +934,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 
 			boolean after = now.after(rightInterval);
 			if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
-				SimpleDateFormat dateformat = new SimpleDateFormat (format);
+				SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 				log.debug("checkPolicyCounterForDateDegradoPrestazionale now["+dateformat.format(now)+"] after policyDate["+dateformat.format(rightInterval)+"]: "+after+"");
 			}
 			if(after){
@@ -953,7 +954,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				dRight = DateUtils.convertToRightInterval(dRight, this.policyDegradoPrestazionaleDateTypeInterval);
 				boolean before = dRight.before(now);
 				if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
-					SimpleDateFormat dateformat = new SimpleDateFormat (format);
+					SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 					log.debug("checkPolicyCounterForDateDegradoPrestazionale Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
 							dateformat.format(now)+"]: "+before);
 				}
@@ -975,7 +976,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 					dRight = DateUtils.convertToRightInterval(dRight, this.policyDegradoPrestazionaleDateTypeInterval);
 					before = dRight.before(now);
 					if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
-						SimpleDateFormat dateformat = new SimpleDateFormat (format);
+						SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 						log.debug("checkPolicyCounterForDateDegradoPrestazionale Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
 								dateformat.format(now)+"]: "+before);
 					}
@@ -1665,8 +1666,6 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 
 	
 	// **** UTILITIES ****
-	
-	private static final String format = "yyyy-MM-dd_HH:mm:ss.SSS";
 		
 	public static String serialize(DatiCollezionati dati){
 		StringBuffer bf = new StringBuffer();

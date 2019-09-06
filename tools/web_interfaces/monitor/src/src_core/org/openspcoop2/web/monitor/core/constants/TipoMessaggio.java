@@ -31,5 +31,15 @@ package org.openspcoop2.web.monitor.core.constants;
  */
 public enum TipoMessaggio {
 
-	Richiesta, Risposta;
+	Richiesta("Richiesta"), Risposta("Risposta"), Collaborazione("Collaborazione"), RiferimentoRichiesta("Riferimento Richiesta");
+	
+	private String label;
+	TipoMessaggio(String label) {
+		this.label = label;
+	}
+	
+	public String getLabel() {
+		return this.label;
+	}
+	
 }

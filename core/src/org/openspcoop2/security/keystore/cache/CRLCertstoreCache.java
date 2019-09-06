@@ -48,4 +48,8 @@ public class CRLCertstoreCache extends AbstractKeystoreCache<CRLCertstore> {
 		}
 	}
 
+	@Override
+	public String getPrefixKey() {
+		return "CRLCertstore ";
+	}
 }

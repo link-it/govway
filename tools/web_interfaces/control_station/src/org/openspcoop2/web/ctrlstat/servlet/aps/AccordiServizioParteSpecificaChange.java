@@ -70,7 +70,6 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
@@ -96,7 +95,6 @@ import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -130,7 +128,6 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 	private IRegistryReader registryReader = null; 
 	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
-	private ConsoleInterfaceType consoleInterfaceType = null;
 	private String protocolPropertiesSet = null;
 	private String editMode = null;
 
@@ -163,8 +160,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 		try {
 			
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(apsHelper); 
-
+			
 			this.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			this.protocolPropertiesSet = apsHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 			String id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
@@ -260,6 +256,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String httpspwdkey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 			String httpspwdprivatekey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 			String httpsalgoritmokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+			String httpsKeyAlias = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
+			String httpsTrustStoreCRLs = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
 				user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -293,13 +291,15 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String actionConfirm = apsHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 
 			String tmpModificaAPI = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_API);
-			boolean showModificaAPIErogazioniFruizioniView = false;
-			if(tmpModificaAPI!=null) {
-				showModificaAPIErogazioniFruizioniView = "true".equals(tmpModificaAPI);
+			
+			String tmpModificaProfilo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO);
+			boolean modificaProfilo = false;
+			if(tmpModificaProfilo!=null) {
+				modificaProfilo = "true".equals(tmpModificaProfilo);
 			}
 			
 			boolean addPropertiesHidden = false;
-			if(showModificaAPIErogazioniFruizioniView) {
+			if(!apsHelper.isModalitaCompleta() && !modificaProfilo) {
 				addPropertiesHidden = true;
 			}
 			
@@ -658,14 +658,15 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
 			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
 			IDServizio idAps = apsHelper.getIDServizioFromValues(oldtiposervizio, oldnomeservizio, oldtiposoggetto,oldnomesoggetto, oldversioneaccordo);
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(this.consoleOperationType, this.consoleInterfaceType, 
+			idAps.setUriAccordoServizioParteComune(idAccordoFactory.getUriFromAccordo(as));
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(this.consoleOperationType, apsHelper, 
 					this.registryReader, this.configRegistryReader, idAps );
 			this.protocolProperties = apsHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
 			oldProtocolPropertyList = asps.getProtocolPropertyList(); 
 
 			if(this.protocolPropertiesSet == null){
-				ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
+				ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
 			}
 
 			
@@ -955,6 +956,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						httpspwdkey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 						httpspwdprivatekey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD);
 						httpsalgoritmokey = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+						httpsKeyAlias = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_ALIAS);
+						httpsTrustStoreCRLs = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
 						if (httpspathkey == null) {
 							httpsstato = false;
 							httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
@@ -1043,7 +1046,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 					
 					// update della configurazione 
-					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,
+					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties,
 							this.registryReader, this.configRegistryReader, idAps);
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
@@ -1082,8 +1085,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								httpspath, httpstipo, httpspwd, httpsalgoritmo,
 								httpsstato, httpskeystore,
 								httpspwdprivatekeytrust, httpspathkey,
-								httpstipokey, httpspwdkey, httpspwdprivatekey,
-								httpsalgoritmokey, tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
+								httpstipokey, httpspwdkey, 
+								httpspwdprivatekey, httpsalgoritmokey,
+								httpsKeyAlias, httpsTrustStoreCRLs,
+								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 								nomeservizio, tiposervizio, null, null, null,
 								null, oldStatoPackage, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
@@ -1093,7 +1098,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								autenticazioneToken, token_policy,
-								listExtendedConnettore, forceEnableConnettore);
+								listExtendedConnettore, forceEnableConnettore,
+								tipoProtocollo, false, false);
 						
 					}
 					else {
@@ -1108,6 +1114,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								httpspwdprivatekeytrust, httpspathkey,
 								httpstipokey, httpspwdkey,
 								httpspwdprivatekey, httpsalgoritmokey,
+								httpsKeyAlias, httpsTrustStoreCRLs,
 								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 								nomeservizio, tiposervizio, null, null, null,
 								null, oldStatoPackage,
@@ -1121,10 +1128,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					// aggiunta campi custom
 					if(addPropertiesHidden) {
-						dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+						dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 					}
 					else {
-						dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+						dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 					}
 
 					pd.setDati(dati);
@@ -1166,8 +1173,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					httpspath, httpstipo, httpspwd, httpsalgoritmo,
 					httpsstato, httpskeystore,
 					httpspwdprivatekeytrust, httpspathkey,
-					httpstipokey, httpspwdkey, httpspwdprivatekey,
-					httpsalgoritmokey, tipoconn,versione,validazioneDocumenti,backToStato,autenticazioneHttp,
+					httpstipokey, httpspwdkey, 
+					httpspwdprivatekey, httpsalgoritmokey,
+					httpsKeyAlias, httpsTrustStoreCRLs,
+					tipoconn,versione,validazioneDocumenti,backToStato,autenticazioneHttp,
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
@@ -1182,10 +1191,16 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					descrizione, tipoSoggettoFruitore, nomeSoggettoFruitore,
 					autenticazioneToken, token_policy);
 			
+			// updateDynamic
+			if(isOk) {
+				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties,
+						this.registryReader, this.configRegistryReader, idAps);
+			}
+			
 			// Validazione base dei parametri custom 
 			if(isOk){
 				try{
-					apsHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+					apsHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -1197,7 +1212,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, 
+					this.consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties, 
 							this.registryReader, this.configRegistryReader, idAps);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
@@ -1218,7 +1233,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,
+				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties,
 						this.registryReader, this.configRegistryReader, idAps);
 
 				dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
@@ -1257,8 +1272,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							httpshostverify, httpspath, httpstipo, httpspwd,
 							httpsalgoritmo, httpsstato, httpskeystore,
 							httpspwdprivatekeytrust, httpspathkey,
-							httpstipokey, httpspwdkey, httpspwdprivatekey,
-							httpsalgoritmokey, tipoconn,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
+							httpstipokey, httpspwdkey, 
+							httpspwdprivatekey, httpsalgoritmokey,
+							httpsKeyAlias, httpsTrustStoreCRLs,
+							tipoconn,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 							nomeservizio, tiposervizio, null, null, null,
 							null, oldStatoPackage, true,
 							isConnettoreCustomUltimaImmagineSalvata, 
@@ -1268,7 +1285,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							autenticazioneToken, token_policy,
-							listExtendedConnettore, forceEnableConnettore);
+							listExtendedConnettore, forceEnableConnettore,
+							tipoProtocollo, false, false);
 					
 				}
 				else {
@@ -1283,6 +1301,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							httpspwdprivatekeytrust, httpspathkey,
 							httpstipokey, httpspwdkey,
 							httpspwdprivatekey, httpsalgoritmokey,
+							httpsKeyAlias, httpsTrustStoreCRLs,
 							tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 							nomeservizio, tiposervizio, null, null, null,
 							null, oldStatoPackage,
@@ -1296,10 +1315,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				
 				// aggiunta campi custom
 				if(addPropertiesHidden) {
-					dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+					dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 				}
 				else {
-					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+					dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 				}
 
 				pd.setDati(dati);
@@ -1325,7 +1344,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 					
 					// update della configurazione 
-					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,
+					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties,
 							this.registryReader, this.configRegistryReader, idAps);
 					
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
@@ -1363,8 +1382,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								httpshostverify, httpspath, httpstipo, httpspwd,
 								httpsalgoritmo, httpsstato, httpskeystore,
 								httpspwdprivatekeytrust, httpspathkey,
-								httpstipokey, httpspwdkey, httpspwdprivatekey,
-								httpsalgoritmokey, tipoconn,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
+								httpstipokey, httpspwdkey, 
+								httpspwdprivatekey, httpsalgoritmokey,
+								httpsKeyAlias, httpsTrustStoreCRLs,
+								tipoconn,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 								nomeservizio, tiposervizio, null, null, null,
 								null, oldStatoPackage, true,
 								isConnettoreCustomUltimaImmagineSalvata, 
@@ -1374,7 +1395,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								autenticazioneToken, token_policy,
-								listExtendedConnettore, forceEnableConnettore);
+								listExtendedConnettore, forceEnableConnettore,
+								tipoProtocollo, false, false);
 						
 					}
 					
@@ -1390,8 +1412,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							httpshostverify, httpspath, httpstipo, httpspwd,
 							httpsalgoritmo, httpsstato, httpskeystore,
 							httpspwdprivatekeytrust, httpspathkey,
-							httpstipokey, httpspwdkey, httpspwdprivatekey,
-							httpsalgoritmokey, tipoconn,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
+							httpstipokey, httpspwdkey, 
+							httpspwdprivatekey, httpsalgoritmokey,
+							httpsKeyAlias, httpsTrustStoreCRLs,
+							tipoconn,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 							nomeservizio, tiposervizio, null, null, null,
 							null, oldStatoPackage,
 							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
@@ -1422,13 +1446,13 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					// aggiunta campi custom
 					if(addPropertiesHidden) {
-						dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+						dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 					}
 					else {
-						dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+						dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 						
 						// aggiunta campi custom come hidden, quelli sopra vengono bruciati dal no-edit
-						dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+						dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 					}
 						
 					String msg = null;
@@ -1586,8 +1610,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					httpshostverify, httpspath, httpstipo, httpspwd,
 					httpsalgoritmo, httpsstato, httpskeystore,
 					httpspwdprivatekeytrust, httpspathkey,
-					httpstipokey, httpspwdkey, httpspwdprivatekey,
-					httpsalgoritmokey,
+					httpstipokey, httpspwdkey, 
+					httpspwdprivatekey, httpsalgoritmokey,
+					httpsKeyAlias, httpsTrustStoreCRLs,
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
@@ -1650,7 +1675,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 					
 					// update della configurazione 
-					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,
+					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties,
 							this.registryReader, this.configRegistryReader, idAps);
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
@@ -1690,7 +1715,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								httpstipo, httpspwd, httpsalgoritmo, httpsstato,
 								httpskeystore, httpspwdprivatekeytrust,
 								httpspathkey, httpstipokey, httpspwdkey,
-								httpspwdprivatekey, httpsalgoritmokey, tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
+								httpspwdprivatekey, httpsalgoritmokey, 
+								httpsKeyAlias, httpsTrustStoreCRLs,
+								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 								nomeservizio, tiposervizio, null, null, null,
 								null,
 								oldStatoPackage, true,
@@ -1701,7 +1728,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								autenticazioneToken, token_policy,
-								listExtendedConnettore, forceEnableConnettore);
+								listExtendedConnettore, forceEnableConnettore,
+								tipoProtocollo, false, false);
 						
 					}
 					else {
@@ -1716,6 +1744,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								httpspwdprivatekeytrust, httpspathkey,
 								httpstipokey, httpspwdkey,
 								httpspwdprivatekey, httpsalgoritmokey,
+								httpsKeyAlias, httpsTrustStoreCRLs,
 								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
 								nomeservizio, tiposervizio, null, null, null,
 								null, oldStatoPackage,
@@ -1729,10 +1758,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					// aggiunta campi custom
 					if(addPropertiesHidden) {
-						dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+						dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 					}
 					else {
-						dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+						dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 					}
 
 					pd.setDati(dati);
@@ -1748,7 +1777,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String superUser = ServletUtils.getUserLoginFromSession(session);
 
 			//imposto properties custom
-			asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType, oldProtocolPropertyList));
+			asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(this.protocolProperties, this.consoleOperationType, oldProtocolPropertyList));
 
 			 List<Object> oggettiDaAggiornare = AccordiServizioParteSpecificaUtilities.getOggettiDaAggiornare(asps, apsCore);
 			

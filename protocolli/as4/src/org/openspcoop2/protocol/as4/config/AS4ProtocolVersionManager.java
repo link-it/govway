@@ -30,7 +30,7 @@ import org.openspcoop2.protocol.basic.config.BasicVersionManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
@@ -61,12 +61,20 @@ public class AS4ProtocolVersionManager extends BasicVersionManager {
 	}
 	
 	@Override
-	public StatoFunzionalitaProtocollo getCollaborazione(ProfiloDiCollaborazione profiloCollaborazione){
+	public StatoFunzionalitaProtocollo getCollaborazione(Busta busta){
+		return StatoFunzionalitaProtocollo.REGISTRO;
+	}
+	@Override
+	public StatoFunzionalitaProtocollo getCollaborazione(Servizio infoServizio){
 		return StatoFunzionalitaProtocollo.REGISTRO;
 	}
 	
 	@Override
-	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(ProfiloDiCollaborazione profiloCollaborazione){
+	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(Busta busta){
+		return StatoFunzionalitaProtocollo.REGISTRO;
+	}
+	@Override
+	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(Servizio infoServizio){
 		return StatoFunzionalitaProtocollo.REGISTRO;
 	}
 	

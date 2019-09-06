@@ -120,13 +120,11 @@ public class ResponseCached implements Serializable {
 		this.digest = digest;
 	}
 	
-	private static final String format = "yyyy-MM-dd_HH:mm:ss.SSS";
-	
 	public String print() throws UtilsException {
 		StringBuffer bf = new StringBuffer();
 		bf.append("UUID: ").append(this.uuid).append("\n\n");
 		bf.append("Digest: ").append(this.digest).append("\n\n");
-		SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
 		String creazione = dateformat.format(this.creazione).replace('_','T');
 		bf.append("Creazione: ").append(creazione).append("\n\n");
 		String scadenza = dateformat.format(this.scadenza).replace('_','T');
