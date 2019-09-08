@@ -589,10 +589,22 @@ public class RESTCore {
 				else {
 					urlAttesa = TransportUtils.buildLocationWithURLBasedParameter(new Properties(), urlBase);
 				}
+				if(urlAttesa.contains("govway/api/in/")) {
+					urlAttesa = urlAttesa.replace("govway/api/in/", "govway/in/"); // la url ritornata e' normalizzata
+				}
+				if(urlAttesa.contains("govway/api/out/")) {
+					urlAttesa = urlAttesa.replace("govway/api/out/", "govway/out/"); // la url ritornata e' normalizzata
+				}
 				
 				if(returnCodeAtteso!=303 && returnCodeAtteso!=304) {
 					Reporter.log("Location ["+location+"] atteso ["+urlAttesa+"] verifico uguaglianza");
-					Assert.assertTrue(location.equals(urlAttesa)); // verifico proxyPassReverse
+					boolean check = location.equals(urlAttesa);
+					if(!check) {
+						System.out.println("====");
+						System.out.println("Location ["+location+"] ");
+						System.out.println("!equals urlAttesa ["+urlAttesa+"] ");
+					}
+					Assert.assertTrue(check); // verifico proxyPassReverse
 				}
 				else {
 					// verifico proxyPassReverse non abbia fatto modifiche essendo un contesto diverso

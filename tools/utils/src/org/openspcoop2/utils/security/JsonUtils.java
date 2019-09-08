@@ -281,14 +281,29 @@ public class JsonUtils {
 	}
 	
 	public static SecretKey getSecretKey(Properties props) throws Exception {
-		if(props.containsKey("rs.security.keystore.type")) {
-			String type = props.getProperty("rs.security.keystore.type");
+		if(props.containsKey(JoseConstants.RSSEC_KEY_STORE_TYPE)) {
+			String type = props.getProperty(JoseConstants.RSSEC_KEY_STORE_TYPE);
 			if("jceks".equalsIgnoreCase(type)) {
-				String fileK = props.getProperty("rs.security.keystore.file");
-				String password = props.getProperty("rs.security.keystore.password");
-				String alias = props.getProperty("rs.security.keystore.alias");
-				String passwordKey = props.getProperty("rs.security.key.password");
-				if(fileK!=null) {
+				Object oKeystore = props.get(JoseConstants.RSSEC_KEY_STORE);
+				String fileK = props.getProperty(JoseConstants.RSSEC_KEY_STORE_FILE);
+				String password = props.getProperty(JoseConstants.RSSEC_KEY_STORE_PSWD);
+				String alias = props.getProperty(JoseConstants.RSSEC_KEY_STORE_ALIAS);
+				String passwordKey = props.getProperty(JoseConstants.RSSEC_KEY_PSWD);
+				
+				if(oKeystore!=null && oKeystore instanceof java.security.KeyStore) {
+					java.security.KeyStore keystoreJCEKS = (java.security.KeyStore) oKeystore;
+					
+					if(alias==null || "".equals(alias)){
+						throw new Exception("(JCEKS) Alias key undefined");
+					}
+					if(passwordKey==null || "".equals(passwordKey)){
+						throw new Exception("(JCEKS) Password key undefined");
+					}
+					
+					SecretKey secretKey = (SecretKey) keystoreJCEKS.getKey(alias, passwordKey.toCharArray());
+					return  secretKey;
+				}
+				else if(fileK!=null) {
 					
 					if(password==null || "".equals(password)){
 						throw new Exception("(JCEKS) Keystore password undefined");
@@ -342,13 +357,13 @@ public class JsonUtils {
 	}
 	
 	public static JwsSignatureProvider getJwsSymmetricProvider(Properties props) throws Exception {
-		String algorithm = props.getProperty("rs.security.signature.algorithm");
+		String algorithm = props.getProperty(JoseConstants.RSSEC_SIGNATURE_ALGORITHM);
 		return getJwsSymmetricProvider(props, algorithm);
 	}
 	public static JwsSignatureProvider getJwsSymmetricProvider(Properties props, String algorithm) throws Exception {
 		org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = null;
 		if(algorithm==null || "".equals(algorithm)) {
-			String type = props.getProperty("rs.security.keystore.type");
+			String type = props.getProperty(JoseConstants.RSSEC_KEY_STORE_TYPE);
 			if("jceks".equalsIgnoreCase(type)) {
 				throw new Exception("(JCEKS) Signature Algorithm undefined");	
 			}
@@ -376,13 +391,13 @@ public class JsonUtils {
 	}
 	
 	public static JwsSignatureVerifier getJwsSignatureVerifier(Properties props) throws Exception {
-		String algorithm = props.getProperty("rs.security.signature.algorithm");
+		String algorithm = props.getProperty(JoseConstants.RSSEC_SIGNATURE_ALGORITHM);
 		return getJwsSignatureVerifier(props, algorithm);
 	}
 	public static JwsSignatureVerifier getJwsSignatureVerifier(Properties props, String algorithm) throws Exception {
 		org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = null;
 		if(algorithm==null || "".equals(algorithm)) {
-			String type = props.getProperty("rs.security.keystore.type");
+			String type = props.getProperty(JoseConstants.RSSEC_KEY_STORE_TYPE);
 			if("jceks".equalsIgnoreCase(type)) {
 				throw new Exception("(JCEKS) Signature Algorithm undefined");
 			}
@@ -411,13 +426,13 @@ public class JsonUtils {
 	
 	
 	public static JweEncryptionProvider getJweEncryptionProvider(Properties props) throws Exception {
-		String algorithm = props.getProperty("rs.security.encryption.content.algorithm");
+		String algorithm = props.getProperty(JoseConstants.RSSEC_ENCRYPTION_CONTENT_ALGORITHM);
 		return getJweEncryptionProvider(props, algorithm);
 	}
 	public static JweEncryptionProvider getJweEncryptionProvider(Properties props, String algorithm) throws Exception {
 		org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm algo = null;
 		if(algorithm==null || "".equals(algorithm)) {
-			String type = props.getProperty("rs.security.keystore.type");
+			String type = props.getProperty(JoseConstants.RSSEC_KEY_STORE_TYPE);
 			if("jceks".equalsIgnoreCase(type)) {
 				throw new Exception("(JCEKS) Content Algorithm undefined");
 			}
@@ -444,13 +459,13 @@ public class JsonUtils {
 	}
 	
 	public static JweDecryptionProvider getJweDecryptionProvider(Properties props) throws Exception {
-		String algorithm = props.getProperty("rs.security.encryption.content.algorithm");
+		String algorithm = props.getProperty(JoseConstants.RSSEC_ENCRYPTION_CONTENT_ALGORITHM);
 		return getJweDecryptionProvider(props, algorithm);
 	}
 	public static JweDecryptionProvider getJweDecryptionProvider(Properties props, String algorithm) throws Exception {
 		org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm algo = null;
 		if(algorithm==null || "".equals(algorithm)) {
-			String type = props.getProperty("rs.security.keystore.type");
+			String type = props.getProperty(JoseConstants.RSSEC_KEY_STORE_TYPE);
 			if("jceks".equalsIgnoreCase(type)) {
 				throw new Exception("(JCEKS) Content Algorithm undefined");
 			}

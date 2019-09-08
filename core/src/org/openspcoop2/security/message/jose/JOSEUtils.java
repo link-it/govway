@@ -645,7 +645,7 @@ public class JOSEUtils {
 							}
 							if(keystore!=null) {
 								properties.remove(JoseConstants.RSSEC_KEY_STORE_FILE);
-								properties.remove(JoseConstants.RSSEC_KEY_STORE_TYPE);
+								// properties.remove(JoseConstants.RSSEC_KEY_STORE_TYPE); non va rimosso, serve per jceks
 								properties.remove(JoseConstants.RSSEC_KEY_STORE_PSWD);
 								properties.put(JoseConstants.RSSEC_KEY_STORE, keystore);
 							}
@@ -675,7 +675,7 @@ public class JOSEUtils {
 						}
 						if(keystore!=null) {
 							properties.remove(JoseConstants.RSSEC_KEY_STORE_FILE);
-							properties.remove(JoseConstants.RSSEC_KEY_STORE_TYPE);
+							// properties.remove(JoseConstants.RSSEC_KEY_STORE_TYPE); non va rimosso, serve per jceks
 							properties.remove(JoseConstants.RSSEC_KEY_STORE_PSWD);
 							properties.put(JoseConstants.RSSEC_KEY_STORE, keystore);
 						}
