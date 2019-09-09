@@ -7,6 +7,7 @@ Guida alla Console di Gestione
 
         introduzione/index
         profiloApiGateway/index
+        profiloModIPA/index
         profiloEDelivery/index
         profiloSPCoop/index
         profiloFatturaPA/index

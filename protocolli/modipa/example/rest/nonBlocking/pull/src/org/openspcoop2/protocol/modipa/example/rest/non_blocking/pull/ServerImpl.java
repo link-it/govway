@@ -38,10 +38,11 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 
 /**
- * RESTNonBlocking-PULL
- *
- * <p>Questo file descrive semplicemente i metodi di un'API e non indica tutte le informazioni di metadatazione che normalmente vanno inserite.
- *
+ * ServerImpl
+ * 
+ * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class ServerImpl implements DefaultApi {
 	

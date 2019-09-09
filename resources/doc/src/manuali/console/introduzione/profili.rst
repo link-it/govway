@@ -11,9 +11,10 @@ dello specifico profilo a cui le API debbano conformarsi. I profili di
 interoperabilità supportati dalla distribuzione standard del prodotto
 sono i seguenti:
 
--  *API Gateway*: è il profilo più generico e permette di supportare, in
-   accordo alle linee guida di interoperabilità di AGID, qualunque
+-  *API Gateway*: è il profilo di interoperabilità di base che consente di supportare qualunque
    generica API basata su scambio di messaggi SOAP e REST.
+
+-  *ModI PA*: è il profilo che consente di supportare gli scenari di comunicazione basati sul Modello di Interoperabilità rilasciato da AGID nel 2018, che fornisce i requisiti per l'integrazione tra il sistema informativo complessivo della Pubblica Amministrazione, Cittadini e Imprese.
 
 -  *eDelivery*: è il profilo standard adottato a livello europeo
    nell'ambito del progetto *CEF*, e basato sul protocollo AS4.

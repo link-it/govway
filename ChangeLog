@@ -1,3 +1,7 @@
+2019-09-09  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.2.0.b1
+
 2019-09-06  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayMonitor, GovWayConsole, ProtocolloModIPA, InstallerVersioneBinaria]
@@ -7,7 +11,7 @@
 	Il lavoro include diverse migliorie quali:	
 	- Aggiunta una cache dedicata a tutti i kestore acceduti dalle verie funzionalità del gateway come ssl, wssecurity, jws, jwe, oauth2 ...
 	- Al connettore https è stata aggiunta la possibilità di indicare opzionalmente l'alias della chiave privata da utilizzare per l'autenticazione client,
-	  se il keystore ne contiene più di una, . 
+	  se il keystore ne contiene più di una. 
 	- È stata aggiunta la possibilità di impostare CRL per la validazione dei certificati sia sul connettore https 
 	  che nelle configurazioni relative alla sicurezza messaggio. 
 	- Sulla govwayMonitor è stata aggiunta la possibilità di effettuare ricerche per id di collaborazione e 

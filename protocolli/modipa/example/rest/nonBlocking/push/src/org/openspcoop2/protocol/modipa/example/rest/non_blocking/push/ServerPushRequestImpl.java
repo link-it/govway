@@ -36,10 +36,11 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 
 /**
- * RESTNonBlocking-PUSH
- *
- * <p>Questo file descrive semplicemente i metodi di un'API e non indica tutte le informazioni di metadatazione che normalmente vanno inserite.
- *
+ * ServerPushRequestImpl
+ * 
+ * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class ServerPushRequestImpl implements DefaultApi {
 	

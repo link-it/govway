@@ -4,7 +4,7 @@
 Profilo 'eDelivery'
 ======================
 
-In questa modalità operativa la govwayConsole consente di produrre
+Il profilo eDelivery consente di produrre
 configurazioni di scenari di interoperabilità che si basano sullo
 standard europeo eDelivery. Per rendere il trattamento dei messaggi
 conforme a tale standard, GovWay si interfaccia ad una installazione del
@@ -25,9 +25,9 @@ quello necessario per permettere la configurazione dell'access point
 Domibus.
 
 .. toctree::
-        :maxdepth: 2
+    :maxdepth: 2
 
-        passiPreliminari
-	erogazioni
-	fruizioni
-	pmode
+    passiPreliminari
+    erogazioni
+    fruizioni
+    pmode
