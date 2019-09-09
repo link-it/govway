@@ -7,4 +7,4 @@ Sono state introdotte le seguenti nuove funzionalità:
 
 -  *CRL*: è adesso possibile indicare una lista di CRL per la validazione dei certificati sia sul connettore https che nelle configurazioni relative alla sicurezza messaggio (es. WSSecurity, JOSE Signature, OAuth2 ...). 
 
--  *Cache*: tutti i keystore e CRL acceduti durante la gestione della sicurezza, sia a livello trasporto che a livello messaggio, vengono conservati in una cache che consente di ottenere performance migliori.
+-  *Cache*: tutti i keystore e CRL acceduti da GovWay, sia per la sicurezza a livello trasporto che a livello messaggio, sono ora gestiti tramite cache.

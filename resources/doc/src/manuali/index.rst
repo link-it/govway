@@ -29,3 +29,9 @@ Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle
         :maxdepth: 1
 
         Release Notes <releaseNotes/index>
+
+.. toctree::
+        :maxdepth: 1
+
+        migrazione/index
+
