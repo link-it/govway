@@ -157,6 +157,17 @@
 			</then>
 		</if>
 		<replace file="${dist}/cfg/govway_local.jcs.properties" token="/etc/govway/indexed-disk-cache" value="${work_dir}"/>
+
+		<if>
+			<equals arg1="${antinstaller_modalita_installazione}" arg2="aggiornamento"/>
+			<then>
+				<mkdir dir="${dist}/cfg/utilities/diff"/>
+
+				<antcall target="_setup_properties_aggiornamento"/>
+
+				<replace dir="${dist}/cfg/utilities/diff" token="/etc/govway/indexed-disk-cache" value="${work_dir}"/>
+			</then>
+		</if>
 		
 		<!-- SQL -->
 		<mkdir dir="${dist}/sql"/>
@@ -165,6 +176,24 @@
 		                <include name="GovWay*.sql"/>
 		        </fileset>
 		</copy>
+		<if>
+			<equals arg1="${antinstaller_modalita_installazione}" arg2="nuova"/>
+			<then>
+				<concat destfile="${dist}/sql/GovWay_init.sql" append="yes">
+					<fileset dir="${tmp_sql}">
+					    	<include name="InstallerProperties.sql"/>
+					</fileset>
+				</concat>
+			</then>
+			<else>
+				<concat destfile="${dist}/sql/GovWay_upgrade_${antinstaller_versione_attuale}.sql" append="yes">
+					<fileset dir="${tmp_sql}">
+					    	<include name="InstallerProperties.sql"/>
+					</fileset>
+				</concat>
+			</else>
+		</if>
+						
 		<mkdir dir="${dist}/sql/utilities"/>
 		<if>
 			<equals arg1="${antinstaller_modalita_installazione}" arg2="nuova"/>
@@ -212,6 +241,33 @@
 			</else>		
 		</if>
 		
+	</target>
+
+	<target name="_setup_properties_aggiornamento">
+
+		<!-- Properties di Aggiornamento -->
+		<java classname="org.openspcoop2.core.commons.PropertiesScriptBuilder" fork="true" outputproperty="_output_props_upgrade">
+			<arg value="${deploy_resources}/properties_upgrade" />
+			<arg value="${dist}/cfg/utilities/diff" />
+			<arg value="${dist}/cfg" />
+			<arg value="${antinstaller_versione_precedente}" />
+			<arg value="${antinstaller_versione_attuale}" />
+			<classpath>
+				<path id="classpath_run">
+					<fileset dir="${deploy_sw}" includes="**/openspcoop2_utils_*.jar"/>
+					<fileset dir="${deploy_sw}" includes="**/openspcoop2_core_*.jar"/>
+			   	</path>				
+			</classpath>
+		</java>
+		<if>
+			<not>
+				<equals arg1="${_output_props_upgrade}" arg2=""/>
+			</not>
+			<then>
+				<fail message="Generazione properties di aggiornamento: ${_output_props_upgrade}"/>	
+			</then>
+		</if>
+
 	</target>
 	
 	<target name="_prepareArchivioJboss">

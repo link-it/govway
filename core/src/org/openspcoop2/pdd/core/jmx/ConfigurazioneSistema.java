@@ -55,11 +55,14 @@ import javax.management.MBeanOperationInfo;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ReflectionException;
 
-import org.slf4j.Logger;
+import org.openspcoop2.core.config.GenericProperties;
+import org.openspcoop2.core.config.Property;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory_impl;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -73,6 +76,7 @@ import org.openspcoop2.utils.resources.CharsetUtilities;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.transport.http.SSLConstants;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
+import org.slf4j.Logger;
 
 
 /**
@@ -106,6 +110,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	public final static String MESSAGE_FACTORY = "getMessageFactory";
 	public final static String DIRECTORY_CONFIGURAZIONE = "getDirectoryConfigurazione";
 	public final static String PROTOCOLS = "getPluginProtocols";
+	public final static String INFORMAZIONI_INSTALLAZIONE = "getInformazioniInstallazione";
 
 
 
@@ -266,6 +271,10 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		
 		else if(actionName.equals(PROTOCOLS)){
 			return this.getPluginProtocols();
+		}
+		
+		else if(actionName.equals(INFORMAZIONI_INSTALLAZIONE)){
+			return this.getInformazioniInstallazione();
 		}
 
 
@@ -1173,7 +1182,83 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		}
 	}
 
-	
+	public String getInformazioniInstallazione(){
+		try {
+			List<GenericProperties> installerProperties = ConfigurazionePdDManager.getInstance().getGenericProperties(CostantiPdD.TIPOLOGIA_INSTALLER);
+			if(installerProperties==null || installerProperties.isEmpty()) {
+				throw new DriverConfigurazioneNotFound();
+			}
+			StringBuffer bf = new StringBuffer();
+			// raccolto id
+			List<String> ids = new ArrayList<String>();
+			for (int i = 0; i < installerProperties.size(); i++) {
+				ids.add(installerProperties.get(i).getNome());
+			}
+			Collections.sort(ids, Collections.reverseOrder());
+			for (String name : ids) {
+				for (GenericProperties gp : installerProperties) {
+					if(gp.getNome().equals(name)) {
+						if(bf.length()>0) {
+							bf.append("\n");
+						}
+						bf.append(gp.getDescrizione());
+						bf.append("\n");
+						
+						List<String> idParams = new ArrayList<String>();
+						for (Property p : gp.getPropertyList()) {
+							idParams.add(p.getNome());
+						}
+						Collections.sort(idParams);
+						for (String idP : idParams) {
+							for (Property p : gp.getPropertyList()) {
+								if(p.getNome().equals(idP)) {
+									
+									if(p.getNome().endsWith("-000:sezione")) {
+										bf.append(p.getValore());
+										bf.append("\n");
+									}
+									else {
+										bf.append("\t");
+										String [] split = p.getNome().split(":");
+										if(split!=null && split.length==3) {
+											bf.append(split[1]);
+											bf.append(" (");
+											bf.append(split[2]);
+											bf.append(") = ");
+										}
+										else {
+											bf.append(p.getNome());
+											bf.append(" = ");
+										}
+										bf.append(p.getValore());
+										bf.append("\n");
+									}
+									
+									break;
+								}
+							}
+						}
+												
+						break;
+					}
+				}
+			}
+			
+			if(bf.length()>0) {
+				return bf.toString();
+			}
+			else {
+				return "Informazioni non presenti";
+			}
+			
+		}catch(DriverConfigurazioneNotFound notFound) {
+			return "Informazioni non presenti";
+		}catch(Throwable e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+		
+	}
 	
 
 }

@@ -118,6 +118,8 @@ public class CostantiPdD {
     /** Costante che indica una busta in uscita */
     public final static String TRACCIAMENTO_OUT = "OUT";
     
+    public final static String TIPOLOGIA_INSTALLER = "installer";
+    
     /**
      * Gestione Preflight Request in corso su SOAP
      */

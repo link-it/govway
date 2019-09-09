@@ -18,6 +18,7 @@ PDD_CONSOLE=${ROOT}/tools/web_interfaces/control_station
 PDD_MONITOR=${ROOT}/tools/web_interfaces/monitor
 LOADER_CONSOLE=${ROOT}/tools/web_interfaces/loader
 TRASPARENTE_PROTOCOL=${ROOT}/protocolli/trasparente
+MODIPA_PROTOCOL=${ROOT}/protocolli/modipa
 SPCOOP_PROTOCOL=${ROOT}/protocolli/spcoop
 AS4_PROTOCOL=${ROOT}/protocolli/as4
 SDI_PROTOCOL=${ROOT}/protocolli/sdi
@@ -78,6 +79,12 @@ fi
 if [ ! -f ${TRASPARENTE_PROTOCOL}/local_env.xml  ]
 then
         cp ${TRASPARENTE_PROTOCOL}/local_env.xml.template ${TRASPARENTE_PROTOCOL}/local_env.xml
+fi
+
+# Protocollo ModIPA
+if [ ! -f ${MODIPA_PROTOCOL}/local_env.xml  ]
+then
+        cp ${MODIPA_PROTOCOL}/local_env.xml.template ${MODIPA_PROTOCOL}/local_env.xml
 fi
 
 # Protocollo SPCoop

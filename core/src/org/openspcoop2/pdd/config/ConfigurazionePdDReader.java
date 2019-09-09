@@ -4914,6 +4914,12 @@ public class ConfigurazionePdDReader {
 		return this.configurazionePdD.getGenericProperties(connectionPdD, tipologia, nome);
 
 	}
+	
+	public List<GenericProperties> getGenericProperties(Connection connectionPdD, String tipologia) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		return this.configurazionePdD.getGenericProperties(connectionPdD, tipologia);
+
+	}
 
 
 	protected SystemProperties getSystemPropertiesPdD() throws DriverConfigurazioneException{

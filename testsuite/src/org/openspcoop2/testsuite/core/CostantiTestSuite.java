@@ -45,7 +45,7 @@ public class CostantiTestSuite {
 	public static void setCONNECTION_TIMEOUT(int cONNECTION_TIMEOUT) {
 		CONNECTION_TIMEOUT = cONNECTION_TIMEOUT;
 	}
-	public static int READ_TIMEOUT=6000;
+	public static int READ_TIMEOUT= 20000; //6000; // aumento per jenkins
 	public static void setREAD_TIMEOUT(int rEAD_TIMEOUT) {
 		READ_TIMEOUT = rEAD_TIMEOUT;
 	}

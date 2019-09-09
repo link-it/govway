@@ -3,6 +3,7 @@ ant.install.log
 ant.install.properties
 deploy/jms
 deploy/resources/protocolli/as4
+deploy/resources/properties_upgrade
 deploy/sql/db2
 deploy/sql/hsql
 deploy/sql/mysql

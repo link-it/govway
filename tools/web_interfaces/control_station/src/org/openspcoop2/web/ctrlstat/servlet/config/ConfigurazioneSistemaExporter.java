@@ -556,6 +556,16 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			statoConnessioniPA = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
+		String infoInstallazione = null;
+		try{
+			infoInstallazione = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniInstallazione(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura delle informazioni sull'installazione (jmxResourcePdD): "+e.getMessage(),e);
+			infoInstallazione = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
 		return infoStatoPorta.formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, vendorJava, messageFactory,
 				statoServizioPD,statoServizioPD_abilitazioni,statoServizioPD_disabilitazioni,
 				statoServizioPA,statoServizioPA_abilitazioni,statoServizioPA_disabilitazioni,
@@ -571,6 +581,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				statoConnessioniDB, statoConnessioniJMS,
 				statoTransazioniId, statoTransazioniIdProtocollo,
 				statoConnessioniPD, statoConnessioniPA, 
+				infoInstallazione,
 				cacheArray);
 	}
 }

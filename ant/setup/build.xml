@@ -400,8 +400,9 @@
 
 	<target name="setup_modipa" depends="_setup_modipa"/>
 	<target name="_setup_modipa">
-		<!-- per ora e' NOP -->
-		<!-- <copy file="${deploy_resources}/protocolli/modipa/modipa_local.properties" todir="${tmp_cfg}"/> -->
+		<copy file="${deploy_resources}/protocolli/modipa/modipa_local.properties" todir="${tmp_cfg}"/>
+
+		<replace file="${tmp_cfg}/modipa_local.properties" token="WORK_DIR" value="${work_dir}"/>
 	</target>
 
 	<target name="setup_spcoop" depends="_setup_spcoop"/>
@@ -818,6 +819,7 @@
 				<antcall target="_setup_sql_aggiornamento"/>
 			</else>
 		</if>
+		<antcall target="_sql_settings_installer_properties"/>
 	</target>
 	<target name="_setup_sql_nuova_installazione">
 		
@@ -1129,6 +1131,27 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 <![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa) VALUES ('trasparente','http://localhost:8080/govway/out/','http://localhost:8080/govway/');
 ]]>
 				</concat>
+			</then>
+		</if>
+
+		<!-- modipa -->
+		<if>
+			<istrue value="${antinstaller_protocollo_modipa}" />
+			<then>
+				<copy file="${deploy_sql}/init_soggetto.sql" tofile="${tmp_sql}/profili/GovWay_upgrade_initialize-profilo-modipa.sql" overwrite="true"/>
+				<antcall target="sql_settings_by_protocol">
+				    <param name="file" value="${tmp_sql}/profili/GovWay_upgrade_initialize-profilo-modipa.sql"/>
+					<param name="sql_nome" value="${antinstaller_nomesoggetto}"/>
+					<param name="sql_tipo" value="${antinstaller_tiposoggetto_modipa}"/>
+					<param name="sql_idporta" value="domain/modipa/${antinstaller_nomesoggetto}"/>
+					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_modipa}${antinstaller_nomesoggetto},c=it"/>
+					<param name="sql_protocollo_versione" value="1.0"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${tmp_sql}/profili/GovWay_upgrade_initialize-profilo-modipa.sql"/>
+					<param name="token" value="'@PDDCONSOLE_USERNAME@'"/>
+					<param name="value" value="(select login from users where permessi='SCMAU')"/>
+				</antcall>
 			</then>
 		</if>
 

@@ -1,0 +1,28 @@
+L'upgrade delle configurazione da una versione alla successiva comporta l'applicazione dei diff o l'aggiunta dei nuovi file.
+
+
+1) Progressione di Versione in Versione
+
+Se tra la nuova versione del software e la precedente sono state rilasciate altre versioni intermedie, i diff devono essere applicati in ordine facendo "promuovere" il file di versione in versione fino alla nuova versione del software scelto. 
+Inoltre se la tra versione di partenza e la versione di destinazione è stata rilasciata una versione major (3.majorVersion.minorVersion), dovrà essere utilizzata la directory upgrade_3.<major-1>.x_to_3.<major>.0 come passaggio tra l'ultimo diff minor disponibile per la major-1 e il primo diff disponibile per la nuova major. Di seguito verrà fornito un esempio di uno scenario di upgrade che coinvole anche l'upgrade verso una versione major successiva.
+Ad esempio supponiamo uno scenario in cui sia stata installata la versione 3.0.4 e si vuole procedere all'upgrade verso la versione 3.2.3;
+I diff dovranno essere applicate nel seguente ordine:
+- upgrade_3.1.4_to_3.1.5
+- upgrade_3.1.x_to_3.2.0
+- upgrade_3.2.0_to_3.2.1
+- upgrade_3.2.1_to_3.2.2
+- upgrade_3.2.2_to_3.2.3
+
+
+2) Ordine di Applicabilità dei diff di una Versione
+
+All'interno di ogni directory 'Upgrade_3.x.y_to_3.x.z' sono presenti più diff per ogni tipo di file supportato. 
+I diff interni ad ogni directory devono essere applicate nell'ordine crescente della data indicata nel prefisso: tipoDatabase/<data>.diff
+Ad esempio nella directory Upgrade_2.1.x_to_2.2.0 i diff presenti andranno applicate in questo ordine:
+- govway_local.2018-09-24.diff
+- govway_local.2018-11-03.diff
+
+3) Presenza di un nuovo file di configurazione
+
+Se nei file collezionati tra il passaggio della versione precedente verso la versione attuale vi è anche la creazione di un nuovo file (termina con .properties invece di .diff), si può utilizzare direttamente quello prodotto dall'installer, o in alternativa applicare i diff sul file di properties trovato.
+

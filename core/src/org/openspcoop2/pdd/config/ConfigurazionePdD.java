@@ -1077,6 +1077,14 @@ public class ConfigurazionePdD  {
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		if(listGenericProperties!=null && listGenericProperties.size()>0) {
 			for (GenericProperties genericProperties : listGenericProperties) {
+				
+				try{
+					this.cache.remove(_getKey_getGenericProperties(genericProperties.getTipologia()));
+					this.getGenericProperties(connectionPdD, genericProperties.getTipologia());
+				}
+				catch(DriverConfigurazioneNotFound notFound){}
+				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}	
+				
 				try{
 					this.cache.remove(_getKey_getGenericProperties(genericProperties.getTipologia(), genericProperties.getNome()));
 					this.getGenericProperties(connectionPdD, genericProperties.getTipologia(), genericProperties.getNome());
@@ -3162,6 +3170,55 @@ public class ConfigurazionePdD  {
 			}
 		}else{
 			gp = (GenericProperties) this.getObject("getGenericProperties",connectionPdD,CONFIGURAZIONE_PORTA, tipologia, nome);
+		}
+
+		if(gp!=null){
+			return gp;
+		}
+		else{
+			throw new DriverConfigurazioneNotFound("[getGenericProperties] GestioneErrore non trovato");
+		}
+	} 
+	
+	private String _getKey_getGenericProperties(String tipologia){
+		String key = "getGenericPropertiesList";
+		key = key + "_"+tipologia;
+		return key;
+	}
+	public List<GenericProperties> getGenericProperties(Connection connectionPdD,String tipologia) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return  getGenericProperties(connectionPdD, false, tipologia);
+	}
+	@SuppressWarnings("unchecked")
+	public List<GenericProperties> getGenericProperties(Connection connectionPdD,boolean forceNoCache, String tipologia) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(!forceNoCache && this.cache!=null){
+			key = this._getKey_getGenericProperties(tipologia);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((List<GenericProperties>) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		List<GenericProperties> gp = null;
+		if(!forceNoCache && this.cache!=null){
+			try{
+				gp = (List<GenericProperties>) this.getObjectCache(key,"getGenericProperties",connectionPdD,CONFIGURAZIONE_PORTA, tipologia);
+			}catch(DriverConfigurazioneException e){
+				throw e;
+			}
+		}else{
+			gp = (List<GenericProperties>) this.getObject("getGenericProperties",connectionPdD,CONFIGURAZIONE_PORTA, tipologia);
 		}
 
 		if(gp!=null){

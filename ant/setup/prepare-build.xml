@@ -29,6 +29,7 @@
 	<property name="deploy_resources" location="deploy/resources" />
 	<property name="code_jms_pdd" location="../../core/deploy/code_jms" />
 	<property name="sql_update" location="../../resources/sql_upgrade" />
+        <property name="properties_update" location="../../resources/properties_upgrade" />
 
 	<target name="prepare_software" depends="clean_prepare,init_prepare">
 		<antcall target="prepare_shared_jar_setup" />
@@ -122,6 +123,9 @@
 		<delete dir="./as"/>
 		<copy todir="${deploy_sql}/sql_upgrade">
 			<fileset dir="${sql_update}"/>
+		</copy>
+		<copy todir="${deploy_resources}/properties_upgrade">
+			<fileset dir="${properties_update}"/>
 		</copy>
 	</target>
 

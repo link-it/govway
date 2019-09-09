@@ -45,6 +45,7 @@ public class InformazioniStatoPorta {
 			String infoCharset, String infoInternazionalizzazione, String infoTimeZone,  
 			String infoProprietaJavaNetworking, String infoProprietaJavaAltro, String infoProprietaSistema,
 			String infoProtocolli,
+			String informazioniInstallazione,
 			InformazioniStatoPortaCache ... cache){
 		return formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, vendorJava, messageFactory,
 				statoServizioPD,statoServizioPD_abilitazioni,statoServizioPD_disabilitazioni,
@@ -61,6 +62,7 @@ public class InformazioniStatoPorta {
 				null,null,
 				null,null,
 				null,null,
+				informazioniInstallazione,
 				cache);
 	}
 	
@@ -81,6 +83,7 @@ public class InformazioniStatoPorta {
 			String statoConnessioniDB, String statoConnessioniJMS,
 			String statoTransazioniId, String statoTransazioniIdProtocollo,
 			String statoConnessioniPD, String statoConnessioniPA, 
+			String informazioniInstallazione,
 			InformazioniStatoPortaCache ... cache){
 		
 		StringBuffer bf = new StringBuffer();
@@ -296,6 +299,14 @@ public class InformazioniStatoPorta {
 			bf.append("\n");
 			bf.append("\n");
 		}
+		
+		bf.append("===========================\n");
+		bf.append("Informazioni Installazione\n");
+		bf.append("===========================\n");
+		bf.append("\n");
+		bf.append(informazioniInstallazione);
+		bf.append("\n");
+		bf.append("\n");
 		
 		return bf.toString();
 	}

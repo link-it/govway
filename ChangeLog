@@ -2,6 +2,15 @@
 
 	* Rilasciata versione 3.2.0.b1
 
+2019-09-09  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Aggiunta funzionalità OP-887
+	Aggiunti all'interno degli script sql generati dall'Installer le informazioni relative ai parametri di installazione selezionati. 
+	Tali informazioni sono poi consultabili tramite la sezione 'Runtime' della 'govwayConsole'.
+	Inoltre nella modalità di aggiornamento vengono adesso prodotti informazioni utili a comprendere 
+	quali sono le differenze rispetto alla precedente versione per quanto concerne i file di configurazione (dist/cfg).
+
 2019-09-06  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayMonitor, GovWayConsole, ProtocolloModIPA, InstallerVersioneBinaria]

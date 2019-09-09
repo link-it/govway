@@ -1,0 +1,45 @@
+--- govway_local.properties
++++ govway_local.properties
+@@ -28,3 +28,42 @@
+ #org.openspcoop2.pdd.check.readJMXResources.password=PASSWORD
+ # ================================================
+ 
++# ================================================
++# Generazione Report
++#
++# Intervallo, in secondi, per l'aggiornamento dei campionamenti statistici
++# Base oraria: ogni 5 minuti
++org.openspcoop2.pdd.statistiche.generazione.baseOraria.timer.intervalloSecondi=300
++# Base giornaliera: ogni 30 minuti
++org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.timer.intervalloSecondi=1800
++# Base settimanale: ogni ora
++org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.timer.intervalloSecondi=3600
++# Base mensile: ogni 2 ore
++org.openspcoop2.pdd.statistiche.generazione.baseMensile.timer.intervalloSecondi=7200
++
++# Tipo di campionamenti abilitati
++org.openspcoop2.pdd.statistiche.generazione.baseOraria.enabled=true
++org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.enabled=true
++org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.enabled=true
++org.openspcoop2.pdd.statistiche.generazione.baseMensile.enabled=true
++
++# Aggiornamento intervallo corrente
++org.openspcoop2.pdd.statistiche.generazione.baseOraria.gestioneUltimaOra=true
++org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.gestioneUltimoGiorno=true
++org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.gestioneUltimaSettimana=false
++org.openspcoop2.pdd.statistiche.generazione.baseMensile.gestioneUltimoMese=false
++# ================================================
++
++# ================================================
++# L'interfaccia WSDL di una API SOAP, registrata su GovWay, è ottenibile attraverso una invocazione HTTP GET 
++# utilizzando la medesima url di invocazione arricchita del prefisso '?wsdl'.
++# 
++# Per default la gestione delle richieste HTTP GET con prefisso '?wsdl' è disabilitata e tali richieste ottengono un errore 'HTTP 404 Not Found'.
++# Le opzioni seguenti permettono di abilitare la funzionalità.
++#
++# Gestione WSDL sulle fruizioni
++org.openspcoop2.pdd.pd.generateWsdl=false
++#
++# Gestione WSDL sulle erogazioni
++org.openspcoop2.pdd.pa.generateWsdl=false
++# ================================================
