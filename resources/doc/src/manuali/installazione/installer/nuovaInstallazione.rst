@@ -110,6 +110,8 @@ come si sviluppa il processo di installazione:
       gestite da GovWay, scelti tra quelli offerti built-in dal
       prodotto:
 
+      -  *ModI PA*
+
       -  *SPCoop*
 
       -  *eDelivery*

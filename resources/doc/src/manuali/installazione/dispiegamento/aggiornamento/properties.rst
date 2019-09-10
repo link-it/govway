@@ -14,3 +14,7 @@ indispensabile che tali file vengano riportati sull'installazione
 precedente e soprattutto occorre fare attenzione a non sovrascrivere
 eventualmente i precedenti, se erano stati modificati rispetto al
 template iniziale (generato dall'installer).
+
+.. note::
+
+	Nella sottodirectory *cfg/utilities/diff* vengono riportate solamente le modifiche attuate sui file, rispetto alla versione precedente, nel formalismo "diff" (estensione .diff) o il file intero (estensione .properties) se si tratta di un file che non esisteva nella precedente versione

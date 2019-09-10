@@ -35,7 +35,7 @@ Il progetto [govway-docker](https://github.com/link-it/govway-docker) fornisce t
 ## Standard di Mercato
 Supporto API conformi ai protocolli standard di mercato, come SOAP 1.1 e 1.2, API restful serializzate in Json o XML o semplici dati binari su Http. L'integrazione avviene sempre tramite le API applicative native, indipendentemente dai profili di interoperabilità adottati, gestiti in maniera trasparente dal gateway.
 ## Conformità alle specifiche di interoperabilità italiane ed europee
-Supporto delle nuove linee guida per l'interoperabilità di AGID (MI 2018) e del "building block" eDelivery del progetto europeo CEF (Connecting European Facilities). Viene inoltre assicurata la retrocompatibilità con il protocollo SPCoop, ancora ampiamente adottato per i servizi della PA.
+Supporto delle nuove linee guida per l'interoperabilità di AGID (ModI PA) e del "building block" eDelivery del progetto europeo CEF (Connecting European Facilities). Viene inoltre assicurata la retrocompatibilità con il protocollo SPCoop, ancora ampiamente adottato per i servizi della PA.
 ## Registro delle API
 La registrazione delle API può avvenire manualmente o tramite caricamento dei descrittori delle interfacce (OpenAPI 3.0, Swagger e WADL per i servizi REST, WSDL per i servizi SOAP, Accordi di Servizio per i servizi SPCoop).
 ## Gestione Govlet

@@ -1,4 +1,4 @@
-2019-09-09  Andrea Poli <apoli@link.it>
+2019-09-10  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.2.0.b1
 
@@ -17,6 +17,8 @@
 	Aggiunta funzionalità OP-841
 	Realizzato un nuovo profilo di interoperabilità 'ModI PA' che soddisfa le linee guida pubblicate al link:
 	- https://docs.italia.it/italia/piano-triennale-ict/lg-modellointeroperabilita-docs/it/bozza/
+	Il profilo "ModI PA" consente in maniera del tutto trasparente alle applicazioni interne al dominio, 
+	la conformità delle API (sia in fruzione che in erogazione) alle nuove Linee Guida AGID di Interoperabilità.
 	Il lavoro include diverse migliorie quali:	
 	- Aggiunta una cache dedicata a tutti i kestore acceduti dalle verie funzionalità del gateway come ssl, wssecurity, jws, jwe, oauth2 ...
 	- Al connettore https è stata aggiunta la possibilità di indicare opzionalmente l'alias della chiave privata da utilizzare per l'autenticazione client,

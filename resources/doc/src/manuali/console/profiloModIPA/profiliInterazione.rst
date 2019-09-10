@@ -25,3 +25,13 @@ La maschera di editing della singola operation/risorsa possiede la sezione ModI 
 
     Profili di interazione ModI PA per operation/risorse dell'API
 
+Nelle sezioni seguenti vengono forniti maggiori dettagli su come siano gestiti i profili non bloccanti.
+
+.. toctree::
+        :maxdepth: 2
+
+	interazione/pushSOAP
+	interazione/pushREST
+	interazione/pullSOAP
+	interazione/pullREST
+

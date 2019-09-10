@@ -5,7 +5,7 @@ Fruizione
 
 Le richieste che provengono dagli applicativi interni del dominio e sono dirette verso altre amministrazioni verranno arricchite del token di sicurezza ModIPA previsto dall'operazione invocata, come indicato precedentemente nella sezione :ref:`modipa_idar01`. 
 
-Per la configurazione delle fruizioni con i profili di sicurezza messaggio è necessario registrare ciascun applicativo interno coinvolto al fine principale di associargli una chiave privata e un certificato X509 che GovWay utilizza per firmare il token di sicurezza ModIPA prodotto. Gli applicativi vengono identificati da GovWay tramite una delle modalità di autenticazione supportate (vedi sez. :ref:`apiGwAutenticazione`). 
+Per la configurazione delle fruizioni con i profili di sicurezza messaggio è necessario registrare ciascun applicativo interno coinvolto al fine principale di associargli una chiave privata e un certificato X509 che GovWay utilizza per firmare il token di sicurezza ModIPA prodotto. Gli applicativi vengono identificati da GovWay tramite una delle modalità di autenticazione supportate descritte nella sezione :ref:`apiGwAutenticazione` (:numref:`FruizioneModIPA2`). 
 
    .. figure:: ../../_figure_console/FruizioneModIPA.jpg
     :scale: 100%
@@ -17,7 +17,7 @@ Per la configurazione delle fruizioni con i profili di sicurezza messaggio è ne
 La registrazione dell'applicativo avviene come già descritto nella sez. :ref:`applicativo`. In questo contesto sarà necessario specificare il dominio "Interno" dell'applicativo e procedere all'inserimento dei dati nel form "ModI PA" (:numref:`applicativo_interno_fig`).
 
    .. figure:: ../../_figure_console/modipa_applicativo_interno.png
-    :scale: 50%
+    :scale: 40%
     :name: applicativo_interno_fig
 
     Dati ModI PA relativi ad un applicativo interno

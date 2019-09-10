@@ -3,7 +3,7 @@
 Erogazione
 ----------
 
-Nelle erogazioni, le richieste provengono da amministrazioni esterne al dominio e sono dirette ad applicativi interni. Prima di procedere con l'inoltro della richiesta verso il backend interno, GovWay valida il token di sicurezza ricevuto rispetto al profilo associato all'operazione invocata (come descritto nella sezione :ref:`modipa_idar01`): verifica firma, validazione temporale, filtro duplicati, verifica integrità del messaggio ...
+Nelle erogazioni, le richieste provengono da amministrazioni esterne al dominio e sono dirette ad applicativi interni. Prima di procedere con l'inoltro della richiesta verso il backend interno, GovWay valida il token di sicurezza ricevuto rispetto al profilo associato all'operazione invocata (come descritto nella sezione :ref:`modipa_idar01`): verifica firma, validazione temporale, filtro duplicati, verifica integrità del messaggio ... (:numref:`ErogazioneModIPA2`)
 
    .. figure:: ../../_figure_console/ErogazioneModIPA.jpg
     :scale: 100%
@@ -44,10 +44,10 @@ Per la configurazione di erogazioni basate su una API con profilo IDAR01 (o IDAS
 Nel contesto dei profili di sicurezza messaggio è possibile registrare anche gli applicativi dei domini esterni al fine di:
 
 1. identificare puntualmente le componenti esterne coinvolte nella comunicazione abilitando le funzionalità di tracciamento e statistica per tali elementi.
-2. abilitare le funzionalità di autorizzazione sugli applicativi identificando puntualmente chi autorizzare dopo il superamento del processo di autenticazione/autorizzazione canale e validazione del token di sicurezza.
+2. abilitare le funzionalità di autorizzazione sugli applicativi identificando puntualmente chi autorizzare dopo il superamento del processo di autenticazione/autorizzazione canale e validazione del token di sicurezza (:numref:`ErogazioneModIPA_autorizzazione`).
 
    .. figure:: ../../_figure_console/ErogazioneModIPA_autorizzazione.jpg
-    :scale: 100%
+    :scale: 40%
     :align: center
     :name: ErogazioneModIPA_autorizzazione
 
@@ -95,10 +95,10 @@ I dati da fornire sono:
     Dati ModI PA relativi ad un applicativo esterno con configurazione manuale dei dati di sicurezza
 
 
-Per abilitare le funzionalità di autorizzazione dei singoli applicativi (punto 2 del precedente elenco) si deve procedere alla configurazione della sezione "Controllo Accessi" relativa all'erogazione. Quando attiva la sicurezza messaggio, questa sezione conterrà il form "Autorizzazione ModI PA" (:numref:`erogazione_secMessaggio_fig`). Qui è possibile specificare un elenco di applicativi (esterni) autorizzati, ad accedere all'erogazione, tra quelli identificati nella fase di verifica del relativo certificato. Gli applicativi esterni saranno selezionabili tra quelli censiti nella sezione "Applicativi".
+Per abilitare le funzionalità di autorizzazione dei singoli applicativi (punto 2 del precedente elenco) si deve procedere alla configurazione della sezione "Controllo Accessi" relativa all'erogazione. Quando attiva la sicurezza messaggio, questa sezione conterrà il form "Autorizzazione ModI PA" (:numref:`erogazione_secMessaggio_fig`). Qui è possibile specificare un elenco di applicativi (esterni) autorizzati, ad accedere all'erogazione, tra quelli identificati nella fase di verifica del relativo certificato. Gli applicativi esterni saranno selezionabili tra quelli censiti nella sezione "Applicativi" (:numref:`erogazione_secMessaggio_fig`).
 
    .. figure:: ../../_figure_console/modipa_erogazione_secMessaggio.png
-    :scale: 50%
+    :scale: 40%
     :name: erogazione_secMessaggio_fig
 
     Autorizzazione di singoli applicativi per l'accesso all'erogazione
