@@ -1,3 +1,10 @@
+2019-09-11  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSDI]
+	Risolto bug OP-893
+	La riconciliazione sulle notifiche descritta nell'Issue (https://github.com/link-it/govway/issues/27) non funzionava su database di tipo Oracle.
+	Inoltre la riconciliazione specifica per la fatturazione attiva, riguardante il trasmittente e l'applicativo mittente non funzionava correttamente.
+
 2019-09-10  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.2.0.b1

@@ -203,7 +203,10 @@ public class BustaBean extends Busta {
 		try {
 			List<TracciaExtInfo> extInfoList = this.protocolFactory.createTracciaSerializer().extractExtInfo(this);
 			if(extInfoList==null || extInfoList.isEmpty() || extInfoList.size()<=1) {
-				map.put("", this.getProperties());
+				Map<String, String> mapDefault = this.getProperties();
+				if(mapDefault!=null && !mapDefault.isEmpty()) {
+					map.put("", mapDefault);
+				}
 			}
 			else {
 				for (TracciaExtInfo tracciaExtInfo : extInfoList) {
@@ -212,7 +215,10 @@ public class BustaBean extends Busta {
 			}
 		}catch(Exception e) {
 			log.error("Conversione extInfo properties fallita: "+e.getMessage(),e);
-			map.put("", this.getProperties());
+			Map<String, String> mapDefault = this.getProperties();
+			if(mapDefault!=null && !mapDefault.isEmpty()) {
+				map.put("", mapDefault);
+			}
 		}
 		return map;
 	}

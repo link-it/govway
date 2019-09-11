@@ -170,30 +170,81 @@ public class SDIValidazioneUtils {
 	
 	public void readInformazioniFatturaRiferita(Busta busta, String identificativoSdI,
 			String servizio, String azione,
-			boolean applicativoMittente) throws ProtocolException {
+			boolean applicativoMittente, boolean fatturazioneAttiva) throws ProtocolException {
 		
 		ITracciaDriver tracciaDriver = this.getDriverTracciamento();
 		if(tracciaDriver==null) {
 			throw new ProtocolException("Accesso al database delle tracce non attivo");
 		}
 		
-		FiltroRicercaTracceConPaginazione filtro = new FiltroRicercaTracceConPaginazione();
-		filtro.setTipoTraccia(RuoloMessaggio.RICHIESTA);
-		filtro.setInformazioniProtocollo(new InformazioniProtocollo());
-		filtro.getInformazioniProtocollo().setServizio(servizio);
-		filtro.getInformazioniProtocollo().setAzione(azione);
-		filtro.getInformazioniProtocollo().addProprietaProtocollo(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, identificativoSdI);
-		filtro.setAsc(false);
-		List<Traccia> list = null;
-		try {
-			list = tracciaDriver.getTracce(filtro);
-		}catch(DriverTracciamentoNotFoundException notFound) {}
-		catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
-		}
-		if(list!=null && !list.isEmpty()) {
-			Traccia traccia = list.get(0); // solo nella fatturazione passiva ne potra' esistere piu' di una in seguito a piu' tentativi di consegna. Le informazioni (raccolte sottostante, escluse gli id messaggi) saranno comunque le stesse. 
+		Traccia traccia = null;
+		if(fatturazioneAttiva) {
+		
+			// L'identificativo SDI si trova nella risposta per la fatturazione attiva. Tutte le altre informazioni nella richiesta.
+			Traccia tracciaRisposta = null;
+			FiltroRicercaTracceConPaginazione filtro = new FiltroRicercaTracceConPaginazione();
+			filtro.setTipoTraccia(RuoloMessaggio.RISPOSTA);
+			filtro.setInformazioniProtocollo(new InformazioniProtocollo());
+			filtro.getInformazioniProtocollo().setServizio(servizio);
+			filtro.getInformazioniProtocollo().setAzione(azione);
+			filtro.getInformazioniProtocollo().addProprietaProtocollo(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, identificativoSdI);
+			filtro.setAsc(false);
+			List<Traccia> list = null;
+			try {
+				list = tracciaDriver.getTracce(filtro);
+			}catch(DriverTracciamentoNotFoundException notFound) {}
+			catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			if(list!=null && !list.isEmpty()) {
+				tracciaRisposta = list.get(0);
+			}
 			
+			if(tracciaRisposta!=null && tracciaRisposta.getIdTransazione()!=null) {
+				try {
+					traccia = tracciaDriver.getTraccia(tracciaRisposta.getIdTransazione(), RuoloMessaggio.RICHIESTA);
+				}catch(DriverTracciamentoNotFoundException notFound) {}
+				catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+				
+				// e' solo l'identificativo SDI e c'è gia.
+//				if(traccia!=null) {
+//					// riporto all'interno dell'oggetto le informazioni mancanti presenti sulla risposta
+//					if(tracciaRisposta.getBusta()!=null && tracciaRisposta.getBusta().sizeProperties()>0) {
+//						
+//						String identificativoSDI = tracciaRisposta.getBusta().getProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI);
+//						if(identificativoSDI!=null && !"".equals(identificativoSDI)) {
+//							traccia.getProperties().put(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, identificativoSDI);
+//						}
+//						
+//					}
+//				}
+			}
+			
+			
+		}
+		else {
+			FiltroRicercaTracceConPaginazione filtro = new FiltroRicercaTracceConPaginazione();
+			filtro.setTipoTraccia(RuoloMessaggio.RICHIESTA);
+			filtro.setInformazioniProtocollo(new InformazioniProtocollo());
+			filtro.getInformazioniProtocollo().setServizio(servizio);
+			filtro.getInformazioniProtocollo().setAzione(azione);
+			filtro.getInformazioniProtocollo().addProprietaProtocollo(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, identificativoSdI);
+			filtro.setAsc(false);
+			List<Traccia> list = null;
+			try {
+				list = tracciaDriver.getTracce(filtro);
+			}catch(DriverTracciamentoNotFoundException notFound) {}
+			catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			if(list!=null && !list.isEmpty()) {
+				traccia = list.get(0); // solo nella fatturazione passiva ne potra' esistere piu' di una in seguito a piu' tentativi di consegna. Le informazioni (raccolte sottostante, escluse gli id messaggi) saranno comunque le stesse. 
+			}
+		}
+		if(traccia!=null) {
+
 			if(applicativoMittente) {
 				if(traccia.getBusta()!=null && traccia.getBusta().getServizioApplicativoFruitore()!=null &&
 						!"".equals(traccia.getBusta().getServizioApplicativoFruitore())) {

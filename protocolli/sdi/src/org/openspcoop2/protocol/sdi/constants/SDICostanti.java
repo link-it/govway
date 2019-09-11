@@ -47,6 +47,8 @@ public class SDICostanti {
     
     public final static String SDI_PROTOCOL_NAMESPACE="www.openspcoop2.org/protocols/sdi";
     
+    public final static boolean SDI_FATTURAZIONE_ATTIVA = true;
+    public final static boolean SDI_FATTURAZIONE_PASSIVA = false;
     
     public final static String SDI_TIPO_FATTURA_XML = "XML";
     public final static String SDI_TIPO_FATTURA_ZIP = "ZIP";

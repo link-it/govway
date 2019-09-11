@@ -506,7 +506,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 					this.sdiValidazioneSemantica.validazioneUtils.readInformazioniFatturaRiferita(this.busta, identificativoSdI, 
 							SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE, 
 							SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE,
-							true);
+							true, SDICostanti.SDI_FATTURAZIONE_ATTIVA);
 				}catch(Exception e){
 					this.sdiValidazioneSemantica.getLog().error("Traccia di una precedente fattura inviata, con identificativo SDI ["+identificativoSdI+"], non rilevata: "+e.getMessage(),e);
 					this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.

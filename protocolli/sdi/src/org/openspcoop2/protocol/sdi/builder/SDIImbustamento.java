@@ -653,11 +653,18 @@ public class SDIImbustamento {
 			fileSdi.setFile(fileSent);
 			fileSdi.setIdentificativoSdI(identificativoSdi);
 			if(this.sdiProperties.isEnable_fatturazionePassiva_generazioneNomeFileEsito()) {
+				// Se è abilitata la genereazione del nome dell'esito su GovWay, il client DEVE fornire il nome della fattura originale su cui manda l'esito
+				busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE_FATTURA, nomeFileFattura);
 				fileSdi.setNomeFile(SDIUtils.getNomeFileMessaggi(protocolFactory, state, nomeFileFattura, TipiMessaggi.EC));
 			}
 			else {
+				// Se non è abilitata la genereazione del nome dell'esito su GovWay, il client DEVE fornire il nome del file corrispondente all'esito.
 				fileSdi.setNomeFile(nomeFileFattura);
 			}
+			
+			// salvo informazioni
+			busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, identificativoSdi+"");
+			busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE, fileSdi.getNomeFile());
 			
 			// detach body
 			soapBody.removeContents();

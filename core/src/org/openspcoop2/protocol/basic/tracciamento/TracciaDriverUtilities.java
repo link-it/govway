@@ -251,7 +251,10 @@ public class TracciaDriverUtilities {
 					sqlQueryObject.addFromTable(CostantiDB.TRACCE_EXT_INFO,aliasExtInfo);
 					sqlQueryObject.addWhereCondition(CostantiDB.TRACCE+"."+CostantiDB.TRACCE_COLUMN_ID+"="+aliasExtInfo+"."+CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_ID_TRACCIA);
 					sqlQueryObject.addWhereCondition(aliasExtInfo+"."+CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_NAME+"=?");	
-					sqlQueryObject.addWhereCondition(aliasExtInfo+"."+CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_VALUE+"=?");	
+					// BUG: la colonna è un clob: su Oracle si ottiene: ORA-00932: inconsistent datatypes: expected - got CLOB
+					//sqlQueryObject.addWhereCondition(aliasExtInfo+"."+CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_VALUE+"=?");
+					sqlQueryObject.addWhereLikeCondition(aliasExtInfo+"."+CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_VALUE, 
+							filtro.getInformazioniProtocollo().getProprietaProtocollo(nomi[i]), false, false);
 				}
 			}
 		}		
@@ -537,11 +540,13 @@ public class TracciaDriverUtilities {
 				for (int i = 0; i < nomi.length; i++) {
 					if(pstmt!=null) {
 						pstmt.setString(startIndex++, nomi[i]);
-						pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getProprietaProtocollo(nomi[i]));
+						// BUG: la colonna value è un TEXT: su Oracle si ottiene: ORA-00932: inconsistent datatypes: expected - got CLOB
+						//pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getProprietaProtocollo(nomi[i]));
 					}
 					if(query!=null) {
 						query.replaceFirst("\\?", "'"+nomi[i]+"'");
-						query.replaceFirst("\\?", "'"+filtro.getInformazioniProtocollo().getProprietaProtocollo(nomi[i])+"'");
+						// BUG: la colonna value è un TEXT: su Oracle si ottiene: ORA-00932: inconsistent datatypes: expected - got CLOB
+						//query.replaceFirst("\\?", "'"+filtro.getInformazioniProtocollo().getProprietaProtocollo(nomi[i])+"'");
 					}
 				}
 			}

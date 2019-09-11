@@ -971,7 +971,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 					this.sdiValidazioneSemantica.validazioneUtils.readInformazioniFatturaRiferita(this.busta, identificativoSdI, 
 							SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE, 
 							SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_RICEVI_FATTURE,
-							false);
+							false, SDICostanti.SDI_FATTURAZIONE_PASSIVA);
 				}catch(Exception e){
 					this.sdiValidazioneSemantica.getLog().error("Traccia di una precedente fattura ricevuta, con identificativo SDI ["+identificativoSdI+"], non rilevata: "+e.getMessage(),e);
 					this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
