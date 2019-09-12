@@ -62,6 +62,7 @@ openspcoop2.printFileReceived = true
 # Messaggio SOAP con attachments
 #openspcoop2.contentType = multipart/related;   boundary="----=_Part_0_6330713.1171639717331";   type="text/xml"
 #file=fileToSend/requestSOAPMultipartRelatedMIME
+#file=ffileToSend/requestSOAPMultipartRelatedMIME_conAttachXML
 
 
 # --------- FUNZIONALITA' DI IMBUSTAMENTO SOAP -------------

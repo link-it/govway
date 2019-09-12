@@ -470,7 +470,7 @@ public class InoltroBuste extends GenericLib{
 		
 		//	GestoriMessaggio
 		GestoreMessaggi msgRequest = new GestoreMessaggi(openspcoopstate, true, idMessageRequest,Costanti.OUTBOX,msgDiag, pddContext);
-		OpenSPCoop2Message requestMessage = null;
+		OpenSPCoop2Message requestMessagePrimaTrasformazione = null;
 		GestoreMessaggi msgResponse = null;
 		
 		
@@ -479,9 +479,9 @@ public class InoltroBuste extends GenericLib{
 		if(requestInfo==null || idTransazione==null) {
 			// devo leggerlo dal messaggio
 			try {
-				requestMessage = msgRequest.getMessage();
+				requestMessagePrimaTrasformazione = msgRequest.getMessage();
 				if(requestInfo==null) {
-					Object o = requestMessage.getContextProperty(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+					Object o = requestMessagePrimaTrasformazione.getContextProperty(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 					if(o==null) {
 						throw new Exception("RequestInfo non presente nel contesto");
 					}
@@ -489,7 +489,7 @@ public class InoltroBuste extends GenericLib{
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO,requestInfo);
 				}
 				if(idTransazione==null) {
-					Object o = requestMessage.getContextProperty(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+					Object o = requestMessagePrimaTrasformazione.getContextProperty(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 					if(o==null) {
 						throw new Exception("IdTransazione non presente nel contesto");
 					}
@@ -1110,8 +1110,8 @@ public class InoltroBuste extends GenericLib{
 			msgDiag.mediumDebug("Lettura messaggio soap della richiesta da spedire...");
 			TransportResponseContext transportResponseContext = null;
 			try{
-				if(requestMessage==null) {
-					requestMessage = msgRequest.getMessage();
+				if(requestMessagePrimaTrasformazione==null) {
+					requestMessagePrimaTrasformazione = msgRequest.getMessage();
 				}
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "msgRequest.getMessage()");
@@ -1232,7 +1232,7 @@ public class InoltroBuste extends GenericLib{
 			
 			OutRequestPDMessage outRequestPDMessage = new OutRequestPDMessage();
 			outRequestPDMessage.setBustaRichiesta(bustaRichiesta);
-			outRequestPDMessage.setMessage(requestMessage);
+			outRequestPDMessage.setMessage(requestMessagePrimaTrasformazione);
 			outRequestPDMessage.setPortaDelegata(pd);
 			outRequestPDMessage.setProprietaTrasporto(propertiesTrasporto);
 			outRequestPDMessage.setProprietaUrlBased(propertiesUrlBased);
@@ -1291,12 +1291,12 @@ public class InoltroBuste extends GenericLib{
 			/* ------------ Trasformazione Richiesta  -------------- */
 			
 			GestoreTrasformazioni gestoreTrasformazioni = null;
-			OpenSPCoop2Message requestMessageTrasformato = requestMessage;
+			OpenSPCoop2Message requestMessageTrasformato = requestMessagePrimaTrasformazione;
 			if(trasformazioni!=null) {
 				try {
 					gestoreTrasformazioni = new GestoreTrasformazioni(this.log, msgDiag, idServizio, soggettoFruitore, servizioApplicativoFruitore, 
 							trasformazioni, transactionNullable, pddContext, requestInfo, tipoPdD);
-					requestMessageTrasformato = gestoreTrasformazioni.trasformazioneRichiesta(requestMessage, bustaRichiesta);
+					requestMessageTrasformato = gestoreTrasformazioni.trasformazioneRichiesta(requestMessagePrimaTrasformazione, bustaRichiesta);
 				}
 				catch(GestoreTrasformazioniException e) {
 					
@@ -1396,29 +1396,29 @@ public class InoltroBuste extends GenericLib{
 				msgDiag.highDebug("Imbustamento (invokeSdk) ...");
 				if(functionAsRouter){
 					if(this.propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDDestinatario)){
-						msgDiag.highDebug("Tipo Messaggio Richiesta prima dell'imbustamento ["+requestMessage.getClass().getName()+"]");
-						ProtocolMessage protocolMessage = imbustatore.addTrasmissione(requestMessage, tras, readQualifiedAttribute,
+						msgDiag.highDebug("Tipo Messaggio Richiesta prima dell'imbustamento ["+requestMessageTrasformato.getClass().getName()+"]");
+						ProtocolMessage protocolMessage = imbustatore.addTrasmissione(requestMessageTrasformato, tras, readQualifiedAttribute,
 								FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
 						if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 							headerBustaRichiesta = protocolMessage.getBustaRawContent();
-							requestMessage = protocolMessage.getMessage(); // updated
+							requestMessageTrasformato = protocolMessage.getMessage(); // updated
 						}
-						msgDiag.highDebug("Tipo Messaggio Richiesta dopo l'imbustamento ["+requestMessage.getClass().getName()+"]");
+						msgDiag.highDebug("Tipo Messaggio Richiesta dopo l'imbustamento ["+requestMessageTrasformato.getClass().getName()+"]");
 					}
 					else{
-						Validatore v = new Validatore(requestMessage, pddContext.getContext(), openspcoopstate.getStatoRichiesta(),this.log, protocolFactory);
+						Validatore v = new Validatore(requestMessageTrasformato, pddContext.getContext(), openspcoopstate.getStatoRichiesta(),this.log, protocolFactory);
 						headerBustaRichiesta = v.getHeaderProtocollo_senzaControlli();
 					}
 				}else{
-					msgDiag.highDebug("Tipo Messaggio Richiesta prima dell'imbustamento ["+requestMessage.getClass().getName()+"]");
-					ProtocolMessage protocolMessage = imbustatore.imbustamentoRichiesta(requestMessage,bustaRichiesta,
+					msgDiag.highDebug("Tipo Messaggio Richiesta prima dell'imbustamento ["+requestMessageTrasformato.getClass().getName()+"]");
+					ProtocolMessage protocolMessage = imbustatore.imbustamentoRichiesta(requestMessageTrasformato,bustaRichiesta,
 							integrazione,gestioneManifest,scartaBody,proprietaManifestAttachments,
 							FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
 					if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 						headerBustaRichiesta = protocolMessage.getBustaRawContent();
-						requestMessage = protocolMessage.getMessage(); // updated
+						requestMessageTrasformato = protocolMessage.getMessage(); // updated
 					}
-					msgDiag.highDebug("Tipo Messaggio Richiesta dopo l'imbustamento ["+requestMessage.getClass().getName()+"]");
+					msgDiag.highDebug("Tipo Messaggio Richiesta dopo l'imbustamento ["+requestMessageTrasformato.getClass().getName()+"]");
 				}
 				msgDiag.highDebug("Imbustamento (invokeSdk) terminato");
 			}catch(Exception e){
@@ -1539,7 +1539,7 @@ public class InoltroBuste extends GenericLib{
 			/* ------------ MTOM Processor BeforeSecurity  -------------- */
 			if(mtomProcessor!=null){
 				try{
-					mtomProcessor.mtomBeforeSecurity(requestMessage, RuoloMessaggio.RICHIESTA);
+					mtomProcessor.mtomBeforeSecurity(requestMessageTrasformato, RuoloMessaggio.RICHIESTA);
 				}catch(Exception e){
 					// L'errore viene registrato dentro il metodo mtomProcessor.mtomBeforeSecurity
 					// msgDiag.logErroreGenerico(e,"MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")");
@@ -1634,11 +1634,11 @@ public class InoltroBuste extends GenericLib{
 						if(org.openspcoop2.security.message.engine.WSSUtilities.isNormalizeToSaajImpl(messageSecurityContext)){
 							msgDiag.mediumDebug("Normalize to saajImpl");
 							//System.out.println("InoltroBusteEgov.request.normalize");
-							requestMessage = requestMessage.normalizeToSaajImpl();
+							requestMessageTrasformato = requestMessageTrasformato.normalizeToSaajImpl();
 						}
 						
 						msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaInCorso");
-						if(messageSecurityContext.processOutgoing(requestMessage,pddContext.getContext(),
+						if(messageSecurityContext.processOutgoing(requestMessageTrasformato,pddContext.getContext(),
 								transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null) == false){
 							msgErrore = messageSecurityContext.getMsgErrore();
 							codiceErroreCooperazione = messageSecurityContext.getCodiceErrore();
@@ -1668,7 +1668,7 @@ public class InoltroBuste extends GenericLib{
 					if(messageSecurityContext!=null && messageSecurityContext.getDigestReader()!=null){
 						try{
 							msgDiag.mediumDebug("Lettura informazioni sulla Sicurezza dal Messaggio di richiesta ...");
-							securityInfo = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),requestMessage);
+							securityInfo = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),requestMessageTrasformato);
 							msgDiag.mediumDebug("Lettura informazioni sulla Sicurezza dal Messaggio di richiesta completata con successo");
 						}catch(Exception e){
 							msgDiag.logErroreGenerico(e,"ErroreLetturaInformazioniSicurezza");
@@ -1718,7 +1718,7 @@ public class InoltroBuste extends GenericLib{
 			/* ------------ MTOM Processor AfterSecurity  -------------- */
 			if(mtomProcessor!=null){
 				try{
-					mtomProcessor.mtomAfterSecurity(requestMessage, RuoloMessaggio.RICHIESTA);
+					mtomProcessor.mtomAfterSecurity(requestMessageTrasformato, RuoloMessaggio.RICHIESTA);
 				}catch(Exception e){
 					// L'errore viene registrato dentro il metodo mtomProcessor.mtomAfterSecurity
 					//msgDiag.logErroreGenerico(e,"MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")");
@@ -1765,28 +1765,28 @@ public class InoltroBuste extends GenericLib{
 				msgDiag.highDebug("Imbustamento (after security) (invokeSdk) ...");
 				if(functionAsRouter){
 					if(this.propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDDestinatario)){
-						msgDiag.highDebug("Tipo Messaggio Richiesta prima dell'imbustamento (after security) ["+requestMessage.getClass().getName()+"]");
-						ProtocolMessage protocolMessage = imbustatore.addTrasmissione(requestMessage, tras, readQualifiedAttribute,
+						msgDiag.highDebug("Tipo Messaggio Richiesta prima dell'imbustamento (after security) ["+requestMessageTrasformato.getClass().getName()+"]");
+						ProtocolMessage protocolMessage = imbustatore.addTrasmissione(requestMessageTrasformato, tras, readQualifiedAttribute,
 								FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
 						if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 							headerBustaRichiesta = protocolMessage.getBustaRawContent();
-							requestMessage = protocolMessage.getMessage(); // updated
+							requestMessageTrasformato = protocolMessage.getMessage(); // updated
 						}
-						msgDiag.highDebug("Tipo Messaggio Richiesta dopo l'imbustamento (after security) ["+requestMessage.getClass().getName()+"]");
+						msgDiag.highDebug("Tipo Messaggio Richiesta dopo l'imbustamento (after security) ["+requestMessageTrasformato.getClass().getName()+"]");
 					}
 					else{
 						// gia' effettuata in fase PRIMA_SICUREZZA_MESSAGGIO
 					}
 				}else{
-					msgDiag.highDebug("Tipo Messaggio Richiesta prima dell'imbustamento (after security) ["+requestMessage.getClass().getName()+"]");
-					ProtocolMessage protocolMessage = imbustatore.imbustamentoRichiesta(requestMessage,bustaRichiesta,
+					msgDiag.highDebug("Tipo Messaggio Richiesta prima dell'imbustamento (after security) ["+requestMessageTrasformato.getClass().getName()+"]");
+					ProtocolMessage protocolMessage = imbustatore.imbustamentoRichiesta(requestMessageTrasformato,bustaRichiesta,
 							integrazione,gestioneManifest,scartaBody,proprietaManifestAttachments,
 							FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
 					if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 						headerBustaRichiesta = protocolMessage.getBustaRawContent();
-						requestMessage = protocolMessage.getMessage(); // updated
+						requestMessageTrasformato = protocolMessage.getMessage(); // updated
 					}
-					msgDiag.highDebug("Tipo Messaggio Richiesta dopo l'imbustamento (after security) ["+requestMessage.getClass().getName()+"]");
+					msgDiag.highDebug("Tipo Messaggio Richiesta dopo l'imbustamento (after security) ["+requestMessageTrasformato.getClass().getName()+"]");
 				}
 				msgDiag.highDebug("Imbustamento (after security) (invokeSdk) terminato");
 			}catch(Exception e){
@@ -2306,7 +2306,7 @@ public class InoltroBuste extends GenericLib{
 							motivoErroreConsegna, connectorSender.getEccezioneProcessamento());
 					responseMessage = connectorSender.getResponse();	
 					if(responseMessage!=null){
-						responseMessage.setTransportRequestContext(requestMessage.getTransportRequestContext());
+						responseMessage.setTransportRequestContext(requestMessagePrimaTrasformazione.getTransportRequestContext());
 						responseMessage.setTransportResponseContext(transportResponseContext);
 					}			
 					// gestione connessione connettore
@@ -2420,7 +2420,7 @@ public class InoltroBuste extends GenericLib{
 							responseMessage, isBlockedTransaction_responseMessageWithTransportCodeError,
 							functionAsRouter, sendRispostaApplicativa, bfMsgErroreSituazioneAnomale);
 					if(esitoTraccia!=null) {
-						tracciamento.registraRichiesta(requestMessage,securityInfo,headerBustaRichiesta,bustaRichiesta,esitoTraccia,
+						tracciamento.registraRichiesta(requestMessageTrasformato,securityInfo,headerBustaRichiesta,bustaRichiesta,esitoTraccia,
 								Tracciamento.createLocationString(false, location),
 								idCorrelazioneApplicativa);
 					}
@@ -2490,7 +2490,7 @@ public class InoltroBuste extends GenericLib{
 				}
 				responseMessage = protocolFactory.createProtocolManager().updateOpenSPCoop2MessageResponse(responseMessage, 
 						bustaRichiesta, nParams,
-						requestMessage.getTransportRequestContext(),transportResponseContext,
+						requestMessagePrimaTrasformazione.getTransportRequestContext(),transportResponseContext,
 						protocolFactory.getCachedRegistryReader(openspcoopstate.getStatoRichiesta()));
 			} catch (Exception e) {
 				
@@ -2499,7 +2499,7 @@ public class InoltroBuste extends GenericLib{
 					if(pe.isForceTrace()) {
 						msgDiag.mediumDebug("Tracciamento della richiesta...");
 						EsitoElaborazioneMessaggioTracciato esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(e.getMessage());
-						tracciamento.registraRichiesta(requestMessage,securityInfo,headerBustaRichiesta,bustaRichiesta,esitoTraccia,
+						tracciamento.registraRichiesta(requestMessageTrasformato,securityInfo,headerBustaRichiesta,bustaRichiesta,esitoTraccia,
 								Tracciamento.createLocationString(false, location),
 								idCorrelazioneApplicativa);
 					}
@@ -2713,7 +2713,7 @@ public class InoltroBuste extends GenericLib{
 						responseMessage, isBlockedTransaction_responseMessageWithTransportCodeError,
 						functionAsRouter, sendRispostaApplicativa, bfMsgErroreSituazioneAnomale);
 				if(esitoTraccia!=null) {
-					tracciamento.registraRichiesta(requestMessage,securityInfo,headerBustaRichiesta,bustaRichiesta,esitoTraccia,
+					tracciamento.registraRichiesta(requestMessageTrasformato,securityInfo,headerBustaRichiesta,bustaRichiesta,esitoTraccia,
 							Tracciamento.createLocationString(false, location),
 							idCorrelazioneApplicativa);
 				}
@@ -3317,17 +3317,17 @@ public class InoltroBuste extends GenericLib{
 					}
 					if(sendRispostaApplicativa){
 						if(responseMessage==null){
-							if(requestMessage.getParseException()!=null){
+							if(requestMessagePrimaTrasformazione.getParseException()!=null){
 								pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 								OpenSPCoop2Message responseMessageError = 
 										this.generatoreErrore.build(IntegrationError.BAD_REQUEST,
-											ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.getErrore432_MessaggioRichiestaMalformato(requestMessage.getParseException().getParseException()),
-											requestMessage.getParseException().getParseException(),
-											requestMessage.getParseException());
+											ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.getErrore432_MessaggioRichiestaMalformato(requestMessagePrimaTrasformazione.getParseException().getParseException()),
+											requestMessagePrimaTrasformazione.getParseException().getParseException(),
+											requestMessagePrimaTrasformazione.getParseException());
 								ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 								openspcoopstate.releaseResource();
 								esito.setEsitoInvocazione(true);	
-								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,requestMessage.getParseException().getParseException().getMessage());
+								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,requestMessagePrimaTrasformazione.getParseException().getParseException().getMessage());
 								return esito;
 							}
 							else if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)){
@@ -4122,7 +4122,7 @@ public class InoltroBuste extends GenericLib{
 					
 					// Scenario RoutingSincrono
 					if( (org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())) &&
-							(!validatoreErrori.isBustaErrore(bustaRichiesta,requestMessage,pValidazioneErrori)) ){
+							(!validatoreErrori.isBustaErrore(bustaRichiesta,requestMessageTrasformato,pValidazioneErrori)) ){
 						msgDiag.mediumDebug("Spedizione msg di sblocco al modulo RicezioneBuste...");
 						ejbUtils.sendSbloccoRicezioneBuste(richiestaDelegata.getIdModuloInAttesa());
 					}
@@ -4235,7 +4235,7 @@ public class InoltroBuste extends GenericLib{
 
 					// Scenario Sincrono
 					if( (org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())) &&
-							(!validatoreErrori.isBustaErrore(bustaRichiesta,requestMessage,pValidazioneErrori)) ){
+							(!validatoreErrori.isBustaErrore(bustaRichiesta,requestMessageTrasformato,pValidazioneErrori)) ){
 						msgDiag.mediumDebug("Gestione punto 2 (MessaggioErroreProtocollo e MessaggioProtocollo) [router] (sincrono)...");
 						ejbUtils.sendBustaRisposta(richiestaDelegata.getIdModuloInAttesa(),bustaRisposta,null,
 								idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore);
@@ -4454,7 +4454,7 @@ public class InoltroBuste extends GenericLib{
 										else {
 											
 											// Validazione Interface
-											validatoreMessaggiApplicativi.validateResponseWithInterface(requestMessage, false);
+											validatoreMessaggiApplicativi.validateResponseWithInterface(requestMessagePrimaTrasformazione, false);
 											
 										}
 										
@@ -4635,7 +4635,7 @@ public class InoltroBuste extends GenericLib{
 					
 						// Scenario RoutingSincrono
 						if( (org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())) &&
-								(!validatoreErrori.isBustaErrore(bustaRichiesta,requestMessage,pValidazioneErrori)) ){
+								(!validatoreErrori.isBustaErrore(bustaRichiesta,requestMessageTrasformato,pValidazioneErrori)) ){
 							msgDiag.mediumDebug("Gestione punto 4 (SoapFault senza una busta associata) [router] (sincrono)...");
 							ejbUtils.sendSbloccoRicezioneBuste(richiestaDelegata.getIdModuloInAttesa());
 						}

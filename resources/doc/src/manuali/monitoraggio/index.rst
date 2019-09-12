@@ -10,4 +10,7 @@ Guida alla Console di Monitoraggio
         monitoraggio/index
         eventi/index
         reportistica/index
-	profiloFatturaPA/index
+	profiloApiGateway/index
+	profiloModIPA/index
+	profiloEDelivery/index
+        profiloFatturaPA/index

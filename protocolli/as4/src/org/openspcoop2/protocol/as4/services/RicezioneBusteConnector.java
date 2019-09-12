@@ -31,7 +31,9 @@ import javax.jms.Message;
 import javax.servlet.ServletException;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
+import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.services.connector.ConnectorUtils;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
@@ -111,12 +113,35 @@ public class RicezioneBusteConnector extends AbstractRicezioneConnector{
 		try{
 			ricezioneBuste.process(as4In, as4Out);
 		}catch(Exception e){
-			ConnectorUtils.getErrorLog().error("RicezioneContenutiApplicativi.process error: "+e.getMessage(),e);
+			ConnectorUtils.getErrorLog().error("RicezioneBusteConnector.process error: "+e.getMessage(),e);
 			throw new ServletException(e.getMessage(),e);
 		}
 		
 		if(as4Out.getResponseStatus()!=200 && as4Out.getResponseStatus()!=202) {
-			throw new Exception("Servizio Ricezione Buste terminato con codice: "+as4Out.getResponseStatus());
+			if(as4Out.getMessage()!=null) {
+				if(ServiceBinding.SOAP.equals(as4Out.getMessage())) {
+					OpenSPCoop2SoapMessage soapMsg = as4Out.getMessage().castAsSoap();
+					if(soapMsg.getSOAPBody()!=null && soapMsg.getSOAPBody().hasFault()) {
+						throw new Exception("Servizio Ricezione Buste terminato con codice '"+as4Out.getResponseStatus()+"' e con un soapFault: "+
+								SoapUtils.toString(soapMsg.getSOAPBody().getFault()));
+					}
+					else {
+						throw new Exception("Servizio Ricezione Buste terminato con codice (Messaggio SOAP senza Fault): "+as4Out.getResponseStatus());
+					}
+				}
+				else {
+					OpenSPCoop2RestMessage<?> restMsg = as4Out.getMessage().castAsRest();
+					if(restMsg.isFault() && restMsg.hasContent()) {
+						throw new Exception("Servizio Ricezione Buste terminato con codice '"+as4Out.getResponseStatus()+"' e con un restFault: "+restMsg.getContentAsString());
+					}
+					else {
+						throw new Exception("Servizio Ricezione Buste terminato con codice (Messaggio SOAP senza Fault): "+as4Out.getResponseStatus());
+					}
+				}
+			}
+			else {
+				throw new Exception("Servizio Ricezione Buste terminato con codice: "+as4Out.getResponseStatus());
+			}
 		}
 		if(as4Out.getMessage()!=null) {
 			OpenSPCoop2SoapMessage soapMsg = as4Out.getMessage().castAsSoap();

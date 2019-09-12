@@ -893,7 +893,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			idMessaggioGestoreMessaggiRichiesta = bustaRichiesta.getID();
 		}
 		GestoreMessaggi msgRequest = new GestoreMessaggi(openspcoopstate, true, idMessaggioGestoreMessaggiRichiesta,Costanti.INBOX,msgDiag,pddContext);
-		OpenSPCoop2Message consegnaMessage = null;
+		OpenSPCoop2Message consegnaMessagePrimaTrasformazione = null;
 		GestoreMessaggi msgResponse = null;
 		msgRequest.setPortaDiTipoStateless(portaDiTipoStateless);
 		
@@ -902,9 +902,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		if(requestInfo==null || idTransazione==null) {
 			// devo leggerlo dal messaggio
 			try {
-				consegnaMessage = msgRequest.getMessage();
+				consegnaMessagePrimaTrasformazione = msgRequest.getMessage();
 				if(requestInfo==null) {
-					Object o = consegnaMessage.getContextProperty(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+					Object o = consegnaMessagePrimaTrasformazione.getContextProperty(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 					if(o==null) {
 						throw new Exception("RequestInfo non presente nel contesto");
 					}
@@ -912,7 +912,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO,requestInfo);
 				}
 				if(idTransazione==null) {
-					Object o = consegnaMessage.getContextProperty(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+					Object o = consegnaMessagePrimaTrasformazione.getContextProperty(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 					if(o==null) {
 						throw new Exception("IdTransazione non presente nel contesto");
 					}
@@ -1254,12 +1254,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			/* ------------  Ricostruzione Messaggio Soap da spedire ------------- */
 			msgDiag.mediumDebug("Ricostruzione SOAPEnvelope di richiesta/consegna...");	
 			try{
-				if(consegnaMessage==null) {
+				if(consegnaMessagePrimaTrasformazione==null) {
 					if(consegnaPerRiferimento==false){
-						consegnaMessage = msgRequest.getMessage();
+						consegnaMessagePrimaTrasformazione = msgRequest.getMessage();
 					}else{
 						// consegnaMessage deve contenere il messaggio necessario all'invocazione del metodo pubblicaEvento
-						consegnaMessage = 
+						consegnaMessagePrimaTrasformazione = 
 							msgRequest.buildRichiestaPubblicazioneMessaggio_RepositoryMessaggi(soggettoFruitore, tipoServizio,servizio,azione);
 					}
 				}
@@ -1337,7 +1337,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			
 			OutRequestPAMessage outRequestPAMessage = new OutRequestPAMessage();
 			outRequestPAMessage.setBustaRichiesta(bustaRichiesta);
-			outRequestPAMessage.setMessage(consegnaMessage);
+			outRequestPAMessage.setMessage(consegnaMessagePrimaTrasformazione);
 			if(pa!=null)
 				outRequestPAMessage.setPortaApplicativa(pa);
 			else
@@ -1410,12 +1410,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			/* ------------ Trasformazione Richiesta  -------------- */
 			
 			GestoreTrasformazioni gestoreTrasformazioni = null;
-			OpenSPCoop2Message consegnaMessageTrasformato = consegnaMessage;
+			OpenSPCoop2Message consegnaMessageTrasformato = consegnaMessagePrimaTrasformazione;
 			if(trasformazioni!=null) {
 				try {
 					gestoreTrasformazioni = new GestoreTrasformazioni(this.log, msgDiag, idServizio, soggettoFruitore, servizioApplicativoFruitore, 
 							trasformazioni, transactionNullable, pddContext, requestInfo, tipoPdD);
-					consegnaMessageTrasformato = gestoreTrasformazioni.trasformazioneRichiesta(consegnaMessage, bustaRichiesta);
+					consegnaMessageTrasformato = gestoreTrasformazioni.trasformazioneRichiesta(consegnaMessagePrimaTrasformazione, bustaRichiesta);
 				}
 				catch(GestoreTrasformazioniException e) {
 					
@@ -1642,7 +1642,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			else if(Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_POLLING.equals(scenarioCooperazione)){
 				try{
 					msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_RispostaAsincrona) [AsincronoAsimmetricoPolling]...");
-					gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_RispostaAsincrona(protocolFactory, consegnaMessage.getServiceBinding(), sa);
+					gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_RispostaAsincrona(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e, "AsincronoSimmetricoPolling.getDatiConsegna(sa:"+servizioApplicativo+")");
 					ejbUtils.rollbackMessage("[AsincronoSimmetricoPolling] Connettore per consegna applicativa non definito:"+e.getMessage(),servizioApplicativo, esito);
@@ -1652,7 +1652,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				}
 			}else{
 				try{
-					gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_InvocazioneServizio(protocolFactory, consegnaMessage.getServiceBinding(), sa);
+					gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_InvocazioneServizio(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
 					msgDiag.mediumDebug("Inizializzo contesto per la gestione (invocazioneServizioPerRiferimento)...");
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e, "InvocazioneServizio.getDatiConsegna(sa:"+servizioApplicativo+")");
@@ -1977,7 +1977,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							motivoErroreConsegna, connectorSender.getEccezioneProcessamento());
 					responseMessage = connectorSender.getResponse();
 					if(responseMessage!=null){
-						responseMessage.setTransportRequestContext(consegnaMessage.getTransportRequestContext());
+						responseMessage.setTransportRequestContext(consegnaMessagePrimaTrasformazione.getTransportRequestContext());
 						responseMessage.setTransportResponseContext(transportResponseContext);
 					}
 					// gestione connessione connettore
@@ -2130,7 +2130,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				}
 				responseMessage = protocolFactory.createProtocolManager().updateOpenSPCoop2MessageResponse(responseMessage, 
 						bustaRichiesta, nParams,
-						consegnaMessage.getTransportRequestContext(),transportResponseContext,
+						consegnaMessagePrimaTrasformazione.getTransportRequestContext(),transportResponseContext,
 						protocolFactory.getCachedRegistryReader(openspcoopstate.getStatoRichiesta()));
 			} catch (Exception e) {
 				msgDiag.addKeywordErroreProcessamento(e, "Aggiornamento messaggio fallito");
@@ -2866,7 +2866,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 										else {
 											
 											// Validazione Interface
-											validatoreMessaggiApplicativi.validateResponseWithInterface(consegnaMessage, true);
+											validatoreMessaggiApplicativi.validateResponseWithInterface(consegnaMessagePrimaTrasformazione, true);
 											
 										}
 										

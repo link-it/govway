@@ -98,12 +98,16 @@ public class APS {
 			}
 		}
 		
+		/*
+		 * 
+		 *  Le 3 proprietà sono in una fruizione se stiamo configurando una fruizione.
 		if(this.ebmsSecurityProfile == null)
 			throw new Exception("Property "+AS4Costanti.AS4_PROTOCOL_PROPERTIES_SECURITY_PROFILE+" non definita per l'aps ["+base.getNome()+"] erogato dal soggetto ["+base.getNomeSoggettoErogatore()+"]");
 		if(this.ebmsReliabilityNonRepudiation == null)
 			throw new Exception("Property "+AS4Costanti.AS4_PROTOCOL_PROPERTIES_RELIABILITY_NON_REPUDIATION+" non definita per l'aps ["+base.getNome()+"] erogato dal soggetto ["+base.getNomeSoggettoErogatore()+"]");
 		if(this.ebmsReliabilityReplyPattern == null)
 			throw new Exception("Property "+AS4Costanti.AS4_PROTOCOL_PROPERTIES_RELIABILITY_REPLY_PATTERN+" non definita per l'aps ["+base.getNome()+"] erogato dal soggetto ["+base.getNomeSoggettoErogatore()+"]");
+		*/
 		
 		Map<String, Azione> azioniAPI = null;
 		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(api.getBase().getServiceBinding())){
@@ -192,19 +196,66 @@ public class APS {
 	public void setCnFruitori(List<String> cnFruitori) {
 		this.cnFruitori = cnFruitori;
 	}
-	public void initCNFruitori(List<Soggetto> soggetti) {
+	public void initCNFruitori(List<Soggetto> soggetti) throws Exception {
+		
+		// Metodo che viene chiamato per le fruizioni
+		
 		for (Fruitore fruitore : this.base.getFruitoreList()) {
 			for (Soggetto soggetto : soggetti) {
 				if(soggetto.getBase().getNome().equals(fruitore.getNome())) {
 					if(this.cnFruitori.contains(soggetto.getEbmsUserMessagePartyCN())==false) {
 						this.cnFruitori.add(soggetto.getEbmsUserMessagePartyCN());
+						
+						org.openspcoop2.protocol.as4.pmode.beans.Fruitore fruitoreBuild = new org.openspcoop2.protocol.as4.pmode.beans.Fruitore(fruitore, this.base, soggetto.getEbmsUserMessagePartyCN());
+						String oggettoFruizione = "fruizione da parte del soggetto '"+fruitore.getNome()+"' dell'api '"+this.base.getNome()+"' erogata dal soggetto '"+this.base.getNomeSoggettoErogatore()+"'";
+					    
+						if(this.ebmsSecurityProfile==null) {
+							this.ebmsSecurityProfile = fruitoreBuild.getEbmsSecurityProfile();
+						}
+						else {
+							if(this.ebmsSecurityProfile.equals(fruitoreBuild.getEbmsSecurityProfile())==false) {
+								throw new Exception("Property "+AS4Costanti.AS4_PROTOCOL_PROPERTIES_SECURITY_PROFILE+" ("+fruitoreBuild.getEbmsSecurityProfile()+") definita definita per la "+oggettoFruizione+
+										" differente dal valore ("+this.ebmsSecurityProfile+") indicato per l'erogazione della medesima API da parte del soggetto "+this.base.getNomeSoggettoErogatore());
+							}
+						}
+						
+						if(this.ebmsReliabilityNonRepudiation==null) {
+							this.ebmsReliabilityNonRepudiation = fruitoreBuild.getEbmsReliabilityNonRepudiation();
+						}
+						else {
+							if(this.ebmsReliabilityNonRepudiation.equals(fruitoreBuild.getEbmsReliabilityNonRepudiation())==false) {
+								throw new Exception("Property "+AS4Costanti.AS4_PROTOCOL_PROPERTIES_RELIABILITY_NON_REPUDIATION+" ("+fruitoreBuild.getEbmsReliabilityNonRepudiation()+") definita definita per la "+oggettoFruizione+
+										" differente dal valore ("+this.ebmsReliabilityNonRepudiation+") indicato per l'erogazione della medesima API da parte del soggetto "+this.base.getNomeSoggettoErogatore());
+							}
+						}
+						
+						if(this.ebmsReliabilityReplyPattern==null) {
+							this.ebmsReliabilityReplyPattern = fruitoreBuild.getEbmsReliabilityReplyPattern();
+						}
+						else {
+							if(this.ebmsReliabilityReplyPattern.equals(fruitoreBuild.getEbmsReliabilityReplyPattern())==false) {
+								throw new Exception("Property "+AS4Costanti.AS4_PROTOCOL_PROPERTIES_RELIABILITY_REPLY_PATTERN+" ("+fruitoreBuild.getEbmsReliabilityReplyPattern()+") definita definita per la "+oggettoFruizione+
+										" differente dal valore ("+this.ebmsReliabilityReplyPattern+") indicato per l'erogazione della medesima API da parte del soggetto "+this.base.getNomeSoggettoErogatore());
+							}
+						}
+						
 					}
 					break;
 				}
 			}
 		}
 	}
-	public void initCNFruitori(List<Soggetto> soggetti,List<IDSoggetto> soggettiAutorizzati) {
+	public void initCNFruitori(List<Soggetto> soggetti,List<IDSoggetto> soggettiAutorizzati) throws Exception {
+		
+		// Metodo che viene chiamato per le erogazioni
+		
+		if(this.ebmsSecurityProfile == null)
+			throw new Exception("Property "+AS4Costanti.AS4_PROTOCOL_PROPERTIES_SECURITY_PROFILE+" non definita per l'erogazione dell'API ["+this.base.getNome()+"] erogata dal soggetto ["+this.base.getNomeSoggettoErogatore()+"]");
+		if(this.ebmsReliabilityNonRepudiation == null)
+			throw new Exception("Property "+AS4Costanti.AS4_PROTOCOL_PROPERTIES_RELIABILITY_NON_REPUDIATION+" non definita per l'erogazione dell'API ["+this.base.getNome()+"] erogata dal soggetto ["+this.base.getNomeSoggettoErogatore()+"]");
+		if(this.ebmsReliabilityReplyPattern == null)
+			throw new Exception("Property "+AS4Costanti.AS4_PROTOCOL_PROPERTIES_RELIABILITY_REPLY_PATTERN+" non definita per l'erogazione dell'API ["+this.base.getNome()+"] erogata dal soggetto ["+this.base.getNomeSoggettoErogatore()+"]");
+				
 		for (IDSoggetto soggettoAutorizzato : soggettiAutorizzati) {
 			for (Soggetto soggetto : soggetti) {
 				if(soggetto.getBase().getNome().equals(soggettoAutorizzato.getNome())) {

@@ -718,8 +718,9 @@ public class RicezioneContenutiApplicativi {
 				msgDiag.logErroreGenerico(e, posizione);
 			}
 		}
-		else
+		else {
 			logCore.error(posizione+": "+e.getMessage(),e);
+		}
 		if (this.msgContext.isGestioneRisposta()) {
 			String posizioneFault = posizione+": "+e.getMessage();
 			OpenSPCoop2Message messageFault = this.generatoreErrore.build(integrationError, 

@@ -47,6 +47,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
@@ -142,7 +143,11 @@ public final class Exporter extends Action {
 				}
 				break;
 			case ACCORDO_SERVIZIO_PARTE_COMUNE:
-				provenienza = new Parameter(AccordiServizioParteComuneCostanti.LABEL_APC, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST,
+				String servletApi = AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST;
+				if(!archiviHelper.isModalitaCompleta()) {
+					servletApi = ApiCostanti.SERVLET_NAME_APC_API_LIST;
+				}
+				provenienza = new Parameter(AccordiServizioParteComuneCostanti.LABEL_APC, servletApi,
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE));
 				identificativi = exporterUtils.getIdsAccordiServizioParteComune(objToExport);
 				for (Object id : identificativi) {

@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
+import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDServizio;
@@ -983,10 +984,95 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 	
 
 
-//	/*** ACCORDI SERVIZIO PARTE SPECIFICA ***/
+	// /** EROGAZIONI / FRUIZIONI **/
+	
+	@Override
+	public ConsoleConfiguration getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType consoleOperationType,
+			IConsoleHelper consoleHelper, IRegistryReader registryReader,
+			IConfigIntegrationReader configIntegrationReader, IDServizio id) throws ProtocolException {
+		
+		ConsoleConfiguration configuration = _getDynamicConfigAccordoServizioParteSpecifica(consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id, false);
+		if(configuration!=null) {
+			return configuration;
+		}
+		return super.getDynamicConfigAccordoServizioParteSpecifica(consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id);
+		
+	}
+	
+	@Override
+	public void updateDynamicConfigAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties,
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio id)
+			throws ProtocolException {
+		
+		boolean operazioneGestita = _updateDynamicConfigParteSpecifica(consoleConfiguration, consoleOperationType, consoleHelper, properties, id, registryReader, false);
+		if(!operazioneGestita) {
+			super.updateDynamicConfigAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, consoleHelper, properties, registryReader, configIntegrationReader, id);
+			return;
+		}
+		
+	}
+	
+	@Override
+	public void validateDynamicConfigAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties,
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio id)
+			throws ProtocolException {
+		
+		boolean operazioneGestita = _validateDynamicConfigAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, consoleHelper, properties, 
+				registryReader, configIntegrationReader, id,false);
+		if(!operazioneGestita) {
+			super.validateDynamicConfigAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, consoleHelper, properties, registryReader, configIntegrationReader, id);
+			return;
+		}
+		
+	}
+	
+	@Override
+	public ConsoleConfiguration getDynamicConfigFruizioneAccordoServizioParteSpecifica(
+			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, IRegistryReader registryReader,
+			IConfigIntegrationReader configIntegrationReader, IDFruizione id) throws ProtocolException {
+		
+		ConsoleConfiguration configuration = _getDynamicConfigAccordoServizioParteSpecifica(consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id.getIdServizio(), true);
+		if(configuration!=null) {
+			return configuration;
+		}
+		return super.getDynamicConfigFruizioneAccordoServizioParteSpecifica(consoleOperationType, consoleHelper, registryReader,
+				configIntegrationReader, id);
+		
+	}
 
 	@Override
-	public ConsoleConfiguration getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio id)
+	public void updateDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties,
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDFruizione id)
+			throws ProtocolException {
+		
+		boolean operazioneGestita = _updateDynamicConfigParteSpecifica(consoleConfiguration, consoleOperationType, consoleHelper, properties, id.getIdServizio(), registryReader, true);
+		if(!operazioneGestita) {
+			super.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType,
+					consoleHelper, properties, registryReader, configIntegrationReader, id);
+		}
+		
+	}
+
+	@Override
+	public void validateDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties,
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDFruizione id)
+			throws ProtocolException {
+	
+		boolean operazioneGestita = _validateDynamicConfigAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, consoleHelper, properties, 
+				registryReader, configIntegrationReader, id.getIdServizio(), true);
+		if(!operazioneGestita) {
+			super.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType,
+					consoleHelper, properties, registryReader, configIntegrationReader, id);
+		}
+		
+	}
+	
+	private ConsoleConfiguration _getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, 
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio id, boolean fruizioni)
 			throws ProtocolException {
 		
 		PModeRegistryReader pmodeRR = new PModeRegistryReader(registryReader, configIntegrationReader, this.protocolFactory);
@@ -1062,10 +1148,16 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		return configuration;
 	}
 
-	@Override
-	public void validateDynamicConfigAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration,
-			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
-			IDServizio id) throws ProtocolException {
+	private boolean _updateDynamicConfigParteSpecifica(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties,
+			IDServizio id, IRegistryReader registryReader, boolean fruizioni) throws ProtocolException {
+		return false;
+	}
+	
+	private boolean _validateDynamicConfigAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
+			IDServizio id, boolean fruizioni) throws ProtocolException {
 		
 		StringProperty securityProfileItem = (StringProperty) 
 				ProtocolPropertiesUtils.getAbstractPropertyById(properties, AS4ConsoleCostanti.AS4_EROGAZIONE_SECURITY_PROFILE_ID);
@@ -1073,6 +1165,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			throw new ProtocolException("Deve essere selezionato uno dei valori presenti nel parametro '"+AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_TYPE_VALUE_LABEL+"'");
 		}
 		
+		return true;
 	}
 
 }

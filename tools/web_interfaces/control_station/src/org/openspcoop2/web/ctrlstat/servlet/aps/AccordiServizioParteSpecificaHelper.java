@@ -880,7 +880,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								eptypeprov = connettore.getTipo();
 							}
 			
-							if (eptypeprov.equals(TipiConnettore.DISABILITATO.getNome())) {
+							boolean connettoreStatic = this.apsCore.isConnettoreStatic(protocollo);
+							
+							if (!connettoreStatic && eptypeprov.equals(TipiConnettore.DISABILITATO.getNome())) {
 								if(tipoOp.equals(TipoOperazione.CHANGE)){
 									this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_PER_POTER_DISABILITARE_IL_CONNETTORE_DEVE_PRIMA_ESSERE_DEFINITO_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE);
 								}

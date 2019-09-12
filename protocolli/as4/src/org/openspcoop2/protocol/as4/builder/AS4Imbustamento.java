@@ -32,14 +32,12 @@ import javax.mail.BodyPart;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
-import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMSource;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
+import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageProperties;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartProperties;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyId;
@@ -67,7 +65,6 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
-import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.as4.AS4RawContent;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
 import org.openspcoop2.protocol.as4.pmode.TranslatorPayloadProfilesDefault;
@@ -81,8 +78,8 @@ import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
-import org.openspcoop2.utils.dch.DataContentHandlerManager;
 import org.openspcoop2.utils.dch.InputStreamDataSource;
+import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.transport.TransportRequestContext;
@@ -97,11 +94,11 @@ import eu.domibus.configuration.Attachment;
 import eu.domibus.configuration.Payload;
 import eu.domibus.configuration.PayloadProfile;
 import eu.domibus.configuration.PayloadProfiles;
+import eu.domibus.configuration.Properties;
+import eu.domibus.configuration.PropertyRef;
 import eu.domibus.configuration.PropertySet;
 import eu.domibus.configuration.PropertyValueHeader;
 import eu.domibus.configuration.PropertyValueUrl;
-import eu.domibus.configuration.Properties;
-import eu.domibus.configuration.PropertyRef;
 
 /**
  * AS4Imbustamento
@@ -670,31 +667,14 @@ public class AS4Imbustamento {
 			
 			String ctBase = ContentTypeUtilities.readBaseTypeFromContentType(contentTypeUtilizzato);
 			if(HttpConstants.CONTENT_TYPE_TEXT_XML.equals(ctBase)) {
-				Source streamSource = null;
-				DataContentHandlerManager dchManager = new DataContentHandlerManager(log);
-				if(dchManager.readMimeTypesContentHandler().containsKey(contentTypeUtilizzato)) {
-					// Se è non registrato un content handler per text/xml
-					// succede se dentro l'ear non c'e' il jar mailapi e l'application server non ha caricato il modulo mailapi (es. tramite versione standalone standard)
-					// e si usa il metodo seguente DOMSource si ottiene il seguente errore:
-					// javax.xml.soap.SOAPException: no object DCH for MIME type text/xml
-					//    at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.28.jar:?]
-					//System.out.println("XML (DOMSource)");
-					streamSource = new DOMSource(XMLUtils.getInstance().newElement(xml));
+				if(MailcapActivationReader.existsDataContentHandler(HttpConstants.CONTENT_TYPE_TEXT_XML)){
+					apBody = as4Message.createAttachmentPart();
+					as4Message.updateAttachmentPart(apBody, xml, contentTypeUtilizzato);
 				}
 				else {
-					// Se è registrato un content handler per text/xml
-					// e succede se dentro l'ear c'e' il jar mailapi oppure se l'application server ha caricato il modulo mailapi (es. tramite versione standalone full)
-					// e si usa il metodo seguente StreamSource, si ottiene il seguente errore:
-					//  Unable to run the JAXP transformer on a stream org.xml.sax.SAXParseException; Premature end of file. (sourceException: Error during saving a multipart message) 
-					//  	com.sun.xml.messaging.saaj.SOAPExceptionImpl: Error during saving a multipart message
-					//        at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.28.jar:?]
-					//        at org.openspcoop2.message.Message1_1_FIX_Impl.writeTo(Message1_1_FIX_Impl.java:172) ~[openspcoop2_message_BUILD-13516.jar:?]
-					//        at org.openspcoop2.message.OpenSPCoop2Message_11_impl.writeTo
-					//System.out.println("XML (StreamSource)");
-					streamSource = new javax.xml.transform.stream.StreamSource(new java.io.ByteArrayInputStream(xml));
+					InputStreamDataSource isSource = new InputStreamDataSource("eDeliveryPayload", contentTypeUtilizzato, xml);
+					apBody = as4Message.createAttachmentPart(new DataHandler(isSource));
 				}
-				apBody = as4Message.createAttachmentPart();
-				apBody.setContent(streamSource, contentTypeUtilizzato);
 			}
 			else {
 				InputStreamDataSource isSource = new InputStreamDataSource("eDeliveryPayload", contentTypeUtilizzato, xml);
@@ -850,33 +830,14 @@ public class AS4Imbustamento {
 				String ctBase = ContentTypeUtilities.readBaseTypeFromContentType(contentTypeUtilizzato);
 				byte [] xml = restMessage.getAsByte(restMessage.castAsRestXml().getContent(), true);
 				if(HttpConstants.CONTENT_TYPE_TEXT_XML.equals(ctBase)) {
-				
-					// solo text/xml può essere costruito con DOMSource
-					Source streamSource = null;
-					DataContentHandlerManager dchManager = new DataContentHandlerManager(log);
-					if(dchManager.readMimeTypesContentHandler().containsKey(contentTypeUtilizzato)) {
-						// Se è non registrato un content handler per text/xml
-						// succede se dentro l'ear non c'e' il jar mailapi e l'application server non ha caricato il modulo mailapi (es. tramite versione standalone standard)
-						// e si usa il metodo seguente DOMSource si ottiene il seguente errore:
-						// javax.xml.soap.SOAPException: no object DCH for MIME type text/xml
-						//    at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.28.jar:?]
-						//System.out.println("XML (DOMSource)");
-						streamSource = new DOMSource(XMLUtils.getInstance().newElement(xml));
+					if(MailcapActivationReader.existsDataContentHandler(HttpConstants.CONTENT_TYPE_TEXT_XML)){
+						ap = as4Message.createAttachmentPart();
+						as4Message.updateAttachmentPart(ap, xml, contentTypeUtilizzato);
 					}
 					else {
-						// Se è registrato un content handler per text/xml
-						// e succede se dentro l'ear c'e' il jar mailapi oppure se l'application server ha caricato il modulo mailapi (es. tramite versione standalone full)
-						// e si usa il metodo seguente StreamSource, si ottiene il seguente errore:
-						//  Unable to run the JAXP transformer on a stream org.xml.sax.SAXParseException; Premature end of file. (sourceException: Error during saving a multipart message) 
-						//  	com.sun.xml.messaging.saaj.SOAPExceptionImpl: Error during saving a multipart message
-						//        at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.28.jar:?]
-						//        at org.openspcoop2.message.Message1_1_FIX_Impl.writeTo(Message1_1_FIX_Impl.java:172) ~[openspcoop2_message_BUILD-13516.jar:?]
-						//        at org.openspcoop2.message.OpenSPCoop2Message_11_impl.writeTo
-						//System.out.println("XML (StreamSource)");
-						streamSource = new javax.xml.transform.stream.StreamSource(new java.io.ByteArrayInputStream(xml));
+						InputStreamDataSource isSource = new InputStreamDataSource("eDeliveryPayload", contentTypeUtilizzato, xml);
+						ap = as4Message.createAttachmentPart(new DataHandler(isSource));
 					}
-					ap = as4Message.createAttachmentPart();
-					ap.setContent(streamSource, contentTypeUtilizzato);
 				}
 				else {
 					InputStreamDataSource isSource = new InputStreamDataSource("eDeliveryPayload", contentTypeUtilizzato, xml);

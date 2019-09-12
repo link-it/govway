@@ -220,6 +220,7 @@ public class GestoreTrasformazioni {
 			}
 			
 		}catch(Throwable e){
+			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RICHIESTA, "N.D.");
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(e, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
 			String msgErrore = "Lettura contenuto della richiesta non riuscita: "+e.getMessage();
@@ -333,6 +334,7 @@ public class GestoreTrasformazioni {
 			}
 
 		} catch(Throwable er) {
+			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RICHIESTA, "N.D.");
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(er, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
 			String msgErrore = "Identificazione regola di trasformazione non riuscita: "+er.getMessage();
@@ -342,6 +344,7 @@ public class GestoreTrasformazioni {
 			
 		
 		if(this.regolaTrasformazione==null) {
+			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RICHIESTA, "N.D.");
 			this.msgDiag.logPersonalizzato("trasformazione.processamentoRichiestaNessunMatch");
 			this.log.debug("Nessuna regola di trasformazione trovata");
 			return message;
@@ -564,6 +567,7 @@ public class GestoreTrasformazioni {
 			}
 			
 		}catch(Throwable e){
+			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RISPOSTA, "N.D.");
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(e, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
 			String msgErrore = "Lettura contenuto della risposta non riuscita: "+e.getMessage();
@@ -661,6 +665,7 @@ public class GestoreTrasformazioni {
 			}
 			
 		} catch(Throwable er) {
+			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RISPOSTA, "N.D.");
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(er, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
 			String msgErrore = "Identificazione regola di trasformazione della risposta non riuscita: "+er.getMessage();
@@ -670,6 +675,7 @@ public class GestoreTrasformazioni {
 			
 		
 		if(trasformazioneRisposta==null) {
+			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RISPOSTA, "N.D.");
 			this.msgDiag.logPersonalizzato("trasformazione.processamentoRispostaNessunMatch");
 			this.log.debug("Nessuna regola di trasformazione della risposta trovata");
 			return message;

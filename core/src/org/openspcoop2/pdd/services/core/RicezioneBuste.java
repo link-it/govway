@@ -793,12 +793,20 @@ public class RicezioneBuste {
 				if(descrizioneErrore==null) {
 					descrizioneErrore = posizioneErrore;
 				}
-				msgDiag.logErroreGenerico(descrizioneErrore, posizioneErrore);
+				msgDiag.logErroreGenerico(descrizioneErrore, posizioneErrore); // nota: non emette informazioni sul core
+				if(logCore!=null){
+					if(e!=null) {
+						logCore.error(descrizioneErrore+": "+e.getMessage(),e);
+					}
+					else {
+						logCore.error(descrizioneErrore);
+					}
+				}
 			}
 		}
 		else if(logCore!=null){
 			if(e!=null) {
-				logCore.error(posizioneErrore+e.getMessage(),e);
+				logCore.error(posizioneErrore+": "+e.getMessage(),e);
 			}
 			else {
 				logCore.error(posizioneErrore);

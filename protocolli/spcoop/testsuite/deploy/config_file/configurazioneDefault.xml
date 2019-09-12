@@ -29,9 +29,7 @@
           -->
 
           <!-- Gestione dei manifest degli attachments -->
-          <!--
-              <attachments gestione-manifest="disabilitato" /> 
-          -->
+          <attachments gestione-manifest="abilitato" /> 
 
           <!-- Indirizzamento delle buste di risposta (Riscontri,RicevuteAsincrone) -->
           <!--

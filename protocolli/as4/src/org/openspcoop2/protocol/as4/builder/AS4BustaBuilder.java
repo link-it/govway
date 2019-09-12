@@ -28,10 +28,7 @@ import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
-import org.openspcoop2.message.constants.MessageRole;
-import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
@@ -82,11 +79,20 @@ public class AS4BustaBuilder extends BustaBuilder<SOAPElement> {
 					this.getProtocolFactory().getCachedRegistryReader(this.state), this.getProtocolFactory());
 		}
 		else {
-			OpenSPCoop2Message soapMsg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_12, MessageRole.RESPONSE);
+			/*
+			OpenSPCoop2Message soapMsg = org.openspcoop2.message.OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(org.openspcoop2.message.constants.MessageType.SOAP_12, 
+				org.openspcoop2.message.constants.MessageRole.RESPONSE);
 			ProtocolMessage response = new ProtocolMessage();
 			response.setMessage(soapMsg);
 			//return super.imbustamento(soapMsg, busta, ruoloMessaggio, proprietaManifestAttachments);
 			return response;
+			*/
+			
+			// Devo lasciare il messaggio inalterato in modo da poter segnalare eventuali errori
+			
+			ProtocolMessage protocolMessage = new ProtocolMessage();
+			protocolMessage.setPhaseUnsupported(true);
+			return protocolMessage;
 		}
 		
 	}

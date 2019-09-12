@@ -33,7 +33,6 @@ import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPElement;
-import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
@@ -54,8 +53,8 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.protocol.engine.RequestInfo;
-import org.openspcoop2.utils.dch.DataContentHandlerManager;
 import org.openspcoop2.utils.dch.InputStreamDataSource;
+import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.io.ArchiveType;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
@@ -623,32 +622,14 @@ public class GestoreTrasformazioniUtilities {
 							String ctBase = ContentTypeUtilities.readBaseTypeFromContentType(contentType);
 							if(HttpConstants.CONTENT_TYPE_TEXT_XML.equals(ctBase)) {
 								
-								// solo text/xml può essere costruito con DOMSource
-								Source streamSource = null;
-								DataContentHandlerManager dchManager = new DataContentHandlerManager(log);
-								if(dchManager.readMimeTypesContentHandler().containsKey(ctBase)) {
-									// Se è non registrato un content handler per text/xml
-									// succede se dentro l'ear non c'e' il jar mailapi e l'application server non ha caricato il modulo mailapi (es. tramite versione standalone standard)
-									// e si usa il metodo seguente DOMSource si ottiene il seguente errore:
-									// javax.xml.soap.SOAPException: no object DCH for MIME type text/xml
-									//    at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.28.jar:?]
-									//System.out.println("XML (DOMSource)");
-									streamSource = new DOMSource(XMLUtils.getInstance().newElement(risultato.getContenuto()));
+								if(MailcapActivationReader.existsDataContentHandler(HttpConstants.CONTENT_TYPE_TEXT_XML)){
+									ap = messageSoap.castAsSoap().createAttachmentPart();
+									messageSoap.castAsSoap().updateAttachmentPart(ap, risultato.getContenuto(), contentType);
 								}
 								else {
-									// Se è registrato un content handler per text/xml
-									// e succede se dentro l'ear c'e' il jar mailapi oppure se l'application server ha caricato il modulo mailapi (es. tramite versione standalone full)
-									// e si usa il metodo seguente StreamSource, si ottiene il seguente errore:
-									//  Unable to run the JAXP transformer on a stream org.xml.sax.SAXParseException; Premature end of file. (sourceException: Error during saving a multipart message) 
-									//  	com.sun.xml.messaging.saaj.SOAPExceptionImpl: Error during saving a multipart message
-									//        at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.28.jar:?]
-									//        at org.openspcoop2.message.Message1_1_FIX_Impl.writeTo(Message1_1_FIX_Impl.java:172) ~[openspcoop2_message_BUILD-13516.jar:?]
-									//        at org.openspcoop2.message.OpenSPCoop2Message_11_impl.writeTo
-									//System.out.println("XML (StreamSource)");
-									streamSource = new javax.xml.transform.stream.StreamSource(new java.io.ByteArrayInputStream(risultato.getContenuto()));
+									InputStreamDataSource isSource = new InputStreamDataSource("attach", contentType, risultato.getContenuto());
+									ap = messageSoap.castAsSoap().createAttachmentPart(new DataHandler(isSource));
 								}
-								ap = messageSoap.castAsSoap().createAttachmentPart();
-								ap.setContent(streamSource, contentType);
 							}
 							else {
 								InputStreamDataSource isSource = new InputStreamDataSource("attach", contentType, risultato.getContenuto());

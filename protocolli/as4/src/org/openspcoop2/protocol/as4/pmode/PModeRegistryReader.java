@@ -36,7 +36,6 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -190,6 +189,8 @@ public class PModeRegistryReader {
 						AccordoServizioParteSpecifica asps = this.registryReader.getAccordoServizioParteSpecifica(idServizio);
 						
 						// aggiungo fruitori letti dalla PA se sono una erogazione
+						// Non si aggiungono, verranno gestiti dopo quando si chiama il metodo findSoggettoAutorizzati 
+						/*
 						try{
 							FiltroRicercaPorteApplicative filtroPA = new FiltroRicercaPorteApplicative();
 							filtroPA.setTipoSoggetto(idServizio.getSoggettoErogatore().getTipo());
@@ -207,7 +208,7 @@ public class PModeRegistryReader {
 											String nomeSoggetto = paSoggetto.getNome();
 											boolean found = false;
 											if(asps.sizeFruitoreList()>0) {
-												for (Fruitore fruitore : asps.getFruitoreList()) {
+												for (org.openspcoop2.core.registry.Fruitore fruitore : asps.getFruitoreList()) {
 													if(fruitore.getTipo().equals(tipoSoggetto) &&
 															fruitore.getNome().equals(nomeSoggetto)) {
 														found = true;
@@ -216,7 +217,7 @@ public class PModeRegistryReader {
 												}
 											}
 											if(!found) {
-												Fruitore fruitore = new Fruitore();
+												org.openspcoop2.core.registry.Fruitore fruitore = new org.openspcoop2.core.registry.Fruitore();
 												fruitore.setTipo(tipoSoggetto);
 												fruitore.setNome(nomeSoggetto);
 												asps.addFruitore(fruitore);
@@ -226,6 +227,7 @@ public class PModeRegistryReader {
 								}
 							}
 						}catch(RegistryNotFound notFound) {}
+						*/
 						
 						
 						soggetto.addAccordoServizioParteSpecifica(asps);

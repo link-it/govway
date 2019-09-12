@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<db:configuration xmlns:db="http://domibus.eu/configuration" party="red_gw">
+
+	<mpcs>
+		<mpc name="defaultMpc"
+			 qualifiedName="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC"
+			 enabled="true"
+			 default="true"
+			 retention_downloaded="0"
+			 retention_undownloaded="14400"/>
+	</mpcs>
+	<businessProcesses>
+		<roles>
+			<role name="defaultInitiatorRole" 
+					value="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator"/>
+			<role name="defaultResponderRole" 
+					value="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder"/>
+		</roles>
+		<parties>
+			<partyIdTypes>
+					<partyIdType name="partyTypeUrn" value="urn:oasis:names:tc:ebcore:partyid-type:unregistered"/>
+			</partyIdTypes>
+			<party name="blue_gw"
+				    endpoint="http://Blue:8080/domibus/services/msh"
+					allowChunking="false">
+				<identifier partyId="domibus-blue" partyIdType="partyTypeUrn"/>
+			</party>
+			<party name="red_gw"
+				    endpoint="http://Red:8180/domibus/services/msh"
+					allowChunking="false">
+				<identifier partyId="domibus-red" partyIdType="partyTypeUrn"/>
+			</party>
+		</parties>
+		<meps>
+			<mep name="oneway" value="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/oneWay"/>
+			<mep name="twoway" value="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/twoWay"/>
+			<binding name="push" value="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/push"/>
+			<binding name="pushAndPush" value="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/push-and-push"/>
+		</meps>
+		<properties>
+			<property name="originalSenderProperty"
+					key="originalSender"
+					datatype="string"
+					required="false"/>
+
+			<property name="finalRecipientProperty"
+					key="finalRecipient"
+					datatype="string"
+					required="false"/>
+
+
+
+			<property name="finalRecipientRequiredProperty" 
+					key="finalRecipient" 
+					datatype="string" 
+					required="true"/> 
+			<property name="demoOptionalProperty" 
+					key="demoOptional" 
+					datatype="string" 
+					required="false"/> 
+			<property name="demoOptionalUrlProperty" 
+					key="demoOptionalUrl" 
+					datatype="string" 
+					required="false"/> 
+			<property name="demoOptionalHeaderProperty" 
+					key="demoOptionalHeader" 
+					datatype="string" 
+					required="false"/> 
+			<property name="originalSenderRequiredProperty" 
+					key="originalSender" 
+					datatype="string" 
+					required="true"/> 
+			<property name="demoRequiredProperty" 
+					key="demoRequired" 
+					datatype="string" 
+					required="true"/> 
+			<propertySet name="ecodexPropertySet">
+				<propertyRef property="finalRecipientProperty"/>
+				<propertyRef property="originalSenderProperty"/>
+			</propertySet>
+			
+			<propertySet name="demoPropertySet">
+				<propertyRef property="finalRecipientProperty"/>
+				<propertyRef property="originalSenderProperty"/>
+				<propertyRef property="demoOptionalProperty"/>
+				<propertyRef property="demoRequiredProperty"/>
+				<propertyRef property="demoOptionalUrlProperty"/>
+				<propertyRef property="demoOptionalHeaderProperty"/>
+			</propertySet>
+			<propertySet name="ecodexRequiredPropertySet">
+				<propertyRef property="finalRecipientRequiredProperty"/>
+				<propertyRef property="originalSenderRequiredProperty"/>
+			</propertySet>
+		</properties>				
+		<payloadProfiles>
+			<payload name="defaultXmlContentPayload"
+					cid="cid:message"
+					required="true"
+					mimeType="text/xml"/>
+			<payload name="defaultJsonContentPayload"
+					cid="cid:message"
+					required="true"
+					mimeType="application/json"/>
+			<payload name="defaultBinaryContentPayload"
+					cid="cid:message"
+					required="true"
+					mimeType="application/octet-stream"/>
+					
+			<payload name="defaultBinaryContentAttachment"
+					cid="cid:attachment" 
+					required="false"
+					mimeType="application/octet-stream"/>
+
+
+			<payload name="JsonTestAttachment1asJson"
+					cid="cid:attachmentJson1" 
+					 
+					required="true"
+					 
+					 
+					mimeType="text/json"/> 
+			<payload name="XmlTestAttachmentAsXml"
+					cid="cid:attachment" 
+					 
+					required="true"
+					 
+					 
+					mimeType="text/xml"/> 
+			<payload name="OctectTestAttachmentAsBinary"
+					cid="cid:attachment" 
+					 
+					required="true"
+					 
+					 
+					mimeType="text/xml"/> 
+			<payload name="JsonTestAttachment2asBinary"
+					cid="cid:attachmentBinary2" 
+					 
+					required="false"
+					 
+					 
+					mimeType="application/octet-stream"/> 
+			<payloadProfile name="DefaultBinaryProfile" 
+					maxSize="40894464">
+				<attachment name="defaultBinaryContentPayload"/>
+				<attachment name="defaultBinaryContentAttachment"/>
+			</payloadProfile>
+			<payloadProfile name="DefaultXmlProfile" 
+					maxSize="40894464">
+				<attachment name="defaultXmlContentPayload"/>
+				<attachment name="defaultBinaryContentAttachment"/>
+			</payloadProfile>
+			<payloadProfile name="DefaultJsonProfile" 
+					maxSize="40894464">
+				<attachment name="defaultJsonContentPayload"/>
+				<attachment name="defaultBinaryContentAttachment"/>
+			</payloadProfile>
+			
+			<payloadProfile name="XmlTestProfile" 
+					maxSize="40894464">
+				<attachment name="defaultXmlContentPayload"/>
+				<attachment name="XmlTestAttachmentAsXml"/>
+			</payloadProfile>
+			<payloadProfile name="JsonTestProfile" 
+					maxSize="40894464">
+				<attachment name="defaultJsonContentPayload"/>
+				<attachment name="JsonTestAttachment1asJson"/>
+				<attachment name="JsonTestAttachment2asBinary"/>
+			</payloadProfile>
+			<payloadProfile name="OctectTestProfile" 
+					maxSize="40894464">
+				<attachment name="defaultBinaryContentPayload"/>
+				<attachment name="OctectTestAttachmentAsBinary"/>
+			</payloadProfile>
+		</payloadProfiles>
+		<securities>
+			<security name="eDeliveryAS4Policy"
+					policy="eDeliveryAS4Policy.xml"
+					signatureMethod="RSA_SHA256" />
+			<security name="eDeliveryAS4Policy_IS"
+					policy="eDeliveryAS4Policy_IS.xml"
+					signatureMethod="RSA_SHA256" />
+			<security name="eDeliveryPolicy_noSignature"
+					policy="eDeliveryPolicy_noSignature.xml"
+					signatureMethod="RSA_SHA256" />
+			<security name="eDeliveryAS4Policy_BST_PKIP"
+					policy="eDeliveryAS4Policy_BST_PKIP.xml"
+					signatureMethod="RSA_SHA256" />
+			<security name="eDeliveryAS4Policy_BST"
+					policy="eDeliveryAS4Policy_BST.xml"
+					signatureMethod="RSA_SHA256" />
+		</securities>
+		<errorHandlings>
+			<errorHandling name="demoErrorHandling" 
+					errorAsResponse="true" 
+					businessErrorNotifyProducer="false"
+					businessErrorNotifyConsumer="false" 
+					deliveryFailureNotifyProducer="false"/>
+		</errorHandlings>
+		<agreements>
+            		<agreement name="agreement1" value="A1" type=""/>
+		</agreements>
+		<services>
+			<service name="Servizio_1" value="bdx:noprocess" 
+			 
+				/>
+			<service name="Servizio_2" value="bdx:noprocess" 
+			type="TEST-REST" 
+				/>
+			<service name="Servizio_3" value="bdx:noprocess" 
+			type="TEST-SOAP" 
+				/>
+			<service name="Servizio_4" value="bdx:noprocessResponse" 
+			type="TEST-REST" 
+				/>
+			<service name="Servizio_5" value="bdx:noprocessResponse" 
+			 
+				/>
+		</services>
+		<actions>
+				<action name="Servizio_4_Resource_17" value="bdx:action.rest:1:testResponsePushAndPush"/>
+				<action name="Servizio_5_Resource_18" value="bdx:action.rest:2:testResponsePushAndPush"/>
+				<action name="Servizio_2_Resource_7" value="bdx:action.rest:1:test"/>
+				<action name="Servizio_2_Resource_10" value="bdx:action.rest:1:testXml"/>
+				<action name="Servizio_2_Resource_8" value="bdx:action.rest:1:testCompress"/>
+				<action name="Servizio_2_Resource_9" value="bdx:action.rest:1:testRequestPushAndPush"/>
+				<action name="Servizio_1_Resource_4" value="bdx:action.rest:2:testJson"/>
+				<action name="Servizio_1_Resource_3" value="bdx:action.rest:2:testDemoPropertySet"/>
+				<action name="Servizio_1_Resource_2" value="bdx:action.rest:2:testCompress"/>
+				<action name="Servizio_1_Resource_1" value="bdx:action.rest:2:test"/>
+				<action name="Servizio_1_Resource_6" value="bdx:action.rest:2:testXml"/>
+				<action name="Servizio_1_Resource_5" value="bdx:action.rest:2:testRequestPushAndPush"/>
+				<action name="Servizio_3_Azione_16" value="bdx:action.soap:1:testXml"/>
+				<action name="Servizio_3_Azione_11" value="bdx:action.soap:1:testResponsePushAndPush"/>
+				<action name="Servizio_3_Azione_14" value="bdx:action.soap:1:testRequestPushAndPush"/>
+				<action name="Servizio_3_Azione_15" value="bdx:action.soap:1:testRequiredProperties"/>
+				<action name="Servizio_3_Azione_12" value="bdx:action.soap:1:test"/>
+				<action name="Servizio_3_Azione_13" value="bdx:action.soap:1:testCompress"/>
+		</actions>
+		<as4>
+			<receptionAwareness name="receptionAwareness" retry="12;4;CONSTANT" duplicateDetection="true"/>
+			<reliability name="Reliability_Process_1" nonRepudiation="true" replyPattern="callback"/>
+			<reliability name="Reliability_Process_2" nonRepudiation="true" replyPattern="response"/>
+			<reliability name="Reliability_Process_3" nonRepudiation="false" replyPattern="response"/>
+			<reliability name="Reliability_Process_4" nonRepudiation="true" replyPattern="response"/>
+			<reliability name="Reliability_Process_5" nonRepudiation="true" replyPattern="response"/>
+			<reliability name="Reliability_Process_6" nonRepudiation="true" replyPattern="response"/>
+		</as4>
+		<legConfigurations>
+			<legConfiguration name="Leg_3" 
+					service="Servizio_2" 
+					action="Servizio_2_Resource_8" 
+					defaultMpc="defaultMpc" 
+					reliability="Reliability_Process_1" 
+					security="eDeliveryPolicy_noSignature"
+					receptionAwareness="receptionAwareness" 
+					propertySet="ecodexPropertySet"
+					payloadProfile="DefaultBinaryProfile"
+					errorHandling="demoErrorHandling"
+					compressPayloads="true"/>
+			<legConfiguration name="Leg_4" 
+					service="Servizio_2" 
+					action="Servizio_2_Resource_9" 
+					defaultMpc="defaultMpc" 
+					reliability="Reliability_Process_1" 
+					security="eDeliveryPolicy_noSignature"
+					receptionAwareness="receptionAwareness" 
+					propertySet="ecodexPropertySet"
+					payloadProfile="DefaultJsonProfile"
+					errorHandling="demoErrorHandling"
+					compressPayloads="false"/>
+			<legConfiguration name="Leg_1" 
+					service="Servizio_2" 
+					action="Servizio_2_Resource_7" 
+					defaultMpc="defaultMpc" 
+					reliability="Reliability_Process_1" 
+					security="eDeliveryPolicy_noSignature"
+					receptionAwareness="receptionAwareness" 
+					propertySet="ecodexPropertySet"
+					payloadProfile="DefaultJsonProfile"
+					errorHandling="demoErrorHandling"
+					compressPayloads="false"/>
+			<legConfiguration name="Leg_2" 
+					service="Servizio_2" 
+					action="Servizio_2_Resource_10" 
+					defaultMpc="defaultMpc" 
+					reliability="Reliability_Process_1" 
+					security="eDeliveryPolicy_noSignature"
+					receptionAwareness="receptionAwareness" 
+					propertySet="ecodexPropertySet"
+					payloadProfile="DefaultXmlProfile"
+					errorHandling="demoErrorHandling"
+					compressPayloads="false"/>
+			<legConfiguration name="Leg_9" 
+					service="Servizio_3" 
+					action="Servizio_3_Azione_13" 
+					defaultMpc="defaultMpc" 
+					reliability="Reliability_Process_2" 
+					security="eDeliveryAS4Policy"
+					receptionAwareness="receptionAwareness" 
+					propertySet="ecodexPropertySet"
+					payloadProfile="DefaultBinaryProfile"
+					errorHandling="demoErrorHandling"
+					compressPayloads="true"/>
+			<legConfiguration name="Leg_7" 
+					service="Servizio_3" 
+					action="Servizio_3_Azione_15" 
+					defaultMpc="defaultMpc" 
+					reliability="Reliability_Process_2" 
+					security="eDeliveryAS4Policy"
+					receptionAwareness="receptionAwareness" 
+					propertySet="ecodexRequiredPropertySet"
+					payloadProfile="DefaultXmlProfile"
+					errorHandling="demoErrorHandling"
+					compressPayloads="false"/>
+			<legConfiguration name="Leg_8" 
+					service="Servizio_3" 
+					action="Servizio_3_Azione_12" 
+					defaultMpc="defaultMpc" 
+					reliability="Reliability_Process_2" 
+					security="eDeliveryAS4Policy"
+					receptionAwareness="receptionAwareness" 
+					propertySet="ecodexPropertySet"
+					payloadProfile="DefaultXmlProfile"
+					errorHandling="demoErrorHandling"
+					compressPayloads="false"/>
+			<legConfiguration name="Leg_5" 
+					service="Servizio_3" 
+					action="Servizio_3_Azione_16" 
+					defaultMpc="defaultMpc" 
+					reliability="Reliability_Process_2" 
+					security="eDeliveryAS4Policy"
+					receptionAwareness="receptionAwareness" 
+					propertySet="ecodexPropertySet"
+					payloadProfile="XmlTestProfile"
+					errorHandling="demoErrorHandling"
+					compressPayloads="false"/>
+			<legConfiguration name="Leg_6" 
+					service="Servizio_3" 
+					action="Servizio_3_Azione_14" 
+					defaultMpc="defaultMpc" 
+					reliability="Reliability_Process_2" 
+					security="eDeliveryAS4Policy"
+					receptionAwareness="receptionAwareness" 
+					propertySet="ecodexPropertySet"
+					payloadProfile="DefaultXmlProfile"
+					errorHandling="demoErrorHandling"
+					compressPayloads="true"/>
+			<legConfiguration name="Leg_15" 
+					service="Servizio_1" 
+					action="Servizio_1_Resource_5" 
+					defaultMpc="defaultMpc" 
+					reliability="Reliability_Process_3" 
+					security="eDeliveryPolicy_noSignature"
+					receptionAwareness="receptionAwareness" 
+					propertySet="ecodexPropertySet"
+					payloadProfile="DefaultJsonProfile"
+					errorHandling="demoErrorHandling"
+					compressPayloads="false"/>
+			<legConfiguration name="Leg_14" 
+					service="Servizio_1" 
+					action="Servizio_1_Resource_6" 
+					defaultMpc="defaultMpc" 
+					reliability="Reliability_Process_3" 
+					security="eDeliveryPolicy_noSignature"
+					receptionAwareness="receptionAwareness" 
+					propertySet="ecodexPropertySet"
+					payloadProfile="DefaultXmlProfile"
+					errorHandling="demoErrorHandling"
+					compressPayloads="false"/>
+			<legConfiguration name="Leg_13" 
+					service="Servizio_1" 
+					action="Servizio_1_Resource_1" 
+					defaultMpc="defaultMpc" 
+					reliability="Reliability_Process_3" 
+					security="eDeliveryPolicy_noSignature"
+					receptionAwareness="receptionAwareness" 
+					propertySet="ecodexPropertySet"
+					payloadProfile="DefaultJsonProfile"
+					errorHandling="demoErrorHandling"
+					compressPayloads="false"/>
+			<legConfiguration name="Leg_12" 
+					service="Servizio_1" 
+					action="Servizio_1_Resource_2" 
+					defaultMpc="defaultMpc" 
+					reliability="Reliability_Process_3" 
+					security="eDeliveryPolicy_noSignature"
+					receptionAwareness="receptionAwareness" 
+					propertySet="ecodexPropertySet"
+					payloadProfile="DefaultBinaryProfile"
+					errorHandling="demoErrorHandling"
+					compressPayloads="true"/>
+			<legConfiguration name="Leg_11" 
+					service="Servizio_1" 
+					action="Servizio_1_Resource_3" 
+					defaultMpc="defaultMpc" 
+					reliability="Reliability_Process_3" 
+					security="eDeliveryPolicy_noSignature"
+					receptionAwareness="receptionAwareness" 
+					propertySet="demoPropertySet"
+					payloadProfile="DefaultJsonProfile"
+					errorHandling="demoErrorHandling"
+					compressPayloads="false"/>
+			<legConfiguration name="Leg_10" 
+					service="Servizio_1" 
+					action="Servizio_1_Resource_4" 
+					defaultMpc="defaultMpc" 
+					reliability="Reliability_Process_3" 
+					security="eDeliveryPolicy_noSignature"
+					receptionAwareness="receptionAwareness" 
+					propertySet="ecodexPropertySet"
+					payloadProfile="JsonTestProfile"
+					errorHandling="demoErrorHandling"
+					compressPayloads="false"/>
+			<legConfiguration name="Leg_16" 
+					service="Servizio_5" 
+					action="Servizio_5_Resource_18" 
+					defaultMpc="defaultMpc" 
+					reliability="Reliability_Process_4" 
+					security="eDeliveryPolicy_noSignature"
+					receptionAwareness="receptionAwareness" 
+					propertySet="ecodexPropertySet"
+					payloadProfile="DefaultJsonProfile"
+					errorHandling="demoErrorHandling"
+					compressPayloads="true"/>
+			<legConfiguration name="Leg_17" 
+					service="Servizio_3" 
+					action="Servizio_3_Azione_11" 
+					defaultMpc="defaultMpc" 
+					reliability="Reliability_Process_5" 
+					security="eDeliveryAS4Policy"
+					receptionAwareness="receptionAwareness" 
+					propertySet="ecodexPropertySet"
+					payloadProfile="DefaultXmlProfile"
+					errorHandling="demoErrorHandling"
+					compressPayloads="false"/>
+			<legConfiguration name="Leg_18" 
+					service="Servizio_4" 
+					action="Servizio_4_Resource_17" 
+					defaultMpc="defaultMpc" 
+					reliability="Reliability_Process_6" 
+					security="eDeliveryPolicy_noSignature"
+					receptionAwareness="receptionAwareness" 
+					propertySet="ecodexPropertySet"
+					payloadProfile="DefaultJsonProfile"
+					errorHandling="demoErrorHandling"
+					compressPayloads="true"/>
+		</legConfigurations>
+<process name="Process_1_push"
+         agreement=""
+         mep="oneway"
+         binding="push"
+         initiatorRole="defaultInitiatorRole"
+         responderRole="defaultResponderRole">
+	<initiatorParties>
+		<initiatorParty name="red_gw"/>
+	</initiatorParties>
+	<responderParties>
+		<responderParty name="blue_gw"/>
+	</responderParties>
+	<legs>
+		<leg name="Leg_3"/>
+		<leg name="Leg_1"/>
+		<leg name="Leg_2"/>
+	</legs>
+</process>
+<process name="Process_1_pushAndPush"
+         agreement=""
+         mep="twoway"
+         binding="pushAndPush"
+         initiatorRole="defaultInitiatorRole"
+         responderRole="defaultResponderRole">
+	<initiatorParties>
+		<initiatorParty name="red_gw"/>
+	</initiatorParties>
+	<responderParties>
+		<responderParty name="blue_gw"/>
+	</responderParties>
+	<legs>
+		<leg name="Leg_4"/>
+	</legs>
+</process>
+<process name="Process_2_push"
+         agreement=""
+         mep="oneway"
+         binding="push"
+         initiatorRole="defaultInitiatorRole"
+         responderRole="defaultResponderRole">
+	<initiatorParties>
+		<initiatorParty name="red_gw"/>
+	</initiatorParties>
+	<responderParties>
+		<responderParty name="blue_gw"/>
+	</responderParties>
+	<legs>
+		<leg name="Leg_9"/>
+		<leg name="Leg_7"/>
+		<leg name="Leg_8"/>
+		<leg name="Leg_5"/>
+	</legs>
+</process>
+<process name="Process_2_pushAndPush"
+         agreement=""
+         mep="twoway"
+         binding="pushAndPush"
+         initiatorRole="defaultInitiatorRole"
+         responderRole="defaultResponderRole">
+	<initiatorParties>
+		<initiatorParty name="red_gw"/>
+	</initiatorParties>
+	<responderParties>
+		<responderParty name="blue_gw"/>
+	</responderParties>
+	<legs>
+		<leg name="Leg_6"/>
+	</legs>
+</process>
+<process name="Process_3_push"
+         agreement=""
+         mep="oneway"
+         binding="push"
+         initiatorRole="defaultInitiatorRole"
+         responderRole="defaultResponderRole">
+	<initiatorParties>
+		<initiatorParty name="red_gw"/>
+	</initiatorParties>
+	<responderParties>
+		<responderParty name="blue_gw"/>
+	</responderParties>
+	<legs>
+		<leg name="Leg_14"/>
+		<leg name="Leg_13"/>
+		<leg name="Leg_12"/>
+		<leg name="Leg_11"/>
+		<leg name="Leg_10"/>
+	</legs>
+</process>
+<process name="Process_3_pushAndPush"
+         agreement=""
+         mep="twoway"
+         binding="pushAndPush"
+         initiatorRole="defaultInitiatorRole"
+         responderRole="defaultResponderRole">
+	<initiatorParties>
+		<initiatorParty name="red_gw"/>
+	</initiatorParties>
+	<responderParties>
+		<responderParty name="blue_gw"/>
+	</responderParties>
+	<legs>
+		<leg name="Leg_15"/>
+	</legs>
+</process>
+<process name="Process_4_pushAndPush"
+         agreement=""
+         mep="twoway"
+         binding="pushAndPush"
+         initiatorRole="defaultInitiatorRole"
+         responderRole="defaultResponderRole">
+	<initiatorParties>
+		<initiatorParty name="blue_gw"/>
+	</initiatorParties>
+	<responderParties>
+		<responderParty name="red_gw"/>
+	</responderParties>
+	<legs>
+		<leg name="Leg_16"/>
+	</legs>
+</process>
+<process name="Process_5_pushAndPush"
+         agreement=""
+         mep="twoway"
+         binding="pushAndPush"
+         initiatorRole="defaultInitiatorRole"
+         responderRole="defaultResponderRole">
+	<initiatorParties>
+		<initiatorParty name="blue_gw"/>
+	</initiatorParties>
+	<responderParties>
+		<responderParty name="red_gw"/>
+	</responderParties>
+	<legs>
+		<leg name="Leg_17"/>
+	</legs>
+</process>
+<process name="Process_6_pushAndPush"
+         agreement=""
+         mep="twoway"
+         binding="pushAndPush"
+         initiatorRole="defaultInitiatorRole"
+         responderRole="defaultResponderRole">
+	<initiatorParties>
+		<initiatorParty name="blue_gw"/>
+	</initiatorParties>
+	<responderParties>
+		<responderParty name="red_gw"/>
+	</responderParties>
+	<legs>
+		<leg name="Leg_18"/>
+	</legs>
+</process>
+	</businessProcesses>
+</db:configuration>
