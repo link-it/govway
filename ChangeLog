@@ -1,3 +1,14 @@
+2019-09-13  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto bug OP-895
+	Sono stati risolti i seguenti problemi:
+	- Utilizzando la govwayConsole sia la funzionalità di verifica raggiungibiltà di un connettore che l'accesso alla sezione 'Runtime' 
+	  produceva il seguente errore: "java.lang.NoClassDefFoundError: org/springframework/web/util/UriUtils ... "
+	- Il deploy della govwayConsole, contenente i jar di spring, cerca di accedere ad una risorsa remota: 'http://java.sun.com/dtd/web-app_2_3.dtd'. 
+	  Il problema è stato risolto aggiornando l'intestazione del file web.xml.
+	  La stessa risoluzione è stata adottata su tutti i file web.xml che presentavano la vecchia definizione.
+
 2019-09-02  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
