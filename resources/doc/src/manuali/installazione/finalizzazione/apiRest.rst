@@ -16,5 +16,5 @@ Accendendo alla lista delle Erogazioni si può notare come le API relative alla 
     :scale: 100%
     :align: center
 
-Procedere con la configurazione del *Controllo degli Accessi* di ogni API al fine di renderla invocabile dall'esterno secondo le modalità di autenticazione ed autorizzazione desiderate. Per maggiori informazioni sul *Controllo degli Accessi* si rimanda alla Guida della Console di Gestione.
+Procedere con la configurazione del :ref:`apiGwControlloAccessi` di ogni API al fine di renderla invocabile dall'esterno secondo le modalità di autenticazione ed autorizzazione desiderate. Per maggiori informazioni sul *Controllo degli Accessi* si rimanda alla Guida della Console di Gestione.
 
