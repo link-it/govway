@@ -348,8 +348,19 @@ public class ModIImbustamentoRest {
 					String hdrValue = null;
 					
 					if(httpHeader.toLowerCase().equals(HttpConstants.DIGEST.toLowerCase())) {
-						hdrName = HttpConstants.DIGEST;
-						hdrValue = digestValue;
+						if(digestValue!=null) {
+							hdrName = HttpConstants.DIGEST;
+							hdrValue = digestValue;
+						}
+						else if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && msg.getTransportResponseContext()!=null && 
+								msg.getTransportRequestContext()!=null && org.openspcoop2.utils.transport.http.HttpRequestMethod.HEAD.equals(msg.getTransportRequestContext().getRequestType()) &&
+								this.modiProperties.isRestSecurityTokenResponseDigestHEADuseServerHeader()) {
+							String digestValueHEAD = msg.getTransportResponseContext().getParameterTrasporto(HttpConstants.DIGEST);
+							if(digestValueHEAD!=null) {
+								hdrName = HttpConstants.DIGEST;
+								hdrValue = digestValueHEAD;
+							}
+						}
 					}
 					else {
 						String value = null;

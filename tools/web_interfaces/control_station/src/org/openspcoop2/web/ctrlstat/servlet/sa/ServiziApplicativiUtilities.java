@@ -127,7 +127,7 @@ public class ServiziApplicativiUtilities {
 			
 			if(saCore.isRegistroServiziLocale()){
 				List<Soggetto> list = null;
-				if(soggettoMultitenantSelezionato!=null && !"".equals(soggettoMultitenantSelezionato)) {
+				if(!filtraSoggettiEsterni && soggettoMultitenantSelezionato!=null && !"".equals(soggettoMultitenantSelezionato)) {
 					IDSoggetto idSoggettoSelezionato = soggettiCore.convertSoggettoSelezionatoToID(soggettoMultitenantSelezionato);
 					list = new ArrayList<>();
 					try {

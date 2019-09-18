@@ -392,6 +392,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if(multitenant && !this.isSoggettoMultitenantSelezionato()) {
 				de.setType(DataElementType.TEXT);
 			}
+			else if(this.isProfiloModIPA(nomeProtocollo)) {
+				de.setType(DataElementType.TEXT);
+			}
 			else {
 				de.setType(DataElementType.HIDDEN);
 			}
@@ -424,7 +427,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			// Aggiunta di un servizio applicativo passando dal menu' 
 			if(!useIdSogg){
 				
-				if((multitenant && !this.isSoggettoMultitenantSelezionato()) || this.isProfiloModIPA(tipoProtocollo)) {
+				boolean visualizzaPerProfiloModIPA = this.isProfiloModIPA(tipoProtocollo);
+				if(visualizzaPerProfiloModIPA) {
+					if(!dominioEsternoProfiloModIPA) {
+						visualizzaPerProfiloModIPA = soggettiList!=null && soggettiList.length>1;
+					}
+				}
+				
+				if((multitenant && !this.isSoggettoMultitenantSelezionato()) || visualizzaPerProfiloModIPA) {
 					de.setType(DataElementType.SELECT);
 					de.setPostBack(true);
 				

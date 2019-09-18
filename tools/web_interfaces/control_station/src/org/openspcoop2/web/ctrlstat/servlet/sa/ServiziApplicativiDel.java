@@ -133,9 +133,19 @@ public final class ServiziApplicativiDel extends Action {
 			if(!useIdSogg){
 				int idLista = Liste.SERVIZIO_APPLICATIVO;
 				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
+				
+				boolean filtroSoggetto = false;
 				if(saHelper.isSoggettoMultitenantSelezionato()) {
+					List<String> protocolli = saCore.getProtocolli(session,false);
+					if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
+						String protocollo = protocolli.get(0);
+						filtroSoggetto = !saHelper.isProfiloModIPA(protocollo);  // in modipa devono essere fatti vedere anche quelli
+					}
+				}
+				if(filtroSoggetto) {
 					ricerca.addFilter(idLista, Filtri.FILTRO_SOGGETTO, saHelper.getSoggettoMultitenantSelezionato());
 				}
+				
 				if(saCore.isVisioneOggettiGlobale(userLogin)){
 					lista = saCore.soggettiServizioApplicativoList(null, ricerca);
 				}else{

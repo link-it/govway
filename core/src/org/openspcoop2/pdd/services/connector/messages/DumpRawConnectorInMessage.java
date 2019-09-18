@@ -63,13 +63,13 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 	}
 	
 	public byte[] getRequestAsByte(){
-		if(this.bout!=null){
+		if(this.bout!=null && this.bout.size()>0){
 			return this.bout.toByteArray();
 		}
 		return null;
 	}
 	public String getRequestAsString(){
-		if(this.bout!=null){
+		if(this.bout!=null && this.bout.size()>0){
 			return this.bout.toString();
 		}
 		return null;

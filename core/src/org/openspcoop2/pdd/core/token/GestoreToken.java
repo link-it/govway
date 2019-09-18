@@ -1641,7 +1641,7 @@ public class GestoreToken {
 					tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PROCESS_TIME), value);
 				}
 				else {
-					jsonNode.put("processTime", jsonUtils.getDateFormat().format(informazioniTokenNormalizzate.getIat()));
+					jsonNode.put("processTime", jsonUtils.getDateFormat().format(processTime));
 				}
 			}
 			

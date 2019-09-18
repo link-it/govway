@@ -169,7 +169,11 @@ public class ModIProperties {
 			}
 			getRestSecurityTokenClaimsClientIdHeader();
 			getRestSecurityTokenClaimSignedHeaders();
+			getRestSecurityTokenSignedHeaders();
 			getRestSecurityTokenClaimsIatTimeCheck_milliseconds();
+			isRestSecurityTokenRequestDigestClean();
+			isRestSecurityTokenResponseDigestClean();
+			isRestSecurityTokenResponseDigestHEADuseServerHeader();
 			isRestSecurityTokenFaultProcessEnabled();
 			getRestCorrelationIdHeader();
 			getRestReplyToHeader();
@@ -815,6 +819,46 @@ public class ModIProperties {
     	return ModIProperties.getRestSecurityTokenClaimSignedHeaders;
 	}
 	
+	
+	private static String [] getRestSecurityTokenSignedHeaders = null;
+	public String [] getRestSecurityTokenSignedHeaders() throws Exception{
+    	if(ModIProperties.getRestSecurityTokenSignedHeaders==null){
+	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.signedHeaders";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					String [] tmp = value.split(",");
+					ModIProperties.getRestSecurityTokenSignedHeaders = new String[tmp.length];
+					for (int i = 0; i < tmp.length; i++) {
+						ModIProperties.getRestSecurityTokenSignedHeaders[i] = tmp[i].trim();
+					}
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new Exception(msgErrore,e);
+			}
+    	}
+    	
+    	return ModIProperties.getRestSecurityTokenSignedHeaders;
+	}
+	public String  getRestSecurityTokenSignedHeadersAsString() throws Exception{
+		StringBuffer bf = new StringBuffer();
+		for (String hdr : getRestSecurityTokenSignedHeaders) {
+			if(bf.length()>0) {
+				bf.append(",");
+			}
+			bf.append(hdr);
+		}
+		return bf.toString();
+	}
+	
 	private static Boolean getRestSecurityTokenClaimsIatTimeCheck_milliseconds_read = null;
 	private static Integer getRestSecurityTokenClaimsIatTimeCheck_milliseconds = null;
 	public Integer getRestSecurityTokenClaimsIatTimeCheck_milliseconds() throws Exception{
@@ -839,6 +883,90 @@ public class ModIProperties {
 		}
 
 		return ModIProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds;
+	}
+	
+	private static Boolean getRestSecurityTokenRequestDigestClean_read= null;
+	private static Boolean getRestSecurityTokenRequestDigestClean= null;
+	public boolean isRestSecurityTokenRequestDigestClean() throws Exception{
+    	if(ModIProperties.getRestSecurityTokenRequestDigestClean_read==null){
+	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.request.digest.clean";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.getRestSecurityTokenRequestDigestClean = Boolean.valueOf(value);
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new Exception(msgErrore,e);
+			}
+    		
+    		ModIProperties.getRestSecurityTokenRequestDigestClean_read = true;
+    	}
+    	
+    	return ModIProperties.getRestSecurityTokenRequestDigestClean;
+	}
+	
+	private static Boolean getRestSecurityTokenResponseDigestClean_read= null;
+	private static Boolean getRestSecurityTokenResponseDigestClean= null;
+	public boolean isRestSecurityTokenResponseDigestClean() throws Exception{
+    	if(ModIProperties.getRestSecurityTokenResponseDigestClean_read==null){
+	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.response.digest.clean";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.getRestSecurityTokenResponseDigestClean = Boolean.valueOf(value);
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new Exception(msgErrore,e);
+			}
+    		
+    		ModIProperties.getRestSecurityTokenResponseDigestClean_read = true;
+    	}
+    	
+    	return ModIProperties.getRestSecurityTokenResponseDigestClean;
+	}
+	
+	private static Boolean getRestSecurityTokenResponseDigestHEADuseServerHeader_read= null;
+	private static Boolean getRestSecurityTokenResponseDigestHEADuseServerHeader= null;
+	public boolean isRestSecurityTokenResponseDigestHEADuseServerHeader() throws Exception{
+    	if(ModIProperties.getRestSecurityTokenResponseDigestHEADuseServerHeader_read==null){
+	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.response.digest.HEAD.useServerHeader";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.getRestSecurityTokenResponseDigestHEADuseServerHeader = Boolean.valueOf(value);
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new Exception(msgErrore,e);
+			}
+    		
+    		ModIProperties.getRestSecurityTokenResponseDigestHEADuseServerHeader_read = true;
+    	}
+    	
+    	return ModIProperties.getRestSecurityTokenResponseDigestHEADuseServerHeader;
 	}
 	
 	private static Boolean getRestSecurityTokenFaultProcessEnabled_read= null;

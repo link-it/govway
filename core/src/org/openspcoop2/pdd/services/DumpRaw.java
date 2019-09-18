@@ -228,13 +228,13 @@ public class DumpRaw {
 		
 		if(this.dump!=null) {
 			byte [] rawMessage = req.getRequestAsByte();
-			if(rawMessage!=null){
-				try {
-					this.dump.dumpBinarioRichiestaIngresso(rawMessage, this.urlProtocolContext);
-				}catch(Throwable t){
-					this.log.error("Log DumpBinarioRichiestaIngresso error: "+t.getMessage(),t);
-				}
+			//if(rawMessage!=null){ // devono essere registrati anche solamente gli header
+			try {
+				this.dump.dumpBinarioRichiestaIngresso(rawMessage, this.urlProtocolContext);
+			}catch(Throwable t){
+				this.log.error("Log DumpBinarioRichiestaIngresso error: "+t.getMessage(),t);
 			}
+			//}
 		}
 	}
 	
@@ -427,16 +427,16 @@ public class DumpRaw {
 		
 		if(this.dump!=null) {
 			byte [] rawMessage = res.getResponseAsByte();
-			if(rawMessage!=null){
-				try {
-					if(res.getContentType()!=null) {
-						res.getTrasporto().put(HttpConstants.CONTENT_TYPE,res.getContentType());
-					}
-					this.dump.dumpBinarioRispostaUscita(rawMessage, this.urlProtocolContext, res.getTrasporto());
-				}catch(Throwable t){
-					this.log.error("Log DumpBinarioRichiestaIngresso error: "+t.getMessage(),t);
+			//if(rawMessage!=null){ // devono essere registrati anche solamente gli header
+			try {
+				if(res.getContentType()!=null) {
+					res.getTrasporto().put(HttpConstants.CONTENT_TYPE,res.getContentType());
 				}
+				this.dump.dumpBinarioRispostaUscita(rawMessage, this.urlProtocolContext, res.getTrasporto());
+			}catch(Throwable t){
+				this.log.error("Log DumpBinarioRichiestaIngresso error: "+t.getMessage(),t);
 			}
+			//}
 		}
 	}
 	

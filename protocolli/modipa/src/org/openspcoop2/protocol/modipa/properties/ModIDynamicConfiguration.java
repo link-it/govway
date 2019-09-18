@@ -49,6 +49,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.basic.properties.BasicDynamicConfiguration;
 import org.openspcoop2.protocol.engine.utils.AzioniUtils;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -441,7 +442,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio id)
 			throws ProtocolException {
 		
-		boolean operazioneGestita = this.validateDynamicConfigParteSpecifica(consoleHelper, properties, id, registryReader, false);
+		boolean operazioneGestita = this.validateDynamicConfigParteSpecifica(consoleConfiguration, consoleHelper, properties, id, registryReader, false);
 		if(!operazioneGestita) {
 			super.validateDynamicConfigAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, consoleHelper, properties, registryReader, configIntegrationReader, id);
 			return;
@@ -483,7 +484,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDFruizione id)
 			throws ProtocolException {
 	
-		boolean operazioneGestita = this.validateDynamicConfigParteSpecifica(consoleHelper, properties, id.getIdServizio(), registryReader, true);
+		boolean operazioneGestita = this.validateDynamicConfigParteSpecifica(consoleConfiguration, consoleHelper, properties, id.getIdServizio(), registryReader, true);
 		if(!operazioneGestita) {
 			super.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType,
 					consoleHelper, properties, registryReader, configIntegrationReader, id);
@@ -590,7 +591,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		return true;
 	}
 	
-	private boolean validateDynamicConfigParteSpecifica(IConsoleHelper consoleHelper, ProtocolProperties properties, IDServizio id,
+	private boolean validateDynamicConfigParteSpecifica(ConsoleConfiguration consoleConfiguration, IConsoleHelper consoleHelper, ProtocolProperties properties, IDServizio id,
 			IRegistryReader registryReader, boolean fruizioni) throws ProtocolException {
 		
 		if(!isMascheraGestioneFruizioneOrErogazione(consoleHelper)) {
@@ -620,7 +621,48 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		
 		// Comprensione se è richiesta la sicurezza
 		if(isSicurezzaMessaggioRequired(api, portType)) {
+			
+			AbstractConsoleItem<?> profiloSicurezzaMessaggioHttpHeadersItem = 	
+					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+							ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST_ID
+							);
+			if(profiloSicurezzaMessaggioHttpHeadersItem!=null) {
 				
+				StringProperty profiloSicurezzaMessaggioHttpHeadersItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST_ID);
+				if(profiloSicurezzaMessaggioHttpHeadersItemValue.getValue()!=null && !"".equals(profiloSicurezzaMessaggioHttpHeadersItemValue.getValue())) {
+					try {
+						String [] hdrObbligatori = ModIProperties.getInstance().getRestSecurityTokenSignedHeaders();
+						if(hdrObbligatori!=null && hdrObbligatori.length>0) {
+							
+							String [] hdrImpostati = profiloSicurezzaMessaggioHttpHeadersItemValue.getValue().split(",");
+							if(hdrImpostati==null || hdrImpostati.length<=0) {
+								throw new  Exception("Nessun header indicato");
+							}
+							
+							for (String hdrObbligatorio : hdrObbligatori) {
+								boolean found = false;
+								for (String hdrImpostato : hdrImpostati) {
+									if(hdrImpostato.toLowerCase().equals(hdrObbligatorio.toLowerCase())) {
+										found = true;
+										break;
+									}
+								}
+								if(!found) {
+									throw new  Exception("Header obbligatorio '"+hdrObbligatorio+"' non indicato");
+								}
+							}
+							
+						}
+					}catch(Exception e) {
+						throw new ProtocolException("Verificare quanto indicato in "+ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST_LABEL+": "+e.getMessage(),e);
+					}
+				}
+				else {
+					throw new ProtocolException("Verificare quanto indicato in "+ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST_LABEL+": nessun header indicato");
+				}
+				
+			}
+			
 			if(!fruizioni) {
 				try {
 					this.readKeystoreConfig(properties);
@@ -1411,7 +1453,12 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST_ID, 
 						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST_LABEL);
 				//profiloSicurezzaMessaggioHttpHeadersItem.setNote(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_NOTE);
-				profiloSicurezzaMessaggioHttpHeadersItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_DEFAULT_VALUE);
+				//profiloSicurezzaMessaggioHttpHeadersItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_DEFAULT_VALUE);
+				try {
+					profiloSicurezzaMessaggioHttpHeadersItem.setDefaultValue(ModIProperties.getInstance().getRestSecurityTokenSignedHeadersAsString());
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
 				profiloSicurezzaMessaggioHttpHeadersItem.setRequired(true);
 				configuration.addConsoleItem(profiloSicurezzaMessaggioHttpHeadersItem);
 			}
@@ -1682,7 +1729,26 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 					}
 				}
 			}
-						
+			
+			
+			
+			AbstractConsoleItem<?> profiloSicurezzaMessaggioHttpHeadersItem = 	
+					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+							ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST_ID
+							);
+			if(profiloSicurezzaMessaggioHttpHeadersItem!=null) {
+				
+				StringProperty profiloSicurezzaMessaggioHttpHeadersItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST_ID);
+				if(profiloSicurezzaMessaggioHttpHeadersItemValue.getValue()==null || "".equals(profiloSicurezzaMessaggioHttpHeadersItemValue.getValue())) {
+					try {
+						profiloSicurezzaMessaggioHttpHeadersItemValue.setValue(ModIProperties.getInstance().getRestSecurityTokenSignedHeadersAsString());
+					}catch(Exception e) {
+						throw new ProtocolException(e.getMessage(),e);
+					}
+				}
+				
+			}
+			
 		}
 		else {
 			

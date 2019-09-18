@@ -32,6 +32,7 @@ import org.openspcoop2.protocol.basic.builder.BustaBuilder;
 import org.openspcoop2.protocol.modipa.AbstractModISecurityToken;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
+import org.openspcoop2.protocol.modipa.validator.ModIRESTSecurity;
 import org.openspcoop2.protocol.modipa.validator.ModISOAPSecurity;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -42,7 +43,6 @@ import org.openspcoop2.protocol.sdk.constants.FaseImbustamento;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
-import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
  * Classe che implementa, in base al protocollo ModI, l'interfaccia {@link org.openspcoop2.protocol.sdk.builder.IBustaBuilder} 
@@ -142,6 +142,7 @@ public class ModIBustaBuilder extends BustaBuilder<AbstractModISecurityToken<?>>
 			if(msg!=null) {
 				
 				Object soapInfo = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_SOAP);
+				Object restInfo = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_REST);
 				
 				if(soapInfo!=null) {
 					
@@ -155,20 +156,17 @@ public class ModIBustaBuilder extends BustaBuilder<AbstractModISecurityToken<?>>
 					}
 					
 				}
-				else if(msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_REST)!=null) {
+				else if(restInfo!=null) {
 					
 					// sbustamento REST
 					
-					if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)) {
-						if(msg!=null && msg.getTransportRequestContext()!=null) {
-							msg.getTransportRequestContext().removeParameterTrasporto(HttpConstants.AUTHORIZATION);
-						}
+					ModIRESTSecurity restSecurity = (ModIRESTSecurity) restInfo;
+					try {
+						restSecurity.clean(msg);
+					}catch(Exception e) {
+						throw new ProtocolException(e.getMessage(),e);
 					}
-					else {
-						if(msg!=null && msg.getTransportResponseContext()!=null) {
-							msg.getTransportResponseContext().removeParameterTrasporto(HttpConstants.AUTHORIZATION);
-						}
-					}
+
 				}
 			}
 			protocolMessage.setMessage(msg);

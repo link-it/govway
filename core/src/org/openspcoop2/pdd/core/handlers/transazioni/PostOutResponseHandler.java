@@ -442,12 +442,12 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 		try{
 			
 			IDSoggetto idDominio = this.openspcoopProperties.getIdentitaPortaDefault(context.getProtocolFactory().getProtocol());
-			if(context.getProtocollo()!=null && context.getProtocollo().getDominio()!=null){
+			if(context.getProtocollo()!=null && context.getProtocollo().getDominio()!=null && !context.getProtocollo().getDominio().equals(idDominio)){
 				idDominio = context.getProtocollo().getDominio();
 			}
 			else if(context.getPddContext()!=null && context.getPddContext().containsKey(Costanti.REQUEST_INFO)){
 				RequestInfo requestInfo = (RequestInfo) context.getPddContext().getObject(Costanti.REQUEST_INFO);
-				if(requestInfo!=null){
+				if(requestInfo!=null && requestInfo.getIdentitaPdD()!=null && !requestInfo.getIdentitaPdD().equals(idDominio)){
 					idDominio = requestInfo.getIdentitaPdD();
 				}
 			}
@@ -775,7 +775,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 											context.getProtocollo().getServizio(), 
 											context.getProtocollo().getErogatore()!=null ? context.getProtocollo().getErogatore().getTipo() : null, 
 											context.getProtocollo().getErogatore()!=null ? context.getProtocollo().getErogatore().getNome() : null,
-											context.getProtocollo().getVersioneServizio());
+											context.getProtocollo().getVersioneServizio()!=null ? context.getProtocollo().getVersioneServizio() : -1);
 							messaggio.setServizio(idServizio);
 						}
 					}

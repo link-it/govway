@@ -721,6 +721,13 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 				out.flush();
 				out.close();
 			}
+			else {
+				if(this.debug){
+					// devo registrare almeno gli header HTTP
+					this.logger.info("Messaggio inviato senza contenuto nell'http-payload", false);
+					this.dumpBinarioRichiestaUscita(null, this.location, propertiesTrasportoDebug);
+				}
+			}
 			
 
 			// Analisi MimeType e ContentLocation della risposta

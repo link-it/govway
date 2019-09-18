@@ -136,8 +136,16 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			
 			this.dumpBinarioRispostaIngresso(bout.toByteArray(), trasporto);
 		}
-		else{
-			this.logger.info("Messaggio ricevuto (ContentType:"+this.tipoRisposta+") senza contenuto nell'http-reply",false);
+		else {
+			if(this.tipoRisposta!=null) {
+				this.logger.info("Messaggio ricevuto (ContentType:"+this.tipoRisposta+") senza contenuto nell'http-reply",false);
+			}
+			else {
+				this.logger.info("Messaggio ricevuto senza contenuto nell'http-reply",false);
+			}
+			
+			// devo registrare almeno gli header HTTP
+			this.dumpBinarioRispostaIngresso(null, trasporto);
 		}
 	}
 	

@@ -24,8 +24,6 @@
 
 package org.openspcoop2.protocol.modipa.constants;
 
-import org.openspcoop2.utils.transport.http.HttpConstants;
-
 /**
  * Classe dove sono fornite le stringhe costanti, definite dalla specifica del protocollo ModI, 
  *
@@ -340,7 +338,7 @@ public class ModIConsoleCostanti {
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST_LABEL = "HTTP Headers da firmare";
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST;
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_NOTE = "Elenco di Header http da firmare";
-	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_DEFAULT_VALUE = HttpConstants.DIGEST+","+HttpConstants.CONTENT_TYPE+","+HttpConstants.CONTENT_ENCODING;
+	//public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_DEFAULT_VALUE = HttpConstants.DIGEST+","+HttpConstants.CONTENT_TYPE+","+HttpConstants.CONTENT_ENCODING;
 	
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE_LABEL = "TrustStore Certificati";
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE;

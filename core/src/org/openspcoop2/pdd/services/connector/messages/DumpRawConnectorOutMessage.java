@@ -67,13 +67,13 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 	}
 	
 	public byte[] getResponseAsByte(){
-		if(this.bout!=null){
+		if(this.bout!=null && this.bout.size()>0){
 			return this.bout.toByteArray();
 		}
 		return null;
 	}
 	public String getResponseAsString(){
-		if(this.bout!=null){
+		if(this.bout!=null && this.bout.size()>0){
 			return this.bout.toString();
 		}
 		return null;

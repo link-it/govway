@@ -407,7 +407,9 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			messageSecurityContext.setIncomingProperties(secProperties, false);
 			joseSignature.process(messageSecurityContext, msgToken, busta);
 			joseSignature.detachSecurity(messageSecurityContext, msgToken.castAsRest());
-			msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_REST, true);
+			
+			ModIRESTSecurity restSecurity = new ModIRESTSecurity(securityTokenHeader, request);
+			msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_REST, restSecurity);
 
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			msgToken.writeTo(bout, true);
