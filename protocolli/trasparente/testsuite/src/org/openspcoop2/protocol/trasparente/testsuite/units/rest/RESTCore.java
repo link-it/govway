@@ -590,7 +590,8 @@ public class RESTCore {
 					urlAttesa = TransportUtils.buildLocationWithURLBasedParameter(new Properties(), urlBase);
 				}
 				if(urlAttesa.contains("govway/api/in/")) {
-					urlAttesa = urlAttesa.replace("govway/api/in/", "govway/in/"); // la url ritornata e' normalizzata
+					//urlAttesa = urlAttesa.replace("govway/api/in/", "govway/in/"); // la url ritornata e' normalizzata
+					urlAttesa = urlAttesa.replace("govway/api/in/", "govway/"); // la url ritornata e' normalizzata
 				}
 				if(urlAttesa.contains("govway/api/out/")) {
 					urlAttesa = urlAttesa.replace("govway/api/out/", "govway/out/"); // la url ritornata e' normalizzata

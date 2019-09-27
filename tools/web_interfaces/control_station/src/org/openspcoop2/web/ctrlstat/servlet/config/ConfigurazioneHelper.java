@@ -3727,6 +3727,21 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		
+		// Configuriazione CORS
+		this.addConfigurazioneCorsToDati(dati, corsStato, corsTipo, 
+				corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, 
+				corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds, 
+				true,
+				allHidden);
+		
+		// Configurazione Response Caching
+		this.addResponseCachingToDati(dati, responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize,		responseCachingMaxResponseSizeBytes, responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, 
+				responseCachingDigestPayload, true, responseCachingDigestHeadersNomiHeaders, responseCachingDigestQueryParameter, responseCachingDigestNomiParametriQuery,  
+				responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore,
+				visualizzaLinkConfigurazioneRegola, servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola,
+				allHidden);
+		
+		
 		if(!allHidden && !multitenantEnabled) {
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROFILO);
@@ -3795,20 +3810,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			}
 		}
-
-		// Configuriazione CORS
-		this.addConfigurazioneCorsToDati(dati, corsStato, corsTipo, 
-				corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, 
-				corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds, 
-				true,
-				allHidden);
-		
-		// Configurazione Response Caching
-		this.addResponseCachingToDati(dati, responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize,		responseCachingMaxResponseSizeBytes, responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, 
-				responseCachingDigestPayload, true, responseCachingDigestHeadersNomiHeaders, responseCachingDigestQueryParameter, responseCachingDigestNomiParametriQuery,  
-				responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore,
-				visualizzaLinkConfigurazioneRegola, servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola,
-				allHidden);
 		
 		if (!allHidden && !this.isModalitaStandard()) {
 			de = new DataElement();

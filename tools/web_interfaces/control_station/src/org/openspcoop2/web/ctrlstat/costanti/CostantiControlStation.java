@@ -483,14 +483,14 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_DESCRIZIONE = "Descrizione";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_POSIZIONE = "Ordine";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REG_EXPR = "Reg Expr";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REG_EXPR = "Espressione Regolare";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REGOLA_TEXT = "Regola";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_CONTESTO_ESTERNO = "Contesto";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL = "Base URL";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_PROFILO = "Profilo";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SOGGETTO = "Soggetto";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_RUOLO = "Ruolo";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SERVICE_BINDING = "Service Binding";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SERVICE_BINDING = "Tipo API";
 	
 	public final static String LABEL_PROXY_PASS_REGOLA_CRITERI_APPLICABILITA = "Criteri di Applicabilità";
 	public final static String LABEL_PROXY_PASS_REGOLA_NUOVA_URL = "Nuova URL di Invocazione";

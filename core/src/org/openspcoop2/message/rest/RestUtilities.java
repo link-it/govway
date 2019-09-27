@@ -228,12 +228,24 @@ public class RestUtilities {
 					}
 				}
 			}
+			String interfaceNameTmp = null;
 			if(interfaceName!=null) {
-				bf.append(interfaceName);
+				interfaceNameTmp = interfaceName;
 			}
 			else {
-				bf.append(transportRequestContext.getInterfaceName());
+				interfaceNameTmp = transportRequestContext.getInterfaceName();
 			}
+			if(interfaceNameTmp!=null) {
+				if(interfaceNameTmp.startsWith("/")) {
+					if(interfaceNameTmp.length()>1) {
+						bf.append(interfaceNameTmp.substring(1));
+					}
+				}
+				else {
+					bf.append(interfaceNameTmp);
+				}
+			}
+			
 			if(suffix.startsWith("/")==false) {
 				bf.append("/");
 			}
