@@ -50,7 +50,7 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 		this.ACCESSO_DATI_GESTIONE_TOKEN = new org.openspcoop2.core.config.model.AccessoDatiGestioneTokenModel(new Field("accesso-dati-gestione-token",org.openspcoop2.core.config.AccessoDatiGestioneToken.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_KEYSTORE = new org.openspcoop2.core.config.model.AccessoDatiKeystoreModel(new Field("accesso-dati-keystore",org.openspcoop2.core.config.AccessoDatiKeystore.class,"configurazione",Configurazione.class));
 		this.MULTITENANT = new org.openspcoop2.core.config.model.ConfigurazioneMultitenantModel(new Field("multitenant",org.openspcoop2.core.config.ConfigurazioneMultitenant.class,"configurazione",Configurazione.class));
-		this.PROTOCOLLI = new org.openspcoop2.core.config.model.ConfigurazioneProtocolliModel(new Field("protocolli",org.openspcoop2.core.config.ConfigurazioneProtocolli.class,"configurazione",Configurazione.class));
+		this.URL_INVOCAZIONE = new org.openspcoop2.core.config.model.ConfigurazioneUrlInvocazioneModel(new Field("url-invocazione",org.openspcoop2.core.config.ConfigurazioneUrlInvocazione.class,"configurazione",Configurazione.class));
 		this.VALIDAZIONE_BUSTE = new org.openspcoop2.core.config.model.ValidazioneBusteModel(new Field("validazione-buste",org.openspcoop2.core.config.ValidazioneBuste.class,"configurazione",Configurazione.class));
 		this.VALIDAZIONE_CONTENUTI_APPLICATIVI = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiModel(new Field("validazione-contenuti-applicativi",org.openspcoop2.core.config.ValidazioneContenutiApplicativi.class,"configurazione",Configurazione.class));
 		this.INDIRIZZO_RISPOSTA = new org.openspcoop2.core.config.model.IndirizzoRispostaModel(new Field("indirizzo-risposta",org.openspcoop2.core.config.IndirizzoRisposta.class,"configurazione",Configurazione.class));
@@ -83,7 +83,7 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 		this.ACCESSO_DATI_GESTIONE_TOKEN = new org.openspcoop2.core.config.model.AccessoDatiGestioneTokenModel(new ComplexField(father,"accesso-dati-gestione-token",org.openspcoop2.core.config.AccessoDatiGestioneToken.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_KEYSTORE = new org.openspcoop2.core.config.model.AccessoDatiKeystoreModel(new ComplexField(father,"accesso-dati-keystore",org.openspcoop2.core.config.AccessoDatiKeystore.class,"configurazione",Configurazione.class));
 		this.MULTITENANT = new org.openspcoop2.core.config.model.ConfigurazioneMultitenantModel(new ComplexField(father,"multitenant",org.openspcoop2.core.config.ConfigurazioneMultitenant.class,"configurazione",Configurazione.class));
-		this.PROTOCOLLI = new org.openspcoop2.core.config.model.ConfigurazioneProtocolliModel(new ComplexField(father,"protocolli",org.openspcoop2.core.config.ConfigurazioneProtocolli.class,"configurazione",Configurazione.class));
+		this.URL_INVOCAZIONE = new org.openspcoop2.core.config.model.ConfigurazioneUrlInvocazioneModel(new ComplexField(father,"url-invocazione",org.openspcoop2.core.config.ConfigurazioneUrlInvocazione.class,"configurazione",Configurazione.class));
 		this.VALIDAZIONE_BUSTE = new org.openspcoop2.core.config.model.ValidazioneBusteModel(new ComplexField(father,"validazione-buste",org.openspcoop2.core.config.ValidazioneBuste.class,"configurazione",Configurazione.class));
 		this.VALIDAZIONE_CONTENUTI_APPLICATIVI = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiModel(new ComplexField(father,"validazione-contenuti-applicativi",org.openspcoop2.core.config.ValidazioneContenutiApplicativi.class,"configurazione",Configurazione.class));
 		this.INDIRIZZO_RISPOSTA = new org.openspcoop2.core.config.model.IndirizzoRispostaModel(new ComplexField(father,"indirizzo-risposta",org.openspcoop2.core.config.IndirizzoRisposta.class,"configurazione",Configurazione.class));
@@ -122,7 +122,7 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 	 
 	public org.openspcoop2.core.config.model.ConfigurazioneMultitenantModel MULTITENANT = null;
 	 
-	public org.openspcoop2.core.config.model.ConfigurazioneProtocolliModel PROTOCOLLI = null;
+	public org.openspcoop2.core.config.model.ConfigurazioneUrlInvocazioneModel URL_INVOCAZIONE = null;
 	 
 	public org.openspcoop2.core.config.model.ValidazioneBusteModel VALIDAZIONE_BUSTE = null;
 	 

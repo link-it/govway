@@ -187,25 +187,46 @@ CREATE TABLE configurazione
 
 
 
--- **** Protocolli ****
+-- **** URLInvocazione ****
 
-CREATE SEQUENCE seq_config_protocolli start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+CREATE SEQUENCE seq_config_url_invocazione start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
 
-CREATE TABLE config_protocolli
+CREATE TABLE config_url_invocazione
+(
+	base_url VARCHAR(255) NOT NULL,
+	base_url_fruizione VARCHAR(255),
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_config_url_invocazione') NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT pk_config_url_invocazione PRIMARY KEY (id)
+);
+
+
+
+
+CREATE SEQUENCE seq_config_url_regole start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE config_url_regole
 (
 	nome VARCHAR(255) NOT NULL,
-	url_pd VARCHAR(255),
-	url_pa VARCHAR(255),
-	url_pd_rest VARCHAR(255),
-	url_pa_rest VARCHAR(255),
-	url_pd_soap VARCHAR(255),
-	url_pa_soap VARCHAR(255),
+	posizione INT NOT NULL,
+	stato VARCHAR(255),
+	descrizione TEXT,
+	regexpr INT NOT NULL,
+	regola VARCHAR(255) NOT NULL,
+	contesto_esterno VARCHAR(255) NOT NULL,
+	base_url VARCHAR(255),
+	protocollo VARCHAR(255),
+	ruolo VARCHAR(255),
+	service_binding VARCHAR(255),
+	tipo_soggetto VARCHAR(255),
+	nome_soggetto VARCHAR(255),
 	-- fk/pk columns
-	id BIGINT DEFAULT nextval('seq_config_protocolli') NOT NULL,
+	id BIGINT DEFAULT nextval('seq_config_url_regole') NOT NULL,
 	-- unique constraints
-	CONSTRAINT unique_config_protocolli_1 UNIQUE (nome),
+	CONSTRAINT unique_config_url_regole_1 UNIQUE (nome),
 	-- fk/pk keys constraints
-	CONSTRAINT pk_config_protocolli PRIMARY KEY (id)
+	CONSTRAINT pk_config_url_regole PRIMARY KEY (id)
 );
 
 

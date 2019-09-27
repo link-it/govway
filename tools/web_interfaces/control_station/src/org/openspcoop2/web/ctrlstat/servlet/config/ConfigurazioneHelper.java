@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.config;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -42,8 +43,7 @@ import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Configurazione;
-import org.openspcoop2.core.config.ConfigurazioneProtocolli;
-import org.openspcoop2.core.config.ConfigurazioneProtocollo;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
@@ -60,6 +60,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -115,7 +116,6 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.ConfigurazionePdD;
-import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.pdd.logger.LogLevels;
@@ -2260,6 +2260,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return false;
 			}
 			
+			// validazione URL Invocazione
+			if(!this.checkDataURLInvocazione()) {
+				return false;
+			}
+			
 			// validazione Cors
 			if(!this.checkDataCors()) {
 				return false;
@@ -3222,7 +3227,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String connessione, String utilizzo, String validman,
 			String gestman, String registrazioneTracce, String dumpPD, String dumpPA,
 			String xsd,	String tipoValidazione, String confPers, Configurazione configurazione,
-			Vector<DataElement> dati, String applicaMTOM, ConfigurazioneProtocolli configProtocolli,
+			Vector<DataElement> dati, String applicaMTOM, 
+			String urlInvocazionePA, String urlInvocazionePD,
 			boolean multitenantEnabled, String multitenantSoggettiFruizioni, String multitenantSoggettiErogazioni,
 			boolean editModeEnabled,
 			boolean corsStato, TipoGestioneCORS corsTipo, boolean corsAllAllowOrigins,	
@@ -3231,7 +3237,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			boolean responseCachingEnabled,	int responseCachingSeconds, boolean responseCachingMaxResponseSize,	long responseCachingMaxResponseSizeBytes, 
 			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders, boolean responseCachingDigestPayload, String responseCachingDigestHeadersNomiHeaders, StatoFunzionalitaCacheDigestQueryParameter responseCachingDigestQueryParameter, String responseCachingDigestNomiParametriQuery, 
 			boolean responseCachingCacheControlNoCache, boolean responseCachingCacheControlMaxAge, boolean responseCachingCacheControlNoStore, boolean visualizzaLinkConfigurazioneRegola, 
-			String servletResponseCachingConfigurazioneRegolaList, List<Parameter> paramsResponseCachingConfigurazioneRegolaList, int numeroResponseCachingConfigurazioneRegola
+			String servletResponseCachingConfigurazioneRegolaList, List<Parameter> paramsResponseCachingConfigurazioneRegolaList, int numeroResponseCachingConfigurazioneRegola, int numeroRegoleProxyPass
 			) throws Exception {
 		DataElement de = new DataElement();
 
@@ -3677,10 +3683,53 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		}
 		
-		
 		if(!allHidden) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_URL_INVOCAZIONE);
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PREFIX_URL_INVOCAZIONE);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+		}
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA);
+		if(allHidden) {
+			de.setType(DataElementType.HIDDEN);
+		}
+		else {
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setRequired(true);
+		}
+		de.setValue(urlInvocazionePA);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD);
+		if(allHidden) {
+			de.setType(DataElementType.HIDDEN);
+		}
+		else {
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setRequired(false);
+		}
+		de.setValue(urlInvocazionePD);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setType(DataElementType.LINK);
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_LIST);
+		boolean contaListeFromSession = ServletUtils.getContaListeFromSession(this.session) != null ? ServletUtils.getContaListeFromSession(this.session) : false;
+		if (contaListeFromSession)
+			de.setValue(ConfigurazioneCostanti.LABEL_REGOLE_PROXY_PASS+" (" + numeroRegoleProxyPass + ")");
+		else
+			de.setValue(ConfigurazioneCostanti.LABEL_REGOLE_PROXY_PASS);
+		dati.addElement(de);
+		
+		
+		if(!allHidden && !multitenantEnabled) {
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROFILO);
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
@@ -3696,122 +3745,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		for (String protocollo : ProtocolUtils.orderProtocolli(protocolliDispondibili)) {
 			IProtocolFactory<?> pFactory = mapPFactory.get(protocollo);
 			
-			
 			InformazioniProtocollo infoProt = pFactory.getInformazioniProtocol();
-			
-			ConfigurazioneProtocollo configProtocollo = null;
-			if(configProtocolli!=null) {
-				for (ConfigurazioneProtocollo check : configProtocolli.getProtocolloList()) {
-					if(check.getNome().equals(protocollo)) {
-						configProtocollo = check;
-						break;
-					}
-				}
-			}
-			
+					
 			User user = ServletUtils.getUserFromSession(this.session);
 			String userLogin = user.getLogin();
 			
-			String nameP = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_NAME+protocollo);
-			String urlInvocazionePD = null;
-			String urlInvocazionePA = null;
-			String urlInvocazionePD_REST = null;
-			String urlInvocazionePA_REST = null;
-			String urlInvocazionePD_SOAP = null;
-			String urlInvocazionePA_SOAP = null;
-			if(nameP!=null) {
-				urlInvocazionePD = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD_NOBINDING+protocollo);
-				urlInvocazionePA = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA_NOBINDING+protocollo);
-				urlInvocazionePD_REST = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD_REST+protocollo);
-				urlInvocazionePA_REST = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA_REST+protocollo);
-				urlInvocazionePD_SOAP = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD_SOAP+protocollo);
-				urlInvocazionePA_SOAP = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA_SOAP+protocollo);
-			}
-			
-			// check eventuali valori di default
-			if(urlInvocazionePD==null) {
-				if(configProtocollo!=null) {
-					urlInvocazionePD = configProtocollo.getUrlInvocazioneServizioPD();
-				}
-			}
-			if(urlInvocazionePA==null) {
-				if(configProtocollo!=null) {
-					urlInvocazionePA = configProtocollo.getUrlInvocazioneServizioPA();
-				}
-			}
-			if(urlInvocazionePD_REST==null) {
-				if(configProtocollo!=null) {
-					urlInvocazionePD_REST = configProtocollo.getUrlInvocazioneServizioRestPD();
-				}
-			}
-			if(urlInvocazionePA_REST==null) {
-				if(configProtocollo!=null) {
-					urlInvocazionePA_REST = configProtocollo.getUrlInvocazioneServizioRestPA();
-				}
-			}
-			if(urlInvocazionePD_SOAP==null) {
-				if(configProtocollo!=null) {
-					urlInvocazionePD_SOAP = configProtocollo.getUrlInvocazioneServizioSoapPD();
-				}
-			}
-			if(urlInvocazionePA_SOAP==null) {
-				if(configProtocollo!=null) {
-					urlInvocazionePA_SOAP = configProtocollo.getUrlInvocazioneServizioSoapPA();
-				}
-			}
-			
-			// default config, rispetto al protocollo
-			ConfigurazioneProtocollo configProtocolloSDK = new ConfigurazioneProtocollo();
-			configProtocolloSDK.setNome(protocollo);
-			ConfigurazionePdDReader.initConfigurazioneProtocolloUrlInvocazione(configProtocolloSDK);
-			
-			
-			if(urlInvocazionePD==null) {
-				urlInvocazionePD = configProtocolloSDK.getUrlInvocazioneServizioPD();
-			}
-			if(urlInvocazionePA==null) {
-				urlInvocazionePA = configProtocolloSDK.getUrlInvocazioneServizioPA();
-			}
-			if(urlInvocazionePD_REST==null) {
-				urlInvocazionePD_REST = configProtocolloSDK.getUrlInvocazioneServizioRestPD();
-			}
-			if(urlInvocazionePA_REST==null) {
-				urlInvocazionePA_REST = configProtocolloSDK.getUrlInvocazioneServizioRestPA();
-			}
-			if(urlInvocazionePD_SOAP==null) {
-				urlInvocazionePD_SOAP = configProtocolloSDK.getUrlInvocazioneServizioSoapPD();
-			}
-			if(urlInvocazionePA_SOAP==null) {
-				urlInvocazionePA_SOAP = configProtocolloSDK.getUrlInvocazioneServizioSoapPA();
-			}
-			
-			if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_VALORE_UNDEFINED.equals(urlInvocazionePD)) {
-				urlInvocazionePD = null;
-			}
-			if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_VALORE_UNDEFINED.equals(urlInvocazionePA)) {
-				urlInvocazionePA = null;
-			}
-			if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_VALORE_UNDEFINED.equals(urlInvocazionePD_REST)) {
-				urlInvocazionePD_REST = null;
-			}
-			if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_VALORE_UNDEFINED.equals(urlInvocazionePA_REST)) {
-				urlInvocazionePA_REST = null;
-			}
-			if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_VALORE_UNDEFINED.equals(urlInvocazionePD_SOAP)) {
-				urlInvocazionePD_SOAP = null;
-			}
-			if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_VALORE_UNDEFINED.equals(urlInvocazionePA_SOAP)) {
-				urlInvocazionePA_SOAP = null;
-			}
-			
-			boolean restPD = urlInvocazionePD_REST!=null && !urlInvocazionePD_REST.equals(urlInvocazionePD);
-			boolean restPA = urlInvocazionePA_REST!=null && !urlInvocazionePA_REST.equals(urlInvocazionePA);
-			
-			boolean soapPD = urlInvocazionePD_SOAP!=null && !urlInvocazionePD_SOAP.equals(urlInvocazionePD);
-			boolean soapPA = urlInvocazionePA_SOAP!=null && !urlInvocazionePA_SOAP.equals(urlInvocazionePA);
-			
 			if(mapPFactory.size()>1) {
-				if(!allHidden) {
+				if(!allHidden && !multitenantEnabled) {
 					de = new DataElement();
 					de.setLabel(infoProt.getLabel());
 					de.setType(DataElementType.SUBTITLE);
@@ -3825,115 +3765,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(protocollo);
 			dati.addElement(de);
-									
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA_NOBINDING+protocollo);
-			if(restPA && soapPA) {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_VALORE_UNDEFINED);
-			}
-			else {
-				if(allHidden) {
-					de.setType(DataElementType.HIDDEN);
-				}
-				else {
-					de.setType(DataElementType.TEXT_EDIT);
-				}
-				de.setValue(urlInvocazionePA);
-			}
-			dati.addElement(de);
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD_NOBINDING+protocollo);
-			if(restPD && soapPD) {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_VALORE_UNDEFINED);
-			}
-			else {
-				if(allHidden) {
-					de.setType(DataElementType.HIDDEN);
-				}
-				else {
-					de.setType(DataElementType.TEXT_EDIT);
-				}
-				de.setValue(urlInvocazionePD);
-			}
-			dati.addElement(de);
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA_REST);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA_REST+protocollo);
-			if(!restPA) {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_VALORE_UNDEFINED);
-			}
-			else {
-				if(allHidden) {
-					de.setType(DataElementType.HIDDEN);
-				}
-				else {
-					de.setType(DataElementType.TEXT_EDIT);
-				}
-				de.setValue(urlInvocazionePA_REST);
-			}
-			dati.addElement(de);
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD_REST);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD_REST+protocollo);
-			if(!restPD) {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_VALORE_UNDEFINED);
-			}
-			else {
-				if(allHidden) {
-					de.setType(DataElementType.HIDDEN);
-				}
-				else {
-					de.setType(DataElementType.TEXT_EDIT);
-				}
-				de.setValue(urlInvocazionePD_REST);
-			}
-			dati.addElement(de);
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA_SOAP);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA_SOAP+protocollo);
-			if(!soapPA) {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_VALORE_UNDEFINED);
-			}
-			else {
-				if(allHidden) {
-					de.setType(DataElementType.HIDDEN);
-				}
-				else {
-					de.setType(DataElementType.TEXT_EDIT);
-				}
-				de.setValue(urlInvocazionePA_SOAP);
-			}
-			dati.addElement(de);
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD_SOAP);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD_SOAP+protocollo);
-			if(!soapPD) {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_VALORE_UNDEFINED);
-			}
-			else {
-				if(allHidden) {
-					de.setType(DataElementType.HIDDEN);
-				}
-				else {
-					de.setType(DataElementType.TEXT_EDIT);
-				}
-				de.setValue(urlInvocazionePD_SOAP);
-			}
-			dati.addElement(de);
-					
+														
 			if(!multitenantEnabled) {
 				IDSoggetto idSoggetto = this.soggettiCore.getSoggettoOperativoDefault(userLogin, protocollo);
 				long idSoggettoLong = this.soggettiCore.getIdSoggetto(idSoggetto.getNome(), idSoggetto.getTipo());
@@ -14535,4 +14367,282 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		return value;
 	}
+	
+	// Prepara la lista delle regole di configurazione proxy pass
+	public void prepareProxyPassConfigurazioneRegolaList(ISearch ricerca, List<ConfigurazioneUrlInvocazioneRegola> lista) throws Exception {
+		try {
+			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA);
+
+			int idLista = Liste.CONFIGURAZIONE_PROXY_PASS_REGOLA;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			
+			// setto la barra del titolo
+			List<Parameter> lstParam = new ArrayList<Parameter>();
+
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+			
+			
+			this.pd.setSearchLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_NOME);
+			if(search.equals("")){
+				this.pd.setSearchDescription("");
+				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROXY_PASS_REGOLE, null));
+			}else{
+				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROXY_PASS_REGOLE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_LIST));
+				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
+			}
+
+			ServletUtils.setPageDataTitle(this.pd, lstParam);
+			
+			// controllo eventuali risultati ricerca
+			if (!search.equals("")) {
+				ServletUtils.enabledPageDataSearch(this.pd, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_NOME, search);
+			}
+
+			// setto le label delle colonne	
+			List<String> lstLabels = new ArrayList<>();
+			if(lista != null && lista.size() > 1)
+				lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_POSIZIONE);
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_STATO);
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_NOME);
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_DESCRIZIONE);
+			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<ConfigurazioneUrlInvocazioneRegola> it = lista.iterator();
+				int numeroElementi = lista.size();
+				int i = 0;
+				while (it.hasNext()) {
+					ConfigurazioneUrlInvocazioneRegola regola = it.next();
+
+					Vector<DataElement> e = new Vector<DataElement>();
+					Parameter pIdRegola = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_ID_REGOLA, regola.getId() + "");
+					
+					// Posizione
+					if(lista.size() > 1) {
+						DataElement de = new DataElement();
+						de.setWidthPx(48);
+						de.setType(DataElementType.IMAGE);
+						DataElementImage imageUp = new DataElementImage();
+						Parameter pDirezioneSu = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_POSIZIONE, 
+								CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SU);
+						Parameter pDirezioneGiu = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_POSIZIONE, 
+								CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_GIU);
+								
+						if(i > 0) {
+							imageUp.setImage(CostantiControlStation.ICONA_FRECCIA_SU);
+							imageUp.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU);
+							imageUp.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_LIST, pIdRegola, pDirezioneSu); 
+						}
+						else {
+							imageUp.setImage(CostantiControlStation.ICONA_PLACEHOLDER);
+						}
+						de.addImage(imageUp);
+						
+						if(i < numeroElementi -1) {
+							DataElementImage imageDown = new DataElementImage();
+							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
+							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU);
+							imageDown.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_LIST, pIdRegola, pDirezioneGiu);
+							de.addImage(imageDown);
+						}
+						de.setValue(regola.getPosizione()+"");
+						e.addElement(de);
+					}
+					
+					// Stato
+					DataElement de = new DataElement();
+					de.setWidthPx(10);
+					de.setType(DataElementType.CHECKBOX);
+					if(regola.getStato()==null // backward compatibility 
+							||
+							StatoFunzionalita.ABILITATO.equals(regola.getStato())){
+						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+						de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
+					}
+					else{
+						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
+					}
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_CHANGE, pIdRegola);
+					e.addElement(de);
+					
+					
+					// Nome
+					de = new DataElement();
+					de.setIdToRemove(regola.getId() + "");
+					de.setValue(regola.getNome());
+					de.setToolTip(regola.getNome());
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_CHANGE, pIdRegola);
+					e.addElement(de);
+					
+					de = new DataElement();
+					if(regola.getDescrizione() != null && regola.getDescrizione().length() > 100) {
+						de.setValue(regola.getDescrizione().substring(0, 97)+"...");
+						de.setToolTip(regola.getDescrizione());
+					} else {
+						de.setValue(regola.getDescrizione());
+					}
+					
+					e.addElement(de);
+
+					dati.addElement(e);
+					i++;
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	// Controlla i dati del registro
+	public boolean proxyPassConfigurazioneRegolaCheckData(TipoOperazione tipoOp, String oldNome) throws Exception {
+
+		try{
+			
+			String nome = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_NOME);
+			
+			if(StringUtils.isEmpty(nome)){
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_NOME));
+				return false;
+			}
+			
+			if(!this.checkLength(nome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_NOME, 1, 255)) {
+				return false;
+			}
+			
+			String stato = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_STATO);
+			
+			if(StringUtils.isEmpty(stato)){
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_STATO));
+				return false;
+			} else {
+				if(!stato.equals(StatoFunzionalita.ABILITATO.getValue()) && !stato.equals(StatoFunzionalita.DISABILITATO.getValue())) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO,ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_STATO));
+					return false;
+				}
+			}
+			
+			String regolaText = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REGOLA_TEXT);
+			
+			if(StringUtils.isEmpty(regolaText)){
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REGOLA_TEXT));
+				return false;
+			}
+			
+			if(!this.checkLength(regolaText, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REGOLA_TEXT, 1, 255)) {
+				return false;
+			}
+			
+			String contestoEsterno = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_CONTESTO_ESTERNO);
+			
+			/*
+			if(StringUtils.isEmpty(contestoEsterno)){
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_CONTESTO_ESTERNO));
+				return false;
+			}
+			*/
+			
+			if(!StringUtils.isEmpty(contestoEsterno)){
+				if(contestoEsterno.contains(" ")) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_CONTESTO_ESTERNO));   
+					return false;
+				}
+				
+				if(!this.checkLength(contestoEsterno, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_CONTESTO_ESTERNO, 1, 255)) {
+					return false;
+				}
+			}
+			
+			String baseUrl = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL);
+			
+			if(!StringUtils.isEmpty(baseUrl)){
+				if(baseUrl.contains(" ")) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL));   
+					return false;
+				}
+				
+				if(!this.checkLength(baseUrl, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL, 1, 255)) {
+					return false;
+				}
+				
+				try{
+					org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(baseUrl);
+				}catch(Exception e){
+					this.pd.setMessage(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL + " non correttamente formata: "+e.getMessage());
+					return false;
+				}
+			}
+			
+//			String protocollo = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_PROFILO);
+//			
+//			if(!StringUtils.isEmpty(protocollo)){
+//				
+//				// valida protocollo
+//				
+//				String soggetto = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SOGGETTO);
+//				
+//				if(!StringUtils.isEmpty(soggetto)){
+//					// valida id soggetto
+//				}
+//			}
+			
+			String ruolo = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_RUOLO);
+			if(!StringUtils.isEmpty(ruolo)){
+				if(!ruolo.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROXY_PASS_REGOLA_RUOLO_EROGAZIONE) && !ruolo.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROXY_PASS_REGOLA_RUOLO_FRUIZIONE)){
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO,ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_RUOLO));
+					return false;
+				}
+			}
+			String serviceBinding = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SERVICE_BINDING);
+			
+			if(!StringUtils.isEmpty(serviceBinding)){
+				if(!serviceBinding.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP) && !serviceBinding.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST)) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO,ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SERVICE_BINDING));
+					return false;
+				}
+			}
+			
+
+			// Se tipoOp = add, controllo che la regola non sia gia' stata registrata
+			if (tipoOp.equals(TipoOperazione.ADD)) {
+				boolean giaRegistrato = this.confCore.existsProxyPassConfigurazioneRegola(nome);
+
+				if (giaRegistrato) {
+					this.pd.setMessage("&Egrave; gi&agrave; presente una Regola di Proxy Pass con questo nome.");
+					return false;
+				}
+			} else { // change controllo che se ho modificato il nome, il nuovo nome non sia comunque utilizzato
+				if(!oldNome.equals(nome)) {
+					boolean giaRegistrato = this.confCore.existsProxyPassConfigurazioneRegola(nome);
+
+					if (giaRegistrato) {
+						this.pd.setMessage("&Egrave; gi&agrave; presente una Regola di Proxy Pass con questo nome.");
+						return false;
+					}
+				}
+			}
+
+			return true;
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+
 }

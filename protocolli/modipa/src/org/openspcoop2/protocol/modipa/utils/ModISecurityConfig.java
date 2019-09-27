@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -36,6 +37,8 @@ import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
@@ -45,6 +48,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.security.message.constants.SignatureDigestAlgorithm;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
@@ -303,7 +307,14 @@ public class ModISecurityConfig {
 				this.checkAudience = true;
 				this.audience = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE);
 				if(this.audience==null) {
-					this.audience = ModIUtilities.getUrlInvocazionePA(protocolFactory, rest, msg.getTransportRequestContext().getInterfaceName());			
+					UrlInvocazioneAPI urlInvocazioneApi = ConfigurazionePdDManager.getInstance().getConfigurazioneUrlInvocazione(protocolFactory, 
+							RuoloContesto.PORTA_APPLICATIVA,
+							rest ? org.openspcoop2.message.constants.ServiceBinding.REST : org.openspcoop2.message.constants.ServiceBinding.SOAP,
+									msg.getTransportRequestContext().getInterfaceName(),
+									new IDSoggetto(aspsParam.getTipoSoggettoErogatore(), aspsParam.getNomeSoggettoErogatore()));		 
+					String prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
+					String contesto = urlInvocazioneApi.getContext();
+					this.audience = Utilities.buildUrl(prefixGatewayUrl, contesto);
 				}
 				if(this.audience==null) {
 					throw new ProtocolException("Audience undefined");

@@ -1179,6 +1179,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			ret.setVersione(item.getVersione());
 			ret.setStato(item.getStato());
 			ret.setStatoDescrizione(item.getStatoDescrizione());
+			ret.setTags(item.getTags());
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 

@@ -420,6 +420,9 @@ public class CostantiControlStation {
 	public final static String LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE = "Regole di Caching Risposta";
 	public final static String LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE_DI = "Regole di Caching Risposta di";
 	
+	public final static String LABEL_CONFIGURAZIONE_PROXY_PASS_REGOLE = "Regole di Proxy Pass";
+	public final static String LABEL_CONFIGURAZIONE_PROXY_PASS_REGOLE_DI = "Regole di Proxy Pass di";
+	
 	public final static String LABEL_CONFIGURAZIONE_DEFAULT = "Configurazione di default del Gateway";
 	public final static String LABEL_CONFIGURAZIONE_RIDEFINITA = "Configurazione ridefinita per l'API";
 	
@@ -474,6 +477,30 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT = "Fault";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS = "Cache Timeout (Secondi)";
 	
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA = "Regola";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLE = "Regole";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_STATO = "Stato";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_NOME = "Nome";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_DESCRIZIONE = "Descrizione";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_POSIZIONE = "Ordine";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REG_EXPR = "Reg Expr";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REGOLA_TEXT = "Regola";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_CONTESTO_ESTERNO = "Contesto";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL = "Base URL";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_PROFILO = "Profilo";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SOGGETTO = "Soggetto";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_RUOLO = "Ruolo";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SERVICE_BINDING = "Service Binding";
+	
+	public final static String LABEL_PROXY_PASS_REGOLA_CRITERI_APPLICABILITA = "Criteri di Applicabilità";
+	public final static String LABEL_PROXY_PASS_REGOLA_NUOVA_URL = "Nuova URL di Invocazione";
+	
+	public final static String MESSAGGIO_INFO_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REGOLA_TEXT_STRINGA_LIBERA = "Stringa utilizzata per individuare l'applicabilità della regola.<BR/>Si ha un'applicabilità se il contesto dell'API (url di invocazione senza la Base URL) inizia con la stringa fornita"; 
+	public final static String MESSAGGIO_INFO_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REGOLA_TEXT_REGEXP = "Espressione Regolare utilizzata per individuare l'applicabilità della regola.<BR/>L'espressione viene verificata sull contesto dell'API (url di invocazione senza la Base URL)"; 
+	public final static String MESSAGGIO_INFO_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_CONTESTO_ESTERNO = "Indica il contesto da utilizzare dopo la Base URL";
+	public final static String MESSAGGIO_INFO_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL = "Permette di ridefinire la Base URL utilizzata rispetto a quanto definito nella configurazione generale";
+	public final static String MESSAGGIO_INFO_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_EXPR_DATI_DINAMICI = "<BR/><BR/>È possibile utilizzare la keyword '${posizione}' per impostare un valore dinamico individuato tramite l'espressione regolare fornita.<BR/>Il primo match, all'interno dell'espressione regolare, è rappresentata da '${0}'.<BR/>Ad esempio: http://server:8080/${0}/altro/${1}/";
+
 	public final static String LABEL_CONFIGURAZIONE_TRASFORMAZIONI = "Trasformazioni";
 	public final static String LABEL_CONFIGURAZIONE_TRASFORMAZIONI_DI = "Trasformazioni di ";
 	public final static String LABEL_CONFIGURAZIONE_TRASFORMAZIONI_REGOLE_TRASFORMAZIONE = "Regole di Trasformazione";
@@ -818,6 +845,20 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT = "resCacheCCRegFault";
 	public final static String PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS = "resCacheCCRegTimeout";
 	
+	public final static String PARAMETRO_CONFIGURAZIONE_PROXY_PASS_ID_REGOLA = "ppId";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_STATO = "ppStato";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_NOME = "ppNome";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_DESCRIZIONE = "ppDescr";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_POSIZIONE = "ppPos";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REG_EXPR = "ppRegExpr";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REGOLA_TEXT = "ppRegText";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_CONTESTO_ESTERNO = "ppCE";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL = "ppBaseUrl";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_PROFILO = "ppProfilo";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SOGGETTO = "ppSogg";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_RUOLO = "ppRuolo";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SERVICE_BINDING = "ppServB";
+	
 	
 	public final static String PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE = "idTrasf";
 	public final static String PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RISPOSTA = "idTrasfRes";
@@ -1099,6 +1140,22 @@ public class CostantiControlStation {
 	public final static String MESSAGGIO_TRASFORMAZIONI_CHECK_UNIQUE_NOME_TIPO_URL = "Una regola con la propriet&agrave indicata risulta gi&agrave; registrata";
 	public final static String MESSAGGIO_TRASFORMAZIONI_CHECK_UNIQUE_NOME_TIPO_HEADER = "Una regola con l'header indicato risulta gi&agrave; registrata";
 
+	public final static String DEFAULT_VALUE_PARAMETRO_PROXY_PASS_REGOLA_RUOLO_QUALSIASI = "";
+	public final static String DEFAULT_VALUE_PARAMETRO_PROXY_PASS_REGOLA_RUOLO_EROGAZIONE = "erogazione";
+	public final static String DEFAULT_VALUE_PARAMETRO_PROXY_PASS_REGOLA_RUOLO_FRUIZIONE = "fruizione";
+	
+	public final static String[] SELECT_VALUES_PARAMETRO_PROXY_PASS_REGOLA_RUOLO = { DEFAULT_VALUE_PARAMETRO_PROXY_PASS_REGOLA_RUOLO_QUALSIASI, DEFAULT_VALUE_PARAMETRO_PROXY_PASS_REGOLA_RUOLO_EROGAZIONE, DEFAULT_VALUE_PARAMETRO_PROXY_PASS_REGOLA_RUOLO_FRUIZIONE};
+	
+		
+	public final static String LABEL_PARAMETRO_PROXY_PASS_REGOLA_RUOLO_EROGAZIONE = "Erogazione";
+	public final static String LABEL_PARAMETRO_PROXY_PASS_REGOLA_RUOLO_FRUIZIONE = "Fruizione";
+	public final static String LABEL_PARAMETRO_PROXY_PASS_REGOLA_RUOLO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+	
+	public final static String[] SELECT_LABELS_PARAMETRO_PROXY_PASS_REGOLA_RUOLO = { LABEL_PARAMETRO_PROXY_PASS_REGOLA_RUOLO_QUALSIASI, LABEL_PARAMETRO_PROXY_PASS_REGOLA_RUOLO_EROGAZIONE, LABEL_PARAMETRO_PROXY_PASS_REGOLA_RUOLO_FRUIZIONE };
+	
+	public final static String[] SELECT_VALUES_PARAMETRO_PROXY_PASS_REGOLA_SERVICE_BINDING = { DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI, DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP, DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST };
+	public final static String[] SELECT_LABELS_PARAMETRO_PROXY_PASS_REGOLA_SERVICE_BINDING = { LABEL_PARAMETRO_SERVICE_BINDING_QUALSIASI, LABEL_PARAMETRO_SERVICE_BINDING_SOAP, LABEL_PARAMETRO_SERVICE_BINDING_REST };
+	
 	/** OTHER */
 	public final static String IMAGES_DIR = "images";
 	public final static String CSS_DIR = "css";
@@ -1124,6 +1181,9 @@ public class CostantiControlStation {
 	public static final boolean VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_REGOLA_TRASFORMAZIONE = false;
 	public static final boolean VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_RISPOSTA_REGOLA_TRASFORMAZIONE = false;
 	public static final boolean VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_POLICY = false;
+	
+	/** COSTANTI VISUALIZZAZIONE MESSAGGI MODIFICA POSIZIONE REGOLA PROXY PASS */
+	public static final boolean VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_REGOLA_PROXY_PASS = false;
 	
 	/** COSTANTE DIMENSIONE TEXT_AREAD */
 	public final static int LABEL_PARAMETRO_TEXT_AREA_SIZE = 3;
@@ -1655,7 +1715,8 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_CONFERMA_REGOLA_POLICY_SPOSTATA_CORRETTAMENTE = "Posizione della policy modificata correttamente.";
 	public static final String MESSAGGIO_CONFERMA_REGOLA_TRASFORMAZIONE_SPOSTATA_CORRETTAMENTE = "Posizione della regola modificata correttamente.";
 	public static final String MESSAGGIO_CONFERMA_REGOLA_TRASFORMAZIONE_RISPOSTA_SPOSTATA_CORRETTAMENTE ="Posizione della regola di risposta modificata correttamente.";
-	 
+	public static final String MESSAGGIO_CONFERMA_REGOLA_PROXY_PASS_SPOSTATA_CORRETTAMENTE = "Posizione della regola modificata correttamente.";
+	
 	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_GRUPPO ="Procedere con l''abilitazione del gruppo ''{0}''?"; 
 	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_FROM_API ="Procedere con l'abilitazione dell'API ?"; 
 	

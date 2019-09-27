@@ -35,7 +35,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.MessageSecurity;
@@ -62,6 +61,7 @@ import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
@@ -81,10 +81,10 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
-import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -1089,33 +1089,11 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 
 		if(datiInvocazione) {
 			
-			ConfigurazioneProtocollo configProt = this.confCore.getConfigurazioneProtocollo(protocollo);
-			
-			boolean useInterfaceNameInInvocationURL = this.useInterfaceNameInImplementationInvocationURL(protocollo, serviceBinding);
-			
-			String prefix = configProt.getUrlInvocazioneServizioPA();
-			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(aspc.getServiceBinding())) {
-				if(configProt.getUrlInvocazioneServizioRestPA()!=null) {
-					prefix = configProt.getUrlInvocazioneServizioRestPA();
-				}
+			IDSoggetto soggettoOperativo = null;
+			if(asps!=null) {
+				soggettoOperativo = new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
 			}
-			else if(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(aspc.getServiceBinding())) {
-				if(configProt.getUrlInvocazioneServizioSoapPA()!=null) {
-					prefix = configProt.getUrlInvocazioneServizioSoapPA();
-				}
-			}
-			prefix = prefix.trim();
-			if(useInterfaceNameInInvocationURL) {
-				if(prefix.endsWith("/")==false) {
-					prefix = prefix + "/";
-				}
-			}
-			
-			String urlInvocazione = prefix;
-			if(useInterfaceNameInInvocationURL) {
-				PorteNamingUtils utils = new PorteNamingUtils(ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo));
-				urlInvocazione = urlInvocazione + utils.normalizePA(nomePorta);
-			}
+			UrlInvocazioneAPI urlInvocazione = this.confCore.getConfigurazioneUrlInvocazione(protocollo, RuoloContesto.PORTA_APPLICATIVA, serviceBinding, nomePorta, soggettoOperativo);
 			
 			de = new DataElement();
 			if(ServiceBinding.SOAP.equals(serviceBinding)) {
@@ -1124,7 +1102,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			else {
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_BASE_URL_INVOCAZIONE);
 			}
-			de.setValue(urlInvocazione);
+			de.setValue(urlInvocazione.getUrl());
 			de.setType(DataElementType.TEXT);
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA+"___LABEL");
 			dati.addElement(de);

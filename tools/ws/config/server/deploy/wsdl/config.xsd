@@ -845,7 +845,7 @@
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-gestione-token" type="accesso-dati-gestione-token"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-keystore" type="accesso-dati-keystore"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="multitenant" type="configurazione-multitenant"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="protocolli" type="configurazione-protocolli"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="url-invocazione" type="configurazione-url-invocazione"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="validazione-buste" type="validazione-buste"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="validazione-contenuti-applicativi" type="validazione-contenuti-applicativi"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="indirizzo-risposta" type="indirizzo-risposta"/>
@@ -977,20 +977,29 @@
 		<xsd:attribute default="soggettiEsterni" name="erogazioneSceltaSoggettiFruitori" type="PortaApplicativaSoggettiFruitori"/>
 	</xsd:complexType>
 
-	<!-- Configurazione Protocolli -->
-	<xsd:complexType name="configurazione-protocolli">
+	<!-- Configurazione URL Invocazione -->
+	<xsd:complexType name="configurazione-url-invocazione">
 		<xsd:sequence>
-			<xsd:element maxOccurs="unbounded" minOccurs="1" name="protocollo" type="configurazione-protocollo"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="regola" type="configurazione-url-invocazione-regola"/>
 		</xsd:sequence>
+		<xsd:attribute name="base-url" type="xsd:string" use="required"/>
+		<xsd:attribute name="base-url-fruizione" type="xsd:string" use="optional"/>
 	</xsd:complexType>
-	<xsd:complexType name="configurazione-protocollo">
+	<xsd:complexType name="configurazione-url-invocazione-regola">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" name="soggetto" type="id-soggetto"/> <!-- è possibile indicare un soggetto operativo per il quale la regola verrà applicata -->
+		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-		<xsd:attribute name="urlInvocazioneServizioPD" type="xsd:string" use="optional"/>
-		<xsd:attribute name="urlInvocazioneServizioPA" type="xsd:string" use="optional"/>
-		<xsd:attribute name="urlInvocazioneServizioRestPD" type="xsd:string" use="optional"/>
-		<xsd:attribute name="urlInvocazioneServizioRestPA" type="xsd:string" use="optional"/>
-		<xsd:attribute name="urlInvocazioneServizioSoapPD" type="xsd:string" use="optional"/>
-		<xsd:attribute name="urlInvocazioneServizioSoapPA" type="xsd:string" use="optional"/>
+		<xsd:attribute name="posizione" type="xsd:int" use="required"/>
+		<xsd:attribute default="abilitato" name="stato" type="StatoFunzionalita" use="optional"/>
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
+		<xsd:attribute default="false" name="regexpr" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="regola" type="xsd:string" use="required"/> <!-- Espressione regolare o prefisso da verificare sull'url interna di govway -->
+		<xsd:attribute name="contesto-esterno" type="xsd:string" use="required"/> <!-- Definisce come rimappare il contesto esterno, è possibile usare $() nel caso la regola sia una espressione regolare -->
+		<xsd:attribute name="base-url" type="xsd:string" use="optional"/> <!-- Permette di ridefinire la base url, è possibile usare $() nel caso la regola sia una espressione regolare -->
+		<xsd:attribute name="protocollo" type="xsd:string" use="optional"/> <!-- Delimita la regola per un profilo -->
+		<xsd:attribute name="ruolo" type="RuoloContesto" use="optional"/> <!-- Delimita la regola per una erogazione o fruizione -->
+		<xsd:attribute name="service-binding" type="ServiceBinding" use="optional"/> <!-- Delimita la regola per una API soap o rest -->
 	</xsd:complexType>
 
 	<!-- Validazione Buste -->
@@ -1455,6 +1464,18 @@
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="1_1"/>
 			<xsd:enumeration value="1_2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RuoloContesto">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="portaDelegata"/>
+			<xsd:enumeration value="portaApplicativa"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ServiceBinding">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="soap"/>
+			<xsd:enumeration value="rest"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	

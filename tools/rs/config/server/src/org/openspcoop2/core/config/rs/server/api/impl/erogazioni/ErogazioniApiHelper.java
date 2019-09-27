@@ -41,7 +41,8 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.AutorizzazioneScope;
-import org.openspcoop2.core.config.ConfigurazioneProtocollo;
+import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.CorsConfigurazione;
@@ -63,6 +64,7 @@ import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIden
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRichiestaIdentificazione;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRispostaIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataSoggettiErogatori;
+import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -213,16 +215,15 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
+import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.protocol.basic.Utilities;
-import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.information_missing.constants.StatoType;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
-import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
@@ -2285,37 +2286,18 @@ public class ErogazioniApiHelper {
 		final PortaApplicativa pa = env.paCore.getPortaApplicativa(idPA);
 		final AccordoServizioParteComuneSintetico aspc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 		ConfigurazioneCore confCore = new ConfigurazioneCore(env.stationCore);
-		ConfigurazioneProtocollo configProt = confCore.getConfigurazioneProtocollo(env.tipo_protocollo);
 		
-		String urlInvocazione = "";
-
-		boolean useInterfaceNameInInvocationURL = env.paHelper.useInterfaceNameInImplementationInvocationURL(env.tipo_protocollo, env.apcCore.toMessageServiceBinding(aspc.getServiceBinding()));
-
-		String prefix = configProt.getUrlInvocazioneServizioPA();
-		if(ServiceBinding.REST.equals(aspc.getServiceBinding())) {
-			if(configProt.getUrlInvocazioneServizioRestPA()!=null) {
-				prefix = configProt.getUrlInvocazioneServizioRestPA();
-			}
-		}
-		else if(ServiceBinding.SOAP.equals(aspc.getServiceBinding())) {
-			if(configProt.getUrlInvocazioneServizioSoapPA()!=null) {
-				prefix = configProt.getUrlInvocazioneServizioSoapPA();
-			}
-		}
-		prefix = prefix.trim();
-		if(useInterfaceNameInInvocationURL) {
-			if(prefix.endsWith("/")==false) {
-				prefix = prefix + "/";
-			}
-		}
-
-		urlInvocazione = prefix;
-		if(useInterfaceNameInInvocationURL) {
-			PorteNamingUtils utils = new PorteNamingUtils(ProtocolFactoryManager.getInstance().getProtocolFactoryByName(env.tipo_protocollo));
-			urlInvocazione = urlInvocazione + utils.normalizePA(pa.getNome());	
+		Configurazione config = confCore.getConfigurazioneGenerale();
+		
+		ConfigurazioneUrlInvocazione configurazioneUrlInvocazione = null;
+		if(config!=null && config.getUrlInvocazione()!=null) {
+			configurazioneUrlInvocazione = config.getUrlInvocazione();
 		}
 		
-		return urlInvocazione;
+		UrlInvocazioneAPI urlInvocazioneAPI = UrlInvocazioneAPI.getConfigurazioneUrlInvocazione(configurazioneUrlInvocazione, env.protocolFactory, RuoloContesto.PORTA_APPLICATIVA, 
+				ServiceBinding.REST.equals(aspc.getServiceBinding()) ? org.openspcoop2.message.constants.ServiceBinding.REST : org.openspcoop2.message.constants.ServiceBinding.SOAP, 
+						pa.getNome(), idServizio.getSoggettoErogatore());		
+		return urlInvocazioneAPI.getUrl();
 		
 	}
 	
@@ -2328,37 +2310,18 @@ public class ErogazioniApiHelper {
 		final AccordoServizioParteComuneSintetico aspc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 		
 		ConfigurazioneCore confCore = new ConfigurazioneCore(env.stationCore);
-		ConfigurazioneProtocollo configProt = confCore.getConfigurazioneProtocollo(env.tipo_protocollo);
+
+		Configurazione config = confCore.getConfigurazioneGenerale();
 		
-		String urlInvocazione = "";
-
-		boolean useInterfaceNameInInvocationURL = env.paHelper.useInterfaceNameInImplementationInvocationURL(env.tipo_protocollo, env.apcCore.toMessageServiceBinding(aspc.getServiceBinding()));
-
-		String prefix = configProt.getUrlInvocazioneServizioPD();
-		if(ServiceBinding.REST.equals(aspc.getServiceBinding())) {
-			if(configProt.getUrlInvocazioneServizioRestPD()!=null) {
-				prefix = configProt.getUrlInvocazioneServizioRestPD();
-			}
-		}
-		else if(ServiceBinding.SOAP.equals(aspc.getServiceBinding())) {
-			if(configProt.getUrlInvocazioneServizioSoapPD()!=null) {
-				prefix = configProt.getUrlInvocazioneServizioSoapPD();
-			}
-		}
-		prefix = prefix.trim();
-		if(useInterfaceNameInInvocationURL) {
-			if(prefix.endsWith("/")==false) {
-				prefix = prefix + "/";
-			}
-		}
-
-		urlInvocazione = prefix;
-		if(useInterfaceNameInInvocationURL) {
-			PorteNamingUtils utils = new PorteNamingUtils(ProtocolFactoryManager.getInstance().getProtocolFactoryByName(env.tipo_protocollo));
-			urlInvocazione = urlInvocazione + utils.normalizePD(pd.getNome());	
+		ConfigurazioneUrlInvocazione configurazioneUrlInvocazione = null;
+		if(config!=null && config.getUrlInvocazione()!=null) {
+			configurazioneUrlInvocazione = config.getUrlInvocazione();
 		}
 		
-		return urlInvocazione;
+		UrlInvocazioneAPI urlInvocazioneAPI = UrlInvocazioneAPI.getConfigurazioneUrlInvocazione(configurazioneUrlInvocazione, env.protocolFactory, RuoloContesto.PORTA_DELEGATA, 
+				ServiceBinding.REST.equals(aspc.getServiceBinding()) ? org.openspcoop2.message.constants.ServiceBinding.REST : org.openspcoop2.message.constants.ServiceBinding.SOAP, 
+						pd.getNome(), fruitore);		
+		return urlInvocazioneAPI.getUrl();
 		
 	}
 	

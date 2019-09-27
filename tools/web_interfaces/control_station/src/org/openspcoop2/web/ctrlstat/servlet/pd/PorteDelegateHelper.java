@@ -35,7 +35,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.MessageSecurity;
@@ -57,6 +56,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
@@ -76,10 +76,10 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
-import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -250,33 +250,15 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 		if(datiInvocazione) {
 			
-			ConfigurazioneProtocollo configProt = this.confCore.getConfigurazioneProtocollo(protocollo);
-			
-			boolean useInterfaceNameInInvocationURL = this.useInterfaceNameInSubscriptionInvocationURL(protocollo, serviceBinding);
-			
-			String prefix = configProt.getUrlInvocazioneServizioPD();
-			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(aspc.getServiceBinding())) {
-				if(configProt.getUrlInvocazioneServizioRestPD()!=null) {
-					prefix = configProt.getUrlInvocazioneServizioRestPD();
-				}
+			IDSoggetto soggettoOperativo = null;
+			if(this.porteDelegateCore.isRegistroServiziLocale()){
+				org.openspcoop2.core.registry.Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(Long.valueOf(idsogg2));
+				soggettoOperativo = new IDSoggetto( soggetto.getTipo() , soggetto.getNome() );
+			}else{
+				org.openspcoop2.core.config.Soggetto soggetto = this.soggettiCore.getSoggetto(Long.valueOf(idsogg2));
+				soggettoOperativo = new IDSoggetto( soggetto.getTipo() , soggetto.getNome() );
 			}
-			else if(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(aspc.getServiceBinding())) {
-				if(configProt.getUrlInvocazioneServizioSoapPD()!=null) {
-					prefix = configProt.getUrlInvocazioneServizioSoapPD();
-				}
-			}
-			prefix = prefix.trim();
-			if(useInterfaceNameInInvocationURL) {
-				if(prefix.endsWith("/")==false) {
-					prefix = prefix + "/";
-				}
-			}
-			
-			String urlInvocazione = prefix;
-			if(useInterfaceNameInInvocationURL) {
-				PorteNamingUtils utils = new PorteNamingUtils(ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo));
-				urlInvocazione = urlInvocazione + utils.normalizePD(nomePorta);
-			}
+			UrlInvocazioneAPI urlInvocazione = this.confCore.getConfigurazioneUrlInvocazione(protocollo, RuoloContesto.PORTA_DELEGATA, serviceBinding, nomePorta, soggettoOperativo);
 			
 			de = new DataElement();
 			if(ServiceBinding.SOAP.equals(serviceBinding)) {
@@ -285,7 +267,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			else {
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_BASE_URL_INVOCAZIONE);
 			}
-			de.setValue(urlInvocazione);
+			de.setValue(urlInvocazione.getUrl());
 			de.setType(DataElementType.TEXT);
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA+"___LABEL");
 			dati.addElement(de);

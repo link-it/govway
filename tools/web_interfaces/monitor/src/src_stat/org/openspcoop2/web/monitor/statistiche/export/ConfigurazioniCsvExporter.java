@@ -58,14 +58,9 @@ import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
-import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
-import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.config.IProtocolIntegrationConfiguration;
-import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.web.monitor.core.report.Templates;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPA;
@@ -465,11 +460,7 @@ public class ConfigurazioniCsvExporter {
 		PortaApplicativaAzione paAzione = paOp2.getAzione();
 		
 		// Modalita
-		ServiceBinding serviceBinding= null;
 		String protocollo = configurazione.getProtocollo();
-		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
-		IProtocolIntegrationConfiguration createProtocolIntegrationConfiguration = protocolFactory.createProtocolIntegrationConfiguration();
-		PorteNamingUtils n = new PorteNamingUtils(protocolFactory);
 		if(StringUtils.isNotEmpty(protocollo))
 			oneLine.add(NamingUtils.getLabelProtocollo(protocollo));
 		else 
@@ -478,8 +469,6 @@ public class ConfigurazioniCsvExporter {
 		// ASPC
 		if(dettaglioPA.getIdAccordoServizioParteComune() != null) {
 			IdAccordoServizioParteComune aspc = dettaglioPA.getIdAccordoServizioParteComune();
-			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding2 = org.openspcoop2.core.registry.constants.ServiceBinding.toEnumConstant(aspc.getServiceBinding());
-			serviceBinding = ServiceBinding.valueOf(serviceBinding2.name());
 			String nomeAspc = aspc.getNome();
 
 			Integer versioneAspc = aspc.getVersione();
@@ -540,31 +529,7 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 		
 		// URL INVOCAZIONE
-		String urlInvocazione = null;
-		
-		try {
-			boolean useInterfaceNameInInvocationURL = createProtocolIntegrationConfiguration.useInterfaceNameInImplementationInvocationURL(serviceBinding); 
-			
-			String prefix = dettaglioPA.getEndpointApplicativoPA();
-			prefix = prefix.trim();
-			if(useInterfaceNameInInvocationURL) {
-				if(prefix.endsWith("/")==false) {
-					prefix = prefix + "/";
-				}
-			}
-			
-			urlInvocazione = prefix;
-			if(useInterfaceNameInInvocationURL) {
-				// se delegated by ci metto il nome della porta padre trattato dalle namingutils
-				if(StringUtils.isNotEmpty(portaApplicativa.getNomePortaDeleganteAzione())) {
-					urlInvocazione = urlInvocazione + n.normalizePA(portaApplicativa.getNomePortaDeleganteAzione());
-				} else {
-					urlInvocazione = urlInvocazione + configurazione.getLabel();
-				}
-			}
-		}catch(Exception e) {
-			 urlInvocazione = null;
-		}
+		String urlInvocazione = dettaglioPA.getUrlInvocazione();
 		
 		if(StringUtils.isNotEmpty(urlInvocazione))
 			oneLine.add(urlInvocazione);
@@ -993,11 +958,7 @@ public class ConfigurazioniCsvExporter {
 		PortaDelegataAzione pdAzione = pdOp2.getAzione();
 		
 		// Modalita
-		ServiceBinding serviceBinding= null;
 		String protocollo = configurazione.getProtocollo();
-		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
-		IProtocolIntegrationConfiguration createProtocolIntegrationConfiguration = protocolFactory.createProtocolIntegrationConfiguration();
-		PorteNamingUtils n = new PorteNamingUtils(protocolFactory);
 		if(StringUtils.isNotEmpty(protocollo))
 			oneLine.add(NamingUtils.getLabelProtocollo(protocollo));
 		else 
@@ -1006,8 +967,6 @@ public class ConfigurazioniCsvExporter {
 		// ASPC
 		if(dettaglioPD.getIdAccordoServizioParteComune() != null) {
 			IdAccordoServizioParteComune aspc = dettaglioPD.getIdAccordoServizioParteComune();
-			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding2 = org.openspcoop2.core.registry.constants.ServiceBinding.toEnumConstant(aspc.getServiceBinding());
-			serviceBinding = ServiceBinding.valueOf(serviceBinding2.name());
 			String nomeAspc = aspc.getNome();
 
 			Integer versioneAspc = aspc.getVersione();
@@ -1081,31 +1040,7 @@ public class ConfigurazioniCsvExporter {
 		
 		
 		// URL INVOCAZIONE
-		String urlInvocazione = null;
-		
-		try {
-			boolean useInterfaceNameInInvocationURL = createProtocolIntegrationConfiguration.useInterfaceNameInSubscriptionInvocationURL(serviceBinding); 
-			
-			String prefix = dettaglioPD.getEndpointApplicativoPD();
-			prefix = prefix.trim();
-			if(useInterfaceNameInInvocationURL) {
-				if(prefix.endsWith("/")==false) {
-					prefix = prefix + "/";
-				}
-			}
-			
-			urlInvocazione = prefix;
-			if(useInterfaceNameInInvocationURL) {
-				// se delegated by ci metto il nome della porta padre trattato dalle namingutils
-				if(StringUtils.isNotEmpty(portaDelegata.getNomePortaDeleganteAzione())) {
-					urlInvocazione = urlInvocazione + n.normalizePD(portaDelegata.getNomePortaDeleganteAzione());
-				} else {
-					urlInvocazione = urlInvocazione + configurazione.getLabel();
-				}
-			}
-		}catch(Exception e) {
-			 urlInvocazione = null;
-		}
+		String urlInvocazione = dettaglioPD.getUrlInvocazione();
 		
 		if(StringUtils.isNotEmpty(urlInvocazione))
 			oneLine.add(urlInvocazione);

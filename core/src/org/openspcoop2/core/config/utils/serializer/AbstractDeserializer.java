@@ -60,6 +60,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.OpenspcoopAppender;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.IdPortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServiziApplicativi;
@@ -118,7 +119,7 @@ import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
-import org.openspcoop2.core.config.ConfigurazioneProtocolli;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
 import org.openspcoop2.core.config.ValidazioneBuste;
 import org.openspcoop2.core.config.IndirizzoRisposta;
 import org.openspcoop2.core.config.Attachments;
@@ -133,7 +134,6 @@ import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.ProtocolProperty;
-import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.StatoServiziPddPortaDelegata;
 import org.openspcoop2.core.config.StatoServiziPddIntegrationManager;
 import org.openspcoop2.core.config.DumpConfigurazioneRegola;
@@ -2481,6 +2481,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public OpenspcoopAppender readOpenspcoopAppenderFromString(String in) throws DeserializerException {
 		return (OpenspcoopAppender) this.xmlToObj(in.getBytes(), OpenspcoopAppender.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: configurazione-url-invocazione-regola
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneUrlInvocazioneRegola readConfigurazioneUrlInvocazioneRegola(String fileName) throws DeserializerException {
+		return (ConfigurazioneUrlInvocazioneRegola) this.xmlToObj(fileName, ConfigurazioneUrlInvocazioneRegola.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneUrlInvocazioneRegola readConfigurazioneUrlInvocazioneRegola(File file) throws DeserializerException {
+		return (ConfigurazioneUrlInvocazioneRegola) this.xmlToObj(file, ConfigurazioneUrlInvocazioneRegola.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneUrlInvocazioneRegola readConfigurazioneUrlInvocazioneRegola(InputStream in) throws DeserializerException {
+		return (ConfigurazioneUrlInvocazioneRegola) this.xmlToObj(in, ConfigurazioneUrlInvocazioneRegola.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneUrlInvocazioneRegola readConfigurazioneUrlInvocazioneRegola(byte[] in) throws DeserializerException {
+		return (ConfigurazioneUrlInvocazioneRegola) this.xmlToObj(in, ConfigurazioneUrlInvocazioneRegola.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneUrlInvocazioneRegola readConfigurazioneUrlInvocazioneRegolaFromString(String in) throws DeserializerException {
+		return (ConfigurazioneUrlInvocazioneRegola) this.xmlToObj(in.getBytes(), ConfigurazioneUrlInvocazioneRegola.class);
 	}	
 	
 	
@@ -6141,63 +6204,63 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	
 	/*
 	 =================================================================================
-	 Object: configurazione-protocolli
+	 Object: configurazione-url-invocazione
 	 =================================================================================
 	*/
 	
 	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazione}
 	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
-	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazione}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazione}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public ConfigurazioneProtocolli readConfigurazioneProtocolli(String fileName) throws DeserializerException {
-		return (ConfigurazioneProtocolli) this.xmlToObj(fileName, ConfigurazioneProtocolli.class);
+	public ConfigurazioneUrlInvocazione readConfigurazioneUrlInvocazione(String fileName) throws DeserializerException {
+		return (ConfigurazioneUrlInvocazione) this.xmlToObj(fileName, ConfigurazioneUrlInvocazione.class);
 	}
 	
 	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazione}
 	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
-	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazione}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazione}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public ConfigurazioneProtocolli readConfigurazioneProtocolli(File file) throws DeserializerException {
-		return (ConfigurazioneProtocolli) this.xmlToObj(file, ConfigurazioneProtocolli.class);
+	public ConfigurazioneUrlInvocazione readConfigurazioneUrlInvocazione(File file) throws DeserializerException {
+		return (ConfigurazioneUrlInvocazione) this.xmlToObj(file, ConfigurazioneUrlInvocazione.class);
 	}
 	
 	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazione}
 	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
-	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazione}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazione}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public ConfigurazioneProtocolli readConfigurazioneProtocolli(InputStream in) throws DeserializerException {
-		return (ConfigurazioneProtocolli) this.xmlToObj(in, ConfigurazioneProtocolli.class);
+	public ConfigurazioneUrlInvocazione readConfigurazioneUrlInvocazione(InputStream in) throws DeserializerException {
+		return (ConfigurazioneUrlInvocazione) this.xmlToObj(in, ConfigurazioneUrlInvocazione.class);
 	}	
 	
 	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazione}
 	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
-	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazione}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazione}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public ConfigurazioneProtocolli readConfigurazioneProtocolli(byte[] in) throws DeserializerException {
-		return (ConfigurazioneProtocolli) this.xmlToObj(in, ConfigurazioneProtocolli.class);
+	public ConfigurazioneUrlInvocazione readConfigurazioneUrlInvocazione(byte[] in) throws DeserializerException {
+		return (ConfigurazioneUrlInvocazione) this.xmlToObj(in, ConfigurazioneUrlInvocazione.class);
 	}	
 	
 	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazione}
 	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
-	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazione}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneUrlInvocazione}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public ConfigurazioneProtocolli readConfigurazioneProtocolliFromString(String in) throws DeserializerException {
-		return (ConfigurazioneProtocolli) this.xmlToObj(in.getBytes(), ConfigurazioneProtocolli.class);
+	public ConfigurazioneUrlInvocazione readConfigurazioneUrlInvocazioneFromString(String in) throws DeserializerException {
+		return (ConfigurazioneUrlInvocazione) this.xmlToObj(in.getBytes(), ConfigurazioneUrlInvocazione.class);
 	}	
 	
 	
@@ -7080,69 +7143,6 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public ProtocolProperty readProtocolPropertyFromString(String in) throws DeserializerException {
 		return (ProtocolProperty) this.xmlToObj(in.getBytes(), ProtocolProperty.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: configurazione-protocollo
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
-	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public ConfigurazioneProtocollo readConfigurazioneProtocollo(String fileName) throws DeserializerException {
-		return (ConfigurazioneProtocollo) this.xmlToObj(fileName, ConfigurazioneProtocollo.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
-	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public ConfigurazioneProtocollo readConfigurazioneProtocollo(File file) throws DeserializerException {
-		return (ConfigurazioneProtocollo) this.xmlToObj(file, ConfigurazioneProtocollo.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
-	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public ConfigurazioneProtocollo readConfigurazioneProtocollo(InputStream in) throws DeserializerException {
-		return (ConfigurazioneProtocollo) this.xmlToObj(in, ConfigurazioneProtocollo.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
-	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public ConfigurazioneProtocollo readConfigurazioneProtocollo(byte[] in) throws DeserializerException {
-		return (ConfigurazioneProtocollo) this.xmlToObj(in, ConfigurazioneProtocollo.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
-	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public ConfigurazioneProtocollo readConfigurazioneProtocolloFromString(String in) throws DeserializerException {
-		return (ConfigurazioneProtocollo) this.xmlToObj(in.getBytes(), ConfigurazioneProtocollo.class);
 	}	
 	
 	

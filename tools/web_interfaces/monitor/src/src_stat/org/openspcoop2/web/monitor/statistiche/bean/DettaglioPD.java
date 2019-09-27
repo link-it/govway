@@ -61,9 +61,8 @@ public class DettaglioPD implements Serializable{
 	private List<Property> propertyIntegrazione = null;
 	private IdAccordoServizioParteComune idAccordoServizioParteComune = null;
 	private String portType = null;
-	private String contesto = null;
-	private String endpointApplicativoPD = null;
-	
+	private String urlInvocazione = null;
+
 	public DettaglioPD(){
 		this.azioni = new ArrayList<String>();
 		this.ruoli = new ArrayList<String>();
@@ -176,20 +175,12 @@ public class DettaglioPD implements Serializable{
 		this.portType = portType;
 	}
 
-	public String getContesto() {
-		return this.contesto;
+	public String getUrlInvocazione() {
+		return this.urlInvocazione;
 	}
 
-	public void setContesto(String contesto) {
-		this.contesto = contesto;
-	}
-
-	public String getEndpointApplicativoPD() {
-		return this.endpointApplicativoPD;
-	}
-
-	public void setEndpointApplicativoPD(String endpointApplicativoPD) {
-		this.endpointApplicativoPD = endpointApplicativoPD;
+	public void setUrlInvocazione(String urlInvocazione) {
+		this.urlInvocazione = urlInvocazione;
 	}
 	
 }

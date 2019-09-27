@@ -23,8 +23,6 @@ package org.openspcoop2.web.monitor.statistiche.dao;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
@@ -45,9 +43,9 @@ import org.openspcoop2.core.commons.search.dao.IPortaApplicativaServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IPortaDelegataServiceSearch;
 import org.openspcoop2.core.commons.search.model.PortaApplicativaModel;
 import org.openspcoop2.core.commons.search.model.PortaDelegataModel;
-import org.openspcoop2.core.config.ConfigurazioneProtocolli;
-import org.openspcoop2.core.config.ConfigurazioneProtocollo;
-import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
+import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
@@ -75,12 +73,12 @@ import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
-import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsService;
@@ -121,9 +119,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 	private transient DriverConfigurazioneDB driverConfigDB = null;
 	private transient DriverRegistroServiziDB driverRegistroDB = null;
 
-	private Hashtable<String, String> endpointApplicativoPD = null;
-	private Hashtable<String, String> endpointApplicativoPA = null;
-
+	private ConfigurazioneUrlInvocazione configurazioneUrlInvocazione;
+	
 	public ConfigurazioniGeneraliService(){
 		try{
 			this.dynamicService = new DynamicUtilsService();
@@ -184,48 +181,10 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				this.driverRegistroDB = new DriverRegistroServiziDB(datasourceJNDIName,datasourceJNDIContext, ConfigurazioniGeneraliService.log, tipoDatabase);
 			}
 
-			ConfigurazioneProtocolli configProtocolli = this.driverConfigDB.getConfigurazioneGenerale().getProtocolli();
-			this.endpointApplicativoPD = new Hashtable<>();
-			this.endpointApplicativoPA = new Hashtable<>();
-			
-			ProtocolFactoryManager pManager = ProtocolFactoryManager.getInstance();
-			MapReader<String, IProtocolFactory<?>> mapPFactory = pManager.getProtocolFactories();
-			Enumeration<String> protocolName = mapPFactory.keys();
-			while (protocolName.hasMoreElements()) {
-				String protocollo = (String) protocolName.nextElement();
-				IProtocolFactory<?> pFactory = mapPFactory.get(protocollo);
-				String context = "";
-				if(pFactory.getManifest().getWeb().sizeContextList()>0) {
-					context = pFactory.getManifest().getWeb().getContext(0).getName();
-				}
-				
-				ConfigurazioneProtocollo configProtocollo = null;
-				if(configProtocolli!=null) {
-					for (ConfigurazioneProtocollo check : configProtocolli.getProtocolloList()) {
-						if(check.getNome().equals(protocollo)) {
-							configProtocollo = check;
-							break;
-						}
-					}
-				}
-				
-				String urlInvocazionePD = null;
-				String urlInvocazionePA = null;
-				if(configProtocollo!=null) {
-					urlInvocazionePD = configProtocollo.getUrlInvocazioneServizioPD();
-				}
-				if(configProtocollo!=null) {
-					urlInvocazionePA = configProtocollo.getUrlInvocazioneServizioPA();
-				}
-				if(urlInvocazionePD==null) {
-					urlInvocazionePD = CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(context);
-				}
-				if(urlInvocazionePA==null) {
-					urlInvocazionePA = CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(context);
-				}
-				this.endpointApplicativoPD.put(protocollo, urlInvocazionePD);
-				this.endpointApplicativoPA.put(protocollo, urlInvocazionePA);
-			}
+			Configurazione config = this.driverConfigDB.getConfigurazioneGenerale();
+			if(config!=null && config.getUrlInvocazione()!=null) {
+				this.configurazioneUrlInvocazione = config.getUrlInvocazione();
+			}	
 
 		}catch(Exception e){
 			ConfigurazioniGeneraliService.log.error("Errore durante la creazione del Service: " + e.getMessage(),e);
@@ -948,12 +907,14 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		dettaglioPD.setPropertyAutorizzazione(ConfigurazioniUtils.getPropertiesAutorizzazionePD(dettaglioPD, idPD, this.driverConfigDB, this.driverRegistroDB));  
 
 		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(idPD.getIdentificativiFruizione().getSoggettoFruitore().getTipo());
-		String contesto = (protocolFactory.getManifest().getWeb().getEmptyContext()!=null && protocolFactory.getManifest().getWeb().getEmptyContext().getEnabled()) ?
-				"" : protocolFactory.getManifest().getWeb().getContext(0).getName();
 
-		dettaglioPD.setContesto(contesto);
-		dettaglioPD.setEndpointApplicativoPD(this.endpointApplicativoPD.get(protocolFactory.getProtocol()));
-
+		UrlInvocazioneAPI urlInvocazioneAPI = UrlInvocazioneAPI.getConfigurazioneUrlInvocazione(this.configurazioneUrlInvocazione, protocolFactory, RuoloContesto.PORTA_DELEGATA, 
+				ConfigurazioniUtils.getServiceBindingFromValues(dettaglioPD.getPortaDelegata().getTipoSoggettoErogatore(), dettaglioPD.getPortaDelegata().getNomeSoggettoErogatore(), 
+						dettaglioPD.getPortaDelegata().getTipoServizio(), dettaglioPD.getPortaDelegata().getNomeServizio(),dettaglioPD.getPortaDelegata().getVersioneServizio(), 
+						this.utilsServiceManager), 
+						idPD.getNome(), idPD.getIdentificativiFruizione().getSoggettoFruitore());
+		dettaglioPD.setUrlInvocazione(urlInvocazioneAPI.getUrl());
+		
 		dettaglioPD.setPropertyIntegrazione(ConfigurazioniUtils.getPropertiesIntegrazionePD(dettaglioPD));
 
 		configurazione.setPd(dettaglioPD);
@@ -988,11 +949,13 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 
 
 		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(idPA.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore().getTipo());
-		String contesto = (protocolFactory.getManifest().getWeb().getEmptyContext()!=null && protocolFactory.getManifest().getWeb().getEmptyContext().getEnabled()) ?
-				"" : protocolFactory.getManifest().getWeb().getContext(0).getName();
-
-		dettaglioPA.setContesto(contesto);
-		dettaglioPA.setEndpointApplicativoPA(this.endpointApplicativoPA.get(protocolFactory.getProtocol()));
+		
+		UrlInvocazioneAPI urlInvocazioneAPI = UrlInvocazioneAPI.getConfigurazioneUrlInvocazione(this.configurazioneUrlInvocazione, protocolFactory, RuoloContesto.PORTA_APPLICATIVA, 
+				ConfigurazioniUtils.getServiceBindingFromValues(idServizio.getSoggettoErogatore().getTipo(), idServizio.getSoggettoErogatore().getNome(), 
+						idServizio.getTipo(), idServizio.getNome(),idServizio.getVersione(), 
+						this.utilsServiceManager), 
+						idPA.getNome(), idServizio.getSoggettoErogatore());
+		dettaglioPA.setUrlInvocazione(urlInvocazioneAPI.getUrl());
 
 		if("trasparente".equals(protocolFactory.getProtocol()))	{
 			dettaglioPA.setTrasparente(true);

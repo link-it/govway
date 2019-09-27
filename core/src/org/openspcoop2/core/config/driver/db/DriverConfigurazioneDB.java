@@ -10595,27 +10595,62 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.CONFIG_PROTOCOLLI);
+				sqlQueryObject.addFromTable(CostantiDB.CONFIG_URL_INVOCAZIONE);
 				sqlQueryObject.addSelectField("*");
 				sqlQuery = sqlQueryObject.createSQLQuery();
 				stm1 = con.prepareStatement(sqlQuery);
 				rs1 = stm1.executeQuery();
-				while(rs1.next()){
-					ConfigurazioneProtocollo configurazioneProtocollo = new ConfigurazioneProtocollo();
-					configurazioneProtocollo.setNome(rs1.getString("nome"));
-					configurazioneProtocollo.setUrlInvocazioneServizioPD(rs1.getString("url_pd"));
-					configurazioneProtocollo.setUrlInvocazioneServizioPA(rs1.getString("url_pa"));
-					configurazioneProtocollo.setUrlInvocazioneServizioRestPD(rs1.getString("url_pd_rest"));
-					configurazioneProtocollo.setUrlInvocazioneServizioRestPA(rs1.getString("url_pa_rest"));
-					configurazioneProtocollo.setUrlInvocazioneServizioSoapPD(rs1.getString("url_pd_soap"));
-					configurazioneProtocollo.setUrlInvocazioneServizioSoapPA(rs1.getString("url_pa_soap"));
-					if(config.getProtocolli()==null) {
-						config.setProtocolli(new ConfigurazioneProtocolli());
-					}
-					config.getProtocolli().addProtocollo(configurazioneProtocollo);
+				if(rs1.next()){
+					ConfigurazioneUrlInvocazione configurazioneUrlInvocazione = new ConfigurazioneUrlInvocazione();
+					configurazioneUrlInvocazione.setBaseUrl(rs1.getString("base_url"));
+					configurazioneUrlInvocazione.setBaseUrlFruizione(rs1.getString("base_url_fruizione"));
+					config.setUrlInvocazione(configurazioneUrlInvocazione);
 				}
 				rs1.close();
 				stm1.close();
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.CONFIG_URL_REGOLE);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addOrderBy("posizione");
+				sqlQueryObject.addOrderBy("nome");
+				sqlQueryObject.setSortType(true);	
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm1 = con.prepareStatement(sqlQuery);
+				rs1 = stm1.executeQuery();
+				while(rs1.next()){
+					
+					if(config.getUrlInvocazione()==null) {
+						config.setUrlInvocazione(new ConfigurazioneUrlInvocazione());
+					}
+					
+					ConfigurazioneUrlInvocazioneRegola regola = new ConfigurazioneUrlInvocazioneRegola();
+					regola.setId(rs1.getLong("id"));
+					regola.setNome(rs1.getString("nome"));
+					regola.setPosizione(rs1.getInt("posizione"));
+					regola.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs1.getString("stato")));
+					regola.setDescrizione(rs1.getString("descrizione"));
+					if(rs1.getInt("regexpr") == CostantiDB.TRUE) {
+						regola.setRegexpr(true);
+					}else {
+						regola.setRegexpr(false);
+					}
+					regola.setRegola(rs1.getString("regola"));
+					regola.setContestoEsterno(rs1.getString("contesto_esterno"));
+					regola.setBaseUrl(rs1.getString("base_url"));
+					regola.setProtocollo(rs1.getString("protocollo"));
+					regola.setRuolo(DriverConfigurazioneDB_LIB.getEnumRuoloContesto(rs1.getString("ruolo")));
+					regola.setServiceBinding(DriverConfigurazioneDB_LIB.getEnumServiceBinding(rs1.getString("service_binding")));
+					String tipoSoggetto = rs1.getString("tipo_soggetto");
+					String nomeSoggetto = rs1.getString("nome_soggetto");
+					if(tipoSoggetto!=null && !"".equals(tipoSoggetto) && nomeSoggetto!=null && !"".equals(nomeSoggetto)) {
+						regola.setSoggetto(new IdSoggetto(new IDSoggetto(tipoSoggetto, nomeSoggetto)));
+					}
+					config.getUrlInvocazione().addRegola(regola);
+				}
+				rs1.close();
+				stm1.close();
+
 				
 				String multitenantStato = rs.getString("multitenant_stato");
 				String multitenantStatoSoggettiFruitori = rs.getString("multitenant_fruizioni");
@@ -16961,6 +16996,233 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			} else {
 				stmt.setInt(parameterIndex ++, CostantiDB.FALSE);
 			}
+			
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				count = risultato.getInt(1);
+			risultato.close();
+			stmt.close();
+
+			return count > 0;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public List<ConfigurazioneUrlInvocazioneRegola> proxyPassConfigurazioneRegolaList(ISearch ricerca) throws DriverConfigurazioneException {
+		String nomeMetodo = "proxyPassConfigurazioneRegolaList";
+		int idLista = Liste.CONFIGURAZIONE_PROXY_PASS_REGOLA;
+		int offset;
+		int limit;
+		String queryString;
+		String search;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		ArrayList<ConfigurazioneUrlInvocazioneRegola> lista = new ArrayList<ConfigurazioneUrlInvocazioneRegola>();
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("responseCachingConfigurazioneRegolaList");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIG_URL_REGOLE);
+			sqlQueryObject.addSelectCountField("id", "cont");
+			
+			if (!search.equals("")) {
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+			}
+			
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIG_URL_REGOLE);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addSelectField("nome");            
+			sqlQueryObject.addSelectField("posizione");       
+			sqlQueryObject.addSelectField("stato");           
+			sqlQueryObject.addSelectField("descrizione");     
+			sqlQueryObject.addSelectField("regexpr");         
+			sqlQueryObject.addSelectField("regola");          
+			sqlQueryObject.addSelectField("contesto_esterno");
+			sqlQueryObject.addSelectField("base_url");        
+			sqlQueryObject.addSelectField("protocollo");      
+			sqlQueryObject.addSelectField("ruolo");           
+			sqlQueryObject.addSelectField("service_binding"); 
+			sqlQueryObject.addSelectField("tipo_soggetto");   
+			sqlQueryObject.addSelectField("nome_soggetto");
+			
+			if (!search.equals("")) {
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+			}
+			sqlQueryObject.addOrderBy("posizione");
+			sqlQueryObject.addOrderBy("nome");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			risultato = stmt.executeQuery();
+
+			
+			while (risultato.next()) { 
+				ConfigurazioneUrlInvocazioneRegola regola = new ConfigurazioneUrlInvocazioneRegola();
+				regola.setId(risultato.getLong("id"));
+				regola.setNome(risultato.getString("nome"));
+				regola.setPosizione(risultato.getInt("posizione"));
+				regola.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(risultato.getString("stato")));
+				regola.setDescrizione(risultato.getString("descrizione"));
+				if(risultato.getInt("regexpr") == CostantiDB.TRUE) {
+					regola.setRegexpr(true);
+				}else {
+					regola.setRegexpr(false);
+				}
+				regola.setRegola(risultato.getString("regola"));
+				regola.setContestoEsterno(risultato.getString("contesto_esterno"));
+				regola.setBaseUrl(risultato.getString("base_url"));
+				regola.setProtocollo(risultato.getString("protocollo"));
+				regola.setRuolo(DriverConfigurazioneDB_LIB.getEnumRuoloContesto(risultato.getString("ruolo")));
+				regola.setServiceBinding(DriverConfigurazioneDB_LIB.getEnumServiceBinding(risultato.getString("service_binding")));
+				String tipoSoggetto = risultato.getString("tipo_soggetto");
+				String nomeSoggetto = risultato.getString("nome_soggetto");
+				if(tipoSoggetto!=null && !"".equals(tipoSoggetto) && nomeSoggetto!=null && !"".equals(nomeSoggetto)) {
+					regola.setSoggetto(new IdSoggetto(new IDSoggetto(tipoSoggetto, nomeSoggetto)));
+				}
+				
+				lista.add(regola);
+			
+			}
+			risultato.close();
+			stmt.close();
+			
+			return lista;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public boolean existsProxyPassConfigurazioneRegola(String nome) throws DriverConfigurazioneException {
+		String nomeMetodo = "existsResponseCachingConfigurazioneRegola";
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		String queryString;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("existsResponseCachingConfigurazioneRegola");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			int count = 0;
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIG_URL_REGOLE);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition("nome = ?");
+			
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			int parameterIndex = 1;
+			stmt.setString(parameterIndex ++, nome);
 			
 			risultato = stmt.executeQuery();
 			if (risultato.next())

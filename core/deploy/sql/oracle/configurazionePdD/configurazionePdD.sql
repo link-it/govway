@@ -234,34 +234,66 @@ end;
 
 
 
--- **** Protocolli ****
+-- **** URLInvocazione ****
 
-CREATE SEQUENCE seq_config_protocolli MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+CREATE SEQUENCE seq_config_url_invocazione MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
 
-CREATE TABLE config_protocolli
+CREATE TABLE config_url_invocazione
 (
-	nome VARCHAR2(255) NOT NULL,
-	url_pd VARCHAR2(255),
-	url_pa VARCHAR2(255),
-	url_pd_rest VARCHAR2(255),
-	url_pa_rest VARCHAR2(255),
-	url_pd_soap VARCHAR2(255),
-	url_pa_soap VARCHAR2(255),
+	base_url VARCHAR2(255) NOT NULL,
+	base_url_fruizione VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
-	-- unique constraints
-	CONSTRAINT unique_config_protocolli_1 UNIQUE (nome),
 	-- fk/pk keys constraints
-	CONSTRAINT pk_config_protocolli PRIMARY KEY (id)
+	CONSTRAINT pk_config_url_invocazione PRIMARY KEY (id)
 );
 
-CREATE TRIGGER trg_config_protocolli
+CREATE TRIGGER trg_config_url_invocazione
 BEFORE
-insert on config_protocolli
+insert on config_url_invocazione
 for each row
 begin
    IF (:new.id IS NULL) THEN
-      SELECT seq_config_protocolli.nextval INTO :new.id
+      SELECT seq_config_url_invocazione.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_config_url_regole MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE config_url_regole
+(
+	nome VARCHAR2(255) NOT NULL,
+	posizione NUMBER NOT NULL,
+	stato VARCHAR2(255),
+	descrizione CLOB,
+	regexpr NUMBER NOT NULL,
+	regola VARCHAR2(255) NOT NULL,
+	contesto_esterno VARCHAR2(255) NOT NULL,
+	base_url VARCHAR2(255),
+	protocollo VARCHAR2(255),
+	ruolo VARCHAR2(255),
+	service_binding VARCHAR2(255),
+	tipo_soggetto VARCHAR2(255),
+	nome_soggetto VARCHAR2(255),
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_config_url_regole_1 UNIQUE (nome),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_config_url_regole PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_config_url_regole
+BEFORE
+insert on config_url_regole
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_config_url_regole.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;

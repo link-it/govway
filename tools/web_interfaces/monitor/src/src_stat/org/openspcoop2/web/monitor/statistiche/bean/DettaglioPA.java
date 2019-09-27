@@ -60,8 +60,7 @@ public class DettaglioPA implements Serializable{
 	private IdAccordoServizioParteComune idAccordoServizioParteComune = null;
 	private String portType = null;
 	private List<String> azioni = null;
-	private String contesto = null;
-	private String endpointApplicativoPA = null;
+	private String urlInvocazione = null;
 	private boolean trasparente= false;
 	private List<Property> propertyIntegrazione = null;
 	
@@ -187,22 +186,14 @@ public class DettaglioPA implements Serializable{
 		this.azioni = azioni;
 	}
 
-	public String getContesto() {
-		return this.contesto;
+	public String getUrlInvocazione() {
+		return this.urlInvocazione;
 	}
 
-	public void setContesto(String contesto) {
-		this.contesto = contesto;
+	public void setUrlInvocazione(String urlInvocazione) {
+		this.urlInvocazione = urlInvocazione;
 	}
-
-	public String getEndpointApplicativoPA() {
-		return this.endpointApplicativoPA;
-	}
-
-	public void setEndpointApplicativoPA(String endpointApplicativoPA) {
-		this.endpointApplicativoPA = endpointApplicativoPA;
-	}
-
+	
 	public boolean isTrasparente() {
 		return this.trasparente;
 	}

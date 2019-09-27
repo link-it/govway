@@ -2,7 +2,7 @@
 -- DROP INDEX index_generic_properties_1;
 -- DROP INDEX index_pdd_sys_props_1;
 -- DROP INDEX index_servizi_pdd_1;
--- DROP INDEX index_config_protocolli_1;
+-- DROP INDEX index_config_url_regole_1;
 DROP TABLE generic_property;
 DROP TABLE generic_properties;
 DROP TABLE pdd_sys_props;
@@ -20,7 +20,8 @@ DROP TABLE tracce_appender_prop;
 DROP TABLE tracce_appender;
 DROP TABLE msgdiag_appender_prop;
 DROP TABLE msgdiag_appender;
-DROP TABLE config_protocolli;
+DROP TABLE config_url_regole;
+DROP TABLE config_url_invocazione;
 DROP TABLE configurazione;
 DROP TABLE config_cache_regole;
 DROP TABLE routing;

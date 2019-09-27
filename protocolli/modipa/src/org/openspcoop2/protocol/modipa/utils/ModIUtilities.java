@@ -29,7 +29,7 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
-import org.openspcoop2.core.config.ConfigurazioneProtocollo;
+import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
@@ -43,7 +43,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
-import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
@@ -57,7 +57,7 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
-import org.openspcoop2.protocol.utils.PorteNamingUtils;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.slf4j.Logger;
 
@@ -276,9 +276,11 @@ public class ModIUtilities {
 					"' relativamente all'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta));
 		}
 		String nomePA = null;
+		IDSoggetto proprietarioPA = null;
 		for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : listMapping) {
 			if(mappingErogazionePortaApplicativa.isDefault()) {
 				nomePA = mappingErogazionePortaApplicativa.getIdPortaApplicativa().getNome();
+				proprietarioPA = idServizioCorrelato.getSoggettoErogatore();
 			}
 		}
 		if(nomePA==null) {
@@ -286,33 +288,20 @@ public class ModIUtilities {
 					"' relativamente all'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta));
 		}
 
-		return getUrlInvocazionePA(protocolFactory, rest, nomePA);
+		return getUrlInvocazionePA(protocolFactory, rest, nomePA, proprietarioPA);
 	}
 	
 	
-	public static String getUrlInvocazionePA(IProtocolFactory<?> protocolFactory, boolean rest, String nomePA) throws Exception {
-		 ConfigurazioneProtocollo configurazioneProtocollo = ConfigurazionePdDManager.getInstance().getConfigurazioneProtocollo(protocolFactory.getProtocol());
-		 if(configurazioneProtocollo!=null) {
-			String prefixGatewayUrl = configurazioneProtocollo.getUrlInvocazioneServizioPA();
-			if(rest) {
-				if(configurazioneProtocollo.getUrlInvocazioneServizioRestPA()!=null) {
-					prefixGatewayUrl = configurazioneProtocollo.getUrlInvocazioneServizioRestPA();
-				}
-			}
-			else {
-				if(configurazioneProtocollo.getUrlInvocazioneServizioSoapPA()!=null) {
-					prefixGatewayUrl = configurazioneProtocollo.getUrlInvocazioneServizioSoapPA();
-				}
-			}
-			
-			if(prefixGatewayUrl.endsWith("/")==false) {
-				prefixGatewayUrl = prefixGatewayUrl+"/";
-			}
-			PorteNamingUtils utils = new PorteNamingUtils(ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolFactory.getProtocol()));
-			prefixGatewayUrl = prefixGatewayUrl+utils.normalizePA(nomePA);
-			return prefixGatewayUrl;
-		 }
-		 return null;
+	public static String getUrlInvocazionePA(IProtocolFactory<?> protocolFactory, boolean rest, String nomePA, IDSoggetto proprietarioPA) throws Exception {
+		
+		UrlInvocazioneAPI urlInvocazioneApi = ConfigurazionePdDManager.getInstance().getConfigurazioneUrlInvocazione(protocolFactory, 
+				RuoloContesto.PORTA_APPLICATIVA,
+				rest ? org.openspcoop2.message.constants.ServiceBinding.REST : org.openspcoop2.message.constants.ServiceBinding.SOAP,
+				nomePA,
+				proprietarioPA);		 
+		String prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
+		String contesto = urlInvocazioneApi.getContext();
+		return Utilities.buildUrl(prefixGatewayUrl, contesto);
 	}
 	
 	public static String getSOAPHeaderReplyToValue(OpenSPCoop2SoapMessage msg) throws Exception {

@@ -55,7 +55,7 @@ import org.openspcoop2.core.config.Attachments;
 import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
-import org.openspcoop2.core.config.ConfigurazioneProtocollo;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
@@ -152,6 +152,8 @@ import org.openspcoop2.core.config.constants.PortaApplicativaSoggettiFruitori;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataSoggettiErogatori;
 import org.openspcoop2.core.config.constants.ProprietaProtocolloValore;
+import org.openspcoop2.core.config.constants.RuoloContesto;
+import org.openspcoop2.core.config.constants.ServiceBinding;
 import org.openspcoop2.core.config.constants.Severita;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
@@ -405,6 +407,22 @@ public class DriverConfigurazioneDB_LIB {
 			return valore.getValue();
 		}
 	}
+	public static String getValue(RuoloContesto valore){
+		if(valore==null){
+			return null;
+		}
+		else{
+			return valore.getValue();
+		}
+	}
+	public static String getValue(ServiceBinding valore){
+		if(valore==null){
+			return null;
+		}
+		else{
+			return valore.getValue();
+		}
+	}
 	
 	
 	public static StatoFunzionalita getEnumStatoFunzionalita(String value){
@@ -581,6 +599,22 @@ public class DriverConfigurazioneDB_LIB {
 		}
 		else{
 			return StatoFunzionalitaCacheDigestQueryParameter.toEnumConstant(value);
+		}
+	}
+	public static RuoloContesto getEnumRuoloContesto(String value){
+		if(value==null){
+			return null;
+		}
+		else{
+			return RuoloContesto.toEnumConstant(value);
+		}
+	}
+	public static ServiceBinding getEnumServiceBinding(String value){
+		if(value==null){
+			return null;
+		}
+		else{
+			return ServiceBinding.toEnumConstant(value);
 		}
 	}
 	
@@ -7995,7 +8029,7 @@ public class DriverConfigurazioneDB_LIB {
 				config.getAccessoDatiAutorizzazione()==null &&
 				config.getAccessoDatiAutenticazione()==null && 
 				config.getMultitenant()==null &&
-				config.getProtocolli()==null &&
+				config.getUrlInvocazione()==null &&
 				config.getValidazioneBuste()==null && 
 				config.getValidazioneContenutiApplicativi()==null &&
 				config.getIndirizzoRisposta()==null &&	
@@ -8677,44 +8711,77 @@ public class DriverConfigurazioneDB_LIB {
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
 
-				// delete from config_protocolli
+				// delete from config_url_invocazione
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-				sqlQueryObject.addDeleteTable(CostantiDB.CONFIG_PROTOCOLLI);
+				sqlQueryObject.addDeleteTable(CostantiDB.CONFIG_URL_REGOLE);
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.executeUpdate();
+				updateStmt.close();
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.CONFIG_URL_INVOCAZIONE);
 				updateQuery = sqlQueryObject.createSQLDelete();
 				updateStmt = con.prepareStatement(updateQuery);
 				updateStmt.executeUpdate();
 				updateStmt.close();
 				
 				// insert into config_protocolli
-				if(config.getProtocolli()!=null && config.getProtocolli().sizeProtocolloList()>0){
-					for(int k=0; k<config.getProtocolli().sizeProtocolloList();k++){
-						ConfigurazioneProtocollo configProtocollo = config.getProtocolli().getProtocollo(k);
-						
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-						sqlQueryObject.addInsertTable(CostantiDB.CONFIG_PROTOCOLLI);
-						sqlQueryObject.addInsertField("nome", "?");
-						sqlQueryObject.addInsertField("url_pd", "?");
-						sqlQueryObject.addInsertField("url_pa", "?");
-						sqlQueryObject.addInsertField("url_pd_rest", "?");
-						sqlQueryObject.addInsertField("url_pa_rest", "?");
-						sqlQueryObject.addInsertField("url_pd_soap", "?");
-						sqlQueryObject.addInsertField("url_pa_soap", "?");
-						updateQuery = sqlQueryObject.createSQLInsert();
-						updateStmt = con.prepareStatement(updateQuery);
-						int indexP = 1;
-						updateStmt.setString(indexP++, configProtocollo.getNome());
-						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioPD());
-						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioPA());
-						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioRestPD());
-						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioRestPA());
-						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioSoapPD());
-						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioSoapPA());
-						updateStmt.executeUpdate();
-						updateStmt.close();
-
+				if(config.getUrlInvocazione()!=null){
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.CONFIG_URL_INVOCAZIONE);
+					sqlQueryObject.addInsertField("base_url", "?");
+					sqlQueryObject.addInsertField("base_url_fruizione", "?");
+					updateQuery = sqlQueryObject.createSQLInsert();
+					updateStmt = con.prepareStatement(updateQuery);
+					int indexP = 1;
+					updateStmt.setString(indexP++, config.getUrlInvocazione().getBaseUrl());
+					updateStmt.setString(indexP++, config.getUrlInvocazione().getBaseUrlFruizione());
+					updateStmt.executeUpdate();
+					updateStmt.close();
+					
+					if(config.getUrlInvocazione().sizeRegolaList()>0){
+						for(int k=0; k<config.getUrlInvocazione().sizeRegolaList();k++){
+							ConfigurazioneUrlInvocazioneRegola configUrlInvocazioneRegola = config.getUrlInvocazione().getRegola(k);
+							
+							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+							sqlQueryObject.addInsertTable(CostantiDB.CONFIG_URL_REGOLE);
+							sqlQueryObject.addInsertField("nome", "?");
+							sqlQueryObject.addInsertField("posizione", "?");
+							sqlQueryObject.addInsertField("stato", "?");
+							sqlQueryObject.addInsertField("descrizione", "?");
+							sqlQueryObject.addInsertField("regexpr", "?");
+							sqlQueryObject.addInsertField("regola", "?");
+							sqlQueryObject.addInsertField("contesto_esterno", "?");
+							sqlQueryObject.addInsertField("base_url", "?");
+							sqlQueryObject.addInsertField("protocollo", "?");
+							sqlQueryObject.addInsertField("ruolo", "?");
+							sqlQueryObject.addInsertField("service_binding", "?");
+							sqlQueryObject.addInsertField("tipo_soggetto", "?");
+							sqlQueryObject.addInsertField("nome_soggetto", "?");
+							updateQuery = sqlQueryObject.createSQLInsert();
+							updateStmt = con.prepareStatement(updateQuery);
+							indexP = 1;
+							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getNome());
+							updateStmt.setInt(indexP++, configUrlInvocazioneRegola.getPosizione());
+							updateStmt.setString(indexP++, DriverConfigurazioneDB_LIB.getValue(configUrlInvocazioneRegola.getStato()));
+							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getDescrizione());
+							updateStmt.setInt(indexP++, configUrlInvocazioneRegola.isRegexpr() ? CostantiDB.TRUE : CostantiDB.FALSE);
+							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getRegola());
+							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getContestoEsterno());
+							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getBaseUrl());
+							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getProtocollo());
+							updateStmt.setString(indexP++, DriverConfigurazioneDB_LIB.getValue(configUrlInvocazioneRegola.getRuolo()));
+							updateStmt.setString(indexP++, DriverConfigurazioneDB_LIB.getValue(configUrlInvocazioneRegola.getServiceBinding()));
+							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getSoggetto()!=null ? configUrlInvocazioneRegola.getSoggetto().getTipo() : null);
+							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getSoggetto()!=null ? configUrlInvocazioneRegola.getSoggetto().getNome() : null);
+							updateStmt.executeUpdate();
+							updateStmt.close();
+	
+						}
 					}
 				}
-				
 				
 				// delete from msg diag appender
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -9271,41 +9338,75 @@ public class DriverConfigurazioneDB_LIB {
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
 
-				// delete from config_protocolli
+				// delete from config_url_invocazione
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-				sqlQueryObject.addDeleteTable(CostantiDB.CONFIG_PROTOCOLLI);
+				sqlQueryObject.addDeleteTable(CostantiDB.CONFIG_URL_REGOLE);
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.executeUpdate();
+				updateStmt.close();
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.CONFIG_URL_INVOCAZIONE);
 				updateQuery = sqlQueryObject.createSQLDelete();
 				updateStmt = con.prepareStatement(updateQuery);
 				updateStmt.executeUpdate();
 				updateStmt.close();
 				
 				// insert into config_protocolli
-				if(config.getProtocolli()!=null && config.getProtocolli().sizeProtocolloList()>0){
-					for(int k=0; k<config.getProtocolli().sizeProtocolloList();k++){
-						ConfigurazioneProtocollo configProtocollo = config.getProtocolli().getProtocollo(k);
-						
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-						sqlQueryObject.addInsertTable(CostantiDB.CONFIG_PROTOCOLLI);
-						sqlQueryObject.addInsertField("nome", "?");
-						sqlQueryObject.addInsertField("url_pd", "?");
-						sqlQueryObject.addInsertField("url_pa", "?");
-						sqlQueryObject.addInsertField("url_pd_rest", "?");
-						sqlQueryObject.addInsertField("url_pa_rest", "?");
-						sqlQueryObject.addInsertField("url_pd_soap", "?");
-						sqlQueryObject.addInsertField("url_pa_soap", "?");
-						updateQuery = sqlQueryObject.createSQLInsert();
-						updateStmt = con.prepareStatement(updateQuery);
-						int indexP = 1;
-						updateStmt.setString(indexP++, configProtocollo.getNome());
-						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioPD());
-						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioPA());
-						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioRestPD());
-						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioRestPA());
-						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioSoapPD());
-						updateStmt.setString(indexP++, configProtocollo.getUrlInvocazioneServizioSoapPA());
-						updateStmt.executeUpdate();
-						updateStmt.close();
-
+				if(config.getUrlInvocazione()!=null){
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.CONFIG_URL_INVOCAZIONE);
+					sqlQueryObject.addInsertField("base_url", "?");
+					sqlQueryObject.addInsertField("base_url_fruizione", "?");
+					updateQuery = sqlQueryObject.createSQLInsert();
+					updateStmt = con.prepareStatement(updateQuery);
+					int indexP = 1;
+					updateStmt.setString(indexP++, config.getUrlInvocazione().getBaseUrl());
+					updateStmt.setString(indexP++, config.getUrlInvocazione().getBaseUrlFruizione());
+					updateStmt.executeUpdate();
+					updateStmt.close();
+					
+					if(config.getUrlInvocazione().sizeRegolaList()>0){
+						for(int k=0; k<config.getUrlInvocazione().sizeRegolaList();k++){
+							ConfigurazioneUrlInvocazioneRegola configUrlInvocazioneRegola = config.getUrlInvocazione().getRegola(k);
+							
+							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+							sqlQueryObject.addInsertTable(CostantiDB.CONFIG_URL_REGOLE);
+							sqlQueryObject.addInsertField("nome", "?");
+							sqlQueryObject.addInsertField("posizione", "?");
+							sqlQueryObject.addInsertField("stato", "?");
+							sqlQueryObject.addInsertField("descrizione", "?");
+							sqlQueryObject.addInsertField("regexpr", "?");
+							sqlQueryObject.addInsertField("regola", "?");
+							sqlQueryObject.addInsertField("contesto_esterno", "?");
+							sqlQueryObject.addInsertField("base_url", "?");
+							sqlQueryObject.addInsertField("protocollo", "?");
+							sqlQueryObject.addInsertField("ruolo", "?");
+							sqlQueryObject.addInsertField("service_binding", "?");
+							sqlQueryObject.addInsertField("tipo_soggetto", "?");
+							sqlQueryObject.addInsertField("nome_soggetto", "?");
+							updateQuery = sqlQueryObject.createSQLInsert();
+							updateStmt = con.prepareStatement(updateQuery);
+							indexP = 1;
+							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getNome());
+							updateStmt.setInt(indexP++, configUrlInvocazioneRegola.getPosizione());
+							updateStmt.setString(indexP++, DriverConfigurazioneDB_LIB.getValue(configUrlInvocazioneRegola.getStato()));
+							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getDescrizione());
+							updateStmt.setInt(indexP++, configUrlInvocazioneRegola.isRegexpr() ? CostantiDB.TRUE : CostantiDB.FALSE);
+							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getRegola());
+							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getContestoEsterno());
+							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getBaseUrl());
+							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getProtocollo());
+							updateStmt.setString(indexP++, DriverConfigurazioneDB_LIB.getValue(configUrlInvocazioneRegola.getRuolo()));
+							updateStmt.setString(indexP++, DriverConfigurazioneDB_LIB.getValue(configUrlInvocazioneRegola.getServiceBinding()));
+							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getSoggetto()!=null ? configUrlInvocazioneRegola.getSoggetto().getTipo() : null);
+							updateStmt.setString(indexP++, configUrlInvocazioneRegola.getSoggetto()!=null ? configUrlInvocazioneRegola.getSoggetto().getNome() : null);
+							updateStmt.executeUpdate();
+							updateStmt.close();
+	
+						}
 					}
 				}
 				

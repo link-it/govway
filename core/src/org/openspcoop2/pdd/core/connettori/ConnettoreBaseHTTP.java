@@ -27,17 +27,17 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.RestUtilities;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
-import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -218,25 +218,6 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 						 if(this.debug)
 							 this.logger.debug("Base URL: ["+baseUrl+"] ...");
 						 
-						 String prefixGatewayUrl = null;
-						 if(this.rest_proxyPassReverse_usePrefixProtocol) {
-							 ConfigurazioneProtocollo configurazioneProtocollo = ConfigurazionePdDManager.getInstance().getConfigurazioneProtocollo(this.getProtocolFactory().getProtocol());
-							 if(configurazioneProtocollo!=null) {
-								 if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-									 prefixGatewayUrl = configurazioneProtocollo.getUrlInvocazioneServizioPA();
-									 if(configurazioneProtocollo.getUrlInvocazioneServizioRestPA()!=null) {
-										 prefixGatewayUrl = configurazioneProtocollo.getUrlInvocazioneServizioRestPA();
-									 }
-								 }
-								 else {
-									 prefixGatewayUrl = configurazioneProtocollo.getUrlInvocazioneServizioPD();
-									 if(configurazioneProtocollo.getUrlInvocazioneServizioRestPD()!=null) {
-										 prefixGatewayUrl = configurazioneProtocollo.getUrlInvocazioneServizioRestPD();
-									 }
-								 }
-							 }
-						 }
-						 
 						 String interfaceName = null;
 						 if(this.requestMsg!=null) {
 							 Object porta = this.requestMsg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
@@ -249,17 +230,20 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 								 }
 							 }
 						 }
-						 if(interfaceName!=null) {
-							 PorteNamingUtils utils = new PorteNamingUtils(this.getProtocolFactory());
-							 if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-								 interfaceName = utils.normalizePA(interfaceName);
-							 }
-							 else {
-								 interfaceName = utils.normalizePD(interfaceName);
-							 }
+						 
+						 String prefixGatewayUrl = null;
+						 String contesto = null;
+						 if(this.rest_proxyPassReverse_usePrefixProtocol) {
+							 UrlInvocazioneAPI urlInvocazioneApi = ConfigurazionePdDManager.getInstance().getConfigurazioneUrlInvocazione(this.getProtocolFactory(), 
+									 ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo) ? RuoloContesto.PORTA_APPLICATIVA : RuoloContesto.PORTA_DELEGATA,
+								     this.requestMsg!=null ? this.requestMsg.getServiceBinding() : null,
+								     interfaceName,
+								     this.requestInfo!=null ? this.requestInfo.getIdentitaPdD() : null);		 
+							 prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
+							 contesto = urlInvocazioneApi.getContext();
 						 }
 						 
-						 String newRedirectLocation = RestUtilities.buildPassReverseUrl(this.requestMsg.getTransportRequestContext(), baseUrl, redirectLocation, prefixGatewayUrl, interfaceName);
+						 String newRedirectLocation = RestUtilities.buildPassReverseUrl(this.requestMsg.getTransportRequestContext(), baseUrl, redirectLocation, prefixGatewayUrl, contesto);
 						 if(this.debug)
 							 this.logger.debug("Nuovo Header '"+header+"':["+newRedirectLocation+"] ...");
 	               

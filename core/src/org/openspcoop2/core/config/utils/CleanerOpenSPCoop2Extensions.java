@@ -62,10 +62,6 @@ public class CleanerOpenSPCoop2Extensions {
 			}
 		}
 		
-		if(configurazionePdD.getProtocolli()!=null && configurazionePdD.getProtocolli().sizeProtocolloList()<=0 ) {
-			configurazionePdD.setProtocolli(null); // altrimeni da errore di validazione in fase di import
-		}
-		
 		if(configurazionePdD.getSystemProperties()!=null && configurazionePdD.getSystemProperties().sizeSystemPropertyList()<=0) {
 			configurazionePdD.setSystemProperties(null); // altrimeni da errore di validazione in fase di import
 		}

@@ -47,7 +47,7 @@ import java.util.List;
  * 			&lt;element name="accesso-dati-gestione-token" type="{http://www.openspcoop2.org/core/config}accesso-dati-gestione-token" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="accesso-dati-keystore" type="{http://www.openspcoop2.org/core/config}accesso-dati-keystore" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="multitenant" type="{http://www.openspcoop2.org/core/config}configurazione-multitenant" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="protocolli" type="{http://www.openspcoop2.org/core/config}configurazione-protocolli" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="url-invocazione" type="{http://www.openspcoop2.org/core/config}configurazione-url-invocazione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="validazione-buste" type="{http://www.openspcoop2.org/core/config}validazione-buste" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="indirizzo-risposta" type="{http://www.openspcoop2.org/core/config}indirizzo-risposta" minOccurs="0" maxOccurs="1"/>
@@ -86,7 +86,7 @@ import java.util.List;
   	"accessoDatiGestioneToken",
   	"accessoDatiKeystore",
   	"multitenant",
-  	"protocolli",
+  	"urlInvocazione",
   	"validazioneBuste",
   	"validazioneContenutiApplicativi",
   	"indirizzoRisposta",
@@ -215,12 +215,12 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
     this.multitenant = multitenant;
   }
 
-  public ConfigurazioneProtocolli getProtocolli() {
-    return this.protocolli;
+  public ConfigurazioneUrlInvocazione getUrlInvocazione() {
+    return this.urlInvocazione;
   }
 
-  public void setProtocolli(ConfigurazioneProtocolli protocolli) {
-    this.protocolli = protocolli;
+  public void setUrlInvocazione(ConfigurazioneUrlInvocazione urlInvocazione) {
+    this.urlInvocazione = urlInvocazione;
   }
 
   public ValidazioneBuste getValidazioneBuste() {
@@ -448,8 +448,8 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
   @XmlElement(name="multitenant",required=false,nillable=false)
   protected ConfigurazioneMultitenant multitenant;
 
-  @XmlElement(name="protocolli",required=false,nillable=false)
-  protected ConfigurazioneProtocolli protocolli;
+  @XmlElement(name="url-invocazione",required=false,nillable=false)
+  protected ConfigurazioneUrlInvocazione urlInvocazione;
 
   @XmlElement(name="validazione-buste",required=false,nillable=false)
   protected ValidazioneBuste validazioneBuste;

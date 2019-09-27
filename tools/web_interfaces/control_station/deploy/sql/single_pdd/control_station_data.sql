@@ -4,6 +4,9 @@ INSERT INTO configurazione (cadenza_inoltro, validazione_stato, validazione_cont
 -- Configurazione Controllo Traffico
 INSERT INTO ct_config (max_threads,pd_connection_timeout,pd_read_timeout,pd_avg_time,pa_connection_timeout,pa_read_timeout,pa_avg_time,cache_size,cache_algorithm,cache_life_time) VALUES (200,10000,150000,10000,10000,120000,10000,10000,'LRU',300);
 
+-- Init Configurazione URL Invocazione
+INSERT INTO config_url_invocazione (base_url) VALUES ('http://localhost:8080/govway/');
+
 -- Rotta di default per routing
 insert INTO routing (tiporotta,registrorotta,is_default) VALUES ('registro',0,1);
 

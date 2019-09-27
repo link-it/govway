@@ -1168,6 +1168,7 @@ public class DBOggettiInUsoUtils  {
 			List<String> autorizzazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.AUTORIZZAZIONE);
 			List<String> trasformazionePA_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PA);
 			List<String> trasformazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_PA);
+			List<String> configurazioniProxyPass_list = whereIsInUso.get(ErrorsHandlerCostant.CONFIGURAZIONE_REGOLE_PROXY_PASS);
 
 			if (servizi_fruitori_list == null) {
 				servizi_fruitori_list = new ArrayList<String>();
@@ -1232,6 +1233,10 @@ public class DBOggettiInUsoUtils  {
 			if (trasformazionePA_list == null) {
 				trasformazionePA_list = new ArrayList<String>();
 				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_PA, trasformazionePA_list);
+			}
+			if (configurazioniProxyPass_list == null) {
+				configurazioniProxyPass_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.CONFIGURAZIONE_REGOLE_PROXY_PASS, configurazioniProxyPass_list);
 			}
 
 
@@ -1677,6 +1682,26 @@ public class DBOggettiInUsoUtils  {
 			risultato.close();
 			stmt.close();
 			
+			// controllo se in uso nelle regole di cnonfigurazione del proxy pass
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIG_URL_REGOLE);
+			sqlQueryObject.addSelectField(CostantiDB.CONFIG_URL_REGOLE+".nome");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_URL_REGOLE+".tipo_soggetto=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.CONFIG_URL_REGOLE+".nome_soggetto=?");	
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setString(1, tipoSoggetto);
+			stmt.setString(2, nomeSoggetto);
+			risultato = stmt.executeQuery();
+			while (risultato.next()) {
+				String nome = risultato.getString("nome");
+				configurazioniProxyPass_list.add(nome);
+				isInUso = true;
+			}
+			risultato.close();
+			stmt.close();
+			
 			
 			return isInUso;
 
@@ -1800,6 +1825,11 @@ public class DBOggettiInUsoUtils  {
 			case TRASFORMAZIONE_PA:
 				if ( messages!=null && messages.size() > 0) {
 					msg += "utilizzato nelle Porte Inbound (Criterio di applicabilità della Trasformazione - Soggetti): " + formatList(messages,separator) + separator;
+				}
+				break;
+			case CONFIGURAZIONE_REGOLE_PROXY_PASS:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Regole di Proxy Pass: " + formatList(messages,separator) + separator;
 				}
 				break;
 			default:

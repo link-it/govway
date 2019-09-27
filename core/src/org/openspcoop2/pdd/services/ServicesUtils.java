@@ -37,10 +37,10 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPHeader;
 
 import org.apache.commons.io.output.NullOutputStream;
-import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.constants.Costanti;
@@ -65,6 +65,7 @@ import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.CORSFilter;
 import org.openspcoop2.pdd.core.CORSWrappedHttpServletResponse;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -551,31 +552,15 @@ public class ServicesUtils {
 					}
 					
 					if(asps.getPortType()!=null && requestInfo.getProtocolContext()!=null) {
-						ConfigurazioneProtocollo configurazioneProtocollo = ConfigurazionePdDManager.getInstance().getConfigurazioneProtocollo(requestInfo.getProtocolFactory().getProtocol());
-						String prefixGatewayUrl = null;
-						if(configurazioneProtocollo!=null) {
-							if(IDService.PORTA_APPLICATIVA.equals(idService)) {
-								prefixGatewayUrl = configurazioneProtocollo.getUrlInvocazioneServizioPA();
-							}
-							else {
-								prefixGatewayUrl = configurazioneProtocollo.getUrlInvocazioneServizioPD();
-							}
-						}
-						prefixGatewayUrl = prefixGatewayUrl.trim();
-						String suffix = requestInfo.getProtocolContext().getFunctionParameters();
-						if(suffix!=null && !"".equals(suffix)) {
-							if(!prefixGatewayUrl.endsWith("/")) {
-								if(!suffix.startsWith("/")) {
-									prefixGatewayUrl = prefixGatewayUrl +"/";
-								}
-							}
-							else {
-								if(suffix.startsWith("/") && suffix.length()>1) {
-									suffix = suffix.substring(1);
-								}
-							}
-							prefixGatewayUrl = prefixGatewayUrl + suffix;
-						}
+						
+						UrlInvocazioneAPI urlInvocazioneApi = ConfigurazionePdDManager.getInstance().getConfigurazioneUrlInvocazione(requestInfo.getProtocolFactory(), 
+								 IDService.PORTA_APPLICATIVA.equals(idService) ? RuoloContesto.PORTA_APPLICATIVA : RuoloContesto.PORTA_DELEGATA,
+								 requestInfo.getIntegrationServiceBinding(),
+								 requestInfo.getProtocolContext().getInterfaceName(),
+								 requestInfo.getIdentitaPdD());		 
+						String prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
+						String contesto = urlInvocazioneApi.getContext();
+						prefixGatewayUrl = Utilities.buildUrl(prefixGatewayUrl, contesto);
 						DefinitionWrapper wrapper = new DefinitionWrapper(wsdlDefinition, xmlUtils);
 						PortType ptWSDL = wrapper.getPortType(asps.getPortType());
 						if(ptWSDL!=null && ptWSDL.getQName()!=null && ptWSDL.getQName().getLocalPart()!=null) {

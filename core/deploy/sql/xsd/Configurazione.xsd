@@ -23,8 +23,9 @@
                                 <linkit:sql-table object-name="routing" object-type="routing"/>
                                 <linkit:sql-table object-name="response-cache-regola" object-type="response-cache-regola"/>
                                 <linkit:sql-table object-name="configurazione" object-type="configurazione"/>
-                                <linkit:sql-comment><![CDATA[**** Protocolli ****]]></linkit:sql-comment>
-                                <linkit:sql-table object-name="protocolli" object-type="protocolli"/>
+                                <linkit:sql-comment><![CDATA[**** URLInvocazione ****]]></linkit:sql-comment>
+                                <linkit:sql-table object-name="url-invocazione" object-type="url-invocazione"/>
+                                <linkit:sql-table object-name="url-invocazione-regola" object-type="url-invocazione-regola"/>
                                 <linkit:sql-comment><![CDATA[**** Messaggi diagnostici Appender ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="msg-diag-appender" object-type="msg-diag-appender"/>
                                 <linkit:sql-table object-name="msg-diag-appender-prop" object-type="msg-diag-appender-prop"/>
@@ -1322,13 +1323,52 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
     
     
     
-    <xsd:element name="protocolli">
+    <xsd:element name="url-invocazione">
         <xsd:annotation>
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="config_protocolli"
-                        comment="Regole di configurazione dei protocolli">
+                    <linkit:sql-table-mapping name="config_url_invocazione"
+                        comment="Configurazione per le url di invocazione del Gateway">
+                    </linkit:sql-table-mapping>                  
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="base-url" type="xsd:string" >
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="base_url"/>
+                                <linkit:sql-ddl-column-comment>BaseURL del Gateway</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="base-url-fruizione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="base_url_fruizione"/>
+                                <linkit:sql-ddl-column-comment>BaseURL del Gateway per le fruizioni</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="url-invocazione-regola">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="config_url_regole"
+                        comment="Regole di configurazione per le url di invocazione">
                         <linkit:sql-table-unique create-index="true">
                             <linkit:sql-table-unique-field name="nome"/>
                         </linkit:sql-table-unique>
@@ -1338,79 +1378,143 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
         </xsd:annotation>
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element name="nome" type="xsd:string" >
+                <xsd:element name="nome" type="xsd:string" minOccurs="1">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
-                                <linkit:sql-ddl-column-comment>Nome del Protocollo</linkit:sql-ddl-column-comment>
+                                <linkit:sql-ddl-column-comment>Identificativo della regola</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="urlInvocazioneServizioPD" type="xsd:string" minOccurs="0">
+                <xsd:element name="posizione" type="xsd:integer" minOccurs="1">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="url_pd"/>
-                                <linkit:sql-ddl-column-comment>URL di invocazione del servizio PD</linkit:sql-ddl-column-comment>
+                                <linkit:sql-ddl-column-comment>Posizione di applicabilità della regola</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="urlInvocazioneServizioPA" type="xsd:string" minOccurs="0">
+                <xsd:element name="stato" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="url_pa"/>
-                                <linkit:sql-ddl-column-comment>URL di invocazione del servizio PA</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-mapping name="stato"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la regola è abilitata (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="urlInvocazioneServizioRestPD" type="xsd:string" minOccurs="0">
+                <xsd:element name="descrizione" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="url_pd_rest"/>
-                                <linkit:sql-ddl-column-comment>URL di invocazione del servizio PD con service binding REST</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-mapping name="descrizione" text="true"/>
+                                <linkit:sql-ddl-column-comment>BaseURL del Gateway per le fruizioni</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="urlInvocazioneServizioRestPA" type="xsd:string" minOccurs="0">
+                <xsd:element name="regexpr" type="xsd:integer" minOccurs="1">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="url_pa_rest"/>
-                                <linkit:sql-ddl-column-comment>URL di invocazione del servizio PA con service binding REST</linkit:sql-ddl-column-comment>
+                                <linkit:sql-ddl-column-comment>Indicazione se la colonna 'regola' rappresenta una Espressione regolare (1) o un prefisso (0) da verificare sull'url interna di govway</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="urlInvocazioneServizioSoapPD" type="xsd:string" minOccurs="0">
+                <xsd:element name="regola" type="xsd:string" minOccurs="1">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="url_pd_soap"/>
-                                <linkit:sql-ddl-column-comment>URL di invocazione del servizio PD con service binding SOAP</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-mapping name="regola"/>
+                                <linkit:sql-ddl-column-comment>Espressione regolare o prefisso da verificare sull'url interna di govway</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="urlInvocazioneServizioSoapPA" type="xsd:string" minOccurs="0">
+                <xsd:element name="contesto-esterno" type="xsd:string" minOccurs="1">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="url_pa_soap"/>
-                                <linkit:sql-ddl-column-comment>URL di invocazione del servizio PA con service binding SOAP</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-mapping name="contesto_esterno"/>
+                                <linkit:sql-ddl-column-comment>Definisce come rimappare il contesto esterno, è possibile usare $() nel caso la regola sia una espressione regolare</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="base-url" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="base_url"/>
+                                <linkit:sql-ddl-column-comment>Permette di ridefinire la base url, è possibile usare $() nel caso la regola sia una espressione regolare</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="protocollo" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="protocollo"/>
+                                <linkit:sql-ddl-column-comment>Delimita la regola per un profilo</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ruolo" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="ruolo"/>
+                                <linkit:sql-ddl-column-comment>Delimita la regola per una erogazione (portaApplicativa) o fruizione (portaDelegata)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="service-binding" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="service_binding"/>
+                                <linkit:sql-ddl-column-comment>Delimita la regola per una API soap o rest</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tipo-soggetto" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="tipo_soggetto"/>
+                                <linkit:sql-ddl-column-comment>Tipo del soggetto operativo per il quale la regola verrà applicata</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="nome-soggetto" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="nome_soggetto"/>
+                                <linkit:sql-ddl-column-comment>Nome del soggetto operativo per il quale la regola verrà applicata</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1418,9 +1522,6 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
-    
-    
-    
     
     <xsd:element name="msg-diag-appender">
         <xsd:annotation>

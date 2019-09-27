@@ -3184,6 +3184,33 @@
             <forward name="configurazionePolicyGestioneTokenDel" path="/jsplib/listElement.jsp"/>
             <forward name="configurazionePolicyGestioneTokenError" path="/jsplib/info.jsp"/>
         </action>
+        
+        <!-- Configurazione Regole Proxy Pass -->
+
+        <action path="/configurazioneProxyPassRegolaAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneProxyPassRegolaAdd"
+            scope="request" validate="true">
+            <forward name="configurazioneProxyPassRegolaAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneProxyPassRegolaAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneProxyPassRegolaAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneProxyPassRegolaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneProxyPassRegolaList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneProxyPassRegolaList"
+            scope="request" validate="true">
+            <forward name="configurazioneProxyPassRegolaList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneProxyPassRegolaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneProxyPassRegolaChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneProxyPassRegolaChange"
+            scope="request" validate="true">
+            <forward name="configurazioneProxyPassRegolaChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneProxyPassRegolaChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneProxyPassRegolaChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneProxyPassRegolaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneProxyPassRegolaDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneProxyPassRegolaDel"
+            scope="request" validate="true">
+            <forward name="configurazioneProxyPassRegolaDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneProxyPassRegolaError" path="/jsplib/info.jsp"/>
+        </action>
     
      	<!-- Audit (Pagina Iniziale)  -->
     

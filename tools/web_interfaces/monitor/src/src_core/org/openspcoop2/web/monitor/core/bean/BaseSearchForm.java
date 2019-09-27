@@ -481,6 +481,8 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.labelNomeAzione = null;
 		
 		this.servizioApplicativo=null;
+		
+		this.riconoscimento = null;
 
 	}
 

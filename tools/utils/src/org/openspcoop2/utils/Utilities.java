@@ -1274,4 +1274,25 @@ public class Utilities {
 			bf.append(timeZone.getRawOffset());
 		}
 	}
+	
+	
+	// ** URL **
+	
+	public static String buildUrl(String prefix, String contesto) {
+		String url = prefix;
+		if(contesto!=null && !"".equals(contesto)) {
+			if(!url.endsWith("/")) {
+				if(!contesto.startsWith("/")) {
+					url = url +"/";
+				}
+			}
+			else {
+				if(contesto.startsWith("/") && contesto.length()>1) {
+					contesto = contesto.substring(1);
+				}
+			}
+			url = url + contesto;
+		}
+		return url;
+	}
 }

@@ -21,7 +21,7 @@
  */
 package org.openspcoop2.core.config.model;
 
-import org.openspcoop2.core.config.ConfigurazioneProtocolli;
+import org.openspcoop2.core.config.IdSoggetto;
 
 import org.openspcoop2.generic_project.beans.AbstractModel;
 import org.openspcoop2.generic_project.beans.IField;
@@ -30,38 +30,42 @@ import org.openspcoop2.generic_project.beans.ComplexField;
 
 
 /**     
- * Model ConfigurazioneProtocolli 
+ * Model IdSoggetto 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConfigurazioneProtocolliModel extends AbstractModel<ConfigurazioneProtocolli> {
+public class IdSoggettoModel extends AbstractModel<IdSoggetto> {
 
-	public ConfigurazioneProtocolliModel(){
+	public IdSoggettoModel(){
 	
 		super();
 	
-		this.PROTOCOLLO = new org.openspcoop2.core.config.model.ConfigurazioneProtocolloModel(new Field("protocollo",org.openspcoop2.core.config.ConfigurazioneProtocollo.class,"configurazione-protocolli",ConfigurazioneProtocolli.class));
+		this.TIPO = new Field("tipo",java.lang.String.class,"id-soggetto",IdSoggetto.class);
+		this.NOME = new Field("nome",java.lang.String.class,"id-soggetto",IdSoggetto.class);
 	
 	}
 	
-	public ConfigurazioneProtocolliModel(IField father){
+	public IdSoggettoModel(IField father){
 	
 		super(father);
 	
-		this.PROTOCOLLO = new org.openspcoop2.core.config.model.ConfigurazioneProtocolloModel(new ComplexField(father,"protocollo",org.openspcoop2.core.config.ConfigurazioneProtocollo.class,"configurazione-protocolli",ConfigurazioneProtocolli.class));
+		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"id-soggetto",IdSoggetto.class);
+		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"id-soggetto",IdSoggetto.class);
 	
 	}
 	
 	
 
-	public org.openspcoop2.core.config.model.ConfigurazioneProtocolloModel PROTOCOLLO = null;
+	public IField TIPO = null;
+	 
+	public IField NOME = null;
 	 
 
 	@Override
-	public Class<ConfigurazioneProtocolli> getModeledClass(){
-		return ConfigurazioneProtocolli.class;
+	public Class<IdSoggetto> getModeledClass(){
+		return IdSoggetto.class;
 	}
 	
 	@Override

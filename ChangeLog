@@ -1,3 +1,12 @@
+2019-07-27  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayCore, GovWayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-855
+	Rivista la modalità di visualizzazione delle Url di Invocazione delle API esposte da GovWay per assicurare che, 
+	in presenza di un reverse proxy che media le comunicazioni https con GovWay, 
+	sia possibile configurare opportunamente le url di invocazione delle API esposte da GovWay 
+	allineandole con le eventuali configurazioni specifiche realizzate sul reverse proxy.
+
 2019-07-25  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor]

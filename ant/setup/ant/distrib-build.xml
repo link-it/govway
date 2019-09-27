@@ -156,7 +156,7 @@
 				<delete file="${dist}/cfg/rs-api-monitor_local.properties"/>
 			</then>
 		</if>
-		<replace file="${dist}/cfg/govway_local.jcs.properties" token="/etc/govway/indexed-disk-cache" value="${work_dir}"/>
+		<replace file="${dist}/cfg/govway_local.jcs.properties" token="/etc/govway/indexed-disk-cache" value="${work_dir}/indexed-disk-cache"/>
 
 		<if>
 			<equals arg1="${antinstaller_modalita_installazione}" arg2="aggiornamento"/>
@@ -165,7 +165,16 @@
 
 				<antcall target="_setup_properties_aggiornamento"/>
 
-				<replace dir="${dist}/cfg/utilities/diff" token="/etc/govway/indexed-disk-cache" value="${work_dir}"/>
+				<replace dir="${dist}/cfg/utilities/diff" token="/etc/govway/indexed-disk-cache" value="${work_dir}/indexed-disk-cache"/>
+
+
+				<move todir="${dist}/cfg" includeemptydirs="false">
+					<fileset dir="${dist}/cfg">
+						<include name="*.properties"/>
+					</fileset>
+					<mapper type="glob" from="*.properties" to="*.properties.new"/>
+				</move>
+
 			</then>
 		</if>
 		

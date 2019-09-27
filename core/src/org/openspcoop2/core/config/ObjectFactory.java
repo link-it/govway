@@ -320,6 +320,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ConfigurazioneUrlInvocazione }
+     */
+    public ConfigurazioneUrlInvocazione createConfigurazioneUrlInvocazione() {
+        return new ConfigurazioneUrlInvocazione();
+    }
+
+    /**
      * Create an instance of {@link AccessoDatiAutenticazione }
      */
     public AccessoDatiAutenticazione createAccessoDatiAutenticazione() {
@@ -408,13 +415,6 @@ public class ObjectFactory {
      */
     public StatoServiziPdd createStatoServiziPdd() {
         return new StatoServiziPdd();
-    }
-
-    /**
-     * Create an instance of {@link ConfigurazioneProtocolli }
-     */
-    public ConfigurazioneProtocolli createConfigurazioneProtocolli() {
-        return new ConfigurazioneProtocolli();
     }
 
     /**
@@ -607,6 +607,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ConfigurazioneUrlInvocazioneRegola }
+     */
+    public ConfigurazioneUrlInvocazioneRegola createConfigurazioneUrlInvocazioneRegola() {
+        return new ConfigurazioneUrlInvocazioneRegola();
+    }
+
+    /**
      * Create an instance of {@link PortaApplicativaAutorizzazioneServiziApplicativi }
      */
     public PortaApplicativaAutorizzazioneServiziApplicativi createPortaApplicativaAutorizzazioneServiziApplicativi() {
@@ -688,13 +695,6 @@ public class ObjectFactory {
      */
     public TrasformazioneSoapRisposta createTrasformazioneSoapRisposta() {
         return new TrasformazioneSoapRisposta();
-    }
-
-    /**
-     * Create an instance of {@link ConfigurazioneProtocollo }
-     */
-    public ConfigurazioneProtocollo createConfigurazioneProtocollo() {
-        return new ConfigurazioneProtocollo();
     }
 
     /**

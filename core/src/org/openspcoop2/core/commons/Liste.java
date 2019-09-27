@@ -157,6 +157,7 @@ public final class Liste
     public final static int CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
     public final static int CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
     public final static int CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA;
+    public final static int CONFIGURAZIONE_PROXY_PASS_REGOLA;
     
 	
 
@@ -268,6 +269,7 @@ public final class Liste
     	CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY = numeroListe ++;
     	CONFIGURAZIONE_GESTIONE_POLICY_TOKEN = numeroListe ++;
     	CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA = numeroListe ++;
+    	CONFIGURAZIONE_PROXY_PASS_REGOLA = numeroListe ++;
     }
     
 	

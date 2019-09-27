@@ -179,27 +179,46 @@ CREATE TABLE configurazione
 
 
 
--- **** Protocolli ****
+-- **** URLInvocazione ****
 
-CREATE TABLE config_protocolli
+CREATE TABLE config_url_invocazione
+(
+	base_url VARCHAR(255) NOT NULL,
+	base_url_fruizione VARCHAR(255),
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- fk/pk keys constraints
+	CONSTRAINT pk_config_url_invocazione PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+
+
+
+CREATE TABLE config_url_regole
 (
 	nome VARCHAR(255) NOT NULL,
-	url_pd VARCHAR(255),
-	url_pa VARCHAR(255),
-	url_pd_rest VARCHAR(255),
-	url_pa_rest VARCHAR(255),
-	url_pd_soap VARCHAR(255),
-	url_pa_soap VARCHAR(255),
+	posizione INT NOT NULL,
+	stato VARCHAR(255),
+	descrizione TEXT,
+	regexpr INT NOT NULL,
+	regola VARCHAR(255) NOT NULL,
+	contesto_esterno VARCHAR(255) NOT NULL,
+	base_url VARCHAR(255),
+	protocollo VARCHAR(255),
+	ruolo VARCHAR(255),
+	service_binding VARCHAR(255),
+	tipo_soggetto VARCHAR(255),
+	nome_soggetto VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- unique constraints
-	CONSTRAINT unique_config_protocolli_1 UNIQUE (nome),
+	CONSTRAINT unique_config_url_regole_1 UNIQUE (nome),
 	-- fk/pk keys constraints
-	CONSTRAINT pk_config_protocolli PRIMARY KEY (id)
+	CONSTRAINT pk_config_url_regole PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
-CREATE UNIQUE INDEX index_config_protocolli_1 ON config_protocolli (nome);
+CREATE UNIQUE INDEX index_config_url_regole_1 ON config_url_regole (nome);
 
 
 

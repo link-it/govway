@@ -25,7 +25,6 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
@@ -47,8 +46,7 @@ import org.openspcoop2.core.config.Attachments;
 import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
-import org.openspcoop2.core.config.ConfigurazioneProtocolli;
-import org.openspcoop2.core.config.ConfigurazioneProtocollo;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
 import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.CorsConfigurazioneHeaders;
 import org.openspcoop2.core.config.CorsConfigurazioneMethods;
@@ -79,9 +77,6 @@ import org.openspcoop2.core.config.constants.TipoConnessioneRisposte;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.constants.ValidazioneBusteTipoControllo;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
-import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.DBManager;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -276,7 +271,12 @@ public final class ConfigurazioneGenerale extends Action {
 			List<Parameter> paramsResponseCachingConfigurazioneRegolaList = new ArrayList<Parameter>();
 			int numeroResponseCachingConfigurazioneRegola = confHelper.numeroRegoleResponseCaching(cachingConfigurazione);
 			List<ResponseCachingConfigurazioneRegola> listaRegoleCachingConfigurazione = cachingConfigurazione != null ?  cachingConfigurazione.getRegolaList() : null;
+			int numeroRegoleProxyPass = confHelper.numeroRegoleProxyPass(configurazione.getUrlInvocazione());
+			
 
+			String urlInvocazionePA = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA);
+			String urlInvocazionePD = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD);
+			
 			List<ExtendedInfo> extendedBeanList = new ArrayList<ExtendedInfo>();
 			if(extendedServletList!=null && extendedServletList.size()>0){
 				for (IExtendedFormServlet extendedServlet : extendedServletList) {
@@ -354,14 +354,14 @@ public final class ConfigurazioneGenerale extends Action {
 							inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
 							connessione, utilizzo, validman, gestman, registrazioneTracce, dumpPD, dumpPA, 
 							xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM,
-							configurazione.getProtocolli(),
+							urlInvocazionePA, urlInvocazionePD,
 							multitenantEnabled, multitenantSoggettiFruizioni, multitenantSoggettiErogazioni,
 							true,
 							corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds,
 							responseCachingEnabled,	responseCachingSeconds, responseCachingMaxResponseSize,	responseCachingMaxResponseSizeBytes, 
 							responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders, responseCachingDigestQueryParameter, responseCachingDigestNomiParametriQuery,
 							responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore, visualizzaLinkConfigurazioneRegola,
-							servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola );
+							servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola, numeroRegoleProxyPass);
 
 					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,
@@ -678,71 +678,19 @@ public final class ConfigurazioneGenerale extends Action {
 					newConfigurazione.getMultitenant().setErogazioneSceltaSoggettiFruitori(PortaApplicativaSoggettiFruitori.SOGGETTI_ESTERNI); // default
 				}
 
-				newConfigurazione.setProtocolli(null); // aggiorno i protocolli
-
-				ProtocolFactoryManager pManager = ProtocolFactoryManager.getInstance();
-				MapReader<String, IProtocolFactory<?>> mapPFactory = pManager.getProtocolFactories();
-				Enumeration<String> protocolName = mapPFactory.keys();
-				while (protocolName.hasMoreElements()) {
-					String protocollo = (String) protocolName.nextElement();
-
-					String nameP = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_NAME+protocollo);
-					if(nameP!=null) {
-						String urlInvocazionePD = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD_NOBINDING+protocollo);
-						String urlInvocazionePA = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA_NOBINDING+protocollo);
-						String urlInvocazionePD_REST = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD_REST+protocollo);
-						String urlInvocazionePA_REST = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA_REST+protocollo);
-						String urlInvocazionePD_SOAP = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD_SOAP+protocollo);
-						String urlInvocazionePA_SOAP = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA_SOAP+protocollo);
-						
-						if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_VALORE_UNDEFINED.equals(urlInvocazionePD)) {
-							urlInvocazionePD = null;
-						}
-						if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_VALORE_UNDEFINED.equals(urlInvocazionePA)) {
-							urlInvocazionePA = null;
-						}
-						if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_VALORE_UNDEFINED.equals(urlInvocazionePD_REST)) {
-							urlInvocazionePD_REST = null;
-						}
-						if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_VALORE_UNDEFINED.equals(urlInvocazionePA_REST)) {
-							urlInvocazionePA_REST = null;
-						}
-						if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_VALORE_UNDEFINED.equals(urlInvocazionePD_SOAP)) {
-							urlInvocazionePD_SOAP = null;
-						}
-						if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_VALORE_UNDEFINED.equals(urlInvocazionePA_SOAP)) {
-							urlInvocazionePA_SOAP = null;
-						}
-						
-						if(urlInvocazionePD_REST==null || "".equals(urlInvocazionePD_REST)) {
-							urlInvocazionePD_REST = urlInvocazionePD;
-						}
-						if(urlInvocazionePD_SOAP==null || "".equals(urlInvocazionePD_SOAP)) {
-							urlInvocazionePD_SOAP = urlInvocazionePD;
-						}
-						
-						if(urlInvocazionePA_REST==null || "".equals(urlInvocazionePA_REST)) {
-							urlInvocazionePA_REST = urlInvocazionePA;
-						}
-						if(urlInvocazionePA_SOAP==null || "".equals(urlInvocazionePA_SOAP)) {
-							urlInvocazionePA_SOAP = urlInvocazionePA;
-						}
-						
-						if(newConfigurazione.getProtocolli()==null) {
-							newConfigurazione.setProtocolli(new ConfigurazioneProtocolli());	
-						}
-
-						ConfigurazioneProtocollo configProtocollo = new ConfigurazioneProtocollo();
-						configProtocollo.setNome(nameP);
-						configProtocollo.setUrlInvocazioneServizioPD(urlInvocazionePD);
-						configProtocollo.setUrlInvocazioneServizioPA(urlInvocazionePA);
-						configProtocollo.setUrlInvocazioneServizioRestPD(urlInvocazionePD_REST);
-						configProtocollo.setUrlInvocazioneServizioRestPA(urlInvocazionePA_REST);
-						configProtocollo.setUrlInvocazioneServizioSoapPD(urlInvocazionePD_SOAP);
-						configProtocollo.setUrlInvocazioneServizioSoapPA(urlInvocazionePA_SOAP);
-						newConfigurazione.getProtocolli().addProtocollo(configProtocollo);
-					}
+				
+				// Url Invocazione
+				if(newConfigurazione.getUrlInvocazione()==null) {
+					newConfigurazione.setUrlInvocazione(new ConfigurazioneUrlInvocazione());
 				}
+				newConfigurazione.getUrlInvocazione().setBaseUrl(urlInvocazionePA);
+				if(urlInvocazionePD!=null && !"".equals(urlInvocazionePD)) {
+					newConfigurazione.getUrlInvocazione().setBaseUrlFruizione(urlInvocazionePD);
+				}
+				else {
+					newConfigurazione.getUrlInvocazione().setBaseUrlFruizione(null);
+				}
+				
 
 				// cors
 				CorsConfigurazione gestioneCors = confHelper.getGestioneCors(corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge,	corsMaxAgeSeconds);
@@ -787,14 +735,14 @@ public final class ConfigurazioneGenerale extends Action {
 						inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
 						connessione, utilizzo, validman, gestman, registrazioneTracce, dumpPD, dumpPA, 
 						xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM,
-						configurazione.getProtocolli(),
+						urlInvocazionePA, urlInvocazionePD,
 						multitenantEnabled, multitenantSoggettiFruizioni, multitenantSoggettiErogazioni,
 						false,
 						corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds,
 						responseCachingEnabled,	responseCachingSeconds, responseCachingMaxResponseSize,	responseCachingMaxResponseSizeBytes, 
 						responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders, responseCachingDigestQueryParameter, responseCachingDigestNomiParametriQuery,
 						responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore, visualizzaLinkConfigurazioneRegola,
-						servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola );
+						servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola, numeroRegoleProxyPass);
 
 				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,
@@ -1030,6 +978,16 @@ public final class ConfigurazioneGenerale extends Action {
 						}
 					}
 				}
+				if(configurazione.getUrlInvocazione()!=null) {
+					urlInvocazionePA = configurazione.getUrlInvocazione().getBaseUrl();
+					if(configurazione.getUrlInvocazione().getBaseUrlFruizione()!=null) {
+						urlInvocazionePD = configurazione.getUrlInvocazione().getBaseUrlFruizione();
+					}
+//					else {
+//						urlInvocazionePD = urlInvocazionePA;
+//					}
+					numeroRegoleProxyPass = configurazione.getUrlInvocazione().sizeRegolaList();
+				}
 				if(configurazione.getAccessoConfigurazione()!=null && configurazione.getAccessoConfigurazione().getCache()!=null){
 					statocache_config = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
 					dimensionecache_config = configurazione.getAccessoConfigurazione().getCache().getDimensione();
@@ -1252,13 +1210,13 @@ public final class ConfigurazioneGenerale extends Action {
 					inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
 					connessione, utilizzo, validman, gestman, registrazioneTracce, dumpPD, dumpPA, 
 					xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM,
-					configurazione.getProtocolli(),
+					urlInvocazionePA, urlInvocazionePD,
 					multitenantEnabled, multitenantSoggettiFruizioni, multitenantSoggettiErogazioni, true, 
 					corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds,
 					responseCachingEnabled,	responseCachingSeconds, responseCachingMaxResponseSize,	responseCachingMaxResponseSizeBytes, 
 					responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders, responseCachingDigestQueryParameter, responseCachingDigestNomiParametriQuery,
 					responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore, visualizzaLinkConfigurazioneRegola,
-					servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola );
+					servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola, numeroRegoleProxyPass);
 
 			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,

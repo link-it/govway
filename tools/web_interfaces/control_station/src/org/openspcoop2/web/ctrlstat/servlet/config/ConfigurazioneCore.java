@@ -34,7 +34,8 @@ import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Configurazione;
-import org.openspcoop2.core.config.ConfigurazioneProtocollo;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -44,6 +45,7 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.SystemProperties;
+import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -60,7 +62,10 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
 import org.openspcoop2.generic_project.exception.NotFoundException;
-import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
@@ -147,6 +152,25 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
+	public List<ConfigurazioneUrlInvocazioneRegola> proxyPassConfigurazioneRegolaList(ISearch ricerca) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "responseCachingConfigurazioneRegolaList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().proxyPassConfigurazioneRegolaList(ricerca);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public boolean existsResponseCachingConfigurazioneRegola(Integer statusMin, Integer statusMax, boolean fault) throws DriverConfigurazioneException{
 		Connection con = null;
 		String nomeMetodo = "existsResponseCachingConfigurazioneRegola";
@@ -158,6 +182,25 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			return driver.getDriverConfigurazioneDB().existsResponseCachingConfigurazioneRegola(statusMin,statusMax,fault);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existsProxyPassConfigurazioneRegola(String nome) throws DriverConfigurazioneException{
+		Connection con = null;
+		String nomeMetodo = "existsProxyPassConfigurazioneRegola";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverConfigurazioneDB().existsProxyPassConfigurazioneRegola(nome);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -399,28 +442,20 @@ public class ConfigurazioneCore extends ControlStationCore {
 	}
 	
 	
-	public ConfigurazioneProtocollo getConfigurazioneProtocollo(String protocollo) throws Exception {
+	public UrlInvocazioneAPI getConfigurazioneUrlInvocazione(String protocollo,
+			RuoloContesto ruolo, ServiceBinding serviceBinding, String interfaceName, IDSoggetto soggettoOperativo) throws Exception {
+		
+		IProtocolFactory<?>protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 		
 		Configurazione config = this.getConfigurazioneGenerale();
-		ConfigurazioneProtocollo configProtocollo = null;
-		if(config.getProtocolli()!=null && config.getProtocolli().sizeProtocolloList()>0) {
-			for (ConfigurazioneProtocollo check : config.getProtocolli().getProtocolloList()) {
-				if(check.getNome().equals(protocollo)) {
-					configProtocollo = check;
-					break;
-				}
-			}
+		
+		ConfigurazioneUrlInvocazione configurazioneUrlInvocazione = null;
+		if(config!=null && config.getUrlInvocazione()!=null) {
+			configurazioneUrlInvocazione = config.getUrlInvocazione();
 		}
 		
-		if(configProtocollo==null) {
-			configProtocollo = new ConfigurazioneProtocollo();
-			configProtocollo.setNome(protocollo);
-		}
-		if(configProtocollo.getUrlInvocazioneServizioPD()==null || configProtocollo.getUrlInvocazioneServizioPA()==null) {
-			ConfigurazionePdDReader.initConfigurazioneProtocolloUrlInvocazione(configProtocollo);
-		}
-		
-		return configProtocollo;
+		return UrlInvocazioneAPI.getConfigurazioneUrlInvocazione(configurazioneUrlInvocazione, protocolFactory, ruolo, serviceBinding, interfaceName, soggettoOperativo);
+
 	}
 	
 	

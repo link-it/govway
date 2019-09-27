@@ -894,10 +894,6 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 				  <filelist dir="${tmp_sql}"
 		                           files="init_soggetto_trasparente.sql"/>
 				</concat>
-				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
-<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa,url_pd_rest,url_pa_rest,url_pd_soap,url_pa_soap) VALUES ('trasparente','http://localhost:8080/govway/out/','http://localhost:8080/govway/', 'http://localhost:8080/govway/out/','http://localhost:8080/govway/', 'http://localhost:8080/govway/out/','http://localhost:8080/govway/');
-]]>
-				</concat>
 				<delete file="${tmp_sql}/init_soggetto_trasparente.sql" failonerror="false"/>
 			</then>
 		</if>
@@ -923,10 +919,6 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 				  </header>
 				  <filelist dir="${tmp_sql}"
 		                           files="init_soggetto_modipa.sql"/>
-				</concat>
-				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
-<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa,url_pd_rest,url_pa_rest,url_pd_soap,url_pa_soap) VALUES ('modipa','http://localhost:8080/govway/modipa/out/','http://localhost:8080/govway/modipa/','http://localhost:8080/govway/rest/out/','http://localhost:8080/govway/rest/','http://localhost:8080/govway/soap/out/','http://localhost:8080/govway/soap/');
-]]>
 				</concat>
 				<delete file="${tmp_sql}/init_soggetto_modipa.sql" failonerror="false"/>
 			</then>
@@ -981,7 +973,7 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 		                           files="init_soggetto_as4.sql"/>
 				</concat>
 				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
-<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa,url_pd_rest,url_pa_rest,url_pd_soap,url_pa_soap) VALUES ('as4','http://localhost:8080/govway/as4/out/','${antinstaller_as4_msh}', 'http://localhost:8080/govway/as4/out/','${antinstaller_as4_msh}', 'http://localhost:8080/govway/as4/out/','${antinstaller_as4_msh}');
+<![CDATA[INSERT INTO config_url_regole (nome, posizione, stato, descrizione, regexpr, regola, contesto_esterno, base_url, protocollo, ruolo) VALUES ('Domibus',1,'abilitato','Servizio di ricezione dei messaggi AS4 dell''Access Point Domibus', 1, '^(.+)$', '', '${antinstaller_as4_msh}','as4','portaApplicativa');
 ]]>
 				</concat>
 				<delete file="${tmp_sql}/init_soggetto_as4.sql" failonerror="false"/>
@@ -1009,10 +1001,6 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 				  </header>
 				  <filelist dir="${tmp_sql}"
 		                           files="init_soggetto_sdi.sql"/>
-				</concat>
-				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
-<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa,url_pd_rest,url_pa_rest,url_pd_soap,url_pa_soap) VALUES ('sdi','http://localhost:8080/govway/sdi/out/xml2soap/','http://localhost:8080/govway/sdi/in/', 'http://localhost:8080/govway/sdi/out/xml2soap/','http://localhost:8080/govway/sdi/in/', 'http://localhost:8080/govway/sdi/out/xml2soap/','http://localhost:8080/govway/sdi/in/');
-]]>
 				</concat>
 				<delete file="${tmp_sql}/init_soggetto_sdi.sql" failonerror="false"/>
 			</then>

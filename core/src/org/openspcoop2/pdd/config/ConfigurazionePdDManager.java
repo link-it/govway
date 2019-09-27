@@ -37,7 +37,6 @@ import org.openspcoop2.core.config.AccessoDatiKeystore;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
-import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
@@ -58,6 +57,7 @@ import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.Transazioni;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
+import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -999,8 +999,10 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getConfigurazioneResponseCachingCache(this.getConnection());
 	}
 	
-	public ConfigurazioneProtocollo getConfigurazioneProtocollo(String protocollo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.getConfigurazioneProtocollo(this.getConnection(), protocollo);
+	public UrlInvocazioneAPI getConfigurazioneUrlInvocazione(IProtocolFactory<?> protocolFactory, RuoloContesto ruolo, ServiceBinding serviceBinding, 
+			String interfaceName, IDSoggetto soggettoOperativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getConfigurazioneUrlInvocazione(this.getConnection(),
+				protocolFactory, ruolo, serviceBinding, interfaceName, soggettoOperativo);
 	}
 	
 	public List<Object> getExtendedInfoConfigurazione() throws DriverConfigurazioneException{

@@ -59,9 +59,10 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
-
+import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.Fruitore;
@@ -102,6 +103,24 @@ public class ConfigurazioniUtils {
 		//			}
 	}
 
+	public static ServiceBinding getServiceBindingFromValues(String tipoSoggettoErogatore, String nomeSoggettoErogatore,
+			String tipoServizio, String nomeServizio, Integer versioneServizio, org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager)
+					throws ServiceException, NotFoundException, MultipleResultException, NotImplementedException {
+		IdAccordoServizioParteSpecifica idAPS = new IdAccordoServizioParteSpecifica();
+		IdSoggetto idErogatore = new IdSoggetto();
+		idErogatore.setTipo(tipoSoggettoErogatore);
+		idErogatore.setNome(nomeSoggettoErogatore);
+		idAPS.setIdErogatore(idErogatore);
+		idAPS.setTipo(tipoServizio);
+		idAPS.setNome(nomeServizio);
+		idAPS.setVersione(versioneServizio);
+		AccordoServizioParteSpecifica asps = serviceManager.getAccordoServizioParteSpecificaServiceSearch().get(idAPS);
+		
+		AccordoServizioParteComune aspc = serviceManager.getAccordoServizioParteComuneServiceSearch().get(asps.getIdAccordoServizioParteComune());
+		
+		return ServiceBinding.valueOf(aspc.getServiceBinding().toUpperCase());
+	}
+	
 	private static AccordoServizioParteSpecifica getAspsFromValues(String tipoSoggettoErogatore, String nomeSoggettoErogatore,
 			String tipoServizio, String nomeServizio, Integer versioneServizio, org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager)
 					throws ServiceException, NotFoundException, MultipleResultException, NotImplementedException {
@@ -594,11 +613,7 @@ public class ConfigurazioniUtils {
 		List<Property> lst = new ArrayList<Property>();
 		long idx = 0;
 		Property p = new Property();
-		String endpointApplicativoPD = dettaglioPD.getEndpointApplicativoPD();
-		String contesto = dettaglioPD.getContesto();
-
-		if(StringUtils.isNotEmpty(contesto) && !contesto.endsWith("/"))
-			contesto += "/";
+		
 		PortaDelegataAzione pdAzione = dettaglioPD.getPortaDelegataOp2().getAzione();
 		if(dettaglioPD.getPortaDelegata().getNomeAzione()!=null &&
 				pdAzione!=null &&
@@ -612,7 +627,7 @@ public class ConfigurazioniUtils {
 			// URL di Invocazione: (Endpoint Applicativo PD)/PD/SPCEnte/SPCMinistero/SPCAnagrafica
 			p = new Property();
 			p.setId(idx++); 
-			p.setNome(CostantiConfigurazioni.LABEL_URL_DI_INVOCAZIONE); p.setValore(endpointApplicativoPD+"/"+contesto+"PD/"+dettaglioPD.getPortaDelegata().getNome());
+			p.setNome(CostantiConfigurazioni.LABEL_URL_DI_INVOCAZIONE); p.setValore(dettaglioPD.getUrlInvocazione());
 			lst.add(p);
 		}
 		else{
@@ -649,7 +664,7 @@ public class ConfigurazioniUtils {
 				// URL di Base: (Endpoint Applicativo PD)/PD/SPCEnte/SPCMinistero/SPCAnagrafica
 				p = new Property();
 				p.setId(idx++); 
-				p.setNome(CostantiConfigurazioni.LABEL_URL_DI_BASE); p.setValore(endpointApplicativoPD+"/"+contesto+"PD/"+dettaglioPD.getPortaDelegata().getNome());
+				p.setNome(CostantiConfigurazioni.LABEL_URL_DI_INVOCAZIONE); p.setValore(dettaglioPD.getUrlInvocazione());
 				lst.add(p);
 
 				// Identificazione Azione:  urlBased/wsdlBased
@@ -692,12 +707,7 @@ public class ConfigurazioniUtils {
 		List<Property> lst = new ArrayList<Property>();
 		long idx = 0;
 		Property p = new Property();
-		String endpointApplicativoPD = dettaglioPA.getEndpointApplicativoPA();
-		String contesto = dettaglioPA.getContesto();
-
-		if(StringUtils.isNotEmpty(contesto) && !contesto.endsWith("/"))
-			contesto += "/";
-
+		
 		if(dettaglioPA.getPortaApplicativa().getNomeAzione()!=null){
 			// Azione: _XXX
 			p = new Property();
@@ -708,7 +718,7 @@ public class ConfigurazioniUtils {
 			// URL di Invocazione: (Endpoint Applicativo PD)/PA/SPCEnte/SPCMinistero/SPCAnagrafica
 			p = new Property();
 			p.setId(idx++); 
-			p.setNome(CostantiConfigurazioni.LABEL_URL_DI_INVOCAZIONE); p.setValore(endpointApplicativoPD+"/"+contesto+"PA/"+dettaglioPA.getPortaApplicativa().getNome());
+			p.setNome(CostantiConfigurazioni.LABEL_URL_DI_INVOCAZIONE); p.setValore(dettaglioPA.getUrlInvocazione());
 			lst.add(p);
 		}
 		else{
@@ -736,7 +746,7 @@ public class ConfigurazioniUtils {
 			// URL di Base: (Endpoint Applicativo PD)/PA/SPCEnte/SPCMinistero/SPCAnagrafica
 			p = new Property();
 			p.setId(idx++); 
-			p.setNome(CostantiConfigurazioni.LABEL_URL_DI_BASE); p.setValore(endpointApplicativoPD+"/"+contesto+"PA/"+dettaglioPA.getPortaApplicativa().getNome());
+			p.setNome(CostantiConfigurazioni.LABEL_URL_DI_INVOCAZIONE); p.setValore(dettaglioPA.getUrlInvocazione());
 			lst.add(p);
 			
 			String value = CostantiConfigurazione.PORTA_DELEGATA_AZIONE_URL_BASED.getValue()+"/"+CostantiConfigurazione.PORTA_DELEGATA_AZIONE_WSDL_BASED.getValue();

@@ -47,7 +47,7 @@ import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
-import org.openspcoop2.core.config.ConfigurazioneProtocollo;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
@@ -85,6 +85,7 @@ import org.openspcoop2.core.config.Transazioni;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
@@ -136,8 +137,6 @@ import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
 import org.openspcoop2.protocol.engine.mapping.ModalitaIdentificazioneAzione;
 import org.openspcoop2.protocol.engine.mapping.OperationFinder;
-import org.openspcoop2.protocol.manifest.Context;
-import org.openspcoop2.protocol.manifest.WebEmptyContext;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
@@ -4971,113 +4970,20 @@ public class ConfigurazionePdDReader {
 		return c.getCache();
 	}
 	
-	public ConfigurazioneProtocollo getConfigurazioneProtocollo(Connection connectionPdD, String protocollo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public UrlInvocazioneAPI getConfigurazioneUrlInvocazione(Connection connectionPdD, 
+			IProtocolFactory<?> protocolFactory, RuoloContesto ruolo, ServiceBinding serviceBinding, String interfaceName, IDSoggetto soggettoOperativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
 		Configurazione config = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
-		ConfigurazioneProtocollo configProtocollo = null;
-		if(config.getProtocolli()!=null && config.getProtocolli().sizeProtocolloList()>0) {
-			for (ConfigurazioneProtocollo check : config.getProtocolli().getProtocolloList()) {
-				if(check.getNome().equals(protocollo)) {
-					configProtocollo = check;
-					break;
-				}
-			}
+		
+		ConfigurazioneUrlInvocazione configurazioneUrlInvocazione = null;
+		if(config!=null && config.getUrlInvocazione()!=null) {
+			configurazioneUrlInvocazione = config.getUrlInvocazione();
 		}
-		if(configProtocollo==null) {
-			configProtocollo = new ConfigurazioneProtocollo();
-			configProtocollo.setNome(protocollo);
-		}
-		if(configProtocollo.getUrlInvocazioneServizioPD()==null || 
-				configProtocollo.getUrlInvocazioneServizioPA()==null ||
-				configProtocollo.getUrlInvocazioneServizioRestPD()==null ||
-				configProtocollo.getUrlInvocazioneServizioRestPA()==null || 
-				configProtocollo.getUrlInvocazioneServizioSoapPD()==null ||
-				configProtocollo.getUrlInvocazioneServizioSoapPA()==null) {
-			initConfigurazioneProtocolloUrlInvocazione(configProtocollo);
-		}
-		return configProtocollo;
+		
+		return UrlInvocazioneAPI.getConfigurazioneUrlInvocazione(configurazioneUrlInvocazione, protocolFactory, ruolo, serviceBinding, interfaceName, soggettoOperativo);
 	}
 	
-	public static void initConfigurazioneProtocolloUrlInvocazione(ConfigurazioneProtocollo configProtocollo) throws DriverConfigurazioneException {
-		try {
-			ProtocolFactoryManager pManager = ProtocolFactoryManager.getInstance();
-			IProtocolFactory<?> pFactory = pManager.getProtocolFactoryByName(configProtocollo.getNome());
-			String contextWithoutBinding = null;
-			String contextWithRestBinding = null;
-			String contextWithSoapBinding = null;
-			if(pFactory.getManifest().getWeb().getEmptyContext()!=null) {
-				WebEmptyContext ctx = pFactory.getManifest().getWeb().getEmptyContext();
-				if(ctx.getBinding()==null) {
-					if(contextWithoutBinding==null) {
-						contextWithoutBinding = "";
-					}
-				}
-				else if(org.openspcoop2.protocol.manifest.constants.ServiceBinding.REST.equals(ctx.getBinding())) {
-					if(contextWithRestBinding==null) {
-						contextWithRestBinding = "";
-					}
-				}
-				else if(org.openspcoop2.protocol.manifest.constants.ServiceBinding.SOAP.equals(ctx.getBinding())) {
-					if(contextWithSoapBinding==null) {
-						contextWithSoapBinding = "";
-					}
-				}
-			}
-			if(pFactory.getManifest().getWeb().sizeContextList()>0) {
-				for (Context ctx : pFactory.getManifest().getWeb().getContextList()) {
-					if(ctx.getBinding()==null) {
-						if(contextWithoutBinding==null) {
-							contextWithoutBinding = ctx.getName();
-						}
-					}
-					else if(org.openspcoop2.protocol.manifest.constants.ServiceBinding.REST.equals(ctx.getBinding())) {
-						if(contextWithRestBinding==null) {
-							contextWithRestBinding = ctx.getName();
-						}
-					}
-					else if(org.openspcoop2.protocol.manifest.constants.ServiceBinding.SOAP.equals(ctx.getBinding())) {
-						if(contextWithSoapBinding==null) {
-							contextWithSoapBinding = ctx.getName();
-						}
-					}
-				}
-			}
-			
-			// Assegno i contesti se non trovati altri.
-			if(contextWithRestBinding==null) {
-				contextWithRestBinding = contextWithoutBinding;
-			}
-			if(contextWithSoapBinding==null) {
-				contextWithSoapBinding = contextWithoutBinding;
-			}
-			if(contextWithoutBinding==null) {
-				throw new Exception("Contesto senza uno specifico binding non indicato");
-			}
-			
-			if(configProtocollo.getUrlInvocazioneServizioPD()==null) {
-				configProtocollo.setUrlInvocazioneServizioPD(CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(contextWithoutBinding));
-			}
-			if(configProtocollo.getUrlInvocazioneServizioPA()==null) {
-				configProtocollo.setUrlInvocazioneServizioPA(CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(contextWithoutBinding));
-			}
-			
-			if(configProtocollo.getUrlInvocazioneServizioRestPD()==null) {
-				configProtocollo.setUrlInvocazioneServizioRestPD(CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(contextWithRestBinding));
-			}
-			if(configProtocollo.getUrlInvocazioneServizioRestPA()==null) {
-				configProtocollo.setUrlInvocazioneServizioRestPA(CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(contextWithRestBinding));
-			}
-			
-			if(configProtocollo.getUrlInvocazioneServizioSoapPD()==null) {
-				configProtocollo.setUrlInvocazioneServizioSoapPD(CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(contextWithSoapBinding));
-			}
-			if(configProtocollo.getUrlInvocazioneServizioSoapPA()==null) {
-				configProtocollo.setUrlInvocazioneServizioSoapPA(CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(contextWithSoapBinding));
-			}
-			
-		}catch(Exception e) {
-			throw new DriverConfigurazioneException(e.getMessage(),e);
-		}
-	}
+
 
 
 

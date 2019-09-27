@@ -60,6 +60,14 @@
 	- gruppi
 	- accordi_gruppi
 
+2019-09-17  Andrea Poli <apoli@link.it>
+
+	Modificata gestione delle url di invocazioni.
+	-- DROP TABLE config_protocolli;
+	Aggiunte nuove tabelle:
+	- config_url_invocazione
+	- config_url_regole
+
 2019-09-03  Andrea Poli <apoli@link.it>
 
 	Aggiunta nuova cache per i keystore acceduti dal Gateway

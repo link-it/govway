@@ -105,7 +105,7 @@
             <option value="oracle" text="Oracle"/>
             <option value="hsql" text="HyperSQL"/>
             <option value="sqlserver" text="SQLServer"/>
-            <option value="db2" text="IBM DB2"/>
+            <!-- <option value="db2" text="IBM DB2"/> -->
         </large-select>
                 
     </page> 
@@ -177,7 +177,7 @@
             <option value="oracle" text="Oracle"/>
             <option value="hsql" text="HyperSQL"/>
             <option value="sqlserver" text="SQLServer"/>
-            <option value="db2" text="IBM DB2"/>
+            <!-- <option value="db2" text="IBM DB2"/> -->
         </large-select>
                 
     </page> 

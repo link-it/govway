@@ -181,6 +181,25 @@ public class StatsSearchForm extends BaseSearchForm{
 	}
 	
 	@Override
+	public void tipologiaRicercaListener(ActionEvent ae) {
+		
+		String oldRiconoscimento = this.getRiconoscimento();
+		
+		super.tipologiaRicercaListener(ae);
+		
+		if(this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO)){
+			this.setRiconoscimento(oldRiconoscimento);
+		}
+		
+	}
+	
+	@Override
+	protected boolean isTipologiaRicercaEntrambiEnabled() {
+		// Per le statistiche lo faccio sempre vedere.
+		return true;
+	}
+	
+	@Override
 	public List<SelectItem> getListaTipiRiconoscimento(){
 		List<SelectItem> lst = new ArrayList<>();
 		
@@ -188,6 +207,12 @@ public class StatsSearchForm extends BaseSearchForm{
 
 		boolean searchModeBySoggetto = TipologiaRicerca.ingresso.equals(this.getTipologiaRicercaEnum());
 		boolean searchModeByApplicativo = !TipologiaRicerca.ingresso.equals(this.getTipologiaRicercaEnum()) || isProtocolloSupportaApplicativoInErogazione();
+		
+		// comunque sia per soggetto e applicativo DEVE essere selezionata una tipooogia di ricerca
+		if( !TipologiaRicerca.ingresso.equals(this.getTipologiaRicercaEnum()) && !TipologiaRicerca.uscita.equals(this.getTipologiaRicercaEnum()) ) {
+			searchModeBySoggetto = false;
+			searchModeByApplicativo = false;
+		}
 		
 		if(searchModeBySoggetto) {
 			if(this.tipoStatistica!=null && 
@@ -335,11 +360,17 @@ public class StatsSearchForm extends BaseSearchForm{
 				}
 			}
 		}
+		
+		this.setTipologiaRicerca("--"); // in modo da far comparire la lista con il suggerimento di selezione come per gli altri
+		
 	}
 
 	@Override
 	protected String ripulisciValori(){
 		this.initSearchListener(null);
+		
+		this.setTipologiaRicerca("--"); // in modo da far comparire la lista con il suggerimento di selezione come per gli altri
+		
 		return null;
 	}
 	
