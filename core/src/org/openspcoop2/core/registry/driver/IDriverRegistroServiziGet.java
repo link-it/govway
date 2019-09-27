@@ -30,6 +30,7 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
@@ -40,6 +41,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
@@ -197,6 +199,38 @@ public interface IDriverRegistroServiziGet extends IBeanUtilities{
 	public List<String> getAllIdPorteDominio(
 			FiltroRicerca filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
 	
+	
+	
+
+	
+	
+	
+	
+	
+	/* Gruppi */
+	
+	/**
+	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Gruppo}, 
+	 * identificato grazie al parametro 
+	 * <var>idGruppo</var> 
+	 *
+	 * @param idGruppo Identificativo del gruppo
+	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Gruppo}.
+	 * 
+	 */
+	public Gruppo getGruppo(
+			IDGruppo idGruppo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
+
+	/**
+	 * Ritorna gli identificatori dei Gruppi che rispettano il parametro di ricerca
+	 * 
+	 * @param filtroRicerca
+	 * @return Una lista di ID dei gruppi trovati
+	 * @throws DriverRegistroServiziException
+	 * @throws DriverRegistroServiziNotFound
+	 */
+	public List<IDGruppo> getAllIdGruppi(
+			FiltroRicercaGruppi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
 	
 	
 	

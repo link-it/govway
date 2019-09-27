@@ -75,6 +75,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link GruppoAccordo }
+     */
+    public GruppoAccordo createGruppoAccordo() {
+        return new GruppoAccordo();
+    }
+
+    /**
      * Create an instance of {@link RuoloSoggetto }
      */
     public RuoloSoggetto createRuoloSoggetto() {
@@ -128,6 +135,20 @@ public class ObjectFactory {
      */
     public ConfigurazioneServizioAzione createConfigurazioneServizioAzione() {
         return new ConfigurazioneServizioAzione();
+    }
+
+    /**
+     * Create an instance of {@link Gruppo }
+     */
+    public Gruppo createGruppo() {
+        return new Gruppo();
+    }
+
+    /**
+     * Create an instance of {@link IdGruppo }
+     */
+    public IdGruppo createIdGruppo() {
+        return new IdGruppo();
     }
 
     /**
@@ -233,6 +254,13 @@ public class ObjectFactory {
      */
     public AccordoServizioParteComuneServizioComposto createAccordoServizioParteComuneServizioComposto() {
         return new AccordoServizioParteComuneServizioComposto();
+    }
+
+    /**
+     * Create an instance of {@link GruppiAccordo }
+     */
+    public GruppiAccordo createGruppiAccordo() {
+        return new GruppiAccordo();
     }
 
     /**

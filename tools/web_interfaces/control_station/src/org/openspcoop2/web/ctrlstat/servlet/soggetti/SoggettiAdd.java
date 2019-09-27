@@ -291,6 +291,11 @@ public final class SoggettiAdd extends Action {
 
 			// Controllo se ho modificato il protocollo, ricalcolo il default della versione del protocollo
 			if(postBackElementName != null ){
+				if(postBackElementName.equalsIgnoreCase(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO)){
+					this.tipoauthSoggetto = null;
+					this.tipologia = SoggettiCostanti.SOGGETTO_RUOLO_EROGATORE;
+				}
+				
 				if(postBackElementName.equalsIgnoreCase(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO)){
 					this.versioneProtocollo = null;
 					// cancello file temporanei

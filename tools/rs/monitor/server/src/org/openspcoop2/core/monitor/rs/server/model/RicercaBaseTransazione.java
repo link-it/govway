@@ -22,8 +22,8 @@
 package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroTemporale;
-import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -45,13 +45,16 @@ public class RicercaBaseTransazione  {
   private FiltroTemporale intervalloTemporale = null;
   
   @Schema(required = true, description = "")
-  private TransazioneRuoloEnum tipo = null;
+  private FiltroRicercaRuoloTransazioneEnum tipo = null;
   
   @Schema(description = "Identificativo del nodo su cui e' stata emessa la transazione")
  /**
    * Identificativo del nodo su cui e' stata emessa la transazione  
   **/
   private String idCluster = null;
+  
+  @Schema(description = "")
+  private String tag = null;
   
   @Schema(description = "")
   private Object api = null;
@@ -151,15 +154,15 @@ public class RicercaBaseTransazione  {
   @JsonProperty("tipo")
   @NotNull
   @Valid
-  public TransazioneRuoloEnum getTipo() {
+  public FiltroRicercaRuoloTransazioneEnum getTipo() {
     return this.tipo;
   }
 
-  public void setTipo(TransazioneRuoloEnum tipo) {
+  public void setTipo(FiltroRicercaRuoloTransazioneEnum tipo) {
     this.tipo = tipo;
   }
 
-  public RicercaBaseTransazione tipo(TransazioneRuoloEnum tipo) {
+  public RicercaBaseTransazione tipo(FiltroRicercaRuoloTransazioneEnum tipo) {
     this.tipo = tipo;
     return this;
   }
@@ -180,6 +183,25 @@ public class RicercaBaseTransazione  {
 
   public RicercaBaseTransazione idCluster(String idCluster) {
     this.idCluster = idCluster;
+    return this;
+  }
+
+ /**
+   * Get tag
+   * @return tag
+  **/
+  @JsonProperty("tag")
+  @Valid
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getTag() {
+    return this.tag;
+  }
+
+  public void setTag(String tag) {
+    this.tag = tag;
+  }
+
+  public RicercaBaseTransazione tag(String tag) {
+    this.tag = tag;
     return this;
   }
 
@@ -271,6 +293,7 @@ public class RicercaBaseTransazione  {
     sb.append("    intervalloTemporale: ").append(RicercaBaseTransazione.toIndentedString(this.intervalloTemporale)).append("\n");
     sb.append("    tipo: ").append(RicercaBaseTransazione.toIndentedString(this.tipo)).append("\n");
     sb.append("    idCluster: ").append(RicercaBaseTransazione.toIndentedString(this.idCluster)).append("\n");
+    sb.append("    tag: ").append(RicercaBaseTransazione.toIndentedString(this.tag)).append("\n");
     sb.append("    api: ").append(RicercaBaseTransazione.toIndentedString(this.api)).append("\n");
     sb.append("    azione: ").append(RicercaBaseTransazione.toIndentedString(this.azione)).append("\n");
     sb.append("    esito: ").append(RicercaBaseTransazione.toIndentedString(this.esito)).append("\n");

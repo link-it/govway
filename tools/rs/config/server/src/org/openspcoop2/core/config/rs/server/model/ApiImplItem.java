@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import java.util.List;
 import org.openspcoop2.utils.service.beans.BaseSoggettoItem;
 import org.openspcoop2.core.config.rs.server.model.StatoApiEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
@@ -43,6 +44,9 @@ public class ApiImplItem extends BaseSoggettoItem {
   
   @Schema(description = "")
   private String apiSoapServizio = null;
+  
+  @Schema(example = "[\"PagamentiTelematici\",\"Anagrafica\"]", description = "")
+  private List<String> apiTags = null;
   
   @Schema(description = "")
   private String tipoServizio = null;
@@ -136,6 +140,30 @@ public class ApiImplItem extends BaseSoggettoItem {
 
   public ApiImplItem apiSoapServizio(String apiSoapServizio) {
     this.apiSoapServizio = apiSoapServizio;
+    return this;
+  }
+
+ /**
+   * Get apiTags
+   * @return apiTags
+  **/
+  @JsonProperty("api_tags")
+  @Valid
+  public List<String> getApiTags() {
+    return this.apiTags;
+  }
+
+  public void setApiTags(List<String> apiTags) {
+    this.apiTags = apiTags;
+  }
+
+  public ApiImplItem apiTags(List<String> apiTags) {
+    this.apiTags = apiTags;
+    return this;
+  }
+
+  public ApiImplItem addApiTagsItem(String apiTagsItem) {
+    this.apiTags.add(apiTagsItem);
     return this;
   }
 
@@ -267,6 +295,7 @@ public class ApiImplItem extends BaseSoggettoItem {
     sb.append("    apiVersione: ").append(ApiImplItem.toIndentedString(this.apiVersione)).append("\n");
     sb.append("    apiReferente: ").append(ApiImplItem.toIndentedString(this.apiReferente)).append("\n");
     sb.append("    apiSoapServizio: ").append(ApiImplItem.toIndentedString(this.apiSoapServizio)).append("\n");
+    sb.append("    apiTags: ").append(ApiImplItem.toIndentedString(this.apiTags)).append("\n");
     sb.append("    tipoServizio: ").append(ApiImplItem.toIndentedString(this.tipoServizio)).append("\n");
     sb.append("    nome: ").append(ApiImplItem.toIndentedString(this.nome)).append("\n");
     sb.append("    versione: ").append(ApiImplItem.toIndentedString(this.versione)).append("\n");

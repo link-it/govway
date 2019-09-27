@@ -59,6 +59,7 @@ public class CostantiExporter {
 	public static final String TIPO_DISTRIBUZIONE_AZIONE = "azione";
 	public static final String TIPO_DISTRIBUZIONE_APPLICATIVO = "applicativo";
 	public static final String TIPO_DISTRIBUZIONE_IDENTIFICATIVO_AUTENTICATO = "identificativo_autenticato";
+	public static final String TIPO_DISTRIBUZIONE_INDIRIZZO_IP = "indirizzo_ip";
 	public static final String TIPO_DISTRIBUZIONE_TOKEN_INFO = "token_info";
 	public static final String TIPO_DISTRIBUZIONE_PERSONALIZZATA = "personalizzata";
 	public static final List<String> TIPI_DISTRIBUZIONE = new ArrayList<String> ();
@@ -71,6 +72,7 @@ public class CostantiExporter {
 		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_AZIONE);
 		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_APPLICATIVO);
 		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_IDENTIFICATIVO_AUTENTICATO);
+		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_INDIRIZZO_IP);
 		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_TOKEN_INFO);
 		// TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_PERSONALIZZATA); TODO
 	}
@@ -99,6 +101,7 @@ public class CostantiExporter {
 	public final static String SOGGETTO_LOCALE  = "soggettoLocale";
 	public final static String TRAFFICO_PER_SOGGETTO  = "trafficoPerSoggetto";
 	
+	public final static String GRUPPO  = "tag";
 	public final static String SERVIZIO  = "servizio";
 	public final static String AZIONE  = "azione";
 	
@@ -116,12 +119,14 @@ public class CostantiExporter {
 	public final static String TIPO_RICERCA_MITTENTE  = "tipoRicercaMittente";
 	public static final String TIPO_RICERCA_MITTENTE_TOKEN_INFO = Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO;
 	public static final String TIPO_RICERCA_MITTENTE_IDENTIFICATIVO_AUTENTICATO = Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO;
+	public static final String TIPO_RICERCA_MITTENTE_INDIRIZZO_IP = Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP;
 	public static final String TIPO_RICERCA_MITTENTE_APPLICATIVO = Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO;
 	public static final String TIPO_RICERCA_MITTENTE_SOGGETTO = Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO;
 	public static final List<String> TIPI_RICERCA_MITTENTE = new ArrayList<String> ();
 	static{
 		TIPI_RICERCA_MITTENTE.add(TIPO_RICERCA_MITTENTE_TOKEN_INFO);
 		TIPI_RICERCA_MITTENTE.add(TIPO_RICERCA_MITTENTE_IDENTIFICATIVO_AUTENTICATO);
+		TIPI_RICERCA_MITTENTE.add(TIPO_RICERCA_MITTENTE_INDIRIZZO_IP);
 		TIPI_RICERCA_MITTENTE.add(TIPO_RICERCA_MITTENTE_APPLICATIVO);
 		TIPI_RICERCA_MITTENTE.add(TIPO_RICERCA_MITTENTE_SOGGETTO);
 	}
@@ -137,6 +142,15 @@ public class CostantiExporter {
 		TIPI_AUTENTICAZIONE.add(TIPO_AUTENTICAZIONE_BASIC);
 		TIPI_AUTENTICAZIONE.add(TIPO_AUTENTICAZIONE_SSL);
 		TIPI_AUTENTICAZIONE.add(TIPO_AUTENTICAZIONE_PRINCIPAL);
+	}
+	
+	public final static String TIPO_INDIRIZZO_IP  = "tipoIndirizzoIP";
+	public final static String TIPO_INDIRIZZO_IP_SOCKET  = org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_CLIENT_ADDRESS_SOCKET;
+	public final static String TIPO_INDIRIZZO_IP_TRANSPORT  = org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_CLIENT_ADDRESS_TRASPORTO;
+	public static final List<String> TIPI_INDIRIZZI_IP = new ArrayList<String> ();
+	static{
+		TIPI_INDIRIZZI_IP.add(TIPO_INDIRIZZO_IP_SOCKET);
+		TIPI_INDIRIZZI_IP.add(TIPO_INDIRIZZO_IP_TRANSPORT);
 	}
 	
 	public final static String TIPO_RICERCA_MITTENTE_ESATTA  = "ricercaMittenteEsatta";

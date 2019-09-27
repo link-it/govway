@@ -44,6 +44,7 @@ import java.util.List;
  * 			&lt;element name="porta-dominio" type="{http://www.openspcoop2.org/core/registry}porta-dominio" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="ruolo" type="{http://www.openspcoop2.org/core/registry}ruolo" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="scope" type="{http://www.openspcoop2.org/core/registry}scope" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="gruppo" type="{http://www.openspcoop2.org/core/registry}gruppo" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/core/registry}soggetto" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
@@ -64,6 +65,7 @@ import java.util.List;
   	"portaDominio",
   	"ruolo",
   	"scope",
+  	"gruppo",
   	"soggetto",
   	"connettore"
   }
@@ -207,6 +209,30 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
 
   public int sizeScopeList() {
     return this.scope.size();
+  }
+
+  public void addGruppo(Gruppo gruppo) {
+    this.gruppo.add(gruppo);
+  }
+
+  public Gruppo getGruppo(int index) {
+    return this.gruppo.get( index );
+  }
+
+  public Gruppo removeGruppo(int index) {
+    return this.gruppo.remove( index );
+  }
+
+  public List<Gruppo> getGruppoList() {
+    return this.gruppo;
+  }
+
+  public void setGruppoList(List<Gruppo> gruppo) {
+    this.gruppo=gruppo;
+  }
+
+  public int sizeGruppoList() {
+    return this.gruppo.size();
   }
 
   public void addSoggetto(Soggetto soggetto) {
@@ -412,6 +438,36 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
   @Deprecated
   public int sizeScope() {
   	return this.scope.size();
+  }
+
+  @XmlElement(name="gruppo",required=true,nillable=false)
+  protected List<Gruppo> gruppo = new ArrayList<Gruppo>();
+
+  /**
+   * @deprecated Use method getGruppoList
+   * @return List<Gruppo>
+  */
+  @Deprecated
+  public List<Gruppo> getGruppo() {
+  	return this.gruppo;
+  }
+
+  /**
+   * @deprecated Use method setGruppoList
+   * @param gruppo List<Gruppo>
+  */
+  @Deprecated
+  public void setGruppo(List<Gruppo> gruppo) {
+  	this.gruppo=gruppo;
+  }
+
+  /**
+   * @deprecated Use method sizeGruppoList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeGruppo() {
+  	return this.gruppo.size();
   }
 
   @XmlElement(name="soggetto",required=true,nillable=false)

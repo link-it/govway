@@ -46,6 +46,7 @@ import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneSimpleSearch
 import org.openspcoop2.core.monitor.rs.server.model.FiltroErogazione;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroFruizione;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroTemporale;
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.InfoImplementazioneApi;
@@ -129,14 +130,14 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 						body.getTipo(), FormatoReportEnum.CSV, TipoReport.api);
 				MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 
+				String tag = null;
 				switch (body.getTipo()) {
 				case EROGAZIONE: {
-					ReportisticaHelper.overrideFiltroErogazione(deserializev2(body.getApi(), FiltroErogazione.class), request, env);
+					ReportisticaHelper.overrideFiltroErogazione(tag, deserializev2(body.getApi(), FiltroErogazione.class), request, env);
 					break;
 				}
 				case FRUIZIONE:
-					ReportisticaHelper.overrideFiltroFruizione(deserializev2(body.getApi(), FiltroFruizione.class), request, env);
-
+					ReportisticaHelper.overrideFiltroFruizione(tag, deserializev2(body.getApi(), FiltroFruizione.class), request, env);
 					break;
 				}
 
@@ -321,8 +322,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
 	public byte[] getReportDistribuzioneApiBySimpleSearch(DateTime dataInizio, DateTime dataFine,
-			TransazioneRuoloEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto,
-			String soggettoRemoto, EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo,
+			FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto,
+			String soggettoRemoto, String tag, EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo,
 			TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 		IContext context = this.getContext();
 		try {
@@ -352,6 +353,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			opzioni.setTipoInformazione(tipo_info_report);
 			ricerca.setReport(opzioni);
 
+			ricerca.setTag(tag);
+			
 			if (esito != null) {
 				FiltroEsito filtro_esito = new FiltroEsito();
 				filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
@@ -414,8 +417,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
 	public byte[] getReportDistribuzioneApplicativoBySimpleSearch(DateTime dataInizio, DateTime dataFine,
-			TransazioneRuoloEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto,
-			String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione,
+			FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto,
+			String soggettoRemoto, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione,
 			EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport,
 			TipoInformazioneReportEnum tipoInformazioneReport) {
 		IContext context = this.getContext();
@@ -448,6 +451,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			opzioni.setTipoInformazione(tipo_info_report);
 			ricerca.setReport(opzioni);
 
+			ricerca.setTag(tag);
+			
 			if (esito != null) {
 				FiltroEsito filtro_esito = new FiltroEsito();
 				filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
@@ -510,8 +515,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
 	public byte[] getReportDistribuzioneAzioneBySimpleSearch(DateTime dataInizio, DateTime dataFine,
-			TransazioneRuoloEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto,
-			String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio,
+			FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto,
+			String soggettoRemoto, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio,
 			EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport,
 			TipoInformazioneReportEnum tipoInformazioneReport) {
 		IContext context = this.getContext();
@@ -542,6 +547,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			opzioni.setTipoInformazione(tipo_info_report);
 			ricerca.setReport(opzioni);
 
+			ricerca.setTag(tag);
+			
 			if (esito != null) {
 				FiltroEsito filtro_esito = new FiltroEsito();
 				filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
@@ -605,8 +612,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
 	public byte[] getReportDistribuzioneEsitiBySimpleSearch(DateTime dataInizio, DateTime dataFine,
-			TransazioneRuoloEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto,
-			String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione,
+			FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto,
+			String soggettoRemoto, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione,
 			UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 		IContext context = this.getContext();
 		try {
@@ -639,6 +646,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			ricerca.setReport(opzioni);
 
+			ricerca.setTag(tag);
+			
 			byte[] ret = ReportisticaHelper.getReportDistribuzioneEsiti(ricerca, env);
 			context.getLogger().info("Invocazione completata con successo");
 
@@ -696,8 +705,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
 	public byte[] getReportDistribuzioneIdAutenticatoBySimpleSearch(DateTime dataInizio, DateTime dataFine,
-			TransazioneRuoloEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto,
-			String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione,
+			FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto,
+			String soggettoRemoto, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione,
 			EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport,
 			TipoInformazioneReportEnum tipoInformazioneReport) {
 		IContext context = this.getContext();
@@ -730,6 +739,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			opzioni.setTipoInformazione(tipo_info_report);
 			ricerca.setReport(opzioni);
 
+			ricerca.setTag(tag);
+			
 			if (esito != null) {
 				FiltroEsito filtro_esito = new FiltroEsito();
 				filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
@@ -792,8 +803,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
 	public byte[] getReportDistribuzioneSoggettoLocaleBySimpleSearch(DateTime dataInizio, DateTime dataFine,
-			TransazioneRuoloEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggettoRemoto,
-			String nomeServizio, String tipoServizio, Integer versioneServizio, String azione,
+			FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggettoRemoto,
+			String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione,
 			EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport,
 			TipoInformazioneReportEnum tipoInformazioneReport) {
 		IContext context = this.getContext();
@@ -824,6 +835,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			opzioni.setTipoInformazione(tipo_info_report);
 			ricerca.setReport(opzioni);
 
+			ricerca.setTag(tag);
+			
 			if (esito != null) {
 				FiltroEsito filtro_esito = new FiltroEsito();
 				filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
@@ -885,8 +898,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
 	public byte[] getReportDistribuzioneSoggettoRemotoBySimpleSearch(DateTime dataInizio, DateTime dataFine,
-			TransazioneRuoloEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto,
-			String soggettoErogatore, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione,
+			FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto,
+			String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione,
 			EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport,
 			TipoInformazioneReportEnum tipoInformazioneReport) {
 		IContext context = this.getContext();
@@ -918,6 +931,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			opzioni.setTipoInformazione(tipo_info_report);
 			ricerca.setReport(opzioni);
 
+			ricerca.setTag(tag);
+			
 			if (esito != null) {
 				FiltroEsito filtro_esito = new FiltroEsito();
 				filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
@@ -981,8 +996,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
 	public byte[] getReportDistribuzioneTemporaleBySimpleSearch(DateTime dataInizio, DateTime dataFine,
-			TransazioneRuoloEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto,
-			String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione,
+			FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto,
+			String soggettoRemoto, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione,
 			EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport,
 			TipoInformazioneReportEnum tipoInformazioneReport) {
 		IContext context = this.getContext();
@@ -1015,6 +1030,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			opzioni.setTipoInformazione(tipo_info_report);
 			ricerca.setReport(opzioni);
 
+			ricerca.setTag(tag);
+			
 			if (esito != null) {
 				FiltroEsito filtro_esito = new FiltroEsito();
 				filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
@@ -1076,8 +1093,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
 	public byte[] getReportDistribuzioneTokenInfoBySimpleSearch(DateTime dataInizio, DateTime dataFine,
-			TransazioneRuoloEnum tipo, FormatoReportEnum formatoReport, TokenClaimEnum claim, ProfiloEnum profilo,
-			String soggetto, String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio,
+			FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, TokenClaimEnum claim, ProfiloEnum profilo,
+			String soggetto, String soggettoRemoto, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio,
 			String azione, EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport,
 			TipoInformazioneReportEnum tipoInformazioneReport) {
 		IContext context = this.getContext();
@@ -1110,6 +1127,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			opzioni.setTipoInformazione(tipo_info_report);
 			ricerca.setReport(opzioni);
 
+			ricerca.setTag(tag);
+			
 			if (esito != null) {
 				FiltroEsito filtro_esito = new FiltroEsito();
 				filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
@@ -1131,6 +1150,102 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 		}
 	}
 
+	
+	 /**
+     * Genera un report statistico organizzato per Indirizzi IP
+     *
+     * Consente di generare un report degli indirizzo IP
+     *
+     */
+    @Override
+	public byte[] getReportDistribuzioneIndirizzoIPByFullSearch(RicercaStatisticaDistribuzioneApplicativo body, ProfiloEnum profilo, String soggetto) {
+    	IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			BaseHelper.throwIfNull(body);
+			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
+			byte[] ret = ReportisticaHelper.getReportDistribuzioneIndirizzoIP(body, env);
+
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			throw e;
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
+    /**
+     * Genera un report statistico organizzato organizzato per Indirizzo IP utilizzando una ricerca semplice
+     *
+     * Consente di generare un report degli indirizzo IP per mezzo di una ricerca semplice
+     *
+     */
+    @Override
+	public byte[] getReportDistribuzioneIndirizzoIPBySimpleSearch(DateTime dataInizio, DateTime dataFine, 
+    		FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto, 
+    		String soggettoRemoto, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, 
+    		EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
+    	IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
+			RicercaStatisticaDistribuzioneApplicativo ricerca = new RicercaStatisticaDistribuzioneApplicativo();
+			ricerca.setTipo(tipo);
+			ricerca.setApi(
+					ReportisticaHelper.buildFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto));
+			ricerca.setAzione(azione);
+
+			FiltroTemporale intervallo = new FiltroTemporale();
+			intervallo.setDataInizio(dataInizio);
+			intervallo.setDataFine(dataFine);
+
+			ricerca.setIntervalloTemporale(intervallo);
+			ricerca.setUnitaTempo(unitaTempo);
+			ricerca.setTipo(tipo);
+
+			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
+			opzioni.setFormato(formatoReport);
+			opzioni.setTipo(tipoReport);
+			TipoInformazioneReport tipo_info_report = new TipoInformazioneReport();
+			tipo_info_report.setTipo(tipoInformazioneReport);
+			opzioni.setTipoInformazione(tipo_info_report);
+			ricerca.setReport(opzioni);
+
+			ricerca.setTag(tag);
+			
+			if (esito != null) {
+				FiltroEsito filtro_esito = new FiltroEsito();
+				filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				ricerca.setEsito(filtro_esito);
+			}
+
+			byte[] ret = ReportisticaHelper.getReportDistribuzioneIndirizzoIP(ricerca, env);
+			context.getLogger().info("Invocazione completata con successo");
+
+			return ret;
+
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			throw e;
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
+	
+	
 	/**
 	 * Ottieni le informazioni generali sulle implementazioni di un Api
 	 *

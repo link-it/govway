@@ -27,6 +27,7 @@ package org.openspcoop2.core.registry.driver;
 
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
@@ -34,6 +35,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
@@ -179,6 +181,45 @@ public interface IDriverRegistroServiziCRUD {
 	 */
 	public void deletePortaDominio(PortaDominio pdd) throws DriverRegistroServiziException;
 	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * Crea una nuovo Gruppo
+	 * 
+	 * @param gruppo
+	 * @throws DriverRegistroServiziException
+	 */
+	public void createGruppo(Gruppo gruppo) throws DriverRegistroServiziException;
+	
+	/**
+     * Verifica l'esistenza di un Gruppo
+     *
+     * @param idGruppo idGruppo del gruppo da verificare
+     * @return true se il gruppo esiste, false altrimenti
+	 * @throws DriverRegistroServiziException
+     */    
+    public boolean existsGruppo(IDGruppo idGruppo) throws DriverRegistroServiziException;
+	
+	/**
+	 * Aggiorna il Gruppo con i nuovi valori.
+	 *  
+	 * @param gruppo
+	 * @throws DriverRegistroServiziException
+	 */
+	public void updateGruppo(Gruppo gruppo) throws DriverRegistroServiziException;
+	
+	/**
+	 * Elimina un Gruppo
+	 *  
+	 * @param gruppo
+	 * @throws DriverRegistroServiziException
+	 */
+	public void deleteGruppo(Gruppo gruppo) throws DriverRegistroServiziException;
 	
 	
 	

@@ -64,7 +64,8 @@
 					<linkit:interface crud="true" id="id-credenziale-mittente">
 						<linkit:ws-interface generate="false"/>
 					</linkit:interface>
-					<linkit:sql-table-mapping name="credenziale_mittente" sequence-cycle="true"
+					<!-- sequence-cycle="false" poiche' gli id rappresentano una credenziale precisa -->
+					<linkit:sql-table-mapping name="credenziale_mittente" sequence-cycle="false" 
 						comment="Contiene le principali informazioni di un mittente non identificato sulla porta">
 						<!-- NOTA: La sommatoria delle colonne per mysql deve essere <=3000 -->
 						<linkit:sql-table-unique create-index="true" >
@@ -185,17 +186,12 @@
 							
 							Analisi dei tipi di database:
 							- postgresql: consente qualsiasi indice
-							- oracle: consente qualsiasi indice
-							- mysql: (verificato su mysql  Ver 15.1 Distrib 10.1.24-MariaDB) 
-							          non consente la creazione degli indici 'INDEX_TR_ADVANCED','INDEX_TR_SEARCH' e 'INDEX_TR_STATS'. 
-							          Errore: Specified key was too long; max key length is 3072 bytes
+							- oracle: consente qualsiasi indice (vengono creati tutti. Attenzione che il max columns è 32 ed è quasi raggiunto per 'INDEX_TR_SEARCH')
+							- mysql: (verificato su mysql 5.7.27) 
+							          non consente la creazione degli indici 'INDEX_TR_MEDIUM', 'INDEX_TR_FULL:','INDEX_TR_SEARCH' e 'INDEX_TR_STATS'. 
+							          Errore: ERROR 1070 (42000): Too many key parts specified; max 16 parts allowed
 							- hsql: consente qualsiasi indice
-							- sqlserver: (verificato su sqlserver 2008)
-										  non consente la creazione degli indici 'INDEX_TR_ADVANCED','INDEX_TR_SEARCH' e 'INDEX_TR_STATS'.
-										  Errore: The maximum limit for index or statistics key column list is 16.
-										  Mentre crea l'indice 'INDEX_TR_MEDIUM' però segnala un warning che l'indice potrebbe non funzionare e quindi dare errore:
-										  Warning! The maximum key length is 900 bytes. The index 'INDEX_TR_MEDIUM' has maximum length of 1997 bytes. 
-										  For some combination of large values, the insert/update operation will fail.
+							- sqlserver: consente qualsiasi indice (verificato su sqlserver 2017)
 						-->	
 				    	<linkit:sql-table-index name="INDEX_TR_ENTRY">
 				    		<linkit:sql-table-index-field name="data-ingresso-richiesta" order="DESC" ignoreTypeCompatibility="true"/>
@@ -229,6 +225,8 @@
 				    		<linkit:sql-table-index-field name="token-username"/>
 				    		<linkit:sql-table-index-field name="token-mail"/>
 				    		<linkit:sql-table-index-field name="stato"/>
+				    		<linkit:sql-table-index-field name="client-address"/>
+				    		<linkit:sql-table-index-field name="gruppi"/>
 				    	</linkit:sql-table-index>
 						<linkit:sql-table-index name="INDEX_TR_FULL">
 							<linkit:sql-table-index-field name="data-ingresso-richiesta" order="DESC" ignoreTypeCompatibility="true"/>
@@ -254,6 +252,8 @@
 							<linkit:sql-table-index-field name="id-correlazione-applicativa-risposta"/>
 							<linkit:sql-table-index-field name="stato"/>
 							<linkit:sql-table-index-field name="protocollo"/>
+							<linkit:sql-table-index-field name="client-address"/>
+							<linkit:sql-table-index-field name="gruppi"/>
 							<linkit:sql-table-index-field name="eventi-gestione"/>
 							<linkit:sql-table-index-field name="cluster-id"/>
 						</linkit:sql-table-index>
@@ -281,6 +281,8 @@
 				    		<linkit:sql-table-index-field name="id-correlazione-applicativa-risposta"/>
 				    		<linkit:sql-table-index-field name="stato"/>
 				    		<linkit:sql-table-index-field name="protocollo"/>
+				    		<linkit:sql-table-index-field name="client-address"/>
+				    		<linkit:sql-table-index-field name="gruppi"/>
 				    		<linkit:sql-table-index-field name="eventi-gestione"/>
 				    		<linkit:sql-table-index-field name="cluster-id"/>
 				    		<linkit:sql-table-index-field name="id-transazione"/>
@@ -309,6 +311,8 @@
 				    		<linkit:sql-table-index-field name="esito"/>
 				    		<linkit:sql-table-index-field name="esito-contesto"/>
 				    		<linkit:sql-table-index-field name="stato"/>
+				    		<linkit:sql-table-index-field name="client-address"/>
+				    		<linkit:sql-table-index-field name="gruppi"/>
 				    		<linkit:sql-table-index-field name="data-uscita-richiesta" ignoreTypeCompatibility="true"/>
 				    		<linkit:sql-table-index-field name="data-ingresso-risposta" ignoreTypeCompatibility="true"/>
 				    		<linkit:sql-table-index-field name="data-uscita-risposta" ignoreTypeCompatibility="true"/>
@@ -1403,6 +1407,19 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						</xsd:appinfo>
 					</xsd:annotation>			        
 				</xsd:element>
+				<xsd:element name="client-address" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="client_address" varchar="20" />
+								<linkit:sql-column-comment><![CDATA[Indirizzo IP client]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Indirizzo IP client ((FK verso credenziale_mittente(id)))]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" />
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 
 			    <!-- eventi emessi sulla gestione della transazione -->
 			    <xsd:element name="eventi-gestione" type="xsd:string" minOccurs="0">
@@ -1410,14 +1427,42 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 			            <xsd:appinfo>
 			                <linkit:generator
 			                    xmlns:linkit="http://www.link.it/project_generator">
-			                    <linkit:sql-column-mapping varchar="1000" />
-			                    <linkit:sql-column-comment><![CDATA[Eventi emessi durante la gestione della transazione]]></linkit:sql-column-comment>
-			                	<linkit:sql-ddl-column-comment><![CDATA[Eventi emessi durante la gestione della transazione]]></linkit:sql-ddl-column-comment>
+			                	<linkit:sql-column-mapping name="eventi_gestione" varchar="20" />
+			                	<linkit:sql-column-comment><![CDATA[Eventi emessi durante la gestione della transazione]]></linkit:sql-column-comment>
+			                	<linkit:sql-ddl-column-comment><![CDATA[Eventi emessi durante la gestione della transazione ((FK verso credenziale_mittente(id)))]]></linkit:sql-ddl-column-comment>
 			                	<linkit:ws-field-mapping filter="false" />
 			                </linkit:generator>
 			            </xsd:appinfo>
 			        </xsd:annotation>
 			    </xsd:element>
+				
+				<!-- informazioni dell'api -->
+				<xsd:element name="tipo-api" type="xsd:int" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="tipo_api" />
+								<linkit:sql-column-comment><![CDATA[Tipologia di API]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Tipo di API (1:SOAP, 2:REST)]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" />
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="gruppi" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="20" />
+								<linkit:sql-column-comment><![CDATA[Gruppi a cui appartiene l'api invocata]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Gruppi a cui appartiene l'api invocata ((FK verso credenziale_mittente(id)))]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" />
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 
 				<!-- Dump Messaggi -->
 				<xsd:element ref="dump-messaggio" minOccurs="0" maxOccurs="2">

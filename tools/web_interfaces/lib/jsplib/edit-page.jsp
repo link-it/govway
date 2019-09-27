@@ -269,6 +269,116 @@ for (int i = 0; i < dati.size(); i++) {
 								    	} else {
 								    		String selDataAttributes = !de.getDataAttributes().equals("") ? de.getDataAttributes() : " ";
 								      		%><input type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%= selDataAttributes %> >
+								      		<%
+								      			if(!de.getDataAttributes().equals("")){
+								      				
+								      				String [] values = de.getValues();
+								      				
+								      				boolean multiColors = de.getDataAttributesMap().containsKey("colors");
+								      				
+								      				%>
+								      					<script type="text/javascript">
+								      					
+								      						<% 
+									      						if (values != null) {
+									      							%>
+									      								var valori_<%= deName %> = [];
+	                            									<%
+	                            									
+	                            									String [] labels = de.getLabels();
+	                            									/*
+	                            									for (int v = 0; v < values.length; v++) {
+	                            										if (labels != null) {
+	                            											%>valori_<%= deName %>.push({'label': '<%= labels[v] %>', 'value': '<%= values[v]  %>', 'index' : <%= v  %>});<%
+	                            										} else {
+	                            											%>valori_<%= deName %>.push({'label': '<%= values[v] %>', 'value': '<%= values[v]  %>', 'index' : <%= v  %>});<%
+	                            										}
+	                            									} //end for values
+	                            									*/
+	                            									
+	                            									for (int v = 0; v < values.length; v++) {
+                            											%> valori_<%= deName %>.push('<%= values[v]  %>'); <%
+	                            									} //end for values
+	                            									%>
+	                            									// constructs the suggestion engine
+	                            									var valori_<%= deName %>_bh = new Bloodhound({
+	                            									  datumTokenizer: Bloodhound.tokenizers.whitespace,
+	                            									  queryTokenizer: Bloodhound.tokenizers.whitespace,
+	                            									  // `states` is an array of state names defined in "The Basics"
+	                            									  local: valori_<%= deName %>
+	                            									});
+	                            									//valori_<%= deName %>_bh.initialize();
+	                            									
+	                            									<%
+	                                        					}
+								      						%>
+								      					
+								      					 /**
+									      				   * Initialize tagsinput behaviour on inputs and selects which have
+									      				   * data-role=tagsinput
+									      				   */
+									      				  $(function() {
+									      				    $("input[data-role=tagsinput][name='<%= deName %>']").tagsinput(
+									      				    		<% if(multiColors || values != null) { %>
+										      				    		{ 	
+										      				    	<% 	} %>
+									      				    		
+									      				    		<%
+									      				    		if(multiColors) { 
+									      				    			String [] supportoColori = de.getStatusValues();
+									      				    		%>
+										      				    		tagClass: function(item, index) {
+										      				    			
+										      				    			var supportoColori_<%= deName %> = [];	
+										      				    			<% 
+												      						if (supportoColori != null) {
+												      							for (int v = 0; v < supportoColori.length; v++) {
+			                            											%> supportoColori_<%= deName %>.push('<%= supportoColori[v]  %>'); <%
+				                            									} //end for values
+												      							%>
+										      				    			<%
+					                                        					}
+												      						%>
+										      				    			if(index !== undefined && index < supportoColori_<%= deName %>.length){
+// 										      				    				return 'label label-info label-info-' + (index % Costanti.NUMERO_GRUPPI_CSS);
+										      				    				return 'label label-info ' + supportoColori_<%= deName %>[index];
+										      				    			}
+										      				    			
+										      				    			return 'label label-info label-info-default';
+										      				    		  }
+									      				    		<% if(multiColors && values != null) { %>
+									      				    		, 	
+									      				    		<% 	} %>
+									      				    		 
+									      				    			<%
+									      				    			}
+									      				    		%>
+									      				    		
+									      				    		<%
+									      				    			if(values != null) {
+								      				    					// source: valori_<%= deName % >_bh.ttAdapter()
+								      				    					%>
+								      				    					// ,itemValue: 'value', itemText: 'label'
+								      				    					  typeaheadjs: {
+								      				    						highlight: true,
+								      				    					    name: 'valori_<%= deName %>',
+								      				    					    // displayKey: 'label',
+								      				    					    // valueKey: 'value',
+								      				    					    source: valori_<%= deName %>_bh
+								      				    					  }
+								      				    					<%
+								      				    				}
+								      				    			%>
+							      				    			<% if(multiColors || values != null) { %>		
+							      				    			}
+							      				    			<% } %>
+									      				    );
+									      				  });
+								      					</script>
+								      				<%
+								      			}
+								      		%>
+								      		
 								      	<% 
 								      		if(deInfo != null){
 								      			String idDivIconInfo = "divIconInfo_"+i;
@@ -510,7 +620,39 @@ for (int i = 0; i < dati.size(); i++) {
 			                            										}
 			                            									} //end for values
 			                                        					}
-			                          									%></select><%
+			                          									%></select>
+			                          									<%
+															      			if(!de.getDataAttributes().equals("")){
+															      				boolean multiColors = de.getDataAttributesMap().containsKey("colors");
+															      				%>
+															      					<script type="text/javascript">
+															      					 /**
+																      				   * Initialize tagsinput behaviour on inputs and selects which have
+																      				   * data-role=tagsinput
+																      				   */
+																      				  $(function() {
+																      				    $("select[multiple][data-role=tagsinput][name='<%= deName %>']").tagsinput(
+															      				    		<% 
+															      				    		if(multiColors) { 
+															      				    		%>
+																      				    		{ tagClass: function(item, index) {
+																      				    			
+																      				    			if(Number.isInteger(index)){
+																      				    				return 'label label-info label-info-' + (index % Costanti.NUMERO_GRUPPI_CSS);
+																      				    			}
+																      				    			
+																      				    			return 'label label-info label-info-default';
+																      				    		  } 
+															      				    			}<%
+															      				    		}
+																      				    		%>
+																      				    );
+																      				  });
+															      					</script>
+															      				<%
+															      			}
+															      		%>
+			                          									<%
 															      		if(deInfo != null){
 															      			String idDivIconInfo = "divIconInfo_"+i;
 															      			String idIconInfo = "iconInfo_"+i; 

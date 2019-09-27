@@ -1,0 +1,15 @@
+{
+        "intervallo_temporale": {
+		"data_inizio": "2012-07-21T17:32:28Z",
+		"data_fine": "2022-07-21T17:32:28Z"
+	},
+	"tipo": "qualsiasi",
+	"mittente": {
+		"tipo": "indirizzo_ip",
+		"id": {
+			"id": "127.0.0.1",
+			"tipo": "client_ip"
+		}
+	}
+}
+

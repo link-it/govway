@@ -36,6 +36,7 @@ import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
@@ -56,6 +57,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostan
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
@@ -125,6 +127,7 @@ public class ArchiviExporter extends HttpServlet {
 			// Cascade
 			String cascade = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE);
 			String cascadePdd = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD);
+			String cascadeGruppi = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_GRUPPI);
 			String cascadeRuoli = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_RUOLI);
 			String cascadeScope = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_SCOPE);
 			String cascadeSoggetti = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_SOGGETTI);
@@ -174,6 +177,10 @@ public class ArchiviExporter extends HttpServlet {
 				if(archiviCore.isExportArchive_servizi_standard()==false){
 					if(cascadePdd!=null & !"".equals(cascadePdd)){
 						cascadeConfig.setCascadePdd(ServletUtils.isCheckBoxEnabled(cascadePdd));
+					}
+					
+					if(cascadeGruppi!=null & !"".equals(cascadeGruppi)){
+						cascadeConfig.setCascadeGruppi(ServletUtils.isCheckBoxEnabled(cascadeGruppi));
 					}
 					
 					if(cascadeRuoli!=null & !"".equals(cascadeRuoli)){
@@ -254,6 +261,10 @@ public class ArchiviExporter extends HttpServlet {
 			case SERVIZIO_APPLICATIVO:
 				identificativi = exporterUtils.getIdsServiziApplicativi(objToExport);
 				redirect = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST;
+				break;
+			case GRUPPO:
+				identificativi = exporterUtils.getIdsGruppi(objToExport);
+				redirect = GruppiCostanti.SERVLET_NAME_GRUPPI_LIST;
 				break;
 			case RUOLO:
 				identificativi = exporterUtils.getIdsRuoli(objToExport);
@@ -399,6 +410,14 @@ public class ArchiviExporter extends HttpServlet {
 							"_"+
 							idServizioApplicativo.getNome()+
 							"."+extSingleArchive;
+				}
+				break;
+			case GRUPPO:
+				if(identificativi.size()>1){
+					fileName = prefix+"Gruppi."+ext;
+				}else{
+					IDGruppo idGruppo = ((IDGruppo)identificativi.get(0));
+					fileName = idGruppo.getNome()+"."+extSingleArchive;
 				}
 				break;
 			case RUOLO:

@@ -8,6 +8,7 @@ DELETE FROM servizi_azioni;
 DELETE FROM servizi;
 DELETE FROM accordi_coop_partecipanti;
 DELETE FROM accordi_cooperazione;
+DELETE FROM accordi_gruppi;
 DELETE FROM api_resources_parameter;
 DELETE FROM api_resources_media;
 DELETE FROM api_resources_response;

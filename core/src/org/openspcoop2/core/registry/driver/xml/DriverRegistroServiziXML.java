@@ -40,6 +40,7 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
@@ -52,6 +53,8 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.Gruppo;
+import org.openspcoop2.core.registry.GruppoAccordo;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.RegistroServizi;
@@ -71,6 +74,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAzioni;
 import org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio;
+import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
 import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
 import org.openspcoop2.core.registry.driver.FiltroRicercaResources;
@@ -709,6 +713,21 @@ public class DriverRegistroServiziXML extends BeanUtilities
 						}
 					}
 					
+					if(filtroRicercaBase.getIdGruppo()!=null && filtroRicercaBase.getIdGruppo().getNome()!=null){
+						boolean found = false;
+						if(as.getGruppi()!=null && as.getGruppi().sizeGruppoList()>0) {
+							for (GruppoAccordo gruppo : as.getGruppi().getGruppoList()) {
+								if(gruppo.getNome().equals(filtroRicercaBase.getIdGruppo().getNome())) {
+									found = true;
+									break;
+								}
+							}
+						}
+						if(!found) {
+							continue;
+						}
+					}
+					
 					if(filtroRicercaBase.getIdAccordoCooperazione()!=null &&
 							(filtroRicercaBase.getIdAccordoCooperazione().getNome()!=null || 
 							filtroRicercaBase.getIdAccordoCooperazione().getVersione()!=null) ){
@@ -960,6 +979,117 @@ public class DriverRegistroServiziXML extends BeanUtilities
 			throw new DriverRegistroServiziException("getAllIdPorteDominio error",e);
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/* Gruppi */
+	
+	/**
+	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Gruppo}, 
+	 * identificato grazie al parametro 
+	 * <var>nome</var> 
+	 *
+	 * @param idGruppo Identificativo del gruppo
+	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Gruppo}.
+	 * 
+	 */
+	@Override
+	public Gruppo getGruppo(
+			IDGruppo idGruppo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		
+		if(idGruppo==null || idGruppo.getNome()==null)
+			throw new DriverRegistroServiziException("[getGruppo] Parametro Non Valido");
+
+		refreshRegistroServiziXML();
+
+		for(int i=0; i<this.registro.sizeGruppoList(); i++){
+			org.openspcoop2.core.registry.Gruppo gruppo = this.registro.getGruppo(i);
+			if (gruppo.getNome() != null) {
+				if (gruppo.getNome().equals(idGruppo.getNome())) {
+					return gruppo;
+				}
+			}
+		}
+
+		throw new DriverRegistroServiziNotFound("[getGruppo] Gruppo non trovato");
+	}
+
+	/**
+	 * Ritorna gli identificatori dei Gruppi che rispettano il parametro di ricerca
+	 * 
+	 * @param filtroRicerca
+	 * @return Una lista di ID dei gruppi trovati
+	 * @throws DriverRegistroServiziException
+	 * @throws DriverRegistroServiziNotFound
+	 */
+	@Override
+	public List<IDGruppo> getAllIdGruppi(
+			FiltroRicercaGruppi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		try{
+
+			List<IDGruppo> idGruppi = new ArrayList<IDGruppo>();
+			for(int i=0; i<this.registro.sizeGruppoList(); i++){
+				org.openspcoop2.core.registry.Gruppo gruppo = this.registro.getGruppo(i);
+				if(filtroRicerca!=null){
+					// Filtro By Data
+					if(filtroRicerca.getMinDate()!=null){
+						if(gruppo.getOraRegistrazione()==null){
+							this.log.debug("[getAllIdGruppi](FiltroByMinDate) Gruppo ["+gruppo.getNome()+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
+							continue;
+						}else if(gruppo.getOraRegistrazione().before(filtroRicerca.getMinDate())){
+							continue;
+						}
+					}
+					if(filtroRicerca.getMaxDate()!=null){
+						if(gruppo.getOraRegistrazione()==null){
+							this.log.debug("[getAllIdGruppi](FiltroByMaxDate) Gruppo ["+gruppo.getNome()+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
+							continue;
+						}else if(gruppo.getOraRegistrazione().after(filtroRicerca.getMaxDate())){
+							continue;
+						}
+					}
+					// Filtro By Nome
+					if(filtroRicerca.getNome()!=null){
+						if(gruppo.getNome().equals(filtroRicerca.getNome()) == false){
+							continue;
+						}
+					}
+					// Filtro By ServiceBinding
+					if(filtroRicerca.getServiceBinding()!=null){
+						if(gruppo.getServiceBinding()!=null){ // se e' uguale a null significa che va bene per qualsiasi service binding
+							if(gruppo.getServiceBinding().equals(filtroRicerca.getServiceBinding()) == false) {
+								continue;
+							}
+						}
+					}
+				}
+				IDGruppo id = new IDGruppo(gruppo.getNome());
+				idGruppi.add(id);
+			}
+			if(idGruppi.size()==0){
+				if(filtroRicerca!=null){
+					throw new DriverRegistroServiziNotFound("Gruppi non trovati che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
+				}else{
+					throw new DriverRegistroServiziNotFound("Gruppi non trovati");
+				}
+			}else{
+				return idGruppi;
+			}
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("getAllIdGruppi error",e);
+		}
+	}
+	
+	
+	
+	
 	
 	
 	

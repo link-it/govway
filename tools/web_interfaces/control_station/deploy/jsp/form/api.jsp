@@ -360,6 +360,65 @@
 														<% 
 														firstText = false;
 													} else { // else multi-select
+														if (type.equals("button")){
+															%>
+						                					<tr class="">
+																<td class="tdTextRiepilogo labelRiepilogo">
+																	<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+																</td>
+																<td class="tdTextRiepilogo <%= stile %>">
+																	<div class="<%=classDivNoEdit %>"> 																	
+																		<%
+																			String [] values = de.getValues();
+				                                        					if (values != null) {
+				                            									String [] labels = de.getLabels();
+				                            									if(values.length > 0){
+				                            										%>
+																					<div class="<%=classDivNoEdit %> titoloTags"> 	
+																						<% 
+				                            									for (int y = 0; y < values.length; y++) {
+				                            										%>
+				                            										<span class="tag label label-info <%=values[y] %>"><%= labels[y] %></span>
+				                            										<%
+				                            									} //end for values
+																					%>
+																					</div>
+																					<% 
+				                            									}
+				                                        					}
+																		%>
+																		
+																		<% 
+																			if(!de.getListaImages().isEmpty()){
+																				for(int idxLink =0; idxLink < de.getListaImages().size() ; idxLink ++ ){
+																					DataElementImage image = de.getListaImages().get(idxLink);
+																					String classLink = "";
+																					String deIconName = image.getImage(); 
+										                					
+																					String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
+										                							
+										                							String deTarget = " ";
+																			  		if (!image.getTarget().equals("")) {
+																			  			deTarget = " target=\""+ image.getTarget() +"\"";
+																			  		}
+											                					%>
+											                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
+											                						<span class="icon-box">
+																						<i class="material-icons md-18"><%= deIconName %></i>
+																					</span>
+											                					</a>
+												                				<%
+																				}// end for-edit-link
+																			} // end edit-link
+																		%>
+						                							</div>
+																</td>
+															</tr>
+															<% 
+															firstText = false;
+														} else { // else button
+															
+														} // end else button
 						                			} // end else multi-select
 						                		} // end else checkbox
 					                		} // end else text

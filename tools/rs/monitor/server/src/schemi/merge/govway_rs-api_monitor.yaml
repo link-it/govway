@@ -37,6 +37,7 @@ paths:
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/id_cluster"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
       - $ref: "#/components/parameters/versione_servizio"
@@ -118,6 +119,7 @@ paths:
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/id_cluster"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
       - $ref: "#/components/parameters/versione_servizio"
@@ -339,6 +341,7 @@ paths:
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
       - $ref: "#/components/parameters/versione_servizio"
@@ -413,6 +416,7 @@ paths:
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
       - $ref: "#/components/parameters/versione_servizio"
@@ -486,6 +490,7 @@ paths:
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_erogatore"
+      - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
       - $ref: "#/components/parameters/versione_servizio"
@@ -560,6 +565,7 @@ paths:
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
       - $ref: "#/components/parameters/versione_servizio"
@@ -633,6 +639,7 @@ paths:
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/esito_transazione"
       - $ref: "#/components/parameters/formato_report"
       - $ref: "#/components/parameters/unita_tempo_report"
@@ -702,6 +709,7 @@ paths:
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
       - $ref: "#/components/parameters/versione_servizio"
@@ -775,6 +783,7 @@ paths:
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
       - $ref: "#/components/parameters/versione_servizio"
@@ -849,6 +858,7 @@ paths:
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
       - $ref: "#/components/parameters/versione_servizio"
@@ -922,6 +932,7 @@ paths:
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
       - $ref: "#/components/parameters/versione_servizio"
@@ -961,6 +972,78 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/RicercaStatisticaDistribuzioneTokenInfo"
+      responses:
+        200:
+          $ref: "#/components/responses/200ReportStatistico"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+  /reportistica/analisi-statistica/distribuzione-indirizzo-ip:
+    get:
+      tags:
+      - "Reportistica"
+      summary: "Genera un report statistico organizzato organizzato per Indirizzo\
+        \ IP utilizzando una ricerca semplice"
+      description: "Consente di generare un report degli indirizzo IP per mezzo di\
+        \ una ricerca semplice"
+      operationId: "getReportDistribuzioneIndirizzoIPBySimpleSearch"
+      parameters:
+      - $ref: "#/components/parameters/data_inizio"
+      - $ref: "#/components/parameters/data_fine"
+      - $ref: "#/components/parameters/tipo_transazione"
+      - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/tag"
+      - $ref: "#/components/parameters/nome_servizio"
+      - $ref: "#/components/parameters/tipo_servizio"
+      - $ref: "#/components/parameters/versione_servizio"
+      - $ref: "#/components/parameters/azione"
+      - $ref: "#/components/parameters/esito_transazione"
+      - $ref: "#/components/parameters/formato_report"
+      - $ref: "#/components/parameters/unita_tempo_report"
+      - $ref: "#/components/parameters/tipo_report"
+      - $ref: "#/components/parameters/tipo_informazione_report"
+      responses:
+        200:
+          $ref: "#/components/responses/200ReportStatistico"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    post:
+      tags:
+      - "Reportistica"
+      summary: "Genera un report statistico organizzato per Indirizzi IP"
+      description: "Consente di generare un report degli indirizzo IP"
+      operationId: "getReportDistribuzioneIndirizzoIPByFullSearch"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RicercaStatisticaDistribuzioneApplicativo"
       responses:
         200:
           $ref: "#/components/responses/200ReportStatistico"
@@ -1022,7 +1105,7 @@ paths:
         \ numero di erogazioni e fruizioni registrate per esso"
       operationId: "getRiepilogoApi"
       parameters:
-      - $ref: "#/components/parameters/tipo_transazione"
+      - $ref: "#/components/parameters/tipo_transazione_config"
       - $ref: "#/components/parameters/soggetto_remoto"
       - $ref: "#/components/parameters/nome_servizio_obbligatorio"
       - $ref: "#/components/parameters/tipo_servizio"
@@ -1060,7 +1143,7 @@ paths:
       description: "Ricerca le erogazioni e fruizioni registrate sul sistema"
       operationId: "getConfigurazioneApi"
       parameters:
-      - $ref: "#/components/parameters/tipo_transazione"
+      - $ref: "#/components/parameters/tipo_transazione_config"
       - $ref: "#/components/parameters/offset"
       - $ref: "#/components/parameters/limit"
       responses:
@@ -1096,7 +1179,7 @@ paths:
         \ in formato csv"
       operationId: "exportConfigurazioneApiBySimpleSearch"
       parameters:
-      - $ref: "#/components/parameters/tipo_transazione"
+      - $ref: "#/components/parameters/tipo_transazione_config"
       - $ref: "#/components/parameters/soggetto_remoto"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
@@ -1406,19 +1489,23 @@ components:
         intervallo_temporale:
           $ref: "#/components/schemas/FiltroTemporale"
         tipo:
-          $ref: "#/components/schemas/TransazioneRuoloEnum"
+          $ref: "#/components/schemas/FiltroRicercaRuoloTransazioneEnum"
         id_cluster:
           type: "string"
           description: "Identificativo del nodo su cui e' stata emessa la transazione"
+        tag:
+          $ref: "#/components/schemas/NCName"
         api:
           discriminator:
             propertyName: "tipo"
             mapping:
               erogazione: "#/components/schemas/FiltroErogazione"
               fruizione: "#/components/schemas/FiltroFruizione"
+              qualsiasi: "#/components/schemas/FiltroQualsiasi"
           oneOf:
           - $ref: "#/components/schemas/FiltroErogazione"
           - $ref: "#/components/schemas/FiltroFruizione"
+          - $ref: "#/components/schemas/FiltroQualsiasi"
         azione:
           $ref: "#/components/schemas/NCName"
         esito:
@@ -1438,9 +1525,11 @@ components:
               mapping:
                 erogazione: "#/components/schemas/FiltroMittenteErogazione"
                 fruizione: "#/components/schemas/FiltroMittenteFruizione"
+                qualsiasi: "#/components/schemas/FiltroMittenteQualsiasi"
             oneOf:
             - $ref: "#/components/schemas/FiltroMittenteErogazione"
             - $ref: "#/components/schemas/FiltroMittenteFruizione"
+            - $ref: "#/components/schemas/FiltroMittenteQualsiasi"
     RicercaIdApplicativo:
       type: "object"
       allOf:
@@ -1462,7 +1551,9 @@ components:
         intervallo_temporale:
           $ref: "#/components/schemas/FiltroTemporale"
         tipo:
-          $ref: "#/components/schemas/TransazioneRuoloEnum"
+          $ref: "#/components/schemas/FiltroRicercaRuoloTransazioneEnum"
+        tag:
+          $ref: "#/components/schemas/NCName"
     RicercaBaseStatisticaSoggetti:
       type: "object"
       allOf:
@@ -1475,9 +1566,11 @@ components:
               mapping:
                 erogazione: "#/components/schemas/FiltroErogazione"
                 fruizione: "#/components/schemas/FiltroFruizione"
+                qualsiasi: "#/components/schemas/FiltroQualsiasi"
             oneOf:
             - $ref: "#/components/schemas/FiltroErogazione"
             - $ref: "#/components/schemas/FiltroFruizione"
+            - $ref: "#/components/schemas/FiltroQualsiasi"
     RicercaStatisticaAndamentoTemporale:
       type: "object"
       allOf:
@@ -1496,9 +1589,11 @@ components:
               mapping:
                 erogazione: "#/components/schemas/FiltroMittenteErogazione"
                 fruizione: "#/components/schemas/FiltroMittenteFruizione"
+                qualsiasi: "#/components/schemas/FiltroMittenteQualsiasi"
             oneOf:
             - $ref: "#/components/schemas/FiltroMittenteErogazione"
             - $ref: "#/components/schemas/FiltroMittenteFruizione"
+            - $ref: "#/components/schemas/FiltroMittenteQualsiasi"
           esito:
             $ref: "#/components/schemas/FiltroEsito"
     RicercaStatisticaDistribuzioneEsiti:
@@ -1519,9 +1614,11 @@ components:
               mapping:
                 erogazione: "#/components/schemas/FiltroMittenteErogazione"
                 fruizione: "#/components/schemas/FiltroMittenteFruizione"
+                qualsiasi: "#/components/schemas/FiltroMittenteQualsiasi"
             oneOf:
             - $ref: "#/components/schemas/FiltroMittenteErogazione"
             - $ref: "#/components/schemas/FiltroMittenteFruizione"
+            - $ref: "#/components/schemas/FiltroMittenteQualsiasi"
     RicercaStatisticaDistribuzioneSoggettoRemoto:
       type: "object"
       allOf:
@@ -1538,9 +1635,11 @@ components:
               mapping:
                 erogazione: "#/components/schemas/FiltroApiBase"
                 fruizione: "#/components/schemas/FiltroFruizione"
+                qualsiasi: "#/components/schemas/FiltroApiBase"
             oneOf:
             - $ref: "#/components/schemas/FiltroApiBase"
             - $ref: "#/components/schemas/FiltroFruizione"
+            - $ref: "#/components/schemas/FiltroApiBase"
           azione:
             $ref: "#/components/schemas/NCName"
           mittente:
@@ -1549,9 +1648,11 @@ components:
               mapping:
                 erogazione: "#/components/schemas/FiltroMittenteErogazioneDistribuzioneSoggettoRemoto"
                 fruizione: "#/components/schemas/FiltroMittenteFruizione"
+                qualsiasi: "#/components/schemas/FiltroMittenteQualsiasi"
             oneOf:
             - $ref: "#/components/schemas/FiltroMittenteErogazioneDistribuzioneSoggettoRemoto"
             - $ref: "#/components/schemas/FiltroMittenteFruizione"
+            - $ref: "#/components/schemas/FiltroMittenteQualsiasi"
           esito:
             $ref: "#/components/schemas/FiltroEsito"
     RicercaStatisticaDistribuzioneSoggettoLocale:
@@ -1572,9 +1673,11 @@ components:
               mapping:
                 erogazione: "#/components/schemas/FiltroMittenteErogazione"
                 fruizione: "#/components/schemas/FiltroMittenteFruizione"
+                qualsiasi: "#/components/schemas/FiltroMittenteQualsiasi"
             oneOf:
             - $ref: "#/components/schemas/FiltroMittenteErogazione"
             - $ref: "#/components/schemas/FiltroMittenteFruizione"
+            - $ref: "#/components/schemas/FiltroMittenteQualsiasi"
           esito:
             $ref: "#/components/schemas/FiltroEsito"
     RicercaStatisticaDistribuzioneApi:
@@ -1600,9 +1703,11 @@ components:
               mapping:
                 erogazione: "#/components/schemas/FiltroMittenteErogazione"
                 fruizione: "#/components/schemas/FiltroMittenteFruizione"
+                qualsiasi: "#/components/schemas/FiltroMittenteQualsiasi"
             oneOf:
             - $ref: "#/components/schemas/FiltroMittenteErogazione"
             - $ref: "#/components/schemas/FiltroMittenteFruizione"
+            - $ref: "#/components/schemas/FiltroMittenteQualsiasi"
           esito:
             $ref: "#/components/schemas/FiltroEsito"
     RicercaStatisticaDistribuzioneAzione:
@@ -1621,9 +1726,11 @@ components:
               mapping:
                 erogazione: "#/components/schemas/FiltroMittenteErogazione"
                 fruizione: "#/components/schemas/FiltroMittenteFruizione"
+                qualsiasi: "#/components/schemas/FiltroMittenteQualsiasi"
             oneOf:
             - $ref: "#/components/schemas/FiltroMittenteErogazione"
             - $ref: "#/components/schemas/FiltroMittenteFruizione"
+            - $ref: "#/components/schemas/FiltroMittenteQualsiasi"
           esito:
             $ref: "#/components/schemas/FiltroEsito"
     RicercaStatisticaDistribuzioneApplicativo:
@@ -1703,6 +1810,10 @@ components:
       type: "object"
       allOf:
       - $ref: "#/components/schemas/FiltroApiBase"
+    FiltroQualsiasi:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/FiltroApiBase"
     FiltroEsito:
       type: "object"
       properties:
@@ -1738,10 +1849,12 @@ components:
               applicativo: "#/components/schemas/FiltroMittenteFruizioneApplicativo"
               identificativo_autenticato: "#/components/schemas/FiltroMittenteIdAutenticato"
               token_info: "#/components/schemas/FiltroMittenteFruizioneTokenClaim"
+              indirizzo_ip: "#/components/schemas/FiltroMittenteIndirizzoIP"
           oneOf:
           - $ref: "#/components/schemas/FiltroMittenteFruizioneApplicativo"
           - $ref: "#/components/schemas/FiltroMittenteIdApplicativo"
           - $ref: "#/components/schemas/FiltroMittenteFruizioneTokenClaim"
+          - $ref: "#/components/schemas/FiltroMittenteIndirizzoIP"
       description: "Descrive le informazioni di filtraggio relative al mittente per\
         \ la ricerca di transazioni relative a fruizioni di servizio"
     FiltroMittenteErogazione:
@@ -1757,13 +1870,33 @@ components:
               applicativo: "#/components/schemas/FiltroMittenteErogazioneApplicativo"
               identificativo_autenticato: "#/components/schemas/FiltroMittenteIdAutenticato"
               token_info: "#/components/schemas/FiltroMittenteErogazioneTokenClaim"
+              indirizzo_ip: "#/components/schemas/FiltroMittenteIndirizzoIP"
           oneOf:
           - $ref: "#/components/schemas/FiltroMittenteErogazioneSoggetto"
           - $ref: "#/components/schemas/FiltroMittenteErogazioneApplicativo"
           - $ref: "#/components/schemas/FiltroMittenteIdApplicativo"
           - $ref: "#/components/schemas/FiltroMittenteErogazioneTokenClaim"
+          - $ref: "#/components/schemas/FiltroMittenteIndirizzoIP"
       description: "Descrive le informazioni di filtraggio relative al mittente per\
         \ la ricerca di transazioni relative ad erogazioni di servizio"
+    FiltroMittenteQualsiasi:
+      type: "object"
+      properties:
+        tipo:
+          $ref: "#/components/schemas/TipoFiltroMittenteQualsiasiEnum"
+        id:
+          discriminator:
+            propertyName: "tipo"
+            mapping:
+              identificativo_autenticato: "#/components/schemas/FiltroMittenteIdAutenticato"
+              token_info: "#/components/schemas/FiltroMittenteFruizioneTokenClaim"
+              indirizzo_ip: "#/components/schemas/FiltroMittenteIndirizzoIP"
+          oneOf:
+          - $ref: "#/components/schemas/FiltroMittenteIdApplicativo"
+          - $ref: "#/components/schemas/FiltroMittenteFruizioneTokenClaim"
+          - $ref: "#/components/schemas/FiltroMittenteIndirizzoIP"
+      description: "Descrive le informazioni di filtraggio relative al mittente per\
+        \ la ricerca di transazioni relative a fruizioni o erogazioni di servizio"
     FiltroMittenteErogazioneDistribuzioneSoggettoRemoto:
       type: "object"
       properties:
@@ -1775,9 +1908,11 @@ components:
             mapping:
               identificativo_autenticato: "#/components/schemas/FiltroMittenteIdAutenticato"
               token_info: "#/components/schemas/FiltroMittenteErogazioneTokenClaim"
+              indirizzo_ip: "#/components/schemas/FiltroMittenteIndirizzoIP"
           oneOf:
           - $ref: "#/components/schemas/FiltroMittenteIdApplicativo"
           - $ref: "#/components/schemas/FiltroMittenteErogazioneTokenClaim"
+          - $ref: "#/components/schemas/FiltroMittenteIndirizzoIP"
       description: "Descrive le informazioni di filtraggio relative al mittente per\
         \ la ricerca di transazioni relative ad erogazioni di servizio"
     FiltroMittenteErogazioneSoggetto:
@@ -1835,6 +1970,14 @@ components:
       properties:
         claim:
           $ref: "#/components/schemas/TokenClaimEnum"
+    FiltroMittenteIndirizzoIP:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/FiltroRicercaId"
+      - type: "object"
+        properties:
+          tipo:
+            $ref: "#/components/schemas/TipoFiltroMittenteIndirizzoIPEnum"
     EsitoTransazioneSimpleSearchEnum:
       type: "string"
       enum:
@@ -1856,6 +1999,7 @@ components:
       - "applicativo"
       - "identificativo_autenticato"
       - "token_info"
+      - "indirizzo_ip"
     TipoFiltroMittenteErogazioneEnum:
       type: "string"
       enum:
@@ -1863,12 +2007,24 @@ components:
       - "applicativo"
       - "identificativo_autenticato"
       - "token_info"
+      - "indirizzo_ip"
+    TipoFiltroMittenteQualsiasiEnum:
+      type: "string"
+      enum:
+      - "identificativo_autenticato"
+      - "token_info"
+      - "indirizzo_ip"
     TipoFiltroMittenteIdentificativoAutenticatoEnum:
       type: "string"
       enum:
       - "basic"
       - "ssl"
       - "principal"
+    TipoFiltroMittenteIndirizzoIPEnum:
+      type: "string"
+      enum:
+      - "client_ip"
+      - "x_forwarded_for"
     TipoMessaggioEnum:
       type: "string"
       example: "richiesta"
@@ -2106,6 +2262,10 @@ components:
             $ref: "#/components/schemas/TransazioneExtInformazioniSoggetto"
           tipo:
             $ref: "#/components/schemas/Tipo"
+          tags:
+            type: "array"
+            items:
+              $ref: "#/components/schemas/NCName"
     TransazioneExtInformazioniApi:
       type: "object"
       allOf:
@@ -2354,6 +2514,13 @@ components:
       - "client_id"
       - "username"
       - "email"
+    FiltroRicercaRuoloTransazioneEnum:
+      type: "string"
+      example: "fruizione"
+      enum:
+      - "fruizione"
+      - "erogazione"
+      - "qualsiasi"
     Money:
       required:
       - "amount"
@@ -2730,6 +2897,13 @@ components:
       description: "La tipologia (erogazione\\fruizione) del servizio"
       required: true
       schema:
+        $ref: "#/components/schemas/FiltroRicercaRuoloTransazioneEnum"
+    tipo_transazione_config:
+      name: "tipo"
+      in: "query"
+      description: "La tipologia (erogazione\\fruizione) del servizio"
+      required: true
+      schema:
         $ref: "#/components/schemas/TransazioneRuoloEnum"
     id_correlazione_applicativa:
       name: "id_applicativo"
@@ -2963,6 +3137,13 @@ components:
       name: "azione"
       in: "query"
       description: "Nome identificativo"
+      required: false
+      schema:
+        $ref: "#/components/schemas/NCName"
+    tag:
+      name: "tag"
+      in: "query"
+      description: "Identificativo del TAg"
       required: false
       schema:
         $ref: "#/components/schemas/NCName"

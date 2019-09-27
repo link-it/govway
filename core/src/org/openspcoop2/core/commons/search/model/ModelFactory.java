@@ -34,7 +34,11 @@ public class ModelFactory {
 	
 	public static PortaDominioModel PORTA_DOMINIO = new PortaDominioModel();
 	
+	public static GruppoModel GRUPPO = new GruppoModel();
+	
 	public static AccordoServizioParteComuneModel ACCORDO_SERVIZIO_PARTE_COMUNE = new AccordoServizioParteComuneModel();
+	
+	public static AccordoServizioParteComuneGruppoModel ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO = new AccordoServizioParteComuneGruppoModel();
 	
 	public static AccordoServizioParteComuneAzioneModel ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE = new AccordoServizioParteComuneAzioneModel();
 	

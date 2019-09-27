@@ -78,6 +78,10 @@ public final class Filtri
 	
 	public final static String FILTRO_TIPO_TOKEN_POLICY = "filtroTipoTokenPolicy";
 	
+	public final static String FILTRO_GRUPPO_SERVICE_BINDING = "filtroGruppoServiceBinding";
+	
+	public final static String FILTRO_GRUPPO = "filtroGruppo";
+	
 	public static List<String> convertToTipiSoggetti(String filterProtocollo, String filterProtocolli) throws CoreException {
 		List<String> tipoSoggettiProtocollo = null;
 		if(filterProtocollo!=null && !"".equals(filterProtocollo)) {

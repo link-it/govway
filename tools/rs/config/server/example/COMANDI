@@ -107,14 +107,19 @@ ESEMPIO:
 	+ CREATE: 
 ./add api bodies/api.json
 ./add api bodies/api_spcoop.json profilo=SPCoop
+./add api bodies/api_tags.json
 
 	+ FIND:
 ./get api
+./get api tipo_api=soap
+./get api tag=TEST1
 
 	+ GET:
 ./get api/PetStore/1
 ./get api/PetStore/1/interfaccia
 ./get api/PetStore/1/interfaccia/download
+./get api/PetStore/1/descrizione
+./get api/PetStore/1/tags
 
 ./get api/RegistroServizi/1 profilo=SPCoop soggetto=SoggettoJson1
 ./get api/RegistroServizi/1/interfaccia profilo=SPCoop soggetto=SoggettoJson1
@@ -125,6 +130,8 @@ ESEMPIO:
 ./update api/PetStore/1/interfaccia bodies/interfaccia_petstore.json
 ./update api/PetStore/1/informazioni bodies/api_info_generali.json
 ./update api/PetStore/1/descrizione bodies/api_descrizione.json
+./update api/PetStore/1/tags bodies/api_modifica_tags.json
+./update api/PetStore/1/tags bodies/api_modifica_tags_vuoti.json
 
 	+ DELETE: 
 ./rem api/NomeInfoJson/5   
@@ -270,7 +277,9 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 ./get erogazioni/PetStore/2
 
 	+ FINDALL	
-./get erogazioni	
+./get erogazioni
+./get erogazioni tipo_api=soap
+./get erogazioni tag=TEST1	
 
 
 	+ GET INTERFACCIA API
@@ -543,6 +552,8 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 
 	+ FINDALL 
 ./get fruizioni
+./get fruizioni tipo_api=soap
+./get fruizioni tag=TEST1
 
 
 	+ GET API

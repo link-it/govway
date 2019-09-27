@@ -52,6 +52,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.pdd.core.credenziali.engine.GestoreCredenzialiEngine;
 import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
@@ -807,6 +808,19 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 
 	public void setVisualizzaDataAccettazione(boolean visualizzaDataAccettazione) {
 		this.visualizzaDataAccettazione = visualizzaDataAccettazione;
+	}
+	
+	public String getTextCredenziali() {
+		if(StringUtils.isNotEmpty(this.dettaglio.getCredenziali())) {
+			String cr = this.dettaglio.getCredenziali();
+			if(cr.startsWith(GestoreCredenzialiEngine.KEYWORD_GATEWAY_CREDENZIALI)) {
+				return cr.substring(GestoreCredenzialiEngine.KEYWORD_GATEWAY_CREDENZIALI.length());
+			}
+			else {
+				return cr;
+			}
+		}
+		return null;
 	}
 	
 	public boolean isVisualizzaTextAreaCredenziali() {

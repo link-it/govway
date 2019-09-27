@@ -35,8 +35,11 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.GruppiAccordo;
+import org.openspcoop2.core.registry.GruppoAccordo;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.beans.GruppoSintetico;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -125,6 +128,9 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				this.addFilterServiceBinding(filterTipoAccordo,false,false);
 			}
 			
+			String filterGruppo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_GRUPPO);
+			addFilterGruppo(filterGruppo, false);
+			
 			if(this.isShowGestioneWorkflowStatoDocumenti()){
 				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
 					String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
@@ -165,6 +171,9 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			
+			// colleziono i tags registrati
+			List<String> tagsDisponibili = this.gruppiCore.getAllGruppiOrdinatiPerDataRegistrazione();
 
 			for (int i = 0; i < lista.size(); i++) {
 				Vector<DataElement> e = new Vector<DataElement>();
@@ -270,6 +279,29 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				
 				de.setWidthPx(16); 
 				e.addElement(de);
+				
+				// tags
+				List<GruppoSintetico> gruppo = accordoServizio.getGruppo();
+				if(gruppo != null && gruppo.size() > 0) {
+					for (int j = 0; j < gruppo.size(); j++) {
+						GruppoSintetico gruppoSintetico = gruppo.get(j);
+						de = new DataElement();
+						de.setName(ApiCostanti.PARAMETRO_APC_API_GESTIONE_GRUPPO + "_" + j);
+						de.setType(DataElementType.BUTTON);
+						de.setLabel(gruppoSintetico.getNome());
+						
+						int indexOf = tagsDisponibili.indexOf(gruppoSintetico.getNome());
+						if(indexOf == -1)
+							indexOf = 0;
+						
+						indexOf = indexOf % CostantiControlStation.NUMERO_GRUPPI_CSS;
+						
+						de.setStyleClass("label-info-"+indexOf);
+						
+						e.addElement(de);
+					}
+				}
+				
 
 				// aggiungo entry
 				dati.addElement(e);
@@ -598,6 +630,48 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		de.setImage(image);
 		
 		dati.addElement(de);
+		
+		// Gruppi 
+		de = new DataElement();
+		de.setType(DataElementType.BUTTON);
+		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_GRUPPI);
+
+		List<String> labelsGruppi = new ArrayList<String>();
+		List<String> valuesGruppi = new ArrayList<String>();
+		
+		GruppiAccordo gruppi = as.getGruppi();
+		if(gruppi != null) {
+			// colleziono i tags registrati
+			List<String> tagsDisponibili = this.gruppiCore.getAllGruppiOrdinatiPerDataRegistrazione();
+			
+			for (int i = 0; i < gruppi.sizeGruppoList(); i++) {
+				GruppoAccordo gruppo = gruppi.getGruppo(i);
+				
+				int indexOf = tagsDisponibili.indexOf(gruppo.getNome());
+				if(indexOf == -1)
+					indexOf = 0;
+				
+				indexOf = indexOf % CostantiControlStation.NUMERO_GRUPPI_CSS;
+				
+				labelsGruppi.add(gruppo.getNome());
+				valuesGruppi.add("label-info-"+indexOf);
+			}
+		}	
+		
+		de.setLabels(labelsGruppi);
+		de.setValues(valuesGruppi);
+		
+		listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_GRUPPI);
+		de.setIcon(ApiCostanti.APC_API_ICONA_MODIFICA_API);
+		image = new DataElementImage();
+		listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_GRUPPI);
+		image.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
+		image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_GRUPPI));
+		image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
+		de.setImage(image);
+		
+		dati.addElement(de);
+		
 		
 		
 		// link

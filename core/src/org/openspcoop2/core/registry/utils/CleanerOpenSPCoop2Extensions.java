@@ -29,6 +29,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
@@ -53,6 +54,12 @@ public class CleanerOpenSPCoop2Extensions {
 	public void clean(PortaDominio portaDominio){
 
 		portaDominio.setSuperUser(null);
+		
+	}
+	
+	public void clean(Gruppo gruppo){
+
+		gruppo.setSuperUser(null);
 		
 	}
 	

@@ -51,6 +51,11 @@ import org.openspcoop2.core.statistiche.model.StatisticaContenutiModel;
 import org.openspcoop2.core.statistiche.model.StatisticaModel;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.dao.jdbc.JDBCCredenzialeMittenteServiceSearch;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeClientAddress;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchClientAddress;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchGruppo;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchToken;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchTrasporto;
 import org.openspcoop2.generic_project.beans.ConstantField;
 import org.openspcoop2.generic_project.beans.Function;
 import org.openspcoop2.generic_project.beans.FunctionField;
@@ -1314,6 +1319,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 			this.impostaFiltroDatiMittente(expr, this.andamentoTemporaleSearch, model, isCount);
+			
+			this.impostaFiltroGruppo(expr, this.andamentoTemporaleSearch, model, isCount);
+			
 
 			if(date==null){
 				// ORDER BY
@@ -1815,6 +1823,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 				
 				this.impostaFiltroDatiMittente(mitExpr, this.distribSoggettoSearch, model, true);
+				
+				this.impostaFiltroGruppo(mitExpr, this.distribSoggettoSearch, model, true);
 
 				// DESTINATARIO
 				IExpression destExpr = dao.newExpression();
@@ -1905,6 +1915,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 				
 				this.impostaFiltroDatiMittente(destExpr, this.distribSoggettoSearch, model, true);
+				
+				this.impostaFiltroGruppo(destExpr, this.distribSoggettoSearch, model, true);
 
 				mitExpr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				mitExpr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -2042,6 +2054,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 				
 				this.impostaFiltroDatiMittente(mitExpr, this.distribSoggettoSearch, model, true);
+				
+				this.impostaFiltroGruppo(mitExpr, this.distribSoggettoSearch, model, true);
 
 				mitExpr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				mitExpr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -2168,6 +2182,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 				
 				this.impostaFiltroDatiMittente(destExpr, this.distribSoggettoSearch, model, true);
+				
+				this.impostaFiltroGruppo(destExpr, this.distribSoggettoSearch, model, true);
 
 				destExpr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				destExpr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -2233,7 +2249,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			StatisticaModel model, boolean isPaginated, int start,
 			int limit) throws ExpressionNotImplementedException,
 			ExpressionException, ServiceException, NotImplementedException,
-			CoreException, NotFoundException, ProtocolException, UserInvalidException {
+			CoreException, NotFoundException, ProtocolException, UserInvalidException, UtilsException {
 
 		List<Index> forceIndexes = null;
 		try{
@@ -2454,6 +2470,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// filtro dati m
 			this.impostaFiltroDatiMittente(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
 			this.impostaFiltroDatiMittente(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
+			
+			this.impostaFiltroGruppo(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
+			this.impostaFiltroGruppo(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
 
 			// UNION
 
@@ -2753,7 +2772,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					erogazione_portaApplicativa_Expr.and().equals(	model.MITTENTE, this.distribSoggettoSearch.getNomeMittente());
 				}
 			}
-
+			
+			// filtro dati m
+			this.impostaFiltroDatiMittente(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
+			
+			this.impostaFiltroGruppo(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
+			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				erogazione_portaApplicativa_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				erogazione_portaApplicativa_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -3030,6 +3054,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 			}
 
+			// filtro dati m
+			this.impostaFiltroDatiMittente(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
+			
+			this.impostaFiltroGruppo(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
+			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				fruizione_portaDelegata_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				fruizione_portaDelegata_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -3785,6 +3814,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 			this.impostaFiltroDatiMittente(expr, this.distribServizioSearch, model, isCount);
+			
+			this.impostaFiltroGruppo(expr, this.distribServizioSearch, model, isCount);
 
 			expr.notEquals(model.TIPO_SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 			expr.notEquals(model.SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -4164,6 +4195,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 			this.impostaFiltroDatiMittente(expr, this.distribAzioneSearch, model, isCount); 
+			
+			this.impostaFiltroGruppo(expr, this.distribAzioneSearch, model, isCount);
 			
 			expr.notEquals(model.AZIONE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 			expr.addGroupBy(model.AZIONE);
@@ -5320,6 +5353,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			
 			this.impostaGroupByFiltroDatiMittente(expr, this.distribSaSearch, model, isCount); 
+			
+			this.impostaFiltroGruppo(expr, this.distribSaSearch, model, isCount);
 
 			// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
 			// Poichè gli applicativi sono identificati univocamente insieme anche al soggetto proprietario, si aggiunge il soggetto nella group by
@@ -5704,6 +5739,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			expr = parseStatistichePersonalizzateFilter(dao, model, modelContenuti);
 			expr.and();
 			this.impostaFiltroDatiMittente(expr, this.statistichePersonalizzateSearch, model, isCount);
+			
+			this.impostaFiltroGruppo(expr, this.statistichePersonalizzateSearch, model, isCount);
 
 			// String idRisorsaAggregare = "RISORSA_DA_AGGREGARE";
 			//
@@ -5745,6 +5782,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 
 		}  catch (ExpressionNotImplementedException | NotImplementedException e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			throw new ServiceException(e);
+		} catch (UtilsException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
@@ -6078,7 +6118,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		} catch (ExpressionNotImplementedException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 			throw new ServiceException(e);
-		} catch (ExpressionException e) {
+		} catch (UtilsException e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			throw new ServiceException(e);
+		}catch (ExpressionException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ServiceException e) {
@@ -6094,7 +6137,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		return null;
 	}
 
-	private IExpression createAndamentoTemporalePersonalizzatoExpression(IServiceSearchWithoutId<?> dao, StatisticaModel model,	StatisticaContenutiModel modelContenuti, boolean isCount) throws ServiceException{
+	private IExpression createAndamentoTemporalePersonalizzatoExpression(IServiceSearchWithoutId<?> dao, StatisticaModel model,	StatisticaContenutiModel modelContenuti, boolean isCount) throws ServiceException, UtilsException{
 		IExpression expr = null;
 
 		FilterImpl report = (FilterImpl) this.statistichePersonalizzateSearch
@@ -6104,6 +6147,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			expr = parseStatistichePersonalizzateFilter(dao, model, modelContenuti);
 			
 			this.impostaFiltroDatiMittente(expr, this.statistichePersonalizzateSearch, model, isCount);
+			
+			this.impostaFiltroGruppo(expr, this.statistichePersonalizzateSearch, model, isCount);
 
 			// Risorsa da aggregare indica la statistica per cui aggregare, deve coincidere nel campo risorsa_nome
 			String nomeStatisticaPersonalizzata = this.statistichePersonalizzateSearch.getStatisticaSelezionata().getIdConfigurazioneStatistica();
@@ -6453,6 +6498,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			IExpression expr = parseStatistichePersonalizzateFilter(dao, model, modelContenuti);
 			expr.and();
 			this.impostaFiltroDatiMittente(expr, this.statistichePersonalizzateSearch, model, false);
+			
+			this.impostaFiltroGruppo(expr, this.statistichePersonalizzateSearch, model, false);
 
 			boolean resourceStats = false;
 			if(StatisticByResource.ID.equals(this.statistichePersonalizzateSearch.getStatisticaSelezionata().getIdConfigurazioneStatistica())){
@@ -6499,6 +6546,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 			throw e;
+		} catch (UtilsException e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			throw new ServiceException(e);
 		} catch (ExpressionNotImplementedException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 			throw new ServiceException(e);
@@ -6591,8 +6641,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			case token_username:
 				fieldCredenziale = model.TOKEN_USERNAME;
 				break;
+				
+			case client_address:
+				return model.CLIENT_ADDRESS;
+				
+			case gruppi:
+				return model.GRUPPI;
+				
+			case eventi:
 			case trasporto:
-			default:
 				// caso impossibile
 				break; 
 			}
@@ -6612,24 +6669,43 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			 
 			IPaginatedExpression pagExpr = null;
 			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
-				pagExpr = org.openspcoop2.core.transazioni.utils.CredenzialiMittenteUtils.createCredenzialeMittentePaginatedExpression(credenzialeMittentiService,
-						org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.trasporto, searchForm.getAutenticazione(), searchForm.getValoreRiconoscimento(), ricercaEsatta, caseSensitive);
+				CredenzialeSearchTrasporto searchTrasporto = new CredenzialeSearchTrasporto(searchForm.getAutenticazione());
+				pagExpr = searchTrasporto.createExpression(credenzialeMittentiService, searchForm.getValoreRiconoscimento(), ricercaEsatta, caseSensitive);
+			} 
+			
+			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP)) {
+				
+				caseSensitive = true;
+				boolean socketAddress = false;
+				boolean trasportAddress = false;
+				boolean and = false;
+				if(ricercaEsatta) {
+					if(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_CLIENT_ADDRESS_SOCKET.equals(searchForm.getClientAddressMode())) {
+						socketAddress = true;
+					}
+					else if(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_CLIENT_ADDRESS_TRASPORTO.equals(searchForm.getClientAddressMode())) {
+						trasportAddress = true;
+					}
+					else {
+						socketAddress = true;
+						trasportAddress = true;
+					}
+				}
+				
+				CredenzialeSearchClientAddress searchClientAddress = new CredenzialeSearchClientAddress(socketAddress, trasportAddress, and);
+				pagExpr = searchClientAddress.createExpression(credenzialeMittentiService, searchForm.getValoreRiconoscimento(), ricercaEsatta, caseSensitive);
 			} 
 			
 			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
 				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(searchForm.getTokenClaim());
-				pagExpr = org.openspcoop2.core.transazioni.utils.CredenzialiMittenteUtils.createCredenzialeMittentePaginatedExpression(credenzialeMittentiService,
-						tcm, null, searchForm.getValoreRiconoscimento(), ricercaEsatta, caseSensitive);
+				CredenzialeSearchToken searchToken = new CredenzialeSearchToken(tcm);
+				pagExpr = searchToken.createExpression(credenzialeMittentiService, searchForm.getValoreRiconoscimento(), ricercaEsatta, caseSensitive);
 			}
 			
 			findAll = credenzialeMittentiService.findAll(pagExpr);
 		}catch(ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 		} catch (NotImplementedException e) {
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
-		} catch (ExpressionNotImplementedException e) { 
-			StatisticheGiornaliereService.log.error(e.getMessage(), e);
-		} catch (ExpressionException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 		} catch (UtilsException e) {
 			StatisticheGiornaliereService	.log.error(e.getMessage(), e);
@@ -6652,33 +6728,22 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// nop;
 			}
 			else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO) ||
+					searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP) ||
 					searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
 				List<org.openspcoop2.core.transazioni.CredenzialeMittente> listaCredenzialiMittente = getIdCredenzialiFromFilter(searchForm, this.credenzialiMittenteDAO, isCount);
-				
-				// se non ho trovato credenziali che corrispondono a quelle inserite allora restituisco un elenco di transazioni vuoto forzando l'id transazione
-				if(listaCredenzialiMittente.size() ==0) {
-					Calendar c = Calendar.getInstance();
-					Date d = new Date();
-					c.setTime(d);
-					c.set(Calendar.YEAR, 2100);
-					filter.and().equals(model.DATA, c.getTime());
-				} else {
-					org.openspcoop2.core.transazioni.CredenzialeMittente credenzialeMittente = listaCredenzialiMittente.get(0);
-					IField fieldCredenziale = getCredenzialeField(credenzialeMittente, model);
-					
-					if(listaCredenzialiMittente.size() ==1) {
-						filter.and().equals(fieldCredenziale, credenzialeMittente.getId().toString());
-						
-					} else {
-						List<String> ids = new ArrayList<>();
-						for (org.openspcoop2.core.transazioni.CredenzialeMittente cMittente : listaCredenzialiMittente) {
-							ids.add(cMittente.getId().toString());
-						}
-						
-						filter.and().in(fieldCredenziale, ids); 
-					}
-				}
+				addListaCredenzialiMittente(filter, listaCredenzialiMittente, model);
 			}
+		}
+	}
+	
+	private void impostaFiltroGruppo(IExpression filter, BaseSearchForm searchForm, StatisticaModel model, boolean isCount) throws UtilsException, ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
+		if (StringUtils.isNotEmpty(searchForm.getGruppo())) {
+			
+			CredenzialeSearchGruppo searchGruppi = new CredenzialeSearchGruppo();
+			IPaginatedExpression pagExpr = searchGruppi.createExpression(this.credenzialiMittenteDAO, searchForm.getGruppo(), true, true);
+			List<CredenzialeMittente> listaCredenzialiMittente = this.credenzialiMittenteDAO.findAll(pagExpr);
+			addListaCredenzialiMittente(filter, listaCredenzialiMittente, model);
+
 		}
 	}
 	
@@ -6695,6 +6760,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			} else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
 				filter.notEquals(model.TRASPORTO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				filter.addGroupBy(model.TRASPORTO_MITTENTE);
+			} else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP)) {
+				filter.notEquals(model.CLIENT_ADDRESS, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				filter.addGroupBy(model.CLIENT_ADDRESS);
 			} else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
 				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(searchForm.getTokenClaim());
 				
@@ -6719,8 +6787,19 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					filter.notEquals(model.TOKEN_USERNAME, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					filter.addGroupBy(model.TOKEN_USERNAME);
 					break;
+					
+				case client_address:
+					filter.notEquals(model.CLIENT_ADDRESS, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					filter.addGroupBy(model.CLIENT_ADDRESS);
+					break;
+					
+				case gruppi:
+					filter.notEquals(model.GRUPPI, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					filter.addGroupBy(model.GRUPPI);
+					break;
+										
+				case eventi:
 				case trasporto:
-				default:
 					// caso impossibile
 					break; 
 				}
@@ -6742,6 +6821,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
 				return model.TRASPORTO_MITTENTE;
 			} 
+			else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP)) {
+				return model.CLIENT_ADDRESS;
+			} 
 			else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
 				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(searchForm.getTokenClaim());
 				
@@ -6756,8 +6838,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					return model.TOKEN_SUBJECT;
 				case token_username:
 					return model.TOKEN_USERNAME;
+					
+				case client_address:
+					return model.CLIENT_ADDRESS;
+					
+				case gruppi:
+					return model.GRUPPI;
+					
+				case eventi:
 				case trasporto:
-				default:
 					// caso impossibile
 					break; 
 				}
@@ -6784,6 +6873,27 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					if(StringUtils.isNotEmpty(risultato)) {
 						CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
 						return credenzialeMittente.getCredenziale();
+					}
+				} 
+				else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP)) {
+					if(StringUtils.isNotEmpty(risultato)) {
+						CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
+						
+						String credenziale = credenzialeMittente.getCredenziale();
+						StringBuffer bf = new StringBuffer();
+						if(CredenzialeClientAddress.isSocketAddressDBValue(credenziale)) {
+							bf.append(CredenzialeClientAddress.convertSocketDBValueToOriginal(credenziale));
+							if(CredenzialeClientAddress.isTransportAddressDBValue(credenziale)) {
+								bf.append(" (X-Forwarded-For: ");
+								bf.append(CredenzialeClientAddress.convertTransportDBValueToOriginal(credenziale));
+								bf.append(")");
+							}
+							
+						}
+						else if(CredenzialeClientAddress.isTransportAddressDBValue(credenziale)) {
+							bf.append(CredenzialeClientAddress.convertTransportDBValueToOriginal(credenziale));
+						}
+						return bf.toString(); 
 					}
 				} 
 				else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
@@ -6820,5 +6930,31 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		
 		return risultato;
 		 
+	}
+	
+	private void addListaCredenzialiMittente(IExpression filter, List<CredenzialeMittente> listaCredenzialiMittente, StatisticaModel model) throws ExpressionNotImplementedException, ExpressionException {
+		// se non ho trovato credenziali che corrispondono a quelle inserite allora restituisco un elenco di transazioni vuoto forzando l'id transazione
+		if(listaCredenzialiMittente.size() ==0) {
+			Calendar c = Calendar.getInstance();
+			Date d = new Date();
+			c.setTime(d);
+			c.set(Calendar.YEAR, 2100);
+			filter.and().equals(model.DATA, c.getTime());
+		} else {
+			org.openspcoop2.core.transazioni.CredenzialeMittente credenzialeMittente = listaCredenzialiMittente.get(0);
+			IField fieldCredenziale = getCredenzialeField(credenzialeMittente, model);
+			
+			if(listaCredenzialiMittente.size() ==1) {
+				filter.and().equals(fieldCredenziale, credenzialeMittente.getId().toString());
+				
+			} else {
+				List<String> ids = new ArrayList<>();
+				for (org.openspcoop2.core.transazioni.CredenzialeMittente cMittente : listaCredenzialiMittente) {
+					ids.add(cMittente.getId().toString());
+				}
+				
+				filter.and().in(fieldCredenziale, ids); 
+			}
+		}
 	}
 }

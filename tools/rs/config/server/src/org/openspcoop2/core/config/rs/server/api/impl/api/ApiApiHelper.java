@@ -23,6 +23,7 @@ package org.openspcoop2.core.config.rs.server.api.impl.api;
 
 import static org.openspcoop2.utils.service.beans.utils.BaseHelper.evalnull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -55,6 +56,7 @@ import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.beans.GruppoSintetico;
 import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
@@ -95,7 +97,7 @@ public class ApiApiHelper {
 		as.setNome(body.getNome());
 		as.setDescrizione(body.getDescrizione());
 		as.setProfiloCollaborazione(ProfiloCollaborazione.SINCRONO);
-	
+			
 		// Quando sono in SPCoopSoap Specifico di tutti i vari wsdl\wsbl solo il wsdlserv, ovvero  AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE
 		// Quando invece sono in modalità ApiGateway e passo una OpenApi, imposto il wsdlconcettuale
 		String interfaccia = body.getInterfaccia() != null ? new String(body.getInterfaccia()) : null;
@@ -521,6 +523,13 @@ public class ApiApiHelper {
 		
 		ret.setStatoDescrizione(descrizioneStato);
 		ret.setStato(stato);
+		
+		if(as.getGruppo()!=null &&  !as.getGruppo().isEmpty()) {
+			ret.setTags(new ArrayList<String>());
+			for (GruppoSintetico tag : as.getGruppo()) {
+				ret.addTagsItem(tag.getNome());
+			}
+		}
 		
 		return ret;
 		

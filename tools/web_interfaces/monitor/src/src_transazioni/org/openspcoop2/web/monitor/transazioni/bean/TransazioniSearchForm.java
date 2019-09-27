@@ -62,12 +62,15 @@ import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
 import org.openspcoop2.web.monitor.core.constants.ModalitaRicercaTransazioni;
 import org.openspcoop2.web.monitor.core.constants.TipoMatch;
+import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dynamic.Ricerche;
 import org.openspcoop2.web.monitor.core.dynamic.components.BaseComponent;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.openspcoop2.web.monitor.transazioni.constants.TransazioniCostanti;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 import org.openspcoop2.web.monitor.transazioni.datamodel.TransazioniDM;
 import org.richfaces.model.Ordering;
@@ -92,6 +95,27 @@ Context, Cloneable {
 	private String nomeRisorsa;
 	private String valoreRisorsa;
 	private String evento;
+	
+	private TipoMatch ricercaLiberaMatchingType = TipoMatch.LIKE;
+	private CaseSensitiveMatch ricercaLiberaCaseSensitiveType = CaseSensitiveMatch.INSENSITIVE;
+	
+	private String ricercaLiberaSoggettoRemoto;
+	private String ricercaLiberaGruppo;
+	private String ricercaLiberaServizio;
+	private String ricercaLiberaAzione;
+	
+	private String ricercaLiberaApplicativo;
+	private String ricercaLiberaIdentificativoAutenticato;
+	private String ricercaLiberaIndirizzoIP;
+	
+	private String ricercaLiberaTokenIssuer;
+	private String ricercaLiberaTokenSubject;
+	private String ricercaLiberaTokenClientID;
+	private String ricercaLiberaTokenUsername;
+	private String ricercaLiberaTokenEmail;
+	
+	private String ricercaLiberaIdApplicativo;
+	
 
 	private Hashtable<String, Ricerche> tabellaRicerchePersonalizzate = new Hashtable<String, Ricerche>();
 
@@ -102,6 +126,11 @@ Context, Cloneable {
 	private List<String> listIdCluster;
 	private String clusterId;
 
+	private static String default_modalitaRicercaStorico = ModalitaRicercaTransazioni.ANDAMENTO_TEMPORALE.getValue();
+	private String modalitaRicercaStorico = TransazioniSearchForm.default_modalitaRicercaStorico;
+	
+	private boolean integrationManagerEnabled = false;
+	
 	public TransazioniSearchForm(){
 		super();
 		
@@ -121,6 +150,11 @@ Context, Cloneable {
 			this.getSortOrders().put(TransazioniDM.COL_DATA_LATENZA_SERVIZIO, Ordering.UNSORTED);
 
 			this.setUseCount(pddMonitorProperties.isAttivoUtilizzaCountStoricoTransazioni()); 
+			
+			this.modalitaRicercaStorico = TransazioniSearchForm.default_modalitaRicercaStorico;
+			
+			this.integrationManagerEnabled = pddMonitorProperties.isAttivoTransazioniIntegrationManager();
+			
 		}catch(Exception e){
 			TransazioniSearchForm.log.error(e.getMessage(), e);
 		}
@@ -139,11 +173,20 @@ Context, Cloneable {
 			this.getSortOrders().put(TransazioniDM.COL_DATA_LATENZA_SERVIZIO, Ordering.UNSORTED);
 			
 			this.setUseCount(pddMonitorProperties.isAttivoUtilizzaCountStoricoTransazioni()); 
+			
+			this.modalitaRicercaStorico = TransazioniSearchForm.default_modalitaRicercaStorico;
+			
+			this.integrationManagerEnabled = pddMonitorProperties.isAttivoTransazioniIntegrationManager();
+			
 		}catch(Exception e){
 			TransazioniSearchForm.log.error(e.getMessage(), e);
 		}
 	}
 
+	public boolean isIntegrationManagerEnabled() {
+		return this.integrationManagerEnabled;
+	}
+	
 	public void setTransazioniService(ITransazioniService transazioniService) {
 		this.transazioniService = transazioniService;
 	}
@@ -151,9 +194,13 @@ Context, Cloneable {
 	private TipoMatch correlazioneApplicativaMatchingType = TipoMatch.EQUALS;
 	private CaseSensitiveMatch correlazioneApplicativaCaseSensitiveType = CaseSensitiveMatch.SENSITIVE;
 
+	public boolean isLive() {
+		return "Live".equals(this.periodo);
+	}
+	
 	@Override
 	public String getPrintPeriodo(){
-		if("Live".equals(this.periodo)){
+		if(this.isLive()){
 			try{
 				PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(TransazioniSearchForm.log);
 				Integer liveUltimiGiorni = monitorProperties.getTransazioniLiveUltimiGiorni();
@@ -192,23 +239,43 @@ Context, Cloneable {
 	@Override
 	protected String ripulisciValori(){
 		String oldModalita = this.getModalitaRicercaStorico();
+		String oldRiconoscimento = this.getRiconoscimento();
+		boolean oldIsLive = this.isLive();
 		this.initSearchListener(null);
 		if(oldModalita!=null && !"".equals(oldModalita)) {
 			this.setModalitaRicercaStorico(oldModalita);
 		}
+		if(oldModalita!=null && !"".equals(oldModalita) && !oldIsLive) {
+			this.setRiconoscimento(oldRiconoscimento);
+		}
+		
+		if(!oldIsLive && TipologiaRicerca.all.equals(this.getDefaultTipologiaRicercaEnum())) {
+			this.setTipologiaRicerca("--"); // in modo da far comparire la lista con il suggerimento di selezione come per gli altri
+		}
+		
 		return null;
 	}
 
 	public void ripulisciLive(){
 		this.ripulisci();	
 		this.periodo = "Live";
+		this.setTipologiaRicerca("--"); // in modo da far comparire la lista con il suggerimento di selezione come per gli altri
 	}
 
+	@Override
+	public void setPeriodo(String periodo) {
+		super.setPeriodo(periodo);
+		if(this.isLive()) {
+			this.setTipologiaRicerca("--"); // in modo da far comparire la lista con il suggerimento di selezione come per gli altri
+		}
+	}
 	
 	@Override
 	public void initSearchListener(ActionEvent ae) {
 		
 		super.initSearchListener(ae);
+				
+		this.modalitaRicercaStorico = TransazioniSearchForm.default_modalitaRicercaStorico;
 		
 		this.getSortOrders().put(TransazioniDM.COL_DATA_INGRESSO_RICHIESTA, Ordering.DESCENDING);
 		this.getSortOrders().put(TransazioniDM.COL_DATA_LATENZA_TOTALE, Ordering.UNSORTED);
@@ -221,11 +288,202 @@ Context, Cloneable {
 		_setPeriodo();
 		
 		this.initSearchForm();
+				
+		this.correlazioneApplicativaMatchingType = TipoMatch.EQUALS;
+		this.correlazioneApplicativaCaseSensitiveType = CaseSensitiveMatch.SENSITIVE;
+		
+		this.ricercaLiberaMatchingType = TipoMatch.LIKE;
+		this.ricercaLiberaCaseSensitiveType = CaseSensitiveMatch.INSENSITIVE;
+		
+		this.ricercaLiberaSoggettoRemoto = null;
+		this.ricercaLiberaGruppo = null;
+		this.ricercaLiberaServizio = null;
+		this.ricercaLiberaAzione = null;
+		
+		this.ricercaLiberaApplicativo = null;
+		this.ricercaLiberaIdentificativoAutenticato = null;
+		this.ricercaLiberaIndirizzoIP = null;
+		
+		this.ricercaLiberaTokenIssuer = null;
+		this.ricercaLiberaTokenSubject = null;
+		this.ricercaLiberaTokenClientID = null;
+		this.ricercaLiberaTokenUsername = null;
+		this.ricercaLiberaTokenEmail = null;
+		
+		this.ricercaLiberaIdApplicativo = null;
+		
 		
 		this.executeQuery = false;
 		
 	}
 
+
+	public String getModalitaRicercaStorico() {
+		if(this.modalitaRicercaStorico==null || "".equals(this.modalitaRicercaStorico)){
+			this.modalitaRicercaStorico = TransazioniSearchForm.default_modalitaRicercaStorico;
+		}
+		return this.modalitaRicercaStorico;
+	}
+
+	public void setModalitaRicercaStorico(String modalitaRicercaStorico) {
+		this.modalitaRicercaStorico = modalitaRicercaStorico;
+	}
+	
+	public String getTipoStoricoLabel() {
+		if(this.getModalitaRicercaStorico() != null) {
+			ModalitaRicercaTransazioni t = ModalitaRicercaTransazioni.getFromString(this.getModalitaRicercaStorico());
+			switch (t) { 
+			case ANDAMENTO_TEMPORALE:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_RICERCA_BASE_BREADCUMP_KEY);
+			case RICERCA_LIBERA:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_RICERCA_LIBERA_BREADCUMP_KEY);
+				
+			case MITTENTE_TOKEN_INFO:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_TOKEN_INFO_BREADCUMP_KEY);
+			case MITTENTE_SOGGETTO:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_SOGGETTO_BREADCUMP_KEY);
+			case MITTENTE_APPLICATIVO:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_APPLICATIVO_BREADCUMP_KEY);
+			case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_IDENTIFICATIVO_AUTENTICATO_BREADCUMP_KEY);
+			case MITTENTE_INDIRIZZO_IP:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_INDIRIZZO_IP_BREADCUMP_KEY);
+				
+			case ID_APPLICATIVO:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_BREADCUMP_KEY);
+			case ID_MESSAGGIO:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_BREADCUMP_KEY);
+			case ID_TRANSAZIONE:
+			default:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_BREADCUMP_KEY);
+			}
+		}
+		
+		return "Visualizza Transazioni";
+	}
+	
+	public boolean isShowRicercaPanel() {
+		if(this.getModalitaRicercaStorico() != null) {
+			ModalitaRicercaTransazioni t = ModalitaRicercaTransazioni.getFromString(this.getModalitaRicercaStorico());
+			switch (t) { 
+			case ANDAMENTO_TEMPORALE:
+			case RICERCA_LIBERA:
+			case MITTENTE_TOKEN_INFO:
+			case MITTENTE_SOGGETTO:
+			case MITTENTE_APPLICATIVO:
+			case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
+			case MITTENTE_INDIRIZZO_IP:
+			case ID_APPLICATIVO:
+				return true;
+				
+			case ID_MESSAGGIO:
+			case ID_TRANSAZIONE:
+			default:
+				return false;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isShowButtonNuovaRicerca() {
+		if(!this.isLive() && this.getModalitaRicercaStorico() != null) {
+			ModalitaRicercaTransazioni t = ModalitaRicercaTransazioni.getFromString(this.getModalitaRicercaStorico());
+			switch (t) { 
+			case ANDAMENTO_TEMPORALE:
+			case RICERCA_LIBERA:
+			case MITTENTE_TOKEN_INFO:
+			case MITTENTE_SOGGETTO:
+			case MITTENTE_APPLICATIVO:
+			case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
+			case MITTENTE_INDIRIZZO_IP:
+			case ID_APPLICATIVO:
+				return true;
+				
+			case ID_MESSAGGIO:
+			case ID_TRANSAZIONE:
+			default:
+				return false;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isShowMittentePanel() {
+		if(this.getModalitaRicercaStorico() != null) {
+			ModalitaRicercaTransazioni t = ModalitaRicercaTransazioni.getFromString(this.getModalitaRicercaStorico());
+			switch (t) { 
+			case ANDAMENTO_TEMPORALE:
+			case RICERCA_LIBERA:
+				return false;
+				
+			case MITTENTE_TOKEN_INFO:
+			case MITTENTE_SOGGETTO:
+			case MITTENTE_APPLICATIVO:
+			case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
+			case MITTENTE_INDIRIZZO_IP:
+				return true;
+				
+			case ID_APPLICATIVO:
+			case ID_MESSAGGIO:
+			case ID_TRANSAZIONE:
+			default:
+				return false;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	protected boolean isTipologiaRicercaEntrambiEnabled() {
+		if(this.isLive()) {
+			//return super.isTipologiaRicercaEntrambiEnabled();
+			return true; // sul live si fa vedere anche la possibilità di avere erogazioni/fruizioni
+		}
+		else {
+			if(this.getModalitaRicercaStorico() != null) {
+				ModalitaRicercaTransazioni t = ModalitaRicercaTransazioni.getFromString(this.getModalitaRicercaStorico());
+				switch (t) { 
+				case ANDAMENTO_TEMPORALE:
+				case RICERCA_LIBERA:
+				case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
+				case MITTENTE_INDIRIZZO_IP:
+				case ID_APPLICATIVO:
+					return true; // non c'e' motivo per non farli vedere
+				
+				case MITTENTE_TOKEN_INFO: // nelle erogazioni vi è anche il soggetto mittente
+				case MITTENTE_SOGGETTO: // solo per erogazioni
+				case MITTENTE_APPLICATIVO:
+					return super.isTipologiaRicercaEntrambiEnabled();
+
+				case ID_MESSAGGIO:
+				case ID_TRANSAZIONE:
+					return super.isTipologiaRicercaEntrambiEnabled(); // non viene visualizzata l'informazione
+				}
+			}
+			return super.isTipologiaRicercaEntrambiEnabled();
+		}
+	}
+	
+	@Override
+	public List<SelectItem> getTipologieRicerca() throws Exception {
+		
+		if(this.isLive()) {
+			return super.getTipologieRicerca();
+		}
+		if(this.getModalitaRicercaStorico() == null) {
+			return super.getTipologieRicerca();
+		}
+		ModalitaRicercaTransazioni t = ModalitaRicercaTransazioni.getFromString(this.getModalitaRicercaStorico());
+		if(ModalitaRicercaTransazioni.MITTENTE_SOGGETTO.equals(t)==false) {
+			return super.getTipologieRicerca();
+		}
+		
+		List<SelectItem> listaTipologie = new ArrayList<SelectItem>();
+		listaTipologie.add(new SelectItem(TipologiaRicerca.ingresso.toString(),"Erogazione"));
+		return listaTipologie;
+	}
+	
+	
 	public void setRicercaPerIdApplicativo(boolean ricercaPerIdApplicativo) {
 		this.ricercaPerIdApplicativo = ricercaPerIdApplicativo;
 	}
@@ -566,7 +824,7 @@ Context, Cloneable {
 				}
 			}
 
-			if(!"Live".equals(this.periodo)){
+			if(!this.isLive()){
 				ModalitaRicercaTransazioni ricerca = ModalitaRicercaTransazioni.getFromString(this.getModalitaRicercaStorico());
 				if(ricerca!=null){
 					switch (ricerca) {
@@ -935,5 +1193,135 @@ Context, Cloneable {
 		else{
 			this.clusterId = clusterId;		
 		}
+	}
+	
+	public String getRicercaLiberaMatchingType() {
+		if(this.ricercaLiberaMatchingType!=null)
+			return this.ricercaLiberaMatchingType.name();
+		return null;
+	}
+
+	public void setRicercaLiberaMatchingType(
+			String ricercaLiberaMatchingType) {
+		if(ricercaLiberaMatchingType!=null){
+			this.ricercaLiberaMatchingType = TipoMatch.valueOf(ricercaLiberaMatchingType);
+		}
+	}
+	
+	public String getRicercaLiberaCaseSensitiveType() {
+		if(this.ricercaLiberaCaseSensitiveType!=null)
+			return this.ricercaLiberaCaseSensitiveType.name();
+		return null;
+	}
+
+	public void setRicercaLiberaCaseSensitiveType(
+			String ricercaLiberaCaseSensitiveType) {
+		if(ricercaLiberaCaseSensitiveType!=null){
+			this.ricercaLiberaCaseSensitiveType = CaseSensitiveMatch.valueOf(ricercaLiberaCaseSensitiveType);
+		}
+	}
+	
+	public String getRicercaLiberaSoggettoRemoto() {
+		return this.ricercaLiberaSoggettoRemoto;
+	}
+
+	public void setRicercaLiberaSoggettoRemoto(String ricercaLiberaSoggettoRemoto) {
+		this.ricercaLiberaSoggettoRemoto = ricercaLiberaSoggettoRemoto;
+	}
+
+	public String getRicercaLiberaGruppo() {
+		return this.ricercaLiberaGruppo;
+	}
+
+	public void setRicercaLiberaGruppo(String ricercaLiberaGruppo) {
+		this.ricercaLiberaGruppo = ricercaLiberaGruppo;
+	}
+
+	public String getRicercaLiberaServizio() {
+		return this.ricercaLiberaServizio;
+	}
+
+	public void setRicercaLiberaServizio(String ricercaLiberaServizio) {
+		this.ricercaLiberaServizio = ricercaLiberaServizio;
+	}
+
+	public String getRicercaLiberaAzione() {
+		return this.ricercaLiberaAzione;
+	}
+
+	public void setRicercaLiberaAzione(String ricercaLiberaAzione) {
+		this.ricercaLiberaAzione = ricercaLiberaAzione;
+	}
+	
+	public String getRicercaLiberaApplicativo() {
+		return this.ricercaLiberaApplicativo;
+	}
+
+	public void setRicercaLiberaApplicativo(String ricercaLiberaApplicativo) {
+		this.ricercaLiberaApplicativo = ricercaLiberaApplicativo;
+	}
+
+	public String getRicercaLiberaIdentificativoAutenticato() {
+		return this.ricercaLiberaIdentificativoAutenticato;
+	}
+
+	public void setRicercaLiberaIdentificativoAutenticato(String ricercaLiberaIdentificativoAutenticato) {
+		this.ricercaLiberaIdentificativoAutenticato = ricercaLiberaIdentificativoAutenticato;
+	}
+
+	public String getRicercaLiberaIndirizzoIP() {
+		return this.ricercaLiberaIndirizzoIP;
+	}
+
+	public void setRicercaLiberaIndirizzoIP(String ricercaLiberaIndirizzoIP) {
+		this.ricercaLiberaIndirizzoIP = ricercaLiberaIndirizzoIP;
+	}
+
+	public String getRicercaLiberaTokenIssuer() {
+		return this.ricercaLiberaTokenIssuer;
+	}
+
+	public void setRicercaLiberaTokenIssuer(String ricercaLiberaTokenIssuer) {
+		this.ricercaLiberaTokenIssuer = ricercaLiberaTokenIssuer;
+	}
+
+	public String getRicercaLiberaTokenSubject() {
+		return this.ricercaLiberaTokenSubject;
+	}
+
+	public void setRicercaLiberaTokenSubject(String ricercaLiberaTokenSubject) {
+		this.ricercaLiberaTokenSubject = ricercaLiberaTokenSubject;
+	}
+
+	public String getRicercaLiberaTokenClientID() {
+		return this.ricercaLiberaTokenClientID;
+	}
+
+	public void setRicercaLiberaTokenClientID(String ricercaLiberaTokenClientID) {
+		this.ricercaLiberaTokenClientID = ricercaLiberaTokenClientID;
+	}
+
+	public String getRicercaLiberaTokenUsername() {
+		return this.ricercaLiberaTokenUsername;
+	}
+
+	public void setRicercaLiberaTokenUsername(String ricercaLiberaTokenUsername) {
+		this.ricercaLiberaTokenUsername = ricercaLiberaTokenUsername;
+	}
+
+	public String getRicercaLiberaTokenEmail() {
+		return this.ricercaLiberaTokenEmail;
+	}
+
+	public void setRicercaLiberaTokenEmail(String ricercaLiberaTokenEmail) {
+		this.ricercaLiberaTokenEmail = ricercaLiberaTokenEmail;
+	}
+
+	public String getRicercaLiberaIdApplicativo() {
+		return this.ricercaLiberaIdApplicativo;
+	}
+
+	public void setRicercaLiberaIdApplicativo(String ricercaLiberaIdApplicativo) {
+		this.ricercaLiberaIdApplicativo = ricercaLiberaIdApplicativo;
 	}
 }

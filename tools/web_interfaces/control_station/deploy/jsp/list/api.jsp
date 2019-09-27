@@ -52,12 +52,15 @@ Vector<?> riga = (Vector<?>) v.elementAt(numeroEntry);
 
 Vector<DataElement> vectorRiepilogo = new Vector<DataElement>();
 Vector<DataElement> vectorCheckBox = new Vector<DataElement>();
+Vector<DataElement> vectorTags = new Vector<DataElement>();
 
 for (int j = 0; j < riga.size(); j++) {
     DataElement de = (DataElement) riga.elementAt(j);
     
 	if (de.getType().equals("checkbox")) {
    		vectorCheckBox.add(de);
+    } else if (de.getType().equals("button")) {
+    	vectorTags.add(de);
     } else{
     	vectorRiepilogo.add(de);
     }
@@ -120,7 +123,17 @@ for (int j = 0; j < riga.size(); j++) {
 				<%
 			%>
 		<div id="titolo_<%=numeroEntryS %>" class="titoloEntry">
-			<span class="titoloEntry"><%=deTitoloValue %>&nbsp;&nbsp;&nbsp;&nbsp;</span>		
+			<span class="titoloEntry"><%=deTitoloValue %>&nbsp;&nbsp;&nbsp;&nbsp;</span>	
+			
+			<% if(vectorTags.size() > 0){ %>
+				<div id="titolo_<%=numeroEntryS %>_tags" class="titoloTags">
+					<% for(int z = 0; z < vectorTags.size(); z ++){ 
+						DataElement tag = vectorTags.get(z);
+					%>
+						<span class="tag label label-info <%=tag.getStyleClass() %>"><%= tag.getLabel() %></span>
+					<% } %>
+				</div>
+			<% } %>
 		</div>
 		<% 
 			DataElement deMetadati = (DataElement) vectorRiepilogo.elementAt(1);

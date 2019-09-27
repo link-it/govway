@@ -68,6 +68,7 @@ import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.beans.GruppoSintetico;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -435,6 +436,9 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				String filterTipoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVICE_BINDING);
 				this.addFilterServiceBinding(filterTipoAccordo,false,true);
 			}
+			
+			String filterGruppo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_GRUPPO);
+			addFilterGruppo(filterGruppo, false);
 
 			if(this.isShowGestioneWorkflowStatoDocumenti()){
 				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
@@ -503,6 +507,9 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 
 			List<AccordoServizioParteComuneSintetico> listApc = new ArrayList<AccordoServizioParteComuneSintetico>();
 			List<String> protocolli = new ArrayList<String>();
+			
+			// colleziono i tags registrati
+			List<String> tagsDisponibili = this.gruppiCore.getAllGruppiOrdinatiPerDataRegistrazione();
 
 			for (AccordoServizioParteSpecifica asps : lista) {
 				AccordoServizioParteComuneSintetico apc = this.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
@@ -582,7 +589,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				de = new DataElement();
 				AccordoServizioParteComuneSintetico apc = listApc.get(i);
 				ServiceBinding serviceBinding = this.apcCore.toMessageServiceBinding(apc.getServiceBinding());
-
+				
 				String labelAPI = this.getLabelIdAccordo(apc);
 				String labelServiceBinding = null;
 				switch (serviceBinding) {
@@ -603,6 +610,28 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				}
 				de.setType(DataElementType.SUBTITLE);
 				e.addElement(de);
+				
+				// tags
+				List<GruppoSintetico> gruppo = apc.getGruppo();
+				if(gruppo != null && gruppo.size() > 0) {
+					for (int j = 0; j < gruppo.size(); j++) {
+						GruppoSintetico gruppoSintetico = gruppo.get(j);
+						de = new DataElement();
+						de.setName(ApiCostanti.PARAMETRO_APC_API_GESTIONE_GRUPPO + "_" + j);
+						de.setType(DataElementType.BUTTON);
+						de.setLabel(gruppoSintetico.getNome());
+						
+						int indexOf = tagsDisponibili.indexOf(gruppoSintetico.getNome());
+						if(indexOf == -1)
+							indexOf = 0;
+						
+						indexOf = indexOf % CostantiControlStation.NUMERO_GRUPPI_CSS;
+						
+						de.setStyleClass("label-info-"+indexOf);
+						
+						e.addElement(de);
+					}
+				}
 				
 				DataElement dataElementStatoApi = null;
 				// stato gruppi
@@ -1250,7 +1279,32 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		}
 		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_ACCORDO); 
 		de.setValue(MessageFormat.format(ErogazioniCostanti.MESSAGE_METADATI_SERVIZIO_EROGAZIONI_EDIT, labelServiceBinding, labelAPI));
-		de.setType(DataElementType.TEXT);
+		de.setType(DataElementType.BUTTON);
+		
+		List<String> labelsGruppi = new ArrayList<String>();
+		List<String> ValuesGruppi = new ArrayList<String>();
+		
+		List<GruppoSintetico> gruppi = as.getGruppo();
+		if(gruppi != null) {
+			// colleziono i tags registrati
+			List<String> tagsDisponibili = this.gruppiCore.getAllGruppiOrdinatiPerDataRegistrazione();
+			
+			for (int i = 0; i < gruppi.size(); i++) {
+				GruppoSintetico gruppo = gruppi.get(i);
+				
+				int indexOf = tagsDisponibili.indexOf(gruppo.getNome());
+				if(indexOf == -1)
+					indexOf = 0;
+				
+				indexOf = indexOf % CostantiControlStation.NUMERO_GRUPPI_CSS;
+				
+				labelsGruppi.add(gruppo.getNome());
+				ValuesGruppi.add("label-info-"+ indexOf);
+			}
+		}	
+		
+		de.setLabels(labelsGruppi);
+		de.setValues(ValuesGruppi);
 		
 		
 		// Lista di Accordi Compatibili

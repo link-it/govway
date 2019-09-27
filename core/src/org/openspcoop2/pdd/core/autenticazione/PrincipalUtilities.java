@@ -162,6 +162,11 @@ public class PrincipalUtilities {
 					}
 				}
 				break;
+			case client_address:
+			case gruppi:
+			case eventi:
+				// non usati in questo contesto
+				break;
 			}
 			if(principal==null || "".equals(principal)) {
 				if(throwException) {

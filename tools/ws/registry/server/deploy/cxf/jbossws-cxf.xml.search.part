@@ -115,6 +115,29 @@
 	</jaxws:endpoint>
 	
 	<jaxws:endpoint 
+		id="Gruppo_PortSoap11"
+		serviceName="GruppoSoap11Service"
+		implementor="org.openspcoop2.core.registry.ws.server.impl.Gruppo@IMPLEMENTOR@Impl_PortSoap11"
+		address="/Gruppo/Soap11" 
+		xmlns="http://www.openspcoop2.org/core/registry/management"
+		wsdlLocation="/WEB-INF/classes/Gruppo@IMPLEMENTOR@_PortSoap11.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>
+	<jaxws:endpoint 
+		id="Gruppo_PortSoap12"
+		serviceName="GruppoSoap12Service"
+		implementor="org.openspcoop2.core.registry.ws.server.impl.Gruppo@IMPLEMENTOR@Impl_PortSoap12"
+		address="/Gruppo/Soap12" 
+		xmlns="http://www.openspcoop2.org/core/registry/management"
+		wsdlLocation="/WEB-INF/classes/Gruppo@IMPLEMENTOR@_PortSoap12.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>
+	
+	<jaxws:endpoint 
 		id="Soggetto_PortSoap11"
 		serviceName="SoggettoSoap11Service"
 		implementor="org.openspcoop2.core.registry.ws.server.impl.Soggetto@IMPLEMENTOR@Impl_PortSoap11"

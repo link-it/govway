@@ -53,6 +53,7 @@ public class ObjectFactory {
     private final static QName _WrapperIdPortaDominio_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdPortaDominio");
     private final static QName _WrapperIdRuolo_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdRuolo");
     private final static QName _WrapperIdScope_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdScope");
+    private final static QName _WrapperIdGruppo_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdGruppo");
     private final static QName _WrapperIdSoggetto_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdSoggetto");
     private final static QName _WrapperIdAccordoServizioParteSpecifica_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdAccordoServizioParteSpecifica");
     private final static QName _RegistryServiceException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-service-exception");
@@ -158,6 +159,14 @@ public class ObjectFactory {
      */
     public WrapperIdScope createWrapperIdScope() {
         return new WrapperIdScope();
+    }
+
+    /**
+     * Create an instance of {@link WrapperIdGruppo }
+     * 
+     */
+    public WrapperIdGruppo createWrapperIdGruppo() {
+        return new WrapperIdGruppo();
     }
 
     /**
@@ -566,6 +575,19 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdScope")
     public JAXBElement<WrapperIdScope> createWrapperIdScope(WrapperIdScope value) {
         return new JAXBElement<WrapperIdScope>(ObjectFactory._WrapperIdScope_QNAME, WrapperIdScope.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdGruppo }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link WrapperIdGruppo }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdGruppo")
+    public JAXBElement<WrapperIdGruppo> createWrapperIdGruppo(WrapperIdGruppo value) {
+        return new JAXBElement<WrapperIdGruppo>(ObjectFactory._WrapperIdGruppo_QNAME, WrapperIdGruppo.class, null, value);
     }
 
     /**

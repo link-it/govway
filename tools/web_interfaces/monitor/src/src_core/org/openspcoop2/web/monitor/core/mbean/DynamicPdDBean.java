@@ -67,6 +67,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 	protected List<SelectItem> soggettiAssociati = null;
 	protected List<SelectItem> soggettiLocale = null;
 	protected List<SelectItem> soggetti = null;
+	protected List<SelectItem> gruppi = null;
 	protected List<SelectItem> servizi = null;
 	protected List<SelectItem> azioni = null;
 	protected List<SelectItem> serviziApplicativi = null;
@@ -74,6 +75,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 	protected Integer soggettiAssociatiSelectItemsWidth = 0;
 	protected Integer soggettiLocaleSelectItemsWidth = 0;
 	protected Integer soggettiSelectItemsWidth = 0;
+	protected Integer gruppiSelectItemsWidth= 0;
 	protected Integer serviziSelectItemsWidth= 0;
 	protected Integer serviziApplicativiSelectItemsWidth = 0;
 	protected Integer azioniSelectItemsWidth = 0;
@@ -81,6 +83,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 	protected boolean soggettiAssociatiSelectItemsWidthCheck = false;
 	protected boolean soggettiLocaleSelectItemsWidthCheck = false;
 	protected boolean soggettiSelectItemsWidthCheck = false;
+	protected boolean gruppiSelectItemsWidthCheck = false;
 	protected boolean serviziSelectItemsWidthCheck = false;
 	protected boolean serviziApplicativiSelectItemsWidthCheck = false;
 	protected boolean azioniSelectItemsWidthCheck = false;
@@ -127,25 +130,68 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		return this.search;
 	}
 	
-	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> azioniAutoComplete(Object val) throws Exception{
-		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaServizi = new ArrayList<org.openspcoop2.web.monitor.core.bean.SelectItem>();
-		List<SelectItem> listaServiziTmp = new ArrayList<>();
+	
+	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> gruppiAutoComplete(Object val) throws Exception{
+		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaGruppi = new ArrayList<org.openspcoop2.web.monitor.core.bean.SelectItem>();
+		List<SelectItem> listaGruppiTmp = new ArrayList<>();
 		if(val==null || StringUtils.isEmpty((String)val)) {
 		}else{
-			listaServiziTmp = this._getAzioni((String)val);
+			listaGruppiTmp = this._getGruppi((String)val);
 		}
 		
-		listaServiziTmp.add(0, new SelectItem("--", "--"));
+		listaGruppiTmp.add(0, new SelectItem("--", "--"));
 		
-		for (SelectItem selectItem : listaServiziTmp) {
+		for (SelectItem selectItem : listaGruppiTmp) {
 			String label = selectItem.getLabel();
 			String value = (String) selectItem.getValue();
 			
 			org.openspcoop2.web.monitor.core.bean.SelectItem newItem = new org.openspcoop2.web.monitor.core.bean.SelectItem(value, label);
-			listaServizi.add(newItem);
+			listaGruppi.add(newItem);
 		}
 
-		return listaServizi;
+		return listaGruppi;
+	}
+
+	public List<SelectItem> getGruppi() throws Exception {
+		return _getGruppi(null);		
+
+	}
+
+	protected List<SelectItem> _getGruppi(String input) throws Exception {
+		if(this.search==null){
+			return new ArrayList<SelectItem>();
+		}
+		if(!this.gruppiSelectItemsWidthCheck){
+			this.gruppi = new ArrayList<SelectItem>();
+			
+			this.gruppi = this.dynamicUtils.getListaGruppi();
+			
+			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.gruppi);
+			this.gruppiSelectItemsWidth = Math.max(this.gruppiSelectItemsWidth,  lunghezzaSelectList);
+		}
+		return this.gruppi;
+	}
+	
+	
+	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> azioniAutoComplete(Object val) throws Exception{
+		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaAzioni = new ArrayList<org.openspcoop2.web.monitor.core.bean.SelectItem>();
+		List<SelectItem> listaAzioniTmp = new ArrayList<>();
+		if(val==null || StringUtils.isEmpty((String)val)) {
+		}else{
+			listaAzioniTmp = this._getAzioni((String)val);
+		}
+		
+		listaAzioniTmp.add(0, new SelectItem("--", "--"));
+		
+		for (SelectItem selectItem : listaAzioniTmp) {
+			String label = selectItem.getLabel();
+			String value = (String) selectItem.getValue();
+			
+			org.openspcoop2.web.monitor.core.bean.SelectItem newItem = new org.openspcoop2.web.monitor.core.bean.SelectItem(value, label);
+			listaAzioni.add(newItem);
+		}
+
+		return listaAzioni;
 	}
 
 	public List<SelectItem> getAzioni() {
@@ -232,12 +278,14 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 
 			String tipoProtocollo = this.search.getProtocollo();
 			
+			String gruppo = this.search.getGruppo();
+			
 			if (TipologiaRicerca.uscita.equals(this.search.getTipologiaRicercaEnum())) {
-				this.servizi = this.dynamicUtils.getListaSelectItemsElencoServiziFruizione(tipoProtocollo, tipoSoggetto, nomeSoggetto,input, false);
+				this.servizi = this.dynamicUtils.getListaSelectItemsElencoServiziFruizione(tipoProtocollo, gruppo, tipoSoggetto, nomeSoggetto,input, false);
 			} else if (TipologiaRicerca.ingresso.equals(this.search.getTipologiaRicercaEnum())) {
-				this.servizi = this.dynamicUtils.getListaSelectItemsElencoServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto,input, true);
+				this.servizi = this.dynamicUtils.getListaSelectItemsElencoServiziErogazione(tipoProtocollo, gruppo, tipoSoggetto, nomeSoggetto,input, true);
 			} else {
-				this.servizi = this.dynamicUtils.getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(tipoProtocollo,null, tipoSoggetto, nomeSoggetto, input);
+				this.servizi = this.dynamicUtils.getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(tipoProtocollo,gruppo,null, tipoSoggetto, nomeSoggetto, input);
 			}
 			
 			
@@ -619,6 +667,13 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		return checkWidthLimits(this.soggettiSelectItemsWidth).toString();
 	}
 
+	public String getGruppiSelectItemsWidth() throws Exception{
+		this.gruppiSelectItemsWidthCheck = false;
+		getGruppi();
+		this.gruppiSelectItemsWidthCheck = true;
+		return checkWidthLimits(this.gruppiSelectItemsWidth).toString();
+	}
+	
 	public String getServiziSelectItemsWidth() throws Exception{
 		this.serviziSelectItemsWidthCheck = false;
 		getServizi();
@@ -673,6 +728,14 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		this.soggettiSelectItemsWidthCheck = soggettiSelectItemsWidthCheck;
 	}
 
+	public boolean isGruppiSelectItemsWidthCheck() {
+		return this.gruppiSelectItemsWidthCheck;
+	}
+
+	public void setGruppiSelectItemsWidthCheck(boolean gruppiSelectItemsWidthCheck) {
+		this.gruppiSelectItemsWidthCheck = gruppiSelectItemsWidthCheck;
+	}
+	
 	public boolean isServiziSelectItemsWidthCheck() {
 		return this.serviziSelectItemsWidthCheck;
 	}
@@ -706,6 +769,10 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		this.defaultSelectItemsWidth = defaultSelectItemsWidth;
 	}
 
+	public void setGruppiSelectItemsWidth(Integer gruppiSelectItemsWidth) {
+		this.gruppiSelectItemsWidth = gruppiSelectItemsWidth;
+	}
+	
 	public void setServiziSelectItemsWidth(Integer serviziSelectItemsWidth) {
 		this.serviziSelectItemsWidth = serviziSelectItemsWidth;
 	}
@@ -731,6 +798,10 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		return checkWidthLimits(this.soggettiSelectItemsWidth);
 	}
 
+	public Integer getGruppiSelectItemsWidthAsInteger() throws Exception{
+		return checkWidthLimits(this.gruppiSelectItemsWidth);
+	}
+	
 	public Integer getServiziSelectItemsWidthAsInteger() throws Exception{
 		return checkWidthLimits(this.serviziSelectItemsWidth);
 	}

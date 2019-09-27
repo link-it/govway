@@ -42,18 +42,21 @@ public class Storico implements Serializable {
 	
 	private String label;
 	private String value;
+	private String icona;
+
 	private ModalitaRicercaTransazioni modalitaRicercaStorico;
 	private boolean rendered;
 	
-	public Storico(String value, String label, ModalitaRicercaTransazioni modalitaRicercaStorico) {
-		this(value, label, modalitaRicercaStorico, true);
+	public Storico(String value, String label, ModalitaRicercaTransazioni modalitaRicercaStorico, String icona) {
+		this(value, label, modalitaRicercaStorico, true, icona);
 	}
 	
-	public Storico(String value, String label, ModalitaRicercaTransazioni modalitaRicercaStorico, boolean rendered) {
+	public Storico(String value, String label, ModalitaRicercaTransazioni modalitaRicercaStorico, boolean rendered, String icona) {
 		this.label = label;
 		this.value = value;
 		this.rendered = rendered;
 		this.modalitaRicercaStorico = modalitaRicercaStorico;
+		this.icona = icona;
 	}
 
 	public String getLabel() {
@@ -69,17 +72,7 @@ public class Storico implements Serializable {
 	}
 
 	public String getIcona() {
-		switch (this.modalitaRicercaStorico) {
-		case ANDAMENTO_TEMPORALE:
-			return org.openspcoop2.web.monitor.core.constants.Costanti.ICONA_ANDAMENTO_TEMPORALE;
-		case ID_APPLICATIVO:
-			return org.openspcoop2.web.monitor.core.constants.Costanti.ICONA_ID_APPLICATIVO;
-		case ID_MESSAGGIO:
-			return org.openspcoop2.web.monitor.core.constants.Costanti.ICONA_ID_MESSAGGIO;
-		case ID_TRANSAZIONE:
-		default:
-			return org.openspcoop2.web.monitor.core.constants.Costanti.ICONA_ID_TRANSAZIONE;
-		}
+		return this.icona;
 	}
 	
 	public String getModalitaRicercaStorico() {

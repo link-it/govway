@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.utils.service.beans;
 
+import java.util.List;
 import org.openspcoop2.utils.service.beans.TransazioneExtInformazioniSoggetto;
 import org.openspcoop2.utils.service.beans.TransazioneInformazioniApi;
 import javax.validation.constraints.*;
@@ -35,7 +36,7 @@ import javax.validation.Valid;
 
 @XmlAccessorType(XmlAccessType.FIELD)
  @XmlType(name = "TransazioneExtInformazioniApiBase", propOrder =
-    { "informazioniErogatore", "tipo"
+    { "informazioniErogatore", "tipo", "tags"
 })
 
 
@@ -48,6 +49,10 @@ public class TransazioneExtInformazioniApiBase extends TransazioneInformazioniAp
   
   @Schema(required = true, description = "")
   private String tipo = null;
+  @XmlElement(name="tags")
+  
+  @Schema(description = "")
+  private List<String> tags = null;
  /**
    * Get informazioniErogatore
    * @return informazioniErogatore
@@ -88,6 +93,30 @@ public class TransazioneExtInformazioniApiBase extends TransazioneInformazioniAp
     return this;
   }
 
+ /**
+   * Get tags
+   * @return tags
+  **/
+  @JsonProperty("tags")
+  @Valid
+  public List<String> getTags() {
+    return this.tags;
+  }
+
+  public void setTags(List<String> tags) {
+    this.tags = tags;
+  }
+
+  public TransazioneExtInformazioniApiBase tags(List<String> tags) {
+    this.tags = tags;
+    return this;
+  }
+
+  public TransazioneExtInformazioniApiBase addTagsItem(String tagsItem) {
+    this.tags.add(tagsItem);
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -96,6 +125,7 @@ public class TransazioneExtInformazioniApiBase extends TransazioneInformazioniAp
     sb.append("    ").append(TransazioneExtInformazioniApiBase.toIndentedString(super.toString())).append("\n");
     sb.append("    informazioniErogatore: ").append(TransazioneExtInformazioniApiBase.toIndentedString(this.informazioniErogatore)).append("\n");
     sb.append("    tipo: ").append(TransazioneExtInformazioniApiBase.toIndentedString(this.tipo)).append("\n");
+    sb.append("    tags: ").append(TransazioneExtInformazioniApiBase.toIndentedString(this.tags)).append("\n");
     sb.append("}");
     return sb.toString();
   }

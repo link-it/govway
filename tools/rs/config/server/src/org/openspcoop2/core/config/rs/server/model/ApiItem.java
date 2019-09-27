@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import java.util.List;
 import org.openspcoop2.utils.service.beans.BaseSoggettoItem;
 import org.openspcoop2.core.config.rs.server.model.StatoApiEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
@@ -49,6 +50,9 @@ public class ApiItem extends BaseSoggettoItem {
   
   @Schema(example = "{\"formato\":\"OpenApi3.0\"}", required = true, description = "")
   private String formato = null;
+  
+  @Schema(example = "[\"PagamentiTelematici\",\"Anagrafica\"]", description = "")
+  private List<String> tags = null;
   
   @Schema(required = true, description = "")
   private StatoApiEnum stato = null;
@@ -174,6 +178,30 @@ public class ApiItem extends BaseSoggettoItem {
   }
 
  /**
+   * Get tags
+   * @return tags
+  **/
+  @JsonProperty("tags")
+  @Valid
+  public List<String> getTags() {
+    return this.tags;
+  }
+
+  public void setTags(List<String> tags) {
+    this.tags = tags;
+  }
+
+  public ApiItem tags(List<String> tags) {
+    this.tags = tags;
+    return this;
+  }
+
+  public ApiItem addTagsItem(String tagsItem) {
+    this.tags.add(tagsItem);
+    return this;
+  }
+
+ /**
    * Get stato
    * @return stato
   **/
@@ -225,6 +253,7 @@ public class ApiItem extends BaseSoggettoItem {
     sb.append("    descrizione: ").append(ApiItem.toIndentedString(this.descrizione)).append("\n");
     sb.append("    versione: ").append(ApiItem.toIndentedString(this.versione)).append("\n");
     sb.append("    formato: ").append(ApiItem.toIndentedString(this.formato)).append("\n");
+    sb.append("    tags: ").append(ApiItem.toIndentedString(this.tags)).append("\n");
     sb.append("    stato: ").append(ApiItem.toIndentedString(this.stato)).append("\n");
     sb.append("    statoDescrizione: ").append(ApiItem.toIndentedString(this.statoDescrizione)).append("\n");
     sb.append("}");

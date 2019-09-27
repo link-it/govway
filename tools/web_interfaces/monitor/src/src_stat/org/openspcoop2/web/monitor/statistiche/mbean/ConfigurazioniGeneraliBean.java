@@ -106,6 +106,10 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 		}
 	}
 
+	public boolean isAbilitaGestioneGrupppiInConfigurazione() {
+		return false; // NOTA: prima di impostarlo a TRUE si stemare i metodi del service, in modo che filtrano anche per tag
+	}
+	
 	@Override
 	public void setSelectedElement(ConfigurazioneGenerale selectedElement) {
 		super.setSelectedElement(selectedElement);
@@ -178,11 +182,13 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 
 			PddRuolo ruoloReport = ((ConfigurazioniGeneraliSearchForm)this.search).getTipologiaTransazioni();
 
+			String gruppo = this.search.getGruppo();
+			
 			if(ruoloReport == null || ruoloReport.equals(PddRuolo.DELEGATA)) {
-				this.servizi = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziFruizione(tipoProtocollo, tipoSoggetto, nomeSoggetto,null,null,input, false, this.search.getPermessiUtenteOperatore());
+				this.servizi = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziFruizione(tipoProtocollo, gruppo, tipoSoggetto, nomeSoggetto,null,null,input, false, this.search.getPermessiUtenteOperatore());
 			}else {
 				// bisogna filtrare per soggetti operativi
-				this.servizi = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto,input, true, this.search.getPermessiUtenteOperatore());
+				this.servizi = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziErogazione(tipoProtocollo, gruppo, tipoSoggetto, nomeSoggetto,input, true, this.search.getPermessiUtenteOperatore());
 			}
 			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.servizi);
 			this.serviziSelectItemsWidth = Math.max(this.serviziSelectItemsWidth,  lunghezzaSelectList);

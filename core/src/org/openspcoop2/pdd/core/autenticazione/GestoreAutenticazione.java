@@ -25,6 +25,7 @@
 package org.openspcoop2.pdd.core.autenticazione;
 
 import java.sql.Connection;
+import java.util.Date;
 import java.util.List;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
@@ -33,14 +34,25 @@ import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
-import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
+import org.openspcoop2.core.transazioni.IdCredenzialeMittente;
 import org.openspcoop2.core.transazioni.dao.ICredenzialeMittenteService;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
-import org.openspcoop2.core.transazioni.utils.CredenzialiMittenteUtils;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
+import org.openspcoop2.core.transazioni.utils.credenziali.AbstractCredenziale;
+import org.openspcoop2.core.transazioni.utils.credenziali.AbstractSearchCredenziale;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeClientAddress;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeEventi;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeGruppi;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchClientAddress;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchEvento;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchGruppo;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchToken;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchTrasporto;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeToken;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTrasporto;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -67,8 +79,6 @@ import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
-import org.openspcoop2.utils.certificate.CertificateUtils;
-import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
@@ -717,8 +727,11 @@ public class GestoreAutenticazione {
     public static void updateCredenzialiTrasporto(IDSoggetto dominio, String modulo, String idTransazione, 
     		String tipoAutenticazione, String credential, CredenzialiMittente credenzialiMittente) throws Exception{
     	
+    	CredenzialeSearchTrasporto trasportoSearch = new CredenzialeSearchTrasporto(tipoAutenticazione);
+    	trasportoSearch.disableConvertToDBValue();
+		CredenzialeTrasporto trasporto = new CredenzialeTrasporto(tipoAutenticazione, credential);
     	credenzialiMittente.setTrasporto(getCredenzialeMittente(dominio, modulo, idTransazione, 
-    			TipoCredenzialeMittente.trasporto, tipoAutenticazione, credential));
+    			trasportoSearch, trasporto));
     	
     }
     
@@ -726,30 +739,83 @@ public class GestoreAutenticazione {
     		InformazioniToken informazioniTokenNormalizzate, CredenzialiMittente credenzialiMittente) throws Exception{
     	
     	if(informazioniTokenNormalizzate.getIss()!=null) {
+    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_issuer);
+    		tokenSearch.disableConvertToDBValue();
+    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_issuer, informazioniTokenNormalizzate.getIss());
     		credenzialiMittente.setToken_issuer(getCredenzialeMittente(dominio, modulo, idTransazione, 
-    				TipoCredenzialeMittente.token_issuer, null, informazioniTokenNormalizzate.getIss()));
+    				tokenSearch, token));
     	}
     	if(informazioniTokenNormalizzate.getClientId()!=null) {
+    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_clientId);
+    		tokenSearch.disableConvertToDBValue();
+    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_clientId, informazioniTokenNormalizzate.getClientId());
     		credenzialiMittente.setToken_clientId(getCredenzialeMittente(dominio, modulo, idTransazione, 
-    				TipoCredenzialeMittente.token_clientId, null, informazioniTokenNormalizzate.getClientId()));
+    				tokenSearch, token));
     	}
     	if(informazioniTokenNormalizzate.getSub()!=null) {
+    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_subject);
+    		tokenSearch.disableConvertToDBValue();
+    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_subject, informazioniTokenNormalizzate.getSub());
     		credenzialiMittente.setToken_subject(getCredenzialeMittente(dominio, modulo, idTransazione, 
-    				TipoCredenzialeMittente.token_subject, null, informazioniTokenNormalizzate.getSub()));
+    				tokenSearch, token));
     	}
     	if(informazioniTokenNormalizzate.getUsername()!=null) {
+    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_username);
+    		tokenSearch.disableConvertToDBValue();
+    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_username, informazioniTokenNormalizzate.getUsername());
     		credenzialiMittente.setToken_username(getCredenzialeMittente(dominio, modulo, idTransazione, 
-    				TipoCredenzialeMittente.token_username, null, informazioniTokenNormalizzate.getUsername()));
+    				tokenSearch, token));
     	}
     	if(informazioniTokenNormalizzate.getUserInfo()!=null && informazioniTokenNormalizzate.getUserInfo().getEMail()!=null) {
+    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_eMail);
+    		tokenSearch.disableConvertToDBValue();
+    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_eMail, informazioniTokenNormalizzate.getUserInfo().getEMail());
     		credenzialiMittente.setToken_eMail(getCredenzialeMittente(dominio, modulo, idTransazione, 
-    				TipoCredenzialeMittente.token_eMail, null, informazioniTokenNormalizzate.getUserInfo().getEMail()));
+    				tokenSearch, token));
     	}
     	
     }
     
+    public static CredenzialeMittente convertGruppiToCredenzialiMittenti(IDSoggetto dominio, String modulo, String idTransazione,
+    		List<String> gruppiList) throws Exception{
+    	if(gruppiList!=null && !gruppiList.isEmpty()) {
+	    	CredenzialeSearchGruppo gruppiSearch = new CredenzialeSearchGruppo();
+	    	gruppiSearch.disableConvertToDBValue();
+	    	CredenzialeGruppi gruppi = new CredenzialeGruppi(gruppiList);
+	    	return getCredenzialeMittente(dominio, modulo, idTransazione, 
+	    			gruppiSearch, gruppi);
+    	}
+    	return null;
+    }
+    
+    public static CredenzialeMittente convertEventiToCredenzialiMittenti(IDSoggetto dominio, String modulo, String idTransazione,
+    		List<String> eventiList) throws Exception{
+    	if(eventiList!=null && !eventiList.isEmpty()) {
+	    	CredenzialeSearchEvento eventiSearch = new CredenzialeSearchEvento();
+	    	eventiSearch.disableConvertToDBValue();
+	    	CredenzialeEventi eventi = new CredenzialeEventi(eventiList);
+	    	return getCredenzialeMittente(dominio, modulo, idTransazione, 
+	    			eventiSearch, eventi);
+    	}
+    	return null;
+    }
+    
+    public static CredenzialeMittente convertClientCredentialToCredenzialiMittenti(IDSoggetto dominio, String modulo, String idTransazione,
+    		String socketAddress, String transportAddress) throws Exception{
+    	boolean socketAddressDefined = socketAddress!=null && !"".equals(socketAddress);
+		boolean transportAddressDefined = transportAddress!=null && !"".equals(transportAddress);
+    	if(socketAddressDefined || transportAddressDefined) {
+	    	CredenzialeSearchClientAddress clientAddressSearch = new CredenzialeSearchClientAddress(socketAddressDefined, transportAddressDefined, true);
+	    	clientAddressSearch.disableConvertToDBValue();
+	    	CredenzialeClientAddress clientAddress = new CredenzialeClientAddress(socketAddress, transportAddress);
+	    	return getCredenzialeMittente(dominio, modulo, idTransazione, 
+	    			clientAddressSearch, clientAddress);
+    	}
+    	return null;
+    }
+    
     private static CredenzialeMittente getCredenzialeMittente(IDSoggetto dominio, String modulo, String idTransazione, 
-    		TipoCredenzialeMittente tipoCredenziale, String tipoAutenticazione, String credentialParam) throws Exception{
+    		AbstractSearchCredenziale searchCredential, AbstractCredenziale credentialParam) throws Exception{
       	
     	if(dominio==null)
 			throw new AutenticazioneException("(Parametri) dominio non definito");
@@ -757,25 +823,30 @@ public class GestoreAutenticazione {
 			throw new AutenticazioneException("(Parametri) modulo non definito");
     	if(idTransazione==null)
 			throw new AutenticazioneException("(Parametri) idTransazione non definito");
-    	if(tipoCredenziale==null)
-			throw new AutenticazioneException("(Parametri) tipoCredenziale non definito");
-    	if(tipoAutenticazione==null && TipoCredenzialeMittente.trasporto.equals(tipoCredenziale))
-			throw new AutenticazioneException("(Parametri) tipoAutenticazione non definito");
+    	if(searchCredential==null)
+			throw new AutenticazioneException("(Parametri) searchCredential non definito");
 		if(credentialParam==null)
 			throw new AutenticazioneException("(Parametri) credenziali non definite");
 		      	
-		String credential = credentialParam;
+		String credential = credentialParam.getCredenziale();
 		int maxLengthCredenziali = OpenSPCoop2Properties.getInstance().getTransazioniCredenzialiMittenteMaxLength();
+		int maxLifeSeconds = OpenSPCoop2Properties.getInstance().getTransazioniCredenzialiMittenteLifeSeconds();
+		Date scadenzaEntry = new Date(DateManager.getTimeMillis()-(maxLifeSeconds*1000));
 		if(credential.length()>maxLengthCredenziali) {
-			logger.error("Attenzione: credenziale '"+tipoCredenziale+"' ricevuta supera la dimensione massima consentita '"+maxLengthCredenziali+"'. Verrà salvata troncata a tale dimensione. Credenziale: '"+credential+"'");
-			credential = credentialParam.substring(0,maxLengthCredenziali);
+			logger.error("Attenzione: credenziale '"+searchCredential.getTipo()+"' ricevuta supera la dimensione massima consentita '"+maxLengthCredenziali+"'. Verrà salvata troncata a tale dimensione. Credenziale: '"+credential+"'");
+			credential = credential.substring(0,maxLengthCredenziali);
+			try {
+				credentialParam.updateCredenziale(credential);
+			}catch(Exception e) {
+				logger.error("Non è possibile troncare la credenziale di tipo '"+searchCredential.getTipo()+"', l'informazione non verrà salvata");
+			}
 		}
 		
     	if(GestoreAutenticazione.cacheAutenticazione==null){
-    		return _getCredenzialeMittente(dominio, modulo, idTransazione, tipoCredenziale, tipoAutenticazione, credential);
+    		return _getCredenzialeMittente(dominio, modulo, idTransazione, scadenzaEntry, searchCredential, credentialParam);
 		}
     	else{
-    		String keyCache = buildCacheKey(tipoCredenziale, tipoAutenticazione, credential);
+    		String keyCache = buildCacheKey(searchCredential, credential);
 
 			synchronized (GestoreAutenticazione.cacheAutenticazione) {
 
@@ -784,7 +855,10 @@ public class GestoreAutenticazione {
 				if(response != null){
 					if(response.getObject()!=null){
 						GestoreAutenticazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:getCredenzialeMittente) in cache.");
-						return (CredenzialeMittente) response.getObject();
+						CredenzialeMittente credenziale = (CredenzialeMittente) response.getObject();
+						if(credenziale.getOraRegistrazione().after(scadenzaEntry)) {
+							return credenziale; // informazione in cache valida
+						}
 					}else if(response.getException()!=null){
 						GestoreAutenticazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:getCredenzialeMittente) in cache.");
 						throw (Exception) response.getException();
@@ -795,7 +869,7 @@ public class GestoreAutenticazione {
 
 				// Effettuo la query
 				GestoreAutenticazione.logger.debug("oggetto con chiave ["+keyCache+"] (method:getCredenzialeMittente) ricerco nella configurazione...");
-				CredenzialeMittente credenziale = _getCredenzialeMittente(dominio, modulo, idTransazione, tipoCredenziale, tipoAutenticazione, credential);
+				CredenzialeMittente credenziale = _getCredenzialeMittente(dominio, modulo, idTransazione, scadenzaEntry, searchCredential, credentialParam);
 
 				// Aggiungo la risposta in cache (se esiste una cache)	
 				// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -818,14 +892,10 @@ public class GestoreAutenticazione {
     	}
     }
     
-    private static String buildCacheKey(TipoCredenzialeMittente tipoCredenziale, String tipoAutenticazione, String credential) throws AutenticazioneException{
+    private static String buildCacheKey(AbstractSearchCredenziale searchCredential, String credential) throws AutenticazioneException{
     	StringBuffer bf = new StringBuffer();
 
-    	bf.append(tipoCredenziale.name()).append(" ");
-    	
-    	if(tipoAutenticazione!=null) {
-    		bf.append(tipoAutenticazione).append(" ");
-    	}
+    	bf.append(searchCredential.getTipo()).append(" ");
     	
     	bf.append(credential);
     	
@@ -833,7 +903,8 @@ public class GestoreAutenticazione {
     }
     
     private static CredenzialeMittente _getCredenzialeMittente(IDSoggetto dominio, String modulo, String idTransazione, 
-    		TipoCredenzialeMittente tipoCredenziale, String tipoAutenticazione, String credential) throws Exception {
+    		Date scadenzaEntry,
+    		AbstractSearchCredenziale searchCredential, AbstractCredenziale credential) throws Exception {
     	DBTransazioniManager dbManager = null;
     	Resource r = null;
     	try{
@@ -859,17 +930,25 @@ public class GestoreAutenticazione {
 						daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(), con, daoFactoryServiceManagerPropertiesTransazioni, logSql);	
 
 			ICredenzialeMittenteService credenzialiMittenteService = transazioniSM.getCredenzialeMittenteService();
-			IPaginatedExpression pagEpression = CredenzialiMittenteUtils.createCredenzialeMittentePaginatedExpression(credenzialiMittenteService, tipoCredenziale, tipoAutenticazione, credential,true,true);
+			boolean ricercaEsatta = true;
+	    	boolean caseSensitive = true;
+	    	IPaginatedExpression pagEpression = searchCredential.createExpression(credenzialiMittenteService, credential.getCredenziale(), ricercaEsatta, caseSensitive);
 			List<CredenzialeMittente> list = credenzialiMittenteService.findAll(pagEpression);
 			if(list==null || list.size()<=0) {
 				// not exists
-				return createCredenzialeMittente(credenzialiMittenteService, tipoCredenziale, tipoAutenticazione, credential);
+				return createCredenzialeMittente(credenzialiMittenteService, scadenzaEntry, searchCredential, credential);
 			}
 			else if(list.size()>1) {
-				throw new Exception("Trovata più di un'occorrenza di credenziale di tipo '"+tipoCredenziale.name()+"'; credenziale: ["+credential+"]");
+				throw new Exception("Trovata più di un'occorrenza di credenziale di tipo '"+searchCredential.getTipo()+"'; credenziale: ["+credential+"]");
 			}
 			else {
-				return list.get(0);
+				CredenzialeMittente credenziale = list.get(0);
+				if(credenziale.getOraRegistrazione().after(scadenzaEntry)) {
+					return credenziale; // informazione in cache valida
+				}
+				else {
+					return updateDataCredenzialeMittente(credenzialiMittenteService, scadenzaEntry, credenziale);
+				}
 			}
 			
 		}finally{
@@ -881,34 +960,49 @@ public class GestoreAutenticazione {
     }
     
     private static synchronized CredenzialeMittente createCredenzialeMittente(ICredenzialeMittenteService credenzialeMittentiService,
-    		TipoCredenzialeMittente tipoCredenziale, String tipoAutenticazione, String credential) throws Exception {
-    	IPaginatedExpression pagEpression = CredenzialiMittenteUtils.createCredenzialeMittentePaginatedExpression(credenzialeMittentiService, tipoCredenziale, tipoAutenticazione, credential, true,true);
-		List<CredenzialeMittente> list = credenzialeMittentiService.findAll(pagEpression);
+    		Date scadenzaEntry,
+    		AbstractSearchCredenziale searchCredential, AbstractCredenziale credential) throws Exception {
+    	boolean ricercaEsatta = true;
+    	boolean caseSensitive = true;
+    	IPaginatedExpression pagEpression = searchCredential.createExpression(credenzialeMittentiService, credential.getCredenziale(), ricercaEsatta, caseSensitive); 
+    	List<CredenzialeMittente> list = credenzialeMittentiService.findAll(pagEpression);
 		if(list==null || list.size()<=0) {
 			// not exists
 			CredenzialeMittente credenzialeMittente = new CredenzialeMittente();
-			if(TipoCredenzialeMittente.trasporto.equals(tipoCredenziale)) {
-				credenzialeMittente.setTipo(tipoCredenziale.name()+"_"+tipoAutenticazione);
-			}
-			else {
-				credenzialeMittente.setTipo(tipoCredenziale.name());
-			}
+			credenzialeMittente.setTipo(credential.getTipo());
 			credenzialeMittente.setOraRegistrazione(DateManager.getDate());
-			if(TipoCredenzialeMittente.trasporto.equals(tipoCredenziale) && TipoAutenticazione.SSL.getValue().equalsIgnoreCase(tipoAutenticazione)) {
-				credenzialeMittente.setCredenziale(CertificateUtils.formatPrincipal(credential, PrincipalType.subject));
-			}
-			else {
-				credenzialeMittente.setCredenziale(credential);
-			}
+			credenzialeMittente.setCredenziale(credential.getCredenziale());
 			credenzialeMittentiService.create(credenzialeMittente);
 			return credenzialeMittente;
 		}
 		else if(list.size()>1) {
-			throw new Exception("Trovata più di un'occorrenza di credenziale di tipo '"+tipoCredenziale.name()+"'; credenziale: ["+credential+"]");
+			throw new Exception("Trovata più di un'occorrenza di credenziale di tipo '"+searchCredential.getTipo()+"'; credenziale: ["+credential.getCredenziale()+"]");
 		}
 		else {
-			return list.get(0);
+			CredenzialeMittente credenziale = list.get(0);
+			if(credenziale.getOraRegistrazione().after(scadenzaEntry)) {
+				return credenziale; // informazione in cache valida
+			}
+			else {
+				return updateDataCredenzialeMittente(credenzialeMittentiService, scadenzaEntry, credenziale);
+			}
 		}
+    }
+    private static synchronized CredenzialeMittente updateDataCredenzialeMittente(ICredenzialeMittenteService credenzialeMittentiService,
+    		Date scadenzaEntry, CredenzialeMittente credenziale) throws Exception {
+    	
+    	IdCredenzialeMittente id = credenzialeMittentiService.convertToId(credenziale);
+    	CredenzialeMittente credenzialeCheck = credenzialeMittentiService.get(id);
+    	if(credenziale.getOraRegistrazione().after(scadenzaEntry)) {
+			return credenzialeCheck; // informazione in cache già aggiornata da una chiamata concorrente
+		}
+		else {
+			//System.out.println("Update Credenziale '"+id.getTipo()+"'");
+			credenzialeCheck.setOraRegistrazione(DateManager.getDate()); // update
+			credenzialeMittentiService.update(id, credenzialeCheck);
+			return credenzialeCheck;
+		}
+    	
     }
     
 }

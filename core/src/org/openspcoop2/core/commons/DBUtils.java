@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
@@ -481,6 +482,51 @@ public class DBUtils {
 			}
 
 			return idPdD;
+
+		}catch (SQLException e) {
+			throw new CoreException(e);
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
+	
+	
+	
+	
+	
+	public static long getIdGruppo(IDGruppo idGruppo, Connection con, String tipoDB) throws CoreException
+	{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		long idGruppoLong=-1;
+		try
+		{
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("nome = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String query = sqlQueryObject.createSQLQuery();
+			stm=con.prepareStatement(query);
+			stm.setString(1, idGruppo.getNome());
+
+			rs=stm.executeQuery();
+
+			if(rs.next()){
+				idGruppoLong = rs.getLong("id");
+			}
+
+			return idGruppoLong;
 
 		}catch (SQLException e) {
 			throw new CoreException(e);

@@ -62,6 +62,8 @@ public class StatisticaModel extends AbstractModel<Statistica> {
 		this.TOKEN_MAIL = new Field("token-mail",java.lang.String.class,"statistica",Statistica.class);
 		this.ESITO = new Field("esito",java.lang.Integer.class,"statistica",Statistica.class);
 		this.ESITO_CONTESTO = new Field("esito-contesto",java.lang.String.class,"statistica",Statistica.class);
+		this.CLIENT_ADDRESS = new Field("client-address",java.lang.String.class,"statistica",Statistica.class);
+		this.GRUPPI = new Field("gruppi",java.lang.String.class,"statistica",Statistica.class);
 		this.NUMERO_TRANSAZIONI = new Field("numero-transazioni",java.lang.Integer.class,"statistica",Statistica.class);
 		this.DIMENSIONI_BYTES_BANDA_COMPLESSIVA = new Field("dimensioni-bytes-banda-complessiva",java.lang.Long.class,"statistica",Statistica.class);
 		this.DIMENSIONI_BYTES_BANDA_INTERNA = new Field("dimensioni-bytes-banda-interna",java.lang.Long.class,"statistica",Statistica.class);
@@ -96,6 +98,8 @@ public class StatisticaModel extends AbstractModel<Statistica> {
 		this.TOKEN_MAIL = new ComplexField(father,"token-mail",java.lang.String.class,"statistica",Statistica.class);
 		this.ESITO = new ComplexField(father,"esito",java.lang.Integer.class,"statistica",Statistica.class);
 		this.ESITO_CONTESTO = new ComplexField(father,"esito-contesto",java.lang.String.class,"statistica",Statistica.class);
+		this.CLIENT_ADDRESS = new ComplexField(father,"client-address",java.lang.String.class,"statistica",Statistica.class);
+		this.GRUPPI = new ComplexField(father,"gruppi",java.lang.String.class,"statistica",Statistica.class);
 		this.NUMERO_TRANSAZIONI = new ComplexField(father,"numero-transazioni",java.lang.Integer.class,"statistica",Statistica.class);
 		this.DIMENSIONI_BYTES_BANDA_COMPLESSIVA = new ComplexField(father,"dimensioni-bytes-banda-complessiva",java.lang.Long.class,"statistica",Statistica.class);
 		this.DIMENSIONI_BYTES_BANDA_INTERNA = new ComplexField(father,"dimensioni-bytes-banda-interna",java.lang.Long.class,"statistica",Statistica.class);
@@ -147,6 +151,10 @@ public class StatisticaModel extends AbstractModel<Statistica> {
 	public IField ESITO = null;
 	 
 	public IField ESITO_CONTESTO = null;
+	 
+	public IField CLIENT_ADDRESS = null;
+	 
+	public IField GRUPPI = null;
 	 
 	public IField NUMERO_TRANSAZIONI = null;
 	 

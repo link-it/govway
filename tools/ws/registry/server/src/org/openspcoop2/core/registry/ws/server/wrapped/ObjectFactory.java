@@ -44,6 +44,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link UpdateGruppo }
+     */
+    public UpdateGruppo createUpdateGruppo() {
+        return new UpdateGruppo();
+    }
+    
+    /**
      * Create an instance of {@link DeleteAllScope }
      */
     public DeleteAllScope createDeleteAllScope() {
@@ -163,6 +170,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link UpdateOrCreateGruppo }
+     */
+    public UpdateOrCreateGruppo createUpdateOrCreateGruppo() {
+        return new UpdateOrCreateGruppo();
+    }
+    
+    /**
      * Create an instance of {@link CreateSoggetto }
      */
     public CreateSoggetto createCreateSoggetto() {
@@ -226,6 +240,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link CreateGruppo }
+     */
+    public CreateGruppo createCreateGruppo() {
+        return new CreateGruppo();
+    }
+    
+    /**
      * Create an instance of {@link UpdateAccordoServizioParteSpecificaResponse }
      */
     public UpdateAccordoServizioParteSpecificaResponse createUpdateAccordoServizioParteSpecificaResponse() {
@@ -261,6 +282,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link CreateGruppoResponse }
+     */
+    public CreateGruppoResponse createCreateGruppoResponse() {
+        return new CreateGruppoResponse();
+    }
+    
+    /**
      * Create an instance of {@link DeleteByIdScope }
      */
     public DeleteByIdScope createDeleteByIdScope() {
@@ -279,6 +307,13 @@ public class ObjectFactory {
      */
     public DeleteByIdAccordoServizioParteComune createDeleteByIdAccordoServizioParteComune() {
         return new DeleteByIdAccordoServizioParteComune();
+    }
+    
+    /**
+     * Create an instance of {@link CountGruppo }
+     */
+    public CountGruppo createCountGruppo() {
+        return new CountGruppo();
     }
     
     /**
@@ -310,6 +345,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link DeleteAllByFilterGruppoResponse }
+     */
+    public DeleteAllByFilterGruppoResponse createDeleteAllByFilterGruppoResponse() {
+        return new DeleteAllByFilterGruppoResponse();
+    }
+    
+    /**
      * Create an instance of {@link DeletePortaDominio }
      */
     public DeletePortaDominio createDeletePortaDominio() {
@@ -321,6 +363,13 @@ public class ObjectFactory {
      */
     public CountAccordoServizioParteSpecifica createCountAccordoServizioParteSpecifica() {
         return new CountAccordoServizioParteSpecifica();
+    }
+    
+    /**
+     * Create an instance of {@link InUseGruppoResponse }
+     */
+    public InUseGruppoResponse createInUseGruppoResponse() {
+        return new InUseGruppoResponse();
     }
     
     /**
@@ -342,6 +391,13 @@ public class ObjectFactory {
      */
     public CreateRuolo createCreateRuolo() {
         return new CreateRuolo();
+    }
+    
+    /**
+     * Create an instance of {@link FindAllIdsGruppoResponse }
+     */
+    public FindAllIdsGruppoResponse createFindAllIdsGruppoResponse() {
+        return new FindAllIdsGruppoResponse();
     }
     
     /**
@@ -408,6 +464,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link CountGruppoResponse }
+     */
+    public CountGruppoResponse createCountGruppoResponse() {
+        return new CountGruppoResponse();
+    }
+    
+    /**
      * Create an instance of {@link CreateAccordoServizioParteComuneResponse }
      */
     public CreateAccordoServizioParteComuneResponse createCreateAccordoServizioParteComuneResponse() {
@@ -419,6 +482,13 @@ public class ObjectFactory {
      */
     public ExistsAccordoCooperazioneResponse createExistsAccordoCooperazioneResponse() {
         return new ExistsAccordoCooperazioneResponse();
+    }
+    
+    /**
+     * Create an instance of {@link DeleteAllGruppoResponse }
+     */
+    public DeleteAllGruppoResponse createDeleteAllGruppoResponse() {
+        return new DeleteAllGruppoResponse();
     }
     
     /**
@@ -520,6 +590,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link FindGruppoResponse }
+     */
+    public FindGruppoResponse createFindGruppoResponse() {
+        return new FindGruppoResponse();
+    }
+    
+    /**
      * Create an instance of {@link DeleteAllByFilterScope }
      */
     public DeleteAllByFilterScope createDeleteAllByFilterScope() {
@@ -562,10 +639,24 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link FindGruppo }
+     */
+    public FindGruppo createFindGruppo() {
+        return new FindGruppo();
+    }
+    
+    /**
      * Create an instance of {@link CreateAccordoServizioParteSpecifica }
      */
     public CreateAccordoServizioParteSpecifica createCreateAccordoServizioParteSpecifica() {
         return new CreateAccordoServizioParteSpecifica();
+    }
+    
+    /**
+     * Create an instance of {@link ExistsGruppoResponse }
+     */
+    public ExistsGruppoResponse createExistsGruppoResponse() {
+        return new ExistsGruppoResponse();
     }
     
     /**
@@ -597,6 +688,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link ExistsGruppo }
+     */
+    public ExistsGruppo createExistsGruppo() {
+        return new ExistsGruppo();
+    }
+    
+    /**
      * Create an instance of {@link DeleteAllAccordoServizioParteComune }
      */
     public DeleteAllAccordoServizioParteComune createDeleteAllAccordoServizioParteComune() {
@@ -622,6 +720,13 @@ public class ObjectFactory {
      */
     public CreatePortaDominio createCreatePortaDominio() {
         return new CreatePortaDominio();
+    }
+    
+    /**
+     * Create an instance of {@link DeleteByIdGruppoResponse }
+     */
+    public DeleteByIdGruppoResponse createDeleteByIdGruppoResponse() {
+        return new DeleteByIdGruppoResponse();
     }
     
     /**
@@ -671,6 +776,20 @@ public class ObjectFactory {
      */
     public FindAllIdsScope createFindAllIdsScope() {
         return new FindAllIdsScope();
+    }
+    
+    /**
+     * Create an instance of {@link DeleteAllGruppo }
+     */
+    public DeleteAllGruppo createDeleteAllGruppo() {
+        return new DeleteAllGruppo();
+    }
+    
+    /**
+     * Create an instance of {@link FindAllGruppoResponse }
+     */
+    public FindAllGruppoResponse createFindAllGruppoResponse() {
+        return new FindAllGruppoResponse();
     }
     
     /**
@@ -828,10 +947,31 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link DeleteAllByFilterGruppo }
+     */
+    public DeleteAllByFilterGruppo createDeleteAllByFilterGruppo() {
+        return new DeleteAllByFilterGruppo();
+    }
+    
+    /**
+     * Create an instance of {@link UpdateGruppoResponse }
+     */
+    public UpdateGruppoResponse createUpdateGruppoResponse() {
+        return new UpdateGruppoResponse();
+    }
+    
+    /**
      * Create an instance of {@link DeleteAllByFilterAccordoCooperazione }
      */
     public DeleteAllByFilterAccordoCooperazione createDeleteAllByFilterAccordoCooperazione() {
         return new DeleteAllByFilterAccordoCooperazione();
+    }
+    
+    /**
+     * Create an instance of {@link DeleteByIdGruppo }
+     */
+    public DeleteByIdGruppo createDeleteByIdGruppo() {
+        return new DeleteByIdGruppo();
     }
     
     /**
@@ -846,6 +986,13 @@ public class ObjectFactory {
      */
     public DeleteAllByFilterPortaDominio createDeleteAllByFilterPortaDominio() {
         return new DeleteAllByFilterPortaDominio();
+    }
+    
+    /**
+     * Create an instance of {@link DeleteGruppo }
+     */
+    public DeleteGruppo createDeleteGruppo() {
+        return new DeleteGruppo();
     }
     
     /**
@@ -1038,6 +1185,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link InUseGruppo }
+     */
+    public InUseGruppo createInUseGruppo() {
+        return new InUseGruppo();
+    }
+    
+    /**
      * Create an instance of {@link DeleteByIdAccordoCooperazione }
      */
     public DeleteByIdAccordoCooperazione createDeleteByIdAccordoCooperazione() {
@@ -1073,10 +1227,31 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link FindAllGruppo }
+     */
+    public FindAllGruppo createFindAllGruppo() {
+        return new FindAllGruppo();
+    }
+    
+    /**
      * Create an instance of {@link UpdateOrCreateSoggetto }
      */
     public UpdateOrCreateSoggetto createUpdateOrCreateSoggetto() {
         return new UpdateOrCreateSoggetto();
+    }
+    
+    /**
+     * Create an instance of {@link GetGruppoResponse }
+     */
+    public GetGruppoResponse createGetGruppoResponse() {
+        return new GetGruppoResponse();
+    }
+    
+    /**
+     * Create an instance of {@link GetGruppo }
+     */
+    public GetGruppo createGetGruppo() {
+        return new GetGruppo();
     }
     
     /**
@@ -1154,6 +1329,13 @@ public class ObjectFactory {
      */
     public CreatePortaDominioResponse createCreatePortaDominioResponse() {
         return new CreatePortaDominioResponse();
+    }
+    
+    /**
+     * Create an instance of {@link DeleteGruppoResponse }
+     */
+    public DeleteGruppoResponse createDeleteGruppoResponse() {
+        return new DeleteGruppoResponse();
     }
     
     /**
@@ -1297,6 +1479,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link FindAllIdsGruppo }
+     */
+    public FindAllIdsGruppo createFindAllIdsGruppo() {
+        return new FindAllIdsGruppo();
+    }
+    
+    /**
      * Create an instance of {@link DeleteAllPortaDominio }
      */
     public DeleteAllPortaDominio createDeleteAllPortaDominio() {
@@ -1308,6 +1497,13 @@ public class ObjectFactory {
      */
     public FindSoggetto createFindSoggetto() {
         return new FindSoggetto();
+    }
+    
+    /**
+     * Create an instance of {@link UpdateOrCreateGruppoResponse }
+     */
+    public UpdateOrCreateGruppoResponse createUpdateOrCreateGruppoResponse() {
+        return new UpdateOrCreateGruppoResponse();
     }
     
     /**

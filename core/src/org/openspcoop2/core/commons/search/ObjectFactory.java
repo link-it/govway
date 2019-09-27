@@ -103,10 +103,38 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Gruppo }
+     */
+    public Gruppo createGruppo() {
+        return new Gruppo();
+    }
+
+    /**
+     * Create an instance of {@link IdGruppo }
+     */
+    public IdGruppo createIdGruppo() {
+        return new IdGruppo();
+    }
+
+    /**
+     * Create an instance of {@link IdAccordoServizioParteComuneGruppo }
+     */
+    public IdAccordoServizioParteComuneGruppo createIdAccordoServizioParteComuneGruppo() {
+        return new IdAccordoServizioParteComuneGruppo();
+    }
+
+    /**
      * Create an instance of {@link IdPortType }
      */
     public IdPortType createIdPortType() {
         return new IdPortType();
+    }
+
+    /**
+     * Create an instance of {@link AccordoServizioParteComuneGruppo }
+     */
+    public AccordoServizioParteComuneGruppo createAccordoServizioParteComuneGruppo() {
+        return new AccordoServizioParteComuneGruppo();
     }
 
     /**

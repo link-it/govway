@@ -181,6 +181,7 @@ public class ArchiviCostanti {
 	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE = "cascade";
 	public final static String PARAMETRO_ARCHIVI_EXPORT_TIPO_DUMP = "tipoDump";
 	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD = "cascadePdd";
+	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE_GRUPPI = "cascadeGruppi";
 	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE_RUOLI = "cascadeRuoli";
 	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE_SCOPE = "cascadeScope";
 	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE_SOGGETTI = "cascadeSoggetti";

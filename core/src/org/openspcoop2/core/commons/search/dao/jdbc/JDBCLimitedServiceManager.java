@@ -30,7 +30,9 @@ import javax.sql.DataSource;
 
 import org.openspcoop2.core.commons.search.dao.ISoggettoServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IPortaDominioServiceSearch;
+import org.openspcoop2.core.commons.search.dao.IGruppoServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteComuneServiceSearch;
+import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteComuneGruppoServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteComuneAzioneServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IPortTypeServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IOperationServiceSearch;
@@ -125,6 +127,27 @@ public class JDBCLimitedServiceManager extends JDBCServiceManager {
 	
 	/*
 	 =====================================================================================================================
+	 Services relating to the object with name:gruppo type:gruppo
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.Gruppo}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.Gruppo}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public IGruppoServiceSearch getGruppoServiceSearch() throws ServiceException,NotImplementedException{
+		return new JDBCGruppoServiceSearch(this.unlimitedJdbcServiceManager);
+	}
+	
+	
+	
+	
+	/*
+	 =====================================================================================================================
 	 Services relating to the object with name:accordo-servizio-parte-comune type:accordo-servizio-parte-comune
 	 =====================================================================================================================
 	*/
@@ -139,6 +162,27 @@ public class JDBCLimitedServiceManager extends JDBCServiceManager {
 	@Override
 	public IAccordoServizioParteComuneServiceSearch getAccordoServizioParteComuneServiceSearch() throws ServiceException,NotImplementedException{
 		return new JDBCAccordoServizioParteComuneServiceSearch(this.unlimitedJdbcServiceManager);
+	}
+	
+	
+	
+	
+	/*
+	 =====================================================================================================================
+	 Services relating to the object with name:accordo-servizio-parte-comune-gruppo type:accordo-servizio-parte-comune-gruppo
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public IAccordoServizioParteComuneGruppoServiceSearch getAccordoServizioParteComuneGruppoServiceSearch() throws ServiceException,NotImplementedException{
+		return new JDBCAccordoServizioParteComuneGruppoServiceSearch(this.unlimitedJdbcServiceManager);
 	}
 	
 	

@@ -79,6 +79,7 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -89,6 +90,7 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
+import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
@@ -98,6 +100,7 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -2648,6 +2651,21 @@ public class ControlStationCore {
 						doSetDati = true;
 					}
 					
+					// Gruppo
+					if (oggetto instanceof Gruppo) {
+						Gruppo gruppo = (Gruppo) oggetto;
+						driver.getDriverRegistroServiziDB().createGruppo(gruppo);
+
+						operazioneDaSmistare = new OperazioneDaSmistare();
+						operazioneDaSmistare.setOperazione(Operazione.add);
+						operazioneDaSmistare.setIDTable(gruppo.getId());
+						operazioneDaSmistare.setSuperuser(superUser);
+						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.gruppo);
+						operazioneDaSmistare.addParameter(OperationsParameter.NOME_GRUPPO, gruppo.getNome());
+
+						doSetDati = true;
+					}
+					
 					// Ruolo
 					if (oggetto instanceof Ruolo) {
 						Ruolo ruolo = (Ruolo) oggetto;
@@ -3131,6 +3149,24 @@ public class ControlStationCore {
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pdd);
 						operazioneDaSmistare.addParameter(OperationsParameter.PORTA_DOMINIO, pdd.getNome());
 
+						doSetDati = true;
+					}
+					
+					// Gruppo
+					if (oggetto instanceof Gruppo) {
+						Gruppo gruppo = (Gruppo) oggetto;
+						driver.getDriverRegistroServiziDB().updateGruppo(gruppo);
+						// Chiedo la setDati
+						operazioneDaSmistare = new OperazioneDaSmistare();
+						operazioneDaSmistare.setOperazione(Operazione.change);
+						operazioneDaSmistare.setIDTable(gruppo.getId());
+						operazioneDaSmistare.setSuperuser(superUser);
+						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.gruppo);
+						operazioneDaSmistare.addParameter(OperationsParameter.NOME_GRUPPO, gruppo.getNome());
+						IDGruppo idGruppoOLD = gruppo.getOldIDGruppoForUpdate();
+						if(idGruppoOLD!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_GRUPPO, idGruppoOLD.getNome());
+						}
 						doSetDati = true;
 					}
 
@@ -3650,6 +3686,19 @@ public class ControlStationCore {
 						operazioneDaSmistare.addParameter(OperationsParameter.PORTA_DOMINIO, pdd.getNome());
 
 						doSetDati = true;
+					}
+					
+					// Ruolo
+					if (oggetto instanceof Gruppo) {
+						Gruppo gruppo = (Gruppo) oggetto;
+						driver.getDriverRegistroServiziDB().deleteGruppo(gruppo);
+						operazioneDaSmistare = new OperazioneDaSmistare();
+						operazioneDaSmistare.setOperazione(Operazione.del);
+						operazioneDaSmistare.setIDTable(gruppo.getId());
+						operazioneDaSmistare.setSuperuser(superUser);
+						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.gruppo);
+						operazioneDaSmistare.addParameter(OperationsParameter.NOME_GRUPPO, gruppo.getNome());
+						operazioneDaSmistareList.add(operazioneDaSmistare);
 					}
 
 					// Ruolo
@@ -4616,6 +4665,18 @@ public class ControlStationCore {
 		}
 
 		// RegistroServizi
+		
+		// Gruppo
+		else if (oggetto instanceof Gruppo) {
+			Gruppo g = (Gruppo) oggetto;
+			msg+=":"+oggetto.getClass().getSimpleName();
+			msg+=":<"+g.getNome()+">";
+			if(Tipologia.CHANGE.equals(tipoOperazione)){
+				if(g.getOldIDGruppoForUpdate()!=null && g.getNome().equals(g.getOldIDGruppoForUpdate().getNome())==false){
+					msg+=":OLD<"+g.getOldIDGruppoForUpdate().getNome()+">";
+				}
+			}
+		}
 
 		// Ruolo
 		else if (oggetto instanceof Ruolo) {
@@ -5006,6 +5067,54 @@ public class ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 
+	}
+	
+	public List<String> getAllGruppiOrdinatiPerDataRegistrazione() throws DriverRegistroServiziException {
+		FiltroRicercaGruppi filtroRicercaGruppi = new FiltroRicercaGruppi();
+		filtroRicercaGruppi.setOrdinaDataRegistrazione(true);
+		List<String> returnList = new ArrayList<>();
+		List<IDGruppo> list = this.getAllIdGruppi(filtroRicercaGruppi);
+		for (IDGruppo idGruppo : list) {
+			returnList.add(idGruppo.getNome());
+		}
+		return returnList;
+	}
+	
+	public List<String> getAllGruppi(FiltroRicercaGruppi filtroRicerca) throws DriverRegistroServiziException {
+		List<String> returnList = new ArrayList<>();
+		List<IDGruppo> list = this.getAllIdGruppi(filtroRicerca);
+		for (IDGruppo idGruppo : list) {
+			returnList.add(idGruppo.getNome());
+		}
+		return returnList;
+	}
+	public List<IDGruppo> getAllIdGruppi(FiltroRicercaGruppi filtroRicerca) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "getAllIdGruppi";
+		DriverControlStationDB driver = null;
+
+		try {
+			if(this.isRegistroServiziLocale()){
+				// prendo una connessione
+				con = ControlStationCore.dbM.getConnection();
+				// istanzio il driver
+				driver = new DriverControlStationDB(con, null, this.tipoDB);
+	
+				return driver.getDriverRegistroServiziDB().getAllIdGruppi(filtroRicerca);
+			}
+			else{
+				return GestoreRegistroServiziRemoto.getDriverRegistroServizi(ControlStationCore.log).getAllIdGruppi(filtroRicerca);
+			}
+
+		} catch (DriverRegistroServiziNotFound de) {
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			return new ArrayList<IDGruppo>();
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
 	}
 
 	public List<String> getAllRuoli(FiltroRicercaRuoli filtroRicerca) throws DriverRegistroServiziException {

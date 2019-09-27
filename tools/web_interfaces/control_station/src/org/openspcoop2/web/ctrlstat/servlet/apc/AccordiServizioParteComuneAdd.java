@@ -24,6 +24,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -43,12 +44,16 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
+import org.openspcoop2.core.registry.GruppiAccordo;
+import org.openspcoop2.core.registry.Gruppo;
+import org.openspcoop2.core.registry.GruppoAccordo;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
+import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -70,6 +75,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiHelper;
+import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
@@ -120,6 +126,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 	private IRegistryReader registryReader = null; 
 	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
+	
+	private String gruppi;
 	
 
 	private BinaryParameter wsdlservcorr, wsdldef, wsdlserv, wsdlconc, wsblconc, wsblserv, wsblservcorr;
@@ -180,7 +188,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			String formatoSpecificaS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_INTERFACE_TYPE);
 			this.interfaceType = StringUtils.isNotEmpty(formatoSpecificaS) ? InterfaceType.toEnumConstant(formatoSpecificaS) : null;
 			
-			
+			this.gruppi = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_GRUPPI);
 
 			// patch per version spinner fino a che non si trova un modo piu' elegante
 			// Veniva sempre impostato false, lo lascio commentato in questo punto perche' veniva passato nella decode della richiesta multipart...
@@ -236,6 +244,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			SoggettiCore soggettiCore = new SoggettiCore(apcCore);
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore(apcCore);
+			GruppiCore gruppiCore = new GruppiCore(apcCore);
 			String labelAccordoServizio = AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo);
 			
 
@@ -257,6 +266,10 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			if(this.serviceBinding == null) {
 				this.serviceBinding  = soggettiCore.getDefaultServiceBinding(this.protocolFactory);
 			}
+			
+			FiltroRicercaGruppi filtroRicerca = new FiltroRicercaGruppi();
+			filtroRicerca.setServiceBinding(apcCore.fromMessageServiceBinding(this.serviceBinding));
+			List<String> elencoGruppi = gruppiCore.getAllGruppi(filtroRicerca);
 
 			boolean showReferente = false;
 			if(this.isServizioComposto){
@@ -360,10 +373,18 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.serviceBinding  = soggettiCore.getDefaultServiceBinding(this.protocolFactory);
 					this.interfaceType = null;
 					this.messageType = null;
+					
+					filtroRicerca = new FiltroRicercaGruppi();
+					filtroRicerca.setServiceBinding(apcCore.fromMessageServiceBinding(this.serviceBinding));
+					elencoGruppi = gruppiCore.getAllGruppi(filtroRicerca);
 				}
 				else if(postBackElementName.equalsIgnoreCase(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SERVICE_BINDING)){
 					this.interfaceType = null;
 					this.messageType = null;
+					
+					filtroRicerca = new FiltroRicercaGruppi();
+					filtroRicerca.setServiceBinding(apcCore.fromMessageServiceBinding(this.serviceBinding));
+					elencoGruppi = gruppiCore.getAllGruppi(filtroRicerca);
 				}
 			}
 
@@ -498,7 +519,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.versione="1";
 					//}
 					
-					
+					this.gruppi = "";
 				}
 
 				// preparo i campi
@@ -522,7 +543,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 						this.privato, this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel, 
 						this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, 
 						this.tipoProtocollo, listaTipiProtocollo,false,false,this.protocolFactory,
-						this.serviceBinding,this.messageType,this.interfaceType);
+						this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -547,7 +568,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.filtrodup, this.confric, this.idcoll, this.idRifRichiesta, this.consord, 
 					this.scadenza, "0",this.referente, this.versione,this.accordoCooperazione,this.privato,visibilitaAccordoCooperazione,null,
 					this.wsblconc,this.wsblserv,this.wsblservcorr, this.validazioneDocumenti, this.tipoProtocollo,null,this.serviceBinding,this.messageType,this.interfaceType,
-					showReferente);
+					showReferente, this.gruppi);
 
 			// updateDynamic
 			if(isOk) {
@@ -616,7 +637,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 						this.privato, this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel, 
 						this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, 
 						this.tipoProtocollo, listaTipiProtocollo,false,false,this.protocolFactory,
-						this.serviceBinding,this.messageType,this.interfaceType);
+						this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -628,6 +649,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping,
 						AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.ADD());
 			}
+			
+			List<Object> objectToCreate = new ArrayList<>();
 
 			AccordoServizioParteComune as = new AccordoServizioParteComune();
 
@@ -721,6 +744,25 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			// stato
 			as.setStatoPackage(this.statoPackage);
 
+			// gruppi
+			if(StringUtils.isNotEmpty(this.gruppi)) {
+				if(as.getGruppi() == null)
+					as.setGruppi(new GruppiAccordo());
+			
+				List<String> nomiGruppi = Arrays.asList(this.gruppi.split(","));
+				
+				for (String nomeGruppo : nomiGruppi) {
+					if(!gruppiCore.existsGruppo(nomeGruppo)) {
+						Gruppo nuovoGruppo = new Gruppo();
+						nuovoGruppo.setNome(nomeGruppo);
+						objectToCreate.add(nuovoGruppo);
+					}
+					
+					GruppoAccordo gruppoAccordo = new GruppoAccordo();
+					gruppoAccordo.setNome(nomeGruppo);
+					as.getGruppi().addGruppo(gruppoAccordo );
+				}
+			}
 
 
 			// Check stato
@@ -758,7 +800,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 							this.privato, this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel, 
 							this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, 
 							this.tipoProtocollo, listaTipiProtocollo,false,false,this.protocolFactory,
-							this.serviceBinding,this.messageType,this.interfaceType);
+							this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi);
 
 					// aggiunta campi custom
 					dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -780,8 +822,9 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			//imposto properties custom
 			as.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(this.protocolProperties, this.consoleOperationType,null));
 			
+			objectToCreate.add(as);
 			// effettuo le operazioni
-			apcCore.performCreateOperation(userLogin, apcHelper.smista(), as);
+			apcCore.performCreateOperation(userLogin, apcHelper.smista(), objectToCreate.toArray(new Object[objectToCreate.size()]));
 			
 			// cancello i file temporanei
 			apcHelper.deleteBinaryParameters(this.wsdlconc,this.wsdldef,this.wsdlserv,this.wsdlservcorr,this.wsblconc,this.wsblserv,this.wsblservcorr);

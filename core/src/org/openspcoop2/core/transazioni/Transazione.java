@@ -127,7 +127,10 @@ import java.util.List;
  * 			&lt;element name="cluster-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="socket-client-address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="transport-client-address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="client-address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="eventi-gestione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="tipo-api" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="gruppi" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="dump-messaggio" type="{http://www.openspcoop2.org/core/transazioni}dump-messaggio" minOccurs="0" maxOccurs="2"/>
  * 			&lt;element name="transazione-extended-info" type="{http://www.openspcoop2.org/core/transazioni}transazione-extended-info" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
@@ -230,7 +233,10 @@ import java.util.List;
   	"clusterId",
   	"socketClientAddress",
   	"transportClientAddress",
+  	"clientAddress",
   	"eventiGestione",
+  	"tipoApi",
+  	"gruppi",
   	"dumpMessaggio",
   	"transazioneExtendedInfo"
   }
@@ -964,12 +970,36 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBean implements
     this.transportClientAddress = transportClientAddress;
   }
 
+  public java.lang.String getClientAddress() {
+    return this.clientAddress;
+  }
+
+  public void setClientAddress(java.lang.String clientAddress) {
+    this.clientAddress = clientAddress;
+  }
+
   public java.lang.String getEventiGestione() {
     return this.eventiGestione;
   }
 
   public void setEventiGestione(java.lang.String eventiGestione) {
     this.eventiGestione = eventiGestione;
+  }
+
+  public int getTipoApi() {
+    return this.tipoApi;
+  }
+
+  public void setTipoApi(int tipoApi) {
+    this.tipoApi = tipoApi;
+  }
+
+  public java.lang.String getGruppi() {
+    return this.gruppi;
+  }
+
+  public void setGruppi(java.lang.String gruppi) {
+    this.gruppi = gruppi;
   }
 
   public void addDumpMessaggio(DumpMessaggio dumpMessaggio) {
@@ -1398,8 +1428,20 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBean implements
   protected java.lang.String transportClientAddress;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="client-address",required=false,nillable=false)
+  protected java.lang.String clientAddress;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="eventi-gestione",required=false,nillable=false)
   protected java.lang.String eventiGestione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @XmlElement(name="tipo-api",required=false,nillable=false)
+  protected int tipoApi;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="gruppi",required=false,nillable=false)
+  protected java.lang.String gruppi;
 
   @XmlElement(name="dump-messaggio",required=true,nillable=false)
   protected List<DumpMessaggio> dumpMessaggio = new ArrayList<DumpMessaggio>();

@@ -49,6 +49,7 @@ import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
@@ -63,6 +64,7 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
@@ -70,6 +72,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
+import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
@@ -160,6 +163,60 @@ public abstract class AbstractArchiveEngine {
 			}catch(Exception eClose){}
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	// --- GRUPPI ---
+	
+	public List<IDGruppo> getAllIdGruppi(FiltroRicercaGruppi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return this.driverRegistroServizi.getAllIdGruppi(filtroRicerca);
+	}
+	
+	public Gruppo getGruppo(IDGruppo idGruppo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		return this.driverRegistroServizi.getGruppo(idGruppo);
+	}
+	
+	public boolean existsGruppo(IDGruppo idGruppo) throws DriverRegistroServiziException {
+		return this.driverRegistroServizi.existsGruppo(idGruppo);
+	}
+	
+	public void createGruppo(Gruppo gruppo) throws DriverRegistroServiziException {
+		this.driverRegistroServizi.createGruppo(gruppo);
+	}
+	
+	public void updateGruppo(Gruppo gruppo) throws DriverRegistroServiziException {
+		this.driverRegistroServizi.updateGruppo(gruppo);
+	}
+	
+	public void deleteGruppo(Gruppo gruppo) throws DriverRegistroServiziException {
+		this.driverRegistroServizi.deleteGruppo(gruppo);
+	}
+	
+	public boolean isGruppoInUso(IDGruppo idGruppo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("archive.isGruppoInUso");
+			return DBOggettiInUsoUtils.isGruppoInUso(con, this.driverRegistroServizi.getTipoDB(), idGruppo, whereIsInUso, normalizeObjectIds);
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	
+	
+	
+	
 	
 	
 	

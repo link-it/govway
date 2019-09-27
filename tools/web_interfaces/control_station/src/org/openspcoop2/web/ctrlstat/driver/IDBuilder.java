@@ -50,6 +50,7 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
+import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
@@ -166,6 +167,15 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				String id = s.getTipo()+"/"+s.getNome();
 				if(this.prefix){
 					return "[SoggettoRegistro] "+ id;
+				}else{
+					return id;
+				}
+			}
+			else if (o instanceof Gruppo) {
+				Gruppo g = (Gruppo) o;
+				String id = g.getNome();
+				if(this.prefix){
+					return "[Gruppo] "+ id;
 				}else{
 					return id;
 				}
@@ -490,6 +500,18 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 					return id;
 				}
 			}
+			else if(o instanceof Gruppo){
+				Gruppo g = (Gruppo) o;
+				if(g.getOldIDGruppoForUpdate()==null){
+					return null; // non lancio un errore
+				}
+				String id = g.getOldIDGruppoForUpdate().getNome();
+				if(this.prefix){
+					return "[Gruppo] "+ id;
+				}else{
+					return id;
+				}
+			}
 			else if (o instanceof Ruolo) {
 				Ruolo r = (Ruolo) o;
 				if(r.getOldIDRuoloForUpdate()==null){
@@ -769,6 +791,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			
 			// RegistroServizi
 			oggetti.add(org.openspcoop2.core.registry.Soggetto.class.getSimpleName());
+			oggetti.add(Gruppo.class.getSimpleName());
 			oggetti.add(Ruolo.class.getSimpleName());
 			oggetti.add(Scope.class.getSimpleName());
 			oggetti.add(AccordoCooperazione.class.getSimpleName());
@@ -825,6 +848,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			
 			// RegistroServizi
 			oggetti.add(org.openspcoop2.core.registry.Soggetto.class.getName());
+			oggetti.add(Gruppo.class.getName());
 			oggetti.add(Ruolo.class.getName());
 			oggetti.add(Scope.class.getName());
 			oggetti.add(AccordoCooperazione.class.getName());

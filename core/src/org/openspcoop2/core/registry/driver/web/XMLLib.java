@@ -42,6 +42,7 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
@@ -1578,6 +1579,144 @@ public class XMLLib{
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/* ---------------- GENERAZIONE XML GRUPPI ------------------------- */
+	/**
+	 * Metodo che controlla se il gruppo risulta gia' registrato
+	 * 
+	 * @param nome Nome del gruppo da creare/modificare
+	 * @return true se il gruppo risulta registrato, false altrimenti.
+	 * 
+	 */   
+	public boolean existsGruppo(String nome)throws DriverRegistroServiziException{
+
+		try {
+			File fileXML = new File(this.pathPrefix + CostantiXMLRepository.GRUPPI + File.separator + nome + ".xml");
+			if( (fileXML.exists()==false) ){
+				return false;
+			}else
+				return true;
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante la ricerca ("+CostantiXMLRepository.GRUPPI+")  ["+nome+"]: "+e.getMessage(),e);
+		}
+
+	}
+
+	/**
+	 * Metodo che si occupa della generazione/modifica di un file XML a partire da un gruppo
+	 * Sono richiesti interattivamente i parametri che identificano il file XML da generare. 
+	 * 
+	 * @param nome Nome del gruppo da creare/modificare
+	 * @param gruppo Dati del gruppo da trasformare in XML.
+	 * 
+	 */   
+	public void createGruppo(String nome,Gruppo gruppo) throws DriverRegistroServiziException{
+
+
+		try {
+			String gruppiDir = this.pathPrefix + CostantiXMLRepository.GRUPPI + File.separator;
+			
+			// Controllo esistenza per modifica
+			String fileXML = gruppiDir + nome + ".xml";
+			File fileXMLF = new File(fileXML);
+			if( fileXMLF.exists() ){
+				// richiesta modifica
+				// elimino vecchia definizione Porta di Dominio
+				try{
+					if(fileXMLF.delete()==false){
+						throw new DriverRegistroServiziException("Eliminazione della vecchia definizione per il gruppo ["+fileXMLF.getAbsolutePath()+"] non riuscita");
+					}
+				}catch(Exception io){
+					throw new DriverRegistroServiziException("Eliminazione della vecchia definizione per il gruppo ["+nome+ "] non riuscita: "+io.toString());
+				}	
+			}
+
+			// Definizione gruppo
+			org.openspcoop2.core.registry.RegistroServizi registroXML = new org.openspcoop2.core.registry.RegistroServizi();
+
+			// generazione XML
+			this.cleanerOpenSPCoop2ExtensionsRegistry.clean(gruppo);
+			registroXML.addGruppo(gruppo);
+			JaxbUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
+
+		}catch(DriverRegistroServiziException e){
+			throw e;
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante l'elaborazione XML del gruppo  ["+nome+"]: "+e.getMessage(),e);
+		}
+	}  
+
+	/**
+	 * Metodo che si occupa dell'eliminazione del gruppo dal repository. 
+	 * 
+	 * @param nome Nome del gruppo da eliminare
+	 */   
+	public void deleteGruppo(String nome) throws DriverRegistroServiziException {
+
+		try {
+			String fileXML = this.pathPrefix + CostantiXMLRepository.GRUPPI + File.separator + nome + ".xml";
+			
+			// Elimino gruppo
+			File gruppo = new File(fileXML);
+			if(gruppo.delete() == false){
+				throw new DriverRegistroServiziException("Eliminazione XML del gruppo ["+nome+"] non riuscta");
+			}
+
+		}catch(DriverRegistroServiziException e){
+			throw e;
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("[XMLlib] Riscontrato errore durante l'eliminazione XML del gruppo ["+nome+"]: "+e.getMessage(),e);
+		}
+	}  
+
+	/**
+	 * Lista dei gruppi registrati
+	 * 
+	 * @return lista dei gruppi registrati
+	 * 
+	 */   
+	public Gruppo[] getGruppi()throws DriverRegistroServiziException{
+
+		Gruppo [] gruppiRegistrate = null;
+		try {
+			File dir = new File(this.pathPrefix + CostantiXMLRepository.GRUPPI);
+			if(dir.exists()==false)
+				return null;
+			File[] gruppi = dir.listFiles();
+			int numGruppi = 0;
+			if(gruppi!=null){
+				for(int i=0; i<gruppi.length;i++){
+					if(gruppi[i].isFile()){
+						numGruppi++;
+					}
+				}
+			}
+			if(numGruppi>0){
+				gruppiRegistrate = new Gruppo[numGruppi];
+				for(int i=0,index=0; i<gruppi.length;i++){
+					if(gruppi[i].isFile()){
+						org.openspcoop2.core.registry.RegistroServizi r = 
+							(org.openspcoop2.core.registry.RegistroServizi)  JaxbUtils.xmlToObj(gruppi[i].getAbsolutePath(),
+									org.openspcoop2.core.registry.RegistroServizi.class);
+						gruppiRegistrate[index] = r.getGruppo(0);
+						index++;
+					}
+				}
+			}
+			return gruppiRegistrate;
+		}catch(Exception e){
+			e.printStackTrace();
+			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante la ricerca dei gruppi: "+e.getMessage(),e);
+		}
+	}
 	
 	
 	

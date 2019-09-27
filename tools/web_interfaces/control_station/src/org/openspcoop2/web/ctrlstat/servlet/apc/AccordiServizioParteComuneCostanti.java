@@ -30,6 +30,7 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCostanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 
@@ -333,6 +334,9 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_APC_MESSAGE_TYPE = CostantiControlStation.PARAMETRO_MESSAGE_TYPE;
 	public final static String PARAMETRO_APC_INTERFACE_TYPE = CostantiControlStation.PARAMETRO_INTERFACE_TYPE;
 	public final static String PARAMETRO_APC_SERVICE_BINDING_SEARCH = CostantiControlStation.PARAMETRO_SERVICE_BINDING_SEARCH;
+	public final static String PARAMETRO_APC_GRUPPI = "gruppi";
+	public final static String PARAMETRO_APC_GRUPPO = "gruppo";
+	public final static String PARAMETRO_APC_GRUPPI_SUPPORTO_COLORI = "__gruppi_colors";
 
 	public final static String PARAMETRO_APC_AZIONI_NOME = "nomeaz";
 	public final static String PARAMETRO_APC_AZIONI_CORRELATA = "azicorr";
@@ -485,6 +489,8 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_INTERFACE_TYPE_WADL = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WADL;
 	public final static String LABEL_PARAMETRO_APC_INTERFACE_TYPE_SWAGGER_2 = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2;
 	public final static String LABEL_PARAMETRO_APC_INTERFACE_TYPE_OPEN_API_3 = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API_3;
+	public final static String LABEL_PARAMETRO_APC_GRUPPI = GruppiCostanti.LABEL_GRUPPI;
+	public final static String LABEL_PARAMETRO_APC_GRUPPO = GruppiCostanti.LABEL_GRUPPO;
 
 	public final static String LABEL_PARAMETRO_APC_ALLEGATI_RUOLO = "Ruolo";
 	public final static String LABEL_PARAMETRO_APC_ALLEGATI_TIPO_FILE = "Tipo";

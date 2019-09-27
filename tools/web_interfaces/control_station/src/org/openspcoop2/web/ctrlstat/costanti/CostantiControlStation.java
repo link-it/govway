@@ -1752,4 +1752,7 @@ public class CostantiControlStation {
 	
 	public final static String ICONA_MODIFICA_TOGGLE_ON = "toggle_on";
 	public final static String ICONA_MODIFICA_TOGGLE_OFF = "toggle_off";
+	
+	// Indica il numero delle possibili classi CSS per i tag dei gruppi, modificare questo valore se si vuole modificare il numero delle classi disponibili
+	public final static Integer NUMERO_GRUPPI_CSS = Costanti.NUMERO_GRUPPI_CSS;
 }

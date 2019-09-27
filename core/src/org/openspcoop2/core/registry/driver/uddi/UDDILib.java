@@ -107,6 +107,8 @@ public class UDDILib
 	public static final String ACCORDO_SERVIZIO = "AccordoServizio";
 	public static final String PORTA_DOMINIO = "PortaDominio";
 	public static final String PORTA_DOMINIO_PREFIX = "PdD@";
+	public static final String GRUPPO = "Gruppo";
+	public static final String GRUPPO_PREFIX = "Gruppo@";
 	public static final String RUOLO = "Ruolo";
 	public static final String RUOLO_PREFIX = "Ruolo@";
 	public static final String SCOPE = "Scope";
@@ -927,6 +929,155 @@ public class UDDILib
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	/* ******** M E T O D I   G R U P P I   ******** */
+
+
+	
+	/**
+	 * Si occupa di recuperare il TModel che registra il gruppo con nome <var>nome</var>
+	 *
+	 * @param nome nome che identifica il gruppo
+	 * @return la TModel che registra il gruppo
+	 */
+	public TModel getGruppo(String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.getTModel(UDDILib.GRUPPO, UDDILib.GRUPPO_PREFIX+nome);
+	}
+	
+	/**
+	 * Si occupa di recuperare le TModels che soddisfano il filtro
+	 *
+	 * @param urlRepository Url del Repository
+	 * @return una lista di TModel che registra i gruppi
+	 */
+	public TModel[] getGruppi(String urlRepository) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.getTModelByFilter(UDDILib.GRUPPO, UDDILib.GRUPPO_PREFIX, urlRepository, false);
+	}
+	
+	/**
+	 * Si occupa di registrare come TModel un gruppo con nome <var>nome</var>
+	 *
+	 * @param nome Nome che identifica il gruppo
+	 * @param url url del file XML associato al gruppo
+	 */	
+	public void createGruppo(String nome, String url) throws DriverRegistroServiziException{
+		this.createTModel(UDDILib.GRUPPO, UDDILib.GRUPPO_PREFIX+ nome, url);
+	}
+
+	/**
+	 * Il metodo si occupa di verificare se nel registro e' regitrata una TModel identificata dal parametro
+	 *
+	 * @param nome Nome del gruppo
+	 * @return true se la TModel risulta registrata, false altrimenti
+	 * 
+	 */
+	public boolean existsGruppo(String nome) throws DriverRegistroServiziException{
+		
+		if ( nome==null )
+			throw new DriverRegistroServiziException("[UDDILib.existsGruppo]: Alcuni parametri non definiti");
+		try{
+			TModel t = getTModel(UDDILib.GRUPPO, UDDILib.GRUPPO_PREFIX+nome);
+			if(t == null)
+				throw new Exception("TModel is null");
+		}catch(DriverRegistroServiziNotFound e){
+			return false;
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		return true;	
+	}
+
+	/**
+	 * Si occupa di modificare il nome della TModel che registra il gruppo con nome <var>nomeOLD</var>
+	 *
+	 * @param nomeOLD vecchio nome che identifica il gruppo
+	 * @param nomeNEW nuovo nome che identifica il gruppo
+	 * @param url nuova url del file XML associato al gruppo
+	 */
+	public void updateGruppo(String nomeOLD,String nomeNEW,String url) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		this.updateTModel(UDDILib.GRUPPO, UDDILib.GRUPPO_PREFIX+nomeOLD, UDDILib.GRUPPO_PREFIX+nomeNEW, url);
+	}
+
+	/**
+	 * Il metodo si occupa di cancellare la TModel identificata dal parametro
+	 *
+	 * @param nome nome che identifica il gruppo
+	 */
+	public void deleteGruppo(String nome) throws DriverRegistroServiziException{
+		this.deleteTModel(UDDILib.GRUPPO, UDDILib.GRUPPO_PREFIX+nome);
+	}
+
+	/**
+	 * Il metodo si occupa di impostare la url del file XML della TModel
+	 *
+	 * @param nome Nome che identifica il gruppo
+	 * @param url url del file XML associato al gruppo
+	 */
+	public void updateUrlXmlGruppo(String nome, String url) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		this.updateUrlXmlTModel(UDDILib.GRUPPO, UDDILib.GRUPPO_PREFIX+nome, url);
+	}
+	/**
+	 * Si occupa di recuperare la URL dell'XML associato al gruppo
+	 * registrato con il nome <var>nome</var>
+	 *
+	 * @param nome Nome che identifica il gruppo
+	 * @return la url dell'XML associato al gruppo
+	 * 
+	 */
+	public String getUrlXmlGruppo(String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		if ( nome==null )
+			throw new DriverRegistroServiziException("[UDDILib.getUrlXmlGruppo]: Alcuni parametri non definiti");
+		try{
+			TModel tm = getTModel(UDDILib.GRUPPO, UDDILib.GRUPPO_PREFIX+nome);
+			return tm.getOverviewDoc().getOverviewURLString();
+		}catch(DriverRegistroServiziNotFound e){
+			throw e;
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("[UDDILib.getUrlXmlGruppo]: "+e.getMessage(),e);
+		}
+	}
+	
+	/**
+	 * Si occupa di recuperare la URL dell'XML associato al gruppo
+	 * registrata con il nome <var>nome</var>
+	 *
+	 * @param searchNome Nome che identifica il gruppo
+	 * @return la url dell'XML associato al gruppo
+	 * 
+	 */
+	public String[] getUrlXmlGruppo(String searchNome,String urlRepository) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		try{
+			TModel[] tm = null;
+			if(searchNome!=null){
+				tm = getTModelByFilter(UDDILib.GRUPPO, UDDILib.GRUPPO_PREFIX+searchNome,urlRepository,true);
+			}else{
+				tm = getTModelByFilter(UDDILib.GRUPPO, UDDILib.GRUPPO_PREFIX,urlRepository,false);
+			}
+			
+			if(tm!=null){
+				String[] url = new String[tm.length];
+				for(int i=0; i<tm.length; i++){
+					url[i] = tm[i].getOverviewDoc().getOverviewURLString();
+				}
+				return url;
+			}else{
+				throw new DriverRegistroServiziNotFound("Gruppo (definizione XML) non trovate");
+			}
+		}
+		catch (DriverRegistroServiziNotFound e){
+			throw e;
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException("[UDDILib.getUrlXmlGruppo]: "+e.getMessage(),e);
+		}
+	}
 	
 	
 	

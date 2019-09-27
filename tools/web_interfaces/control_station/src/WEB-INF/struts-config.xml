@@ -1020,6 +1020,33 @@
             <forward name="scopeError" path="/jsplib/info.jsp"/>
         </action>
         
+		<!-- Gruppi -->
+
+        <action path="/gruppiAdd" type="org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiAdd"
+            scope="request" validate="true">
+            <forward name="gruppiAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="gruppiAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="gruppiAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="gruppiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/gruppiList" type="org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiList"
+            scope="request" validate="true">
+            <forward name="gruppiList" path="/jsplib/listElement.jsp"/>
+            <forward name="gruppiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/gruppiChange" type="org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiChange"
+            scope="request" validate="true">
+            <forward name="gruppiChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="gruppiChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="gruppiChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="gruppiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/gruppiDel" type="org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiDel"
+            scope="request" validate="true">
+            <forward name="gruppiDel" path="/jsplib/listElement.jsp"/>
+            <forward name="gruppiError" path="/jsplib/info.jsp"/>
+        </action>
+
 
 		<!--  Archivi -->
         

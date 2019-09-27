@@ -73,6 +73,24 @@ public interface IServiceManager {
 	
 	/*
 	 =====================================================================================================================
+	 Services relating to the object with name:gruppo type:gruppo
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.Gruppo}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.Gruppo}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	public IGruppoServiceSearch getGruppoServiceSearch() throws ServiceException,NotImplementedException;
+	
+	
+	
+	
+	/*
+	 =====================================================================================================================
 	 Services relating to the object with name:accordo-servizio-parte-comune type:accordo-servizio-parte-comune
 	 =====================================================================================================================
 	*/
@@ -85,6 +103,24 @@ public interface IServiceManager {
 	 * @throws NotImplementedException Exception thrown when the method is not implemented
 	 */
 	public IAccordoServizioParteComuneServiceSearch getAccordoServizioParteComuneServiceSearch() throws ServiceException,NotImplementedException;
+	
+	
+	
+	
+	/*
+	 =====================================================================================================================
+	 Services relating to the object with name:accordo-servizio-parte-comune-gruppo type:accordo-servizio-parte-comune-gruppo
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	public IAccordoServizioParteComuneGruppoServiceSearch getAccordoServizioParteComuneGruppoServiceSearch() throws ServiceException,NotImplementedException;
 	
 	
 	

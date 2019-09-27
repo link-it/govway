@@ -21,8 +21,8 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
+import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroTemporale;
-import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
 import org.openspcoop2.core.monitor.rs.server.model.UnitaTempoReportEnum;
 import javax.validation.constraints.*;
 
@@ -39,7 +39,10 @@ public class RicercaBaseStatistica  {
   private FiltroTemporale intervalloTemporale = null;
   
   @Schema(required = true, description = "")
-  private TransazioneRuoloEnum tipo = null;
+  private FiltroRicercaRuoloTransazioneEnum tipo = null;
+  
+  @Schema(description = "")
+  private String tag = null;
  /**
    * Get unitaTempo
    * @return unitaTempo
@@ -86,16 +89,35 @@ public class RicercaBaseStatistica  {
   @JsonProperty("tipo")
   @NotNull
   @Valid
-  public TransazioneRuoloEnum getTipo() {
+  public FiltroRicercaRuoloTransazioneEnum getTipo() {
     return this.tipo;
   }
 
-  public void setTipo(TransazioneRuoloEnum tipo) {
+  public void setTipo(FiltroRicercaRuoloTransazioneEnum tipo) {
     this.tipo = tipo;
   }
 
-  public RicercaBaseStatistica tipo(TransazioneRuoloEnum tipo) {
+  public RicercaBaseStatistica tipo(FiltroRicercaRuoloTransazioneEnum tipo) {
     this.tipo = tipo;
+    return this;
+  }
+
+ /**
+   * Get tag
+   * @return tag
+  **/
+  @JsonProperty("tag")
+  @Valid
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getTag() {
+    return this.tag;
+  }
+
+  public void setTag(String tag) {
+    this.tag = tag;
+  }
+
+  public RicercaBaseStatistica tag(String tag) {
+    this.tag = tag;
     return this;
   }
 
@@ -108,6 +130,7 @@ public class RicercaBaseStatistica  {
     sb.append("    unitaTempo: ").append(RicercaBaseStatistica.toIndentedString(this.unitaTempo)).append("\n");
     sb.append("    intervalloTemporale: ").append(RicercaBaseStatistica.toIndentedString(this.intervalloTemporale)).append("\n");
     sb.append("    tipo: ").append(RicercaBaseStatistica.toIndentedString(this.tipo)).append("\n");
+    sb.append("    tag: ").append(RicercaBaseStatistica.toIndentedString(this.tag)).append("\n");
     sb.append("}");
     return sb.toString();
   }

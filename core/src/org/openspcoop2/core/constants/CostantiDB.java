@@ -57,6 +57,7 @@ public final class CostantiDB {
     /*REGSERV*/
     public static final String PROTOCOL_PROPERTIES = "protocol_properties";
     public static final String PDD = "pdd";
+    public static final String GRUPPI	= "gruppi";
     public static final String RUOLI	= "ruoli";
     public static final String SCOPE	= "scope";
     public static final String SOGGETTI_RUOLI = "soggetti_ruoli";
@@ -75,6 +76,7 @@ public final class CostantiDB {
     public static final String API_RESOURCES_RESPONSE = "api_resources_response";
     public static final String API_RESOURCES_MEDIA = "api_resources_media";
     public static final String API_RESOURCES_PARAMETER = "api_resources_parameter";
+    public static final String ACCORDI_GRUPPI = "accordi_gruppi";
     public static final String CONNETTORI_PROPERTIES = "connettori_properties";
     public static final String DOCUMENTI = "documenti";
     public static final String ACCORDI_SERVIZI_COMPOSTO = "acc_serv_composti";

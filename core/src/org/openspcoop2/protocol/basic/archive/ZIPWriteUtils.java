@@ -53,6 +53,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
@@ -71,6 +72,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica
 import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
+import org.openspcoop2.protocol.sdk.archive.ArchiveGruppo;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
@@ -302,6 +304,19 @@ public class ZIPWriteUtils {
 					PortaDominio pdd = archivePdd.getPortaDominio();
 					this.cleanerOpenSPCoop2ExtensionsRegistry.clean(pdd);
 					write(zipOut, "PortaDominio", archivePdd.getNomePdd(), SerializationType.REGISTRY, pdd);
+				}
+			}
+
+			// gruppi
+			if(archive.getGruppi()!=null && archive.getGruppi().size()>0){
+				for (int i = 0; i < archive.getGruppi().size(); i++) {
+					ArchiveGruppo archiveGruppo = archive.getGruppi().get(i);
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_GRUPPI_DIR+File.separatorChar+
+							ZIPUtils.convertNameToSistemaOperativoCompatible(archiveGruppo.getIdGruppo().getNome())+".xml";
+					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
+					Gruppo gruppo = archiveGruppo.getGruppo();
+					this.cleanerOpenSPCoop2ExtensionsRegistry.clean(gruppo);
+					write(zipOut, "Gruppo", archiveGruppo.getIdGruppo().getNome(), SerializationType.REGISTRY, gruppo);
 				}
 			}
 			

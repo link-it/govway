@@ -36,6 +36,7 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
@@ -50,6 +51,8 @@ import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.Gruppo;
+import org.openspcoop2.core.registry.GruppoAccordo;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
@@ -70,6 +73,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAzioni;
 import org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio;
+import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
 import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
 import org.openspcoop2.core.registry.driver.FiltroRicercaResources;
@@ -667,6 +671,20 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 							continue;
 						}
 					}
+					if(filtroRicercaBase.getIdGruppo()!=null && filtroRicercaBase.getIdGruppo().getNome()!=null){
+						boolean found = false;
+						if(as.getGruppi()!=null && as.getGruppi().sizeGruppoList()>0) {
+							for (GruppoAccordo gruppo : as.getGruppi().getGruppoList()) {
+								if(gruppo.getNome().equals(filtroRicercaBase.getIdGruppo().getNome())) {
+									found = true;
+									break;
+								}
+							}
+						}
+						if(!found) {
+							continue;
+						}
+					}
 					
 					if(filtroRicercaBase.getIdAccordoCooperazione()!=null &&
 							(filtroRicercaBase.getIdAccordoCooperazione().getNome()!=null || 
@@ -1012,6 +1030,197 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 				throw new DriverRegistroServiziException("getAllIdPorteDominio error",e);
 		}
 	}
+	
+	
+	
+	
+	/* Gruppi */
+	
+	/**
+	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Gruppo}, 
+	 * identificato grazie al parametro 
+	 * <var>nome</var> 
+	 *
+	 * @param idGruppo Identificativo del gruppo
+	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Gruppo}.
+	 * 
+	 */
+	@Override
+	public Gruppo getGruppo(
+			IDGruppo idGruppo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		if(idGruppo==null || idGruppo.getNome()==null)
+			throw new DriverRegistroServiziException("[getGruppo] Parametro Non Valido");
+
+		//		 controllo inizializzazione UDDI
+		if(this.uddiLib.create == false){
+			throw new DriverRegistroServiziException("[getGruppo] Inizializzazione dell'engine UDDI errata");
+		}
+		
+		//		 Controllo pre-esistenza del gruppo
+		if( this.uddiLib.existsGruppo(idGruppo.getNome()) == false){
+			throw new DriverRegistroServiziNotFound("[getGruppo] Gruppo richiesto non esiste: "+idGruppo.getNome());
+		} 
+		
+		org.openspcoop2.core.registry.Gruppo gruppoRichiesto = null;
+
+		// Ottengo URL XML associato al gruppo
+		String urlXMLGruppo = this.uddiLib.getUrlXmlGruppo(idGruppo.getNome());
+		if(urlXMLGruppo == null){
+			throw new DriverRegistroServiziException("[getGruppo] definzione XML non disponibile");
+		}
+
+		// Ottengo oggetto PortaDominio
+		ByteArrayInputStream bin = null;
+		try{
+			byte[] fileXML = null;
+			try{
+				fileXML = HttpUtilities.requestHTTPFile(urlXMLGruppo);
+			}catch(UtilsException e){
+				// Controllo pre-esistenza dell'accordo
+				if( "404".equals(e.getMessage()) ){
+					throw new DriverRegistroServiziNotFound("[getGruppo] Gruppo richiesto non esiste nel repository http: "+idGruppo.getNome());
+				} else
+					throw e;
+			}
+			
+			/* --- Validazione XSD (ora che sono sicuro che non ho un 404) -- */
+			try{
+				this.validatoreRegistro.valida(urlXMLGruppo);  
+			}catch (Exception e) {
+				throw new DriverRegistroServiziException("[getGruppo] Riscontrato errore durante la validazione XSD del Gruppo ("+idGruppo.getNome()+"): "+e.getMessage(),e);
+			}
+			
+			// parsing
+			bin = new ByteArrayInputStream(fileXML);
+			org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer deserializer = new org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer();
+			org.openspcoop2.core.registry.RegistroServizi rs = 
+				(org.openspcoop2.core.registry.RegistroServizi) deserializer.readRegistroServizi(bin);
+			if(rs.sizeGruppoList()>0)
+				gruppoRichiesto = rs.getGruppo(0);
+			bin.close();
+		}catch(Exception e){
+			try{
+				if(bin!=null)
+					bin.close();
+			} catch(Exception eis) {}
+			if(e instanceof DriverRegistroServiziNotFound)
+				throw (DriverRegistroServiziNotFound)e;
+			else
+				throw new DriverRegistroServiziException("[getGruppo] Errore durante il parsing xml del Gruppo ("+idGruppo.getNome()+"): "+e.getMessage(),e);
+		}
+
+		if(gruppoRichiesto==null)
+			throw new DriverRegistroServiziNotFound("[getGruppo] Gruppo ["+idGruppo.getNome()+"] non trovato.");
+		
+		return gruppoRichiesto;
+	}
+
+	/**
+	 * Ritorna gli identificatori dei Gruppi che rispettano il parametro di ricerca
+	 * 
+	 * @param filtroRicerca
+	 * @return Una lista di ID dei gruppi trovati
+	 * @throws DriverRegistroServiziException
+	 * @throws DriverRegistroServiziNotFound
+	 */
+	@Override
+	public List<IDGruppo> getAllIdGruppi(
+			FiltroRicercaGruppi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		try{
+
+			// Ricerca UDDI delle porte di dominio
+			/*if(this.urlPrefix==null){
+				throw new DriverRegistroServiziException("[getAllIdPorteDominio] Implementazione non eseguibile se il driver non viene inizializzato con urlPrefix.");
+			}*/
+			
+			String nomeFiltro = null;
+			if(filtroRicerca!=null)
+				nomeFiltro = filtroRicerca.getNome();
+			String [] urlXMLGruppi = this.uddiLib.getUrlXmlGruppo(nomeFiltro,this.urlPrefix);
+			
+			// Esamina dei Gruppi
+			List<IDGruppo> idGruppi = new ArrayList<IDGruppo>();
+			for(int i=0; i<urlXMLGruppi.length; i++){
+				org.openspcoop2.core.registry.Gruppo gruppo = null;
+				
+				/* --- Validazione XSD -- */
+				try{
+					this.validatoreRegistro.valida(urlXMLGruppi[i]);  
+				}catch (Exception e) {
+					throw new DriverRegistroServiziException("[getAllIdGruppi] Riscontrato errore durante la validazione XSD ("+urlXMLGruppi[i]+"): "+e.getMessage(),e);
+				}
+				
+				// Ottengo oggetto Porta di dominio
+				ByteArrayInputStream bin = null;
+				try{
+					byte[] fileXML = HttpUtilities.requestHTTPFile(urlXMLGruppi[i]);
+					bin = new ByteArrayInputStream(fileXML);
+					org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer deserializer = new org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer();
+					org.openspcoop2.core.registry.RegistroServizi rs = 
+						(org.openspcoop2.core.registry.RegistroServizi) deserializer.readRegistroServizi(bin);
+					if(rs.sizeGruppoList()>0)
+						gruppo = rs.getGruppo(0);
+					bin.close();
+				}catch(Exception e){
+					try{
+						if(bin!=null)
+							bin.close();
+					} catch(Exception eis) {}
+					throw new DriverRegistroServiziException("[getAllIdGruppi] Errore durante il parsing xml ("+urlXMLGruppi[i]+"): "+e.getMessage(),e);
+				}
+				if(gruppo==null)
+					throw new DriverRegistroServiziException("[getAllIdGruppi] Gruppo non definito per la url ["+urlXMLGruppi[i]+"]");
+				
+				if(filtroRicerca!=null){
+					// Filtro By Data
+					if(filtroRicerca.getMinDate()!=null){
+						if(gruppo.getOraRegistrazione()==null){
+							this.log.debug("[getAllIdGruppi](FiltroByMinDate) Gruppo ["+gruppo.getNome()+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
+							continue;
+						}else if(gruppo.getOraRegistrazione().before(filtroRicerca.getMinDate())){
+							continue;
+						}
+					}
+					if(filtroRicerca.getMaxDate()!=null){
+						if(gruppo.getOraRegistrazione()==null){
+							this.log.debug("[getAllIdGruppi](FiltroByMaxDate) Gruppo ["+gruppo.getNome()+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
+							continue;
+						}else if(gruppo.getOraRegistrazione().after(filtroRicerca.getMaxDate())){
+							continue;
+						}
+					}
+					// Filtro By Nome
+					if(filtroRicerca.getNome()!=null){
+						if(gruppo.getNome().equals(filtroRicerca.getNome()) == false){
+							continue;
+						}
+					}
+					// Filtro By ServiceBinding
+					if(filtroRicerca.getServiceBinding()!=null){
+						if(gruppo.getServiceBinding()!=null){ // se e' uguale a null significa che va bene per qualsiasi service binding
+							if(gruppo.getServiceBinding().equals(filtroRicerca.getServiceBinding()) == false) {
+								continue;
+							}
+						}
+					}
+				}
+				IDGruppo id = new IDGruppo(gruppo.getNome());
+				idGruppi.add(id);
+			}
+			if(idGruppi.size()==0){
+				throw new DriverRegistroServiziNotFound("Gruppi non trovati che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
+			}else{
+				return idGruppi;
+			}
+		}catch(Exception e){
+			if(e instanceof DriverRegistroServiziNotFound)
+				throw (DriverRegistroServiziNotFound)e;
+			else
+				throw new DriverRegistroServiziException("getAllIdGruppi error",e);
+		}
+	}
+	
+	
 	
 	
 	
@@ -2741,6 +2950,180 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			throw new DriverRegistroServiziException("[deletePortaDominio] Errore generatosi durante l'eliminazione della porta di dominio ["+pdd.getNome()+"]: "+e.getMessage(),e);
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * Crea una nuovo Gruppo
+	 * 
+	 * @param gruppo
+	 * @throws DriverRegistroServiziException
+	 */
+	@Override
+	public void createGruppo(Gruppo gruppo) throws DriverRegistroServiziException{
+		if( gruppo == null)
+			throw new DriverRegistroServiziException("[createGruppo] Parametro Non Valido");
+		
+		try {
+
+			// controllo inizializzazione UDDI
+			if(this.uddiLib.create == false){
+				throw new DriverRegistroServiziException("Inizializzazione dell'engine UDDI errata");
+			}
+
+			// Controllo elementi obbligatori
+			if( (gruppo.getNome() == null) ){
+				throw new DriverRegistroServiziException("Gruppo non completamente definito nei parametri obbligatori");
+			}
+
+			// Controllo pre-esistenza del gruppo
+			if( this.uddiLib.existsGruppo(gruppo.getNome()) == true){
+				throw new DriverRegistroServiziException("Il gruppo ["+gruppo.getNome()
+				+"] risulta gia' inserito nel registro dei servizi.");
+			} 
+
+			// Generazione XML
+			this.generatoreXML.createGruppo(gruppo.getNome(),gruppo);
+				
+			// Registrazione nel registro UDDI.
+			String urlXML = this.urlPrefix + CostantiXMLRepository.GRUPPI + CostantiRegistroServizi.URL_SEPARATOR + gruppo.getNome()  + ".xml";
+			this.uddiLib.createGruppo(gruppo.getNome(),urlXML);
+
+		}catch (Exception e) {
+			throw new DriverRegistroServiziException("[createGruppo] Errore generatosi durante la creazione di un nuovo gruppo ["+gruppo.getNome()+"]: "+e.getMessage(),e);
+		}
+	}
+	
+	/**
+     * Verifica l'esistenza di un Gruppo
+     *
+     * @param idGruppo idGruppo del gruppo da verificare
+     * @return true se il gruppo esiste, false altrimenti
+	 * @throws DriverRegistroServiziException
+     */    
+	@Override
+	public boolean existsGruppo(IDGruppo idGruppo) throws DriverRegistroServiziException{
+    	if( idGruppo == null || idGruppo.getNome()==null)
+			return false;
+    	
+    	try{
+    		return this.uddiLib.existsGruppo(idGruppo.getNome());
+    	}catch(Exception e){
+    		this.log.error("[existsGruppo] Gruppo non trovato: "+e.getMessage(),e);
+    		return false;
+    	}
+    }
+	
+	/**
+	 * Aggiorna il Gruppo con i nuovi valori.
+	 *  
+	 * @param gruppo
+	 * @throws DriverRegistroServiziException
+	 */
+	@Override
+	public void updateGruppo(Gruppo gruppo) throws DriverRegistroServiziException{
+		if( gruppo == null)
+			throw new DriverRegistroServiziException("[updateGruppo] Parametro Non Valido");
+		
+		IDGruppo idGruppoOLD = null;
+		//idGruppoOLD = gruppo.getOldIDGruppoForUpdate();
+		//if(idGruppoOLD==null)
+		idGruppoOLD = new IDGruppo(gruppo.getNome());
+		
+		try {
+
+			// controllo inizializzazione UDDI
+			if(this.uddiLib.create == false){
+				throw new DriverRegistroServiziException("Inizializzazione dell'engine UDDI errata");
+			}
+
+			// Controllo  del gruppo da Modificare
+			if(idGruppoOLD==null || idGruppoOLD.getNome()==null){
+				throw new DriverRegistroServiziException("Gruppo da modificare non definito");
+			}
+
+			// Controllo elementi obbligatori del gruppo modificato
+			if( (gruppo.getNome() == null) ){
+				throw new DriverRegistroServiziException("Gruppo modificato non completamente definita nei parametri obbligatori");
+			}
+
+			// Controllo pre-esistenza del gruppo da modificare
+			if( this.uddiLib.existsGruppo(idGruppoOLD.getNome()) == false){
+				throw new DriverRegistroServiziException("Il Gruppo ["+idGruppoOLD
+				+"] non risulta gia' inserita nel registro dei servizi.");
+			} 
+
+			// Controllo non esistenza della nuova identita del gruppo (se da modificare)
+			IDGruppo idGruppoNEW = new IDGruppo(gruppo.getNome());
+			if(idGruppoOLD.equals(idGruppoNEW) == false){
+				if( this.uddiLib.existsGruppo(idGruppoNEW.getNome()) == true){
+					throw new DriverRegistroServiziException("Il Gruppo ["+idGruppoNEW
+					+"] risulta gia' inserita nel registro dei servizi.");
+				} 
+			}
+
+			// Ri-Generazione XML
+			this.generatoreXML.createGruppo(idGruppoOLD.getNome(),gruppo);
+			
+			// Modifica UDDI
+			if(idGruppoOLD.equals(idGruppoNEW) == false){
+				String urlXML = this.urlPrefix + CostantiXMLRepository.GRUPPI + CostantiRegistroServizi.URL_SEPARATOR + idGruppoNEW  + ".xml";
+				this.uddiLib.updateGruppo(idGruppoOLD.getNome(),idGruppoNEW.getNome(),urlXML);
+			}
+
+		}catch (Exception e) {
+			throw new DriverRegistroServiziException("[updateGruppo] Errore generatosi durante la modifica del gruppo ["+idGruppoOLD+"]: "+e);
+		}
+	}
+	
+	/**
+	 * Elimina un Gruppo
+	 *  
+	 * @param gruppo
+	 * @throws DriverRegistroServiziException
+	 */
+	@Override
+	public void deleteGruppo(Gruppo gruppo) throws DriverRegistroServiziException{
+		if( gruppo == null)
+			throw new DriverRegistroServiziException("[deleteGruppo] Parametro Non Valido");
+				
+		try {
+			// controllo inizializzazione UDDI
+			if(this.uddiLib.create == false){
+				throw new DriverRegistroServiziException("Inizializzazione dell'engine UDDI errata");
+			}
+		
+			// Controllo id del gruppo
+			if(gruppo.getNome()==null){
+				throw new DriverRegistroServiziException("Gruppo da eliminare non definito");
+			}
+
+			// Controllo pre-esistenza del gruppo da eliminare
+			if( this.uddiLib.existsGruppo(gruppo.getNome()) == false){
+				throw new DriverRegistroServiziException("Il Gruppo ["+gruppo.getNome()
+				+"] non risulta gia' inserita nel registro dei servizi.");
+			} 
+
+			// Delete from Repository
+			this.generatoreXML.deleteGruppo(gruppo.getNome());
+				
+			// Delete from UDDI
+			this.uddiLib.deleteGruppo(gruppo.getNome());
+			
+		}catch (Exception e) {
+			throw new DriverRegistroServiziException("[deleteGruppo] Errore generatosi durante l'eliminazione del gruppo ["+gruppo.getNome()+"]: "+e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	
 	
 	
 	

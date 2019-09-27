@@ -24,6 +24,7 @@ package org.openspcoop2.core.monitor.rs.server.api.impl.utils;
 
 import org.joda.time.DateTime;
 import org.openspcoop2.core.monitor.rs.server.config.ServerProperties;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -72,14 +73,8 @@ public class SearchFormUtilities {
 		return user;
 	}
 	
-	private void initBaseInfo(BaseSearchForm searchForm, IContext context, ProfiloEnum profilo, String soggetto, TransazioneRuoloEnum ruolo) throws Exception {
-		searchForm.setUser(this.getUtente(context));
-		String protocollo = Converter.toProtocollo(profilo);
-		searchForm.setProtocollo(protocollo);
-		String tipoSoggettoLocale = this.protocolFactoryManager.getDefaultOrganizationTypes().get(protocollo);
-		String nomeSoggettoLocale = soggetto!=null ? soggetto : this.serverProperties.getSoggettoDefault(protocollo);
-		searchForm.setTipoNomeSoggettoLocale(tipoSoggettoLocale+"/"+nomeSoggettoLocale);
-		searchForm.saveProtocollo();
+	private void initBaseInfo(BaseSearchForm searchForm, IContext context, ProfiloEnum profilo, String soggetto, FiltroRicercaRuoloTransazioneEnum ruolo) throws Exception {
+		this.initBaseInfo(searchForm, context, profilo, soggetto);
 		if(ruolo!=null) {
 			switch (ruolo) {
 			case FRUIZIONE:
@@ -88,11 +83,24 @@ public class SearchFormUtilities {
 			case EROGAZIONE:
 				searchForm.setTipologiaRicerca(TipologiaRicerca.ingresso);	
 				break;
+			case QUALSIASI:
+				searchForm.setTipologiaRicerca(TipologiaRicerca.all);	
+				break;
 			}
 		}
 	}
 	
-	public HttpRequestWrapper getHttpRequestWrapper(IContext context, ProfiloEnum profilo, String soggetto, TransazioneRuoloEnum ruolo, 
+	private void initBaseInfo(BaseSearchForm searchForm, IContext context, ProfiloEnum profilo, String soggetto) throws Exception {
+		searchForm.setUser(this.getUtente(context));
+		String protocollo = Converter.toProtocollo(profilo);
+		searchForm.setProtocollo(protocollo);
+		String tipoSoggettoLocale = this.protocolFactoryManager.getDefaultOrganizationTypes().get(protocollo);
+		String nomeSoggettoLocale = soggetto!=null ? soggetto : this.serverProperties.getSoggettoDefault(protocollo);
+		searchForm.setTipoNomeSoggettoLocale(tipoSoggettoLocale+"/"+nomeSoggettoLocale);
+		searchForm.saveProtocollo();
+	}
+	
+	public HttpRequestWrapper getHttpRequestWrapper(IContext context, ProfiloEnum profilo, String soggetto, FiltroRicercaRuoloTransazioneEnum ruolo, 
 			FormatoReportEnum formato, TipoReport tipo) throws Exception {
 		HttpRequestWrapper request = new HttpRequestWrapper(context.getServletRequest());
 		request.overrideParameter(CostantiExporter.TIPO_DISTRIBUZIONE, tipo.getValue());
@@ -108,6 +116,9 @@ public class SearchFormUtilities {
 				break;
 			case EROGAZIONE:
 				request.overrideParameter(CostantiExporter.TIPOLOGIA,CostantiExporter.TIPOLOGIA_EROGAZIONE);
+				break;
+			case QUALSIASI:
+				request.overrideParameter(CostantiExporter.TIPOLOGIA,CostantiExporter.TIPOLOGIA_EROGAZIONE_FRUIZIONE);
 				break;
 			}
 		}
@@ -132,8 +143,24 @@ public class SearchFormUtilities {
 		}
 		return request;
 	}
+	public HttpRequestWrapper getHttpRequestWrapper(IContext context, ProfiloEnum profilo, String soggetto, TransazioneRuoloEnum ruolo, 
+			FormatoReportEnum formato, TipoReport tipo) throws Exception {
+		FiltroRicercaRuoloTransazioneEnum ruoloNull = null;
+		HttpRequestWrapper wrapper = getHttpRequestWrapper(context, profilo, soggetto, ruoloNull, formato, tipo);
+		if(ruolo!=null) {
+			switch (ruolo) {
+			case FRUIZIONE:
+				wrapper.overrideParameter(CostantiExporter.TIPOLOGIA,CostantiExporter.TIPOLOGIA_FRUIZIONE);
+				break;
+			case EROGAZIONE:
+				wrapper.overrideParameter(CostantiExporter.TIPOLOGIA,CostantiExporter.TIPOLOGIA_EROGAZIONE);
+				break;
+			}
+		}
+		return wrapper;
+	}
 	
-	public TransazioniSearchForm getAndamentoTemporaleSearchForm(IContext context, ProfiloEnum profilo, String soggetto, TransazioneRuoloEnum ruolo,
+	public TransazioniSearchForm getAndamentoTemporaleSearchForm(IContext context, ProfiloEnum profilo, String soggetto, FiltroRicercaRuoloTransazioneEnum ruolo,
 			DateTime dataInizio, DateTime dataFine) throws Exception {
 		TransazioniSearchForm searchForm = new TransazioniSearchForm();
 		initBaseInfo(searchForm, context, profilo, soggetto, ruolo);
@@ -161,7 +188,7 @@ public class SearchFormUtilities {
 		return searchForm;
 	}
 	
-	public TransazioniSearchForm getIdApplicativoSearchForm(IContext context, ProfiloEnum profilo, String soggetto, TransazioneRuoloEnum ruolo,
+	public TransazioniSearchForm getIdApplicativoSearchForm(IContext context, ProfiloEnum profilo, String soggetto, FiltroRicercaRuoloTransazioneEnum ruolo,
 			DateTime dataInizio, DateTime dataFine) throws Exception {
 		TransazioniSearchForm searchForm = new TransazioniSearchForm();
 		initBaseInfo(searchForm, context, profilo, soggetto, ruolo);
@@ -175,7 +202,7 @@ public class SearchFormUtilities {
 	
 	public ConfigurazioniGeneraliSearchForm getConfigurazioniGeneraliSearchForm(IContext context, ProfiloEnum profilo, String soggetto, TransazioneRuoloEnum ruolo) throws Exception {
 		ConfigurazioniGeneraliSearchForm searchForm = new ConfigurazioniGeneraliSearchForm();
-		initBaseInfo(searchForm, context, profilo, soggetto, ruolo);
+		initBaseInfo(searchForm, context, profilo, soggetto);
 		if(ruolo!=null) {
 			switch (ruolo) {
 			case FRUIZIONE:

@@ -16,7 +16,7 @@
 					(sf_bean.periodo == 'Live') 
 					or 
 					(
-						(sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo') 
+						(sf_bean.showRicercaPanel) 
 						and 
 						( 
 							sf_bean.showListaProtocolli 
@@ -25,7 +25,7 @@
 							or
 							(applicationBean.user and !applicationBean.amministratore and sf_bean.showFiltroSoggettoLocale)
 							or
-							(appInfo.transazioni_im_enabled and sf_bean.modalitaRicercaStorico == 'intervalloTemporale')
+							(sf_bean.integrationManagerEnabled and sf_bean.modalitaRicercaStorico == 'intervalloTemporale')
 							or
 							sf_bean.tipoRicercaSPCoop != 'im'
 							or
@@ -41,7 +41,7 @@
 			<h:inputHidden value="#{sf_mbean.tipoStorico}" rendered="#{sf_bean.periodo != 'Live'}"/>
 			
 			<a4j:outputPanel id="panelProtocollo" layout="block" 
-				rendered="#{sf_bean.showListaProtocolli and (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo')}" >
+				rendered="#{sf_bean.showListaProtocolli and sf_bean.showRicercaPanel}" >
 				<link:prop label="#{applicationBean.labelProfilo}">
 					<rich:comboBox id="protocolloCombo" value="#{sf_bean.protocollo}" converter="selectItemConverter" 
 						defaultLabel="Seleziona #{applicationBean.labelProfilo}" directInputSuggestions="true" width="416" enableManualInput="false">
@@ -51,7 +51,7 @@
 				</link:prop>
 			</a4j:outputPanel>
 			
-			<a4j:outputPanel id="panelSoggettoLocale" layout="block" rendered="#{(applicationBean.amministratore and sf_bean.showFiltroSoggettoLocale) and (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo') }">
+			<a4j:outputPanel id="panelSoggettoLocale" layout="block" rendered="#{(applicationBean.amministratore and sf_bean.showFiltroSoggettoLocale) and (sf_bean.showRicercaPanel) }">
 				<c:if test="#{not sf_bean.visualizzaFiltroSoggettiSelectList}">
 					<link:prop label="#{msg['transazioni.search.soggettoLocale']}">
 						<h:inputText id="sogLocaleInput" value="#{sf_labelSoggettoLocale}" styleClass="inputLinkLong"/>
@@ -83,7 +83,7 @@
 					</link:prop>
    				</c:if>
 			</a4j:outputPanel>
-			<a4j:outputPanel id="panelSoggettoLocaleNonAmministratore" layout="block" rendered="#{(applicationBean.user and !applicationBean.amministratore and sf_bean.showFiltroSoggettoLocale) and (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo') }">
+			<a4j:outputPanel id="panelSoggettoLocaleNonAmministratore" layout="block" rendered="#{(applicationBean.user and !applicationBean.amministratore and sf_bean.showFiltroSoggettoLocale) and (sf_bean.showRicercaPanel) }">
 				<link:prop label="#{msg['transazioni.search.soggettoLocale']}">
 					<rich:comboBox width="416" id="sogLocaleSuggestion"  converter="selectItemConverter"
 									value="#{sf_soggettoLocale}" listWidth="#{sf_mbean.soggettiAssociatiSelectItemsWidth}"
@@ -101,10 +101,10 @@
 				</h:panelGroup>
 			</a4j:outputPanel>
 			
-			<a4j:outputPanel id="panelFunzionePorta" layout="block" rendered="#{appInfo.transazioni_im_enabled and sf_bean.modalitaRicercaStorico == 'intervalloTemporale'}">
+			<a4j:outputPanel id="panelFunzionePorta" layout="block" rendered="#{sf_bean.integrationManagerEnabled and sf_bean.modalitaRicercaStorico == 'intervalloTemporale'}">
 				<link:prop label="Funzione Gateway">
 					<rich:comboBox id="tipologiaTransazioneCombo" value="#{sf_bean.tipoRicercaSPCoop}" defaultLabel="Seleziona Funzione Gateway" converter="selectItemConverter"
-							width="416" rendered="#{appInfo.transazioni_im_enabled}" enableManualInput="false">
+							width="416" rendered="#{sf_bean.integrationManagerEnabled}" enableManualInput="false">
 						<f:selectItem itemLabel="Proxy Trasparente" itemValue="spcoop" />
 						<f:selectItem itemLabel="Integration Manager" itemValue="im" />
 						<f:selectItem itemLabel="Entrambe" itemValue="all" />
@@ -114,7 +114,7 @@
 			</a4j:outputPanel>
 
 			<a4j:outputPanel id="panelTipo" layout="block"
-				rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo')}" >
+				rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and (sf_bean.showRicercaPanel)}" >
 				<link:prop label="Tipo">
 					<rich:comboBox id="tipologiaCombo" value="#{sf_tipologiaRicerca}" defaultLabel="Seleziona Tipologia" converter="selectItemConverter"
 							width="416" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
@@ -124,7 +124,7 @@
 				</link:prop>
 			</a4j:outputPanel>
 			
-			<a4j:outputPanel id="panelIdCluster" layout="block" rendered="#{sf_bean.visualizzaIdCluster and (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo')}">
+			<a4j:outputPanel id="panelIdCluster" layout="block" rendered="#{sf_bean.visualizzaIdCluster and (sf_bean.showRicercaPanel)}">
 				<link:prop label="ID Cluster">
 					<h:inputText id="idCluster" value="#{sf_bean.clusterId}" styleClass="inputLinkLong" rendered="#{sf_bean.visualizzaIdClusterAsSelectList == false}"/>
 					<rich:comboBox id="idClusterCombo" value="#{sf_bean.clusterId}"
@@ -138,10 +138,10 @@
 			</a4j:outputPanel>
 			
 			<a4j:outputPanel id="filtriRicercaTemporale" layout="block" 
-				rendered="#{sf_bean.periodo != 'Live' and (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo')}">
+				rendered="#{sf_bean.periodo != 'Live' and (sf_bean.showRicercaPanel)}">
 			
 				<div class="subtitle">
-					<h:outputText id="idTemporale" value="Filtro Temporale" styleClass="subtitle"/>
+					<h:outputText id="idTemporale" value="#{msg['transazioni.search.sezioneFiltroTemporale.label']}" styleClass="subtitle"/>
 				</div>
 			
 				<link:prop label="Periodo" rendered="#{sf_bean.periodo != 'Live'}" labelId="labelPeriodoCombo">
@@ -183,7 +183,7 @@
 			</a4j:outputPanel>
 			
 			<a4j:outputPanel id="filtriRicercaServizio" layout="block" 
-				rendered="#{sf_bean.periodo == 'Live' or (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo')}">
+				rendered="#{sf_bean.periodo == 'Live' or (sf_bean.showRicercaPanel and sf_bean.modalitaRicercaStorico != 'ricercaLibera')}">
 
 				<div class="subtitle">
 					<h:outputText id="idDatiServizio" value="#{msg['transazioni.search.sezioneFiltroDatiServizio.label']}" styleClass="subtitle"/>
@@ -208,6 +208,18 @@
 					<ui:param name="sf_labelNomeDestinatario" value="#{sf_labelNomeDestinatario}" />
 					<ui:param name="sf_labelTrafficoPerSoggetto" value="#{sf_labelTrafficoPerSoggetto}" />
 			 	</ui:include>
+		
+				<a4j:outputPanel layout="block" id="gruppoComboCtr">
+					<ui:include src="/transazioni/includes/searchFormFiltroGruppi.xhtml">
+						<ui:param name="outOfRegionToRefresh" value="#{outOfRegionToRefresh}"/>
+						<ui:param name="sf_gruppo" value="#{sf_gruppo}" />
+						<ui:param name="sf_gruppi" value="#{sf_gruppi}" />
+						<ui:param name="sf_tipologiaRicerca" value="#{sf_tipologiaRicerca}" />
+						<ui:param name="sf_bean" value="#{sf_bean}" />
+						<ui:param name="sf_mbean" value="#{sf_mbean}" />
+						<ui:param name="sf_labelGruppo" value="#{sf_labelGruppo}" />
+				 	</ui:include>
+				</a4j:outputPanel>
 	
 				<a4j:outputPanel layout="block" id="servizioComboCtr">
 					<ui:include src="/transazioni/includes/searchFormFiltroServizio.xhtml">
@@ -246,15 +258,63 @@
 				</a4j:outputPanel>
 				
 			</a4j:outputPanel>
-			
-			<a4j:outputPanel id="filtriRicercaDatiMittente" layout="block" 
-				rendered="#{sf_bean.periodo == 'Live' or (sf_bean.modalitaRicercaStorico == 'intervalloTemporale')}">
+						
+			<a4j:outputPanel id="filtriRicercaTransazione" layout="block" 
+				rendered="#{sf_bean.periodo == 'Live' or (sf_bean.showRicercaPanel)}">
 					
 				<div class="subtitle">
-					<h:outputText id="idDatiMittente" value="Filtro Dati Mittente" styleClass="subtitle"/>
+					<h:outputText id="idDatiTransazione" value="#{msg['transazioni.search.sezioneFiltroEsito.label']}" styleClass="subtitle"/>
+				</div>	
+							
+				<link:prop label="Esito">
+					<rich:comboBox id="esitoGruppoCombo" value="#{sf_bean.esitoGruppo}"
+						defaultLabel="Seleziona esito" directInputSuggestions="true"
+						width="416" converter="selectItemConverter" enableManualInput="false">
+						<f:selectItems value="#{sf_bean.esitiGruppo}"/>
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true" />
+					</rich:comboBox>
+				</link:prop>
+				
+				<link:prop label="Dettaglio Esito" rendered="#{sf_bean.showDettaglio}">
+					<rich:comboBox id="esitoDettaglioCombo" value="#{sf_bean.esitoDettaglio}"
+						defaultLabel="Seleziona dettaglio esito" directInputSuggestions="true"
+						width="416" converter="selectItemConverter" enableManualInput="false">
+						<f:selectItems value="#{sf_bean.esitiDettaglio}"/>
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
+					</rich:comboBox>
+				</link:prop>			
+				<link:prop label="Dettaglio Esito" rendered="#{sf_bean.showDettaglioPersonalizzato}">
+					<h:selectManyListbox id="esitoDettaglioManyListbox" value="#{sf_bean.esitoDettaglioPersonalizzato}" style="width:416px;" size="5">
+						<f:selectItems value="#{sf_bean.esitiDettagliPersonalizzati}"/>
+					</h:selectManyListbox>
+				</link:prop>
+				
+				<link:prop label="Contesto" rendered="#{sf_bean.showEsitiContesto}">
+					<rich:comboBox id="esitoContestoCombo" value="#{sf_bean.esitoContesto}"
+						defaultLabel="Seleziona contesto" directInputSuggestions="true"
+						width="416" converter="selectItemConverter" enableManualInput="false">
+						<f:selectItems value="#{sf_bean.esitiContesto}"/>
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
+					</rich:comboBox>
+				</link:prop>
+			
+				<link:prop label="Evento" rendered="#{applicationBean.showEventi}">
+						<h:inputText id="evento" value="#{sf_bean.evento}"  styleClass="inputLinkLong">
+							<rich:hotKey key="return" handler="#{rich:element('evento')}.change()" selector="#evento" rendered="#{sf_bean.periodo eq 'Live'}" />
+							<a4j:support event="onchange" rendered="#{sf_bean.periodo eq 'Live'}" limitToList="true"/>
+						</h:inputText>
+				</link:prop>
+							
+			</a4j:outputPanel>
+			
+			<a4j:outputPanel id="filtriRicercaDatiMittente" layout="block" 
+				rendered="#{sf_bean.periodo == 'Live' or (sf_bean.showMittentePanel)}">
+					
+				<div class="subtitle">
+					<h:outputText id="idDatiMittente" value="#{msg['transazioni.search.sezioneFiltroDatiMittente.label']}" styleClass="subtitle"/>
 				</div>	
 								
-				<link:prop label="Tipo Ricerca" rendered="">
+				<link:prop label="Tipo Ricerca" rendered="#{sf_bean.periodo == 'Live'}">
 					<rich:comboBox id="riconoscimentoCombo" value="#{sf_bean.riconoscimento}" 
 								defaultLabel="Selezione Tipo" converter="selectItemConverter"
 								directInputSuggestions="true" width="416" enableManualInput="false">
@@ -346,14 +406,14 @@
 					</a4j:outputPanel>
 					
 					<a4j:outputPanel layout="block" id="modRicercaComboCtr" rendered="#{sf_bean.riconoscimento == 'tokenInfo' or sf_bean.riconoscimento == 'identificativoAutenticato'}">
-						<link:prop label="Ricerca Esatta">
+						<link:prop label="#{msg['commons.search.ricercaEsatta.label']}">
 							<h:selectOneRadio id="modRicercaRadio" value="#{sf_bean.mittenteMatchingType}" styleClass="controlset">
 								<f:selectItem itemValue="EQUALS" itemLabel="Si"/>
 								<f:selectItem itemValue="LIKE" itemLabel="No"/>
 							</h:selectOneRadio>
 						</link:prop>
 						
-						<link:prop label="Case Sensitive">
+						<link:prop label="#{msg['commons.search.caseSensitive.label']}">
 							<h:selectOneRadio id="modRicercaRadioCaseSens" value="#{sf_bean.mittenteCaseSensitiveType}" styleClass="controlset">
 								<f:selectItem itemValue="SENSITIVE" itemLabel="Si"/>
 								<f:selectItem itemValue="INSENSITIVE" itemLabel="No"/>
@@ -364,65 +424,43 @@
 							<h:inputText id="valoreRiconoscimento" value="#{sf_bean.valoreRiconoscimento}" styleClass="inputLinkLong"/>
 						</link:prop>
 					</a4j:outputPanel>
-				</a4j:outputPanel>
-			</a4j:outputPanel>
-			
-			<a4j:outputPanel id="filtriRicercaTransazione" layout="block" 
-				rendered="#{sf_bean.periodo == 'Live' or (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo')}">
 					
-				<div class="subtitle">
-					<h:outputText id="idDatiTransazione" value="Filtro Esito" styleClass="subtitle"/>
-				</div>	
-							
-				<link:prop label="Esito">
-					<rich:comboBox id="esitoGruppoCombo" value="#{sf_bean.esitoGruppo}"
-						defaultLabel="Seleziona esito" directInputSuggestions="true"
-						width="416" converter="selectItemConverter" enableManualInput="false">
-						<f:selectItems value="#{sf_bean.esitiGruppo}"/>
-						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true" />
-					</rich:comboBox>
-				</link:prop>
-				
-				<link:prop label="Dettaglio Esito" rendered="#{sf_bean.showDettaglio}">
-					<rich:comboBox id="esitoDettaglioCombo" value="#{sf_bean.esitoDettaglio}"
-						defaultLabel="Seleziona dettaglio esito" directInputSuggestions="true"
-						width="416" converter="selectItemConverter" enableManualInput="false">
-						<f:selectItems value="#{sf_bean.esitiDettaglio}"/>
-						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
-					</rich:comboBox>
-				</link:prop>			
-				<link:prop label="Dettaglio Esito" rendered="#{sf_bean.showDettaglioPersonalizzato}">
-					<h:selectManyListbox id="esitoDettaglioManyListbox" value="#{sf_bean.esitoDettaglioPersonalizzato}" style="width:416px;" size="5">
-						<f:selectItems value="#{sf_bean.esitiDettagliPersonalizzati}"/>
-					</h:selectManyListbox>
-				</link:prop>
-				
-				<link:prop label="Contesto" rendered="#{sf_bean.showEsitiContesto}">
-					<rich:comboBox id="esitoContestoCombo" value="#{sf_bean.esitoContesto}"
-						defaultLabel="Seleziona contesto" directInputSuggestions="true"
-						width="416" converter="selectItemConverter" enableManualInput="false">
-						<f:selectItems value="#{sf_bean.esitiContesto}"/>
-						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
-					</rich:comboBox>
-				</link:prop>
-			
-				<link:prop label="Evento" rendered="#{applicationBean.showEventi}">
-						<h:inputText id="evento" value="#{sf_bean.evento}"  styleClass="inputLinkLong">
-							<rich:hotKey key="return" handler="#{rich:element('evento')}.change()" selector="#evento" rendered="#{sf_bean.periodo eq 'Live'}" />
-							<a4j:support event="onchange" rendered="#{sf_bean.periodo eq 'Live'}" limitToList="true"/>
-						</h:inputText>
-				</link:prop>
-							
+					<a4j:outputPanel layout="block" id="modRicercaClientAddressComboCtr" rendered="#{sf_bean.riconoscimento == 'ip'}">
+						<link:prop label="#{msg['commons.search.ricercaEsatta.label']}">
+							<h:selectOneRadio id="modRicercaClientAddressRadio" value="#{sf_bean.mittenteMatchingType}" styleClass="controlset">
+								<f:selectItem itemValue="EQUALS" itemLabel="Si"/>
+								<f:selectItem itemValue="LIKE" itemLabel="No"/>
+								<a4j:support status="mainStatus" event="onchange" reRender="modRicercaClientAddressComboCtr" limitToList="true"/>
+							</h:selectOneRadio>
+						</link:prop>
+
+						<a4j:outputPanel layout="block" id="clientAddressComboCtr" rendered="#{sf_bean.riconoscimento == 'ip' and sf_bean.mittenteMatchingType == 'EQUALS'}">
+							<link:prop label="Tipo" required="false">
+								<rich:comboBox id="clientAddressCombo" value="#{sf_bean.clientAddressMode}" defaultLabel="Selezione Tipo Indirizzo" 
+										converter="selectItemConverter"	directInputSuggestions="true" width="416" enableManualInput="false">
+									<f:selectItem itemValue="--" itemLabel="[Qualsiasi]"/>
+									<f:selectItem itemValue="socket" itemLabel="Client IP"/>
+									<f:selectItem itemValue="transport" itemLabel="X-Forwarded-For"/>
+								</rich:comboBox>
+							</link:prop>				
+						</a4j:outputPanel>
+						
+						<link:prop label="Indirizzo" required="true">
+							<h:inputText id="clientAddressValoreRiconoscimento" value="#{sf_bean.valoreRiconoscimento}" styleClass="inputLinkLong"/>
+						</link:prop>
+					</a4j:outputPanel>
+					
+				</a4j:outputPanel>
 			</a4j:outputPanel>
 						
 			<a4j:outputPanel id="filtriAvanzatiIdCtr" layout="block"
 				rendered="#{sf_bean.modalitaRicercaStorico == 'idApplicativo'}">
 			
 				<div class="subtitle">
-					<h:outputText id="idDatiIdApplicativo" value="Filtro Identificativo Applicativo" styleClass="subtitle"/>
+					<h:outputText id="idDatiIdApplicativo" value="#{msg['transazioni.search.sezioneFiltroIdentificativoApplicativo.label']}" styleClass="subtitle"/>
 				</div>
 				
-				<link:prop label="Ricerca Esatta">
+				<link:prop label="#{msg['commons.search.ricercaEsatta.label']}">
 					<h:selectOneRadio id="radioCorrApp" value="#{sf_bean.correlazioneApplicativaMatchingType}" styleClass="controlset">
 						<f:selectItem itemValue="EQUALS" itemLabel="Si"/>
 						<f:selectItem itemValue="LIKE" itemLabel="No"/>
@@ -430,7 +468,7 @@
 					</h:selectOneRadio>
 				</link:prop>
 				
-				<link:prop label="Case Sensitive">
+				<link:prop label="#{msg['commons.search.caseSensitive.label']}">
 					<h:selectOneRadio id="radioCorrAppCaseSens" value="#{sf_bean.correlazioneApplicativaCaseSensitiveType}" styleClass="controlset">
 						<f:selectItem itemValue="SENSITIVE" itemLabel="Si"/>
 						<f:selectItem itemValue="INSENSITIVE" itemLabel="No"/>
@@ -439,7 +477,7 @@
 				</link:prop>
 				
 				<a4j:outputPanel id="panelIdApplicativo" layout="block" ajaxRendered="true">
-					<link:prop label="ID Applicativo" rendered="#{sf_bean.tipoRicercaSPCoop!='im'}" required="true">
+					<link:prop label="#{msg['transazioni.search.sezioneFiltroIdentificativoApplicativo.id.label']}" rendered="#{sf_bean.tipoRicercaSPCoop!='im'}" required="true">
 						<h:inputText id="idApplicativo" value="#{sf_bean.idCorrelazioneApplicativa}" styleClass="inputLinkLong">
 							<rich:hotKey key="return" handler="#{rich:element('idApplicativo')}.change()" selector="#idApplicativo" rendered="#{sf_bean.periodo eq 'Live'}"/>
 							<a4j:support event="onchange" rendered="#{sf_bean.periodo eq 'Live'}" limitToList="true"/>
@@ -453,7 +491,7 @@
 				rendered="#{sf_bean.modalitaRicercaStorico == 'idMessaggio'}">
 			
 				<div class="subtitle">
-					<h:outputText id="idDatiIdProtocollo" value="Filtro Identificativo Messaggio" styleClass="subtitle"/>
+					<h:outputText id="idDatiIdProtocollo" value="#{msg['transazioni.search.sezioneFiltroIdentificativoMessaggio.label']}" styleClass="subtitle"/>
 				</div>
 				
 				<link:prop label="Tipo" rendered="#{sf_bean.periodo != 'Live'}" >
@@ -465,7 +503,7 @@
 					</rich:comboBox>
 				</link:prop>		
 			
-				<link:prop label="ID" rendered="#{sf_bean.periodo != 'Live'}" required="true">
+				<link:prop label="#{msg['transazioni.search.sezioneFiltroIdentificativoMessaggio.id.label']}" rendered="#{sf_bean.periodo != 'Live'}" required="true">
 					<h:inputText id="idEgov" value="#{sf_bean.idEgov}" styleClass="inputLinkLong"/>
 				</link:prop>
 					
@@ -475,10 +513,10 @@
 				rendered="#{sf_bean.modalitaRicercaStorico == 'idTransazione'}">
 			
 				<div class="subtitle">
-					<h:outputText id="idDatiIdTransazione" value="Filtro Identificativo Transazione" styleClass="subtitle"/>
+					<h:outputText id="idDatiIdTransazione" value="#{msg['transazioni.search.sezioneFiltroIdentificativoTransazione.label']}" styleClass="subtitle"/>
 				</div>
 			
-				<link:prop label="ID" rendered="#{sf_bean.periodo != 'Live'}" required="true">
+				<link:prop label="#{msg['transazioni.search.sezioneFiltroIdentificativoTransazione.id.label']}" rendered="#{sf_bean.periodo != 'Live'}" required="true">
 					<h:inputText id="idTransazione" value="#{sf_bean.idTransazione}" styleClass="inputLinkLong"/>
 				</link:prop>
 					
@@ -489,7 +527,7 @@
 				(sf_bean.periodo == 'Live' or sf_bean.modalitaRicercaStorico == 'intervalloTemporale')}">
 
 				<div class="subtitle">
-					<h:outputText id="idDatiFiltriAvanzatiServizio" value="Filtro Avanzato per Servizio" styleClass="subtitle"/>
+					<h:outputText id="idDatiFiltriAvanzatiServizio" value="#{msg['transazioni.search.sezioneFiltroAvanzatoPerServizio.label']}" styleClass="subtitle"/>
 				</div>
 			
 				<a4j:outputPanel layout="block" id="statiComboCtr">
@@ -530,7 +568,7 @@
 				(sf_bean.periodo == 'Live' or sf_bean.modalitaRicercaStorico == 'intervalloTemporale')}}">
 				
 				<div class="subtitle">
-					<h:outputText id="idDatiRicerchePersonalizzate" value="Filtro Personalizzato" styleClass="subtitle"/>
+					<h:outputText id="idDatiRicerchePersonalizzate" value="#{msg['transazioni.search.sezioneFiltroPersonalizzato.label']}" styleClass="subtitle"/>
 				</div>
 							
 				<link:prop label="Ricerca">
@@ -564,6 +602,97 @@
 				</link:fieldset>	
 					
 			
+			</a4j:outputPanel>
+			
+			<a4j:outputPanel id="filtriRicercaLibera" layout="block" 
+				rendered="#{sf_bean.periodo != 'Live' and sf_bean.showRicercaPanel and sf_bean.modalitaRicercaStorico == 'ricercaLibera'}">
+
+				<div class="subtitle">
+					<h:outputText id="idRicercaLibera" value="#{msg['transazioni.search.sezioneFiltroRicercaLibera.label']}" styleClass="subtitle"/>
+				</div>
+				
+				<link:prop label="#{msg['commons.search.ricercaEsatta.label']}">
+					<h:selectOneRadio id="radioRicercaLibera" value="#{sf_bean.ricercaLiberaMatchingType}" styleClass="controlset">
+						<f:selectItem itemValue="EQUALS" itemLabel="Si"/>
+						<f:selectItem itemValue="LIKE" itemLabel="No"/>
+					</h:selectOneRadio>
+				</link:prop>
+				
+				<link:prop label="#{msg['commons.search.caseSensitive.label']}">
+					<h:selectOneRadio id="radioRicercaLiberaCaseSens" value="#{sf_bean.ricercaLiberaCaseSensitiveType}" styleClass="controlset">
+						<f:selectItem itemValue="SENSITIVE" itemLabel="Si"/>
+						<f:selectItem itemValue="INSENSITIVE" itemLabel="No"/>
+					</h:selectOneRadio>
+				</link:prop>
+
+				<div class="subtitle">
+					<h:outputText id="idDatiServizioRicercaLibera" value="#{msg['transazioni.search.sezioneFiltroDatiServizio.label']}" styleClass="subtitle"/>
+				</div>
+				
+				<link:prop label="#{msg['transazioni.search.soggettoRemoto']}" rendered="">
+						<h:inputText id="ricercaLiberaSoggettoRemoto" value="#{sf_bean.ricercaLiberaSoggettoRemoto}"  styleClass="inputLinkLong"/>
+				</link:prop>
+				
+				<link:prop label="#{msg['transazioni.search.gruppo']}" rendered="#{sf_bean.existsGruppi}">
+						<h:inputText id="ricercaLiberaGruppo" value="#{sf_bean.ricercaLiberaGruppo}"  styleClass="inputLinkLong"/>
+				</link:prop>
+				
+				<link:prop label="#{msg['transazioni.search.servizio']}" rendered="">
+						<h:inputText id="ricercaLiberaServizio" value="#{sf_bean.ricercaLiberaServizio}"  styleClass="inputLinkLong"/>
+				</link:prop>
+				
+				<link:prop label="#{sf_bean.labelAzione}" rendered="">
+						<h:inputText id="ricercaLiberaAzione" value="#{sf_bean.ricercaLiberaAzione}"  styleClass="inputLinkLong"/>
+				</link:prop>
+				
+				<div class="subtitle">
+					<h:outputText id="idDatiMittenteRicercaLibera" value="#{msg['transazioni.search.sezioneFiltroDatiMittente.label']}" styleClass="subtitle"/>
+				</div>
+				
+				<link:prop label="#{msg['commons.applicativo.label']}" rendered="">
+					<h:inputText id="ricercaLiberaApplicativo" value="#{sf_bean.ricercaLiberaApplicativo}"  styleClass="inputLinkLong"/>
+				</link:prop>
+				
+				<link:prop label="#{msg['commons.identificativoAutenticato.label']}" rendered="">
+					<h:inputText id="ricercaLiberaIdentificativoAutenticato" value="#{sf_bean.ricercaLiberaIdentificativoAutenticato}"  styleClass="inputLinkLong"/>
+				</link:prop>
+				
+				<link:prop label="#{msg['commons.indirizzoIP.label']}" rendered="">
+					<h:inputText id="ricercaLiberaIndirizzoIP" value="#{sf_bean.ricercaLiberaIndirizzoIP}"  styleClass="inputLinkLong"/>
+				</link:prop>
+				
+				<div class="subtitle">
+					<h:outputText id="idDatiTokenRicercaLibera" value="#{msg['transazioni.search.sezioneFiltroRicercaLibera.token.label']}" styleClass="subtitle"/>
+				</div>
+				
+				<link:prop label="#{msg['transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.issuer.label']}" rendered="">
+					<h:inputText id="ricercaLiberaTokenIssuer" value="#{sf_bean.ricercaLiberaTokenIssuer}"  styleClass="inputLinkLong"/>
+				</link:prop>
+				
+				<link:prop label="#{msg['transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.subject.label']}" rendered="">
+					<h:inputText id="ricercaLiberaTokenSubject" value="#{sf_bean.ricercaLiberaTokenSubject}"  styleClass="inputLinkLong"/>
+				</link:prop>
+				
+				<link:prop label="#{msg['transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.clientID.label']}" rendered="">
+					<h:inputText id="ricercaLiberaTokenClientID" value="#{sf_bean.ricercaLiberaTokenClientID}"  styleClass="inputLinkLong"/>
+				</link:prop>
+				
+				<link:prop label="#{msg['transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.username.label']}" rendered="">
+					<h:inputText id="ricercaLiberaTokenUsername" value="#{sf_bean.ricercaLiberaTokenUsername}"  styleClass="inputLinkLong"/>
+				</link:prop>
+				
+				<link:prop label="#{msg['transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.email.label']}" rendered="">
+					<h:inputText id="ricercaLiberaTokenEmail" value="#{sf_bean.ricercaLiberaTokenEmail}"  styleClass="inputLinkLong"/>
+				</link:prop>
+				
+				<div class="subtitle">
+					<h:outputText id="idDatiIdApplicativoRicercaLibera" value="#{msg['transazioni.search.sezioneFiltroIdentificativoApplicativo.label']}" styleClass="subtitle"/>
+				</div>
+				
+				<link:prop label="#{msg['transazioni.search.sezioneFiltroIdentificativoApplicativo.id.label']}" rendered="">
+					<h:inputText id="ricercaLiberaIdApplicativo" value="#{sf_bean.ricercaLiberaIdApplicativo}"  styleClass="inputLinkLong"/>
+				</link:prop>
+				
 			</a4j:outputPanel>
 			
 		</a4j:outputPanel>

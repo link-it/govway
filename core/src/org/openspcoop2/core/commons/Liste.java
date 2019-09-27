@@ -124,7 +124,8 @@ public final class Liste
 	public final static int SERVIZI_ALLEGATI;
 	public final static int CONFIGURAZIONE_EROGAZIONE;
 	public final static int CONFIGURAZIONE_FRUIZIONE;
-	
+
+	public final static int	GRUPPI;
 	public final static int	RUOLI;	
 	public final static int	SCOPE;	
 	public final static int	REGISTRI;
@@ -243,6 +244,7 @@ public final class Liste
     	SERVIZI_ALLEGATI= numeroListe ++;
     	CONFIGURAZIONE_EROGAZIONE = numeroListe ++;
     	CONFIGURAZIONE_FRUIZIONE = numeroListe ++;
+    	GRUPPI = numeroListe ++;	
     	RUOLI = numeroListe ++;	
     	SCOPE = numeroListe ++;	
     	REGISTRI = numeroListe ++;

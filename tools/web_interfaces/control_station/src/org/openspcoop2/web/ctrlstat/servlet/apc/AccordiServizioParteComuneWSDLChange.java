@@ -30,11 +30,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -48,6 +51,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
+import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.MessageType;
@@ -69,6 +73,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
@@ -192,8 +197,9 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
 			SoggettiCore soggettiCore = new SoggettiCore(apcCore);
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore(apcCore);
+			GruppiCore gruppiCore = new GruppiCore(apcCore);
 
-			// Flag per controllare il mapping automatico di porttype e operation
+			// Flag per controllare il mapping automatico di porttype e operation 
 			boolean enableAutoMapping = apcCore.isEnableAutoMappingWsdlIntoAccordo();
 			boolean enableAutoMapping_estraiXsdSchemiFromWsdlTypes = apcCore.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
 
@@ -209,6 +215,12 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 			MessageType messageType = apcCore.toMessageMessageType(as.getMessageType());
 			org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
+			String gruppi = "";
+			// leggo i gruppi dall'accordo
+			if(as.getGruppi() != null) {
+				List<String> nomiGruppi = as.getGruppi().getGruppoList().stream().flatMap(e-> Stream.of(e.getNome())).collect(Collectors.toList());
+				gruppi = StringUtils.join(nomiGruppi, ",");
+			}
 			
 			isSupportoProfiloAsincrono = acCore.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding);
 			
@@ -226,6 +238,10 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 					}
 				}
 			}
+			
+			FiltroRicercaGruppi filtroRicerca = new FiltroRicercaGruppi();
+			filtroRicerca.setServiceBinding(apcCore.fromMessageServiceBinding(serviceBinding));
+			List<String> elencoGruppi = gruppiCore.getAllGruppi(filtroRicerca);
 			
 			String oldwsdl = "";
 			byte[] wsdlbyte = null;
@@ -585,6 +601,16 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 			messageType = apcCore.toMessageMessageType(as.getMessageType());
 			formatoSpecifica = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
+			
+			filtroRicerca = new FiltroRicercaGruppi();
+			filtroRicerca.setServiceBinding(apcCore.fromMessageServiceBinding(serviceBinding));
+			elencoGruppi = gruppiCore.getAllGruppi(filtroRicerca);
+			
+			if(as.getGruppi() != null) {
+				List<String> nomiGruppi = as.getGruppi().getGruppoList().stream().flatMap(e-> Stream.of(e.getNome())).collect(Collectors.toList());
+				gruppi = StringUtils.join(nomiGruppi, ",");
+			} else 
+				gruppi = "";
 
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();
@@ -596,7 +622,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 					showUtilizzoSenzaAzione, utilizzoSenzaAzione,referente,versione,providersList,providersListLabel,
 					(as.getPrivato()!=null && as.getPrivato()),isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 					accordoCooperazioneId,statoPackage,statoPackage,this.tipoAccordo,this.validazioneDocumenti, 
-					tipoProtocollo,listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,serviceBinding,messageType,formatoSpecifica);
+					tipoProtocollo,listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,serviceBinding,messageType,formatoSpecifica,gruppi, elencoGruppi);
 
 			// aggiunta campi custom
 			dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);

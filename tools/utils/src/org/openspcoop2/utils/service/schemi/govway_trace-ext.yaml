@@ -204,6 +204,10 @@ components:
               $ref: '#/components/schemas/TransazioneExtInformazioniSoggetto'
             tipo:
               $ref: 'govway_core.yaml#/components/schemas/Tipo'
+            tags:
+              type: "array"
+              items:
+                $ref: 'govway_core.yaml#/components/schemas/NCName' 
  
     TransazioneExtInformazioniApi:
       type: object

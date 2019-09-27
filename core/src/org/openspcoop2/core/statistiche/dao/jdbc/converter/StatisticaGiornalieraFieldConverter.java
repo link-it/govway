@@ -208,6 +208,20 @@ public class StatisticaGiornalieraFieldConverter extends AbstractSQLFieldConvert
 				return "esito_contesto";
 			}
 		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.CLIENT_ADDRESS)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".client_address";
+			}else{
+				return "client_address";
+			}
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.GRUPPI)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".gruppi";
+			}else{
+				return "gruppi";
+			}
+		}
 		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".richieste";
@@ -538,6 +552,12 @@ public class StatisticaGiornalieraFieldConverter extends AbstractSQLFieldConvert
 			return this.toTable(StatisticaGiornaliera.model().STATISTICA_BASE, returnAlias);
 		}
 		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.ESITO_CONTESTO)){
+			return this.toTable(StatisticaGiornaliera.model().STATISTICA_BASE, returnAlias);
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.CLIENT_ADDRESS)){
+			return this.toTable(StatisticaGiornaliera.model().STATISTICA_BASE, returnAlias);
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.GRUPPI)){
 			return this.toTable(StatisticaGiornaliera.model().STATISTICA_BASE, returnAlias);
 		}
 		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI)){

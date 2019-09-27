@@ -1368,6 +1368,17 @@ div.prop-slider{
 	color: ${body.secondary.color};
 }
 
+.entryErogazione .titoloTags,
+.entryFruizione .titoloTags,
+.entryApi .titoloTags {
+	display: inline-flex;
+}
+
+.divNoEdit.titoloTags {
+    display: inline-flex;
+    padding-top: 0px;
+}
+
 .funzionalitaErogazione,
 .funzionalitaFruizione {
 	padding: 16px;
@@ -1670,3 +1681,54 @@ div.prop table.controlset-cb-info {
 span.controlset-cb-info {
 	margin-left: 10px;
 } 
+
+.tt-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    list-style: none;
+    font-family: 'Roboto';
+	font-size: 16px;
+    border: 1px solid ${input.border.color} ;
+    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    background-clip: padding-box;
+    cursor: pointer;
+    background-color: ${input.background.color};
+	background-image: none;
+}
+
+.tt-suggestion {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: normal;
+    line-height: 1.428571429;
+    white-space: nowrap;
+    background-color: ${input.background.color};
+	color: ${input.color};
+	font-size: 16px;
+}
+
+.tt-suggestion:hover,
+.tt-suggestion.tt-cursor {
+  text-decoration: none;
+  outline: 0;
+  background-color: ${option.hover.background.color};
+  color: 	 ${option.hover.color};
+}
+
+.tt-suggestion:focus {
+  text-decoration: none;
+  outline: 0;
+  background-color: ${option.active.background.color};
+  color: 	 ${option.active.color};
+}
+
+

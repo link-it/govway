@@ -356,7 +356,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 	 */
 	@Override
 	public ListaFruizioni findAllFruizioni(ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset,
-			TipoApiEnum tipoApi) {
+			TipoApiEnum tipoApi, String tag) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");
@@ -373,6 +373,10 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			if (tipoApi != null)
 				ricerca.addFilter(idLista, Filtri.FILTRO_SERVICE_BINDING, tipoApi.toString().toLowerCase());
 
+			if(tag!=null) {
+				ricerca.addFilter(idLista, Filtri.FILTRO_GRUPPO, tag);
+			}
+			
 			List<AccordoServizioParteSpecifica> lista = env.apsCore.soggettiServizioList(null, ricerca, null, true, false);
 
 			if (env.findall_404 && lista.isEmpty()) {

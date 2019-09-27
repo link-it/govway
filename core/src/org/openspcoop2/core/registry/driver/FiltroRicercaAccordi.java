@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 
 /**
@@ -73,6 +74,8 @@ public class FiltroRicercaAccordi implements Serializable{
 	private IDAccordoCooperazione idAccordoCooperazione;
 	private Boolean servizioComposto;
 
+	private IDGruppo idGruppo;
+	
 	public ServiceBinding getServiceBinding() {
 		return this.serviceBinding;
 	}
@@ -173,6 +176,12 @@ public class FiltroRicercaAccordi implements Serializable{
 		this.servizioComposto = servizioComposto;
 	}
 	
+	public IDGruppo getIdGruppo() {
+		return this.idGruppo;
+	}
+	public void setIdGruppo(IDGruppo gruppo) {
+		this.idGruppo = gruppo;
+	}
 	
 	@Override
 	public String toString(){
@@ -200,6 +209,8 @@ public class FiltroRicercaAccordi implements Serializable{
 			bf.append(" [id-accordo-cooperazione:"+this.idAccordoCooperazione+"]");
 		if(this.servizioComposto!=null)
 			bf.append(" [servizio-composto:"+this.servizioComposto+"]");
+		if(this.idGruppo!=null)
+			bf.append(" [id-gruppo:"+this.idGruppo+"]");
 		if(this.protocolPropertiesAccordo!=null && this.protocolPropertiesAccordo.size()>0){
 			bf.append(" [protocol-properties-accordo:"+this.protocolPropertiesAccordo.size()+"]");
 			for (int i = 0; i < this.protocolPropertiesAccordo.size(); i++) {

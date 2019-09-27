@@ -26,6 +26,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.core.transazioni.constants.TipoAPI;
 import org.openspcoop2.core.transazioni.utils.TempiElaborazione;
 import org.openspcoop2.core.transazioni.utils.TempiElaborazioneUtils;
 import org.openspcoop2.message.constants.MessageType;
@@ -42,6 +44,8 @@ import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
+import org.openspcoop2.web.monitor.core.utils.MessageManager;
+import org.openspcoop2.web.monitor.transazioni.constants.TransazioniCostanti;
 
 /**
  * TransazioneBean
@@ -68,6 +72,8 @@ public class TransazioneBean extends Transazione{
 	private java.lang.String tokenSubjectLabel = null;
 	private java.lang.String tokenUsernameLabel = null;
 	private java.lang.String tokenMailLabel = null;
+	private java.lang.String eventiLabel = null;
+	private java.lang.String gruppiLabel = null;
 
 	public TransazioneBean() {
 		super();
@@ -85,6 +91,8 @@ public class TransazioneBean extends Transazione{
 		metodiEsclusi.add(new BlackListElement("setTokenSubjectLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setTokenUsernameLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setTokenMailLabel", String.class));
+		metodiEsclusi.add(new BlackListElement("setEventiLabel", String.class));
+		metodiEsclusi.add(new BlackListElement("setGruppiLabel", String.class));
 
 		BeanUtils.copy(this, transazione, metodiEsclusi);
 	}
@@ -471,35 +479,6 @@ public class TransazioneBean extends Transazione{
 		return null;
 	}
 
-	public String getEventiGestioneHTML(){
-		String tmp = this.getEventiGestione();
-		if(tmp!=null){
-			tmp = tmp.trim();
-			if(tmp.contains(",")){
-				String [] split = tmp.split(",");
-				if(split!=null && split.length>0){
-					StringBuffer bf = new StringBuffer();
-					for (int i = 0; i < split.length; i++) {
-						if(bf.length()>0){
-							bf.append("<BR/>");
-						}
-						bf.append(split[i].trim());
-					}
-					return bf.toString();
-				}
-				else{
-					return tmp;
-				}
-			}
-			else{
-				return tmp;
-			}
-		}
-		else{
-			return null;
-		}
-	}
-
 	@Override
 	public String getNomePorta(){
 		String nomePorta = super.getNomePorta();
@@ -610,6 +589,103 @@ public class TransazioneBean extends Transazione{
 		this.tokenMailLabel = tokenMailLabel;
 	}
 
+	
+	
+	
+	@Override
+	public String getEventiGestione() {
+		return this.eventiLabel;
+	}
+	public String getEventiGestioneRawValue() {
+		return this.eventiGestione;
+	}
+	
+	public String getEventiGestioneHTML(){
+		String tmp = this.getEventiGestione();
+		if(tmp!=null){
+			tmp = tmp.trim();
+			if(tmp.contains(",")){
+				String [] split = tmp.split(",");
+				if(split!=null && split.length>0){
+					StringBuffer bf = new StringBuffer();
+					for (int i = 0; i < split.length; i++) {
+						if(bf.length()>0){
+							bf.append("<BR/>");
+						}
+						bf.append(split[i].trim());
+					}
+					return bf.toString();
+				}
+				else{
+					return tmp;
+				}
+			}
+			else{
+				return tmp;
+			}
+		}
+		else{
+			return null;
+		}
+	}
+	
+	public java.lang.String getEventiLabel() {
+		return this.eventiLabel;
+	}
+
+	public void setEventiLabel(java.lang.String eventiLabel) {
+		this.eventiLabel = eventiLabel;
+	}
+
+	
+	@Override
+	public String getGruppi() {
+		return this.gruppiLabel;
+	}
+	public String getGruppiRawValue() {
+		return this.gruppi;
+	}
+	
+	public String getGruppiHTML(){
+		String tmp = this.getGruppi();
+		if(tmp!=null){
+			tmp = tmp.trim();
+			if(tmp.contains(",")){
+				String [] split = tmp.split(",");
+				if(split!=null && split.length>0){
+					StringBuffer bf = new StringBuffer();
+					for (int i = 0; i < split.length; i++) {
+						if(bf.length()>0){
+							bf.append("<BR/>");
+						}
+						bf.append(split[i].trim());
+					}
+					return bf.toString();
+				}
+				else{
+					return tmp;
+				}
+			}
+			else{
+				return tmp;
+			}
+		}
+		else{
+			return null;
+		}
+	}
+	
+	public java.lang.String getGruppiLabel() {
+		return this.gruppiLabel;
+	}
+
+	public void setGruppiLabel(java.lang.String gruppiLabel) {
+		this.gruppiLabel = gruppiLabel;
+	}
+	
+	
+	
+	
 	public TempiElaborazioneBean getTempiElaborazioneObject() {
 		String tempiElaborazione = this.getTempiElaborazione();
 		try {
@@ -625,4 +701,52 @@ public class TransazioneBean extends Transazione{
 			return null;
 		}
 	}
+	
+	public String getTipoApiLabel() {
+		if(TipoAPI.REST.getValoreAsInt() == this.getTipoApi()) {
+			return "Rest";
+		}
+		else if(TipoAPI.SOAP.getValoreAsInt() == this.getTipoApi()) {
+			return "Soap";
+		}
+		else {
+			return "";
+		}
+	}
+	
+	public String getPddRuoloToolTip() {
+		PddRuolo pddRuolo = this.getPddRuolo();
+		if(pddRuolo!=null) {
+			switch (pddRuolo) {
+			case DELEGATA:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_RUOLO_PDD_DELEGATA_LABEL_KEY);
+			case APPLICATIVA:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_RUOLO_PDD_APPLICATIVA_LABEL_KEY);
+			case ROUTER:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_RUOLO_PDD_ROUTER_LABEL_KEY);
+			case INTEGRATION_MANAGER:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_RUOLO_PDD_IM_LABEL_KEY);
+			}
+		}
+		return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_RUOLO_PDD_ROUTER_LABEL_KEY);
+	}
+	
+	public String getPddRuoloImage() {
+		PddRuolo pddRuolo = this.getPddRuolo();
+		if(pddRuolo!=null) {
+			switch (pddRuolo) {
+			case DELEGATA:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_RUOLO_PDD_DELEGATA_ICON_KEY);
+			case APPLICATIVA:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_RUOLO_PDD_APPLICATIVA_ICON_KEY);
+			case ROUTER:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_RUOLO_PDD_ROUTER_ICON_KEY);
+			case INTEGRATION_MANAGER:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_RUOLO_PDD_IM_ICON_KEY);
+			}
+		}
+		return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_RUOLO_PDD_ROUTER_ICON_KEY);
+	}
+	
+
 }

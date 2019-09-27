@@ -232,4 +232,7 @@ public class Costanti {
 	
 	public static final int LUNGHEZZA_LABEL_TABS = 30;
 	public static final int LUNGHEZZA_RIGA_TESTO_TABELLA = 150;
+	
+	// Indica il numero delle possibili classi CSS per i tag dei gruppi, modificare questo valore se si vuole modificare il numero delle classi disponibili
+	public final static Integer NUMERO_GRUPPI_CSS = 30;
 }

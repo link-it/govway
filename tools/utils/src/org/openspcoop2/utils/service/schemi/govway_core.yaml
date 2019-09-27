@@ -133,6 +133,13 @@ components:
       required: false
       schema:
         $ref: '#/components/schemas/NCName'
+    tag:
+      name: tag
+      in: query
+      description: Identificativo del TAg
+      required: false
+      schema:
+        $ref: '#/components/schemas/NCName'
 
 
     # Criteri di ricerca obbligatori nella query  
@@ -332,4 +339,11 @@ components:
         - username
         - email
 
+    FiltroRicercaRuoloTransazioneEnum:
+      type: string
+      enum:
+        - fruizione
+        - erogazione
+        - qualsiasi
+      example: fruizione
 

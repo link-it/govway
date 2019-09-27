@@ -90,6 +90,8 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.TOKEN_MAIL,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.ESITO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.ESITO_CONTESTO,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.CLIENT_ADDRESS,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.GRUPPI,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA,false),"?");
@@ -121,6 +123,8 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getTokenMail(),StatisticaGiornaliera.model().STATISTICA_BASE.TOKEN_MAIL.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getEsito(),StatisticaGiornaliera.model().STATISTICA_BASE.ESITO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getEsitoContesto(),StatisticaGiornaliera.model().STATISTICA_BASE.ESITO_CONTESTO.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getClientAddress(),StatisticaGiornaliera.model().STATISTICA_BASE.CLIENT_ADDRESS.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getGruppi(),StatisticaGiornaliera.model().STATISTICA_BASE.GRUPPI.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getNumeroTransazioni(),StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getDimensioniBytesBandaComplessiva(),StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getDimensioniBytesBandaInterna(),StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()),
@@ -280,6 +284,10 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		lstObjects.add(new JDBCObject(statisticaGiornaliera_statisticaBase.getEsito(), StatisticaGiornaliera.model().STATISTICA_BASE.ESITO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.ESITO_CONTESTO,false), "?");
 		lstObjects.add(new JDBCObject(statisticaGiornaliera_statisticaBase.getEsitoContesto(), StatisticaGiornaliera.model().STATISTICA_BASE.ESITO_CONTESTO.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.CLIENT_ADDRESS,false), "?");
+		lstObjects.add(new JDBCObject(statisticaGiornaliera_statisticaBase.getClientAddress(), StatisticaGiornaliera.model().STATISTICA_BASE.CLIENT_ADDRESS.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.GRUPPI,false), "?");
+		lstObjects.add(new JDBCObject(statisticaGiornaliera_statisticaBase.getGruppi(), StatisticaGiornaliera.model().STATISTICA_BASE.GRUPPI.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,false), "?");
 		lstObjects.add(new JDBCObject(statisticaGiornaliera_statisticaBase.getNumeroTransazioni(), StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false), "?");

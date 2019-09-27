@@ -191,6 +191,9 @@ public class PddMonitorProperties {
 	public boolean isAttivoLiveRuoloOperatore() throws Exception{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.live.ruoloOperatore.enabled", true, true));
 	}
+	public boolean isAttivoTransazioniIntegrationManager() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni_im_enabled", true, true));
+	}
 	public boolean isAttivoTransazioniEsitiLive() throws Exception{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.esitiLiveEnabled", true, true));
 	}
@@ -849,6 +852,10 @@ public class PddMonitorProperties {
 	
 	public boolean isVisualizzaFiltroSoggettiSelectList() throws Exception{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("console.filtri.soggetti.selectList.enabled", true, true));
+	}
+	
+	public boolean isVisualizzaFiltroGruppiSelectList() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("console.filtri.gruppi.selectList.enabled", true, true));
 	}
 	
 	public boolean isVisualizzaFiltroServiziSelectList() throws Exception{

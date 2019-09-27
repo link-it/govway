@@ -26,10 +26,13 @@ import java.util.Map;
 
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteComuneGruppo;
 import org.openspcoop2.core.commons.search.PortType;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
@@ -174,6 +177,8 @@ public interface IDynamicUtilsService {
 	 */
 	public AccordoServizioParteComune getAccordoServizio(String tipoProtocollo, IDSoggetto idSoggetto, String tipoServizio, String nomeServizio, Integer versioneServizio);
 	
+	public List<IdAccordoServizioParteComuneGruppo> getAccordoServizioGruppi(IdAccordoServizioParteComune id);
+	
 	/***
 	 * 
 	 * Restituisce l'elenco dei servizi  
@@ -225,6 +230,11 @@ public interface IDynamicUtilsService {
 	public PortType getPortTypeFromAccordoServizio(String tipoProtocollo,IDAccordo idAccordo ,String nomeServizio) ;
 	
 	public int countPortTypeFromAccordoServizio(String tipoProtocollo,IDAccordo idAccordo ,String nomeServizio) ;
+	
+	
+	public List<IDGruppo> getGruppi();
+	public int countGruppi();
+	
 	
 	/****
 	 * 

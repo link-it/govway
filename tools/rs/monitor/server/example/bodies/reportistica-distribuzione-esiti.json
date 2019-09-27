@@ -1,0 +1,16 @@
+{
+    "unita_tempo": "orario",
+    "intervallo_temporale": {
+      "data_inizio": "2012-04-29T06:51:05.860Z",
+      "data_fine": "2022-04-29T06:51:05.860Z"
+    },
+    "tipo": "qualsiasi",
+    "tag": "tagTest1",
+    "report": {
+      "formato": "csv",
+      "tipo": "table",
+      "tipo_informazione": {
+        "tipo": "numero_transazioni"
+      }
+    }
+  }

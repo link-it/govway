@@ -36,6 +36,8 @@ public class Archive {
 
 	private ArchiveSortedMap<ArchivePdd> pdd = new ArchiveSortedMap<ArchivePdd>();
 	
+	private ArchiveSortedMap<ArchiveGruppo> gruppi = new ArchiveSortedMap<ArchiveGruppo>();
+	
 	private ArchiveSortedMap<ArchiveRuolo> ruoli = new ArchiveSortedMap<ArchiveRuolo>();
 	
 	private ArchiveSortedMap<ArchiveScope> scope = new ArchiveSortedMap<ArchiveScope>();
@@ -76,6 +78,9 @@ public class Archive {
 	}
 	public ArchiveSortedMap<ArchivePdd> getPdd() {
 		return this.pdd;
+	}
+	public ArchiveSortedMap<ArchiveGruppo> getGruppi() {
+		return this.gruppi;
 	}
 	public ArchiveSortedMap<ArchiveRuolo> getRuoli() {
 		return this.ruoli;

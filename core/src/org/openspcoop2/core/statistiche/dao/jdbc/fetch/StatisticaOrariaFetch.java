@@ -98,6 +98,10 @@ public class StatisticaOrariaFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "esito", StatisticaOraria.model().STATISTICA_BASE.ESITO.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setEsitoContesto", StatisticaOraria.model().STATISTICA_BASE.ESITO_CONTESTO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "esito_contesto", StatisticaOraria.model().STATISTICA_BASE.ESITO_CONTESTO.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setClientAddress", StatisticaOraria.model().STATISTICA_BASE.CLIENT_ADDRESS.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "client_address", StatisticaOraria.model().STATISTICA_BASE.CLIENT_ADDRESS.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setGruppi", StatisticaOraria.model().STATISTICA_BASE.GRUPPI.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "gruppi", StatisticaOraria.model().STATISTICA_BASE.GRUPPI.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setNumeroTransazioni", StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "richieste", StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setDimensioniBytesBandaComplessiva", StatisticaOraria.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType(),
@@ -241,6 +245,10 @@ public class StatisticaOrariaFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"statistica-base.esito"));
 				setParameter(object.getStatisticaBase(), "setEsitoContesto", StatisticaOraria.model().STATISTICA_BASE.ESITO_CONTESTO.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.esito-contesto"));
+				setParameter(object.getStatisticaBase(), "setClientAddress", StatisticaOraria.model().STATISTICA_BASE.CLIENT_ADDRESS.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.client-address"));
+				setParameter(object.getStatisticaBase(), "setGruppi", StatisticaOraria.model().STATISTICA_BASE.GRUPPI.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.gruppi"));
 				setParameter(object.getStatisticaBase(), "setNumeroTransazioni", StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.numero-transazioni"));
 				setParameter(object.getStatisticaBase(), "setDimensioniBytesBandaComplessiva", StatisticaOraria.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType(),

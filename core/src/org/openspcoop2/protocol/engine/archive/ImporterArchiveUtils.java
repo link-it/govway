@@ -35,6 +35,7 @@ import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
@@ -79,6 +80,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImport;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetail;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetailConfigurazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
+import org.openspcoop2.protocol.sdk.archive.ArchiveGruppo;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
@@ -169,6 +171,20 @@ public class ImporterArchiveUtils {
 					detail.setException(e);
 				}
 				esito.getPdd().add(detail);
+			}
+			
+			
+			// Gruppi
+			for (int i = 0; i < archive.getGruppi().size(); i++) {
+				ArchiveGruppo archiveGruppo = archive.getGruppi().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveGruppo);
+				try{
+					this.importGruppo(archiveGruppo, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getGruppi().add(detail);
 			}
 			
 			
@@ -583,6 +599,91 @@ public class ImporterArchiveUtils {
 			detail.setException(e);
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	public void importGruppo(ArchiveGruppo archiveGruppo,ArchiveEsitoImportDetail detail){
+		
+		IDGruppo idGruppo = archiveGruppo.getIdGruppo();
+		try{
+			
+			// --- check esistenza ---
+			if(this.updateAbilitato==false){
+				if(this.importerEngine.existsGruppo(idGruppo)){
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					return;
+				}
+			}
+			
+				
+			// --- check elementi riferiti ---
+			// non esistenti
+			
+			
+			// --- compatibilita' elementi riferiti ---
+			// non esistenti
+			
+			
+			// ---- visibilita' oggetto riferiti ---
+			// non esistenti
+			
+			
+			// --- set dati obbligatori nel db ----
+			
+			archiveGruppo.getGruppo().setSuperUser(this.userLogin);
+			
+			org.openspcoop2.core.registry.driver.utils.XMLDataConverter.
+				impostaInformazioniRegistroDB_Gruppo(archiveGruppo.getGruppo());
+			
+			
+			// --- ora registrazione
+			archiveGruppo.getGruppo().setOraRegistrazione(DateManager.getDate());
+			
+			
+			// --- upload ---
+			boolean create = false;
+			if(this.importerEngine.existsGruppo(idGruppo)){
+				
+				org.openspcoop2.core.registry.Gruppo old = this.importerEngine.getGruppo(idGruppo);
+				archiveGruppo.getGruppo().setId(old.getId());
+				
+				// visibilita' oggetto stesso per update
+				if(this.importerEngine.isVisioneOggettiGlobale(this.userLogin)==false){
+					if(this.userLogin.equals(old.getSuperUser())==false){
+						throw new Exception("Il gruppo non è visibile/aggiornabile dall'utente collegato ("+this.userLogin+")");
+					}
+				}
+
+				// update
+				this.importerEngine.updateGruppo(archiveGruppo.getGruppo());
+				create = false;
+			}
+			// --- create ---
+			else{
+				this.importerEngine.createGruppo(archiveGruppo.getGruppo());
+				create = true;
+			}
+				
+
+			// --- info ---
+			if(create){
+				detail.setState(ArchiveStatoImport.CREATED);
+			}else{
+				detail.setState(ArchiveStatoImport.UPDATED);
+			}
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'import del gruppo ["+idGruppo+"]: "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
+	
+	
 	
 	
 	

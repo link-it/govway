@@ -39,6 +39,7 @@ import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
 import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
@@ -49,11 +50,13 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.GruppoAccordo;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.RuoloSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
+import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
@@ -75,6 +78,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveCascadeConfiguration;
 import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
+import org.openspcoop2.protocol.sdk.archive.ArchiveGruppo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveIdCorrelazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveMode;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
@@ -155,6 +159,11 @@ public class ExporterArchiveUtils {
 		case PDD:
 			for (Object object : listObject) {
 				this.readPdd(archive, (String)object, cascadeConfig, exportSourceArchiveType);
+			}
+			break;
+		case GRUPPO:
+			for (Object object : listObject) {
+				this.readGruppo(archive, (IDGruppo)object, cascadeConfig, exportSourceArchiveType);
 			}
 			break;
 		case RUOLO:
@@ -255,6 +264,28 @@ public class ExporterArchiveUtils {
 					}
 					if(!found){
 						this.readPdd(archive, idPdd, cascadeConfig, false, ArchiveType.PDD);
+					}
+				}
+			}catch(DriverRegistroServiziNotFound notFound){}
+			
+			// aggiungo gruppi 'zombie'
+			FiltroRicercaGruppi filtroRicercaGruppi = new FiltroRicercaGruppi();
+			List<IDGruppo> idGruppi = null;
+			try{
+				idGruppi = this.archiveEngine.getAllIdGruppi(filtroRicercaGruppi);
+				for (IDGruppo idGruppo : idGruppi) {
+					boolean found = false;
+					if(archive.getGruppi()!=null && archive.getGruppi().size()>0){
+						for (String idArchiveGruppo : archive.getGruppi().keys()) {
+							ArchiveGruppo archiveGruppo = archive.getGruppi().get(idArchiveGruppo);
+							if(archiveGruppo.getIdGruppo().equals(idGruppo)){
+								found = true;
+								break;
+							}
+						}
+					}
+					if(!found){
+						this.readGruppo(archive, idGruppo, cascadeConfig, false, ArchiveType.GRUPPO);
 					}
 				}
 			}catch(DriverRegistroServiziNotFound notFound){}
@@ -421,6 +452,74 @@ public class ExporterArchiveUtils {
 		
 		
 	}
+	
+	
+	
+	private void readGruppo(Archive archive, IDGruppo idGruppo, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception{
+		this.readGruppo(archive, idGruppo, cascadeConfig, true, provenienza);
+	}
+	private void readGruppo(Archive archive, IDGruppo idGruppo, ArchiveCascadeConfiguration cascadeConfig, boolean cascadeAvanti, ArchiveType provenienza) throws Exception{
+		
+		String key = ArchiveGruppo.buildKey(idGruppo.getNome());
+		if(archive.getGruppi().containsKey(key)){
+			// gia gestito
+		}
+		else{
+			try{
+				if(cascadeConfig.isCascadeGruppi() || ArchiveType.GRUPPO.equals(provenienza)){
+					
+					// add
+					org.openspcoop2.core.registry.Gruppo gruppo = this.archiveEngine.getGruppo(idGruppo);
+					ArchiveGruppo archiveGruppo = new ArchiveGruppo(gruppo, this.idCorrelazione);
+					archive.getGruppi().add(archiveGruppo);
+					
+					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
+					
+					// non vi sono oggetti che possiedono come figlio il gruppo
+					
+				}
+			}catch(Exception e){
+				throw new ProtocolException("(Gruppo "+idGruppo.getNome()+") "+e.getMessage(),e);
+			}
+		}
+		
+		
+		// *** cascade in avanti ***
+		
+		if(cascadeAvanti){
+		
+			// accordi servizio parte comune
+			FiltroRicercaAccordi filtroAccordiServizioParteComune = new FiltroRicercaAccordi();
+			filtroAccordiServizioParteComune.setIdGruppo(idGruppo);
+			filtroAccordiServizioParteComune.setServizioComposto(false);
+			try{
+				List<IDAccordo> idsAccordi = this.archiveEngine.getAllIdAccordiServizioParteComune(filtroAccordiServizioParteComune);
+				if(idsAccordi!=null && idsAccordi.size()>0){
+					for (IDAccordo idAccordo : idsAccordi) {
+						this.readAccordoServizioParteComune(archive, idAccordo, cascadeConfig, ArchiveType.GRUPPO);
+					}
+				}
+			}catch(DriverRegistroServiziNotFound notFound){}	
+			
+			// accordi servizio composto
+			FiltroRicercaAccordi filtroAccordiServizioComposto = new FiltroRicercaAccordi();
+			filtroAccordiServizioComposto.setIdGruppo(idGruppo);
+			filtroAccordiServizioComposto.setServizioComposto(true);
+			try{
+				List<IDAccordo> idsAccordi = this.archiveEngine.getAllIdAccordiServizioParteComune(filtroAccordiServizioComposto);
+				if(idsAccordi!=null && idsAccordi.size()>0){
+					for (IDAccordo idAccordo : idsAccordi) {
+						this.readAccordoServizioComposto(archive, idAccordo, cascadeConfig, ArchiveType.GRUPPO);
+					}
+				}
+			}catch(DriverRegistroServiziNotFound notFound){}	
+			
+		}
+		
+		
+	}
+	
+	
 	
 	private void readRuolo(Archive archive, IDRuolo idRuolo, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception{
 		this.readRuolo(archive, idRuolo, cascadeConfig, true, provenienza);
@@ -937,6 +1036,13 @@ public class ExporterArchiveUtils {
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
 					
 					this.readSoggetto(archive, idAccordoServizio.getSoggettoReferente(), cascadeConfig, false, ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE); // per evitare loop
+					
+					if(as.getGruppi()!=null && as.getGruppi().sizeGruppoList()>0) {
+						for (GruppoAccordo gruppo : as.getGruppi().getGruppoList()) {
+							IDGruppo idGruppo = new IDGruppo(gruppo.getNome());
+							this.readGruppo(archive, idGruppo, cascadeConfig, false, ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE); // per evitare loop
+						}
+					}
 					
 				}
 				

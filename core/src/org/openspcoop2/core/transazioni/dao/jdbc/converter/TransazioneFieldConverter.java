@@ -677,11 +677,32 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "transport_client_address";
 			}
 		}
+		if(field.equals(Transazione.model().CLIENT_ADDRESS)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".client_address";
+			}else{
+				return "client_address";
+			}
+		}
 		if(field.equals(Transazione.model().EVENTI_GESTIONE)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".eventi_gestione";
 			}else{
 				return "eventi_gestione";
+			}
+		}
+		if(field.equals(Transazione.model().TIPO_API)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".tipo_api";
+			}else{
+				return "tipo_api";
+			}
+		}
+		if(field.equals(Transazione.model().GRUPPI)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".gruppi";
+			}else{
+				return "gruppi";
 			}
 		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ID_TRANSAZIONE)){
@@ -1210,7 +1231,16 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(Transazione.model().TRANSPORT_CLIENT_ADDRESS)){
 			return this.toTable(Transazione.model(), returnAlias);
 		}
+		if(field.equals(Transazione.model().CLIENT_ADDRESS)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
 		if(field.equals(Transazione.model().EVENTI_GESTIONE)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
+		if(field.equals(Transazione.model().TIPO_API)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
+		if(field.equals(Transazione.model().GRUPPI)){
 			return this.toTable(Transazione.model(), returnAlias);
 		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ID_TRANSAZIONE)){

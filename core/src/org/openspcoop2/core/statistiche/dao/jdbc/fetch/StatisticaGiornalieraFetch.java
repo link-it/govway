@@ -98,6 +98,10 @@ public class StatisticaGiornalieraFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "esito", StatisticaGiornaliera.model().STATISTICA_BASE.ESITO.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setEsitoContesto", StatisticaGiornaliera.model().STATISTICA_BASE.ESITO_CONTESTO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "esito_contesto", StatisticaGiornaliera.model().STATISTICA_BASE.ESITO_CONTESTO.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setClientAddress", StatisticaGiornaliera.model().STATISTICA_BASE.CLIENT_ADDRESS.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "client_address", StatisticaGiornaliera.model().STATISTICA_BASE.CLIENT_ADDRESS.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setGruppi", StatisticaGiornaliera.model().STATISTICA_BASE.GRUPPI.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "gruppi", StatisticaGiornaliera.model().STATISTICA_BASE.GRUPPI.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setNumeroTransazioni", StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "richieste", StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setDimensioniBytesBandaComplessiva", StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType(),
@@ -241,6 +245,10 @@ public class StatisticaGiornalieraFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"statistica-base.esito"));
 				setParameter(object.getStatisticaBase(), "setEsitoContesto", StatisticaGiornaliera.model().STATISTICA_BASE.ESITO_CONTESTO.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.esito-contesto"));
+				setParameter(object.getStatisticaBase(), "setClientAddress", StatisticaGiornaliera.model().STATISTICA_BASE.CLIENT_ADDRESS.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.client-address"));
+				setParameter(object.getStatisticaBase(), "setGruppi", StatisticaGiornaliera.model().STATISTICA_BASE.GRUPPI.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.gruppi"));
 				setParameter(object.getStatisticaBase(), "setNumeroTransazioni", StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.numero-transazioni"));
 				setParameter(object.getStatisticaBase(), "setDimensioniBytesBandaComplessiva", StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType(),

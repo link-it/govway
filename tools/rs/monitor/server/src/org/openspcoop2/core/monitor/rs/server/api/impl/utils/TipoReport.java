@@ -41,7 +41,8 @@ public enum TipoReport {
 	azione(CostantiExporter.TIPO_DISTRIBUZIONE_AZIONE),
 	applicativo(CostantiExporter.TIPO_DISTRIBUZIONE_APPLICATIVO),
 	identificativo_autenticato(CostantiExporter.TIPO_DISTRIBUZIONE_IDENTIFICATIVO_AUTENTICATO),
-	token_info(CostantiExporter.TIPO_DISTRIBUZIONE_TOKEN_INFO);
+	token_info(CostantiExporter.TIPO_DISTRIBUZIONE_TOKEN_INFO),
+	indirizzo_ip(CostantiExporter.TIPO_DISTRIBUZIONE_INDIRIZZO_IP);
 	
 	
 	TipoReport(String v) {

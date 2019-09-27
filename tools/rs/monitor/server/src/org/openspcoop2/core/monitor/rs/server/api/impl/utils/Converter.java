@@ -180,6 +180,10 @@ public class Converter {
 		CredenzialiMittente credenzialiMittente = convertToCredenzialiMittente(transazioneDB);		
 		
 		org.openspcoop2.pdd.logger.traccia.Converter converter = new org.openspcoop2.pdd.logger.traccia.Converter(log);
+		if(transazioneDB.getGruppiLabel()!=null && !"".equals(transazioneDB.getGruppiLabel())) {
+			// converto voce originale
+			transazioneDB.setGruppi(transazioneDB.getGruppiLabel());
+		}
 		TransazioneExt transazione = converter.toTransazioneExt(transazioneDB, credenzialiMittente, null, null, null);
 	
 		ItemTransazione item = new ItemTransazione();

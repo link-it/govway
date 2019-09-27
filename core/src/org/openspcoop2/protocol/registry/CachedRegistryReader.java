@@ -342,6 +342,9 @@ public class CachedRegistryReader implements IRegistryReader {
 			if(filtro.getServiceBinding()!=null) {
 				filtroDriver.setServiceBinding(filtro.getServiceBinding());
 			}
+			if(filtro.getIdGruppo()!=null) {
+				filtroDriver.setIdGruppo(filtro.getIdGruppo());
+			}
 			List<FiltroRicercaProtocolProperty> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
 			if(listPP!=null && listPP.size()>0){
 				filtroDriver.setProtocolPropertiesAccordo(listPP);
@@ -437,6 +440,9 @@ public class CachedRegistryReader implements IRegistryReader {
 			if(filtro.getServiceBinding()!=null) {
 				filtroDriver.setServiceBinding(filtro.getServiceBinding());
 			}
+			if(filtro.getIdGruppo()!=null) {
+				filtroDriver.setIdGruppo(filtro.getIdGruppo());
+			}
 			List<FiltroRicercaProtocolProperty> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
 			if(listPP!=null && listPP.size()>0){
 				filtroDriver.setProtocolPropertiesAccordo(listPP);
@@ -516,6 +522,9 @@ public class CachedRegistryReader implements IRegistryReader {
 			if(filtro.getServiceBinding()!=null) {
 				filtroDriver.setServiceBinding(filtro.getServiceBinding());
 			}
+			if(filtro.getIdGruppo()!=null) {
+				filtroDriver.setIdGruppo(filtro.getIdGruppo());
+			}
 			List<FiltroRicercaProtocolProperty> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
 			if(listPP!=null && listPP.size()>0){
 				filtroDriver.setProtocolPropertiesAccordo(listPP);
@@ -585,6 +594,9 @@ public class CachedRegistryReader implements IRegistryReader {
 			if(filtro.getServiceBinding()!=null) {
 				filtroDriver.setServiceBinding(filtro.getServiceBinding());
 			}
+			if(filtro.getIdGruppo()!=null) {
+				filtroDriver.setIdGruppo(filtro.getIdGruppo());
+			}
 			List<FiltroRicercaProtocolProperty> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
 			if(listPP!=null && listPP.size()>0){
 				filtroDriver.setProtocolPropertiesAccordo(listPP);
@@ -652,6 +664,9 @@ public class CachedRegistryReader implements IRegistryReader {
 			}
 			if(filtro.getServiceBinding()!=null) {
 				filtroDriver.setServiceBinding(filtro.getServiceBinding());
+			}
+			if(filtro.getIdGruppo()!=null) {
+				filtroDriver.setIdGruppo(filtro.getIdGruppo());
 			}
 			List<FiltroRicercaProtocolProperty> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
 			if(listPP!=null && listPP.size()>0){
@@ -854,6 +869,9 @@ public class CachedRegistryReader implements IRegistryReader {
 			}
 			if(filtro.getServiceBinding()!=null) {
 				filtroDriver.setServiceBinding(filtro.getServiceBinding());
+			}
+			if(filtro.getIdGruppo()!=null) {
+				filtroDriver.setIdGruppo(filtro.getIdGruppo());
 			}
 			List<FiltroRicercaProtocolProperty> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
 			if(listPP!=null && listPP.size()>0){

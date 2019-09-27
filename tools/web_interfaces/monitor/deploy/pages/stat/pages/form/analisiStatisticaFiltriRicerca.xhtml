@@ -64,7 +64,7 @@
 				           	</ui:include>
 						</c:if>
 						
-						<c:if test="#{analisiStatisticaBean.tipoDistribuzione == 'servizio_applicativo-applicativo' or analisiStatisticaBean.tipoDistribuzione == 'servizio_applicativo-identificativoAutenticato' or analisiStatisticaBean.tipoDistribuzione == 'servizio_applicativo-tokenInfo'}">
+						<c:if test="#{analisiStatisticaBean.tipoDistribuzione == 'servizio_applicativo-applicativo' or analisiStatisticaBean.tipoDistribuzione == 'servizio_applicativo-identificativoAutenticato' or analisiStatisticaBean.tipoDistribuzione == 'servizio_applicativo-tokenInfo' or analisiStatisticaBean.tipoDistribuzione == 'servizio_applicativo-ip'}">
 							<ui:include src="/stat/includes/searchFormDistribSA.xhtml">
 				               	<ui:param name="mBean" value="#{analisiStatisticaBean.mBean}" />
 				               	<ui:param name="search" value="#{mBean.search}" />

@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core.handlers.transazioni;
 
 import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
@@ -30,8 +31,21 @@ import java.util.List;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.GruppoAccordo;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.transazioni.CredenzialeMittente;
+import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.TransazioneExtendedInfo;
+import org.openspcoop2.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.core.transazioni.constants.RuoloTransazione;
+import org.openspcoop2.core.transazioni.constants.TipoAPI;
+import org.openspcoop2.core.transazioni.utils.TempiElaborazioneUtils;
+import org.openspcoop2.core.transazioni.utils.credenziali.AbstractCredenzialeList;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
@@ -39,10 +53,17 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
 import org.openspcoop2.pdd.core.handlers.ExtendedTransactionInfo;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
+import org.openspcoop2.pdd.core.transazioni.DateUtility;
+import org.openspcoop2.pdd.core.transazioni.PropertiesSerializator;
+import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.logger.DumpUtility;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
@@ -54,17 +75,6 @@ import org.openspcoop2.utils.json.JSONUtils;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
-import org.openspcoop2.core.transazioni.Transazione;
-import org.openspcoop2.core.transazioni.TransazioneExtendedInfo;
-import org.openspcoop2.core.transazioni.constants.PddRuolo;
-import org.openspcoop2.core.transazioni.constants.RuoloTransazione;
-import org.openspcoop2.core.transazioni.utils.TempiElaborazioneUtils;
-import org.openspcoop2.pdd.core.transazioni.DateUtility;
-import org.openspcoop2.pdd.core.transazioni.PropertiesSerializator;
-import org.openspcoop2.pdd.core.transazioni.Transaction;
-import org.openspcoop2.pdd.logger.DumpUtility;
-import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 
 /**     
  * PostOutResponseHandler_TransazioneUtilities
@@ -100,6 +110,8 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			Transaction transaction,
 			IDSoggetto idDominio) throws HandlerException{
 
+		// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
+		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		
 		Traccia tracciaRichiesta = transaction.getTracciaRichiesta();
@@ -497,11 +509,12 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			else if(profiloCollaborazioneValueBustaTracciaRichiesta!=null){
 				transactionDTO.setProfiloCollaborazioneProt(profiloCollaborazioneValueBustaTracciaRichiesta);
 			}
+			IDAccordo idAccordo = null;
 			if (context.getProtocollo()!=null){
 
 				transactionDTO.setIdCollaborazione(context.getProtocollo().getCollaborazione());
 
-				IDAccordo idAccordo = context.getProtocollo().getIdAccordo();
+				idAccordo = context.getProtocollo().getIdAccordo();
 				if(idAccordo!=null){
 					transactionDTO.setUriAccordoServizio(IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordo));
 				}
@@ -531,6 +544,60 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			if(transactionDTO.getAzione()==null) {
 				if(transaction!=null && transaction.getRequestInfo()!=null && transaction.getRequestInfo().getIdServizio()!=null) {
 					transactionDTO.setAzione(transaction.getRequestInfo().getIdServizio().getAzione());
+				}
+			}
+			
+			RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(context.getStato());
+			if(idAccordo==null) {
+				if(transactionDTO.getNomeServizio()!=null && transactionDTO.getTipoServizio()!=null && 
+						transactionDTO.getNomeSoggettoErogatore()!=null && transactionDTO.getTipoSoggettoErogatore()!=null ) {
+					try {
+						IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(transactionDTO.getTipoServizio(), transactionDTO.getNomeServizio(), 
+							transactionDTO.getTipoSoggettoErogatore(), transactionDTO.getNomeSoggettoErogatore(), transactionDTO.getVersioneServizio());
+						AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false);
+						idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+					}catch(Throwable e) {
+						// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
+						this.logger.error("Errore durante la comprensione delle caratteristiche dell'API (Accesso servizio): "+e.getMessage(),e);
+					}
+				}
+			}
+			if(idAccordo!=null) {
+				try {
+					AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false);
+					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(aspc.getServiceBinding())) {
+						transactionDTO.setTipoApi(TipoAPI.REST.getValoreAsInt());
+					}
+					else {
+						transactionDTO.setTipoApi(TipoAPI.SOAP.getValoreAsInt());
+					}
+					
+					if(aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
+						List<String> gruppi = new ArrayList<String>();
+						int count = 0;
+						int maxLengthCredenziali = OpenSPCoop2Properties.getInstance().getTransazioniCredenzialiMittenteMaxLength()-AbstractCredenzialeList.PREFIX.length();
+						for (int i=0; i<aspc.getGruppi().sizeGruppoList(); i++) {
+							GruppoAccordo gruppoAccordo = aspc.getGruppi().getGruppo(i);
+							String dbValue = AbstractCredenzialeList.getDBValue(gruppoAccordo.getNome());
+							if(count+dbValue.length()<maxLengthCredenziali) {
+								gruppi.add( gruppoAccordo.getNome() );
+								count = count+dbValue.length();
+							}
+							else {
+								// tronco i gruppi ai primi trovati. Sono troppi eventi gruppi associati alla api
+							}
+						}
+						if(gruppi.size()>0){
+							CredenzialeMittente credGruppi = GestoreAutenticazione.convertGruppiToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, gruppi);
+							if(credGruppi!=null) {
+								transactionDTO.setGruppi(credGruppi.getId()+"");
+							}
+						}
+					}
+					
+				}catch(Throwable e) {
+					// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
+					this.logger.error("Errore durante la comprensione delle caratteristiche dell'API (Accesso servizio): "+e.getMessage(),e);
 				}
 			}
 
@@ -597,6 +664,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 						try{
 							transactionDTO.setHeaderProtocolloRichiesta(tracciaRichiesta.getBustaAsRawContent().toString(TipoSerializzazione.DEFAULT));
 						}catch(Exception e){
+							/// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
 							this.logger.error("Errore durante la conversione dell'oggetto Busta di richiesta ["+tracciaRichiesta.getBustaAsRawContent().getClass().getName()+"] in stringa");
 						}
 					}
@@ -622,6 +690,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 							try{
 								transactionDTO.setProtocolloExtInfoRichiesta(ps.convertToDBColumnValue());
 							}catch(Exception e){
+								// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
 								this.logger.error("Errore durante la conversione delle proprieta della Busta di richiesta: "+e.getMessage(),e);
 							}
 						}
@@ -640,6 +709,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 						try{
 							transactionDTO.setHeaderProtocolloRisposta(tracciaRisposta.getBustaAsRawContent().toString(TipoSerializzazione.DEFAULT));
 						}catch(Exception e){
+							// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
 							this.logger.error("Errore durante la conversione dell'oggetto Busta di risposta ["+tracciaRisposta.getBustaAsRawContent().getClass().getName()+"] in stringa");
 						}
 					}
@@ -665,6 +735,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 							try{
 								transactionDTO.setProtocolloExtInfoRisposta(ps.convertToDBColumnValue());
 							}catch(Exception e){
+								// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
 								this.logger.error("Errore durante la conversione delle proprieta della Busta di risposta: "+e.getMessage(),e);
 							}
 						}
@@ -817,6 +888,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				try {
 					transactionDTO.setTempiElaborazione(TempiElaborazioneUtils.convertToDBValue(transaction.getTempiElaborazione()));
 				}catch(Exception e) {
+					// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
 					this.logger.error("TempiElaborazioneUtils.convertToDBValue failed: "+e.getMessage(),e);
 				}
 			}
@@ -842,31 +914,57 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					transactionDTO.setTransportClientAddress(ipAddress.substring(0, 250)+"...");
 				}
 			}
+			if(transactionDTO.getSocketClientAddress()!=null || transactionDTO.getTransportClientAddress()!=null) {
+				try {
+					CredenzialeMittente credClientAddress =GestoreAutenticazione.convertClientCredentialToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, 
+							transactionDTO.getSocketClientAddress(), transactionDTO.getTransportClientAddress()); 
+					if(credClientAddress!=null) {
+						transactionDTO.setClientAddress(credClientAddress.getId()+"");
+					}
+				}catch(Throwable e) {
+					// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
+					this.logger.error("Errore durante la scrittura dell'indice per la ricerca del client address: "+e.getMessage(),e);
+				}
+			}
 			
 			
 			// ** eventi di gestione **
-			StringBuffer eventi_gestione = new StringBuffer();
+			List<String> eventiGestione = new ArrayList<String>();
+			int count = 0;
+			int maxLengthCredenziali = OpenSPCoop2Properties.getInstance().getTransazioniCredenzialiMittenteMaxLength()-AbstractCredenzialeList.PREFIX.length();
 			if(transaction.getEventiGestione()!=null && transaction.getEventiGestione().size()>0){
 				for (int i=0; i<transaction.getEventiGestione().size(); i++) {
-					if (i>0){
-						eventi_gestione.append(", ");
+					String dbValue = AbstractCredenzialeList.getDBValue(transaction.getEventiGestione().get(i));
+					if(count+dbValue.length()<maxLengthCredenziali) {
+						eventiGestione.add( transaction.getEventiGestione().get(i) );
+						count = count+dbValue.length();
 					}
-					eventi_gestione.append( transaction.getEventiGestione().get(i) );
+					else {
+						// tronco gli eventi ai primi trovati. Sono troppi eventi successi sulla transazione.
+					}
 				}
 			}
 			Object oEventoMax = context.getPddContext().getObject(CostantiControlloTraffico.PDD_CONTEXT_MAX_REQUEST_VIOLATED_EVENTO);
 			if(oEventoMax!=null && (oEventoMax instanceof String)){
-				if(eventi_gestione.length()>0)
-					eventi_gestione.append(",");
-				eventi_gestione.append((String)oEventoMax);
-			}
-			if(eventi_gestione.length()>0){
-				if(eventi_gestione.length()<=1000){
-					transactionDTO.setEventiGestione(eventi_gestione.toString());
+				String max = (String)oEventoMax;
+				String dbValue = AbstractCredenzialeList.getDBValue(max);
+				if(count+dbValue.length()<maxLengthCredenziali) {
+					eventiGestione.add( max );
+					count = count+dbValue.length();
 				}
-				else{
-					// tronco gli eventi a 1000 caratteri. Sono troppi eventi successi sulla transazione. Eventualmente accorciare le stringhe degli eventi.
-					transactionDTO.setEventiGestione(eventi_gestione.toString().substring(0, 996)+"...");	
+				else {
+					// tronco gli eventi ai primi trovati. Sono troppi eventi successi sulla transazione.
+				}
+			}
+			if(eventiGestione.size()>0){
+				try {
+					CredenzialeMittente credEventi = GestoreAutenticazione.convertEventiToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, eventiGestione);
+					if(credEventi!=null) {
+						transactionDTO.setEventiGestione(credEventi.getId()+"");
+					}
+				}catch(Throwable e) {
+					// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
+					this.logger.error("Errore durante la definizione dell'indice per la ricerca degli eventi: "+e.getMessage(),e);
 				}
 			}
 			

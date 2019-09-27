@@ -33,6 +33,7 @@ package org.openspcoop2.protocol.sdk.constants;
 public enum ArchiveType {
 
 	PDD,
+	GRUPPO,
 	RUOLO,
 	SCOPE,
 	SOGGETTO, 

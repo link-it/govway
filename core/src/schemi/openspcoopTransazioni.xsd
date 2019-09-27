@@ -170,9 +170,14 @@
 				<!-- Indirizzo IP -->
 				<xsd:element name="socket-client-address" type="xsd:string" minOccurs="0"/>
 				<xsd:element name="transport-client-address" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="client-address" type="xsd:string" minOccurs="0"/>
 
 			    <!-- eventi emessi sulla gestione della transazione -->
 			    <xsd:element name="eventi-gestione" type="xsd:string" minOccurs="0"/>
+				
+				<!-- informazioni dell'api -->
+				<xsd:element name="tipo-api" type="xsd:int" minOccurs="0"/>
+				<xsd:element name="gruppi" type="xsd:string" minOccurs="0"/>
 
 				<!-- Dump Messaggi -->
 				<xsd:element ref="dump-messaggio" minOccurs="0" maxOccurs="2"/>

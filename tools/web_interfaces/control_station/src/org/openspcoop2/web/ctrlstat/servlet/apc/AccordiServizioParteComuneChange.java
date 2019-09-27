@@ -26,10 +26,13 @@ package org.openspcoop2.web.ctrlstat.servlet.apc;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,6 +53,9 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
+import org.openspcoop2.core.registry.GruppiAccordo;
+import org.openspcoop2.core.registry.Gruppo;
+import org.openspcoop2.core.registry.GruppoAccordo;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
@@ -58,6 +64,7 @@ import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
+import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.message.constants.MessageType;
@@ -83,6 +90,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -116,7 +124,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 	private ServiceBinding serviceBinding = null;
 	private MessageType messageType = null;
 	private InterfaceType interfaceType = null;
-
+	private String gruppi;
+	
 	// Protocol Properties
 	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
 	private ConsoleConfiguration consoleConfiguration =null;
@@ -200,6 +209,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 				? MessageType.valueOf(messageProcessorS) : null;
 		String formatoSpecificaS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_INTERFACE_TYPE);
 		this.interfaceType = StringUtils.isNotEmpty(formatoSpecificaS) ? InterfaceType.toEnumConstant(formatoSpecificaS) : null;
+		
+		this.gruppi = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_GRUPPI);
 
 		if("".equals(this.tipoAccordo))
 			this.tipoAccordo = null;
@@ -225,6 +236,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		boolean gestioneDescrizione = false;
 		boolean gestioneSpecificaInterfacce = false;
 		boolean gestioneInformazioniProtocollo = false;
+		boolean gestioneGruppi = false;
 		if(isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom) {
 			if(ApiCostanti.VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI.equals(apiGestioneParziale)) {
 				gestioneInformazioniGenerali = true;
@@ -245,10 +257,14 @@ public final class AccordiServizioParteComuneChange extends Action {
 			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_OPZIONI_AVANZATE.equals(apiGestioneParziale)) {
 				gestioneInformazioniProtocollo = true;
 			}
+			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_GRUPPI.equals(apiGestioneParziale)) {
+				gestioneGruppi = true;
+			}
+			
 		}
 		
 		boolean addPropertiesHidden = false;
-		if(gestioneInformazioniGenerali || gestioneSoggettoReferente || gestioneDescrizione || gestioneSpecificaInterfacce || gestioneInformazioniProtocollo) {
+		if(gestioneInformazioniGenerali || gestioneSoggettoReferente || gestioneDescrizione || gestioneSpecificaInterfacce || gestioneInformazioniProtocollo || gestioneGruppi) {
 			addPropertiesHidden = true;
 		}
 		
@@ -276,7 +292,10 @@ public final class AccordiServizioParteComuneChange extends Action {
 		SoggettiCore soggettiCore = new SoggettiCore(apcCore);
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
 		AccordiCooperazioneCore acCore = new AccordiCooperazioneCore(apcCore);
+		GruppiCore gruppiCore = new GruppiCore(apcCore);
 		Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+		FiltroRicercaGruppi filtroRicerca = new FiltroRicercaGruppi();
+		List<String> elencoGruppi = null;
 
 		AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idAcc);
 		boolean asWithAllegati = apcHelper.asWithAllegatiXsd(as);
@@ -473,68 +492,82 @@ public final class AccordiServizioParteComuneChange extends Action {
 					this.consord = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConsegnaInOrdine());
 				if(this.scadenza == null)
 					this.scadenza = as.getScadenza() != null ? as.getScadenza() : "";
-					if(privatoS==null){
-						this.privato = as.getPrivato()!=null && as.getPrivato();
+				if(privatoS==null){
+					this.privato = as.getPrivato()!=null && as.getPrivato();
+				}
+
+				this.showUtilizzoSenzaAzione = as.sizeAzioneList() > 0;// se ci
+				// sono
+				// azioni
+				// allora
+				// visualizzo
+				// il
+				// checkbox
+				if(this.utilizzo==null)
+					this.utilizzoSenzaAzione = as.getUtilizzoSenzaAzione();	
+
+				if(this.statoPackage==null)
+					this.statoPackage = as.getStatoPackage();
+
+				if(this.wsdlconc == null){
+					this.wsdlconc = new BinaryParameter();
+					this.wsdlconc.setValue(as.getByteWsdlConcettuale());
+				}
+
+				if(this.wsdldef == null){
+					this.wsdldef = new BinaryParameter();
+					this.wsdldef.setValue(as.getByteWsdlDefinitorio());
+				}
+
+				if(this.wsdlserv == null){
+					this.wsdlserv = new BinaryParameter();
+					this.wsdlserv.setValue(as.getByteWsdlLogicoErogatore());
+				}
+
+				if(this.wsdlservcorr == null){
+					this.wsdlservcorr = new BinaryParameter();
+					this.wsdlservcorr.setValue(as.getByteWsdlLogicoFruitore());
+				}
+
+				if(this.wsblconc == null){
+					this.wsblconc = new BinaryParameter();
+					this.wsblconc.setValue(as.getByteSpecificaConversazioneConcettuale());
+				}
+
+				if(this.wsblserv == null){
+					this.wsblserv = new BinaryParameter();
+					this.wsblserv.setValue(as.getByteSpecificaConversazioneErogatore());
+				}
+
+				if(this.wsblservcorr == null){
+					this.wsblservcorr = new BinaryParameter();
+					this.wsblservcorr.setValue(as.getByteSpecificaConversazioneFruitore());
+				}
+
+				if(this.serviceBinding == null){
+					this.serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
+				
+					if(this.messageType == null){
+						this.messageType = apcCore.toMessageMessageType(as.getMessageType());
 					}
-
-					this.showUtilizzoSenzaAzione = as.sizeAzioneList() > 0;// se ci
-					// sono
-					// azioni
-					// allora
-					// visualizzo
-					// il
-					// checkbox
-					if(this.utilizzo==null)
-						this.utilizzoSenzaAzione = as.getUtilizzoSenzaAzione();	
-
-					if(this.statoPackage==null)
-						this.statoPackage = as.getStatoPackage();
-
-					if(this.wsdlconc == null){
-						this.wsdlconc = new BinaryParameter();
-						this.wsdlconc.setValue(as.getByteWsdlConcettuale());
-					}
-
-					if(this.wsdldef == null){
-						this.wsdldef = new BinaryParameter();
-						this.wsdldef.setValue(as.getByteWsdlDefinitorio());
-					}
-
-					if(this.wsdlserv == null){
-						this.wsdlserv = new BinaryParameter();
-						this.wsdlserv.setValue(as.getByteWsdlLogicoErogatore());
-					}
-
-					if(this.wsdlservcorr == null){
-						this.wsdlservcorr = new BinaryParameter();
-						this.wsdlservcorr.setValue(as.getByteWsdlLogicoFruitore());
-					}
-
-					if(this.wsblconc == null){
-						this.wsblconc = new BinaryParameter();
-						this.wsblconc.setValue(as.getByteSpecificaConversazioneConcettuale());
-					}
-
-					if(this.wsblserv == null){
-						this.wsblserv = new BinaryParameter();
-						this.wsblserv.setValue(as.getByteSpecificaConversazioneErogatore());
-					}
-
-					if(this.wsblservcorr == null){
-						this.wsblservcorr = new BinaryParameter();
-						this.wsblservcorr.setValue(as.getByteSpecificaConversazioneFruitore());
-					}
-
-					if(this.serviceBinding == null){
-						this.serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 					
-						if(this.messageType == null){
-							this.messageType = apcCore.toMessageMessageType(as.getMessageType());
-						}
+					filtroRicerca = new FiltroRicercaGruppi();
+					filtroRicerca.setServiceBinding(apcCore.fromMessageServiceBinding(this.serviceBinding));
+					elencoGruppi = gruppiCore.getAllGruppi(filtroRicerca);
+				}
+				
+				if(this.interfaceType == null)
+					this.interfaceType = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
+				
+				if(this.gruppi == null) {
+					// leggo i gruppi dall'accordo
+					if(as.getGruppi() != null) {
+						List<String> nomiGruppi = as.getGruppi().getGruppoList().stream().flatMap(e-> Stream.of(e.getNome())).collect(Collectors.toList());
+						this.gruppi = StringUtils.join(nomiGruppi, ",");
+					} else {
+						this.gruppi = "";
 					}
-					
-					if(this.interfaceType == null)
-						this.interfaceType = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
+				}
 
 			} catch (Exception ex) {
 				return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), ex, pd, session, gd, mapping, 
@@ -548,6 +581,10 @@ public final class AccordiServizioParteComuneChange extends Action {
 				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SERVICE_BINDING)){
 					this.interfaceType = null;
 					this.messageType = null;
+					
+					filtroRicerca = new FiltroRicercaGruppi();
+					filtroRicerca.setServiceBinding(apcCore.fromMessageServiceBinding(this.serviceBinding));
+					elencoGruppi = gruppiCore.getAllGruppi(filtroRicerca);
 				}
 			}
 
@@ -589,7 +626,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
-						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType);
+						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi);
 
 				// aggiunta campi custom
 				if(addPropertiesHidden) {
@@ -623,7 +660,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 				this.filtrodup, this.confric, this.idcoll, this.idRifRichiesta, this.consord, 
 				this.scadenza, this.id,this.referente,this.versione,this.accordoCooperazioneId,this.privato,visibilitaAccordoCooperazione,idAccordoOLD, 
 				this.wsblconc,this.wsblserv,this.wsblservcorr, this.validazioneDocumenti,this.tipoProtocollo,this.backToStato,this.serviceBinding,this.messageType,this.interfaceType,
-				true);
+				true, this.gruppi);
 
 		// updateDynamic
 		if(isOk) {
@@ -690,7 +727,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 					this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 					this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 					this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
-					this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType);
+					this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi);
 
 			// aggiunta campi custom
 			if(addPropertiesHidden) {
@@ -733,14 +770,14 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
-						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType);
+						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi);
 
 				dati = apcHelper.addAccordiToDatiAsHidden(dati, nome, this.descr, this.profcoll, null, null, null, null, 
 						this.filtrodup, this.confric, this.idcoll, this.idRifRichiesta, this.consord, this.scadenza, this.id,						
 						tipoOp, this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione, this.referente,this.versione, providersList, providersListLabel,
 						this.privato,this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel,
 						this.accordoCooperazioneId, this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti, this.tipoProtocollo, 
-						listaTipiProtocollo, used, this.serviceBinding,this.messageType,this.interfaceType);
+						listaTipiProtocollo, used, this.serviceBinding,this.messageType,this.interfaceType, this.gruppi);
 				
 				if(this.backToStato!= null) {
 					// backtostato per chiudere la modifica dopo la conferma
@@ -886,7 +923,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
-						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType);
+						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi);
 
 				// aggiunta campi custom
 				if(addPropertiesHidden) {
@@ -907,6 +944,32 @@ public final class AccordiServizioParteComuneChange extends Action {
 		//imposto properties custom
 		as.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(this.protocolProperties, this.consoleOperationType, oldProtocolPropertyList));
 
+		List<Object> objectToCreate = new ArrayList<>();
+		
+		if(as.getGruppi() == null)
+			as.setGruppi(new GruppiAccordo());
+		
+		// svuto la lista e riporto solo quelli che sono selezionati dall'utente.
+		as.getGruppi().getGruppoList().clear();
+		
+		// gruppi
+		if(StringUtils.isNotEmpty(this.gruppi)) {
+			
+		
+			List<String> nomiGruppi = Arrays.asList(this.gruppi.split(","));
+			
+			for (String nomeGruppo : nomiGruppi) {
+				if(!gruppiCore.existsGruppo(nomeGruppo)) {
+					Gruppo nuovoGruppo = new Gruppo();
+					nuovoGruppo.setNome(nomeGruppo);
+					objectToCreate.add(nuovoGruppo);
+				}
+				
+				GruppoAccordo gruppoAccordo = new GruppoAccordo();
+				gruppoAccordo.setNome(nomeGruppo);
+				as.getGruppi().addGruppo(gruppoAccordo );
+			}
+		}
 
 		// Modifico i dati dell'accordo nel db
 		try {
@@ -994,7 +1057,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 									this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 									this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
 									this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,
-									this.serviceBinding,this.messageType,this.interfaceType);
+									this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi);
 
 							// aggiunta campi custom
 							if(addPropertiesHidden) {
@@ -1027,6 +1090,10 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 			}
 
+			if(!objectToCreate.isEmpty()) { // salvo eventuali nuovi gruppi
+				// effettuo le operazioni
+				apcCore.performCreateOperation(userLogin, apcHelper.smista(), objectToCreate.toArray(new Object[objectToCreate.size()]));
+			}
 
 			operazioniDaEffettuare = operazioniList.toArray(operazioniDaEffettuare);
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), operazioniDaEffettuare);

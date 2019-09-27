@@ -132,6 +132,7 @@ public class Converter {
 	private boolean richiesta_connettore = true;
 	private boolean diagnostici = true;
 	private boolean api_erogatoreExtraInfo = true;
+	private boolean api_tags = true;
 	private boolean api_tipo = true;
 	private boolean api_idAsincrono = true;
 	private boolean api_profiloCollaborazione = true;
@@ -545,6 +546,19 @@ public class Converter {
 		}
 		if(this.api_erogatore) {
 			api.setErogatore(transazioneDB.getNomeSoggettoErogatore());
+		}
+		if(this.api_tags) {
+			if(transazioneDB.getGruppi()!=null && !"".equals(transazioneDB.getGruppi())) {
+				String [] tmp = transazioneDB.getGruppi().split(",");
+				if(tmp!=null && tmp.length>0) {
+					((TransazioneExtInformazioniApi)api).setTags(new ArrayList<>());
+					for (String tag : tmp) {
+						if(tag!=null && !"".equals(tag.trim())) {
+							((TransazioneExtInformazioniApi)api).addTagsItem(tag.trim());
+						}
+					}
+				}
+			}
 		}
 		if(this.api_nome) {
 			api.setNome(transazioneDB.getNomeServizio());
@@ -1027,6 +1041,9 @@ public class Converter {
 		this.api_erogatoreExtraInfo = api_erogatoreExtraInfo;
 	}
 
+	public void setApi_tags(boolean api_tags) {
+		this.api_tags = api_tags;
+	}
 
 	public void setApi_tipo(boolean api_tipo) {
 		this.api_tipo = api_tipo;

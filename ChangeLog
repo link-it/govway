@@ -1,3 +1,44 @@
+2019-07-25  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayCore, GovWayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-875
+	Ad ogni API è adesso possibile associare uno o più tag al fine di raccoglierle in un gruppo tematico.
+	I tag permettono di effettuare una ricerca relativa ad un gruppo tematico sulla govwayConsole, 
+	in modo da individuare tutte le API, le erogazioni e le fruizioni relative ad uno specifico tag.
+	La govwayConsole utilizza un meccanismo di visualizzazione dei tag basati sul colore, 
+	in modo da rendere più agevole l'individuazione di uno specifico tag negli elenchi.
+	Infine sulla govwayConsole sarà possibile gestire l'anagrafica dei tag esistenti.
+	Il raggruppamento in tag è utilizzabile anche sulla govwayMonitor come meccanismo di filtro per ricercare transazioni
+	o per generare report statistici relativamente a erogazioni o fruizioni di API che possiedono il tag indicato.
+
+2019-09-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-878
+	Effettuata una riorganizzazione delle funzionalità di ricerca delle transazioni.
+	Per la maggior parte delle ricerche è stata rilasciato il vincolo di indicare obbligatoriamente la tipologia (erogazione/fruizione) 
+	in modo da consentire una ricerca che permetta di visualizzare transazioni che rientrano in entrambe le tipologie.
+	Le tipologie di ricerche sono state classificate in tre aree:
+	- Ricerca generica: consente di effettuare ricerche in cui i filtri sono guidati attraverso selectList ('base') o sono campi liberi ('avanzata').
+	- Ricerca per mittente: consente di selezionare il chiamante in base a differenti criteri:
+	  a) Valori dei claims di un Token
+	  b) Identità del Soggetto
+	  c) Identità dell'applicativo
+	  d) Principal del chiamante
+	  e) Indirizzo IP sia riferito al Client IP (socket address) che riferito ad un eventuale header http 'X-Forwarded-For'
+	- Ricerca per identificativi: consente di selezionare le transazioni per id applicativo, di messaggio o di transazione.
+
+2019-09-23  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayMonitor]
+	Aggiunta funzionalità OP-879
+	È adesso possibile effettuare la ricerca di transazioni specificando l'indirizzo IP del chiamante.
+	L'indirizzo IP indicato può essere specializzato per cercare transazioni che si riferiscono ad un preciso Client IP (socket address)
+	o che si riferiscono al valore presente nell'header http 'X-Forwarded-For'.
+	Le informazioni sull'indirizzo IP sono inoltre utilizzabili per applicare filtri sui risultati presentati nei vari tipi di report statistici 	
+	(Distribuzione per API, per Operazione, per Soggetto ...).
+	Infine è adesso possibile ottenere una nuova distribuzione statistica basata sugli indirizzi IP dei chiamanti.
+
 2019-09-06  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, ProtocolloModIPA]

@@ -30,7 +30,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum TipoFiltroMittenteFruizioneEnum {
 APPLICATIVO("applicativo"),
   IDENTIFICATIVO_AUTENTICATO("identificativo_autenticato"),
-  TOKEN_INFO("token_info");
+  TOKEN_INFO("token_info"),
+  INDIRIZZO_IP("indirizzo_ip");
 
   private String value;
 

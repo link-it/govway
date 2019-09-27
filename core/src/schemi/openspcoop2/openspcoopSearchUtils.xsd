@@ -133,6 +133,43 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 
+
+	<xsd:element name="gruppo">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" id="id-gruppo"/>
+					<linkit:sql-table-mapping name="gruppo" />
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="nome" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="nome"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="service-binding" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="service_binding"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+
     <xsd:element name="accordo-servizio-parte-comune">
         <xsd:annotation>
             <xsd:appinfo>
@@ -218,7 +255,44 @@
              </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
-
+	
+	<xsd:element name="accordo-servizio-parte-comune-gruppo">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" id="id-accordo-servizio-parte-comune-gruppo"/>
+					<linkit:sql-table-mapping name="accordi_gruppi" />
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-gruppo" type="id-gruppo">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-id-mapping relationship="reversed" object-name="gruppo"
+									object-type="gruppo"/>
+								<linkit:sql-column-mapping name="id_gruppo"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="id-accordo-servizio-parte-comune" type="id-accordo-servizio-parte-comune">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-id-mapping relationship="reversed" object-name="accordo-servizio-parte-comune"
+									object-type="accordo-servizio-parte-comune"/>
+								<linkit:sql-column-mapping name="id_accordo"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
 	<xsd:element name="accordo-servizio-parte-comune-azione">
 		<xsd:annotation>
 			<xsd:appinfo>
@@ -935,6 +1009,20 @@
 			<xsd:element name="nome" type="xsd:string"/>
 		</xsd:sequence>
 	</xsd:complexType>
+	
+	<xsd:complexType name="id-gruppo">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping relationship="none" object-name="gruppo"
+						object-type="gruppo"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
 
 	<xsd:complexType name="id-accordo-servizio-parte-comune">
         <xsd:annotation>
@@ -951,6 +1039,21 @@
         	<xsd:element name="versione" type="xsd:integer"/>
         	<xsd:element name="service-binding" type="xsd:string" minOccurs="0"/>
         </xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="id-accordo-servizio-parte-comune-gruppo">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping relationship="none" object-name="accordo-servizio-parte-comune-gruppo"
+						object-type="accordo-servizio-parte-comune-gruppo"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="id-gruppo" type="id-gruppo"/>
+			<xsd:element name="id-accordo-servizio-parte-comune" type="id-accordo-servizio-parte-comune"/>
+		</xsd:sequence>
 	</xsd:complexType>
 
 	<xsd:complexType name="id-accordo-servizio-parte-comune-azione">

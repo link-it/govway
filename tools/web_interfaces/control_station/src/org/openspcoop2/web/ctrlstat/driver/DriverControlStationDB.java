@@ -63,6 +63,7 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva
 import org.openspcoop2.core.controllo_traffico.dao.IDBAttivazionePolicyServiceSearch;
 import org.openspcoop2.core.controllo_traffico.dao.IDBConfigurazionePolicyServiceSearch;
 import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
@@ -151,7 +152,7 @@ public class DriverControlStationDB  {
 	private JDBCServiceManager jdbcServiceManagerControlloTraffico = null;
 
 	private IDAccordoFactory idAccordoFactory = null;
-	@SuppressWarnings("unused")
+//	@SuppressWarnings("unused")
 	private IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = null;
 	
 	public String getTipoDatabase() {
@@ -4416,6 +4417,80 @@ public class DriverControlStationDB  {
 			}
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public boolean isGruppoInUso(IDGruppo idGruppo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
+		String nomeMetodo = "isGruppoInUso";
+
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			return DBOggettiInUsoUtils.isGruppoInUso(con, this.tipoDB, idGruppo, whereIsInUso, normalizeObjectIds);
+			
+		} catch (Exception se) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public boolean isGruppoConfigInUso(IDGruppo idRuolo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
+		String nomeMetodo = "isGruppoConfigInUso";
+
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			return DBOggettiInUsoUtils.isGruppoConfigInUso(con, this.tipoDB, idRuolo, whereIsInUso, normalizeObjectIds);
+			
+		} catch (Exception se) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
 			try {
 				if (this.atomica) {

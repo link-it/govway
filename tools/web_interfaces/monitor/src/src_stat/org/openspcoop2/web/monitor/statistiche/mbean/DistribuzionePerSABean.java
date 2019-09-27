@@ -206,8 +206,10 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		if(StringUtils.isNotEmpty(this.search.getRiconoscimento())) {
 			if(this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
 				return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_MITTENTE_SERVIZIO_APPLICATIVO_LABEL_SUFFIX_KEY);
-			}  else if(this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+			} else if(this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
 				return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_MITTENTE_IDENTIFICATIVO_AUTENTICATO_SUFFIX_KEY);
+			} else if(this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP)) {
+				return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_MITTENTE_INDIRIZZO_IP_SUFFIX_KEY);
 			} else { // token
 				if (StringUtils.isNotEmpty(this.search.getTokenClaim())) {
 					org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(this.search.getTokenClaim());
@@ -729,6 +731,8 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 				return CostantiGrafici.DISTRIBUZIONE_SA_APPLICATIVO_FILE_NAME;
 			}  else if(this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
 				return CostantiGrafici.DISTRIBUZIONE_SA_IDENTIFICATIVO_AUTENTICATO_FILE_NAME;
+			} else if(this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP)) {
+				return CostantiGrafici.DISTRIBUZIONE_SA_INDIRIZZO_IP_FILE_NAME;
 			} else { // token
 				if (StringUtils.isNotEmpty(this.search.getTokenClaim())) {
 					org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(this.search.getTokenClaim());

@@ -48,6 +48,8 @@ public enum Identified implements IEnumeration , Serializable , Cloneable {
 	RUOLO ("Ruolo"),
 	@javax.xml.bind.annotation.XmlEnumValue("Scope")
 	SCOPE ("Scope"),
+	@javax.xml.bind.annotation.XmlEnumValue("Gruppo")
+	GRUPPO ("Gruppo"),
 	@javax.xml.bind.annotation.XmlEnumValue("Soggetto")
 	SOGGETTO ("Soggetto"),
 	@javax.xml.bind.annotation.XmlEnumValue("AccordoServizioParteSpecifica")

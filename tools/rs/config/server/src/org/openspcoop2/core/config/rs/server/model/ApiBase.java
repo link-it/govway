@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import java.util.List;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import javax.validation.constraints.*;
 
@@ -47,6 +48,9 @@ public class ApiBase  {
   
   @Schema(example = "{\"formato\":\"OpenApi3.0\"}", required = true, description = "")
   private String formato = null;
+  
+  @Schema(example = "[\"PagamentiTelematici\",\"Anagrafica\"]", description = "")
+  private List<String> tags = null;
  /**
    * Get referente
    * @return referente
@@ -165,6 +169,30 @@ public class ApiBase  {
     return this;
   }
 
+ /**
+   * Get tags
+   * @return tags
+  **/
+  @JsonProperty("tags")
+  @Valid
+  public List<String> getTags() {
+    return this.tags;
+  }
+
+  public void setTags(List<String> tags) {
+    this.tags = tags;
+  }
+
+  public ApiBase tags(List<String> tags) {
+    this.tags = tags;
+    return this;
+  }
+
+  public ApiBase addTagsItem(String tagsItem) {
+    this.tags.add(tagsItem);
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -177,6 +205,7 @@ public class ApiBase  {
     sb.append("    descrizione: ").append(ApiBase.toIndentedString(this.descrizione)).append("\n");
     sb.append("    versione: ").append(ApiBase.toIndentedString(this.versione)).append("\n");
     sb.append("    formato: ").append(ApiBase.toIndentedString(this.formato)).append("\n");
+    sb.append("    tags: ").append(ApiBase.toIndentedString(this.tags)).append("\n");
     sb.append("}");
     return sb.toString();
   }

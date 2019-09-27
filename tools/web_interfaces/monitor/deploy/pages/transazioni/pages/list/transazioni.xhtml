@@ -12,7 +12,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 		<a4j:outputPanel id="transazioniCrumbsCtr" rendered="#{not(searchFormTransazioni.periodo eq 'Live')}">	
 		<ul>
 			<li>
-				<a4j:htmlCommandLink action="transazioniStart" value="Storico" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
+				<a4j:htmlCommandLink action="transazioniStart" value="#{msg['menu.monitoraggio.storico']}" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
 			</li>
 			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
 			<li><h:outputText id="msgLabelRicercaSceltaDiag" value="#{searchFormTransazioni.tipoStoricoLabel}" styleClass="ultimo-path"/></li>
@@ -53,6 +53,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 									<ui:param name="sf_dataFine" value="#{searchFormTransazioni.dataFine}" />
 									<ui:param name="sf_nomeMittente" value="#{searchFormTransazioni.tipoNomeMittente}" />
 									<ui:param name="sf_nomeDestinatario" value="#{searchFormTransazioni.tipoNomeDestinatario}" />
+									<ui:param name="sf_gruppo" value="#{searchFormTransazioni.gruppo}" />
 									<ui:param name="sf_servizio" value="#{searchFormTransazioni.nomeServizio}" />
 									<ui:param name="sf_nomeAzione" value="#{searchFormTransazioni.nomeAzione}" />
 									<ui:param name="sf_trafficoPerSoggetto" value="#{searchFormTransazioni.tipoNomeTrafficoPerSoggetto}" />
@@ -60,6 +61,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 									<ui:param name="sf_servizioApplicativo" value="#{searchFormTransazioni.servizioApplicativo}" />
 									<ui:param name="sf_soggettiLocale" value="#{transazioniBean.soggettiLocale}" />
 									<ui:param name="sf_soggetti" value="#{transazioniBean.soggetti}" />
+									<ui:param name="sf_gruppi" value="#{transazioniBean.gruppi}" />
 									<ui:param name="sf_servizi" value="#{transazioniBean.servizi}" />
 									<ui:param name="sf_azioni" value="#{transazioniBean.azioni}" />
 									<ui:param name="sf_serviziApplicativi" value="#{transazioniBean.serviziApplicativi}" />
@@ -72,13 +74,13 @@ xmlns="http://www.w3.org/1999/xhtml"
 									<ui:param name="sf_labelNomeMittente" value="#{searchFormTransazioni.labelTipoNomeMittente}" />
 									<ui:param name="sf_labelNomeDestinatario" value="#{searchFormTransazioni.labelTipoNomeDestinatario}" />
 									<ui:param name="sf_labelTrafficoPerSoggetto" value="#{searchFormTransazioni.labelTipoNomeTrafficoPerSoggetto}" />
+									<ui:param name="sf_labelGruppo" value="#{searchFormTransazioni.gruppo}" />
 									<ui:param name="sf_labelServizio" value="#{searchFormTransazioni.labelNomeServizio}" />
 									<ui:param name="sf_labelNomeAzione" value="#{searchFormTransazioni.labelNomeAzione}" />
 								</ui:include>
 								
 								<a4j:outputPanel id="panelButtonSearchTransazioni" styleClass="buttonrow" layout="block" ajaxRendered="false">	
-									<a4j:commandButton id="filtra" value="#{searchFormTransazioni.aggiornamentoDatiAbilitato and
-															(searchFormTransazioni.modalitaRicercaStorico=='intervalloTemporale' or searchFormTransazioni.modalitaRicercaStorico=='idApplicativo') ? 
+									<a4j:commandButton id="filtra" value="#{(searchFormTransazioni.aggiornamentoDatiAbilitato and searchFormTransazioni.showButtonNuovaRicerca) ? 
 															'Nuova Ricerca' : 'Filtra'}" 
 														styleClass="icon-refresh" 
 														process="searchPnl" 
@@ -93,7 +95,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 														reRender="panelPaginaTransazioniCtr"
 														rendered="#{not(searchFormTransazioni.periodo eq 'Live') and 
 															searchFormTransazioni.aggiornamentoDatiAbilitato and
-															(searchFormTransazioni.modalitaRicercaStorico=='intervalloTemporale' or searchFormTransazioni.modalitaRicercaStorico=='idApplicativo')}"
+															searchFormTransazioni.showButtonNuovaRicerca}"
 														action="#{searchFormTransazioni.aggiorna}"
 														oncomplete="completa(event)"
 														/>	
@@ -518,6 +520,15 @@ xmlns="http://www.w3.org/1999/xhtml"
 								</h:graphicImage>
 								<h:graphicImage id="outEsitoImgOther" value="/images/tema_link/ko_red.png" rendered="#{!item.esitoOk and !item.esitoFaultApplicativo and !item.esitoKo}"/>
 							</rich:column>
+							<rich:column id="colRuoloTransazioneImg" sortable="false" label="Ruolo Transazione (Immagine)" style="text-align: center;">
+								<f:facet name="header">
+									<i class="material-icons md-24">swap_horiz</i>
+								</f:facet>
+								<a4j:outputPanel id="imgRuoloTransazione">
+									<i class="material-icons md-16">#{item.pddRuoloImage}</i>
+								</a4j:outputPanel>
+								<rich:toolTip for="imgRuoloTransazione" value="#{item.pddRuoloToolTip}" />
+							</rich:column>
 							<rich:column id="colDataRichLive">
 								<f:facet name="header">
 									<h:outputText id="outDataRichLive1" value="Data Richiesta" />
@@ -538,13 +549,6 @@ xmlns="http://www.w3.org/1999/xhtml"
 								</f:facet>
 								<h:outputText id="outProtocollo2" value="#{item.protocolloLabel}" />
 								<rich:toolTip for="outProtocollo2" value="#{item.protocolloLabel}" />
-							</rich:column>
-							<rich:column id="colPddRuolo" sortable="false" label="Tipologia">
-								<f:facet name="header">
-									<h:outputText id="outPddRuolo1" value="Tipologia" />
-								</f:facet>
-								<h:outputText id="outPddRuolo2" value="#{item.pddRuolo=='DELEGATA' ? 'Fruizione' : item.pddRuolo=='APPLICATIVA' ? 'Erogazione' : item.pddRuolo=='ROUTER' ? 'Router' : 'I.M.'}" />
-								<rich:toolTip for="outPddRuolo2" value="#{item.pddRuolo=='DELEGATA' ? 'Fruizione' : item.pddRuolo=='APPLICATIVA' ? 'Erogazione' : item.pddRuolo=='ROUTER' ? 'Router' : 'I.M.'}" />
 							</rich:column>
 							<rich:column id="colServLive">
 								<f:facet name="header">

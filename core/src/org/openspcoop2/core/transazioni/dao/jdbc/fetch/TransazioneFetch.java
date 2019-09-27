@@ -228,8 +228,14 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "socket_client_address", Transazione.model().SOCKET_CLIENT_ADDRESS.getFieldType()));
 				setParameter(object, "setTransportClientAddress", Transazione.model().TRANSPORT_CLIENT_ADDRESS.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "transport_client_address", Transazione.model().TRANSPORT_CLIENT_ADDRESS.getFieldType()));
+				setParameter(object, "setClientAddress", Transazione.model().CLIENT_ADDRESS.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "client_address", Transazione.model().CLIENT_ADDRESS.getFieldType()));
 				setParameter(object, "setEventiGestione", Transazione.model().EVENTI_GESTIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "eventi_gestione", Transazione.model().EVENTI_GESTIONE.getFieldType()));
+				setParameter(object, "setTipoApi", Transazione.model().TIPO_API.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "tipo_api", Transazione.model().TIPO_API.getFieldType()));
+				setParameter(object, "setGruppi", Transazione.model().GRUPPI.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "gruppi", Transazione.model().GRUPPI.getFieldType()));
 				return object;
 			}
 			if(model.equals(Transazione.model().TRANSAZIONE_EXTENDED_INFO)){
@@ -434,8 +440,14 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"socket-client-address"));
 				setParameter(object, "setTransportClientAddress", Transazione.model().TRANSPORT_CLIENT_ADDRESS.getFieldType(),
 					this.getObjectFromMap(map,"transport-client-address"));
+				setParameter(object, "setClientAddress", Transazione.model().CLIENT_ADDRESS.getFieldType(),
+					this.getObjectFromMap(map,"client-address"));
 				setParameter(object, "setEventiGestione", Transazione.model().EVENTI_GESTIONE.getFieldType(),
 					this.getObjectFromMap(map,"eventi-gestione"));
+				setParameter(object, "setTipoApi", Transazione.model().TIPO_API.getFieldType(),
+					this.getObjectFromMap(map,"tipo-api"));
+				setParameter(object, "setGruppi", Transazione.model().GRUPPI.getFieldType(),
+					this.getObjectFromMap(map,"gruppi"));
 				return object;
 			}
 			if(model.equals(Transazione.model().TRANSAZIONE_EXTENDED_INFO)){

@@ -44,6 +44,9 @@ public class ApiImplVersioneApiView extends BaseSoggettoItem {
   @Schema(description = "")
   private String apiSoapServizio = null;
   
+  @Schema(example = "[\"PagamentiTelematici\",\"Anagrafica\"]", description = "")
+  private List<String> apiTags = null;
+  
   @Schema(description = "")
   private String tipoServizio = null;
   
@@ -128,6 +131,30 @@ public class ApiImplVersioneApiView extends BaseSoggettoItem {
   }
 
  /**
+   * Get apiTags
+   * @return apiTags
+  **/
+  @JsonProperty("api_tags")
+  @Valid
+  public List<String> getApiTags() {
+    return this.apiTags;
+  }
+
+  public void setApiTags(List<String> apiTags) {
+    this.apiTags = apiTags;
+  }
+
+  public ApiImplVersioneApiView apiTags(List<String> apiTags) {
+    this.apiTags = apiTags;
+    return this;
+  }
+
+  public ApiImplVersioneApiView addApiTagsItem(String apiTagsItem) {
+    this.apiTags.add(apiTagsItem);
+    return this;
+  }
+
+ /**
    * Get tipoServizio
    * @return tipoServizio
   **/
@@ -181,6 +208,7 @@ public class ApiImplVersioneApiView extends BaseSoggettoItem {
     sb.append("    apiVersione: ").append(ApiImplVersioneApiView.toIndentedString(this.apiVersione)).append("\n");
     sb.append("    apiReferente: ").append(ApiImplVersioneApiView.toIndentedString(this.apiReferente)).append("\n");
     sb.append("    apiSoapServizio: ").append(ApiImplVersioneApiView.toIndentedString(this.apiSoapServizio)).append("\n");
+    sb.append("    apiTags: ").append(ApiImplVersioneApiView.toIndentedString(this.apiTags)).append("\n");
     sb.append("    tipoServizio: ").append(ApiImplVersioneApiView.toIndentedString(this.tipoServizio)).append("\n");
     sb.append("    versioni: ").append(ApiImplVersioneApiView.toIndentedString(this.versioni)).append("\n");
     sb.append("}");

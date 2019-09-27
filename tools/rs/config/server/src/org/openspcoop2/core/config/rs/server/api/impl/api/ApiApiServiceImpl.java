@@ -45,6 +45,7 @@ import org.openspcoop2.core.config.rs.server.model.ApiItem;
 import org.openspcoop2.core.config.rs.server.model.ApiReferenteView;
 import org.openspcoop2.core.config.rs.server.model.ApiRisorsa;
 import org.openspcoop2.core.config.rs.server.model.ApiServizio;
+import org.openspcoop2.core.config.rs.server.model.ApiTags;
 import org.openspcoop2.core.config.rs.server.model.ApiViewItem;
 import org.openspcoop2.core.config.rs.server.model.HttpMethodEnum;
 import org.openspcoop2.core.config.rs.server.model.ListaApi;
@@ -60,6 +61,9 @@ import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Documento;
+import org.openspcoop2.core.registry.GruppiAccordo;
+import org.openspcoop2.core.registry.Gruppo;
+import org.openspcoop2.core.registry.GruppoAccordo;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Resource;
@@ -88,6 +92,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilit
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviHelper;
+import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
@@ -140,6 +145,16 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			boolean validazioneDocumenti = ServerProperties.getInstance().isValidazioneDocumenti();
 
+			StringBuffer bfTags = new StringBuffer();
+			if(body!=null && body.getTags()!=null && !body.getTags().isEmpty()) {
+				for (String tag : body.getTags()) {
+					if(bfTags.length()>0) {
+						bfTags.append(",");
+					}
+					bfTags.append(tag);
+				}
+			}
+			
 			if (!env.apcHelper.accordiCheckData(TipoOperazione.ADD, as.getNome(), as.getDescrizione(),
 					as.getProfiloCollaborazione().toString(), Helper.toBinaryParameter(as.getByteWsdlDefinitorio()), // wsdldef
 					Helper.toBinaryParameter(as.getByteWsdlConcettuale()), // wsdlconc,
@@ -161,12 +176,37 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					new BinaryParameter(), // wsblservcorr
 					validazioneDocumenti, env.tipo_protocollo, null, // backToStato
 					env.apcCore.toMessageServiceBinding(as.getServiceBinding()), null, // messageType
-					Enums.interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica()), env.gestisciSoggettoReferente)) {
+					Enums.interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica()), env.gestisciSoggettoReferente,
+					bfTags.toString())) {
 
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 
-			env.apcCore.performCreateOperation(env.userLogin, false, as);
+			List<Object> objectToCreate = new ArrayList<>();
+			
+			if(body.getTags()!=null && !body.getTags().isEmpty()) {
+				as.setGruppi(new GruppiAccordo());
+				
+				GruppiCore gruppiCore = new GruppiCore(env.stationCore);
+				
+				for (String tag : body.getTags()) {
+					GruppoAccordo gruppo = new GruppoAccordo();
+					gruppo.setNome(tag);
+					as.getGruppi().addGruppo(gruppo);
+					
+					if(!gruppiCore.existsGruppo(tag)) {
+						Gruppo nuovoGruppo = new Gruppo();
+						nuovoGruppo.setNome(tag);
+						objectToCreate.add(nuovoGruppo);
+					}
+				}
+			}
+			
+			objectToCreate.add(as);
+			
+			// effettuo le operazioni
+			env.apcCore.performCreateOperation(env.userLogin, false, objectToCreate.toArray(new Object[objectToCreate.size()]));
+			
 			context.getLogger().info("Invocazione completata con successo");
 			
 			// Bug Fix: altrimenti viene generato 204
@@ -853,7 +893,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 	 */
 	@Override
 	public ListaApi findAllApi(ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset,
-			TipoApiEnum tipoApi) {
+			TipoApiEnum tipoApi, String tag) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");
@@ -869,6 +909,10 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			if (tipoApi != null)
 				ricerca.addFilter(idLista, Filtri.FILTRO_SERVICE_BINDING, Enums.serviceBindingFromTipo.get(tipoApi).toString().toLowerCase());
+			
+			if(tag!=null) {
+				ricerca.addFilter(idLista, Filtri.FILTRO_GRUPPO, tag);
+			}
 
 			final String tipoAccordo = "apc"; // Dal debug.
 			final List<AccordoServizioParteComuneSintetico> lista = AccordiServizioParteComuneUtilities
@@ -1493,6 +1537,47 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 		}
 	}
 
+    /**
+     * Restituisce i tags associati all'API
+     *
+     * Questa operazione consente di ottenere i tags associati all'API identificata dal nome e dalla versione
+     *
+     */
+	@Override
+	public ApiTags getApiTags(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			ApiEnv env = new ApiEnv(profilo, soggetto, context);
+			AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
+
+			if (as == null)
+				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
+
+			ApiTags ret = new ApiTags();
+			if(as.getGruppi()!=null && as.getGruppi().getGruppoList()!=null && !as.getGruppi().getGruppoList().isEmpty()) {
+				for (GruppoAccordo tag : as.getGruppi().getGruppoList()) {
+					ret.addTagsItem(tag.getNome());
+				}
+			}
+			
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			throw e;
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+	}
+
+	
 	/**
 	 * Modifica i dati di un allegato di una API
 	 *
@@ -1691,6 +1776,16 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			 * visibilitaAccordoCooperazione=ac.getPrivato()!=null && ac.getPrivato(); }
 			 */
 
+			StringBuffer bfTags = new StringBuffer();
+			if(as.getGruppi()!=null && as.getGruppi().getGruppoList()!=null && !as.getGruppi().getGruppoList().isEmpty()) {
+				for (GruppoAccordo tag : as.getGruppi().getGruppoList()) {
+					if(bfTags.length()>0) {
+						bfTags.append(",");
+					}
+					bfTags.append(tag.getNome());
+				}
+			}
+			
 			if (!env.apcHelper.accordiCheckData(TipoOperazione.CHANGE, as.getNome(), as.getDescrizione(),
 					as.getProfiloCollaborazione().toString(), Helper.toBinaryParameter(as.getByteWsdlDefinitorio()),
 					Helper.toBinaryParameter(as.getByteWsdlConcettuale()),
@@ -1711,7 +1806,8 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					null, // wsblservrorr
 					validazioneDocumenti, env.tipo_protocollo, null, // backToStato
 					env.apcCore.toMessageServiceBinding(as.getServiceBinding()), null, // MessageType
-					Enums.interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica()), env.gestisciSoggettoReferente)) {
+					Enums.interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica()), env.gestisciSoggettoReferente,
+					bfTags.toString())) {
 
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
@@ -1784,6 +1880,16 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			 * visibilitaAccordoCooperazione=ac.getPrivato()!=null && ac.getPrivato(); }
 			 */
 
+			StringBuffer bfTags = new StringBuffer();
+			if(as.getGruppi()!=null && as.getGruppi().getGruppoList()!=null && !as.getGruppi().getGruppoList().isEmpty()) {
+				for (GruppoAccordo tag : as.getGruppi().getGruppoList()) {
+					if(bfTags.length()>0) {
+						bfTags.append(",");
+					}
+					bfTags.append(tag.getNome());
+				}
+			}
+			
 			if (!env.apcHelper.accordiCheckData(TipoOperazione.CHANGE, as.getNome(), as.getDescrizione(),
 					as.getProfiloCollaborazione().toString(), Helper.toBinaryParameter(as.getByteWsdlDefinitorio()),
 					Helper.toBinaryParameter(as.getByteWsdlConcettuale()),
@@ -1804,7 +1910,8 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					null, // wsblservrorr
 					validazioneDocumenti, env.tipo_protocollo, null, // backToStato
 					env.apcCore.toMessageServiceBinding(as.getServiceBinding()), null, // MessageType
-					Enums.interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica()), env.gestisciSoggettoReferente)) {
+					Enums.interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica()), env.gestisciSoggettoReferente,
+					bfTags.toString())) {
 
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
@@ -2010,5 +2117,143 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
 	}
+	
+    /**
+     * Consente di modificare i tags associati all'API
+     *
+     * Questa operazione consente di aggiornare i tags associati all'API identificata dal nome e dalla versione
+     *
+     */
+	@Override
+	public void updateApiTags(ApiTags body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			if (body == null)
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un body");
+
+			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
+			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
+			final IDAccordo oldIdAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
+
+			if (as == null)
+				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
+
+			List<Object> objectToCreate = new ArrayList<>();
+			
+			if(body.getTags()==null || body.getTags().isEmpty()) {
+				as.setGruppi(null);
+			}
+			else {
+				as.setGruppi(new GruppiAccordo()); // annullo eventuali tags presenti.
+				
+				GruppiCore gruppiCore = new GruppiCore(env.stationCore);
+				
+				for (String tag : body.getTags()) {
+					GruppoAccordo gruppo = new GruppoAccordo();
+					gruppo.setNome(tag);
+					as.getGruppi().addGruppo(gruppo);
+					
+					if(!gruppiCore.existsGruppo(tag)) {
+						Gruppo nuovoGruppo = new Gruppo();
+						nuovoGruppo.setNome(tag);
+						objectToCreate.add(nuovoGruppo);
+					}
+				}
+			}
+			
+			boolean validazioneDocumenti = ServerProperties.getInstance().isValidazioneDocumenti();
+
+			BinaryParameter wsdlserv = new BinaryParameter();
+			wsdlserv.setValue(as.getByteWsdlLogicoErogatore());
+
+			BinaryParameter wsdlconc = new BinaryParameter();
+			wsdlconc.setValue(as.getByteWsdlConcettuale());
+
+			BinaryParameter wsdldef = new BinaryParameter();
+			wsdldef.setValue(as.getByteWsdlDefinitorio());
+
+			/*
+			 * boolean visibilitaAccordoCooperazione=false;
+			 * if("-".equals(this.accordoCooperazioneId)==false &&
+			 * "".equals(this.accordoCooperazioneId)==false &&
+			 * this.accordoCooperazioneId!=null){ AccordoCooperazione ac =
+			 * acCore.getAccordoCooperazione(Long.parseLong(this.accordoCooperazioneId));
+			 * visibilitaAccordoCooperazione=ac.getPrivato()!=null && ac.getPrivato(); }
+			 */
+
+			StringBuffer bfTags = new StringBuffer();
+			if(as.getGruppi()!=null && as.getGruppi().getGruppoList()!=null && !as.getGruppi().getGruppoList().isEmpty()) {
+				for (GruppoAccordo tag : as.getGruppi().getGruppoList()) {
+					if(bfTags.length()>0) {
+						bfTags.append(",");
+					}
+					bfTags.append(tag.getNome());
+				}
+			}
+			
+			if (!env.apcHelper.accordiCheckData(TipoOperazione.CHANGE, as.getNome(), as.getDescrizione(),
+					as.getProfiloCollaborazione().toString(), Helper.toBinaryParameter(as.getByteWsdlDefinitorio()),
+					Helper.toBinaryParameter(as.getByteWsdlConcettuale()),
+					Helper.toBinaryParameter(as.getByteWsdlLogicoErogatore()),
+					Helper.toBinaryParameter(as.getByteWsdlLogicoFruitore()),
+					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getFiltroDuplicati()),
+					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConfermaRicezione()),
+					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getIdCollaborazione()),
+					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getIdRiferimentoRichiesta()),
+					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConsegnaInOrdine()),
+					as.getScadenza() == null ? "" : as.getScadenza(), as.getId().toString(), as.getSoggettoReferente().getNome(),
+					as.getVersione().toString(), null, // AccordoCooperazioneID
+					false, // privato false, null,
+					false, // visibilitaAccordoCooperazione
+					oldIdAccordo, // idAccordoOld
+					null, // wsblconc
+					null, // wsblserv
+					null, // wsblservrorr
+					validazioneDocumenti, env.tipo_protocollo, null, // backToStato
+					env.apcCore.toMessageServiceBinding(as.getServiceBinding()), null, // MessageType
+					Enums.interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica()), env.gestisciSoggettoReferente,
+					bfTags.toString())) {
+
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			}
+
+			// Il profilo di collaborazione di base è Sincrono.
+			// Quindi Nella AccordiServizioPArteComuneChange così come nella Add possiamo
+			// assumerlo costante.
+			// Sono i Servizi e le Azioni ad avere un profilo di collaborazione
+
+			as.setOldIDAccordoForUpdate(oldIdAccordo);
+			List<Object> operazioniList = new ArrayList<Object>(Arrays.asList(as));
+
+			// Questa roba non serve qui perchè la updateDescrizione non cambia il nome e
+			// quindi nemmeno l'ID.
+			IDAccordo idNEW = env.idAccordoFactory.getIDAccordoFromAccordo(as);
+			if (idNEW.equals(oldIdAccordo) == false) {
+				AccordiServizioParteComuneUtilities.findOggettiDaAggiornare(oldIdAccordo, as, env.apcCore, operazioniList);
+			}
+
+			
+			// effettuo le operazioni
+			if(objectToCreate.size()>0) {
+				env.apcCore.performCreateOperation(env.userLogin, false, objectToCreate.toArray(new Object[objectToCreate.size()]));
+			}
+			
+			env.apcCore.performUpdateOperation(env.userLogin, false, operazioniList.toArray());
+
+			context.getLogger().info("Invocazione completata con successo");
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			throw e;
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
 
 }

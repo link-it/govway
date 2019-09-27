@@ -37,6 +37,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
@@ -232,6 +233,16 @@ public class ExporterUtils {
 		return idsAccordi;
 	}
 	
+	public List<?> getIdsGruppi(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
+		List<IDGruppo> idsGruppi = new ArrayList<IDGruppo>();
+		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
+		for (String id : idsToExport) {
+			IDGruppo idGruppo = new IDGruppo(id);
+			idsGruppi.add(idGruppo);
+		}
+		return idsGruppi;
+	}
+		
 	public List<?> getIdsRuoli(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
 		List<IDRuolo> idsRuoli = new ArrayList<IDRuolo>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);

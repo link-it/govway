@@ -60,6 +60,7 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
@@ -82,6 +83,9 @@ import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.GruppiAccordo;
+import org.openspcoop2.core.registry.Gruppo;
+import org.openspcoop2.core.registry.GruppoAccordo;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Message;
 import org.openspcoop2.core.registry.MessagePart;
@@ -105,6 +109,7 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneServizioCompostoServizioComponenteSintetico;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneServizioCompostoSintetico;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.beans.GruppoSintetico;
 import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.beans.ResourceSintetica;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
@@ -131,6 +136,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAzioni;
 import org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio;
+import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
 import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
 import org.openspcoop2.core.registry.driver.FiltroRicercaProtocolProperty;
@@ -1634,6 +1640,36 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				rs.close();
 				stm.close();
+				
+				
+				// read gruppi
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.ACCORDI_GRUPPI);
+				sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+				sqlQueryObject.addSelectAliasField(CostantiDB.GRUPPI, "id", "identificativoGruppo");
+				sqlQueryObject.addSelectAliasField(CostantiDB.GRUPPI, "nome", "nomeGruppo");
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_gruppo = "+CostantiDB.GRUPPI+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_accordo = ?");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy(CostantiDB.GRUPPI+".nome");
+				sqlQueryObject.setSortType(true);
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idAccordo);
+
+				this.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordo));
+				rs = stm.executeQuery();
+
+				while (rs.next()) {
+					GruppoSintetico gruppo = new GruppoSintetico();
+					gruppo.setId(rs.getLong("identificativoGruppo"));
+					gruppo.setNome(rs.getString("nomeGruppo"));
+					accordoServizio.getGruppo().add(gruppo);
+				}
+				rs.close();
+				stm.close();
+			
 
 
 				// read AccordoServizioComposto
@@ -2025,7 +2061,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				
 				// read resources
 				this.readResources(accordoServizio,con);
-
+				
+				// read gruppi
+				this.readAccordiGruppi(accordoServizio,con);
 
 				// read AccordoServizioComposto
 				this.readAccordoServizioComposto(accordoServizio , con);
@@ -2977,6 +3015,81 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 
+	private void readAccordiGruppi(AccordoServizioParteComune as,Connection conParam) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		// Aggiungo port type
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = null;
+
+		try {
+			this.log.debug("operazione atomica = " + this.atomica);
+			// prendo la connessione dal pool
+			if(conParam!=null)
+				con = conParam;
+			else if (this.atomica)
+				con = this.getConnectionFromDatasource("readAccordiGruppi");
+			else
+				con = this.globalConnection;
+
+			if(as.getId()==null || as.getId()<=0)
+				throw new Exception("Accordo id non definito");
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.ACCORDI_GRUPPI);
+			sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+			sqlQueryObject.addSelectAliasField(CostantiDB.GRUPPI, "id", "identificativoGruppo");
+			sqlQueryObject.addSelectAliasField(CostantiDB.GRUPPI, "nome", "nomeGruppo");
+			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_gruppo = "+CostantiDB.GRUPPI+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_accordo = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addOrderBy(CostantiDB.GRUPPI+".nome");
+			sqlQueryObject.setSortType(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+			stm.setLong(1, as.getId());
+
+			this.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, as.getId()));
+			rs = stm.executeQuery();
+
+			while (rs.next()) {
+				if(as.getGruppi()==null){
+					as.setGruppi(new GruppiAccordo());
+				}	
+				GruppoAccordo gruppo = new GruppoAccordo();
+				gruppo.setId(rs.getLong("identificativoGruppo"));
+				gruppo.setNome(rs.getString("nomeGruppo"));
+				as.getGruppi().addGruppo(gruppo);
+			}
+			rs.close();
+			stm.close();
+		
+		}catch (DriverRegistroServiziNotFound e) {
+			throw e;
+		}catch (Exception se) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::readAccordiGruppi] Exception :" + se.getMessage(),se);
+		} finally {
+
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (conParam==null && this.atomica) {
+					this.log.debug("rilascio connessione al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore
+			}
+
+		}
+	}
+	
 	private void readAccordoServizioComposto(AccordoServizioParteComune as,Connection conParam) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -3199,6 +3312,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES);
 				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".id="+CostantiDB.API_RESOURCES+".id_accordo");
 			}
+			if(filtroRicercaBase!=null){
+				if(filtroRicercaBase.getIdGruppo()!=null && filtroRicercaBase.getIdGruppo().getNome()!=null) {
+					sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+					sqlQueryObject.addFromTable(CostantiDB.ACCORDI_GRUPPI);
+					sqlQueryObject.addWhereCondition(CostantiDB.GRUPPI+".id="+CostantiDB.ACCORDI_GRUPPI+".id_gruppo");
+					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".id="+CostantiDB.ACCORDI_GRUPPI+".id_accordo");
+				}
+			}
 			
 			// select field
 			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI,"nome","nomeAccordo");
@@ -3238,7 +3359,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				if(filtroRicercaBase.getServiceBinding()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".service_binding = ?");
-
+				if(filtroRicercaBase.getIdGruppo()!=null && filtroRicercaBase.getIdGruppo().getNome()!=null) {
+					sqlQueryObject.addWhereCondition(CostantiDB.GRUPPI+".nome = ?");
+				}
+				
 				if( (filtroRicercaBase.getIdAccordoCooperazione()!=null &&
 						(filtroRicercaBase.getIdAccordoCooperazione().getNome()!=null || 
 						filtroRicercaBase.getIdAccordoCooperazione().getSoggettoReferente()!=null || 
@@ -3343,7 +3467,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 					stm.setString(indexStmt, filtroRicercaBase.getServiceBinding().getValue());
 					indexStmt++;
 				}
-					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".service_binding = ?");
+				if(filtroRicercaBase.getIdGruppo()!=null && filtroRicercaBase.getIdGruppo().getNome()!=null) {
+					this.log.debug("gruppo stmt.setString("+filtroRicercaBase.getIdGruppo().getNome()+")");
+					stm.setString(indexStmt, filtroRicercaBase.getIdGruppo().getNome());
+					indexStmt++;
+				}	
+				
 				if(filtroRicercaBase.getIdAccordoCooperazione()!=null &&
 						(filtroRicercaBase.getIdAccordoCooperazione().getNome()!=null || 
 						filtroRicercaBase.getIdAccordoCooperazione().getSoggettoReferente()!=null || 
@@ -3726,6 +3855,15 @@ IDriverWS ,IMonitoraggioRisorsa{
 				DriverRegistroServiziDB_LIB.CRUDResource(CostantiDB.CREATE,accordoServizio,resource, connection, idAccordo);
 			}
 			this.log.debug("inserite " + accordoServizio.sizeResourceList() + " resources relative all'accordo :" + nome + " id :" + idAccordo);
+			
+			// Gruppi
+			if(accordoServizio.getGruppi()!=null && accordoServizio.getGruppi().sizeGruppoList()>0) {
+				for (int i = 0; i < accordoServizio.getGruppi().sizeGruppoList(); i++) {
+					GruppoAccordo gruppo = accordoServizio.getGruppi().getGruppo(i);
+					DriverRegistroServiziDB_LIB.CRUDAccordoGruppo(CostantiDB.CREATE,accordoServizio, gruppo, connection, idAccordo);
+				}
+				this.log.debug("inserite " + accordoServizio.sizeAzioneList() + " gruppi relative all'accordo :" + nome + " id :" + idAccordo);
+			}
 			
 			// Accordo servizio composto
 			if(accordoServizio.getServizioComposto()!=null){
@@ -5046,6 +5184,50 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("inserite " + accordoServizio.sizeResourceList() + " resources relative all'accordo :" + nome + " id :" + idAccordoLong);
 			
 			
+			
+			// Gruppi
+			//TODO possibile ottimizzazione
+			//la lista contiene tutte e sole le risorse necessarie
+			//prima cancello le risorse e poi reinserisco quelle nuove
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.ACCORDI_GRUPPI);
+			sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+			sqlQueryObject.addSelectAliasField(CostantiDB.GRUPPI, "id", "identificativoGruppo");
+			sqlQueryObject.addSelectAliasField(CostantiDB.GRUPPI, "nome", "nomeGruppo");
+			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_gruppo = "+CostantiDB.GRUPPI+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_accordo = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm=connection.prepareStatement(sqlQuery);
+			stm.setLong(1, idAccordoLong);
+			rs=stm.executeQuery();
+			List<GruppoAccordo> gruppi = new ArrayList<GruppoAccordo>();
+			while(rs.next()){
+				GruppoAccordo gruppo = new GruppoAccordo();
+				gruppo.setNome(rs.getString("nomeGruppo"));
+				gruppo.setId(rs.getLong("identificativoGruppo"));
+				gruppi.add(gruppo);
+			}
+			rs.close();
+			stm.close();
+	
+			while(gruppi.size()>0){
+				GruppoAccordo gruppo = gruppi.remove(0);
+				DriverRegistroServiziDB_LIB.CRUDAccordoGruppo(CostantiDB.DELETE, accordoServizio, gruppo, connection, idAccordoLong);
+			}
+			this.log.debug("Cancellate "+n+" resources associate all'accordo :" + nome + " id :" + idAccordoLong);
+			
+			if(accordoServizio.getGruppi()!=null && accordoServizio.getGruppi().sizeGruppoList()>0) {
+				for (int i = 0; i < accordoServizio.getGruppi().sizeGruppoList(); i++) {
+					GruppoAccordo gruppo = accordoServizio.getGruppi().getGruppo(i);
+					DriverRegistroServiziDB_LIB.CRUDAccordoGruppo(CostantiDB.CREATE,accordoServizio, gruppo, connection, idAccordoLong);
+				}
+				this.log.debug("inserite " + accordoServizio.sizeAzioneList() + " gruppi relative all'accordo :" + nome + " id :" + idAccordoLong);
+			}
+			
+			
+			
 			// Accordo servizio composto
 			if(accordoServizio.getServizioComposto()!=null){
 				// Elimino eventualmente se prima era presente
@@ -5440,6 +5622,39 @@ IDriverWS ,IMonitoraggioRisorsa{
 				DriverRegistroServiziDB_LIB.CRUDResource(CostantiDB.DELETE, accordoServizio, resource, connection, idAccordoLong);
 			}
 			
+			
+			// Gruppi
+			//TODO possibile ottimizzazione
+			//la lista contiene tutte e sole le risorse necessarie
+			//prima cancello le risorse e poi reinserisco quelle nuove
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.ACCORDI_GRUPPI);
+			sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+			sqlQueryObject.addSelectAliasField(CostantiDB.GRUPPI, "id", "identificativoGruppo");
+			sqlQueryObject.addSelectAliasField(CostantiDB.GRUPPI, "nome", "nomeGruppo");
+			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_gruppo = "+CostantiDB.GRUPPI+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_accordo = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm=connection.prepareStatement(sqlQuery);
+			stm.setLong(1, idAccordoLong);
+			rs=stm.executeQuery();
+			List<GruppoAccordo> gruppi = new ArrayList<GruppoAccordo>();
+			while(rs.next()){
+				GruppoAccordo gruppo = new GruppoAccordo();
+				gruppo.setNome(rs.getString("nomeGruppo"));
+				gruppo.setId(rs.getLong("identificativoGruppo"));
+				gruppi.add(gruppo);
+			}
+			rs.close();
+			stm.close();
+	
+			while(gruppi.size()>0){
+				GruppoAccordo gruppo = gruppi.remove(0);
+				DriverRegistroServiziDB_LIB.CRUDAccordoGruppo(CostantiDB.DELETE, accordoServizio, gruppo, connection, idAccordoLong);
+			}
+			this.log.debug("Cancellate "+n+" resources associate all'accordo :" + nome + " id :" + idAccordoLong);
 			
 			
 			
@@ -6132,6 +6347,761 @@ IDriverWS ,IMonitoraggioRisorsa{
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	/* Gruppi */
+
+	/**
+	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Gruppo}, 
+	 * identificato grazie al parametro 
+	 * <var>nome</var> 
+	 *
+	 * @param idGruppo Identificativo del gruppo
+	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Gruppo}.
+	 * 
+	 */
+	@Override
+	public Gruppo getGruppo(
+			IDGruppo idGruppo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+
+		this.log.debug("richiesto getGruppo: " + idGruppo);
+		// conrollo consistenza
+		if (idGruppo == null)
+			throw new DriverRegistroServiziException("[getGruppo] Parametro idGruppo is null");
+		if (idGruppo.getNome()==null || idGruppo.getNome().trim().equals(""))
+			throw new DriverRegistroServiziException("[getGruppo] Parametro idGruppo.nome non e' definito");
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("getGruppo(nome)");
+
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getGruppo] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("nome = ?");
+			String queryString = sqlQueryObject
+					.createSQLQuery();
+			stm = con.prepareStatement(queryString);
+			stm.setString(1, idGruppo.getNome());
+			rs = stm.executeQuery();
+			Gruppo gruppo = null;
+			if (rs.next()) {
+				gruppo = new Gruppo();
+				gruppo.setId(rs.getLong("id"));
+				gruppo.setNome(rs.getString("nome"));
+				gruppo.setDescrizione(rs.getString("descrizione"));
+				String serviceBinding = rs.getString("service_binding");
+				if(serviceBinding!=null){
+					gruppo.setServiceBinding(ServiceBinding.toEnumConstant(serviceBinding));
+				}
+				gruppo.setSuperUser(rs.getString("superuser"));
+
+				// Ora Registrazione
+				if(rs.getTimestamp("ora_registrazione")!=null){
+					gruppo.setOraRegistrazione(new Date(rs.getTimestamp("ora_registrazione").getTime()));
+				}
+
+			} else {
+				throw new DriverRegistroServiziNotFound("[DriverRegistroServiziDB::getGruppo] rs.next non ha restituito valori con la seguente interrogazione :\n" + 
+						DriverRegistroServiziDB_LIB.formatSQLString(queryString, idGruppo.getNome()));
+			}
+
+			return gruppo;
+
+		}catch (DriverRegistroServiziNotFound e) {
+			throw e;
+		} catch (SQLException se) {
+
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getGruppo] SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getGruppo] Exception: " + se.getMessage(),se);
+		} finally {
+			try {
+				rs.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				stm.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+
+	public Gruppo getGruppo(
+			long idGruppo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+
+		this.log.debug("richiesto getGruppo: " + idGruppo);
+		// conrollo consistenza
+		if (idGruppo <=0)
+			throw new DriverRegistroServiziException("[getGruppo] Parametro idGruppo non valido");
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("getGruppo(id)");
+
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getGruppo] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione atomica = " + this.atomica);
+
+		IDGruppo idGruppoObject = null;
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+			sqlQueryObject.addSelectField("nome");
+			sqlQueryObject.addWhereCondition("id = ?");
+			String queryString = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(queryString);
+			stm.setLong(1, idGruppo);
+			rs = stm.executeQuery();
+			if (rs.next()) {
+				idGruppoObject = new IDGruppo(rs.getString("nome"));
+			} else {
+				throw new DriverRegistroServiziNotFound("[DriverRegistroServiziDB::getGruppo] rs.next non ha restituito valori con la seguente interrogazione :\n" + 
+						DriverRegistroServiziDB_LIB.formatSQLString(queryString, idGruppo));
+			}
+
+		}catch (DriverRegistroServiziNotFound e) {
+			throw e;
+		} catch (SQLException se) {
+
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getGruppo] SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getGruppo] Exception: " + se.getMessage(),se);
+		} finally {
+			try {
+				rs.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				stm.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return this.getGruppo(idGruppoObject);
+	}
+
+	/**
+	 * Ritorna gli identificatori dei Gruppi che rispettano il parametro di ricerca
+	 * 
+	 * @param filtroRicerca
+	 * @return Una lista di ID dei gruppi trovati
+	 * @throws DriverRegistroServiziException
+	 * @throws DriverRegistroServiziNotFound
+	 */
+	@Override
+	public List<IDGruppo> getAllIdGruppi(
+			FiltroRicercaGruppi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+
+		boolean filtroRicercaTipo = false;
+		if(filtroRicerca!=null){
+			filtroRicercaTipo = filtroRicerca.getServiceBinding()!=null;
+		}
+		
+		this.log.debug("getAllIdGruppi...");
+
+		try {
+			this.log.debug("operazione atomica = " + this.atomica);
+			// prendo la connessione dal pool
+			if (this.atomica)
+				con = this.getConnectionFromDatasource("getAllIdGruppi");
+			else
+				con = this.globalConnection;
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+			sqlQueryObject.addSelectField("nome");
+			if(filtroRicerca!=null){
+				// Filtro By Data
+				if(filtroRicerca.getMinDate()!=null)
+					sqlQueryObject.addWhereCondition("ora_registrazione > ?");
+				if(filtroRicerca.getMaxDate()!=null)
+					sqlQueryObject.addWhereCondition("ora_registrazione < ?");
+				if(filtroRicerca.getNome()!=null)
+					sqlQueryObject.addWhereCondition("nome = ?");
+				if(filtroRicercaTipo){
+					
+					ISQLQueryObject sqlQueryObjectServiceBinding = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObjectServiceBinding.addWhereIsNullCondition("service_binding");
+					sqlQueryObjectServiceBinding.addWhereCondition("service_binding= ?");
+					sqlQueryObjectServiceBinding.setANDLogicOperator(false);
+					sqlQueryObject.addWhereCondition(sqlQueryObjectServiceBinding.createSQLConditions());
+					
+				}
+				
+				if(filtroRicerca.isOrdinaDataRegistrazione())
+					sqlQueryObject.addOrderBy("ora_registrazione");
+				
+				sqlQueryObject.addOrderBy("nome");
+			}
+
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			this.log.debug("eseguo query : " + sqlQuery );
+			stm = con.prepareStatement(sqlQuery);
+			int indexStmt = 1;
+			if(filtroRicerca!=null){
+				if(filtroRicerca.getMinDate()!=null){
+					this.log.debug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
+					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMinDate().getTime()));
+					indexStmt++;
+				}
+				if(filtroRicerca.getMaxDate()!=null){
+					this.log.debug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
+					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMaxDate().getTime()));
+					indexStmt++;
+				}	
+				if(filtroRicerca.getNome()!=null){
+					this.log.debug("nome stmt.setString("+filtroRicerca.getNome()+")");
+					stm.setString(indexStmt, filtroRicerca.getNome());
+					indexStmt++;
+				}	
+				if(filtroRicercaTipo){
+					this.log.debug("serviceBinding stmt.setString("+filtroRicerca.getServiceBinding().getValue()+")");
+					stm.setString(indexStmt, filtroRicerca.getServiceBinding().getValue());
+					indexStmt++;
+				}
+			}
+			rs = stm.executeQuery();
+			List<IDGruppo> nomiGruppi = new ArrayList<IDGruppo>();
+			while (rs.next()) {
+				nomiGruppi.add(new IDGruppo(rs.getString("nome")));
+			}
+			if(nomiGruppi.size()==0){
+				if(filtroRicerca!=null)
+					throw new DriverRegistroServiziNotFound("Gruppi non trovati che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
+				else
+					throw new DriverRegistroServiziNotFound("Gruppi non trovati");
+			}else{
+				return nomiGruppi;
+			}
+		}catch(DriverRegistroServiziNotFound de){
+			throw de;
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException("getAllIdGruppi error",e);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessione al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore
+			}
+
+		}
+	}
+
+
+
+	/**
+	 * Crea una nuovo Gruppo
+	 * 
+	 * @param gruppo
+	 * @throws DriverRegistroServiziException
+	 */
+	@Override
+	public void createGruppo(Gruppo gruppo) throws DriverRegistroServiziException{
+		if (gruppo == null)
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createGruppo] Parametro non valido.");
+
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("createGruppo");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createGruppo] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDGruppo type = 1");
+			DriverRegistroServiziDB_LIB.CRUDGruppo(CostantiDB.CREATE, gruppo, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createGruppo] Errore durante la creazione del gruppo : " + qe.getMessage(), qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+
+	/**
+     * Verifica l'esistenza di un Gruppo
+     *
+     * @param idGruppo idGruppo del gruppo da verificare
+     * @return true se il gruppo esiste, false altrimenti
+	 * @throws DriverRegistroServiziException
+     */    
+    @Override
+	public boolean existsGruppo(IDGruppo idGruppo) throws DriverRegistroServiziException{
+		boolean exist = false;
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+
+		if (idGruppo == null)
+			throw new DriverRegistroServiziException("Parametro non valido");
+
+		if (idGruppo.getNome()==null || idGruppo.getNome().equals(""))
+			throw new DriverRegistroServiziException("Parametro vuoto non valido");
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("existsGruppo");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsGruppo] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("nome = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+			stm.setString(1, idGruppo.getNome());
+			rs = stm.executeQuery();
+			if (rs.next())
+				exist = true;
+			rs.close();
+			stm.close();
+
+		} catch (Exception e) {
+			exist = false;
+			this.log.error("Errore durante verifica esistenza gruppo: "+e.getMessage(), e);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			if (this.atomica) {
+				try {
+					con.close();
+				} catch (Exception e) {
+				}
+			}
+		}
+
+		return exist;
+	}
+
+    /**
+	 * Aggiorna il Gruppo con i nuovi valori.
+	 *  
+	 * @param gruppo
+	 * @throws DriverRegistroServiziException
+	 */
+	@Override
+	public void updateGruppo(Gruppo gruppo) throws DriverRegistroServiziException{
+		if (gruppo == null)
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateGruppo] Parametro non valido.");
+
+		PreparedStatement stm=null;
+		ResultSet rs=null;
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("updateGruppo");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateGruppo] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione atomica = " + this.atomica);
+
+		try {
+
+			this.log.debug("CRUDGruppo type = 2");
+			DriverRegistroServiziDB_LIB.CRUDGruppo(CostantiDB.UPDATE, gruppo, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateGruppo] Errore durante l'aggiornamento del gruppo : " + qe.getMessage(),qe);
+		} finally {
+
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}	
+
+	/**
+	 * Elimina un Gruppo
+	 *  
+	 * @param gruppo
+	 * @throws DriverRegistroServiziException
+	 */
+	@Override
+	public void deleteGruppo(Gruppo gruppo) throws DriverRegistroServiziException{
+		if (gruppo == null)
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deleteGruppo] Parametro non valido.");
+
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("deleteGruppo");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deleteGruppo] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDGruppo type = 3");
+			DriverRegistroServiziDB_LIB.CRUDGruppo(CostantiDB.DELETE, gruppo, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deleteGruppo] Errore durante l'eliminazione del gruppo : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	
+	public List<Gruppo> gruppiList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
+		String nomeMetodo = "gruppiList";
+		int idLista = Liste.GRUPPI;
+		int offset;
+		int limit;
+		String search;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+
+		String filterServiceBinding = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVICE_BINDING);
+		ServiceBinding serviceBinding = null;
+		if(filterServiceBinding!=null) {
+			serviceBinding = ServiceBinding.toEnumConstant(filterServiceBinding);
+		}
+				
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+		ArrayList<Gruppo> lista = new ArrayList<Gruppo>();
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("gruppiList");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		List<IDGruppo> listIdGruppi = null;
+		try {
+
+			ISQLQueryObject sqlQueryObjectServiceBinding = null;
+			if(serviceBinding!=null) {
+				sqlQueryObjectServiceBinding = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectServiceBinding.addWhereIsNullCondition("service_binding");
+				sqlQueryObjectServiceBinding.addWhereCondition("service_binding= ?");
+				sqlQueryObjectServiceBinding.setANDLogicOperator(false);
+			}
+			
+			if (!search.equals("")) {
+				//query con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
+					sqlQueryObject.addWhereCondition("superuser = ?");
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);	
+				if(serviceBinding!=null) {
+					sqlQueryObject.addWhereCondition(sqlQueryObjectServiceBinding.createSQLConditions());
+				}
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
+					sqlQueryObject.addWhereCondition("superuser = ?");
+				if(serviceBinding!=null) {
+					sqlQueryObject.addWhereCondition(sqlQueryObjectServiceBinding.createSQLConditions());
+				}
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			int index = 1;
+			if(this.useSuperUser && superuser!=null && (!superuser.equals(""))){
+				stmt.setString(index++, superuser);
+			}
+			if(serviceBinding!=null) {
+				stmt.setString(index++, serviceBinding.getValue());
+			}
+
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			if (!search.equals("")) { // con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+				sqlQueryObject.addSelectField("nome");
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
+					sqlQueryObject.addWhereCondition("superuser = ?");
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+				if(serviceBinding!=null) {
+					sqlQueryObject.addWhereCondition(sqlQueryObjectServiceBinding.createSQLConditions());
+				}
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy("nome");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				// senza search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+				sqlQueryObject.addSelectField("nome");
+				if(this.useSuperUser && superuser!=null && (!superuser.equals("")))
+					sqlQueryObject.addWhereCondition("superuser = ?");
+				if(serviceBinding!=null) {
+					sqlQueryObject.addWhereCondition(sqlQueryObjectServiceBinding.createSQLConditions());
+				}
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy("nome");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			index = 1;
+			if(this.useSuperUser && superuser!=null && (!superuser.equals(""))){
+				stmt.setString(index++, superuser);
+			}
+			if(serviceBinding!=null) {
+				stmt.setString(index++, serviceBinding.getValue());
+			}
+			risultato = stmt.executeQuery();
+
+			listIdGruppi = new ArrayList<>();
+			while (risultato.next()) {
+
+				listIdGruppi.add(new IDGruppo(risultato.getString("nome")));
+
+			}
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		
+		if(listIdGruppi!=null){
+			for (IDGruppo idGruppo : listIdGruppi) {
+				try{
+					lista.add(this.getGruppo(idGruppo));
+				}catch(DriverRegistroServiziNotFound notFound){
+					// non può capitare
+					throw new DriverRegistroServiziException(notFound.getMessage(),notFound);
+				}
+			}
+		}
+		
+		return lista;
+	}
 	
 	
 	
@@ -12863,12 +13833,15 @@ IDriverWS ,IMonitoraggioRisorsa{
 		String filterTipoAPI = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVICE_BINDING);
 		
 		String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
+		
+		String filterGruppo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_GRUPPO);
 
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
 		this.log.debug("filterProtocolli : " + filterProtocolli);
 		this.log.debug("filterTipoAPI : " + filterTipoAPI);
 		this.log.debug("filterStatoAccordo : " + filterStatoAccordo);
+		this.log.debug("filterGruppo : " + filterGruppo);
 
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -12938,6 +13911,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 			if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".stato = ?");
 			}
+			if(filterGruppo!=null && !filterGruppo.equals("")) {
+				sqlQueryObject.addFromTable(CostantiDB.ACCORDI_GRUPPI);
+				sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_accordo="+CostantiDB.ACCORDI+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_gruppo="+CostantiDB.GRUPPI+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.GRUPPI+".nome = ?");
+			}
 			
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
@@ -12950,6 +13930,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 				stmt.setString(index++, filterStatoAccordo);
+			}
+			if(filterGruppo!=null && !filterGruppo.equals("")) {
+				stmt.setString(index++, filterGruppo);
 			}
 			
 			risultato = stmt.executeQuery();
@@ -12990,6 +13973,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 			if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".stato = ?");
 			}
+			if(filterGruppo!=null && !filterGruppo.equals("")) {
+				sqlQueryObject.addFromTable(CostantiDB.ACCORDI_GRUPPI);
+				sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_accordo="+CostantiDB.ACCORDI+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_gruppo="+CostantiDB.GRUPPI+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.GRUPPI+".nome = ?");
+			}
 			
 			if(excludeASParteComune){
 				sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectExclude);
@@ -13018,6 +14008,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 				stmt.setString(index++, filterStatoAccordo);
+			}
+			if(filterGruppo!=null && !filterGruppo.equals("")) {
+				stmt.setString(index++, filterGruppo);
 			}
 			risultato = stmt.executeQuery();
 
@@ -19607,6 +20600,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 
 		String filterTipoAPI = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVICE_BINDING);
+		if(filterTipoAPI!=null && filterTipoAPI.equals("")) {
+			filterTipoAPI = null;
+		}
+		
+		String filterGruppo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_GRUPPO);
+		if(filterGruppo!=null && filterGruppo.equals("")) {
+			filterGruppo = null;
+		}
 		
 		String filterDominio = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_DOMINIO);
 		PddTipologia pddTipologia = null;
@@ -19628,6 +20629,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		this.log.debug("filterProtocollo : " + filterProtocollo);
 		this.log.debug("filterProtocolli : " + filterProtocolli);
 		this.log.debug("filterTipoAPI : " + filterTipoAPI);
+		this.log.debug("filterGruppo : " + filterGruppo);
 		this.log.debug("filterDominio : " + filterDominio);
 		this.log.debug("filterStatoAccordo : " + filterStatoAccordo);
 		this.log.debug("filterSoggettoNome : " + filterSoggettoNome);
@@ -19692,9 +20694,15 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				if(permessiUtente!=null || filterTipoAPI!=null) {
+				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null) {
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
+					if(filterGruppo!=null) {
+						sqlQueryObject.addFromTable(CostantiDB.ACCORDI_GRUPPI);
+						sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+						sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_accordo="+CostantiDB.ACCORDI+".id");
+						sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_gruppo="+CostantiDB.GRUPPI+".id");
+					}
 				}
 				if(gestioneFruitori) {
 					sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
@@ -19729,6 +20737,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
 					sqlQueryObject.addWhereCondition("service_binding = ?");
+				}
+				if(filterGruppo!=null && !filterGruppo.equals("")) {
+					sqlQueryObject.addWhereCondition(CostantiDB.GRUPPI+".nome = ?");
 				}
 				if(pddTipologia!=null) {
 					if(PddTipologia.ESTERNO.equals(pddTipologia)) {
@@ -19767,9 +20778,15 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				if(permessiUtente!=null || filterTipoAPI!=null) {
+				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null) {
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
+					if(filterGruppo!=null) {
+						sqlQueryObject.addFromTable(CostantiDB.ACCORDI_GRUPPI);
+						sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+						sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_accordo="+CostantiDB.ACCORDI+".id");
+						sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_gruppo="+CostantiDB.GRUPPI+".id");
+					}
 				}
 				if(gestioneFruitori) {
 					sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
@@ -19804,6 +20821,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
 					sqlQueryObject.addWhereCondition("service_binding = ?");
+				}
+				if(filterGruppo!=null && !filterGruppo.equals("")) {
+					sqlQueryObject.addWhereCondition(CostantiDB.GRUPPI+".nome = ?");
 				}
 				if(pddTipologia!=null) {
 					if(PddTipologia.ESTERNO.equals(pddTipologia)) {
@@ -19844,6 +20864,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
 				stmt.setString(index++, filterTipoAPI);
 			}
+			if(filterGruppo!=null && !filterGruppo.equals("")) {
+				stmt.setString(index++, filterGruppo);
+			}
 			if(pddTipologia!=null) {
 				stmt.setString(index++, pddTipologia.toString());
 			}
@@ -19863,9 +20886,15 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				if(permessiUtente!=null || filterTipoAPI!=null) {
+				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null) {
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
+					if(filterGruppo!=null) {
+						sqlQueryObject.addFromTable(CostantiDB.ACCORDI_GRUPPI);
+						sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+						sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_accordo="+CostantiDB.ACCORDI+".id");
+						sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_gruppo="+CostantiDB.GRUPPI+".id");
+					}
 				}
 				if(gestioneFruitori) {
 					sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
@@ -19886,7 +20915,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("tipo_servizio");
 				sqlQueryObject.addSelectField("versione_servizio");
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI+".id_soggetto","idSoggettoErogatore");
-				sqlQueryObject.addSelectField("id_accordo");
+				sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".id_accordo");
 				sqlQueryObject.addSelectField("servizio_correlato");
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI+".stato","statoServizio");
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI,"descrizione","descrizioneServizio");
@@ -19917,6 +20946,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
 					sqlQueryObject.addWhereCondition("service_binding = ?");
+				}
+				if(filterGruppo!=null && !filterGruppo.equals("")) {
+					sqlQueryObject.addWhereCondition(CostantiDB.GRUPPI+".nome = ?");
 				}
 				if(pddTipologia!=null) {
 					if(PddTipologia.ESTERNO.equals(pddTipologia)) {
@@ -19970,9 +21002,15 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				if(permessiUtente!=null || filterTipoAPI!=null) {
+				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null) {
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
+					if(filterGruppo!=null) {
+						sqlQueryObject.addFromTable(CostantiDB.ACCORDI_GRUPPI);
+						sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+						sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_accordo="+CostantiDB.ACCORDI+".id");
+						sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_gruppo="+CostantiDB.GRUPPI+".id");
+					}
 				}
 				if(gestioneFruitori) {
 					sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
@@ -19993,7 +21031,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("tipo_servizio");
 				sqlQueryObject.addSelectField("versione_servizio");
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI+".id_soggetto","idSoggettoErogatore");
-				sqlQueryObject.addSelectField("id_accordo");
+				sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".id_accordo");
 				sqlQueryObject.addSelectField("servizio_correlato");
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI+".stato","statoServizio");
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI,"descrizione","descrizioneServizio");
@@ -20025,6 +21063,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
 					sqlQueryObject.addWhereCondition("service_binding = ?");
+				}
+				if(filterGruppo!=null && !filterGruppo.equals("")) {
+					sqlQueryObject.addWhereCondition(CostantiDB.GRUPPI+".nome = ?");
 				}
 				if(pddTipologia!=null) {
 					if(PddTipologia.ESTERNO.equals(pddTipologia)) {
@@ -20080,6 +21121,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				stmt.setString(index++, superuser);
 			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
 				stmt.setString(index++, filterTipoAPI);
+			}
+			if(filterGruppo!=null && !filterGruppo.equals("")) {
+				stmt.setString(index++, filterGruppo);
 			}
 			if(pddTipologia!=null) {
 				stmt.setString(index++, pddTipologia.toString());

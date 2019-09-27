@@ -53,9 +53,9 @@ public class TransazioneDettaglioRichiestaDatiTrasporto  {
   
   @Schema(required = true, description = "")
   private HttpMethodEnum tipo = null;
-  @XmlElement(name="url_invocazione", required = true)
+  @XmlElement(name="url_invocazione")
   
-  @Schema(example = "/govway/in/Ente/PetStore/v2/pet", required = true, description = "")
+  @Schema(example = "/govway/in/Ente/PetStore/v2/pet", description = "")
   private String urlInvocazione = null;
  /**
    * Get dataRicezione
@@ -121,7 +121,6 @@ public class TransazioneDettaglioRichiestaDatiTrasporto  {
    * @return urlInvocazione
   **/
   @JsonProperty("url_invocazione")
-  @NotNull
   @Valid
   public String getUrlInvocazione() {
     return this.urlInvocazione;

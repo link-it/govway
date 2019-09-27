@@ -34,6 +34,7 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.monitor.MonitorCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.operazioni.OperazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
@@ -106,6 +107,7 @@ public class GestoreAutorizzazioni {
 	Vector<String> servletChangePWD_Modalita = null;
 	Vector<String> servletOperazioni = null;
 	Vector<String> servletProtocolProperties = null;
+	Vector<String> servletGruppi = null;
 	
 	// Associazione diritti alle funzionalita'
 	PermessiUtente permessiPdD = null;
@@ -132,6 +134,7 @@ public class GestoreAutorizzazioni {
 	PermessiUtente permessiChangePWD_Modalita = null;
 	PermessiUtente permessiOperazioni = null;
 	PermessiUtente permessiProtocolProperties = null;
+	PermessiUtente permessiGruppi = null;
 
 	
 	private boolean singlePdD = false;
@@ -435,6 +438,13 @@ public class GestoreAutorizzazioni {
 		/** Permessi Associati alla gestione delle protocol properties */
 		this.permessiProtocolProperties = new PermessiUtente();
 		this.permessiProtocolProperties.setServizi(true);
+		
+		/** Gruppo di servlet che gestiscono i gruppi */
+		this.servletGruppi = new Vector<String>();
+		this.servletGruppi.addAll(GruppiCostanti.SERVLET_GRUPPI);
+		/** Permessi associati alla gestione dei gruppi */
+		this.permessiGruppi = new PermessiUtente();
+		this.permessiGruppi.setSistema(true);
 	}
 	
 	
@@ -522,6 +532,8 @@ public class GestoreAutorizzazioni {
 			return this.permessiOperazioni.or(user.getPermessi());
 		}else if(this.servletProtocolProperties.contains(nomeServlet)){
 			return this.permessiProtocolProperties.or(user.getPermessi());
+		}else if(this.servletGruppi.contains(nomeServlet)){
+			return this.permessiGruppi.or(user.getPermessi());
 		}else{
 			log.error("Servlet richiesta non gestita: "+nomeServlet);
 			return false;

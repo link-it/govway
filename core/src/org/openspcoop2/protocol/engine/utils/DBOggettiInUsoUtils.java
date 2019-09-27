@@ -37,6 +37,7 @@ import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
@@ -351,6 +352,198 @@ public class DBOggettiInUsoUtils  {
 	}
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// ***** GRUPPI ******
+
+	// Lascio i metodi se servissero in futuro
+	public static boolean isGruppoConfigInUso(Connection con, String tipoDB, IDGruppo idGruppo, Map<ErrorsHandlerCostant, 
+			List<String>> whereIsInUso, boolean normalizeObjectIds) throws UtilsException {
+		return _isGruppoInUso(con,tipoDB,idGruppo,false,true,whereIsInUso,normalizeObjectIds);
+	}
+	public static boolean isGruppoRegistryInUso(Connection con, String tipoDB, IDGruppo idGruppo, Map<ErrorsHandlerCostant, 
+			List<String>> whereIsInUso, boolean normalizeObjectIds) throws UtilsException {
+		return _isGruppoInUso(con,tipoDB,idGruppo,true,false,whereIsInUso,normalizeObjectIds);
+	}
+	public static boolean isGruppoInUso(Connection con, String tipoDB, IDGruppo idGruppo, Map<ErrorsHandlerCostant, 
+			List<String>> whereIsInUso, boolean normalizeObjectIds) throws UtilsException {
+		return _isGruppoInUso(con,tipoDB,idGruppo,true,true,whereIsInUso,normalizeObjectIds);
+	}
+	private static boolean _isGruppoInUso(Connection con, String tipoDB, IDGruppo idGruppo, boolean registry, boolean config, Map<ErrorsHandlerCostant, 
+			List<String>> whereIsInUso, boolean normalizeObjectIds) throws UtilsException {
+		String nomeMetodo = "_isGruppoInUso";
+
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+		PreparedStatement stmt2 = null;
+		ResultSet risultato2 = null;
+		String queryString;
+
+		try {
+
+			long idG = DBUtils.getIdGruppo(idGruppo, con, tipoDB);
+			
+			boolean isInUso = false;
+			
+			List<String> accordi_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_ACCORDI);
+				
+			if (accordi_list == null) {
+				accordi_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_ACCORDI, accordi_list);
+			}
+			
+			
+			// Controllo che il gruppo non sia in uso negli accordi
+			if(registry){
+				
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.ACCORDI_GRUPPI);
+				sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_gruppo = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_GRUPPI+".id_accordo = "+CostantiDB.ACCORDI+".id");
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setLong(1, idG);
+				risultato = stmt.executeQuery();
+				while (risultato.next()){
+					isInUso=true;
+					
+					String nomeAccordo = risultato.getString("nome");
+					int versione = risultato.getInt("versione");
+					long idReferente = risultato.getLong("id_referente");
+					IDSoggetto idReferenteObject = null;
+					
+					if(idReferente>0){
+
+						ISQLQueryObject sqlQueryObjectReferente = SQLObjectFactory.createSQLQueryObject(tipoDB);
+						sqlQueryObjectReferente.addFromTable(CostantiDB.SOGGETTI);
+						sqlQueryObjectReferente.addSelectField("*");
+						sqlQueryObjectReferente.addWhereCondition("id=?");
+						sqlQueryObjectReferente.setANDLogicOperator(true);
+						String queryStringReferente = sqlQueryObjectReferente.createSQLQuery();
+						stmt2 = con.prepareStatement(queryStringReferente);
+						stmt2.setLong(1, idReferente);
+						risultato2 = stmt2.executeQuery();
+						if(risultato2.next()){
+							idReferenteObject = new IDSoggetto();
+							idReferenteObject.setTipo(risultato2.getString("tipo_soggetto"));
+							idReferenteObject.setNome(risultato2.getString("nome_soggetto"));
+						}
+						risultato2.close(); risultato2=null;
+						stmt2.close(); stmt2=null;
+
+					}
+					
+					if(normalizeObjectIds && idReferenteObject!=null) {
+						String protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(idReferenteObject.getTipo());
+						IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromValues(nomeAccordo, idReferenteObject, versione); 
+						accordi_list.add(getProtocolPrefix(protocollo)+NamingUtils.getLabelAccordoServizioParteComune(protocollo, idAccordo));
+					}
+					else {
+
+						StringBuffer bf = new StringBuffer();
+
+						bf.append(idReferenteObject.getTipo());
+						bf.append("/");
+						bf.append(idReferenteObject.getNome());
+						bf.append(":");
+						
+						bf.append(nomeAccordo);
+		
+						if(idReferente>0){
+							bf.append(":");
+							bf.append(versione);
+						}
+		
+						accordi_list.add(bf.toString());
+					}
+					
+				}
+				risultato.close();
+				stmt.close();
+			}
+
+			return isInUso;
+
+		} catch (Exception se) {
+			throw new UtilsException("[DBOggettiInUsoUtils::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			// Chiudo statement and resultset
+			try {
+				try{
+					if(risultato2!=null) risultato2.close();
+					if(stmt2!=null) stmt2.close();
+				}catch (Exception e) {
+					//ignore
+				}
+				if (risultato != null) {
+					risultato.close();
+				}
+				if (stmt != null) {
+					stmt.close();
+				}
+			} catch (Exception e) {
+				// ignore
+			}
+		}
+	}
+
+
+	public static String toString(IDGruppo idGruppo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator){
+		return toString(idGruppo, whereIsInUso, prefix, separator," non eliminabile perch&egrave; :");
+	}
+	public static String toString(IDGruppo idGruppo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator, String intestazione){
+		Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
+		String msg = "Gruppo '"+idGruppo.getNome()+"'" + intestazione+separator;
+		if(prefix==false){
+			msg = "";
+		}
+		String separatorCategorie = "";
+		if(whereIsInUso.size()>1) {
+			separatorCategorie = separator;
+		}
+		for (ErrorsHandlerCostant key : keys) {
+			List<String> messages = whereIsInUso.get(key);
+
+			if ( messages!=null && messages.size() > 0) {
+				msg += separatorCategorie;
+			}
+			
+			switch (key) {
+			case IN_USO_IN_ACCORDI:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "associato all'API: " + formatList(messages,separator) + separator;
+				}
+				break;
+			default:
+				msg += "utilizzato in oggetto non codificato ("+key+")"+separator;
+				break;
+			}
+
+		}// chiudo for
+
+		return msg;
+	}
+
+
+
+
+
+
 	
 	
 	
@@ -1311,7 +1504,7 @@ public class DBOggettiInUsoUtils  {
 					String nome_soggetto = risultato.getString("nome_soggetto");
 
 					String tipoServizio = risultato.getString("tipo_servizio");
-					String nomeServizio = risultato.getString("servizio");
+					String nomeServizio = risultato.getString("nome_servizio");
 					Integer versioneServizio = risultato.getInt("versione_servizio");
 					
 					if(normalizeObjectIds) {

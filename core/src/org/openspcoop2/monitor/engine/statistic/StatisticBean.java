@@ -57,6 +57,8 @@ public class StatisticBean {
 	private String tokenMail;
 	private Integer esito;
 	private String esitoContesto;
+	private String gruppo;
+	private String clientAddress;
 	private long richieste;
 	private long bytesBandaTotale;
 	private long bytesBandaInterna;
@@ -205,6 +207,20 @@ public class StatisticBean {
 	public void setEsitoContesto(String esitoContesto) {
 		this.esitoContesto = esitoContesto;
 	}
+	
+	public String getGruppo() {
+		return this.gruppo;
+	}
+	public void setGruppo(String gruppo) {
+		this.gruppo = gruppo;
+	}
+	public String getClientAddress() {
+		return this.clientAddress;
+	}
+	public void setClientAddress(String clientAddress) {
+		this.clientAddress = clientAddress;
+	}
+	
 	public long getRichieste() {
 		return this.richieste;
 	}
@@ -287,6 +303,10 @@ public class StatisticBean {
 		bf.append(this.tokenUsername);
 		bf.append("] token-Mail[");
 		bf.append(this.tokenMail);
+		bf.append("] clientAddress[");
+		bf.append(this.clientAddress);
+		bf.append("] gruppo[");
+		bf.append(this.gruppo);
 		bf.append("] esito[");
 		bf.append(this.esito);
 		bf.append("] esito-contesto[");

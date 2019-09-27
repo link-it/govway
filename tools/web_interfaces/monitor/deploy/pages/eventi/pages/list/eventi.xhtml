@@ -37,7 +37,7 @@
 								<a4j:outputPanel id="dataCtr" layout="block">
 								
 									<div class="subtitle">
-										<h:outputText id="idTemporale" value="Filtro Temporale" styleClass="subtitle"/>
+										<h:outputText id="idTemporale" value="#{msg['eventi.search.sezioneFiltroTemporale.label']}" styleClass="subtitle"/>
 									</div>
 								
 									<link:prop label="Periodo" labelId="labelPeriodoCombo">
@@ -76,7 +76,7 @@
 								<a4j:outputPanel id="eventoCtr" layout="block">					
 								
 									<div class="subtitle">
-										<h:outputText id="idDatiEvento" value="Filtro Dati Evento" styleClass="subtitle"/>
+										<h:outputText id="idDatiEvento" value="#{msg['eventi.search.sezioneFiltroDatiEvento.label']}" styleClass="subtitle"/>
 									</div>
 								
 									<link:prop label="Severità">
@@ -102,17 +102,17 @@
 								<a4j:outputPanel id="filtriAvanzatiIdCtr" layout="block">
 								
 									<div class="subtitle">
-										<h:outputText id="idDatiIdApplicativo" value="Filtro Dati Identificativi" styleClass="subtitle"/>
+										<h:outputText id="idDatiIdApplicativo" value="#{msg['eventi.search.sezioneFiltroDatiIdentificativi.label']}" styleClass="subtitle"/>
 									</div>
 									
-									<link:prop label="Ricerca Esatta">
+									<link:prop label="#{msg['commons.search.ricercaEsatta.label']}">
 										<h:selectOneRadio id="radioCorrApp" value="#{searchFormEventi.matchingType}" styleClass="controlset" style="margin-left: 170px">
 											<f:selectItem itemValue="EQUALS" itemLabel="Si"/>
 											<f:selectItem itemValue="LIKE" itemLabel="No"/>
 										</h:selectOneRadio>
 									</link:prop>
 									
-									<link:prop label="Case Sensitive">
+									<link:prop label="#{msg['commons.search.caseSensitive.label']}">
 										<h:selectOneRadio id="radioCorrAppCaseSens" value="#{searchFormEventi.caseSensitiveType}" styleClass="controlset" style="margin-left: 170px">
 											<f:selectItem itemValue="SENSITIVE" itemLabel="Si"/>
 											<f:selectItem itemValue="INSENSITIVE" itemLabel="No"/>

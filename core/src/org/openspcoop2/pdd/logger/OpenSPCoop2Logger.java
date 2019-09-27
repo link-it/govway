@@ -514,24 +514,24 @@ public class OpenSPCoop2Logger {
 				throw new Exception("Logger govway.controlloTraffico.sql.error non trovato");
 			
 			// STATISTICHE LOG
-			OpenSPCoop2Logger.loggerOpenSPCoopStatistiche = LoggerWrapperFactory.getLogger("govway.statistiche");
+			OpenSPCoop2Logger.loggerOpenSPCoopStatistiche = LoggerWrapperFactory.getLogger("govway.statistiche.generazione");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatistiche==null)
-				throw new Exception("Logger govway.statistiche non trovato");
+				throw new Exception("Logger govway.statistiche.generazione non trovato");
 			
 			// STATISTICHE LOG (ERROR)
-			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheError = LoggerWrapperFactory.getLogger("govway.statistiche.error");
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheError = LoggerWrapperFactory.getLogger("govway.statistiche.generazione.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheError==null)
-				throw new Exception("Logger govway.statistiche.error non trovato");
+				throw new Exception("Logger govway.statistiche.generazione.error non trovato");
 			
 			// STATISTICHE SQL LOG
-			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSql = LoggerWrapperFactory.getLogger("govway.statistiche.sql");
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSql = LoggerWrapperFactory.getLogger("govway.statistiche.generazione.sql");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSql==null)
-				throw new Exception("Logger govway.statistiche.sql non trovato");
+				throw new Exception("Logger govway.statistiche.generazione.sql non trovato");
 			
 			// STATISTICHE SQL LOG (ERROR)
-			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSqlError = LoggerWrapperFactory.getLogger("govway.statistiche.sql.error");
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSqlError = LoggerWrapperFactory.getLogger("govway.statistiche.generazione.sql.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSqlError==null)
-				throw new Exception("Logger govway.statistiche.sql.error non trovato");
+				throw new Exception("Logger govway.statistiche.generazione.sql.error non trovato");
 			
 			// CONSOLE
 			OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging correttamente inizializzato.");

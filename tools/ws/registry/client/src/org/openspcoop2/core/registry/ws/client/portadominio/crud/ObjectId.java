@@ -42,6 +42,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{http://www.openspcoop2.org/core/registry/management}wrapperIdPortaDominio"/&gt;
  *         &lt;element ref="{http://www.openspcoop2.org/core/registry/management}wrapperIdRuolo"/&gt;
  *         &lt;element ref="{http://www.openspcoop2.org/core/registry/management}wrapperIdScope"/&gt;
+ *         &lt;element ref="{http://www.openspcoop2.org/core/registry/management}wrapperIdGruppo"/&gt;
  *         &lt;element ref="{http://www.openspcoop2.org/core/registry/management}wrapperIdSoggetto"/&gt;
  *         &lt;element ref="{http://www.openspcoop2.org/core/registry/management}wrapperIdAccordoServizioParteSpecifica"/&gt;
  *       &lt;/choice&gt;
@@ -59,6 +60,7 @@ import javax.xml.bind.annotation.XmlType;
     "wrapperIdPortaDominio",
     "wrapperIdRuolo",
     "wrapperIdScope",
+    "wrapperIdGruppo",
     "wrapperIdSoggetto",
     "wrapperIdAccordoServizioParteSpecifica"
 })
@@ -69,6 +71,7 @@ public class ObjectId {
     protected WrapperIdPortaDominio wrapperIdPortaDominio;
     protected WrapperIdRuolo wrapperIdRuolo;
     protected WrapperIdScope wrapperIdScope;
+    protected WrapperIdGruppo wrapperIdGruppo;
     protected WrapperIdSoggetto wrapperIdSoggetto;
     protected WrapperIdAccordoServizioParteSpecifica wrapperIdAccordoServizioParteSpecifica;
 
@@ -190,6 +193,30 @@ public class ObjectId {
      */
     public void setWrapperIdScope(WrapperIdScope value) {
         this.wrapperIdScope = value;
+    }
+
+    /**
+     * Gets the value of the wrapperIdGruppo property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link WrapperIdGruppo }
+     *     
+     */
+    public WrapperIdGruppo getWrapperIdGruppo() {
+        return this.wrapperIdGruppo;
+    }
+
+    /**
+     * Sets the value of the wrapperIdGruppo property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link WrapperIdGruppo }
+     *     
+     */
+    public void setWrapperIdGruppo(WrapperIdGruppo value) {
+        this.wrapperIdGruppo = value;
     }
 
     /**

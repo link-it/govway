@@ -48,6 +48,8 @@ import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroErogazione;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroFruizione;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroQualsiasi;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
 import org.openspcoop2.core.monitor.rs.server.model.ListaEventi;
 import org.openspcoop2.core.monitor.rs.server.model.ListaTransazioni;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaIdApplicativo;
@@ -61,7 +63,6 @@ import org.openspcoop2.utils.service.beans.DiagnosticoSeveritaEnum;
 import org.openspcoop2.utils.service.beans.FiltroRicercaId;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.TransazioneExt;
-import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.context.IContext;
@@ -255,33 +256,49 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
      *
      */
 	@Override
-    public ListaTransazioni findAllTransazioniByIdApplicativoSimpleSearch(DateTime dataInizio, DateTime dataFine, TransazioneRuoloEnum tipo, String idApplicativo, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit, String sort, String idCluster,  String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean ricercaEsatta, Boolean caseSensitive) {
+	public ListaTransazioni findAllTransazioniByIdApplicativoSimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, String idApplicativo, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit, String sort, String idCluster,  String soggettoRemoto, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean ricercaEsatta, Boolean caseSensitive) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
-                        
+                       
 			SearchFormUtilities searchFormUtilities = new SearchFormUtilities();	
 			TransazioniSearchForm search = searchFormUtilities.getIdApplicativoSearchForm(context, profilo, soggetto, 
 					tipo, dataInizio, dataFine);
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			
 			// FiltroApi
-			FiltroApiBase filtroApi = tipo == TransazioneRuoloEnum.EROGAZIONE ? new FiltroErogazione() : new FiltroFruizione();
+			FiltroApiBase filtroApi = null;
+			switch (tipo) {
+			case EROGAZIONE:
+				filtroApi = new FiltroErogazione();
+				break;
+			case FRUIZIONE:
+				filtroApi = new FiltroFruizione();
+				break;
+			case QUALSIASI:
+				filtroApi = new FiltroQualsiasi();
+				break;
+			}
 			filtroApi.setNome(nomeServizio);
 			filtroApi.setTipo(tipoServizio);
 			filtroApi.setVersione(versioneServizio);
 			switch (tipo) {
 			case EROGAZIONE: {
-				overrideFiltroApiBase(filtroApi, azione, env.soggetto, search, env);
+				overrideFiltroApiBase(tag, filtroApi, azione, env.soggetto, search, env);
 				break;
 			}
-			case FRUIZIONE:
+			case FRUIZIONE: {
 				FiltroFruizione filtro = (FiltroFruizione) filtroApi;
 				filtro.setErogatore(soggettoRemoto);
-				overrideFiltroFruizione(filtro, azione, search, env);
+				overrideFiltroFruizione(tag, filtro, azione, search, env);
 				break;
+			}
+			case QUALSIASI: {
+				overrideFiltroApiBase(tag, filtroApi, azione, env.soggetto, search, env);
+				break;
+			}
 			}
 			
 			// FiltroEsito
@@ -355,7 +372,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
      *
      */
 	@Override
-    public ListaTransazioni findAllTransazioniBySimpleSearch(DateTime dataInizio, DateTime dataFine, TransazioneRuoloEnum tipo, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit, String sort,  String idCluster,  String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito) {
+    public ListaTransazioni findAllTransazioniBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit, String sort,  String idCluster,  String soggettoRemoto, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -369,20 +386,36 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 					tipo, dataInizio, dataFine);
 		
 			// FiltroApi
-			FiltroApiBase filtroApi = tipo == TransazioneRuoloEnum.EROGAZIONE ? new FiltroErogazione() : new FiltroFruizione();
+			FiltroApiBase filtroApi = null;
+			switch (tipo) {
+			case EROGAZIONE:
+				filtroApi = new FiltroErogazione();
+				break;
+			case FRUIZIONE:
+				filtroApi = new FiltroFruizione();
+				break;
+			case QUALSIASI:
+				filtroApi = new FiltroQualsiasi();
+				break;
+			}
 			filtroApi.setNome(nomeServizio);
 			filtroApi.setTipo(tipoServizio);
 			filtroApi.setVersione(versioneServizio);	
 			switch (tipo) {
 			case EROGAZIONE: {
-				overrideFiltroApiBase(filtroApi, azione, env.soggetto, search, env);
+				overrideFiltroApiBase(tag, filtroApi, azione, env.soggetto, search, env);
 				break;
 			}
-			case FRUIZIONE:
+			case FRUIZIONE:{
 				FiltroFruizione filtro = (FiltroFruizione) filtroApi;
 				filtro.setErogatore(soggettoRemoto);
-				overrideFiltroFruizione(filtro, azione, search, env);
+				overrideFiltroFruizione(tag, filtro, azione, search, env);
 				break;
+			}
+			case QUALSIASI: {
+				overrideFiltroApiBase(tag, filtroApi, azione, env.soggetto, search, env);
+				break;
+			}
 			}
 			
 			if (esito != null) {

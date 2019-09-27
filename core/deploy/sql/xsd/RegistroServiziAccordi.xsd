@@ -30,6 +30,7 @@
                                 <linkit:sql-table object-name="resource-response" object-type="resource-response"/>
                                 <linkit:sql-table object-name="resource-rapresentation" object-type="resource-rapresentation"/>
                                 <linkit:sql-table object-name="resource-parameter" object-type="resource-parameter"/>
+                                <linkit:sql-table object-name="accordi-gruppi" object-type="accordi-gruppi"/>
                                 <linkit:sql-comment><![CDATA[**** Accordi di Cooperazione ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="accordi-cooperazione" object-type="accordi-cooperazione"/>
                                 <linkit:sql-table object-name="accordi-coop-partecipanti" object-type="accordi-coop-partecipanti"/>
@@ -1785,6 +1786,62 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
         </xsd:complexType>
     </xsd:element>
     
+    <xsd:element name="accordi-gruppi">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="accordi_gruppi"
+                        comment="Elenco dei gruppi associati all'accordo">
+                        <linkit:sql-table-constraint unique="unique_acc_gruppi" index="idx_acc_gruppi"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="accordi"
+                            reference-object-type="accordi"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_accordo"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-foreign-key reference-table="gruppi">
+                            <linkit:sql-table-fk-field name="id_gruppo"/>
+                            <linkit:sql-table-fk-reference-column name="id"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="id_accordo"/>
+                            <linkit:sql-table-unique-field name="id_gruppo"/>
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_accordo" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_accordo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'accordo [FK verso tabella accordi(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_gruppo" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_gruppo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del gruppo [FK verso tabella gruppi(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    
+    
     
     <xsd:element name="accordi-cooperazione">
         <xsd:annotation>
@@ -2687,6 +2744,23 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="soggetti">
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="tabella_di_servizio" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="gruppi">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="gruppi">
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>

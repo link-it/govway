@@ -45,9 +45,13 @@
   border: none;
   box-shadow: none;
 }
-.bootstrap-tagsinput .tag {
+.bootstrap-tagsinput .tag, 
+.titoloTags .tag {
   margin-right: 2px;
   color: white;
+}
+.titoloTags .tag {
+  margin: 0px 3px;
 }
 .bootstrap-tagsinput .tag [data-role="remove"] {
   margin-left: 8px;
@@ -72,3 +76,40 @@
     padding: 4px;
     margin: 3px 3px;
 }
+
+.label-info.label-info-default { background-color: ${input.tags.card.background.color}; }
+.label-info.label-info-0 { background-color: ${gruppi.background.0.color}; }
+.label-info.label-info-1 { background-color: ${gruppi.background.1.color}; }
+.label-info.label-info-2 { background-color: ${gruppi.background.2.color}; }
+.label-info.label-info-3 { background-color: ${gruppi.background.3.color}; }
+.label-info.label-info-4 { background-color: ${gruppi.background.4.color}; }
+.label-info.label-info-5 { background-color: ${gruppi.background.5.color}; }
+.label-info.label-info-6 { background-color: ${gruppi.background.6.color}; }
+.label-info.label-info-7 { background-color: ${gruppi.background.7.color}; }
+.label-info.label-info-8 { background-color: ${gruppi.background.8.color}; }
+.label-info.label-info-9 { background-color: ${gruppi.background.9.color}; }
+.label-info.label-info-10 { background-color: ${gruppi.background.10.color}; }
+.label-info.label-info-11 { background-color: ${gruppi.background.11.color}; }
+.label-info.label-info-12 { background-color: ${gruppi.background.12.color}; }
+.label-info.label-info-13 { background-color: ${gruppi.background.13.color}; }
+.label-info.label-info-14 { background-color: ${gruppi.background.14.color}; }
+.label-info.label-info-15 { background-color: ${gruppi.background.15.color}; }
+.label-info.label-info-16 { background-color: ${gruppi.background.16.color}; }
+.label-info.label-info-17 { background-color: ${gruppi.background.17.color}; }
+.label-info.label-info-18 { background-color: ${gruppi.background.18.color}; }
+.label-info.label-info-19 { background-color: ${gruppi.background.19.color}; }
+.label-info.label-info-20 { background-color: ${gruppi.background.20.color}; }
+.label-info.label-info-21 { background-color: ${gruppi.background.21.color}; }
+.label-info.label-info-22 { background-color: ${gruppi.background.22.color}; }
+.label-info.label-info-23 { background-color: ${gruppi.background.23.color}; }
+.label-info.label-info-24 { background-color: ${gruppi.background.24.color}; }
+.label-info.label-info-25 { background-color: ${gruppi.background.25.color}; }
+.label-info.label-info-26 { background-color: ${gruppi.background.26.color}; }
+.label-info.label-info-27 { background-color: ${gruppi.background.27.color}; }
+.label-info.label-info-28 { background-color: ${gruppi.background.28.color}; }
+.label-info.label-info-29 { background-color: ${gruppi.background.29.color}; }
+
+
+
+
+

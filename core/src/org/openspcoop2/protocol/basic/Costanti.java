@@ -198,6 +198,8 @@ public class Costanti {
 	public static final String OPENSPCOOP2_ARCHIVE_CONTROLLO_TRAFFICO_ACTIVE_POLICY_DIR = "policies"; // devo utilizzare un nome che in ordine lessicografico venga dopo configPolicies
 	
 	public static final String OPENSPCOOP2_ARCHIVE_PORTE_DOMINIO_DIR = "porteDominio";
+
+	public static final String OPENSPCOOP2_ARCHIVE_GRUPPI_DIR = "gruppi";
 	
 	public static final String OPENSPCOOP2_ARCHIVE_RUOLI_DIR = "ruoli";
 	

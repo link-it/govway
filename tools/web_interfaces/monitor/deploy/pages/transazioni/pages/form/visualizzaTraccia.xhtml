@@ -14,7 +14,7 @@
 	<ui:define name="navbar">
 		<ul>
 			<li>
-				<a4j:htmlCommandLink action="transazioniStart" value="Storico" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
+				<a4j:htmlCommandLink action="transazioniStart" value="#{msg['menu.monitoraggio.storico']}" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
 			</li>
 			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16" rendered="#{searchFormTransazioni.periodo != 'Live'}"/></li>
 			<li>

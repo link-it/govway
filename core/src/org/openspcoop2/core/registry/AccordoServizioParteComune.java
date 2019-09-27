@@ -54,6 +54,7 @@ import java.util.List;
  * 			&lt;element name="allegato" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="specifica-semiformale" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="gruppi" type="{http://www.openspcoop2.org/core/registry}gruppi-accordo" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="super-user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
@@ -106,7 +107,8 @@ import java.util.List;
   	"resource",
   	"allegato",
   	"specificaSemiformale",
-  	"protocolProperty"
+  	"protocolProperty",
+  	"gruppi"
   }
 )
 
@@ -296,6 +298,14 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   public int sizeProtocolPropertyList() {
     return this.protocolProperty.size();
+  }
+
+  public GruppiAccordo getGruppi() {
+    return this.gruppi;
+  }
+
+  public void setGruppi(GruppiAccordo gruppi) {
+    this.gruppi = gruppi;
   }
 
   public java.lang.String getSuperUser() {
@@ -873,6 +883,9 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   public int sizeProtocolProperty() {
   	return this.protocolProperty.size();
   }
+
+  @XmlElement(name="gruppi",required=false,nillable=false)
+  protected GruppiAccordo gruppi;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String superUser;

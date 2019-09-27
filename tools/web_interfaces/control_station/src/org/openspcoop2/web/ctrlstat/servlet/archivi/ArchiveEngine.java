@@ -42,6 +42,7 @@ import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
@@ -109,6 +110,39 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 	}
+	
+	
+	
+	// --- GRUPPI ---
+	
+	@Override
+	public void createGruppo(Gruppo gruppo) throws DriverRegistroServiziException {
+		try{
+			this.archiviCore.performCreateOperation(this.userLogin, this.smista, gruppo);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void updateGruppo(Gruppo gruppo) throws DriverRegistroServiziException {
+		try{
+			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, gruppo);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void deleteGruppo(Gruppo gruppo) throws DriverRegistroServiziException {
+		try{
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, gruppo);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	
+	
 	
 	
 	// --- RUOLI ---

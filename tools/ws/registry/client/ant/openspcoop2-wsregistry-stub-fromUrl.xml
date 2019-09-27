@@ -92,6 +92,32 @@
 
 		<antcall target="-generateStub">
 			<param name="stubInterfaceType" value=""/>
+			<param name="stubClassEntity" value="Gruppo"/>
+			<param name="stubVariableEntity" value="gruppo"/>
+			<param name="stubSoapVersion" value="11"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.gruppo"/>
+			<param name="stubWsdl" value="${wsdlURL_registry_ws_client}/Gruppo/Soap11?wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/gruppo"/>
+			<param name="stubJavaClassNameClient" value="Gruppo_GruppoPortSoap11_Client.java"/>
+		</antcall>
+			
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value=""/>
+			<param name="stubClassEntity" value="Gruppo"/>
+			<param name="stubVariableEntity" value="gruppo"/>
+			<param name="stubSoapVersion" value="12"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.gruppo"/>
+			<param name="stubWsdl" value="${wsdlURL_registry_ws_client}/Gruppo/Soap12?wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/gruppo"/>
+			<param name="stubJavaClassNameClient" value="Gruppo_GruppoPortSoap12_Client.java"/>
+		</antcall>
+
+
+
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value=""/>
 			<param name="stubClassEntity" value="Ruolo"/>
 			<param name="stubVariableEntity" value="ruolo"/>
 			<param name="stubSoapVersion" value="11"/>
@@ -113,6 +139,7 @@
 			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/ruolo"/>
 			<param name="stubJavaClassNameClient" value="Ruolo_RuoloPortSoap12_Client.java"/>
 		</antcall>
+
 
 
 		<antcall target="-generateStub">

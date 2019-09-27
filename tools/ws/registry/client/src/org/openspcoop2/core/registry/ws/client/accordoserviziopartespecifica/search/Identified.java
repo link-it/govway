@@ -40,6 +40,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="PortaDominio"/&gt;
  *     &lt;enumeration value="Ruolo"/&gt;
  *     &lt;enumeration value="Scope"/&gt;
+ *     &lt;enumeration value="Gruppo"/&gt;
  *     &lt;enumeration value="Soggetto"/&gt;
  *     &lt;enumeration value="AccordoServizioParteSpecifica"/&gt;
  *   &lt;/restriction&gt;
@@ -61,6 +62,8 @@ public enum Identified {
     RUOLO("Ruolo"),
     @XmlEnumValue("Scope")
     SCOPE("Scope"),
+    @XmlEnumValue("Gruppo")
+    GRUPPO("Gruppo"),
     @XmlEnumValue("Soggetto")
     SOGGETTO("Soggetto"),
     @XmlEnumValue("AccordoServizioParteSpecifica")

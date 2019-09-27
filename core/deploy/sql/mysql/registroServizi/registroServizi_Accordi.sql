@@ -301,6 +301,25 @@ CREATE TABLE api_resources_parameter
 
 
 
+CREATE TABLE accordi_gruppi
+(
+	id_accordo BIGINT NOT NULL,
+	id_gruppo BIGINT NOT NULL,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- unique constraints
+	CONSTRAINT unique_acc_gruppi_1 UNIQUE (id_accordo,id_gruppo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_accordi_gruppi_1 FOREIGN KEY (id_gruppo) REFERENCES gruppi(id),
+	CONSTRAINT fk_accordi_gruppi_2 FOREIGN KEY (id_accordo) REFERENCES accordi(id),
+	CONSTRAINT pk_accordi_gruppi PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+-- index
+CREATE UNIQUE INDEX idx_acc_gruppi_1 ON accordi_gruppi (id_accordo,id_gruppo);
+
+
+
 -- **** Accordi di Cooperazione ****
 
 CREATE TABLE accordi_cooperazione

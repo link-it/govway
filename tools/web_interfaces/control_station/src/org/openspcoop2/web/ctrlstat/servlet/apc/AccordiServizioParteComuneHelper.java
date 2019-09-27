@@ -23,6 +23,7 @@ package org.openspcoop2.web.ctrlstat.servlet.apc;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -2954,7 +2955,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			String stato,String oldStato,String tipoAccordo,boolean validazioneDocumenti,
 			String tipoProtocollo, List<String> listaTipiProtocollo, boolean used, boolean asWithAllegatiXSD,
 			IProtocolFactory<?> protocolFactory,
-			ServiceBinding serviceBinding, MessageType messageType, org.openspcoop2.protocol.manifest.constants.InterfaceType interfaceType
+			ServiceBinding serviceBinding, MessageType messageType, org.openspcoop2.protocol.manifest.constants.InterfaceType interfaceType,
+			String gruppi, List<String> elencoGruppi
 			) throws Exception {
 
 		Boolean showAccordiAzioni = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);
@@ -3003,6 +3005,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		boolean gestioneDescrizione = false;
 		boolean gestioneSpecificaInterfacce = false;
 		boolean gestioneInformazioniProtocollo = false;
+		boolean gestioneGruppi = false;
 		if(TipoOperazione.ADD.equals(tipoOperazione) || isModalitaVistaApiCustom==null || !isModalitaVistaApiCustom) {
 			gestioneInformazioniGenerali = true;
 			gestioneInformazioniProfilo = true;
@@ -3010,6 +3013,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			gestioneDescrizione = true;
 			gestioneSpecificaInterfacce = true;
 			gestioneInformazioniProtocollo = true;
+			gestioneGruppi = true;
 		}
 		else  {
 			if(ApiCostanti.VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI.equals(apiGestioneParziale)) {
@@ -3029,6 +3033,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_OPZIONI_AVANZATE.equals(apiGestioneParziale)) {
 				gestioneInformazioniProtocollo = true;
+			}
+			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_GRUPPI.equals(apiGestioneParziale)) {
+				gestioneGruppi = true;
 			}
 		}
 		
@@ -3056,6 +3063,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		if(TipoOperazione.CHANGE.equals(tipoOperazione) && isModalitaVistaApiCustom && gestioneDescrizione) {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+		}
+		if(TipoOperazione.CHANGE.equals(tipoOperazione) && isModalitaVistaApiCustom && gestioneGruppi) {
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_GRUPPI);
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
@@ -3280,7 +3293,55 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_DESCRIZIONE);
 		de.setSize(this.getSize());
-		dati.addElement(de);		
+		dati.addElement(de);	
+		
+		// gruppi
+		de = new DataElement();
+		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_GRUPPI);
+		de.setValue(gruppi);
+		de.setLabels(elencoGruppi);	
+		de.setValues(elencoGruppi);
+		
+		if( tipoOperazione.equals(TipoOperazione.ADD) || (gestioneGruppi && modificheAbilitate)){
+			de.setType(DataElementType.TEXT_EDIT);
+		}else{
+			if(gestioneGruppi) {
+				de.setType(DataElementType.TEXT);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+			}
+			if( !modificheAbilitate && StringUtils.isBlank(gruppi))
+				de.setValue("");
+		}
+		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_GRUPPI);
+		de.setSize(this.getSize());
+		
+		if(modificheAbilitate) {
+			if(tipoOperazione.equals(TipoOperazione.ADD)) {
+				de.enableTags();
+			} else {
+				de.enableTags(true);
+				// supporto con i colori dei tag gia' presenti
+				if(!StringUtils.isBlank(gruppi)) {
+					// colleziono i tags registrati
+					List<String> tagsDisponibili = this.gruppiCore.getAllGruppiOrdinatiPerDataRegistrazione();
+					List<String> nomiGruppi = Arrays.asList(gruppi.split(","));
+					
+					for (String nomeGruppo : nomiGruppi) {
+						int indexOf = tagsDisponibili.indexOf(nomeGruppo);
+						if(indexOf == -1)
+							indexOf = 0;
+						
+						indexOf = indexOf % CostantiControlStation.NUMERO_GRUPPI_CSS;
+						
+						de.addStatus(nomeGruppo, "label-info-"+indexOf, "");
+					}
+				}
+			}
+		}
+		
+		dati.addElement(de);
 
 		de = new DataElement();
 		if( gestioneInformazioniGenerali && modificheAbilitate ){
@@ -4224,7 +4285,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			boolean isServizioComposto,String[] accordiCooperazioneEsistenti,String[] accordiCooperazioneEsistentiLabel,String accordoCooperazione,
 			String stato,String oldStato,String tipoAccordo,boolean validazioneDocumenti,
 			String tipoProtocollo, List<String> listaTipiProtocollo, boolean used,
-			ServiceBinding serviceBinding, MessageType messageType, org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica
+			ServiceBinding serviceBinding, MessageType messageType, org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica,
+			String gruppi
 			) throws Exception {
 
 		Boolean showAccordiCooperazione = (Boolean) this.session.getAttribute("ShowAccordiCooperazione");
@@ -4281,7 +4343,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_DESCRIZIONE);
 		de.setSize(this.getSize());
-		dati.addElement(de);		
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_GRUPPI);
+		de.setValue(gruppi);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_GRUPPI);
+		de.setSize(this.getSize());
+		dati.addElement(de);
 
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE);
@@ -4537,7 +4607,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			IDAccordo idAccordoOLD, BinaryParameter wsblconc, BinaryParameter wsblserv, BinaryParameter wsblservcorr,boolean validazioneDocumenti,
 			String tipoProtocollo, String backToStato,
 			ServiceBinding serviceBinding, MessageType messageType, org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica,
-			boolean checkReferente)
+			boolean checkReferente, String gruppi)
 					throws Exception {
 		try {
 			int idInt = 0;
@@ -4606,6 +4676,17 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
 			if(this.checkNCName(nome, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME)==false){
 				return false;
+			}
+			
+			// validazione dei nomi gruppi
+			if(gruppi!=null && !"".equals(gruppi)) {
+				List<String> nomiGruppi = Arrays.asList(gruppi.split(","));
+				
+				for (String nomeGruppo : nomiGruppi) {
+					if(this.checkNCName(nomeGruppo, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_GRUPPI)==false){
+						return false;
+					}
+				}
 			}
 
 			// La versione deve contenere solo lettere e numeri e '.'
@@ -8045,6 +8126,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_OPZIONI_AVANZATE.equals(apiGestioneParziale)) {
 				labelApcChange = ApiCostanti.APC_API_LABEL_GESTIONE_OPZIONI_AVANZATE;
+			}
+			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_GRUPPI.equals(apiGestioneParziale)) {
+				labelApcChange = ApiCostanti.APC_API_LABEL_GESTIONE_GRUPPI;
 			}
 			
 			if(apiGestioneParziale == null)

@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import java.util.List;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,6 +41,9 @@ public class APIBaseImpl  {
   
   @Schema(description = "")
   private String apiSoapServizio = null;
+  
+  @Schema(example = "[\"PagamentiTelematici\",\"Anagrafica\"]", description = "")
+  private List<String> apiTags = null;
   
   @Schema(description = "")
   private String tipoServizio = null;
@@ -122,6 +126,30 @@ public class APIBaseImpl  {
   }
 
  /**
+   * Get apiTags
+   * @return apiTags
+  **/
+  @JsonProperty("api_tags")
+  @Valid
+  public List<String> getApiTags() {
+    return this.apiTags;
+  }
+
+  public void setApiTags(List<String> apiTags) {
+    this.apiTags = apiTags;
+  }
+
+  public APIBaseImpl apiTags(List<String> apiTags) {
+    this.apiTags = apiTags;
+    return this;
+  }
+
+  public APIBaseImpl addApiTagsItem(String apiTagsItem) {
+    this.apiTags.add(apiTagsItem);
+    return this;
+  }
+
+ /**
    * Get tipoServizio
    * @return tipoServizio
   **/
@@ -150,6 +178,7 @@ public class APIBaseImpl  {
     sb.append("    apiVersione: ").append(APIBaseImpl.toIndentedString(this.apiVersione)).append("\n");
     sb.append("    apiReferente: ").append(APIBaseImpl.toIndentedString(this.apiReferente)).append("\n");
     sb.append("    apiSoapServizio: ").append(APIBaseImpl.toIndentedString(this.apiSoapServizio)).append("\n");
+    sb.append("    apiTags: ").append(APIBaseImpl.toIndentedString(this.apiTags)).append("\n");
     sb.append("    tipoServizio: ").append(APIBaseImpl.toIndentedString(this.tipoServizio)).append("\n");
     sb.append("}");
     return sb.toString();

@@ -19,7 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 package org.openspcoop2.core.transazioni.ws.server;
 
 import org.openspcoop2.core.transazioni.ws.server.filter.SearchFilterDumpMessaggio;

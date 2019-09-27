@@ -50,6 +50,7 @@ paths:
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
         - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/tipo_api"
+        - $ref: "govway_core.yaml#/components/parameters/tag"
       summary: Ricerca api
       operationId: findAllApi
       description: Elenca le API registrate
@@ -406,6 +407,70 @@ paths:
       responses: 
         '204':
           description: La descrizione è stato aggiornata correttamente
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+          
+  /api/{nome}/{versione}/tags:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"   
+    get:
+      tags:
+        - api
+      summary: Restituisce i tags associati all'API
+      operationId: getApiTags
+      description: Questa operazione consente di ottenere i tags associati all'API identificata dal nome e dalla versione
+      responses:
+        "200":
+          description: Tags restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiTags"
+        '400':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        '401':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        '403':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '404':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - api
+      summary: Consente di modificare i tags associati all'API
+      operationId: updateApiTags
+      description: Questa operazione consente di aggiornare i tags associati all'API identificata dal nome e dalla versione
+      requestBody:
+        description: Dati da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiTags'
+      responses: 
+        '204':
+          description: I tags sono stati aggiornati correttamente
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':
@@ -1096,6 +1161,7 @@ paths:
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
         - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/tipo_api"
+        - $ref: "govway_core.yaml#/components/parameters/tag"
       summary: Ricerca erogazioni di api
       operationId: findAllErogazioni
       description: Elenca le erogazioni di API
@@ -3342,6 +3408,7 @@ paths:
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
         - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/tipo_api"
+        - $ref: "govway_core.yaml#/components/parameters/tag"
       summary: Ricerca fruizioni di api
       operationId: findAllFruizioni
       description: Elenca le fruizioni di API
@@ -6227,6 +6294,17 @@ components:
           type: string
           maxLength: 255
           example: 'descrizione API'
+          
+    ApiTags:
+      type: object
+      required:
+        - tags
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: 'govway_core.yaml#/components/schemas/NCName'
+          example: [PagamentiTelematici, Anagrafica] 
           
     ApiAllegato:
       type: object

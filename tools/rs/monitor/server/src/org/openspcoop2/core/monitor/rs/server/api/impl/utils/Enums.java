@@ -29,12 +29,15 @@ import org.openspcoop2.core.config.constants.TipoAutenticazione;
 
 import org.openspcoop2.core.eventi.constants.TipoSeverita;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.OccupazioneBandaEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TempoMedioRispostaEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteErogazioneEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteFruizioneEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteIdentificativoAutenticatoEnum;
+import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteIndirizzoIPEnum;
+import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteQualsiasiEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TokenClaimEnum;
@@ -91,6 +94,12 @@ public class Enums {
 		toTipoAutenticazione.put(TipoFiltroMittenteIdentificativoAutenticatoEnum.BASIC, TipoAutenticazione.BASIC);
 		toTipoAutenticazione.put(TipoFiltroMittenteIdentificativoAutenticatoEnum.PRINCIPAL, TipoAutenticazione.PRINCIPAL);
 		toTipoAutenticazione.put(TipoFiltroMittenteIdentificativoAutenticatoEnum.SSL, TipoAutenticazione.SSL);
+	}
+	
+	public static final Map<TipoFiltroMittenteIndirizzoIPEnum, String> toTipoIndirizzzoIP = new HashMap<>();
+	static {
+		toTipoIndirizzzoIP.put(TipoFiltroMittenteIndirizzoIPEnum.CLIENT_IP, org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_CLIENT_ADDRESS_SOCKET);
+		toTipoIndirizzzoIP.put(TipoFiltroMittenteIndirizzoIPEnum.X_FORWARDED_FOR, org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_CLIENT_ADDRESS_TRASPORTO);
 	}
 
 	public static final Map<TokenClaimEnum, String> toTokenClaim = new HashMap<>();
@@ -168,6 +177,13 @@ public class Enums {
 		toTipologiaRuoloTransazione.put(TransazioneRuoloEnum.FRUIZIONE, CostantiExporter.TIPOLOGIA_FRUIZIONE);
 	}
 	
+	public static final Map<FiltroRicercaRuoloTransazioneEnum, String> toTipologiaFiltroRicercaRuoloTransazioneEnum = new HashMap<>();
+	static {
+		toTipologiaFiltroRicercaRuoloTransazioneEnum.put(FiltroRicercaRuoloTransazioneEnum.EROGAZIONE, CostantiExporter.TIPOLOGIA_EROGAZIONE);
+		toTipologiaFiltroRicercaRuoloTransazioneEnum.put(FiltroRicercaRuoloTransazioneEnum.FRUIZIONE, CostantiExporter.TIPOLOGIA_FRUIZIONE);
+		toTipologiaFiltroRicercaRuoloTransazioneEnum.put(FiltroRicercaRuoloTransazioneEnum.QUALSIASI, CostantiExporter.TIPOLOGIA_EROGAZIONE_FRUIZIONE);
+	}
+	
 	public static final String toTipoRicercaMittente(TipoFiltroMittenteErogazioneEnum v) {
 		if (v == null) return null;
 		
@@ -176,6 +192,18 @@ public class Enums {
 		case IDENTIFICATIVO_AUTENTICATO: return CostantiExporter.TIPO_RICERCA_MITTENTE_IDENTIFICATIVO_AUTENTICATO;
 		case SOGGETTO: return CostantiExporter.TIPO_RICERCA_MITTENTE_SOGGETTO;
 		case TOKEN_INFO: return CostantiExporter.TIPO_RICERCA_MITTENTE_TOKEN_INFO;
+		case INDIRIZZO_IP: return CostantiExporter.TIPO_RICERCA_MITTENTE_INDIRIZZO_IP;
+		default: return null;
+		}
+	}
+	
+	public static final String toTipoRicercaMittente(TipoFiltroMittenteQualsiasiEnum v) {
+		if (v == null) return null;
+		
+		switch (v) {
+		case IDENTIFICATIVO_AUTENTICATO: return CostantiExporter.TIPO_RICERCA_MITTENTE_IDENTIFICATIVO_AUTENTICATO;
+		case TOKEN_INFO: return CostantiExporter.TIPO_RICERCA_MITTENTE_TOKEN_INFO;
+		case INDIRIZZO_IP: return CostantiExporter.TIPO_RICERCA_MITTENTE_INDIRIZZO_IP;
 		default: return null;
 		}
 	}
@@ -187,6 +215,7 @@ public class Enums {
 		case APPLICATIVO: return CostantiExporter.TIPO_RICERCA_MITTENTE_APPLICATIVO;
 		case IDENTIFICATIVO_AUTENTICATO: return CostantiExporter.TIPO_RICERCA_MITTENTE_IDENTIFICATIVO_AUTENTICATO;
 		case TOKEN_INFO: return CostantiExporter.TIPO_RICERCA_MITTENTE_TOKEN_INFO;
+		case INDIRIZZO_IP: return CostantiExporter.TIPO_RICERCA_MITTENTE_INDIRIZZO_IP;
 		default: return null;
 		}
 	}

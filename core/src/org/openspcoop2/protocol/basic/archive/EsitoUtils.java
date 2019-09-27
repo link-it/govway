@@ -51,6 +51,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImport;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetail;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetailConfigurazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
+import org.openspcoop2.protocol.sdk.archive.ArchiveGruppo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveIdCorrelazione;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
@@ -181,6 +182,26 @@ public class EsitoUtils {
 			bfEsito.append("\n");
 		}
 		if(archive.getPdd().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		
+		// Tags
+		if(archive.getGruppi().size()>0){
+			bfEsito.append("Tags (").append(archive.getGruppi().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getGruppi().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveGruppo = archive.getGruppi().get(i);
+				String nomeGruppo = ((ArchiveGruppo)archiveGruppo.getArchiveObject()).getIdGruppo().getNome();
+				bfEsito.append("\t- [").append(nomeGruppo).append("] ");
+				serializeStato(archiveGruppo, bfEsito, importOperation);
+			}catch(Throwable e){
+				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getGruppi().size()>0){
 			bfEsito.append("\n");	
 		}
 		
@@ -599,6 +620,13 @@ public class EsitoUtils {
 			ArchiveEsitoImportDetail archivePdd = archive.getPdd().get(i);
 			ArchiveIdCorrelazione idCorrelazione = ((ArchivePdd)archivePdd.getArchiveObject()).getIdCorrelazione();
 			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getPdd().add(archivePdd);
+		}
+		
+		// Gruppi
+		for (int i = 0; i < archive.getGruppi().size(); i++) {
+			ArchiveEsitoImportDetail archiveGruppo = archive.getGruppi().get(i);
+			ArchiveIdCorrelazione idCorrelazione = ((ArchiveGruppo)archiveGruppo.getArchiveObject()).getIdCorrelazione();
+			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getGruppi().add(archiveGruppo);
 		}
 		
 		// Ruoli

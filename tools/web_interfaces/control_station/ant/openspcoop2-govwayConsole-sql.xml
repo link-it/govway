@@ -164,6 +164,7 @@
 		<var name="sqlSourceFiles" value="govwayConsole_PorteDominio.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} configurazionePdD/configurazionePdD_Connettori.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} configurazionePdD/configurazionePdD_ConnettoriGestioneErrore.sql"/>
+		<var name="sqlSourceFiles" value="${sqlSourceFiles} registroServizi/registroServizi_Gruppi.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} registroServizi/registroServizi_Ruoli.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} registroServizi/registroServizi_Scope.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} registroServizi/registroServizi_ProtocolProperties.sql"/>
@@ -242,6 +243,7 @@
 		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} govwayConsole_Soggetti_delete.sql"/>
 		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} registroServizi/registroServizi_Scope_delete.sql"/>
 		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} registroServizi/registroServizi_Ruoli_delete.sql"/>
+		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} registroServizi/registroServizi_Gruppi_delete.sql"/>
 		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} registroServizi/registroServizi_ProtocolProperties_delete.sql"/>
 		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} configurazionePdD/configurazionePdD_Connettori_delete.sql"/>
  		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} configurazionePdD/configurazionePdD_ConnettoriGestioneErrore_delete.sql"/>
@@ -283,6 +285,7 @@
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} govwayConsole_Soggetti_drop.sql"/>
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} registroServizi/registroServizi_Scope_drop.sql"/>
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} registroServizi/registroServizi_Ruoli_drop.sql"/>
+		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} registroServizi/registroServizi_Gruppi_drop.sql"/>
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} registroServizi/registroServizi_ProtocolProperties_drop.sql"/>
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} configurazionePdD/configurazionePdD_Connettori_drop.sql"/>
  		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} configurazionePdD/configurazionePdD_ConnettoriGestioneErrore_drop.sql"/>

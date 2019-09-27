@@ -173,6 +173,15 @@ public class AnalisiStatisticaBean implements Serializable {
 		gruppoAzione.setListaAnalisiStatistica(listaAnalisiGruppoAzione);
 		this.tipiAnalisiStatistica.add(gruppoAzione);
 
+		GruppoAnalisiStatistica gruppoTokeniinfo = new GruppoAnalisiStatistica();
+		gruppoTokeniinfo.setLabel(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_LABEL_KEY));
+		List<AnalisiStatistica> listaAnalisiGruppoTokeniInfo = new ArrayList<>();
+		listaAnalisiGruppoTokeniInfo.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO +"-" + org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO,CostantiGrafici.TIPO_REPORT_BAR_CHART,TipoReport.BAR_CHART));
+		listaAnalisiGruppoTokeniInfo.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO +"-" + org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO,CostantiGrafici.TIPO_REPORT_PIE_CHART,TipoReport.PIE_CHART));
+		listaAnalisiGruppoTokeniInfo.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO +"-" + org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO,CostantiGrafici.TIPO_REPORT_TABELLA,TipoReport.TABELLA));
+		gruppoTokeniinfo.setListaAnalisiStatistica(listaAnalisiGruppoTokeniInfo);
+		this.tipiAnalisiStatistica.add(gruppoTokeniinfo);
+		
 		GruppoAnalisiStatistica gruppoApplicativo = new GruppoAnalisiStatistica();
 		gruppoApplicativo.setLabel(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_APPLICATIVO_LABEL_KEY));
 		List<AnalisiStatistica> listaAnalisiGruppoApplicativo = new ArrayList<>();
@@ -190,15 +199,15 @@ public class AnalisiStatisticaBean implements Serializable {
 		listaAnalisiGruppoIdentificativoAutenticato.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO +"-" + org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO,CostantiGrafici.TIPO_REPORT_TABELLA,TipoReport.TABELLA));
 		gruppoIdentificativoAutenticato.setListaAnalisiStatistica(listaAnalisiGruppoIdentificativoAutenticato);
 		this.tipiAnalisiStatistica.add(gruppoIdentificativoAutenticato);
-
-		GruppoAnalisiStatistica gruppoTokeniinfo = new GruppoAnalisiStatistica();
-		gruppoTokeniinfo.setLabel(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_LABEL_KEY));
-		List<AnalisiStatistica> listaAnalisiGruppoTokeniInfo = new ArrayList<>();
-		listaAnalisiGruppoTokeniInfo.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO +"-" + org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO,CostantiGrafici.TIPO_REPORT_BAR_CHART,TipoReport.BAR_CHART));
-		listaAnalisiGruppoTokeniInfo.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO +"-" + org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO,CostantiGrafici.TIPO_REPORT_PIE_CHART,TipoReport.PIE_CHART));
-		listaAnalisiGruppoTokeniInfo.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO +"-" + org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO,CostantiGrafici.TIPO_REPORT_TABELLA,TipoReport.TABELLA));
-		gruppoTokeniinfo.setListaAnalisiStatistica(listaAnalisiGruppoTokeniInfo);
-		this.tipiAnalisiStatistica.add(gruppoTokeniinfo);
+		
+		GruppoAnalisiStatistica gruppoIndirizzoIP = new GruppoAnalisiStatistica();
+		gruppoIndirizzoIP.setLabel(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_INDIRIZZO_IP_LABEL_KEY));
+		List<AnalisiStatistica> listaAnalisiGruppoIndirizzoIP = new ArrayList<>();
+		listaAnalisiGruppoIndirizzoIP.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO +"-" + org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP,CostantiGrafici.TIPO_REPORT_BAR_CHART,TipoReport.BAR_CHART));
+		listaAnalisiGruppoIndirizzoIP.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO +"-" + org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP,CostantiGrafici.TIPO_REPORT_PIE_CHART,TipoReport.PIE_CHART));
+		listaAnalisiGruppoIndirizzoIP.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO +"-" + org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP,CostantiGrafici.TIPO_REPORT_TABELLA,TipoReport.TABELLA));
+		gruppoIndirizzoIP.setListaAnalisiStatistica(listaAnalisiGruppoIndirizzoIP);
+		this.tipiAnalisiStatistica.add(gruppoIndirizzoIP);
 
 		if(this.applicationBean.getShowStatistichePersonalizzate()) {
 			GruppoAnalisiStatistica gruppoPersonalizzate = new GruppoAnalisiStatistica();
@@ -438,8 +447,10 @@ public class AnalisiStatisticaBean implements Serializable {
 				String[] mittenteType = this.tipoDistribuzione.split("-");
 				if(mittenteType[1].equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
 					return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_APPLICATIVO_LABEL_KEY);
-				}  else if(mittenteType[1].equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+				} else if(mittenteType[1].equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
 					return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_IDENTIFICATIVO_AUTENTICATO_LABEL_KEY);
+				} else if(mittenteType[1].equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP)) {
+					return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_INDIRIZZO_IP_LABEL_KEY);
 				} else {
 					return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_LABEL_KEY);
 				}

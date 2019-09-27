@@ -326,6 +326,11 @@
 				<xsd:element minOccurs="0" name="token-info" type="xsd:string">
 					
 				</xsd:element>
+				
+				<!-- Tempi Elaborazione -->
+				<xsd:element minOccurs="0" name="tempi-elaborazione" type="xsd:string">
+					
+				</xsd:element>
 			    
 				<!-- filtro duplicati (0=originale,-1=duplicata,<0=quanti duplicati esistono) -->
 				<xsd:element default="0" minOccurs="0" name="duplicati-richiesta" type="xsd:int">
@@ -347,11 +352,22 @@
 				<xsd:element minOccurs="0" name="transport-client-address" type="xsd:string">
 								        
 				</xsd:element>
+				<xsd:element minOccurs="0" name="client-address" type="xsd:string">
+					
+				</xsd:element>
 
 			    <!-- eventi emessi sulla gestione della transazione -->
 			    <xsd:element minOccurs="0" name="eventi-gestione" type="xsd:string">
 			        
 			    </xsd:element>
+				
+				<!-- informazioni dell'api -->
+				<xsd:element minOccurs="0" name="tipo-api" type="xsd:int">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="gruppi" type="xsd:string">
+					
+				</xsd:element>
 
 				<!-- Dump Messaggi -->
 				<xsd:element maxOccurs="2" minOccurs="0" ref="dump-messaggio">

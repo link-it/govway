@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/hsql/registroServizi/2019-09-19-patch.sql

@@ -1,3 +1,65 @@
+2019-09-25  Andrea Poli <apoli@link.it>
+
+	Aggiunte informazioni associate ad una transazione
+	- ALTER TABLE transazioni ADD COLUMN tipo_api INT;
+	- ALTER TABLE transazioni ADD COLUMN gruppi VARCHAR(20);
+
+	Aggiunte/Modificate colonne utilizzate negli indici per le ricerche all'interno della transazione
+	- ALTER TABLE transazioni ADD COLUMN client_address VARCHAR(20);
+	- ALTER TABLE transazioni DROP COLUMN eventi_gestione; -- modifica non retro compatibile
+	- ALTER TABLE transazioni ADD COLUMN eventi_gestione VARCHAR(20);
+
+	Rivisti indici delle Transazioni:
+	- INDEX_TR_MEDIUM
+	- INDEX_TR_FULL
+	- INDEX_TR_SEARCH
+	- INDEX_TR_STATS
+
+	Rivista logica di gestione delle informazioni salvate in 'credenziale_mittente'. La sequenza deve essere NO CYCLE
+	  +CREATE SEQUENCE seq_credenziale_mittente ... NO CYCLE;
+
+	Aggiunte nuove informazione nelle statistiche:
+	- ALTER TABLE statistiche_orarie ADD COLUMN client_address VARCHAR(20);
+	  UPDATE statistiche_orarie set client_address='-';
+	  ALTER TABLE statistiche_orarie ALTER COLUMN client_address SET NOT NULL;
+	- ALTER TABLE statistiche_orarie ADD COLUMN gruppi VARCHAR(20);
+	  UPDATE statistiche_orarie set gruppi='-';
+	  ALTER TABLE statistiche_orarie ALTER COLUMN gruppi SET NOT NULL;
+	- ALTER TABLE statistiche_giornaliere ADD COLUMN client_address VARCHAR(20);
+	  UPDATE statistiche_giornaliere set client_address='-';
+	  ALTER TABLE statistiche_giornaliere ALTER COLUMN client_address SET NOT NULL;
+	- ALTER TABLE statistiche_giornaliere ADD COLUMN gruppi VARCHAR(20);
+	  UPDATE statistiche_giornaliere set gruppi='-';
+	  ALTER TABLE statistiche_giornaliere ALTER COLUMN gruppi SET NOT NULL;
+	- ALTER TABLE statistiche_settimanali ADD COLUMN client_address VARCHAR(20);
+	  UPDATE statistiche_settimanali set client_address='-';
+	  ALTER TABLE statistiche_settimanali ALTER COLUMN client_address SET NOT NULL;
+	- ALTER TABLE statistiche_settimanali ADD COLUMN gruppi VARCHAR(20);
+	  UPDATE statistiche_settimanali set gruppi='-';
+	  ALTER TABLE statistiche_settimanali ALTER COLUMN gruppi SET NOT NULL;
+	- ALTER TABLE statistiche_mensili ADD COLUMN client_address VARCHAR(20);
+	  UPDATE statistiche_mensili set client_address='-';
+	  ALTER TABLE statistiche_mensili ALTER COLUMN client_address SET NOT NULL;
+	- ALTER TABLE statistiche_mensili ADD COLUMN gruppi VARCHAR(20);
+	  UPDATE statistiche_mensili set gruppi='-';
+	  ALTER TABLE statistiche_mensili ALTER COLUMN gruppi SET NOT NULL;
+
+	Rivisti indici delle Statistice:
+	- INDEX_STAT_HOUR_FULL
+	- INDEX_STAT_HOUR
+	- INDEX_STAT_DAY_FULL
+	- INDEX_STAT_DAY
+	- INDEX_STAT_WEEK_FULL
+	- INDEX_STAT_WEEK
+	- INDEX_STAT_MONTH_FULL
+	- INDEX_STAT_MONTH
+
+2019-09-19  Andrea Poli <apoli@link.it>
+
+	Aggiunta possibilità di associare dei gruppi alle API:
+	- gruppi
+	- accordi_gruppi
+
 2019-09-03  Andrea Poli <apoli@link.it>
 
 	Aggiunta nuova cache per i keystore acceduti dal Gateway

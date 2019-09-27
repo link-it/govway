@@ -51,6 +51,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link WrapperIdGruppo }
+     */
+    public WrapperIdGruppo createWrapperIdGruppo() {
+        return new WrapperIdGruppo();
+    }
+    
+    /**
      * Create an instance of {@link IdEntity }
      */
     public IdEntity createIdEntity() {

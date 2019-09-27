@@ -39,6 +39,7 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
@@ -51,10 +52,12 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.IdAccordoCooperazione;
 import org.openspcoop2.core.registry.IdAccordoServizioParteComune;
 import org.openspcoop2.core.registry.IdAccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.IdGruppo;
 import org.openspcoop2.core.registry.IdPortaDominio;
 import org.openspcoop2.core.registry.IdRuolo;
 import org.openspcoop2.core.registry.IdScope;
@@ -75,6 +78,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAzioni;
 import org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio;
+import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
 import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
 import org.openspcoop2.core.registry.driver.FiltroRicercaResources;
@@ -95,6 +99,8 @@ import org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica.sea
 import org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica.search.SearchFilterAccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ws.client.portadominio.search.PortaDominioSoap11Service;
 import org.openspcoop2.core.registry.ws.client.portadominio.search.SearchFilterPortaDominio;
+import org.openspcoop2.core.registry.ws.client.gruppo.search.GruppoSoap11Service;
+import org.openspcoop2.core.registry.ws.client.gruppo.search.SearchFilterGruppo;
 import org.openspcoop2.core.registry.ws.client.ruolo.search.RuoloSoap11Service;
 import org.openspcoop2.core.registry.ws.client.ruolo.search.SearchFilterRuolo;
 import org.openspcoop2.core.registry.ws.client.scope.search.ScopeSoap11Service;
@@ -137,6 +143,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 	private org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica.search.AccordoServizioParteSpecificaSoap11Service accordoServizioParteSpecificaService;
 	private org.openspcoop2.core.registry.ws.client.soggetto.search.SoggettoSoap11Service soggettoService;
 	private org.openspcoop2.core.registry.ws.client.portadominio.search.PortaDominioSoap11Service pddService;
+	private org.openspcoop2.core.registry.ws.client.gruppo.search.GruppoSoap11Service gruppoService;
 	private org.openspcoop2.core.registry.ws.client.ruolo.search.RuoloSoap11Service ruoloService;
 	private org.openspcoop2.core.registry.ws.client.scope.search.ScopeSoap11Service scopeService;
 	
@@ -145,6 +152,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 	private org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica.search.AccordoServizioParteSpecifica accordoServizioParteSpecificaPort;
 	private org.openspcoop2.core.registry.ws.client.soggetto.search.Soggetto soggettoPort;
 	private org.openspcoop2.core.registry.ws.client.portadominio.search.PortaDominio pddPort;
+	private org.openspcoop2.core.registry.ws.client.gruppo.search.Gruppo gruppoPort;
 	private org.openspcoop2.core.registry.ws.client.ruolo.search.Ruolo ruoloPort;
 	private org.openspcoop2.core.registry.ws.client.scope.search.Scope scopePort;
 
@@ -191,6 +199,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 			this.accordoServizioParteSpecificaService = new AccordoServizioParteSpecificaSoap11Service();
 			this.soggettoService = new SoggettoSoap11Service();
 			this.pddService = new PortaDominioSoap11Service();
+			this.gruppoService = new GruppoSoap11Service();
 			this.ruoloService = new RuoloSoap11Service();
 			this.scopeService = new ScopeSoap11Service();
 			
@@ -199,6 +208,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 			this.accordoServizioParteSpecificaPort = this.accordoServizioParteSpecificaService.getAccordoServizioParteSpecificaPortSoap11();
 			this.soggettoPort = this.soggettoService.getSoggettoPortSoap11();
 			this.pddPort = this.pddService.getPortaDominioPortSoap11();
+			this.gruppoPort = this.gruppoService.getGruppoPortSoap11();
 			this.ruoloPort = this.ruoloService.getRuoloPortSoap11();
 			this.scopePort = this.scopeService.getScopePortSoap11();
 			
@@ -212,6 +222,8 @@ public class DriverRegistroServiziWS extends BeanUtilities
 					prefixLocation+"Soggetto/Soap11");
 			((BindingProvider)this.pddPort).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
 					prefixLocation+"PortaDominio/Soap11");
+			((BindingProvider)this.gruppoPort).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
+					prefixLocation+"Gruppo/Soap11");
 			((BindingProvider)this.ruoloPort).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
 					prefixLocation+"Ruolo/Soap11");
 			((BindingProvider)this.scopePort).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
@@ -222,6 +234,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 			((BindingProvider)this.accordoServizioParteSpecificaPort).getRequestContext().put("schema-validation-enabled", true);
 			((BindingProvider)this.soggettoPort).getRequestContext().put("schema-validation-enabled", true);
 			((BindingProvider)this.pddPort).getRequestContext().put("schema-validation-enabled", true);
+			((BindingProvider)this.gruppoPort).getRequestContext().put("schema-validation-enabled", true);
 			((BindingProvider)this.ruoloPort).getRequestContext().put("schema-validation-enabled", true);
 			((BindingProvider)this.scopePort).getRequestContext().put("schema-validation-enabled", true);
 			
@@ -243,6 +256,9 @@ public class DriverRegistroServiziWS extends BeanUtilities
 				((BindingProvider)this.pddPort).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);
 				((BindingProvider)this.pddPort).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
 				
+				((BindingProvider)this.gruppoPort).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);
+				((BindingProvider)this.gruppoPort).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
+				
 				((BindingProvider)this.ruoloPort).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);
 				((BindingProvider)this.ruoloPort).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
 				
@@ -255,6 +271,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 			this.log.debug("GestoreRegistro: Inizializzato WebService. AccordoServizioParteSpecifica: " + this.accordoServizioParteSpecificaService.getClass().getSimpleName());
 			this.log.debug("GestoreRegistro: Inizializzato WebService. Soggetto: " + this.soggettoService.getClass().getSimpleName());
 			this.log.debug("GestoreRegistro: Inizializzato WebService. PortaDominio: " + this.pddService.getClass().getSimpleName());
+			this.log.debug("GestoreRegistro: Inizializzato WebService. Gruppo: " + this.gruppoService.getClass().getSimpleName());
 			this.log.debug("GestoreRegistro: Inizializzato WebService. Ruolo: " + this.ruoloService.getClass().getSimpleName());
 			this.log.debug("GestoreRegistro: Inizializzato WebService. Scope: " + this.scopeService.getClass().getSimpleName());
 			
@@ -338,6 +355,66 @@ public class DriverRegistroServiziWS extends BeanUtilities
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 	}
+	
+	
+	
+	// GRUPPI
+
+	@Override
+	public Gruppo getGruppo(
+			IDGruppo idGruppo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		try{
+			return this.gruppoPort.get(new IdGruppo(idGruppo));
+		}catch(org.openspcoop2.core.registry.ws.client.gruppo.search.RegistryNotFoundException_Exception e){
+			throw new DriverRegistroServiziNotFound(e.getMessage(),e);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+
+
+	@Override
+	public List<IDGruppo> getAllIdGruppi(
+			FiltroRicercaGruppi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		try{
+			SearchFilterGruppo filter = new SearchFilterGruppo();
+			if(filtroRicerca!=null){
+				if(filtroRicerca.getNome()!=null){
+					filter.setNome(filtroRicerca.getNome());
+				}
+				if(filtroRicerca.getServiceBinding()!=null){
+					filter.setServiceBinding(filtroRicerca.getServiceBinding());
+				}
+				if(filtroRicerca.getMaxDate()!=null){
+					GregorianCalendar cal = (GregorianCalendar) Calendar.getInstance();
+					cal.setTime(filtroRicerca.getMaxDate());
+					filter.setOraRegistrazioneMax(this.dataTypeFactory.newXMLGregorianCalendar(cal));
+				}
+				if(filtroRicerca.getMinDate()!=null){
+					GregorianCalendar cal = (GregorianCalendar) Calendar.getInstance();
+					cal.setTime(filtroRicerca.getMinDate());
+					filter.setOraRegistrazioneMax(this.dataTypeFactory.newXMLGregorianCalendar(cal));
+				}				
+			}
+			List<IdGruppo> ids = this.gruppoPort.findAllIds(filter);
+			if(ids==null || ids.size()<=0){
+				throw new org.openspcoop2.core.registry.ws.client.gruppo.search.RegistryNotFoundException_Exception("La ricerca non ha trovato gruppi");
+			}
+			List<IDGruppo> idsOpenSPCoop = new ArrayList<IDGruppo>();
+			for (IdGruppo idGruppo : ids) {
+				String idGruppoOpenSPCoop = idGruppo.getNome();
+				idsOpenSPCoop.add(new IDGruppo(idGruppoOpenSPCoop));
+			}
+			
+			return idsOpenSPCoop;
+			
+		}catch(org.openspcoop2.core.registry.ws.client.gruppo.search.RegistryNotFoundException_Exception e){
+			throw new DriverRegistroServiziNotFound(e.getMessage(),e);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	
 	
 	
 	

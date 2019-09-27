@@ -37,8 +37,11 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteComuneGruppo;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -310,6 +313,27 @@ public class DynamicPdDBeanUtils implements Serializable {
 		return this.dynamicUtilsService.checkTipoPdd(nome, tipoPdD);
 	}
 
+	public List<SelectItem> getListaGruppi(){
+		List<SelectItem> gruppi = new ArrayList<SelectItem>();
+
+		try{
+			List<IDGruppo>  lista = this.dynamicUtilsService.getGruppi();
+			if(lista!=null && !lista.isEmpty()) {
+				for (IDGruppo id : lista) {
+					SelectItem item = new SelectItem(id.getNome(),id.getNome());
+					gruppi.add(item);
+				}
+			}
+		}catch(Exception e){}
+
+		return gruppi;
+	}
+	
+	public boolean existsGruppi() {
+		return this.dynamicUtilsService.countGruppi()>0;
+	}
+		
+	
 	public Map<String, String> findAzioniFromServizio(String tipoProtocollo,IDServizio idServizio, String val){
 		String nomeServizio = idServizio.getNome();
 		String tipoServizio = idServizio.getTipo();
@@ -518,12 +542,12 @@ public class DynamicPdDBeanUtils implements Serializable {
 	}
 
 
-	public List<SelectItem> getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(String tipoProtocollo,String uriAccordoServizio, String tipoSoggetto, String nomeSoggetto, String input){
-		return getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(tipoProtocollo, uriAccordoServizio, tipoSoggetto, nomeSoggetto, input, false);
+	public List<SelectItem> getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(String tipoProtocollo,String gruppo, String uriAccordoServizio, String tipoSoggetto, String nomeSoggetto, String input){
+		return getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(tipoProtocollo, gruppo, uriAccordoServizio, tipoSoggetto, nomeSoggetto, input, false);
 	}
 
 
-	public List<SelectItem> getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(String tipoProtocollo,String uriAccordoServizio, String tipoSoggetto , String nomeSoggetto, String input, boolean soloOperativi){
+	public List<SelectItem> getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(String tipoProtocollo,String gruppo, String uriAccordoServizio, String tipoSoggetto , String nomeSoggetto, String input, boolean soloOperativi){
 		List<SelectItem> servizi = new ArrayList<SelectItem>();
 
 		try{
@@ -534,6 +558,23 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 			if(servizi2 != null && servizi2.size() > 0){
 				for (AccordoServizioParteSpecifica res : servizi2) {
+					
+					if(gruppo!=null && !"".equals(gruppo)) {
+						List<IdAccordoServizioParteComuneGruppo> lGruppi = this.dynamicUtilsService.getAccordoServizioGruppi(res.getIdAccordoServizioParteComune());
+						boolean found = false;
+						if(lGruppi!=null && !lGruppi.isEmpty()) {
+							for (IdAccordoServizioParteComuneGruppo gruppoCheck : lGruppi) {
+								if(gruppoCheck.getIdGruppo().getNome().equals(gruppo)) {
+									found = true;
+									break;
+								}
+							}
+						}
+						if(!found) {
+							continue;
+						}
+					}
+					
 					boolean add= true;
 					String value= null;
 					// servizi.add(new
@@ -725,18 +766,18 @@ public class DynamicPdDBeanUtils implements Serializable {
 	}
 
 	
-	public List<SelectItem> getListaSelectItemsElencoServiziErogazione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String input){
-		return _getListaSelectItemsElencoServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, false, null);
+	public List<SelectItem> getListaSelectItemsElencoServiziErogazione(String tipoProtocollo, String gruppo, String tipoSoggetto, String nomeSoggetto, String input){
+		return _getListaSelectItemsElencoServiziErogazione(tipoProtocollo, gruppo, tipoSoggetto, nomeSoggetto, input, false, null);
 	}
-	public List<SelectItem> getListaSelectItemsElencoServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String input, boolean soloOperativi){
-		return _getListaSelectItemsElencoServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, soloOperativi, null);
-	}
-
-	public List<SelectItem> getListaSelectItemsElencoConfigurazioneServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String input, boolean soloOperativi,  PermessiUtenteOperatore permessiUtenteOperatore){
-		return _getListaSelectItemsElencoServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, soloOperativi, permessiUtenteOperatore);
+	public List<SelectItem> getListaSelectItemsElencoServiziErogazione(String tipoProtocollo, String gruppo, String tipoSoggetto , String nomeSoggetto, String input, boolean soloOperativi){
+		return _getListaSelectItemsElencoServiziErogazione(tipoProtocollo, gruppo, tipoSoggetto, nomeSoggetto, input, soloOperativi, null);
 	}
 
-	private List<SelectItem> _getListaSelectItemsElencoServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String input, boolean soloOperativi, PermessiUtenteOperatore permessiUtenteOperatore){
+	public List<SelectItem> getListaSelectItemsElencoConfigurazioneServiziErogazione(String tipoProtocollo, String gruppo, String tipoSoggetto , String nomeSoggetto, String input, boolean soloOperativi,  PermessiUtenteOperatore permessiUtenteOperatore){
+		return _getListaSelectItemsElencoServiziErogazione(tipoProtocollo, gruppo, tipoSoggetto, nomeSoggetto, input, soloOperativi, permessiUtenteOperatore);
+	}
+
+	private List<SelectItem> _getListaSelectItemsElencoServiziErogazione(String tipoProtocollo, String gruppo, String tipoSoggetto , String nomeSoggetto, String input, boolean soloOperativi, PermessiUtenteOperatore permessiUtenteOperatore){
 		List<SelectItem> servizi = new ArrayList<SelectItem>();
 
 		try{
@@ -756,6 +797,31 @@ public class DynamicPdDBeanUtils implements Serializable {
 			Map<String, String> mapElementi = new HashMap<>();
 			if(servizi2 != null && servizi2.size() > 0){
 				for (IDServizio res : servizi2) {
+					
+					if(gruppo!=null && !"".equals(gruppo)) {
+						
+						AccordoServizioParteComune aspc = this.dynamicUtilsService.getAccordoServizio(tipoProtocollo, res.getSoggettoErogatore(), 
+								res.getTipo(), res.getNome(), res.getVersione());
+						
+						IdAccordoServizioParteComune idAspc = new IdAccordoServizioParteComune();
+						idAspc.setIdSoggetto(aspc.getIdReferente());
+						idAspc.setNome(aspc.getNome());
+						idAspc.setVersione(aspc.getVersione());
+						List<IdAccordoServizioParteComuneGruppo> lGruppi = this.dynamicUtilsService.getAccordoServizioGruppi(idAspc);
+						boolean found = false;
+						if(lGruppi!=null && !lGruppi.isEmpty()) {
+							for (IdAccordoServizioParteComuneGruppo gruppoCheck : lGruppi) {
+								if(gruppoCheck.getIdGruppo().getNome().equals(gruppo)) {
+									found = true;
+									break;
+								}
+							}
+						}
+						if(!found) {
+							continue;
+						}
+					}
+					
 					boolean add= true;
 					String value= null;
 					// servizi.add(new
@@ -839,19 +905,19 @@ public class DynamicPdDBeanUtils implements Serializable {
 		return servizi;
 	}
 	
-	public List<SelectItem> getListaSelectItemsElencoServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String input){
-		return _getListaSelectItemsElencoServiziFruizione(tipoProtocollo, null, null, tipoSoggettoErogatore, nomeSoggettoErogatore, input, false, null);
+	public List<SelectItem> getListaSelectItemsElencoServiziFruizione(String tipoProtocollo, String gruppo, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String input){
+		return _getListaSelectItemsElencoServiziFruizione(tipoProtocollo, gruppo, null, null, tipoSoggettoErogatore, nomeSoggettoErogatore, input, false, null);
 	}
 
-	public List<SelectItem> getListaSelectItemsElencoServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String input, boolean soloOperativi){
-		return _getListaSelectItemsElencoServiziFruizione(tipoProtocollo, null, null, tipoSoggettoErogatore, nomeSoggettoErogatore, input, soloOperativi, null);
+	public List<SelectItem> getListaSelectItemsElencoServiziFruizione(String tipoProtocollo, String gruppo, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String input, boolean soloOperativi){
+		return _getListaSelectItemsElencoServiziFruizione(tipoProtocollo, gruppo, null, null, tipoSoggettoErogatore, nomeSoggettoErogatore, input, soloOperativi, null);
 	}
 	
-	public List<SelectItem> getListaSelectItemsElencoConfigurazioneServiziFruizione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String input, boolean soloOperativi, PermessiUtenteOperatore permessiUtenteOperatore){
-		return _getListaSelectItemsElencoServiziFruizione(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoSoggettoErogatore, nomeSoggettoErogatore, input, soloOperativi, permessiUtenteOperatore);
+	public List<SelectItem> getListaSelectItemsElencoConfigurazioneServiziFruizione(String tipoProtocollo, String gruppo, String tipoSoggetto, String nomeSoggetto, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String input, boolean soloOperativi, PermessiUtenteOperatore permessiUtenteOperatore){
+		return _getListaSelectItemsElencoServiziFruizione(tipoProtocollo, gruppo, tipoSoggetto, nomeSoggetto, tipoSoggettoErogatore, nomeSoggettoErogatore, input, soloOperativi, permessiUtenteOperatore);
 	}
 	
-	private List<SelectItem> _getListaSelectItemsElencoServiziFruizione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String input, boolean soloOperativi, PermessiUtenteOperatore permessiUtenteOperatore){
+	private List<SelectItem> _getListaSelectItemsElencoServiziFruizione(String tipoProtocollo, String gruppo, String tipoSoggetto, String nomeSoggetto, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String input, boolean soloOperativi, PermessiUtenteOperatore permessiUtenteOperatore){
 		List<SelectItem> servizi = new ArrayList<SelectItem>();
 
 		try{
@@ -870,6 +936,32 @@ public class DynamicPdDBeanUtils implements Serializable {
 			Map<String, String> mapElementi = new HashMap<>();
 			if(servizi2 != null && servizi2.size() > 0){
 				for (IDServizio res : servizi2) {
+					
+					
+					if(gruppo!=null && !"".equals(gruppo)) {
+						
+						AccordoServizioParteComune aspc = this.dynamicUtilsService.getAccordoServizio(tipoProtocollo, res.getSoggettoErogatore(), 
+								res.getTipo(), res.getNome(), res.getVersione());
+						
+						IdAccordoServizioParteComune idAspc = new IdAccordoServizioParteComune();
+						idAspc.setIdSoggetto(aspc.getIdReferente());
+						idAspc.setNome(aspc.getNome());
+						idAspc.setVersione(aspc.getVersione());
+						List<IdAccordoServizioParteComuneGruppo> lGruppi = this.dynamicUtilsService.getAccordoServizioGruppi(idAspc);
+						boolean found = false;
+						if(lGruppi!=null && !lGruppi.isEmpty()) {
+							for (IdAccordoServizioParteComuneGruppo gruppoCheck : lGruppi) {
+								if(gruppoCheck.getIdGruppo().getNome().equals(gruppo)) {
+									found = true;
+									break;
+								}
+							}
+						}
+						if(!found) {
+							continue;
+						}
+					}
+					
 					boolean add= true;
 					String value= null;
 					// servizi.add(new

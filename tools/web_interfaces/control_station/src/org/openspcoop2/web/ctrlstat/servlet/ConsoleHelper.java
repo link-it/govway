@@ -112,6 +112,7 @@ import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
@@ -143,6 +144,7 @@ import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -219,6 +221,8 @@ import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCore;
+import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.monitor.MonitorCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.operazioni.OperazioniCore;
 import org.openspcoop2.web.ctrlstat.servlet.operazioni.OperazioniCostanti;
@@ -329,6 +333,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	protected ProtocolPropertiesCore protocolPropertiesCore = null;
 	protected RuoliCore ruoliCore = null;
 	protected ScopeCore scopeCore = null;
+	protected GruppiCore gruppiCore = null;
 
 	protected AuditHelper auditHelper;
 	public AuditHelper getAuditHelper() {
@@ -477,6 +482,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			this.protocolPropertiesCore = new ProtocolPropertiesCore(this.core);
 			this.ruoliCore = new RuoliCore(this.core);
 			this.scopeCore = new ScopeCore(this.core);
+			this.gruppiCore = new GruppiCore(this.core);
 			
 			this.auditHelper = new AuditHelper(request, pd, session);
 
@@ -1524,6 +1530,8 @@ public class ConsoleHelper implements IConsoleHelper {
 
 
 					dimensioneEntries = 5; // configurazione, tracciamento, controllo del traffico, policy e audit
+					
+					dimensioneEntries++; // gruppi
 
 					if(!isModalitaStandard()) {
 						dimensioneEntries++; // caches
@@ -1577,7 +1585,11 @@ public class ConsoleHelper implements IConsoleHelper {
 					index++;
 					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
 					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST;
-					index++;			
+					index++;	
+					
+					entries[index][0] = GruppiCostanti.LABEL_GRUPPI;
+					entries[index][1] = GruppiCostanti.SERVLET_NAME_GRUPPI_LIST;
+					index++;
 					// link utenti sotto quello di configurazione  generale
 					if (pu.isUtenti()) {
 						for (int j = 0; j < entriesUtenti.length; j++) {
@@ -8406,6 +8418,34 @@ public class ConsoleHelper implements IConsoleHelper {
 					CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_VALORI, 
 					CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_LABELS, 
 					postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterGruppo(String gruppo, boolean postBack) throws Exception{
+		try {
+			
+			FiltroRicercaGruppi filtroGruppi = new FiltroRicercaGruppi();
+			List<IDGruppo> listGruppi = this.ruoliCore.getAllIdGruppi(filtroGruppi);
+			int length = 1;
+			if(listGruppi!=null && listGruppi.size()>0) {
+				length+=listGruppi.size();
+			}
+			String [] values = new String[length];
+			String [] labels = new String[length];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_RUOLO_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_RUOLO_QUALSIASI;
+			if(listGruppi!=null && listGruppi.size()>0) {
+				for (int i =0; i < listGruppi.size() ; i ++) {
+					labels[i+1] = listGruppi.get(i).getNome();
+					values[i+1] = listGruppi.get(i).getNome();
+				}
+			}
+			
+			this.pd.addFilter(Filtri.FILTRO_GRUPPO, GruppiCostanti.LABEL_GRUPPO, gruppo, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);

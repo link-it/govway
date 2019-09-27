@@ -1,7 +1,7 @@
 /*
  * GovWay - A customizable API Gateway 
  * http://www.govway.org
- * 
+ *
  * from the Link.it OpenSPCoop project codebase
  * 
  * Copyright (c) 2005-2019 Link.it srl (http://link.it).
@@ -102,6 +102,7 @@ package org.openspcoop2.core.transazioni.ws.server.filter;
  *         &lt;element name="token-username" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="token-mail" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="token-info" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="tempi-elaborazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="cluster-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="socket-client-address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="transport-client-address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
@@ -204,6 +205,7 @@ import java.util.Date;
     "tokenUsername",
     "tokenMail",
     "tokenInfo",
+    "tempiElaborazione",
     "clusterId",
     "socketClientAddress",
     "transportClientAddress",
@@ -1173,6 +1175,19 @@ public class SearchFilterTransazione extends org.openspcoop2.utils.beans.BaseBea
 	
 	public String getTokenInfo(){
 		return this.tokenInfo;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="tempi-elaborazione",required=false,nillable=false)
+	private String tempiElaborazione;
+	
+	public void setTempiElaborazione(String tempiElaborazione){
+		this.tempiElaborazione = tempiElaborazione;
+	}
+	
+	public String getTempiElaborazione(){
+		return this.tempiElaborazione;
 	}
 	
 	

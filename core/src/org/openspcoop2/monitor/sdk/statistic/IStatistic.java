@@ -64,6 +64,10 @@ public interface IStatistic {
 	public String getTokenInfoUsername();	
 	public String getTokenInfoEmail();	
 	
+	public String getClientAddress();
+	
+	public String getGruppo();
+	
 	public TipiDatabase getDatabaseType();
 	
 	public StatisticType getStatisticType();

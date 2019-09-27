@@ -47,6 +47,8 @@ import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteFruizione;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteFruizioneApplicativo;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteFruizioneTokenClaim;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteIdApplicativo;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteIndirizzoIP;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteQualsiasi;
 import org.openspcoop2.core.monitor.rs.server.model.ListaTransazioni;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaBaseTransazione;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaIntervalloTemporale;
@@ -74,7 +76,10 @@ import org.openspcoop2.web.monitor.transazioni.dao.TransazioniService;
  */
 public class TransazioniHelper {
 
-	public static final void overrideFiltroApiBase(FiltroApiBase filtro_api, String azione, IDSoggetto erogatore, TransazioniSearchForm search, MonitoraggioEnv env) {
+	public static final void overrideFiltroApiBase(String tag, FiltroApiBase filtro_api, String azione, IDSoggetto erogatore, TransazioniSearchForm search, MonitoraggioEnv env) {
+		
+		search.setGruppo(tag);
+		
 		if (filtro_api == null)
 			return;
 
@@ -97,18 +102,18 @@ public class TransazioniHelper {
 		search.setNomeAzione(azione);
 	}
 
-	public static final void overrideFiltroFruizione(FiltroFruizione filtro, String azione,
+	public static final void overrideFiltroFruizione(String tag, FiltroFruizione filtro, String azione,
 			TransazioniSearchForm search, MonitoraggioEnv env) {
 		if (filtro == null)
 			return;
 
-		overrideFiltroApiBase(filtro, azione, new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()), search, env);
+		overrideFiltroApiBase(tag, filtro, azione, new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()), search, env);
 		if (filtro.getErogatore() != null)
 			search.setTipoNomeDestinatario(new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()).toString());
 	}
 
 	public static final void overrideFiltroRicercaId(FiltroRicercaId filtro, TransazioniSearchForm search,
-			MonitoraggioEnv env) {
+			MonitoraggioEnv env, String tipoRiconoscimento) {
 		if (filtro == null)
 			return;
 
@@ -118,15 +123,25 @@ public class TransazioniHelper {
 				(BooleanUtils.isTrue(filtro.isCaseSensitive()) ? CaseSensitiveMatch.SENSITIVE
 						: CaseSensitiveMatch.INSENSITIVE).toString());
 		search.setValoreRiconoscimento(filtro.getId());
-		search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO);
+		search.setRiconoscimento(tipoRiconoscimento);
 	}
 
 	public static final void overrideFiltroMittenteIdApplicativo(FiltroMittenteIdApplicativo filtro,
 			TransazioniSearchForm search, MonitoraggioEnv env) {
 		if (filtro == null)
 			return;
-		overrideFiltroRicercaId(filtro, search, env);
+		overrideFiltroRicercaId(filtro, search, env, Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO);
 		search.setAutenticazione(Enums.toTipoAutenticazione.get(filtro.getAutenticazione()).toString());
+	}
+	
+	public static final void overrideFiltroMittenteIndirizzoIP(FiltroMittenteIndirizzoIP filtro,
+			TransazioniSearchForm search, MonitoraggioEnv env) {
+		if (filtro == null)
+			return;
+		overrideFiltroRicercaId(filtro, search, env, Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP);
+		if(filtro.getTipo()!=null) {
+			search.setClientAddressMode(Enums.toTipoIndirizzzoIP.get(filtro.getTipo()));
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -175,10 +190,13 @@ public class TransazioniHelper {
 
 		switch (body.getTipo()) {
 		case EROGAZIONE:
-			overrideFiltroApiBase(deserializev2(body.getApi(), FiltroApiBase.class), body.getAzione(), env.soggetto, search, env);
+			overrideFiltroApiBase(body.getTag(), deserializev2(body.getApi(), FiltroApiBase.class), body.getAzione(), env.soggetto, search, env);
 			break;
 		case FRUIZIONE:
-			overrideFiltroFruizione(deserializev2(body.getApi(), FiltroFruizione.class),body.getAzione(), search, env);
+			overrideFiltroFruizione(body.getTag(), deserializev2(body.getApi(), FiltroFruizione.class),body.getAzione(), search, env);
+			break;
+		case QUALSIASI:
+			overrideFiltroApiBase(body.getTag(), deserializev2(body.getApi(), FiltroApiBase.class), body.getAzione(), env.soggetto, search, env);
 			break;
 		}
 
@@ -221,7 +239,14 @@ public class TransazioniHelper {
 				search.setMittenteCaseSensitiveType( (BooleanUtils.isTrue(fClaim.isCaseSensitive()) ? CaseSensitiveMatch.SENSITIVE : CaseSensitiveMatch.INSENSITIVE).toString());
 				search.setValoreRiconoscimento(fClaim.getId());
 				break;
+				
+			case INDIRIZZO_IP: {
+				TransazioniHelper.overrideFiltroMittenteIndirizzoIP(ReportisticaHelper.deserializeFiltroMittenteIndirizzoIP(fMittente.getId()), search, env);
+				break;
 			}
+				
+			}
+			
 			break;
 		}
 
@@ -261,9 +286,51 @@ public class TransazioniHelper {
 					search.setTipoNomeMittente(new IDSoggetto(tipo_soggetto, fClaim.getSoggetto()).toString());
 				break;
 			}
+			
+			case INDIRIZZO_IP: {
+				TransazioniHelper.overrideFiltroMittenteIndirizzoIP(ReportisticaHelper.deserializeFiltroMittenteIndirizzoIP(fMittente.getId()), search, env);
+				break;
+			}
+			
 			}
 			break;
 		}
+		
+		case QUALSIASI: {
+			FiltroMittenteQualsiasi fMittente = deserializev2(body.getMittente(),FiltroMittenteQualsiasi.class);
+			
+			if (fMittente == null)
+				break;
+
+			switch (fMittente.getTipo()) {
+			
+			case IDENTIFICATIVO_AUTENTICATO: {
+				FiltroMittenteIdApplicativo fIdent = ReportisticaHelper.deserializeFiltroMittenteIdApplicativo(fMittente.getId());
+				TransazioniHelper.overrideFiltroMittenteIdApplicativo(fIdent, search, env);
+				break;
+			}
+
+			case TOKEN_INFO: {
+				FiltroMittenteErogazioneTokenClaim fClaim = ReportisticaHelper.deserializeFiltroMittenteErogazioneTokenClaim(fMittente.getId());
+				search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
+				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).toString());
+				search.setMittenteMatchingType( (BooleanUtils.isTrue(fClaim.isRicercaEsatta()) ? TipoMatch.EQUALS : TipoMatch.LIKE).toString());
+				search.setMittenteCaseSensitiveType( (BooleanUtils.isTrue(fClaim.isCaseSensitive()) ? CaseSensitiveMatch.SENSITIVE : CaseSensitiveMatch.INSENSITIVE).toString());
+				search.setValoreRiconoscimento(fClaim.getId());
+				if (!StringUtils.isEmpty(fClaim.getSoggetto()))
+					search.setTipoNomeMittente(new IDSoggetto(tipo_soggetto, fClaim.getSoggetto()).toString());
+				break;
+			}
+			
+			case INDIRIZZO_IP: {
+				TransazioniHelper.overrideFiltroMittenteIndirizzoIP(ReportisticaHelper.deserializeFiltroMittenteIndirizzoIP(fMittente.getId()), search, env);
+				break;
+			}
+			
+			}
+			break;
+		}
+		
 		}
 	}
 
@@ -281,6 +348,18 @@ public class TransazioniHelper {
 
 			List<TransazioneBean> listTransazioniDB = transazioniService.findAll(Converter.toOffset(offset),
 					Converter.toLimit(limit), Converter.toSortOrder(sort), Converter.toSortField(sort));
+			if(listTransazioniDB!=null && !listTransazioniDB.isEmpty()) {
+				for (TransazioneBean transazioneBean : listTransazioniDB) {
+					if(transazioneBean.getGruppiRawValue()!=null && !"".equals(transazioneBean.getGruppiRawValue())) {
+						try {
+							transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteGruppi(transazioneBean, transazioneBean);
+						}catch(Exception e) {
+							throw new UtilsException(e.getMessage(),e);
+						}
+					}
+				}
+			}
+			
 			ListaTransazioni ret = ListaUtils.costruisciLista(env.context.getServletRequest().getRequestURI(),
 					Converter.toOffset(offset), Converter.toLimit(limit),
 					listTransazioniDB != null ? listTransazioniDB.size() : 0, ListaTransazioni.class);

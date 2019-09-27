@@ -24,6 +24,7 @@ package org.openspcoop2.web.ctrlstat.servlet.apc.api;
 import java.util.Vector;
 
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCostanti;
 
 /**
  * ApiCostanti
@@ -89,13 +90,16 @@ public class ApiCostanti extends AccordiServizioParteComuneCostanti {
 	public final static String APC_API_LABEL_GESTIONE_SERVIZI = "Servizi";
 	public final static String APC_API_LABEL_GESTIONE_ALLEGATI = "Allegati";
 	public final static String APC_API_LABEL_GESTIONE_OPZIONI_AVANZATE = "Opzioni Avanzate";
+	public final static String APC_API_LABEL_GESTIONE_GRUPPI = GruppiCostanti.LABEL_GRUPPI;
 	
+	public final static String PARAMETRO_APC_API_GESTIONE_GRUPPO = AccordiServizioParteComuneCostanti.PARAMETRO_APC_GRUPPO;
 	
 	public final static String PARAMETRO_APC_API_GESTIONE_PARZIALE = "apiGestioneParziale";
 	public final static String VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI = "apiInfoGenerali";
 	public final static String VALORE_PARAMETRO_APC_API_SOGGETTO_REFERENTE = "apiSoggettoReferente";
 	public final static String VALORE_PARAMETRO_APC_API_PROFILO = "apiProfilo";
 	public final static String VALORE_PARAMETRO_APC_API_DESCRIZIONE = "apiDescrizione";
+	public final static String VALORE_PARAMETRO_APC_API_GRUPPI = "apiGruppi";
 	public final static String VALORE_PARAMETRO_APC_API_GESTIONE_SPECIFICA_INTERFACCE = "apiGestioneSpecificaInterfacce";
 	public final static String VALORE_PARAMETRO_APC_API_OPZIONI_AVANZATE = "apiOpzioniAvanzate";
 	public final static String VALORE_PARAMETRO_APC_API_GESTIONE_PARZIALE_WSDL_CHANGE = "apiWsdlChange";

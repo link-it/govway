@@ -153,6 +153,11 @@ components:
               'rest': '#/components/schemas/FormatoRestEnum'
           example:
             formato: 'OpenApi3.0' 
+        tags:
+          type: array
+          items:
+            $ref: 'govway_core.yaml#/components/schemas/NCName'
+          example: [PagamentiTelematici, Anagrafica] 
       
     # Base: Allegato
     Allegato:
@@ -440,6 +445,11 @@ components:
           $ref: 'govway_core.yaml#/components/schemas/SimpleName'
         api_soap_servizio:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
+        api_tags:
+          type: array
+          items:
+            $ref: 'govway_core.yaml#/components/schemas/NCName'
+          example: [PagamentiTelematici, Anagrafica] 
         tipo_servizio:
           $ref: 'govway_core.yaml#/components/schemas/Tipo'
           

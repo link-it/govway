@@ -195,6 +195,7 @@
 				<!-- org.openspcoop.2.core.transazioni -->	
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.transazioni,org.openspcoop2.core.transazioni.constants,org.openspcoop2.core.transazioni.models,org.openspcoop2.core.transazioni.utils,org.openspcoop2.core.transazioni.utils.serializer" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.transazioni.dao,org.openspcoop2.core.transazioni.dao.jdbc,org.openspcoop2.core.transazioni.dao.jdbc.converter,org.openspcoop2.core.transazioni.dao.jdbc.fetch" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.transazioni.utils.credenziali" />
 				<antcall target="compile_src_openspcoop2">
 					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/core/transazioni"/>

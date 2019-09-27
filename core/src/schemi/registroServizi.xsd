@@ -15,6 +15,7 @@
 				<xsd:element ref="porta-dominio" maxOccurs="unbounded" minOccurs="0" />
 				<xsd:element ref="ruolo" maxOccurs="unbounded" minOccurs="0" />
 				<xsd:element ref="scope" maxOccurs="unbounded" minOccurs="0" />
+				<xsd:element ref="gruppo" maxOccurs="unbounded" minOccurs="0" />
 				<xsd:element ref="soggetto" maxOccurs="unbounded" minOccurs="0" />
 				<xsd:element ref="connettore" maxOccurs="unbounded" minOccurs="0" />
 			</xsd:sequence>
@@ -76,6 +77,8 @@
 				type="documento"/>
 			<!-- Protocol Properties -->
 			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
+			<!-- Gruppi -->
+			<xsd:element maxOccurs="1" minOccurs="0" name="gruppi" type="gruppi-accordo"/>
 		</xsd:sequence>
 		<xsd:attribute name="service-binding" type="ServiceBinding" use="required"/>
 		<xsd:attribute name="message-type" type="MessageType" use="optional"/>
@@ -271,6 +274,16 @@
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	
+	<!-- Gruppi di un Accordo -->
+	<xsd:complexType name="gruppi-accordo">
+		<xsd:sequence>
+			<xsd:element name="gruppo" type="gruppo-accordo" minOccurs="1" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="gruppo-accordo">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
 	
 	
 	<!-- Porta di Dominio -->
@@ -308,6 +321,18 @@
 		<xsd:attribute name="tipologia" type="xsd:string" use="optional"/> <!-- caratteristica dello scope (es. policy di gestione) -->
 		<xsd:attribute name="nome-esterno" type="xsd:string" use="optional"/>
 		<xsd:attribute name="contesto-utilizzo" type="ScopeContesto" use="optional" default="qualsiasi"/>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime" use="optional"/>
+	</xsd:complexType>
+
+
+
+
+	<!-- Gruppi -->
+	<xsd:element name="gruppo" type="gruppo" />
+	<xsd:complexType name="gruppo">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
+		<xsd:attribute name="service-binding" type="ServiceBinding" use="optional" />
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime" use="optional"/>
 	</xsd:complexType>
 
@@ -678,6 +703,9 @@
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	<xsd:complexType name="id-scope">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="id-gruppo">
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	

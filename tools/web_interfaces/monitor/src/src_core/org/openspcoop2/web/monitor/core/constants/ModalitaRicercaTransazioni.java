@@ -35,6 +35,12 @@ package org.openspcoop2.web.monitor.core.constants;
 public enum ModalitaRicercaTransazioni {
 
 	ANDAMENTO_TEMPORALE ("intervalloTemporale"),
+	RICERCA_LIBERA ("ricercaLibera"),
+	MITTENTE_TOKEN_INFO ("mittenteTokenInfo"),
+	MITTENTE_SOGGETTO ("mittenteSoggetto"),
+	MITTENTE_APPLICATIVO ("mittenteApplicativo"),
+	MITTENTE_IDENTIFICATIVO_AUTENTICATO ("mittenteIdentificativoAutenticato"),
+	MITTENTE_INDIRIZZO_IP ("mittenteIndirizzoIP"),
 	ID_APPLICATIVO ("idApplicativo"), 
 	ID_MESSAGGIO ("idMessaggio"),
 	ID_TRANSAZIONE ("idTransazione");
@@ -54,33 +60,14 @@ public enum ModalitaRicercaTransazioni {
 	}
 
 	public static ModalitaRicercaTransazioni getFromString(String v){
-		if(v.equals(ANDAMENTO_TEMPORALE.value)){
-			return ANDAMENTO_TEMPORALE;
-		} else if(v.equals(ID_APPLICATIVO.value)){
-			return ID_APPLICATIVO;
-		} else if(v.equals(ID_MESSAGGIO.value)){
-			return ID_MESSAGGIO;
-		} else if(v.equals(ID_TRANSAZIONE.value)){
-			return ID_TRANSAZIONE;
-		} 
-		
-		return null;
-		
+		ModalitaRicercaTransazioni res = null;
+		for (ModalitaRicercaTransazioni tmp : values()) {
+			if(tmp.getValue().equals(v)){
+				res = tmp;
+				break;
+			}
+		}
+		return res;
 	}
-	
-	
-	public static String getValue(ModalitaRicercaTransazioni ruolo){
-		if(ruolo.equals(ANDAMENTO_TEMPORALE))
-			return ANDAMENTO_TEMPORALE.value;
-		else if(ruolo.equals(ID_APPLICATIVO))
-			return ID_APPLICATIVO.value; 
-		else if(ruolo.equals(ID_MESSAGGIO))
-			return ID_MESSAGGIO.value;
-		else if(ruolo.equals(ID_TRANSAZIONE))
-			return ID_TRANSAZIONE.value;
-		
-		return null;
-	}
-	
 	
 }

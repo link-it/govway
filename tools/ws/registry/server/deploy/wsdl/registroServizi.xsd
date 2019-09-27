@@ -18,6 +18,7 @@
 				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="porta-dominio"/>
 				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="ruolo"/>
 				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="scope"/>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="gruppo"/>
 				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="soggetto"/>
 				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="connettore"/>
 			</xsd:sequence>
@@ -99,6 +100,8 @@
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="specifica-semiformale" type="documento"/>
 			<!-- Protocol Properties -->
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="protocol-property" type="protocol-property"/>
+			<!-- Gruppi -->
+			<xsd:element maxOccurs="1" minOccurs="0" name="gruppi" type="gruppi-accordo"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="super-user" type="xsd:string" use="optional">
@@ -415,6 +418,16 @@
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	
+	<!-- Gruppi di un Accordo -->
+	<xsd:complexType name="gruppi-accordo">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="1" name="gruppo" type="gruppo-accordo"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="gruppo-accordo">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
 	
 	
 	<!-- Porta di Dominio -->
@@ -501,6 +514,24 @@
 	
 	
 
+
+
+	<!-- Gruppi -->
+	<xsd:element name="gruppo" type="gruppo"/>
+	<xsd:complexType name="gruppo">
+		
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
+		<xsd:attribute name="service-binding" type="ServiceBinding" use="optional"/>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
+			
+		</xsd:attribute>	
+		<!-- start-extensions -->
+		<xsd:attribute name="super-user" type="xsd:string" use="optional">
+			
+		</xsd:attribute>
+		<!-- end-extensions -->
+	</xsd:complexType>
 
 	
 	
@@ -995,6 +1026,9 @@
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	<xsd:complexType name="id-scope">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="id-gruppo">
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	

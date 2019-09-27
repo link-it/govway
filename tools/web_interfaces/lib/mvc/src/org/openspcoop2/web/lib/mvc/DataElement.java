@@ -671,7 +671,8 @@ public class DataElement {
 		
 		if(!this.dataAttributes.isEmpty()) {
 			for (String key : this.dataAttributes.keySet()) {
-				sb.append("data-").append(key).append("=\"").append(this.dataAttributes.get(key)).append("\"");
+				if(!key.equals("colors"))
+					sb.append("data-").append(key).append("=\"").append(this.dataAttributes.get(key)).append("\"");
 			}
 		}
 		
@@ -679,6 +680,11 @@ public class DataElement {
 	}
 	public void enableTags() {
 		this.getDataAttributesMap().put("role", "tagsinput");
+	}
+	
+	public void enableTags(boolean multicolor) {
+		this.getDataAttributesMap().put("role", "tagsinput");
+		this.getDataAttributesMap().put("colors", "true");
 	}
 
 	public void reloadMinValue(boolean reload) {

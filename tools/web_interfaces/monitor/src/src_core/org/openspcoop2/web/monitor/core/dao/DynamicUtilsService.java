@@ -33,8 +33,12 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
+import org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.Fruitore;
+import org.openspcoop2.core.commons.search.Gruppo;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteComuneGruppo;
 import org.openspcoop2.core.commons.search.IdPortaDominio;
 import org.openspcoop2.core.commons.search.PortType;
 import org.openspcoop2.core.commons.search.PortaApplicativa;
@@ -43,9 +47,11 @@ import org.openspcoop2.core.commons.search.PortaDominio;
 import org.openspcoop2.core.commons.search.ServizioApplicativo;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
+import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteComuneGruppoServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteComuneServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteSpecificaServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IFruitoreServiceSearch;
+import org.openspcoop2.core.commons.search.dao.IGruppoServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IPortTypeServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IPortaApplicativaServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IPortaDelegataServiceSearch;
@@ -60,6 +66,7 @@ import org.openspcoop2.core.commons.search.utils.ProjectInfo;
 import org.openspcoop2.core.commons.search.utils.RegistroCore;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -112,7 +119,10 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 	private ISoggettoServiceSearch soggettoDAO;
 
+	private IGruppoServiceSearch gruppiDAO;
+	
 	private IAccordoServizioParteComuneServiceSearch aspcDAO = null;
+	private IAccordoServizioParteComuneGruppoServiceSearch aspcGruppiDAO = null;
 	private IAccordoServizioParteSpecificaServiceSearch aspsDAO = null;
 
 	private IServizioApplicativoServiceSearch serviziApplicativiDAO = null;
@@ -133,7 +143,10 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 					.getInstance( log).getServiceManager(ProjectInfo.getInstance(), DynamicUtilsService.log);
 			this.soggettoDAO = this.utilsServiceManager.getSoggettoServiceSearch();
 
+			this.gruppiDAO = this.utilsServiceManager.getGruppoServiceSearch();
+			
 			this.aspcDAO = this.utilsServiceManager.getAccordoServizioParteComuneServiceSearch();
+			this.aspcGruppiDAO = this.utilsServiceManager.getAccordoServizioParteComuneGruppoServiceSearch();
 			this.aspsDAO = this.utilsServiceManager.getAccordoServizioParteSpecificaServiceSearch();
 
 			this.serviziApplicativiDAO = this.utilsServiceManager.getServizioApplicativoServiceSearch();
@@ -166,7 +179,10 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 					.getInstance( log).getServiceManager(ProjectInfo.getInstance(), con,autoCommit,serviceManagerProperties,log);
 			this.soggettoDAO = this.utilsServiceManager.getSoggettoServiceSearch();
 
+			this.gruppiDAO = this.utilsServiceManager.getGruppoServiceSearch();
+			
 			this.aspcDAO = this.utilsServiceManager.getAccordoServizioParteComuneServiceSearch();
+			this.aspcGruppiDAO = this.utilsServiceManager.getAccordoServizioParteComuneGruppoServiceSearch();
 			this.aspsDAO = this.utilsServiceManager.getAccordoServizioParteSpecificaServiceSearch();
 
 			this.serviziApplicativiDAO = this.utilsServiceManager.getServizioApplicativoServiceSearch();
@@ -867,6 +883,33 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	}
 
 	@Override
+	public List<IdAccordoServizioParteComuneGruppo> getAccordoServizioGruppi(IdAccordoServizioParteComune id){
+		try {
+			
+			IPaginatedExpression pagExpr = this.aspcGruppiDAO.newPaginatedExpression();
+			pagExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, id.getNome());
+			pagExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, id.getVersione());
+			pagExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, id.getIdSoggetto().getNome());
+			pagExpr.equals(AccordoServizioParteComuneGruppo.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, id.getIdSoggetto().getTipo());
+			List<IdAccordoServizioParteComuneGruppo> list = this.aspcGruppiDAO.findAllIds(pagExpr);
+			return list;
+			
+		}catch (ServiceException e) {
+			log.error(e.getMessage(), e);
+		} catch (NotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionNotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionException e) {
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		
+		return null;
+	}
+	
+	@Override
 	public int countElencoServizi(String tipoProtocollo,Soggetto soggetto) {
 		try {
 			IExpression expr = this.aspsDAO.newExpression();
@@ -1421,6 +1464,49 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		return 0;
 	}
 
+	@Override
+	public List<IDGruppo> getGruppi(){
+		try {
+			IPaginatedExpression expr = this.gruppiDAO.newPaginatedExpression();
+			
+			expr.sortOrder(SortOrder.ASC).addOrder(Gruppo.model().NOME);
+			
+			List<Object> list = this.gruppiDAO.select(expr, Gruppo.model().NOME);
+			if(list!=null && !list.isEmpty()) {
+				List<IDGruppo> r = new ArrayList<>();
+				for (Object o : list) {
+					r.add(new IDGruppo((String)o));
+				}
+				return r;
+			}
+			
+		} catch (ServiceException e) {
+			log.error(e.getMessage(), e);
+		} catch (NotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch(NotFoundException notFound) {
+			log.debug(notFound.getMessage(), notFound);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+
+		return new ArrayList<IDGruppo>();
+	}
+	@Override
+	public int countGruppi() {
+		try {
+			IExpression expr = this.gruppiDAO.newExpression();
+			return (int) this.gruppiDAO.count(expr).longValue();
+		} catch (ServiceException e) {
+			log.error(e.getMessage(), e);
+		} catch (NotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		return 0;
+	}
+	
 	@Override
 	public List<AccordoServizioParteSpecifica> getServizi(String tipoProtocollo,String uriAccordoServizio, String tipoSoggetto , String nomeSoggetto) {
 		return this.getServizi(tipoProtocollo, uriAccordoServizio, tipoSoggetto, nomeSoggetto, null);

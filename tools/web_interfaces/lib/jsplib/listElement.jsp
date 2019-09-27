@@ -72,6 +72,7 @@ String customListViewName = pd.getCustomListViewName();
 <link rel="stylesheet" href="css/ui.core.css" type="text/css">
 <link rel="stylesheet" href="css/ui.theme.css" type="text/css">
 <link rel="stylesheet" href="css/ui.dialog.css" type="text/css">
+<link rel="stylesheet" href="css/bootstrap-tagsinput.css" type="text/css">
 <script type="text/javascript" src="js/webapps.js"></script>
 
 

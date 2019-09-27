@@ -33,6 +33,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -46,6 +47,7 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
@@ -63,6 +65,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoDelete;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetail;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetailConfigurazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
+import org.openspcoop2.protocol.sdk.archive.ArchiveGruppo;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
@@ -424,6 +427,19 @@ public class DeleterArchiveUtils {
 				esito.getSoggetti().add(detail);
 			}
 			
+			// Gruppi
+			for (int i = 0; i < archive.getGruppi().size(); i++) {
+				ArchiveGruppo archiveGruppo = archive.getGruppi().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveGruppo);
+				try{
+					this.deleteGruppo(archiveGruppo, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getGruppi().add(detail);
+			}
+			
 			// Ruoli
 			for (int i = 0; i < archive.getRuoli().size(); i++) {
 				ArchiveRuolo archiveRuolo = archive.getRuoli().get(i);
@@ -637,6 +653,52 @@ public class DeleterArchiveUtils {
 		}			
 		catch(Exception e){
 			this.log.error("Errore durante l'eliminazione della porta di dominio ["+nomePdd+"]: "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
+	
+	
+	
+	public void deleteGruppo(ArchiveGruppo archiveGruppo,ArchiveEsitoImportDetail detail){
+		
+		IDGruppo idGruppo = archiveGruppo.getIdGruppo();
+		try{
+			
+			// --- check esistenza ---
+			if(this.importerEngine.existsGruppo(idGruppo)==false){
+				detail.setState(ArchiveStatoImport.DELETED_NOT_EXISTS);
+				return;
+			}
+			
+			
+			// ---- visibilita' oggetto che si vuole eliminare ---
+			
+			// gruppo
+			Gruppo gruppoReadFromDb = this.importerEngine.getGruppo(idGruppo);
+			if(this.importerEngine.isVisioneOggettiGlobale(this.userLogin)==false){
+				if(this.userLogin.equals(gruppoReadFromDb.getSuperUser())==false){
+					throw new Exception("Il Gruppo ["+idGruppo+"] non è visibile/eliminabile dall'utente collegato ("+this.userLogin+")");
+				}
+			}
+			
+			
+			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
+			
+			HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+			if (this.importerEngine.isGruppoInUso(idGruppo, whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO)) {
+				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idGruppo, whereIsInUso,false,NEW_LINE));
+			}
+			
+			
+			// --- delete ---
+			this.importerEngine.deleteGruppo(archiveGruppo.getGruppo());
+			detail.setState(ArchiveStatoImport.DELETED);				
+
+						
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'eliminazione del gruppo ["+idGruppo+"]: "+e.getMessage(),e);
 			detail.setState(ArchiveStatoImport.ERROR);
 			detail.setException(e);
 		}

@@ -55,7 +55,7 @@
 			<a4j:outputPanel id="periodoCtr" layout="block">
 			
 				<div class="subtitle">
-					<h:outputText id="idTemporale" value="Filtro Temporale" styleClass="subtitle"/>
+					<h:outputText id="idTemporale" value="#{msg['stats.search.sezioneFiltroTemporale.label']}" styleClass="subtitle"/>
 				</div>
 				
 		 		<link:prop label="Unità di tempo">
@@ -118,11 +118,9 @@
 			
 			<a4j:outputPanel id="filtriRicercaServizio" layout="block">
 			
-				<c:if test="#{sf_showServizi or sf_tipologiaRicerca eq 'uscita'}">
-					<div class="subtitle">
-						<h:outputText id="idDatiServizio" value="#{msg['stats.search.sezioneFiltroDatiServizio.label']}" styleClass="subtitle"/>
-					</div>
-				</c:if>
+				<div class="subtitle">
+					<h:outputText id="idDatiServizio" value="#{msg['stats.search.sezioneFiltroDatiServizio.label']}" styleClass="subtitle"/>
+				</div>
 											
 				<ui:include src="/stat/includes/searchFormStatistichePersonalizzateFiltroSoggetto.xhtml">
 					<ui:param name="outOfRegionToRefresh" value="#{outOfRegionToRefresh}"/>
@@ -146,7 +144,19 @@
 					<ui:param name="tipo_filtro_soggetti" value="soggetto_remoto" />
 			 	</ui:include>
 				
+				<ui:include src="/stat/includes/searchFormStatistichePersonalizzateFiltroGruppi.xhtml">
+					<ui:param name="outOfRegionToRefresh" value="#{outOfRegionToRefresh}"/>
+					<ui:param name="sf_gruppo" value="#{sf_gruppo}" />
+					<ui:param name="sf_gruppi" value="#{sf_gruppi}" />
+					<ui:param name="sf_tipologiaRicerca" value="#{sf_tipologiaRicerca}" />
+					<ui:param name="sf_bean" value="#{sf_bean}" />
+					<ui:param name="sf_mbean" value="#{sf_mbean}" />
+					<ui:param name="sf_labelGruppo" value="#{sf_labelGruppo}" />
+			 	</ui:include>
+				
 				<c:if test="#{sf_showServizi}">
+				
+				
 					<ui:include src="/stat/includes/searchFormStatistichePersonalizzateFiltroServizio.xhtml">
 						<ui:param name="outOfRegionToRefresh" value="#{outOfRegionToRefresh}"/>
 						<ui:param name="sf_nomeMittente" value="#{sf_nomeMittente}" />
@@ -185,10 +195,50 @@
 				
 			</a4j:outputPanel>
 			
+			<a4j:outputPanel id="filtriRicercaTransazione" layout="block">
+			
+				<div class="subtitle">
+					<h:outputText id="idDatiTransazione" value="#{msg['stats.search.sezioneFiltroEsito.label']}" styleClass="subtitle"/>
+				</div>
+				
+				<link:prop label="Esito">
+					<rich:comboBox id="esitoGruppoCombo" value="#{sf_bean.esitoGruppo}"
+						defaultLabel="Seleziona esito" directInputSuggestions="true"
+						width="416" converter="selectItemConverter" enableManualInput="false">
+						<f:selectItems value="#{sf_bean.esitiGruppo}"/>
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl"  oncomplete="#{outOfRegionToRefresh}()"/>
+					</rich:comboBox>
+				</link:prop>
+				
+				<link:prop label="Dettaglio Esito" rendered="#{sf_bean.showDettaglio}">
+					<rich:comboBox id="esitoDettaglioCombo" value="#{sf_bean.esitoDettaglio}"
+						defaultLabel="Seleziona dettaglio esito" directInputSuggestions="true"
+						width="416" converter="selectItemConverter" enableManualInput="false">
+						<f:selectItems value="#{sf_bean.esitiDettaglio}"/>
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl"  oncomplete="#{outOfRegionToRefresh}()"/>
+					</rich:comboBox>
+				</link:prop>
+				<link:prop label="Dettaglio Esito" rendered="#{sf_bean.showDettaglioPersonalizzato}">
+					<h:selectManyListbox id="esitoDettaglioManyListbox" value="#{sf_bean.esitoDettaglioPersonalizzato}" style="width:416px;" size="5">
+						<f:selectItems value="#{sf_bean.esitiDettagliPersonalizzati}"/>
+					</h:selectManyListbox>
+				</link:prop>
+				
+				<link:prop label="Contesto" rendered="#{sf_bean.showEsitiContesto}">
+					<rich:comboBox id="esitoContestoCombo" value="#{sf_bean.esitoContesto}"
+						defaultLabel="Seleziona contesto" directInputSuggestions="true"
+						width="416" converter="selectItemConverter" enableManualInput="false">
+						<f:selectItems value="#{sf_bean.esitiContesto}"/>
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl"  oncomplete="#{outOfRegionToRefresh}()"/>
+					</rich:comboBox>
+				</link:prop>
+				
+			</a4j:outputPanel>
+			
 			<a4j:outputPanel id="filtriRicercaDatiMittente" layout="block" 	rendered="#{sf_showDatiMittente}">
 					
 				<div class="subtitle">
-					<h:outputText id="idDatiMittente" value="Filtro Dati Mittente" styleClass="subtitle"/>
+					<h:outputText id="idDatiMittente" value="#{msg['stats.search.sezioneFiltroDatiMittente.label']}" styleClass="subtitle"/>
 				</div>	
 				
 				<link:prop label="Tipo" rendered="">
@@ -267,14 +317,14 @@
 					</a4j:outputPanel>
 					
 					<a4j:outputPanel layout="block" id="modRicercaComboCtr" rendered="#{sf_bean.riconoscimento == 'tokenInfo' or sf_bean.riconoscimento == 'identificativoAutenticato'}">
-						<link:prop label="Ricerca Esatta">
+						<link:prop label="#{msg['commons.search.ricercaEsatta.label']}">
 							<h:selectOneRadio id="modRicercaRadio" value="#{sf_bean.mittenteMatchingType}" styleClass="controlset">
 								<f:selectItem itemValue="EQUALS" itemLabel="Si"/>
 								<f:selectItem itemValue="LIKE" itemLabel="No"/>
 							</h:selectOneRadio>
 						</link:prop>
 						
-						<link:prop label="Case Sensitive">
+						<link:prop label="#{msg['commons.search.caseSensitive.label']}">
 							<h:selectOneRadio id="modRicercaRadioCaseSens" value="#{sf_bean.mittenteCaseSensitiveType}" styleClass="controlset">
 								<f:selectItem itemValue="SENSITIVE" itemLabel="Si"/>
 								<f:selectItem itemValue="INSENSITIVE" itemLabel="No"/>
@@ -285,49 +335,35 @@
 							<h:inputText id="valoreRiconoscimento" value="#{sf_bean.valoreRiconoscimento}" styleClass="inputLinkLong"/>
 						</link:prop>
 					</a4j:outputPanel>
+					
+					<a4j:outputPanel layout="block" id="modRicercaClientAddressComboCtr" rendered="#{sf_bean.riconoscimento == 'ip'}">
+						<link:prop label="#{msg['commons.search.ricercaEsatta.label']}">
+							<h:selectOneRadio id="modRicercaClientAddressRadio" value="#{sf_bean.mittenteMatchingType}" styleClass="controlset">
+								<f:selectItem itemValue="EQUALS" itemLabel="Si"/>
+								<f:selectItem itemValue="LIKE" itemLabel="No"/>
+								<a4j:support status="mainStatus" event="onchange" reRender="modRicercaClientAddressComboCtr" limitToList="true"/>
+							</h:selectOneRadio>
+						</link:prop>
+
+						<a4j:outputPanel layout="block" id="clientAddressComboCtr" rendered="#{sf_bean.riconoscimento == 'ip' and sf_bean.mittenteMatchingType == 'EQUALS'}">
+							<link:prop label="Tipo" required="false">
+								<rich:comboBox id="clientAddressCombo" value="#{sf_bean.clientAddressMode}" defaultLabel="Selezione Tipo Indirizzo" 
+										converter="selectItemConverter"	directInputSuggestions="true" width="416" enableManualInput="false">
+									<f:selectItem itemValue="--" itemLabel="[Qualsiasi]"/>
+									<f:selectItem itemValue="socket" itemLabel="Client IP"/>
+									<f:selectItem itemValue="transport" itemLabel="X-Forwarded-For"/>
+								</rich:comboBox>
+							</link:prop>				
+						</a4j:outputPanel>
+						
+						<link:prop label="Indirizzo" required="true">
+							<h:inputText id="clientAddressValoreRiconoscimento" value="#{sf_bean.valoreRiconoscimento}" styleClass="inputLinkLong"/>
+						</link:prop>
+					</a4j:outputPanel>
+					
 				</a4j:outputPanel>
 			</a4j:outputPanel>
-				
-			<a4j:outputPanel id="filtriRicercaTransazione" layout="block">
-			
-				<div class="subtitle">
-					<h:outputText id="idDatiTransazione" value="Filtro Esito" styleClass="subtitle"/>
-				</div>
-				
-				<link:prop label="Esito">
-					<rich:comboBox id="esitoGruppoCombo" value="#{sf_bean.esitoGruppo}"
-						defaultLabel="Seleziona esito" directInputSuggestions="true"
-						width="416" converter="selectItemConverter" enableManualInput="false">
-						<f:selectItems value="#{sf_bean.esitiGruppo}"/>
-						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl"  oncomplete="#{outOfRegionToRefresh}()"/>
-					</rich:comboBox>
-				</link:prop>
-				
-				<link:prop label="Dettaglio Esito" rendered="#{sf_bean.showDettaglio}">
-					<rich:comboBox id="esitoDettaglioCombo" value="#{sf_bean.esitoDettaglio}"
-						defaultLabel="Seleziona dettaglio esito" directInputSuggestions="true"
-						width="416" converter="selectItemConverter" enableManualInput="false">
-						<f:selectItems value="#{sf_bean.esitiDettaglio}"/>
-						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl"  oncomplete="#{outOfRegionToRefresh}()"/>
-					</rich:comboBox>
-				</link:prop>
-				<link:prop label="Dettaglio Esito" rendered="#{sf_bean.showDettaglioPersonalizzato}">
-					<h:selectManyListbox id="esitoDettaglioManyListbox" value="#{sf_bean.esitoDettaglioPersonalizzato}" style="width:416px;" size="5">
-						<f:selectItems value="#{sf_bean.esitiDettagliPersonalizzati}"/>
-					</h:selectManyListbox>
-				</link:prop>
-				
-				<link:prop label="Contesto" rendered="#{sf_bean.showEsitiContesto}">
-					<rich:comboBox id="esitoContestoCombo" value="#{sf_bean.esitoContesto}"
-						defaultLabel="Seleziona contesto" directInputSuggestions="true"
-						width="416" converter="selectItemConverter" enableManualInput="false">
-						<f:selectItems value="#{sf_bean.esitiContesto}"/>
-						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl"  oncomplete="#{outOfRegionToRefresh}()"/>
-					</rich:comboBox>
-				</link:prop>
-				
-			</a4j:outputPanel>
-			
+							
 			<a4j:outputPanel id="personalizzazioneReport" layout="block">
 			
 				<div class="subtitle">

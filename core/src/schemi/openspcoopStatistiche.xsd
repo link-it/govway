@@ -113,6 +113,8 @@
 			<xsd:element name="token-info" type="xsd:string" />
 			<xsd:element name="esito" type="xsd:integer" />
 			<xsd:element name="esito-contesto" type="xsd:string" />
+			<xsd:element name="client-address" type="xsd:string" />
+			<xsd:element name="gruppi" type="xsd:string" />
 			
 			<!-- Informazioni -->
 			<xsd:element name="numero-transazioni" type="xsd:integer" />

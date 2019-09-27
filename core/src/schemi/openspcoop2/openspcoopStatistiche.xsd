@@ -24,15 +24,12 @@
 		
 		Analisi dei tipi di database:
 		- postgresql: consente qualsiasi indice
-		- oracle: consente qualsiasi indice
-		- mysql: (verificato su mysql  Ver 15.1 Distrib 10.1.24-MariaDB) consente qualsiasi indice
+		- oracle: consente qualsiasi indice (vengono creati tutti. Attenzione che il max columns è 32 ed è quasi raggiunto per 'INDEX_TR_SEARCH')
+		- mysql: (verificato su mysql 5.7.27) 
+				  non consente la creazione degli indici 'INDEX_STAT_<TIPOSTAT>_FULL' e 'INDEX_STAT_<TIPOSTAT>'. 
+				  Errore: ERROR 1070 (42000): Too many key parts specified; max 16 parts allowed
 		- hsql: consente qualsiasi indice
-		- sqlserver: (verificato su sqlserver 2008)
-		non consente la creazione degli indici 'INDEX_STAT_<TIPOSTAT>'.
-		Errore: The maximum limit for index or statistics key column list is 16.
-		Mentre crea l'indice 'INDEX_STAT_<TIPOSTAT>_FULL' però segnala un warning che l'indice potrebbe non funzionare e quindi dare errore:
-		Warning! The maximum key length is 900 bytes. The index 'INDEX_STAT_<TIPOSTAT>_FULL' has maximum length of 1642 bytes. 
-		For some combination of large values, the insert/update operation will fail.
+		- sqlserver: consente qualsiasi indice (verificato su sqlserver 2017)
 	-->	
 
 
@@ -177,6 +174,8 @@
 							<linkit:sql-table-index-column name="token_subject"/>
 							<linkit:sql-table-index-column name="token_username"/>
 							<linkit:sql-table-index-column name="token_mail"/>
+							<linkit:sql-table-index-column name="client_address"/>
+							<linkit:sql-table-index-column name="gruppi"/>
 						</linkit:sql-table-index>
 						<linkit:sql-table-index name="INDEX_STAT_HOUR">
 							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
@@ -199,6 +198,8 @@
 							<linkit:sql-table-index-column name="token_subject"/>
 							<linkit:sql-table-index-column name="token_username"/>
 							<linkit:sql-table-index-column name="token_mail"/>
+							<linkit:sql-table-index-column name="client_address"/>
+							<linkit:sql-table-index-column name="gruppi"/>
 							<linkit:sql-table-index-column name="richieste"/>
 							<linkit:sql-table-index-column name="bytes_banda_complessiva"/>
 							<linkit:sql-table-index-column name="bytes_banda_interna"/>
@@ -304,6 +305,8 @@
 							<linkit:sql-table-index-column name="token_subject"/>
 							<linkit:sql-table-index-column name="token_username"/>
 							<linkit:sql-table-index-column name="token_mail"/>
+							<linkit:sql-table-index-column name="client_address"/>
+							<linkit:sql-table-index-column name="gruppi"/>
 						</linkit:sql-table-index>
 						<linkit:sql-table-index name="INDEX_STAT_DAY">
 							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
@@ -326,6 +329,8 @@
 							<linkit:sql-table-index-column name="token_subject"/>
 							<linkit:sql-table-index-column name="token_username"/>
 							<linkit:sql-table-index-column name="token_mail"/>
+							<linkit:sql-table-index-column name="client_address"/>
+							<linkit:sql-table-index-column name="gruppi"/>
 							<linkit:sql-table-index-column name="richieste"/>
 							<linkit:sql-table-index-column name="bytes_banda_complessiva"/>
 							<linkit:sql-table-index-column name="bytes_banda_interna"/>
@@ -426,6 +431,8 @@
 							<linkit:sql-table-index-column name="token_subject"/>
 							<linkit:sql-table-index-column name="token_username"/>
 							<linkit:sql-table-index-column name="token_mail"/>
+							<linkit:sql-table-index-column name="client_address"/>
+							<linkit:sql-table-index-column name="gruppi"/>
 						</linkit:sql-table-index>
 						<linkit:sql-table-index name="INDEX_STAT_WEEK">
 							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
@@ -448,6 +455,8 @@
 							<linkit:sql-table-index-column name="token_subject"/>
 							<linkit:sql-table-index-column name="token_username"/>
 							<linkit:sql-table-index-column name="token_mail"/>
+							<linkit:sql-table-index-column name="client_address"/>
+							<linkit:sql-table-index-column name="gruppi"/>
 							<linkit:sql-table-index-column name="richieste"/>
 							<linkit:sql-table-index-column name="bytes_banda_complessiva"/>
 							<linkit:sql-table-index-column name="bytes_banda_interna"/>
@@ -549,6 +558,8 @@
 							<linkit:sql-table-index-column name="token_subject"/>
 							<linkit:sql-table-index-column name="token_username"/>
 							<linkit:sql-table-index-column name="token_mail"/>
+							<linkit:sql-table-index-column name="client_address"/>
+							<linkit:sql-table-index-column name="gruppi"/>
 						</linkit:sql-table-index>
 						<linkit:sql-table-index name="INDEX_STAT_MONTH">
 							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
@@ -571,6 +582,8 @@
 							<linkit:sql-table-index-column name="token_subject"/>
 							<linkit:sql-table-index-column name="token_username"/>
 							<linkit:sql-table-index-column name="token_mail"/>
+							<linkit:sql-table-index-column name="client_address"/>
+							<linkit:sql-table-index-column name="gruppi"/>
 							<linkit:sql-table-index-column name="richieste"/>
 							<linkit:sql-table-index-column name="bytes_banda_complessiva"/>
 							<linkit:sql-table-index-column name="bytes_banda_interna"/>
@@ -854,6 +867,32 @@
 							xmlns:linkit="http://www.link.it/project_generator">
 							<linkit:sql-column-mapping name="esito_contesto" varchar="20"/>
 							<linkit:sql-ddl-column-comment><![CDATA[Contesto della Transazione]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="client-address" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="client_address" varchar="20" />
+							<linkit:sql-column-comment><![CDATA[Indirizzo IP client]]></linkit:sql-column-comment>
+							<linkit:sql-ddl-column-comment><![CDATA[Indirizzo IP client (FK verso credenziale_mittente(id))]]></linkit:sql-ddl-column-comment>
+							<linkit:ws-field-mapping filter="false" />
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="gruppi" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="gruppi" varchar="20" />
+							<linkit:sql-column-comment><![CDATA[Gruppi a cui appartiene l'api invocata]]></linkit:sql-column-comment>
+							<linkit:sql-ddl-column-comment><![CDATA[Gruppi a cui appartiene l'api invocata ((FK verso credenziale_mittente(id)))]]></linkit:sql-ddl-column-comment>
+							<linkit:ws-field-mapping filter="false" />
 						</linkit:generator>
 					</xsd:appinfo>
 				</xsd:annotation>

@@ -31,7 +31,8 @@ public enum TipoFiltroMittenteErogazioneEnum {
 SOGGETTO("soggetto"),
   APPLICATIVO("applicativo"),
   IDENTIFICATIVO_AUTENTICATO("identificativo_autenticato"),
-  TOKEN_INFO("token_info");
+  TOKEN_INFO("token_info"),
+  INDIRIZZO_IP("indirizzo_ip");
 
   private String value;
 

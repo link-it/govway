@@ -428,6 +428,15 @@ public class ReportExporter extends HttpServlet{
 				((DistribuzionePerSABean<?>) bean).setSearch(statSearchForm);
 				((DistribuzionePerSABean<?>) bean).getSearch().initSearchListener(null);
 			}
+			else if(CostantiExporter.TIPO_DISTRIBUZIONE_INDIRIZZO_IP.equals(tipoDistribuzioneReport)){
+				statSearchForm.setTipoStatistica(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO);
+				statSearchForm.setRiconoscimento(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP);
+				service.setDistribSaSearch(statSearchForm);
+				bean = new DistribuzionePerSABean<>();
+				((DistribuzionePerSABean<?>) bean).setStatisticheGiornaliereService(service);
+				((DistribuzionePerSABean<?>) bean).setSearch(statSearchForm);
+				((DistribuzionePerSABean<?>) bean).getSearch().initSearchListener(null);
+			}
 			else if(CostantiExporter.TIPO_DISTRIBUZIONE_TOKEN_INFO.equals(tipoDistribuzioneReport)){
 				statSearchForm.setTipoStatistica(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO);
 				statSearchForm.setRiconoscimento(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
@@ -603,8 +612,8 @@ public class ReportExporter extends HttpServlet{
 		
 
 		
-		// ** Soggetto / Servizio / Azione **
-				
+		// ** Soggetto / Tag / Servizio / Azione **
+					
 		String mittente = req.getParameter(CostantiExporter.MITTENTE);
 		if(mittente!=null){
 			mittente = mittente.trim();
@@ -623,6 +632,11 @@ public class ReportExporter extends HttpServlet{
 			statSearchForm.setTipoNomeTrafficoPerSoggetto(trafficoPerSoggetto);
 		}
 		
+		String gruppo = req.getParameter(CostantiExporter.GRUPPO);
+		if(gruppo!=null){
+			gruppo = gruppo.trim();
+			statSearchForm.setGruppo(gruppo);
+		}
 		
 		String servizio = req.getParameter(CostantiExporter.SERVIZIO);
 		if(servizio!=null){
@@ -682,7 +696,8 @@ public class ReportExporter extends HttpServlet{
 			}
 			
 			else if(CostantiExporter.TIPO_RICERCA_MITTENTE_IDENTIFICATIVO_AUTENTICATO.equals(tipoRicercaMittente) ||
-					CostantiExporter.TIPO_RICERCA_MITTENTE_TOKEN_INFO.equals(tipoRicercaMittente)) {
+					CostantiExporter.TIPO_RICERCA_MITTENTE_TOKEN_INFO.equals(tipoRicercaMittente) ||
+					CostantiExporter.TIPO_RICERCA_MITTENTE_INDIRIZZO_IP.equals(tipoRicercaMittente)) {
 			
 				if(CostantiExporter.TIPO_RICERCA_MITTENTE_IDENTIFICATIVO_AUTENTICATO.equals(tipoRicercaMittente)) {
 					String tipoAutenticazione = req.getParameter(CostantiExporter.TIPO_AUTENTICAZIONE);
@@ -693,6 +708,21 @@ public class ReportExporter extends HttpServlet{
 									+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.TIPI_AUTENTICAZIONE);
 						}
 						statSearchForm.setAutenticazione(tipoAutenticazione);
+					}
+					else {
+						throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_RICERCA_MITTENTE+"' valorizzato con '"+tipoRicercaMittente
+								+"' richiede la definizione del parametro '"+CostantiExporter.TIPO_AUTENTICAZIONE+"'");
+					}
+				}
+				else if(CostantiExporter.TIPO_RICERCA_MITTENTE_INDIRIZZO_IP.equals(tipoRicercaMittente)) {
+					String tipoIndirizzoIP = req.getParameter(CostantiExporter.TIPO_INDIRIZZO_IP);
+					if(tipoIndirizzoIP!=null){
+						tipoIndirizzoIP = tipoIndirizzoIP.trim();
+						if(CostantiExporter.TIPI_INDIRIZZI_IP.contains(tipoIndirizzoIP) == false){
+							throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_INDIRIZZO_IP+"' fornito possiede un valore '"+tipoIndirizzoIP
+									+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.TIPI_INDIRIZZI_IP);
+						}
+						statSearchForm.setClientAddressMode(tipoIndirizzoIP);
 					}
 					else {
 						throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_RICERCA_MITTENTE+"' valorizzato con '"+tipoRicercaMittente
@@ -734,6 +764,7 @@ public class ReportExporter extends HttpServlet{
 								+"' richiede la definizione del parametro '"+CostantiExporter.RICERCA_MITTENTE_TIPO_CLAIM+"'");
 					}					
 				}
+				
 				
 				String tipoMatch = req.getParameter(CostantiExporter.TIPO_RICERCA_MITTENTE_ESATTA);
 				TipoMatch tipoMatchEnum = TipoMatch.EQUALS;

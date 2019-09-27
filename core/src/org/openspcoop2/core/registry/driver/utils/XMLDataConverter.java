@@ -47,6 +47,7 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
@@ -59,6 +60,7 @@ import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
@@ -772,6 +774,37 @@ public class XMLDataConverter {
 		
 		
 		
+		
+		// Gruppi
+		try{
+			
+			for(int i=0; i<this.sorgenteRegistro.sizeGruppoList(); i++){
+				Gruppo gruppo = this.sorgenteRegistro.getGruppo(i);
+				gruppo.setSuperUser(this.superUser);
+				impostaInformazioniRegistroDB_Gruppo(gruppo);
+				
+				IDGruppo idGruppo = new IDGruppo(gruppo.getNome());
+				if( (reset==false) && this.gestoreCRUD.existsGruppo(idGruppo)){
+					this.log.info("Gruppo "+gruppo.getNome()+" aggiornamento in corso...");
+					this.gestoreCRUD.updateGruppo(gruppo);
+					this.log.info("Gruppo "+gruppo.getNome()+" aggiornata.");
+				}else{
+					this.log.info("Gruppo "+gruppo.getNome()+" creazione in corso...");
+					this.gestoreCRUD.createGruppo(gruppo);
+					this.log.info("Gruppo "+gruppo.getNome()+" creata.");				
+				}
+				
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			throw new DriverRegistroServiziException("Errore durante la conversione XML dei gruppi: "+e.getMessage(),e);
+		}
+		
+		
+		
+		
+		
 		// Ruoli
 		try{
 			
@@ -973,6 +1006,10 @@ public class XMLDataConverter {
 			driverRegistroServiziDB.updateTipoPortaDominio(pdd.getNome(), tipoPdd);
 			log.info("Porta di Dominio "+pdd.getNome()+" aggiornata con tipo "+PddTipologia.ESTERNO.toString()+".");
 		}
+	}
+	
+	public static void impostaInformazioniRegistroDB_Gruppo(Gruppo gruppo) throws DriverRegistroServiziException{
+
 	}
 	
 	public static void impostaInformazioniRegistroDB_Ruolo(Ruolo ruolo) throws DriverRegistroServiziException{

@@ -129,7 +129,10 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.CLUSTER_ID = new Field("cluster-id",java.lang.String.class,"transazione",Transazione.class);
 		this.SOCKET_CLIENT_ADDRESS = new Field("socket-client-address",java.lang.String.class,"transazione",Transazione.class);
 		this.TRANSPORT_CLIENT_ADDRESS = new Field("transport-client-address",java.lang.String.class,"transazione",Transazione.class);
+		this.CLIENT_ADDRESS = new Field("client-address",java.lang.String.class,"transazione",Transazione.class);
 		this.EVENTI_GESTIONE = new Field("eventi-gestione",java.lang.String.class,"transazione",Transazione.class);
+		this.TIPO_API = new Field("tipo-api",int.class,"transazione",Transazione.class);
+		this.GRUPPI = new Field("gruppi",java.lang.String.class,"transazione",Transazione.class);
 		this.DUMP_MESSAGGIO = new org.openspcoop2.core.transazioni.model.DumpMessaggioModel(new Field("dump-messaggio",org.openspcoop2.core.transazioni.DumpMessaggio.class,"transazione",Transazione.class));
 		this.TRANSAZIONE_EXTENDED_INFO = new org.openspcoop2.core.transazioni.model.TransazioneExtendedInfoModel(new Field("transazione-extended-info",org.openspcoop2.core.transazioni.TransazioneExtendedInfo.class,"transazione",Transazione.class));
 	
@@ -226,7 +229,10 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.CLUSTER_ID = new ComplexField(father,"cluster-id",java.lang.String.class,"transazione",Transazione.class);
 		this.SOCKET_CLIENT_ADDRESS = new ComplexField(father,"socket-client-address",java.lang.String.class,"transazione",Transazione.class);
 		this.TRANSPORT_CLIENT_ADDRESS = new ComplexField(father,"transport-client-address",java.lang.String.class,"transazione",Transazione.class);
+		this.CLIENT_ADDRESS = new ComplexField(father,"client-address",java.lang.String.class,"transazione",Transazione.class);
 		this.EVENTI_GESTIONE = new ComplexField(father,"eventi-gestione",java.lang.String.class,"transazione",Transazione.class);
+		this.TIPO_API = new ComplexField(father,"tipo-api",int.class,"transazione",Transazione.class);
+		this.GRUPPI = new ComplexField(father,"gruppi",java.lang.String.class,"transazione",Transazione.class);
 		this.DUMP_MESSAGGIO = new org.openspcoop2.core.transazioni.model.DumpMessaggioModel(new ComplexField(father,"dump-messaggio",org.openspcoop2.core.transazioni.DumpMessaggio.class,"transazione",Transazione.class));
 		this.TRANSAZIONE_EXTENDED_INFO = new org.openspcoop2.core.transazioni.model.TransazioneExtendedInfoModel(new ComplexField(father,"transazione-extended-info",org.openspcoop2.core.transazioni.TransazioneExtendedInfo.class,"transazione",Transazione.class));
 	
@@ -408,7 +414,13 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 	 
 	public IField TRANSPORT_CLIENT_ADDRESS = null;
 	 
+	public IField CLIENT_ADDRESS = null;
+	 
 	public IField EVENTI_GESTIONE = null;
+	 
+	public IField TIPO_API = null;
+	 
+	public IField GRUPPI = null;
 	 
 	public org.openspcoop2.core.transazioni.model.DumpMessaggioModel DUMP_MESSAGGIO = null;
 	 

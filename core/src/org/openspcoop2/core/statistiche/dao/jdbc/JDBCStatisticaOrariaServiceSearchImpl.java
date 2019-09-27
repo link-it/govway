@@ -429,6 +429,8 @@ public class JDBCStatisticaOrariaServiceSearchImpl implements IJDBCServiceSearch
 		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.TOKEN_MAIL,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.ESITO,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.ESITO_CONTESTO,true));
+		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.CLIENT_ADDRESS,true));
+		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.GRUPPI,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA,true));

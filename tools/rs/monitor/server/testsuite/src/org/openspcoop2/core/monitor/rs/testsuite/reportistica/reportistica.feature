@@ -197,13 +197,6 @@ Scenario:  Statistiche Per Distribuzione SoggettoRemoto
     * def filtro = read('classpath:bodies/reportistica-soggetto-remoto.json')
     * set filtro.api = ({nome: setup.erogazione_petstore.api_nome, versione: setup.erogazione_petstore.api_versione})
     * set filtro.intervallo_temporale = intervallo_temporale
-    * set filtro.mittente = 
-    """
-    ({ 
-        tipo: 'identificativo_autenticato',
-        id: { id: setup.applicativo_principal.credenziali.userid, autenticazione: 'principal' } 
-    })
-    """
     Given path 'distribuzione-soggetto-remoto'
     And request filtro
     When method post

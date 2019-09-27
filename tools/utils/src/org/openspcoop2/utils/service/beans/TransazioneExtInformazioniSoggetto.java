@@ -47,9 +47,9 @@ public class TransazioneExtInformazioniSoggetto  {
   
   @Schema(required = true, description = "")
   private String codice = null;
-  @XmlElement(name="indirizzo", required = true)
+  @XmlElement(name="indirizzo")
   
-  @Schema(required = true, description = "")
+  @Schema(description = "")
   private String indirizzo = null;
  /**
    * Get tipo
@@ -96,7 +96,6 @@ public class TransazioneExtInformazioniSoggetto  {
    * @return indirizzo
   **/
   @JsonProperty("indirizzo")
-  @NotNull
   @Valid
   public String getIndirizzo() {
     return this.indirizzo;

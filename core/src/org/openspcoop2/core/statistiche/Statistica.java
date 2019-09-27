@@ -58,6 +58,8 @@ import java.io.Serializable;
  * 			&lt;element name="token-mail" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="esito" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="esito-contesto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="client-address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="gruppi" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="numero-transazioni" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="dimensioni-bytes-banda-complessiva" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="dimensioni-bytes-banda-interna" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/>
@@ -98,6 +100,8 @@ import java.io.Serializable;
   	"tokenMail",
   	"esito",
   	"esitoContesto",
+  	"clientAddress",
+  	"gruppi",
   	"numeroTransazioni",
   	"dimensioniBytesBandaComplessiva",
   	"dimensioniBytesBandaInterna",
@@ -300,6 +304,22 @@ public class Statistica extends org.openspcoop2.utils.beans.BaseBean implements 
     this.esitoContesto = esitoContesto;
   }
 
+  public java.lang.String getClientAddress() {
+    return this.clientAddress;
+  }
+
+  public void setClientAddress(java.lang.String clientAddress) {
+    this.clientAddress = clientAddress;
+  }
+
+  public java.lang.String getGruppi() {
+    return this.gruppi;
+  }
+
+  public void setGruppi(java.lang.String gruppi) {
+    this.gruppi = gruppi;
+  }
+
   public java.lang.Integer getNumeroTransazioni() {
     return this.numeroTransazioni;
   }
@@ -445,6 +465,14 @@ public class Statistica extends org.openspcoop2.utils.beans.BaseBean implements 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="esito-contesto",required=true,nillable=false)
   protected java.lang.String esitoContesto;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="client-address",required=false,nillable=false)
+  protected java.lang.String clientAddress;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="gruppi",required=true,nillable=false)
+  protected java.lang.String gruppi;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="numero-transazioni",required=true,nillable=false)

@@ -197,6 +197,7 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.beans.GruppoSintetico;
 import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.PddTipologia;
@@ -204,8 +205,8 @@ import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
-import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
 import org.openspcoop2.core.registry.constants.TipiDocumentoLivelloServizio;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -2123,6 +2124,13 @@ public class ErogazioniApiHelper {
 			toFill.setGestioneCors(Helper.boolToStatoFunzionalita(gestioneCors != null).toString());
 			toFill.setUrlInvocazione(urlInvocazione);
 			
+			if(aspc.getGruppo()!=null && !aspc.getGruppo().isEmpty()) {
+				toFill.setApiTags(new ArrayList<>());
+				for (GruppoSintetico tag : aspc.getGruppo()) {
+					toFill.addApiTagsItem(tag.getNome());
+				}
+			}
+			
 			/*if(numeroAbilitate == 0) {
 				de.setValue(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_DISABILITATE);
 				de.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_DISABILITATE_TOOLTIP);
@@ -2182,6 +2190,7 @@ public class ErogazioniApiHelper {
 		toFill.setStatoDescrizione(impl.getStatoDescrizione());
 		toFill.setTipoServizio(impl.getTipoServizio());
 		toFill.setVersione(impl.getVersione());
+		toFill.setApiTags(impl.getApiTags());
 	}
 	
 	

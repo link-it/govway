@@ -997,6 +997,10 @@ public abstract class AbstractStatistiche {
 		statisticaBase.setTokenUsername(stat.getTokenUsername());
 		statisticaBase.setTokenMail(stat.getTokenMail());
 		
+		statisticaBase.setClientAddress(stat.getClientAddress());
+		
+		statisticaBase.setGruppi(stat.getGruppo());
+		
 		statisticaBase.setEsito(stat.getEsito());
 		statisticaBase.setEsitoContesto(stat.getEsitoContesto());
 		

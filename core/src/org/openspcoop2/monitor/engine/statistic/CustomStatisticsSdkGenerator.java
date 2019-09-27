@@ -149,6 +149,16 @@ public class CustomStatisticsSdkGenerator implements IStatistic {
 	}
 	
 	@Override
+	public String getClientAddress(){
+		return this.statistic.getClientAddress();
+	}
+	
+	@Override
+	public String getGruppo(){
+		return this.statistic.getGruppo();
+	}
+	
+	@Override
 	public TipiDatabase getDatabaseType(){
 		return this.abstractStatisticheCore.getDatabaseType();
 	}

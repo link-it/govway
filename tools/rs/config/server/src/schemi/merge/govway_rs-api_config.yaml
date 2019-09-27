@@ -49,6 +49,7 @@ paths:
       - $ref: "#/components/parameters/limit"
       - $ref: "#/components/parameters/offset"
       - $ref: "#/components/parameters/tipo_api"
+      - $ref: "#/components/parameters/tag"
       responses:
         200:
           description: "Ricerca eseguita correttamente"
@@ -410,6 +411,71 @@ paths:
       responses:
         204:
           description: "La descrizione è stato aggiornata correttamente"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+  /api/{nome}/{versione}/tags:
+    get:
+      tags:
+      - "api"
+      summary: "Restituisce i tags associati all'API"
+      description: "Questa operazione consente di ottenere i tags associati all'API\
+        \ identificata dal nome e dalla versione"
+      operationId: "getApiTags"
+      responses:
+        200:
+          description: "Tags restituiti con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiTags"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        403:
+          $ref: "#/components/responses/403Forbidden"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        429:
+          $ref: "#/components/responses/429TooManyRequests"
+        503:
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "api"
+      summary: "Consente di modificare i tags associati all'API"
+      description: "Questa operazione consente di aggiornare i tags associati all'API\
+        \ identificata dal nome e dalla versione"
+      operationId: "updateApiTags"
+      requestBody:
+        description: "Dati da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApiTags"
+        required: true
+      responses:
+        204:
+          description: "I tags sono stati aggiornati correttamente"
         400:
           $ref: "#/components/responses/400BadRequest"
         401:
@@ -1120,6 +1186,7 @@ paths:
       - $ref: "#/components/parameters/limit"
       - $ref: "#/components/parameters/offset"
       - $ref: "#/components/parameters/tipo_api"
+      - $ref: "#/components/parameters/tag"
       responses:
         200:
           description: "Ricerca eseguita correttamente"
@@ -3421,6 +3488,7 @@ paths:
       - $ref: "#/components/parameters/limit"
       - $ref: "#/components/parameters/offset"
       - $ref: "#/components/parameters/tipo_api"
+      - $ref: "#/components/parameters/tag"
       responses:
         200:
           description: "Ricerca eseguita correttamente"
@@ -6368,6 +6436,18 @@ components:
           maxLength: 255
           type: "string"
           example: "descrizione API"
+    ApiTags:
+      required:
+      - "tags"
+      type: "object"
+      properties:
+        tags:
+          type: "array"
+          example:
+          - "PagamentiTelematici"
+          - "Anagrafica"
+          items:
+            $ref: "#/components/schemas/NCName"
     ApiAllegato:
       required:
       - "allegato"
@@ -6935,6 +7015,13 @@ components:
           oneOf:
           - $ref: "#/components/schemas/FormatoSoapEnum"
           - $ref: "#/components/schemas/FormatoRestEnum"
+        tags:
+          type: "array"
+          example:
+          - "PagamentiTelematici"
+          - "Anagrafica"
+          items:
+            $ref: "#/components/schemas/NCName"
     Allegato:
       required:
       - "documento"
@@ -7210,6 +7297,13 @@ components:
           $ref: "#/components/schemas/SimpleName"
         api_soap_servizio:
           $ref: "#/components/schemas/NCName"
+        api_tags:
+          type: "array"
+          example:
+          - "PagamentiTelematici"
+          - "Anagrafica"
+          items:
+            $ref: "#/components/schemas/NCName"
         tipo_servizio:
           $ref: "#/components/schemas/Tipo"
     APIImpl:
@@ -8868,6 +8962,13 @@ components:
       schema:
         $ref: "#/components/schemas/NCName"
       example: "Azione1"
+    tag:
+      name: "tag"
+      in: "query"
+      description: "Identificativo del TAg"
+      required: false
+      schema:
+        $ref: "#/components/schemas/NCName"
     data_inizio:
       name: "data_inizio"
       in: "query"

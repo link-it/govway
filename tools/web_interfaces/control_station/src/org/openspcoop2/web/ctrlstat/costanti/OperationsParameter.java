@@ -57,6 +57,8 @@ public enum OperationsParameter {
 	// Mapping
 	MAPPING_ID_FRUITORE("mIDFruitore"), MAPPING_ID_SERVIZIO("mIDServizio"), 
 	MAPPING_ID_PORTA_DELEGATA("mIDPortaDelegata"), MAPPING_ID_PORTA_APPLICATIVA("mIDPortaApplicativa"), 
+	// Gruppo
+	NOME_GRUPPO("NomeGruppo"), OLD_NOME_GRUPPO("OldNomeGruppo"),
 	// Ruolo
 	NOME_RUOLO("NomeRuolo"), OLD_NOME_RUOLO("OldNomeRuolo"),
 	// Scope

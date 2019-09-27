@@ -33,6 +33,7 @@
     },
     trimValue: true,
     allowDuplicates: false,
+    checkDuplicatesCaseInsensitive: true,
     triggerChange: true,
     allowWhiteSpaces: false
   };
@@ -69,7 +70,7 @@
      * Adds the given item as a new tag. Pass true to dontPushVal to prevent
      * updating the elements val()
      */
-    add: function(item, dontPushVal, options) {
+    add: function(item, dontPushVal, position, options) {
       var self = this;
 
       if (self.options.maxTags && self.itemsArray.length >= self.options.maxTags)
@@ -101,7 +102,7 @@
         var items = item.split(delimiter);
         if (items.length > 1) {
           for (var i = 0; i < items.length; i++) {
-            this.add(items[i], true);
+            this.add(items[i], true, i);
           }
 
           if (!dontPushVal)
@@ -112,11 +113,17 @@
 
       var itemValue = self.options.itemValue(item),
           itemText = self.options.itemText(item),
-          tagClass = self.options.tagClass(item),
+          
           itemTitle = self.options.itemTitle(item);
-
+      
+      var tagClass;
+      if(position === undefined)
+    	  tagClass = self.options.tagClass(item);
+      else 
+    	  tagClass = self.options.tagClass(item, position);
+      
       // Ignore items allready added
-      var existing = $.grep(self.itemsArray, function(item) { return self.options.itemValue(item) === itemValue; } )[0];
+      var existing = $.grep(self.itemsArray, function(item) { return self.options.checkDuplicatesCaseInsensitive ? (self.options.itemValue(item).toLowerCase() === itemValue.toLowerCase()) : (self.options.itemValue(item) === itemValue); } )[0];
       if (existing && !self.options.allowDuplicates) {
         // Invoke onTagExists
         if (self.options.onTagExists) {
@@ -378,7 +385,7 @@
           self.$input.on('focusout', $.proxy(function(event) {
               // HACK: only process on focusout when no typeahead opened, to
               //       avoid adding the typeahead text as tag
-              if ($('.typeahead, .twitter-typeahead', self.$container).length === 0) {
+//              if ($('.typeahead, .twitter-typeahead', self.$container).length === 0) {
             	  var text = self.$input.val();
             	// Only attempt to add a tag if there is data in the field
                   if (text.length !== 0) {
@@ -395,7 +402,7 @@
                 	 self.add(self.$input.val());
                   }
                   self.$input.val('');
-              }
+//              }
           }, self));
         }
 
@@ -690,11 +697,11 @@
       return found;
   }
 
-  /**
-   * Initialize tagsinput behaviour on inputs and selects which have
-   * data-role=tagsinput
-   */
-  $(function() {
-    $("input[data-role=tagsinput], select[multiple][data-role=tagsinput]").tagsinput();
-  });
+//  /**
+//   * Initialize tagsinput behaviour on inputs and selects which have
+//   * data-role=tagsinput
+//   */
+//  $(function() {
+//    $("input[data-role=tagsinput], select[multiple][data-role=tagsinput]").tagsinput();
+//  });
 })(window.jQuery);

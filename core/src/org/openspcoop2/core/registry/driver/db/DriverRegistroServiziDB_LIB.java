@@ -48,6 +48,7 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
@@ -65,6 +66,8 @@ import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.Gruppo;
+import org.openspcoop2.core.registry.GruppoAccordo;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.MessagePart;
 import org.openspcoop2.core.registry.Operation;
@@ -556,6 +559,182 @@ public class DriverRegistroServiziDB_LIB {
 		}
 	}
 	
+	public static void CRUDGruppo(int type, Gruppo gruppo, Connection con)
+			throws DriverRegistroServiziException {
+		if (gruppo == null) {
+			throw new DriverRegistroServiziException(
+			"[DriverRegistroServiziDB_LIB::CRUDGruppo] Parametro non valido.");
+		}
+
+		/*if ((type != CostantiDB.CREATE) && (pdd.getId() <= 0)) {
+			throw new DriverRegistroServiziException(
+			"[DriverRegistroServiziDB_LIB::CRUDGruppo] ID Gruppo non valido.");
+		}*/
+
+		String nome = gruppo.getNome();
+		String descrizione = gruppo.getDescrizione();
+		ServiceBinding serviceBinding = gruppo.getServiceBinding();
+
+		String superuser = gruppo.getSuperUser();
+
+		PreparedStatement updateStmt = null;
+		String updateQuery = "";
+		PreparedStatement selectStmt = null;
+		String selectQuery = "";
+		ResultSet selectRS = null;
+		int n = 0;
+
+		try {
+
+			// preparo lo statement in base al tipo di operazione
+			switch (type) {
+			case CREATE:
+				// CREATE
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addInsertTable(CostantiDB.GRUPPI);
+				sqlQueryObject.addInsertField("nome", "?");
+				sqlQueryObject.addInsertField("descrizione", "?");
+				sqlQueryObject.addInsertField("service_binding", "?");
+				sqlQueryObject.addInsertField("superuser", "?");
+				if(gruppo.getOraRegistrazione()!=null)
+					sqlQueryObject.addInsertField("ora_registrazione", "?");
+
+				updateQuery = sqlQueryObject.createSQLInsert();
+				updateStmt = con.prepareStatement(updateQuery);
+
+				int index = 1;
+				updateStmt.setString(index++, nome);
+				updateStmt.setString(index++, descrizione);
+				updateStmt.setString(index++, serviceBinding!=null? serviceBinding.getValue() : null);
+				updateStmt.setString(index++, superuser);
+				if(gruppo.getOraRegistrazione()!=null)
+					updateStmt.setTimestamp(index++, new Timestamp(gruppo.getOraRegistrazione().getTime()));
+
+				// eseguo lo statement
+				n = updateStmt.executeUpdate();
+
+				updateStmt.close();
+
+				DriverRegistroServiziDB_LIB.log.debug("CRUDGruppo type = " + type
+						+ " row affected =" + n);
+
+				DriverRegistroServiziDB_LIB.log.debug("CRUDGruppo CREATE : \n"
+						+ DriverRegistroServiziDB_LIB.formatSQLString(
+								updateQuery, nome, descrizione,(serviceBinding!=null? serviceBinding.getValue() : null),
+								superuser));
+
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.GRUPPI);
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addWhereCondition("nome = ?");
+				selectQuery = sqlQueryObject.createSQLQuery();
+				selectStmt = con.prepareStatement(selectQuery);
+				selectStmt.setString(1, nome);
+
+				selectRS = selectStmt.executeQuery();
+				if (selectRS.next()) {
+					gruppo.setId(selectRS.getLong("id"));
+				}
+				selectRS.close();
+				selectStmt.close();
+				break;
+
+			case UPDATE:
+				// UPDATE1
+
+				String nomeGruppo = gruppo.getOldIDGruppoForUpdate()!=null ? gruppo.getOldIDGruppoForUpdate().getNome() : null;
+				if(nomeGruppo==null || "".equals(nomeGruppo))
+					nomeGruppo = gruppo.getNome();
+				
+				IDGruppo idG = new IDGruppo(nomeGruppo);
+				long idGruppo = DBUtils.getIdGruppo(idG, con, DriverRegistroServiziDB_LIB.tipoDB);
+				if (idGruppo <= 0)
+					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDGruppo(UPDATE)] Id Gruppo non valido.");
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addUpdateTable(CostantiDB.GRUPPI);
+				sqlQueryObject.addUpdateField("nome", "?");
+				sqlQueryObject.addUpdateField("descrizione", "?");
+				sqlQueryObject.addUpdateField("service_binding", "?");
+				sqlQueryObject.addUpdateField("superuser", "?");
+				if(gruppo.getOraRegistrazione()!=null)
+					sqlQueryObject.addUpdateField("ora_registrazione", "?");
+				sqlQueryObject.addWhereCondition("id=?");
+				updateQuery = sqlQueryObject.createSQLUpdate();
+				updateStmt = con.prepareStatement(updateQuery);
+
+				index = 1;
+				updateStmt.setString(index++, nome);
+				updateStmt.setString(index++, descrizione);
+				updateStmt.setString(index++, serviceBinding!=null? serviceBinding.getValue() : null);
+				updateStmt.setString(index++, superuser);
+				if(gruppo.getOraRegistrazione()!=null)
+					updateStmt.setTimestamp(index++, new Timestamp(gruppo.getOraRegistrazione().getTime()));
+	
+				updateStmt.setLong(index++, idGruppo);
+
+				// eseguo lo statement
+				n = updateStmt.executeUpdate();
+				updateStmt.close();
+				DriverRegistroServiziDB_LIB.log.debug("CRUDGruppo type = " + type
+						+ " row affected =" + n);
+
+				DriverRegistroServiziDB_LIB.log.debug("CRUDGruppo UPDATE : \n"
+						+ DriverRegistroServiziDB_LIB.formatSQLString(
+								updateQuery, nome, descrizione,(serviceBinding!=null? serviceBinding.getValue() : null),
+								superuser,idGruppo));
+
+				break;
+
+			case DELETE:
+				// DELETE
+
+				idG = new IDGruppo(nome);
+				idGruppo = DBUtils.getIdGruppo(idG, con, DriverRegistroServiziDB_LIB.tipoDB);
+				if (idGruppo <= 0)
+					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDGruppo(DELETE)] Id Gruppo non valido.");
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.GRUPPI);
+				sqlQueryObject.addWhereCondition("id=?");
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+
+				updateStmt.setLong(1, idGruppo);
+
+				// eseguo lo statement
+				n = updateStmt.executeUpdate();
+				updateStmt.close();
+				DriverRegistroServiziDB_LIB.log.debug("CRUDGruppo type = " + type
+						+ " row affected =" + n);
+
+				DriverRegistroServiziDB_LIB.log.debug("CRUDGruppo DELETE : \n"
+						+ DriverRegistroServiziDB_LIB.formatSQLString(
+								updateQuery, idGruppo));
+
+				break;
+			}
+
+		} catch (SQLException se) {
+			throw new DriverRegistroServiziException(
+					"[DriverControlStationDB_LIB::CRUDGruppo] SQLException ["
+					+ se.getMessage() + "].",se);
+		} catch (Exception se) {
+			throw new DriverRegistroServiziException(
+					"[DriverControlStationDB_LIB::CRUDGruppo] Exception ["
+					+ se.getMessage() + "].",se);
+		} finally {
+
+			try {
+				updateStmt.close();
+				selectRS.close();
+				selectStmt.close();
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
 	
 	public static void CRUDRuolo(int type, Ruolo ruolo, Connection con)
 			throws DriverRegistroServiziException {
@@ -628,7 +807,7 @@ public class DriverRegistroServiziDB_LIB {
 								(ruoloContesto!=null? ruoloContesto.getValue() : null),superuser));
 
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.PDD);
+				sqlQueryObject.addFromTable(CostantiDB.RUOLI);
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addWhereCondition("nome = ?");
 				selectQuery = sqlQueryObject.createSQLQuery();
@@ -815,7 +994,7 @@ public class DriverRegistroServiziDB_LIB {
 								(scopeContesto!=null? scopeContesto.getValue() : null),superuser));
 
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.PDD);
+				sqlQueryObject.addFromTable(CostantiDB.SCOPE);
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addWhereCondition("nome = ?");
 				selectQuery = sqlQueryObject.createSQLQuery();
@@ -4713,6 +4892,83 @@ public class DriverRegistroServiziDB_LIB {
 			}
 		}
 	}
+	
+	
+	public static long CRUDAccordoGruppo(int type, AccordoServizioParteComune as,GruppoAccordo gruppo, Connection con, long idAccordo) throws DriverRegistroServiziException {
+		PreparedStatement updateStmt = null;
+		String updateQuery;
+		long n = 0;
+		if (idAccordo <= 0)
+			new Exception("[DriverRegistroServiziDB_LIB::CRUDAccordoGruppo] ID Accordo non valido.");
+		
+		try {
+			
+			IDGruppo idGruppo = new IDGruppo(gruppo.getNome());
+			long idGruppoLong = DBUtils.getIdGruppo(idGruppo, con, DriverRegistroServiziDB_LIB.tipoDB);
+			if(idGruppoLong<=0) {
+				new Exception("[DriverRegistroServiziDB_LIB::CRUDAccordoGruppo] Gruppo con nome '"+idGruppo.getNome()+"' non esistente.");
+			}
+			
+			switch (type) {
+			case CREATE:
+								
+				// create
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addInsertTable(CostantiDB.ACCORDI_GRUPPI);
+				sqlQueryObject.addInsertField("id_accordo", "?");
+				sqlQueryObject.addInsertField("id_gruppo", "?");
+				updateQuery = sqlQueryObject.createSQLInsert();
+				updateStmt = con.prepareStatement(updateQuery);
+				int index = 1;
+				updateStmt.setLong(index++, idAccordo);
+				updateStmt.setLong(index++, idGruppoLong);
+
+				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoGruppo CREATE :\n"+
+						DriverRegistroServiziDB_LIB.formatSQLString(updateQuery,idAccordo,idGruppoLong));
+				n = updateStmt.executeUpdate();
+				updateStmt.close();
+				DriverRegistroServiziDB_LIB.log.debug("CRUDAzione type = " + type + " row affected =" + n);
+
+				break;
+
+			case UPDATE:
+				
+				throw new DriverRegistroServiziException("Non supportato");
+
+			case DELETE:
+				// delete
+
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.ACCORDI_GRUPPI);
+				sqlQueryObject.addWhereCondition("id_accordo=?");
+				sqlQueryObject.addWhereCondition("id_gruppo=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				String sqlQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(sqlQuery);
+				index = 1;
+				updateStmt.setLong(index++, idAccordo);
+				updateStmt.setLong(index++, idGruppoLong);
+				n=updateStmt.executeUpdate();
+				updateStmt.close();
+				DriverRegistroServiziDB_LIB.log.debug("CRUDAzione type = " + type + " row affected =" + n);
+				
+				break;
+			}
+
+			return n;
+
+		} catch (SQLException se) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAzione] SQLException : " + se.getMessage(),se);
+		} catch (Exception se) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAzione] Exception : " + se.getMessage(),se);
+		} finally {
+			try {
+				if(updateStmt!=null)updateStmt.close();
+			} catch (Exception e) {
+			}
+		}
+	}
+	
 	
 
 	/**

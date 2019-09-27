@@ -148,6 +148,16 @@
 		<cxfrun classname="org.openspcoop2.core.registry.ws.client.portadominio.PortaDominio_PortaDominioPortSoap12_Client"
 				param1="${baseWsdlURL_registry_ws_client}/registry/PortaDominio/soap12?wsdl" />
 	</target>
+	<target name="runGruppoClient_soap11_stubFromUrl" description="Run org.openspcoop2.core.registry.ws.client.gruppo.Gruppo_GruppoPortSoap11_Client" depends="jar">
+		<property name="param" value=""/>
+		<cxfrun classname="org.openspcoop2.core.registry.ws.client.gruppo.Gruppo_GruppoPortSoap11_Client"
+				param1="${baseWsdlURL_registry_ws_client}/registry/Gruppo/soap11?wsdl" />
+	</target>
+	<target name="runGruppoClient_soap12_stubFromUrl" description="Run org.openspcoop2.core.registry.ws.client.gruppo.Gruppo_GruppoPortSoap12_Client" depends="jar">
+		<property name="param" value=""/>
+		<cxfrun classname="org.openspcoop2.core.registry.ws.client.gruppo.Gruppo_GruppoPortSoap12_Client"
+				param1="${baseWsdlURL_registry_ws_client}/registry/Gruppo/soap12?wsdl" />
+	</target>
 	<target name="runRuoloClient_soap11_stubFromUrl" description="Run org.openspcoop2.core.registry.ws.client.ruolo.Ruolo_RuoloPortSoap11_Client" depends="jar">
 		<property name="param" value=""/>
 		<cxfrun classname="org.openspcoop2.core.registry.ws.client.ruolo.Ruolo_RuoloPortSoap11_Client"
@@ -157,6 +167,16 @@
 		<property name="param" value=""/>
 		<cxfrun classname="org.openspcoop2.core.registry.ws.client.ruolo.Ruolo_RuoloPortSoap12_Client"
 				param1="${baseWsdlURL_registry_ws_client}/registry/Ruolo/soap12?wsdl" />
+	</target>
+	<target name="runScopeClient_soap11_stubFromUrl" description="Run org.openspcoop2.core.registry.ws.client.scope.Scope_ScopePortSoap11_Client" depends="jar">
+		<property name="param" value=""/>
+		<cxfrun classname="org.openspcoop2.core.registry.ws.client.scope.Scope_ScopePortSoap11_Client"
+				param1="${baseWsdlURL_registry_ws_client}/registry/Scope/soap11?wsdl" />
+	</target>
+	<target name="runScopeClient_soap12_stubFromUrl" description="Run org.openspcoop2.core.registry.ws.client.scope.Scope_ScopePortSoap12_Client" depends="jar">
+		<property name="param" value=""/>
+		<cxfrun classname="org.openspcoop2.core.registry.ws.client.scope.Scope_ScopePortSoap12_Client"
+				param1="${baseWsdlURL_registry_ws_client}/registry/Scope/soap12?wsdl" />
 	</target>
 	<target name="runSoggettoClient_soap11_stubFromUrl" description="Run org.openspcoop2.core.registry.ws.client.soggetto.Soggetto_SoggettoPortSoap11_Client" depends="jar">
 		<property name="param" value=""/>
@@ -280,6 +300,37 @@
 				param1="deploy/wsdl/PortaDominioCRUD_PortSoap12.wsdl" />
 	</target>
 
+	<target name="runGruppoAllClient_soap11_stubFromWsdl" description="Run org.openspcoop2.core.registry.ws.client.gruppo.all.Gruppo_GruppoPortSoap11_Client" depends="jar">
+		<property name="param" value=""/>
+		<cxfrun classname="org.openspcoop2.core.registry.ws.client.gruppo.all.Gruppo_GruppoPortSoap11_Client"
+				param1="deploy/wsdl/GruppoAll_PortSoap11.wsdl" />
+	</target>
+	<target name="runGruppoAllClient_soap12_stubFromWsdl" description="Run org.openspcoop2.core.registry.ws.client.gruppo.all.Gruppo_GruppoPortSoap12_Client" depends="jar">
+		<property name="param" value=""/>
+		<cxfrun classname="org.openspcoop2.core.registry.ws.client.gruppo.all.Gruppo_GruppoPortSoap12_Client"
+				param1="deploy/wsdl/GruppoAll_PortSoap12.wsdl" />
+	</target>
+	<target name="runGruppoSearchClient_soap11_stubFromWsdl" description="Run org.openspcoop2.core.registry.ws.client.gruppo.search.Gruppo_GruppoPortSoap11_Client" depends="jar">
+		<property name="param" value=""/>
+		<cxfrun classname="org.openspcoop2.core.registry.ws.client.gruppo.search.Gruppo_GruppoPortSoap11_Client"
+				param1="deploy/wsdl/GruppoSearch_PortSoap11.wsdl" />
+	</target>
+	<target name="runGruppoSearchClient_soap12_stubFromWsdl" description="Run org.openspcoop2.core.registry.ws.client.gruppo.search.Gruppo_GruppoPortSoap12_Client" depends="jar">
+		<property name="param" value=""/>
+		<cxfrun classname="org.openspcoop2.core.registry.ws.client.gruppo.search.Gruppo_GruppoPortSoap12_Client"
+				param1="deploy/wsdl/GruppoSearch_PortSoap12.wsdl" />
+	</target>
+	<target name="runGruppoCRUDClient_soap11_stubFromWsdl" description="Run org.openspcoop2.core.registry.ws.client.gruppo.crud.Gruppo_GruppoPortSoap11_Client" depends="jar">
+		<property name="param" value=""/>
+		<cxfrun classname="org.openspcoop2.core.registry.ws.client.gruppo.crud.Gruppo_GruppoPortSoap11_Client"
+				param1="deploy/wsdl/GruppoCRUD_PortSoap11.wsdl" />
+	</target>
+	<target name="runGruppoCRUDClient_soap12_stubFromWsdl" description="Run org.openspcoop2.core.registry.ws.client.gruppo.crud.Gruppo_GruppoPortSoap12_Client" depends="jar">
+		<property name="param" value=""/>
+		<cxfrun classname="org.openspcoop2.core.registry.ws.client.gruppo.crud.Gruppo_GruppoPortSoap12_Client"
+				param1="deploy/wsdl/GruppoCRUD_PortSoap12.wsdl" />
+	</target>
+
 	<target name="runRuoloAllClient_soap11_stubFromWsdl" description="Run org.openspcoop2.core.registry.ws.client.ruolo.all.Ruolo_RuoloPortSoap11_Client" depends="jar">
 		<property name="param" value=""/>
 		<cxfrun classname="org.openspcoop2.core.registry.ws.client.ruolo.all.Ruolo_RuoloPortSoap11_Client"
@@ -309,6 +360,37 @@
 		<property name="param" value=""/>
 		<cxfrun classname="org.openspcoop2.core.registry.ws.client.ruolo.crud.Ruolo_RuoloPortSoap12_Client"
 				param1="deploy/wsdl/RuoloCRUD_PortSoap12.wsdl" />
+	</target>
+
+	<target name="runScopeAllClient_soap11_stubFromWsdl" description="Run org.openspcoop2.core.registry.ws.client.scope.all.Scope_ScopePortSoap11_Client" depends="jar">
+		<property name="param" value=""/>
+		<cxfrun classname="org.openspcoop2.core.registry.ws.client.scope.all.Scope_ScopePortSoap11_Client"
+				param1="deploy/wsdl/ScopeAll_PortSoap11.wsdl" />
+	</target>
+	<target name="runScopeAllClient_soap12_stubFromWsdl" description="Run org.openspcoop2.core.registry.ws.client.scope.all.Scope_ScopePortSoap12_Client" depends="jar">
+		<property name="param" value=""/>
+		<cxfrun classname="org.openspcoop2.core.registry.ws.client.scope.all.Scope_ScopePortSoap12_Client"
+				param1="deploy/wsdl/ScopeAll_PortSoap12.wsdl" />
+	</target>
+	<target name="runScopeSearchClient_soap11_stubFromWsdl" description="Run org.openspcoop2.core.registry.ws.client.scope.search.Scope_ScopePortSoap11_Client" depends="jar">
+		<property name="param" value=""/>
+		<cxfrun classname="org.openspcoop2.core.registry.ws.client.scope.search.Scope_ScopePortSoap11_Client"
+				param1="deploy/wsdl/ScopeSearch_PortSoap11.wsdl" />
+	</target>
+	<target name="runScopeSearchClient_soap12_stubFromWsdl" description="Run org.openspcoop2.core.registry.ws.client.scope.search.Scope_ScopePortSoap12_Client" depends="jar">
+		<property name="param" value=""/>
+		<cxfrun classname="org.openspcoop2.core.registry.ws.client.scope.search.Scope_ScopePortSoap12_Client"
+				param1="deploy/wsdl/ScopeSearch_PortSoap12.wsdl" />
+	</target>
+	<target name="runScopeCRUDClient_soap11_stubFromWsdl" description="Run org.openspcoop2.core.registry.ws.client.scope.crud.Scope_ScopePortSoap11_Client" depends="jar">
+		<property name="param" value=""/>
+		<cxfrun classname="org.openspcoop2.core.registry.ws.client.scope.crud.Scope_ScopePortSoap11_Client"
+				param1="deploy/wsdl/ScopeCRUD_PortSoap11.wsdl" />
+	</target>
+	<target name="runScopeCRUDClient_soap12_stubFromWsdl" description="Run org.openspcoop2.core.registry.ws.client.scope.crud.Scope_ScopePortSoap12_Client" depends="jar">
+		<property name="param" value=""/>
+		<cxfrun classname="org.openspcoop2.core.registry.ws.client.scope.crud.Scope_ScopePortSoap12_Client"
+				param1="deploy/wsdl/ScopeCRUD_PortSoap12.wsdl" />
 	</target>
 		
 	<target name="runSoggettoAllClient_soap11_stubFromWsdl" description="Run org.openspcoop2.core.registry.ws.client.soggetto.all.Soggetto_SoggettoPortSoap11_Client" depends="jar">

@@ -11,7 +11,7 @@
 	<ui:define name="navbar">
 			<ul>
 				<li>
-					<a4j:htmlCommandLink action="transazioniStart" value="Storico" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
+					<a4j:htmlCommandLink action="transazioniStart" value="#{msg['menu.monitoraggio.storico']}" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
 				</li>
 				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16" rendered="#{searchFormTransazioni.periodo != 'Live'}"/></li>
 				<li>
@@ -57,12 +57,15 @@
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelErogatore" value="Erogatore" rendered="#{not empty dettagliBean.dettaglio.nomeSoggettoErogatore}"/>
 							<h:outputText id="outErogatore" value="#{dettagliBean.dettaglio.soggettoErogatore}" rendered="#{not empty dettagliBean.dettaglio.nomeSoggettoErogatore}"/>
 							
-							<h:outputLabel styleClass="outputFieldLabel" id="outLabelServizio" value="#{msg['commons.servizio.label']}" rendered="#{not empty dettagliBean.dettaglio.nomeServizio}"/>
+							<h:outputLabel styleClass="outputFieldLabel" id="outLabelServizio" value="#{msg['commons.servizio.label']} #{dettagliBean.dettaglio.tipoApiLabel}" rendered="#{not empty dettagliBean.dettaglio.nomeServizio}"/>
 							<h:outputText id="outServizio" value="#{dettagliBean.dettaglio.servizio}" rendered="#{not empty dettagliBean.dettaglio.nomeServizio}"/>
 							
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelAzione" value="Azione" rendered="#{not empty dettagliBean.dettaglio.azione}"/>
 							<h:outputText id="outAzione" value="#{dettagliBean.dettaglio.azione}" rendered="#{not empty dettagliBean.dettaglio.azione}"/>
 							
+							<h:outputLabel styleClass="outputFieldLabel" id="outLabelGruppi" value="Tags" rendered="#{not empty dettagliBean.dettaglio.gruppiHTML}" />
+							<h:outputText id="outGruppi" value="#{dettagliBean.dettaglio.gruppiHTML}" escape="false" rendered="#{not empty dettagliBean.dettaglio.gruppiHTML}" />
+													
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelProfColl" value="Profilo Collaborazione" rendered="#{not empty dettagliBean.dettaglio.profiloCollaborazioneProt or not empty dettagliBean.dettaglio.profiloCollaborazioneOp2}"/>
 							<h:outputText id="outProfCollProt" value="#{dettagliBean.dettaglio.profiloCollaborazioneProt}" rendered="#{not empty dettagliBean.dettaglio.profiloCollaborazioneProt}"/>
 							<h:outputText id="outProfCollOp2" value="#{dettagliBean.dettaglio.profiloCollaborazioneOp2}" rendered="#{empty dettagliBean.dettaglio.profiloCollaborazioneProt and not empty dettagliBean.dettaglio.profiloCollaborazioneOp2}"/>
@@ -564,7 +567,7 @@
 								<h:inputTextarea id="outUrlInvocazioneTextArea" value="#{dettagliBean.dettaglio.urlInvocazione}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong" style="width:auto;"
 									rendered="#{not empty dettagliBean.dettaglio.urlInvocazione and dettagliBean.visualizzaTextAreaUrlInvocazione}" />
 								
-								<h:outputLabel styleClass="outputFieldLabel" id="outLabelIndirizzoClient" value="Indirizzo Client" rendered="#{not empty dettagliBean.dettaglio.socketClientAddress}" />
+								<h:outputLabel styleClass="outputFieldLabel" id="outLabelIndirizzoClient" value="Client IP" rendered="#{not empty dettagliBean.dettaglio.socketClientAddress}" />
 								<h:outputText id="outIndirizzoClient" value="#{dettagliBean.dettaglio.socketClientAddress}" rendered="#{not empty dettagliBean.dettaglio.socketClientAddress}" />
 								
 								<h:outputLabel styleClass="outputFieldLabel" id="outLabelXForwardedFor" value="X-Forwarded-For" rendered="#{not empty dettagliBean.dettaglio.transportClientAddress}" />
@@ -573,10 +576,10 @@
 								<h:outputLabel styleClass="outputFieldLabel" id="outLabelCodiceRispostaUscita" value="Codice Risposta Client" rendered="#{not empty dettagliBean.dettaglio.codiceRispostaUscita}"/>
 								<h:outputText id="outCodiceRispostaUscita" value="#{dettagliBean.dettaglio.codiceRispostaUscita}" rendered="#{not empty dettagliBean.dettaglio.codiceRispostaUscita}"/>
 								
-								<h:outputLabel styleClass="outputFieldLabel" id="outLabelCredenziali" value="Credenziali" rendered="#{not empty dettagliBean.dettaglio.credenziali}"/>
-								<h:outputText id="outCredenziali" value="#{dettagliBean.dettaglio.credenziali}" rendered="#{not empty dettagliBean.dettaglio.credenziali and not dettagliBean.visualizzaTextAreaCredenziali}" />
-								<h:inputTextarea id="outCredenzialiTextArea" value="#{dettagliBean.dettaglio.credenziali}" readonly="true"  cols="60" rows="3" styleClass="inputLinkLong" style="width:auto;"
-									rendered="#{not empty dettagliBean.dettaglio.credenziali and dettagliBean.visualizzaTextAreaCredenziali}" />
+								<h:outputLabel styleClass="outputFieldLabel" id="outLabelCredenziali" value="Credenziali" rendered="#{not empty dettagliBean.textCredenziali}"/>
+								<h:outputText id="outCredenziali" value="#{dettagliBean.textCredenziali}" rendered="#{not empty dettagliBean.textCredenziali and not dettagliBean.visualizzaTextAreaCredenziali}" />
+								<h:inputTextarea id="outCredenzialiTextArea" value="#{dettagliBean.textCredenziali}" readonly="true"  cols="60" rows="3" styleClass="inputLinkLong" style="width:auto;"
+									rendered="#{not empty dettagliBean.textCredenziali and dettagliBean.visualizzaTextAreaCredenziali}" />
 								
 								
 								<h:outputLabel styleClass="outputFieldLabel" value="" id="idTokenInfoSubtitleLabel" 
@@ -585,7 +588,7 @@
 								<a4j:outputPanel layout="block" styleClass="subtitle-nopaddingleft-nomarginleft"
 									rendered="#{not empty dettagliBean.dettaglio.tokenIssuer or not empty dettagliBean.dettaglio.tokenClientId or not empty dettagliBean.dettaglio.tokenSubject or not empty dettagliBean.dettaglio.tokenUsername or not empty dettagliBean.dettaglio.tokenMail or not empty dettagliBean.dettaglio.tokenInfo}"
 								>	
-									<h:outputText id="idTokenInfo" value="Token Info" styleClass="subtitle-nopaddingleft-nomarginleft" />
+									<h:outputText id="idTokenInfo" value="#{msg['commons.tokenInfo.label']}" styleClass="subtitle-nopaddingleft-nomarginleft" />
 								</a4j:outputPanel>
 						
 								<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenIssuer" value="Issuer" rendered="#{not empty dettagliBean.dettaglio.tokenIssuer}"/>
@@ -603,7 +606,7 @@
 								<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenEmail" value="eMail" rendered="#{not empty dettagliBean.dettaglio.tokenMail}"/>
 								<h:outputText id="outTokenEmail" value="#{dettagliBean.dettaglio.tokenMailLabel}" rendered="#{not empty dettagliBean.dettaglio.tokenMail}"/>
 								
-								<h:outputLabel id="outLabelTokenInfo" styleClass="outputFieldLabel" value="Token Info" rendered="#{not empty dettagliBean.dettaglio.tokenInfo}"/>
+								<h:outputLabel id="outLabelTokenInfo" styleClass="outputFieldLabel" value="#{msg['commons.tokenInfo.label']}" rendered="#{not empty dettagliBean.dettaglio.tokenInfo}"/>
 								<h:panelGroup id="panelGroupTokenInfo" rendered="#{not empty dettagliBean.dettaglio.tokenInfo}">
 									<h:form id="formTokenInfo">
 	                                        <a4j:htmlCommandLink id="tokenInfo-iconLink"

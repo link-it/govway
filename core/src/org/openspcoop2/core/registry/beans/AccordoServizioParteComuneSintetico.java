@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Azione;
+import org.openspcoop2.core.registry.GruppoAccordo;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Resource;
@@ -70,6 +71,11 @@ public class AccordoServizioParteComuneSintetico extends org.openspcoop2.utils.b
 				this.resource.add(new ResourceSintetica(pt));
 			}
 		}
+		if(apc.getGruppi()!=null && apc.getGruppi().sizeGruppoList()>0) {
+			for (GruppoAccordo gruppoAccordo : apc.getGruppi().getGruppoList()) {
+				this.gruppo.add(new GruppoSintetico(gruppoAccordo));
+			}
+		}
 		this.superUser = apc.getSuperUser();
 		this.statoPackage = apc.getStatoPackage();
 		this.privato = apc.getPrivato();
@@ -103,6 +109,8 @@ public class AccordoServizioParteComuneSintetico extends org.openspcoop2.utils.b
 	private List<PortTypeSintetico> portType = new ArrayList<PortTypeSintetico>();
 
 	private List<ResourceSintetica> resource = new ArrayList<ResourceSintetica>();
+	
+	private List<GruppoSintetico> gruppo = new ArrayList<GruppoSintetico>();
 
 	private java.lang.String superUser;
 
@@ -188,6 +196,13 @@ public class AccordoServizioParteComuneSintetico extends org.openspcoop2.utils.b
 		this.resource = resource;
 	}
 
+	public List<GruppoSintetico> getGruppo() {
+		return this.gruppo;
+	}
+	public void setGruppo(List<GruppoSintetico> gruppo) {
+		this.gruppo = gruppo;
+	}
+	
 	public java.lang.String getSuperUser() {
 		return this.superUser;
 	}

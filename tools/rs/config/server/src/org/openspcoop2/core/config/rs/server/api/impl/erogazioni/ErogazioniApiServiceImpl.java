@@ -332,7 +332,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 	 */
 	@Override
 	public ListaErogazioni findAllErogazioni(ProfiloEnum profilo, String soggetto, String q, Integer limit,
-			Integer offset, TipoApiEnum tipoApi) {
+			Integer offset, TipoApiEnum tipoApi, String tag) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");
@@ -348,6 +348,10 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			if (tipoApi != null)
 				ricerca.addFilter(idLista, Filtri.FILTRO_SERVICE_BINDING, tipoApi.toString().toLowerCase());
 
+			if(tag!=null) {
+				ricerca.addFilter(idLista, Filtri.FILTRO_GRUPPO, tag);
+			}
+			
 			List<AccordoServizioParteSpecifica> lista = env.apsCore.soggettiServizioList(null, ricerca, null, false, true);
 
 			if (env.findall_404 && lista.isEmpty()) {

@@ -5,6 +5,7 @@
 -- DROP INDEX index_servizi_azione_1;
 -- DROP INDEX index_servizi_1;
 -- DROP INDEX index_accordi_cooperazione_1;
+-- DROP INDEX idx_acc_gruppi_1;
 -- DROP INDEX index_api_resp_1;
 -- DROP INDEX index_api_resources_2;
 -- DROP INDEX index_api_resources_1;
@@ -30,6 +31,7 @@ DROP TABLE servizi_azioni;
 DROP TABLE servizi;
 DROP TABLE accordi_coop_partecipanti;
 DROP TABLE accordi_cooperazione;
+DROP TABLE accordi_gruppi;
 DROP TABLE api_resources_parameter;
 DROP TABLE api_resources_media;
 DROP TABLE api_resources_response;

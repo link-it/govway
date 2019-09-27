@@ -64,6 +64,13 @@
 								</ui:include>
 							</a4j:outputPanel>
 	
+							<a4j:outputPanel layout="block" id="gruppiComboCtr">
+								<ui:include src="/stat/includes/searchFormConfigurazioniGeneraliFiltroGruppi.xhtml">
+									<ui:param name="sf_bean" value="#{configurazioniGeneraliSearchForm}" />
+									<ui:param name="sf_mbean" value="#{configurazioniGeneraliBean}" />
+								</ui:include>
+							</a4j:outputPanel>
+	
 							<a4j:outputPanel layout="block" id="servizioComboCtr">
 								<ui:include src="/stat/includes/searchFormConfigurazioniGeneraliFiltroServizio.xhtml">
 									<ui:param name="sf_bean" value="#{configurazioniGeneraliSearchForm}" />

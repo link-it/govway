@@ -72,6 +72,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link SearchFilterGruppo }
+     */
+    public SearchFilterGruppo createSearchFilterGruppo() {
+        return new SearchFilterGruppo();
+    }
+    
+    /**
      * Create an instance of {@link SearchFilterAccordoServizioParteComune }
      */
     public SearchFilterAccordoServizioParteComune createSearchFilterAccordoServizioParteComune() {

@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    
+    
+    <c:if test="#{sf_bean.existsGruppi}">
+	    <c:if test="#{not sf_bean.visualizzaFiltroGruppiSelectList}">
+	    	<link:prop label="#{msg['stats.search.gruppo']}">
+	     	 	<h:inputText id="gruppoCombo" value="#{sf_labelGruppo}" styleClass="inputLinkLong"/>
+				<rich:suggestionbox
+							id="gruppoComboSuggestion" 
+							width="416" 
+							for="gruppoCombo" 
+							suggestionAction="#{sf_mbean.gruppiAutoComplete}"
+							ajaxSingle="true" listWidth="#{sf_mbean.gruppiSelectItemsWidth}"
+							nothingLabel="--" var="selectItem" fetchValue="#{selectItem.label}"
+							param="gruppoCombo">
+					<h:column>
+						<h:outputText value="#{selectItem.label}" rendered="true" />
+					</h:column>
+					<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.gruppoSelected}" reRender="searchPnl,valoreRisorsaCtr" oncomplete="#{outOfRegionToRefresh}()">
+						<f:setPropertyActionListener value="#{selectItem.value}" target="#{sf_gruppo}" />  
+					</a4j:support>
+				</rich:suggestionbox>
+				<h:inputHidden id="gruppoComboHidden" value="#{sf_gruppo}" />
+	     		<rich:toolTip rendered="#{not empty sf_gruppo}" direction="top-right" for="gruppoCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.gruppoTooltip}"/>
+			</link:prop> 
+	    </c:if>
+	    
+	   	<c:if test="#{sf_bean.visualizzaFiltroGruppiSelectList}">
+			<link:prop label="#{msg['stats.search.gruppo']}">
+				<rich:comboBox id="gruppoCombo2" value="#{sf_gruppo}" converter="selectItemConverter"
+					defaultLabel="#{msg['stats.search.gruppo.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.gruppiSelectItemsWidth}"
+					width="416" enableManualInput="false" >
+					<f:selectItem itemValue="--" itemLabel="--" />
+					<f:selectItems value="#{sf_gruppi}"/>
+					<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.gruppoSelected}" reRender="searchPnl,valoreRisorsaCtr" oncomplete="#{outOfRegionToRefresh}()"/>
+				</rich:comboBox>
+				<rich:toolTip rendered="#{not empty sf_gruppo}" direction="top-right" for="gruppoCombo2" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.gruppoTooltip}"/>
+			</link:prop>
+		</c:if>	
+	</c:if>	
+   	
+</ui:composition>

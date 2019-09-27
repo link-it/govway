@@ -208,6 +208,20 @@ public class StatisticaOrariaFieldConverter extends AbstractSQLFieldConverter {
 				return "esito_contesto";
 			}
 		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.CLIENT_ADDRESS)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".client_address";
+			}else{
+				return "client_address";
+			}
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.GRUPPI)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".gruppi";
+			}else{
+				return "gruppi";
+			}
+		}
 		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".richieste";
@@ -538,6 +552,12 @@ public class StatisticaOrariaFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(StatisticaOraria.model().STATISTICA_BASE, returnAlias);
 		}
 		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.ESITO_CONTESTO)){
+			return this.toTable(StatisticaOraria.model().STATISTICA_BASE, returnAlias);
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.CLIENT_ADDRESS)){
+			return this.toTable(StatisticaOraria.model().STATISTICA_BASE, returnAlias);
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.GRUPPI)){
 			return this.toTable(StatisticaOraria.model().STATISTICA_BASE, returnAlias);
 		}
 		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI)){

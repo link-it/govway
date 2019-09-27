@@ -62,6 +62,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
@@ -92,6 +93,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica
 import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
+import org.openspcoop2.protocol.sdk.archive.ArchiveGruppo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveIdCorrelazione;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
@@ -424,6 +426,13 @@ public class ZIPReadUtils  {
 							byte[] xml = placeholder.replace(content);
 							bin = new ByteArrayInputStream(xml);
 							this.readPortaDominio(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
+						}
+						
+						// ********** gruppi ****************
+						else if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_GRUPPI_DIR+File.separatorChar)) ){
+							byte[] xml = placeholder.replace(content);
+							bin = new ByteArrayInputStream(xml);
+							this.readGruppo(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
 						}
 						
 						// ********** ruoli ****************
@@ -1215,6 +1224,24 @@ public class ZIPReadUtils  {
 		}catch(Exception eDeserializer){
 			String xmlString = this.toStringXmlElementForErrorMessage(xml);
 			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (porta-dominio) non valida rispetto allo schema (RegistroServizi): "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
+	}
+	
+	public void readGruppo(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+		try{
+			if(validationDocuments){
+				org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
+			Gruppo gruppo = this.jaxbRegistryDeserializer.readGruppo(xml);
+			String key = ArchiveGruppo.buildKey(gruppo.getNome());
+			if(archivio.getGruppi().containsKey(key)){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un gruppo con key ["+key+"]");
+			}
+			archivio.getGruppi().add(key,new ArchiveGruppo(gruppo,idCorrelazione));
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (gruppo) non valida rispetto allo schema (RegistroServizi): "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}

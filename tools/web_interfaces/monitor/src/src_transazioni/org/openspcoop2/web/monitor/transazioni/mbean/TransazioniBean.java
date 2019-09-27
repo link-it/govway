@@ -50,6 +50,7 @@ import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.constants.ModalitaRicercaTransazioni;
 import org.openspcoop2.web.monitor.core.constants.NomiTabelle;
+import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
@@ -57,10 +58,13 @@ import org.openspcoop2.web.monitor.core.dao.IUserService;
 import org.openspcoop2.web.monitor.core.dao.UserService;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
+import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.openspcoop2.web.monitor.transazioni.bean.GruppoStorico;
 import org.openspcoop2.web.monitor.transazioni.bean.Storico;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm;
+import org.openspcoop2.web.monitor.transazioni.constants.TransazioniCostanti;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 import org.openspcoop2.web.monitor.transazioni.exporter.ColonnaExportManager;
 import org.openspcoop2.web.monitor.transazioni.exporter.CostantiExport;
@@ -103,7 +107,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 
 	private ApplicationBean applicationBean = null;
 	
-	private List<Storico> tipiStorico;
+	private List<GruppoStorico> tipiStorico;
 	private String tipoStorico;
 	
 
@@ -890,20 +894,73 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 	private Boolean showSelezioneColonne = false;
 
 
-	public List<Storico> getTipiStorico() {
+	public List<GruppoStorico> getTipiStorico() {
 		if(this.tipiStorico == null){
-			this.tipiStorico = new ArrayList<Storico>();
+			this.tipiStorico = new ArrayList<GruppoStorico>();
 
-			this.tipiStorico.add(new Storico(ModalitaRicercaTransazioni.ANDAMENTO_TEMPORALE.getValue(), Costanti.LABEL_STORICO_ANDAMENTO_TEMPORALE, ModalitaRicercaTransazioni.ANDAMENTO_TEMPORALE));
-			this.tipiStorico.add(new Storico(ModalitaRicercaTransazioni.ID_APPLICATIVO.getValue(), Costanti.LABEL_STORICO_ID_APPLICATIVO, ModalitaRicercaTransazioni.ID_APPLICATIVO));
-			this.tipiStorico.add(new Storico(ModalitaRicercaTransazioni.ID_MESSAGGIO.getValue(), Costanti.LABEL_STORICO_ID_MESSAGGIO, ModalitaRicercaTransazioni.ID_MESSAGGIO));
-			this.tipiStorico.add(new Storico(ModalitaRicercaTransazioni.ID_TRANSAZIONE.getValue(), Costanti.LABEL_STORICO_ID_TRANSAZIONE, ModalitaRicercaTransazioni.ID_TRANSAZIONE));
+			GruppoStorico gruppoTemporale = new GruppoStorico();
+			gruppoTemporale.setLabel(MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_LABEL_KEY));
+			List<Storico> listaGruppoTermporale = new ArrayList<>();
+			listaGruppoTermporale.add(new Storico(ModalitaRicercaTransazioni.ANDAMENTO_TEMPORALE.getValue(), 
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_RICERCA_BASE_LABEL_KEY), 
+					ModalitaRicercaTransazioni.ANDAMENTO_TEMPORALE,
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_RICERCA_BASE_ICON_KEY)));
+			listaGruppoTermporale.add(new Storico(ModalitaRicercaTransazioni.RICERCA_LIBERA.getValue(), 
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_RICERCA_LIBERA_LABEL_KEY), 
+					ModalitaRicercaTransazioni.RICERCA_LIBERA,
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_RICERCA_LIBERA_ICON_KEY)));
+			gruppoTemporale.setListaStorico(listaGruppoTermporale);
+			this.tipiStorico.add(gruppoTemporale);
+			
+			GruppoStorico gruppoMittente = new GruppoStorico();
+			gruppoMittente.setLabel(MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITTENTE_LABEL_KEY));
+			List<Storico> listaGruppoMittente = new ArrayList<>();
+			listaGruppoMittente.add(new Storico(ModalitaRicercaTransazioni.MITTENTE_TOKEN_INFO.getValue(), 
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_TOKEN_INFO_LABEL_KEY), 
+					ModalitaRicercaTransazioni.MITTENTE_TOKEN_INFO,
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_TOKEN_INFO_ICON_KEY)));
+			listaGruppoMittente.add(new Storico(ModalitaRicercaTransazioni.MITTENTE_SOGGETTO.getValue(), 
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_SOGGETTO_LABEL_KEY), 
+					ModalitaRicercaTransazioni.MITTENTE_SOGGETTO,
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_SOGGETTO_ICON_KEY)));
+			listaGruppoMittente.add(new Storico(ModalitaRicercaTransazioni.MITTENTE_APPLICATIVO.getValue(), 
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_APPLICATIVO_LABEL_KEY), 
+					ModalitaRicercaTransazioni.MITTENTE_APPLICATIVO,
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_APPLICATIVO_ICON_KEY)));
+			listaGruppoMittente.add(new Storico(ModalitaRicercaTransazioni.MITTENTE_IDENTIFICATIVO_AUTENTICATO.getValue(), 
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_IDENTIFICATIVO_AUTENTICATO_LABEL_KEY), 
+					ModalitaRicercaTransazioni.MITTENTE_IDENTIFICATIVO_AUTENTICATO,
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_IDENTIFICATIVO_AUTENTICATO_ICON_KEY)));
+			listaGruppoMittente.add(new Storico(ModalitaRicercaTransazioni.MITTENTE_INDIRIZZO_IP.getValue(), 
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_INDIRIZZO_IP_LABEL_KEY), 
+					ModalitaRicercaTransazioni.MITTENTE_INDIRIZZO_IP,
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_INDIRIZZO_IP_ICON_KEY)));
+			gruppoMittente.setListaStorico(listaGruppoMittente);
+			this.tipiStorico.add(gruppoMittente);
+
+			GruppoStorico gruppoId = new GruppoStorico();
+			gruppoId.setLabel(MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_LABEL_KEY));
+			List<Storico> listaGruppoId = new ArrayList<>();
+			listaGruppoId.add(new Storico(ModalitaRicercaTransazioni.ID_APPLICATIVO.getValue(), 
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LABEL_KEY), 
+					ModalitaRicercaTransazioni.ID_APPLICATIVO,
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_ICON_KEY)));
+			listaGruppoId.add(new Storico(ModalitaRicercaTransazioni.ID_MESSAGGIO.getValue(), 
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_LABEL_KEY), 
+					ModalitaRicercaTransazioni.ID_MESSAGGIO,
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_ICON_KEY)));
+			listaGruppoId.add(new Storico(ModalitaRicercaTransazioni.ID_TRANSAZIONE.getValue(), 
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_LABEL_KEY), 
+					ModalitaRicercaTransazioni.ID_TRANSAZIONE,
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_ICON_KEY)));
+			gruppoId.setListaStorico(listaGruppoId);
+			this.tipiStorico.add(gruppoId);
 		}
 		
 		return this.tipiStorico;
 	}
 
-	public void setTipiStorico(List<Storico> tipiStorico) {
+	public void setTipiStorico(List<GruppoStorico> tipiStorico) {
 		this.tipiStorico = tipiStorico;
 	}
 
@@ -916,7 +973,37 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 		
 		if(this.updateTipoStorico) {
 			this.search.initSearchListener(null);
-			this.search.setModalitaRicercaStorico(this.tipoStorico);
+			((TransazioniSearchForm)this.search).setModalitaRicercaStorico(this.tipoStorico);
+			
+			if(!TipologiaRicerca.all.equals(this.search.getDefaultTipologiaRicercaEnum())) {
+				((TransazioniSearchForm)this.search).setTipologiaRicerca(this.search.getDefaultTipologiaRicercaEnum());
+			}
+			else {
+				((TransazioniSearchForm)this.search).setTipologiaRicerca("--"); // in modo da far comparire la lista con il suggerimento di selezione come per gli altri
+			}
+			
+			
+			ModalitaRicercaTransazioni t = ModalitaRicercaTransazioni.getFromString(((TransazioniSearchForm)this.search).getModalitaRicercaStorico());
+			switch (t) { 
+			case MITTENTE_TOKEN_INFO:
+				this.search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
+				break;
+			case MITTENTE_SOGGETTO:
+				this.search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO);
+				break;
+			case MITTENTE_APPLICATIVO:
+				this.search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO);
+				break;
+			case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
+				this.search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO);
+				break;
+			case MITTENTE_INDIRIZZO_IP:
+				this.search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP);
+				break;
+			default:
+				break;
+			}
+			
 			this.updateTipoStorico = false;
 		}
 		

@@ -43,9 +43,18 @@
 					</h:graphicImage>
 					<h:graphicImage id="outEsitoImgOther" value="/images/tema_link/ko_red.png" rendered="#{!item.esitoOk and !item.esitoFaultApplicativo and !item.esitoKo}"/>
 				</rich:column>
-				<rich:column id="colDataIngRich" sortable="true" sortBy="#{item.dataIngressoRichiesta}" sortOrder="#{value.sortOrders['dataIngressoRichiesta']}" label="Data Ingresso Richiesta" width="175px">
+				<rich:column id="colRuoloTransazioneImg" sortable="false" label="Ruolo Transazione (Immagine)" width="42px" style="text-align: center;">
 					<f:facet name="header">
-						<h:outputText id="outDataIngRich1" value="Data Ingresso Richiesta" />
+						<i class="material-icons md-24">swap_horiz</i>
+					</f:facet>
+					<a4j:outputPanel id="imgRuoloTransazione">
+						<i class="material-icons md-16">#{item.pddRuoloImage}</i>
+					</a4j:outputPanel>
+					<rich:toolTip for="imgRuoloTransazione" value="#{item.pddRuoloToolTip}" />
+				</rich:column>
+				<rich:column id="colDataIngRich" sortable="true" sortBy="#{item.dataIngressoRichiesta}" sortOrder="#{value.sortOrders['dataIngressoRichiesta']}" label="Data Ingresso Richiesta" width="155px">
+					<f:facet name="header">
+						<h:outputText id="outDataIngRich1" value="Data Richiesta" />
 					</f:facet>
 					<a4j:htmlCommandLink id="details-iconLink" styleClass="icon-details" action="dettagliMessaggio">
 						<f:setPropertyActionListener value="#{item.idTransazione}" target="#{dettagliBean.idTransazione}"/>
@@ -206,7 +215,7 @@
 					<h:outputText id="outServ3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 					<rich:toolTip for="outServ3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 				</rich:column>
-				<rich:column id="colServErogatore" sortable="false" label="#{msg['commons.servizio.label']} + Erogatore" width="207px">
+				<rich:column id="colServErogatore" sortable="false" label="#{msg['commons.servizio.label']} + Erogatore" width="199px">
 					<f:facet name="header">
 						<h:outputText id="outServErogatore1" value="#{msg['commons.servizio.label']}" />
 					</f:facet>
@@ -215,7 +224,14 @@
 					<h:outputText id="outServErogatore3" value="[IM] #{item.servizioApplicativoErogatore} (#{item.soggettoErogatore})" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 					<rich:toolTip for="outServErogatore3" value="[IM] #{item.servizioApplicativoErogatore} (#{item.soggettoErogatore})" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 				</rich:column>
-				<rich:column id="colAzione" sortable="false" label="Operazione" width="207px">
+				<rich:column id="colTipoApi" sortable="false" label="Tipo API" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outTipoApi1" value="Tipo API" />
+					</f:facet>
+					<h:outputText id="outTipoApi2" value="#{item.tipoApiLabel}" rendered="#{not empty item.tipoApiLabel}"/>
+					<rich:toolTip for="outTipoApi2" value="#{item.tipoApiLabel}" rendered="#{not empty item.tipoApiLabel}"/>
+				</rich:column>
+				<rich:column id="colAzione" sortable="false" label="Operazione" width="198px">
 					<f:facet name="header">
 						<h:outputText id="outAzione1" value="Operazione" />
 					</f:facet>
@@ -233,7 +249,7 @@
 					<h:outputText id="outServizioApplicativo3" value="#{item.servizioApplicativoFruitore}" rendered="#{item.pddRuolo!='DELEGATA'}"/>
 					<rich:toolTip for="outServizioApplicativo3" value="#{item.servizioApplicativoFruitore}" rendered="#{item.pddRuolo!='DELEGATA'}"/>
 				</rich:column>
-				<rich:column id="colServizioApplicativoFruitore" sortable="false" label="Applicativo + Fruitore" width="207px" >
+				<rich:column id="colServizioApplicativoFruitore" sortable="false" label="Applicativo + Fruitore" width="199px" >
 					<f:facet name="header">
 						<h:outputText id="outServizioApplicativoFruitore1" value="Mittente" />
 					</f:facet>
@@ -404,15 +420,6 @@
 					<h:outputText id="outDuplicatiRisposta2" value="#{item.duplicatiRisposta >=0 ? item.duplicatiRisposta : 'Duplicata'}" />
 					<rich:toolTip for="outDuplicatiRisposta2">
 						<h:outputText value="#{item.duplicatiRisposta >=0 ? item.duplicatiRisposta : 'Duplicata'}"/>
-					</rich:toolTip>
-				</rich:column>
-				<rich:column id="colEventi" sortable="false" label="Eventi" visible="false" rendered="#{applicationBean.showInformazioniEventiTransazioniGrid}">
-					<f:facet name="header">
-						<h:outputText id="outEventi1" value="Eventi" />
-					</f:facet>
-					<h:outputText id="outEventi2" value="#{item.eventiGestione}" />
-					<rich:toolTip for="outEventi2">
-						<h:outputText value="#{item.eventiGestione}"/>
 					</rich:toolTip>
 				</rich:column>
 				<rich:column id="colStato" sortable="false" label="Stato" visible="false" rendered="#{applicationBean.showInformazioniContenutiTransazioniGrid}">
