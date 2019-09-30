@@ -22,9 +22,9 @@ che può non andar bene se il gateway è stato dispiegato in modo da
 essere raggiungibile tramite un host, porta o contesto differente.
 
 Per modificare i prefissi delle url di invocazioni accedere alla voce
-*'Configurazione - Generale'* del menù. Nella sezione *'Gestione
-Profilo'* è possibile configurare i prefissi di una erogazione e di una
-fruizione per ogni profilo.
+*'Configurazione - Generale'* del menù (sezione :ref:`configGenerale_urlInvocazione`). Nella sezione *'URL di Invocazione API'* è possibile configurare i prefissi di una erogazione e di una
+fruizione. Inoltre in presenza di un reverse proxy che media le comunicazioni http con GovWay, è anche possibile configurare opportunamente le url di invocazione delle API esposte da GovWay allineandole con le eventuali configurazioni specifiche realizzate sul reverse proxy.
+
 
     .. figure:: ../_figure_installazione/govwayConsole_urlInvocazione.png
         :scale: 100%

@@ -2,19 +2,24 @@
 Monitoraggio e Diagnostica
 ==========================
 
-La console offre due modalità per il monitoraggio del traffico (live e
-storico) accessibili dalla sezione monitoraggio del menu di navigazione.
+La console consente di effettuare il monitoraggio del traffico gestito da Govway ad esempio per:
 
-Le due modalità "storico" e "live" consentono di visualizzare le singole
-transazioni con la possibilità di filtrare i dati mostrati. La modalità
-"storico" consente di filtrare anche per un intervallo temporale
-personalizzabile. La modalità "live" consente invece di visualizzare le
-ultime 25 transazioni e offre un aggiornamento continuo dei risultati.
+- conoscere i servizi richiesti e l'esito delle relative invocazioni
+
+- reperire le tracce emesse e gli altri elementi prova delle trasmissioni
+
+- effettuare l'indagine diagnostica su transazioni in errore
+
+- altri scopi dettagliati più avanti
+
+La sezione dedicata al monitoraggio delle transazioni è quella accessibile dal menu di navigazione alla voce "Monitoraggio > Transazioni". Vi sono diverse modalità di consultazione delle transazioni basate sui criteri filtro che possono essere impiegati nei diversi contesti.
+
+Un'ulteriore sezione consente di consultare le transazioni in transito in modalità "Live". Operando in tale modalità vengono visualizzate le transazioni più recenti con aggiornamento automatico della finestra temporale impostata.
 
 .. toctree::
-        :maxdepth: 2
+    :maxdepth: 2
 
-        live
-	storico
-	export
-	dettaglio
+    transazioni
+    live
+    export
+    dettaglio

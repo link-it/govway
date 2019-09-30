@@ -33,16 +33,18 @@ I dati da indicare per generare un report sono:
    -  **Periodo:**\ consente di indicare un intervallo temporale di
       interesse
 
--  Filtro Dati API
+-  Dati API
 
    -  **Soggetto Erogatore**: Opzione, presente nel caso delle fruizioni, per selezionare il soggetto erogatore relativo alle transazioni interessate.
+
+   -  **Tag**: permette di filtrare rispetto ad un tag di classificazione delle API.
 
    -  **API**: permette di filtrare su una specifica API tra quelle erogate dal soggetto indicato.
 
    -  **Azione/Risorsa**: permette di selezionare una tra le
       azioni/risorse della API selezionata.
 
--  Filtro Dati Mittente: permette di filtrare le transazioni da
+-  Dati Mittente: permette di filtrare le transazioni da
    includere nel report sulla base dei dati legati alla richiesta
    inviata dal mittente.
 
@@ -62,7 +64,7 @@ I dati da indicare per generare un report sono:
          criterio per il confronto con il token ricavato durante il
          processo di autenticazione.
 
--  Filtro Esito
+-  Esito
 
    -  **Esito**: permette di selezionare una categoria di esiti a cui le
       transazioni appartengono. Valgono le medesime considerazioni

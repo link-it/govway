@@ -4,7 +4,7 @@ Dettaglio Transazione
 ~~~~~~~~~~~~~~~~~~~~~
 
 Dal risutalto di una ricerca transazioni, sia in modalità "live" (:ref:`mon_live`) che
-in modalità "storico" (:ref:`mon_storico`), cliccando sulla data di ingresso di una
+in modalità "storico" (:ref:`mon_transazioni`), cliccando sulla data di ingresso di una
 specifica transazione si ottiene la pagina con le informazioni di
 dettaglio, suddivisa nelle seguenti sezioni:
 

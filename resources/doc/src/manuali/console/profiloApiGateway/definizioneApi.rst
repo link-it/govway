@@ -25,12 +25,17 @@ Gli elementi dell'elenco possono essere selezionati per l'eliminazione,
 con il pulsante Elimina, e per l'esportazione, con il pulsante Esporta.
 La funzione di esportazione è descritta nella sezione :ref:`esporta`.
 
-.. note::
+.. note::**Icona di Stato**
+
     Le API in elenco sono visualizzate con un'icona colorata affiancata
     al nome. L'icona di colore rosso indica un problema nella
     configurazione e quindi l'inutilizzabilità della API. L'icona gialla
     indica il parziale utilizzo limitato agli elementi configurati
     correttamente. L'icona verde indica la piena funzionalità.
+
+.. note::**Tags**
+
+    A fianco del nome della API, in alcuni casi, è mostrato l'elenco dei tag associati a scopo di classificazione.
 
 Si crea una nuova API premendo il pulsante *Aggiungi*.
 
@@ -48,6 +53,8 @@ Compilare il form (:numref:`apiNew`) inserendo i seguenti dati:
 -  *Nome*: Assegnare un nome che identifichi le API.
 
 -  *Descrizione*: un testo opzionale di descrizione.
+
+-   *Tags*: un elenco di tag da associare all'API per classificarla. Iniziando a scrivere, vengono proposti i tag già esistenti compatibili.
 
 -  *Versione*: progressivo numerico che identifica l'indice di
    revisione.

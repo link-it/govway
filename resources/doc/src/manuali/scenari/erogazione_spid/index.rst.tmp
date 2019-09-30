@@ -1,0 +1,21 @@
+.. _scenari_erogazione_spid:
+
+Erogazione SPID
+===============
+
+Obiettivo
+---------
+Esporre un servizio che richiede l'autenticazione degli utenti tramite SPID.
+
+
+Sintesi
+-------
+Assumendo che sia stata effettuata la configurazione di un'erogazione con controllo degli accessi tramite token OAuth (:ref:`scenari_erogazione_oauth`), mostriamo adesso come prevedere che l'autenticazione dell'utente, nell'ambito del flusso "Authorization Code", venga effettuata tramite il servizio SPID.
+
+
+Esecuzione
+----------
+
+
+Configurazione
+--------------

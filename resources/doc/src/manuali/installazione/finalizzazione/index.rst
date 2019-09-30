@@ -101,6 +101,12 @@ tematiche:
    istanza. Per realizzare un'installazione in load balancing seguire le
    indicazioni descritte nella sezione :ref:`cluster`.
 
+#. *Configurazione HTTPS*
+
+   GovWay processa ogni richiesta in una duplice veste agendo sia da server al momento della ricezione della richiesta che da client al momento di inoltrare la richiesta verso i backend applicativi. 
+
+   In entrambi i ruoli la configurazione varia a seconda dell'architettura in cui è stato dispiegato GovWay (es. presenza di un Web Server). Indicazioni sulla configurazione vengono fornite nella sezione :ref:`install_ssl_config`.
+
 .. toctree::
         :maxdepth: 2
 
@@ -112,3 +118,4 @@ tematiche:
 	cachingRisposta
 	apiRest
 	cluster/index
+	ssl/index

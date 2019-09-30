@@ -31,7 +31,7 @@ come si sviluppa il processo di installazione:
       effettivamente installato il software GovWay.
 
    -  *DBMS*: il tipo di database scelto tra quelli supportati:
-      PostgreSQL, MySQL, Oracle, HyperSQL, SQLServer, IBM DB2.
+      PostgreSQL, MySQL, Oracle, HyperSQL, SQLServer.
 
    -  *Application Server*: Application server utilizzato selezionato
       tra: WildFly (17.x, 16.x, 15.x, 14.x, 13.x, 12.x, 11.x, 10.x) e Apache Tomcat (9.x,

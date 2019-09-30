@@ -19,6 +19,9 @@ Il profilo ModI PA prevede che i servizi siano basati su SOAP o REST fornendo se
 
 Nel processo di configurazione, tramite la govwayConsole, sono inoltre tenuti in considerazione tutti gli aspetti previsti dalle Linee Guida:
 
+- *URL di Invocazione API*: le linee guida richiedono che deve essere indicato in modo esplicito la tecnologia utilizzata (REST o SOAP) e la versione. Le url con cui vengono esposte le API su GovWay soddisfano entrambi i requisiti.
+
+
 - *Profili di Interazione*: definiscono la modalità con cui fruitore ed erogatore di un servizio interagiscono. Sono previsti i seguenti due profili:
 
     + *Bloccante*: il fruitore invia la richiesta è resta bloccato in attesa di ricevere la risposta, completa dei dati attesi, dall'erogatore

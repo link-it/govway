@@ -1,13 +1,17 @@
-===================
-Scenari Applicativi
-===================
+.. _scenari:
+
+=======
+Scenari
+=======
 
 .. toctree::
-        :maxdepth: 2
+    :maxdepth: 2
 
-        profiloApiGateway/index
-        configurazioni/index
-        sospensione/index
-        cors/index
-        controllo_accessi/index
-        todo
+    ambiente
+    erogazione_pubblica/index
+    erogazione_oauth/index
+    erogazione_modipa_rest/index
+    fruizione_modipa_rest/index
+    erogazione_modipa_soap/index
+    fruizione_modipa_soap/index
+    monitoraggio/index

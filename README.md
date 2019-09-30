@@ -4,7 +4,7 @@
 [![License](https://github.com/link-it/govway/blob/master/resources/images/license.svg)](https://raw.githubusercontent.com/link-it/govway/master/LICENSE)
 
 Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle normative della Pubblica Amministrazione:
-- Conforme alle nuove linee guida AGID per l’interoperabilità ModI 2018 (profilo API Gateway)
+- Conforme alle nuove linee guida AGID per l’interoperabilità ModI (profilo API Gateway)
 - Conforme alle specifiche per l’interoperabilità europea (profilo eDelivery)
 - Conforme alle specifiche per la fatturazione elettronica sul canale SdiCoop (profilo Fatturazione Elettronica)
 - Retrocompatibile con il paradigma di cooperazione applicativa (profilo SPCoop)

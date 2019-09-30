@@ -62,7 +62,7 @@ I tipi di report che si possono generare sono:
    transitati e tempi medi di risposta, aggregando i dati per
    applicativo client che ha inviato la richiesta
 
--  Distribuzione per Identificativo Autenticato
+-  Distribuzione per Principal
 
    Consente di visualizzare la distribuzione delle transazioni rispetto
    all'identificativo dell'utente rilevato in fase di autenticazione
@@ -72,6 +72,10 @@ I tipi di report che si possono generare sono:
    Consente di visualizzare la distribuzione delle transazioni rispetto
    ad uno dei claim ricavati dal token ottenuto nel corso
    dell'autenticazione della richiesta
+
+-  Distribuzione per Indirizzo IP
+
+   Consente di visualizzare la distribuzione delle transazioni rispetto all'indirizzo IP di provenienza delle richieste
 
 Per ogni report è possibile specificare dei criteri di filtro come descritto nella sezione :ref:`mon_stats_filtri`.
 
@@ -89,3 +93,4 @@ Per ogni report è possibile specificare dei criteri di filtro come descritto ne
 	distribuzioneApplicativo
 	distribuzioneIdAutenticato
 	distribuzioneTokenInfo
+	distribuzioneIndirizzoIP

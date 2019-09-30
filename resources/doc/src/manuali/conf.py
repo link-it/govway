@@ -89,6 +89,6 @@ html_static_path = ['_static']
 #
 # html_sidebars = {}
 #---sphinx-themes-----
-html_theme = 'sphinx_ops_theme'
 import sphinx_ops_theme
+html_theme = 'sphinx_ops_theme'
 html_theme_path = [sphinx_ops_theme.get_html_theme_path()]

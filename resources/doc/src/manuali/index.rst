@@ -28,6 +28,11 @@ Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle
 .. toctree::
         :maxdepth: 1
 
+        How-To <howto/index>
+
+.. toctree::
+        :maxdepth: 1
+
         API <api/index>
 
 .. toctree::

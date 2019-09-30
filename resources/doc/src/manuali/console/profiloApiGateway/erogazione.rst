@@ -88,12 +88,17 @@ nell'elenco delle erogazioni presenti nel registro (:numref:`erogazioneList`).
 
     Elenco Erogazioni presenti nel registro
 
-.. note::
+.. note::**Icona di Stato**
+
     Le erogazioni in elenco sono visualizzate con un'icona colorata
     affiancata al nome. L'icona di colore rosso indica che l'erogazione
     è disabilitata. L'icona di colore giallo indica che solo alcuni
     gruppi di risorse/azioni sono abilitati all'uso. L'icona verde
     indica lo stato abilitato.
+
+.. note::**Tags**
+
+    A fianco del nome può accadere che venga visualizzato l'elenco dei tags che sono assegnati all'API cui l'erogazione fa riferimento.
 
 Per la ricerca dell'elemento nell'elenco delle erogazioni è possibile
 filtrare i dati visualizzati tramite la maschera di filtro che compare
@@ -126,7 +131,7 @@ accedere al relativo dettaglio aprendo un nuovo tab del browser (:numref:`dettag
 La pagina di dettaglio dell'erogazione visualizza i principali elementi di configurazione, che sono:
 
     - **Nome**: nome dell'erogazione. Accanto al valore è presente l'icona a matita che consente di modificare tale valore. In assenza di configurazioni specifiche per risorsa/azione (sezione :ref:`configSpecificaRisorsa`) è presente anche un'icona che permette di disattivare/riattivare l'erogazione. Lo stato di attivazione dell'erogazione è segnalato tramite l'icona colorata presente accanto al nome.
-    - **API**: API cui fa riferimento l'erogazione. È presente un'icona che apre in una nuova finestra l'interfaccia per la gestione della configurazione della specifica API.
+    - **API**: API cui fa riferimento l'erogazione con evidenza degli eventuali tags. È presente un'icona che apre in una nuova finestra l'interfaccia per la gestione della configurazione della specifica API.
     - **URL Invocazione**: URL che deve utilizzare il mittente per accedere al servizio erogato tramite il gateway. Questo dato rappresenta la *URL* del servizio nel caso Soap o la *Base URL* nel caso Rest. Per la selezione dell'operazione da invocare si distinguono i seguenti casi:
         -  *REST*: Indipendentemente che l'API sia stata configurata fornendo il relativo descrittore, WADL o OpenAPI, l'identificazione dell'operation sarà sempre effettuata in automatico dal contesto di invocazione. Non è quindi necessario fornire ulteriori indicazioni.
         -  *SOAP*
