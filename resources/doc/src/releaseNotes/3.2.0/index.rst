@@ -11,7 +11,9 @@ si può invece far riferimento al file ChangeLog di questa versione.
         :maxdepth: 2
 
 	modipa
+	tags
 	sicurezza
 	consoleMonitoraggio
+	urlInvocazione
 	installer
 	bug
