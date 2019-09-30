@@ -16,7 +16,7 @@ clean:
 	rm -rf _build
 	rm -rf */_build
 
-pdf: pdf-manuale-installazione pdf-manuale-gestione pdf-manuale-monitoraggio pdf-scenari-applicativi
+pdf: pdf-manuale-installazione pdf-manuale-gestione pdf-manuale-monitoraggio pdf-scenari-applicativi pdf-howto
 
 pdf-manuale-installazione:
 	@echo "Producing pdf Manuale Installazione ..."
@@ -37,6 +37,11 @@ pdf-scenari-applicativi:
 	@echo "Producing pdf Scenari Applicativi ..."
 	cd scenari; rm -rf pdf; ${SPHINXBUILD} -v -b latex -c .. -Dproject="Scenari Applicativi" . "$(BUILDDIR)/pdf"; cd "$(BUILDDIR)/pdf"; make clean all-pdf
 	@echo "Producing pdf Scenari Applicativi ok"
+
+pdf-howto:
+	@echo "Producing pdf How to ..."
+	cd howto; rm -rf pdf; ${SPHINXBUILD} -v -b latex -c .. -Dproject="How-to" . "$(BUILDDIR)/pdf"; cd "$(BUILDDIR)/pdf"; make clean all-pdf
+	@echo "Producing pdf How to ok"
 
 post:
 	sh ./postprocess.sh
