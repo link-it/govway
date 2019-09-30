@@ -1,3 +1,10 @@
+2019-09-30  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-902
+	Se la terminazione ssl viene gestita su un frontend http (Apache httpd, IIS, etc) che inoltra su header http i certificati x.509 
+	o il DN dei certificati client autenticati, GovWay può adesso essere configurato per processare le informazioni presenti in tali header.
+
 2019-07-27  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor]

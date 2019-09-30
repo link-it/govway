@@ -30,8 +30,12 @@ import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiConfigurationException;
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.PrincipalType;
+import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.springframework.web.util.UriUtils;
 
 /**     
  * GestoreCredenzialiEngine
@@ -225,6 +229,10 @@ public class GestoreCredenzialiEngine {
 		}
 		
 		String headerNameSSLSubject = null;
+		String headerNameSSLIssuer = null;
+		String headerNameSSLCertificate = null;
+		boolean sslCertificateUrlDecode = false;
+		boolean sslCertificateBase64Decode = false;
 		boolean verificaIdentitaSSL = false;
 		try {
 			if(this.portaApplicativa){
@@ -232,7 +240,29 @@ public class GestoreCredenzialiEngine {
 			}else{
 				headerNameSSLSubject = op2Properties.getGestoreCredenzialiPortaDelegataHeaderSslSubject();
 			}
-			verificaIdentitaSSL = headerNameSSLSubject!=null;
+			if(this.portaApplicativa){
+				headerNameSSLIssuer = op2Properties.getGestoreCredenzialiPortaApplicativaHeaderSslIssuer();
+			}else{
+				headerNameSSLIssuer = op2Properties.getGestoreCredenzialiPortaDelegataHeaderSslIssuer();
+			}
+			if(this.portaApplicativa){
+				headerNameSSLCertificate = op2Properties.getGestoreCredenzialiPortaApplicativaHeaderSslCertificate();
+			}else{
+				headerNameSSLCertificate = op2Properties.getGestoreCredenzialiPortaDelegataHeaderSslCertificate();
+			}
+			if(headerNameSSLCertificate!=null) {
+				if(this.portaApplicativa){
+					sslCertificateUrlDecode = op2Properties.isGestoreCredenzialiPortaApplicativaHeaderSslCertificateUrlDecode();
+				}else{
+					sslCertificateUrlDecode = op2Properties.isGestoreCredenzialiPortaDelegataHeaderSslCertificateUrlDecode();
+				} 
+				if(this.portaApplicativa){
+					sslCertificateBase64Decode = op2Properties.isGestoreCredenzialiPortaApplicativaHeaderSslCertificateBase64Decode();
+				}else{
+					sslCertificateBase64Decode = op2Properties.isGestoreCredenzialiPortaDelegataHeaderSslCertificateBase64Decode();
+				} 
+			}
+			verificaIdentitaSSL = headerNameSSLSubject!=null || headerNameSSLCertificate!=null;
 		}catch(Exception e) {
 			// non dovrebbe succedere eccezioni, la validazione dei metodi viene fatta allo startup della PdD
 			throw new GestoreCredenzialiException(e.getMessage(),e);
@@ -263,15 +293,19 @@ public class GestoreCredenzialiEngine {
 			existsHeader_basicPassword = existsHeader(headerTrasporto, headerNameBasicPassword);
 		}
 		boolean existsHeader_sslSubject = false;
+		boolean existsHeader_sslIssuer = false;
+		boolean existsHeader_sslCertificate = false;
 		if(verificaIdentitaSSL){
 			existsHeader_sslSubject = existsHeader(headerTrasporto, headerNameSSLSubject);
+			existsHeader_sslIssuer = existsHeader(headerTrasporto, headerNameSSLIssuer);
+			existsHeader_sslCertificate = existsHeader(headerTrasporto, headerNameSSLCertificate);
 		}
 		boolean existsHeader_principal = false;
 		if(verificaIdentitaPrincipal){
 			existsHeader_principal = existsHeader(headerTrasporto, headerNamePrincipal);
 		}
 		
-		if( (!existsHeader_basicUsername || !existsHeader_basicPassword) && !existsHeader_sslSubject && !existsHeader_principal ){
+		if( (!existsHeader_basicUsername || !existsHeader_basicPassword) && !existsHeader_sslSubject && !existsHeader_sslCertificate && !existsHeader_principal ){
 			return credenzialiTrasporto; // credenziali originali poiche' non sono presenti header che indicano nuove credenziali.	
 		}
 				
@@ -293,22 +327,84 @@ public class GestoreCredenzialiEngine {
 		}
 		
 		// Lettura credenziali ssl
-		if(verificaIdentitaSSL &&
-				existsHeader_sslSubject ){
-			
-			String subject = getProperty(headerTrasporto, 	headerNameSSLSubject );
-			if(subject==null || "".equals(subject)){
-				throw new GestoreCredenzialiConfigurationException("Subject value non fornito nell'header del trasporto "+headerNameSSLSubject);
+		if(verificaIdentitaSSL) {
+			if(existsHeader_sslSubject ){
+				
+				String subject = getProperty(headerTrasporto, 	headerNameSSLSubject );
+				if(subject==null || "".equals(subject)){
+					throw new GestoreCredenzialiConfigurationException("Subject value non fornito nell'header del trasporto "+headerNameSSLSubject);
+				}
+				try{
+					org.openspcoop2.utils.certificate.CertificateUtils.formatPrincipal(subject, PrincipalType.subject);
+					// Non posso validare, verra' fornito un certificato nel formato RFC 2253 o RFC 1779
+					// Sicuramente puo' contenere sia il carattere '/' che ',' ma uno dei due sara' escaped tramite il formato richiesto.
+					//org.openspcoop.utils.Utilities.validaSubject(subject);
+				}catch(Exception e){
+					throw new GestoreCredenzialiException("Subject value fornito nell'header del trasporto "+headerNameSSLSubject+" non valido: "+e.getMessage(),e);
+				}
+				c.setSubject(subject);
 			}
-			try{
-				org.openspcoop2.utils.certificate.CertificateUtils.formatPrincipal(subject, PrincipalType.subject);
-				// Non posso validare, verra' fornito un certificato nel formato RFC 2253 o RFC 1779
-				// Sicuramente puo' contenere sia il carattere '/' che ',' ma uno dei due sara' escaped tramite il formato richiesto.
-				//org.openspcoop.utils.Utilities.validaSubject(subject);
-			}catch(Exception e){
-				throw new GestoreCredenzialiException("Subject value fornito nell'header del trasporto "+headerNameSSLSubject+" non valido: "+e.getMessage(),e);
+			if(existsHeader_sslIssuer ){
+				
+				String issuer = getProperty(headerTrasporto, 	headerNameSSLIssuer );
+				if(issuer==null || "".equals(issuer)){
+					throw new GestoreCredenzialiConfigurationException("Issuer value non fornito nell'header del trasporto "+headerNameSSLIssuer);
+				}
+				try{
+					org.openspcoop2.utils.certificate.CertificateUtils.formatPrincipal(issuer, PrincipalType.issuer);
+					// Non posso validare, verra' fornito un certificato nel formato RFC 2253 o RFC 1779
+					// Sicuramente puo' contenere sia il carattere '/' che ',' ma uno dei due sara' escaped tramite il formato richiesto.
+					//org.openspcoop.utils.Utilities.validaSubject(subject);
+				}catch(Exception e){
+					throw new GestoreCredenzialiException("Issuer value fornito nell'header del trasporto "+headerNameSSLIssuer+" non valido: "+e.getMessage(),e);
+				}
+				c.setIssuer(issuer);
 			}
-			c.setSubject(subject);
+			if(existsHeader_sslCertificate ){
+				
+				String certificate = getProperty(headerTrasporto, 	headerNameSSLCertificate );
+				if(certificate==null || "".equals(certificate)){
+					throw new GestoreCredenzialiConfigurationException("Certificate non fornito nell'header del trasporto "+headerNameSSLCertificate);
+				}
+				
+				if(sslCertificateUrlDecode) {
+					certificate = UriUtils.decode(certificate, Charset.UTF_8.getValue());
+				}
+				
+				byte [] certBytes = null;
+				if(sslCertificateBase64Decode) {
+					certBytes = Base64Utilities.decode(certificate);
+				}
+				else {
+
+					boolean enrichPrefixCERT = false; // TODO se serve. Per ora non e' agganciata
+					String BEGIN = "----BEGIN CERTIFICATE----";
+					String END = "----END CERTIFICATE----";
+					if(enrichPrefixCERT) {
+						if(certificate.startsWith(BEGIN)==false) {
+							certificate = BEGIN+"\n"+certificate;
+						}
+						if(certificate.endsWith(END)==false) {
+							certificate = certificate+ "\n"+END;
+						}
+					}
+
+					certBytes = certificate.getBytes();
+				}
+				
+				try{
+					c.setCertificate(ArchiveLoader.load(certBytes));
+					
+					String subject = c.getCertificate().getCertificate().getSubject().toString();
+					String issuer = c.getCertificate().getCertificate().getIssuer().toString();
+					c.setSubject(subject);
+					c.setIssuer(issuer);
+					
+				}catch(Exception e){
+					throw new GestoreCredenzialiException("Certificate fornito nell'header del trasporto "+headerNameSSLCertificate+" non valido: "+e.getMessage(),e);
+				}
+				
+			}
 		}
 		
 		// Lettura credenziali principal

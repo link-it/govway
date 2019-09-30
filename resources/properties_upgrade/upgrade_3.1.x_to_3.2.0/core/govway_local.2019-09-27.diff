@@ -1,0 +1,66 @@
+--- a/ant/setup/deploy/resources/core/govway_local.properties
++++ b/ant/setup/deploy/resources/core/govway_local.properties
+@@ -68,3 +68,63 @@ org.openspcoop2.pdd.pd.generateWsdl=false
+ org.openspcoop2.pdd.pa.generateWsdl=false
+ # ================================================
+ 
++# ================================================
++# Mediazione tramite WebServer (Fruizioni)
++org.openspcoop2.pdd.services.pd.gestoreCredenziali.enabled=false
++# Nome del WebServer che media le comunicazioni https con GovWay
++org.openspcoop2.pdd.services.pd.gestoreCredenziali.nome=WebServer<NomeSoggettoDefault>
++#
++# Modalità di autenticazione da parte di GovWay del webServer (none/ssl/basic/principal)
++org.openspcoop2.pdd.services.pd.gestoreCredenziali.autenticazioneCanale=none
++# Credenziali attese da GovWay (a seconda della modalità di autenticazione indicata) che identificano il webServer
++#org.openspcoop2.pdd.services.pd.gestoreCredenziali.autenticazioneCanale.basic.username=Username
++#org.openspcoop2.pdd.services.pd.gestoreCredenziali.autenticazioneCanale.basic.password=Password
++#org.openspcoop2.pdd.services.pd.gestoreCredenziali.autenticazioneCanale.ssl.subject=Subject
++#org.openspcoop2.pdd.services.pd.gestoreCredenziali.autenticazioneCanale.principal=Principal
++# 
++# Il WebServer, se effettua autenticazione https può inoltrare le informazioni sul certificato client tramite i seguenti header http.
++# DN del Subject e dell'Issuer tramite gli header:
++#org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.subject=X-SSL-Subject
++#org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.issuer=X-SSL-Issuer
++# Certificato tramite l'header:
++#org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate=X-SSL-Cert
++# Indicazione se l'header valorizzato con il certificato è url encoded:
++#org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.url_decode=true/false
++# Indicazione se l'header valorizzato con il certificato è base64 encoded:
++#org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.base64_decode=true/false
++#
++# L'identità del chiamante può essere fornita dal WebServer anche come informazione 'principal' tramite il seguente header:
++#org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.principal=X-Principal
++================================================
++
++# ================================================
++# Mediazione tramite WebServer (Erogazioni)
++org.openspcoop2.pdd.services.pa.gestoreCredenziali.enabled=false
++# Nome del WebServer che media le comunicazioni https con GovWay
++org.openspcoop2.pdd.services.pa.gestoreCredenziali.nome=WebServer<NomeSoggettoDefault>
++#
++# Modalità di autenticazione da parte di GovWay del webServer (none/ssl/basic/principal)
++org.openspcoop2.pdd.services.pa.gestoreCredenziali.autenticazioneCanale=none
++# Credenziali attese da GovWay (a seconda della modalità di autenticazione indicata) che identificano il webServer
++#org.openspcoop2.pdd.services.pa.gestoreCredenziali.autenticazioneCanale.basic.username=Username
++#org.openspcoop2.pdd.services.pa.gestoreCredenziali.autenticazioneCanale.basic.password=Password
++#org.openspcoop2.pdd.services.pa.gestoreCredenziali.autenticazioneCanale.ssl.subject=Subject
++#org.openspcoop2.pdd.services.pa.gestoreCredenziali.autenticazioneCanale.principal=Principal
++# 
++# Il WebServer, se effettua autenticazione https può inoltrare le informazioni sul certificato client tramite i seguenti header http.
++# DN del Subject e dell'Issuer tramite gli header:
++#org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.subject=X-SSL-Subject
++#org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.issuer=X-SSL-Issuer
++# Certificato tramite l'header:
++#org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate=X-SSL-Cert
++# Indicazione se l'header valorizzato con il certificato è url encoded:
++#org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode=true/false
++# Indicazione se l'header valorizzato con il certificato è base64 encoded:
++#org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.base64_decode=true/false
++#
++# L'identità del chiamante può essere fornita dal WebServer anche come informazione 'principal' tramite il seguente header:
++#org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.principal=X-Principal
++================================================
++
++
++
