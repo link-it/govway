@@ -44,12 +44,36 @@ Passi da eseguire:
 
 2. Successivamente si passa alla chiamata della "POST /pet" seguendo il flusso OAuth2 richiesto per l'approvvigionamento del token di autorizzazione. Posizionarsi sulla request "2b. Erogazione Token (postPet) OK":
 
-    - Nella sezione "Authorization" selezionare il Type "OAuth 2.0" e premere il pulsante "Get New Access Token", quindi "Request Token" sulla finestra popup successiva (i campi del form sono compilati con i valori presenti nella configurazione del progetto). *** CAPIRE QUALI VALORI INDICARE ***
-    - Completare il processo di autenticazione dell'utente seguendo il flusso proposto. *** CREDENZIALI UTENTE? ***
-    - Superata l'autenticazione, viene restituito l'access token (mostrato a video sulla finestra popup).
-    - Inserire il token nella richiesta premendo il pulsante "Use Token".
-    - Eseguire la richiesta tramite il pulsante "Send".
-    - L'operazione viene eseguita con successo e restituito l'esito (:numref:`postman_erogazione_OK_fig`).
+  - Nella sezione "Authorization" selezionare il Type "OAuth 2.0" e premere il pulsante "Get New Access Token"
+  - La maschera fornita (:numref:`postman_newAccessToken_fig`) deve essere compilata con i parametri necessari ad richiedere un token all'authorization server. Utilizzare i seguenti parametri che permettono di richiedere un token all'authorization server preconfigurato per lo scenario:
+
+      ::
+
+          Callback URL: {{keycloak-callback-url}}
+	  Auth URL: {{keycloak-url-auth}}
+	  Access Token URL: {{keycloak-url-token}}
+	  Client ID: {{keycloak-client-id}}
+	  Client Secret: {{keycloak-client-secret}}
+
+   .. figure:: ../_figure_scenari/postman_newAccessToken.png
+    :scale: 80%
+    :align: center
+    :name: postman_newAccessToken_fig
+
+    Ottenimento nuovo token
+
+  - Compilati correttamente i campi per ottenere un token cliccare sul pulsante "Request Token"
+  - Completare il processo di autenticazione dell'utente seguendo il flusso proposto ed utilizzando le credenziali dell'utente preconfigurato sull'authorization server per lo scenario di test:
+
+      ::
+
+          username: paolorossi
+	  password: 123456
+
+  - Superata l'autenticazione, viene restituito l'access token (mostrato a video sulla finestra popup).
+  - Inserire il token nella richiesta premendo il pulsante "Use Token".
+  - Eseguire la richiesta tramite il pulsante "Send".
+  - L'operazione viene eseguita con successo e restituito l'esito (:numref:`postman_erogazione_OK_fig`).
 
    .. figure:: ../_figure_scenari/Postman_erogazione_OK.png
     :scale: 80%

@@ -5,7 +5,7 @@ Fruizione REST ModI PA
 
 Obiettivo
 ---------
-Fruire di un servizio REST accessibile in accordo alla normativa prevista dal Modello di Interoperabilità 2018.
+Fruire di un servizio REST accessibile in accordo alla normativa prevista dal Modello di Interoperabilità.
 
 Sintesi
 -------

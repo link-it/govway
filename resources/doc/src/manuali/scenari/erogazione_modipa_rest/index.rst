@@ -5,7 +5,7 @@ Erogazione REST ModI PA
 
 Obiettivo
 ---------
-Esporre un servizio REST accessibile in accordo alla normativa prevista dal Modello di Interoperabilità 2018.
+Esporre un servizio REST accessibile in accordo alla normativa prevista dal Modello di Interoperabilità.
 
 Sintesi
 -------
@@ -38,7 +38,7 @@ L'esecuzione dello scenario si basa sui seguenti elementi:
 - una API "PetStore", basata su REST, profilo di interazione Bloccante e profili di sicurezza IDAC02, IDAR02 e IDAR03.
 - un'istanza Govway per la gestione del profilo ModI PA nel dominio dell'erogatore.
 - un client del dominio esterno che invoca la "POST /pet" diretto all'erogazione esposta da Govway.
-- il server PetStore di esempio che riceve le richieste inoltrate dal Govway e produce le relative risposte.
+- il server PetStore di esempio che riceve le richieste inoltrate dal Govway e produce le relative risposte. Per questo scenario viene utilizzato il server disponibile on line all'indirizzo 'http://petstore.swagger.io/'.
 
 Per eseguire e verificare lo scenario si può utilizzare il progetto Postman a corredo con la request "5. Erogazione ModI PA", che è stato preconfigurato per il funzionamento con le caratteristiche descritte sopra.
 

@@ -20,7 +20,7 @@ Sono state introdotte le seguenti nuove funzionalità:
 - *Tipologia delle Transazioni*: è stata reintrodotta la possibilità di ricerca senza dover indicare obbligatoriamente la tipologia della transazione (erogazione/fruizione). 
 
 - *Indirizzo IP del Chiamante*: è stata aggiunta la possibilità di effettuare la ricerca di transazioni specificando l'indirizzo IP del chiamante. L'indirizzo IP può riferirsi all'indirizzo IP del client o al valore dell'header http 'X-Forwarded-For'.
-  L'indirizzo IP può essere inoltre utilizzato per filtrare i risultati dei report statistici (Distribuzione per API, per Operazione, per Soggetto ...). Infine è stata introdotta un nuovo tipo di report basat sugli indirizzi IP dei chiamanti.
+  L'indirizzo IP può essere inoltre utilizzato per filtrare i risultati dei report statistici (Distribuzione per API, per Operazione, per Soggetto ...). Infine è stata introdotta un nuovo tipo di report basato sugli indirizzi IP dei chiamanti.
 
 -  *Ricerca per Identificativo di Collaborazione*: aggiunta la possibilità di effettuare ricerche per individuare tutte le transazioni correlate attraverso il medesimo *identificativo di collaborazione*.
  

@@ -5,7 +5,7 @@ Erogazione SOAP ModI PA
 
 Obiettivo
 ---------
-Esporre un servizio SOAP accessibile in accordo alla normativa prevista dal Modello di Interoperabilità 2018.
+Esporre un servizio SOAP accessibile in accordo alla normativa prevista dal Modello di Interoperabilità.
 
 Sintesi
 -------
@@ -34,10 +34,10 @@ Esecuzione
 ----------
 L'esecuzione dello scenario si basa sui seguenti elementi:
 
-- una API di esempio (SOAPBlockingImpl), basata su SOAP, profilo di interazione Bloccante e profili di sicurezza IDAC02, IDAS02 e IDAS03.
+- una API di esempio (Credit Card Verification), basata su SOAP, profilo di interazione Bloccante e profili di sicurezza IDAC02, IDAS02 e IDAS03.
 - un'istanza Govway per la gestione del profilo ModI PA nel dominio dell'erogatore.
-- un client del dominio esterno che invoca l'azione di esempio "MRequest".
-- il server SOAPBlockingImpl di esempio che riceve le richieste inoltrate dal Govway e produce le relative risposte.
+- un client del dominio esterno che invoca l'azione di esempio "CheckCC".
+- il server 'Credit Card Verification' di esempio che riceve le richieste inoltrate dal Govway e produce le relative risposte. Per questo scenario viene utilizzato il server disponibile on line all'indirizzo 'http://ws.cdyne.com/creditcardverify/luhnchecker.asmx'.
 
 Per eseguire e verificare lo scenario si può utilizzare il progetto Postman a corredo con la request "7. Erogazione SOAP ModI PA", che è stato preconfigurato per il funzionamento con le caratteristiche descritte sopra.
 
@@ -71,7 +71,9 @@ Conformità ai requisiti ModI PA
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 La verifica dei requisiti ModI PA per questo scenario non differisce da quanto già descritto in :ref:`modipa_conformita`.
 
-Il processo di configurazione per questo scenario è del tutto analogo a quello descritto per lo scenario :ref:`scenari_erogazione_rest_modipa`. Nel seguito sono evidenziate le sole differenze.
+Il processo di configurazione per questo scenario è del tutto analogo a quello descritto per lo scenario :ref:`scenari_erogazione_rest_modipa`. Nel seguito sono evidenziate le sole differenze. 
+
+L'interfaccia wsdl del servizio soap è ottenibile all'indirizzo 'https://ws.cdyne.com/creditcardverify/luhnchecker.asmx?wsdl'.
 
 Registrazione API
 ~~~~~~~~~~~~~~~~~

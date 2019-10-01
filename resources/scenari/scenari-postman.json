@@ -1,0 +1,489 @@
+{
+	"info": {
+		"_postman_id": "388f3e56-fa78-45fc-9964-864ee696550a",
+		"name": "Scenari GovWay",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Erogazione Pubblica (findByStatus)",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{govway-url}}/{{soggetto}}/PetStore/v1/pet/findByStatus?status=available",
+					"host": [
+						"{{govway-url}}"
+					],
+					"path": [
+						"{{soggetto}}",
+						"PetStore",
+						"v1",
+						"pet",
+						"findByStatus"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "available"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2a. Erogazione Token (postPet) Error",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 32,\n  \"category\": {\n    \"id\": 0,\n    \"name\": \"Alano\"\n  },\n  \"name\": \"Leo\",\n  \"photoUrls\": [\n    \"string\"\n  ],\n  \"tags\": [\n    {\n      \"id\": 0,\n      \"name\": \"pelo corto\"\n    }\n  ],\n  \"status\": \"available\"\n}"
+				},
+				"url": {
+					"raw": "{{govway-url}}/{{soggetto}}/PetStore/v1/pet",
+					"host": [
+						"{{govway-url}}"
+					],
+					"path": [
+						"{{soggetto}}",
+						"PetStore",
+						"v1",
+						"pet"
+					]
+				},
+				"description": "Invocazione di una erogazione pubblicamente accessibile (POST)"
+			},
+			"response": []
+		},
+		{
+			"name": "2b. Erogazione Token (postPet) OK",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessToken",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJJOFQxbERhWWZ1SlNRZGQydkcyWHhpN3lpTzUyTWxDMHA0ZHlFeElMcmI4In0.eyJqdGkiOiIxOGI1Y2JlNy1lOTgxLTRjYWItYWRjNS04YmI0YjM3ZTA1ZWUiLCJleHAiOjE1Njc2MDc1NDUsIm5iZiI6MCwiaWF0IjoxNTY3NjA3MjQ1LCJpc3MiOiJodHRwOi8vMTAuMTE0Ljg3LjM3OjgwODAvYXV0aC9yZWFsbXMvdGVzdHJlYWxtIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjIyMTU4ZmIxLWNlYTctNDZjOS04MTgwLTFlMzBjY2I0Zjk0NCIsInR5cCI6IkJlYXJlciIsImF6cCI6InRlc3RjbGllbnQiLCJhdXRoX3RpbWUiOjE1Njc2MDYxNjEsInNlc3Npb25fc3RhdGUiOiIwNmIzZDQ0Yi1lMjYzLTQxZTQtYjlkNC03Y2JjMTdhYzQ1ZjciLCJhY3IiOiIwIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHA6Ly9zZXJ2aXppY2xpZW50aS5saW5rLml0LyoiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJ0ZXN0Y2xpZW50Ijp7InJvbGVzIjpbInVtYV9wcm90ZWN0aW9uIiwidGVzdHJvbGUiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoicHJvZmlsZSBwaG9uZSBlbWFpbCIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IlV0ZW50ZSBUZXN0IiwicHJlZmVycmVkX3VzZXJuYW1lIjoidGVzdHVzZXIiLCJnaXZlbl9uYW1lIjoiVXRlbnRlIiwiZmFtaWx5X25hbWUiOiJUZXN0In0.PoYXHCFg_T2ZMi5sbuOpKHfv7M-_ufoEjVl0M8bmuxN69b8gwDjmglARRHl4B03bigy4erX3zYZnYTAXYZ_M9iQE7gL9Lrj3JNMbQh_PB9cYh89EN-9RAwR35bsLx0ioebA3Lb6diSjMtE6rvyQhM7hZTmdMyV6DAMO1Q1F4SPfytO6RvYewc2CrEDbaqKuljcwBXphXRKTU3fb-3g0dpAbXVFlXr-SB56zAMStIulE9rX6n6ug6RRqbvN644Lf_oUropjk0Snzj2JZHSwSge0p5vtY-YoyK_hNo5rvR8XrdndywVqojc1CNGpxhvoy6KuJ8aEJgEMHXeADI63ft8Q",
+							"type": "string"
+						},
+						{
+							"key": "tokenType",
+							"value": "bearer",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 32,\n  \"category\": {\n    \"id\": 0,\n    \"name\": \"Alano\"\n  },\n  \"name\": \"Leo\",\n  \"photoUrls\": [\n    \"string\"\n  ],\n  \"tags\": [\n    {\n      \"id\": 0,\n      \"name\": \"pelo corto\"\n    }\n  ],\n  \"status\": \"available\"\n}"
+				},
+				"url": {
+					"raw": "{{govway-url}}/{{soggetto}}/PetStore/v1/pet",
+					"host": [
+						"{{govway-url}}"
+					],
+					"path": [
+						"{{soggetto}}",
+						"PetStore",
+						"v1",
+						"pet"
+					]
+				},
+				"description": "Invocazione di una erogazione pubblicamente accessibile (POST)"
+			},
+			"response": []
+		},
+		{
+			"name": "3. Erogazione Pubblica (getPet)",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{govway-url}}/{{soggetto}}/PetStore/v1/pet/32",
+					"host": [
+						"{{govway-url}}"
+					],
+					"path": [
+						"{{soggetto}}",
+						"PetStore",
+						"v1",
+						"pet",
+						"32"
+					]
+				},
+				"description": "Invocazione di una erogazione pubblicamente accessibile (GET)"
+			},
+			"response": []
+		},
+		{
+			"name": "5a. Erogazione REST ModI PA",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "App1.{{soggettoEsterno}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 32,\n  \"category\": {\n    \"id\": 0,\n    \"name\": \"Alano\"\n  },\n  \"name\": \"Leo\",\n  \"photoUrls\": [\n    \"string\"\n  ],\n  \"tags\": [\n    {\n      \"id\": 0,\n      \"name\": \"pelo corto\"\n    }\n  ],\n  \"status\": \"available\"\n}"
+				},
+				"url": {
+					"raw": "{{govway-url}}/rest/out/{{soggettoEsterno}}/{{soggetto}}/PetStore/v1/pet",
+					"host": [
+						"{{govway-url}}"
+					],
+					"path": [
+						"rest",
+						"out",
+						"{{soggettoEsterno}}",
+						"{{soggetto}}",
+						"PetStore",
+						"v1",
+						"pet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5b. Erogazione REST ModI PA Error",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "App2.{{soggettoEsterno}}",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 32,\n  \"category\": {\n    \"id\": 0,\n    \"name\": \"Alano\"\n  },\n  \"name\": \"Leo\",\n  \"photoUrls\": [\n    \"string\"\n  ],\n  \"tags\": [\n    {\n      \"id\": 0,\n      \"name\": \"pelo corto\"\n    }\n  ],\n  \"status\": \"available\"\n}"
+				},
+				"url": {
+					"raw": "{{govway-url}}/rest/out/{{soggettoEsterno}}/{{soggetto}}/PetStore/v1/pet",
+					"host": [
+						"{{govway-url}}"
+					],
+					"path": [
+						"rest",
+						"out",
+						"{{soggettoEsterno}}",
+						"{{soggetto}}",
+						"PetStore",
+						"v1",
+						"pet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6. Fruizione REST ModI PA",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "App1.{{soggetto}}",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 32,\n  \"category\": {\n    \"id\": 0,\n    \"name\": \"Alano\"\n  },\n  \"name\": \"Leo\",\n  \"photoUrls\": [\n    \"string\"\n  ],\n  \"tags\": [\n    {\n      \"id\": 0,\n      \"name\": \"pelo corto\"\n    }\n  ],\n  \"status\": \"available\"\n}"
+				},
+				"url": {
+					"raw": "{{govway-url}}/rest/out/{{soggetto}}/{{soggettoEsterno}}/PetStore/v1/pet",
+					"host": [
+						"{{govway-url}}"
+					],
+					"path": [
+						"rest",
+						"out",
+						"{{soggetto}}",
+						"{{soggettoEsterno}}",
+						"PetStore",
+						"v1",
+						"pet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "7. Erogazione SOAP ModI PA",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "App1.{{soggettoEsterno}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "text/xml"
+					},
+					{
+						"key": "SOAPAction",
+						"value": "http://ws.cdyne.com/CheckCC",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CheckCC xmlns=\"http://ws.cdyne.com/\">\n            <CardNumber>4111111111111111</CardNumber>\n        </CheckCC>\n    </soapenv:Body>\n</soapenv:Envelope>"
+				},
+				"url": {
+					"raw": "{{govway-url}}/soap/out/{{soggettoEsterno}}/{{soggetto}}/LuhnCheckerSoap/v1/",
+					"host": [
+						"{{govway-url}}"
+					],
+					"path": [
+						"soap",
+						"out",
+						"{{soggettoEsterno}}",
+						"{{soggetto}}",
+						"LuhnCheckerSoap",
+						"v1",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "8. Fruizione SOAP ModI PA",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "App1.{{soggetto}}",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "text/xml"
+					},
+					{
+						"key": "SOAPAction",
+						"value": "http://ws.cdyne.com/CheckCC",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <CheckCC xmlns=\"http://ws.cdyne.com/\">\n            <CardNumber>4111111111111111</CardNumber>\n        </CheckCC>\n    </soapenv:Body>\n</soapenv:Envelope>"
+				},
+				"url": {
+					"raw": "{{govway-url}}/soap/out/{{soggetto}}/{{soggettoEsterno}}/LuhnCheckerSoap/v1/",
+					"host": [
+						"{{govway-url}}"
+					],
+					"path": [
+						"soap",
+						"out",
+						"{{soggetto}}",
+						"{{soggettoEsterno}}",
+						"LuhnCheckerSoap",
+						"v1",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "88792ee5-c463-4bd8-9916-f0fb70387d4b",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "f25cc912-fa7c-40f9-b099-49d1fae39b6d",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "d568fac7-dfc1-4e42-9a74-bf6e638d9ccc",
+			"key": "hostname",
+			"value": "127.0.0.1",
+			"type": "string"
+		},
+		{
+			"id": "403f59a2-c8c8-4403-b5ff-0e999042da59",
+			"key": "govway-url",
+			"value": "https://{{hostname}}/govway",
+			"type": "string"
+		},
+		{
+			"id": "039a86a9-f2d8-4cde-943b-3dfca3b3d285",
+			"key": "soggetto",
+			"value": "Ente",
+			"type": "string"
+		},
+		{
+			"id": "b336a15a-ad95-4de0-a3b2-2d21f4a13bd9",
+			"key": "soggettoEsterno",
+			"value": "EnteEsterno",
+			"type": "string"
+		},
+		{
+			"id": "9f914808-fa67-4bd7-b1f5-d4b6fc4442bd",
+			"key": "keycloak-url-auth",
+			"value": "https://{{hostname}}/auth/realms/master/protocol/openid-connect/auth",
+			"type": "string"
+		},
+		{
+			"id": "3c7afc92-8d01-4615-a22d-8e828e0d6ac4",
+			"key": "keycloak-url-token",
+			"value": "https://{{hostname}}/auth/realms/master/protocol/openid-connect/token",
+			"type": "string"
+		},
+		{
+			"id": "00f8d502-c949-4a02-90dc-8b17783fcb31",
+			"key": "keycloak-client-id",
+			"value": "oauth2-app1",
+			"type": "string"
+		},
+		{
+			"id": "cd43567b-4a6b-4209-b85f-23f7a252d09e",
+			"key": "keycloak-client-secret",
+			"value": "fd5f09fa-028d-461b-8e4f-063c111c069f",
+			"type": "string"
+		},
+		{
+			"id": "9de847c1-a59b-46cf-9739-1b1ff1d79bd0",
+			"key": "keycloak-callback-url",
+			"value": "http://127.0.0.1/oauth2-app1/callback-uri",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

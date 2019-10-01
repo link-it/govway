@@ -5,7 +5,7 @@ Fruizione SOAP ModI PA
 
 Obiettivo
 ---------
-Fruire di un servizio SOAP accessibile in accordo alla normativa prevista dal Modello di Interoperabilità 2018.
+Fruire di un servizio SOAP accessibile in accordo alla normativa prevista dal Modello di Interoperabilità.
 
 Sintesi
 -------
@@ -34,9 +34,9 @@ Esecuzione
 ----------
 L'esecuzione dello scenario si basa sui seguenti elementi:
 
-- una API di esempio (SOAPBlockingImpl), basata su SOAP, profilo di interazione Bloccante e profili di sicurezza IDAC02, IDAS02 e IDAS03.
+- una API di esempio (Credit Card Verification), basata su SOAP, profilo di interazione Bloccante e profili di sicurezza IDAC02, IDAS02 e IDAS03.
 - un'istanza Govway per la gestione del profilo ModI PA nel dominio del fruitore.
-- un client del dominio gestito che invoca l'azione di esempio "MRequest" tramite Govway.
+- un client del dominio gestito che invoca l'azione di esempio "CheckCC" tramite Govway.
 
 Per eseguire e verificare lo scenario si può utilizzare il progetto Postman a corredo con la request "8. Fruizione SOAP ModI PA", che è stato preconfigurato per il funzionamento con le caratteristiche descritte sopra.
 
