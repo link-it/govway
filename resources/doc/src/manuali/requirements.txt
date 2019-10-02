@@ -1,1 +1,1 @@
-$ pip install sphinx_ops_theme
+sphinx_ops_theme
