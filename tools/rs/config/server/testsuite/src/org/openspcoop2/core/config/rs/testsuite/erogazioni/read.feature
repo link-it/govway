@@ -80,3 +80,20 @@ Scenario: Erogazioni Get Connettore Erogazione
     * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
     * call delete ({ resourcePath: api_petstore_path })
 
+
+@FindAllTags
+Scenario: Erogazioni FindAll di Api con Tags definiti 
+
+* eval api_petstore.tags = ['TESTSUITE']
+
+* call create ({ resourcePath: 'api', body: api_petstore })
+* call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+
+* def erogazioni_response = call read('classpath:findall_stub.feature') { resourcePath: 'erogazioni', query_params:  { tag: '#(api_petstore.tags[0])' } }
+* match each erogazioni_response.findall_response_body.items[*].api_tags == '#notnull'
+* match each erogazioni_response.findall_response_body.items[*].api_tags[*] contains api_petstore.tags[0]
+
+* call delete ({ resourcePath: 'erogazioni/' + petstore_key })
+* call delete ({ resourcePath: api_petstore_path })
+
+

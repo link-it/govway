@@ -7,7 +7,6 @@ Background:
 * def api = read('api.json') 
 * eval randomize(api, ["nome"])
 
-
 @FindAll200
 Scenario: Api FindAll 200 OK
     
@@ -77,7 +76,24 @@ Scenario: Api Get Api Descrizione
     Then status 200
 
     * call delete ( { resourcePath: "api/" + api.nome + "/" + api.versione })
+    
+@GetTags
+Scenario: Api Get Api Tags
 
+* def api_key = api.nome + '/' + api.versione
+* eval api.tags = ['TESTSUITE', 'TESTSUITE2']
+		
+* call create ( { resourcePath: 'api', body: api, key: api_key } )
+
+* def api_tags_get_key = api_key + '/tags'
+* def api_tags_response = call read('classpath:get_stub.feature') { resourcePath: 'api', key:  '#(api_tags_get_key)' }
+
+* match api_tags_response.get_response_body.tags == '#notnull'
+* match api_tags_response.get_response_body.tags == '#[2]'
+* match api_tags_response.get_response_body.tags contains api.tags[0]
+* match api_tags_response.get_response_body.tags contains api.tags[1]
+
+* call delete ( { resourcePath: 'api/' + api_key })
 
 #@GetAllegati
 #Scenario: Get Api Allegati

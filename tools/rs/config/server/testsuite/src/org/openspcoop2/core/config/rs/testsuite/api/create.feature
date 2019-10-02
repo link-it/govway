@@ -32,7 +32,7 @@ Scenario: Api Create SPCoop 204
     * call delete ( { resourcePath: 'soggetti/' + soggetto.nome })
 
 @CreateSPCoopNoSoggetto400
-Scenario:Api  Create SPCoop Referente Not Found
+Scenario: Api Create SPCoop Referente Not Found
     
     * def query_params = ( { profilo: "SPCoop", soggetto: soggetto.nome })
 
@@ -44,4 +44,33 @@ Scenario:Api  Create SPCoop Referente Not Found
     When method post
     Then assert responseStatus == 400
 
+@CreateApiTags
+Scenario: Api Create Tags definiti check get
+	
+* eval api.tags = ['TESTSUITE']
+* def api_key = api.nome + '/' + api.versione
+		
+* call create ( { resourcePath: 'api', body: api, key: api_key } )
+
+* def api_response = call read('classpath:get_stub.feature') { resourcePath: 'api', key:  '#(api_key)' }
+* match api_response.get_response_body.tags == '#notnull'
+* match api_response.get_response_body.tags[0] == api.tags[0]
+
+* call delete ( { resourcePath: 'api/' + api_key })
+
+@CreateApiTagsFindAll
+Scenario: Api Create Tags definiti check findall
+
+* eval api.tags = ['TESTSUITE']
+* def api_key = api.nome + '/' + api.versione
+		
+* call create ( { resourcePath: 'api', body: api, key: api_key } )
+
+* def api_response = call read('classpath:findall_stub.feature') { resourcePath: 'api', query_params:  { tag: '#(api.tags[0])' } }
+* match each api_response.findall_response_body.items[*].tags == '#notnull'
+* match each api_response.findall_response_body.items[*].tags[*] contains api.tags[0]
+
+* call delete ( { resourcePath: 'api/' + api_key })
+    
+    
     

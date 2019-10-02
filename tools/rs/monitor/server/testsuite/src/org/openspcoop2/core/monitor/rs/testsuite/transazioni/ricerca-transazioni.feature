@@ -64,7 +64,62 @@ Scenario: Ricerca per FiltroApi
     When method post
     Then status 200
     And match each response.items contains { api: '#(^expected_api)' }
+    
 
+@FiltroApiTipoQualsiasi
+Scenario: Ricerca per FiltroApi con tipo qualsiasi
+
+    * def filtro = read('classpath:bodies/ricerca-filtro-api-erogazione.json')
+    * set filtro.intervallo_temporale = intervallo_temporale
+    * set filtro.tipo = 'qualsiasi'
+    * set filtro.api = null
+    * set filtro.azione = null
+    * set filtro.esito = { 'tipo' : 'ok' }
+
+    * set filtro.tipo = 'fruizione'
+    Given request filtro
+    When method post
+    Then status 200
+    * match response.items == '#notnull'
+    * match response.items[*].ruolo contains 'fruizione'
+    * match response.items[*].ruolo !contains 'erogazione'
+    * eval numeroFruizioni = response.items.length
+    
+    * set filtro.tipo = 'erogazione'
+    Given request filtro
+    When method post
+    Then status 200
+    * match response.items == '#notnull'
+    * match response.items[*].ruolo contains 'erogazione'
+    * match response.items[*].ruolo !contains 'fruizione'
+    * eval numeroErogazioni = response.items.length
+    
+    * set filtro.tipo = 'qualsiasi'
+    Given request filtro
+    When method post
+    Then status 200
+    * match response.items == '#notnull'
+    * match response.items == '#[(numeroFruizioni + numeroErogazioni)]'
+
+
+@FiltroApiTags
+Scenario: RicercaSempliceTransazioni tramite richiesta GET con tag 'TESTSUITE'
+    
+    * def tag = 'TESTSUITE'
+    * def filtro = read('classpath:bodies/ricerca-filtro-api-erogazione.json')
+    * set filtro.intervallo_temporale = intervallo_temporale
+    * set filtro.tipo = 'qualsiasi'
+    * set filtro.api = null
+    * set filtro.azione = null
+    * set filtro.esito = { 'tipo' : 'ok' }
+    * set filtro.tag = tag
+
+    Given request filtro
+    When method post
+    Then status 200
+    * match response.items == '#notnull'
+    * match response.items[*].api.tags == '#notnull'
+    * match response.items[*].api.tags[*] contains tag
 
 @FiltroMittenteApplicativo
 Scenario: Ricerca per Filtro Mittente Applicativo
@@ -166,7 +221,49 @@ Scenario: Ricerca per Filtro Mittente Soggetto
     And assert response.items.length >= 1
     And match each response.items contains { mittente: '#(^expected_mittente)'}
 
+@FiltroIndirizzoIPClientIP
+Scenario: Ricerca per Filtro Indirizzo IP (Client IP)
+    * def filtro = read('classpath:bodies/ricerca-filtro-mittente-indirizzo-ip.json')
+    * eval filtro.intervallo_temporale = intervallo_temporale
+    * eval filtro.mittente.id.id = "127.0.0.1"
+    * eval filtro.mittente.id.tipo = "client_ip"
 
+    * def expected_mittente = ({ indirizzo_client: filtro.mittente.id.id })
+
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length >= 1
+    And match each response.items contains { mittente: '#(^expected_mittente)' }
+
+    * set filtro.tipo = "fruizione"
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length >= 1
+    And match each response.items contains { mittente: '#(^expected_mittente)' }
+
+@FiltroIndirizzoIPXForwardedFor
+Scenario: Ricerca per Filtro Indirizzo IP (X-Forwarded-For)
+    * def filtro = read('classpath:bodies/ricerca-filtro-mittente-indirizzo-ip.json')
+    * eval filtro.intervallo_temporale = intervallo_temporale
+    * eval filtro.mittente.id.id = "127.0.0.2"
+    * eval filtro.mittente.id.tipo = "x_forwarded_for"
+
+    * def expected_mittente = ({ indirizzo_client_inoltrato: filtro.mittente.id.id })
+
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length >= 1
+    And match each response.items contains { mittente: '#(^expected_mittente)' }
+
+    * set filtro.tipo = "fruizione"
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length >= 1
+    And match each response.items contains { mittente: '#(^expected_mittente)' }
 
 @TestNotFound
     Scenario: Test Not Found
@@ -247,6 +344,72 @@ Scenario: RicercaSempliceTransazioni tramite richiesta GET
     Then status 200
     And assert response.items.length > 0 && response.items.length <= 3
 
+@RicercaSempliceTransazioniTipoQualsiasi
+Scenario: RicercaSempliceTransazioni tramite richiesta GET con tipo transazione 'qualsiasi'
+    
+    * def filtro = read('classpath:bodies/ricerca-filtro-api-erogazione.json')
+    * eval filtro.api.nome = setup.erogazione_petstore.api_nome
+    * eval filtro.api.versione = setup.erogazione_petstore.api_versione    
+    * eval filtro.intervallo_temporale = intervallo_temporale
+
+    * def query =
+    """ ({
+        data_inizio: filtro.intervallo_temporale.data_inizio,
+        data_fine: filtro.intervallo_temporale.data_fine,
+        tipo: 'qualsiasi',
+        esito: 'ok'
+    })
+    """
+   # * set query.soggetto_remoto = setup.erogatore.nome
+    * set query.tipo = 'fruizione'
+    Given params query
+    When method get
+    Then status 200
+    * match response.items == '#notnull'
+    * match response.items[*].ruolo contains 'fruizione'
+    * match response.items[*].ruolo !contains 'erogazione'
+    * eval numeroFruizioni = response.items.length
+    
+  #  * set query.soggetto_remoto = setup.erogatore.nome
+    * set query.tipo = 'erogazione'
+    Given params query
+    When method get
+    Then status 200
+    * match response.items == '#notnull'
+    * match response.items[*].ruolo contains 'erogazione'
+    * match response.items[*].ruolo !contains 'fruizione'
+    * eval numeroErogazioni = response.items.length
+    
+  #  * set query.soggetto_remoto = null
+    * set query.tipo = 'qualsiasi'
+    Given params query
+    When method get
+    Then status 200
+    * match response.items == '#[(numeroFruizioni + numeroErogazioni)]'
+    
+@RicercaSempliceTransazioniTags
+Scenario: RicercaSempliceTransazioni tramite richiesta GET con tag 'TESTSUITE'
+    
+    * def tag = 'TESTSUITE'
+    * def filtro = read('classpath:bodies/ricerca-filtro-api-erogazione.json')
+    * eval filtro.api.nome = setup.erogazione_petstore.api_nome
+    * eval filtro.api.versione = setup.erogazione_petstore.api_versione    
+    * eval filtro.intervallo_temporale = intervallo_temporale
+    
+    * def query =
+    """ ({
+        data_inizio: filtro.intervallo_temporale.data_inizio,
+        data_fine: filtro.intervallo_temporale.data_fine,
+        tipo: 'qualsiasi',
+        tags: tag
+    })
+    """
+    Given params query
+    When method get
+    Then status 200
+    * match response.items == '#notnull'
+    * match response.items[*].api.tags == '#notnull'
+    * match response.items[*].api.tags[*] contains tag
 
 @IdMessaggioRisposta
 Scenario: Ricerca singola transazione per Id Messaggio (Risposta)

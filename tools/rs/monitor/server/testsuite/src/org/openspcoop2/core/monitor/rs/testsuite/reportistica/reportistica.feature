@@ -467,4 +467,49 @@ Scenario: Statistiche per Distribuzione Token Info
     And params query
     When method get
     Then status 200
+    
+@DistribuzioneIndirizzoIP
+Scenario: Statistiche per Distribuzione Indirizzo IP
+    * def filtro = read('classpath:bodies/reportistica-distribuzione-applicativo.json')
+    * set filtro.api = ({nome: setup.erogazione_petstore.api_nome, versione: setup.erogazione_petstore.api_versione})
+    * set filtro.intervallo_temporale = intervallo_temporale
+
+    Given path 'distribuzione-indirizzo-ip'
+    And request filtro
+    When method post
+    Then status 200
+
+    * def query =
+    """
+    ({
+        data_inizio: filtro.intervallo_temporale.data_inizio,
+        data_fine: filtro.intervallo_temporale.data_fine,
+        tipo: filtro.tipo,
+        formato_report: filtro.report.formato,
+        unita_tempo: filtro.unita_tempo,
+        tipo_report: filtro.report.tipo,
+        tipo_informazione_report: filtro.report.tipo_informazione.tipo,
+        esito: filtro.esito.tipo,
+        nome_servizio: filtro.api.nome,
+        versione_servizio: filtro.api.versione
+    })
+    """    
+    Given path 'distribuzione-indirizzo-ip'
+    And params query
+    When method get
+    Then status 200
+
+    * set filtro.tipo = 'fruizione'
+    * set filtro.api.erogatore = setup.fruizione_petstore.erogatore
+    Given path 'distribuzione-indirizzo-ip'
+    And request filtro
+    When method post
+    Then status 200    
+
+    * set query.tipo = 'fruizione'
+    * set query.soggetto_remoto = filtro.api.erogatore
+    Given path 'distribuzione-indirizzo-ip'
+    And params query
+    When method get
+    Then status 200
 

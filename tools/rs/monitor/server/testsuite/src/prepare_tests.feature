@@ -7,6 +7,7 @@ Scenario: Preparazione Test
     * def api_petstore = read('classpath:bodies/api-petstore.json')
     * eval randomize(api_petstore, ["nome"])
     * def api_petstore_path = 'api/' + api_petstore.nome + '/' + api_petstore.versione
+    * eval api_petstore.tags = ['TESTSUITE']
 
     * call create ({ resourcePath: 'api', body: api_petstore })
 
@@ -109,12 +110,14 @@ Scenario: Preparazione Test
     Given url configUrl
     And path erogazione_petstore_path, 'url-invocazione'
     And header Authorization = govwayConfAuth
+    And headers {'X-Forwarded-For': '127.0.0.2' }
     When method get
     Then status 200
     * def url_invocazione = response.url_invocazione
     Given url configUrl
     And path fruizione_petstore_path, 'url-invocazione'
     And header Authorization = govwayConfAuth
+    And headers {'X-Forwarded-For': '127.0.0.2' }
     When method get
     Then status 200
     * def fruizione_url_invocazione = response.url_invocazione
@@ -128,12 +131,14 @@ Scenario: Preparazione Test
     Given url url_invocazione
     And path 'pet'
     And header Authorization = applicativo_credentials
+    And headers {'X-Forwarded-For': '127.0.0.2' }
     And request pet_update
     When method put
     Then status 200
     Given url fruizione_url_invocazione
     And path 'pet'
     And header Authorization = applicativo_credentials
+    And headers {'X-Forwarded-For': '127.0.0.2' }
     And request pet_update
     When method put
     Then status 200
@@ -142,6 +147,7 @@ Scenario: Preparazione Test
     Given url url_invocazione
     And path 'pet'
     And header Authorization = soggetto_credentials
+    And headers {'X-Forwarded-For': '127.0.0.2' }
     And request pet_update
     When method put
     Then status 200
@@ -151,6 +157,7 @@ Scenario: Preparazione Test
     And path 'pet'
     And header HeaderTestPrincipal = applicativo_principal.credenziali.userid
     And header HeaderTestCorrelazione = "prova"
+    And headers {'X-Forwarded-For': '127.0.0.2' }
     And request pet_post
     When method post
     Then status 200
@@ -158,6 +165,7 @@ Scenario: Preparazione Test
     And path 'pet'
     And header HeaderTestPrincipal = applicativo_principal.credenziali.userid
     And header HeaderTestCorrelazione = "prova"
+    And headers {'X-Forwarded-For': '127.0.0.2' }
     And request pet_post
     When method post
     Then status 200
@@ -241,6 +249,7 @@ Scenario: Preparazione Test
     
     * def fruizione_url_invocazione_https =  ( fruizione_url_invocazione.replace('http','https').replace('8080', '8444'))
     Given url fruizione_url_invocazione_https
+    And headers {'X-Forwarded-For': '127.0.0.2' }
     And path 'pet', pet_update.id
     When method get
     Then status 200
@@ -253,6 +262,7 @@ Scenario: Preparazione Test
 
     * def url_invocazione_https = ( url_invocazione.replace('http','https').replace('8080', '8444'))
     Given url url_invocazione_https
+    And headers {'X-Forwarded-For': '127.0.0.2' }
     And path 'pet', pet_update.id
     When method get
     Then status 200

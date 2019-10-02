@@ -107,3 +107,21 @@ Scenario: Fruizioni Get Connettore
     * call delete ({ resourcePath: 'fruizioni/' + fruizione_key })
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
     * call delete ({ resourcePath: api_petstore_path })
+    
+    
+@FindAllTags
+Scenario: Fruizioni FindAll di Api con Tags definiti 
+
+* eval api_petstore.tags = ['TESTSUITE']
+
+* call create ({ resourcePath: 'api', body: api_petstore })
+* call create ({ resourcePath: 'soggetti', body: erogatore })
+* call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
+
+* def fruizioni_response = call read('classpath:findall_stub.feature') { resourcePath: 'fruizioni', query_params:  { tag: '#(api_petstore.tags[0])' } }
+* match each fruizioni_response.findall_response_body.items[*].api_tags == '#notnull'
+* match each fruizioni_response.findall_response_body.items[*].api_tags[*] contains api_petstore.tags[0]
+
+* call delete ({ resourcePath: 'fruizioni/' + fruizione_key })
+* call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+* call delete ({ resourcePath: api_petstore_path })
