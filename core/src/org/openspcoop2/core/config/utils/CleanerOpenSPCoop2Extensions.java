@@ -65,8 +65,13 @@ public class CleanerOpenSPCoop2Extensions {
 		if(configurazionePdD.getSystemProperties()!=null && configurazionePdD.getSystemProperties().sizeSystemPropertyList()<=0) {
 			configurazionePdD.setSystemProperties(null); // altrimeni da errore di validazione in fase di import
 		}
+		
 	}
 
+	public void clean(org.openspcoop2.core.config.GenericProperties policy) {
+		
+	}
+	
 	public void clean(org.openspcoop2.core.config.Soggetto soggettoConfig){
 		
 		soggettoConfig.setSuperUser(null);

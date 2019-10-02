@@ -60,6 +60,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveScope;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
+import org.openspcoop2.protocol.sdk.archive.ArchiveTokenPolicy;
 
 /**
  * EsitoUtils
@@ -487,7 +488,7 @@ public class EsitoUtils {
 			}
 			bfEsito.append("\n");
 		}
-		if(archive.getPdd().size()>0){
+		if(archive.getControlloTraffico_configurationPolicies().size()>0){
 			bfEsito.append("\n");	
 		}
 		
@@ -506,9 +507,49 @@ public class EsitoUtils {
 			}
 			bfEsito.append("\n");
 		}
-		if(archive.getPdd().size()>0){
+		if(archive.getControlloTraffico_activePolicies().size()>0){
 			bfEsito.append("\n");	
 		}
+		
+		
+		// Token Policy (Validation)
+		if(archive.getToken_validation_policies().size()>0){
+			bfEsito.append("Token Policy - Validation (").append(archive.getToken_validation_policies().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getToken_validation_policies().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveTokenPolicy = archive.getToken_validation_policies().get(i);
+				String nomePolicy = ((ArchiveTokenPolicy)archiveTokenPolicy.getArchiveObject()).getNomePolicy();
+				bfEsito.append("\t- [").append(nomePolicy).append("] ");
+				serializeStato(archiveTokenPolicy, bfEsito, importOperation);
+			}catch(Throwable e){
+				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getToken_validation_policies().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		// Token Policy (Retrieve)
+		if(archive.getToken_retrieve_policies().size()>0){
+			bfEsito.append("Token Policy - Retrieve (").append(archive.getToken_retrieve_policies().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getToken_retrieve_policies().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveTokenPolicy = archive.getToken_retrieve_policies().get(i);
+				String nomePolicy = ((ArchiveTokenPolicy)archiveTokenPolicy.getArchiveObject()).getNomePolicy();
+				bfEsito.append("\t- [").append(nomePolicy).append("] ");
+				serializeStato(archiveTokenPolicy, bfEsito, importOperation);
+			}catch(Throwable e){
+				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getToken_retrieve_policies().size()>0){
+			bfEsito.append("\n");	
+		}
+		
 		
 		// Configurazione
 		if(archive.getConfigurazionePdD()!=null){
@@ -743,6 +784,20 @@ public class EsitoUtils {
 			ArchiveEsitoImportDetail archiveCCPolicy = archive.getControlloTraffico_activePolicies().get(i);
 			ArchiveIdCorrelazione idCorrelazione = ((ArchiveActivePolicy)archiveCCPolicy.getArchiveObject()).getIdCorrelazione();
 			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getControlloTraffico_activePolicies().add(archiveCCPolicy);
+		}
+		
+		// Token Policy (Validation)
+		for (int i = 0; i < archive.getToken_validation_policies().size(); i++) {
+			ArchiveEsitoImportDetail archiveTokenPolicy = archive.getToken_validation_policies().get(i);
+			ArchiveIdCorrelazione idCorrelazione = ((ArchiveTokenPolicy)archiveTokenPolicy.getArchiveObject()).getIdCorrelazione();
+			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getToken_validation_policies().add(archiveTokenPolicy);
+		}
+		
+		// Token Policy (Retrieve)
+		for (int i = 0; i < archive.getToken_retrieve_policies().size(); i++) {
+			ArchiveEsitoImportDetail archiveTokenPolicy = archive.getToken_retrieve_policies().get(i);
+			ArchiveIdCorrelazione idCorrelazione = ((ArchiveTokenPolicy)archiveTokenPolicy.getArchiveObject()).getIdCorrelazione();
+			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getToken_retrieve_policies().add(archiveTokenPolicy);
 		}
 		
 		// Configurazione

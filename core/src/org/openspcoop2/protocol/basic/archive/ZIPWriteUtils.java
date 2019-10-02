@@ -80,6 +80,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveScope;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
+import org.openspcoop2.protocol.sdk.archive.ArchiveTokenPolicy;
 import org.openspcoop2.protocol.sdk.constants.ArchiveVersion;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
@@ -234,6 +235,9 @@ public class ZIPWriteUtils {
 						Costanti.OPENSPCOOP2_ARCHIVE_CONFIGURAZIONE_FILE_NAME;
 				zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
 				Configurazione configurazionePdD = archive.getConfigurazionePdD();
+				while(configurazionePdD.sizeGenericPropertiesList()>0) {
+					configurazionePdD.removeGenericProperties(0); // le generic properties non sono tutte da esportare. Ad es. le informazioni sulla installazione no. Le altre sono gestite sotto come token policy
+				}
 				this.cleanerOpenSPCoop2ExtensionsConfig.clean(configurazionePdD);
 				write(zipOut, "ConfigurazionePdD", "", SerializationType.CONFIG, configurazionePdD);
 			}
@@ -291,6 +295,34 @@ public class ZIPWriteUtils {
 					org.openspcoop2.core.controllo_traffico.AttivazionePolicy policy = archiveCC.getPolicy();
 					this.cleanerOpenSPCoop2ExtensionsControlloTraffico.clean(policy);
 					write(zipOut, "ControlloTraffico_AttivazionePolicy", archiveCC.getNomePolicy(), SerializationType.CONTROLLO_TRAFFICO, policy);
+				}
+			}
+			
+			// tokenPolicy (validation)
+			if(archive.getToken_validation_policies()!=null && archive.getToken_validation_policies().size()>0){
+				for (int i = 0; i < archive.getToken_validation_policies().size(); i++) {
+					ArchiveTokenPolicy archiveTP = archive.getToken_validation_policies().get(i);
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_TOKEN_POLICIES_DIR+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_TOKEN_POLICIES_VALIDATION_DIR+File.separatorChar+
+							ZIPUtils.convertNameToSistemaOperativoCompatible(archiveTP.getNomePolicy())+".xml";
+					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
+					org.openspcoop2.core.config.GenericProperties policy = archiveTP.getPolicy();
+					this.cleanerOpenSPCoop2ExtensionsConfig.clean(policy);
+					write(zipOut, "TokenPolicy_Validation", archiveTP.getNomePolicy(), SerializationType.CONFIG, policy);
+				}
+			}
+			
+			// tokenPolicy (retrieve)
+			if(archive.getToken_retrieve_policies()!=null && archive.getToken_retrieve_policies().size()>0){
+				for (int i = 0; i < archive.getToken_retrieve_policies().size(); i++) {
+					ArchiveTokenPolicy archiveTP = archive.getToken_retrieve_policies().get(i);
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_TOKEN_POLICIES_DIR+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_TOKEN_POLICIES_RETRIEVE_DIR+File.separatorChar+
+							ZIPUtils.convertNameToSistemaOperativoCompatible(archiveTP.getNomePolicy())+".xml";
+					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
+					org.openspcoop2.core.config.GenericProperties policy = archiveTP.getPolicy();
+					this.cleanerOpenSPCoop2ExtensionsConfig.clean(policy);
+					write(zipOut, "TokenPolicy_Retrieve", archiveTP.getNomePolicy(), SerializationType.CONFIG, policy);
 				}
 			}
 			

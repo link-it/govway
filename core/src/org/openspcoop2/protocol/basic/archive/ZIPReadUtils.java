@@ -102,6 +102,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveScope;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
+import org.openspcoop2.protocol.sdk.archive.ArchiveTokenPolicy;
 import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
 import org.openspcoop2.protocol.sdk.constants.ArchiveVersion;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
@@ -418,6 +419,22 @@ public class ZIPReadUtils  {
 							else {
 								bin = new ByteArrayInputStream(xml);
 								this.readControlloTraffico_configurazione(archivio, bin, xml, entryName, validationDocuments);
+							}
+						}
+						
+						// ********** token policies ****************
+						else if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_TOKEN_POLICIES_DIR+File.separatorChar)) ){
+							byte[] xml = placeholder.replace(content);
+							if(entryName.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_TOKEN_POLICIES_VALIDATION_DIR+File.separatorChar)){
+								bin = new ByteArrayInputStream(xml);
+								this.readTokenValidationPolicy(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
+							}
+							else if(entryName.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_TOKEN_POLICIES_RETRIEVE_DIR+File.separatorChar)){
+								bin = new ByteArrayInputStream(xml);
+								this.readTokenRetrievePolicy(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
+							}
+							else {
+								throw new ProtocolException("Elemento ["+entryName+"] non atteso");
 							}
 						}
 						
@@ -1206,6 +1223,42 @@ public class ZIPReadUtils  {
 		}catch(Exception eDeserializer){
 			String xmlString = this.toStringXmlElementForErrorMessage(xml);
 			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (attivazione-policy) non valida rispetto allo schema (ControlloTraffico): "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
+	}
+	
+	public void readTokenValidationPolicy(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+		try{
+			if(validationDocuments){
+				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
+			org.openspcoop2.core.config.GenericProperties policy = this.jaxbConfigDeserializer.readGenericProperties(xml);
+			String key = ArchiveTokenPolicy.buildKey(policy.getTipo(), policy.getNome());
+			if(archivio.getToken_validation_policies().containsKey(key)){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di una policy di token validation con key ["+key+"]");
+			}
+			archivio.getToken_validation_policies().add(key,new ArchiveTokenPolicy(policy,idCorrelazione));
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (token-policy) non valida rispetto allo schema (ConfigurazionePdD): "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
+	}
+	
+	public void readTokenRetrievePolicy(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+		try{
+			if(validationDocuments){
+				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
+			org.openspcoop2.core.config.GenericProperties policy = this.jaxbConfigDeserializer.readGenericProperties(xml);
+			String key = ArchiveTokenPolicy.buildKey(policy.getTipo(), policy.getNome());
+			if(archivio.getToken_retrieve_policies().containsKey(key)){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di una policy di token retrieve con key ["+key+"]");
+			}
+			archivio.getToken_retrieve_policies().add(key,new ArchiveTokenPolicy(policy,idCorrelazione));
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (token-policy) non valida rispetto allo schema (ConfigurazionePdD): "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}

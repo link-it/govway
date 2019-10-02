@@ -631,7 +631,7 @@
 			<xsd:element name="integration-manager" type="integration-manager" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="stato-servizi-pdd" type="stato-servizi-pdd" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="system-properties" type="system-properties" maxOccurs="1" minOccurs="0" />
-			<xsd:element name="generic-properties" type="generic-properties" maxOccurs="unbounded" minOccurs="0" />
+			<xsd:element ref="generic-properties" maxOccurs="unbounded" minOccurs="0" />
 			<xsd:element name="gestione-cors" type="cors-configurazione" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="response-caching" type="response-caching-configurazione-generale" maxOccurs="1" minOccurs="0" />
 		</xsd:sequence>
@@ -922,6 +922,7 @@
 	
 	
 	<!-- OpenSPCoop GenericConfigProperties utilizzato per configurazioni dinamiche -->
+	<xsd:element name="generic-properties" type="generic-properties" />
 	<xsd:complexType name="generic-properties">
 		<xsd:sequence>
 			<xsd:element name="property" type="Property" maxOccurs="unbounded" minOccurs="0"/>

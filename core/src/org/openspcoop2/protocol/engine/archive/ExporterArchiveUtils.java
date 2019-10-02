@@ -29,16 +29,19 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.Scope;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
 import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -49,6 +52,7 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.GruppoAccordo;
 import org.openspcoop2.core.registry.IdSoggetto;
@@ -88,6 +92,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveScope;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
+import org.openspcoop2.protocol.sdk.archive.ArchiveTokenPolicy;
 import org.openspcoop2.protocol.sdk.archive.IArchive;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 
@@ -218,7 +223,31 @@ public class ExporterArchiveUtils {
 			break;
 		case CONFIGURAZIONE:
 			readControlloTrafficoConfigurazione(archive, true, false);
+			readTokenPolicyConfigurazione(archive);
 			archive.setConfigurazionePdD(this.archiveEngine.getConfigurazione());
+			
+			// aggiungo gruppi 'zombie'
+			FiltroRicercaGruppi filtroRicercaGruppi = new FiltroRicercaGruppi();
+			List<IDGruppo> idGruppi = null;
+			try{
+				idGruppi = this.archiveEngine.getAllIdGruppi(filtroRicercaGruppi);
+				for (IDGruppo idGruppo : idGruppi) {
+					boolean found = false;
+					if(archive.getGruppi()!=null && archive.getGruppi().size()>0){
+						for (String idArchiveGruppo : archive.getGruppi().keys()) {
+							ArchiveGruppo archiveGruppo = archive.getGruppi().get(idArchiveGruppo);
+							if(archiveGruppo.getIdGruppo().equals(idGruppo)){
+								found = true;
+								break;
+							}
+						}
+					}
+					if(!found){
+						this.readGruppo(archive, idGruppo, cascadeConfig, false, ArchiveType.GRUPPO);
+					}
+				}
+			}catch(DriverRegistroServiziNotFound notFound){}
+			
 			break;
 		case ALL:
 		case ALL_WITHOUT_CONFIGURAZIONE:
@@ -240,6 +269,7 @@ public class ExporterArchiveUtils {
 			boolean loadActivePolicyFruizioneErogazione = false; // vengono gia' caricate da sopra con il cascade sui soggetti, che arriva sulle PD e PA
 			if(exportSourceArchiveType.equals(ArchiveType.ALL)){
 				readControlloTrafficoConfigurazione(archive, true, loadActivePolicyFruizioneErogazione);
+				readTokenPolicyConfigurazione(archive);
 				archive.setConfigurazionePdD(this.archiveEngine.getConfigurazione());
 			}
 			else if(exportSourceArchiveType.equals(ArchiveType.ALL_WITHOUT_CONFIGURAZIONE)){
@@ -269,26 +299,28 @@ public class ExporterArchiveUtils {
 			}catch(DriverRegistroServiziNotFound notFound){}
 			
 			// aggiungo gruppi 'zombie'
-			FiltroRicercaGruppi filtroRicercaGruppi = new FiltroRicercaGruppi();
-			List<IDGruppo> idGruppi = null;
-			try{
-				idGruppi = this.archiveEngine.getAllIdGruppi(filtroRicercaGruppi);
-				for (IDGruppo idGruppo : idGruppi) {
-					boolean found = false;
-					if(archive.getGruppi()!=null && archive.getGruppi().size()>0){
-						for (String idArchiveGruppo : archive.getGruppi().keys()) {
-							ArchiveGruppo archiveGruppo = archive.getGruppi().get(idArchiveGruppo);
-							if(archiveGruppo.getIdGruppo().equals(idGruppo)){
-								found = true;
-								break;
+			if(exportSourceArchiveType.equals(ArchiveType.ALL)){
+				filtroRicercaGruppi = new FiltroRicercaGruppi();
+				idGruppi = null;
+				try{
+					idGruppi = this.archiveEngine.getAllIdGruppi(filtroRicercaGruppi);
+					for (IDGruppo idGruppo : idGruppi) {
+						boolean found = false;
+						if(archive.getGruppi()!=null && archive.getGruppi().size()>0){
+							for (String idArchiveGruppo : archive.getGruppi().keys()) {
+								ArchiveGruppo archiveGruppo = archive.getGruppi().get(idArchiveGruppo);
+								if(archiveGruppo.getIdGruppo().equals(idGruppo)){
+									found = true;
+									break;
+								}
 							}
 						}
+						if(!found){
+							this.readGruppo(archive, idGruppo, cascadeConfig, false, ArchiveType.GRUPPO);
+						}
 					}
-					if(!found){
-						this.readGruppo(archive, idGruppo, cascadeConfig, false, ArchiveType.GRUPPO);
-					}
-				}
-			}catch(DriverRegistroServiziNotFound notFound){}
+				}catch(DriverRegistroServiziNotFound notFound){}
+			}
 			
 			// aggiungo ruoli 'zombie'
 			FiltroRicercaRuoli filtroRicercaRuoli = new FiltroRicercaRuoli();
@@ -349,12 +381,23 @@ public class ExporterArchiveUtils {
 		try {
 			listControlloTraffico_configurationPolicies = this.archiveEngine.getAllIdControlloTraffico_configurationPolicies();
 		}catch(DriverConfigurazioneNotFound notFound) {}
-		if(listControlloTraffico_configurationPolicies!=null && listControlloTraffico_configurationPolicies.size()>0) {
-			for (IdPolicy idPolicy : listControlloTraffico_configurationPolicies) {
-				archive.getControlloTraffico_configurationPolicies().add(new ArchiveConfigurationPolicy(
-						this.archiveEngine.getControlloTraffico_configurationPolicy(idPolicy),
-						this.idCorrelazione));
+		if(policyGlobali) {
+			if(listControlloTraffico_configurationPolicies!=null && listControlloTraffico_configurationPolicies.size()>0) {
+				for (IdPolicy idPolicy : listControlloTraffico_configurationPolicies) {
+					
+					String keyPolicyConfig = ArchiveConfigurationPolicy.buildKey(idPolicy.getNome());
+					if(archive.getControlloTraffico_configurationPolicies().containsKey(keyPolicyConfig)==false) {
+					
+						archive.getControlloTraffico_configurationPolicies().add(new ArchiveConfigurationPolicy(
+								this.archiveEngine.getControlloTraffico_configurationPolicy(idPolicy),
+								this.idCorrelazione));
+						
+					}
+				}
 			}
+		}
+		else {
+			// le aggiungo dopo: aggiungo le policy configurate solamente realmente utilizzate.
 		}
 		
 		List<IdActivePolicy> listControlloTraffico_activePolicies = null;
@@ -371,14 +414,35 @@ public class ExporterArchiveUtils {
 		}catch(DriverConfigurazioneNotFound notFound) {}
 		if(listControlloTraffico_activePolicies!=null && listControlloTraffico_activePolicies.size()>0) {
 			for (IdActivePolicy idPolicy : listControlloTraffico_activePolicies) {
-				if(policyFruizioniErogazioni) {
-					
+				String keyActivePolicy = ArchiveActivePolicy.buildKey(idPolicy.getIdPolicy());
+				if(archive.getControlloTraffico_activePolicies().containsKey(keyActivePolicy)==false) {
+					archive.getControlloTraffico_activePolicies().add(new ArchiveActivePolicy(
+							this.archiveEngine.getControlloTraffico_activePolicy(idPolicy),
+							this.idCorrelazione));	
 				}
-				archive.getControlloTraffico_activePolicies().add(new ArchiveActivePolicy(
-						this.archiveEngine.getControlloTraffico_activePolicy(idPolicy),
-						this.idCorrelazione));
+								
+				if(!policyGlobali) {
+					// aggiungo le policy configurate solamente realmente utilizzate.
+					
+					String keyPolicyConfig = ArchiveConfigurationPolicy.buildKey(idPolicy.getIdPolicy());
+					if(archive.getControlloTraffico_configurationPolicies().containsKey(keyPolicyConfig)==false) {
+					
+						if(listControlloTraffico_configurationPolicies!=null && listControlloTraffico_configurationPolicies.size()>0) {
+							for (IdPolicy idConfigPolicy : listControlloTraffico_configurationPolicies) {
+								if(idConfigPolicy.getNome().equals(idPolicy.getIdPolicy())) {
+									archive.getControlloTraffico_configurationPolicies().add(new ArchiveConfigurationPolicy(
+											this.archiveEngine.getControlloTraffico_configurationPolicy(idConfigPolicy),
+											this.idCorrelazione));
+									break;
+								}
+							}
+						}
+						
+					}
+				}
 			}
 		}
+		
 	}
 	
 	private void readControlloTrafficoPolicyPorta(Archive archive, boolean delegata, String nomePorta) throws Exception {
@@ -394,11 +458,73 @@ public class ExporterArchiveUtils {
 		}catch(DriverConfigurazioneNotFound notFound) {}
 		if(listControlloTraffico_activePolicies!=null && listControlloTraffico_activePolicies.size()>0) {
 			for (IdActivePolicy idPolicy : listControlloTraffico_activePolicies) {
-				archive.getControlloTraffico_activePolicies().add(new ArchiveActivePolicy(
-						this.archiveEngine.getControlloTraffico_activePolicy(idPolicy),
-						this.idCorrelazione));
+				
+				String keyActivePolicy = ArchiveActivePolicy.buildKey(idPolicy.getIdPolicy());
+				if(archive.getControlloTraffico_activePolicies().containsKey(keyActivePolicy)==false) {
+					archive.getControlloTraffico_activePolicies().add(new ArchiveActivePolicy(
+							this.archiveEngine.getControlloTraffico_activePolicy(idPolicy),
+							this.idCorrelazione));
+				}
+				
+				// aggiungo anche la policy configurata.
+				String keyPolicyConfig = ArchiveConfigurationPolicy.buildKey(idPolicy.getIdPolicy());
+				if(archive.getControlloTraffico_configurationPolicies().containsKey(keyPolicyConfig)==false) {
+					try {
+						archive.getControlloTraffico_configurationPolicies().add(new ArchiveConfigurationPolicy(
+								this.archiveEngine.getControlloTraffico_configurationPolicy(idPolicy.getIdPolicy()),
+								this.idCorrelazione));
+					}catch(DriverConfigurazioneNotFound notFound) {}
+				}
 			}
 		}
+	}
+	
+	private void readTokenPolicyConfigurazione(Archive archive) throws Exception {
+		
+		List<IDGenericProperties> listPolicies_validation = null;
+		try {
+			listPolicies_validation = this.archiveEngine.getAllIdGenericProperties_validation();
+		}catch(DriverConfigurazioneNotFound notFound) {}
+		if(listPolicies_validation!=null && listPolicies_validation.size()>0) {
+			for (IDGenericProperties idGP : listPolicies_validation) {
+				readTokenPolicy_validation(archive,idGP.getNome());
+			}
+		}
+		
+		List<IDGenericProperties> listPolicies_retrieve = null;
+		try {
+			listPolicies_retrieve = this.archiveEngine.getAllIdGenericProperties_retrieve();
+		}catch(DriverConfigurazioneNotFound notFound) {}
+		if(listPolicies_retrieve!=null && listPolicies_retrieve.size()>0) {
+			for (IDGenericProperties idGP : listPolicies_retrieve) {
+				readTokenPolicy_retrieve(archive,idGP.getNome());
+			}
+		}
+		
+	}
+	
+	private void readTokenPolicy_validation(Archive archive, String nomePolicy) throws Exception {
+		
+		String key = ArchiveTokenPolicy.buildKey(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION, nomePolicy);
+		if(archive.getToken_validation_policies().containsKey(key)){
+			// gia gestito
+		}
+		else{
+			archive.getToken_validation_policies().add(new ArchiveTokenPolicy(this.archiveEngine.getGenericProperties_validation(nomePolicy), this.idCorrelazione));
+		}
+		
+	}
+	
+	private void readTokenPolicy_retrieve(Archive archive, String nomePolicy) throws Exception {
+		
+		String key = ArchiveTokenPolicy.buildKey(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE, nomePolicy);
+		if(archive.getToken_retrieve_policies().containsKey(key)){
+			// gia gestito
+		}
+		else{
+			archive.getToken_retrieve_policies().add(new ArchiveTokenPolicy(this.archiveEngine.getGenericProperties_retrieve(nomePolicy), this.idCorrelazione));
+		}
+		
 	}
 	
 
@@ -917,6 +1043,20 @@ public class ExporterArchiveUtils {
 							}catch(DriverRegistroServiziNotFound notFound){}	
 						}
 					}
+					
+					// token policy di negoziazione
+					if(sa!=null && sa.getInvocazioneServizio()!=null) {
+						if(sa.getInvocazioneServizio().getConnettore()!=null &&
+								sa.getInvocazioneServizio().getConnettore().getProperties()!=null && sa.getInvocazioneServizio().getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+							this.readTokenPolicy_retrieve(archive, sa.getInvocazioneServizio().getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY));
+						}
+					}
+					if(sa!=null && sa.getRispostaAsincrona()!=null) {
+						if(sa.getRispostaAsincrona().getConnettore()!=null &&
+								sa.getRispostaAsincrona().getConnettore().getProperties()!=null && sa.getRispostaAsincrona().getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+							this.readTokenPolicy_retrieve(archive, sa.getRispostaAsincrona().getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY));
+						}
+					}
 				}
 			}catch(Exception e){
 				throw new ProtocolException("(ServizioApplicativo "+idServizioApplicativo+") "+e.getMessage(),e);
@@ -1211,6 +1351,22 @@ public class ExporterArchiveUtils {
 					else{
 						this.readAccordoServizioComposto(archive, idAccordoServizioParteComune, cascadeConfig, false, ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA); // per evitare loop
 					}
+					
+					// token policy di negoziazione
+					if(as!=null && as.getConfigurazioneServizio()!=null) {
+						if(as.getConfigurazioneServizio().getConnettore()!=null &&
+								as.getConfigurazioneServizio().getConnettore().getProperties()!=null && as.getConfigurazioneServizio().getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+							this.readTokenPolicy_retrieve(archive, as.getConfigurazioneServizio().getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY));
+						}
+						if(as.getConfigurazioneServizio().sizeConfigurazioneAzioneList()>0) {
+							for (ConfigurazioneServizioAzione confAzione : as.getConfigurazioneServizio().getConfigurazioneAzioneList()) {
+								if(confAzione.getConnettore()!=null &&
+										confAzione.getConnettore().getProperties()!=null && confAzione.getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+									this.readTokenPolicy_retrieve(archive, confAzione.getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY));
+								}
+							}
+						}
+					}
 				}
 					
 			}catch(Exception e){
@@ -1360,6 +1516,22 @@ public class ExporterArchiveUtils {
 					// accordoServizioParteSpecifica
 					this.readAccordoServizioParteSpecifica(archive, idAccordoServizio, cascadeConfig, false, ArchiveType.FRUITORE); // per evitare loop
 					
+					// token policy di negoziazione
+					if(fruitore!=null) {
+						if(fruitore.getConnettore()!=null &&
+								fruitore.getConnettore().getProperties()!=null && fruitore.getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+							this.readTokenPolicy_retrieve(archive, fruitore.getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY));
+						}
+						if(fruitore.sizeConfigurazioneAzioneList()>0) {
+							for (ConfigurazioneServizioAzione confAzione : fruitore.getConfigurazioneAzioneList()) {
+								if(confAzione.getConnettore()!=null &&
+										confAzione.getConnettore().getProperties()!=null && confAzione.getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+									this.readTokenPolicy_retrieve(archive, confAzione.getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY));
+								}
+							}
+						}
+					}
+					
 				}
 					
 			}catch(Exception e){
@@ -1477,6 +1649,11 @@ public class ExporterArchiveUtils {
 							}catch(DriverRegistroServiziNotFound notFound){}	
 						}
 					}
+					
+					// token policy di validazione
+					if(pd!=null && pd.getGestioneToken()!=null && pd.getGestioneToken().getPolicy()!=null && !"".equals(pd.getGestioneToken().getPolicy())) {
+						this.readTokenPolicy_validation(archive, pd.getGestioneToken().getPolicy());
+					}
 				}
 					
 			}catch(Exception e){
@@ -1592,7 +1769,7 @@ public class ExporterArchiveUtils {
 								List<IDRuolo> idsRuoli = this.archiveEngine.getAllIdRuoli(filtroRuolo);
 								if(idsRuoli!=null && idsRuoli.size()>0){
 									for (IDRuolo idRuolo : idsRuoli) {
-										this.readRuolo(archive, idRuolo, cascadeConfig, false, ArchiveType.PORTA_DELEGATA); // per evitare loop
+										this.readRuolo(archive, idRuolo, cascadeConfig, false, ArchiveType.PORTA_APPLICATIVA); // per evitare loop
 									}
 								}
 							}catch(DriverRegistroServiziNotFound notFound){}	
@@ -1610,11 +1787,16 @@ public class ExporterArchiveUtils {
 								List<IDScope> idsScope = this.archiveEngine.getAllIdScope(filtroScope);
 								if(idsScope!=null && idsScope.size()>0){
 									for (IDScope idScope : idsScope) {
-										this.readScope(archive, idScope, cascadeConfig, false, ArchiveType.PORTA_DELEGATA); // per evitare loop
+										this.readScope(archive, idScope, cascadeConfig, false, ArchiveType.PORTA_APPLICATIVA); // per evitare loop
 									}
 								}
 							}catch(DriverRegistroServiziNotFound notFound){}	
 						}
+					}
+					
+					// token policy di validazione
+					if(pa!=null && pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null && !"".equals(pa.getGestioneToken().getPolicy())) {
+						this.readTokenPolicy_validation(archive, pa.getGestioneToken().getPolicy());
 					}
 
 				}

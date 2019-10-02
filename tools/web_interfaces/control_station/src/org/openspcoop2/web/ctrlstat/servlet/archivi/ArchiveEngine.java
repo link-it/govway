@@ -24,6 +24,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.archivi;
 
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -624,6 +625,34 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 		try{
 			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, policy);
 		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	
+	// --- Token Policy ---
+	
+	@Override
+	public void createGenericProperties(GenericProperties gp) throws DriverConfigurazioneException{
+		try {
+			this.archiviCore.performCreateOperation(this.userLogin, this.smista, gp);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void updateGenericProperties(GenericProperties gp) throws DriverConfigurazioneException{
+		try {
+			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, gp);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void deleteGenericProperties(GenericProperties gp) throws DriverConfigurazioneException{
+		try {
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, gp);
+		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
 	}

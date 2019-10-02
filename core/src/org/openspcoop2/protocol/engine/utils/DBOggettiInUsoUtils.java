@@ -34,9 +34,11 @@ import java.util.Set;
 
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -3351,6 +3353,397 @@ public class DBOggettiInUsoUtils  {
 					msg += "utilizzato nelle Porte Inbound (Criterio di applicabilità della Trasformazione - Applicativi): " + formatList(messages,separator) + separator;
 				}
 				break;
+			default:
+				msg += "utilizzato in oggetto non codificato ("+key+")"+separator;
+				break;
+			}
+
+		}// chiudo for
+
+		return msg;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// ***** GENERIC PROPERTIES ******
+
+	// Lascio i metodi se servissero in futuro
+	public static boolean isGenericPropertiesInUso(Connection con, String tipoDB, IDGenericProperties idGP, Map<ErrorsHandlerCostant, 
+			List<String>> whereIsInUso, boolean normalizeObjectIds) throws UtilsException {
+		String nomeMetodo = "isGenericPropertiesInUso";
+
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+		PreparedStatement stmt2 = null;
+		ResultSet risultato2 = null;
+		String queryString;
+
+		try {
+
+			boolean isInUso = false;
+			
+			List<String> tokenPA_list = whereIsInUso.get(ErrorsHandlerCostant.TOKEN_PA);
+			List<String> tokenPD_list = whereIsInUso.get(ErrorsHandlerCostant.TOKEN_PD);
+			List<String> connettorePA_list = whereIsInUso.get(ErrorsHandlerCostant.CONNETTORE_PA);
+			List<String> connettorePD_list = whereIsInUso.get(ErrorsHandlerCostant.CONNETTORE_PD);
+			
+			List<String> mapping_tokenPA_list = whereIsInUso.get(ErrorsHandlerCostant.TOKEN_MAPPING_PA);
+			List<String> mapping_tokenPD_list = whereIsInUso.get(ErrorsHandlerCostant.TOKEN_MAPPING_PD);
+			List<String> mapping_connettorePA_list = whereIsInUso.get(ErrorsHandlerCostant.CONNETTORE_MAPPING_PA);
+			List<String> mapping_connettorePD_list = whereIsInUso.get(ErrorsHandlerCostant.CONNETTORE_MAPPING_PD);
+			
+			if (tokenPA_list == null) {
+				tokenPA_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.TOKEN_PA, tokenPA_list);
+			}
+			if (tokenPD_list == null) {
+				tokenPD_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.TOKEN_PD, tokenPD_list);
+			}
+			if (connettorePA_list == null) {
+				connettorePA_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.CONNETTORE_PA, connettorePA_list);
+			}
+			if (connettorePD_list == null) {
+				connettorePD_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.CONNETTORE_PD, connettorePD_list);
+			}
+			
+			if (mapping_tokenPA_list == null) {
+				mapping_tokenPA_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.TOKEN_MAPPING_PA, mapping_tokenPA_list);
+			}
+			if (mapping_tokenPD_list == null) {
+				mapping_tokenPD_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.TOKEN_MAPPING_PD, mapping_tokenPD_list);
+			}
+			if (mapping_connettorePA_list == null) {
+				mapping_connettorePA_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.CONNETTORE_MAPPING_PA, mapping_connettorePA_list);
+			}
+			if (mapping_connettorePD_list == null) {
+				mapping_connettorePD_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.CONNETTORE_MAPPING_PD, mapping_connettorePD_list);
+			}
+			
+			
+			
+			if(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION.equals(idGP.getTipologia())) {
+			
+				// Controllo che non sia in uso nelle porte applicative
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE+".nome_porta");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".token_policy = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setString(1, idGP.getNome());
+				risultato = stmt.executeQuery();
+				while (risultato.next()) {
+					String nome = risultato.getString("nome_porta");
+					ResultPorta resultPorta = formatPortaApplicativa(nome, tipoDB, con, normalizeObjectIds);
+					if(resultPorta.mapping) {
+						mapping_tokenPA_list.add(resultPorta.label);
+					}
+					else {
+						tokenPA_list.add(resultPorta.label);
+					}
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();
+				
+				
+				// Controllo che il ruolo non sia in uso nelle porte delegate
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE+".nome_porta");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".token_policy = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setString(1, idGP.getNome());
+				risultato = stmt.executeQuery();
+				while (risultato.next()) {
+					String nome = risultato.getString("nome_porta");
+					ResultPorta resultPorta = formatPortaDelegata(nome, tipoDB, con, normalizeObjectIds);
+					if(resultPorta.mapping) {
+						mapping_tokenPD_list.add(resultPorta.label);
+					}
+					else {
+						tokenPD_list.add(resultPorta.label);
+					}
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();				
+				
+			}
+			
+			if(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE.equals(idGP.getTipologia())) {
+				
+				List<Long> idConnettori = new ArrayList<>();
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.CONNETTORI);
+				sqlQueryObject.addSelectField(CostantiDB.CONNETTORI+".id");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.addWhereCondition(CostantiDB.CONNETTORI+".token_policy = ?");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setString(1, idGP.getNome());
+				risultato = stmt.executeQuery();
+				while (risultato.next()) {
+					Long id = risultato.getLong("id");
+					idConnettori.add(id);
+				}
+				risultato.close();
+				stmt.close();
+				
+				if(idConnettori!=null && !idConnettori.isEmpty()) {
+				
+					List<Long> idFruizioni = new ArrayList<>();
+					List<Long> idServiziApplicativi = new ArrayList<>();
+					
+										
+					for (Long idConnettore : idConnettori) {
+						
+						
+						// Controllo che il ruolo non sia in uso nelle porte applicative
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+						sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+						sqlQueryObject.addSelectField("id");
+						sqlQueryObject.setANDLogicOperator(true);
+						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_connettore_inv=?");
+						queryString = sqlQueryObject.createSQLQuery();
+						stmt = con.prepareStatement(queryString);
+						stmt.setLong(1, idConnettore);
+						risultato = stmt.executeQuery();
+						while (risultato.next()) {
+							Long id = risultato.getLong("id");
+							idServiziApplicativi.add(id);
+						}
+						risultato.close();
+						stmt.close();
+						
+						
+						// Controllo che il ruolo non sia in uso nelle porte delegate
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+						sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
+						sqlQueryObject.addSelectField("id");
+						sqlQueryObject.setANDLogicOperator(true);
+						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_connettore=?");
+						queryString = sqlQueryObject.createSQLQuery();
+						stmt = con.prepareStatement(queryString);
+						stmt.setLong(1, idConnettore);
+						risultato = stmt.executeQuery();
+						while (risultato.next()) {
+							Long id = risultato.getLong("id");
+							idFruizioni.add(id);
+						}
+						risultato.close();
+						stmt.close();
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+						sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI_AZIONI);
+						sqlQueryObject.addSelectField("id_fruizione");
+						sqlQueryObject.setANDLogicOperator(true);
+						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI_AZIONI+".id_connettore=?");
+						queryString = sqlQueryObject.createSQLQuery();
+						stmt = con.prepareStatement(queryString);
+						stmt.setLong(1, idConnettore);
+						risultato = stmt.executeQuery();
+						while (risultato.next()) {
+							Long id = risultato.getLong("id");
+							idFruizioni.add(id);
+						}
+						risultato.close();
+						stmt.close();
+						
+					}
+					
+					
+					
+					// porte applicative
+					
+					if(idServiziApplicativi!=null && !idServiziApplicativi.isEmpty()) {
+						for (Long idServiziApplicativo : idServiziApplicativi) {
+							
+							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+							sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA);
+							sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+							sqlQueryObject.setSelectDistinct(true);
+							sqlQueryObject.addSelectField("nome_porta");
+							sqlQueryObject.setANDLogicOperator(true);
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SA+".id_servizio_applicativo=?");
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.PORTE_APPLICATIVE_SA+".id_porta");
+							queryString = sqlQueryObject.createSQLQuery();
+							stmt = con.prepareStatement(queryString);
+							stmt.setLong(1, idServiziApplicativo);
+							risultato = stmt.executeQuery();
+							while (risultato.next()) {
+								String nomePorta = risultato.getString("nome_porta");
+								ResultPorta resultPorta = formatPortaApplicativa(nomePorta, tipoDB, con, normalizeObjectIds);
+								if(resultPorta.mapping) {
+									mapping_connettorePA_list.add(resultPorta.label);
+								}
+								else {
+									connettorePA_list.add(resultPorta.label);
+								}
+							}
+							risultato.close();
+							stmt.close();
+							
+						}
+					}
+					
+					
+					
+					// porte delegate
+					
+					if(idFruizioni!=null && !idFruizioni.isEmpty()) {
+						
+						for (Long idFruizione : idFruizioni) {
+							
+							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+							sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
+							sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+							sqlQueryObject.setSelectDistinct(true);
+							sqlQueryObject.addSelectField("nome_porta");
+							sqlQueryObject.setANDLogicOperator(true);
+							sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".id_fruizione=?");
+							sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".id_porta="+CostantiDB.PORTE_DELEGATE+".id");
+							queryString = sqlQueryObject.createSQLQuery();
+							stmt = con.prepareStatement(queryString);
+							stmt.setLong(1, idFruizione);
+							risultato = stmt.executeQuery();
+							while (risultato.next()) {
+								String nomePorta = risultato.getString("nome_porta");
+								ResultPorta resultPorta = formatPortaDelegata(nomePorta, tipoDB, con, normalizeObjectIds);
+								if(resultPorta.mapping) {
+									mapping_connettorePD_list.add(resultPorta.label);
+								}
+								else {
+									connettorePD_list.add(resultPorta.label);
+								}
+								isInUso = true;
+							}
+							risultato.close();
+							stmt.close();
+							
+						}
+						
+					}
+				}
+				
+			}
+			
+			
+			return isInUso;
+
+		} catch (Exception se) {
+			throw new UtilsException("[DBOggettiInUsoUtils::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			// Chiudo statement and resultset
+			try {
+				try{
+					if(risultato2!=null) risultato2.close();
+					if(stmt2!=null) stmt2.close();
+				}catch (Exception e) {
+					//ignore
+				}
+				if (risultato != null) {
+					risultato.close();
+				}
+				if (stmt != null) {
+					stmt.close();
+				}
+			} catch (Exception e) {
+				// ignore
+			}
+		}
+	}
+
+
+	public static String toString(IDGenericProperties idGP, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator){
+		return toString(idGP, whereIsInUso, prefix, separator," non eliminabile perch&egrave; :");
+	}
+	public static String toString(IDGenericProperties idGP, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator, String intestazione){
+		Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
+		String msg = "Token Policy '"+idGP.getNome()+"'" + intestazione+separator;
+		if(prefix==false){
+			msg = "";
+		}
+		String separatorCategorie = "";
+		if(whereIsInUso.size()>1) {
+			separatorCategorie = separator;
+		}
+		for (ErrorsHandlerCostant key : keys) {
+			List<String> messages = whereIsInUso.get(key);
+
+			if ( messages!=null && messages.size() > 0) {
+				msg += separatorCategorie;
+			}
+			
+			switch (key) {
+			
+			case TOKEN_MAPPING_PD:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzata nel controllo degli accessi per le Fruizioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case TOKEN_PD:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Outbound (Controllo degli Accessi): " + formatList(messages,separator) + separator;
+				}
+				break;
+			case TOKEN_MAPPING_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nel controllo degli accessi per le Erogazioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case TOKEN_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Inbound (Controllo degli Accessi): " + formatList(messages,separator) + separator;
+				}
+				break;
+				
+			case CONNETTORE_MAPPING_PD:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzata nel connettore per le Fruizioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case CONNETTORE_PD:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Outbound (Connettore): " + formatList(messages,separator) + separator;
+				}
+				break;
+			case CONNETTORE_MAPPING_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nel connettore per le Erogazioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case CONNETTORE_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Inbound (Connettore): " + formatList(messages,separator) + separator;
+				}
+				break;
+				
 			default:
 				msg += "utilizzato in oggetto non codificato ("+key+")"+separator;
 				break;

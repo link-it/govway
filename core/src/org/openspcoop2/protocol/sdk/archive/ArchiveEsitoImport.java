@@ -59,6 +59,9 @@ public class ArchiveEsitoImport {
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> controlloTraffico_configurationPolicies = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> controlloTraffico_activePolicies = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> token_validation_policies = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> token_retrieve_policies = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+	
 	private ArchiveEsitoImportDetailConfigurazione<Configurazione> configurazionePdD;
 
 	public ArchiveSortedMap<ArchiveEsitoImportDetail> getPdd() {
@@ -132,6 +135,14 @@ public class ArchiveEsitoImport {
 
 	public ArchiveSortedMap<ArchiveEsitoImportDetail> getControlloTraffico_activePolicies() {
 		return this.controlloTraffico_activePolicies;
+	}
+	
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getToken_validation_policies() {
+		return this.token_validation_policies;
+	}
+
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getToken_retrieve_policies() {
+		return this.token_retrieve_policies;
 	}
 	
 	public ArchiveEsitoImportDetailConfigurazione<Configurazione> getConfigurazionePdD() {

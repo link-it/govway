@@ -277,7 +277,19 @@ public class ModIImbustamentoSoap {
 		wsAddressingValue.setReplyToAnonymouys();
 		
 		if(soapMessage.getSoapAction()!=null) {
-			wsAddressingValue.setAction(soapMessage.getSoapAction());
+			String soapAction = soapMessage.getSoapAction();
+			soapAction = soapAction.trim();
+			if(soapAction.startsWith("\"")) {
+				if(soapAction.length()>1) {
+					soapAction = soapAction.substring(1);
+				}
+			}
+			if(soapAction.endsWith("\"")) {
+				if(soapAction.length()>1) {
+					soapAction = soapAction.substring(0,(soapAction.length()-1));
+				}
+			}
+			wsAddressingValue.setAction(soapAction);
 		}
 		
 		WSAddressingHeader wsAddressingHeaders = wsaddressingUtilities.build(soapMessage, 

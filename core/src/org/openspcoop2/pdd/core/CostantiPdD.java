@@ -24,6 +24,7 @@
 
 package org.openspcoop2.pdd.core;
 
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.controllo_traffico.beans.JMXConstants;
 import org.openspcoop2.utils.Costanti;
 import org.openspcoop2.utils.jmx.CostantiJMX;
@@ -118,7 +119,7 @@ public class CostantiPdD {
     /** Costante che indica una busta in uscita */
     public final static String TRACCIAMENTO_OUT = "OUT";
     
-    public final static String TIPOLOGIA_INSTALLER = "installer";
+    public final static String TIPOLOGIA_INSTALLER = CostantiConfigurazione.GENERIC_PROPERTIES_TIPOLOGIA_INSTALLER;
     
     /**
      * Gestione Preflight Request in corso su SOAP

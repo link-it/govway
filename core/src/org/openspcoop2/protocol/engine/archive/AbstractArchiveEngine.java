@@ -23,6 +23,7 @@
 package org.openspcoop2.protocol.engine.archive;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,9 +31,11 @@ import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneGestioneErrore;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
@@ -49,6 +52,7 @@ import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -1402,6 +1406,146 @@ public abstract class AbstractArchiveEngine {
 	public boolean isControlloTraffico_configurationPolicyInUso(IdActivePolicy IdActivePolicy, List<String> whereIsInUso) throws DriverRegistroServiziException {
 		return false;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	// --- Token Policy ---
+	
+	public List<IDGenericProperties> getAllIdGenericProperties(String tipologia) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return _getAllIdGenericProperties(tipologia);
+	}
+	public List<IDGenericProperties> getAllIdGenericProperties_validation() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return _getAllIdGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION);
+	}
+	public List<IDGenericProperties> getAllIdGenericProperties_retrieve() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return _getAllIdGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE);
+	}
+	private List<IDGenericProperties> _getAllIdGenericProperties(String tipologia) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		try {
+			List<GenericProperties> l = this.driverConfigurazione.getGenericProperties(tipologia);
+			if(l==null || l.isEmpty()) {
+				throw new DriverConfigurazioneNotFound();
+			}
+			List<IDGenericProperties> lNew = new ArrayList<IDGenericProperties>();
+			for (GenericProperties genericProperties : l) {
+				
+				if(!tipologia.equals(genericProperties.getTipologia())) {
+					continue;
+				}
+				
+				IDGenericProperties id = new IDGenericProperties();
+				id.setNome(genericProperties.getNome());
+				id.setTipologia(tipologia);
+				lNew.add(id);
+			}
+			return lNew;
+		}catch(DriverConfigurazioneNotFound e) {
+			throw e;
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public GenericProperties getGenericProperties(String tipologia, String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		return _getGenericProperties(tipologia, nome);
+	}
+	public GenericProperties getGenericProperties(IDGenericProperties idGP) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		return _getGenericProperties(idGP.getTipologia(), idGP.getNome());
+	}
+	public GenericProperties getGenericProperties_validation(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return _getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION, nome);
+	}
+	public GenericProperties getGenericProperties_retrieve(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return _getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE, nome);
+	}
+	private GenericProperties _getGenericProperties(String tipologia, String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		try {
+			GenericProperties gp = this.driverConfigurazione.getGenericProperties(tipologia, nome);
+			if(gp==null) {
+				throw new DriverConfigurazioneNotFound();
+			}
+			return gp;
+		}catch(DriverConfigurazioneNotFound e) {
+			throw e;
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public boolean existsGenericProperties(String tipologia, String nome) throws DriverConfigurazioneException {
+		return _existsGenericProperties(tipologia, nome);
+	}
+	public boolean existsGenericProperties(IDGenericProperties idGP) throws DriverConfigurazioneException {
+		return _existsGenericProperties(idGP.getTipologia(), idGP.getNome());
+	}
+	public boolean existsGenericProperties_validation(String nome) throws DriverConfigurazioneException{
+		return _existsGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION, nome);
+	}
+	public boolean existsGenericProperties_retrieve(String nome) throws DriverConfigurazioneException{
+		return _existsGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE, nome);
+	}
+	private boolean _existsGenericProperties(String tipologia, String nome) throws DriverConfigurazioneException{
+		try {
+			GenericProperties gp = this.driverConfigurazione.getGenericProperties(tipologia, nome);
+			return gp!=null;
+		}catch(DriverConfigurazioneNotFound e) {
+			return false;
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+
+	public void createGenericProperties(GenericProperties gp) throws DriverConfigurazioneException{
+		try {
+			this.driverConfigurazione.createGenericProperties(gp);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	public void updateGenericProperties(GenericProperties gp) throws DriverConfigurazioneException{
+		try {
+			this.driverConfigurazione.updateGenericProperties(gp);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	public void deleteGenericProperties(GenericProperties gp) throws DriverConfigurazioneException{
+		try {
+			this.driverConfigurazione.deleteGenericProperties(gp);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public boolean isGenericPropertiesInUso(String tipologia, String nome, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverRegistroServiziException {
+		IDGenericProperties idGP = new IDGenericProperties();
+		idGP.setTipologia(tipologia);
+		idGP.setNome(nome);
+		return this.isGenericPropertiesInUso(idGP,whereIsInUso, normalizeObjectIds);
+	}
+	public boolean isGenericPropertiesInUso(IDGenericProperties idGP, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("archive.isGenericPropertiesInUso");
+			return DBOggettiInUsoUtils.isGenericPropertiesInUso(con, this.driverRegistroServizi.getTipoDB(), idGP, whereIsInUso, normalizeObjectIds);
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	
+	
 	
 	
 	

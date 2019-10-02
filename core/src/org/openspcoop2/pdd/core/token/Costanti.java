@@ -23,6 +23,7 @@
 
 package org.openspcoop2.pdd.core.token;
 
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 
 /**     
@@ -34,8 +35,8 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
  */
 public class Costanti {
 
-	public final static String TIPOLOGIA = "gestionePolicyToken";
-	public final static String TIPOLOGIA_RETRIEVE = "retrievePolicyToken";
+	public final static String TIPOLOGIA = CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION;
+	public final static String TIPOLOGIA_RETRIEVE = CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE;
 	
 	
 	// Context

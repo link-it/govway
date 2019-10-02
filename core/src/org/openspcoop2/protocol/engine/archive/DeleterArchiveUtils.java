@@ -33,6 +33,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -73,6 +74,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveScope;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
+import org.openspcoop2.protocol.sdk.archive.ArchiveTokenPolicy;
 import org.openspcoop2.protocol.sdk.constants.ArchiveStatoImport;
 import org.slf4j.Logger;
 
@@ -105,32 +107,6 @@ public class DeleterArchiveUtils {
 			
 			ArchiveEsitoDelete esito = new ArchiveEsitoDelete();
 			
-			
-			// ControlloTraffico (AttivazionePolicy)
-			for (int i = 0; i < archive.getControlloTraffico_activePolicies().size(); i++) {
-				ArchiveActivePolicy archivePolicy = archive.getControlloTraffico_activePolicies().get(i);
-				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePolicy);
-				try{
-					this.deleteActivePolicy(archivePolicy, detail);
-				}catch(Exception e){
-					detail.setState(ArchiveStatoImport.ERROR);
-					detail.setException(e);
-				}
-				esito.getControlloTraffico_activePolicies().add(detail);
-			}
-			
-			// ControlloTraffico (ConfigurazionePolicy)
-			for (int i = 0; i < archive.getControlloTraffico_configurationPolicies().size(); i++) {
-				ArchiveConfigurationPolicy archivePolicy = archive.getControlloTraffico_configurationPolicies().get(i);
-				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePolicy);
-				try{
-					this.deleteConfigPolicy(archivePolicy, detail);
-				}catch(Exception e){
-					detail.setState(ArchiveStatoImport.ERROR);
-					detail.setException(e);
-				}
-				esito.getControlloTraffico_configurationPolicies().add(detail);
-			}
 			
 			
 			// Preparo Liste di Mapping da creare una volta registrati sia gli accordi (servizi e fruitori) che le porte (delegate e applicative)
@@ -480,6 +456,59 @@ public class DeleterArchiveUtils {
 			}
 			
 			
+			// ControlloTraffico (AttivazionePolicy)
+			for (int i = 0; i < archive.getControlloTraffico_activePolicies().size(); i++) {
+				ArchiveActivePolicy archivePolicy = archive.getControlloTraffico_activePolicies().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePolicy);
+				try{
+					this.deleteActivePolicy(archivePolicy, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getControlloTraffico_activePolicies().add(detail);
+			}
+			
+			// ControlloTraffico (ConfigurazionePolicy)
+			for (int i = 0; i < archive.getControlloTraffico_configurationPolicies().size(); i++) {
+				ArchiveConfigurationPolicy archivePolicy = archive.getControlloTraffico_configurationPolicies().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePolicy);
+				try{
+					this.deleteConfigPolicy(archivePolicy, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getControlloTraffico_configurationPolicies().add(detail);
+			}
+			
+			
+			// TokenPolicy (Validation)
+			for (int i = 0; i < archive.getToken_validation_policies().size(); i++) {
+				ArchiveTokenPolicy archivePolicy = archive.getToken_validation_policies().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePolicy);
+				try{
+					this.deleteTokenPolicy(archivePolicy, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getToken_validation_policies().add(detail);
+			}
+			
+			// TokenPolicy (Retrieve)
+			for (int i = 0; i < archive.getToken_retrieve_policies().size(); i++) {
+				ArchiveTokenPolicy archivePolicy = archive.getToken_retrieve_policies().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePolicy);
+				try{
+					this.deleteTokenPolicy(archivePolicy, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getToken_retrieve_policies().add(detail);
+			}
+			
 			
 			// Configurazione (Gestisco solamente informazioni extended, in modo da chiamare il driver con la DELETE)
 			if(archive.getConfigurazionePdD()!=null && archive.getConfigurazionePdD().sizeExtendedInfoList()>0) {
@@ -594,6 +623,49 @@ public class DeleterArchiveUtils {
 		}			
 		catch(Exception e){
 			this.log.error("Errore durante l'eliminazione dell'attivazione della policy ["+nomePolicy+"]: "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
+	
+	
+	public void deleteTokenPolicy(ArchiveTokenPolicy archivePolicy,ArchiveEsitoImportDetail detail){
+		
+		String nomePolicy = archivePolicy.getNomePolicy();
+		String tipologiaPolicy = archivePolicy.getTipologiaPolicy();
+		try{
+			
+			// --- check esistenza ---
+			if(this.importerEngine.existsGenericProperties(tipologiaPolicy, nomePolicy)==false){
+				detail.setState(ArchiveStatoImport.DELETED_NOT_EXISTS);
+				return;
+			}
+			
+			
+			// ---- visibilita' oggetto che si vuole eliminare ---
+			
+			// non esistenti
+			
+			
+			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
+			
+			HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+			if (this.importerEngine.isGenericPropertiesInUso(tipologiaPolicy,  nomePolicy, whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO)) {
+				IDGenericProperties idGP = new IDGenericProperties();
+				idGP.setNome(nomePolicy);
+				idGP.setTipologia(tipologiaPolicy);
+				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idGP, whereIsInUso,false,NEW_LINE));
+			}
+			
+			
+			// --- delete ---
+			this.importerEngine.deleteGenericProperties(archivePolicy.getPolicy());
+			detail.setState(ArchiveStatoImport.DELETED);				
+
+						
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'eliminazione della token policy ["+nomePolicy+"] (tipo: '"+tipologiaPolicy+"'): "+e.getMessage(),e);
 			detail.setState(ArchiveStatoImport.ERROR);
 			detail.setException(e);
 		}

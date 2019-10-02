@@ -284,6 +284,11 @@ public class CostantiConfigurazione {
     /** tipo di server: web */
     public final static String SERVER_WEB = "web";
     
+    /** Token */
+	public final static String GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION = "gestionePolicyToken";
+	public final static String GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE = "retrievePolicyToken";
+	public final static String GENERIC_PROPERTIES_TIPOLOGIA_INSTALLER = "installer";
+    
     /** Routing */
     public final static String ROUTE_REGISTRO = "registro";
     public final static String ROUTE_GATEWAY = "gateway";

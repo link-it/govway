@@ -88,6 +88,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveScope;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
+import org.openspcoop2.protocol.sdk.archive.ArchiveTokenPolicy;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.ArchiveStatoImport;
 import org.openspcoop2.utils.date.DateManager;
@@ -473,6 +474,34 @@ public class ImporterArchiveUtils {
 					detail.setException(e);
 				}
 				esito.getControlloTraffico_activePolicies().add(detail);
+			}
+			
+			
+			
+			// Token Policy (Validation)
+			for (int i = 0; i < archive.getToken_validation_policies().size(); i++) {
+				ArchiveTokenPolicy archiveTokenPolicy = archive.getToken_validation_policies().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveTokenPolicy);
+				try{
+					this.importTokenPolicy(archiveTokenPolicy, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getToken_validation_policies().add(detail);
+			}
+			
+			// Token Policy (Retrieve)
+			for (int i = 0; i < archive.getToken_retrieve_policies().size(); i++) {
+				ArchiveTokenPolicy archiveTokenPolicy = archive.getToken_retrieve_policies().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveTokenPolicy);
+				try{
+					this.importTokenPolicy(archiveTokenPolicy, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getToken_retrieve_policies().add(detail);
 			}
 			
 			
@@ -2694,6 +2723,76 @@ public class ImporterArchiveUtils {
 		}			
 		catch(Exception e){
 			this.log.error("Errore durante l'import dell'attivazione della policy ["+nomePolicy+"]: "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
+	
+	public void importTokenPolicy(ArchiveTokenPolicy archivePolicy,ArchiveEsitoImportDetail detail){
+		
+		String nomePolicy = archivePolicy.getNomePolicy();
+		String tipologiaPolicy = archivePolicy.getTipologiaPolicy();
+		try{
+			
+			// --- check esistenza ---
+			if(this.updateAbilitato==false){
+				if(this.importerEngine.existsGenericProperties(tipologiaPolicy, nomePolicy)){
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					return;
+				}
+			}
+			
+				
+			// --- check elementi riferiti ---
+			// non esistenti
+			
+			
+			// --- compatibilita' elementi riferiti ---
+			// non esistenti
+			
+			
+			// ---- visibilita' oggetto riferiti ---
+			// non esistenti
+			
+			
+			// --- set dati obbligatori nel db ----
+			// non esistenti
+			
+			
+			// --- ora registrazione
+			// non esistenti
+			
+			
+			// --- upload ---
+			boolean create = false;
+			if(this.importerEngine.existsControlloTraffico_activePolicy(nomePolicy)){
+				
+				AttivazionePolicy old = this.importerEngine.getControlloTraffico_activePolicy(nomePolicy);
+				archivePolicy.getPolicy().setId(old.getId());
+				
+				// visibilita' oggetto stesso per update
+				// non esistenti
+
+				// update
+				this.importerEngine.updateGenericProperties(archivePolicy.getPolicy());
+				create = false;
+			}
+			// --- create ---
+			else{
+				this.importerEngine.createGenericProperties(archivePolicy.getPolicy());
+				create = true;
+			}
+				
+			
+			// --- info ---
+			if(create){
+				detail.setState(ArchiveStatoImport.CREATED);
+			}else{
+				detail.setState(ArchiveStatoImport.UPDATED);
+			}
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'import token policy ["+nomePolicy+"] (tipo: '"+tipologiaPolicy+"'): "+e.getMessage(),e);
 			detail.setState(ArchiveStatoImport.ERROR);
 			detail.setException(e);
 		}

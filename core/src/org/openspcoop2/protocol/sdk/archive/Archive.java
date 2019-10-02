@@ -60,6 +60,9 @@ public class Archive {
 	private ArchiveSortedMap<ArchiveActivePolicy> controlloTraffico_activePolicies = new ArchiveSortedMap<ArchiveActivePolicy>();
 	private org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale controlloTraffico_configurazione;
 	
+	private ArchiveSortedMap<ArchiveTokenPolicy> token_validation_policies = new ArchiveSortedMap<ArchiveTokenPolicy>();
+	private ArchiveSortedMap<ArchiveTokenPolicy> token_retrieve_policies = new ArchiveSortedMap<ArchiveTokenPolicy>();
+	
 	private Configurazione configurazionePdD;
 	
 	public org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale getControlloTraffico_configurazione() {
@@ -127,5 +130,10 @@ public class Archive {
 	public ArchiveSortedMap<ArchiveActivePolicy> getControlloTraffico_activePolicies() {
 		return this.controlloTraffico_activePolicies;
 	}
-	
+	public ArchiveSortedMap<ArchiveTokenPolicy> getToken_validation_policies() {
+		return this.token_validation_policies;
+	}
+	public ArchiveSortedMap<ArchiveTokenPolicy> getToken_retrieve_policies() {
+		return this.token_retrieve_policies;
+	}
 }
