@@ -75,6 +75,7 @@ Scenario: Ricerca per FiltroApi con tipo qualsiasi
     * set filtro.api = null
     * set filtro.azione = null
     * set filtro.esito = { 'tipo' : 'ok' }
+    * set filtro.limit = 1000
 
     * set filtro.tipo = 'fruizione'
     Given request filtro
@@ -93,6 +94,7 @@ Scenario: Ricerca per FiltroApi con tipo qualsiasi
     * match response.items[*].ruolo contains 'erogazione'
     * match response.items[*].ruolo !contains 'fruizione'
     * eval numeroErogazioni = response.items.length
+    * eval if( monitorUrl.contains("api-monitor/v1") ) numeroErogazioni = numeroErogazioni +1
     
     * set filtro.tipo = 'qualsiasi'
     Given request filtro
@@ -103,7 +105,7 @@ Scenario: Ricerca per FiltroApi con tipo qualsiasi
 
 
 @FiltroApiTags
-Scenario: RicercaSempliceTransazioni tramite richiesta GET con tag 'TESTSUITE'
+Scenario: Ricerca tramite richiesta POST con tag 'TESTSUITE'
     
     * def tag = 'TESTSUITE'
     * def filtro = read('classpath:bodies/ricerca-filtro-api-erogazione.json')
@@ -357,7 +359,8 @@ Scenario: RicercaSempliceTransazioni tramite richiesta GET con tipo transazione 
         data_inizio: filtro.intervallo_temporale.data_inizio,
         data_fine: filtro.intervallo_temporale.data_fine,
         tipo: 'qualsiasi',
-        esito: 'ok'
+        esito: 'ok',
+	limit: 1000
     })
     """
    # * set query.soggetto_remoto = setup.erogatore.nome
@@ -379,6 +382,7 @@ Scenario: RicercaSempliceTransazioni tramite richiesta GET con tipo transazione 
     * match response.items[*].ruolo contains 'erogazione'
     * match response.items[*].ruolo !contains 'fruizione'
     * eval numeroErogazioni = response.items.length
+    * eval if( monitorUrl.contains("api-monitor/v1") ) numeroErogazioni = numeroErogazioni +1
     
   #  * set query.soggetto_remoto = null
     * set query.tipo = 'qualsiasi'
@@ -401,7 +405,7 @@ Scenario: RicercaSempliceTransazioni tramite richiesta GET con tag 'TESTSUITE'
         data_inizio: filtro.intervallo_temporale.data_inizio,
         data_fine: filtro.intervallo_temporale.data_fine,
         tipo: 'qualsiasi',
-        tags: tag
+        tag: tag
     })
     """
     Given params query

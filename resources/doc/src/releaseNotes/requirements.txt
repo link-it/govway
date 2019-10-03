@@ -1,1 +1,1 @@
-sphinx_ops_theme
+sphinx_rtd_theme

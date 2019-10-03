@@ -1,10 +1,11 @@
-# GovWay
+# GovWay - API Gateway per la Pubblica Amministrazione italiana
 [![Build Status](https://jenkins.link.it/govway/buildStatus/icon?job=GovWay&style=plastic)](https://jenkins.link.it/govway/job/GovWay/)
 [![Docker](https://github.com/link-it/govway/blob/master/resources/images/docker.svg)](https://hub.docker.com/r/linkitaly/govway)
 [![License](https://github.com/link-it/govway/blob/master/resources/images/license.svg)](https://raw.githubusercontent.com/link-it/govway/master/LICENSE)
 
 Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle normative della Pubblica Amministrazione:
-- Conforme alle nuove linee guida AGID per l’interoperabilità ModI (profilo API Gateway)
+- Conforme agli standard di mercati (profilo API Gateway)
+- Conforme alle nuove linee guida AGID per l’interoperabilità ModI (profilo ModI PA)
 - Conforme alle specifiche per l’interoperabilità europea (profilo eDelivery)
 - Conforme alle specifiche per la fatturazione elettronica sul canale SdiCoop (profilo Fatturazione Elettronica)
 - Retrocompatibile con il paradigma di cooperazione applicativa (profilo SPCoop)
@@ -12,12 +13,19 @@ Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle
 
 ## Documentazione
 
+* [Informazioni sul progetto GovWay](https://govway.org)
+
+Manuali PDF:
 * [Manuale di Installazione](./resources/doc/pdf/GovWay-ManualeInstallazione.pdf)
 * [Manuale Utente](./resources/doc/pdf/GovWay-ManualeUtente.pdf)
 * [Manuale di Monitoraggio](./resources/doc/pdf/GovWay-ManualeMonitoraggio.pdf)
 
 ## Docker
-Il progetto [govway-docker](https://github.com/link-it/govway-docker) fornisce tutto il necessario per produrre un'ambiente di prova per GovWay funzionante, containerizzato in formato Docker.
+
+Ambienti di prova delle versioni stabili di GovWay, containerizzati in formato Docker, sono disponibile su [Docker Hub
+](https://hub.docker.com/r/linkitaly/govway).
+
+Il progetto [govway-docker](https://github.com/link-it/govway-docker) fornisce tutto il necessario per produrre un nuovo ambiente di prova per GovWay funzionante, containerizzato in formato Docker, a partire anche da versioni non stabili o dai sorgenti.
 
 ## Govlet
 
