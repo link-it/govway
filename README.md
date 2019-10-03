@@ -1,21 +1,24 @@
-# GovWay - API Gateway per la Pubblica Amministrazione italiana
+# GovWay - API Gateway per la Pubblica Amministrazione
 [![Build Status](https://jenkins.link.it/govway/buildStatus/icon?job=GovWay&style=plastic)](https://jenkins.link.it/govway/job/GovWay/)
 [![Docker](https://github.com/link-it/govway/blob/master/resources/images/docker.svg)](https://hub.docker.com/r/linkitaly/govway)
+[![Documentation Status](https://readthedocs.org/projects/govway/badge/?version=latest&style=plastic)](https://govway.readthedocs.io/it/latest/?badge=latest)
 [![License](https://github.com/link-it/govway/blob/master/resources/images/license.svg)](https://raw.githubusercontent.com/link-it/govway/master/LICENSE)
 
 Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle normative della Pubblica Amministrazione:
-- Conforme agli standard di mercati (profilo API Gateway)
-- Conforme alle nuove linee guida AGID per l’interoperabilità ModI (profilo ModI PA)
-- Conforme alle specifiche per l’interoperabilità europea (profilo eDelivery)
-- Conforme alle specifiche per la fatturazione elettronica sul canale SdiCoop (profilo Fatturazione Elettronica)
-- Retrocompatibile con il paradigma di cooperazione applicativa (profilo SPCoop)
-- Connettori preconfigurati (GovLet) per l’accesso ai principali servizi pubblici italiani
+- Conformità agli standard di mercato: gestione protocolli standard di mercato, come SOAP 1.1 e 1.2, API restful serializzate in Json o XML o semplici dati binari su Http.
+- Conformità alle specifiche italiane per l'interoperabilità: supporto delle nuove linee guida per l'interoperabilità di AGID (ModI PA). Viene inoltre assicurata la retrocompatibilità con il protocollo SPCoop, ancora ampiamente adottato per i servizi della PA. 
+- Conformità alle specifiche dell'interoperabilità europea: supporto supporto del protocollo AS4, tramite integrazione con il Building Block eDelivery del progetto europeo CEF (Connecting European Facilities).
+- Conformità alle specifiche per la fatturazione elettronica sul canale SdiCoop.
 
 ## Documentazione
 
-* [Informazioni sul progetto GovWay](https://govway.org)
+Sito WEB del Progetto: 
+* https://govway.org
 
-Manuali PDF:
+Documentazione online:
+* [Read the docs](https://govway.readthedocs.io/it/latest/) ([download](https://readthedocs.org/projects/govway/downloads/htmlzip/latest/))
+
+Documentazione PDF:
 * [Manuale di Installazione](./resources/doc/pdf/GovWay-ManualeInstallazione.pdf)
 * [Manuale Utente](./resources/doc/pdf/GovWay-ManualeUtente.pdf)
 * [Manuale di Monitoraggio](./resources/doc/pdf/GovWay-ManualeMonitoraggio.pdf)
