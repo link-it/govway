@@ -152,6 +152,9 @@ public class GestoreErroreConnettore {
 				if(isSuccessfulHttpRedirectStatusCode) {
 					codiceTrasporto.setValoreMassimo(399);
 				}
+				else {
+					codiceTrasporto.setValoreMassimo(299);
+				}
 				gestione.addCodiceTrasporto(codiceTrasporto);
 	
 	

@@ -42,6 +42,12 @@ public class SPCoopInstanceProperties extends InstanceProperties {
 	SPCoopInstanceProperties(String confDir,Properties reader,Logger log) throws Exception{
 		super(SPCoopCostanti.OPENSPCOOP2_LOCAL_HOME,reader, log);
 		
+		if(confDir==null) {
+			try {
+				confDir = InstanceProperties.readConfDirFromGovWayProperties();
+			}catch(Throwable t) {}
+		}
+		
 		super.setLocalFileImplementation(SPCoopCostanti.SPCOOP_PROPERTIES,SPCoopCostanti.SPCOOP_PROPERTIES_LOCAL_PATH, confDir);
 		
 	}

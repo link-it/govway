@@ -1,3 +1,4 @@
+@parallel=false
 Feature: Ricerca per identificativo applicativo
 
 Background:

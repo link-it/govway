@@ -44,6 +44,11 @@ public class AS4InstanceProperties extends InstanceProperties {
 		
 		// Leggo directory di configurazione
 		String confDir = super.getValue("org.openspcoop2.protocol.as4.confDirectory");
+		if(confDir==null) {
+			try {
+				confDir = InstanceProperties.readConfDirFromGovWayProperties();
+			}catch(Throwable t) {}
+		}
 		
 		super.setLocalFileImplementation(AS4Costanti.AS4_PROPERTIES,AS4Costanti.AS4_PROPERTIES_LOCAL_PATH, confDir);
 		

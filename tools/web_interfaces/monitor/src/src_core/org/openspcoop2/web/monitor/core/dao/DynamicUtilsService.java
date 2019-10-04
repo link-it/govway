@@ -136,11 +136,19 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	private IPortaApplicativaServiceSearch portaApplicativaDAO  = null;
 
 	public static final int LIMIT_SEARCH = 10000;
-	
+
 	public DynamicUtilsService(){
+		this(null);
+	}
+	public DynamicUtilsService(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager){
 		try{
-			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
-					.getInstance( log).getServiceManager(ProjectInfo.getInstance(), DynamicUtilsService.log);
+			if(serviceManager==null) {
+				this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
+						.getInstance( log).getServiceManager(ProjectInfo.getInstance(), DynamicUtilsService.log);
+			}
+			else {
+				this.utilsServiceManager = serviceManager;
+			}
 			this.soggettoDAO = this.utilsServiceManager.getSoggettoServiceSearch();
 
 			this.gruppiDAO = this.utilsServiceManager.getGruppoServiceSearch();

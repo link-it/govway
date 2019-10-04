@@ -1,3 +1,4 @@
+@parallel=false
 Feature: Ricerca Temporale Transazioni e Ricerca Eventi
 
 Background: 

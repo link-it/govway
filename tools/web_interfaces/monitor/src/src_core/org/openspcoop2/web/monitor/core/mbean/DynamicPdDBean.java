@@ -121,6 +121,15 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 					e);
 		}
 	}
+	public DynamicPdDBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager){
+		super(serviceManager);
+		try {
+			this.dynamicUtils = new DynamicPdDBeanUtils(serviceManager,log);
+		} catch (Exception e) {
+			DynamicPdDBean.log.warn("lettura delle properties fallita.....",
+					e);
+		}
+	}
 
 	public void setSearch(BaseSearchForm searc) {
 		this.search = searc;

@@ -222,6 +222,7 @@ public class SOAPEngine {
 		
 		try {
 			this.call.setTimeout(CostantiTestSuite.READ_TIMEOUT);
+			this.call.setProperty(org.apache.axis.client.Call.CONNECTION_TIMEOUT_PROPERTY, CostantiTestSuite.READ_TIMEOUT);
 			this.call.invoke(this.sentMessage);
 		} catch (AxisFault e) {
 			if(e.getHeaders() != null) {

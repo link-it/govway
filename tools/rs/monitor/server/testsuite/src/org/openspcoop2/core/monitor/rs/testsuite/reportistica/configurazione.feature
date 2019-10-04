@@ -1,3 +1,4 @@
+@parallel=false
 Feature: Report della configurazione di GovWay
 
 Background:
@@ -56,7 +57,7 @@ Scenario: Recupero Configurazione API
     })
     """
     Given url configurazioneUrl
-    And params ({tipo: 'erogazione', limit: 0})
+    And params ({tipo: 'erogazione'})
     When method get
     Then status 200
     And match response.items contains ([expected])
@@ -70,7 +71,7 @@ Scenario: Recupero Configurazione API
         erogatore: setup.fruizione_petstore.erogatore
     })
     """
-    Given params ({tipo: 'fruizione', limit: 0})
+    Given params ({tipo: 'fruizione'})
     When method get
     Then status 200
     And match response.items contains ([expected])

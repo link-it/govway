@@ -23,6 +23,7 @@
 
 package org.openspcoop2.utils.properties;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -355,5 +356,22 @@ public abstract class InstanceProperties {
 		}
 		
 		return tmp;
+	}
+	
+	
+	public static String readConfDirFromGovWayProperties() {
+		try {
+			Class<?> cOp2Props = Class.forName("org.openspcoop2.pdd.config.OpenSPCoop2Properties");
+			Method cOp2Props_methodGetInstance = cOp2Props.getMethod("getInstance");
+			Object op2Props = cOp2Props_methodGetInstance.invoke(null);
+			if(op2Props!=null) {
+				Method rootDir_method = op2Props.getClass().getMethod("getRootDirectory");
+				Object rootDir = rootDir_method.invoke(op2Props);
+				if(rootDir!=null && rootDir instanceof String) {
+					return (String) rootDir;
+				}
+			}
+		}catch(Throwable t) {}
+		return null;
 	}
 }

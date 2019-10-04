@@ -25,9 +25,9 @@ package org.openspcoop2.protocol.trasparente.config;
 
 import java.util.Properties;
 
-import org.slf4j.Logger;
 import org.openspcoop2.protocol.trasparente.constants.TrasparenteCostanti;
 import org.openspcoop2.utils.properties.InstanceProperties;
+import org.slf4j.Logger;
 
 
 /**
@@ -44,6 +44,11 @@ public class TrasparenteInstanceProperties extends InstanceProperties {
 		
 		// Leggo directory di configurazione
 		String confDir = super.getValue("org.openspcoop2.protocol.trasparente.confDirectory");
+		if(confDir==null) {
+			try {
+				confDir = InstanceProperties.readConfDirFromGovWayProperties();
+			}catch(Throwable t) {}
+		}
 		
 		super.setLocalFileImplementation(TrasparenteCostanti.TRASPARENTE_PROPERTIES,TrasparenteCostanti.TRASPARENTE_PROPERTIES_LOCAL_PATH, confDir);
 		

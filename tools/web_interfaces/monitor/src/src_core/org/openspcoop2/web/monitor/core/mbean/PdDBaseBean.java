@@ -53,7 +53,10 @@ public class PdDBaseBean<T,K,ServiceType extends IService> extends BaseBean<T, K
 	public PdDBaseBean (){
 		this.dynamicUtilsService = new DynamicUtilsService();
 	}
-		
+	public PdDBaseBean (org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager){
+		this.dynamicUtilsService = new DynamicUtilsService(serviceManager);
+	}	
+	
 //	public List<Soggetto> soggettiAutoComplete(Object val){
 //		String tipoProtocollo = this.getProtocollo();
 //		return _getListaSoggetti(val, tipoProtocollo);

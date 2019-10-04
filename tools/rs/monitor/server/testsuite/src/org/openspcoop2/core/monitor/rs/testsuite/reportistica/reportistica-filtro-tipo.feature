@@ -1,3 +1,4 @@
+@parallel=false
 Feature: Reportistica e esportazione grafici
 
 Background:

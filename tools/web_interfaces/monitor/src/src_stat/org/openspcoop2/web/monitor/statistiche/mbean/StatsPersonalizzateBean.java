@@ -82,6 +82,13 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 
 	public StatsPersonalizzateBean() {
 		super();
+		this.init();
+	}
+	public StatsPersonalizzateBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager) {
+		super(serviceManager);
+		this.init();
+	}
+	private void init() {
 		this.setChartId("statistichePersonalizzate");
 		this.setFilename("../FusionCharts/ScrollCombi2D.swf");
 	}

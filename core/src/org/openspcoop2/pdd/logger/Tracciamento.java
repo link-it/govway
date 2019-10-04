@@ -923,7 +923,14 @@ public class Tracciamento {
 				
 		traccia.setCorrelazioneApplicativa(idCorrelazioneApplicativa);
 		traccia.setCorrelazioneApplicativaRisposta(idCorrelazioneApplicativaRisposta);
-		traccia.setLocation(location);
+		if(location!=null) {
+			if(location.length()>230) { // sto piu' basso di 255 per evitare caratteri strani che occupano più bytes.
+				traccia.setLocation(location.substring(0, 230)+" ...");
+			}
+			else {
+				traccia.setLocation(location);
+			}
+		}
 		traccia.setProtocollo(this.protocolFactory.getProtocol());
 		
 		if(securityInfo!=null){

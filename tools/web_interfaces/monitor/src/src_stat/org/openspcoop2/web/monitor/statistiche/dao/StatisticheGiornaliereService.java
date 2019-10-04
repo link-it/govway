@@ -130,6 +130,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private StatsSearchForm distribSaSearch;
 	private StatistichePersonalizzateSearchForm statistichePersonalizzateSearch;
 
+	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsServiceManager;
+	
 	private org.openspcoop2.core.statistiche.dao.IServiceManager transazioniStatisticheServiceManager;
 
 	private IStatisticaGiornalieraServiceSearch statGiornaliereSearchDAO;
@@ -148,6 +150,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	public StatisticheGiornaliereService() {
 
 		try {
+			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
+					.getInstance(StatisticheGiornaliereService.log).getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(), StatisticheGiornaliereService.log);
+			
 			this.transazioniStatisticheServiceManager = (org.openspcoop2.core.statistiche.dao.IServiceManager) DAOFactory
 					.getInstance(StatisticheGiornaliereService.log).getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),StatisticheGiornaliereService.log);
 
@@ -181,6 +186,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	public StatisticheGiornaliereService(Connection con, boolean autoCommit, ServiceManagerProperties serviceManagerProperties, Logger log) {
 
 		try {
+			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
+					.getInstance(log).getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(),con,autoCommit,serviceManagerProperties,log);
+			
 			this.transazioniStatisticheServiceManager = (org.openspcoop2.core.statistiche.dao.IServiceManager) DAOFactory
 					.getInstance(log).getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),con,autoCommit,serviceManagerProperties,log);
 
@@ -200,6 +208,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		} catch (Exception e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 		}
+	}
+	
+	public org.openspcoop2.core.commons.search.dao.IServiceManager getUtilsServiceManager() {
+		return this.utilsServiceManager;
 	}
 	
 	public void setAndamentoTemporaleSearch(

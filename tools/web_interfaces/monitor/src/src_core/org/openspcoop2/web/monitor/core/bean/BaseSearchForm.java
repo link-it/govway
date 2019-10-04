@@ -359,7 +359,10 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 							BaseSearchForm.log.error("Errore durante l'impostazione del default per il protocollo: " + e.getMessage(),e);
 						}
 					}
-				} else {
+				}else if(loggedUtenteModalita==null) {
+					protocolFactory = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
+				} 
+				else {
 					protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(loggedUtenteModalita);
 				}
 				
@@ -1690,7 +1693,11 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	}
 	
 	public boolean isShowFiltroSoggettoLocale(){
-		return Utility.getLoginBean().isShowFiltroSoggettoLocale();
+		LoginBean lb = Utility.getLoginBean();
+		if(lb==null) {
+			return true;
+		}
+		return lb.isShowFiltroSoggettoLocale();
 	}
 	
 	public boolean isSetFiltroProtocollo() {

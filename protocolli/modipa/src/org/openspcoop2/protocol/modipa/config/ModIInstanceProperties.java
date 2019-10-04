@@ -44,6 +44,11 @@ public class ModIInstanceProperties extends InstanceProperties {
 		
 		// Leggo directory di configurazione
 		String confDir = super.getValue("org.openspcoop2.protocol.modipa.confDirectory");
+		if(confDir==null) {
+			try {
+				confDir = InstanceProperties.readConfDirFromGovWayProperties();
+			}catch(Throwable t) {}
+		}
 		
 		super.setLocalFileImplementation(ModICostanti.MODIPA_PROPERTIES,ModICostanti.MODIPA_PROPERTIES_LOCAL_PATH, confDir);
 		

@@ -84,6 +84,13 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 	// private SelectItem[] specialFilters;
 
 	public BaseStatsMBean() {
+		init();
+	}
+	public BaseStatsMBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager) {
+		super(serviceManager);
+		init();
+	}
+	private void init() {
 		try {
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(DynamicPdDBean.log);
 			this.isVisualizzaPerDimensioneEnabled = govwayMonitorProperties.isAttivoStatisticheVisualizzazioneDimensione();

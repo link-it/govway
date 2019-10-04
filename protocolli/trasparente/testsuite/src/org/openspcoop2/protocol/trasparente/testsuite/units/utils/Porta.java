@@ -25,6 +25,7 @@
 package org.openspcoop2.protocol.trasparente.testsuite.units.utils;
 
 import java.util.Date;
+import java.util.Random;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.constants.MessageType;
@@ -322,6 +323,9 @@ public class Porta {
 
 	public void testSincrono(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
+			Random r = new Random();
+			org.openspcoop2.utils.Utilities.sleep((r.nextInt(3000))+1000);
+			
 			this.collaborazioneTrasparenteBase.testSincrono(data, msgDiagData,id, CostantiTestSuite.SOAP_TIPO_SERVIZIO,
 					CostantiTestSuite.SOAP_NOME_SERVIZIO_SINCRONO, checkServizioApplicativo);
 		}catch(Exception e){

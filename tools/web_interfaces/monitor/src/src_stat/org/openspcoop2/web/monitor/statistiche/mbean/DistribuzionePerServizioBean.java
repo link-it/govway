@@ -80,6 +80,13 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 
 	public DistribuzionePerServizioBean() {
 		super();
+		this.init();
+	}
+	public DistribuzionePerServizioBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager) {
+		super(serviceManager);
+		this.init();
+	}
+	private void init() {
 		this.setChartId("distribuzioneServizio");
 		this.setFilename("../FusionCharts/ScrollCombi2D.swf");
 	}

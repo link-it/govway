@@ -13906,7 +13906,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			
 			//query con filter
 			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
-				sqlQueryObject.addWhereCondition("service_binding = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".service_binding = ?");
 			}
 			if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".stato = ?");
@@ -13947,8 +13947,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-			sqlQueryObject.addSelectField(CostantiDB.ACCORDI, "id");
-			sqlQueryObject.addSelectField(CostantiDB.ACCORDI, "nome");
+			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI, "id", "idAccordo");
+			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI, "nome", "nomeAccordo");
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI, "versione");
 			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI, "tipo_soggetto");
 			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI, "nome_soggetto");
@@ -13968,7 +13968,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 
 			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) { // con filter
-				sqlQueryObject.addWhereCondition("service_binding = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".service_binding = ?");
 			}
 			if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".stato = ?");
@@ -13988,7 +13988,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addWhereExistsCondition(true, sqlQueryObjectExclude);
 			}
 			sqlQueryObject.setANDLogicOperator(true);
-			sqlQueryObject.addOrderBy("nome");
+			sqlQueryObject.addOrderBy("nomeAccordo");
 			sqlQueryObject.addOrderBy("versione");
 			sqlQueryObject.addOrderBy("nome_soggetto");
 			sqlQueryObject.addOrderBy("tipo_soggetto");
@@ -14018,7 +14018,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			while (risultato.next()) {
 
-				Long id = risultato.getLong("id");
+				Long id = risultato.getLong("idAccordo");
 				accordo = this.getAccordoServizioParteComuneSintetico(id, con);
 				lista.add(accordo);
 
@@ -20736,7 +20736,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereINCondition(CostantiDB.SERVIZI+".tipo_servizio", true, tipoServiziProtocollo.toArray(new String[1]));
 				}
 				if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
-					sqlQueryObject.addWhereCondition("service_binding = ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".service_binding = ?");
 				}
 				if(filterGruppo!=null && !filterGruppo.equals("")) {
 					sqlQueryObject.addWhereCondition(CostantiDB.GRUPPI+".nome = ?");
@@ -20820,7 +20820,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereINCondition(CostantiDB.SERVIZI+".tipo_servizio", true, tipoServiziProtocollo.toArray(new String[1]));
 				}
 				if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
-					sqlQueryObject.addWhereCondition("service_binding = ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".service_binding = ?");
 				}
 				if(filterGruppo!=null && !filterGruppo.equals("")) {
 					sqlQueryObject.addWhereCondition(CostantiDB.GRUPPI+".nome = ?");
@@ -20945,7 +20945,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereINCondition(CostantiDB.SERVIZI+".tipo_servizio", true, tipoServiziProtocollo.toArray(new String[1]));
 				}
 				if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
-					sqlQueryObject.addWhereCondition("service_binding = ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".service_binding = ?");
 				}
 				if(filterGruppo!=null && !filterGruppo.equals("")) {
 					sqlQueryObject.addWhereCondition(CostantiDB.GRUPPI+".nome = ?");
@@ -21062,7 +21062,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereINCondition(CostantiDB.SERVIZI+".tipo_servizio", true, tipoServiziProtocollo.toArray(new String[1]));
 				}
 				if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
-					sqlQueryObject.addWhereCondition("service_binding = ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".service_binding = ?");
 				}
 				if(filterGruppo!=null && !filterGruppo.equals("")) {
 					sqlQueryObject.addWhereCondition(CostantiDB.GRUPPI+".nome = ?");

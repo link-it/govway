@@ -76,6 +76,13 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 
 	public AndamentoTemporaleBean() {
 		super();
+		this.init();
+	}
+	public AndamentoTemporaleBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager) {
+		super(serviceManager);
+		this.init();
+	}
+	private void init() {
 		this.setSlice(Integer.MAX_VALUE);
 	}
 	

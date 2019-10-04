@@ -102,10 +102,18 @@ public class DynamicPdDBeanUtils implements Serializable {
 	}
 
 	public DynamicPdDBeanUtils(Logger log) throws Exception{
+		this(null, log);
+	}
+	public DynamicPdDBeanUtils(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, Logger log) throws Exception{
 		this.log = log;
 		try{
 			this.log.debug("Init Dynamic Utils in corso...");
-			this.dynamicUtilsService = new DynamicUtilsService();
+			if(serviceManager!=null) {
+				this.dynamicUtilsService = new DynamicUtilsService(serviceManager);
+			}
+			else {
+				this.dynamicUtilsService = new DynamicUtilsService();
+			}
 			String fontName = PddMonitorProperties.getInstance(log).getConsoleFontFamilyName();
 			int fontStyle = PddMonitorProperties.getInstance(log).getConsoleFontStyle();
 			this.defaultFont = new Font(fontName,fontStyle, 14);
