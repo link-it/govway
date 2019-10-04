@@ -10,6 +10,13 @@ Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle
 - Conformità alle specifiche dell'interoperabilità europea: supporto supporto del protocollo AS4, tramite integrazione con il Building Block eDelivery del progetto europeo CEF (Connecting European Facilities).
 - Conformità alle specifiche per la fatturazione elettronica sul canale SdiCoop.
 
+## Contributi
+
+È possibile partecipare attraverso la creazione di [issues](https://github.com/link-it/govway/issues) e [pull requests](https://github.com/link-it/govway/pulls).
+
+Il progetto possiede un backlog di supporto tecnico costituito dalle [Issue di tipo 'Support'](https://github.com/link-it/govway/issues?utf8=%E2%9C%93&q=is%3Aissue+label%3A%22support%22+).
+
+
 ## Documentazione
 
 Sito WEB del Progetto: 
@@ -17,11 +24,13 @@ Sito WEB del Progetto:
 
 Documentazione online:
 * [Read the docs](https://govway.readthedocs.io/it/latest/) ([download](https://readthedocs.org/projects/govway/downloads/htmlzip/latest/))
+* Backlog di supporto tecnico costituito dalle [Issue di tipo 'Support'](https://github.com/link-it/govway/issues?utf8=%E2%9C%93&q=is%3Aissue+label%3A%22support%22+)
 
 Documentazione PDF:
 * [Manuale di Installazione](./resources/doc/pdf/GovWay-ManualeInstallazione.pdf)
 * [Manuale Utente](./resources/doc/pdf/GovWay-ManualeUtente.pdf)
 * [Manuale di Monitoraggio](./resources/doc/pdf/GovWay-ManualeMonitoraggio.pdf)
+
 
 ## Docker
 
