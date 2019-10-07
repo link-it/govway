@@ -1,3 +1,12 @@
+2019-10-07  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.2.0
+
+2019-10-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Corretto problema su console che non consentiva di utilizzare i filtri per TAG insieme al filtro per tipologia REST/SOAP.
+
 2019-09-30  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.2.0.rc1
