@@ -132,7 +132,7 @@ descritto nella precedente sezione :ref:`authClaims`. La verifica che andiamo a 
 -  **Configurazione Controllo degli Accessi**
 
    Accedere alla sezione *'Erogazioni'* e selezionare l'API
-   precedentemente registrata *'PetStore v2'*. Dopodichè accedere, dal
+   precedentemente registrata *'PetStore v1'*. Dopodichè accedere, dal
    dettaglio dell'erogazione, alla sezione *'Configurazione'* dove
    vengono visualizzate le funzionalità attive. Cliccare sulla voce
    presente nella colonna '*Controllo Accessi*\ ' e procedere con la
@@ -159,16 +159,16 @@ descritto nella precedente sezione :ref:`authClaims`. La verifica che andiamo a 
 
    Effettuata la configurazione salvarla cliccando sul pulsante 'Salva'.
 
-.. figure:: ../_figure_howto/oauthAutorizzazioneXACMLConfigControlloAccessi.png
-    :scale: 50%
-    :align: center
-    :name: quick_oauthAuthXACML_fig
+   .. figure:: ../_figure_howto/oauthAutorizzazioneXACMLConfigControlloAccessi.png
+       :scale: 50%
+       :align: center
+       :name: quick_oauthAuthXACML_fig
 
-    Configurazione OAuth2 - Autorizzazione XACML Policy
+       Configurazione OAuth2 - Autorizzazione XACML Policy
 
 -  **Invocazione API**
 
-.. note:: **Reset Cache delle Configurazioni prima di un nuovo test**
+   .. note:: **Reset Cache delle Configurazioni prima di un nuovo test**
        |br|
        Le configurazioni accedute da GovWay vengono mantenute in una
        cache dopo il primo accesso per 2 ore, è quindi necessario
@@ -220,25 +220,25 @@ descritto nella precedente sezione :ref:`authClaims`. La verifica che andiamo a 
    configurazione sopra indicata sono terminate con errore con esito
    *Autorizzazione Negata*.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreXACML.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthAuthXACMLNegata_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreXACML.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthAuthXACMLNegata_fig
 
-    Tracce delle invocazioni terminate con errore 'Autorizzazione Negata'
+       Tracce delle invocazioni terminate con errore 'Autorizzazione Negata'
 
-Accedendo al dettaglio di una transazione terminata in errore, e
+   Accedendo al dettaglio di una transazione terminata in errore, e
    visualizzandone i diagnostici è possibile comprendere che l'errore è
    dovuto ad una decisione 'deny' ottenuta dopo la valutazione della
    policy: *'(result-1 DENY
    code:urn:oasis:names:tc:xacml:1.0:status:ok)'*.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreXACML_diagnostici.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthAuthXACMLDiagnostici_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreXACML_diagnostici.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthAuthXACMLDiagnostici_fig
 
-    Diagnostici di una invocazione terminata con errore
+       Diagnostici di una invocazione terminata con errore
 
 -  **Registrazione ClientId corretto nella XACMLPolicy**
 
@@ -288,13 +288,13 @@ Accedendo al dettaglio di una transazione terminata in errore, e
 -  **Aggiornamento XACMLPolicy in Controllo degli Accessi**
 
    Tramite la *govwayConsole* accedere nuovamente alla maschera di
-   configurazione '*Controllo Accessi*\ ' dell'API *'PetStore v2'*;
+   configurazione '*Controllo Accessi*\ ' dell'API *'PetStore v1'*;
    all'interno della sezione *'Autorizzare'* caricare la policy
    aggiornata.
 
 -  **Nuova invocazione API**
 
-.. note:: **Reset Cache delle Configurazioni prima di un nuovo test**
+   .. note:: **Reset Cache delle Configurazioni prima di un nuovo test**
        |br|
        Effettuare il reset della cache accedendo alla sezione
        *'Strumenti' - 'Runtime'* e selezionare la voce

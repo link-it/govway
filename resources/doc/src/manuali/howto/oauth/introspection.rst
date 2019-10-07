@@ -15,7 +15,7 @@ l'\ *access token* ricevuto.
 -  **Configurazione Controllo degli Accessi**
 
    Accedere alla sezione *'Erogazioni'* e selezionare l'API
-   precedentemente registrata *'PetStore v2'*. Dopodichè accedere, dal
+   precedentemente registrata *'PetStore v1'*. Dopodichè accedere, dal
    dettaglio dell'erogazione, alla sezione *'Configurazione'* dove
    vengono visualizzate le funzionalità attive. Per abilitare una
    protezione dell'api basata su *OAuth* cliccare sulla voce presente
@@ -36,16 +36,16 @@ l'\ *access token* ricevuto.
 
    Effettuata la configurazione salvarla cliccando sul pulsante 'Salva'.
 
-.. figure:: ../_figure_howto/oauthIntrospectionConfig.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthIntrospectionConfig_fig
+   .. figure:: ../_figure_howto/oauthIntrospectionConfig.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthIntrospectionConfig_fig
 
-    Configurazione OAuth2 per PetStore
+       Configurazione OAuth2 per PetStore
 
 -  **Invocazione API senza un access token**
 
-.. note:: **Reset Cache delle Configurazioni prima di un nuovo test**
+   .. note:: **Reset Cache delle Configurazioni prima di un nuovo test**
        |br|
        Le configurazioni accedute da GovWay vengono mantenute in una
        cache dopo il primo accesso per 2 ore, è quindi necessario
@@ -53,10 +53,7 @@ l'\ *access token* ricevuto.
        *'Strumenti' - 'Runtime'* e selezionare la voce
        *'ResetAllCaches'*.
 
-Al termine di questi passi di configurazione il servizio REST sarà
-invocabile solamente se viene fornito un *access token*. Con il
-seguente comando è possibile constatare come una richiesta che non
-possieda l'\ *access token* viene rifiutata da GovWay.
+   Al termine di questi passi di configurazione il servizio REST sarà invocabile solamente se viene fornito un *access token*. Con il seguente comando è possibile constatare come una richiesta che non possieda l'\ *access token* viene rifiutata da GovWay.
 
    ::
 
@@ -100,12 +97,12 @@ possieda l'\ *access token* viene rifiutata da GovWay.
    configurazione sopra indicata sono terminate con errore con esito
    *Gestione Token Fallita*.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErrore.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthStoricoTransazioniErrore_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErrore.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthStoricoTransazioniErrore_fig
 
-    Tracce delle invocazioni terminate con errore 'Gestione Token Fallita'
+       Tracce delle invocazioni terminate con errore 'Gestione Token Fallita'
 
 -  **Acquisizione Access Token**
 
@@ -129,12 +126,12 @@ possieda l'\ *access token* viene rifiutata da GovWay.
       rediretti alla pagina di autenticazione in google dove si dovrà
       procedere ad autenticarsi.
 
-.. figure:: ../_figure_howto/oauthIntrospectionPlaygroundStep1.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthPlaygroundStep1_fig
+      .. figure:: ../_figure_howto/oauthIntrospectionPlaygroundStep1.png
+          :scale: 100%
+          :align: center
+          :name: quick_oauthPlaygroundStep1_fig
 
-    Ottenimento Token: Playground Google, Step 1
+          Ottenimento Token: Playground Google, Step 1
 
 
     2. *Authorization Code*
@@ -143,12 +140,12 @@ possieda l'\ *access token* viene rifiutata da GovWay.
       seconda fase prevista dall'applicazione *Playground* denominata
       *'Exchange authorization code for tokens'*.
 
-.. figure:: ../_figure_howto/oauthIntrospectionPlaygroundStep2.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthPlaygroundStep2_fig
+      .. figure:: ../_figure_howto/oauthIntrospectionPlaygroundStep2.png
+          :scale: 100%
+          :align: center
+          :name: quick_oauthPlaygroundStep2_fig
 
-    Ottenimento Token: Playground Google, Step 2
+          Ottenimento Token: Playground Google, Step 2
 
     3. *Access Token*
 
@@ -156,25 +153,25 @@ possieda l'\ *access token* viene rifiutata da GovWay.
       si ottiene infine un *access token* da estrarre nella risposta
       http visualizzata sulla destra dell'applicazione.
 
-.. figure:: ../_figure_howto/oauthIntrospectionPlaygroundStep3.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthPlaygroundStep3_fig
+      .. figure:: ../_figure_howto/oauthIntrospectionPlaygroundStep3.png
+          :scale: 100%
+          :align: center
+          :name: quick_oauthPlaygroundStep3_fig
 
-    Ottenimento Token: Playground Google, Step 3
+          Ottenimento Token: Playground Google, Step 3
 
 -  **Invocazione API con un access token**
 
    Con il seguente comando è possibile effettuare una richiesta che
    possiede l'\ *access token* ottenuto nella precedente fase.
 
-.. note:: **Bearer Token Usage**
+   .. note:: **Bearer Token Usage**
        |br|
        Un *access token* può essere incluso nella richiesta tramite una
        delle modalità definite dalla specifica `RFC
        6750 <https://tools.ietf.org/html/rfc6750>`__.
 
-::
+   ::
 
        curl -v -X PUT "http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet?access_token=ACCESS_TOKEN" \
        -H "accept: application/json" \
@@ -191,7 +188,7 @@ possieda l'\ *access token* viene rifiutata da GovWay.
    L'esito dell'aggiornamento viene confermato con un codice http 200 e
    una risposta json equivalente alla richiesta:
 
-::
+   ::
 
        HTTP/1.1 200 OK
        Access-Control-Allow-Origin: *
@@ -221,25 +218,25 @@ possieda l'\ *access token* viene rifiutata da GovWay.
    informazioni principali estratte dal token (es. Subject presente nel
    claim 'sub').
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniOk.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthStoricoTransazioniOK_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniOk.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthStoricoTransazioniOK_fig
 
-    Traccia di una invocazione terminata con successo
+       Traccia di una invocazione terminata con successo
 
 
-Cliccando sul link *'Visualizza'* della voce *'Token Info'* è
+   Cliccando sul link *'Visualizza'* della voce *'Token Info'* è
    possibile vedere tutti i claims presenti nel token, tra cui è
    possibile constatare la presenza del cliam *scope* valorizzato con
    quanto richiesto tramite l'applicazione Playground.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniOkTokenInfo.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthStoricoTransazioniOKTokenInfo_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniOkTokenInfo.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthStoricoTransazioniOKTokenInfo_fig
 
-    Informazioni ottenute tramite Introspection del Token
+       Informazioni ottenute tramite Introspection del Token
 
 -  **Invocazione API con un access token non valido**
 
@@ -293,10 +290,9 @@ Cliccando sul link *'Visualizza'* della voce *'Token Info'* è
    vengono descritte nella sezione :ref:`tokenForward`.
 
    Per vedere quali header vengono effettivamente prodotti possiamo
-   utilizzare la funzionalità *'Registrazione Messaggi'* .
-   .. descritta nel dettaglio nella sezione XXXX quick_registrazioneMessaggi 
+   utilizzare la funzionalità *'Registrazione Messaggi'*. 
    Accedere alla sezione *'Erogazioni'* e
-   selezionare l'API precedentemente registrata *'PetStore v2'*.
+   selezionare l'API precedentemente registrata *'PetStore v1'*.
    Dopodichè accedere, dal dettaglio dell'erogazione, alla sezione
    *'Configurazione'* dove vengono visualizzate le funzionalità attive.
    Per abilitare la registrazione degli header cliccare sulla voce
@@ -316,14 +312,14 @@ Cliccando sul link *'Visualizza'* della voce *'Token Info'* è
 
    Effettuata la configurazione salvarla cliccando sul pulsante 'Salva'.
 
-.. figure:: ../_figure_howto/oauthConfigurazioneDump.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthConfigDump_fig
+   .. figure:: ../_figure_howto/oauthConfigurazioneDump.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthConfigDump_fig
 
-    Configurazione Registrazione Messaggi per visualizzare Header HTTP
+       Configurazione Registrazione Messaggi per visualizzare Header HTTP
 
-Prima di procedere con una nuova richiesta effettuare il reset della
+   Prima di procedere con una nuova richiesta effettuare il reset della
    cache delle configurazioni accedendo alla sezione *'Strumenti' -
    'Runtime'* e selezionare la voce *'ResetAllCaches'*.
 
@@ -333,16 +329,16 @@ Prima di procedere con una nuova richiesta effettuare il reset della
    voce *'Contenuti Uscita'* (:numref:`quick_oauthConfigDumpVisualizzaHeader_fig`) che permette di vedere gli header http
    prodotti da GovWay (:numref:`quick_oauthConfigDumpHeaders_fig`).
 
-.. figure:: ../_figure_howto/oauthConfigurazioneDumpVisualizzaHeader.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthConfigDumpVisualizzaHeader_fig
+   .. figure:: ../_figure_howto/oauthConfigurazioneDumpVisualizzaHeader.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthConfigDumpVisualizzaHeader_fig
 
-    Dettaglio della transazione con contenuti
+       Dettaglio della transazione con contenuti
 
-.. figure:: ../_figure_howto/oauthConfigurazioneDumpHeaders.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthConfigDumpHeaders_fig
+   .. figure:: ../_figure_howto/oauthConfigurazioneDumpHeaders.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthConfigDumpHeaders_fig
 
-    Header HTTP prodotti da GovWay contenenti le informazioni sul Token
+       Header HTTP prodotti da GovWay contenenti le informazioni sul Token

@@ -32,12 +32,12 @@ dominio gestito dal soggetto *Ente2*.
    *'Generale'*. Nella maschera visualizzata selezionare il valore
    *'abilitato'* nella sezione *'Multi-Tenant'*.
 
-.. figure:: ../_figure_howto/multitenant_configurazione_abilitato.png
-    :scale: 100%
-    :align: center
-    :name: quick_multitenantAbilitato_fig
+   .. figure:: ../_figure_howto/multitenant_configurazione_abilitato.png
+       :scale: 100%
+       :align: center
+       :name: quick_multitenantAbilitato_fig
 
-    Configurazione Multi-Tenant Abilitato
+       Configurazione Multi-Tenant Abilitato
 
 2. **Registrazione nuovo Soggetto**
 
@@ -52,12 +52,12 @@ dominio gestito dal soggetto *Ente2*.
    -  *Descrizione*: opzionalmente è possibile fornire una descrizione
       generica del soggetto.
 
-.. figure:: ../_figure_howto/multitenant_configurazione_soggetto.png
-    :scale: 100%
-    :align: center
-    :name: quick_multitenantSoggetto_fig
+   .. figure:: ../_figure_howto/multitenant_configurazione_soggetto.png
+       :scale: 100%
+       :align: center
+       :name: quick_multitenantSoggetto_fig
 
-    Registrazione nuovo Soggetto
+       Registrazione nuovo Soggetto
 
 3. **Selezione del Dominio da gestire**
 
@@ -68,12 +68,12 @@ dominio gestito dal soggetto *Ente2*.
    l'apposito menù situato in alto a destra nell'intestazione delle
    console.
 
-.. figure:: ../_figure_howto/apiGateway_multitenant_selezione_soggetto.png
-    :scale: 100%
-    :align: center
-    :name: quick_multitenantSelezioneSoggetto_fig
+   .. figure:: ../_figure_howto/apiGateway_multitenant_selezione_soggetto.png
+       :scale: 100%
+       :align: center
+       :name: quick_multitenantSelezioneSoggetto_fig
 
-    Selezione del Soggetto
+       Selezione del Soggetto
 
 4. **Registrazione Erogazione**
 
@@ -84,9 +84,9 @@ dominio gestito dal soggetto *Ente2*.
    -  *Nome*: selezionare l'API precedentemente registrata *'PetStore
       v2'*.
 
-   -  *Autenticazione - Stato*: per esporre l'API in modo che sia
+   -  *Controllo degli Accessi - Accesso API*: per esporre l'API in modo che sia
       invocabile da qualunque client in forma anonima selezionare lo
-      stato *'disabilitato'*.
+      stato *'pubblico'*.
 
    -  *Connettore - Endpoint*: indicare la *base uri* dove viene erogata
       l'API nel dominio interno. Per il nostro esempio utilizzare sempre
@@ -99,27 +99,29 @@ dominio gestito dal soggetto *Ente2*.
    potrà conoscere l'\ *url di invocazione* che deve essere comunicata
    ai client che desiderano invocare l'API.
 
+    .. note::
+
        **Nome del Soggetto presente nella url di invocazione**
 
        Come si può vedere dalla :numref:`quick_multitenantUrlInvocazione_fig` il soggetto *Ente2* compare nella url indicata.
 
-.. figure:: ../_figure_howto/apiGateway_multitenant_erogazione_urlInvocazione.png
-    :scale: 100%
-    :align: center
-    :name: quick_multitenantUrlInvocazione_fig
+   .. figure:: ../_figure_howto/apiGateway_multitenant_erogazione_urlInvocazione.png
+       :scale: 100%
+       :align: center
+       :name: quick_multitenantUrlInvocazione_fig
 
-    URL di Invocazione dell'API erogata
+       URL di Invocazione dell'API erogata
 
 5. **Invocazione API tramite GovWay**
 
    Al termine di questi passi di configurazione il servizio REST sarà
    raggiungibile dai client utilizzando l'url di invocazione:
 
-   -  *http://host:port/govway/\ **Ente2**/PetStore/v2/<uri-risorsa>*
+   -  http://host:port/govway/**Ente2**/PetStore/v1/<uri-risorsa>
 
    ::
 
-       curl -v -X PUT "http://127.0.0.1:8080/govway/Ente2/PetStore/v2/pet" \
+       curl -v -X PUT "http://127.0.0.1:8080/govway/Ente2/PetStore/v1/pet" \
        -H "accept: application/json" \
        -H "Content-Type: application/json" \
        -d '{

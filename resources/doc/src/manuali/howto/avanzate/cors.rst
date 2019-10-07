@@ -32,7 +32,7 @@ In GovWay è abilitata per default una gestione globale del CORS. I
 dettagli sulla configurazione globale sono accedibili tramite la voce
 del menù *'Configurazione - Generale'* all'interno della sezione
 *'Gestione CORS'*. Per il dettaglio sul significa di ogni voce si
-rimanda alla specifica CORS *https://www.w3.org/TR/cors/*. Sono
+rimanda alla specifica CORS (https://www.w3.org/TR/cors/). Sono
 abilitati per default:
 
 -  *Access-Control-Allow-Origins*: Qualsiasi origine (\*)
@@ -78,7 +78,7 @@ parametri per utilizzare il servizio descritto nella sezione :ref:`erogazioneRES
                "status": "available"
        }
 
--  *Remote URL*: http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet
+-  *Remote URL*: http://127.0.0.1:8080/govway/Ente/PetStore/v1/pet
 
 Se si attiva la modalità *Developers Tool* (es. su Chrome 'More Tools -
 Developers Tool') è possibile vedere le richieste effettuate dal browser

@@ -31,17 +31,17 @@ all'interno del token:
    inseriremo l'identificativo di *Playground* in modo da completare con
    successo la verifica.
 
-.. figure:: ../_figure_howto/oauth_scenario_claim.jpg
-    :scale: 100%
-    :align: center
-    :name: quick_oauthAutorizzazioneClaims_fig
+   .. figure:: ../_figure_howto/oauth_scenario_claim.jpg
+       :scale: 100%
+       :align: center
+       :name: quick_oauthAutorizzazioneClaims_fig
 
-    Scenario OAuth con autorizzazione sui Claims
+       Scenario OAuth con autorizzazione sui Claims
 
 -  **Configurazione Controllo degli Accessi**
 
    Accedere alla sezione *'Erogazioni'* e selezionare l'API
-   precedentemente registrata *'PetStore v2'*. Dopodichè accedere, dal
+   precedentemente registrata *'PetStore v1'*. Dopodichè accedere, dal
    dettaglio dell'erogazione, alla sezione *'Configurazione'* dove
    vengono visualizzate le funzionalità attive. Cliccare sulla voce
    presente nella colonna '*Controllo Accessi*\ ' e procedere con la
@@ -71,7 +71,7 @@ all'interno del token:
       una lista di valori tra i quali non è presente l'applicazione
       Playground per il claim 'azp':
 
-.. note:: **Per conoscere l’identificativo dell’applicazione Playground**
+   .. note:: **Per conoscere l’identificativo dell’applicazione Playground**
 	 |br|
           È possibile vedere una precedente transazione terminata con
           successo per conoscere l'esatto valore associato
@@ -83,16 +83,16 @@ all'interno del token:
 
    Effettuata la configurazione salvarla cliccando sul pulsante 'Salva'.
 
-.. figure:: ../_figure_howto/oauthAutorizzazioneClaimConfigControlloAccessi.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthAutorizzazione2_fig
+   .. figure:: ../_figure_howto/oauthAutorizzazioneClaimConfigControlloAccessi.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthAutorizzazione2_fig
 
-    Configurazione OAuth2 - Autorizzazione
+       Configurazione OAuth2 - Autorizzazione
 
 -  **Invocazione API**
 
-.. note:: **Reset Cache delle Configurazioni prima di un nuovo test**
+   .. note:: **Reset Cache delle Configurazioni prima di un nuovo test**
        |br|
        Le configurazioni accedute da GovWay vengono mantenute in una
        cache dopo il primo accesso per 2 ore, è quindi necessario
@@ -145,29 +145,29 @@ all'interno del token:
    configurazione sopra indicata sono terminate con errore con esito
    *Autorizzazione Negata*.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreClaim.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthTracceAutorizzazioneNegata_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreClaim.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthTracceAutorizzazioneNegata_fig
 
-    Tracce delle invocazioni terminate con errore 'Autorizzazione Negata'
+       Tracce delle invocazioni terminate con errore 'Autorizzazione Negata'
 
-Accedendo al dettaglio di una transazione terminata in errore, e
+   Accedendo al dettaglio di una transazione terminata in errore, e
    visualizzandone i diagnostici è possibile comprendere l'errore che
    come atteso risulta essere un valore sconosciuto per quanto concerne
    il claim 'azp'.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreClaim_diagnostici.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthDiagnosticiErrore2_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreClaim_diagnostici.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthDiagnosticiErrore2_fig
 
-    Diagnostici di una invocazione terminata con errore
+       Diagnostici di una invocazione terminata con errore
 
 -  **Registrazione ClientId corretto in Controllo degli Accessi**
 
    Tramite la *govwayConsole* accedere nuovamente alla maschera di
-   configurazione '*Controllo Accessi*\ ' dell'API *'PetStore v2'*;
+   configurazione '*Controllo Accessi*\ ' dell'API *'PetStore v1'*;
    all'interno della sezione *'Autorizzare'* modificare il valore del
    claim 'azp' aggiungendo l'applicazione *Playground*:
 
@@ -175,16 +175,16 @@ Accedendo al dettaglio di una transazione terminata in errore, e
 
    -  azp=client1, client2, 407408718192.apps.googleusercontent.com
 
-.. figure:: ../_figure_howto/oauthAutorizzazioneConfigClaim2red.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthClaimsOK_fig
+   .. figure:: ../_figure_howto/oauthAutorizzazioneConfigClaim2red.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthClaimsOK_fig
 
-    Configurazione OAuth2 - Autorizzazione dei claims corretta
+       Configurazione OAuth2 - Autorizzazione dei claims corretta
 
 -  **Nuova invocazione API**
 
-.. note:: **Reset Cache delle Configurazioni prima di un nuovo test**
+   .. note:: **Reset Cache delle Configurazioni prima di un nuovo test**
        |br|
        Effettuare il reset della cache accedendo alla sezione
        *'Strumenti' - 'Runtime'* e selezionare la voce

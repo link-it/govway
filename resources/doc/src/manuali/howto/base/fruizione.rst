@@ -3,11 +3,11 @@
 Fruizione API
 -------------
 
-Procediamo adesso con la descrizione dei passi di configurazione
+In questa sezione vengono descritti i passi di configurazione
 necessari, ad un applicativo client interno al dominio di gestione, per
 poter fruire di una API REST esterna. L'API REST esterna utilizzata sarà
-lo *Swagger Petstore* e, poiché si suppone che tale
-scenario sia già stato provato, non è necessario registrare nuovamente
+lo *Swagger Petstore* e, poiché si suppone che lo
+scenario descritto nella sezione :ref:`erogazioneREST` sia già stato provato, non è necessario registrare nuovamente
 l'API.
 
 In GovWay ad ogni dominio, interno o esterno, viene associato ad un
@@ -36,7 +36,7 @@ procedere come segue:
    Accedere alla sezione *'Soggetti'* e selezionare il pulsante
    *'Aggiungi'*. Fornire i seguenti dati:
 
-   -  *Dominio*: selezionare la voce *'Esterno'*.
+   -  *Dominio*: selezionare la voce *'Esterno'*. Questa voce è presente solamente se il *Multitenat* è abilitato su GovWay (maggiori dettagli sono forniti nella sezione :ref:`quickMultitenant`).
 
    -  *Nome*: indicare il nome del Soggetto che rappresenta il nuovo
       dominio esterno, ad esempio *'EnteEsterno'*.
@@ -46,12 +46,12 @@ procedere come segue:
    -  *Descrizione*: opzionalmente è possibile fornire una descrizione
       generica del soggetto.
 
-.. figure:: ../_figure_howto/fruizioneRESTBaseRegistrazioneSoggetto.png
-    :scale: 100%
-    :align: center
-    :name: quick_fruizioneSoggetto_fig
+   .. figure:: ../_figure_howto/fruizioneRESTBaseRegistrazioneSoggetto.png
+       :scale: 100%
+       :align: center
+       :name: quick_fruizioneSoggetto_fig
 
-    Registrazione nuovo Soggetto
+       Registrazione nuovo Soggetto
 
 2. **Registrazione Fruizione**
 
@@ -64,9 +64,9 @@ procedere come segue:
    -  *Soggetto Erogatore - Nome*: selezionare il soggetto
       precedentemente registrato *'EnteEsterno'*.
 
-   -  *Autenticazione - Stato*: per esporre l'API in modo che sia
+   -  *Controllo degli Accessi - Accesso API*: per esporre l'API in modo che sia
       invocabile da qualunque client in forma anonima selezionare lo
-      stato *'disabilitato'*.
+      stato *'pubblico'*.
 
    -  *Connettore - Endpoint*: indicare la *base uri* dove viene erogata
       l'API nel dominio esterno. Per il nostro esempio utilizzare la
@@ -74,31 +74,31 @@ procedere come segue:
 
       -  *http://petstore.swagger.io/v2*
 
-.. figure:: ../_figure_howto/fruizioneRESTBaseRegistrazioneFruizione.png
-    :scale: 100%
-    :align: center
-    :name: quick_fruizioneAPI_fig
+   .. figure:: ../_figure_howto/fruizioneRESTBaseRegistrazioneFruizione.png
+       :scale: 100%
+       :align: center
+       :name: quick_fruizioneAPI_fig
 
-    Registrazione di una fruizione di API
+       Registrazione di una fruizione di API
 
-Effettuato il salvataggio, l'API erogata sarà consultabile
-   all'interno dell'elenco delle fruizioni. Accedendo al dettaglio si
-   potrà conoscere l'\ *url di invocazione* che deve essere comunicata
-   ai client che desiderano invocare l'API.
+   Effettuato il salvataggio, l'API erogata sarà consultabile all'interno dell'elenco delle fruizioni. Accedendo al dettaglio si potrà conoscere l'\ *url di invocazione* che deve essere comunicata ai client che desiderano invocare l'API.
 
-.. figure:: ../_figure_howto/fruizioneRESTBaseConsultazioneFruizione.png
-    :scale: 100%
-    :align: center
-    :name: quick_urlFruizioneAPI_fig
+   .. figure:: ../_figure_howto/fruizioneRESTBaseConsultazioneFruizione.png
+       :scale: 100%
+       :align: center
+       :name: quick_urlFruizioneAPI_fig
 
-    URL di Invocazione dell'API fruita
+       URL di Invocazione dell'API fruita
 
 3. **Invocazione API tramite GovWay**
 
    Al termine di questi passi di configurazione il servizio REST sarà
    raggiungibile dai client utilizzando l'url di invocazione:
 
-   -  *http://host:port/govway/out/<soggetto-dominio-interno>/EnteEsterno/PetStore/v2/<uri-risorsa>*
+   -  http://host:port/govway/out/*<soggetto-dominio-interno>*/EnteEsterno/PetStore/v1/<uri-risorsa>
+
+
+    .. note::
 
        **Soggetto Interno al Dominio**
 
@@ -107,7 +107,7 @@ Effettuato il salvataggio, l'API erogata sarà consultabile
 
    ::
 
-       curl -v -X PUT "http://127.0.0.1:8080/govway/out/Ente/EnteEsterno/PetStore/v2/pet" \
+       curl -v -X PUT "http://127.0.0.1:8080/govway/out/Ente/EnteEsterno/PetStore/v1/pet" \
        -H "accept: application/json" \
        -H "Content-Type: application/json" \
        -d '{

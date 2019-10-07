@@ -33,9 +33,8 @@ Una rappresentazione di questo scenario è mostrata nella :numref:`quick_sospens
     Sospensione di una API
 
 Per sospendere una erogazione o fruizione di API, utilizzando la console
-*govwayConsole* dal dettaglio dell'erogazione o della fruizione accedere
-alla sezione *'Configurazione'*. Cliccando sull'icona di stato verde
-comparirà una finestra di dialogo dove viene richiesto di confermare la
+*govwayConsole* dal dettaglio dell'erogazione o della fruizione cliccare sul 'toggle' di abilitazione/disabilitazione presente nella prima riga dove viene presentato il nome dell'API.
+Comparirà una finestra di dialogo dove viene richiesto di confermare la
 sospensione. La :numref:`quick_sospensioneDisattivazione_fig` mostra una sospensione in corso dell'erogazione
 registrata nella sezione :ref:`erogazioneREST`.
 
@@ -73,7 +72,7 @@ l'erogazione risulta sospesa:
 
 ::
 
-    curl -v -X PUT "http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet" \
+    curl -v -X PUT "http://127.0.0.1:8080/govway/Ente/PetStore/v1/pet" \
     -H "accept: application/json" \
     -H "Content-Type: application/json" \
     -d '{

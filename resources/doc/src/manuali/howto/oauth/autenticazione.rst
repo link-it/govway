@@ -70,7 +70,7 @@ l'interazione con tale servizio.
 -  **Configurazione Controllo degli Accessi**
 
    Accedere alla sezione *'Erogazioni'* e selezionare l'API
-   precedentemente registrata *'PetStore v2'*. Dopodichè accedere, dal
+   precedentemente registrata *'PetStore v1'*. Dopodichè accedere, dal
    dettaglio dell'erogazione, alla sezione *'Configurazione'* dove
    vengono visualizzate le funzionalità attive. Cliccare sulla voce
    presente nella colonna '*Controllo Accessi*\ ' e procedere con la
@@ -88,10 +88,7 @@ l'interazione con tale servizio.
 
    -  *Token Forward*: abilitato
 
-   Procedere inoltre con la seguente configurazione all'interno della
-   sezione *'Autenticazione'*:
-
-   -  *Trasporto - Stato*: disabilitato
+   Procedere inoltre abilitando i seguenti 'Required Claims':    
 
    -  *Token - Issuer*: disabilitato
 
@@ -105,16 +102,16 @@ l'interazione con tale servizio.
 
    Effettuata la configurazione salvarla cliccando sul pulsante 'Salva'.
 
-.. figure:: ../_figure_howto/oauthAutenticazioneConfig.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthAutenticazione_fig
+   .. figure:: ../_figure_howto/oauthAutenticazioneConfig.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthAutenticazione_fig
 
-    Configurazione OAuth2 - Autenticazione
+       Configurazione OAuth2 - Autenticazione
 
 -  **Invocazione API**
 
-.. note:: **Reset Cache delle Configurazioni prima di un nuovo test** 
+   .. note:: **Reset Cache delle Configurazioni prima di un nuovo test** 
        |br|
        Le configurazioni accedute da GovWay vengono mantenute in una
        cache dopo il primo accesso per 2 ore, è quindi necessario
@@ -122,7 +119,7 @@ l'interazione con tale servizio.
        *'Strumenti' - 'Runtime'* e selezionare la voce
        *'ResetAllCaches'*.
 
-Per effettuare il test acquisire un token utilizzando l'applicazione
+   Per effettuare il test acquisire un token utilizzando l'applicazione
    *Playground* come descritto nella precedente sezione :ref:`validazioneIntrospection` e procedere
    con il seguente comando.
 
@@ -164,64 +161,64 @@ Per effettuare il test acquisire un token utilizzando l'applicazione
 
    Attraverso la console *govwayMonitor* è possibile consultare lo
    storico delle transazioni che sono transitate nel gateway. Dalla
-   figura ? si può vedere come le transazioni generate dopo la
+   figura :numref:`quick_oauthAutenticazioneFallita_fig` si può vedere come le transazioni generate dopo la
    configurazione sopra indicata sono terminate con errore con esito
    *Autenticazione Fallita*.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreUserInfo.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthAutenticazioneFallita_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreUserInfo.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthAutenticazioneFallita_fig
 
-    Tracce delle invocazioni terminate con errore 'Autenticazione Fallita'
+       Tracce delle invocazioni terminate con errore 'Autenticazione Fallita'
 
-Accedendo al dettaglio di una transazione terminata in errore, e
+   Accedendo al dettaglio di una transazione terminata in errore, e
    visualizzandone i diagnostici è possibile comprendere l'errore che
    come atteso risulta essere la mancanza dell'informazione *Username*
    richiesta obbligatoriamente tramite la sezione *'Autenticazione'*
    precedentemente configurata
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreUserInfo_diagnostici.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthDiagnosticiErrore_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreUserInfo_diagnostici.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthDiagnosticiErrore_fig
 
-    Diagnostici di una invocazione terminata con errore
+       Diagnostici di una invocazione terminata con errore
 
-Cliccando sul link *'Visualizza'* della voce *'Token Info'* è
+   Cliccando sul link *'Visualizza'* della voce *'Token Info'* è
    possibile comunque vedere tutti i claims presenti nel token, dove si
    denota come non sia presente uno dei claim che rappresenta
    l'informazione 'Username'.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreUserInfoKoInfo.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthInfoToken_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreUserInfoKoInfo.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthInfoToken_fig
 
-    Informazioni presenti nel Token
+       Informazioni presenti nel Token
 
 -  **Abilitazione UserInfo in Configurazione Controllo degli Accessi**
 
    Tramite la *govwayConsole* accedere nuovamente alla maschera di
-   configurazione '*Controllo Accessi*\ ' dell'API *'PetStore v2'* ed
+   configurazione '*Controllo Accessi*\ ' dell'API *'PetStore v1'* ed
    abilitare stavolta anche il servizio *'User Info'*.
 
-.. figure:: ../_figure_howto/oauthAutenticazioneConfig2red.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthAutenticazioneConfig_fig
+   .. figure:: ../_figure_howto/oauthAutenticazioneConfig2red.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthAutenticazioneConfig_fig
 
-    Configurazione OAuth2 - Autenticazione
+       Configurazione OAuth2 - Autenticazione
 
 -  **Nuova invocazione API**
 
-.. note:: **Reset Cache delle Configurazioni prima di un nuovo test**
+   .. note:: **Reset Cache delle Configurazioni prima di un nuovo test**
        |br|
        Effettuare il reset della cache accedendo alla sezione
        *'Strumenti' - 'Runtime'* e selezionare la voce
        *'ResetAllCaches'*.
 
-Per effettuare il test acquisire un token utilizzando l'applicazione
+   Per effettuare il test acquisire un token utilizzando l'applicazione
    *Playground* come descritto nella precedente sezione :ref:`validazioneIntrospection` e procedere
    con il seguente comando.
 
@@ -250,21 +247,21 @@ Per effettuare il test acquisire un token utilizzando l'applicazione
    nella sezione *'Informazioni Mittente'*, sono presenti tutte e tre le
    informazioni principali attese: ClientId, Subject e Username.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniUserInfoOkInfo.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthTracciaInvocazioneOK_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniUserInfoOkInfo.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthTracciaInvocazioneOK_fig
 
-    Traccia di una invocazione terminata con successo
+       Traccia di una invocazione terminata con successo
 
-Cliccando sul link *'Visualizza'* della voce *'Token Info'* è
+   Cliccando sul link *'Visualizza'* della voce *'Token Info'* è
    possibile vedere tutti i claims presenti nel token, tra cui è
    possibile constatare la presenza dei claims estratti grazie
    all'invocazione del servizio *'User Info'*.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniUserInfoOkInfoDettaglio.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthJWTTokenInfo_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniUserInfoOkInfoDettaglio.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthJWTTokenInfo_fig
 
-    Informazioni presenti in un Token JWT
+       Informazioni presenti in un Token JWT

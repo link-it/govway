@@ -64,27 +64,27 @@ servizio *PetStore*.
       rediretti alla pagina di autenticazione in google dove si dovrà
       procedere ad autenticarsi.
 
-.. figure:: ../_figure_howto/oauthScopePlaygroundStep1.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthScopeAPICalendarStep1_fig
+      .. figure:: ../_figure_howto/oauthScopePlaygroundStep1.png
+          :scale: 100%
+          :align: center
+          :name: quick_oauthScopeAPICalendarStep1_fig
 
-    Ottenimento Token: Playground Google, scelta scope API Calendar
+          Ottenimento Token: Playground Google, scelta scope API Calendar
 
-2. *Autorizzazione scope API Calendar*
+   2. *Autorizzazione scope API Calendar*
 
       Effettuata l'autenticazione in Google si viene rediretti ad una
       pagina dove è richiesto all'utente di autorizzare l'applicazione
       Playground all'utilizzo degli scope API Calendar.
 
-.. figure:: ../_figure_howto/oauthScopePlaygroundStep2.png
-    :scale: 50%
-    :align: center
-    :name: quick_oauthScopeAPICalendarStep2_fig
+      .. figure:: ../_figure_howto/oauthScopePlaygroundStep2.png
+          :scale: 50%
+          :align: center
+          :name: quick_oauthScopeAPICalendarStep2_fig
 
-    Ottenimento Token: Playground Google, autorizzazione scope API Calendar
+          Ottenimento Token: Playground Google, autorizzazione scope API Calendar
 
-3. *Access Token*
+   3. *Access Token*
 
       Autorizzati gli scope si viene rediretti alla seconda fase
       prevista dall'applicazione *Playground* denominata *'Exchange
@@ -93,14 +93,14 @@ servizio *PetStore*.
       token* da estrarre nella risposta http visualizzata sulla destra
       dell'applicazione.
 
-.. figure:: ../_figure_howto/oauthScopePlaygroundStep3red.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthScopeAPICalendarStep3_fig
+      .. figure:: ../_figure_howto/oauthScopePlaygroundStep3red.png
+          :scale: 100%
+          :align: center
+          :name: quick_oauthScopeAPICalendarStep3_fig
 
-    Ottenimento Token: Playground Google, Step 3
+          Ottenimento Token: Playground Google, Step 3
 
-#. *Registrazione degli scope su GovWay*
+-  **Registrazione degli scope su GovWay**
 
    Accedere alla sezione *'Scope'* della *govwayConsole* per registrare
    gli scope relativi ad *API Calendar*. Per registrare un nuovo scope
@@ -110,40 +110,40 @@ servizio *PetStore*.
    l'acquisizione del token, che verrà utilizzato nei test descritti in
    questa sezione.
 
-.. table:: Registrazione Scope
-   :widths: auto
-   :name: quick_scope_tab
+   .. table:: Registrazione Scope
+      :widths: auto
+      :name: quick_scope_tab
 
-   =================================  ==========================================================    =========
-   Nome                               Identificativo Esterno                                        Contesto
-   =================================  ==========================================================    =========
-   google.calendar.events.readonly    https://www.googleapis.com/auth/calendar.events.readonly      Qualsiasi
-   google.calendar.readonly           https://www.googleapis.com/auth/calendar.readonly             Qualsiasi
-   google.calendar.settings.readonly  https://www.googleapis.com/auth/calendar.settings.readonly    Qualsiasi
-   google.drive                       https://www.googleapis.com/auth/drive                         Qualsiasi
-   =================================  ==========================================================    =========
+      =================================  ==========================================================    =========
+      Nome                               Identificativo Esterno                                        Contesto
+      =================================  ==========================================================    =========
+      google.calendar.events.readonly    https://www.googleapis.com/auth/calendar.events.readonly      Qualsiasi
+      google.calendar.readonly           https://www.googleapis.com/auth/calendar.readonly             Qualsiasi
+      google.calendar.settings.readonly  https://www.googleapis.com/auth/calendar.settings.readonly    Qualsiasi
+      google.drive                       https://www.googleapis.com/auth/drive                         Qualsiasi
+      =================================  ==========================================================    =========
 
-.. figure:: ../_figure_howto/oauthScopeRegistrazioneConfig.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthRegistrazioneScope_fig
+   .. figure:: ../_figure_howto/oauthScopeRegistrazioneConfig.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthRegistrazioneScope_fig
 
-    Configurazione OAuth2 - Registrazione Scope
+       Configurazione OAuth2 - Registrazione Scope
 
-Terminata la registrazione gli scope è possibile specificarli
+   Terminata la registrazione gli scope è possibile specificarli
    all'interno del Controllo degli Accessi di una API.
 
-.. figure:: ../_figure_howto/oauthScopeRegistrazioneConfigList.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthListaScope_fig
+   .. figure:: ../_figure_howto/oauthScopeRegistrazioneConfigList.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthListaScope_fig
 
-    Configurazione OAuth2 - Lista degli Scope registrati
+       Configurazione OAuth2 - Lista degli Scope registrati
 
 -  **Configurazione Controllo degli Accessi**
 
    Accedere alla sezione *'Erogazioni'* e selezionare l'API
-   precedentemente registrata *'PetStore v2'*. Dopodichè accedere, dal
+   precedentemente registrata *'PetStore v1'*. Dopodichè accedere, dal
    dettaglio dell'erogazione, alla sezione *'Configurazione'* dove
    vengono visualizzate le funzionalità attive. Cliccare sulla voce
    presente nella colonna *'Controllo Accessi'* e procedere con la
@@ -172,37 +172,37 @@ Terminata la registrazione gli scope è possibile specificarli
 
    Effettuata la configurazione salvarla cliccando sul pulsante 'Salva'.
 
-.. figure:: ../_figure_howto/oauthAutorizzazioneScopeConfigControlloAccessi.png
-    :scale: 50%
-    :align: center
-    :name: quick_oauthAutorizzazione_fig
+   .. figure:: ../_figure_howto/oauthAutorizzazioneScopeConfigControlloAccessi.png
+       :scale: 50%
+       :align: center
+       :name: quick_oauthAutorizzazione_fig
 
-    Configurazione OAuth2 - Autorizzazione
+       Configurazione OAuth2 - Autorizzazione
 
-Salvata la configurazione si deve nuovamente accedere al *'Controllo Accessi'* dove nella sezione *'Autorizzazione'* è adesso disponibile
+   Salvata la configurazione si deve nuovamente accedere al *'Controllo Accessi'* dove nella sezione *'Autorizzazione'* è adesso disponibile
    un link *'Scope (0)'* che permette di registrare gli scope che un
    token deve possedere quando invoca l'api PetStore.
 
-.. figure:: ../_figure_howto/oauthAutorizzazioneScopeConfigControlloAccessiLinkScope.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthAutorizzazioneScope_fig
+   .. figure:: ../_figure_howto/oauthAutorizzazioneScopeConfigControlloAccessiLinkScope.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthAutorizzazioneScope_fig
 
-    Configurazione OAuth2 - Autorizzazione - Scope
+       Configurazione OAuth2 - Autorizzazione - Scope
 
-Tramite il pulsante *'Aggiungi'* aggiungere tutti e 4 gli scope
+   Tramite il pulsante *'Aggiungi'* aggiungere tutti e 4 gli scope
    precedentemente registrati su GovWay.
 
-.. figure:: ../_figure_howto/oauthAutorizzazioneScopeConfigControlloAccessiScopeRegistrati.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthAutorizzazioneElencoScope_fig
+   .. figure:: ../_figure_howto/oauthAutorizzazioneScopeConfigControlloAccessiScopeRegistrati.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthAutorizzazioneElencoScope_fig
 
-    Configurazione OAuth2 - Autorizzazione - Elenco Scope
+       Configurazione OAuth2 - Autorizzazione - Elenco Scope
 
 -  **Invocazione API**
 
-.. note:: **Reset Cache delle Configurazioni prima di un nuovo test**
+   .. note:: **Reset Cache delle Configurazioni prima di un nuovo test**
        |br|
        Le configurazioni accedute da GovWay vengono mantenute in una
        cache dopo il primo accesso per 2 ore, è quindi necessario
@@ -210,7 +210,7 @@ Tramite il pulsante *'Aggiungi'* aggiungere tutti e 4 gli scope
        *'Strumenti' - 'Runtime'* e selezionare la voce
        *'ResetAllCaches'*.
 
-Per effettuare il test utilizzare il token, contenente gli scope API
+   Per effettuare il test utilizzare il token, contenente gli scope API
    Calendar, precedentemente ottenuto.
 
    ::
@@ -255,63 +255,63 @@ Per effettuare il test utilizzare il token, contenente gli scope API
    configurazione sopra indicata sono terminate con errore con esito
    *Autorizzazione Negata*.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreScope.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthAutorizzazioneNegata_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreScope.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthAutorizzazioneNegata_fig
 
-    Tracce delle invocazioni terminate con errore 'Autorizzazione Negata'
+       Tracce delle invocazioni terminate con errore 'Autorizzazione Negata'
 
-Accedendo al dettaglio di una transazione terminata in errore, e
+   Accedendo al dettaglio di una transazione terminata in errore, e
    visualizzandone i diagnostici è possibile comprendere l'errore che
    come atteso risulta essere la mancanza dello scope
    *https://www.googleapis.com/auth/drive* richiesto poichè nella
    sezione *'Autorizzazione'* è stato indicato che gli scope registrati
    devono essere tutti presente nell'access token.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreScope_diagnostici.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthErroreScope_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreScope_diagnostici.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthErroreScope_fig
 
-    Diagnostici di una invocazione terminata con errore
+       Diagnostici di una invocazione terminata con errore
 
-Cliccando sul link *'Visualizza'* della voce *'Token Info'* è
+   Cliccando sul link *'Visualizza'* della voce *'Token Info'* è
    possibile vedere tutti i claims presenti nel token, dove si possono
    vedere gli scope richiesti tramite Playground.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreScopeKoInfo.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthTokenScope_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreScopeKoInfo.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthTokenScope_fig
 
-    Scope presenti nel Token
+       Scope presenti nel Token
 
 -  **Modifica controllo degli scope (Almeno uno) in Configurazione
    Controllo degli Accessi**
 
    Tramite la *govwayConsole* accedere nuovamente alla maschera di
-   configurazione '*Controllo Accessi*\ ' dell'API *'PetStore v2'*;
+   configurazione '*Controllo Accessi*\ ' dell'API *'PetStore v1'*;
    all'interno della sezione *'Autorizzare'* modificare il tipo di
    controllo '*Scope Richiesti*\ ' dal valore *'tutti'* al valore
    *'almeno uno'*.
 
-.. figure:: ../_figure_howto/oauthAutorizzazioneConfig2red.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthAutorizzazioneScopeAlmenoUno_fig
+   .. figure:: ../_figure_howto/oauthAutorizzazioneConfig2red.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthAutorizzazioneScopeAlmenoUno_fig
 
-    Configurazione OAuth2 - Autorizzazione degli scope con opzione 'Almeno uno'
+       Configurazione OAuth2 - Autorizzazione degli scope con opzione 'Almeno uno'
 
 -  **Nuova invocazione API**
 
-.. note:: **Reset Cache delle Configurazioni prima di un nuovo test**
+   .. note:: **Reset Cache delle Configurazioni prima di un nuovo test**
        |br|
        Effettuare il reset della cache accedendo alla sezione
        *'Strumenti' - 'Runtime'* e selezionare la voce
        *'ResetAllCaches'*.
 
-Effettuare una nuova invocazione del test.
+   Effettuare una nuova invocazione del test.
 
    ::
 

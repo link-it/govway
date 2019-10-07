@@ -9,6 +9,6 @@ Raccolta di esempi relativi alle funzionalità avanzate.
     :maxdepth: 2
 
     multiTenant
+    gruppi
     cors
     sospensione
-    gruppi

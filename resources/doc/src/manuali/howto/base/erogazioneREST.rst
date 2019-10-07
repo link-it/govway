@@ -3,19 +3,18 @@
 Erogazione API REST
 -------------------
 
-Procediamo adesso con la descrizione dei passi di configurazione
+In questa sezione vengono descritti i passi di configurazione
 necessari a registrare una API REST implementata da un applicativo
-interno al proprio dominio di gestione. L'applicativo implementa lo
-*Swagger Petstore*. In questo scenario di esempio si
-suppone che l'indirizzo http://petstore.swagger.io/ dove viene erogato
-il servizio sia interno al proprio dominio di gestione.
+interno al proprio dominio di gestione. 
+Nello scenario si
+suppone che il servizio *PetStore*, disponibile on line all'indirizzo http://petstore.swagger.io/ , sia erogato all'interno del dominio di gestione.
 
 L'API, per questo primo esempio di utilizzo del Gateway, viene
 registrata in modo che sia accessibile in forma anonima da qualunque
 client invocando l'url esposta da GovWay. Una rappresentazione di questo
 scenario è mostrata nella :numref:`quick_erogazioneREST_fig`. Prima di procedere con la
-configurazione effettuare il download dell'interfaccia API disponibile
-in https://petstore.swagger.io/v2/swagger.json.
+configurazione effettuare il download dell'interfaccia OpenAPI 3.0 del servizio *PetStore* disponibile
+all'indirizzo 'https://raw.githubusercontent.com/Mermade/openapi3-examples/master/fail/apimatic-converted-petstore.json'.
 
 .. figure:: ../_figure_howto/erogazioneRESTBase.png
     :scale: 100%
@@ -41,32 +40,29 @@ procedere come segue:
       generica dell'API.
 
    -  *Versione*: indicare la versione dell'API che si sta registrando;
-      nell'esempio utilizziamo la versione *2* del PetStore.
+      nell'esempio utilizziamo la versione *1*.
 
-   -  *Formato Specifica*: selezionare *'Swagger 2.0'* tra i formati
+   -  *Formato Specifica*: selezionare *'OpenAPI 3.0'* tra i formati
       supportati.
 
-   -  *Swagger 2.0*: caricare l'interfaccia API scaricata dall'indirizzo
-      https://petstore.swagger.io/v2/swagger.json.
+   -  *OpenAPI 3.0*: caricare l'interfaccia API scaricata dall'indirizzo
+      'https://raw.githubusercontent.com/Mermade/openapi3-examples/master/fail/apimatic-converted-petstore.json'.
 
-.. figure:: ../_figure_howto/erogazioneRESTBaseRegistrazioneAPI.png
-    :scale: 100%
-    :align: center
-    :name: quick_registrazioneAPI_fig
+   .. figure:: ../_figure_howto/erogazioneRESTBaseRegistrazioneAPI.png
+       :scale: 100%
+       :align: center
+       :name: quick_registrazioneAPI_fig
 
-    Registrazione di una API
+       Registrazione di una API
 
-Effettuato il salvataggio, l'API sarà consultabile all'interno
-   dell'elenco delle API registrate. Accedendo al dettaglio si potranno
-   visionare le risorse che tale API dispone come si può vedere dalla
-   :numref:`quick_risorseAPI_fig`.
+   Effettuato il salvataggio, l'API sarà consultabile all'interno dell'elenco delle API registrate. Accedendo al dettaglio si potranno visionare le risorse che tale API dispone come si può vedere dalla :numref:`quick_risorseAPI_fig`.
 
-.. figure:: ../_figure_howto/erogazioneRESTBaseConsultazioneRisorseAPI.png
-    :scale: 100%
-    :align: center
-    :name: quick_risorseAPI_fig
+   .. figure:: ../_figure_howto/erogazioneRESTBaseConsultazioneRisorseAPI.png
+       :scale: 100%
+       :align: center
+       :name: quick_risorseAPI_fig
 
-    Risorse di una API
+       Risorse di una API
 
 2. **Registrazione Erogazione**
 
@@ -76,9 +72,9 @@ Effettuato il salvataggio, l'API sarà consultabile all'interno
    -  *Nome*: selezionare l'API precedentemente registrata *'PetStore
       v2'*.
 
-   -  *Autenticazione - Stato*: per esporre l'API in modo che sia
+   -  *Controllo degli Accessi - Accesso API*: per esporre l'API in modo che sia
       invocabile da qualunque client in forma anonima selezionare lo
-      stato *'disabilitato'*.
+      stato *'pubblico'*.
 
    -  *Connettore - Endpoint*: indicare la *base uri* dove viene erogata
       l'API nel dominio interno. Per il nostro esempio utilizzare la
@@ -86,31 +82,28 @@ Effettuato il salvataggio, l'API sarà consultabile all'interno
 
       -  *http://petstore.swagger.io/v2*
 
-.. figure:: ../_figure_howto/erogazioneRESTBaseRegistrazioneErogazione.png
-    :scale: 100%
-    :align: center
-    :name: quick_erogazioneAPI_fig
+   .. figure:: ../_figure_howto/erogazioneRESTBaseRegistrazioneErogazione.png
+       :scale: 100%
+       :align: center
+       :name: quick_erogazioneAPI_fig
 
-    Registrazione di una erogazione di API
+       Registrazione di una erogazione di API
 
-Effettuato il salvataggio, l'API erogata sarà consultabile
-   all'interno dell'elenco delle erogazioni. Accedendo al dettaglio si
-   potrà conoscere l'\ *url di invocazione* che deve essere comunicata
-   ai client che desiderano invocare l'API.
+   Effettuato il salvataggio, l'API erogata sarà consultabile all'interno dell'elenco delle erogazioni. Accedendo al dettaglio si potrà conoscere l'\ *url di invocazione* che deve essere comunicata ai client che desiderano invocare l'API.
 
-.. figure:: ../_figure_howto/erogazioneRESTBaseConsultazioneErogazione.png
-    :scale: 100%
-    :align: center
-    :name: quick_UrlErogazioneAPI_fig
+   .. figure:: ../_figure_howto/erogazioneRESTBaseConsultazioneErogazione.png
+       :scale: 100%
+       :align: center
+       :name: quick_UrlErogazioneAPI_fig
 
-    URL di Invocazione dell'API erogata
+       URL di Invocazione dell'API erogata
 
 3. **Invocazione API tramite GovWay**
 
    Al termine di questi passi di configurazione il servizio REST sarà
    raggiungibile dai client utilizzando l'url di invocazione:
 
-   -  *http://host:port/govway/<soggetto-dominio-interno>/PetStore/v2/<uri-risorsa>*
+   -  http://host:port/govway/*<soggetto-dominio-interno>*/PetStore/v1/<uri-risorsa>
 
        **Soggetto interno al dominio**
 
@@ -119,7 +112,7 @@ Effettuato il salvataggio, l'API erogata sarà consultabile
 
    ::
 
-       curl -v -X PUT "http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet" \
+       curl -v -X PUT "http://127.0.0.1:8080/govway/Ente/PetStore/v1/pet" \
        -H "accept: application/json" \
        -H "Content-Type: application/json" \
        -d '{
@@ -155,11 +148,9 @@ Effettuato il salvataggio, l'API erogata sarà consultabile
            "status":"available"
        }
 
-       **Traccia della comunicazione**
+   **Traccia della comunicazione**
 
-       L'invocazione restituisce al client, sotto forma di header HTTP,
-       l'id di transazione con cui è stata salvata la traccia contenente
-       tutti i dati dell'invocazione sul Gateway.
+   L'invocazione restituisce al client, sotto forma di header HTTP, l'id di transazione con cui è stata salvata la traccia contenente tutti i dati dell'invocazione sul Gateway.
 
 4. **Consultazione Tracce**
 

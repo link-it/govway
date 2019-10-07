@@ -38,7 +38,7 @@ IDToken <https://openid.net/specs/openid-connect-core-1_0.html#IDToken>`__).
 -  **Configurazione Controllo degli Accessi**
 
    Accedere alla sezione *'Erogazioni'* e selezionare l'API
-   precedentemente registrata *'PetStore v2'*. Dopodichè accedere, dal
+   precedentemente registrata *'PetStore v1'*. Dopodichè accedere, dal
    dettaglio dell'erogazione, alla sezione *'Configurazione'* dove
    vengono visualizzate le funzionalità attive. Cliccare sulla voce
    presente nella colonna '*Controllo Accessi*\ ' e procedere con la
@@ -58,12 +58,12 @@ IDToken <https://openid.net/specs/openid-connect-core-1_0.html#IDToken>`__).
 
    Effettuata la configurazione salvarla cliccando sul pulsante 'Salva'.
 
-.. figure:: ../_figure_howto/oauthValidazioneJWTConfig.png
-    :scale: 50%
-    :align: center
-    :name: quick_oauthJWTConfig_fig
+   .. figure:: ../_figure_howto/oauthValidazioneJWTConfig.png
+       :scale: 50%
+       :align: center
+       :name: quick_oauthJWTConfig_fig
 
-    Configurazione OAuth2 - Validazione JWT
+       Configurazione OAuth2 - Validazione JWT
 
 -  **Acquisizione Access Token**
 
@@ -73,25 +73,25 @@ IDToken <https://openid.net/specs/openid-connect-core-1_0.html#IDToken>`__).
    *'Exchange authorization code for tokens'*, estrarre dalla risposta
    http visualizzata sulla destra dell'applicazione l'\ *id token*.
 
-.. figure:: ../_figure_howto/oauthValidazioneJWTPlaygroundStep3red.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthJWTPlaygroundStep3_fig
+   .. figure:: ../_figure_howto/oauthValidazioneJWTPlaygroundStep3red.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthJWTPlaygroundStep3_fig
 
-    Ottenimento Token: Playground Google, Step 3
+       Ottenimento Token: Playground Google, Step 3
 
 -  **Invocazione API con un access token**
 
    Con il seguente comando è possibile effettuare una richiesta che
    possiede l'\ *id token* ottenuto nella precedente fase.
 
-.. note:: **Bearer Token Usage** 
+   .. note:: **Bearer Token Usage** 
        |br|
        Un *access token* può essere incluso nella richiesta tramite una
        delle modalità definite dalla specifica `RFC
        6750 <https://tools.ietf.org/html/rfc6750>`__.
 
-::
+   ::
 
        curl -v -X PUT "http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet?access_token=ID_TOKEN" \
        -H "accept: application/json" \
@@ -138,21 +138,18 @@ IDToken <https://openid.net/specs/openid-connect-core-1_0.html#IDToken>`__).
    informazioni principali estratte dal token (es. Subject presente nel
    claim 'sub').
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniOk_validazioneJWT.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthStoricoTransazioniOKJWT_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniOk_validazioneJWT.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthStoricoTransazioniOKJWT_fig
 
-    Traccia di una invocazione terminata con successo
+       Traccia di una invocazione terminata con successo
 
-- Cliccando sul link *'Visualizza'* della voce *'Token Info'* è
-   possibile vedere tutti i claims presenti nel token, tra cui è
-   possibile constatare la presenza del claim *scope* valorizzato con
-   quanto richiesto tramite l'applicazione Playground.
+   Cliccando sul link *'Visualizza'* della voce *'Token Info'* è possibile vedere tutti i claims presenti nel token, tra cui è possibile constatare la presenza del claim *scope* valorizzato con quanto richiesto tramite l'applicazione Playground.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniOkTokenInfo_validazioneJWT.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthStoricoTransazioniOKTokenInfoJWT_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniOkTokenInfo_validazioneJWT.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthStoricoTransazioniOKTokenInfoJWT_fig
 
-    Informazioni presenti in un Token JWT
+       Informazioni presenti in un Token JWT

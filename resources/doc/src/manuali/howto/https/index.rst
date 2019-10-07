@@ -24,21 +24,21 @@ all'application server (es. via mod\_jk).
 
    Per abilitare l'autenticazione *'ssl'* accedere alla sezione
    *'Erogazioni'* e selezionare l'API precedentemente registrata
-   *'PetStore v2'*. Dopodichè accedere, dal dettaglio dell'erogazione,
+   *'PetStore v1'*. Dopodichè accedere, dal dettaglio dell'erogazione,
    alla sezione *'Configurazione'* dove vengono visualizzate le
    funzionalità attive. Cliccare sulla voce presente nella colonna
    '*Controllo Accessi*\ ' e procedere con la modifica dello stato
    relativo all'\ *'Autenticazione'* con il valore *'https'*. Effettuata
    la configurazione salvarla cliccando sul pulsante 'Salva'.
 
-.. figure:: ../_figure_howto/autenticazioneSSLControlloAccessi.png
-    :scale: 50%
-    :align: center
-    :name: quick_oauthHTTPSConfig_fig
+   .. figure:: ../_figure_howto/autenticazioneSSLControlloAccessi.png
+       :scale: 50%
+       :align: center
+       :name: quick_oauthHTTPSConfig_fig
 
-    Configurazione Autenticazione Https
+       Configurazione Autenticazione Https
 
-.. note:: **Reset Cache delle Configurazioni prima di un nuovo test**
+   .. note:: **Reset Cache delle Configurazioni prima di un nuovo test**
        Le configurazioni accedute da GovWay vengono mantenute in una
        cache dopo il primo accesso per 2 ore, è quindi necessario
        forzare un reset della cache. Per farlo accedere alla sezione
@@ -54,7 +54,7 @@ all'application server (es. via mod\_jk).
    Per effettuare una invocazione fornendo un certificato client è
    possibile utilizzare il seguente comando:
 
-.. note:: **Docker**
+   .. note:: **Docker**
        Nell'esempio si suppone di utilizzare l'installazione di GovWay
        realizzata tramite *'govway-docker'* disponibile su github
        all'indirizzo https://github.com/link-it/govway-docker.
@@ -96,14 +96,14 @@ all'application server (es. via mod\_jk).
    vedere come il subject del certificato client utilizzato dal
    chiamante sia stato associato alla traccia.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniSslInfo.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthTracciaSubjectCertificato_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniSslInfo.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthTracciaSubjectCertificato_fig
 
-    Traccia dell'invocazione contenente il subject del certificato client
+       Traccia dell'invocazione contenente il subject del certificato client
 
-Sempre attraverso la console *govwayMonitor* è possibile ricercare
+   Sempre attraverso la console *govwayMonitor* è possibile ricercare
    tutte le transazioni che sono transitate sul gateway relative ad uno
    specifico certificato client. Per farlo si deve modificare i
    parametri relativi alla sezione 'Filtro Dati Mittente' presenti nel
@@ -152,24 +152,24 @@ Sempre attraverso la console *govwayMonitor* è possibile ricercare
                        Public-Key: (2048 bit)
                            ....
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniSslRicercaSubjectIntero.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthRicercaSubject_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniSslRicercaSubjectIntero.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthRicercaSubject_fig
 
-    Ricerca di transazioni con mittente identificato fornendo l'intero subject del certificato client
+       Ricerca di transazioni con mittente identificato fornendo l'intero subject del certificato client
 
-I criteri di ricerca descritti nella :numref:`quick_oauthRicercaSubjectParziale_fig` effettuano invece una
+   I criteri di ricerca descritti nella :numref:`quick_oauthRicercaSubjectParziale_fig` effettuano invece una
    ricerca che consente di ottenere le transazioni relative al subject
    utilizzato nell'esempio precedente, fornendo come criterio solamente
    il valore del 'CN'.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniSslRicercaSubjectParziale.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthRicercaSubjectParziale_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniSslRicercaSubjectParziale.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthRicercaSubjectParziale_fig
 
-    Ricerca di transazioni con mittente identificato fornendo una parte del subject del certificato client
+       Ricerca di transazioni con mittente identificato fornendo una parte del subject del certificato client
 
 -  *Invocazione senza certificato ssl*.
 
@@ -216,24 +216,24 @@ I criteri di ricerca descritti nella :numref:`quick_oauthRicercaSubjectParziale_
    configurazione sopra indicata sono terminate con errore con esito
    *Autenticazione Fallita*.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreHttps.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthRicercaAuthFallita_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreHttps.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthRicercaAuthFallita_fig
 
-    Tracce delle invocazioni terminate con errore 'Autenticazione Fallita'
+       Tracce delle invocazioni terminate con errore 'Autenticazione Fallita'
 
-Accedendo al dettaglio di una transazione terminata in errore, e
+   Accedendo al dettaglio di una transazione terminata in errore, e
    visualizzandone i diagnostici è possibile comprendere l'errore che
    come atteso risulta essere riconducibile al fatto che non sono
    disponibili le credenziali del client.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreHttps_diagnostici.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthDiagnosticiInvocazioneErrore_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniErroreHttps_diagnostici.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthDiagnosticiInvocazioneErrore_fig
 
-    Diagnostici di una invocazione terminata con errore
+       Diagnostici di una invocazione terminata con errore
 
 -  *Invocazione in http*.
 

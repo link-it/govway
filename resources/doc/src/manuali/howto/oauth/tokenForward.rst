@@ -11,10 +11,9 @@ servizio *PetStore*) le informazioni inerenti il token ricevuto sotto
 forma di header http.
 
 Per vedere quali header vengono effettivamente prodotti possiamo
-utilizzare la funzionalità *'Registrazione Messaggi'* .
-.. descritta nel dettaglio nella sezione XXXX quick_registrazioneMessaggi. 
+utilizzare la funzionalità *'Registrazione Messaggi'*.
 Accedere alla sezione *'Erogazioni'* e
-selezionare l'API precedentemente registrata *'PetStore v2'*. Dopodichè
+selezionare l'API precedentemente registrata *'PetStore v1'*. Dopodichè
 accedere, dal dettaglio dell'erogazione, alla sezione *'Configurazione'*
 dove vengono visualizzate le funzionalità attive. Per abilitare la
 registrazione degli header cliccare sulla voce presente nella colonna

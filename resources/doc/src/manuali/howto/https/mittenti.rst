@@ -90,12 +90,12 @@ Di seguito viene descritto come realizzare lo scenario di :numref:`quick_oauthHT
                           Public-Key: (2048 bit)
                               ....
 
-.. figure:: ../_figure_howto/autenticazioneHttpsRegistrazioneSoggetto.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthNuovoSoggetto_fig
+   .. figure:: ../_figure_howto/autenticazioneHttpsRegistrazioneSoggetto.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthNuovoSoggetto_fig
 
-    Registrazione nuovo Soggetto
+       Registrazione nuovo Soggetto
 
 -  **Registrazione Applicativo interno al dominio**
 
@@ -142,12 +142,12 @@ Di seguito viene descritto come realizzare lo scenario di :numref:`quick_oauthHT
                           Public-Key: (2048 bit)
                               ....
 
-.. figure:: ../_figure_howto/autenticazioneHttpsRegistrazioneApplicativo.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthNuovoApplicativo_fig
+   .. figure:: ../_figure_howto/autenticazioneHttpsRegistrazioneApplicativo.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthNuovoApplicativo_fig
 
-    Registrazione nuovo Applicativo
+       Registrazione nuovo Applicativo
 
 -  *Invocazione con certificato ssl 'test Client 1'*.
 
@@ -184,26 +184,26 @@ Di seguito viene descritto come realizzare lo scenario di :numref:`quick_oauthHT
    chiamante, alla traccia sia stato associato come mittente il soggetto
    identificato 'SoggettoEsterno1'.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniSslInfoSoggetto.png
-    :scale: 50%
-    :align: center
-    :name: quick_oauthTracciaSoggettoMittente_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniSslInfoSoggetto.png
+       :scale: 50%
+       :align: center
+       :name: quick_oauthTracciaSoggettoMittente_fig
 
-    Traccia dell'invocazione contenente il soggetto mittente
+       Traccia dell'invocazione contenente il soggetto mittente
 
-Sempre attraverso la console *govwayMonitor* è possibile ricercare
+   Sempre attraverso la console *govwayMonitor* è possibile ricercare
    tutte le transazioni che sono transitate sul gateway relative ad uno
    specifico soggetto mittente. Per farlo si deve modificare i parametri
    relativi alla sezione 'Filtro Dati API' presenti nel filtro di
    ricerca dello storico delle transazioni indicando come soggetto
    mittente il soggetto 'SoggettoEsterno1'.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniSslRicercaSoggetto.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthRicercaTransazioniSoggettoMittente_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniSslRicercaSoggetto.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthRicercaTransazioniSoggettoMittente_fig
 
-    Ricerca di transazioni di un soggetto mittente
+       Ricerca di transazioni di un soggetto mittente
 
 -  *Invocazione con certificato ssl 'test Client 2'*.
 
@@ -244,14 +244,14 @@ Sempre attraverso la console *govwayMonitor* è possibile ricercare
    chiamante, alla traccia sia stato associato l'applicativo mittente
    identificato come 'Applicativo1'.
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniSslInfoApplicativo.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthTracciaApplicativoMittente_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniSslInfoApplicativo.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthTracciaApplicativoMittente_fig
 
-    Traccia dell'invocazione contenente l'applicativo mittente
+       Traccia dell'invocazione contenente l'applicativo mittente
 
-Sempre attraverso la console *govwayMonitor* è possibile ricercare
+   Sempre attraverso la console *govwayMonitor* è possibile ricercare
    tutte le transazioni che sono transitate sul gateway relative ad uno
    specifico applicativo mittente. Per farlo si deve modificare i
    parametri relativi alla sezione 'Filtro Dati Mittente' presenti nel
@@ -265,9 +265,9 @@ Sempre attraverso la console *govwayMonitor* è possibile ricercare
    -  *Applicativo*: selezionare l'applicativo mittente delle
       transazioni che si desidera ricercare
 
-.. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniSslRicercaApplicativo.png
-    :scale: 100%
-    :align: center
-    :name: quick_oauthRicercaApplicativoMittente_fig
+   .. figure:: ../_figure_howto/oauthConsultazioneStoricoTransazioniSslRicercaApplicativo.png
+       :scale: 100%
+       :align: center
+       :name: quick_oauthRicercaApplicativoMittente_fig
 
-    Ricerca di transazioni di un applicativo mittente
+       Ricerca di transazioni di un applicativo mittente
