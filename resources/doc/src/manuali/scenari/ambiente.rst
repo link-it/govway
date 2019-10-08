@@ -32,7 +32,7 @@ Dopo aver scompattato l'`archivio <https://raw.githubusercontent.com/link-it/gov
 
 - *Archivio*: scompattare l'`archivio <https://raw.githubusercontent.com/link-it/govway/master/resources/scenari/scenari.zip>`_ nella cartella di destinazione scelta per ospitare l'ambiente di esecuzione degli scenari.
 
-- *Hostname*: l'ambiente è configurato per utilizzare l'hostname 'govway.localdomain'. Configurare una risoluzione dell'hostname ad esempio registrando nel file  /etc/resolv.conf l'entry:
+- *Hostname*: l'ambiente è configurato per utilizzare l'hostname 'govway.localdomain'. Configurare una risoluzione dell'hostname ad esempio registrando nel file  /etc/hosts l'entry:
 
    ::
 
