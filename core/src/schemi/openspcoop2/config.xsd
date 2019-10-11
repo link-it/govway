@@ -543,6 +543,16 @@
 					</xsd:appinfo>
 				</xsd:annotation>
 			</xsd:element>
+			<xsd:element name="behaviour" type="porta-applicativa-behaviour" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="id-soggetto" type="xsd:unsignedLong" use="optional">
@@ -624,7 +634,6 @@
 		</xsd:attribute>
 		<xsd:attribute name="gestione-manifest" type="StatoFunzionalita" />
 		<xsd:attribute name="stateless" type="StatoFunzionalita" />
-		<xsd:attribute name="behaviour" type="xsd:string" use="optional"/>
 		<xsd:attribute name="autenticazione" type="xsd:string" default="ssl">
 			<xsd:annotation>
 				<xsd:appinfo>
@@ -720,7 +729,28 @@
 	</xsd:complexType>
 	<!-- PortaApplicativa.ServizioApplicativo -->
 	<xsd:complexType name="porta-applicativa-servizio-applicativo">
+		<xsd:sequence>
+			<xsd:element name="dati-connettore" type="porta-applicativa-servizio-applicativo-connettore" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter-use-default="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>		
+	</xsd:complexType>
+	<xsd:complexType name="porta-applicativa-servizio-applicativo-connettore">
+		<xsd:sequence>
+			<xsd:element name="filtro" type="xsd:string" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="proprieta" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
+		</xsd:sequence>		
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
+		<xsd:attribute name="stato" type="StatoFunzionalita" default="abilitato"/>
 	</xsd:complexType>
 	<!-- PortaApplicativa Autorizzazione per Soggetti -->
 	<xsd:complexType name="porta-applicativa-autorizzazione-soggetti">
@@ -741,6 +771,13 @@
 	<xsd:complexType name="porta-applicativa-autorizzazione-servizio-applicativo">
 		<xsd:attribute name="tipo-soggetto-proprietario" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome-soggetto-proprietario" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<!-- PortaApplicativa Behaviour -->
+	<xsd:complexType name="porta-applicativa-behaviour">
+		<xsd:sequence>
+			<xsd:element name="proprieta" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
+		</xsd:sequence>		
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 

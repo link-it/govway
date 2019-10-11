@@ -44,6 +44,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
+import org.openspcoop2.core.config.PortaApplicativaBehaviour;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
@@ -661,7 +662,7 @@ public final class PorteApplicativeChange extends Action {
 						stateless = pa.getStateless().toString();
 				}
 				if (behaviour == null) {
-					behaviour = pa.getBehaviour();
+					behaviour = (pa.getBehaviour()!=null ? pa.getBehaviour().getNome() : null);
 				}
 				if (gestBody == null) {
 					String allegaBody = null;
@@ -1286,9 +1287,10 @@ public final class PorteApplicativeChange extends Action {
 			pa.setCorrelazioneApplicativa(ca);
 			pa.setIntegrazione(integrazione);
 			
-			if(behaviour!=null && !"".equals(behaviour))
-				pa.setBehaviour(behaviour);
-			else 
+			if(behaviour!=null && !"".equals(behaviour)){
+				pa.setBehaviour(new PortaApplicativaBehaviour());
+				pa.getBehaviour().setNome(behaviour);
+			}else 
 				pa.setBehaviour(null);
 
 			if(servizioApplicativo!=null && !"".equals(servizioApplicativo)){

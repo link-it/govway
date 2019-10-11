@@ -18538,6 +18538,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		ResultSet rs = null;
 		PreparedStatement stm1 = null;
 		ResultSet rs1 = null;
+		PreparedStatement stm2 = null;
+		ResultSet rs2 = null;
 		String sqlQuery = null;
 
 		if(conParam!=null){
@@ -18824,7 +18826,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 				// Stateless
 				pa.setStateless(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("stateless")));
-				pa.setBehaviour(rs.getString("behaviour"));
+				
+				// Behaviour
+				String behaviour = rs.getString("behaviour");
+				if(behaviour!=null && !"".equals(behaviour)) {
+					pa.setBehaviour(new PortaApplicativaBehaviour());
+					pa.getBehaviour().setNome(behaviour);
+				}
 
 				// Autorizzazione
 				pa.setAutenticazione(rs.getString("autenticazione"));
@@ -19196,8 +19204,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				// aggiungo
 				// il servizio applicativo alla PortaDelegata da ritornare
 				while (rs.next()) {
+					long idSA_PA = rs.getLong("id");
 					idSA = rs.getLong("id_servizio_applicativo");
 
+					String nomeConnettore = rs.getString("connettore_nome");
+					String descrizioneConnettore = rs.getString("connettore_descrizione");
+					String statoConnettore = rs.getString("connettore_stato");
+					String filtriConnettore = rs.getString("connettore_filtri");
+					
 					if (idSA != 0) {
 						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 						sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
@@ -19217,14 +19231,71 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							servizioApplicativo = new PortaApplicativaServizioApplicativo();
 							servizioApplicativo.setId(idSA);
 							servizioApplicativo.setNome(rs1.getString("nome"));
+							
+							if(nomeConnettore!=null && !"".equals(nomeConnettore)) {
+								servizioApplicativo.setDatiConnettore(new PortaApplicativaServizioApplicativoConnettore());
+								servizioApplicativo.getDatiConnettore().setNome(nomeConnettore);
+								servizioApplicativo.getDatiConnettore().setDescrizione(descrizioneConnettore);
+								servizioApplicativo.getDatiConnettore().setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(statoConnettore));
+								
+								List<String> l = convertToList(filtriConnettore);
+								if(!l.isEmpty()) {
+									servizioApplicativo.getDatiConnettore().setFiltroList(l);
+								}
+								
+								Proprieta prop = null;
+								sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+								sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA_PROPS);
+								sqlQueryObject.addSelectField("*");
+								sqlQueryObject.addWhereCondition("id_porta=?");
+								sqlQuery = sqlQueryObject.createSQLQuery();
+								stm2 = con.prepareStatement(sqlQuery);
+								stm2.setLong(1, idSA_PA);
+								rs2=stm2.executeQuery();
+								while (rs2.next()) {
+									prop = new Proprieta();
+									prop.setId(rs2.getLong("id"));
+									prop.setNome(rs2.getString("nome"));
+									prop.setValore(rs2.getString("valore"));
+									servizioApplicativo.getDatiConnettore().addProprieta(prop);
+								}
+								rs2.close();
+								stm2.close();
+							}
+							
 							pa.addServizioApplicativo(servizioApplicativo);
 						}
 						rs1.close();
 						stm1.close();
+						
+						
 					}
 				}
 				rs.close();
 				stm.close();
+				
+				
+				if(pa.getBehaviour()!=null) {
+					// behaviour prop
+					Proprieta prop = null;
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_BEHAVIOUR_PROPS);
+					sqlQueryObject.addSelectField("*");
+					sqlQueryObject.addWhereCondition("id_porta=?");
+					sqlQuery = sqlQueryObject.createSQLQuery();
+					stm = con.prepareStatement(sqlQuery);
+					stm.setLong(1, idPortaApplicativa);
+					rs=stm.executeQuery();
+					while (rs.next()) {
+						prop = new Proprieta();
+						prop.setId(rs.getLong("id"));
+						prop.setNome(rs.getString("nome"));
+						prop.setValore(rs.getString("valore"));
+						pa.getBehaviour().addProprieta(prop);
+					}
+					rs.close();
+					stm.close();
+				}
 				
 				
 				// autenticazione prop
@@ -20649,7 +20720,21 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt.close();
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SA_PROPS);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SA);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_BEHAVIOUR_PROPS);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
 			stmt.executeUpdate();

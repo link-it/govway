@@ -98,8 +98,8 @@ public class SoggettoVirtuale  {
 			
 			if(gestisciBehaviuorPerFiltri){
 				
-				if(sa.getPortaApplicativa().getBehaviour()!=null){
-					String tipoBehaviour = ClassNameProperties.getInstance().getBehaviour(sa.getPortaApplicativa().getBehaviour());
+				if(sa.getPortaApplicativa().getBehaviour()!=null && sa.getPortaApplicativa().getBehaviour().getNome()!=null){
+					String tipoBehaviour = ClassNameProperties.getInstance().getBehaviour(sa.getPortaApplicativa().getBehaviour().getNome());
 					if(tipoBehaviour==null){
 						throw new Exception("Tipo di behaviour ["+sa.getPortaApplicativa().getBehaviour()+"] sconosciuto");
 					}

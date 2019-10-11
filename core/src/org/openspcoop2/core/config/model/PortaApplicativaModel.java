@@ -66,6 +66,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.GESTIONE_CORS = new org.openspcoop2.core.config.model.CorsConfigurazioneModel(new Field("gestione-cors",org.openspcoop2.core.config.CorsConfigurazione.class,"porta-applicativa",PortaApplicativa.class));
 		this.RESPONSE_CACHING = new org.openspcoop2.core.config.model.ResponseCachingConfigurazioneModel(new Field("response-caching",org.openspcoop2.core.config.ResponseCachingConfigurazione.class,"porta-applicativa",PortaApplicativa.class));
 		this.TRASFORMAZIONI = new org.openspcoop2.core.config.model.TrasformazioniModel(new Field("trasformazioni",org.openspcoop2.core.config.Trasformazioni.class,"porta-applicativa",PortaApplicativa.class));
+		this.BEHAVIOUR = new org.openspcoop2.core.config.model.PortaApplicativaBehaviourModel(new Field("behaviour",org.openspcoop2.core.config.PortaApplicativaBehaviour.class,"porta-applicativa",PortaApplicativa.class));
 		this.ID_SOGGETTO = new Field("id-soggetto",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
 		this.ID_ACCORDO = new Field("id-accordo",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
 		this.ID_PORT_TYPE = new Field("id-port-type",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
@@ -81,7 +82,6 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.SCARTA_BODY = new Field("scarta-body",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.GESTIONE_MANIFEST = new Field("gestione-manifest",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.STATELESS = new Field("stateless",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
-		this.BEHAVIOUR = new Field("behaviour",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.AUTENTICAZIONE = new Field("autenticazione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.AUTENTICAZIONE_OPZIONALE = new Field("autenticazione-opzionale",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.AUTORIZZAZIONE = new Field("autorizzazione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
@@ -120,6 +120,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.GESTIONE_CORS = new org.openspcoop2.core.config.model.CorsConfigurazioneModel(new ComplexField(father,"gestione-cors",org.openspcoop2.core.config.CorsConfigurazione.class,"porta-applicativa",PortaApplicativa.class));
 		this.RESPONSE_CACHING = new org.openspcoop2.core.config.model.ResponseCachingConfigurazioneModel(new ComplexField(father,"response-caching",org.openspcoop2.core.config.ResponseCachingConfigurazione.class,"porta-applicativa",PortaApplicativa.class));
 		this.TRASFORMAZIONI = new org.openspcoop2.core.config.model.TrasformazioniModel(new ComplexField(father,"trasformazioni",org.openspcoop2.core.config.Trasformazioni.class,"porta-applicativa",PortaApplicativa.class));
+		this.BEHAVIOUR = new org.openspcoop2.core.config.model.PortaApplicativaBehaviourModel(new ComplexField(father,"behaviour",org.openspcoop2.core.config.PortaApplicativaBehaviour.class,"porta-applicativa",PortaApplicativa.class));
 		this.ID_SOGGETTO = new ComplexField(father,"id-soggetto",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
 		this.ID_ACCORDO = new ComplexField(father,"id-accordo",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
 		this.ID_PORT_TYPE = new ComplexField(father,"id-port-type",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
@@ -135,7 +136,6 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.SCARTA_BODY = new ComplexField(father,"scarta-body",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.GESTIONE_MANIFEST = new ComplexField(father,"gestione-manifest",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.STATELESS = new ComplexField(father,"stateless",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
-		this.BEHAVIOUR = new ComplexField(father,"behaviour",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.AUTENTICAZIONE = new ComplexField(father,"autenticazione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.AUTENTICAZIONE_OPZIONALE = new ComplexField(father,"autenticazione-opzionale",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.AUTORIZZAZIONE = new ComplexField(father,"autorizzazione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
@@ -196,6 +196,8 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	 
 	public org.openspcoop2.core.config.model.TrasformazioniModel TRASFORMAZIONI = null;
 	 
+	public org.openspcoop2.core.config.model.PortaApplicativaBehaviourModel BEHAVIOUR = null;
+	 
 	public IField ID_SOGGETTO = null;
 	 
 	public IField ID_ACCORDO = null;
@@ -225,8 +227,6 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	public IField GESTIONE_MANIFEST = null;
 	 
 	public IField STATELESS = null;
-	 
-	public IField BEHAVIOUR = null;
 	 
 	public IField AUTENTICAZIONE = null;
 	 

@@ -3126,7 +3126,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							setStatoOpzioniAvanzate(de, 
 									protocollo, serviceBindingMessage,
 									paAssociata.getAllegaBody(), paAssociata.getScartaBody(), 
-									paAssociata.getIntegrazione(), paAssociata.getBehaviour(), 
+									paAssociata.getIntegrazione(), 
+									(paAssociata.getBehaviour()!=null ? paAssociata.getBehaviour().getNome() : null), 
 									paAssociata.getStateless(), null, 
 									paAssociata.getRicevutaAsincronaSimmetrica(), paAssociata.getRicevutaAsincronaAsimmetrica(),
 									paAssociata.getGestioneManifest());

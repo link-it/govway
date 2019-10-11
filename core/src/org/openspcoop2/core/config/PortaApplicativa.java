@@ -66,6 +66,7 @@ import java.util.List;
  * 			&lt;element name="gestione-cors" type="{http://www.openspcoop2.org/core/config}cors-configurazione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="response-caching" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="trasformazioni" type="{http://www.openspcoop2.org/core/config}trasformazioni" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="behaviour" type="{http://www.openspcoop2.org/core/config}porta-applicativa-behaviour" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="id-soggetto" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
  * 		&lt;attribute name="id-accordo" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
@@ -82,7 +83,6 @@ import java.util.List;
  * 		&lt;attribute name="scarta-body" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="gestione-manifest" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional"/>
  * 		&lt;attribute name="stateless" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional"/>
- * 		&lt;attribute name="behaviour" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="autenticazione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="ssl"/>
  * 		&lt;attribute name="autenticazione-opzionale" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="autorizzazione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="authenticated"/>
@@ -125,7 +125,8 @@ import java.util.List;
   	"tracciamento",
   	"gestioneCors",
   	"responseCaching",
-  	"trasformazioni"
+  	"trasformazioni",
+  	"behaviour"
   }
 )
 
@@ -453,6 +454,14 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
     this.trasformazioni = trasformazioni;
   }
 
+  public PortaApplicativaBehaviour getBehaviour() {
+    return this.behaviour;
+  }
+
+  public void setBehaviour(PortaApplicativaBehaviour behaviour) {
+    this.behaviour = behaviour;
+  }
+
   public java.lang.Long getIdSoggetto() {
     return this.idSoggetto;
   }
@@ -643,14 +652,6 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   public void setStateless(org.openspcoop2.core.config.constants.StatoFunzionalita stateless) {
     this.stateless = stateless;
-  }
-
-  public java.lang.String getBehaviour() {
-    return this.behaviour;
-  }
-
-  public void setBehaviour(java.lang.String behaviour) {
-    this.behaviour = behaviour;
   }
 
   public java.lang.String getAutenticazione() {
@@ -1005,6 +1006,9 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
   @XmlElement(name="trasformazioni",required=false,nillable=false)
   protected Trasformazioni trasformazioni;
 
+  @XmlElement(name="behaviour",required=false,nillable=false)
+  protected PortaApplicativaBehaviour behaviour;
+
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idSoggetto;
 
@@ -1073,10 +1077,6 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   @XmlAttribute(name="stateless",required=false)
   protected StatoFunzionalita stateless;
-
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="behaviour",required=false)
-  protected java.lang.String behaviour;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="autenticazione",required=false)

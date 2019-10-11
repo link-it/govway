@@ -89,6 +89,8 @@ public final class CostantiDB {
     public static final String SERVIZI_APPLICATIVI_RUOLI = "sa_ruoli";
     public static final String PORTE_APPLICATIVE = "porte_applicative";
     public static final String PORTE_APPLICATIVE_SA = "porte_applicative_sa";
+    public static final String PORTE_APPLICATIVE_SA_PROPS = "pa_sa_properties";
+    public static final String PORTE_APPLICATIVE_BEHAVIOUR_PROPS = "pa_behaviour_props";
     public static final String PORTE_APPLICATIVE_AUTENTICAZIONE_PROP = "pa_auth_properties";
     public static final String PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP = "pa_authz_properties";
     public static final String PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP = "pa_authzc_properties";

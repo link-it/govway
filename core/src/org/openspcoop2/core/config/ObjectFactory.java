@@ -390,6 +390,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link PortaApplicativaServizioApplicativoConnettore }
+     */
+    public PortaApplicativaServizioApplicativoConnettore createPortaApplicativaServizioApplicativoConnettore() {
+        return new PortaApplicativaServizioApplicativoConnettore();
+    }
+
+    /**
      * Create an instance of {@link Ruolo }
      */
     public Ruolo createRuolo() {
@@ -653,6 +660,13 @@ public class ObjectFactory {
      */
     public Risposte createRisposte() {
         return new Risposte();
+    }
+
+    /**
+     * Create an instance of {@link PortaApplicativaBehaviour }
+     */
+    public PortaApplicativaBehaviour createPortaApplicativaBehaviour() {
+        return new PortaApplicativaBehaviour();
     }
 
     /**

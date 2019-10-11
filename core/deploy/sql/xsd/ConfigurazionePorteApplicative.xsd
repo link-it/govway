@@ -21,6 +21,8 @@
                                 <linkit:sql-comment><![CDATA[**** Porte Applicative ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="porte-applicative" object-type="porte-applicative"/>
                                 <linkit:sql-table object-name="porte-applicative-sa" object-type="porte-applicative-sa"/>
+                                <linkit:sql-table object-name="porte-applicative-sa-prop" object-type="NomeValore"/>
+                                <linkit:sql-table object-name="porte-applicative-behaviour-prop" object-type="NomeValore"/>
                                 <linkit:sql-table object-name="porte-applicative-prop-autenticazione" object-type="NomeValore"/>
                                 <linkit:sql-table object-name="porte-applicative-prop-autorizzazione" object-type="NomeValore"/>
                                 <linkit:sql-table object-name="porte-applicative-prop-autorizzazione-contenuto" object-type="NomeValore"/>
@@ -1127,9 +1129,112 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="connettore_nome" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="connettore_nome" varchar="255"/>
+                                <linkit:sql-ddl-column-comment>Nome Assegnato al Connettore</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[Dati Connettore]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="connettore_descrizione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="connettore_descrizione" varchar="4000"/>
+                                <linkit:sql-ddl-column-comment>Descrizione Assegnata al Connettore</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="connettore_stato" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="connettore_stato"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il connettore è abilitato (abilitato/disabilitato)</linkit:sql-ddl-column-comment>      
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="connettore_filtri" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="connettore_filtri" text="true"/>
+                                <linkit:sql-ddl-column-comment>Filtri associati al connettore</linkit:sql-ddl-column-comment>      
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+    
+    <xsd:element name="porte-applicative-sa-prop" type="NomeValore">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_sa_properties" 
+                        comment="Elenco di proprieta, relative al servizio applicativo associato alla porta">
+                        <linkit:sql-table-constraint unique="uniq_pa_sa_props" index="idx_pa_sa_props"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative-sa"
+                            reference-object-type="porte-applicative-sa"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique>
+                            <linkit:sql-table-unique-field name="id_porta"/>
+                            <linkit:sql-table-unique-field name="nome"/>
+                            <linkit:sql-table-unique-field name="valore"/>
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-index name="INDEX_PA_SA_PROP">
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+    </xsd:element>
+    
+    <xsd:element name="porte-applicative-behaviour-prop" type="NomeValore">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_behaviour_props" 
+                        comment="Elenco di proprieta, relative al behaviour associato alla porta">
+                        <linkit:sql-table-constraint unique="uniq_pa_behaviour_props" index="idx_pa_behaviour_props"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique>
+                            <linkit:sql-table-unique-field name="id_porta"/>
+                            <linkit:sql-table-unique-field name="nome"/>
+                            <linkit:sql-table-unique-field name="valore"/>
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-index name="INDEX_PA_BEHAVIOUR_PROP">
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+    </xsd:element>
+    
+    
     
     
     

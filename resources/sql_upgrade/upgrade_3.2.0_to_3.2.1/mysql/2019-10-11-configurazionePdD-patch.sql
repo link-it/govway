@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/mysql/configurazionePdD/2019-10-11-patch.sql

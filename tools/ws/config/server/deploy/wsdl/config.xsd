@@ -243,6 +243,9 @@
 			<xsd:element minOccurs="0" name="trasformazioni" type="trasformazioni">
 				
 			</xsd:element>
+			<xsd:element minOccurs="0" name="behaviour" type="porta-applicativa-behaviour">
+				
+			</xsd:element>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="id-soggetto" type="xsd:unsignedLong" use="optional">
@@ -275,7 +278,6 @@
 		</xsd:attribute>
 		<xsd:attribute name="gestione-manifest" type="StatoFunzionalita"/>
 		<xsd:attribute name="stateless" type="StatoFunzionalita"/>
-		<xsd:attribute name="behaviour" type="xsd:string" use="optional"/>
 		<xsd:attribute default="ssl" name="autenticazione" type="xsd:string">
 			
 		</xsd:attribute>
@@ -322,7 +324,21 @@
 	</xsd:complexType>
 	<!-- PortaApplicativa.ServizioApplicativo -->
 	<xsd:complexType name="porta-applicativa-servizio-applicativo">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" name="dati-connettore" type="porta-applicativa-servizio-applicativo-connettore">
+				
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>		
+	</xsd:complexType>
+	<xsd:complexType name="porta-applicativa-servizio-applicativo-connettore">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="filtro" type="xsd:string"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="proprieta" type="proprieta"/>
+		</xsd:sequence>		
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
+		<xsd:attribute default="abilitato" name="stato" type="StatoFunzionalita"/>
 	</xsd:complexType>
 	<!-- PortaApplicativa Autorizzazione per Soggetti -->
 	<xsd:complexType name="porta-applicativa-autorizzazione-soggetti">
@@ -343,6 +359,13 @@
 	<xsd:complexType name="porta-applicativa-autorizzazione-servizio-applicativo">
 		<xsd:attribute name="tipo-soggetto-proprietario" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome-soggetto-proprietario" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<!-- PortaApplicativa Behaviour -->
+	<xsd:complexType name="porta-applicativa-behaviour">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="proprieta" type="proprieta"/>
+		</xsd:sequence>		
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 

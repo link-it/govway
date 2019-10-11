@@ -24,6 +24,7 @@ package org.openspcoop2.core.config;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -36,6 +37,9 @@ import java.io.Serializable;
  * 
  * <pre>
  * &lt;complexType name="porta-applicativa-servizio-applicativo">
+ * 		&lt;sequence>
+ * 			&lt;element name="dati-connettore" type="{http://www.openspcoop2.org/core/config}porta-applicativa-servizio-applicativo-connettore" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * &lt;/complexType>
  * </pre>
@@ -47,7 +51,11 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "porta-applicativa-servizio-applicativo")
+@XmlType(name = "porta-applicativa-servizio-applicativo", 
+  propOrder = {
+  	"datiConnettore"
+  }
+)
 
 @XmlRootElement(name = "porta-applicativa-servizio-applicativo")
 
@@ -69,6 +77,14 @@ public class PortaApplicativaServizioApplicativo extends org.openspcoop2.utils.b
 		this.id=Long.valueOf(-1);
   }
 
+  public PortaApplicativaServizioApplicativoConnettore getDatiConnettore() {
+    return this.datiConnettore;
+  }
+
+  public void setDatiConnettore(PortaApplicativaServizioApplicativoConnettore datiConnettore) {
+    this.datiConnettore = datiConnettore;
+  }
+
   public java.lang.String getNome() {
     return this.nome;
   }
@@ -83,6 +99,9 @@ public class PortaApplicativaServizioApplicativo extends org.openspcoop2.utils.b
   private Long id;
 
 
+
+  @XmlElement(name="dati-connettore",required=false,nillable=false)
+  protected PortaApplicativaServizioApplicativoConnettore datiConnettore;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)

@@ -256,10 +256,6 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 			sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".stateless=?");
 			paramTypes.add(new JDBCObject(filter.getStateless().getValue(),String.class));
 		}
-		if(filter.getBehaviour()!= null) {
-			sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".behaviour=?");
-			paramTypes.add(new JDBCObject(filter.getBehaviour(),String.class));
-		}
 		
 		if(filter.getAutorizzazioneContenuto()!= null) {
 			sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".autorizzazione_contenuto=?");

@@ -1,3 +1,15 @@
+2019-10-11  Andrea Poli <apoli@link.it>
+
+	Aggiunte informazioni per gestire i connettori multipli:
+
+	ALTER TABLE porte_applicative_sa ADD COLUMN connettore_nome VARCHAR(255);
+	ALTER TABLE porte_applicative_sa ADD COLUMN connettore_descrizione VARCHAR(4000);
+	ALTER TABLE porte_applicative_sa ADD COLUMN connettore_stato VARCHAR(255);
+	ALTER TABLE porte_applicative_sa ADD COLUMN connettore_filtri TEXT;
+
+	Nuove tabelle 'pa_sa_properties' e 'pa_behaviour_props'.
+
+
 2019-09-25  Andrea Poli <apoli@link.it>
 
 	Aggiunte informazioni associate ad una transazione

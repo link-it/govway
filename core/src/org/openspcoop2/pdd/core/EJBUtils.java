@@ -1479,12 +1479,12 @@ public class EJBUtils {
 			BehaviourForwardToFilter singleFilterBehaviour = null;
 			boolean behaviourResponseTo = false;
 			// pa is null nel caso di soggetto virtuale
-			if(pa!=null && pa.getBehaviour()!=null && !"".equals(pa.getBehaviour())){
-				String tipoBehaviour = ClassNameProperties.getInstance().getBehaviour(pa.getBehaviour());
+			if(pa!=null && pa.getBehaviour()!=null && pa.getBehaviour().getNome()!=null && !"".equals(pa.getBehaviour().getNome())){
+				String tipoBehaviour = ClassNameProperties.getInstance().getBehaviour(pa.getBehaviour().getNome());
 				if(tipoBehaviour==null){
 					throw new Exception("Tipo di behaviour ["+pa.getBehaviour()+"] sconosciuto");
 				}
-				this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_BEHAVIOUR, pa.getBehaviour());
+				this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_BEHAVIOUR, pa.getBehaviour().getNome());
 				IBehaviour behaviourImpl = (IBehaviour) Loader.getInstance().newInstance(tipoBehaviour);
 				gestoreMessaggi.setPortaDiTipoStateless(stateless);
 				behaviour = behaviourImpl.behaviour(gestoreMessaggi, busta, requestInfo);
