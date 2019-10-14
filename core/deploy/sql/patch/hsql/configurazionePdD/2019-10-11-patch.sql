@@ -3,7 +3,8 @@ ALTER TABLE porte_applicative_sa ADD COLUMN connettore_descrizione VARCHAR(4000)
 ALTER TABLE porte_applicative_sa ADD COLUMN connettore_stato VARCHAR(255);
 ALTER TABLE porte_applicative_sa ADD COLUMN connettore_filtri VARCHAR(65535);
 
-
+ALTER TABLE servizi_applicativi ADD COLUMN tipo VARCHAR(255);
+update servizi_applicativi set tipo='client' where tipologia_fruizione<>'disabilitato';
 
 CREATE SEQUENCE seq_pa_sa_properties AS BIGINT START WITH 1 INCREMENT BY 1 ; -- (Scommentare in hsql 2.x) NO CYCLE;
 

@@ -7183,6 +7183,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sa = new ServizioApplicativo();
 
 				sa.setId(rs.getLong("id"));
+				sa.setTipo(rs.getString("tipo"));
 				sa.setNome(rs.getString("nome"));
 				sa.setIdSoggetto(rs.getLong("id_soggetto"));
 				//tipo e nome soggetto

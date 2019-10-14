@@ -7,6 +7,8 @@
 	ALTER TABLE porte_applicative_sa ADD COLUMN connettore_stato VARCHAR(255);
 	ALTER TABLE porte_applicative_sa ADD COLUMN connettore_filtri TEXT;
 
+	ALTER TABLE servizi_applicativi ADD COLUMN tipo VARCHAR(255); 
+
 	Nuove tabelle 'pa_sa_properties' e 'pa_behaviour_props'.
 
 

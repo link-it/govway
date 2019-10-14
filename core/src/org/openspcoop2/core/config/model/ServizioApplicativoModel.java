@@ -52,6 +52,7 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 		this.TIPOLOGIA_FRUIZIONE = new Field("tipologia-fruizione",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.TIPOLOGIA_EROGAZIONE = new Field("tipologia-erogazione",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.NOME = new Field("nome",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
+		this.TIPO = new Field("tipo",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"servizio-applicativo",ServizioApplicativo.class);
 	
@@ -71,6 +72,7 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 		this.TIPOLOGIA_FRUIZIONE = new ComplexField(father,"tipologia-fruizione",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.TIPOLOGIA_EROGAZIONE = new ComplexField(father,"tipologia-erogazione",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
+		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"servizio-applicativo",ServizioApplicativo.class);
 	
@@ -97,6 +99,8 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 	public IField TIPOLOGIA_EROGAZIONE = null;
 	 
 	public IField NOME = null;
+	 
+	public IField TIPO = null;
 	 
 	public IField DESCRIZIONE = null;
 	 

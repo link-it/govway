@@ -391,6 +391,7 @@
 		<xsd:attribute name="tipologia-erogazione" type="xsd:string" use="optional"/>
 		<!-- end-extensions -->
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="tipo" type="xsd:string" use="optional"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
 			

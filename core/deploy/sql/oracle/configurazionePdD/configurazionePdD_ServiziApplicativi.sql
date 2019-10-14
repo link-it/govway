@@ -5,6 +5,7 @@ CREATE SEQUENCE seq_servizi_applicativi MINVALUE 1 MAXVALUE 9223372036854775807 
 CREATE TABLE servizi_applicativi
 (
 	nome VARCHAR2(2000) NOT NULL,
+	tipo VARCHAR2(255),
 	descrizione VARCHAR2(255),
 	-- * Risposta Asincrona *
 	-- valori 0/1 indicano rispettivamente FALSE/TRUE

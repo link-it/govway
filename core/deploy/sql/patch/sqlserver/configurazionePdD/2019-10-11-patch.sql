@@ -3,6 +3,8 @@ ALTER TABLE porte_applicative_sa ADD connettore_descrizione VARCHAR(4000);
 ALTER TABLE porte_applicative_sa ADD connettore_stato VARCHAR(255);
 ALTER TABLE porte_applicative_sa ADD connettore_filtri VARCHAR(max);
 
+ALTER TABLE servizi_applicativi ADD tipo VARCHAR(255);
+update servizi_applicativi set tipo='client' where tipologia_fruizione<>'disabilitato';
 
 CREATE TABLE pa_sa_properties
 (

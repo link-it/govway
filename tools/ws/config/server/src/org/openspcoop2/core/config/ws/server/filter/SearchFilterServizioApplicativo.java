@@ -37,6 +37,7 @@ package org.openspcoop2.core.config.ws.server.filter;
  *         &lt;element name="tipologia-fruizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="tipologia-erogazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
@@ -76,6 +77,7 @@ import org.openspcoop2.core.config.ws.server.filter.beans.InvocazionePorta;
     "tipologiaFruizione",
     "tipologiaErogazione",
     "nome",
+    "tipo",
     "descrizione",
     "oraRegistrazioneMin",
     "oraRegistrazioneMax",
@@ -186,6 +188,19 @@ public class SearchFilterServizioApplicativo extends org.openspcoop2.utils.beans
 	
 	public String getNome(){
 		return this.nome;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="tipo",required=false,nillable=false)
+	private String tipo;
+	
+	public void setTipo(String tipo){
+		this.tipo = tipo;
+	}
+	
+	public String getTipo(){
+		return this.tipo;
 	}
 	
 	
