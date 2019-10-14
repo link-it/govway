@@ -1,3 +1,12 @@
+2019-10-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-907
+	Durante la validazione dei contenuti, in presenza di messaggi che contengono un elemento 'xsi:type' definito con un prefisso
+	non utilizzato da altri elementi, si ottiene il seguente errore:
+		"The value of the attribute "prefix="xmlns",localpart="p",rawname="xmlns"" is invalid. Prefixed namespace bindings may not be empty."
+	Il problema è stato risolto.
+
 2019-10-07  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.2.0
