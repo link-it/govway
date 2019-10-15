@@ -56,6 +56,9 @@ public class FiltroRicercaServiziApplicativi extends FiltroRicercaBase implement
 	
 	/** Ruolo */
 	private IDRuolo idRuolo;
+	
+	/** Tipo */
+	private String tipo;
 
 	/** ProtocolProperty */
 	private List<FiltroRicercaProtocolProperty> protocolProperties = new ArrayList<FiltroRicercaProtocolProperty>();
@@ -121,6 +124,14 @@ public class FiltroRicercaServiziApplicativi extends FiltroRicercaBase implement
 
 	public void setIdRuolo(IDRuolo idRuolo) {
 		this.idRuolo = idRuolo;
+	}
+
+	public String getTipo() {
+		return this.tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
 
 }

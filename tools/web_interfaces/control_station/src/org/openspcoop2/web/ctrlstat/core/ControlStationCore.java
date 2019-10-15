@@ -538,6 +538,21 @@ public class ControlStationCore {
 	public boolean isAccordiCooperazioneEnabled() {
 		return this.isAccordiCooperazioneEnabled;
 	}
+	
+	/** Connettori Multipli */
+	private boolean isConnettoriMultipliEnabled;
+	public boolean isConnettoriMultipliEnabled() {
+		return this.isConnettoriMultipliEnabled;
+	}
+	
+	/** Connettori Multipli */
+	private boolean isApplicativiServerEnabled;
+	public boolean isApplicativiServerEnabled(ConsoleHelper helper) {
+		if(helper.isModalitaCompleta()) {
+			return false;
+		}
+		return this.isApplicativiServerEnabled;
+	}
 
 	/** Parametri pdd */
 	private int portaPubblica = 80;
@@ -1610,6 +1625,12 @@ public class ControlStationCore {
 		/** Accordi di Cooperazione */
 		this.isAccordiCooperazioneEnabled = core.isAccordiCooperazioneEnabled;
 		
+		/** Connettori Multipli */
+		this.isConnettoriMultipliEnabled = core.isConnettoriMultipliEnabled;
+		
+		/** Applicativi Server */
+		this.isApplicativiServerEnabled = core.isApplicativiServerEnabled;		
+		
 		/** Parametri pdd */
 		this.portaPubblica = core.portaPubblica;
 		this.portaGestione = core.portaGestione;
@@ -1881,6 +1902,8 @@ public class ControlStationCore {
 			this.isAuditingRegistrazioneElementiBinari = consoleProperties.isAuditingRegistrazioneElementiBinari();
 			this.isIntegrationManagerEnabled = consoleProperties.isIntegrationManagerEnabled();
 			this.isAccordiCooperazioneEnabled = consoleProperties.isAccordiCooperazioneEnabled();
+			this.isConnettoriMultipliEnabled = consoleProperties.isConnettoriMultipliEnabled();
+			this.isApplicativiServerEnabled = consoleProperties.isApplicativiServerEnabled();
 			
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();

@@ -79,6 +79,7 @@ public class ServiziApplicativiCostanti {
 	
 	/* LABEL GENERALI */
 	
+	public final static String LABEL_TIPO ="Tipo";
 	public final static String LABEL_TIPOLOGIA ="Tipologia";
 	public final static String LABEL_FRUITORE ="Fruitore";
 	public final static String LABEL_EROGATORE ="Erogatore";
@@ -135,6 +136,7 @@ public class ServiziApplicativiCostanti {
 //	public final static String PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_FRUITORE = "ruoloFruitore";
 //	public final static String PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_EROGATORE = "ruoloErogatore";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_SA = "ruoloSA";
+	public final static String PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA = "tipoSA";
 	
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_RUOLI = "ruoli";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_ACTION = "action";
@@ -168,6 +170,7 @@ public class ServiziApplicativiCostanti {
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVOCAZIONE_SERVIZIO_DI = "Invocazione Servizio di ";	
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_ASINCRONA_DI = "Risposta Asincrona di ";
 	
+	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_TIPO = "Tipo";
 	
 	/* DEFAULT VALUE PARAMETRI */
 	
@@ -196,6 +199,15 @@ public class ServiziApplicativiCostanti {
 	public final static String SERVIZI_APPLICATIVI_RUOLO_EROGATORE = Filtri.VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_EROGATORE;
 	public final static String[] SERVIZI_APPLICATIVI_RUOLO = { SERVIZI_APPLICATIVI_RUOLO_FRUITORE, 
 		SERVIZI_APPLICATIVI_RUOLO_EROGATORE };
+	
+	public final static String LABEL_PARAMETRO_FILTRO_TIPO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+	public final static String VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER = CostantiConfigurazione.SERVER;
+	public final static String VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT = CostantiConfigurazione.CLIENT;
+	public final static String SERVIZI_APPLICATIVI_TIPO_NON_CONFIGURATO = "Non Configurato";
+	public final static String LABEL_SERVIZI_APPLICATIVI_TIPO_CLIENT = "Client";
+	public final static String LABEL_SERVIZI_APPLICATIVI_TIPO_SERVER = "Server";
+	public final static String[] LABELS_SERVIZI_APPLICATIVI_TIPO = { LABEL_SERVIZI_APPLICATIVI_TIPO_CLIENT, LABEL_SERVIZI_APPLICATIVI_TIPO_SERVER };
+	public final static String[] VALUES_SERVIZI_APPLICATIVI_TIPO = { VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT, VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER };
 	
 	/* ATTRIBUTI */
 	

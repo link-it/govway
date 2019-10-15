@@ -325,4 +325,8 @@ public class CostantiConfigurazione {
 		return DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA.replace(DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_INVOCAZIONE_PROTOCOL_TEMPLATE, c);
 	}
 	
+	 /** Servizio Applicativo Tipo */
+    public final static String CLIENT = "client";
+    public final static String SERVER = "server";
+    
 }

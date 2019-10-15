@@ -5046,9 +5046,10 @@ public class ConsoleHelper implements IConsoleHelper {
 					// Calcolo liste
 					PortaApplicativa pa = (PortaApplicativa) oggetto;
 					PorteApplicativeServizioApplicativoAutorizzatoUtilities utilities = new PorteApplicativeServizioApplicativoAutorizzatoUtilities();
+					boolean escludiSAServer = this.porteApplicativeCore.isApplicativiServerEnabled(this);					
 					utilities.buildList(pa, profiloModi, protocollo, true,
 							idSoggettoToAdd,
-							this.porteApplicativeCore, this);
+							this.porteApplicativeCore, this, escludiSAServer);
 					
 					String[] soggettiList = utilities.soggettiList;
 					String[] soggettiListLabel = utilities.soggettiListLabel;

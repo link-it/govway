@@ -154,6 +154,11 @@ public final class ServiziApplicativiChange extends Action {
 
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
 			
+			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
+			SoggettiCore soggettiCore = new SoggettiCore(saCore);
+			
+			boolean isApplicativiServerEnabled = saCore.isApplicativiServerEnabled(saHelper);
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
 			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
@@ -168,6 +173,17 @@ public final class ServiziApplicativiChange extends Action {
 			String ruoloFruitore = null; //saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_FRUITORE);
 			String ruoloErogatore = null; //saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_EROGATORE);
 			String ruoloSA = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_SA);
+			String tipoSA = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA);
+			
+			if(isApplicativiServerEnabled) {
+				if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT.equals(tipoSA)) {
+					ruoloSA = ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_FRUITORE;
+				}
+				if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(tipoSA)) {
+					ruoloSA = ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_EROGATORE;
+				}
+			}
+			
 			if(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_FRUITORE.equals(ruoloSA)){
 				ruoloFruitore = TipologiaFruizione.NORMALE.getValue();
 				ruoloErogatore = TipologiaErogazione.DISABILITATO.getValue();
@@ -189,6 +205,8 @@ public final class ServiziApplicativiChange extends Action {
 //			else if(ruoloErogatore!=null && !"".equals(ruoloErogatore)){
 //				ruoloErogatore = TipologiaErogazione.DISABILITATO.getValue();
 //			}
+			
+			
 			
 			this.protocolPropertiesSet = saHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 			
@@ -305,7 +323,7 @@ public final class ServiziApplicativiChange extends Action {
 			
 			// jms
 			String nomeCodaJMS = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_NOME_CODA);
-			String tipo = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
+			String tipoCodaJMS = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
 			String initcont = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_INIT_CTX);
 			String urlpgk = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_URL_PKG);
 			String provurl = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PROVIDER_URL);
@@ -362,9 +380,6 @@ public final class ServiziApplicativiChange extends Action {
 			
 			// Preparo il menu
 			saHelper.makeMenu();
-
-			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
-			SoggettiCore soggettiCore = new SoggettiCore(saCore);
 
 			// Prendo il nome e il provider del servizioApplicativo
 			ServizioApplicativo sa = saCore.getServizioApplicativo(idServizioApplicativo);
@@ -796,6 +811,12 @@ public final class ServiziApplicativiChange extends Action {
 					ruoloErogatore=sa.getTipologiaErogazione();
 				}
 				
+				if(tipoSA == null)
+					tipoSA = sa.getTipo();
+				
+				if(tipoSA == null)
+					tipoSA = "";
+				
 				
 				if (sbustamento == null) {
 					if(is.getSbustamentoSoap()!=null)
@@ -1005,8 +1026,8 @@ public final class ServiziApplicativiChange extends Action {
 						}
 					}
 					if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_TIPO)) {
-						if (tipo == null) {
-							tipo = singlecp.getValore();
+						if (tipoCodaJMS == null) {
+							tipoCodaJMS = singlecp.getValore();
 						}
 					}
 					if (singlecp.getNome().equals(CostantiDB.CONNETTORE_JMS_CONNECTION_FACTORY)) {
@@ -1143,7 +1164,7 @@ public final class ServiziApplicativiChange extends Action {
 						ruoloFruitore,ruoloErogatore,
 						sbustamento, sbustamentoInformazioniProtocolloRichiesta, getmsg,
 						invrifRichiesta, risprif,
-						endpointtype, autenticazioneHttp, url, nomeCodaJMS, tipo,
+						endpointtype, autenticazioneHttp, url, nomeCodaJMS, tipoCodaJMS,
 						user, password, initcont, urlpgk,
 						provurl, connfact, sendas, 
 						httpsurl, httpstipologia, httpshostverify,
@@ -1165,7 +1186,7 @@ public final class ServiziApplicativiChange extends Action {
 						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
 						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSA,tipoCredenzialiSSLWizardStep,
-						autenticazioneToken,token_policy);
+						autenticazioneToken,token_policy,tipoSA);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiConfig(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -1248,7 +1269,7 @@ public final class ServiziApplicativiChange extends Action {
 						ruoloFruitore,ruoloErogatore,
 						sbustamento, sbustamentoInformazioniProtocolloRichiesta, getmsg,
 						invrifRichiesta, risprif,
-						endpointtype, autenticazioneHttp, url, nomeCodaJMS, tipo,
+						endpointtype, autenticazioneHttp, url, nomeCodaJMS, tipoCodaJMS,
 						user, password, initcont, urlpgk,
 						provurl, connfact, sendas, 
 						httpsurl, httpstipologia, httpshostverify,
@@ -1270,7 +1291,7 @@ public final class ServiziApplicativiChange extends Action {
 						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
 						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSA,tipoCredenzialiSSLWizardStep,
-						autenticazioneToken,token_policy);
+						autenticazioneToken,token_policy,tipoSA);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiConfig(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -1282,6 +1303,10 @@ public final class ServiziApplicativiChange extends Action {
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.CHANGE());
 			}
 
+			if(isApplicativiServerEnabled && tipoSA.equals(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER)) {
+				tipoauthSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC;
+			}
+			
 			if(ruoloFruitore==null){
 				ruoloFruitore = TipologiaFruizione.DISABILITATO.getValue();
 			}
@@ -1294,11 +1319,21 @@ public final class ServiziApplicativiChange extends Action {
 			}
 			sa.setTipologiaFruizione(ruoloFruitore);
 			sa.setTipologiaErogazione(ruoloErogatore);
+			sa.setTipo(tipoSA);
 			
 			
 			// *** Invocazione Porta ***
-			if(interfacciaAvanzata ||
-					!TipologiaFruizione.DISABILITATO.getValue().equals(ruoloFruitore)){
+			boolean showInvocazionePortaStep1 = (interfacciaAvanzata || !TipologiaFruizione.DISABILITATO.getValue().equals(ruoloFruitore));
+			boolean showInvocazionePortaStep2 = !showInvocazionePortaStep1 && (interfacciaStandard && TipologiaFruizione.DISABILITATO.getValue().equals(ruoloFruitore));
+			
+//			if(isApplicativiServerEnabled) {
+//				showInvocazionePortaStep1 = showInvocazionePortaStep1 && ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT.equals(tipoSA);
+//				if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(tipoSA)) {
+//					showInvocazionePortaStep2 = true;
+//				}
+//			}
+
+			if(showInvocazionePortaStep1){
 			
 				if (ipge == null)
 					ipge = new InvocazionePortaGestioneErrore();
@@ -1371,8 +1406,8 @@ public final class ServiziApplicativiChange extends Action {
 				sa.setInvocazionePorta(ip);
 
 			}
-			else if(interfacciaStandard &&
-					TipologiaFruizione.DISABILITATO.getValue().equals(ruoloFruitore)){
+			
+			if(showInvocazionePortaStep2){
 				
 				InvocazionePorta invocazionePorta = new InvocazionePorta();
 				credenziali = new Credenziali();
@@ -1437,9 +1472,16 @@ public final class ServiziApplicativiChange extends Action {
 			}
 			
 			
+			
+			
 			// *** Invocazione Servizio ***
-			if(interfacciaStandard &&
-					!TipologiaErogazione.DISABILITATO.getValue().equals(ruoloErogatore)){
+			
+			boolean showInvocazioneServizio = interfacciaStandard && !TipologiaErogazione.DISABILITATO.getValue().equals(ruoloErogatore);
+			if(isApplicativiServerEnabled) {
+				showInvocazioneServizio = ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(tipoSA);
+			}
+			
+			if(showInvocazioneServizio){
 			
 				if(sbustamento==null){
 					is.setSbustamentoSoap(CostantiConfigurazione.DISABILITATO);
@@ -1484,7 +1526,7 @@ public final class ServiziApplicativiChange extends Action {
 						!connis.getTipo().equals(TipiConnettore.FILE.toString()))
 					oldConnT = TipiConnettore.CUSTOM.toString();
 				saHelper.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
-						nomeCodaJMS, tipo, user, password,
+						nomeCodaJMS, tipoCodaJMS, user, password,
 						initcont, urlpgk, provurl, connfact,
 						sendas, httpsurl, httpstipologia,
 						httpshostverify, httpspath, httpstipo,

@@ -318,6 +318,14 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "accordiCooperazione.enabled");
 	}
 	
+	public boolean isConnettoriMultipliEnabled() throws UtilsException{
+		return this.readBooleanProperty(true, "connettoriMultipli.enabled");
+	}
+	
+	public boolean isApplicativiServerEnabled() throws UtilsException{
+		return this.readBooleanProperty(true, "applicativiServer.enabled");
+	}
+	
 	
 	/* ----- Impostazioni grafiche ------- */
 	

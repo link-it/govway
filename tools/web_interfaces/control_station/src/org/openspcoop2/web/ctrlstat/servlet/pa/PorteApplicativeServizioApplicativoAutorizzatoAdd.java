@@ -153,12 +153,13 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoAdd extends Act
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String nomePorta = pa.getNome();
 			
+			boolean escludiSAServer = porteApplicativeCore.isApplicativiServerEnabled(porteApplicativeHelper);
 
 			// Calcolo liste
 			PorteApplicativeServizioApplicativoAutorizzatoUtilities utilities = new PorteApplicativeServizioApplicativoAutorizzatoUtilities();
 			utilities.buildList(pa, modipa, protocollo, escludiSoggettoErogatore,
 					idSoggettoToAdd,
-					porteApplicativeCore, porteApplicativeHelper);
+					porteApplicativeCore, porteApplicativeHelper, escludiSAServer);
 			
 			String[] soggettiList = utilities.soggettiList;
 			String[] soggettiListLabel = utilities.soggettiListLabel;

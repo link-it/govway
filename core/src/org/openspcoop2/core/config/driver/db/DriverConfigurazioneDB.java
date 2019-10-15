@@ -17667,7 +17667,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 	}
 
-	public List<ServizioApplicativo> soggettiServizioApplicativoList(IDSoggetto idSoggetto,String superuser,CredenzialeTipo credenziale) throws DriverConfigurazioneException {
+	public List<ServizioApplicativo> soggettiServizioApplicativoList(IDSoggetto idSoggetto,String superuser,CredenzialeTipo credenziale, String tipoSA) throws DriverConfigurazioneException {
 		String nomeMetodo = "soggettiServizioApplicativoList";
 		Connection con = null;
 		PreparedStatement stmt=null;
@@ -17704,6 +17704,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
 			if(credenziale!=null)
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
+			if(tipoSA!=null)
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addOrderBy("nome");
 			sqlQueryObject.setSortType(true);
@@ -17716,6 +17718,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stmt.setString(index++, superuser);
 			if(credenziale!=null)
 				stmt.setString(index++, credenziale.getValue());
+			if(tipoSA!=null)
+				stmt.setString(index++, tipoSA);
 			risultato = stmt.executeQuery();
 
 			while (risultato.next()) {
@@ -17801,6 +17805,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		
 		String filterRuolo = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_RUOLO);
 		
+		String filterTipoServizioApplicativo = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_TIPO_SERVIZIO_APPLICATIVO);
+		
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
 		this.log.debug("filterProtocolli : " + filterProtocolli);
@@ -17808,6 +17814,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		this.log.debug("filterSoggettoTipo : " + filterSoggettoTipo);
 		this.log.debug("filterRuoloServizioApplicativo : " + filterRuoloServizioApplicativo);
 		this.log.debug("filterRuolo : " + filterRuolo);
+		this.log.debug("filterTipoServizioApplicativo : " + filterTipoServizioApplicativo);
 		
 		Connection con = null;
 		PreparedStatement stmt=null;
@@ -17859,6 +17866,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id="+CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".id_servizio_applicativo");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo=?");
 				}
+				if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
+					sqlQueryObject.addWhereCondition(true, "tipo is not null", "tipo=?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -17887,6 +17897,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id="+CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".id_servizio_applicativo");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo=?");
 				}
+				if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
+					sqlQueryObject.addWhereCondition(true, "tipo is not null", "tipo=?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			}
@@ -17907,6 +17920,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 			if(filterRuolo!=null && !"".equals(filterRuolo)) {
 				stmt.setString(index++, filterRuolo);
+			}
+			if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
+				stmt.setString(index++, filterTipoServizioApplicativo);
 			}
 			risultato = stmt.executeQuery();
 			if (risultato.next())
@@ -17948,6 +17964,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id="+CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".id_servizio_applicativo");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo=?");
 				}
+				if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
+					sqlQueryObject.addWhereCondition(true, "tipo is not null", "tipo=?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.addOrderBy("nome_soggetto");
@@ -17987,6 +18006,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id="+CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".id_servizio_applicativo");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo=?");
 				}
+				if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
+					sqlQueryObject.addWhereCondition(true, "tipo is not null", "tipo=?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.addOrderBy("nome_soggetto");
@@ -18013,6 +18035,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 			if(filterRuolo!=null && !"".equals(filterRuolo)) {
 				stmt.setString(index++, filterRuolo);
+			}
+			if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
+				stmt.setString(index++, filterTipoServizioApplicativo);
 			}
 			risultato = stmt.executeQuery();
 
@@ -18091,9 +18116,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 		}
 		
+		String filterTipoServizioApplicativo = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_TIPO_SERVIZIO_APPLICATIVO);
+		
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
 		this.log.debug("filterProtocolli : " + filterProtocolli);
+		this.log.debug("filterRuoloServizioApplicativo : " + filterRuoloServizioApplicativo);
+		this.log.debug("filterTipoServizioApplicativo : " + filterTipoServizioApplicativo);
 		
 		Connection con = null;
 		PreparedStatement stmt=null;
@@ -18135,6 +18164,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				else if(tipologiaErogazione!=null) {
 					sqlQueryObject.addWhereCondition(true, "tipologia_erogazione is not null", "tipologia_erogazione<>?");
 				}
+				if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
+					sqlQueryObject.addWhereCondition(true, "tipo is not null", "tipo=?");
+				}
 				sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".nome", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
@@ -18155,6 +18187,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				else if(tipologiaErogazione!=null) {
 					sqlQueryObject.addWhereCondition(true, "tipologia_erogazione is not null", "tipologia_erogazione<>?");
 				}
+				if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
+					sqlQueryObject.addWhereCondition(true, "tipo is not null", "tipo=?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			}
@@ -18168,6 +18203,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 			else if(tipologiaErogazione!=null) {
 				stmt.setString(index++, tipologiaErogazione.getValue());
+			}
+			if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
+				stmt.setString(index++, filterTipoServizioApplicativo);
 			}
 			risultato = stmt.executeQuery();
 			if (risultato.next())
@@ -18206,6 +18244,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addOrderBy("nome_soggetto");
 					sqlQueryObject.addOrderBy("tipo_soggetto");
 				}
+				if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
+					sqlQueryObject.addWhereCondition(true, "tipo is not null", "tipo=?");
+				}
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
 				sqlQueryObject.setOffset(offset);
@@ -18238,6 +18279,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addOrderBy("nome_soggetto");
 					sqlQueryObject.addOrderBy("tipo_soggetto");
 				}
+				if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
+					sqlQueryObject.addWhereCondition(true, "tipo is not null", "tipo=?");
+				}
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
 				sqlQueryObject.setOffset(offset);
@@ -18253,6 +18297,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 			else if(tipologiaErogazione!=null) {
 				stmt.setString(index++, tipologiaErogazione.getValue());
+			}
+			if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
+				stmt.setString(index++, filterTipoServizioApplicativo);
 			}
 			risultato = stmt.executeQuery();
 
@@ -25310,6 +25357,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".nome = ?");
 				if(filtroRicerca.getIdRuolo()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo = ?");
+				if(filtroRicerca.getTipo()!=null)
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".tipo = ?");
 				setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca, CostantiDB.SERVIZI_APPLICATIVI);
 			}
 
@@ -25347,6 +25396,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(filtroRicerca.getIdRuolo()!=null){
 					this.log.debug("ruolo stmt.setString("+filtroRicerca.getIdRuolo().getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getIdRuolo().getNome());
+					indexStmt++;
+				}
+				if(filtroRicerca.getTipo()!=null){
+					this.log.debug("tipo stmt.setString("+filtroRicerca.getTipo()+")");
+					stm.setString(indexStmt, filtroRicerca.getTipo());
 					indexStmt++;
 				}
 				setProtocolPropertiesForSearch(stm, indexStmt, filtroRicerca, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO);
