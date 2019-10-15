@@ -30,6 +30,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import org.w3c.dom.Attr;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -342,6 +344,8 @@ public class DynamicNamespaceContext implements javax.xml.namespace.NamespaceCon
 		if(node == null)
 			return;
 
+		//System.out.println("ELEMENTO ["+node.getLocalName()+"] ["+node.getNamespaceURI()+"]");
+		
 		String namespace = node.getNamespaceURI();
 		if(namespace!=null && "".equals(namespace)==false){
 		
@@ -355,15 +359,49 @@ public class DynamicNamespaceContext implements javax.xml.namespace.NamespaceCon
 			this.addNamespace(prefix,node.getNamespaceURI());
 			
 		}
-			
+					
+		// child nodes
+		
 		NodeList list = node.getChildNodes();
-		if(list == null)
-			return;
-
-		int nodes = list.getLength();
-		for(int i=0;i<nodes;i++){
-			Node child = list.item(i);
-			findPrefixNamespace(child);
+		if(list != null) {
+			int nodes = list.getLength();
+			for(int i=0;i<nodes;i++){
+				Node child = list.item(i);
+				findPrefixNamespace(child);
+			}
+		}
+		
+		// attributes
+		
+		NamedNodeMap  mapAttribute = node.getAttributes();
+		if(mapAttribute!=null && mapAttribute.getLength()>0) {
+			for(int i=0;i<mapAttribute.getLength();i++){
+				Node n = mapAttribute.item(i);
+				
+				//System.out.println("N["+i+"]: "+n.getClass().getName());
+				
+				if(n instanceof Attr) {
+					Attr attr = (Attr) n;
+					
+					if("http://www.w3.org/2000/xmlns/".equals(attr.getNamespaceURI())) {
+					
+						//System.out.println("ATTRIBUTO PREFIX["+attr.getPrefix()+"]  NS["+attr.getNamespaceURI()+"] ["+attr.getLocalName()+"] ["+attr.getNodeValue()+"]");
+					
+						String prefix = attr.getLocalName();
+						if(prefix!=null && !"xmlns".equals(prefix) && "xmlns".equals(attr.getPrefix())){
+							
+							// Esamino attributi del nodo
+							//System.out.println("ESAMINO ATTRIBUTO PREFIX["+prefix+"]  NS["+attr.getNodeValue()+"]");
+							if(attr.getNodeValue()!=null && !"".equals(attr.getNodeValue())) {
+								this.addNamespace(prefix,attr.getNodeValue());
+							}
+							
+						}
+						
+					}
+					
+				}
+			}
 		}
 	}
 	
