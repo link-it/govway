@@ -87,7 +87,11 @@ public class OpenSPCoop2Message_saaj_12_impl extends AbstractOpenSPCoop2Message_
 	
 	@Override
 	protected String _super_getContentType() {
-		return getMessage1_2_FIX_Impl().getContentType();
+		try {
+			return _getContentType(false);
+		} catch (Throwable e) {
+			// Non dovrebbe avvenire errori
+		}	return getMessage1_2_FIX_Impl().getContentType();
 	}
 	
 	@Override
@@ -97,10 +101,14 @@ public class OpenSPCoop2Message_saaj_12_impl extends AbstractOpenSPCoop2Message_
 	
 	@Override
 	public String getContentType() throws MessageException{
+		return _getContentType(true);
+	}
+	private String _getContentType(boolean includeContentTypeParameters) throws MessageException{
 		
 		try {
-			ContentType cType = new ContentType(getMessage1_2_FIX_Impl().getContentType());
-			if(cType.getBaseType().equals(HttpConstants.CONTENT_TYPE_MULTIPART)) {
+			String ct = getMessage1_2_FIX_Impl().getContentType();
+			ContentType cType = new ContentType(ct);
+			if(cType.getBaseType().equalsIgnoreCase(HttpConstants.CONTENT_TYPE_MULTIPART)) {
 				if(getMessage1_2_FIX_Impl().getMimeMultipart() != null)
 					cType.setParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_BOUNDARY, 
 							getMessage1_2_FIX_Impl().getMimeMultipart().getContentType().getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_BOUNDARY));
@@ -115,11 +123,22 @@ public class OpenSPCoop2Message_saaj_12_impl extends AbstractOpenSPCoop2Message_
 				}
 				this.contentTypeParamaters.put(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION, this.soapAction);
 			}
-			return ContentTypeUtilities.buildContentType(cType.toString(),this.contentTypeParamaters);	
+			if(includeContentTypeParameters) {
+				return ContentTypeUtilities.buildContentType(cType.toString(),this.contentTypeParamaters);
+			}
+			else {
+				return cType.toString();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			try{
-				return ContentTypeUtilities.buildContentType(getMessage1_2_FIX_Impl().getContentType(),this.contentTypeParamaters);
+				String ct = getMessage1_2_FIX_Impl().getContentType();
+				if(includeContentTypeParameters) {
+					return ContentTypeUtilities.buildContentType(ct,this.contentTypeParamaters);
+				}
+				else {
+					return ct;
+				}
 			}catch(Exception eInternal){
 				throw new RuntimeException(eInternal.getMessage(),eInternal);
 			}

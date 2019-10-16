@@ -268,13 +268,6 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 	@Override
 	public void updateContentType() throws MessageException {
 		try{
-			if(countAttachments() > 0 && saveRequired()){
-		   		saveChanges();
-			}else if((ContentTypeUtilities.isMtom(this.getContentType())) && saveRequired() ){
-				// Bug Fix: OP-375  'Unable to internalize message' con messaggi senza attachments con ContentType 'multipart/related; ...type="application/xop+xml"'
-				//			Capita per i messaggi che contengono un content type multipart e però non sono effettivamente presenti attachments.
-				saveChanges();
-			}
 			if(countAttachments() > 0){
 				if(saveRequired()) {
 					saveChanges();
@@ -285,13 +278,14 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 				if(saveRequired()) {
 					
 					boolean pulizia = false;
-					if((ContentTypeUtilities.isMtom(this.getContentType())) ){
+					String contentType = _super_getContentType();
+					if((ContentTypeUtilities.isMtom(contentType)) ){
 						// Bug Fix: OP-375  'Unable to internalize message' con messaggi senza attachments con ContentType 'multipart/related; ...type="application/xop+xml"'
 						//			Capita per i messaggi che contengono un content type multipart e però non sono effettivamente presenti attachments.
 						saveChanges();
 						pulizia = true;
 					}
-					else if((ContentTypeUtilities.isMultipart( this.getContentType())) ){
+					else if((ContentTypeUtilities.isMultipart(contentType)) ){
 						// Bug Fix: OP-678 'Unable to internalize message' con messaggi senza attachments con ContentType 'multipart/related; ...type="text/xml"'
 						//			Capita per i messaggi che contengono un content type multipart e però non sono effettivamente presenti attachments.
 						saveChanges();
@@ -300,8 +294,14 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 					
 					if(pulizia) {
 						try {
-							String ct = _super_getContentType();
-							javax.mail.internet.ContentType ctObj = new javax.mail.internet.ContentType(ct);
+							javax.mail.internet.ContentType ctObj = new javax.mail.internet.ContentType(contentType);
+							
+							// Bug Fix: OP-909
+							// Rimane il tipo 'Multipart-Type' come Content-Type in caso di messaggio 'MTOM' senza allegati.
+							String contentTypeInternal = ContentTypeUtilities.getInternalMultipartContentType(contentType);
+							javax.mail.internet.ContentType ctObjInternal = new javax.mail.internet.ContentType(contentTypeInternal);
+							ctObj.setPrimaryType(ctObjInternal.getPrimaryType());
+							ctObj.setSubType(ctObjInternal.getSubType());
 							
 							String type = ctObj.getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_TYPE);
 							if(type!=null && !type.equals("")) {

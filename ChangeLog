@@ -1,3 +1,10 @@
+2019-10-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-909
+	Il fix 'OP-374' non era stato correttamente riportato ed in presenza di messaggi che non presentavano allegati 
+	nonostante il Content-Type indicasse un tipo Multipart 'MTOM', il messaggio non veniva corretto eliminando il boundary.
+
 2019-10-14  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
