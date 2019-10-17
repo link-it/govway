@@ -21913,7 +21913,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 	}
 
-	public List<ServizioApplicativo> getServiziApplicativiWithIdErogatore(Long idErogatore) throws DriverConfigurazioneException {
+	public List<ServizioApplicativo> getServiziApplicativiWithIdErogatore(Long idErogatore, String tipo) throws DriverConfigurazioneException {
 
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -21937,10 +21937,18 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("id_soggetto = ?");
+			if(tipo != null) {
+				sqlQueryObject.addWhereCondition("tipo = ?");
+				sqlQueryObject.setANDLogicOperator(true);
+			}
+			
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 
 			stm.setLong(1, idErogatore);
+			if(tipo != null) {
+				stm.setString(2, tipo);
+			}
 
 			this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idErogatore));
 			rs = stm.executeQuery();
