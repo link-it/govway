@@ -46,6 +46,7 @@ import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
+import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativiBehaviourMessage;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativiMessage;
 import org.openspcoop2.pdd.mdb.EsitoLib;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
@@ -228,7 +229,10 @@ public class TimerConsegnaContenutiApplicativi  {
 
 								IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(bustaToSend.getProtocollo());
 
-								String implementazioneMittente = this.registroServiziReader.getImplementazionePdD(new IDSoggetto(bustaToSend.getTipoMittente(),bustaToSend.getMittente()), null);
+								String implementazioneMittente = null;
+								if(bustaToSend.getTipoMittente()!=null && bustaToSend.getMittente()!=null) {
+									implementazioneMittente = this.registroServiziReader.getImplementazionePdD(new IDSoggetto(bustaToSend.getTipoMittente(),bustaToSend.getMittente()), null);
+								}
 								String implementazioneDestinatario = this.registroServiziReader.getImplementazionePdD(new IDSoggetto(bustaToSend.getTipoDestinatario(),bustaToSend.getDestinatario()), null);
 
 								messaggioDaInviare = new GestoreMessaggi(openspcoopstateGestore,true,idMsgDaInoltrare,Costanti.INBOX,
@@ -273,7 +277,8 @@ public class TimerConsegnaContenutiApplicativi  {
 								consegnaMSG.setImplementazionePdDSoggettoMittente(implementazioneMittente);
 								consegnaMSG.setImplementazionePdDSoggettoDestinatario(implementazioneDestinatario);
 								consegnaMSG.setPddContext(pddContext);
-								consegnaMSG.setIdMessaggioPreBehaviour(bustaToSend.getRiferimentoMessaggio());
+								consegnaMSG.setRichiestaApplicativa(richiestaApplicativa);
+								
 								BehaviourForwardToConfiguration behaviourForwardToConfiguration = new BehaviourForwardToConfiguration();
 								if(msgServizioApplicativo.isSbustamentoSoap())
 									behaviourForwardToConfiguration.setSbustamentoSoap(StatoFunzionalita.ABILITATA);
@@ -283,9 +288,12 @@ public class TimerConsegnaContenutiApplicativi  {
 									behaviourForwardToConfiguration.setSbustamentoInformazioniProtocollo(StatoFunzionalita.ABILITATA);
 								else 
 									behaviourForwardToConfiguration.setSbustamentoInformazioniProtocollo(StatoFunzionalita.DISABILITATA);
-								consegnaMSG.setBehaviourForwardToConfiguration(behaviourForwardToConfiguration);
+								
+								ConsegnaContenutiApplicativiBehaviourMessage behaviourMsg = new ConsegnaContenutiApplicativiBehaviourMessage();
+								behaviourMsg.setIdMessaggioPreBehaviour(bustaToSend.getRiferimentoMessaggio());
+								behaviourMsg.setBehaviourForwardToConfiguration(behaviourForwardToConfiguration);
+								consegnaMSG.setBehaviour(behaviourMsg);
 
-								consegnaMSG.setRichiestaApplicativa(richiestaApplicativa);
 
 								ConsegnaContenutiApplicativi lib = new ConsegnaContenutiApplicativi(OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
 								openspcoopstateMesssaggio = new OpenSPCoopStateful();

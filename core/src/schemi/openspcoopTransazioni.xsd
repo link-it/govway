@@ -180,7 +180,10 @@
 				<xsd:element name="gruppi" type="xsd:string" minOccurs="0"/>
 
 				<!-- Dump Messaggi -->
-				<xsd:element ref="dump-messaggio" minOccurs="0" maxOccurs="2"/>
+				<xsd:element ref="dump-messaggio" minOccurs="0" maxOccurs="unbounded"/>
+				
+				<!-- Dati Consegna Server Applicativo -->
+				<xsd:element ref="transazione-applicativo-server" minOccurs="0" maxOccurs="unbounded"/>
 				
 				<!-- Extended Info -->
 				<xsd:element ref="transazione-extended-info" minOccurs="0" maxOccurs="unbounded"/>
@@ -198,6 +201,32 @@
 		</xsd:complexType>
 	</xsd:element>
 	
+	
+	<xsd:element name="transazione-applicativo-server">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-transazione" type="xsd:string" />
+				
+				<xsd:element name="servizio-applicativo-erogatore" type="xsd:string"/>
+				
+				<xsd:element name="data-uscita-richiesta" type="xsd:dateTime" minOccurs="0"/>
+				<xsd:element name="data-accettazione-risposta" type="xsd:dateTime" minOccurs="0"/>
+				<xsd:element name="data-ingresso-risposta" type="xsd:dateTime" minOccurs="0"/>
+				
+				<xsd:element name="richiesta-uscita-bytes" type="xsd:unsignedLong" minOccurs="0"/>
+				<xsd:element name="risposta-ingresso-bytes" type="xsd:unsignedLong" minOccurs="0"/>
+				
+				<xsd:element name="codice-risposta" type="xsd:string" minOccurs="0" />
+				
+				<xsd:element name="data-primo-tentativo" type="xsd:dateTime" minOccurs="0"/>
+				<xsd:element name="data-ultimo-errore" type="xsd:dateTime" minOccurs="0"/>
+				<xsd:element name="codice-risposta-ultimo-errore" type="xsd:string" minOccurs="0" />
+				<xsd:element name="ultimo-errore" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="numero-tentativi" type="xsd:int" minOccurs="0" default="0"/>
+				
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
 	
 
 	<xsd:element name="transazione-info">
@@ -257,6 +286,7 @@
 			<xsd:sequence>
 				<xsd:element name="id-transazione" type="xsd:string"/>
 				<xsd:element name="protocollo" type="xsd:string" />
+				<xsd:element name="servizio-applicativo-erogatore" type="xsd:string" minOccurs="0"/>
 				<xsd:element name="tipo-messaggio" type="tipo-messaggio"/>
 				<xsd:element name="formato-messaggio" type="xsd:string" minOccurs="0"/>
 				<xsd:element name="content-type" type="xsd:string" minOccurs="0"/>
@@ -342,6 +372,14 @@
 		<xsd:sequence>
 			<xsd:element name="id-transazione" type="xsd:string"/>
 			<xsd:element name="tipo-messaggio" type="tipo-messaggio"/>
+			<xsd:element name="servizio-applicativo-erogatore" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="id-transazione-applicativo-server">
+		<xsd:sequence>
+			<xsd:element name="id-transazione" type="xsd:string"/>
+			<xsd:element name="servizio-applicativo-erogatore" type="xsd:string" minOccurs="0"/>
 		</xsd:sequence>
 	</xsd:complexType>
 

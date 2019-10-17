@@ -244,6 +244,11 @@ public final class CostantiDB {
 	public static final String TABLE_TRANSAZIONI_INDEX_FILTRO_RES_1 = "INDEX_TR_FILTROD_RES";
 	public static final String TABLE_TRANSAZIONI_INDEX_FILTRO_REQ_2 = "INDEX_TR_FILTROD_REQ_2";
 	public static final String TABLE_TRANSAZIONI_INDEX_FILTRO_RES_2 = "INDEX_TR_FILTROD_RES_2";
+	
+	public static final String TRANSAZIONI_EXTENDED_INFO = "transazione_extended_info";
+	
+	 /*TRANSAZIONI_SERVER_APPLICATIVI*/
+    public static final String TRANSAZIONI_APPLICATIVI_SERVER = "transazioni_sa";
     
     /*EVENTI*/
     public static final String DUMP_EVENTI = "notifiche_eventi";
@@ -409,6 +414,7 @@ public final class CostantiDB {
     public static final String MSG_DIAGNOSTICI_COLUMN_CODICE = "codice";
     public static final String MSG_DIAGNOSTICI_COLUMN_PROTOCOLLO = "protocollo";
     public static final String MSG_DIAGNOSTICI_COLUMN_ID_TRANSAZIONE = "id_transazione";
+    public static final String MSG_DIAGNOSTICI_COLUMN_APPLICATIVO = "applicativo";
     public static final String MSG_DIAGNOSTICI_COLUMN_ID = "id";
     
     /*COLONNE TABELLA PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST */

@@ -18695,6 +18695,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("response_cache_control_nostore");
 			sqlQueryObject.addSelectField("id_accordo");
 			sqlQueryObject.addSelectField("id_port_type");
+			sqlQueryObject.addSelectField("id_sa_default");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id_soggetto = "+this.tabellaSoggetti+".id");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id = ?");
 			sqlQueryObject.setANDLogicOperator(true);
@@ -18709,7 +18710,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 				PortaApplicativa pa = new PortaApplicativa();
 				pa.setId(rs.getLong("idPA"));
-				pa.setIdSoggetto(rs.getLong("idSoggetto"));
+				long idSoggetto = rs.getLong("idSoggetto");
+				pa.setIdSoggetto(idSoggetto);
 				pa.setDescrizione(rs.getString("descrizionePorta"));
 				pa.setNome(rs.getString("nome_porta"));
 				pa.setTipoSoggettoProprietario(rs.getString("tipo_soggetto"));
@@ -19061,9 +19063,35 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					readResponseCaching(idPortaApplicativa, false, false, pa.getResponseCaching(), rs, con);
 				}
 				
+				// Servizio Applicativo di default
+				long id_sa_default = rs.getLong("id_sa_default");
+				
 				rs.close();
 				stm.close();
 
+				
+				// Servizio Applicativo di default
+				if(id_sa_default>0) {
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+					sqlQueryObject.addSelectField("nome");
+					sqlQueryObject.addWhereCondition("id=?");
+					sqlQuery = sqlQueryObject.createSQLQuery();
+					stm = con.prepareStatement(sqlQuery);
+					stm.setLong(1, id_sa_default);
+
+					this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idPortaApplicativa));
+					rs = stm.executeQuery();
+
+					// Request Flow Parameter
+					if (rs.next()) {
+						String nome = rs.getString("nome");
+						pa.setServizioApplicativoDefault(nome);
+					}
+					rs.close();
+					stm.close();
+				}
+				
 				
 				// Trasformazioni
 				Trasformazioni trasformazioni = DriverConfigurazioneDB_LIB.readTrasformazioni(idPortaApplicativa, false, con);

@@ -57,5 +57,12 @@ public class ObjectFactory {
         return new SearchFilterDumpMessaggio();
     }
     
+    /**
+     * Create an instance of {@link SearchFilterTransazioneApplicativoServer }
+     */
+    public SearchFilterTransazioneApplicativoServer createSearchFilterTransazioneApplicativoServer() {
+        return new SearchFilterTransazioneApplicativoServer();
+    }
+    
 
 }

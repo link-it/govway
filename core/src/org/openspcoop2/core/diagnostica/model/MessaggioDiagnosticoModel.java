@@ -46,6 +46,7 @@ public class MessaggioDiagnosticoModel extends AbstractModel<MessaggioDiagnostic
 		this.DOMINIO = new org.openspcoop2.core.diagnostica.model.DominioDiagnosticoModel(new Field("dominio",org.openspcoop2.core.diagnostica.DominioDiagnostico.class,"messaggio-diagnostico",MessaggioDiagnostico.class));
 		this.IDENTIFICATIVO_RICHIESTA = new Field("identificativo-richiesta",java.lang.String.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
 		this.IDENTIFICATIVO_RISPOSTA = new Field("identificativo-risposta",java.lang.String.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
+		this.APPLICATIVO = new Field("applicativo",java.lang.String.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
 		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
 		this.CODICE = new Field("codice",java.lang.String.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
 		this.MESSAGGIO = new Field("messaggio",java.lang.String.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
@@ -62,6 +63,7 @@ public class MessaggioDiagnosticoModel extends AbstractModel<MessaggioDiagnostic
 		this.DOMINIO = new org.openspcoop2.core.diagnostica.model.DominioDiagnosticoModel(new ComplexField(father,"dominio",org.openspcoop2.core.diagnostica.DominioDiagnostico.class,"messaggio-diagnostico",MessaggioDiagnostico.class));
 		this.IDENTIFICATIVO_RICHIESTA = new ComplexField(father,"identificativo-richiesta",java.lang.String.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
 		this.IDENTIFICATIVO_RISPOSTA = new ComplexField(father,"identificativo-risposta",java.lang.String.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
+		this.APPLICATIVO = new ComplexField(father,"applicativo",java.lang.String.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
 		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
 		this.CODICE = new ComplexField(father,"codice",java.lang.String.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
 		this.MESSAGGIO = new ComplexField(father,"messaggio",java.lang.String.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
@@ -79,6 +81,8 @@ public class MessaggioDiagnosticoModel extends AbstractModel<MessaggioDiagnostic
 	public IField IDENTIFICATIVO_RICHIESTA = null;
 	 
 	public IField IDENTIFICATIVO_RISPOSTA = null;
+	 
+	public IField APPLICATIVO = null;
 	 
 	public IField ORA_REGISTRAZIONE = null;
 	 

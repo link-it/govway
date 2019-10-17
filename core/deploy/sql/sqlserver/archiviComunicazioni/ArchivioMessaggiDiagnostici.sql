@@ -16,6 +16,7 @@ CREATE TABLE msgdiagnostici
 	-- Protocollo (puo' non essere presente per i diagnostici di 'servizio' della porta)
 	protocollo VARCHAR(255),
 	id_transazione VARCHAR(255) NOT NULL,
+	applicativo VARCHAR(2000),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- check constraints

@@ -131,7 +131,8 @@ import java.util.List;
  * 			&lt;element name="eventi-gestione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="tipo-api" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="gruppi" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="dump-messaggio" type="{http://www.openspcoop2.org/core/transazioni}dump-messaggio" minOccurs="0" maxOccurs="2"/>
+ * 			&lt;element name="dump-messaggio" type="{http://www.openspcoop2.org/core/transazioni}dump-messaggio" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="transazione-applicativo-server" type="{http://www.openspcoop2.org/core/transazioni}transazione-applicativo-server" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="transazione-extended-info" type="{http://www.openspcoop2.org/core/transazioni}transazione-extended-info" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
@@ -238,6 +239,7 @@ import java.util.List;
   	"tipoApi",
   	"gruppi",
   	"dumpMessaggio",
+  	"transazioneApplicativoServer",
   	"transazioneExtendedInfo"
   }
 )
@@ -1026,6 +1028,30 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBean implements
     return this.dumpMessaggio.size();
   }
 
+  public void addTransazioneApplicativoServer(TransazioneApplicativoServer transazioneApplicativoServer) {
+    this.transazioneApplicativoServer.add(transazioneApplicativoServer);
+  }
+
+  public TransazioneApplicativoServer getTransazioneApplicativoServer(int index) {
+    return this.transazioneApplicativoServer.get( index );
+  }
+
+  public TransazioneApplicativoServer removeTransazioneApplicativoServer(int index) {
+    return this.transazioneApplicativoServer.remove( index );
+  }
+
+  public List<TransazioneApplicativoServer> getTransazioneApplicativoServerList() {
+    return this.transazioneApplicativoServer;
+  }
+
+  public void setTransazioneApplicativoServerList(List<TransazioneApplicativoServer> transazioneApplicativoServer) {
+    this.transazioneApplicativoServer=transazioneApplicativoServer;
+  }
+
+  public int sizeTransazioneApplicativoServerList() {
+    return this.transazioneApplicativoServer.size();
+  }
+
   public void addTransazioneExtendedInfo(TransazioneExtendedInfo transazioneExtendedInfo) {
     this.transazioneExtendedInfo.add(transazioneExtendedInfo);
   }
@@ -1471,6 +1497,36 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBean implements
   @Deprecated
   public int sizeDumpMessaggio() {
   	return this.dumpMessaggio.size();
+  }
+
+  @XmlElement(name="transazione-applicativo-server",required=true,nillable=false)
+  protected List<TransazioneApplicativoServer> transazioneApplicativoServer = new ArrayList<TransazioneApplicativoServer>();
+
+  /**
+   * @deprecated Use method getTransazioneApplicativoServerList
+   * @return List<TransazioneApplicativoServer>
+  */
+  @Deprecated
+  public List<TransazioneApplicativoServer> getTransazioneApplicativoServer() {
+  	return this.transazioneApplicativoServer;
+  }
+
+  /**
+   * @deprecated Use method setTransazioneApplicativoServerList
+   * @param transazioneApplicativoServer List<TransazioneApplicativoServer>
+  */
+  @Deprecated
+  public void setTransazioneApplicativoServer(List<TransazioneApplicativoServer> transazioneApplicativoServer) {
+  	this.transazioneApplicativoServer=transazioneApplicativoServer;
+  }
+
+  /**
+   * @deprecated Use method sizeTransazioneApplicativoServerList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeTransazioneApplicativoServer() {
+  	return this.transazioneApplicativoServer.size();
   }
 
   @XmlElement(name="transazione-extended-info",required=true,nillable=false)

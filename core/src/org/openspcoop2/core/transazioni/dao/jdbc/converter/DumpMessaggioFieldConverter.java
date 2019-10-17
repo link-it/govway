@@ -82,6 +82,13 @@ public class DumpMessaggioFieldConverter extends AbstractSQLFieldConverter {
 				return "protocollo";
 			}
 		}
+		if(field.equals(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".servizio_applicativo_erogatore";
+			}else{
+				return "servizio_applicativo_erogatore";
+			}
+		}
 		if(field.equals(DumpMessaggio.model().TIPO_MESSAGGIO)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".tipo_messaggio";
@@ -323,6 +330,9 @@ public class DumpMessaggioFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(DumpMessaggio.model(), returnAlias);
 		}
 		if(field.equals(DumpMessaggio.model().PROTOCOLLO)){
+			return this.toTable(DumpMessaggio.model(), returnAlias);
+		}
+		if(field.equals(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE)){
 			return this.toTable(DumpMessaggio.model(), returnAlias);
 		}
 		if(field.equals(DumpMessaggio.model().TIPO_MESSAGGIO)){

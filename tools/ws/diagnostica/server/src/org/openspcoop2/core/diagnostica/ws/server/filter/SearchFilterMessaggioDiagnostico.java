@@ -33,6 +33,7 @@ package org.openspcoop2.core.diagnostica.ws.server.filter;
  *         &lt;element name="dominio" type="{http://www.openspcoop2.org/core/diagnostica/management}dominio-diagnostico" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="identificativo-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="identificativo-risposta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="applicativo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="codice" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
@@ -70,6 +71,7 @@ import org.openspcoop2.core.diagnostica.ws.server.filter.beans.Protocollo;
     "dominio",
     "identificativoRichiesta",
     "identificativoRisposta",
+    "applicativo",
     "oraRegistrazioneMin",
     "oraRegistrazioneMax",
     "codice",
@@ -133,6 +135,19 @@ public class SearchFilterMessaggioDiagnostico extends org.openspcoop2.utils.bean
 	
 	public String getIdentificativoRisposta(){
 		return this.identificativoRisposta;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="applicativo",required=false,nillable=false)
+	private String applicativo;
+	
+	public void setApplicativo(String applicativo){
+		this.applicativo = applicativo;
+	}
+	
+	public String getApplicativo(){
+		return this.applicativo;
 	}
 	
 	

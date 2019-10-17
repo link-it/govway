@@ -25,6 +25,8 @@
 								<linkit:sql-comment><![CDATA[TRANSAZIONI]]></linkit:sql-comment>
 								<linkit:sql-table object-name="transazione"
 									object-type="transazione"/>
+								<linkit:sql-table object-name="transazione-applicativo-server"
+									object-type="transazione-applicativo-server"/>
 								<linkit:sql-table object-name="transazione-info"
 									object-type="transazione-info"/>
 								<linkit:sql-table object-name="transazione-export"
@@ -1158,6 +1160,7 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
+								<!-- Questa colonna mantiene le identita degli applicativi fruitori che, registrati via console, hanno una lunghezza massima di 255 caratteri -->
 								<linkit:sql-ddl-column-comment><![CDATA[Identificativo dell'applicativo fruitore]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
@@ -1168,6 +1171,13 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
+								<!-- 
+									Questa colonna mantiene l'identita di un applicativo erogatore che, registrati via console, ha una lunghezza massima di 255 caratteri,
+									mentre se generato dinamicamente si somma al nome del soggetto, del servizio etc....
+									Viene quindi impostata la dimensione massima associabile ad un nome di un applicativo nel backend: 2000
+									NOTA: in caso di consegna multipla questa colonna non viene utilizzata e la memorizzazione avviene su transazione_applicativo
+								-->
+								<linkit:sql-column-mapping varchar="2000"/>
 								<linkit:sql-ddl-column-comment><![CDATA[Identificativo dell'applicativo erogatore]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
@@ -1465,11 +1475,23 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 				</xsd:element>
 
 				<!-- Dump Messaggi -->
-				<xsd:element ref="dump-messaggio" minOccurs="0" maxOccurs="2">
+				<xsd:element ref="dump-messaggio" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:appinfo>
 							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-id-mapping object-name="dump-messaggio" object-type="dump-messaggio"
+									relationship="none"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				
+				<!-- Dati Consegna Server Applicativo -->
+				<xsd:element ref="transazione-applicativo-server" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-id-mapping object-name="transazione-applicativo-server" object-type="transazione-applicativo-server"
 									relationship="none"/>
 							</linkit:generator>
 						</xsd:appinfo>
@@ -1501,6 +1523,196 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+	
+	
+	
+	<xsd:element name="transazione-applicativo-server">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true" id="id-transazione-applicativo-server">
+						<linkit:ws-interface search="true" crud="false" all="false" >
+							<linkit:ws-search-method-interface inUse="false" />
+							<linkit:ws-filter orCondition="false"/>
+						</linkit:ws-interface>
+					</linkit:interface>
+					<linkit:sql-table-mapping name="transazioni_sa" sequence-cycle="true"
+						comment="Contiene le informazioni relative alle consegne verso gli applicativi server">
+						<!-- Indici per ottimizzare le ricerche basate sull'id della trasazione -->
+						<linkit:sql-table-index>
+							<linkit:sql-table-index-field name="id-transazione"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-transazione" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment>Identificativo della transazione a cui appartiene l'applicativo</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				
+				<xsd:element name="servizio-applicativo-erogatore" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<!-- 
+									Questa colonna mantiene l'identita di un applicativo erogatore che, registrati via console, ha una lunghezza massima di 255 caratteri,
+									mentre se generato dinamicamente si somma al nome del soggetto, del servizio etc....
+									Viene quindi impostata la dimensione massima associabile ad un nome di un applicativo nel backend: 2000
+									NOTA: in caso di consegna multipla questa colonna non viene utilizzata e la memorizzazione avviene su transazione_applicativo
+								-->
+								<linkit:sql-column-mapping varchar="2000"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo dell'applicativo erogatore]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				
+				<xsd:element name="data-uscita-richiesta" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di richiesta è stato inoltrato dalla Porta]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="data-accettazione-risposta" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui la risposta è pervenuta (connessione instaurata) sulla Porta]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="data-ingresso-risposta" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di risposta è ricevuto dalla Porta]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				
+				<xsd:element name="richiesta-uscita-bytes" type="xsd:unsignedLong" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Dimensione messaggi gestiti]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Dimensione del messaggio di richiesta inoltrato dalla Porta]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="risposta-ingresso-bytes" type="xsd:unsignedLong" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Dimensione messaggi gestiti]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Dimensione del messaggio di risposta ricevuto sulla Porta]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+								
+				<xsd:element name="codice-risposta" type="xsd:string" minOccurs="0" >
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="10"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Il codice di risposta ottenuto nella fase di uscita (es. HTTP 200/404/500)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				
+				
+				<xsd:element name="data-primo-tentativo" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di richiesta è stato inoltrato dalla Porta per la prima volta]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="data-ultimo-errore" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale relativo all'ultimo tentativo di consegna fallito]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="codice-risposta-ultimo-errore" type="xsd:string" minOccurs="0" >
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="10"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Il codice di risposta ottenuto nella fase di uscita (es. HTTP 200/404/500) relativamente all'ultimo tentativo di consegna fallito]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="ultimo-errore" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping medium-text="true" />
+								<linkit:sql-ddl-column-comment><![CDATA[Errore relativo all'ultimo tentativo di consegna fallito]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="numero-tentativi" type="xsd:int" minOccurs="0" default="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Numero di tentativi di consegna]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" />
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				
+				
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	
+				   
+			    
 	
 	
 
@@ -1760,6 +1972,23 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-column-mapping varchar="20"/>
 								<linkit:sql-ddl-column-comment><![CDATA[Protocollo utilizzato per la transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="servizio-applicativo-erogatore" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<!-- 
+									Questa colonna mantiene l'identita di un applicativo erogatore che, registrati via console, ha una lunghezza massima di 255 caratteri,
+									mentre se generato dinamicamente si somma al nome del soggetto, del servizio etc....
+									Viene quindi impostata la dimensione massima associabile ad un nome di un applicativo nel backend: 2000
+									NOTA: in caso di consegna multipla questa colonna non viene utilizzata e la memorizzazione avviene su transazione_applicativo
+								-->
+								<linkit:sql-column-mapping varchar="2000"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo dell'applicativo erogatore]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
@@ -2301,6 +2530,14 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 		<xsd:sequence>
 			<xsd:element name="id-transazione" type="xsd:string"/>
 			<xsd:element name="tipo-messaggio" type="tipo-messaggio"/>
+			<xsd:element name="servizio-applicativo-erogatore" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="id-transazione-applicativo-server">
+		<xsd:sequence>
+			<xsd:element name="id-transazione" type="xsd:string"/>
+			<xsd:element name="servizio-applicativo-erogatore" type="xsd:string" minOccurs="0"/>
 		</xsd:sequence>
 	</xsd:complexType>
 

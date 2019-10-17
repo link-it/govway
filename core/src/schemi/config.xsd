@@ -175,6 +175,7 @@
 		<xsd:attribute name="autorizzazione" type="xsd:string" default="authenticated"/>
 		<xsd:attribute name="autorizzazione-contenuto" type="xsd:string"/>
 		<xsd:attribute name="ricerca-porta-azione-delegata" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="servizio-applicativo-default" type="xsd:string" use="optional"/>
 		<xsd:attribute name="stato" type="StatoFunzionalita" default="abilitato" />
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
 	</xsd:complexType>

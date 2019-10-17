@@ -4777,6 +4777,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("response_cache_hash_headers", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_hdr_list", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_payload", "?");
+				// servizio applicativo default
+				sqlQueryObject.addInsertField("id_sa_default", "?");
 				// id
 				sqlQueryObject.addInsertField("id_accordo", "?");
 				sqlQueryObject.addInsertField("id_port_type", "?");
@@ -4923,6 +4925,17 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, response_cache_hash_headers);
 				stm.setString(index++, response_cache_hash_headers_list);
 				stm.setString(index++, response_cache_hash_payload);
+				
+				// servizio applicativo default
+				long idServizioApplicativoDefault = -1;
+				if(aPA.getServizioApplicativoDefault()!=null) {
+					idServizioApplicativoDefault = DBUtils.getIdServizioApplicativo(aPA.getServizioApplicativoDefault(), tipoProprietario, nomeProprietario, 
+							con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+					if(idServizioApplicativoDefault<=0) {
+						throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDPortaApplicativa(CREATE)] Impossibile recuperare l'ID del servizio applicativo di default '"+aPA.getServizioApplicativoDefault()+"'.");
+					}
+				}
+				stm.setLong(index++, idServizioApplicativoDefault);
 				
 				//idaccordo
 				stm.setLong(index++, aPA.getIdAccordo()!=null ? aPA.getIdAccordo() : -1L);
@@ -5688,6 +5701,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("response_cache_hash_headers", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_hdr_list", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_payload", "?");
+				// servizio applicativo default
+				sqlQueryObject.addUpdateField("id_sa_default", "?");
 				// id
 				sqlQueryObject.addUpdateField("id_accordo", "?");
 				sqlQueryObject.addUpdateField("id_port_type", "?");
@@ -5834,6 +5849,18 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, response_cache_hash_headers);
 				stm.setString(index++, response_cache_hash_headers_list);
 				stm.setString(index++, response_cache_hash_payload);
+				
+				// servizio applicativo default
+				idServizioApplicativoDefault = -1;
+				if(aPA.getServizioApplicativoDefault()!=null) {
+					idServizioApplicativoDefault = DBUtils.getIdServizioApplicativo(aPA.getServizioApplicativoDefault(), tipoProprietario, nomeProprietario, 
+							con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+					if(idServizioApplicativoDefault<=0) {
+						throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDPortaApplicativa(CREATE)] Impossibile recuperare l'ID del servizio applicativo di default '"+aPA.getServizioApplicativoDefault()+"'.");
+					}
+				}
+				stm.setLong(index++, idServizioApplicativoDefault);
+				
 				// id
 				stm.setLong(index++, aPA.getIdAccordo() !=null ? aPA.getIdAccordo() : -1L);
 				stm.setLong(index++, aPA.getIdPortType() !=null ? aPA.getIdPortType() : -1L);

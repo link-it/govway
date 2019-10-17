@@ -2163,6 +2163,8 @@ public class MsgDiagnostico {
 		msgDiagnostico.setIdBustaRisposta(this.idMessaggioRisposta);
 		msgDiagnostico.setCodice(codiceDiagnostico);
 		
+		msgDiagnostico.setApplicativo(this.servizioApplicativo);
+		
 		msgDiagnostico.setProtocollo(this.protocolFactory.getProtocol());
 		
 		if(this.pddContext!=null){

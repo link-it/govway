@@ -2,6 +2,8 @@
 
 	Aggiunte informazioni per gestire i connettori multipli:
 
+	ALTER TABLE porte_applicative ADD COLUMN id_sa_default BIGINT;
+
 	ALTER TABLE porte_applicative_sa ADD COLUMN connettore_nome VARCHAR(255);
 	ALTER TABLE porte_applicative_sa ADD COLUMN connettore_descrizione VARCHAR(4000);
 	ALTER TABLE porte_applicative_sa ADD COLUMN connettore_stato VARCHAR(255);
@@ -11,6 +13,15 @@
 
 	Nuove tabelle 'pa_sa_properties' e 'pa_behaviour_props'.
 
+	ALTER TABLE msgdiagnostici ADD COLUMN applicativo VARCHAR(2000);
+
+	ALTER TABLE MSG_SERVIZI_APPLICATIVI ALTER COLUMN SERVIZIO_APPLICATIVO TYPE VARCHAR(2000);
+
+	ALTER TABLE transazioni ALTER COLUMN servizio_applicativo_erogatore TYPE VARCHAR(2000);
+
+	Nuova tabella 'transazioni_sa'
+
+	ALTER TABLE dump_messaggi ADD COLUMN servizio_applicativo_erogatore VARCHAR(2000);
 
 2019-09-25  Andrea Poli <apoli@link.it>
 

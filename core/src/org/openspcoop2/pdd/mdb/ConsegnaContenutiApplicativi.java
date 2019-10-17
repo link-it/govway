@@ -300,7 +300,13 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		EsitoLib esito = new EsitoLib();
 		ConsegnaContenutiApplicativiMessage consegnaContenutiApplicativiMsg = (ConsegnaContenutiApplicativiMessage) openspcoopstate.getMessageLib();
 		
-		String idMessaggioPreBehaviour = consegnaContenutiApplicativiMsg.getIdMessaggioPreBehaviour();
+		ConsegnaContenutiApplicativiBehaviourMessage behaviourConsegna = consegnaContenutiApplicativiMsg.getBehaviour();
+		String idMessaggioPreBehaviour = null;
+		BehaviourForwardToConfiguration behaviourForwardToConfiguration = null;
+		if(behaviourConsegna!=null) {
+			idMessaggioPreBehaviour = behaviourConsegna.getIdMessaggioPreBehaviour();
+			behaviourForwardToConfiguration = behaviourConsegna.getBehaviourForwardToConfiguration();
+		}
 		
 		/* PddContext */
 		PdDContext pddContext = consegnaContenutiApplicativiMsg.getPddContext();
@@ -1602,7 +1608,6 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 
 			// behaviourForwardToConfiguration
-			BehaviourForwardToConfiguration behaviourForwardToConfiguration = consegnaContenutiApplicativiMsg.getBehaviourForwardToConfiguration();
 			if(behaviourForwardToConfiguration!=null){
 				if(behaviourForwardToConfiguration.getSbustamentoInformazioniProtocollo()!=null){
 					if(org.openspcoop2.pdd.core.behaviour.StatoFunzionalita.ABILITATA.equals(behaviourForwardToConfiguration.getSbustamentoInformazioniProtocollo())){

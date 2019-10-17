@@ -291,6 +291,9 @@
 		<xsd:attribute default="disabilitato" name="ricerca-porta-azione-delegata" type="StatoFunzionalita">
 			
 		</xsd:attribute>
+		<xsd:attribute name="servizio-applicativo-default" type="xsd:string" use="optional">
+			
+		</xsd:attribute>
 		<xsd:attribute default="abilitato" name="stato" type="StatoFunzionalita">
 			
 		</xsd:attribute>

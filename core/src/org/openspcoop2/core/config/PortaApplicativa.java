@@ -88,6 +88,7 @@ import java.util.List;
  * 		&lt;attribute name="autorizzazione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="authenticated"/>
  * 		&lt;attribute name="autorizzazione-contenuto" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="ricerca-porta-azione-delegata" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
+ * 		&lt;attribute name="servizio-applicativo-default" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
  * &lt;/complexType>
@@ -718,6 +719,14 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
     this.ricercaPortaAzioneDelegata = ricercaPortaAzioneDelegata;
   }
 
+  public java.lang.String getServizioApplicativoDefault() {
+    return this.servizioApplicativoDefault;
+  }
+
+  public void setServizioApplicativoDefault(java.lang.String servizioApplicativoDefault) {
+    this.servizioApplicativoDefault = servizioApplicativoDefault;
+  }
+
   public void set_value_stato(String value) {
     this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
@@ -1101,6 +1110,10 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   @XmlAttribute(name="ricerca-porta-azione-delegata",required=false)
   protected StatoFunzionalita ricercaPortaAzioneDelegata = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="servizio-applicativo-default",required=false)
+  protected java.lang.String servizioApplicativoDefault;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_stato;

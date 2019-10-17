@@ -33,10 +33,10 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
+import org.openspcoop2.pdd.core.behaviour.BehaviourLoader;
 import org.openspcoop2.pdd.core.behaviour.IBehaviour;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.utils.resources.Loader;
 
 
 
@@ -99,11 +99,8 @@ public class SoggettoVirtuale  {
 			if(gestisciBehaviuorPerFiltri){
 				
 				if(sa.getPortaApplicativa().getBehaviour()!=null && sa.getPortaApplicativa().getBehaviour().getNome()!=null){
-					String tipoBehaviour = ClassNameProperties.getInstance().getBehaviour(sa.getPortaApplicativa().getBehaviour().getNome());
-					if(tipoBehaviour==null){
-						throw new Exception("Tipo di behaviour ["+sa.getPortaApplicativa().getBehaviour()+"] sconosciuto");
-					}
-					IBehaviour behaviourImpl = (IBehaviour) Loader.getInstance().newInstance(tipoBehaviour);
+					
+					IBehaviour behaviourImpl = BehaviourLoader.newInstance(sa.getPortaApplicativa().getBehaviour(), null);
 					
 					Busta bustaConSoggettiReali = busta.clone();
 					// Inverto mitt-dest
@@ -114,7 +111,8 @@ public class SoggettoVirtuale  {
 					bustaConSoggettiReali.setDestinatario(sa.getIdSoggettoReale().getNome());
 					bustaConSoggettiReali.setTipoDestinatario(sa.getIdSoggettoReale().getTipo());
 					
-					Behaviour behaviour = behaviourImpl.behaviour(gestoreMessaggi, bustaConSoggettiReali, requestInfo);
+					Behaviour behaviour = behaviourImpl.behaviour(gestoreMessaggi, bustaConSoggettiReali, 
+							sa.getPortaApplicativa(), requestInfo);
 					if(behaviour!=null && behaviour.getForwardTo()!=null &&
 							behaviour.getForwardTo().size()==1){
 						BehaviourForwardToFilter filter = behaviour.getForwardTo().get(0).getFilter();

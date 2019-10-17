@@ -64,6 +64,7 @@ import org.openspcoop2.pdd.core.behaviour.Behaviour;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardTo;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToConfiguration;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
+import org.openspcoop2.pdd.core.behaviour.BehaviourLoader;
 import org.openspcoop2.pdd.core.behaviour.IBehaviour;
 import org.openspcoop2.pdd.core.behaviour.StatoFunzionalita;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
@@ -75,6 +76,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
+import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativiBehaviourMessage;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativiMessage;
 import org.openspcoop2.pdd.mdb.EsitoLib;
 import org.openspcoop2.pdd.mdb.InoltroRisposte;
@@ -1480,14 +1482,11 @@ public class EJBUtils {
 			boolean behaviourResponseTo = false;
 			// pa is null nel caso di soggetto virtuale
 			if(pa!=null && pa.getBehaviour()!=null && pa.getBehaviour().getNome()!=null && !"".equals(pa.getBehaviour().getNome())){
-				String tipoBehaviour = ClassNameProperties.getInstance().getBehaviour(pa.getBehaviour().getNome());
-				if(tipoBehaviour==null){
-					throw new Exception("Tipo di behaviour ["+pa.getBehaviour()+"] sconosciuto");
-				}
-				this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_BEHAVIOUR, pa.getBehaviour().getNome());
-				IBehaviour behaviourImpl = (IBehaviour) Loader.getInstance().newInstance(tipoBehaviour);
+				
+				IBehaviour behaviourImpl = BehaviourLoader.newInstance(pa.getBehaviour(), this.msgDiag);
+				
 				gestoreMessaggi.setPortaDiTipoStateless(stateless);
-				behaviour = behaviourImpl.behaviour(gestoreMessaggi, busta, requestInfo);
+				behaviour = behaviourImpl.behaviour(gestoreMessaggi, busta, pa, requestInfo);
 				
 				behaviourResponseTo = behaviour!=null && behaviour.isResponseTo();
 				
@@ -1724,7 +1723,7 @@ public class EJBUtils {
 						Busta bustaNewMessaggio = behaviourForwardTo.getBusta();
 						if(bustaNewMessaggio==null){
 							bustaNewMessaggio = busta.clone();
-							bustaNewMessaggio.setID("Forward"+i+"_"+busta.getID());
+							bustaNewMessaggio.setID("gw-"+i+"-"+busta.getID());
 						}
 						bustaNewMessaggio.setRiferimentoMessaggio(busta.getID()); // per il timer
 						bustaNewMessaggio.addProperty(CostantiPdD.KEY_DESCRIZIONE_BEHAVIOUR, behaviourForwardTo.getDescription());
@@ -1833,10 +1832,13 @@ public class EJBUtils {
 			consegnaMSG.setImplementazionePdDSoggettoDestinatario(this.implementazionePdDSoggettoDestinatario);
 			consegnaMSG.setPddContext(this.pddContext);
 			consegnaMSG.setRichiestaDelegata(localForwardRichiestaDelegata);
-			if(idBustaPreBehaviourNewMessage!=null){
-				consegnaMSG.setIdMessaggioPreBehaviour(idBustaPreBehaviourNewMessage);
+			
+			if(idBustaPreBehaviourNewMessage!=null || behaviourForwardToConfiguration!=null) {
+				ConsegnaContenutiApplicativiBehaviourMessage behaviourMsg = new ConsegnaContenutiApplicativiBehaviourMessage();
+				behaviourMsg.setIdMessaggioPreBehaviour(idBustaPreBehaviourNewMessage);
+				behaviourMsg.setBehaviourForwardToConfiguration(behaviourForwardToConfiguration);
+				consegnaMSG.setBehaviour(behaviourMsg);
 			}
-			consegnaMSG.setBehaviourForwardToConfiguration(behaviourForwardToConfiguration);
 			
 			// Aggiungo costante servizio applicativo
 			this.msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, servizioApplicativo);
