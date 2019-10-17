@@ -27,7 +27,6 @@ package org.openspcoop2.pdd.mdb;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
 import org.openspcoop2.pdd.core.PdDContext;
-import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToConfiguration;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.protocol.sdk.Busta;
 
@@ -82,18 +81,13 @@ public class ConsegnaContenutiApplicativiMessage implements GenericMessage {
 	private PdDContext pddContext;
 
 	/**
-	 * ID Messaggio PreSave Behaviour
+	 * Behaviour
 	 */
-	private String idMessaggioPreBehaviour = null;
-	
-	/**
-	 * BehaviourForwardToConfiguration
-	 */
-	private BehaviourForwardToConfiguration behaviourForwardToConfiguration;
+	private ConsegnaContenutiApplicativiBehaviourMessage behaviour = null;
 	
 
 	/* ********  C O S T R U T T O R E  ******** */
-
+	
 	/**
 	 * Costruttore. 
 	 *
@@ -155,10 +149,6 @@ public class ConsegnaContenutiApplicativiMessage implements GenericMessage {
 		this.stateless = stateless;
 	}
 
-	public void setIdMessaggioPreBehaviour(String idMessaggioPreBehaviour) {
-		this.idMessaggioPreBehaviour = idMessaggioPreBehaviour;
-	}
-
 	public void setImplementazionePdDSoggettoMittente(
 			String implementazionePdDSoggettoMittente) {
 		this.implementazionePdDSoggettoMittente = implementazionePdDSoggettoMittente;
@@ -173,9 +163,8 @@ public class ConsegnaContenutiApplicativiMessage implements GenericMessage {
 		this.pddContext = pddContext;
 	}
 	
-	public void setBehaviourForwardToConfiguration(
-			BehaviourForwardToConfiguration behaviourForwardToConfiguration) {
-		this.behaviourForwardToConfiguration = behaviourForwardToConfiguration;
+	public void setBehaviour(ConsegnaContenutiApplicativiBehaviourMessage behaviour) {
+		this.behaviour = behaviour;
 	}
 	
 
@@ -243,12 +232,8 @@ public class ConsegnaContenutiApplicativiMessage implements GenericMessage {
 		return this.pddContext;
 	}
 	
-	public String getIdMessaggioPreBehaviour() {
-		return this.idMessaggioPreBehaviour;
-	}
-
-	public BehaviourForwardToConfiguration getBehaviourForwardToConfiguration() {
-		return this.behaviourForwardToConfiguration;
+	public ConsegnaContenutiApplicativiBehaviourMessage getBehaviour() {
+		return this.behaviour;
 	}
 
 

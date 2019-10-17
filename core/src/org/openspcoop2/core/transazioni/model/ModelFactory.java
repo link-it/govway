@@ -34,6 +34,8 @@ public class ModelFactory {
 	
 	public static TransazioneModel TRANSAZIONE = new TransazioneModel();
 	
+	public static TransazioneApplicativoServerModel TRANSAZIONE_APPLICATIVO_SERVER = new TransazioneApplicativoServerModel();
+	
 	public static TransazioneInfoModel TRANSAZIONE_INFO = new TransazioneInfoModel();
 	
 	public static TransazioneExportModel TRANSAZIONE_EXPORT = new TransazioneExportModel();

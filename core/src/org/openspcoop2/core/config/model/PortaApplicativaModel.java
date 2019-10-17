@@ -87,6 +87,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.AUTORIZZAZIONE = new Field("autorizzazione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.AUTORIZZAZIONE_CONTENUTO = new Field("autorizzazione-contenuto",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.RICERCA_PORTA_AZIONE_DELEGATA = new Field("ricerca-porta-azione-delegata",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.SERVIZIO_APPLICATIVO_DEFAULT = new Field("servizio-applicativo-default",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.STATO = new Field("stato",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"porta-applicativa",PortaApplicativa.class);
 	
@@ -141,6 +142,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.AUTORIZZAZIONE = new ComplexField(father,"autorizzazione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.AUTORIZZAZIONE_CONTENUTO = new ComplexField(father,"autorizzazione-contenuto",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.RICERCA_PORTA_AZIONE_DELEGATA = new ComplexField(father,"ricerca-porta-azione-delegata",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.SERVIZIO_APPLICATIVO_DEFAULT = new ComplexField(father,"servizio-applicativo-default",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"porta-applicativa",PortaApplicativa.class);
 	
@@ -237,6 +239,8 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	public IField AUTORIZZAZIONE_CONTENUTO = null;
 	 
 	public IField RICERCA_PORTA_AZIONE_DELEGATA = null;
+	 
+	public IField SERVIZIO_APPLICATIVO_DEFAULT = null;
 	 
 	public IField STATO = null;
 	 

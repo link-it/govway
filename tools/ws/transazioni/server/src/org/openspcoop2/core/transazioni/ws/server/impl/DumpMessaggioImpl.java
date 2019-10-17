@@ -88,6 +88,9 @@ public abstract class DumpMessaggioImpl extends BaseImpl  implements DumpMessagg
 		if(filter.getTipoMessaggio()!= null) {
 			exp.equals(DumpMessaggio.model().TIPO_MESSAGGIO, filter.getTipoMessaggio());
 		}
+		if(filter.getServizioApplicativoErogatore()!= null) {
+			exp.equals(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE, filter.getServizioApplicativoErogatore());
+		}
 		if(filter.getContentType()!= null) {
 			exp.equals(DumpMessaggio.model().CONTENT_TYPE, filter.getContentType());
 		}

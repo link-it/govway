@@ -127,7 +127,7 @@ CREATE TABLE transazioni
 	id_correlazione_applicativa VARCHAR(255),
 	id_correlazione_risposta VARCHAR(255),
 	servizio_applicativo_fruitore VARCHAR(255),
-	servizio_applicativo_erogatore VARCHAR(255),
+	servizio_applicativo_erogatore VARCHAR(2000),
 	operazione_im VARCHAR(255),
 	location_richiesta VARCHAR(255),
 	location_risposta VARCHAR(255),
@@ -179,6 +179,39 @@ CREATE INDEX INDEX_TR_FILTROD_REQ_2 ON transazioni (data_id_msg_richiesta,id_mes
 CREATE INDEX INDEX_TR_FILTROD_RES_2 ON transazioni (data_id_msg_risposta,id_messaggio_risposta);
 CREATE INDEX INDEX_TR_COLLABORAZIONE ON transazioni (id_collaborazione);
 CREATE INDEX INDEX_TR_RIF_RICHIESTA ON transazioni (id_asincrono);
+
+CREATE TABLE transazioni_sa
+(
+	id_transazione VARCHAR(255) NOT NULL,
+	servizio_applicativo_erogatore VARCHAR(2000) NOT NULL,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_uscita_richiesta TIMESTAMP(3) DEFAULT 0,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_accettazione_risposta TIMESTAMP(3) DEFAULT 0,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_ingresso_risposta TIMESTAMP(3) DEFAULT 0,
+	-- Dimensione messaggi gestiti
+	richiesta_uscita_bytes BIGINT,
+	-- Dimensione messaggi gestiti
+	risposta_ingresso_bytes BIGINT,
+	codice_risposta VARCHAR(10),
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_primo_tentativo TIMESTAMP(3) DEFAULT 0,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_ultimo_errore TIMESTAMP(3) DEFAULT 0,
+	codice_risposta_ultimo_errore VARCHAR(10),
+	ultimo_errore MEDIUMTEXT,
+	numero_tentativi INT DEFAULT 0,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- fk/pk keys constraints
+	CONSTRAINT pk_transazioni_sa PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+-- index
+CREATE INDEX index_transazioni_sa_1 ON transazioni_sa (id_transazione);
+
+
 
 CREATE TABLE transazioni_info
 (
@@ -234,6 +267,7 @@ CREATE TABLE dump_messaggi
 (
 	id_transazione VARCHAR(255) NOT NULL,
 	protocollo VARCHAR(20) NOT NULL,
+	servizio_applicativo_erogatore VARCHAR(2000),
 	tipo_messaggio VARCHAR(255) NOT NULL,
 	formato_messaggio VARCHAR(20),
 	content_type VARCHAR(255),

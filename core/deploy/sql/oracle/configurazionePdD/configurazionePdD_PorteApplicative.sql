@@ -114,6 +114,7 @@ CREATE TABLE porte_applicative
 	response_cache_control_nocache NUMBER,
 	response_cache_control_maxage NUMBER,
 	response_cache_control_nostore NUMBER,
+	id_sa_default NUMBER,
 	-- Stato della porta: abilitato/disabilitato
 	stato VARCHAR2(255),
 	-- proprietario porta applicativa

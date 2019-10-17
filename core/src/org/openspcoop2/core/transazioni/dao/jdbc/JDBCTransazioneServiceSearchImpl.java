@@ -827,6 +827,14 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
 	
 	private void _join(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
 
+		if(expression.inUseModel(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER,false)){
+			String tableName1 = this.getTransazioneFieldConverter().toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER);
+			String tableName2 = this.getTransazioneFieldConverter().toTable(Transazione.model());
+			sqlQueryObject.addWhereCondition(tableName1+".id_transazione="+tableName2+".id");
+		}
+		
+		
+		
 		boolean joinTransazioniRequired = false;
 		if(expression.inUseModel(Transazione.model().DUMP_MESSAGGIO.ALLEGATO,false)){
 			String tableName1 = this.getTransazioneFieldConverter().toTable(Transazione.model().DUMP_MESSAGGIO.ALLEGATO);

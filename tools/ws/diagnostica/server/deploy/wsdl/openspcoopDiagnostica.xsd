@@ -14,6 +14,8 @@
 			<!-- Identificativi -->
 			<xsd:element minOccurs="0" name="identificativo-richiesta" type="xsd:string"/>
 			<xsd:element minOccurs="0" name="identificativo-risposta" type="xsd:string"/>
+			<!-- Applicativo Consegna -->
+			<xsd:element minOccurs="0" name="applicativo" type="xsd:string"/>
 			<!-- Altro -->
 			<xsd:element name="ora-registrazione" type="xsd:dateTime">
 				

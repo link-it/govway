@@ -41,6 +41,7 @@ import java.io.Serializable;
  * 			&lt;element name="dominio" type="{http://www.openspcoop2.org/core/diagnostica}dominio-diagnostico" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="identificativo-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="identificativo-risposta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="applicativo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="codice" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
@@ -63,6 +64,7 @@ import java.io.Serializable;
   	"dominio",
   	"identificativoRichiesta",
   	"identificativoRisposta",
+  	"applicativo",
   	"oraRegistrazione",
   	"codice",
   	"messaggio",
@@ -121,6 +123,14 @@ public class MessaggioDiagnostico extends org.openspcoop2.utils.beans.BaseBean i
 
   public void setIdentificativoRisposta(java.lang.String identificativoRisposta) {
     this.identificativoRisposta = identificativoRisposta;
+  }
+
+  public java.lang.String getApplicativo() {
+    return this.applicativo;
+  }
+
+  public void setApplicativo(java.lang.String applicativo) {
+    this.applicativo = applicativo;
   }
 
   public java.util.Date getOraRegistrazione() {
@@ -196,6 +206,10 @@ public class MessaggioDiagnostico extends org.openspcoop2.utils.beans.BaseBean i
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="identificativo-risposta",required=false,nillable=false)
   protected java.lang.String identificativoRisposta;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="applicativo",required=false,nillable=false)
+  protected java.lang.String applicativo;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")

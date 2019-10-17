@@ -55,6 +55,7 @@ package org.openspcoop2.core.config.ws.server.filter;
  *         &lt;element name="autorizzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="autorizzazione-contenuto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ricerca-porta-azione-delegata" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="servizio-applicativo-default" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
@@ -118,6 +119,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
     "autorizzazione",
     "autorizzazioneContenuto",
     "ricercaPortaAzioneDelegata",
+    "servizioApplicativoDefault",
     "stato",
     "oraRegistrazioneMin",
     "oraRegistrazioneMax",
@@ -449,6 +451,19 @@ public class SearchFilterPortaApplicativa extends org.openspcoop2.utils.beans.Ba
 	
 	public StatoFunzionalita getRicercaPortaAzioneDelegata(){
 		return this.ricercaPortaAzioneDelegata;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="servizio-applicativo-default",required=false,nillable=false)
+	private String servizioApplicativoDefault;
+	
+	public void setServizioApplicativoDefault(String servizioApplicativoDefault){
+		this.servizioApplicativoDefault = servizioApplicativoDefault;
+	}
+	
+	public String getServizioApplicativoDefault(){
+		return this.servizioApplicativoDefault;
 	}
 	
 	

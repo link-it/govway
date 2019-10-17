@@ -39,6 +39,7 @@
  			<xsd:element name="autorizzazione" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="autorizzazione-contenuto" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="ricerca-porta-azione-delegata" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="servizio-applicativo-default" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="stato" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="ora-registrazione-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="ora-registrazione-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />

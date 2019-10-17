@@ -118,7 +118,7 @@ CREATE TABLE transazioni
 	id_correlazione_applicativa VARCHAR(255),
 	id_correlazione_risposta VARCHAR(255),
 	servizio_applicativo_fruitore VARCHAR(255),
-	servizio_applicativo_erogatore VARCHAR(255),
+	servizio_applicativo_erogatore VARCHAR(2000),
 	operazione_im VARCHAR(255),
 	location_richiesta VARCHAR(255),
 	location_risposta VARCHAR(255),
@@ -171,6 +171,36 @@ CREATE INDEX INDEX_TR_FILTROD_RES_2 ON transazioni (data_id_msg_risposta,id_mess
 CREATE INDEX INDEX_TR_COLLABORAZIONE ON transazioni (id_collaborazione);
 CREATE INDEX INDEX_TR_RIF_RICHIESTA ON transazioni (id_asincrono);
 
+CREATE SEQUENCE seq_transazioni_sa start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 CYCLE;
+
+CREATE TABLE transazioni_sa
+(
+	id_transazione VARCHAR(255) NOT NULL,
+	servizio_applicativo_erogatore VARCHAR(2000) NOT NULL,
+	data_uscita_richiesta TIMESTAMP,
+	data_accettazione_risposta TIMESTAMP,
+	data_ingresso_risposta TIMESTAMP,
+	-- Dimensione messaggi gestiti
+	richiesta_uscita_bytes BIGINT,
+	-- Dimensione messaggi gestiti
+	risposta_ingresso_bytes BIGINT,
+	codice_risposta VARCHAR(10),
+	data_primo_tentativo TIMESTAMP,
+	data_ultimo_errore TIMESTAMP,
+	codice_risposta_ultimo_errore VARCHAR(10),
+	ultimo_errore TEXT,
+	numero_tentativi INT DEFAULT 0,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_transazioni_sa') NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT pk_transazioni_sa PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_transazioni_sa_1 ON transazioni_sa (id_transazione);
+
+
+
 CREATE TABLE transazioni_info
 (
 	tipo VARCHAR(255) NOT NULL,
@@ -222,6 +252,7 @@ CREATE TABLE dump_messaggi
 (
 	id_transazione VARCHAR(255) NOT NULL,
 	protocollo VARCHAR(20) NOT NULL,
+	servizio_applicativo_erogatore VARCHAR(2000),
 	tipo_messaggio VARCHAR(255) NOT NULL,
 	formato_messaggio VARCHAR(20),
 	content_type VARCHAR(255),

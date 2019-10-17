@@ -227,6 +227,16 @@ public class MsgDiagnostico implements Serializable{
 	}
 	
 	
+	// applicativo [Wrapper]
+	
+	public String getApplicativo() {
+		return this.messaggioDiagnostico.getApplicativo();
+	}
+	public void setApplicativo(String applicativo) {
+		this.messaggioDiagnostico.setApplicativo(applicativo);
+	}
+	
+	
 	
 	// codice [Wrapper]
 	

@@ -395,6 +395,8 @@ public class DiagnosticDriverUtilities {
 				
 				msg.setIdTransazione(rs.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID_TRANSAZIONE));
 				
+				msg.setApplicativo(rs.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_APPLICATIVO));
+				
 				IDSoggetto idSoggetto = new IDSoggetto();
 				idSoggetto.setCodicePorta(rs.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_PDD_CODICE));
 				idSoggetto.setNome(rs.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_PDD_NOME_SOGGETTO));
