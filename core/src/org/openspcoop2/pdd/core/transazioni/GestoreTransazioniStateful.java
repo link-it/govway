@@ -23,7 +23,6 @@ package org.openspcoop2.pdd.core.transazioni;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -287,69 +286,69 @@ public class GestoreTransazioniStateful {
 			
 			break;
 			
-		case DATA_USCITA_RICHIESTA:
-			
-			updateDataUscitaRichiesta(transazioneService, (Date)so.getObject(), so.getIdTransazione());
-			if(this.debug)
-				this.log.debug(tipoGestione+"Informazione sulla data di uscita della richiesta aggiornata");
-			
-			break;
-			
-		case DATA_INGRESSO_RISPOSTA:
-			
-			updateDataIngressoRisposta(transazioneService, (Date)so.getObject(), so.getIdTransazione());
-			if(this.debug)
-				this.log.debug(tipoGestione+"Informazione sulla data di ingresso della risposta aggiornata");
-			
-			break;
-			
-		case DIMENSIONE_USCITA_RICHIESTA:
-			
-			updateDimensioneUscitaRichiesta(transazioneService, (Long)so.getObject(), so.getIdTransazione());
-			if(this.debug)
-				this.log.debug(tipoGestione+"Informazione sulla dimensione di uscita della richiesta aggiornata");
-			
-			break;
-			
-		case DIMENSIONE_INGRESSO_RISPOSTA:
-			
-			updateDimensioneIngressoRisposta(transazioneService, (Long)so.getObject(), so.getIdTransazione());
-			if(this.debug)
-				this.log.debug(tipoGestione+"Informazione sulla dimensione di ingresso della risposta aggiornata");
-			
-			break;
-			
-		case LOCATION:
-			
-			updateLocationConnettore(transazioneService, (String)so.getObject(), so.getIdTransazione());
-			if(this.debug)
-				this.log.debug(tipoGestione+"Informazione sulla location aggiornata");
-			
-			break;
-			
-		case TIPO_CONNETTORE:
-			
-			updateTipoConnettore(transazioneService, (String)so.getObject(), so.getIdTransazione());
-			if(this.debug)
-				this.log.debug(tipoGestione+"Informazione sul tipo di connettore aggiornata");
-			
-			break;
-			
-		case CODICE_TRASPORTO_RICHIESTA:
-			
-			updateCodiceTrasportoRichiesta(transazioneService, (String)so.getObject(), so.getIdTransazione());
-			if(this.debug)
-				this.log.debug(tipoGestione+"Informazione sul codice di trasporto aggiornata");
-			
-			break;
-			
-		case SCENARIO_COOPERAZIONE:
-			
-			updateScenarioDiCooperazione(transazioneService, (String)so.getObject(), so.getIdTransazione());
-			if(this.debug)
-				this.log.debug(tipoGestione+"Informazione sullo scenario di cooperazione aggiornata");
-			
-			break;
+//		case DATA_USCITA_RICHIESTA:
+//			
+//			updateDataUscitaRichiesta(transazioneService, (Date)so.getObject(), so.getIdTransazione());
+//			if(this.debug)
+//				this.log.debug(tipoGestione+"Informazione sulla data di uscita della richiesta aggiornata");
+//			
+//			break;
+//			
+//		case DATA_INGRESSO_RISPOSTA:
+//			
+//			updateDataIngressoRisposta(transazioneService, (Date)so.getObject(), so.getIdTransazione());
+//			if(this.debug)
+//				this.log.debug(tipoGestione+"Informazione sulla data di ingresso della risposta aggiornata");
+//			
+//			break;
+//			
+//		case DIMENSIONE_USCITA_RICHIESTA:
+//			
+//			updateDimensioneUscitaRichiesta(transazioneService, (Long)so.getObject(), so.getIdTransazione());
+//			if(this.debug)
+//				this.log.debug(tipoGestione+"Informazione sulla dimensione di uscita della richiesta aggiornata");
+//			
+//			break;
+//			
+//		case DIMENSIONE_INGRESSO_RISPOSTA:
+//			
+//			updateDimensioneIngressoRisposta(transazioneService, (Long)so.getObject(), so.getIdTransazione());
+//			if(this.debug)
+//				this.log.debug(tipoGestione+"Informazione sulla dimensione di ingresso della risposta aggiornata");
+//			
+//			break;
+//			
+//		case LOCATION:
+//			
+//			updateLocationConnettore(transazioneService, (String)so.getObject(), so.getIdTransazione());
+//			if(this.debug)
+//				this.log.debug(tipoGestione+"Informazione sulla location aggiornata");
+//			
+//			break;
+//			
+//		case TIPO_CONNETTORE:
+//			
+//			updateTipoConnettore(transazioneService, (String)so.getObject(), so.getIdTransazione());
+//			if(this.debug)
+//				this.log.debug(tipoGestione+"Informazione sul tipo di connettore aggiornata");
+//			
+//			break;
+//			
+//		case CODICE_TRASPORTO_RICHIESTA:
+//			
+//			updateCodiceTrasportoRichiesta(transazioneService, (String)so.getObject(), so.getIdTransazione());
+//			if(this.debug)
+//				this.log.debug(tipoGestione+"Informazione sul codice di trasporto aggiornata");
+//			
+//			break;
+//			
+//		case SCENARIO_COOPERAZIONE:
+//			
+//			updateScenarioDiCooperazione(transazioneService, (String)so.getObject(), so.getIdTransazione());
+//			if(this.debug)
+//				this.log.debug(tipoGestione+"Informazione sullo scenario di cooperazione aggiornata");
+//			
+//			break;
 			
 		case OUT_REQUEST_STATEFUL_OBJECT:
 			
@@ -429,60 +428,60 @@ public class GestoreTransazioniStateful {
 	}
 	
 	
-	private void updateDataUscitaRichiesta(ITransazioneService transazioneService,Date data,String idTransazione) throws Exception{
-		
-		UpdateField updateField = new UpdateField(Transazione.model().DATA_USCITA_RICHIESTA, data);
-		transazioneService.updateFields(idTransazione, updateField);
-		
-	}
-	
-	private void updateDataIngressoRisposta(ITransazioneService transazioneService,Date data,String idTransazione) throws Exception{
-		
-		UpdateField updateField = new UpdateField(Transazione.model().DATA_INGRESSO_RISPOSTA, data);
-		transazioneService.updateFields(idTransazione, updateField);
-		
-	}
-	
-	private void updateDimensioneUscitaRichiesta(ITransazioneService transazioneService,Long dimensione,String idTransazione) throws Exception{
-		
-		UpdateField updateField = new UpdateField(Transazione.model().RICHIESTA_USCITA_BYTES, dimensione);
-		transazioneService.updateFields(idTransazione, updateField);
-	
-	}
-	
-	private void updateDimensioneIngressoRisposta(ITransazioneService transazioneService,Long dimensione,String idTransazione) throws Exception{
-		
-		UpdateField updateField = new UpdateField(Transazione.model().RISPOSTA_INGRESSO_BYTES, dimensione);
-		transazioneService.updateFields(idTransazione, updateField);
-		
-	}
-	
-	private void updateLocationConnettore(ITransazioneService transazioneService,String value,String idTransazione) throws Exception{
-		
-		UpdateField updateField = new UpdateField(Transazione.model().LOCATION_CONNETTORE, value);
-		transazioneService.updateFields(idTransazione, updateField);
-		
-	}
-	
-	private void updateTipoConnettore(ITransazioneService transazioneService,String value,String idTransazione) throws Exception{
-		
-		// TODO leggere le attuali informazioni e aggiornarle
-		
-	}
-	
-	private void updateCodiceTrasportoRichiesta(ITransazioneService transazioneService,String value,String idTransazione) throws Exception{
-		
-		// TODO leggere le attuali informazioni e aggiornarle
-		
-	}
-	
-	
-	private void updateScenarioDiCooperazione(ITransazioneService transazioneService,String value,String idTransazione) throws Exception{
-		
-		UpdateField updateField = new UpdateField(Transazione.model().RUOLO_TRANSAZIONE, value);
-		transazioneService.updateFields(idTransazione, updateField);
-		
-	}
+//	private void updateDataUscitaRichiesta(ITransazioneService transazioneService,Date data,String idTransazione) throws Exception{
+//		
+//		UpdateField updateField = new UpdateField(Transazione.model().DATA_USCITA_RICHIESTA, data);
+//		transazioneService.updateFields(idTransazione, updateField);
+//		
+//	}
+//	
+//	private void updateDataIngressoRisposta(ITransazioneService transazioneService,Date data,String idTransazione) throws Exception{
+//		
+//		UpdateField updateField = new UpdateField(Transazione.model().DATA_INGRESSO_RISPOSTA, data);
+//		transazioneService.updateFields(idTransazione, updateField);
+//		
+//	}
+//	
+//	private void updateDimensioneUscitaRichiesta(ITransazioneService transazioneService,Long dimensione,String idTransazione) throws Exception{
+//		
+//		UpdateField updateField = new UpdateField(Transazione.model().RICHIESTA_USCITA_BYTES, dimensione);
+//		transazioneService.updateFields(idTransazione, updateField);
+//	
+//	}
+//	
+//	private void updateDimensioneIngressoRisposta(ITransazioneService transazioneService,Long dimensione,String idTransazione) throws Exception{
+//		
+//		UpdateField updateField = new UpdateField(Transazione.model().RISPOSTA_INGRESSO_BYTES, dimensione);
+//		transazioneService.updateFields(idTransazione, updateField);
+//		
+//	}
+//	
+//	private void updateLocationConnettore(ITransazioneService transazioneService,String value,String idTransazione) throws Exception{
+//		
+//		UpdateField updateField = new UpdateField(Transazione.model().LOCATION_CONNETTORE, value);
+//		transazioneService.updateFields(idTransazione, updateField);
+//		
+//	}
+//	
+//	private void updateTipoConnettore(ITransazioneService transazioneService,String value,String idTransazione) throws Exception{
+//		
+//		// TODO leggere le attuali informazioni e aggiornarle
+//		
+//	}
+//	
+//	private void updateCodiceTrasportoRichiesta(ITransazioneService transazioneService,String value,String idTransazione) throws Exception{
+//		
+//		// TODO leggere le attuali informazioni e aggiornarle
+//		
+//	}
+//	
+//	
+//	private void updateScenarioDiCooperazione(ITransazioneService transazioneService,String value,String idTransazione) throws Exception{
+//		
+//		UpdateField updateField = new UpdateField(Transazione.model().RUOLO_TRANSAZIONE, value);
+//		transazioneService.updateFields(idTransazione, updateField);
+//		
+//	}
 	
 	private void updateOutRequestStatefulObject(ITransazioneService transazioneService,OutRequestStatefulObject object,String idTransazione) throws Exception{
 		

@@ -410,6 +410,32 @@
 					
 				</xsd:element>
 				
+				<xsd:element name="data-registrazione" type="xsd:dateTime">
+					
+				</xsd:element>
+				
+				<xsd:element minOccurs="0" name="protocollo" type="xsd:string">
+					
+				</xsd:element>
+				
+				<xsd:element default="false" minOccurs="0" name="consegna-successo" type="xsd:boolean">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="dettaglio-esito" type="xsd:int">
+					
+				</xsd:element>
+				
+				<xsd:element default="false" minOccurs="0" name="consegna-integration-manager" type="xsd:boolean">
+					
+				</xsd:element>
+				
+				<xsd:element minOccurs="0" name="identificativo-messaggio" type="xsd:string">
+					
+				</xsd:element>
+								
+				<xsd:element minOccurs="0" name="data-accettazione-richiesta" type="xsd:dateTime">
+					
+				</xsd:element>
 				<xsd:element minOccurs="0" name="data-uscita-richiesta" type="xsd:dateTime">
 					
 				</xsd:element>
@@ -427,7 +453,17 @@
 					
 				</xsd:element>
 								
+				<xsd:element minOccurs="0" name="location-connettore" type="xsd:string">
+					
+				</xsd:element>
 				<xsd:element minOccurs="0" name="codice-risposta" type="xsd:string">
+					
+				</xsd:element>
+				
+				<xsd:element minOccurs="0" name="fault" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="formato-fault" type="xsd:string">
 					
 				</xsd:element>
 				
@@ -435,7 +471,20 @@
 				<xsd:element minOccurs="0" name="data-primo-tentativo" type="xsd:dateTime">
 					
 				</xsd:element>
+				<xsd:element default="0" minOccurs="0" name="numero-tentativi" type="xsd:int">
+					
+				</xsd:element>
+				
+				
+				<xsd:element minOccurs="0" name="cluster-id" type="xsd:string">
+								        
+				</xsd:element>
+				
+				
 				<xsd:element minOccurs="0" name="data-ultimo-errore" type="xsd:dateTime">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="dettaglio-esito-ultimo-errore" type="xsd:int">
 					
 				</xsd:element>
 				<xsd:element minOccurs="0" name="codice-risposta-ultimo-errore" type="xsd:string">
@@ -444,10 +493,18 @@
 				<xsd:element minOccurs="0" name="ultimo-errore" type="xsd:string">
 					
 				</xsd:element>
-				<xsd:element default="0" minOccurs="0" name="numero-tentativi" type="xsd:int">
+				<xsd:element minOccurs="0" name="location-ultimo-errore" type="xsd:string">
 					
 				</xsd:element>
-				
+				<xsd:element minOccurs="0" name="cluster-id-ultimo-errore" type="xsd:string">
+								        
+				</xsd:element>
+				<xsd:element minOccurs="0" name="fault-ultimo-errore" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="formato-fault-ultimo-errore" type="xsd:string">
+					
+				</xsd:element>
 				
 			</xsd:sequence>
 		</xsd:complexType>

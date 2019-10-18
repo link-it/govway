@@ -964,6 +964,48 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "servizio_applicativo_erogatore";
 			}
 		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DATA_REGISTRAZIONE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".data_registrazione";
+			}else{
+				return "data_registrazione";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.CONSEGNA_SUCCESSO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".consegna_successo";
+			}else{
+				return "consegna_successo";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DETTAGLIO_ESITO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".dettaglio_esito";
+			}else{
+				return "dettaglio_esito";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.CONSEGNA_INTEGRATION_MANAGER)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".consegna_im";
+			}else{
+				return "consegna_im";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.IDENTIFICATIVO_MESSAGGIO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".identificativo_messaggio";
+			}else{
+				return "identificativo_messaggio";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DATA_ACCETTAZIONE_RICHIESTA)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".data_accettazione_richiesta";
+			}else{
+				return "data_accettazione_richiesta";
+			}
+		}
 		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DATA_USCITA_RICHIESTA)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".data_uscita_richiesta";
@@ -999,11 +1041,32 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "risposta_ingresso_bytes";
 			}
 		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.LOCATION_CONNETTORE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".location_connettore";
+			}else{
+				return "location_connettore";
+			}
+		}
 		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.CODICE_RISPOSTA)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".codice_risposta";
 			}else{
 				return "codice_risposta";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.FAULT)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".fault";
+			}else{
+				return "fault";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.FORMATO_FAULT)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".formato_fault";
+			}else{
+				return "formato_fault";
 			}
 		}
 		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DATA_PRIMO_TENTATIVO)){
@@ -1013,11 +1076,32 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "data_primo_tentativo";
 			}
 		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.NUMERO_TENTATIVI)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".numero_tentativi";
+			}else{
+				return "numero_tentativi";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.CLUSTER_ID)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".cluster_id";
+			}else{
+				return "cluster_id";
+			}
+		}
 		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DATA_ULTIMO_ERRORE)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".data_ultimo_errore";
 			}else{
 				return "data_ultimo_errore";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DETTAGLIO_ESITO_ULTIMO_ERRORE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".dettaglio_esito_ultimo_errore";
+			}else{
+				return "dettaglio_esito_ultimo_errore";
 			}
 		}
 		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.CODICE_RISPOSTA_ULTIMO_ERRORE)){
@@ -1034,11 +1118,32 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "ultimo_errore";
 			}
 		}
-		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.NUMERO_TENTATIVI)){
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.LOCATION_ULTIMO_ERRORE)){
 			if(appendTablePrefix){
-				return this.toAliasTable(field)+".numero_tentativi";
+				return this.toAliasTable(field)+".location_ultimo_errore";
 			}else{
-				return "numero_tentativi";
+				return "location_ultimo_errore";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.CLUSTER_ID_ULTIMO_ERRORE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".cluster_id_ultimo_errore";
+			}else{
+				return "cluster_id_ultimo_errore";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.FAULT_ULTIMO_ERRORE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".fault_ultimo_errore";
+			}else{
+				return "fault_ultimo_errore";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.FORMATO_FAULT_ULTIMO_ERRORE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".formato_fault_ultimo_errore";
+			}else{
+				return "formato_fault_ultimo_errore";
 			}
 		}
 		if(field.equals(Transazione.model().TRANSAZIONE_EXTENDED_INFO.NOME)){
@@ -1452,6 +1557,24 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.SERVIZIO_APPLICATIVO_EROGATORE)){
 			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
 		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DATA_REGISTRAZIONE)){
+			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.CONSEGNA_SUCCESSO)){
+			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DETTAGLIO_ESITO)){
+			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.CONSEGNA_INTEGRATION_MANAGER)){
+			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.IDENTIFICATIVO_MESSAGGIO)){
+			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DATA_ACCETTAZIONE_RICHIESTA)){
+			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
+		}
 		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DATA_USCITA_RICHIESTA)){
 			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
 		}
@@ -1467,13 +1590,31 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.RISPOSTA_INGRESSO_BYTES)){
 			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
 		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.LOCATION_CONNETTORE)){
+			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
+		}
 		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.CODICE_RISPOSTA)){
+			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.FAULT)){
+			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.FORMATO_FAULT)){
 			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
 		}
 		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DATA_PRIMO_TENTATIVO)){
 			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
 		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.NUMERO_TENTATIVI)){
+			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.CLUSTER_ID)){
+			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
+		}
 		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DATA_ULTIMO_ERRORE)){
+			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DETTAGLIO_ESITO_ULTIMO_ERRORE)){
 			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
 		}
 		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.CODICE_RISPOSTA_ULTIMO_ERRORE)){
@@ -1482,7 +1623,16 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.ULTIMO_ERRORE)){
 			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
 		}
-		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.NUMERO_TENTATIVI)){
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.LOCATION_ULTIMO_ERRORE)){
+			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.CLUSTER_ID_ULTIMO_ERRORE)){
+			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.FAULT_ULTIMO_ERRORE)){
+			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.FORMATO_FAULT_ULTIMO_ERRORE)){
 			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
 		}
 		if(field.equals(Transazione.model().TRANSAZIONE_EXTENDED_INFO.NOME)){

@@ -102,4 +102,15 @@ public class PdDContext implements Serializable {
 		return value;
 	}
 	
+	@Override
+	public Object clone() {
+		PdDContext newPdDContext = new PdDContext();
+		Enumeration<String> keys = this.keys();
+		while (keys.hasMoreElements()) {
+			String key = (String) keys.nextElement();
+			Object o = this.getObject(key);
+			newPdDContext.addObject(key, o);
+		}
+		return newPdDContext;
+	}
 }

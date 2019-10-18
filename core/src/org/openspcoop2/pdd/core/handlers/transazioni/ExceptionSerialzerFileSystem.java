@@ -28,6 +28,7 @@ import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.diagnostica.MessaggioDiagnostico;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.pdd.core.FileSystemSerializer;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
@@ -136,4 +137,56 @@ public class ExceptionSerialzerFileSystem {
 		}
 	}
 	
+	
+	public void registrazioneFileSystemDiagnosticoEmessoPdD(MsgDiagnostico msgDiag, String idTransazione, String applicativoServer){
+		try{
+			MessaggioDiagnostico msgDiagOp2 = msgDiag.getMessaggioDiagnostico();
+			
+			// forzo
+			msgDiagOp2.setIdTransazione(idTransazione);
+			msgDiagOp2.setApplicativo(applicativoServer);
+			
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			msgDiagOp2.writeTo(bout, WriteToSerializerType.XML_JAXB);
+	    	bout.flush();
+	    	bout.close();
+			FileSystemSerializer.getInstance().registraDiagnostico(bout.toByteArray(), msgDiagOp2.getOraRegistrazione());
+		}catch(Exception eSerializer){
+			this.logger.error("Errore durante la registrazione su file system del messaggio diagnostico [idTransazione: "+idTransazione+"][server: "+applicativoServer+"]: "+eSerializer.getMessage(),eSerializer);
+		}
+	}
+	
+	public void registrazioneFileSystemDumpEmessoPdD(Messaggio messaggio, String idTransazione, String applicativoServer){
+		try{
+			DumpMessaggio messaggioOp2 = messaggio.toDumpMessaggio();
+			
+			// forzo
+			messaggio.setIdTransazione(idTransazione);
+			messaggio.setServizioApplicativoErogatore(applicativoServer);
+			
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			messaggioOp2.writeTo(bout, WriteToSerializerType.XML_JAXB);
+	    	bout.flush();
+	    	bout.close();
+			FileSystemSerializer.getInstance().registraDump(bout.toByteArray(), messaggioOp2.getDumpTimestamp());
+		}catch(Exception eSerializer){
+			this.logger.error("Errore durante la registrazione su file system del messaggio diagnostico [idTransazione: "+idTransazione+"][server: "+applicativoServer+"]: "+eSerializer.getMessage(),eSerializer);
+		}
+	}
+	
+	public void registrazioneFileSystemTransazioneApplicativoServerEmessoPdD(TransazioneApplicativoServer transazioneApplicativoServer, String idTransazione, String applicativoServer){
+		try{
+			// forzo
+			transazioneApplicativoServer.setIdTransazione(idTransazione);
+			transazioneApplicativoServer.setServizioApplicativoErogatore(applicativoServer);
+			
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			transazioneApplicativoServer.writeTo(bout, WriteToSerializerType.XML_JAXB);
+	    	bout.flush();
+	    	bout.close();
+			FileSystemSerializer.getInstance().registraTransazioneApplicativoServer(bout.toByteArray(), transazioneApplicativoServer.getDataAccettazioneRichiesta());
+		}catch(Exception eSerializer){
+			this.logger.error("Errore durante la registrazione su file system del messaggio diagnostico [idTransazione: "+idTransazione+"][server: "+applicativoServer+"]: "+eSerializer.getMessage(),eSerializer);
+		}
+	}
 }

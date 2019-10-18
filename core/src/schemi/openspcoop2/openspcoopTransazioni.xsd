@@ -1577,6 +1577,87 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 					</xsd:annotation>
 				</xsd:element>
 				
+				<xsd:element name="data-registrazione" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui la richiesta è stata registrata per la prima volta sulla Porta]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				
+				<xsd:element name="protocollo" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping generate="false"/> <!-- informazione non serializzata su database -->
+								<linkit:sql-ddl-column-comment><![CDATA[Protocollo utilizzato per la transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				
+				<xsd:element name="consegna-successo" type="xsd:boolean" default="false" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Esito della Transazione]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Esito della Transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="dettaglio-esito" type="xsd:int" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Dettaglio dell'esito della Transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				
+				<xsd:element name="consegna-integration-manager" type="xsd:boolean" default="false" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="consegna_im"/>
+								<linkit:sql-column-comment><![CDATA[Consegna via Integration Manager]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Consegna via Integration Manager]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				
+				<xsd:element name="identificativo-messaggio" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo del messaggio]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+								
+				<xsd:element name="data-accettazione-richiesta" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui la richiesta è processata dalla Porta]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element name="data-uscita-richiesta" type="xsd:dateTime" minOccurs="0">
 					<xsd:annotation>
 						<xsd:appinfo>
@@ -1636,6 +1717,17 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 					</xsd:annotation>
 				</xsd:element>
 								
+				<xsd:element name="location-connettore" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping text="true" />
+								<linkit:sql-ddl-column-comment><![CDATA[Endpoint di inoltro del messaggio]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element name="codice-risposta" type="xsd:string" minOccurs="0" >
 					<xsd:annotation>
 						<xsd:appinfo>
@@ -1643,6 +1735,31 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-column-mapping varchar="10"/>
 								<linkit:sql-ddl-column-comment><![CDATA[Il codice di risposta ottenuto nella fase di uscita (es. HTTP 200/404/500)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				
+				<xsd:element name="fault" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping medium-text="true"/>
+								<linkit:sql-column-comment><![CDATA[Eventuali FAULT]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Fault]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" />
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="formato-fault" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="20"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Indicazione sul tipo di fault (es. SOAP11, JSON, BINARY)]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
@@ -1660,13 +1777,51 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
+				<xsd:element name="numero-tentativi" type="xsd:int" minOccurs="0" default="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Numero di tentativi di consegna]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" />
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				
+				
+				<xsd:element name="cluster-id" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="cluster_id" varchar="100" />
+								<linkit:sql-column-comment><![CDATA[Cluster ID]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Cluster ID]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>			        
+				</xsd:element>
+				
+				
 				<xsd:element name="data-ultimo-errore" type="xsd:dateTime" minOccurs="0">
 					<xsd:annotation>
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Informazioni relative all'ultimo tentativo di consegna fallito]]></linkit:sql-column-comment>
 								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale relativo all'ultimo tentativo di consegna fallito]]></linkit:sql-ddl-column-comment>
 								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="dettaglio-esito-ultimo-errore" type="xsd:int" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Dettaglio dell'esito della Transazione relativamente all'ultimo tentativo di consegna fallito]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
@@ -1693,18 +1848,52 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
-				<xsd:element name="numero-tentativi" type="xsd:int" minOccurs="0" default="0">
+				<xsd:element name="location-ultimo-errore" type="xsd:string" minOccurs="0">
 					<xsd:annotation>
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
-								<linkit:sql-ddl-column-comment><![CDATA[Numero di tentativi di consegna]]></linkit:sql-ddl-column-comment>
+								<linkit:sql-column-mapping text="true" />
+								<linkit:sql-ddl-column-comment><![CDATA[Endpoint di inoltro del messaggio relativo all'ultimo tentativo di consegna fallito]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="cluster-id-ultimo-errore" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="cluster_id_ultimo_errore" varchar="100" />
+								<linkit:sql-ddl-column-comment><![CDATA[Cluster ID relativo all'ultimo tentativo di consegna fallito]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>			        
+				</xsd:element>
+				<xsd:element name="fault-ultimo-errore" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping medium-text="true"/>
+								<linkit:sql-column-comment><![CDATA[Eventuali FAULT]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Fault relativo all'ultimo tentativo di consegna fallito]]></linkit:sql-ddl-column-comment>
 								<linkit:ws-field-mapping filter="false" />
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
-				
+				<xsd:element name="formato-fault-ultimo-errore" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="20"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Indicazione sul tipo di fault (es. SOAP11, JSON, BINARY)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 				
 			</xsd:sequence>
 		</xsd:complexType>

@@ -3000,7 +3000,7 @@ public class GestoreMessaggi  {
 				}
 
 				// Costruzione Query
-				String query = "SELECT "+fieldNamesPdDContext_db.toString()+" FROM "+GestoreMessaggi.MESSAGGI+" WHERE ID_MESSAGGIO = ? AND TIPO=?";
+				String query = "SELECT id_transazione, "+fieldNamesPdDContext_db.toString()+" FROM "+GestoreMessaggi.MESSAGGI+" WHERE ID_MESSAGGIO = ? AND TIPO=?";
 
 				//log.debug("Query: "+query);
 				pstmtRead = connectionDB.prepareStatement(query);
@@ -3015,6 +3015,11 @@ public class GestoreMessaggi  {
 						String keyDB = keysDB.nextElement();
 						Object object = rs.getObject(keyDB);
 						pddContext.addObject(mapping.get(keyDB), object);
+					}
+					
+					String idTransazione = rs.getString("id_transazione");
+					if(idTransazione!=null) {
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, idTransazione);
 					}
 
 				}else{

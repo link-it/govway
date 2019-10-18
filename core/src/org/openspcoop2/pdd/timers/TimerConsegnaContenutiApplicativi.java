@@ -33,6 +33,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
@@ -292,6 +293,10 @@ public class TimerConsegnaContenutiApplicativi  {
 								ConsegnaContenutiApplicativiBehaviourMessage behaviourMsg = new ConsegnaContenutiApplicativiBehaviourMessage();
 								behaviourMsg.setIdMessaggioPreBehaviour(bustaToSend.getRiferimentoMessaggio());
 								behaviourMsg.setBehaviourForwardToConfiguration(behaviourForwardToConfiguration);
+								IdTransazioneApplicativoServer idTransazioneApplicativoServer = new IdTransazioneApplicativoServer();
+								idTransazioneApplicativoServer.setIdTransazione(PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext));
+								idTransazioneApplicativoServer.setServizioApplicativoErogatore(servizioApplicativo);
+								behaviourMsg.setIdTransazioneApplicativoServer(idTransazioneApplicativoServer);
 								consegnaMSG.setBehaviour(behaviourMsg);
 
 

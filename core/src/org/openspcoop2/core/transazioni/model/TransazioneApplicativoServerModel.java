@@ -44,17 +44,33 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 	
 		this.ID_TRANSAZIONE = new Field("id-transazione",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.SERVIZIO_APPLICATIVO_EROGATORE = new Field("servizio-applicativo-erogatore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DATA_REGISTRAZIONE = new Field("data-registrazione",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.PROTOCOLLO = new Field("protocollo",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CONSEGNA_SUCCESSO = new Field("consegna-successo",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DETTAGLIO_ESITO = new Field("dettaglio-esito",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CONSEGNA_INTEGRATION_MANAGER = new Field("consegna-integration-manager",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.IDENTIFICATIVO_MESSAGGIO = new Field("identificativo-messaggio",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DATA_ACCETTAZIONE_RICHIESTA = new Field("data-accettazione-richiesta",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_USCITA_RICHIESTA = new Field("data-uscita-richiesta",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_ACCETTAZIONE_RISPOSTA = new Field("data-accettazione-risposta",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_INGRESSO_RISPOSTA = new Field("data-ingresso-risposta",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.RICHIESTA_USCITA_BYTES = new Field("richiesta-uscita-bytes",java.lang.Long.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.RISPOSTA_INGRESSO_BYTES = new Field("risposta-ingresso-bytes",java.lang.Long.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.LOCATION_CONNETTORE = new Field("location-connettore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.CODICE_RISPOSTA = new Field("codice-risposta",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.FAULT = new Field("fault",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.FORMATO_FAULT = new Field("formato-fault",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_PRIMO_TENTATIVO = new Field("data-primo-tentativo",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.NUMERO_TENTATIVI = new Field("numero-tentativi",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CLUSTER_ID = new Field("cluster-id",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_ULTIMO_ERRORE = new Field("data-ultimo-errore",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DETTAGLIO_ESITO_ULTIMO_ERRORE = new Field("dettaglio-esito-ultimo-errore",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.CODICE_RISPOSTA_ULTIMO_ERRORE = new Field("codice-risposta-ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.ULTIMO_ERRORE = new Field("ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
-		this.NUMERO_TENTATIVI = new Field("numero-tentativi",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.LOCATION_ULTIMO_ERRORE = new Field("location-ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CLUSTER_ID_ULTIMO_ERRORE = new Field("cluster-id-ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.FAULT_ULTIMO_ERRORE = new Field("fault-ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.FORMATO_FAULT_ULTIMO_ERRORE = new Field("formato-fault-ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 	
 	}
 	
@@ -64,17 +80,33 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 	
 		this.ID_TRANSAZIONE = new ComplexField(father,"id-transazione",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.SERVIZIO_APPLICATIVO_EROGATORE = new ComplexField(father,"servizio-applicativo-erogatore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DATA_REGISTRAZIONE = new ComplexField(father,"data-registrazione",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.PROTOCOLLO = new ComplexField(father,"protocollo",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CONSEGNA_SUCCESSO = new ComplexField(father,"consegna-successo",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DETTAGLIO_ESITO = new ComplexField(father,"dettaglio-esito",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CONSEGNA_INTEGRATION_MANAGER = new ComplexField(father,"consegna-integration-manager",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.IDENTIFICATIVO_MESSAGGIO = new ComplexField(father,"identificativo-messaggio",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DATA_ACCETTAZIONE_RICHIESTA = new ComplexField(father,"data-accettazione-richiesta",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_USCITA_RICHIESTA = new ComplexField(father,"data-uscita-richiesta",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_ACCETTAZIONE_RISPOSTA = new ComplexField(father,"data-accettazione-risposta",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_INGRESSO_RISPOSTA = new ComplexField(father,"data-ingresso-risposta",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.RICHIESTA_USCITA_BYTES = new ComplexField(father,"richiesta-uscita-bytes",java.lang.Long.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.RISPOSTA_INGRESSO_BYTES = new ComplexField(father,"risposta-ingresso-bytes",java.lang.Long.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.LOCATION_CONNETTORE = new ComplexField(father,"location-connettore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.CODICE_RISPOSTA = new ComplexField(father,"codice-risposta",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.FAULT = new ComplexField(father,"fault",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.FORMATO_FAULT = new ComplexField(father,"formato-fault",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_PRIMO_TENTATIVO = new ComplexField(father,"data-primo-tentativo",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.NUMERO_TENTATIVI = new ComplexField(father,"numero-tentativi",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CLUSTER_ID = new ComplexField(father,"cluster-id",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_ULTIMO_ERRORE = new ComplexField(father,"data-ultimo-errore",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DETTAGLIO_ESITO_ULTIMO_ERRORE = new ComplexField(father,"dettaglio-esito-ultimo-errore",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.CODICE_RISPOSTA_ULTIMO_ERRORE = new ComplexField(father,"codice-risposta-ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.ULTIMO_ERRORE = new ComplexField(father,"ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
-		this.NUMERO_TENTATIVI = new ComplexField(father,"numero-tentativi",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.LOCATION_ULTIMO_ERRORE = new ComplexField(father,"location-ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CLUSTER_ID_ULTIMO_ERRORE = new ComplexField(father,"cluster-id-ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.FAULT_ULTIMO_ERRORE = new ComplexField(father,"fault-ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.FORMATO_FAULT_ULTIMO_ERRORE = new ComplexField(father,"formato-fault-ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 	
 	}
 	
@@ -83,6 +115,20 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 	public IField ID_TRANSAZIONE = null;
 	 
 	public IField SERVIZIO_APPLICATIVO_EROGATORE = null;
+	 
+	public IField DATA_REGISTRAZIONE = null;
+	 
+	public IField PROTOCOLLO = null;
+	 
+	public IField CONSEGNA_SUCCESSO = null;
+	 
+	public IField DETTAGLIO_ESITO = null;
+	 
+	public IField CONSEGNA_INTEGRATION_MANAGER = null;
+	 
+	public IField IDENTIFICATIVO_MESSAGGIO = null;
+	 
+	public IField DATA_ACCETTAZIONE_RICHIESTA = null;
 	 
 	public IField DATA_USCITA_RICHIESTA = null;
 	 
@@ -94,17 +140,35 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 	 
 	public IField RISPOSTA_INGRESSO_BYTES = null;
 	 
+	public IField LOCATION_CONNETTORE = null;
+	 
 	public IField CODICE_RISPOSTA = null;
+	 
+	public IField FAULT = null;
+	 
+	public IField FORMATO_FAULT = null;
 	 
 	public IField DATA_PRIMO_TENTATIVO = null;
 	 
+	public IField NUMERO_TENTATIVI = null;
+	 
+	public IField CLUSTER_ID = null;
+	 
 	public IField DATA_ULTIMO_ERRORE = null;
+	 
+	public IField DETTAGLIO_ESITO_ULTIMO_ERRORE = null;
 	 
 	public IField CODICE_RISPOSTA_ULTIMO_ERRORE = null;
 	 
 	public IField ULTIMO_ERRORE = null;
 	 
-	public IField NUMERO_TENTATIVI = null;
+	public IField LOCATION_ULTIMO_ERRORE = null;
+	 
+	public IField CLUSTER_ID_ULTIMO_ERRORE = null;
+	 
+	public IField FAULT_ULTIMO_ERRORE = null;
+	 
+	public IField FORMATO_FAULT_ULTIMO_ERRORE = null;
 	 
 
 	@Override

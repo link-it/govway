@@ -25,6 +25,7 @@ package org.openspcoop2.pdd.core.handlers;
 
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.ProtocolContext;
+import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.pdd.core.IntegrationContext;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreUscita;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -55,6 +56,17 @@ public class OutRequestContext extends BaseContext {
 	/** Informazioni di integrazione */
 	private IntegrationContext integrazione;
 
+	/** Servizio Applicativo Erogatore */
+	private TransazioneApplicativoServer transazioneApplicativoServer = null;
+	
+	public TransazioneApplicativoServer getTransazioneApplicativoServer() {
+		return this.transazioneApplicativoServer;
+	}
+
+	public void setTransazioneApplicativoServer(TransazioneApplicativoServer transazioneApplicativoServer) {
+		this.transazioneApplicativoServer = transazioneApplicativoServer;
+	}
+
 	public InfoConnettoreUscita getConnettore() {
 		return this.connettore;
 	}
@@ -78,4 +90,6 @@ public class OutRequestContext extends BaseContext {
 	public void setIntegrazione(IntegrationContext integrazione) {
 		this.integrazione = integrazione;
 	}
+	
+
 }

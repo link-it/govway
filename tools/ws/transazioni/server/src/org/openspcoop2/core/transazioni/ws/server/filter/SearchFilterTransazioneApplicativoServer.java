@@ -31,6 +31,15 @@ package org.openspcoop2.core.transazioni.ws.server.filter;
  *     &lt;sequence>
  *         &lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="servizio-applicativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="data-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="data-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="consegna-successo" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="Boolean.valueOf("false")" />
+ *         &lt;element name="dettaglio-esito" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="consegna-integration-manager" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="Boolean.valueOf("false")" />
+ *         &lt;element name="identificativo-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="data-accettazione-richiesta-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="data-accettazione-richiesta-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-uscita-richiesta-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-uscita-richiesta-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-accettazione-risposta-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
@@ -41,13 +50,20 @@ package org.openspcoop2.core.transazioni.ws.server.filter;
  *         &lt;element name="richiesta-uscita-bytes-max" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="risposta-ingresso-bytes-min" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="risposta-ingresso-bytes-max" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="location-connettore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="codice-risposta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="formato-fault" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-primo-tentativo-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-primo-tentativo-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="cluster-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-ultimo-errore-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-ultimo-errore-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="dettaglio-esito-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="codice-risposta-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="location-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="cluster-id-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="formato-fault-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="descOrder" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="Boolean.valueOf("false")" />
@@ -75,6 +91,15 @@ import java.util.Date;
 @javax.xml.bind.annotation.XmlType(name = "search-filter-transazione-applicativo-server", namespace="http://www.openspcoop2.org/core/transazioni/management", propOrder = {
     "idTransazione",
     "servizioApplicativoErogatore",
+    "dataRegistrazioneMin",
+    "dataRegistrazioneMax",
+    "protocollo",
+    "consegnaSuccesso",
+    "dettaglioEsito",
+    "consegnaIntegrationManager",
+    "identificativoMessaggio",
+    "dataAccettazioneRichiestaMin",
+    "dataAccettazioneRichiestaMax",
     "dataUscitaRichiestaMin",
     "dataUscitaRichiestaMax",
     "dataAccettazioneRispostaMin",
@@ -85,13 +110,20 @@ import java.util.Date;
     "richiestaUscitaBytesMax",
     "rispostaIngressoBytesMin",
     "rispostaIngressoBytesMax",
+    "locationConnettore",
     "codiceRisposta",
+    "formatoFault",
     "dataPrimoTentativoMin",
     "dataPrimoTentativoMax",
+    "clusterId",
     "dataUltimoErroreMin",
     "dataUltimoErroreMax",
+    "dettaglioEsitoUltimoErrore",
     "codiceRispostaUltimoErrore",
     "ultimoErrore",
+    "locationUltimoErrore",
+    "clusterIdUltimoErrore",
+    "formatoFaultUltimoErrore",
     "limit",
     "offset",
     "descOrder"
@@ -124,6 +156,127 @@ public class SearchFilterTransazioneApplicativoServer extends org.openspcoop2.ut
 	
 	public String getServizioApplicativoErogatore(){
 		return this.servizioApplicativoErogatore;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-registrazione-min",required=false,nillable=false)
+	private Date dataRegistrazioneMin;
+	
+	public void setDataRegistrazioneMin(Date dataRegistrazioneMin){
+		this.dataRegistrazioneMin = dataRegistrazioneMin;
+	}
+	
+	public Date getDataRegistrazioneMin(){
+		return this.dataRegistrazioneMin;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-registrazione-max",required=false,nillable=false)
+	private Date dataRegistrazioneMax;
+	
+	public void setDataRegistrazioneMax(Date dataRegistrazioneMax){
+		this.dataRegistrazioneMax = dataRegistrazioneMax;
+	}
+	
+	public Date getDataRegistrazioneMax(){
+		return this.dataRegistrazioneMax;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="protocollo",required=false,nillable=false)
+	private String protocollo;
+	
+	public void setProtocollo(String protocollo){
+		this.protocollo = protocollo;
+	}
+	
+	public String getProtocollo(){
+		return this.protocollo;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlElement(name="consegna-successo",required=false,nillable=false,defaultValue="false")
+	private Boolean consegnaSuccesso = Boolean.valueOf("false");
+	
+	public void setConsegnaSuccesso(Boolean consegnaSuccesso){
+		this.consegnaSuccesso = consegnaSuccesso;
+	}
+	
+	public Boolean getConsegnaSuccesso(){
+		return this.consegnaSuccesso;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @XmlElement(name="dettaglio-esito",required=false,nillable=false)
+	private Integer dettaglioEsito;
+	
+	public void setDettaglioEsito(Integer dettaglioEsito){
+		this.dettaglioEsito = dettaglioEsito;
+	}
+	
+	public Integer getDettaglioEsito(){
+		return this.dettaglioEsito;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlElement(name="consegna-integration-manager",required=false,nillable=false,defaultValue="false")
+	private Boolean consegnaIntegrationManager = Boolean.valueOf("false");
+	
+	public void setConsegnaIntegrationManager(Boolean consegnaIntegrationManager){
+		this.consegnaIntegrationManager = consegnaIntegrationManager;
+	}
+	
+	public Boolean getConsegnaIntegrationManager(){
+		return this.consegnaIntegrationManager;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="identificativo-messaggio",required=false,nillable=false)
+	private String identificativoMessaggio;
+	
+	public void setIdentificativoMessaggio(String identificativoMessaggio){
+		this.identificativoMessaggio = identificativoMessaggio;
+	}
+	
+	public String getIdentificativoMessaggio(){
+		return this.identificativoMessaggio;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-accettazione-richiesta-min",required=false,nillable=false)
+	private Date dataAccettazioneRichiestaMin;
+	
+	public void setDataAccettazioneRichiestaMin(Date dataAccettazioneRichiestaMin){
+		this.dataAccettazioneRichiestaMin = dataAccettazioneRichiestaMin;
+	}
+	
+	public Date getDataAccettazioneRichiestaMin(){
+		return this.dataAccettazioneRichiestaMin;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-accettazione-richiesta-max",required=false,nillable=false)
+	private Date dataAccettazioneRichiestaMax;
+	
+	public void setDataAccettazioneRichiestaMax(Date dataAccettazioneRichiestaMax){
+		this.dataAccettazioneRichiestaMax = dataAccettazioneRichiestaMax;
+	}
+	
+	public Date getDataAccettazioneRichiestaMax(){
+		return this.dataAccettazioneRichiestaMax;
 	}
 	
 	
@@ -264,6 +417,19 @@ public class SearchFilterTransazioneApplicativoServer extends org.openspcoop2.ut
 	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="location-connettore",required=false,nillable=false)
+	private String locationConnettore;
+	
+	public void setLocationConnettore(String locationConnettore){
+		this.locationConnettore = locationConnettore;
+	}
+	
+	public String getLocationConnettore(){
+		return this.locationConnettore;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="codice-risposta",required=false,nillable=false)
 	private String codiceRisposta;
 	
@@ -273,6 +439,19 @@ public class SearchFilterTransazioneApplicativoServer extends org.openspcoop2.ut
 	
 	public String getCodiceRisposta(){
 		return this.codiceRisposta;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="formato-fault",required=false,nillable=false)
+	private String formatoFault;
+	
+	public void setFormatoFault(String formatoFault){
+		this.formatoFault = formatoFault;
+	}
+	
+	public String getFormatoFault(){
+		return this.formatoFault;
 	}
 	
 	
@@ -304,6 +483,19 @@ public class SearchFilterTransazioneApplicativoServer extends org.openspcoop2.ut
 	}
 	
 	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="cluster-id",required=false,nillable=false)
+	private String clusterId;
+	
+	public void setClusterId(String clusterId){
+		this.clusterId = clusterId;
+	}
+	
+	public String getClusterId(){
+		return this.clusterId;
+	}
+	
+	
 	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-ultimo-errore-min",required=false,nillable=false)
@@ -332,6 +524,19 @@ public class SearchFilterTransazioneApplicativoServer extends org.openspcoop2.ut
 	}
 	
 	
+	@javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @XmlElement(name="dettaglio-esito-ultimo-errore",required=false,nillable=false)
+	private Integer dettaglioEsitoUltimoErrore;
+	
+	public void setDettaglioEsitoUltimoErrore(Integer dettaglioEsitoUltimoErrore){
+		this.dettaglioEsitoUltimoErrore = dettaglioEsitoUltimoErrore;
+	}
+	
+	public Integer getDettaglioEsitoUltimoErrore(){
+		return this.dettaglioEsitoUltimoErrore;
+	}
+	
+	
 	@javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="codice-risposta-ultimo-errore",required=false,nillable=false)
 	private String codiceRispostaUltimoErrore;
@@ -355,6 +560,45 @@ public class SearchFilterTransazioneApplicativoServer extends org.openspcoop2.ut
 	
 	public String getUltimoErrore(){
 		return this.ultimoErrore;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="location-ultimo-errore",required=false,nillable=false)
+	private String locationUltimoErrore;
+	
+	public void setLocationUltimoErrore(String locationUltimoErrore){
+		this.locationUltimoErrore = locationUltimoErrore;
+	}
+	
+	public String getLocationUltimoErrore(){
+		return this.locationUltimoErrore;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="cluster-id-ultimo-errore",required=false,nillable=false)
+	private String clusterIdUltimoErrore;
+	
+	public void setClusterIdUltimoErrore(String clusterIdUltimoErrore){
+		this.clusterIdUltimoErrore = clusterIdUltimoErrore;
+	}
+	
+	public String getClusterIdUltimoErrore(){
+		return this.clusterIdUltimoErrore;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="formato-fault-ultimo-errore",required=false,nillable=false)
+	private String formatoFaultUltimoErrore;
+	
+	public void setFormatoFaultUltimoErrore(String formatoFaultUltimoErrore){
+		this.formatoFaultUltimoErrore = formatoFaultUltimoErrore;
+	}
+	
+	public String getFormatoFaultUltimoErrore(){
+		return this.formatoFaultUltimoErrore;
 	}
 	
 	

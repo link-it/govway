@@ -31,6 +31,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.utils.beans.BaseBean;
 
 
 /**
@@ -42,7 +43,7 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
  * @version $Rev$, $Date$
  */
 
-public class RichiestaDelegata implements java.io.Serializable {
+public class RichiestaDelegata extends BaseBean implements java.io.Serializable, Cloneable {
 
 	 /**
 	 * serialVersionUID
@@ -285,6 +286,10 @@ public class RichiestaDelegata implements java.io.Serializable {
 	public boolean isRicevutaAsincrona() {
 		return this.ricevutaAsincrona;
 	}
+	// metodo che serve per il clone
+	public boolean getRicevutaAsincrona() {
+		return this.ricevutaAsincrona;
+	}
 	/**
 	 * Ritorna l'identificatore della porta delegata
 	 * 
@@ -322,6 +327,15 @@ public class RichiestaDelegata implements java.io.Serializable {
 		this.profiloCollaborazione = profiloCollaborazione;
 		this.profiloCollaborazioneValue = profiloCollaborazioneValue;
 	}
+	
+	// metodi che servono per il clone
+	public void setProfiloCollaborazione(ProfiloDiCollaborazione profiloCollaborazione) {
+		this.profiloCollaborazione = profiloCollaborazione;
+	}
+	public void setProfiloCollaborazioneValue(String profiloCollaborazioneValue) {
+		this.profiloCollaborazioneValue = profiloCollaborazioneValue;
+	}
+	
 	
 	public String getProfiloCollaborazioneValue() {
 		return this.profiloCollaborazioneValue;

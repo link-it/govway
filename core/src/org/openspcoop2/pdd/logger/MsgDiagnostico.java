@@ -43,12 +43,14 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.GeneratoreCasualeDate;
+import org.openspcoop2.pdd.core.transazioni.GestoreConsegnaMultipla;
 import org.openspcoop2.pdd.core.transazioni.RepositoryGestioneStateful;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
@@ -88,7 +90,7 @@ public class MsgDiagnostico {
 	/** Indicazione di un gestore di msg diagnostici funzionante */
 	public static boolean gestoreDiagnosticaDisponibile = true;
 	/** Primo errore avvenuto nel momento in cui è stato rilevato un malfunzionamento nel sistema di diagnostica */
-	public static Exception motivoMalfunzionamentoDiagnostici = null;
+	public static Throwable motivoMalfunzionamentoDiagnostici = null;
 	
 
 	/**  Logger log4j utilizzato per scrivere i msgDiagnostici */
@@ -429,6 +431,12 @@ public class MsgDiagnostico {
 	}
 	public void setIdCorrelazioneRisposta(String idCorrelazioneRisposta) {
 		this.idCorrelazioneRisposta = idCorrelazioneRisposta;
+	}
+	
+	/** -----------------Impostazione TransazioneApplicativoServer ---------------- */
+	private TransazioneApplicativoServer transazioneApplicativoServer;
+	public void setTransazioneApplicativoServer(TransazioneApplicativoServer transazioneApplicativoServer) {
+		this.transazioneApplicativoServer = transazioneApplicativoServer;
 	}
 	
 	
@@ -2117,29 +2125,44 @@ public class MsgDiagnostico {
 	
 	
 	private void logMsgDiagnosticoInTransactionContext(org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico msgDiag) {
-		Exception exc = null;
-		boolean gestioneStateful = false;
-		try {
-			Transaction tr = TransactionContext.getTransaction(msgDiag.getIdTransazione());
-			tr.addMsgDiagnostico(msgDiag);
-		}catch(TransactionDeletedException e){
-			gestioneStateful = true;
-		}catch(TransactionNotExistsException e){
-			gestioneStateful = true;
-		}catch(Exception e){
-			exc = e;
+		
+		if(this.transazioneApplicativoServer!=null) {
+			try {
+				// forzo
+				msgDiag.setIdTransazione(this.transazioneApplicativoServer.getIdTransazione());
+				msgDiag.setApplicativo(this.transazioneApplicativoServer.getServizioApplicativoErogatore());
+				GestoreConsegnaMultipla.getInstance().safeSave(msgDiag);
+			}catch(Throwable t) {
+				logError("Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
+				gestioneErroreDiagnostica(t);
+			}
 		}
-		if(gestioneStateful){
-			try{
-				//System.out.println("@@@@@REPOSITORY@@@@@ LOG MSG DIAG ID TRANSAZIONE ["+idTransazione+"] ADD");
-				RepositoryGestioneStateful.addMsgDiagnostico(msgDiag.getIdTransazione(), msgDiag);
+		else {
+		
+			Exception exc = null;
+			boolean gestioneStateful = false;
+			try {
+				Transaction tr = TransactionContext.getTransaction(msgDiag.getIdTransazione());
+				tr.addMsgDiagnostico(msgDiag);
+			}catch(TransactionDeletedException e){
+				gestioneStateful = true;
+			}catch(TransactionNotExistsException e){
+				gestioneStateful = true;
 			}catch(Exception e){
 				exc = e;
 			}
-		}
-		if(exc!=null) {
-			logError("Errore durante l'emissione del msg diagnostico nel contesto della transazione: "+exc.getMessage(),exc);
-			gestioneErroreDiagnostica(exc);
+			if(gestioneStateful){
+				try{
+					//System.out.println("@@@@@REPOSITORY@@@@@ LOG MSG DIAG ID TRANSAZIONE ["+idTransazione+"] ADD");
+					RepositoryGestioneStateful.addMsgDiagnostico(msgDiag.getIdTransazione(), msgDiag);
+				}catch(Exception e){
+					exc = e;
+				}
+			}
+			if(exc!=null) {
+				logError("Errore durante l'emissione del msg diagnostico nel contesto della transazione: "+exc.getMessage(),exc);
+				gestioneErroreDiagnostica(exc);
+			}
 		}
 	}
 	
@@ -2190,7 +2213,7 @@ public class MsgDiagnostico {
 		return msgDiagnostico;
 	}
 	
-	private void gestioneErroreDiagnostica(Exception e) {
+	private void gestioneErroreDiagnostica(Throwable e) {
 		
 		if(this.openspcoopProperties.isRegistrazioneDiagnosticaFallita_BloccoServiziPdD()){
 			MsgDiagnostico.gestoreDiagnosticaDisponibile=false;
@@ -2202,7 +2225,7 @@ public class MsgDiagnostico {
 		
 	}
 	
-	private void logError(String msgErrore,Exception e){
+	private void logError(String msgErrore,Throwable e){
 		if(this.loggerOpenSPCoop2Core!=null){
 			this.loggerOpenSPCoop2Core.error(msgErrore,e);
 		}

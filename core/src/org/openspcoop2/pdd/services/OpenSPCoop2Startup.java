@@ -1645,6 +1645,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				FileSystemUtilities.mkdir(dirRecovery, configMkdir);
 				FileSystemSerializer fs = FileSystemSerializer.getInstance();
 				FileSystemUtilities.mkdir(fs.getDirTransazioni().getAbsolutePath(), configMkdir);
+				FileSystemUtilities.mkdir(fs.getDirTransazioneApplicativoServer().getAbsolutePath(), configMkdir);
 				FileSystemUtilities.mkdir(fs.getDirDiagnostici().getAbsolutePath(), configMkdir);
 				FileSystemUtilities.mkdir(fs.getDirTracce().getAbsolutePath(), configMkdir);
 				FileSystemUtilities.mkdir(fs.getDirDump().getAbsolutePath(), configMkdir);
