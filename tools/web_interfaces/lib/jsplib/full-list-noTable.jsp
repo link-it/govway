@@ -134,7 +134,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 							  	String [] values = filtro.getValues();
 							  	String [] labels = filtro.getLabels();
 							  	String selezionato = filtro.getSelected();
-								String selEvtOnChange = !filtro.getOnChange().equals("") ? (" onChange=\"Change(document.form,'"+filterName+"')\" " ) : " ";
+								String selEvtOnChange = !filtro.getOnChange().equals("") ? (" onChange=\"visualizzaAjaxStatus();Change(document.form,'"+filterName+"')\" " ) : " ";
 								String classInput = filtro.getStyleClass();
 							  	%>
 										<tr>
@@ -181,8 +181,8 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 								<tr>
 									<td class="buttonrow">
 										<div class="buttonrowricerca">
-											<input type="button" onClick="Search(document.form)" value='<%=pd.getLabelBottoneFiltra() %>' />
-											<input type="button" onClick="Reset(document.form);" value='<%=pd.getLabelBottoneRipulsci() %>' />
+											<input type="button" onClick="visualizzaAjaxStatus();Search(document.form)" value='<%=pd.getLabelBottoneFiltra() %>' />
+											<input type="button" onClick="visualizzaAjaxStatus();Reset(document.form);" value='<%=pd.getLabelBottoneRipulsci() %>' />
 										</div>								
 									
 									</td>
@@ -361,7 +361,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 										//Bottone Previous
 										if (pd.getIndex() != 0) {
 											%>							
-											<img id="ds_prev_bottom" src="images/tema_link/go_prev.png" onclick="PrevPage(document.form.limit.options[document.form.limit.selectedIndex].value)" title="Precedente"  class="dsImg" />
+											<img id="ds_prev_bottom" src="images/tema_link/go_prev.png" onclick="visualizzaAjaxStatus();PrevPage(document.form.limit.options[document.form.limit.selectedIndex].value)" title="Precedente"  class="dsImg" />
 											<%
 										} else{
 											%>
@@ -372,7 +372,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 										//Scelta numero di entries da visualizzare
 										if ((pd.getNumEntries() > 20) || (pd.getIndex() != 0)) {
 										  %></td>
-											<td><select name="limit" onChange="CambiaVisualizzazione(document.form.limit.options[selectedIndex].value)"><%
+											<td><select name="limit" onChange="visualizzaAjaxStatus();CambiaVisualizzazione(document.form.limit.options[selectedIndex].value)"><%
 										  switch (pd.getPageSize()) {
 										    case 20 :
 											%>
@@ -446,7 +446,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 										  if (pd.getIndex()+pd.getPageSize() < pd.getNumEntries()) {
 											  nextBottomDisabled = false;
 										   			%>
-										   			<img id="ds_next_bottom" src="images/tema_link/go_next.png" onClick="NextPage()" title="Successiva" class="dsImg"/>
+										   			<img id="ds_next_bottom" src="images/tema_link/go_next.png" onClick="visualizzaAjaxStatus();NextPage()" title="Successiva" class="dsImg"/>
 										   			<%
 										  }
 										}
@@ -484,7 +484,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 									 		for (int b = 0; b < bottoni.size(); b++) {
 									   			DataElement bottone = (DataElement) bottoni.elementAt(b);
 									   			%>
-									   			<input type="button" onClick="<%= bottone.getOnClick() %>" value='<%= bottone.getValue() %>'/>
+									   			<input type="button" onClick="visualizzaAjaxStatus();<%= bottone.getOnClick() %>" value='<%= bottone.getValue() %>'/>
 									   			<%
 									 		}
 										}
@@ -497,7 +497,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 									
 									//Bottone di Add
 									if (pd.getAddButton()) {
-									  %><input type="button" onClick="AddEntry()" value='Aggiungi' /><%
+									  %><input type="button" onClick="visualizzaAjaxStatus();AddEntry()" value='Aggiungi' /><%
 									}
 									
 									%>

@@ -71,6 +71,7 @@ PageData pd = (PageData) session.getAttribute(pdString);
 							<script type="text/javascript">
 							   $('[id=voceMenu_<%=j %>]')
 							   .click(function() {
+								   		visualizzaAjaxStatus(); 
 										var val = $(this).children('input[id=url_entry_<%=j %>]').val();
 										window.location = val;
 							       });
@@ -84,6 +85,7 @@ PageData pd = (PageData) session.getAttribute(pdString);
 							<script type="text/javascript">
 							   $('[id=voceMenu_<%=j %>]')
 							   .click(function() {
+								   		visualizzaAjaxStatus();
 										var val = $(this).children('input[id=url_entry_<%=j %>]').val();
 										window.location = val;
 							       });

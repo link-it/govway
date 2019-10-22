@@ -116,6 +116,7 @@ for (int j = 0; j < riga.size(); j++) {
 					<script type="text/javascript">
 					   $('[id=entry_<%=numeroEntryS %>]')
 					   .click(function() {
+						   		visualizzaAjaxStatus();
 								var val = $(this).children('input[id=url_entry_<%=numeroEntryS %>]').val();
 								window.location = val;
 					       });

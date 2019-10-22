@@ -188,7 +188,7 @@
 														  		}
 													  			
 						                					%>
-						                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
+						                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="visualizzaAjaxStatus();return true;">
 						                						<span class="icon-box">
 																	<i class="material-icons md-18"><%= deIconName %></i>
 																</span>
@@ -265,7 +265,7 @@
 																	  		}
 																  			
 									                					%>
-									                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
+									                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="visualizzaAjaxStatus();return true;">
 									                						<span class="icon-box">
 																				<i class="material-icons md-18"><%= deIconName %></i>
 																			</span>
@@ -345,7 +345,7 @@
 																		  			deTarget = " target=\""+ image.getTarget() +"\"";
 																		  		}
 										                					%>
-										                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
+										                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="visualizzaAjaxStatus();return true;">
 										                						<span class="icon-box">
 																					<i class="material-icons md-18"><%= deIconName %></i>
 																				</span>
@@ -402,7 +402,7 @@
 																			  			deTarget = " target=\""+ image.getTarget() +"\"";
 																			  		}
 											                					%>
-											                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
+											                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="visualizzaAjaxStatus();return true;">
 											                						<span class="icon-box">
 																						<i class="material-icons md-18"><%= deIconName %></i>
 																					</span>
@@ -447,7 +447,7 @@
 											  	if (type.equals("link")){
 							        				%>
 							        					<div class="riepilogo-links-button-div">
-							        						<a href="<%= de.getUrl() %>" <%= deTip %> class="riepilogo-links-button">
+							        						<a href="<%= de.getUrl() %>" <%= deTip %> class="riepilogo-links-button" onClick="visualizzaAjaxStatus();return true;">
 									            				<i class="material-icons md-36"><%=iconLink %></i>							            				
 									            				<span class="riepilogo-links-button-text"><%= de.getValue() %></span>
 								            				</a>
@@ -470,10 +470,10 @@
 								  String [][] bottoni = pd.getBottoni();
 								  if ((bottoni != null) && (bottoni.length > 0)) {
 								    for (int i = 0; i < bottoni.length; i++) {
-								      %><input type=button onClick="<%= bottoni[i][1] %>" value="<%= bottoni[i][0] %>"/>&nbsp;<%
+								      %><input type=button onClick="visualizzaAjaxStatus();<%= bottoni[i][1] %>" value="<%= bottoni[i][0] %>"/>&nbsp;<%
 								    }
 								  } else {
-								    %><input type=button onClick="EditPage()" value="Edit" /><%
+								    %><input type=button onClick="visualizzaAjaxStatus();EditPage()" value="Edit" /><%
 								  }
 							  %></div>
 						  </td>
@@ -485,8 +485,8 @@
 					    %><tr class="buttonrow">
 						    <td colspan="2" >
 						    	<div class="buttonrowform">
-						    		<input type=submit onClick='CheckDati();return false;' value="Invia" />
-						    		<input type=button onClick='document.form.reset();' value="Cancella" />
+						    		<input type=submit onClick='visualizzaAjaxStatus();CheckDati();return false;' value="Invia" />
+						    		<input type=button onClick='visualizzaAjaxStatus();document.form.reset();' value="Cancella" />
 						    	</div>
 						    </td>
 					    </tr><%

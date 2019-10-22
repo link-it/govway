@@ -58,6 +58,7 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 								%>, <%	
 							}
 						    %>'<%= bottoni[i][0] %>' : function() {
+						    	visualizzaAjaxStatus();
 						    	<%= bottoni[i][1] %>;
 						    	 $( this ).dialog( "close" );
 			 	 	        }
