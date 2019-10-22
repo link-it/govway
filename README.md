@@ -92,9 +92,9 @@ Cruscotto web rivolto alla diagnostica ed al monitoraggio del traffico gestito d
 
 # Licenza
 GovWay - A customizable API Gateway 
-http://www.govway.org
+https://www.govway.org
 
-Copyright (c) Link.it srl (http://link.it). 
+Copyright (c) 2005-2019 Link.it srl (http://link.it). 
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 3, as published by
